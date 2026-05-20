@@ -985,13 +985,33 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /npx playwright install --with-deps chromium/);
   assert.match(workflow, /npm run validate/);
   assert.match(workflow, /npm run test:screenshot-manifest/);
+  const installDependenciesIndex = workflow.indexOf('run: npm ci');
+  const installChromiumIndex = workflow.indexOf('run: npx playwright install --with-deps chromium');
+  const validateIndex = workflow.indexOf('run: npm run validate');
+  assert.match(workflow, /name:\s*Upload visual smoke artifacts/);
+  const visualArtifactIndex = workflow.indexOf('name: Upload visual smoke artifacts');
+  const releaseEvidenceUploadIndex = workflow.indexOf('name: Upload release evidence index');
+  const visualArtifactBlock = workflow.slice(visualArtifactIndex, releaseEvidenceUploadIndex);
+  assert.ok(visualArtifactIndex > validateIndex, 'visual artifacts upload after validation');
+  assert.ok(
+    visualArtifactIndex > workflow.indexOf('run: npm run test:screenshot-manifest'),
+    'visual artifacts upload after screenshot manifest check',
+  );
+  assert.ok(
+    releaseEvidenceUploadIndex > visualArtifactIndex,
+    'release evidence upload stays after visual artifact upload',
+  );
+  assert.match(visualArtifactBlock, /uses:\s*actions\/upload-artifact@v6/);
+  assert.match(visualArtifactBlock, /if:\s*always\(\)/);
+  assert.match(visualArtifactBlock, /name:\s*visual-smoke-artifacts/);
+  assert.match(visualArtifactBlock, /test-results\//);
+  assert.match(visualArtifactBlock, /playwright-report\//);
+  assert.match(visualArtifactBlock, /reports\/2026-05-15-uiux-screenshots\//);
+  assert.match(visualArtifactBlock, /if-no-files-found:\s*ignore/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
-  const installDependenciesIndex = workflow.indexOf('run: npm ci');
-  const installChromiumIndex = workflow.indexOf('run: npx playwright install --with-deps chromium');
-  const validateIndex = workflow.indexOf('run: npm run validate');
   assert.ok(installChromiumIndex > installDependenciesIndex, 'Chromium installs after npm ci');
   assert.ok(validateIndex > installChromiumIndex, 'Chromium installs before validation runs');
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));

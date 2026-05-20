@@ -12,12 +12,16 @@ export type BlockingModalDismissal = {
   launchOverlayDismissed: boolean;
 };
 
-// Storage keys matching the app's settingsStore constants.
-const settingsLanguageKey = 'language';
-const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+// Storage keys matching the web MMKV keys plus the legacy localStorage keys
+// that older tests used before settings moved behind the "settings" store id.
+const legacySettingsLanguageKey = 'language';
+const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 
-// Selector for dialog/modal overlays in the rendered app.
-const dialogLocator = '[role="dialog"]';
+// Selector for modal overlays that block route screenshots in the rendered app.
+export const blockingModalOverlayLocator =
+  '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -44,19 +48,29 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
 
 export async function seedSettingsLanguage(page: Page, language: AppLanguage): Promise<void> {
   await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+    ({
+      language: seededLanguage,
+      languageKey,
+      legacyLanguageKey,
+    }: {
+      language: AppLanguage;
+      languageKey: string;
+      legacyLanguageKey: string;
+    }) => {
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
     },
-    { language, languageKey: settingsLanguageKey },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ seenKey }: { seenKey: string }) => {
+    ({ legacySeenKey, seenKey }: { legacySeenKey: string; seenKey: string }) => {
+      window.localStorage.setItem(legacySeenKey, 'true');
       window.localStorage.setItem(seenKey, 'true');
     },
-    { seenKey: settingsSeenAboutKey },
+    { legacySeenKey: legacySettingsSeenAboutKey, seenKey: settingsSeenAboutKey },
   );
 }
 
@@ -68,18 +82,30 @@ export async function seedFreshFirstRunSettingsLanguage(
     ({
       language: seededLanguage,
       languageKey,
+      legacyLanguageKey,
+      legacySeenKey,
       seenKey,
     }: {
       language: AppLanguage;
       languageKey: string;
+      legacyLanguageKey: string;
+      legacySeenKey: string;
       seenKey: string;
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.removeItem(legacySeenKey);
       window.localStorage.removeItem(seenKey);
     },
-    { language, languageKey: settingsLanguageKey, seenKey: settingsSeenAboutKey },
+    {
+      language,
+      languageKey: settingsLanguageKey,
+      legacyLanguageKey: legacySettingsLanguageKey,
+      legacySeenKey: legacySettingsSeenAboutKey,
+      seenKey: settingsSeenAboutKey,
+    },
   );
 }
 
@@ -92,7 +118,7 @@ export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
 
   if (await closeLaunchAd.isVisible().catch(() => false)) {
     await closeLaunchAd.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
     return true;
   }
 
@@ -124,7 +150,7 @@ export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<bo
 
   if (await skipGuide.isVisible().catch(() => false)) {
     await skipGuide.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
     return true;
   }
 
@@ -136,7 +162,7 @@ export async function dismissBlockingModals(page: Page): Promise<BlockingModalDi
   const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
   const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
 
-  await expect(page.locator(dialogLocator)).toHaveCount(0);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
 
   return {
     firstRunAboutDismissed,
@@ -174,9 +200,18 @@ export async function selectQuestionLanguageInSettings(
   language: AppLanguage,
 ): Promise<void> {
   await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+    ({
+      language: seededLanguage,
+      languageKey,
+      legacyLanguageKey,
+    }: {
+      language: AppLanguage;
+      languageKey: string;
+      legacyLanguageKey: string;
+    }) => {
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
     },
-    { language, languageKey: settingsLanguageKey },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }

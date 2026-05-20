@@ -7,10 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function runValidation() {
-  return spawnSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  return spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-remove-ads-hook-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
 }
 
 function validationOutput(result) {
@@ -27,11 +31,18 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
 
   assert.doesNotMatch(
     output,
-    /Remove Ads entitlement hook must fail closed while purchase state loads|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
+    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
   );
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /RemoveAdsEntitlementStatus = 'loading' \| 'ready' \| 'read_failed'/);
   assert.match(hookSource, /adsDisabled: true/);
+  assert.match(hookSource, /defaultNativePurchaseRuntimeOptions/);
+  assert.match(
+    hookSource,
+    /createNativePurchaseProvider\(\{ platform: getNativePurchasePlatform\(\) \}\)/,
+  );
+  assert.match(hookSource, /createSecureStorePurchaseStorage/);
+  assert.doesNotMatch(hookSource, /if \(Platform\.OS !== 'web'\) return undefined;/);
   assert.match(hookSource, /getPurchaseEntitlements\(purchaseRuntime\)/);
   assert.match(hookSource, /publishRemoveAdsEntitlements\(storedEntitlements\)/);
   assert.match(hookSource, /setCurrentEntitlements\(AD_BLOCKED_PENDING_ENTITLEMENTS\)/);
@@ -73,6 +84,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-remove-ads-hook-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -83,6 +95,45 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Remove Ads entitlement hook must fail closed while purchase state loads/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects missing native default provider', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+\`  defaultNativePurchaseRuntimeOptions ??= {
+    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+    storage: createSecureStorePurchaseStorage(),
+  };
+
+  return defaultNativePurchaseRuntimeOptions;\`,
+\`  return undefined;\`,
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native Remove Ads entitlement runtime must provide a native provider and secure storage/,
   );
 });
 
@@ -103,6 +154,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-remove-ads-hook-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -133,6 +185,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-remove-ads-hook-parity');
 require('./scripts/validate-content.js');
 `,
     ],

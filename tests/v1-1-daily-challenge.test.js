@@ -5,8 +5,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const progressStateKey = 'progressState';
 require.extensions['.ts'] = function tsLoader(module, filename) {
   const source = fs.readFileSync(filename, 'utf8');
   const transpiled = ts.transpileModule(source, {
@@ -17,6 +19,23 @@ require.extensions['.ts'] = function tsLoader(module, filename) {
 };
 function loadTs(rel) {
   return require(path.join(repoRoot, rel));
+}
+
+function loadProgressStoreWithMemory(initialProgress = undefined) {
+  const progressStorage = createMemoryMMKV(
+    initialProgress ? { [progressStateKey]: JSON.stringify(initialProgress) } : {},
+  );
+  const { useProgressStore } = loadTsWithStorage(repoRoot, 'lib/storage/progressStore.ts', {
+    progress: progressStorage,
+  });
+
+  return { progressStorage, useProgressStore };
+}
+
+function readPersistedProgress(progressStorage) {
+  const serialized = progressStorage.getString(progressStateKey);
+  assert.ok(serialized, 'expected progress state to be persisted');
+  return JSON.parse(serialized);
 }
 
 function bigBank() {
@@ -139,5 +158,134 @@ test('daily challenge completion is persisted by local day in the progress store
   assert.match(
     progressTypes,
     /dailyChallengeCompletions: Record<string, DailyChallengeCompletion>;/,
+  );
+});
+
+test('DailyChallengeProgress hydration keeps valid local days and drops malformed records', () => {
+  const { useProgressStore } = loadProgressStoreWithMemory({
+    completedQuestionIds: [],
+    questionProgress: {},
+    totalXp: 0,
+    answerDates: [],
+    answerHistory: [],
+    mockExamSessions: [],
+    streakFreezeState: {
+      available: 1,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+    dailyChallengeCompletions: {
+      valid: {
+        dayKey: '2026-05-20',
+        questionIds: [' q001 ', 'q002', 'q001', '', 17],
+        correctCount: 4,
+        totalCount: 2,
+        score: 1.2,
+        timeSpentSeconds: 999999999,
+        completedAt: '2026-05-20T10:00:00.000Z',
+      },
+      duplicateSameDay: {
+        dayKey: '2026-05-20',
+        questionIds: ['q999'],
+        correctCount: 0,
+        totalCount: 1,
+        score: 0,
+        timeSpentSeconds: 10,
+        completedAt: '2026-05-20T11:00:00.000Z',
+      },
+      clampedCounts: {
+        dayKey: '2026-05-21',
+        questionIds: ['q010', 'q011'],
+        correctCount: 99,
+        totalCount: 1,
+        score: -3,
+        timeSpentSeconds: -1,
+        completedAt: '2026-05-21T10:00:00.000Z',
+      },
+      invalidDay: {
+        dayKey: '2026-02-30',
+        questionIds: ['q003'],
+        correctCount: 1,
+        totalCount: 1,
+        score: 1,
+        timeSpentSeconds: 5,
+        completedAt: '2026-02-28T10:00:00.000Z',
+      },
+      invalidTimestamp: {
+        dayKey: '2026-05-22',
+        questionIds: ['q004'],
+        correctCount: 1,
+        totalCount: 1,
+        score: 1,
+        timeSpentSeconds: 5,
+        completedAt: 'not-a-date',
+      },
+      invalidQuestionIds: {
+        dayKey: '2026-05-23',
+        questionIds: [],
+        correctCount: 0,
+        totalCount: 0,
+        score: 0,
+        timeSpentSeconds: 0,
+        completedAt: '2026-05-23T10:00:00.000Z',
+      },
+    },
+  });
+
+  const completions = useProgressStore.getState().dailyChallengeCompletions;
+  assert.deepEqual(Object.keys(completions), ['2026-05-20', '2026-05-21']);
+  assert.deepEqual(completions['2026-05-20'], {
+    dayKey: '2026-05-20',
+    questionIds: ['q001', 'q002'],
+    correctCount: 2,
+    totalCount: 2,
+    score: 1,
+    timeSpentSeconds: 14400,
+    completedAt: '2026-05-20T10:00:00.000Z',
+  });
+  assert.deepEqual(completions['2026-05-21'], {
+    dayKey: '2026-05-21',
+    questionIds: ['q010', 'q011'],
+    correctCount: 2,
+    totalCount: 2,
+    score: 0,
+    timeSpentSeconds: 0,
+    completedAt: '2026-05-21T10:00:00.000Z',
+  });
+});
+
+test('daily challenge duplicate day write cannot overwrite the first completion', () => {
+  const { progressStorage, useProgressStore } = loadProgressStoreWithMemory();
+  const firstCompletion = {
+    dayKey: '2026-05-20',
+    questionIds: ['q001', 'q002'],
+    correctCount: 2,
+    totalCount: 2,
+    score: 1,
+    timeSpentSeconds: 42,
+    completedAt: '2026-05-20T10:00:00.000Z',
+  };
+  const duplicateCompletion = {
+    dayKey: '2026-05-20',
+    questionIds: ['q999'],
+    correctCount: 0,
+    totalCount: 1,
+    score: 0,
+    timeSpentSeconds: 3,
+    completedAt: '2026-05-20T11:00:00.000Z',
+  };
+
+  useProgressStore.getState().recordDailyChallengeCompletion(firstCompletion);
+  useProgressStore.getState().recordDailyChallengeCompletion(duplicateCompletion);
+
+  assert.deepEqual(
+    useProgressStore.getState().dailyChallengeCompletions['2026-05-20'],
+    firstCompletion,
+  );
+  assert.deepEqual(
+    readPersistedProgress(progressStorage).dailyChallengeCompletions['2026-05-20'],
+    firstCompletion,
   );
 });

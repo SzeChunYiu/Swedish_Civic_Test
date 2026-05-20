@@ -287,7 +287,7 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
+test('tierComparison: Pro Lifetime stays separate from the Remove Ads entitlement', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
@@ -302,10 +302,19 @@ test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays
     }),
     false,
   );
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(adsRow.flag, 'adsDisabled');
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
+  assert.equal(adsRow.flag, undefined);
+  assert.deepEqual(adsRow.free, {
+    kind: 'text',
+    sv: 'vid sessionsskifte',
+    en: 'at session boundaries',
+  });
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
+  assert.deepEqual(adsRow.pro, {
+    kind: 'text',
+    sv: 'vid sessionsskifte',
+    en: 'at session boundaries',
+  });
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -315,9 +324,9 @@ test('tierComparison: three columns in canonical order', () => {
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
-  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
+  assert.equal(columnsById.adFree.priceSv, '29 kr · engångsköp');
   assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
-  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
+  assert.equal(columnsById.pro.priceSv, '59 kr · engångsköp');
   assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
@@ -328,11 +337,8 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
-test('tierComparison: native table hides ebook-only benefits until a native ebook route exists', () => {
+test('tierComparison: native table lists ebook storage benefits already backed by local primitives', () => {
   const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
-  const nativeEbookRouteExists = fs.existsSync(path.join(repoRoot, 'app/ebook.tsx'));
-  if (nativeEbookRouteExists) return;
-
   const rowIds = TIER_ROWS.map((row) => row.id);
   const rowLabels = TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
   const rowFlags = TIER_ROWS.map((row) => row.flag).filter(Boolean);
@@ -342,11 +348,11 @@ test('tierComparison: native table hides ebook-only benefits until a native eboo
     true,
     'the local highlight store can remain as a tested primitive while the native reader is absent',
   );
-  assert.equal(rowIds.includes('highlights'), false);
-  assert.equal(rowIds.includes('notesExport'), false);
-  assert.equal(rowFlags.includes('multiColorHighlights'), false);
-  assert.equal(rowFlags.includes('notesExport'), false);
-  assert.doesNotMatch(
+  assert.equal(rowIds.includes('highlights'), true);
+  assert.equal(rowIds.includes('notesExport'), true);
+  assert.equal(rowFlags.includes('multiColorHighlights'), true);
+  assert.equal(rowFlags.includes('notesExport'), true);
+  assert.match(
     rowLabels,
     /Markeringar i e-bok|Ebook highlights|Exportera anteckningar|Notes export/,
   );
@@ -356,8 +362,8 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
-  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
-  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
+  assert.equal(fresh.primarySv, 'Köp Pro · 59 kr');
+  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 kr');
   assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
@@ -378,10 +384,9 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /rowSummary:/);
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
-  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
-  assert.doesNotMatch(source, /29 kr|29 kronor/);
+  assert.match(source, /Remove Ads for 29 SEK stays available/);
+  assert.match(source, /Ta bort annonser för 29 kr finns kvar/);
+  assert.match(source, /Ta bort annonser för 29 kronor finns kvar separat/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });

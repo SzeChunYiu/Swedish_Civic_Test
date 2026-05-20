@@ -2,6 +2,7 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { writeRecoverably } from './persistenceWarning';
 
@@ -66,7 +67,8 @@ function normalizeMistakeReview(value: unknown): PersistedMistakeReview {
       const safeQuestionId = normalizeQuestionId(questionId);
       const selectedOptionTextEn = normalizeSelectedAnswerText(item.selectedOptionTextEn);
       const selectedOptionTextSv = normalizeSelectedAnswerText(item.selectedOptionTextSv);
-      if (!safeQuestionId || item.questionId !== safeQuestionId) continue;
+      if (!safeQuestionId || !isSafeImportedMapKey(safeQuestionId)) continue;
+      if (item.questionId !== safeQuestionId) continue;
       if (!isIsoTimestamp(item.answeredAt)) continue;
       if (!selectedOptionTextEn || !selectedOptionTextSv) continue;
 

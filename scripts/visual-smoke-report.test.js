@@ -5,8 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
+const visualSmokeSpecPath = path.join(repoRoot, 'tests/e2e/visual-smoke.spec.ts');
 const expectedRoutes = [
   '/',
   '/onboarding',
@@ -30,14 +32,39 @@ function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 }
 
+function readRepoFile(relativePath) {
+  return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
 function sha256File(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+test('visual smoke uses the shared blocking modal overlay locator', () => {
+  const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
+  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
+
+  assert.match(browserLaunchSource, /export const blockingModalOverlayLocator/);
+  assert.match(browserLaunchSource, /\[role="dialog"\]\[aria-modal="true"\]/);
+  assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
+  assert.match(
+    visualSmokeSource,
+    /import \{ blockingModalOverlayLocator, dismissBlockingModals \} from '\.\/browserLaunch';/,
+  );
+  assert.match(visualSmokeSource, /page\.locator\(blockingModalOverlayLocator\)/);
+  assert.doesNotMatch(
+    visualSmokeSource,
+    /page\.locator\('\[role="dialog"\]\[aria-modal="true"\]'\)/,
+  );
+});
+
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
   assert.match(manifest.viewport, /iPhone 12/);
+  assert.match(manifest.outputPolicy, /tmp\/visual-smoke-uiux-screenshots/);
+  assert.match(manifest.outputPolicy, /VISUAL_SMOKE_UPDATE_BASELINE=1/);
   assert.match(manifest.launchOverlayPolicy, /dismisses the launch sponsor overlay/i);
+  assert.match(manifest.launchOverlayPolicy, /modal menu overlays/i);
   assert.match(manifest.duplicatePolicy, /duplicate screenshot hashes fail/i);
 
   const routes = manifest.routes || [];
@@ -81,4 +108,35 @@ test('visual smoke report records route-specific screenshots without launch over
     .filter((names) => !explainedDuplicateScreenshotGroups.has(names));
 
   assert.deepEqual(unexplainedDuplicates, []);
+});
+
+test('visual smoke runtime output defaults to ignored temp artifacts', () => {
+  const source = fs.readFileSync(visualSmokeSpecPath, 'utf8');
+  const gitignore = fs.readFileSync(gitignorePath, 'utf8');
+
+  assert.match(
+    source,
+    /const baselineScreenshotDir = path\.resolve\('reports\/2026-05-15-uiux-screenshots'\);/,
+  );
+  assert.match(
+    source,
+    /const runtimeScreenshotDir = path\.resolve\('tmp\/visual-smoke-uiux-screenshots'\);/,
+  );
+  assert.match(
+    source,
+    /const refreshCommittedBaseline = process\.env\.VISUAL_SMOKE_UPDATE_BASELINE === '1';/,
+  );
+  assert.match(
+    source,
+    /const screenshotDir = refreshCommittedBaseline \? baselineScreenshotDir : runtimeScreenshotDir;/,
+  );
+  assert.match(
+    source,
+    /Default visual-smoke runs must not write into the committed screenshot baseline/,
+  );
+  assert.match(
+    source,
+    /Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed reports\/2026-05-15-uiux-screenshots baseline\./,
+  );
+  assert.match(gitignore, /^tmp\/$/m);
 });

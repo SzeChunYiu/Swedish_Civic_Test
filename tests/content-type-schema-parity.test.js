@@ -8,6 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('content TypeScript schema stays in parity with runtime validator expectations', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -29,14 +30,18 @@ test('content TypeScript schema stays in parity with runtime validator expectati
     contentTypes,
     /export type LocalizedContentText = Record<'sv' \| 'en', string> &\s*Partial<Record<LocaleCode, string>>;/,
   );
+  assert.match(
+    contentTypes,
+    /export type LocalizedContentTextOverrides = Partial<Record<LocaleCode, string>>;/,
+  );
   assert.match(contentTypes, /export interface PracticeQuestion/);
   assert.match(contentTypes, /text\?: LocalizedContentText;/);
   assert.match(contentTypes, /questionText\?: LocalizedContentText;/);
   assert.match(contentTypes, /explanationText\?: LocalizedContentText;/);
   assert.match(contentTypes, /uhrReference: UHRReference;/);
   assert.match(contentTypes, /tags: string\[\];/);
-  assert.match(contentTypes, /nameText\?: LocalizedContentText;/);
-  assert.match(contentTypes, /descriptionText\?: LocalizedContentText;/);
+  assert.match(contentTypes, /nameText\?: LocalizedContentTextOverrides;/);
+  assert.match(contentTypes, /descriptionText\?: LocalizedContentTextOverrides;/);
   assert.match(contentTypes, /export interface GlossaryTerm/);
   assert.match(contentTypes, /chapterId\?: string;/);
 });

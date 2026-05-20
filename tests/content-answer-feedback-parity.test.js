@@ -5,13 +5,22 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-test('answer feedback runtime stays in parity with every published question option set', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+function parseFocusedValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-answer-feedback-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
+  assert.ok(match, 'focused answer feedback validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
+test('answer feedback runtime stays in parity with every published question option set', () => {
+  const summary = parseFocusedValidationSummary();
 
   assert.equal(summary.answerValidationTypeUnionsValidated, 1);
   assert.equal(summary.answerValidationTypeInterfacesValidated, 1);
@@ -38,6 +47,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-answer-feedback-parity');
 require('./scripts/validate-content.js');
 `,
     ],

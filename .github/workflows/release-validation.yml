@@ -46,6 +46,17 @@ jobs:
       - name: Verify visual smoke screenshot manifest
         run: npm run test:screenshot-manifest
 
+      - name: Upload visual smoke artifacts
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: visual-smoke-artifacts
+          path: |
+            test-results/
+            playwright-report/
+            reports/2026-05-15-uiux-screenshots/
+          if-no-files-found: ignore
+
       - name: Verify release ownership guard
         run: npm run test:ownership
 

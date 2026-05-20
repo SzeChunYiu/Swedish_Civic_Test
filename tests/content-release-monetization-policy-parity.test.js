@@ -60,6 +60,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map()) {
 
 test('release monetization policy stays aligned with Remove Ads and ad consent runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
