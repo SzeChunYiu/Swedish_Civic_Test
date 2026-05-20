@@ -131,6 +131,16 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(legalPageSource, /const resolvedBackLabel = backLabel \?\? copy\.defaultBackLabel;/);
   assert.match(legalPageSource, /accessibilityLabel=\{resolvedBackAccessibilityLabel\}/);
   assert.match(legalPageSource, /\{resolvedBackLabel\}/);
+  assert.match(legalPageSource, /export function LegalExternalLink\(/);
+  assert.match(legalPageSource, /accessibilityHint=\{accessibilityHint\}/);
+  assert.match(legalPageSource, /accessibilityRole="link"/);
+  assert.match(legalPageSource, /onMouseEnter:\s*\(\) => setIsHovered\(true\)/);
+  assert.match(legalPageSource, /onFocus:\s*\(\) => setIsFocused\(true\)/);
+  assert.match(legalPageSource, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(legalPageSource, /minHeight:\s*space\[6\]/);
+  assert.match(legalPageSource, /borderWidth:\s*space\.hairline/);
+  assert.match(legalPageSource, /backgroundColor:\s*colors\.focusSoft/);
+  assert.match(legalPageSource, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
   assert.match(complianceLinksSource, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(complianceLinksSource, /type ComplianceLinksCopy =/);
   assert.match(
@@ -171,18 +181,30 @@ test('compliance scaffold exposes legal page headings as headers', () => {
     sourcesSource,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
   );
+  assert.match(sourcesSource, /<LegalExternalLink/);
+  assert.match(sourcesSource, /LegalSectionParagraph/);
+  assert.match(sourcesSource, /displayUrl=\{UHR_EDUCATION_MATERIAL_DISPLAY_URL\}/);
+  assert.match(sourcesSource, /label=\{copy\.openEducationMaterialLabel\}/);
   assert.match(sourcesSource, /Källor/);
   assert.match(sourcesSource, /Primärt studiematerial/);
+  assert.match(sourcesSource, /Öppna utbildningsmaterialet/);
   assert.match(sourcesSource, /Sources/);
   assert.match(sourcesSource, /Primary study material/);
+  assert.match(sourcesSource, /Open education material/);
   assert.match(supportSource, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
   assert.match(supportSource, /const copy = supportCopy\[language\];/);
   assert.match(supportSource, /<LegalPage title=\{copy\.title\}>/);
   assert.match(supportSource, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
+  assert.match(supportSource, /<LegalExternalLink/);
+  assert.match(supportSource, /LegalSectionParagraph/);
+  assert.match(supportSource, /displayUrl=\{PUBLIC_SUPPORT_DISPLAY_URL\}/);
+  assert.match(supportSource, /label=\{copy\.openSupportPageLabel\}/);
   assert.match(supportSource, /Support och återkoppling/);
   assert.match(supportSource, /Vad du kan rapportera/);
+  assert.match(supportSource, /Öppna supportsidan/);
   assert.match(supportSource, /Support and feedback/);
   assert.match(supportSource, /What to report/);
+  assert.match(supportSource, /Open support page/);
   assert.match(termsSource, /const termsCopy: Record<AppLanguage, TermsRouteCopy>/);
   assert.match(termsSource, /const copy = termsCopy\[language\];/);
   assert.match(termsSource, /<LegalPage title=\{copy\.title\}>/);
