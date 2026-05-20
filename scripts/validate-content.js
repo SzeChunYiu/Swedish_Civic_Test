@@ -567,7 +567,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
+    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Redoindikator',
     'redo',
@@ -610,7 +610,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
     'Provredo',
-    'Växla mellan tidsatta prov, flashcards, bokmärken, felspårning, ljud och redoindikator.',
+    'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
@@ -670,6 +670,10 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Lärdomar från', ' framgångsrika'],
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
+].map((parts) => parts.join(''));
+const FORBIDDEN_HOME_ROUTE_MISTAKE_REVIEW_COPY = [
+  ['fel', 'spårning'],
+  ['repetition av ', 'misstag'],
 ].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -8146,6 +8150,12 @@ function validateHomeRouteCopyParity() {
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_MISTAKE_REVIEW_COPY.forEach((forbidden) => {
+    if (homeRoute.includes(forbidden)) {
+      reject(`home route Swedish copy must describe reviewing missed questions, not ${forbidden}`);
     }
   });
 
