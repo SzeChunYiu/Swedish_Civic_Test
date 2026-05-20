@@ -22,18 +22,15 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
-import {
-  buildDailyChallenge,
-  dailyChallengeBannerCopy,
-  isDailyChallengeCompleted,
-} from '../../lib/learning/dailyChallenge';
+import { dashboardSummary } from '../../lib/learning/dashboardStats';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswerAttemptsForLocalDate } from '../../lib/learning/streaks';
+import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
@@ -53,8 +50,6 @@ type GuidedPathStageCopy = {
     status: string,
   ) => string;
   chapterRange: string;
-  cta: (isCompleted: boolean) => string;
-  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
   description: string;
   levelLabel: string;
   progressLabel: (completedChapters: number, totalChapters: number) => string;
@@ -64,10 +59,6 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
-  dailyChallengeAccessibilityLabel: (title: string, subtitle: string) => string;
-  dailyChallengeCompletedCta: string;
-  dailyChallengeCta: string;
-  dailyChallengeResult: (correctCount: number, totalCount: number) => string;
   dailyGoalTitle: string;
   dashboardAccessibilityLabel: (summary: string) => string;
   dashboardCta: string;
@@ -82,8 +73,20 @@ type HomeCopy = {
   feedbackLinkAccessibilityLabel: string;
   feedbackText: string;
   feedbackTitle: string;
-  freeBankBadge: string;
-  freeBankText: string;
+  guidedPathDailyAccessibilityLabel: (completed: number, goal: number) => string;
+  guidedPathDailyCta: string;
+  guidedPathDailyText: (completed: number, goal: number) => string;
+  guidedPathDailyTitle: string;
+  guidedPathResumeAccessibilityLabel: (stageTitle: string) => string;
+  guidedPathResumeCta: string;
+  guidedPathStageStatuses: {
+    active: string;
+    completed: string;
+    upcoming: string;
+  };
+  guidedPathStages: GuidedPathStageCopy[];
+  guidedPathSubtitle: string;
+  guidedPathTitle: string;
   levelMetric: string;
   questionsHelper: (count: number) => string;
   questionsMetric: string;
@@ -92,7 +95,7 @@ type HomeCopy = {
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
-  readinessCaveat: string;
+  readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
   reviewWeakChapters: string;
@@ -168,7 +171,9 @@ function buildGuidedPracticePathStages(
     const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
     const href = nextChapterId
       ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
-      : '/exam';
+      : group.id === 'advanced'
+        ? '/exam'
+        : '/learn';
 
     return {
       accessibilityLabel: stageCopy.accessibilityLabel(
@@ -178,8 +183,6 @@ function buildGuidedPracticePathStages(
         statusLabel,
       ),
       chapterRange: stageCopy.chapterRange,
-      cta: stageCopy.cta(isCompleted),
-      ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted),
       description: stageCopy.description,
       href,
       id: group.id,
@@ -197,11 +200,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
-    dailyChallengeAccessibilityLabel: (title, subtitle) => `${title}. ${subtitle}`,
-    dailyChallengeCompletedCta: 'Gör om dagens utmaning',
-    dailyChallengeCta: 'Starta dagens utmaning',
-    dailyChallengeResult: (correctCount, totalCount) =>
-      `Senaste resultat: ${correctCount}/${totalCount} rätt`,
     dailyGoalTitle: 'Dagens mål',
     dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
     dashboardCta: 'Visa översikt',
@@ -217,28 +215,72 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Sparade och missade frågor samlas på ett ställe, med källstödda förklaringar och utan annonser i provläget.',
     feedbackTitle: 'Håll koll på det som behöver övas',
-    freeBankBadge: 'Hela banken gratis',
-    freeBankText:
-      'Alla 13 ämnen och hela frågebanken ingår gratis. Betala bara om du vill ta bort annonser från studieskärmar.',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Starta dagens övning. ${completed} av ${goal} svar klara idag.`,
+    guidedPathDailyCta: 'Starta dagens övning',
+    guidedPathDailyText: (completed, goal) => `${completed}/${goal} svar idag håller vanan synlig.`,
+    guidedPathDailyTitle: 'Daglig övning',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Fortsätt på ${stageTitle}`,
+    guidedPathResumeCta: 'Fortsätt på nästa kapitel',
+    guidedPathStageStatuses: {
+      active: 'Pågår',
+      completed: 'Klar',
+      upcoming: 'Nästa',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 1-4',
+        description: 'Börja med landet, demokratin, styret och valen.',
+        levelLabel: 'Nybörjare',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Grunderna i Sverige och demokrati',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 5-9',
+        description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
+        levelLabel: 'Fortsättning',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Rättigheter, medier och samhällsliv',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Kapitel 10-13',
+        description:
+          'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
+        levelLabel: 'Avancerad',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} kapitel provade`,
+        title: 'Historia, omvärld, religion och traditioner',
+      },
+    ],
+    guidedPathSubtitle:
+      'Följ 13 samhällskapitel i tre steg, fortsätt där du var och håll igång dagens övning.',
+    guidedPathTitle: 'Väg från grund till provträning',
     levelMetric: 'nivå',
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett tidsatt övningsprov',
-    readinessCtaAccessibilityLabel:
-      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett mockprov',
+    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'lokalt',
-    readinessCaveat:
-      'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Förberedelsesignal',
+      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'redo',
+    readinessSparseNote:
+      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Redoindikator',
     readinessVerdicts: {
-      not_ready_yet: 'Mer underlag behövs',
-      getting_there: 'Framsteg syns',
-      almost_ready: 'Bra övningstakt',
-      strong_preparation: 'Stark lokal övning',
+      not_ready_yet: 'Öva mer först',
+      getting_there: 'På rätt väg',
+      almost_ready: 'Nästan redo',
+      strong_preparation: 'Stark förberedelse',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
@@ -260,16 +302,15 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Övningsläge',
-        lesson:
-          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och redoindikator.',
+        label: 'Provredo',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska övningsprov, genomgång av frågor du missat och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -278,11 +319,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
-    dailyChallengeAccessibilityLabel: (title, subtitle) => `${title}. ${subtitle}`,
-    dailyChallengeCompletedCta: "Retry today's challenge",
-    dailyChallengeCta: "Start today's challenge",
-    dailyChallengeResult: (correctCount, totalCount) =>
-      `Latest result: ${correctCount}/${totalCount} correct`,
     dailyGoalTitle: "Today's goal",
     dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
     dashboardCta: 'View dashboard',
@@ -298,28 +334,73 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     feedbackText:
       'Saved and missed questions stay in one place, with source-backed explanations and no ads in exam mode.',
     feedbackTitle: 'Keep track of what needs review',
-    freeBankBadge: 'Full bank free',
-    freeBankText:
-      'All 13 topics and the full question bank are included for free. Pay only if you want to remove ads from study screens.',
+    guidedPathDailyAccessibilityLabel: (completed, goal) =>
+      `Start today's practice. ${completed} of ${goal} answers complete today.`,
+    guidedPathDailyCta: "Start today's practice",
+    guidedPathDailyText: (completed, goal) =>
+      `${completed}/${goal} answers today keeps the habit visible.`,
+    guidedPathDailyTitle: 'Daily practice',
+    guidedPathResumeAccessibilityLabel: (stageTitle) => `Continue with ${stageTitle}`,
+    guidedPathResumeCta: 'Continue the next chapter',
+    guidedPathStageStatuses: {
+      active: 'In progress',
+      completed: 'Done',
+      upcoming: 'Next',
+    },
+    guidedPathStages: [
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 1-4',
+        description: 'Start with Sweden, democracy, government, and elections.',
+        levelLabel: 'Beginner',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Sweden and democracy basics',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 5-9',
+        description: 'Build through law, media, rights, working life, and welfare.',
+        levelLabel: 'Builder',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'Rights, media, and civic life',
+      },
+      {
+        accessibilityLabel: (title, chapterRange, progressLabel, status) =>
+          `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
+        chapterRange: 'Chapters 10-13',
+        description:
+          'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
+        levelLabel: 'Advanced',
+        progressLabel: (completedChapters, totalChapters) =>
+          `${completedChapters}/${totalChapters} chapters tried`,
+        title: 'History, the wider world, religion, and traditions',
+      },
+    ],
+    guidedPathSubtitle:
+      "Follow 13 civic chapters in three stages, resume where you left off, and keep today's practice visible.",
+    guidedPathTitle: 'Guided path from basics to exam practice',
     levelMetric: 'level',
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Preparation signal: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a timed practice exam',
-    readinessCtaAccessibilityLabel:
-      'Start a timed practice exam to compare with your local preparation signal',
+      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a mock exam',
+    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'local',
-    readinessCaveat:
-      'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
-    readinessTitle: 'Preparation signal',
+      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'ready',
+    readinessSparseNote:
+      'Based on your answers so far. Answer more questions for a steadier signal.',
+    readinessTitle: 'Readiness indicator',
     readinessVerdicts: {
-      not_ready_yet: 'More evidence needed',
-      getting_there: 'Progress is visible',
-      almost_ready: 'Solid practice pace',
-      strong_preparation: 'Strong local practice',
+      not_ready_yet: 'Keep practicing first',
+      getting_there: 'Getting there',
+      almost_ready: 'Almost ready',
+      strong_preparation: 'Strong preparation',
     },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
@@ -341,16 +422,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Timed practice',
+        label: 'Exam readiness',
         lesson:
-          'Switch between timed mock exams, bookmarks, missed-question review, audio, and readiness signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
       'Choose one clear next step, get quick feedback, and follow progress without distractions in exam mode.',
     studyLoopTitle: 'Smart study habits',
     subtitle:
-      'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, missed-question review, and source-backed explanations.',
+      'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     title: 'Prepare calmly, one civic concept at a time',
     weakChaptersHelper: 'needs review',
     weakChaptersMetric: 'weak chapters',
@@ -366,9 +447,8 @@ export default function Screen() {
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
-  const answerAttempts = useProgressStore((state) => state.answerAttempts);
+  const answerHistory = useProgressStore((state) => state.answerHistory);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
-  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
@@ -376,10 +456,7 @@ export default function Screen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
-  const completedToday = Math.min(
-    countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress }),
-    dailyGoalAnswers,
-  );
+  const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const streakWithFreeze = useMemo(
     () =>
@@ -414,14 +491,47 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
-  const dailyChallengeCompletion = dailyChallengeCompletions[dailyChallenge.dayKey];
-  const dailyChallengeBanner = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
-  const dailyChallengeAccessibilityLabel = copy.dailyChallengeAccessibilityLabel(
-    dailyChallengeBanner.title,
-    dailyChallengeBanner.subtitle,
+  const dashboardProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        answerHistory,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, answerHistory, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
   );
+  const dashboardQuestionChapterIndex = useMemo(
+    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
+    [],
+  );
+  const dashboard = useMemo(
+    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
+    [dashboardProgress, dashboardQuestionChapterIndex],
+  );
+  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
+  const guidedPathStages = useMemo(
+    () => buildGuidedPracticePathStages(copy, questionProgress),
+    [copy, questionProgress],
+  );
+  const guidedPathActiveStage =
+    guidedPathStages.find((stage) => stage.isActive) ?? guidedPathStages[0];
+  const guidedPathResumeHref = guidedPathActiveStage?.href ?? '/learn';
+  const guidedPathCopy: GuidedPracticePathCopy = {
+    dailyPracticeAccessibilityLabel: copy.guidedPathDailyAccessibilityLabel(
+      completedToday,
+      dailyGoalAnswers,
+    ),
+    dailyPracticeCta: copy.guidedPathDailyCta,
+    dailyPracticeText: copy.guidedPathDailyText(completedToday, dailyGoalAnswers),
+    dailyPracticeTitle: copy.guidedPathDailyTitle,
+    resumeAccessibilityLabel: copy.guidedPathResumeAccessibilityLabel(
+      guidedPathActiveStage?.title ?? copy.guidedPathStages[0].title,
+    ),
+    resumeCta: copy.guidedPathResumeCta,
+  };
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -487,7 +597,9 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
+        {readiness.isSparse ? (
+          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
+        ) : null}
         <Link
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
@@ -498,36 +610,7 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      <Card
-        accessible
-        accessibilityLabel={dailyChallengeAccessibilityLabel}
-        style={styles.dailyChallengeCard}
-      >
-        <Badge tone={dailyChallengeCompleted ? 'green' : 'warm'}>
-          {dailyChallenge.questionIds.length} {language === 'sv' ? 'frågor' : 'questions'}
-        </Badge>
-        <Text accessibilityRole="header" style={styles.dailyChallengeTitle}>
-          {dailyChallengeBanner.title}
-        </Text>
-        <Text style={styles.dailyChallengeText}>{dailyChallengeBanner.subtitle}</Text>
-        {dailyChallengeCompletion ? (
-          <Text style={styles.dailyChallengeResult}>
-            {copy.dailyChallengeResult(
-              dailyChallengeCompletion.correctCount,
-              dailyChallengeCompletion.totalCount,
-            )}
-          </Text>
-        ) : null}
-        <Link
-          accessibilityLabel={dailyChallengeAccessibilityLabel}
-          accessibilityRole="link"
-          href="/practice?mode=challenge"
-          style={styles.dailyChallengeLink}
-        >
-          {dailyChallengeCompleted ? copy.dailyChallengeCompletedCta : copy.dailyChallengeCta}
-        </Link>
-      </Card>
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
@@ -720,7 +803,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  readinessCaveat: {
+  readinessSparseNote: {
     color: colors.textDisclaimer,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
@@ -733,40 +816,6 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  dailyChallengeCard: {
-    gap: space[1],
-  },
-  dailyChallengeTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  dailyChallengeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  dailyChallengeResult: {
-    color: colors.success,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  dailyChallengeLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    marginTop: space[0.5],
-    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -828,14 +877,6 @@ const styles = StyleSheet.create({
     gap: space[1],
   },
   streakFreezeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  freeBankCard: {
-    gap: space[1],
-  },
-  freeBankText: {
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,

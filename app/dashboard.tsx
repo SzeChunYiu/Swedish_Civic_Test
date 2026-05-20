@@ -163,6 +163,7 @@ function createDashboardProEntitlements(): ProTierEntitlements {
 
 export default function DashboardScreen() {
   const answerDates = useProgressStore((state) => state.answerDates);
+  const answerHistory = useProgressStore((state) => state.answerHistory);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
@@ -174,12 +175,13 @@ export default function DashboardScreen() {
     () =>
       buildDashboardProgressSnapshot({
         answerDates,
+        answerHistory,
         dailyGoalAnswers,
         mockExamSessions,
         questionProgress,
         totalXp,
       }),
-    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+    [answerDates, answerHistory, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
   );
   const questionChapterIndex = useMemo(createQuestionChapterIndex, []);
   const activityBins = useMemo(
