@@ -739,3 +739,4 @@ CLAIMED GENERATED-SINGLE-CHOICE-META-PROMPT-CLEANUP-1 by pane4-data-integrity-35
 
 CLAIMED PROGRESS-RECORD-ANSWER-BOOLEAN-GUARD-1 by pane0-manager-build-3515350 2026-05-20T05:34:06Z
 CLAIMED MOCK-EXAM-TIME-HEATMAP-A11Y-SEPARATION-1 by pane3-uiux-3540063 2026-05-20T05:38:15Z
+CLAIMED AD-UNIT-PLATFORM-AVAILABILITY-1 by pane2-setup-3547416 2026-05-20T05:40:21Z (takeover: prior branch is 599 commits behind origin/main and current origin/main still treats real-ad availability as placement-wide when only one native platform has a unit)
