@@ -111,7 +111,6 @@ function TopBarAudioSwitch({
   return (
     <Pressable
       {...interactionHandlers}
-      aria-checked={audioEnabled}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="switch"
       accessibilityState={{ checked: audioEnabled }}
