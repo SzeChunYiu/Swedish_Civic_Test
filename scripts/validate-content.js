@@ -3826,6 +3826,11 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
     name: 'PersistedMockExamAccess',
     fields: [
       { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      {
+        name: 'completedMockExamSessionIdsByDate',
+        type: 'Record<string, string[]>',
+        optional: false,
+      },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
     ],
   },
@@ -3833,6 +3838,11 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
     name: 'StoredMockExamAccessSnapshot',
     fields: [
       { name: 'completedMockExamsByDate', type: 'Record<string, number>', optional: false },
+      {
+        name: 'completedMockExamSessionIdsByDate',
+        type: 'Record<string, string[]>',
+        optional: false,
+      },
       { name: 'rewardedExtraExamCredits', type: 'number', optional: false },
       { name: 'completedMockExamsToday', type: 'number', optional: false },
       { name: 'dateKey', type: 'string', optional: false },
@@ -3855,6 +3865,14 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
     fields: [
       { name: 'date', type: 'Date | string', optional: true },
       { name: 'storage', type: 'MockExamAccessStorage', optional: false },
+    ],
+  },
+  {
+    name: 'RecordMockExamCompletionOptions',
+    fields: [
+      { name: 'date', type: 'Date | string', optional: true },
+      { name: 'storage', type: 'MockExamAccessStorage', optional: false },
+      { name: 'sessionId', type: 'string', optional: false },
     ],
   },
 ];
