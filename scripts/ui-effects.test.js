@@ -1041,6 +1041,27 @@ test('home screen uses natural Swedish missed-question review copy', () => {
   assert.match(source, /href="\/mistakes"/);
 });
 
+test('home source-trust row links to sources with token feedback', () => {
+  const source = read('components/ui/SocialProofRow.tsx');
+
+  assert.match(source, /import \{ Link \} from 'expo-router';/);
+  assert.match(source, /href="\/sources"/);
+  assert.match(source, /accessibilityLabel=\{rowAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /Källor och transparens/);
+  assert.match(source, /Sources and transparency/);
+  assert.match(source, /Öppna källor och transparens/);
+  assert.match(source, /Open sources and transparency/);
+  assert.match(source, /isFocused \|\| isHovered \? styles\.rowInteractive : null/);
+  assert.match(source, /isPressed \? styles\.rowPressed : null/);
+  assert.match(source, /minHeight: space\[6\]/);
+  assert.match(source, /paddingHorizontal: space\[1\.25\]/);
+  assert.match(source, /backgroundColor: colors\.focusSoft/);
+  assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /Excellent|Utmärkt|5 of 5|5 av 5|★★★★★/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('home shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/home.tsx');
 
