@@ -180,7 +180,7 @@ export default function Screen() {
     wrongAnswerCount,
   };
   const badges = deriveBadges(badgeInput);
-  const unlockedBadgeIds = new Set(badges.map((badge) => badge.id));
+  const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
