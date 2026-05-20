@@ -836,6 +836,39 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('remove-ads placement CTA localizes purchase actions beside passive ad slots', () => {
+  const ctaSource = read('components/monetization/RemoveAdsPlacementCta.tsx');
+  const learnSource = read('app/(tabs)/learn.tsx');
+  const practiceSource = read('app/(tabs)/practice.tsx');
+  const mistakesSource = read('app/(tabs)/mistakes.tsx');
+  const examSource = read('app/(tabs)/exam.tsx');
+
+  assert.match(ctaSource, /type RemoveAdsPlacementCtaCopy =/);
+  assert.match(
+    ctaSource,
+    /const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy>/,
+  );
+  assert.match(ctaSource, /const language = languageOverride \?\? settingsLanguage;/);
+  assert.match(ctaSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(ctaSource, /useRemoveAdsEntitlements/);
+  assert.match(ctaSource, /shouldShowAd\(placement, entitlements\)/);
+  assert.match(ctaSource, /buyRemoveAds\(purchaseRuntime\)/);
+  assert.match(ctaSource, /restoreRemoveAdsPurchase\(purchaseRuntime\)/);
+  assert.match(ctaSource, /accessibilityLabel=\{copy\.statusAccessibilityLabel\(statusMessage\)\}/);
+  assert.match(ctaSource, /Köp Ta bort annonser för \$\{price\}/);
+  assert.match(ctaSource, /Återställ köp av Ta bort annonser/);
+  assert.match(ctaSource, /Buy Remove Ads for \$\{price\}/);
+  assert.match(ctaSource, /Restore Remove Ads purchase/);
+  assert.match(learnSource, /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta placement="results_native" \/>/);
+  assert.doesNotMatch(examSource, /RemoveAdsPlacementCta/);
+  assert.doesNotMatch(ctaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('profile shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/profile.tsx');
 

@@ -35,10 +35,89 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
+  assert.match(learnSource, /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>/);
   assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>/,
+  );
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(mistakesSource, /<RemoveAdsPlacementCta placement="results_native" \/>/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
-  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+  assert.match(nativeAdCardSource, /getAdUnit\('results_native'\)/);
+  assert.match(nativeAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
+  assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
+  assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
+  assert.match(nativeAdCardNativeSource, /NativeAdView/);
+  assert.match(nativeAdCardNativeSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /<View\s+accessible\s+accessibilityHint=\{copy\.hint\}\s+accessibilityLabel=\{copy\.accessibilityLabel\}\s+accessibilityRole="summary"[\s\S]*?style=\{styles\.summary\}/,
+  );
+  assert.match(nativeAdCardNativeSource, /NativeAsset/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardNativeSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
+  assert.match(nativeAdCardNativeSource, /NativeMediaView/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /<NativeAsset assetType=\{NativeAssetType\.CALL_TO_ACTION\}>\s*<Text\s+accessible\s+accessibilityHint=\{copy\.ctaHint\}\s+accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}\s+accessibilityRole="button"\s+style=\{styles\.cta\}\s*>/,
+  );
+  assert.match(nativeAdCardNativeSource, /minHeight:\s*space\[6\]/);
+  assert.match(nativeAdCardNativeSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardNativeSource, /getAdUnit\('results_native'\)/);
+  assert.match(nativeAdCardNativeSource, /getNativeAdCardCopy\(language, unit\)/);
+  assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
+  assert.doesNotMatch(
+    examSource,
+    /AdBanner|NativeAd|Interstitial|LaunchPopupAd|RemoveAdsPlacementCta/i,
+  );
+});
+
+test('ad placement route parity rejects missing nearby Remove Ads CTA', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/learn.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('      <RemoveAdsPlacementCta placement="chapter_list_banner" />\\n      <AdBanner placement="chapter_list_banner" />', '      <AdBanner placement="chapter_list_banner" />');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/learn\.tsx must render RemoveAdsPlacementCta placement chapter_list_banner/,
+  );
 });
 
 test('ad placement route parity rejects a drifted study route placement', () => {

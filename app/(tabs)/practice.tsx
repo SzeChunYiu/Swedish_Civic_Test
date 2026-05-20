@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { Badge } from '../../components/ui/Badge';
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
@@ -291,6 +292,7 @@ export default function Screen() {
             language={language}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <AdBanner placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button

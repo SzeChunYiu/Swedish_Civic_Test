@@ -1,10 +1,8 @@
-import { useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
-import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/Button';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
@@ -42,23 +40,24 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
       selectedWrongAnswer
-        ? `Fråga att öva på. Ditt senaste svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
-        : `Fråga att öva på. Rätt svar: ${correctAnswer}.`,
+        ? `Svar att repetera. Ditt senaste felaktiga svar: ${selectedWrongAnswer}. Rätt svar: ${correctAnswer}.`
+        : `Svar att repetera. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad till senare övning',
+    bookmarkedMeta: 'Sparad för fokuserad repetition',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'Svara fel på en övningsfråga så visas den här.',
     emptyTitle: 'Inga misstag ännu',
-    mistakeBadge: 'Öva igen',
-    mistakeTitle: 'Frågor att öva på',
-    selectedWrongAnswerLabel: 'Ditt senaste svar',
-    subtitle: 'Gå igenom frågor du har missat, se förklaringen och hitta källan på samma ställe.',
+    mistakeBadge: 'Fellogg',
+    mistakeTitle: 'Fel svar att repetera',
+    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
+    subtitle:
+      'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
     title: 'Misstag',
-    wrongAnswers: (count) => (count === 1 ? 'Missad 1 gång' : `Missad ${count} gånger`),
+    wrongAnswers: (count) => `Fel svar: ${count}`,
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -93,7 +92,6 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
 }
 
 export default function Screen() {
-  const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
@@ -116,9 +114,8 @@ export default function Screen() {
       </View>
       <QuestionDisclaimer />
 
-      <RemoveAdsPlacementCta />
-      <NativeAdCard />
       <RemoveAdsPlacementCta placement="results_native" />
+      <NativeAdCard />
 
       {bookmarkedQuestions.length > 0 ? (
         <View style={styles.list}>
@@ -205,14 +202,14 @@ export default function Screen() {
             {copy.emptyTitle}
           </Text>
           <Text style={styles.emptyText}>{copy.emptyText}</Text>
-          <Button
+          <Link
             accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
-            accessibilityRole="button"
-            onPress={() => router.push('/practice')}
-            style={styles.practiceButton}
+            accessibilityRole="link"
+            href="/practice"
+            style={styles.practiceLink}
           >
             {copy.emptyPracticeLink}
-          </Button>
+          </Link>
         </View>
       ) : null}
     </ScrollView>
@@ -316,8 +313,16 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
   },
-  practiceButton: {
+  practiceLink: {
     alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
     marginTop: space[1],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
 });
