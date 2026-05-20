@@ -29,6 +29,17 @@ test('answer validation accepts only the exact correct option id', () => {
   assert.equal(isCorrectAnswer(question, ' option-b '), false);
 });
 
+test('answer scoring accepts only strict boolean result arrays', () => {
+  const { scoreAnswers } = loadTs('lib/quiz/scoring.ts');
+
+  assert.deepEqual(scoreAnswers(), { correct: 0, total: 0 });
+  assert.deepEqual(scoreAnswers(null), { correct: 0, total: 0 });
+  assert.deepEqual(scoreAnswers('true,false'), { correct: 0, total: 0 });
+  assert.deepEqual(scoreAnswers([true, false, true]), { correct: 2, total: 3 });
+  assert.deepEqual(scoreAnswers(['yes', 1, {}, null]), { correct: 0, total: 0 });
+  assert.deepEqual(scoreAnswers([true, 'yes', false, 1, {}, true]), { correct: 2, total: 3 });
+});
+
 test('answer option feedback reveals the correct answer after a wrong selection', () => {
   const { getAnswerOptionFeedback } = loadTs('lib/quiz/answerValidation.ts');
   const question = {
