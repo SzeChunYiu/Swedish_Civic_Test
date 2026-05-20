@@ -1800,9 +1800,9 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
   const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+    /^(?:Vilket svar stämmer bäst\?|Vilket svar är korrekt\?|Välj rätt alternativ:|Vilket påstående är korrekt om\b|Vilket påstående stämmer bäst om\b|Vilket påstående beskriver\b|Which answer best matches\?|Which answer is correct\?|Choose the correct option:|Which statement is correct about\b|Which statement best matches\b|Which statement describes\b)/i;
   const absentTrueFalseExplanationPattern =
-    /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
+    /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|påståendet som motsvarar den uppgiften|motsatsen inte stämmer|That makes True correct|True is correct|while False|statement that matches that fact|opposite statement is not)\b/i;
 
   function singleChoiceOptionTexts(question) {
     return (question.opts || []).flatMap((option) => [option.sv, option.en]);
@@ -3380,8 +3380,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
-        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
+        "        questionSv: 'Vilket påstående är korrekt om Sverige?',",
+        "        questionEn: 'Which statement is correct about Sweden?',",
         "      }",
         "    : question,",
         ");",
@@ -3400,6 +3400,52 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /generated variant\[0\] uses generated single-choice meta-stem wording/,
+  );
+});
+
+test('published question schema rejects generated single-choice judgement boilerplate explanations', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map((question) =>",
+        "  question.id === generatedFixtureId('q001', 0)",
+        "    ? {",
+        "        ...question,",
+        "        explanationSv: 'Sverige ligger i Norden. Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.',",
+        "        explanationEn: 'Sweden is in the Nordic region. Therefore the statement that matches that fact is correct, while the opposite statement is not.',",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /generated variant\[0\] explanation refers to True\/False labels absent from the options/,
   );
 });
 

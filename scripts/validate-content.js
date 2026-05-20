@@ -350,13 +350,27 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
+  /^\s*Vilket svar stämmer bäst\?/i,
   /^\s*Vilket svar är korrekt\?/i,
+  /^\s*Välj rätt alternativ:/i,
+  /^\s*Vilket påstående är korrekt om\b/i,
+  /^\s*Vilket påstående stämmer bäst om\b/i,
+  /^\s*Vilket påstående beskriver\b/i,
+  /^\s*Which answer best matches\?/i,
   /^\s*Which answer is correct\?/i,
+  /^\s*Choose the correct option:/i,
+  /^\s*Which statement is correct about\b/i,
+  /^\s*Which statement best matches\b/i,
+  /^\s*Which statement describes\b/i,
 ];
 const GENERATED_SINGLE_CHOICE_ABSENT_TRUE_FALSE_EXPLANATION_PATTERNS = [
   /\bPåståendet är sant\b/i,
   /\balternativet\s+Sant\b/i,
   /\bmedan\s+Falskt\b/i,
+  /\bpåståendet som motsvarar den uppgiften\b/i,
+  /\bmotsatsen inte stämmer\b/i,
+  /\bstatement that matches that fact\b/i,
+  /\bopposite statement is not\b/i,
   /\bThat makes True correct\b/i,
   /\bTrue is correct\b/i,
   /\bwhile False\b/i,
@@ -4161,6 +4175,10 @@ function ensureSentence(value) {
   const trimmed = value.trim();
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
+function ensureQuestion(value) {
+  const trimmed = stripFinalPunctuation(value);
+  return trimmed ? `${trimmed}?` : trimmed;
+}
 function lowerFirst(value) {
   if (/^EU\b/.test(value)) return value;
   return value ? `${value[0].toLowerCase()}${value.slice(1)}` : value;
@@ -4660,6 +4678,10 @@ function cleanTrueFalseSourceExplanationSv(source) {
           '',
         )
         .replace(
+          /\s*Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln\.?$/i,
+          '',
+        )
+        .replace(
           /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
           '',
         )
@@ -4674,6 +4696,10 @@ function cleanTrueFalseSourceExplanationEn(source) {
         .replace(/^The statement is true[:.]?\s*/i, '')
         .replace(
           /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
+          '',
+        )
+        .replace(
+          /\s*The northern part of the country therefore extends into the area north of the Arctic Circle\.?$/i,
           '',
         )
         .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
@@ -4714,15 +4740,187 @@ function falseStatementExplanationEn(source) {
 }
 
 function trueFalseSingleChoiceExplanationSv(source) {
-  return `${ensureSentence(
-    trueFalseSourceStatementSv(source, true),
-  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
+  return trueStatementExplanationSv(source);
 }
 
 function trueFalseSingleChoiceExplanationEn(source) {
-  return `${ensureSentence(
-    trueFalseSourceStatementEn(source, true),
-  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
+  return trueStatementExplanationEn(source);
+}
+
+function directTrueFalsePromptSv(source, variant) {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
+  let match = statement.match(/^(Sveriges nordligaste del) ligger\b/i);
+  if (match) {
+    return variant === 'section' ? `Var ligger ${match[1]}?` : `Vad gäller för ${match[1]}?`;
+  }
+
+  if (/^Sverige har ett milt klimat\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vad gäller för Sveriges klimat jämfört med andra områden på samma breddgrad?'
+      : 'Vilken uppgift gäller Sveriges klimat vid den här breddgraden?';
+  }
+
+  if (/^Riksdagen väljer statsminister\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vem väljer statsministern i Sverige?'
+      : 'Vad gör riksdagen när en regering ska bildas?';
+  }
+
+  if (/^Partier som inte stödjer regeringen kallas opposition\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vad kallas partier som inte stödjer regeringen?'
+      : 'Vad betyder opposition i svensk politik?';
+  }
+
+  if (
+    /^Politiker i Sverige behöver inte följa resultatet av en folkomröstning\b/i.test(statement)
+  ) {
+    return variant === 'section'
+      ? 'Vad gäller för politiker och folkomröstningar i Sverige?'
+      : 'Hur bindande är folkomröstningar för politiker i Sverige?';
+  }
+
+  if (/^En person får lämna uppgifter till tidningar, radio och tv\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vad gäller för den som lämnar uppgifter till tidningar, radio och tv?'
+      : 'Vilket skydd gäller när någon lämnar uppgifter till medier?';
+  }
+
+  if (/^Public service ska vara oberoende\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vilken roll ska public service ha i Sverige?'
+      : 'Hur ska public service arbeta i Sverige?';
+  }
+
+  if (/^Kommunerna ansvarar för att äldre och sjuka personer\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vilket ansvar har kommuner för äldre och sjuka personer?'
+      : 'Vilket stöd kan kommuner ge äldre och sjuka personer?';
+  }
+
+  if (/^Sverige ansvarar för att skydda landet och dess invånare\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vilket ansvar har Sverige inom totalförsvaret?'
+      : 'Vad ska totalförsvaret skydda i Sverige?';
+  }
+
+  if (/^Staten och Svenska kyrkan skildes åt år 2000\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Vad hände med Svenska kyrkan och staten år 2000?'
+      : 'Hur förändrades relationen mellan Svenska kyrkan och staten år 2000?';
+  }
+
+  if (/^Sverige brukar delas in i\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Hur brukar Sverige delas in geografiskt?'
+      : 'Vilka landsdelar brukar Sverige delas in i?';
+  }
+
+  return variant === 'section'
+    ? `Vad gäller för ${statementTopicSv(source)}?`
+    : `Vilken uppgift gäller ${statementTopicSv(source)}?`;
+}
+
+function directTrueFalsePromptEn(source, variant) {
+  const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
+  let match = statement.match(/^(Sweden's northernmost part) lies\b/i);
+  if (match) {
+    return variant === 'section' ? `Where is ${match[1]} located?` : `What applies to ${match[1]}?`;
+  }
+
+  if (/^Sweden has a mild climate\b/i.test(statement)) {
+    return variant === 'section'
+      ? "What applies to Sweden's climate compared with other areas at the same latitude?"
+      : "Which fact applies to Sweden's climate at this latitude?";
+  }
+
+  if (/^The Riksdag chooses the prime minister\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'Who chooses the prime minister in Sweden?'
+      : 'What does the Riksdag do when a government is formed?';
+  }
+
+  if (/^Parties that do not support the government are called the opposition\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What are parties that do not support the government called?'
+      : 'What does opposition mean in Swedish politics?';
+  }
+
+  if (
+    /^Politicians in Sweden do not have to follow the result of a referendum\b/i.test(statement)
+  ) {
+    return variant === 'section'
+      ? 'What applies to politicians and referendums in Sweden?'
+      : 'How binding are referendum results for politicians in Sweden?';
+  }
+
+  if (/^A person may provide information to newspapers, radio, and TV\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What applies to people who give information to newspapers, radio, and TV?'
+      : 'What protection applies when someone gives information to the media?';
+  }
+
+  if (/^Public service should be independent\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What role should public service have in Sweden?'
+      : 'How should public service work in Sweden?';
+  }
+
+  if (/^Municipalities are responsible for helping older and sick people\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What responsibility do municipalities have for older and sick people?'
+      : 'What support can municipalities give older and sick people?';
+  }
+
+  if (/^Sweden is responsible for protecting the country and its residents\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What responsibility does Sweden have within total defence?'
+      : 'What should total defence protect in Sweden?';
+  }
+
+  if (/^The state and the Church of Sweden separated in 2000\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'What happened between the Church of Sweden and the state in 2000?'
+      : 'How did the relation between the Church of Sweden and the state change in 2000?';
+  }
+
+  if (/^Sweden is usually divided into\b/i.test(statement)) {
+    return variant === 'section'
+      ? 'How is Sweden usually divided geographically?'
+      : 'Which major parts is Sweden usually divided into?';
+  }
+
+  return variant === 'section'
+    ? `What applies to ${statementTopicEn(source)}?`
+    : `Which fact applies to ${statementTopicEn(source)}?`;
+}
+
+function rephrasedSingleChoicePromptSv(source, variant) {
+  const question = stripFinalPunctuation(source.questionSv);
+  const statementMatch = question.match(
+    /^Vilket påstående (?:stämmer om|är korrekt om|stämmer bäst om|beskriver) (.+)$/i,
+  );
+  if (statementMatch) {
+    return variant === 'section'
+      ? ensureQuestion(`Vad stämmer om ${statementMatch[1]}`)
+      : ensureQuestion(`Vilken uppgift gäller ${statementMatch[1]}`);
+  }
+
+  return ensureQuestion(question);
+}
+
+function rephrasedSingleChoicePromptEn(source, variant) {
+  const question = stripFinalPunctuation(source.questionEn);
+  const statementMatch = question.match(
+    /^Which statement (?:is correct about|best matches|describes) (.+)$/i,
+  );
+  if (statementMatch) {
+    return variant === 'section'
+      ? ensureQuestion(`What is true of ${statementMatch[1]}`)
+      : ensureQuestion(`Which fact applies to ${statementMatch[1]}`);
+  }
+
+  return ensureQuestion(question);
 }
 
 function statementTopicSv(source) {
@@ -4796,27 +4994,27 @@ function generatedTrueFalseStatementEn(source, option, variantIsTrue) {
 }
 function judgementPromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
+    return directTrueFalsePromptSv(source, 'judgement');
   }
-  return `Välj rätt alternativ: ${source.questionSv}`;
+  return rephrasedSingleChoicePromptSv(source, 'judgement');
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which statement best matches ${statementTopicEn(source)}?`;
+    return directTrueFalsePromptEn(source, 'judgement');
   }
-  return `Choose the correct option: ${source.questionEn}`;
+  return rephrasedSingleChoicePromptEn(source, 'judgement');
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
-    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
+    return directTrueFalsePromptSv(source, 'section');
   }
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return rephrasedSingleChoicePromptSv(source, 'section');
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
-    return `Which statement is correct about ${statementTopicEn(source)}?`;
+    return directTrueFalsePromptEn(source, 'section');
   }
-  return `Which answer best matches? ${source.questionEn}`;
+  return rephrasedSingleChoicePromptEn(source, 'section');
 }
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
