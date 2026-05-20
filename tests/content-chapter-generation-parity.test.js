@@ -68,8 +68,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/chapters.ts')) {
     return String(contents).replace(
-      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 55,",
-      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 60,",
+      /(id: 'ch07',[\\s\\S]*?questionCount:) 80,/,
+      '$1 85,',
     );
   }
   return contents;
@@ -83,7 +83,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /ch07 questionCount is 60, expected 55 published questions/,
+    /ch07 questionCount is 85, expected 80 published questions/,
   );
 });
 

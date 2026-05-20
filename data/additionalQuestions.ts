@@ -3677,4 +3677,159 @@ export const additionalQuestions: PracticeQuestion[] = [
     ['justice-system', 'police', 'prosecutor', 'courts'],
     'hard',
   ),
+  single(
+    'q175',
+    'ch07',
+    {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Mänskliga rättigheter gäller alla',
+      pageApprox: 22,
+    },
+    'Vad betyder det att mänskliga rättigheter gäller alla?',
+    'What does it mean that human rights apply to everyone?',
+    [
+      [
+        'Varje människa har rättigheter oavsett bakgrund eller livssituation',
+        'Every person has rights regardless of background or life situation',
+      ],
+      [
+        'Bara svenska medborgare har mänskliga rättigheter',
+        'Only Swedish citizens have human rights',
+      ],
+      [
+        'Rättigheterna gäller bara personer som arbetar',
+        'The rights apply only to people who work',
+      ],
+      [
+        'Varje kommun väljer själv vilka människor som har rättigheter',
+        'Each municipality chooses which people have rights',
+      ],
+    ],
+    0,
+    'Mänskliga rättigheter utgår från att alla människor är födda fria och lika i värde och rättigheter. De gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning.',
+    'Human rights are based on all people being born free and equal in value and rights. They apply regardless of factors such as sex, age, origin, religion, disability, or sexual orientation.',
+    ['universal-human-rights', 'equal-worth', 'rights-for-everyone'],
+    'easy',
+  ),
+  single(
+    'q176',
+    'ch07',
+    { chapter: 'Mänskliga rättigheter', section: 'Jämställdhet mellan könen', pageApprox: 23 },
+    'Vilket exempel hör till arbetet för jämställdhet mellan könen?',
+    'Which example is part of work for gender equality?',
+    [
+      [
+        'Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst',
+        'Women and men should have equal opportunities for education, work, and income',
+      ],
+      [
+        'Att bara män ska kunna påverka politiska beslut',
+        'Only men should be able to influence political decisions',
+      ],
+      [
+        'Att föräldraledighet alltid ska tas av mammor',
+        'Parental leave should always be taken by mothers',
+      ],
+      [
+        'Att kvinnor och män ska ha olika lagliga rättigheter',
+        'Women and men should have different legal rights',
+      ],
+    ],
+    0,
+    'Jämställdhet innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Lika möjligheter till utbildning, arbete och inkomst är exempel på detta.',
+    'Gender equality means that women and men should have the same rights and duties and equal power to influence society and their own lives. Equal opportunities for education, work, and income are examples of this.',
+    ['gender-equality', 'education', 'work', 'income'],
+  ),
+  single(
+    'q177',
+    'ch07',
+    { chapter: 'Mänskliga rättigheter', section: 'Minoriteters rättigheter', pageApprox: 25 },
+    'Vad innebär minoriteters rättigheter?',
+    'What do minority rights mean?',
+    [
+      [
+        'Att minoriteter ska kunna bevara och utveckla sina språk och kulturer',
+        'That minorities should be able to preserve and develop their languages and cultures',
+      ],
+      [
+        'Att minoriteter måste sluta använda sina språk',
+        'That minorities must stop using their languages',
+      ],
+      [
+        'Att minoriteter inte får kontakta myndigheter',
+        'That minorities are not allowed to contact public authorities',
+      ],
+      [
+        'Att minoriteter alltid saknar skydd i lag',
+        'That minorities always lack protection in law',
+      ],
+    ],
+    0,
+    'Minoriteters rättigheter handlar bland annat om skydd för språk, kultur och identitet. En minoritet ska inte behöva ge upp sitt språk eller sin kultur för att delta i samhället.',
+    'Minority rights include protection for language, culture, and identity. A minority should not have to give up its language or culture in order to take part in society.',
+    ['minority-rights', 'language', 'culture', 'identity'],
+  ),
+  single(
+    'q178',
+    'ch07',
+    {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Personer med funktionsnedsättning',
+      pageApprox: 26,
+    },
+    'Vad är ett mål med arbetet för personer med funktionsnedsättning?',
+    'What is one aim of work for people with disabilities?',
+    [
+      [
+        'Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor',
+        'Society should be accessible so people can participate on equal terms',
+      ],
+      [
+        'Att personer med funktionsnedsättning inte ska kunna studera eller arbeta',
+        'People with disabilities should not be able to study or work',
+      ],
+      ['Att tillgänglighet bara är en privat fråga', 'Accessibility is only a private matter'],
+      [
+        'Att myndigheter ska ignorera behov av stöd',
+        'Public authorities should ignore needs for support',
+      ],
+    ],
+    0,
+    'Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.',
+    'Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
+    ['disability-rights', 'accessibility', 'equal-participation'],
+  ),
+  single(
+    'q179',
+    'ch07',
+    {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Arbetet mot diskriminering',
+      pageApprox: 26,
+    },
+    'Vilket påstående beskriver diskrimineringsskyddet i Sverige?',
+    'Which statement describes protection against discrimination in Sweden?',
+    [
+      [
+        'Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden',
+        'Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited',
+      ],
+      [
+        'Arbetsgivare får alltid behandla personer olika på dessa grunder',
+        'Employers may always treat people differently on these grounds',
+      ],
+      [
+        'Diskrimineringslagen gäller bara personer över 65 år',
+        'The Discrimination Act applies only to people over age 65',
+      ],
+      [
+        'Skyddet gäller bara om någon redan är svensk medborgare',
+        'The protection applies only if someone is already a Swedish citizen',
+      ],
+    ],
+    0,
+    'Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder.',
+    'The Discrimination Act prohibits discrimination connected to several protected grounds, such as sex, transgender identity or expression, ethnicity, religion, disability, sexual orientation, and age.',
+    ['discrimination-act', 'protected-grounds', 'equal-rights'],
+  ),
 ];
