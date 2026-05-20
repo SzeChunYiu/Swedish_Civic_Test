@@ -1,5 +1,7 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -424,6 +426,49 @@ test('release readiness and owner action surfaces use current ads posture', () =
   assert.match(releaseReadiness, /generated binary/i);
   assert.match(externalBlockers, /concrete AdMob app\/unit IDs/i);
   assert.match(ownerActionPacket, /concrete AdMob app\/unit IDs/i);
+});
+
+
+test('generated owner action packet uses current ads posture', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'owner-action-packet-'));
+  const releaseGatesPath = path.join(tmpDir, 'release-gates.json');
+  const outputPath = path.join(tmpDir, 'owner-action-packet.md');
+
+  fs.writeFileSync(
+    releaseGatesPath,
+    JSON.stringify(
+      {
+        gates: {
+          'store-records': { status: 'BLOCKED' },
+          'privacy-review': { status: 'BLOCKED' },
+        },
+      },
+      null,
+      2,
+    ),
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      'scripts/write-release-owner-action-packet.js',
+      '--release-gates',
+      releaseGatesPath,
+      '--out',
+      outputPath,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 1, result.stderr || result.stdout);
+
+  const packet = fs.readFileSync(outputPath, 'utf8');
+  assert.match(packet, /Google Mobile Ads|AdMob/i);
+  assert.match(packet, /Remove Ads/i);
+  assert.match(packet, /29 SEK/i);
+  assert.match(packet, /ATT\/UMP|ATT and UMP|ATT\/UMP consent/i);
+  assert.match(packet, /app-ads\.txt/i);
+  assertNoLegacyAdsPosture(packet);
 });
 
 test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
