@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
@@ -209,10 +209,29 @@ function Stepper({
 }: StepperProps) {
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
+  const stepperAccessibilityActions = [
+    { name: 'decrement', label: decrementAccessibilityLabel },
+    { name: 'increment', label: incrementAccessibilityLabel },
+  ];
+
+  const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+    switch (event.nativeEvent.actionName) {
+      case 'decrement':
+        if (canDecrement) onChange?.(getNextValue(value, step, -1, min, max));
+        break;
+      case 'increment':
+        if (canIncrement) onChange?.(getNextValue(value, step, 1, min, max));
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <View
+      accessibilityActions={stepperAccessibilityActions}
       accessibilityLabel={label}
+      onAccessibilityAction={handleAccessibilityAction}
       accessibilityRole="adjustable"
       accessibilityValue={{ max, min, now: value, text: valueLabel }}
       style={styles.stepper}
@@ -355,28 +374,33 @@ export function MockExamConfigPanel({
   const resolvedDurationValueLabel = resolvedDurationValueLabelGetter(safeDuration);
   const resolvedSelectedChaptersValueLabel =
     resolvedSelectedChaptersValueLabelGetter(selectedChapterCount);
+  const resolvedPanelAccessibilityLabel =
+    accessibilityLabel ??
+    getPanelAccessibilityLabel({
+      chaptersLabel: resolvedChaptersLabel,
+      durationLabel: resolvedDurationLabel,
+      durationValueLabel: resolvedDurationValueLabel,
+      questionCount: safeQuestionCount,
+      questionCountLabel: resolvedQuestionCountLabel,
+      selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
+      title,
+    });
 
   return (
     <Surface
-      accessibilityLabel={
-        accessibilityLabel ??
-        getPanelAccessibilityLabel({
-          chaptersLabel: resolvedChaptersLabel,
-          durationLabel: resolvedDurationLabel,
-          durationValueLabel: resolvedDurationValueLabel,
-          questionCount: safeQuestionCount,
-          questionCountLabel: resolvedQuestionCountLabel,
-          selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
-          title,
-        })
-      }
-      accessibilityRole={accessibilityRole}
+      {...surfaceProps}
+      accessible={false}
+      accessibilityRole="none"
       elevation={elevation}
       style={[styles.panel, style]}
       tone={tone}
-      {...surfaceProps}
     >
-      <View style={styles.header}>
+      <View
+        accessible
+        accessibilityLabel={resolvedPanelAccessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        style={styles.header}
+      >
         <View style={styles.headerCopy}>
           <Text variant="h2">{title}</Text>
           {subtitle ? (
@@ -466,11 +490,7 @@ export function MockExamConfigPanel({
           </View>
         </View>
 
-        <View
-          accessibilityLabel={resolvedChaptersLabel}
-          accessibilityRole="summary"
-          style={styles.chips}
-        >
+        <View style={styles.chips}>
           {chapters.map((chapter) => {
             const selected = selectedChapterIds.some((selectedId) =>
               idsMatch(selectedId, chapter.id),
