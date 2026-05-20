@@ -27,6 +27,7 @@ const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
 const minDailyGoalAnswers = 1;
 const maxDailyGoalAnswers = 50;
+const storedDailyGoalOptions = [5, 10, 20, 40];
 
 let settingsStorage: MMKV | null = null;
 
@@ -104,7 +105,7 @@ function normalizeDailyGoalAnswers(answerCount: unknown): number {
     return defaultDailyGoalAnswers;
   }
 
-  return answerCount;
+  return storedDailyGoalOptions.includes(answerCount) ? answerCount : defaultDailyGoalAnswers;
 }
 
 type SettingsState = {

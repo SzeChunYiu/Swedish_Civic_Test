@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-route-copy'],
+    ['scripts/validate-content.js', '--focus-settings-parity'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -73,7 +73,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-parity');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -103,7 +103,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-parity');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -130,7 +130,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-parity');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -162,7 +162,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -195,7 +195,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-route-copy');require('./scripts/validate-content.js');
+process.argv.push('--focus-settings-parity');require('./scripts/validate-content.js');
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },

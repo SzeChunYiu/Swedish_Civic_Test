@@ -67,7 +67,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-settings-store');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -78,7 +78,7 @@ require('./scripts/validate-content.js');
 test('audio setting stays in parity between storage and settings switch', () => {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-store'],
+    ['scripts/validate-content.js', '--focus-settings-parity'],
     {
       encoding: 'utf8',
     },
@@ -174,7 +174,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -191,7 +191,7 @@ require('./scripts/validate-content.js');
 test('settings store schema stays in parity with persisted settings state', () => {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-store'],
+    ['scripts/validate-content.js', '--focus-settings-parity'],
     {
       encoding: 'utf8',
     },
@@ -234,7 +234,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-settings-store');
+process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
     ],
