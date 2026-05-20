@@ -1591,9 +1591,29 @@ test('free dashboard surface is routed, localized, and accessible', () => {
   assert.match(dashboard, /<ActivityHeatmap bins=\{activityBins\} copy=\{copy\.activity\} \/>/);
   assert.match(dashboard, /<PerChapterProgressBars/);
   assert.match(dashboard, /<StreakXpSparkline/);
+  assert.match(dashboard, /const summaryAccessibilityLabel = copy\.summaryAccessibilityLabel\(/);
+  assert.match(
+    dashboard,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.doesNotMatch(
+    dashboard,
+    /<Card[\s\S]{0,180}accessibilityLabel=\{summaryAccessibilityLabel\}[\s\S]{0,900}<Link/,
+  );
+  assert.match(
+    activity,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+  );
   assert.match(activity, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(activity, /accessibilityRole="summary"/);
+  assert.doesNotMatch(activity, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(
+    chapters,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+  );
   assert.match(activity, /copy\.emptyState/);
   assert.match(chapters, /accessibilityState=\{\{ selected \}\}/);
+  assert.doesNotMatch(chapters, /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(chapters, /copy\.emptyState/);
   assert.match(sparkline, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.match(sparkline, /copy\.emptyState/);
