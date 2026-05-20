@@ -3196,6 +3196,117 @@ const REQUIRED_QUESTION_DISCLAIMER_PHRASES = [
   'Swedish government',
   'not real exam questions',
 ];
+const EXPECTED_QUESTION_REPORT_LINK_RULES = [
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'expo link import',
+    pattern: /import \{ Link \} from 'expo-router';/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'Swedish report label',
+    pattern: /Rapportera den här frågan/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'English report label',
+    pattern: /Report this question/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'selected answer prop',
+    pattern: /selectedOptionId\?: string \| null;/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'source citation context',
+    pattern: /getQuestionSourceCitation\(question, language\)/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'question id query context',
+    pattern: /\['questionId', question\.id\]/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'selected answer query context',
+    pattern: /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'encoded query values',
+    pattern: /encodeURIComponent\(key\)[\s\S]*encodeURIComponent\(value\)/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'minimum report link target size',
+    pattern: /minHeight: space\[6\]/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    label: 'practice report link import',
+    pattern:
+      /import \{ QuestionReportLink \} from '\.\.\/\.\.\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'app/(tabs)/practice.tsx',
+    label: 'practice feedback selected answer context',
+    message: 'QuestionReportLink missing practice feedback selected answer context',
+    pattern:
+      /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="practice"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
+  },
+  {
+    file: 'app/quiz/[sessionId].tsx',
+    label: 'quiz feedback selected answer context',
+    message: 'QuestionReportLink missing quiz feedback selected answer context',
+    pattern:
+      /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="quiz"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'selected answer search param',
+    pattern: /selectedAnswer\?: string \| string\[\];/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'selected answer context parsing',
+    pattern: /selectedAnswer: getSearchParam\(params\.selectedAnswer\)/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'selected answer context row',
+    pattern: /copy\.questionReportContext\.selectedAnswer/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'Swedish non-PII warning',
+    message: 'QuestionReportLink missing support context non-PII copy',
+    pattern: /Lägg inte till namn, personnummer, ärendenummer/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'English non-PII warning',
+    message: 'QuestionReportLink missing support context non-PII copy',
+    pattern:
+      /Do not add names, personal identity numbers, case numbers, or other personal data to the report\./,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'support context summary role',
+    pattern: /accessibilityRole="summary"/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'no direct report data submission',
+    message: 'QuestionReportLink support route must not submit report data over the network',
+    forbiddenPattern: /mailto:|Linking\.openURL|fetch\(/,
+  },
+  {
+    file: 'package.json',
+    label: 'question report content test route',
+    pattern: /tests\/content-question-report-link-parity\.test\.js/,
+  },
+];
 const EXPECTED_THEME_COLOR_TOKENS = [
   'canvas',
   'surface',
@@ -7462,6 +7573,8 @@ let premiumEntitlementStatesValidated = 0;
 let premiumEntitlementParityValidated = false;
 let questionDisclaimerRoutesValidated = 0;
 let questionDisclaimerCopyValidated = false;
+let questionReportLinkRulesValidated = 0;
+let questionReportLinkParityValidated = false;
 let mockExamConfigTypeFieldsValidated = 0;
 let mockExamConfigTypeSchemaParityValidated = false;
 let mockExamConfigExactSchemaKeysValidated = false;
@@ -8021,6 +8134,16 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
     progressTypeSchemaParityValidated,
     progressStoreFieldsValidated,
     progressStoreSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-report-link-parity')) {
+  validateQuestionReportLinkParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionReportLinkRulesValidated,
+    questionReportLinkParityValidated,
   });
   process.exit(0);
 }
@@ -9193,6 +9316,51 @@ function validateQuestionDisclaimerParity() {
 
     if (routeIsValid) questionDisclaimerRoutesValidated += 1;
   });
+}
+
+function validateQuestionReportLinkParity() {
+  let valid = true;
+  const sourceCache = new Map();
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function readSource(relativePath) {
+    if (sourceCache.has(relativePath)) return sourceCache.get(relativePath);
+
+    try {
+      const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      sourceCache.set(relativePath, source);
+      return source;
+    } catch (error) {
+      reject(`${relativePath} could not be read for question report link parity: ${error.message}`);
+      sourceCache.set(relativePath, '');
+      return '';
+    }
+  }
+
+  EXPECTED_QUESTION_REPORT_LINK_RULES.forEach((rule) => {
+    const source = readSource(rule.file);
+    const message = rule.message ?? `QuestionReportLink missing ${rule.label}`;
+    let ruleIsValid = true;
+
+    if (rule.pattern && !rule.pattern.test(source)) {
+      ruleIsValid = false;
+      reject(message);
+    }
+    if (rule.forbiddenPattern && rule.forbiddenPattern.test(source)) {
+      ruleIsValid = false;
+      reject(message);
+    }
+
+    if (ruleIsValid) questionReportLinkRulesValidated += 1;
+  });
+
+  if (valid && questionReportLinkRulesValidated === EXPECTED_QUESTION_REPORT_LINK_RULES.length) {
+    questionReportLinkParityValidated = true;
+  }
 }
 
 function validateMockExamConfigTypeSchemaParity() {
@@ -16693,6 +16861,7 @@ validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
 validateQuestionDisclaimerParity();
+validateQuestionReportLinkParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
@@ -16817,6 +16986,8 @@ console.log(
       premiumEntitlementParityValidated,
       questionDisclaimerRoutesValidated,
       questionDisclaimerCopyValidated,
+      questionReportLinkRulesValidated,
+      questionReportLinkParityValidated,
       mockExamConfigTypeFieldsValidated,
       mockExamConfigTypeSchemaParityValidated,
       mockExamConfigExactSchemaKeysValidated,
