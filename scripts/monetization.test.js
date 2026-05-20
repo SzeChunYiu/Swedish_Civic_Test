@@ -340,6 +340,28 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
 });
 
+test('native practice interstitial uses consent-aware ad gate and platform unit lookup', () => {
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(
+    practiceInterstitialSource,
+    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
+  );
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS/,
+  );
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
