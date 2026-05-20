@@ -64,91 +64,103 @@ export function PerChapterProgressBars({
   const accessibilityLabel = `${copy.title}: ${answeredChapters} / ${chapters.length}`;
 
   return (
-    <Card accessibilityLabel={accessibilityLabel} accessibilityRole="summary" style={styles.card}>
-      <View style={styles.header}>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.title}
-        </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      </View>
-      <View style={styles.sortRow}>
-        {(
-          [
-            ['chapter', copy.chapterOrder],
-            ['weakest', copy.weakestFirst],
-          ] as const
-        ).map(([mode, label]) => {
-          const selected = sortMode === mode;
-          return (
-            <Pressable
-              key={mode}
-              accessibilityLabel={copy.sortAccessibilityLabel(label)}
-              accessibilityRole="button"
-              accessibilityState={{ selected }}
-              hitSlop={space[0.5]}
-              onPress={() => setSortMode(mode)}
-              style={({ pressed }) => [
-                styles.sortButton,
-                selected ? styles.sortButtonSelected : null,
-                pressed ? styles.sortButtonPressed : null,
-              ]}
-            >
-              <Text
-                style={[styles.sortButtonText, selected ? styles.sortButtonTextSelected : null]}
-              >
-                {label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-      {answeredChapters === 0 ? (
-        <Text style={styles.emptyState}>{copy.emptyState}</Text>
-      ) : (
-        <View style={styles.list}>
-          {visibleBars.map((bar) => {
-            const chapter = chapterById.get(bar.chapterId);
-            const chapterName =
-              language === 'en'
-                ? (chapter?.nameEn ?? bar.chapterId)
-                : (chapter?.nameSv ?? bar.chapterId);
-            const accuracyPercent = percent(bar.accuracy);
-            const coveragePercent = percent(bar.coverage);
+    <>
+      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
+        {accessibilityLabel}
+      </Text>
+      <Card style={styles.card}>
+        <View style={styles.header}>
+          <Text accessibilityRole="header" style={styles.title}>
+            {copy.title}
+          </Text>
+          <Text style={styles.subtitle}>{copy.subtitle}</Text>
+        </View>
+        <View style={styles.sortRow}>
+          {(
+            [
+              ['chapter', copy.chapterOrder],
+              ['weakest', copy.weakestFirst],
+            ] as const
+          ).map(([mode, label]) => {
+            const selected = sortMode === mode;
             return (
-              <Link
-                key={bar.chapterId}
-                accessibilityLabel={copy.linkLabel(chapterName)}
-                accessibilityRole="link"
-                href={`/chapter/${bar.chapterId}`}
-                style={styles.chapterLink}
+              <Pressable
+                key={mode}
+                accessibilityLabel={copy.sortAccessibilityLabel(label)}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                hitSlop={space[0.5]}
+                onPress={() => setSortMode(mode)}
+                style={({ pressed }) => [
+                  styles.sortButton,
+                  selected ? styles.sortButtonSelected : null,
+                  pressed ? styles.sortButtonPressed : null,
+                ]}
               >
-                <View style={styles.chapterRow}>
-                  <Text style={styles.chapterName}>{chapterName}</Text>
-                  <View style={styles.progressPair}>
-                    <View style={styles.progressLine}>
-                      <Text style={styles.progressLabel}>
-                        {copy.accuracyLabel}: {accuracyPercent}%
-                      </Text>
-                      <ProgressBar language={language} progress={ratio(bar.accuracy)} />
-                    </View>
-                    <View style={styles.progressLine}>
-                      <Text style={styles.progressLabel}>
-                        {copy.coverageLabel}: {coveragePercent}%
-                      </Text>
-                      <ProgressBar language={language} progress={ratio(bar.coverage)} />
-                    </View>
-                  </View>
-                </View>
-              </Link>
+                <Text
+                  style={[styles.sortButtonText, selected ? styles.sortButtonTextSelected : null]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
             );
           })}
         </View>
-      )}
-    </Card>
+        {answeredChapters === 0 ? (
+          <Text style={styles.emptyState}>{copy.emptyState}</Text>
+        ) : (
+          <View style={styles.list}>
+            {visibleBars.map((bar) => {
+              const chapter = chapterById.get(bar.chapterId);
+              const chapterName =
+                language === 'en'
+                  ? (chapter?.nameEn ?? bar.chapterId)
+                  : (chapter?.nameSv ?? bar.chapterId);
+              const accuracyPercent = percent(bar.accuracy);
+              const coveragePercent = percent(bar.coverage);
+              return (
+                <Link
+                  key={bar.chapterId}
+                  accessibilityLabel={copy.linkLabel(chapterName)}
+                  accessibilityRole="link"
+                  href={`/chapter/${bar.chapterId}`}
+                  style={styles.chapterLink}
+                >
+                  <View style={styles.chapterRow}>
+                    <Text style={styles.chapterName}>{chapterName}</Text>
+                    <View style={styles.progressPair}>
+                      <View style={styles.progressLine}>
+                        <Text style={styles.progressLabel}>
+                          {copy.accuracyLabel}: {accuracyPercent}%
+                        </Text>
+                        <ProgressBar language={language} progress={ratio(bar.accuracy)} />
+                      </View>
+                      <View style={styles.progressLine}>
+                        <Text style={styles.progressLabel}>
+                          {copy.coverageLabel}: {coveragePercent}%
+                        </Text>
+                        <ProgressBar language={language} progress={ratio(bar.coverage)} />
+                      </View>
+                    </View>
+                  </View>
+                </Link>
+              );
+            })}
+          </View>
+        )}
+      </Card>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  accessibilitySummary: {
+    height: 1,
+    margin: -1,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: 1,
+  },
   card: {
     gap: space[1.5],
   },

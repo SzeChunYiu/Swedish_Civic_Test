@@ -5,6 +5,7 @@ import { colors, radius, space, typography } from '../../lib/theme';
 import { Card } from '../ui/Card';
 
 export type ActivityHeatmapCopy = {
+  dayLabel: (date: string, answers: number) => string;
   emptyState: string;
   summary: (totalAnswers: number, activeDays: number, maxDayCount: number) => string;
   subtitle: string;
@@ -33,38 +34,51 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
   const accessibilityLabel = copy.summary(totalAnswers, activeDays, maxDayCount);
 
   return (
-    <Card accessibilityLabel={accessibilityLabel} accessibilityRole="summary" style={styles.card}>
-      <View style={styles.header}>
-        <Text accessibilityRole="header" style={styles.title}>
-          {copy.title}
-        </Text>
-        <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      </View>
-      {totalAnswers === 0 ? (
-        <Text style={styles.emptyState}>{copy.emptyState}</Text>
-      ) : (
-        <ScrollView
-          accessibilityLabel={accessibilityLabel}
-          aria-label={accessibilityLabel}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
-          <View style={styles.heatmap}>
-            {bins.map((bin) => (
-              <View
-                key={bin.date}
-                accessibilityLabel={`${bin.date}: ${bin.count}`}
-                style={[styles.cell, styles[heatLevel(bin.count, maxDayCount)]]}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </Card>
+    <>
+      <Text accessibilityRole="summary" style={styles.accessibilitySummary}>
+        {accessibilityLabel}
+      </Text>
+      <Card style={styles.card}>
+        <View style={styles.header}>
+          <Text accessibilityRole="header" style={styles.title}>
+            {copy.title}
+          </Text>
+          <Text style={styles.subtitle}>{copy.subtitle}</Text>
+        </View>
+        {totalAnswers === 0 ? (
+          <Text style={styles.emptyState}>{copy.emptyState}</Text>
+        ) : (
+          <ScrollView
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="summary"
+            aria-label={accessibilityLabel}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            <View style={styles.heatmap}>
+              {bins.map((bin) => (
+                <View
+                  key={bin.date}
+                  accessibilityLabel={copy.dayLabel(bin.date, bin.count)}
+                  style={[styles.cell, styles[heatLevel(bin.count, maxDayCount)]]}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        )}
+      </Card>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  accessibilitySummary: {
+    height: 1,
+    margin: -1,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: 1,
+  },
   card: {
     gap: space[1.5],
   },

@@ -10,7 +10,7 @@ import {
   NativeMediaView,
 } from 'react-native-google-mobile-ads';
 
-import { nativeAdCardCopy } from '../../lib/monetization/adCopy';
+import { getNativeAdCardCopy } from '../../lib/monetization/adCopy';
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -24,7 +24,7 @@ export function NativeAdCard({
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const language = useSettingsStore((state) => state.language);
-  const copy = nativeAdCardCopy[language];
+  const copy = getNativeAdCardCopy(language);
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
   const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);

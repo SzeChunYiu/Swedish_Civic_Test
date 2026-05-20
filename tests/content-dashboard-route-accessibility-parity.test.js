@@ -93,6 +93,21 @@ function assertDashboardAccessibilitySeparation(sources) {
     /<ScrollView[\s\S]*?accessibilityLabel=\{accessibilityLabel\}[\s\S]*?accessibilityRole="summary"[\s\S]*?aria-label=\{accessibilityLabel\}[\s\S]*?horizontal/,
     'ActivityHeatmap ScrollView must keep its localized chart summary',
   );
+  assert.match(
+    sources.activity,
+    /accessibilityLabel=\{copy\.dayLabel\(bin\.date, bin\.count\)\}/,
+    'ActivityHeatmap cells must use localized per-day answer labels',
+  );
+  assert.match(
+    sources.dashboard,
+    /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} svar`/,
+    'Dashboard Swedish activity copy must label heatmap cells as answers',
+  );
+  assert.match(
+    sources.dashboard,
+    /dayLabel: \(date, answers\) => `\$\{date\}: \$\{answers\} answers`/,
+    'Dashboard English activity copy must label heatmap cells as answers',
+  );
   assert.doesNotMatch(
     sources.activity,
     /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,
@@ -172,8 +187,8 @@ test('dashboard accessibility parity rejects an unlabelled heatmap ScrollView', 
       assertDashboardAccessibilitySeparation({
         ...sources,
         activity: sources.activity.replace(
-          '          accessibilityLabel={accessibilityLabel}\n          accessibilityRole="summary"\n          aria-label={accessibilityLabel}\n',
-          '',
+          /\s*accessibilityLabel=\{accessibilityLabel\}\n\s*accessibilityRole="summary"\n\s*aria-label=\{accessibilityLabel\}\n/,
+          '\n',
         ),
       }),
     /ActivityHeatmap ScrollView must keep its localized chart summary/,
