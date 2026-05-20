@@ -221,7 +221,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.mockExamAccessTypeSchemaParityValidated, true);
   assert.equal(summary.themeColorTokensValidated, 37);
   assert.equal(summary.themeSpaceTokensValidated, 24);
-  assert.equal(summary.themeRadiusTokensValidated, 7);
+  assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
