@@ -1830,7 +1830,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Påsk firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen. Långfredagen uppmärksammar Jesu död och påskdagen hans uppståndelse, medan advent, första maj och Alla helgons dag hör till andra delar av året.',
-    "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday remembers Jesus' death and Easter Sunday his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
+    "Easter is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday. Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection, while Advent, May Day, and All Saints' Day belong to other parts of the year.",
     ['easter', 'christian-holiday', 'spring-traditions'],
     'easy',
   ),
