@@ -863,6 +863,48 @@ test('generateCalibration: overconfident user → over_confident verdict', () =>
   assert.equal(result.verdict, 'over_confident');
 });
 
+test('generateCalibration: invalid confidence ratings are skipped without corrupting buckets', () => {
+  const { generateCalibration, isConfidenceRating, normalizeConfidenceRating } = loadTs(
+    'lib/learning/calibration.ts',
+  );
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+  const events = [
+    {
+      questionId: 'valid-low',
+      isCorrect: false,
+      answeredAt: '2026-05-19',
+      confidenceRating: 1,
+    },
+    ...invalidRatings.map((confidenceRating, index) => ({
+      questionId: `invalid-${index}`,
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating,
+    })),
+    {
+      questionId: 'valid-high',
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating: 5,
+    },
+  ];
+
+  assert.doesNotThrow(() => generateCalibration(events));
+  const result = generateCalibration(events);
+
+  assert.equal(result.totalRatedAnswers, 2);
+  assert.deepEqual(
+    result.buckets.map((bucket) => bucket.count),
+    [1, 0, 0, 0, 1],
+  );
+  assert.equal(result.buckets[0].actualAccuracy, 0);
+  assert.equal(result.buckets[4].actualAccuracy, 1);
+  for (const rating of invalidRatings) {
+    assert.equal(isConfidenceRating(rating), false);
+    assert.equal(normalizeConfidenceRating(rating), null);
+  }
+});
+
 test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
   assert.equal(gradeFromConfidence(false, 1), 1);
@@ -874,4 +916,15 @@ test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   assert.equal(lapsePenaltyForWrong(1), 0);
   assert.equal(lapsePenaltyForWrong(3), 1);
   assert.equal(lapsePenaltyForWrong(5), 2);
+});
+
+test('gradeFromConfidence + lapsePenaltyForWrong: invalid ratings use safe defaults', () => {
+  const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+
+  for (const rating of invalidRatings) {
+    assert.equal(gradeFromConfidence(true, rating), 3);
+    assert.equal(gradeFromConfidence(false, rating), 1);
+    assert.equal(lapsePenaltyForWrong(rating), 0);
+  }
 });
