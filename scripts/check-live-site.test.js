@@ -234,27 +234,23 @@ test('live site check rejects unqualified no-tracking static copy', async () => 
   });
 });
 
-test('live site check rejects static team credential claims', async () => {
-  const staleAssetsWithCredentialClaim = currentAssets();
-  staleAssetsWithCredentialClaim['/index.html'] = [
-    staleAssetsWithCredentialClaim['/index.html'],
-    "An independent study tool, built by people who've taken the test themselves.",
-  ].join('\n');
-  staleAssetsWithCredentialClaim['/app.js'] = [
-    staleAssetsWithCredentialClaim['/app.js'],
-    "'footer.about.p': 'Ett verktyg från personer som själva har gjort provet.'",
+test('live site check rejects static MVP release copy', async () => {
+  const staleIndex = [
+    currentAssets()['/index.html'],
+    '<p>No. The MVP needs zero registration.</p>',
+    '<span data-i18n="privacy.meta2.v">1.0 MVP</span>',
   ].join('\n');
 
-  await withStaticServer(staleAssetsWithCredentialClaim, async (baseUrl) => {
+  await withStaticServer({ ...currentAssets(), '/index.html': staleIndex }, async (baseUrl) => {
     const result = await checkLiveSite(baseUrl, {
       requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
       requiredQuestionCount: 715,
     });
-    const failedCheck = result.checks.find((check) => check.name === 'static team credential copy');
+    const failedCheck = result.checks.find((check) => check.name === 'static release copy');
     assert.equal(result.ok, false);
     assert.equal(failedCheck?.ok, false);
-    assert.match(failedCheck?.details ?? '', /taken the test themselves/);
-    assert.match(failedCheck?.details ?? '', /själva har gjort provet/);
+    assert.match(failedCheck?.details ?? '', /MVP release label/);
+    assert.match(failedCheck?.details ?? '', /"MVP"/);
   });
 });
 

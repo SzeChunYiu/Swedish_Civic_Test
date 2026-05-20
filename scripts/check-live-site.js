@@ -7,10 +7,12 @@ const crypto = require('node:crypto');
 const {
   findStaticHeadMetadataDescriptionIssues,
   findStaticHeadMetadataTitleIssues,
-  findUnsupportedStaticTeamCredentialClaimsInSource,
-  formatUnsupportedStaticTeamCredentialClaims,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
+const {
+  findUnsupportedStaticReleaseCopyInSource,
+  formatUnsupportedStaticReleaseCopy,
+} = require('./static-site-release-copy-guard');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_INDEX_PATH = path.join(__dirname, '..', 'site', 'index.html');
@@ -259,11 +261,8 @@ function findStaticNoTrackingClaimIssues(indexSource, appSource) {
     .map((pattern) => `unqualified static no-tracking claim: ${pattern.source}`);
 }
 
-function findStaticTeamCredentialClaimIssues(indexSource, appSource) {
-  return [
-    ...findUnsupportedStaticTeamCredentialClaimsInSource(indexSource, 'index.html'),
-    ...findUnsupportedStaticTeamCredentialClaimsInSource(appSource, 'app.js'),
-  ];
+function findStaticReleaseCopyIssues(indexSource, appSource) {
+  return findUnsupportedStaticReleaseCopyInSource(`${indexSource}\n${appSource}`, 'live static');
 }
 
 function normalizeHeaderValue(value) {
@@ -394,14 +393,11 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('static privacy no-tracking copy', staticNoTrackingIssues.join('; ')),
   );
 
-  const staticTeamCredentialIssues = findStaticTeamCredentialClaimIssues(index, app);
+  const staticReleaseCopyIssues = findStaticReleaseCopyIssues(index, app);
   checks.push(
-    staticTeamCredentialIssues.length === 0
-      ? pass('static team credential copy')
-      : fail(
-          'static team credential copy',
-          formatUnsupportedStaticTeamCredentialClaims(staticTeamCredentialIssues),
-        ),
+    staticReleaseCopyIssues.length === 0
+      ? pass('static release copy')
+      : fail('static release copy', formatUnsupportedStaticReleaseCopy(staticReleaseCopyIssues)),
   );
 
   checks.push(

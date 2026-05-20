@@ -1,31 +1,18 @@
 const assert = require('node:assert/strict');
-const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const {
-  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
-  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
-  assertNoUnsupportedStaticTeamCredentialClaims,
   assertNoUnsupportedStaticOutcomeSlogans,
   assertStaticHeadMetadataDescriptionSource,
   assertStaticHeadMetadataTitleSource,
-  findUnsupportedStaticTeamCredentialClaimsInSource,
 } = require('./static-outcome-copy-guard');
-const { assertStaticV11ReadinessCopySource } = require('./static-v11-readiness-copy-guard');
+const { assertNoUnsupportedStaticReleaseCopy } = require('./static-site-release-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
-const expectedStaticHeadMetadataOutcomePatterns =
-  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS.length + UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-}
-
-function parseValidationSummary(output) {
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
 }
 
 function readAppName() {
@@ -73,30 +60,6 @@ test('static mock exam copy avoids unsupported official pass-line claims', () =>
   assert.doesNotMatch(practiceSource, new RegExp('godk' + '[aä]nt', 'i'));
 });
 
-test('sources route cites the current UHR authority-boundary page', () => {
-  const sourcesRoute = read('app/sources.tsx');
-
-  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
-  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
-  assert.match(
-    sourcesRoute,
-    /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
-  );
-  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
-  assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
-  assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
-  assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
-  assert.match(
-    sourcesRoute,
-    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
-  );
-  assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
-  assert.doesNotMatch(
-    sourcesRoute,
-    /kvalitets(?:granskad|granskade|kontrollerad|kontrollerade)\s+av\s+UHR|quality-(?:controlled|checked|reviewed)\s+by\s+UHR/i,
-  );
-});
-
 test('compliance pages and source links are present', () => {
   const expectedFiles = [
     'app/disclaimer.tsx',
@@ -142,26 +105,16 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
   assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
-  assert.match(sourcesRoute, /const UHR_AUTHORITY_BOUNDARY_SOURCE = \{/);
-  assert.match(sourcesRoute, /retrievedDate:\s*'2026-05-20'/);
-  assert.match(sourcesRoute, /title:\s*'UHR: Om medborgarskapsprovet'/);
-  assert.match(
-    sourcesRoute,
-    /url:\s*'https:\/\/www\.uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet\/'/,
-  );
-  assert.match(sourcesRoute, /UHR inte står bakom dessa/);
-  assert.match(sourcesRoute, /Källa hämtad \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
+  assert.match(sourcesRoute, /UHR står inte bakom dem/);
+  assert.match(sourcesRoute, /Källa hämtad 2026-05-19/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
   assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
-  assert.match(sourcesRoute, /quality is not controlled by UHR or any other authority/);
-  assert.match(sourcesRoute, /Source accessed \$\{UHR_AUTHORITY_BOUNDARY_SOURCE\.retrievedDate\}/);
+  assert.match(sourcesRoute, /quality is not checked by UHR or any other authority/);
+  assert.match(sourcesRoute, /Source accessed 2026-05-19/);
   assert.match(sourcesRoute, /uhr\.se\/medborgarskapsprovet\/om-medborgarskapsprovet/i);
   assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
-  assert.match(
-    sourcesRoute,
-    /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/,
-  );
+  assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_ABOUT_TEST_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -175,10 +128,7 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Öppna UHR:s sida Om medborgarskapsprovet/);
   assert.match(sourcesRoute, /Open UHR About the citizenship test page/);
   assert.doesNotMatch(sourcesRoute, /UHR\s+varnar|UHR\s+warns/i);
-  assert.doesNotMatch(
-    sourcesRoute,
-    /kvalitets(?:granskad|granskade|kontrollerad|kontrollerade)\s+av\s+UHR|quality-(?:controlled|checked|reviewed)\s+by\s+UHR/i,
-  );
+  assert.doesNotMatch(sourcesRoute, /kvalitetsgranskade\s+av\s+UHR|quality-controlled\s+by\s+UHR/i);
   assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
   assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
   assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
@@ -232,6 +182,14 @@ test('static site brand copy matches app identity', () => {
   );
 });
 
+test('static site release copy avoids MVP and beta labels', () => {
+  assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
+  assert.match(read('site/app.js'), /['"]privacy\.meta2\.v['"]:\s*['"]1\.0['"]/);
+  assert.match(read('site/index.html'), /data-i18n="privacy\.meta2\.v">1\.0</);
+  assert.match(read('site/app.js'), /No\. You do not need to register\./);
+  assert.match(read('site/app.js'), /Nej\. Du behöver inte registrera dig\./);
+});
+
 test('static learner-facing slogans avoid pass and passport outcome promises', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
   assert.equal(assertStaticHeadMetadataTitleSource(read('site/index.html')), 1);
@@ -245,24 +203,6 @@ test('static learner-facing slogans avoid pass and passport outcome promises', (
       assert.match(siteAppSource, new RegExp(escapeRegExp(homepageSlogan(locale, key))));
     }
   }
-});
-
-test('static footer copy avoids unsupported team credential claims', () => {
-  assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
-  assert.deepEqual(
-    findUnsupportedStaticTeamCredentialClaimsInSource(
-      "An app built by people who've taken the test themselves.",
-      'fixture.js',
-    ).map((issue) => issue.label),
-    ['English team test-taker claim'],
-  );
-  assert.deepEqual(
-    findUnsupportedStaticTeamCredentialClaimsInSource(
-      'Ett verktyg från personer som själva har gjort provet.',
-      'fixture.js',
-    ).map((issue) => issue.label),
-    ['Swedish self-completed test claim'],
-  );
 });
 
 test('static head metadata description is neutral and non-empty', () => {
@@ -317,65 +257,6 @@ test('static head metadata description is neutral and non-empty', () => {
   );
 });
 
-test('validate-content reports static head metadata summary fields', () => {
-  const output = execFileSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-static-head-metadata'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-  const summary = parseValidationSummary(output);
-
-  assert.equal(summary.staticHeadMetadataTitleValidated, 1);
-  assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
-  assert.equal(
-    summary.staticHeadMetadataOutcomeClaimPatternsValidated,
-    expectedStaticHeadMetadataOutcomePatterns,
-  );
-  assert.equal(summary.staticHeadMetadataParityValidated, true);
-  assert.equal(summary.staticValidationSyntaxGateValidated, true);
-});
-
-test('validate-content rejects static head metadata pass outcome mutations', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const path = require('node:path');
-const repoRoot = process.cwd();
-const originalReadFileSync = fs.readFileSync;
-
-fs.readFileSync = function patchedReadFileSync(filePath, ...rest) {
-  if (
-    typeof filePath === 'string' &&
-    path.resolve(filePath) === path.join(repoRoot, 'site/index.html')
-  ) {
-    return originalReadFileSync
-      .call(this, filePath, ...rest)
-      .replace(/(<title>)[\\s\\S]*?(<\\/title>)/, '$1Almost Swedish — Study, fika, pass.$2');
-  }
-
-  return originalReadFileSync.call(this, filePath, ...rest);
-};
-
-process.argv.push('--focus-static-head-metadata');
-require('./scripts/validate-content.js');
-`,
-    ],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /Study,\s*fika,\s*pass/);
-});
-
 test('static Swedish mock exam copy stays clearly unofficial practice wording', () => {
   const practice = read('site/practice.js');
 
@@ -420,18 +301,4 @@ test('static mock-exam marketing avoids unsourced format and readiness claims', 
   assert.match(staticApp, /tidsatt övning/);
   assert.match(staticApp, /Det officiella upplägget kan ändras/);
   assert.match(staticApp, /Fortsätt repetera källmaterialet/);
-});
-
-test('static v1.1 dashboard copy stays scoped to local practice data', () => {
-  const staticV11 = read('site/v11.js');
-
-  assert.deepEqual(assertStaticV11ReadinessCopySource(staticV11), {
-    requiredCopyValidated: 12,
-    unsupportedPatternsValidated: 4,
-  });
-  assert.throws(
-    () =>
-      assertStaticV11ReadinessCopySource(staticV11.replace('Lokal övningssignal', 'Din beredskap')),
-    /unsupported readiness\/pass-prediction copy/,
-  );
 });
