@@ -1552,7 +1552,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch11',
     { chapter: 'Sverige och omvärlden', section: 'EU och Europarådet', pageApprox: 39 },
     'Vad arbetar Europarådet för?',
-    'What does the Council of Europe work for?',
+    'What does the Council of Europe promote?',
     [
       [
         'Mänskliga rättigheter, demokrati och rättsstatens principer',
@@ -1564,7 +1564,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer. Sverige är medlem i organisationen, som bildades 1949, och Europadomstolen hör till Europarådet; det är inte en jordbruksmyndighet, skriver inte svenska kommunbudgetar och ersätter inte FN.',
-    'The Council of Europe works for human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.',
+    'The Council of Europe promotes human rights, democracy, and rule-of-law principles. Sweden is a member of the organization, which was formed in 1949, and the European Court of Human Rights is part of the Council of Europe; it is not an agricultural body, does not write Swedish municipal budgets, and does not replace the UN.',
     ['council-of-europe', 'human-rights', 'democracy'],
   ),
   single(
