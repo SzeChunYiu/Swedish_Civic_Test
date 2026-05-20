@@ -6387,13 +6387,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -6410,8 +6410,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32014,13 +32014,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "Which answer best matches? How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Vilket svar stämmer bäst? Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -32037,8 +32037,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32063,8 +32063,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Many people celebrate Christmas as a family holiday even without religious meaning.",
-      "sv": "Många firar jul som en familjehögtid även utan religiös betydelse."
+      "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them.",
+      "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem."
     },
     "opts": [
       {
@@ -32078,8 +32078,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32119,8 +32119,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32145,13 +32145,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement is correct about Christmas celebrations in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående stämmer om julfirande i Sverige?"
+      "en": "Choose the correct option: How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?",
+      "sv": "Välj rätt alternativ: Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?"
     },
     "opts": [
       {
-        "en": "Many people celebrate Christmas as a family holiday even without religious meaning",
-        "sv": "Många firar jul som en familjehögtid även utan religiös betydelse"
+        "en": "Many people celebrate Christmas as a family holiday even when it has no religious meaning for them",
+        "sv": "Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem"
       },
       {
         "en": "Christmas is always celebrated with demonstrations about social issues",
@@ -32168,8 +32168,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even without religious meaning, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
-      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som familjehögtid även utan religiös betydelse, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
+      "en": "Christmas has Christian roots and is also a major family holiday in Sweden. Many people celebrate Christmas as a family holiday even when it has no religious meaning for them, while demonstrations, spring bonfires, and New Year fireworks belong to other holidays.",
+      "sv": "Julen har kristna rötter och är också en stor familjehögtid i Sverige. Många firar jul som en familjehögtid även när julen inte har religiös betydelse för dem, medan demonstrationer, vårbrasor och nyårsfyrverkerier hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
