@@ -87,6 +87,31 @@ Next suggested validator action:
 
 ## CEO cycle handoff
 
+2026-05-20T08:25:30+02:00: CEO cycle decision remains HOLD/add-none.
+Required CEO and GM operating docs were read from the project checkout and
+supervisor repo. Batch outcome remains the shippable Expo + React Native +
+TypeScript citizenship-prep app with accepted scaffold, content, UI/UX,
+data-integrity, QA, release artifacts, clean typecheck, and no cross-lane
+ownership conflicts. Current P0 evidence: `codex-tasks/P0.md` still has
+unchecked SHUFFLE-FIX, TRANSLATE-COMPLETE, SOURCE-CITATION, and
+CRITICAL-REVIEWER standing work. `codex-tasks/blockers.txt` has active
+infra/validation blockers for LANGUAGE typecheck verification and MASCOT
+styleguide typecheck/validation. Local tmux shows only `fleet: 1 windows`;
+local HEAD/origin observed as `1bcf4f7e` / `68267e89`, with unrelated dirty
+parallel-lane work in the shared checkout.
+
+Supervisor dry-run
+`/projects/hep/fs9/shared/nnbar/billy/civic-lunarc/codex-supervisor/bin/csup staff --scenario=resume --dry-run`
+reported queued work on multiple civic hosts (`work=10`, `blockers=10`,
+`prompts=1` or `5`) but held each observed host on
+`reason=lunarc_requires_slurm_station`; the long dry-run was stopped after the
+repeated HOLD pattern was established. Direction: do not add new lane scope,
+run `--apply`, or staff non-P0 side work. Keep active capacity on P0-advancing
+atoms only: DATA-INTEGRITY for generated prompt gates, CONTENT/VALIDATOR for
+English naturalness and source-citation acceptance, and VALIDATOR for the
+infra/typecheck blocker verification queue. No new human escalation is
+required this cycle.
+
 2026-05-20T03:36:55+02:00: CEO cycle decision remains HOLD/add-none.
 Required CEO and GM operating docs were read from the project checkout. Latest
 observed `origin/main` during this cycle was `8c95ca29`. `codex-tasks/P0.md`
