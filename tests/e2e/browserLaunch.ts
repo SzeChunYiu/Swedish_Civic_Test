@@ -1,4 +1,19 @@
 import { existsSync } from 'node:fs';
+import { expect, type Page } from '@playwright/test';
+
+import type { AppLanguage } from '../../lib/storage/settingsStore';
+
+export type { AppLanguage } from '../../lib/storage/settingsStore';
+
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+const dialogLocator = '[role="dialog"][aria-modal="true"]';
+
+export type BlockingModalDismissal = {
+  firstRunAboutDismissed: boolean;
+  languagePickerDismissed: boolean;
+  launchOverlayDismissed: boolean;
+};
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -21,6 +36,17 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
   const executablePath = findSystemChromiumExecutable();
 
   return executablePath ? { executablePath } : undefined;
+}
+
+export function collectConsoleAndPageErrors(page: Page): string[] {
+  const errors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  return errors;
 }
 
 export async function seedSettingsLanguage(page: Page, language: AppLanguage): Promise<void> {
@@ -61,6 +87,27 @@ export async function seedFreshFirstRunSettingsLanguage(
       window.localStorage.removeItem(seenKey);
     },
     { language, languageKey: settingsLanguageKey, seenKey: settingsSeenAboutKey },
+  );
+}
+
+export async function selectQuestionLanguageInSettings(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const label =
+    language === 'en'
+      ? /Byt frågespråk till Engelskt stöd|Set question language to English support/
+      : /Byt frågespråk till Svenska|Set question language to Swedish/;
+  const selectedLabel =
+    language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
+
+  await page.getByLabel(label).click();
+  await expect(page.getByRole('radio', { name: selectedLabel })).toHaveAttribute(
+    'aria-checked',
+    'true',
   );
 }
 

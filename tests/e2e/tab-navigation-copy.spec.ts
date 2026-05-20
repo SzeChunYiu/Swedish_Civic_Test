@@ -41,10 +41,9 @@ async function enableEnglishSupport(page: Page) {
   await page
     .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
     .click();
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
+  await expect(
+    page.getByRole('radio', { name: 'Set question language to English support' }),
+  ).toHaveAttribute('aria-checked', 'true');
 }
 
 test('bottom exam tab renders safe Swedish and English labels on mobile web', async ({ page }) => {

@@ -5,14 +5,13 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '../../dist-web');
 const port = Number(process.env.PORT || 4173);
 
-
-function assertDistWebReady(outputDir = root, repoRoot = path.resolve(__dirname, '../..')) {
+function assertDistWebReady(outputDir = root) {
   const indexPath = path.join(outputDir, 'index.html');
   if (!fs.existsSync(indexPath)) {
     throw new Error('dist-web/index.html is missing. Run `npm run build:web:export` first.');
   }
-  const { assertWebExportFreshness } = require('../../scripts/prepare-web-export.js');
-  assertWebExportFreshness(outputDir, { repoRoot });
+  const { check } = require('../../scripts/prepare-web-export.js');
+  check(outputDir);
 }
 
 const contentTypeByExt = {
@@ -31,13 +30,19 @@ function sendFile(res, filePath) {
 }
 
 function startServer() {
-  assertDistWebReady(root, path.resolve(__dirname, '../..'));
+  assertDistWebReady(root);
   return http
     .createServer((req, res) => {
       const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
-      const safePath = path.normalize(decodeURIComponent(url.pathname)).replace(/^\.\.(?:\/|$)/, '');
+      const safePath = path
+        .normalize(decodeURIComponent(url.pathname))
+        .replace(/^\.\.(?:\/|$)/, '');
       const requested = path.join(root, safePath);
-      if (requested.startsWith(root) && fs.existsSync(requested) && fs.statSync(requested).isFile()) {
+      if (
+        requested.startsWith(root) &&
+        fs.existsSync(requested) &&
+        fs.statSync(requested).isFile()
+      ) {
         sendFile(res, requested);
         return;
       }
