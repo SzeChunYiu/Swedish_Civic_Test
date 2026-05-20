@@ -4340,6 +4340,10 @@ function cleanTrueFalseSourceExplanationSv(source) {
           '',
         )
         .replace(
+          /\s*Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln\.?$/i,
+          '',
+        )
+        .replace(
           /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
           '',
         )
@@ -4354,6 +4358,10 @@ function cleanTrueFalseSourceExplanationEn(source) {
         .replace(/^The statement is true[:.]?\s*/i, '')
         .replace(
           /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
+          '',
+        )
+        .replace(
+          /\s*The northern part of the country therefore extends into the area north of the Arctic Circle\.?$/i,
           '',
         )
         .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
@@ -6500,6 +6508,7 @@ let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
+let themeContrastValidated = true;
 let themeTokenSchemaValidated = false;
 let contentTestValidateContentExecCallsValidated = 0;
 let contentTestValidateContentExecCwdPinnedValidated = 0;
@@ -8657,6 +8666,7 @@ function validateLegalRouteHeaderParity() {
 
   for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
     let routeSource = '';
+    let routeRequiredSnippetsValid = true;
     try {
       routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
     } catch (error) {
@@ -8675,9 +8685,13 @@ function validateLegalRouteHeaderParity() {
     if (expectedRoute.requiredSnippets) {
       expectedRoute.requiredSnippets.forEach((snippet) => {
         if (!routeSource.includes(snippet)) {
+          routeRequiredSnippetsValid = false;
           reject(`${expectedRoute.file} missing legal route snippet: ${snippet}`);
         }
       });
+    }
+    if (routeRequiredSnippetsValid) {
+      legalSwedishEnglishTokenRoutesValidated += 1;
     }
 
     const pageTitleOccurrences = expectedRoute.titlePattern
@@ -14477,6 +14491,8 @@ console.log(
       mistakesRouteCopyParityValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      legalSwedishEnglishTokenRoutesValidated,
+      legalSwedishEnglishTokenGuardValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
@@ -14556,6 +14572,7 @@ console.log(
       themeTypographyTokensValidated,
       themeShadowTokensValidated,
       themeMotionTokensValidated,
+      themeContrastValidated,
       themeTokenSchemaValidated,
       mascotAssetFilesValidated,
       contentTestValidateContentExecCallsValidated,

@@ -907,6 +907,10 @@ function cleanTrueFalseSourceExplanationSv(source: PracticeQuestion): string {
           '',
         )
         .replace(
+          /\s*Den norra delen av landet sträcker sig alltså in i området norr om polcirkeln\.?$/i,
+          '',
+        )
+        .replace(
           /\s*[;,]?\s*(?:så\s+påståendet\s+är\s+sant|därför\s+(?:är\s+)?påståendet\s+sant)\.?$/i,
           '',
         )
@@ -922,6 +926,10 @@ function cleanTrueFalseSourceExplanationEn(source: PracticeQuestion): string {
         .replace(/^The statement is true[:.]?\s*/i, '')
         .replace(
           /\s*That\s+makes\s+True\s+correct,\s+while\s+False\s+contradicts\s+the\s+fact\.?$/i,
+          '',
+        )
+        .replace(
+          /\s*The northern part of the country therefore extends into the area north of the Arctic Circle\.?$/i,
           '',
         )
         .replace(/\s*,?\s*so\s+the\s+statement\s+is\s+true\.?$/i, '')
