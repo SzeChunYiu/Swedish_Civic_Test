@@ -16,7 +16,8 @@ export const chapters: Chapter[] = [
       ti: 'ሃገረ ሽወደን',
       tr: 'İsveç ülkesi',
       uk: 'Країна Швеція',
-    },    descriptionSv: 'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
+    },
+    descriptionSv: 'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
     descriptionEn: 'Geography, climate, nature, population, natural resources, and climate change.',
     descriptionText: {
       'zh-Hans': '地理、气候、自然、人口、自然资源与气候变化。',
@@ -29,7 +30,8 @@ export const chapters: Chapter[] = [
       ti: 'ጂኦግራፊ፣ ክሊማ፣ ተፈጥሮ፣ ህዝቢ፣ ተፈጥሮኣዊ ጸጋታትን ለውጢ ኩነታት ኣየርን።',
       tr: 'Coğrafya, iklim, doğa, nüfus, doğal kaynaklar ve iklim değişikliği.',
       uk: 'Географія, клімат, природа, населення, природні ресурси та зміна клімату.',
-    },    questionCount: 65,
+    },
+    questionCount: 65,
   },
   {
     id: 'ch02',
@@ -44,9 +46,10 @@ export const chapters: Chapter[] = [
       pl: 'Demokratyczny system Szwecji',
       so: 'Nidaamka dimoqraadiga ah ee Iswiidhan',
       ti: 'ደሞክራስያዊ ስርዓት ሽወደን',
-      tr: 'İsveç\'in demokratik sistemi',
+      tr: "İsveç'in demokratik sistemi",
       uk: 'Демократична система Швеції',
-    },    descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
+    },
+    descriptionSv: 'Demokrati, folkstyre, sätt att påverka samhället och hot mot demokratin.',
     descriptionEn:
       'Democracy, rule by the people, ways to influence society, and threats to democracy.',
     descriptionText: {
@@ -60,7 +63,8 @@ export const chapters: Chapter[] = [
       ti: 'ደሞክራሲ፣ ህዝባዊ ምሕደራ፣ ኣብ ሕብረተሰብ ጽልዋ ናይ ምግባር መንገድታትን ኣንጻር ደሞክራሲ ዘሎ ስግኣታትን።',
       tr: 'Demokrasi, halkın yönetimi, topluma etki etme yolları ve demokrasiye yönelik tehditler.',
       uk: 'Демократія, народовладдя, способи впливу на суспільство та загрози демократії.',
-    },    questionCount: 50,
+    },
+    questionCount: 50,
   },
   {
     id: 'ch03',
@@ -77,7 +81,8 @@ export const chapters: Chapter[] = [
       ti: 'ሽወደን ብኸመይ ከም እትመሓደር',
       tr: 'İsveç nasıl yönetilir',
       uk: 'Як управляється Швеція',
-    },    descriptionSv:
+    },
+    descriptionSv:
       'Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick.',
     descriptionEn:
       "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
@@ -90,9 +95,10 @@ export const chapters: Chapter[] = [
       pl: 'Jak władza polityczna jest dzielona między państwo, regiony (region) i kommun, oraz ustrój państwowy Szwecji.',
       so: 'Sida awoodda siyaasadeed loogu qaybiyo dawladda, region-yada iyo kommun-yada, iyo nidaamka dawladnimo ee Iswiidhan.',
       ti: 'ፖለቲካዊ ስልጣን ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun ብኸመይ ከም ዝመቓራሕ፣ ከምኡ’ውን ስርዓተ መንግስቲ ሽወደን።',
-      tr: 'Siyasi gücün devlet, region\'lar ve kommun\'lar arasında nasıl paylaşıldığı ve İsveç\'in yönetim biçimi.',
+      tr: "Siyasi gücün devlet, region'lar ve kommun'lar arasında nasıl paylaşıldığı ve İsveç'in yönetim biçimi.",
       uk: 'Як політична влада розподіляється між державою, region і kommun, а також державний устрій Швеції.',
-    },    questionCount: 55,
+    },
+    questionCount: 55,
   },
   {
     id: 'ch04',
@@ -109,7 +115,8 @@ export const chapters: Chapter[] = [
       ti: 'ፖለቲካዊ ምርጫታትን ሰልፍታትን',
       tr: 'Siyasi seçimler ve partiler',
       uk: 'Політичні вибори та партії',
-    },    descriptionSv: 'Val, röstning, folkomröstningar och politiska partiers roll i Sverige.',
+    },
+    descriptionSv: 'Val, röstning, folkomröstningar och politiska partiers roll i Sverige.',
     descriptionEn: 'Elections, voting, referendums, and the role of political parties in Sweden.',
     descriptionText: {
       'zh-Hans': '选举、投票、公民投票，以及政党在瑞典所扮演的角色。',
@@ -120,9 +127,10 @@ export const chapters: Chapter[] = [
       pl: 'Wybory, głosowanie, referenda oraz rola partii politycznych w Szwecji.',
       so: 'Doorashooyinka, codbixinta, afti iyo doorka xisbiyada siyaasadeed ee Iswiidhan.',
       ti: 'ምርጫታት፣ ምድማጽ፣ ህዝበ-ውሳነታትን ኣብ ሽወደን ዘሎ ተራ ፖለቲካዊ ሰልፍታትን።',
-      tr: 'Seçimler, oy verme, referandumlar ve İsveç\'te siyasi partilerin rolü.',
+      tr: "Seçimler, oy verme, referandumlar ve İsveç'te siyasi partilerin rolü.",
       uk: 'Вибори, голосування, референдуми та роль політичних партій у Швеції.',
-    },    questionCount: 70,
+    },
+    questionCount: 70,
   },
   {
     id: 'ch05',
@@ -139,7 +147,8 @@ export const chapters: Chapter[] = [
       ti: 'ሕግን ፍትሕን',
       tr: 'Hukuk ve adalet',
       uk: 'Право та правосуддя',
-    },    descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
+    },
+    descriptionSv: 'Grundlagarna, rättsväsendet, rättssäkerhet och allemansrätten.',
     descriptionEn:
       'The fundamental laws, the justice system, rule of law, and the right of public access.',
     descriptionText: {
@@ -153,7 +162,8 @@ export const chapters: Chapter[] = [
       ti: 'Grundlagarna (መሰረታውያን ሕግታት)፣ ስርዓተ ፍትሒ፣ ግዝኣተ ሕግን allemansrätten (ናጻ ናብ ተፈጥሮ ናይ ምብጻሕ መሰል)ን።',
       tr: 'Grundlagarna (anayasal temel yasalar), yargı sistemi, hukukun üstünlüğü ve allemansrätten (doğaya serbest erişim hakkı).',
       uk: 'Grundlagarna (основні закони), система правосуддя, верховенство права та allemansrätten (право вільного доступу до природи).',
-    },    questionCount: 45,
+    },
+    questionCount: 45,
   },
   {
     id: 'ch06',
@@ -170,7 +180,8 @@ export const chapters: Chapter[] = [
       ti: 'ተራ ማዕከናት ዜና',
       tr: 'Medyanın rolü',
       uk: 'Роль медіа',
-    },    descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
+    },
+    descriptionSv: 'Fria medier, olika slags medier, public service och källkritik.',
     descriptionEn:
       'Free media, different types of media, public service broadcasting, and source criticism.',
     descriptionText: {
@@ -184,7 +195,8 @@ export const chapters: Chapter[] = [
       ti: 'ናጻ ማዕከናት ዜና፣ ዝተፈላለዩ ዓይነታት ማዕከናት ዜና፣ public service (ህዝባዊ መሰናድኦ ዜና) ከምኡ’ውን ነቐፌታዊ ኣረኣእያ ምንጪ (källkritik)።',
       tr: 'Özgür medya, farklı medya türleri, public service (kamu yayıncılığı) ve kaynak değerlendirmesi (källkritik).',
       uk: 'Вільні медіа, різні види медіа, public service (суспільне мовлення) та критична оцінка джерел (källkritik).',
-    },    questionCount: 55,
+    },
+    questionCount: 55,
   },
   {
     id: 'ch07',
@@ -197,11 +209,12 @@ export const chapters: Chapter[] = [
       ckb: 'مافەکانی مرۆڤ',
       fa: 'حقوق بشر',
       pl: 'Prawa człowieka',
-      so: 'Xuquuqda bani\'aadamka',
+      so: "Xuquuqda bani'aadamka",
       ti: 'ሰብኣዊ መሰላት',
       tr: 'İnsan hakları',
       uk: 'Права людини',
-    },    descriptionSv:
+    },
+    descriptionSv:
       'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',
     descriptionEn:
       "Human rights, gender equality, children's rights, minority rights, and discrimination.",
@@ -212,11 +225,12 @@ export const chapters: Chapter[] = [
       ckb: 'مافەکانی مرۆڤ، یەکسانیی ڕەگەزی، مافەکانی منداڵان، مافەکانی کەمینەکان و جیاکاری.',
       fa: 'حقوق بشر، برابری جنسیتی، حقوق کودکان، حقوق اقلیت‌ها و تبعیض.',
       pl: 'Prawa człowieka, równość płci, prawa dzieci, prawa mniejszości i dyskryminacja.',
-      so: 'Xuquuqda bani\'aadamka, sinnaanta jinsiga, xuquuqda carruurta, xuquuqda laamiyada iyo takoorid.',
+      so: "Xuquuqda bani'aadamka, sinnaanta jinsiga, xuquuqda carruurta, xuquuqda laamiyada iyo takoorid.",
       ti: 'ሰብኣዊ መሰላት፣ ጾታዊ ማዕርነት፣ መሰላት ቆልዑ፣ መሰላት ውሑዳትን ኣድልዎን።',
       tr: 'İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.',
       uk: 'Права людини, гендерна рівність, права дітей, права меншин та дискримінація.',
-    },    questionCount: 55,
+    },
+    questionCount: 55,
   },
   {
     id: 'ch08',
@@ -233,7 +247,8 @@ export const chapters: Chapter[] = [
       ti: 'ዕዳጋ ስራሕን ውልቃዊ ቍጠባን',
       tr: 'İş gücü piyasası ve kişisel finans',
       uk: 'Ринок праці та особисті фінанси',
-    },    descriptionSv: 'Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.',
+    },
+    descriptionSv: 'Arbetsmarknaden, arbetsmarknadens parter, arbetsregler och privatekonomi.',
     descriptionEn:
       'The labour market, labour-market parties, workplace rules, and personal finance.',
     descriptionText: {
@@ -247,7 +262,8 @@ export const chapters: Chapter[] = [
       ti: 'ዕዳጋ ስራሕ፣ ኣካላት ዕዳጋ ስራሕ፣ ሕግታት ስራሕን ውልቃዊ ቍጠባን።',
       tr: 'İş gücü piyasası, iş gücü piyasası tarafları, çalışma kuralları ve kişisel finans.',
       uk: 'Ринок праці, сторони ринку праці, правила праці та особисті фінанси.',
-    },    questionCount: 35,
+    },
+    questionCount: 35,
   },
   {
     id: 'ch09',
@@ -264,7 +280,8 @@ export const chapters: Chapter[] = [
       ti: 'ሕብረተሰብ ድሕነት (welfare)',
       tr: 'Refah toplumu',
       uk: 'Суспільство добробуту',
-    },    descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
+    },
+    descriptionSv: 'Skatter, välfärd och ansvarsfördelning mellan stat, regioner och kommuner.',
     descriptionEn:
       'Taxes, welfare, and how responsibilities are divided between the state, regions, and municipalities.',
     descriptionText: {
@@ -274,11 +291,12 @@ export const chapters: Chapter[] = [
       ckb: 'باجەکان، خۆشگوزەرانی و دابەشکردنی بەرپرسیارێتی لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun).',
       fa: 'مالیات‌ها، رفاه و تقسیم مسئولیت‌ها میان دولت، مناطق (region) و کمون‌ها (kommun).',
       pl: 'Podatki, dobrobyt (welfare) i podział odpowiedzialności między państwo, regiony (region) i kommun.',
-      so: 'Canshuuraha, daryeelka (welfare) iyo qaybinta mas\'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.',
+      so: "Canshuuraha, daryeelka (welfare) iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
       ti: 'ቀረጽ፣ ድሕነት (welfare) ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።',
-      tr: 'Vergiler, refah (welfare) ve sorumlulukların devlet, region\'lar ve kommun\'lar arasında paylaşımı.',
+      tr: "Vergiler, refah (welfare) ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
       uk: 'Податки, добробут (welfare) та розподіл відповідальності між державою, region і kommun.',
-    },    questionCount: 55,
+    },
+    questionCount: 55,
   },
   {
     id: 'ch10',
@@ -293,9 +311,10 @@ export const chapters: Chapter[] = [
       pl: 'Współczesna historia Szwecji',
       so: 'Taariikhda casriga ah ee Iswiidhan',
       ti: 'ዘመናዊ ታሪኽ ሽወደን',
-      tr: 'İsveç\'in modern tarihi',
+      tr: "İsveç'in modern tarihi",
       uk: 'Сучасна історія Швеції',
-    },    descriptionSv:
+    },
+    descriptionSv:
       'Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering.',
     descriptionEn:
       "From agricultural society to industrial society, democratization, the people's home, and globalization.",
@@ -310,7 +329,8 @@ export const chapters: Chapter[] = [
       ti: 'ካብ ሕርሻዊ ሕብረተሰብ ናብ ኢንዱስትሪያዊ ሕብረተሰብ፣ ደሞክራሲ ምስፋን፣ Folkhemmet (ቤት ህዝቢ) ከምኡ’ውን ግሎባላይዜሽን።',
       tr: 'Tarım toplumundan sanayi toplumuna, demokratikleşme, Folkhemmet (halkın evi) ve küreselleşme.',
       uk: 'Від аграрного суспільства до промислового, демократизація, Folkhemmet (народний дім) та глобалізація.',
-    },    questionCount: 50,
+    },
+    questionCount: 50,
   },
   {
     id: 'ch11',
@@ -327,7 +347,8 @@ export const chapters: Chapter[] = [
       ti: 'ሽወደንን ግዳማዊ ዓለምን',
       tr: 'İsveç ve dış dünya',
       uk: 'Швеція та зовнішній світ',
-    },    descriptionSv:
+    },
+    descriptionSv:
       'Nordiskt, europeiskt och globalt samarbete samt försvars- och säkerhetspolitik.',
     descriptionEn: 'Nordic, European, and global cooperation, plus defence and security policy.',
     descriptionText: {
@@ -341,7 +362,8 @@ export const chapters: Chapter[] = [
       ti: 'ኖርዲካዊ፣ ኤውሮጳዊን ዓለማውን ምትሕብባር፣ ከምኡ’ውን ፖሊሲ ምክልኻልን ጸጥታን።',
       tr: 'İskandinav, Avrupa ve küresel iş birliği ile savunma ve güvenlik politikası.',
       uk: 'Співпраця на рівні країн Північної Європи, європейська та глобальна, а також оборонна та безпекова політика.',
-    },    questionCount: 60,
+    },
+    questionCount: 60,
   },
   {
     id: 'ch12',
@@ -358,7 +380,8 @@ export const chapters: Chapter[] = [
       ti: 'ዓለማዊ መንግስትን ብዙሕ ሃይማኖት ዘለዋ ሃገርን',
       tr: 'Laik bir devlet ve çok dinli bir ülke',
       uk: 'Світська держава та багатоконфесійна країна',
-    },    descriptionSv:
+    },
+    descriptionSv:
       'Religionsfrihet, statens religiösa neutralitet och religionens roll i samhället.',
     descriptionEn:
       "Freedom of religion, the state's religious neutrality, and the role of religion in society.",
@@ -373,7 +396,8 @@ export const chapters: Chapter[] = [
       ti: 'ናጽነት ሃይማኖት፣ ሃይማኖታዊ ገለልተኝነት መንግስትን ኣብ ሕብረተሰብ ዘሎ ተራ ሃይማኖትን።',
       tr: 'Din özgürlüğü, devletin dini tarafsızlığı ve dinin toplumdaki rolü.',
       uk: 'Свобода віросповідання, релігійна нейтральність держави та роль релігії в суспільстві.',
-    },    questionCount: 105,
+    },
+    questionCount: 105,
   },
   {
     id: 'ch13',
@@ -390,7 +414,8 @@ export const chapters: Chapter[] = [
       ti: 'ባህልታትን በዓላትን',
       tr: 'Gelenekler ve özel günler',
       uk: 'Традиції та свята',
-    },    descriptionSv: 'Traditionella högtider i Sverige och hur traditioner förändras över tid.',
+    },
+    descriptionSv: 'Traditionella högtider i Sverige och hur traditioner förändras över tid.',
     descriptionEn: 'Traditional holidays in Sweden and how traditions change over time.',
     descriptionText: {
       'zh-Hans': '瑞典的传统节日，以及传统如何随时间而变化。',
@@ -401,8 +426,9 @@ export const chapters: Chapter[] = [
       pl: 'Tradycyjne święta w Szwecji oraz to, jak tradycje zmieniają się z biegiem czasu.',
       so: 'Ciidaha dhaqameed ee Iswiidhan iyo sida caadooyinku ay isu beddelaan muddo ka dib.',
       ti: 'ኣብ ሽወደን ዘለዉ ባህላዊ በዓላትን ባህልታት ብግዜ ብኸመይ ከም ዝቕየሩን።',
-      tr: 'İsveç\'teki geleneksel özel günler ve geleneklerin zaman içinde nasıl değiştiği.',
+      tr: "İsveç'teki geleneksel özel günler ve geleneklerin zaman içinde nasıl değiştiği.",
       uk: 'Традиційні свята у Швеції та те, як традиції змінюються з часом.',
-    },    questionCount: 145,
+    },
+    questionCount: 145,
   },
 ];
