@@ -1647,6 +1647,19 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, /<title>Almost Swedish<\/title>/);
+  assert.match(index, /<meta name="application-name" content="Almost Swedish" \/>/);
+  assert.match(index, /<meta name="apple-mobile-web-app-title" content="Almost Swedish" \/>/);
+  assert.match(
+    index,
+    /<meta name="description" content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references\." \/>/,
+  );
+  assert.match(index, /<meta property="og:site_name" content="Almost Swedish" \/>/);
+  assert.match(index, /<meta property="og:title" content="Almost Swedish" \/>/);
+  assert.match(
+    index,
+    /<meta property="og:description" content="Practice Swedish civic knowledge with offline quizzes, local progress, and source references\." \/>/,
+  );
   assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
   assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
   assert.doesNotMatch(index, /src="\/_expo\//);

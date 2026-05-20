@@ -6079,12 +6079,15 @@ const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
+const webHtmlShell = loadText('app/+html.tsx');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
+let webHtmlBrandMetadataFieldsValidated = 0;
+let webHtmlBrandMetadataParityValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
 let tabNavigationRulesValidated = 0;
@@ -6587,6 +6590,67 @@ function validateAppConfigSchema() {
 
   if (valid && appConfigPluginsValidated === EXPECTED_APP_CONFIG_PLUGINS.length) {
     appConfigSchemaValidated = true;
+  }
+}
+
+function validateWebHtmlBrandMetadata() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const appName = appConfig?.expo?.name;
+  if (typeof appName !== 'string' || appName.length === 0) {
+    reject('app.json expo.name must be available before validating web title metadata');
+    return;
+  }
+
+  const escapedAppName = escapeRegExp(appName);
+  const titleDeclarationPattern = new RegExp(
+    `const\\s+webDocumentTitle\\s*=\\s*['"]${escapedAppName}['"]`,
+  );
+  const requiredSnippets = [
+    [titleDeclarationPattern, 'app/+html.tsx webDocumentTitle must match app.json expo.name'],
+    [/<title>\{webDocumentTitle\}<\/title>/, 'app/+html.tsx must render the document title'],
+    [
+      /<meta\s+content=\{webDocumentTitle\}\s+name=["']application-name["']\s*\/>/,
+      'app/+html.tsx must expose application-name brand metadata',
+    ],
+    [
+      /<meta\s+content=\{webDocumentTitle\}\s+name=["']apple-mobile-web-app-title["']\s*\/>/,
+      'app/+html.tsx must expose Apple web app title metadata',
+    ],
+    [
+      /<meta\s+content=\{webDocumentDescription\}\s+name=["']description["']\s*\/>/,
+      'app/+html.tsx must keep standard description metadata',
+    ],
+    [
+      /<meta\s+content=\{webDocumentTitle\}\s+property=["']og:title["']\s*\/>/,
+      'app/+html.tsx must expose Open Graph title metadata',
+    ],
+    [
+      /<meta\s+content=\{webDocumentDescription\}\s+property=["']og:description["']\s*\/>/,
+      'app/+html.tsx must expose Open Graph description metadata',
+    ],
+  ];
+
+  for (const [pattern, message] of requiredSnippets) {
+    if (pattern.test(webHtmlShell)) {
+      webHtmlBrandMetadataFieldsValidated += 1;
+    } else {
+      reject(message);
+    }
+  }
+
+  const staleBrowserTitle = ['Sweden', 'Citizenship', 'Test', 'Prep'].join(' ');
+  if (webHtmlShell.includes(staleBrowserTitle)) {
+    reject('app/+html.tsx must not use the stale browser-title brand');
+  }
+
+  if (valid && webHtmlBrandMetadataFieldsValidated === requiredSnippets.length) {
+    webHtmlBrandMetadataParityValidated = true;
   }
 }
 
@@ -13878,6 +13942,7 @@ validateMockExamConfig(
     : 0,
 );
 validateAppConfigSchema();
+validateWebHtmlBrandMetadata();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
@@ -13988,6 +14053,8 @@ console.log(
       chapterExactSchemaKeysValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
+      webHtmlBrandMetadataFieldsValidated,
+      webHtmlBrandMetadataParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       tabNavigationRulesValidated,

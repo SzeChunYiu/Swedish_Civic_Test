@@ -157,8 +157,12 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
+  const appConfig = readJson('app.json');
+  const appTitle = appConfig.expo.name;
 
   assertContains(htmlShell, '<html data-app-shell="expo-router" lang="sv">');
+  assertContains(htmlShell, `const webDocumentTitle = '${appTitle}';`);
+  assertContains(htmlShell, '<title>{webDocumentTitle}</title>');
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
     htmlShell,
@@ -176,10 +180,16 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /<body[\s\S]*backgroundColor:\s*colors\.canvas/,
     'web body background should use the theme canvas color',
   );
+  assertContains(htmlShell, '<meta content={webDocumentTitle} name="application-name" />');
   assertContains(
     htmlShell,
-    'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.',
+    '<meta content={webDocumentTitle} name="apple-mobile-web-app-title" />',
   );
+  assertContains(htmlShell, '<meta content={webDocumentDescription} name="description" />');
+  assertContains(htmlShell, '<meta content={webDocumentTitle} property="og:site_name" />');
+  assertContains(htmlShell, '<meta content={webDocumentTitle} property="og:title" />');
+  assertContains(htmlShell, '<meta content={webDocumentDescription} property="og:description" />');
+  assertContains(htmlShell, 'Practice Swedish civic knowledge with offline quizzes');
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
@@ -282,6 +292,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     htmlShell,
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${manifest.webLanguages[0]}">`,
   );
+  assertContains(htmlShell, `const webDocumentTitle = 'Almost Swedish';`);
+  assertContains(htmlShell, '<title>{webDocumentTitle}</title>');
+  assertContains(htmlShell, '<meta content={webDocumentTitle} name="application-name" />');
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);
   assertMatches(
