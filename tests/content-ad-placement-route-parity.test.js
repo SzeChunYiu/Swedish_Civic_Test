@@ -34,12 +34,15 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
   assert.match(
     homeSource,
     /<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
   );
   assert.match(learnSource, /<AdBanner placement="chapter_list_banner" \/>/);
-  assert.match(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(practiceSource, /getPracticeInterstitialShowKey\(question\.id, shuffleSessionId\)/);
+  assert.doesNotMatch(practiceSource, /showKey=\{[\s\S]{0,160}selectedOptionId/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
   assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
@@ -55,6 +58,39 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
+});
+
+test('ad placement route parity rejects practice interstitial keys scoped to selected answers', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'getPracticeInterstitialShowKey(question.id, shuffleSessionId)',
+        "\`\${question.id}:\${selectedOptionId ?? ''}\`",
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Practice route must key quiz_completed_interstitial by question and shuffle session/,
+  );
 });
 
 test('ad placement route parity rejects a drifted study route placement', () => {

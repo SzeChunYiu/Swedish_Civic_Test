@@ -57,7 +57,9 @@ test('practice flow scopes completed progress to the visible question bank', () 
 });
 
 test('practice session separates retry from next-question advancement', () => {
-  const { usePracticeSessionStore } = loadTs('lib/quiz/practiceSessionStore.ts');
+  const { getPracticeInterstitialShowKey, usePracticeSessionStore } = loadTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
 
   usePracticeSessionStore.setState({
     activeQuestionId: null,
@@ -70,18 +72,33 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, 'q1-a');
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
+  const firstFeedbackKey = getPracticeInterstitialShowKey(
+    usePracticeSessionStore.getState().activeQuestionId,
+    usePracticeSessionStore.getState().shuffleSessionId,
+  );
 
   usePracticeSessionStore.getState().resetSelection();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
+  assert.equal(
+    getPracticeInterstitialShowKey(
+      usePracticeSessionStore.getState().activeQuestionId,
+      usePracticeSessionStore.getState().shuffleSessionId,
+    ),
+    firstFeedbackKey,
+  );
 
   usePracticeSessionStore.getState().advanceQuestion();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
+  assert.notEqual(
+    getPracticeInterstitialShowKey('q1', usePracticeSessionStore.getState().shuffleSessionId),
+    firstFeedbackKey,
+  );
 });
 
 test('chapter quiz session id resolves to the first question in that chapter', () => {

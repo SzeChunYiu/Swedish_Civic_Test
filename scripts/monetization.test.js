@@ -348,6 +348,14 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
 
   assert.match(practiceInterstitialSource, /InterstitialAd\.createForAdRequest/);
   assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
+  assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
+  assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
+  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,
+  );
   assert.match(
     practiceInterstitialSource,
     /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
