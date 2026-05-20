@@ -25,6 +25,8 @@ function staleToken(...parts) {
   return new RegExp(parts.join('_'), 'i');
 }
 
+function staleSeparatedWords(...words) {
+  return new RegExp(words.join('[\\s_-]+'), 'i');
 function staleNativeIdentifierPattern() {
   return new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
 }
@@ -62,6 +64,15 @@ function assertNoStalePublicPrivacyPosture(source) {
     staleWords('real', 'ads', 'disabled'),
     staleWords('Data', 'Not', 'Collected'),
     staleToken('REAL_ADS', 'ENABLED_FOR_V1'),
+  ].forEach((pattern) => assert.doesNotMatch(source, pattern));
+}
+
+function assertNoStaleReleaseInstructionPosture(source) {
+  [
+    staleSeparatedWords('real', 'ads', 'disabled'),
+    staleSeparatedWords('deferred', 'real', 'ads', 'disabled'),
+    staleWords('disabled', 'Google', 'Mobile', 'Ads'),
+    new RegExp(`${['REAL_ADS', 'ENABLED_FOR_V1'].join('_')}\\s*=\\s*false`, 'i'),
   ].forEach((pattern) => assert.doesNotMatch(source, pattern));
 }
 
@@ -363,6 +374,23 @@ test('current release gate evidence records ad-supported ads posture', () => {
 
   assertNoLegacyAdsPosture(releaseGatesSource);
   assertNoLegacyAdsPosture(questionnaireSource);
+});
+
+test('active release instructions describe the ad-supported Remove Ads posture', () => {
+  const activeReleaseInstructions = [
+    read('publishing/post-eas-auth-runbook.md'),
+    read('reports/external-release-blockers.md'),
+    read('scripts/write-release-owner-action-packet.js'),
+  ].join('\n');
+
+  assert.match(activeReleaseInstructions, /AdMob app (record|readiness)/i);
+  assert.match(activeReleaseInstructions, /Google Mobile Ads/i);
+  assert.match(activeReleaseInstructions, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/i);
+  assert.match(activeReleaseInstructions, /Remove Ads/i);
+  assert.match(activeReleaseInstructions, /29 SEK/i);
+  assert.match(activeReleaseInstructions, /App Tracking Transparency|ATT/i);
+  assert.match(activeReleaseInstructions, /Google UMP|UMP consent|ATT\/UMP/i);
+  assertNoStaleReleaseInstructionPosture(activeReleaseInstructions);
 });
 
 test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
