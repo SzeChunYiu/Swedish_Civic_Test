@@ -30,7 +30,7 @@ translated languages. Concrete deliverables are:
 | Culture/humor/register documented | per-language `style-guide.md` files plus `locales/*/phrasebook.md` | All corpus languages have style guides; all target/corpus workspaces have phrasebooks/audits except source English uses embedded style-guide treatment. | yes, phase 1 |
 | Word-level glossary/audit workspaces | `locales/{ar,ckb,fa,pl,so,ti,tr,uk,zh-Hans,zh-Hant}/` | README, glossary, phrasebook, and audit files exist for all listed language workspaces. | yes, phase 1 |
 | Runtime fail-closed state | `docs/localization/readiness.json`; `lib/i18n/locales.ts`; `node --test scripts/localization-readiness.test.js` | Picker targets `ar/fa/so/ti/pl/tr/zh-Hans/zh-Hant` are unavailable and blocked; test passes. | yes |
-| Actual website/static copy improvement | `site/i18n-extras.js`; `scripts/static-site-i18n-extras-cultural-copy.test.js` | Static extra copy improved for `zh-Hans`, `zh-Hant`, `ar`, `fa`, `pl`, `so`, `ti`, `tr`; guard covers pass/passport slogans, Turkish outcome promises, and Chinese punctuation. | partial |
+| Actual website/static copy improvement | `site/i18n-extras.js`; `scripts/static-site-i18n-extras-cultural-copy.test.js` | Static extra copy improved for `zh-Hans`, `zh-Hant`, `ar`, `fa`, `pl`, `so`, `ti`, `tr`, `uk`; guard covers pass/passport slogans, Turkish outcome promises, and Chinese punctuation. | partial |
 | Actual app UI strings translated | `docs/localization/readiness.json` has `uiStrings: "not_started"`; `lib/i18n/locales.ts` and `components/ui/LanguagePicker.tsx` include native coming-soon badges for all blocked picker target locales | Full app UI translations are not done; only a tiny language-picker unavailable badge slice exists for blocked picker target locales. | partial |
 | Question bank and answer explanations translated | `docs/localization/readiness.json` has `questionContent: "not_started"` for target picker locales | No target-language question/content translation is complete. | no |
 | Accessibility labels and screen-reader text translated | readiness entries show `missing`, `missing_rtl_runtime_review`, `missing_cjk_runtime_review`, or `missing_geez_script_review` | Accessibility/runtime review remains missing. | no |
@@ -61,7 +61,7 @@ Corpus-only workspaces outside the runtime picker:
 | Locale | Workspace status | Release status |
 |---|---|---|
 | `ckb` | phase-1 glossary/phrasebook/audit exists | not in picker/readiness yet |
-| `uk` | phase-1 glossary/phrasebook/audit exists | not in picker/readiness yet |
+| `uk` | phase-1 glossary/phrasebook/audit exists | static extra surface added; not in native picker/readiness yet |
 
 ## Recent merged evidence
 
@@ -87,7 +87,7 @@ Corpus-only workspaces outside the runtime picker:
 5. Obtain or record native review for each language before moving any release
    gate to `allowed`.
 6. Continue replacing static/app mechanical copy for languages beyond the current
-   static extra surface (any future `ckb`/`uk` picker
+   static extra surface (any future `ckb` picker
    addition).
 
 ## Recommended next round
