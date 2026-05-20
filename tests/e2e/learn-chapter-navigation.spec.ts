@@ -28,7 +28,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await firstChapter.click();
 
   await expect(page).toHaveURL(/\/chapter\/ch01$/);
-  await expect(page.getByLabel('Starta quiz för Landet Sverige')).toBeVisible();
+  await expect(page.getByLabel('Starta övning för Landet Sverige')).toBeVisible();
 
   const chapterScreen = page.locator('body');
   await expect(chapterScreen).toContainText('Landet Sverige');
