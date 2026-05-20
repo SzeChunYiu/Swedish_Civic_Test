@@ -6897,6 +6897,12 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const calibrationModule = loadTs('lib/learning/calibration.ts');
+const isConfidenceRating = calibrationModule.isConfidenceRating;
+const normalizeConfidenceRating = calibrationModule.normalizeConfidenceRating;
+const generateCalibration = calibrationModule.generateCalibration;
+const gradeFromConfidence = calibrationModule.gradeFromConfidence;
+const lapsePenaltyForWrong = calibrationModule.lapsePenaltyForWrong;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7156,6 +7162,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let confidenceRatingBoundaryCasesValidated = 0;
+let confidenceRatingBoundaryParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -15000,6 +15008,170 @@ function validateSpacedRepetitionSchedule() {
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
 }
 
+function validateConfidenceRatingBoundaryParity() {
+  if (
+    typeof isConfidenceRating !== 'function' ||
+    typeof normalizeConfidenceRating !== 'function' ||
+    typeof generateCalibration !== 'function' ||
+    typeof gradeFromConfidence !== 'function' ||
+    typeof lapsePenaltyForWrong !== 'function'
+  ) {
+    return;
+  }
+
+  let valid = true;
+  const validRatings = [1, 2, 3, 4, 5];
+  const invalidRatings = [
+    0,
+    6,
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    'high',
+    null,
+    undefined,
+    3.5,
+    {},
+    [],
+  ];
+  const requiredSourceSnippets = [
+    ['export function isConfidenceRating', 'calibration must export isConfidenceRating'],
+    [
+      'export function normalizeConfidenceRating',
+      'calibration must export normalizeConfidenceRating',
+    ],
+    [
+      'normalizeConfidenceRating(event.confidenceRating)',
+      'generateCalibration must normalize event confidence ratings before bucket indexing',
+    ],
+    [
+      'normalizedRating === null || normalizedRating <= 3',
+      'gradeFromConfidence must default invalid correct confidence to Good, not Easy',
+    ],
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  let calibrationSource = '';
+  try {
+    calibrationSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/calibration.ts'), 'utf8');
+  } catch (error) {
+    reject(`lib/learning/calibration.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  validRatings.forEach((rating) => {
+    let caseIsValid = true;
+    if (!isConfidenceRating(rating)) {
+      caseIsValid = false;
+      reject(`confidence rating ${rating} should be accepted`);
+    }
+    if (normalizeConfidenceRating(rating) !== rating) {
+      caseIsValid = false;
+      reject(`confidence rating ${rating} should normalize to itself`);
+    }
+    if (caseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  invalidRatings.forEach((rating) => {
+    let caseIsValid = true;
+    if (isConfidenceRating(rating)) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should be rejected`);
+    }
+    if (normalizeConfidenceRating(rating) !== null) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should normalize to null`);
+    }
+    if (gradeFromConfidence(true, rating) !== 3) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should map correct answers to Good`);
+    }
+    if (gradeFromConfidence(false, rating) !== 1) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should keep wrong answers at Again`);
+    }
+    if (lapsePenaltyForWrong(rating) !== 0) {
+      caseIsValid = false;
+      reject(`invalid confidence rating ${String(rating)} should not add lapse penalty`);
+    }
+    if (caseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  let runtimeCaseIsValid = true;
+  let calibrationResult;
+  try {
+    calibrationResult = generateCalibration([
+      {
+        questionId: 'valid-low',
+        isCorrect: false,
+        answeredAt: '2026-05-19',
+        confidenceRating: 1,
+      },
+      ...invalidRatings.map((confidenceRating, index) => ({
+        questionId: `invalid-${index}`,
+        isCorrect: true,
+        answeredAt: '2026-05-19',
+        confidenceRating,
+      })),
+      {
+        questionId: 'valid-high',
+        isCorrect: true,
+        answeredAt: '2026-05-19',
+        confidenceRating: 5,
+      },
+    ]);
+  } catch (error) {
+    runtimeCaseIsValid = false;
+    reject(`generateCalibration must not throw on invalid confidence ratings: ${error.message}`);
+  }
+
+  if (calibrationResult) {
+    const bucketCounts = calibrationResult.buckets.map((bucket) => bucket.count);
+    if (calibrationResult.totalRatedAnswers !== 2) {
+      runtimeCaseIsValid = false;
+      reject(
+        `generateCalibration should skip invalid ratings and count 2 valid answers, got ${calibrationResult.totalRatedAnswers}`,
+      );
+    }
+    if (!jsonEqual(bucketCounts, [1, 0, 0, 0, 1])) {
+      runtimeCaseIsValid = false;
+      reject(
+        `generateCalibration bucket counts for invalid-rating mix are ${JSON.stringify(bucketCounts)}`,
+      );
+    }
+    if (
+      calibrationResult.buckets.some(
+        (bucket) =>
+          !Number.isFinite(bucket.count) ||
+          (bucket.actualAccuracy !== null && !Number.isFinite(bucket.actualAccuracy)) ||
+          (bucket.deltaPoints !== null && !Number.isFinite(bucket.deltaPoints)),
+      )
+    ) {
+      runtimeCaseIsValid = false;
+      reject('generateCalibration must not create non-finite bucket counts or deltas');
+    }
+  }
+  if (runtimeCaseIsValid) confidenceRatingBoundaryCasesValidated += 1;
+
+  requiredSourceSnippets.forEach(([snippet, message]) => {
+    if (!calibrationSource.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    confidenceRatingBoundaryCasesValidated += 1;
+  });
+
+  const expectedCases =
+    validRatings.length + invalidRatings.length + requiredSourceSnippets.length + 1;
+  if (valid && confidenceRatingBoundaryCasesValidated === expectedCases) {
+    confidenceRatingBoundaryParityValidated = true;
+  }
+}
+
 function validateStreakRules() {
   if (typeof calculateStreak !== 'function') return;
 
@@ -16695,6 +16867,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateConfidenceRatingBoundaryParity();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -16944,6 +17117,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      confidenceRatingBoundaryCasesValidated,
+      confidenceRatingBoundaryParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
