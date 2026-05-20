@@ -36,7 +36,7 @@ App identity (from publishing/release-readiness.md):
 
 ## Part B — "Remove Ads" in-app purchase (29 SEK, one-time)
 
-Product model: **non-consumable**, one-time unlock, sets `adsDisabled=true`.
+Product model: **non-consumable**, one-time unlock. The app stores a local validated purchase-status record with product ID, transaction ID or purchase token, and receipt-validation timestamp; it must not be documented as a bare entitlement flag.
 
 ### Apple — App Store Connect
 1. App Store Connect → your app → **In-App Purchases** → Create →

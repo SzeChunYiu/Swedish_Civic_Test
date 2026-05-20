@@ -28,6 +28,10 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/privacy.tsx'), /ad-supported/i);
   assert.match(read('app/privacy.tsx'), /Remove Ads/i);
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
+  assert.match(read('app/privacy.tsx'), /product ID/i);
+  assert.match(read('app/privacy.tsx'), /transaction ID or purchase token/i);
+  assert.match(read('app/privacy.tsx'), /receipt-validation timestamp/i);
+  assert.doesNotMatch(read('app/privacy.tsx'), /adsDisabled=true/);
   assert.match(read('app/privacy.tsx'), /App Tracking Transparency/i);
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
   assert.match(read('app/terms.tsx'), /study/i);
