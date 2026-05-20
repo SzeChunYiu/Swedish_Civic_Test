@@ -287,20 +287,40 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro does not grant the v1.0 Remove Ads entitlement', () => {
+test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
 
   assert.equal(premium.REMOVE_ADS_ENTITLEMENTS.adsDisabled, true);
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
-  assert.equal(adsRow.flag, undefined);
+  assert.equal(
+    premium.hasProEntitlement({
+      adsDisabled: true,
+      fullMistakeReview: false,
+      unlimitedMockExams: false,
+      spacedRepetition: false,
+    }),
+    false,
+  );
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
+  assert.equal(adsRow.flag, 'adsDisabled');
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, {
-    kind: 'text',
-    sv: 'vid sessionsskifte',
-    en: 'at session boundaries',
-  });
+  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
+});
+
+test('tierComparison: Swedish Pro labels use natural learner-facing copy', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const labelsById = Object.fromEntries(TIER_ROWS.map((row) => [row.id, row.labelSv]));
+
+  assert.equal(labelsById.mockExams, 'Övningsprov');
+  assert.equal(labelsById.mistakeReview, 'Repetera misstag');
+  assert.equal(labelsById.spacedRepetition, 'Repetition med intervall');
+  assert.equal(labelsById.customStudyPlan, 'Studieplan efter provdatum');
+  assert.equal(labelsById.predictedPass, 'Beräknad provberedskap');
+  assert.equal(labelsById.confidenceSlider, 'Säkerhetsskala och kalibrering');
+  assert.equal(labelsById.accessibility, 'Lättläst typsnitt, textstorlek och mörkt läge');
+  assert.notEqual(labelsById.mockExams, 'Provexamina');
+  assert.notEqual(labelsById.mistakeReview, 'Felgranskning');
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -318,12 +338,57 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
+test('tierComparison: native table hides ebook-only benefits until a native ebook route exists', () => {
+  const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const nativeEbookRouteExists = fs.existsSync(path.join(repoRoot, 'app/ebook.tsx'));
+  if (nativeEbookRouteExists) return;
+
+  const rowIds = TIER_ROWS.map((row) => row.id);
+  const rowLabels = TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
+  const rowFlags = TIER_ROWS.map((row) => row.flag).filter(Boolean);
+
+  assert.equal(
+    fs.existsSync(path.join(repoRoot, 'lib/storage/highlightsStore.ts')),
+    true,
+    'the local highlight store can remain as a tested primitive while the native reader is absent',
+  );
+  assert.equal(rowIds.includes('highlights'), false);
+  assert.equal(rowIds.includes('notesExport'), false);
+  assert.equal(rowFlags.includes('multiColorHighlights'), false);
+  assert.equal(rowFlags.includes('notesExport'), false);
+  assert.doesNotMatch(
+    rowLabels,
+    /Markeringar i e-bok|Ebook highlights|Exportera anteckningar|Notes export/,
+  );
+});
+
 test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', () => {
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
+});
+
+test('ProPaywall: renders the canonical tier model with separate Pro and Remove Ads paths', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /TIER_COLUMNS/);
+  assert.match(source, /TIER_ROWS/);
+  assert.match(source, /paywallCtaLabels/);
+  assert.match(source, /buyProLifetime/);
+  assert.match(source, /restoreProLifetime/);
+  assert.match(source, /alreadyAdFree/);
+  assert.match(source, /rowSummary:/);
+  assert.match(source, /accessibilityRole="summary"/);
+  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 // -------------------------------------------------------- Dashboard stats
@@ -701,6 +766,40 @@ test('computeReadinessScore: idle 30 days drags recency to 0', () => {
     now: new Date('2026-05-19T12:00:00.000Z'),
   });
   assert.equal(result.components.recency, 0);
+});
+
+test('computeReadinessScore: exam answers feed mock average, not practice accuracy', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const examAnswers = [
+    ...Array.from({ length: 32 }, () => true),
+    ...Array.from({ length: 8 }, () => false),
+  ].map((isCorrect, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+
+  const result = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'mock-with-answers',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: examAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 0);
+  assert.equal(result.components.mockAverage, 0.8);
 });
 
 // -------------------------------------------------------- Calibration

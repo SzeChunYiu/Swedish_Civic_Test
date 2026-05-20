@@ -23,11 +23,6 @@ type StaticSite = {
 function sanitizedIndexHtml() {
   return fs
     .readFileSync(path.join(siteRoot, 'index.html'), 'utf8')
-    .replace(/\s*<link\s+rel="preconnect"\s+href="https:\/\/fonts\.[^>]+>\s*/g, '\n')
-    .replace(
-      /\s*<link\s+href="https:\/\/fonts\.googleapis\.com\/css2\?[^>]+rel="stylesheet"\s*\/>\s*/g,
-      '\n',
-    )
     .replace(/\s*<script[\s\S]*?src="https:\/\/unpkg\.com\/[\s\S]*?<\/script>\s*/g, '\n')
     .replace(/\s*<script\s+type="text\/babel"\s+src="[^"]+"><\/script>\s*/g, '\n');
 }

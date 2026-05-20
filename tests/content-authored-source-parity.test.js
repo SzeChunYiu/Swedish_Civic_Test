@@ -33,7 +33,7 @@ test('derived q002 true-statement explanation expectation stays anchored to auth
     source,
     /byId\.get\(sourceQ002TrueStatementId\)\?\.explanationEn, sourceQ002\.explanationEn/,
   );
-  assert.doesNotMatch(source, /byId\.get\('q155'\)/);
+  assert.doesNotMatch(source, /byId\.get\('q\d{3,}'\)/);
   assert.doesNotMatch(
     source,
     /Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
