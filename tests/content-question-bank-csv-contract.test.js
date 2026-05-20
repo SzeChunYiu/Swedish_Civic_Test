@@ -112,6 +112,7 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /content\/question-bank\.csv row 2 has 22 columns, expected 21/,
+    /content\/question-bank\.csv row 2 has 19 columns, expected 18/,
   );
 });
 
@@ -219,6 +220,7 @@ test('question-bank export check rejects published-variant provenance collapse',
 });
 
 test('question-bank CSV exposes UHR source metadata with no blank cells', () => {
+test('question-bank CSV exposes UHR source publisher with no blank cells', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
     encoding: 'utf8',
@@ -231,6 +233,7 @@ test('question-bank CSV exposes UHR source metadata with no blank cells', () => 
 
   const uhrSectionMap = JSON.parse(
     fs.readFileSync(path.join(repoRoot, 'content/uhr-section-map.json'), 'utf8'),
+    fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
   );
   const csv = fs.readFileSync(path.join(repoRoot, 'content', 'question-bank.csv'), 'utf8');
   const lines = csv.trimEnd().split('\n');
@@ -255,6 +258,19 @@ test('question-bank CSV exposes UHR source metadata with no blank cells', () => 
       `every row should export ${field}`,
     );
   }
+  const publisherIndex = header.indexOf('uhrSourcePublisher');
+  assert.notEqual(publisherIndex, -1);
+
+  const rows = lines.slice(1).map(parseExportedCsvLine);
+  assert.equal(rows.length, summary.publishedQuestions);
+  assert.equal(
+    rows.find((row) => row[idIndex] === 'q001')?.[publisherIndex],
+    uhrSectionMap.source.publisher,
+  );
+  assert.ok(
+    rows.every((row) => row[publisherIndex] === uhrSectionMap.source.publisher),
+    'every row should export the UHR source publisher',
+  );
 });
 
 test('question-bank CSV contract rejects source publisher drift', () => {
