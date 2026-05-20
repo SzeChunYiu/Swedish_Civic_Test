@@ -1794,6 +1794,9 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     'utf8',
   );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
@@ -1853,6 +1856,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /minWidth: space\[15\]/);
   assert.doesNotMatch(paywallSource, /minWidth: 128/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
+  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(placementCtaSource, /shouldShowAd\(placement, resolvedEntitlements\)/);
+  assert.match(placementCtaSource, /href="\/profile"/);
+  assert.match(placementCtaSource, /Open Remove Ads/);
+  assert.match(placementCtaSource, /Öppna Ta bort annonser/);
   assert.match(homeSource, /import \{ PremiumBanner \}/);
   assert.match(homeSource, /entitlementsReady: monetizationEntitlementsReady/);
   assert.match(
@@ -1860,10 +1869,17 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     /monetizationEntitlementsReady && !monetizationEntitlements\.adsDisabled/,
   );
   assert.match(
-    homeSource,
-    /\{monetizationEntitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*entitlements=\{monetizationEntitlements\}[\s\S]*onEntitlementsChange=\{setMonetizationEntitlements\}[\s\S]*runtimeOptions=\{purchaseRuntime\}[\s\S]*\/>[\s\S]*\) : null\}[\s\S]*<AdBanner placement="home_banner" \/>/,
+    learnSource,
+    /<RemoveAdsPlacementCta placement="chapter_list_banner" \/>\s*<AdBanner placement="chapter_list_banner" \/>/,
   );
-  assert.doesNotMatch(homeSource, /<AdBanner entitlements=\{monetizationEntitlements\}/);
+  assert.match(
+    practiceSource,
+    /<RemoveAdsPlacementCta placement="quiz_completed_interstitial" \/>\s*<AdBanner placement="quiz_completed_interstitial" \/>/,
+  );
+  assert.match(
+    mistakesSource,
+    /<RemoveAdsPlacementCta placement="results_native" \/>\s*<NativeAdCard \/>/,
+  );
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /entitlementsReady/);
   assert.match(profileSource, /const removeAdsPaywall = entitlementsReady \? \(/);
@@ -1884,6 +1900,10 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
@@ -1895,10 +1915,12 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.match(pricingWedgeSource, /Alla frågor är gratis/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(placementCtaSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
   assert.doesNotMatch(pricingWedgeSource, /29 kr/);
   assert.doesNotMatch(pricingWedgeSource, /\bprovet är alltid annonsfritt\b/i);
   assert.doesNotMatch(paywallSource, /29 kr/);
+  assert.doesNotMatch(placementCtaSource, /29 kr/);
 });
 
 test('ad placements hydrate persisted remove-ads entitlements by default', () => {
@@ -1914,12 +1936,8 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
-  const webInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
-    'utf8',
-  );
-  const nativeInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
   const entitlementHookSource = fs.readFileSync(
@@ -1943,10 +1961,8 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
-  assert.match(webInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
-  assert.match(webInterstitialSource, /!entitlementsReady/);
-  assert.match(nativeInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
-  assert.match(nativeInterstitialSource, /!entitlementsReady/);
+  assert.match(placementCtaSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(placementCtaSource, /!entitlementsReady/);
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {

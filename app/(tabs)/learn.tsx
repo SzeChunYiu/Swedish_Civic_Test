@@ -169,6 +169,7 @@ export default function Screen() {
         })}
       </View>
 
+      <RemoveAdsPlacementCta placement="chapter_list_banner" />
       <AdBanner placement="chapter_list_banner" />
       <RemoveAdsPlacementCta placement="chapter_list_banner" />
     </ScreenShell>
