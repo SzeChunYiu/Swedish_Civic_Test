@@ -17,19 +17,26 @@ function loadTs(relativePath) {
   return mod.exports;
 }
 
-test('XP progression parity validates answer, completion, and level rules', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+function runFocusedXpRulesValidation() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-xp-rules'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+  assert.ok(match, 'focused XP validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
 
-  const summary = JSON.parse(match[0]);
+test('XP progression parity validates answer, completion, and level rules', () => {
+  const summary = runFocusedXpRulesValidation();
   const { calculateAnswerXp, calculateQuizCompletionXp, calculateLevel } =
     loadTs('lib/learning/xp.ts');
 
-  assert.equal(summary.xpRulesValidated, 11);
+  assert.equal(summary.xpRulesValidated, 20);
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: false }), 10);
@@ -60,6 +67,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-xp-rules');
 require('./scripts/validate-content.js');
 `,
     ],
