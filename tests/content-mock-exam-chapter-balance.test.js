@@ -46,7 +46,6 @@ function loadTs(relativePath, exportName) {
 
 test('default mock exam stays balanced across bundled UHR chapters', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
