@@ -77,7 +77,9 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /buyProLifetime/);
   assert.match(proPaywallSource, /restoreProLifetime/);
   assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
-  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
+  assert.match(proPaywallSource, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(proPaywallSource, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} remains separate/);
+  assert.doesNotMatch(proPaywallSource, /29 kr|29 kronor/);
   assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
 });
 
