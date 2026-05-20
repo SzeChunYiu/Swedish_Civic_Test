@@ -8727,9 +8727,6 @@ function validateLegalRouteHeaderParity() {
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
   }
-  if (valid && legalSwedishEnglishTokenRoutesValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
-    legalSwedishEnglishTokenGuardValidated = true;
-  }
 }
 
 function validateSettingsRouteHeaderParity() {

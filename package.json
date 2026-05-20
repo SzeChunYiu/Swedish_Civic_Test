@@ -35,7 +35,7 @@
     "submit:production": "node scripts/submit-production-guard.js",
     "test:build-config": "node --test scripts/build-config.test.js",
     "test:web-export-budget": "node --test tests/web-export-budget.test.js",
-    "test:derived-content": "node --test scripts/derived-content.test.js",
+    "test:derived-content": "node --test scripts/derived-content.test.js tests/derived-content-helper.test.js",
     "test:app-assets": "node --test scripts/app-assets.test.js",
     "test:architecture": "node --test scripts/architecture-scaffold.test.js",
     "test:router-shell": "node --test scripts/router-shell.test.js",
