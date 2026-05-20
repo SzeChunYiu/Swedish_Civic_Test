@@ -215,7 +215,7 @@ test('settings hydration falls back when MMKV reads throw', () => {
   assert.equal(state.hasSeenAboutTheTest, false);
 });
 
-test('settings runtime setters normalize invalid values before writing state', () => {
+test('settings runtime setters normalize invalid values or no-op before writing state', () => {
   const storage = createMemoryMMKV();
   const useSettingsStore = loadSettingsStoreFromStorage(storage);
 
@@ -230,7 +230,7 @@ test('settings runtime setters normalize invalid values before writing state', (
   assert.equal(state.includeSupplementaryQuestions, false);
   assert.equal(state.dailyGoalAnswers, 50);
   assert.equal(storage.values.get('language'), 'sv');
-  assert.equal(storage.values.get('audioEnabled'), true);
+  assert.equal(storage.values.get('audioEnabled'), undefined);
   assert.equal(storage.values.get('includeSupplementaryQuestions'), false);
   assert.equal(storage.values.get('dailyGoalAnswers'), 50);
 });
