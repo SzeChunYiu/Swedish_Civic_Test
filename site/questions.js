@@ -22678,7 +22678,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Cooperation between trade unions and employers.",
+      "en": "The 1938 Saltsjöbaden Agreement was important for cooperation between trade unions and employers.",
       "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare."
     },
     "opts": [
@@ -22718,7 +22718,7 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "true_false",
     "q": {
-      "en": "Sweden’s entry into the EU.",
+      "en": "The 1938 Saltsjöbaden Agreement was important for Sweden’s entry into the EU.",
       "sv": "Saltsjöbadsavtalet från 1938 blev viktigt för Sveriges inträde i EU."
     },
     "opts": [
@@ -23910,7 +23910,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "Human rights, democracy, and rule-of-law principles.",
+      "en": "The Council of Europe promotes human rights, democracy, and rule-of-law principles.",
       "sv": "Europarådet arbetar för mänskliga rättigheter, demokrati och rättsstatens principer."
     },
     "opts": [
@@ -23950,7 +23950,7 @@
     "chapter": "Ch. 11 · Sweden and the outside world",
     "type": "true_false",
     "q": {
-      "en": "Only agricultural policy.",
+      "en": "The Council of Europe promotes only agricultural policy.",
       "sv": "Europarådet arbetar endast för jordbrukspolitik."
     },
     "opts": [
@@ -25494,7 +25494,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Celebrate with parties and dinners and at night with fireworks.",
+      "en": "On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.",
       "sv": "På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier."
     },
     "opts": [
@@ -25534,7 +25534,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "Large bonfires and spring songs.",
+      "en": "On New Year’s Eve, 31 December, large bonfires and spring songs are common.",
       "sv": "På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger."
     },
     "opts": [
