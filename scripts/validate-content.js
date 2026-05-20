@@ -263,6 +263,10 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
+const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
+  /\bVilket svar beskriver\b/i,
+  /\bWhich answer describes\b/i,
+];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
@@ -4275,6 +4279,12 @@ function findQuestionJudgementMetaStem(question) {
   return QUESTION_JUDGEMENT_META_STEM_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionAnswerKeyPrompt(question) {
+  const text = [question.questionSv, question.questionEn].join(' ');
+
+  return QUESTION_ANSWER_KEY_PROMPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4896,6 +4906,35 @@ function describesStatementEn(subject, answer) {
   }
   return replaceLeadingEnglishSubject(subject, answer);
 }
+function importantRolesStatementSv(subject, context, answer) {
+  if (/^Att\s+/i.test(answer)) {
+    return `I ${context} har ${lowerFirst(subject)} viktiga uppgifter: att ${lowerLeadingSwedishClauseStart(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  if (/^De ska\s+/i.test(answer)) {
+    return `I ${context} ska ${lowerFirst(subject)} ${lowerFirst(answer.replace(/^De ska\s+/i, ''))}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+function importantRolesStatementEn(subject, context, answer) {
+  if (/^To inform, enable public debate, and scrutinize people with power$/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(
+      subject,
+    )} play important roles: informing, enabling public debate, and scrutinizing people with power`;
+  }
+  if (/^To\s+/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(subject)} play an important role: ${englishGerundPhrase(
+      answer,
+    )}`;
+  }
+  if (/^They should\s+/i.test(answer)) {
+    return `In ${context}, ${lowerFirst(subject)} should ${lowerFirst(
+      answer.replace(/^They should\s+/i, ''),
+    )}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
 function commonStatementSv(subject, answer) {
   if (/^Gemensamma\s+/i.test(answer)) {
     return `${upperFirst(subject)} har ${lowerFirst(answer)}`;
@@ -5403,6 +5442,8 @@ function civicStatementSv(source, option) {
     )} för att ${match[3]}`;
   match = q.match(/^Vilket ansvar har (.+?) inom (.+)$/i);
   if (match) return `${upperFirst(match[1])} ansvarar för ${swedishPurposeClause(answer)}`;
+  match = q.match(/^Vilka viktiga uppgifter har (.+?) i (.+)$/i);
+  if (match) return importantRolesStatementSv(match[1], match[2], answer);
   match = q.match(/^Vilket svar ger exempel på (.+)$/i);
   if (match) return `${upperFirst(answer)} är exempel på ${match[1]}`;
   match = q.match(/^Vad förändrades genom (.+)$/i);
@@ -5721,6 +5762,8 @@ function civicStatementEn(source, option) {
     )} to ${match[3]}`;
   match = q.match(/^What responsibility do (.+?) have within (.+)$/i);
   if (match) return `${upperFirst(match[1])} are responsible for ${englishGerundPhrase(answer)}`;
+  match = q.match(/^What important roles do (.+?) play in (.+)$/i);
+  if (match) return importantRolesStatementEn(match[1], match[2], answer);
   match = q.match(/^Which answer gives examples of (.+)$/i);
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
@@ -15362,6 +15405,9 @@ function validateAuthoredSourceParity() {
         `${label} authored true/false source explanation contains answer-judgement boilerplate`,
       );
     }
+    if (findQuestionAnswerKeyPrompt(question)) {
+      reject(`${label} source prompt asks about the answer instead of the civic concept`);
+    }
 
     if (validateQuestionSchema(question, index) && authoredQuestionIsValid) {
       authoredSourceQuestionsValidated += 1;
@@ -16143,6 +16189,7 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
@@ -16165,6 +16212,9 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated judgement meta-stem instead of a civic-study prompt`);
       } else {
         questionJudgementMetaStemsValidated += 1;
+      }
+      if (answerKeyPrompt) {
+        fail(`${label} asks about the answer instead of the civic concept`);
       }
       if (generatedTrueFalseNaturalnessIssue) {
         fail(`${label} contains a generated true/false grammar-splice stem`);

@@ -2002,8 +2002,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "What important roles do free media play in a democracy?",
+      "sv": "Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -15074,8 +15074,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Which answer best matches? What important roles do free media play in a democracy?",
+      "sv": "Vilket svar stämmer bäst? Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -15122,8 +15122,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.",
-      "sv": "En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt."
+      "en": "In a democracy, free media play important roles: informing, enabling public debate, and scrutinizing people with power.",
+      "sv": "I en demokrati har fria medier viktiga uppgifter: att informera, möjliggöra samhällsdebatt och granska personer med makt."
     },
     "opts": [
       {
@@ -15162,8 +15162,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Free media in a democracy should replace political elections.",
-      "sv": "Fria medier i en demokrati ska ersätta politiska val."
+      "en": "In a democracy, free media should replace political elections.",
+      "sv": "I en demokrati ska fria medier ersätta politiska val."
     },
     "opts": [
       {
@@ -15202,8 +15202,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes an important role of free media in a democracy?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Choose the correct option: What important roles do free media play in a democracy?",
+      "sv": "Välj rätt alternativ: Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {

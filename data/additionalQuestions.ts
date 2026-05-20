@@ -553,8 +553,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q045',
     'ch06',
     { chapter: 'Mediernas roll', section: 'Fria medier', pageApprox: 20 },
-    'Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?',
-    'Which answer describes an important role of free media in a democracy?',
+    'Vilka viktiga uppgifter har fria medier i en demokrati?',
+    'What important roles do free media play in a democracy?',
     [
       [
         'Att informera, möjliggöra samhällsdebatt och granska personer med makt',
