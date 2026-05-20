@@ -259,6 +259,10 @@ const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
   /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
 ];
+const QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS = [
+  /\bVilka varor som har moms\b/i,
+  /\bWhich goods have VAT\b/i,
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -4309,6 +4313,25 @@ function findQuestionTaxVatTwoConceptIssue(question) {
   ].join(' ');
 
   return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionSuccessionVatDistractorIssue(question) {
+  if (
+    question.uhrReference?.section !== 'Successionsordningen' &&
+    !(question.tags || []).includes('succession')
+  ) {
+    return null;
+  }
+
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionNestedMetaStem(question) {
@@ -16372,6 +16395,7 @@ if (Array.isArray(questions)) {
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
+      const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16415,6 +16439,9 @@ if (Array.isArray(questions)) {
         fail(
           `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
         );
+      }
+      if (successionVatDistractorIssue) {
+        fail(`${label} uses the old q038 VAT distractor wording`);
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
