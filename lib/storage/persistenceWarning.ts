@@ -1,4 +1,4 @@
-export type PersistenceOperation = 'write';
+export type PersistenceOperation = 'read' | 'write';
 
 export type RecoverablePersistenceWarning = {
   type: 'recoverable-persistence-warning';
@@ -12,6 +12,11 @@ export type RecoverablePersistenceWarning = {
 
 type WritableStorage = {
   set: (key: string, value: boolean | number | string) => void;
+};
+
+export type RecoverableReadResult<T> = {
+  value: T | undefined;
+  warning: RecoverablePersistenceWarning | null;
 };
 
 function describeError(error: unknown): string | undefined {
@@ -61,5 +66,28 @@ export function writeRecoverably(
       operation: 'write',
       storageId,
     });
+  }
+}
+
+export function readRecoverably<T>(
+  storage: object | null,
+  storageId: string,
+  key: string,
+  read: () => T | undefined,
+): RecoverableReadResult<T> {
+  if (!storage) return { value: undefined, warning: null };
+
+  try {
+    return { value: read(), warning: null };
+  } catch (error) {
+    return {
+      value: undefined,
+      warning: createRecoverablePersistenceWarning({
+        error,
+        key,
+        operation: 'read',
+        storageId,
+      }),
+    };
   }
 }
