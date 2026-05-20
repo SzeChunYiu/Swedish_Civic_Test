@@ -6198,31 +6198,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What do many people do on All Saints’ Day in Sweden?",
-      "sv": "Vad gör många på Alla helgons dag i Sverige?"
+      "en": "What kind of holiday is All Saints’ Day in Sweden?",
+      "sv": "Vilken typ av helgdag är Alla helgons dag i Sverige?"
     },
     "opts": [
       {
-        "en": "Go to cemeteries and light candles on graves",
-        "sv": "Går till kyrkogården och tänder ljus på gravar"
+        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
+        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
       },
       {
-        "en": "Dance around a midsummer pole and make flower wreaths",
-        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
+        "en": "A Midsummer celebration that welcomes summer",
+        "sv": "En midsommarfest för att välkomna sommaren"
       },
       {
-        "en": "Light large bonfires to welcome spring",
-        "sv": "Tänder stora brasor för att välkomna våren"
+        "en": "Workers' day with demonstrations and speeches",
+        "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {
-        "en": "Open one Advent calendar door each day",
-        "sv": "Öppnar en lucka i adventskalendern varje dag"
+        "en": "A period of preparation before Christmas",
+        "sv": "En förberedelseperiod inför julen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
+      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6234,8 +6234,7 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "cemetery",
-      "candles",
+      "christian-holiday",
       "remembrance",
       "traditions"
     ]
@@ -31290,31 +31289,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do many people do on All Saints’ Day in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gör många på Alla helgons dag i Sverige?"
+      "en": "What kind of holiday is All Saints’ Day in Sweden ...?",
+      "sv": "Vilken typ av helgdag är Alla helgons dag i Sverige ...?"
     },
     "opts": [
       {
-        "en": "Go to cemeteries and light candles on graves",
-        "sv": "Går till kyrkogården och tänder ljus på gravar"
+        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
+        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
       },
       {
-        "en": "Dance around a midsummer pole and make flower wreaths",
-        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
+        "en": "A Midsummer celebration that welcomes summer",
+        "sv": "En midsommarfest för att välkomna sommaren"
       },
       {
-        "en": "Light large bonfires to welcome spring",
-        "sv": "Tänder stora brasor för att välkomna våren"
+        "en": "Workers' day with demonstrations and speeches",
+        "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {
-        "en": "Open one Advent calendar door each day",
-        "sv": "Öppnar en lucka i adventskalendern varje dag"
+        "en": "A period of preparation before Christmas",
+        "sv": "En förberedelseperiod inför julen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
+      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31326,8 +31325,7 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "cemetery",
-      "candles",
+      "christian-holiday",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31340,8 +31338,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on graves.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på gravar."
+      "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died.",
+      "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött."
     },
     "opts": [
       {
@@ -31355,8 +31353,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
+      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31368,8 +31366,7 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "cemetery",
-      "candles",
+      "christian-holiday",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31382,8 +31379,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, many people dance around a midsummer pole and make flower wreaths.",
-      "sv": "På Alla helgons dag dansar många runt midsommarstången och binder blomsterkransar."
+      "en": "A Midsummer celebration that welcomes summer.",
+      "sv": "En midsommarfest för att välkomna sommaren."
     },
     "opts": [
       {
@@ -31397,8 +31394,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
+      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31410,8 +31407,7 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "cemetery",
-      "candles",
+      "christian-holiday",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31424,31 +31420,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What do many people do on All Saints’ Day in Sweden?",
-      "sv": "Välj rätt alternativ: Vad gör många på Alla helgons dag i Sverige?"
+      "en": "Choose the correct option: What kind of holiday is All Saints’ Day in Sweden?",
+      "sv": "Välj rätt alternativ: Vilken typ av helgdag är Alla helgons dag i Sverige?"
     },
     "opts": [
       {
-        "en": "Go to cemeteries and light candles on graves",
-        "sv": "Går till kyrkogården och tänder ljus på gravar"
+        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
+        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
       },
       {
-        "en": "Dance around a midsummer pole and make flower wreaths",
-        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
+        "en": "A Midsummer celebration that welcomes summer",
+        "sv": "En midsommarfest för att välkomna sommaren"
       },
       {
-        "en": "Light large bonfires to welcome spring",
-        "sv": "Tänder stora brasor för att välkomna våren"
+        "en": "Workers' day with demonstrations and speeches",
+        "sv": "Arbetarnas dag med demonstrationer och tal"
       },
       {
-        "en": "Open one Advent calendar door each day",
-        "sv": "Öppnar en lucka i adventskalendern varje dag"
+        "en": "A period of preparation before Christmas",
+        "sv": "En förberedelseperiod inför julen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
-      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
+      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
+      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31460,8 +31456,7 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "cemetery",
-      "candles",
+      "christian-holiday",
       "remembrance",
       "traditions",
       "published-variant",
