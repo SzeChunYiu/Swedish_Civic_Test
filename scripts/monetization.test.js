@@ -306,6 +306,11 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
 });
 
 test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const adBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
@@ -317,6 +322,9 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(adsSource, /export const WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(adBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.doesNotMatch(adBannerSource, /WEB_FALLBACK_CONSENT_DECISION/);
   assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
   assert.match(nativeAdCardSource, /NativeAdView/);
   assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
@@ -332,7 +340,11 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   );
   assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd|Sponsored study placement/);
 
-  assert.match(webAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(webAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webAdCardSource,
+    /shouldShowAd\('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION\)/,
+  );
   assert.match(
     webAdCardSource,
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,

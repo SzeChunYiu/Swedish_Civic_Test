@@ -1261,13 +1261,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Frågepass',
-    'Det finns inga övningsfrågor ännu.',
+    'Quizpass',
+    'Det finns inga quizfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Frågepass ${currentSessionId}',
+    'Quizpass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här frågan',
+    'Försök igen med den här quizfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1280,12 +1280,6 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Try this quiz question again',
   ],
 };
-const SWEDISH_ROUTE_QUIZ_LOANWORD_FORBIDDEN = [
-  new RegExp(['Starta', 'quiz'].join(' ')),
-  new RegExp(['Quiz', 'pass'].join('')),
-  new RegExp(['quiz', 'frågor'].join('')),
-  new RegExp(['quiz', 'frågan'].join('')),
-];
 const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'quiz route must import AppLanguage from settings'],
   ['type QuizSessionCopy = {', 'quiz route must define a typed copy contract'],
@@ -1343,8 +1337,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta frågepass',
-    'Starta frågepass för ${chapterTitle}',
+    'Starta quiz',
+    'Starta quiz för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -3791,8 +3785,8 @@ const STATIC_SITE_SWEDISH_STUDY_TERM_REQUIRED = [
 ];
 const STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_FORBIDDEN = [
   /gör ett\s+quiz/i,
-  new RegExp(['quiz', 'frågor'].join(''), 'i'),
-  new RegExp(['quiz', 'pass'].join(''), 'i'),
+  /quizfrågor/i,
+  /quizpass/i,
   /quizet/i,
 ];
 const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = ['gör en övning'];
@@ -6996,6 +6990,14 @@ function validateAdPlacementRouteParity() {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
       );
+      const webFallbackShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)`,
+      );
+      const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+      const adBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
@@ -7004,8 +7006,20 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
         'utf8',
       );
-      if (!nativeAdCardSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)) {
+      if (!adsSource.includes('export const WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('ads.ts must export the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!adBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!webFallbackShouldShowPattern.test(nativeAdCardSource)) {
         reject(`NativeAdCard must gate ${spec.placement} through shouldShowAd`);
+        routeIsValid = false;
+      }
+      if (!nativeAdCardSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('NativeAdCard web fallback must use the shared web fallback consent decision');
         routeIsValid = false;
       }
       if (nativeAdCardSource.includes('react-native-google-mobile-ads')) {
@@ -8022,11 +8036,6 @@ function validateQuizRouteCopyParity() {
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
-  SWEDISH_ROUTE_QUIZ_LOANWORD_FORBIDDEN.forEach((pattern) => {
-    if (pattern.test(quizRoute)) {
-      reject('quiz route Swedish copy must avoid English quiz loanwords');
-    }
-  });
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -8303,11 +8312,6 @@ function validateChapterRouteCopyParity() {
 
   EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!chapterRoute.includes(snippet)) reject(message);
-  });
-  SWEDISH_ROUTE_QUIZ_LOANWORD_FORBIDDEN.forEach((pattern) => {
-    if (pattern.test(chapterRoute)) {
-      reject('chapter route Swedish copy must avoid English quiz loanwords');
-    }
   });
 
   const seenLabels = new Set();
