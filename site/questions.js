@@ -1864,12 +1864,12 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "What applies to a person suspected of a crime in Sweden?",
+      "en": "How should a person suspected of a crime be treated in Sweden?",
       "sv": "Vad gäller för en person som är misstänkt för brott i Sverige?"
     },
     "opts": [
       {
-        "en": "A suspected person should be considered innocent until the person has been convicted",
+        "en": "A person suspected of a crime should be considered innocent until convicted",
         "sv": "En misstänkt person ska betraktas som oskyldig tills personen har dömts"
       },
       {
@@ -4874,8 +4874,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
-      "sv": "Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
+      "en": "What exists in different places in Sweden for Buddhists and Hindus?",
+      "sv": "Vad finns på olika platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -14546,12 +14546,12 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What applies to a person suspected of a crime in Sweden?",
+      "en": "Which answer best matches? How should a person suspected of a crime be treated in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad gäller för en person som är misstänkt för brott i Sverige?"
     },
     "opts": [
       {
-        "en": "A suspected person should be considered innocent until the person has been convicted",
+        "en": "A person suspected of a crime should be considered innocent until convicted",
         "sv": "En misstänkt person ska betraktas som oskyldig tills personen har dömts"
       },
       {
@@ -14594,7 +14594,7 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "true_false",
     "q": {
-      "en": "A suspected person should be considered innocent until the person has been convicted.",
+      "en": "A person suspected of a crime should be considered innocent until convicted.",
       "sv": "En misstänkt person ska betraktas som oskyldig tills personen har dömts."
     },
     "opts": [
@@ -14674,12 +14674,12 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What applies to a person suspected of a crime in Sweden?",
+      "en": "Choose the correct option: How should a person suspected of a crime be treated in Sweden?",
       "sv": "Välj rätt alternativ: Vad gäller för en person som är misstänkt för brott i Sverige?"
     },
     "opts": [
       {
-        "en": "A suspected person should be considered innocent until the person has been convicted",
+        "en": "A person suspected of a crime should be considered innocent until convicted",
         "sv": "En misstänkt person ska betraktas som oskyldig tills personen har dömts"
       },
       {
@@ -26218,8 +26218,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
+      "en": "Which answer best matches? What exists in different places in Sweden for Buddhists and Hindus?",
+      "sv": "Vilket svar stämmer bäst? Vad finns på olika platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {
@@ -26267,8 +26267,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Buddhist and Hindu congregations and temples exist in Sweden.",
-      "sv": "Buddhistiska och hinduiska församlingar och tempel finns i Sverige."
+      "en": "In different places in Sweden, there are Buddhist and Hindu congregations and temples for Buddhists and Hindus.",
+      "sv": "På olika platser i Sverige finns buddhistiska och hinduiska församlingar och tempel för buddhister och hinduer."
     },
     "opts": [
       {
@@ -26308,8 +26308,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Government agencies that choose religion exist in Sweden.",
-      "sv": "Statliga myndigheter som väljer religion finns i Sverige."
+      "en": "In different places in Sweden, there are government agencies that choose religion for Buddhists and Hindus.",
+      "sv": "På olika platser i Sverige finns statliga myndigheter som väljer religion för buddhister och hinduer."
     },
     "opts": [
       {
@@ -26349,8 +26349,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?",
-      "sv": "Välj rätt alternativ: Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?"
+      "en": "Choose the correct option: What exists in different places in Sweden for Buddhists and Hindus?",
+      "sv": "Välj rätt alternativ: Vad finns på olika platser i Sverige för buddhister och hinduer?"
     },
     "opts": [
       {

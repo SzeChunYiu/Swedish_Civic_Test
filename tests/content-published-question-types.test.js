@@ -16,10 +16,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
-const buddhistHinduOldPromptPattern =
-  /\b(?:Vad finns på olika platser i Sverige för buddhister och hinduer|What exists in different places in Sweden for Buddhists and Hindus)\b/i;
-const buddhistHinduRedundantGeneratedPattern =
-  /\b(?:På olika platser i Sverige finns (?:buddhistiska och hinduiska församlingar och tempel|statliga myndigheter som väljer religion) för buddhister och hinduer|In different places in Sweden, there are (?:Buddhist and Hindu congregations and temples|government agencies that choose religion) for Buddhists and Hindus)\b/i;
+const suspectedCrimeEnglishCalquePattern = /\bWhat applies to a person suspected of a crime\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -226,6 +223,86 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('suspected-crime source prompt uses natural English in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.en, ...(question.opts || []).map((option) => option.en)].join(' ');
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q042 = generatedSiteBank.find((question) => question.id === 'q042');
+  const q042Practice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q042', 'singleChoice'),
+  );
+  const q042Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q042', 'judgement'),
+  );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    suspectedCrimeEnglishCalquePattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => suspectedCrimeEnglishCalquePattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(q042, 'q042 should be published in the site bank');
+  assert.equal(q042.q.en, 'How should a person suspected of a crime be treated in Sweden?');
+  assert.equal(
+    q042.opts[0].en,
+    'A person suspected of a crime should be considered innocent until convicted',
+  );
+  assert.ok(q042Practice, 'q042 generated practice variant should be published');
+  assert.equal(
+    q042Practice.q.en,
+    'Which answer best matches? How should a person suspected of a crime be treated in Sweden?',
+  );
+  assert.ok(q042Judgement, 'q042 generated judgement variant should be published');
+  assert.equal(
+    q042Judgement.q.en,
+    'Choose the correct option: How should a person suspected of a crime be treated in Sweden?',
+  );
+});
+
+test('suspected-crime English naturalness guard rejects What applies calque', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'How should a person suspected of a crime be treated in Sweden?',
+      'What applies to a person suspected of a crime in Sweden?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q042 uses a suspected-crime English prompt calque/,
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -307,108 +384,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
-  );
-});
-
-test('Buddhist and Hindu congregation source and exports use direct prompts', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const sourceSiteQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
-  const q108 = generatedById.get('q108');
-  const q108True = generatedById.get(
-    generatedQuestionId(sourceSiteQuestions, 'q108', 'trueStatement'),
-  );
-  const q108False = generatedById.get(
-    generatedQuestionId(sourceSiteQuestions, 'q108', 'falseStatement'),
-  );
-  const textForQuestion = (question) =>
-    [
-      question.q?.sv,
-      question.q?.en,
-      question.why?.sv,
-      question.why?.en,
-      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
-    ].join(' ');
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) => {
-    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    return (
-      buddhistHinduOldPromptPattern.test(source) ||
-      buddhistHinduRedundantGeneratedPattern.test(source)
-    );
-  });
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) => {
-      const text = textForQuestion(question);
-      return (
-        buddhistHinduOldPromptPattern.test(text) ||
-        buddhistHinduRedundantGeneratedPattern.test(text)
-      );
-    })
-    .map((question) => question.id);
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(q108, 'q108 should be published in the site bank');
-  assert.ok(q108True, 'q108 true-statement variant should be published in the site bank');
-  assert.ok(q108False, 'q108 false-statement variant should be published in the site bank');
-  assert.equal(
-    q108.q.sv,
-    'Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?',
-  );
-  assert.equal(
-    q108.q.en,
-    'What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?',
-  );
-  assert.equal(
-    q108True.q.sv,
-    'Buddhistiska och hinduiska församlingar och tempel finns i Sverige.',
-  );
-  assert.equal(q108True.q.en, 'Buddhist and Hindu congregations and temples exist in Sweden.');
-  assert.equal(q108False.q.sv, 'Statliga myndigheter som väljer religion finns i Sverige.');
-  assert.equal(q108False.q.en, 'Government agencies that choose religion exist in Sweden.');
-});
-
-test('Buddhist and Hindu prompt naturalness guard rejects vague source prompt', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'Vilka slags församlingar och tempel finns för buddhister och hinduer i Sverige?',
-        'Vad finns på olika platser i Sverige för buddhister och hinduer?',
-      )
-      .replace(
-        'What kinds of congregations and temples are there for Buddhists and Hindus in Sweden?',
-        'What exists in different places in Sweden for Buddhists and Hindus?',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q108 uses vague Buddhist\/Hindu source prompt wording/,
   );
 });
 

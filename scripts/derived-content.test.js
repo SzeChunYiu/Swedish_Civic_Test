@@ -649,13 +649,12 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       chapterId: 'ch05',
       type: 'single_choice',
       questionSv: 'Vad gäller för en person som är misstänkt för brott i Sverige?',
-      questionEn: 'What applies to a person suspected of a crime in Sweden?',
+      questionEn: 'How should a person suspected of a crime be treated in Sweden?',
       options: [
         {
           id: 'a',
           textSv: 'En misstänkt person ska betraktas som oskyldig tills personen har dömts',
-          textEn:
-            'A suspected person should be considered innocent until the person has been convicted',
+          textEn: 'A person suspected of a crime should be considered innocent until convicted',
         },
         {
           id: 'b',
@@ -773,9 +772,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     ),
   );
   assert.ok(
-    text.includes(
-      'A suspected person should be considered innocent until the person has been convicted.',
-    ),
+    text.includes('A person suspected of a crime should be considered innocent until convicted.'),
   );
   assert.ok(
     text.includes(

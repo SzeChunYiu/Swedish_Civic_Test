@@ -491,11 +491,11 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch05',
     { chapter: 'Lag och rätt', section: 'Domstolar', pageApprox: 18 },
     'Vad gäller för en person som är misstänkt för brott i Sverige?',
-    'What applies to a person suspected of a crime in Sweden?',
+    'How should a person suspected of a crime be treated in Sweden?',
     [
       [
         'En misstänkt person ska betraktas som oskyldig tills personen har dömts',
-        'A suspected person should be considered innocent until the person has been convicted',
+        'A person suspected of a crime should be considered innocent until convicted',
       ],
       [
         'Domstolarna avgör bara frågor mellan föräldrar',
