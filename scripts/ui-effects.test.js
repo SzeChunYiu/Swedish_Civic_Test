@@ -1087,6 +1087,18 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   );
 });
 
+test('first-run about modal uses natural Swedish guide accessibility copy', () => {
+  const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
+  const staleGuideLabel = ['Öppna om-', 'provet-', 'guiden'].join('');
+
+  assert.match(source, /open: 'Läs guiden'/);
+  assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
+  assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
+  assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.doesNotMatch(source, new RegExp(staleGuideLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(source, /Öppna\s+om-[\s\S]*provet-[\s\S]*guiden/);
+});
+
 test('exam results include per-question explanations and UHR sources', () => {
   const source = read('app/(tabs)/exam.tsx');
 
