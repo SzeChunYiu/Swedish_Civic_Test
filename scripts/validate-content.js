@@ -954,6 +954,14 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route guided path must reuse the daily-practice progress signal',
   ],
   [
+    'const answerAttempts = useProgressStore((state) => state.answerAttempts);',
+    'home route must read persisted answer attempts for the daily goal',
+  ],
+  [
+    'countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress })',
+    'home daily goal must count persisted per-answer attempts with migration fallback',
+  ],
+  [
     'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
     'home route must read persisted mock exam scores',
   ],
@@ -3365,6 +3373,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
 const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'completedQuestionIds', type: 'string[]', optional: false },
   { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
+  { name: 'answerAttempts', type: 'AnswerAttemptProgress[]', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
@@ -12221,6 +12230,19 @@ function validateProgressStoreSchemaParity() {
       'mock-exam answer timing rows must hydrate through a normalizer',
     ],
     [
+      'export type AnswerAttemptProgress = {',
+      'progress store must type persisted per-answer attempt rows',
+    ],
+    [
+      'function normalizeAnswerAttempts(value: unknown): AnswerAttemptProgress[]',
+      'answer-attempt rows must hydrate through a normalizer',
+    ],
+    ['answerAttempts: [],', 'empty progress must initialize answer attempt history'],
+    [
+      'answerAttempts: normalizeAnswerAttempts(candidate.answerAttempts)',
+      'progress hydration must normalize persisted answer attempt history',
+    ],
+    [
       'const normalizedAnswers = normalizeMockExamAnswers(item.answers);',
       'mock-exam hydration must normalize persisted answer timing rows',
     ],
@@ -12250,6 +12272,10 @@ function validateProgressStoreSchemaParity() {
     [
       "import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';",
       'progress store must import quiz completion XP rules',
+    ],
+    [
+      '{ questionId, isCorrect, answeredAt }',
+      'recordAnswer must persist one dated answer-attempt row per answer',
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
@@ -12294,6 +12320,7 @@ function validateProgressStoreSchemaParity() {
     'Math.round(candidate.lifetimeSpent ?? fallback.lifetimeSpent)',
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
+    'answeredAt: item.answeredAt',
     'completedAt: item.completedAt',
     'timeSpentSeconds: item.timeSpentSeconds',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
