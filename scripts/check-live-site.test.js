@@ -198,6 +198,48 @@ test('live site check passes current static assets', async () => {
   });
 });
 
+test('live site check rejects unqualified no-tracking static copy', async () => {
+  const staleApp = [
+    currentAssets()['/app.js'],
+    '"numbers.4": "to start. No login. No tracking.";',
+    '"numbers.4": "att börja. Ingen inloggning. Ingen spårning.";',
+  ].join('\n');
+
+  await withStaticServer({ ...currentAssets(), '/app.js': staleApp }, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find(
+      (check) => check.name === 'static privacy no-tracking copy',
+    );
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /No tracking/);
+    assert.match(failedCheck?.details ?? '', /Ingen spårning/);
+  });
+});
+
+test('live site check rejects missing static security headers', async () => {
+  await withStaticServer(
+    currentAssets(),
+    async (baseUrl) => {
+      const result = await checkLiveSite(baseUrl, {
+        requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+        requiredQuestionCount: 715,
+      });
+      const failedCheck = result.checks.find((check) => check.name === 'static security headers');
+      assert.equal(result.ok, false);
+      assert.equal(failedCheck?.ok, false);
+      assert.match(failedCheck?.details ?? '', /missing X-Content-Type-Options/);
+      assert.match(failedCheck?.details ?? '', /missing Referrer-Policy/);
+      assert.match(failedCheck?.details ?? '', /missing X-Frame-Options/);
+      assert.match(failedCheck?.details ?? '', /missing Permissions-Policy/);
+    },
+    { includeSecurityHeaders: false },
+  );
+});
+
 test('live site check rejects stale deploy assets', async () => {
   await withStaticServer(staleAssets(), async (baseUrl) => {
     const result = await checkLiveSite(baseUrl, {
