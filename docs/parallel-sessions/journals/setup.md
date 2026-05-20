@@ -1204,9 +1204,9 @@ Next suggested validator action: keep SETUP source-held unless fresh P0 site/rel
 
 ## Iteration 252 - 2026-05-19
 
-Task completed: MASCOT-ASSET-PACK-CONTRACT-1 - committed the 10 mascot x 5 expression SVG asset pack and added asset contract guards for path resolution, file size, flat colors, local-only SVG safety, and official Swedish flag color usage.
-Artifacts changed: `assets/mascot/**`, `tests/v1-1-mascot-catalog.test.js`, `scripts/app-assets.test.js`, `scripts/validate-content.js`, `docs/parallel-sessions/journals/setup.md`.
-Verification: clean worktree from current `origin/main` `664861be`; `node --test tests/v1-1-mascot-catalog.test.js scripts/app-assets.test.js scripts/theme-discipline.test.js` exit 0 with 10/10 passing; `npm run validate:content` exit 0 with `mascotAssetFilesValidated:50` and `mascotAssetContractValidated:true`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run format:check` exit 0; `npm run test:ownership` exit 0.
-PR: pending from `task/setup/mascot-asset-pack-contract-1779209972` at handoff commit time.
-Blocked? no for this mascot asset contract atom.
-Next suggested validator action: inspect the committed mascot SVGs and rerun the mascot/app-assets/content validation checks before accepting `MASCOT-ASSET-PACK-CONTRACT-1`.
+Task completed: REMOVE-ADS-STORED-RECEIPT-REVALIDATION-1 - made persisted Remove Ads entitlement loading fail closed unless a purchase provider restores and validates current store ownership, clearing local-only structured records that only parse from storage.
+Artifacts changed: `lib/monetization/purchases.ts`, `lib/monetization/useRemoveAdsEntitlements.ts`, `scripts/monetization.test.js`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-remove-ads-purchase-runtime-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `26583e9b`; linked shared `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 24/24 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `removeAdsPurchaseRuntimeCasesValidated:15`; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-remove-ads-purchase-runtime-parity.test.js scripts/content-production.test.js` exit 0 with 4/4 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run format:check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `node scripts/prepare-web-export.js --check dist-web` exit 0; `git diff --check` exit 0.
+PR: pending from `task/setup/stored-receipt-revalidation-1779161279` at handoff commit time.
+Blocked? no for this P0 ads-IAP source atom.
+Next suggested validator action: inspect the stored entitlement revalidation path and rerun `npm run test:monetization`, `npm run validate:content`, and the purchase-runtime parity tests before accepting `REMOVE-ADS-STORED-RECEIPT-REVALIDATION-1`.

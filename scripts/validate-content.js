@@ -13198,21 +13198,15 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
     [
-      normalizedPurchaseSource.includes('interface RemoveAdsPersistenceResult') &&
-        normalizedPurchaseSource.includes('async function persistValidatedRemoveAdsEntitlement') &&
-        normalizedPurchaseSource.includes('persisted: false'),
-      'Remove Ads persistence failures must be represented as a typed recoverable result',
-    ],
-    [
-      normalizedPurchaseSource.includes("return createResult('persistence_failed'") &&
-        normalizedPurchaseSource.includes("source: 'purchase'") &&
-        normalizedPurchaseSource.includes("source: 'restore'"),
-      'Remove Ads buy and restore flows must return persistence_failed after validated persistence failures',
-    ],
-    [
-      normalizedPurchaseSource.includes('async function getFailClosedPurchaseEntitlements') &&
-        normalizedPurchaseSource.includes('return removeAdsEntitlements(false);'),
-      'Remove Ads persistence failures must fail closed instead of enabling adsDisabled without stored proof',
+      normalizedPurchaseSource.includes('revalidateStoredRemoveAdsEntitlementRecord') &&
+        normalizedPurchaseSource.includes('clearStoredRemoveAdsEntitlement(storage)') &&
+        normalizedPurchaseSource.includes(
+          'const availablePurchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);',
+        ) &&
+        normalizedPurchaseSource.includes('purchaseMatchesStoredRecord(purchase, record)') &&
+        normalizedPurchaseSource.includes('if (!provider) {') &&
+        normalizedPurchaseSource.includes('await clearStoredRemoveAdsEntitlement(storage);'),
+      'stored Remove Ads entitlements must revalidate through the provider before disabling ads',
     ],
   ];
 

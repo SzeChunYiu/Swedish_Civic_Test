@@ -5,6 +5,7 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
   createMockPurchaseProvider,
+  createNativePurchaseProvider,
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
@@ -20,6 +21,7 @@ const E2E_TEST_GLOBAL = '__SMT_E2E__';
 const MAX_TEST_ENTITLEMENT_DELAY_MS = 5000;
 
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
+let defaultNativePurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
 const removeAdsEntitlementListeners = new Set<(entitlements: PremiumEntitlements) => void>();
@@ -61,8 +63,13 @@ function subscribeToRemoveAdsEntitlements(listener: (entitlements: PremiumEntitl
 
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
-): PurchaseRuntimeOptions | undefined {
-  if (Platform.OS !== 'web') return undefined;
+): PurchaseRuntimeOptions {
+  if (Platform.OS !== 'web') {
+    defaultNativePurchaseRuntimeOptions ??= {
+      provider: createNativePurchaseProvider(),
+    };
+    return defaultNativePurchaseRuntimeOptions;
+  }
 
   defaultWebPurchaseRuntimeOptions ??= {
     provider: createMockPurchaseProvider(),
