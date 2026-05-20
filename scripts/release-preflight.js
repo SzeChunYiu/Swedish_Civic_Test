@@ -134,10 +134,21 @@ const v11ScopeSurfacePaths = [
   'lib/monetization/proLifetimePurchase.ts',
 ];
 
-const removeAdsDeviceQaPath = 'reports/release-ads-iap-device-qa.md';
-const removeAdsStep3Command =
-  'test -f lib/monetization/purchases.ts && grep -qiE "restore" lib/monetization/purchases.ts && grep -rqi "remove.?ads" app components lib';
+const removeAdsDeviceQaPath =
+  process.env.RELEASE_PREFLIGHT_DEVICE_QA_PATH || 'reports/release-ads-iap-device-qa.md';
+const removeAdsStep3StructuralGate =
+  'Remove Ads structural gate: purchases.ts exists, canonical buy/restore flows use REMOVE_ADS_PRODUCT_ID, 29 SEK pricing is exported, and app/components/lib expose Remove Ads wiring';
 const releaseScopeOverrideId = 'release-scope-v11';
+const removeAdsDeviceQaArtifactRoot = 'reports/release-device-qa/';
+const removeAdsDeviceQaRequiredChecks = [
+  'admob-test-ads-study-screens',
+  'remove-ads-purchase-hides-ads',
+  'entitlement-persists-after-relaunch',
+  'restore-purchase-restores-entitlement',
+  'att-status-documented',
+  'ump-consent-documented',
+  'mock-exam-shows-no-ads',
+];
 
 const expectedPublicUrlEvidenceRequirements = {
   'store-records': [
@@ -227,17 +238,40 @@ function removeAdsV1AcceptanceFindings() {
   if (!/admob|advertis|in-app purchase/i.test(dataSafety)) {
     findings.push('GOAL step 7 is red: Google Play data safety does not disclose ads and IAP.');
   }
+  const stalePublicPrivacyTerms = stalePublicPrivacyPatterns
+    .filter(([pattern]) => pattern.test(publicPrivacySurface))
+    .map(([, label]) => label);
+  if (stalePublicPrivacyTerms.length > 0) {
+    findings.push(
+      `Public privacy posture is red: hosted/listing copy still says ${stalePublicPrivacyTerms.join(
+        ', ',
+      )}.`,
+    );
+  }
+  if (!/Google Mobile Ads|AdMob/i.test(publicPrivacySurface)) {
+    findings.push(
+      'Public privacy posture is red: public copy does not disclose Google Mobile Ads.',
+    );
+  }
+  if (!/Remove Ads/i.test(publicPrivacySurface) || !/29 SEK/i.test(publicPrivacySurface)) {
+    findings.push(
+      'Public privacy posture is red: public copy does not disclose 29 SEK Remove Ads.',
+    );
+  }
+  if (
+    !/App Tracking Transparency|ATT/i.test(publicPrivacySurface) ||
+    !/UMP consent/i.test(publicPrivacySurface)
+  ) {
+    findings.push('Public privacy posture is red: public copy does not disclose ATT/UMP consent.');
+  }
   if (!exists(removeAdsDeviceQaPath)) {
     findings.push(`Manual device-QA gate is red: ${removeAdsDeviceQaPath} is missing.`);
   } else {
-    const deviceQa = readFileIfExists(removeAdsDeviceQaPath);
-    const blockedTerms = blockedEvidencePatterns
-      .filter(([pattern]) => pattern.test(deviceQa))
-      .map(([, label]) => label);
-    if (blockedTerms.length > 0) {
+    const errors = validateRemoveAdsDeviceQaReport(removeAdsDeviceQaPath);
+    if (errors.length > 0) {
       findings.push(
-        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} still contains ${blockedTerms.join(
-          ', ',
+        `Manual device-QA gate is red: ${removeAdsDeviceQaPath} is incomplete: ${errors.join(
+          '; ',
         )}.`,
       );
     }
