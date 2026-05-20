@@ -26,7 +26,7 @@ const featureEvidence = {
   ),
   webAdPreviewSafe: has('components/monetization/AdBanner.tsx', /web preview/),
   homeNextAction: has('app/(tabs)/home.tsx', /nextAction/),
-  homeFeedbackCard: has('app/(tabs)/home.tsx', /Study-loop improvements/),
+  homeFeedbackCard: has('app/(tabs)/home.tsx', /10,000-learner feedback pass/),
   settingsLink: has('app/(tabs)/profile.tsx', /Open settings/),
 };
 
