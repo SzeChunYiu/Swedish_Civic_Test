@@ -24,6 +24,31 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-progress-schema-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
+function runFocusedExamSubmissionValidationWithRoutePatch(search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return String(contents).replace(${JSON.stringify(search)}, ${JSON.stringify(replacement)});
+  }
+  return contents;
+};
+process.argv.push('--focus-exam-submission-finality-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -155,10 +180,13 @@ function progressSnapshot(state) {
 }
 
 test('progress question schema stays in parity with persisted progress records', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-progress-schema-parity'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -174,7 +202,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 13);
+  assert.equal(summary.progressStoreFieldsValidated, 17);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.match(progressTypes, /export interface UserQuestionProgress/);
   assert.match(
@@ -195,6 +223,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /answerHistory: AnswerHistoryEntry\[\];/);
   assert.match(progressStore, /mockExamSessions: MockExamProgress\[\];/);
   assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
+  assert.match(progressStore, /persistenceWarning: RecoverablePersistenceWarning \| null;/);
   assert.match(progressStore, /function normalizeNonNegativeInteger\(value: unknown/);
   assert.match(progressStore, /function normalizeAnswerHistoryEntry\(value: unknown\)/);
   assert.match(progressStore, /const seenCount = normalizeNonNegativeInteger/);
@@ -218,11 +247,18 @@ test('progress question schema stays in parity with persisted progress records',
   );
   assert.match(
     progressStore,
-    /function writeProgress\(progress: PersistedProgress\): PersistedProgress/,
+    /function writeProgress\(\s*progress: PersistedProgress,\s*\): PersistedProgress & \{\s*persistenceWarning: RecoverablePersistenceWarning \| null;?\s*\}/,
   );
   assert.match(progressStore, /const serializedProgress = JSON\.stringify\(progress\);/);
-  assert.match(progressStore, /progressStorage\?\.set\(progressStateKey, serializedProgress\);/);
-  assert.match(progressStore, /return normalizeProgress\(JSON\.parse\(serializedProgress\)\);/);
+  assert.match(progressStore, /writeRecoverably\(/);
+  assert.match(progressStore, /progressStorageId/);
+  assert.match(progressStore, /progressStateKey/);
+  assert.match(progressStore, /serializedProgress/);
+  assert.match(
+    progressStore,
+    /return \{ \.\.\.normalizeProgress\(JSON\.parse\(serializedProgress\)\), persistenceWarning \};/,
+  );
+  assert.match(progressStore, /clearPersistenceWarning: \(\) => void;/);
 });
 
 test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
@@ -522,6 +558,19 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assert.deepEqual(useProgressStore.getState().answerHistory, []);
 });
 
+test('exam submission finality parity rejects losing the submitted completion timestamp', () => {
+  const result = runFocusedExamSubmissionValidationWithRoutePatch(
+    'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),',
+    'completedAt: new Date().toISOString(),',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result submission must persist a completed mock-exam score for readiness/,
+  );
+});
+
 test('progress hydration falls back when MMKV reads throw', () => {
   const state = loadProgressFromProgressStorage({
     getString() {
@@ -559,6 +608,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-progress-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -643,6 +693,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-progress-schema-parity');
 require('./scripts/validate-content.js');
 `,
     ],
