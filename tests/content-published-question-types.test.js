@@ -29,6 +29,7 @@ const luciaExplanationRoleScaffoldPattern =
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
+const authoredWayToPromptPattern = /\b(?:Vilket är ett sätt att|Which is a way to)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const generatedIdLiteralPatterns = [
@@ -751,6 +752,95 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q045 source prompt asks about the answer instead of the civic concept/,
+  );
+});
+
+test('participation source prompts ask the civic concept directly in exports', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) => [question.q?.sv, question.q?.en].join(' ');
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = Array.from(actualSiteBank)
+    .filter((question) => authoredWayToPromptPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => authoredWayToPromptPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1] ?? line.slice(0, 80));
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q013 = generatedSiteBank.find((question) => question.id === 'q013');
+  const q013True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'trueStatement'),
+  );
+  const q013False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q013', 'falseStatement'),
+  );
+
+  assert.ok(q013, 'q013 should be published in the site bank');
+  assert.equal(q013.q.sv, 'Hur kan människor påverka samhället och delta i demokratin?');
+  assert.equal(q013.q.en, 'How can people influence society and participate in democracy?');
+  assert.ok(q013True, 'q013 true generated variant should be published');
+  assert.equal(
+    q013True.q.sv,
+    'Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling.',
+  );
+  assert.equal(
+    q013True.q.en,
+    'People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.',
+  );
+  assert.ok(q013False, 'q013 false generated variant should be published');
+  assert.equal(
+    q013False.q.sv,
+    'Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val.',
+  );
+  assert.equal(
+    q013False.q.en,
+    'People can influence society and participate in democracy by banning others from voting in political elections.',
+  );
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('participation source prompt guard rejects way-to answer-key wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents)
+      .replace(
+        'Hur kan människor påverka samhället och delta i demokratin?',
+        'Vilket är ett sätt att påverka och delta i samhället?',
+      )
+      .replace(
+        'How can people influence society and participate in democracy?',
+        'Which is a way to influence and participate in society?',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q013 source prompt asks about the answer instead of the civic concept/,
   );
 });
 
