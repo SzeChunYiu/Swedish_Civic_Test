@@ -36,6 +36,8 @@ const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
 const highlightsStorageId = 'highlights';
 export const MAX_HIGHLIGHT_SPAN = 5000;
 export const MAX_HIGHLIGHT_NOTE_LENGTH = 1000;
+const ADD_HIGHLIGHT_INPUT_VALIDATION_ID = 'hl_input_validation';
+const ADD_HIGHLIGHT_INPUT_VALIDATION_TIMESTAMP = '2026-01-01T00:00:00.000Z';
 
 let highlightsStorage: MMKV | null = null;
 
@@ -188,9 +190,37 @@ export interface AddHighlightInput {
   note?: string;
 }
 
-function normalizeAddHighlightInput(input: AddHighlightInput): AddHighlightInput | null {
+function normalizeAddHighlightInput(input: unknown): AddHighlightInput | null {
   if (!input || typeof input !== 'object') return null;
-  return input;
+  const candidate = input as Partial<AddHighlightInput>;
+  if (!isNonEmptyString(candidate.chapterId)) throw new Error('Invalid highlight range.');
+  if (candidate.color !== undefined && !isHighlightColor(candidate.color)) {
+    throw new Error('Invalid highlight color.');
+  }
+  const highlight = normalizeHighlight(
+    {
+      id: ADD_HIGHLIGHT_INPUT_VALIDATION_ID,
+      chapterId: candidate.chapterId,
+      blockId: candidate.blockId,
+      startOffset: candidate.startOffset,
+      endOffset: candidate.endOffset,
+      color: candidate.color,
+      ...(candidate.note !== undefined ? { note: candidate.note } : {}),
+      createdAt: ADD_HIGHLIGHT_INPUT_VALIDATION_TIMESTAMP,
+      updatedAt: ADD_HIGHLIGHT_INPUT_VALIDATION_TIMESTAMP,
+    },
+    candidate.chapterId,
+    'write',
+  );
+  if (!highlight) throw new Error('Invalid highlight range.');
+  return {
+    chapterId: highlight.chapterId,
+    blockId: highlight.blockId,
+    startOffset: highlight.startOffset,
+    endOffset: highlight.endOffset,
+    color: highlight.color,
+    ...(highlight.note !== undefined ? { note: highlight.note } : {}),
+  };
 }
 
 function createHighlight(input: AddHighlightInput, now: string): Highlight {
@@ -241,6 +271,7 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     return highlight;
   },
   updateHighlight: (id, patch) => {
+    if (!isNonEmptyString(id) || !patch || typeof patch !== 'object') return;
     if (patch.color !== undefined && !isHighlightColor(patch.color)) {
       throw new Error('Invalid highlight color.');
     }
@@ -249,20 +280,27 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     set((state) => {
       const byChapter: Record<string, Highlight[]> = {};
       let touched = false;
+      const updatedAt = new Date().toISOString();
       for (const [chapterId, list] of Object.entries(state.byChapter)) {
         byChapter[chapterId] = list.map((h) => {
           if (h.id !== id) return h;
           touched = true;
-          return {
-            ...h,
-            color: patch.color ?? h.color,
-            note: patch.note !== undefined ? normalizedNote : h.note,
-            updatedAt: new Date().toISOString(),
-          };
+          const highlight = normalizeHighlight(
+            {
+              ...h,
+              color: patch.color ?? h.color,
+              note: patch.note !== undefined ? normalizedNote : h.note,
+              updatedAt,
+            },
+            chapterId,
+            'write',
+          );
+          if (!highlight) throw new Error('Invalid highlight update.');
+          return highlight;
         });
       }
       if (!touched) return state;
-      const next = { byChapter };
+      const next = normalizeHighlightsState({ byChapter });
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
