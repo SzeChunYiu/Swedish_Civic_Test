@@ -253,6 +253,27 @@ const QUESTION_AUTHORITY_OVERCLAIM_PATTERN_FIXTURES = [
   'kvalitetsgranskad av regeringen',
   'garanterar att klara',
 ];
+const PROVENANCE_AUTHORITY_COPY_OVERCLAIMS = [
+  [['Directly', 'from', 'UHR'], 'positive direct-source English badge copy'],
+  [['Direkt', 'från', 'UHR'], 'positive direct-source Swedish badge copy'],
+  [['traced', 'directly', 'to', 'UHR'], 'positive traced-source English drawer copy'],
+  [['kommer', 'direkt', 'från', 'UHR'], 'positive traced-source Swedish drawer copy'],
+  [['generated', 'from', 'a', 'UHR', 'question'], 'positive generated-source English copy'],
+  [['genererats', 'från', 'en', 'UHR-fråga'], 'positive generated-source Swedish copy'],
+].map(([parts, label]) => ({
+  label,
+  pattern: new RegExp(parts.map((part) => escapeRegExp(part)).join('\\s+'), 'i'),
+}));
+const PROVENANCE_AUTHORITY_COPY_FILES = [
+  'app/(tabs)/practice.tsx',
+  'lib/content/provenance.ts',
+  'site/practice.js',
+  'scripts/validate-content.js',
+  'scripts/static-site-question-feedback.test.js',
+  'tests/content-practice-route-copy-parity.test.js',
+  'tests/content-static-site-source-citation-parity.test.js',
+  'tests/e2e/practice-header-controls.spec.ts',
+];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
   /\bTrue or false:\s*A correct answer to\s+"(?:True or false:)?/i,
@@ -454,8 +475,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Redaktionell',
     'Om källorna',
     'Stäng om källorna',
-    'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i mock-provet är UHR.',
-    'Variant som genererats utifrån en UHR-fråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
+    'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
+    'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
   ],
   en: [
@@ -480,8 +501,8 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Editorial',
     'About the sources',
     'Close about-the-sources',
-    "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
-    'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
+    "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.",
+    'Variant of an app-authored, UHR-referenced practice question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
   ],
 };
@@ -7046,6 +7067,8 @@ let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
+let provenanceAuthorityCopyFilesValidated = 0;
+let provenanceAuthorityCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
@@ -8901,6 +8924,43 @@ function validatePracticeRouteCopyParity() {
   );
   if (valid && practiceRouteCopyLabelsValidated === expectedLabelCount) {
     practiceRouteCopyParityValidated = true;
+  }
+}
+
+function validateProvenanceAuthorityCopyBoundary() {
+  let valid = true;
+
+  for (const relativePath of PROVENANCE_AUTHORITY_COPY_FILES) {
+    const filePath = path.join(repoRoot, relativePath);
+    let source = '';
+    try {
+      source = fs.readFileSync(filePath, 'utf8');
+    } catch (error) {
+      valid = false;
+      fail(
+        `${relativePath} could not be read for provenance authority copy validation: ${error.message}`,
+      );
+      continue;
+    }
+
+    const matches = PROVENANCE_AUTHORITY_COPY_OVERCLAIMS.filter(({ pattern }) =>
+      pattern.test(source),
+    );
+    if (matches.length > 0) {
+      valid = false;
+      fail(
+        `${relativePath} includes positive provenance authority wording: ${matches
+          .map(({ label }) => label)
+          .join(', ')}`,
+      );
+      continue;
+    }
+
+    provenanceAuthorityCopyFilesValidated += 1;
+  }
+
+  if (valid && provenanceAuthorityCopyFilesValidated === PROVENANCE_AUTHORITY_COPY_FILES.length) {
+    provenanceAuthorityCopyParityValidated = true;
   }
 }
 
@@ -15337,6 +15397,7 @@ validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
+validateProvenanceAuthorityCopyBoundary();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
@@ -15470,6 +15531,8 @@ console.log(
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
       practiceRouteCopyParityValidated,
+      provenanceAuthorityCopyFilesValidated,
+      provenanceAuthorityCopyParityValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
       chapterRouteCopyLabelsValidated,

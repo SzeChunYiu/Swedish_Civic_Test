@@ -14,7 +14,7 @@ export function getQuestionProvenance(question: { tags?: readonly string[] }): Q
   return 'uhr';
 }
 
-/** True when a question came directly from UHR's *Sverige i fokus*. */
+/** True when a question is based on UHR's *Sverige i fokus*. */
 export function isUhrQuestion(question: { tags?: readonly string[] }): boolean {
   return getQuestionProvenance(question) === 'uhr';
 }
@@ -44,16 +44,14 @@ export const provenanceCopy: Record<
   uhr: {
     labelSv: 'UHR',
     labelEn: 'UHR',
-    descriptionSv: 'Direkt från UHR:s utbildningsmaterial Sverige i fokus.',
-    descriptionEn: "Directly from UHR's study material Sverige i fokus.",
+    descriptionSv: 'Baserad på UHR:s studiematerial Sverige i fokus.',
+    descriptionEn: "Based on UHR's study material Sverige i fokus.",
   },
   derived: {
     labelSv: 'Tillägg',
     labelEn: 'Supplementary',
-    descriptionSv:
-      'Variant som genererats från en UHR-fråga för att öva samma kunskap från en annan vinkel.',
-    descriptionEn:
-      'Variant generated from a UHR question to practise the same knowledge from another angle.',
+    descriptionSv: 'Variant av en appskriven, UHR-hänvisad övningsfråga.',
+    descriptionEn: 'Variant of an app-authored, UHR-referenced practice question.',
   },
   editorial: {
     labelSv: 'Redaktionell',

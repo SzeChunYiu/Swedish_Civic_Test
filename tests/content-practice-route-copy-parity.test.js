@@ -6,6 +6,10 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function phrase(parts) {
+  return parts.join(' ');
+}
+
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -21,6 +25,8 @@ test('practice route shell copy follows the persisted settings language', () => 
 
   assert.equal(summary.practiceRouteCopyLabelsValidated, 72);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
+  assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
+  assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
   assert.match(source, /type PracticeScope/);
   assert.match(source, /const QUICK_ROUND_SIZE = 10;/);
@@ -42,6 +48,12 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);
   assert.doesNotMatch(source, /Close about-the-sources|about-the-sources/);
+  assert.doesNotMatch(source, new RegExp(phrase(['traced', 'directly', 'to', 'UHR']), 'i'));
+  assert.doesNotMatch(
+    source,
+    new RegExp(phrase(['generated', 'from', 'a', 'UHR', 'question']), 'i'),
+  );
+  assert.doesNotMatch(source, new RegExp(phrase(['kommer', 'direkt', 'från', 'UHR']), 'i'));
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
@@ -131,4 +143,36 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /source drawer copy must not contain hyphenated about-the-sources/,
   );
+});
+
+test('provenance copy parity rejects positive UHR authority wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+const current =
+  "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.";
+const stale = [
+  'Questions traced',
+  'directly to',
+  "UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
+].join(' ');
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace(current, stale);
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /positive provenance authority wording/);
 });

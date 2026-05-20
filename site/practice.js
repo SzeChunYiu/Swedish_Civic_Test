@@ -51,12 +51,18 @@
   }
   const provenanceCopy = {
     uhr: {
-      en: { label: 'UHR', description: "Directly from UHR's study material Sverige i fokus." },
-      sv: { label: 'UHR', description: 'Direkt från UHR:s utbildningsmaterial Sverige i fokus.' },
+      en: { label: 'UHR', description: "Based on UHR's study material Sverige i fokus." },
+      sv: { label: 'UHR', description: 'Baserad på UHR:s studiematerial Sverige i fokus.' },
     },
     derived: {
-      en: { label: 'Supplementary', description: 'Variant generated from a UHR question.' },
-      sv: { label: 'Tillägg', description: 'Variant som genererats från en UHR-fråga.' },
+      en: {
+        label: 'Supplementary',
+        description: 'Variant of an app-authored, UHR-referenced practice question.',
+      },
+      sv: {
+        label: 'Tillägg',
+        description: 'Variant av en appskriven, UHR-hänvisad övningsfråga.',
+      },
     },
     editorial: {
       en: { label: 'Editorial', description: 'Hand-written editorial context.' },

@@ -94,13 +94,13 @@ test('practice header controls keep English labels, states, and mobile targets',
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expect(
     page.getByText(
-      "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
+      "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.",
     ),
   ).toBeVisible();
   await expect(page.getByText('Supplementary', { exact: true }).first()).toBeVisible();
   await expect(
     page.getByText(
-      'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
+      'Variant of an app-authored, UHR-referenced practice question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     ),
   ).toBeVisible();
   await expect(page.getByText('Editorial', { exact: true }).first()).toBeVisible();
@@ -109,9 +109,7 @@ test('practice header controls keep English labels, states, and mobile targets',
       'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
     ),
   ).toBeVisible();
-  await expect(
-    page.getByText('Frågor som kommer direkt från UHR:s utbildningsmaterial'),
-  ).toHaveCount(0);
+  await expect(page.getByText('Frågor skrivna utifrån UHR:s studiematerial')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });

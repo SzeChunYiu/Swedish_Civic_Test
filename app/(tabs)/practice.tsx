@@ -93,10 +93,10 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesHide: 'Stäng om källorna',
     aboutSourcesUhrTitle: 'UHR-källa',
     aboutSourcesUhrBody:
-      'Frågor som kommer direkt från UHR:s utbildningsmaterial Sverige i fokus. Allt innehåll i mock-provet är UHR.',
+      'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
     aboutSourcesSupplementaryTitle: 'Tilläggsfråga',
     aboutSourcesSupplementaryBody:
-      'Variant som genererats utifrån en UHR-fråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
+      'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
       'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
@@ -125,10 +125,10 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesHide: 'Close source details',
     aboutSourcesUhrTitle: 'UHR source',
     aboutSourcesUhrBody:
-      "Questions traced directly to UHR's study material Sverige i fokus. The mock exam is always UHR-only.",
+      "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.",
     aboutSourcesSupplementaryTitle: 'Supplementary',
     aboutSourcesSupplementaryBody:
-      'Variant generated from a UHR question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
+      'Variant of an app-authored, UHR-referenced practice question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     aboutSourcesEditorialTitle: 'Editorial',
     aboutSourcesEditorialBody:
       'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
