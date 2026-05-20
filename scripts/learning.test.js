@@ -223,6 +223,82 @@ test('readiness score includes recent persisted mock exam results', () => {
   assert.ok(withMocks.score > base.score);
 });
 
+test('readiness mock totals do not inflate rolling practice accuracy', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      {
+        sessionId: 'mock-with-counts',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 32,
+        totalCount: 40,
+      },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  assert.equal(result.components.accuracy, 0);
+  assert.equal(result.components.mockAverage, 0.8);
+  assert.ok(result.score > 0);
+});
+
+test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
+  const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'valid',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T10:00:00.000Z',
+        completedAt: '2026-05-20T10:45:00.000Z',
+        score: 0.72,
+      },
+      {
+        id: 'backwards',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T12:00:00.000Z',
+        completedAt: '2026-05-20T11:00:00.000Z',
+        score: 0.81,
+      },
+      {
+        id: 'invalid-completed',
+        mode: 'exam',
+        questionIds: [],
+        answers: [],
+        startedAt: '2026-05-20T12:00:00.000Z',
+        completedAt: 'not-a-date',
+        score: 0.99,
+      },
+    ],
+  };
+
+  assert.deepEqual(
+    mockHistory(progress).map((entry) => ({
+      durationMs: entry.durationMs,
+      sessionId: entry.sessionId,
+    })),
+    [
+      { durationMs: 45 * 60 * 1000, sessionId: 'valid' },
+      { durationMs: null, sessionId: 'backwards' },
+    ],
+  );
+  assert.equal(bestMockScore(progress), 0.81);
+});
+
 test('mock exam completion XP is awarded once per stored session', () => {
   const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
   const store = useProgressStore;
