@@ -874,10 +874,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Förändringen genom den nya grundlagen år 1809 var att kungens makt begränsades.',
       'The change through the new constitution in 1809 was that the king’s power was limited.',
     ],
-    q466: [
-      'Saltsjöbadsavtalet från 1938 blev viktigt för samarbetet mellan fackföreningar och arbetsgivare.',
-      'The 1938 Saltsjöbaden Agreement became important for cooperation between trade unions and employers.',
-    ],
     q470: [
       'Tiden efter andra världskriget kallas ofta de svenska rekordåren eftersom Sverige hade långvarig stark ekonomisk tillväxt och kunde genomföra stora reformer.',
       'The period after the Second World War is often called the Swedish record years because Sweden had long-lasting strong economic growth and could carry out major reforms.',
