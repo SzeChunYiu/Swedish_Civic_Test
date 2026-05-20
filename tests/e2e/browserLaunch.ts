@@ -16,8 +16,9 @@ export type BlockingModalDismissal = {
 const settingsLanguageKey = 'language';
 const settingsSeenAboutKey = 'hasSeenAboutTheTest';
 
-// Selector for dialog/modal overlays in the rendered app.
-const dialogLocator = '[role="dialog"]';
+// Selector for modal overlays that block route screenshots in the rendered app.
+export const blockingModalOverlayLocator =
+  '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -92,7 +93,7 @@ export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
 
   if (await closeLaunchAd.isVisible().catch(() => false)) {
     await closeLaunchAd.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
     return true;
   }
 
@@ -124,7 +125,7 @@ export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<bo
 
   if (await skipGuide.isVisible().catch(() => false)) {
     await skipGuide.click();
-    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
     return true;
   }
 
@@ -136,7 +137,7 @@ export async function dismissBlockingModals(page: Page): Promise<BlockingModalDi
   const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
   const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
 
-  await expect(page.locator(dialogLocator)).toHaveCount(0);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
 
   return {
     firstRunAboutDismissed,
