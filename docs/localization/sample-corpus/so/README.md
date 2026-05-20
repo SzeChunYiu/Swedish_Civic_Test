@@ -19,10 +19,6 @@ Plain explanatory civic Somali, close to Swedish authority newcomer guidance.
 - Keep Swedish legal facts exact; do not smooth away conditions.
 - Use encouragement that sounds respectful, not childish.
 
-## Required local style guide
-
-See `style-guide.md` for Somali mechanical-translation repairs, civic terms, UI patterns, humor guidance, and the word-by-word audit checklist. Future Somali copy PRs should cite that file in their validation notes.
-
 ## Reusable localization notes
 
 - Error encouragement should reassure and teach; never shame the learner.
@@ -31,6 +27,6 @@ See `style-guide.md` for Somali mechanical-translation repairs, civic terms, UI 
 
 ## Next tasks
 
-1. Add glossary terms with source URLs before translating UI or questions.
-2. Audit new Somali strings against `style-guide.md` before enabling the locale.
-3. Add more native-speaker humor/tone examples that are newly authored, not copied.
+1. Add native-speaker observations after reading the sources directly.
+2. Add glossary terms with source URLs before translating UI or questions.
+3. Add humor/tone examples that are newly authored, not copied.

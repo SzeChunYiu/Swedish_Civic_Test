@@ -181,6 +181,178 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
   );
 });
 
+test('real ad units can be supplied through the local override loader', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID: undefined,
+      EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID: undefined,
+      EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON: JSON.stringify({
+        results_native: {
+          androidUnitId: 'ca-app-pub-1234567890123456/5555555555',
+          ios: 'ca-app-pub-1234567890123456/6666666666',
+        },
+      }),
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => {
+      const gitignore = fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8');
+      const { REAL_AD_UNITS_JSON_ENV, readRealAdUnitOverrides } = loadTs(
+        'lib/monetization/adUnitsReal.ts',
+      );
+      const { adsConfig, getAdUnit, getPlatformAdUnitId, shouldShowAd } =
+        loadTs('lib/monetization/ads.ts');
+
+      assert.equal(REAL_AD_UNITS_JSON_ENV, 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON');
+      assert.match(gitignore, /lib\/monetization\/ad-units\.real\.ts/);
+      assert.deepEqual(readRealAdUnitOverrides().results_native, {
+        androidUnitId: 'ca-app-pub-1234567890123456/5555555555',
+        iosUnitId: 'ca-app-pub-1234567890123456/6666666666',
+      });
+      assert.equal(adsConfig.realUnitOverrideEnvKey, 'EXPO_PUBLIC_ADMOB_REAL_UNITS_JSON');
+      assert.equal(getAdUnit('results_native').enabled, true);
+      assert.equal(
+        getPlatformAdUnitId('results_native', 'android'),
+        'ca-app-pub-1234567890123456/5555555555',
+      );
+      assert.equal(
+        getPlatformAdUnitId('results_native', 'ios'),
+        'ca-app-pub-1234567890123456/6666666666',
+      );
+      assert.equal(
+        shouldShowAd('results_native', { adsDisabled: false }, { adServingAllowed: true }),
+        true,
+      );
+    },
+  );
+});
+test('results native placement uses the native Google Mobile Ads surface on native builds', () => {
+  const nativeAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
+    'utf8',
+  );
+  const webAdCardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
+    'utf8',
+  );
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(nativeAdCardSource, /NativeAd\.createForAdRequest/);
+  assert.match(nativeAdCardSource, /NativeAdView/);
+  assert.match(nativeAdCardSource, /<NativeAdView accessible=\{false\}/);
+  assert.match(nativeAdCardSource, /accessibilityRole="summary"/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.HEADLINE/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.BODY/);
+  assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
+  for (const [assetType, directChild] of [
+    ['ICON', 'Image'],
+    ['HEADLINE', 'Text'],
+    ['BODY', 'Text'],
+    ['ADVERTISER', 'Text'],
+    ['CALL_TO_ACTION', 'Text'],
+  ]) {
+    assert.match(
+      nativeAdCardSource,
+      new RegExp(
+        `<NativeAsset assetType=\\{NativeAssetType\\.${assetType}\\}>\\s*<${directChild}\\b`,
+      ),
+    );
+  }
+  assert.match(
+    nativeAdCardSource,
+    /accessibilityLabel=\{copy\.ctaAccessibilityLabel\(nativeAd\.callToAction\)\}/,
+  );
+  assert.match(nativeAdCardSource, /minHeight:\s*space\[6\]/);
+  assert.match(nativeAdCardSource, /NativeMediaView/);
+  assert.match(nativeAdCardSource, /getAdUnit\('results_native'\)/);
+  assert.match(nativeAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
+  assert.match(nativeAdCardSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
+  assert.match(nativeAdCardSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeAdCardSource, /\.destroy\(\)/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(nativeAdCardSource, /createPlaceholderNativeAd/);
+
+  assert.match(webAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(webAdCardSource, /getAdUnit\('results_native'\)/);
+  assert.match(webAdCardSource, /getNativeAdCardCopy\(language, unit\)/);
+  assert.match(
+    webAdCardSource,
+    /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
+  );
+  assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+  assert.match(adCopySource, /live:\s*\{/);
+  assert.match(adCopySource, /test:\s*\{/);
+  assert.doesNotMatch(adCopySource, new RegExp(['Sponsrad', 'studieplacering'].join('\\s+'), 'i'));
+});
+
+test('practice completion placement uses a native interstitial and web preview', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const nativeInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+  const webInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(
+    practiceSource,
+    /const practiceInterstitialShowKey = getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\);/,
+  );
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{practiceInterstitialShowKey\} \/>/,
+  );
+  assert.doesNotMatch(
+    practiceSource,
+    /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.OPENED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.CLOSED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.load\(\)/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
+  assert.match(
+    nativeInterstitialSource,
+    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
+  assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    nativeInterstitialSource,
+    /AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/,
+  );
+  assert.doesNotMatch(
+    nativeInterstitialSource,
+    /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/,
+  );
+  assert.match(
+    webInterstitialSource,
+    /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
+  );
+  assert.match(webInterstitialSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
