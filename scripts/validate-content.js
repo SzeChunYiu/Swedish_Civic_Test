@@ -2846,7 +2846,7 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'Card receives chapter accessibility summary',
     pattern:
-      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+      /accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}/,
   },
   {
     label: 'visible chapter title',
@@ -3061,7 +3061,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE\[language\][\s\S]*QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -3178,7 +3178,7 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   {
     label: 'language-specific explanation selection',
     pattern:
-      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
+      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\)\);/,
   },
   {
     label: 'localized explanation in accessibility summary',

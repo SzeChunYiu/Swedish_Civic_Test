@@ -26,7 +26,7 @@ test('shared Badge keeps visual uppercase text and readable accessibility labels
   assert.match(source, /accessibilityLabel \?\?/);
   assert.match(source, /aria-label=\{badgeAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{badgeAccessibilityLabel\}/);
-  assert.match(source, /style=\{\[styles\.badge, styles\[tone\]\]\}/);
+  assert.match(source, /style=\{\[styles\.badge, styles\[tone\], style\]\}/);
   assert.match(source, /textTransform:\s*'uppercase'/);
 });
 

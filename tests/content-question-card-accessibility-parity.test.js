@@ -21,7 +21,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
   assert.match(source, /language\?: AppLanguage/);
@@ -55,12 +55,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
   assert.match(source, /Swedish original/);
-  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
-  assert.match(
-    source,
-    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
-  );
-  assert.match(source, /accessibilitySummary: \{/);
+  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
@@ -69,10 +64,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
-  assert.match(
-    helperSource,
-    /fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
-  );
+  assert.match(helperSource, /QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE\[language\]/);
   assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
 });
 
@@ -165,7 +157,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('QuestionCard accessibility parity rejects parent card grouping of source controls', () => {
+test('QuestionCard accessibility parity rejects dropped parent card summary', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -178,7 +170,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<Card>', '<Card accessibilityLabel={questionAccessibilityLabel}>');
+      .replace('<Card accessibilityLabel={questionAccessibilityLabel}>', '<Card>');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -191,7 +183,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /QuestionCard parent Card must not group nested source controls/,
+    /QuestionCard missing Card receives accessibility summary/,
   );
 });
 

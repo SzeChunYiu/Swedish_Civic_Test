@@ -19,6 +19,9 @@ const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = 
   sv: 'Fråga saknas',
   en: 'Question unavailable',
 };
+const QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE = QUESTION_DISPLAY_FALLBACKS as Partial<
+  Record<QuestionTextLanguage, string>
+>;
 
 const SOURCE_AUTHORITY_REPLACEMENTS = [
   {
@@ -58,7 +61,8 @@ export function stripSourceAuthorityPhrasing(text?: string): string {
 export function getQuestionDisplayText(
   question: QuestionTextSource | undefined,
   language: QuestionTextLanguage,
-  fallback = QUESTION_DISPLAY_FALLBACKS[primaryLanguageFor(language)],
+  fallback = QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE[language] ??
+    QUESTION_DISPLAY_FALLBACKS[primaryLanguageFor(language)],
 ): string {
   const rawText = resolveLocalizedText(question?.questionText, language, {
     en: question?.questionEn,
@@ -90,7 +94,7 @@ export function getQuestionSourceCitation(
   }
 
   const { chapter, pageApprox, section } = question.uhrReference;
-  return primaryLanguageFor(language) === 'en'
+  return language === 'en'
     ? `Source: Sverige i fokus, ${chapter}, ${section}, p. ${pageApprox}`
     : `Källa: Sverige i fokus, ${chapter}, ${section}, s. ${pageApprox}`;
 }

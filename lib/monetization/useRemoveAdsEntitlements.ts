@@ -5,9 +5,12 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
   createMockPurchaseProvider,
+  createNativePurchaseProvider,
+  createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
+  type RemoveAdsStorePlatform,
 } from './purchases';
 
 const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
@@ -20,9 +23,9 @@ export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
 type RemoveAdsE2ERuntime = typeof globalThis & {
   __SMT_E2E__?: boolean;
   __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS?: number;
-  __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
 };
 
+let defaultNativePurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
@@ -60,24 +63,28 @@ function waitForEntitlementDelay(delayMs: number): Promise<void> {
   });
 }
 
-function getE2ERemoveAdsMockOwned(): boolean {
-  if (Platform.OS !== 'web') return false;
-
-  const runtime = globalThis as RemoveAdsE2ERuntime;
-  return runtime.__SMT_E2E__ === true && runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ === true;
+function getNativePurchasePlatform(): RemoveAdsStorePlatform {
+  return Platform.OS === 'android' ? 'android' : 'ios';
 }
 
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
-): PurchaseRuntimeOptions | undefined {
-  if (Platform.OS !== 'web') return undefined;
+): PurchaseRuntimeOptions {
+  if (Platform.OS === 'web') {
+    defaultWebPurchaseRuntimeOptions ??= {
+      provider: createMockPurchaseProvider(),
+      storage: createWebPurchaseStorage(initialAdsDisabled),
+    };
 
-  defaultWebPurchaseRuntimeOptions ??= {
-    provider: createMockPurchaseProvider({ owned: getE2ERemoveAdsMockOwned() }),
-    storage: createWebPurchaseStorage(initialAdsDisabled),
+    return defaultWebPurchaseRuntimeOptions;
+  }
+
+  defaultNativePurchaseRuntimeOptions ??= {
+    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+    storage: createSecureStorePurchaseStorage(),
   };
 
-  return defaultWebPurchaseRuntimeOptions;
+  return defaultNativePurchaseRuntimeOptions;
 }
 
 export function useRemoveAdsEntitlements({

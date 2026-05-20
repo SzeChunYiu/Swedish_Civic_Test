@@ -20,12 +20,13 @@ test('shared MetricCard keeps visible metric text and accessibility summary in p
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/MetricCard.tsx'), 'utf8');
 
-  assert.equal(summary.metricCardAccessibilityRulesValidated, 10);
+  assert.equal(summary.metricCardAccessibilityRulesValidated, 16);
   assert.equal(summary.metricCardAccessibilityParityValidated, true);
   assert.match(source, /const metricAccessibilityLabel =/);
   assert.match(source, /accessibilityLabel \?\? `\$\{label\}: \$\{value\}/);
   assert.match(source, /aria-label=\{metricAccessibilityLabel\}/);
-  assert.match(source, /\s+accessible\s+/);
+  assert.match(source, /accessible=\{accessible\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
   assert.match(source, /<Text style=\{styles\.value\}>\{value\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.label\}>\{label\}<\/Text>/);

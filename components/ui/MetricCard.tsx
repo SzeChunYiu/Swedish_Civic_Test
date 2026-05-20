@@ -1,28 +1,42 @@
+import type { ComponentProps } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, radius, shadows, space, typography } from '../../lib/theme';
 
+/**
+ * Defaults: `tone="warm"`, `accessible=true`, `accessibilityRole="summary"`,
+ * and an accessibility label derived from the visible label/value/helper text.
+ */
+export interface MetricCardProps extends Omit<ComponentProps<typeof View>, 'children' | 'style'> {
+  accessibilityLabel?: string;
+  helper?: string;
+  label: string;
+  style?: ComponentProps<typeof View>['style'];
+  tone?: 'warm' | 'blue';
+  value: string | number;
+}
+
 export function MetricCard({
+  accessible = true,
   accessibilityLabel,
+  accessibilityRole = 'summary',
   label,
   value,
   helper,
+  style,
   tone = 'warm',
-}: {
-  accessibilityLabel?: string;
-  label: string;
-  value: string | number;
-  helper?: string;
-  tone?: 'warm' | 'blue';
-}) {
+  ...viewProps
+}: MetricCardProps) {
   const metricAccessibilityLabel =
     accessibilityLabel ?? `${label}: ${value}${helper ? `. ${helper}` : ''}`;
 
   return (
     <View
       aria-label={metricAccessibilityLabel}
-      accessible
+      accessible={accessible}
       accessibilityLabel={metricAccessibilityLabel}
-      style={[styles.card, tone === 'blue' ? styles.blueCard : null]}
+      accessibilityRole={accessibilityRole}
+      style={[styles.card, tone === 'blue' ? styles.blueCard : null, style]}
+      {...viewProps}
     >
       <Text style={styles.value}>{value}</Text>
       <Text style={styles.label}>{label}</Text>
@@ -36,7 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flex: 1,
     gap: space[0.5],
     padding: space[2],
