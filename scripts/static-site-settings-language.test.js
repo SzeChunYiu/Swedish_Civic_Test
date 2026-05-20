@@ -50,6 +50,7 @@ const staticLanguageOptions = [
   { value: 'zh-Hant', label: '繁體中文' },
   { value: 'ar', label: 'العربية' },
   { value: 'so', label: 'Soomaali' },
+  { value: 'tr', label: 'Türkçe' },
 ];
 
 const translatedKeys = [
@@ -307,7 +308,7 @@ test('extra Settings languages rerender high-frequency UI with English fallback'
   assert.equal(context.translatedText('nav.home'), '首页');
   assert.equal(context.translatedText('nav.mock'), '模拟考');
   assert.equal(context.translatedText('settings.title'), '设置');
-  assert.equal(context.translatedText('consent.title'), 'Cookie,刚刚好。');
+  assert.equal(context.translatedText('consent.title'), 'Cookie，刚刚好。');
   assert.equal(context.translatedText('hero.cta1'), '开始练习 →');
   assert.equal(context.translatedText('terms.h1a'), 'Plain rules,');
 
@@ -324,6 +325,17 @@ test('extra Settings languages rerender high-frequency UI with English fallback'
     context.translatedText('footer.honest.p'),
     'غير رسمي. مستقل. لا ينتمي إلى UHR أو Skolverket أو Migrationsverket أو الحكومة السويدية.',
   );
+
+  context.clickSettingsLanguage('tr');
+  assert.equal(context.storage.get('smt_lang'), 'tr');
+  assert.equal(context.sandbox.document.documentElement.lang, 'tr');
+  assert.equal(context.sandbox.document.documentElement.dir, 'ltr');
+  assert.equal(context.languageButton('tr').classList.contains('is-on'), true);
+  assert.equal(context.languageButton('ar').classList.contains('is-on'), false);
+  assert.equal(context.translatedText('nav.home'), 'Ana sayfa');
+  assert.equal(context.translatedText('settings.title'), 'Ayarlar');
+  assert.equal(context.translatedText('consent.title'), 'Çerezler, gerektiği kadar.');
+  assert.equal(context.translatedText('footer.honest.p'), 'Resmî değildir. Bağımsızdır. UHR, Skolverket, Migrationsverket veya İsveç hükümetine bağlı değildir.');
 });
 
 test('extra static dictionaries avoid pass/passport outcome slogans', () => {
@@ -337,6 +349,8 @@ test('extra static dictionaries avoid pass/passport outcome slogans', () => {
     'احصل على الجواز',
     'Imtixaanka uga gud',
     'Hel baasaboorka',
+    'Sınavı geç',
+    'Pasaportu al',
   ];
 
   for (const snippet of staleOutcomeSnippets) {
