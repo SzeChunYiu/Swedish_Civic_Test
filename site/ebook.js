@@ -27,6 +27,10 @@
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
     },
+    editorialCommentary: {
+      label: 'Editorial commentary',
+      retrievedDate: '2026-05-19',
+    },
   });
 
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
@@ -63,6 +67,7 @@
   ]);
 
   function sourceLink(note) {
+    if (!note.url) return `${note.label} (${note.retrievedDate})`;
     return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
   }
 
@@ -74,12 +79,43 @@
 
   function ebookSourceNote(lang, sourceKeys) {
     const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
-    const label = tr({ sv: 'Källor hämtade', en: 'Sources accessed', 'zh-Hans': '已获取来源', 'zh-Hant': '已取得來源', ar: 'المصادر التي تمّ الوصول إليها', ckb: 'سەرچاوەکانی دەستگەیشتوو', fa: 'منابع مشاهده‌شده', pl: 'Pobrane źródła', so: 'Ilaha la helay', ti: 'ዝተረኽቡ ምንጪታት', tr: 'Erişilen kaynaklar', uk: 'Отримані джерела' });
+    const label = tr({
+      sv: 'Källor hämtade',
+      en: 'Sources accessed',
+      'zh-Hans': '已获取来源',
+      'zh-Hant': '已取得來源',
+      ar: 'المصادر التي تمّ الوصول إليها',
+      ckb: 'سەرچاوەکانی دەستگەیشتوو',
+      fa: 'منابع مشاهده‌شده',
+      pl: 'Pobrane źródła',
+      so: 'Ilaha la helay',
+      ti: 'ዝተረኽቡ ምንጪታት',
+      tr: 'Erişilen kaynaklar',
+      uk: 'Отримані джерела',
+    });
     return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
   }
 
-  function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudyMaterial']) {
-    const resolvedHeading = heading || (tr({ sv: 'Fakta att repetera', en: 'Facts to review', 'zh-Hans': '需复习的知识点', 'zh-Hant': '需複習的知識點', ar: 'حقائق للمراجعة', ckb: 'ڕاستییەکان بۆ پێداچوونەوە', fa: 'نکته‌هایی برای مرور', pl: 'Fakty do powtórzenia', so: 'Xaqiiqooyinka dib loo eegayo', ti: 'ዝድገሙ ሓቅታት', tr: 'Tekrar edilecek bilgiler', uk: 'Факти для повторення' }));
+  function ebookFactBox(lang, heading, facts, sourceKeys) {
+    if (!Array.isArray(sourceKeys) || sourceKeys.length === 0) {
+      throw new Error('ebookFactBox requires explicit sourceKeys');
+    }
+    const resolvedHeading =
+      heading ||
+      tr({
+        sv: 'Fakta att repetera',
+        en: 'Facts to review',
+        'zh-Hans': '需复习的知识点',
+        'zh-Hant': '需複習的知識點',
+        ar: 'حقائق للمراجعة',
+        ckb: 'ڕاستییەکان بۆ پێداچوونەوە',
+        fa: 'نکته‌هایی برای مرور',
+        pl: 'Fakty do powtórzenia',
+        so: 'Xaqiiqooyinka dib loo eegayo',
+        ti: 'ዝድገሙ ሓቅታት',
+        tr: 'Tekrar edilecek bilgiler',
+        uk: 'Факти для повторення',
+      });
     return `
       <div class="ebook__factbox">
         <h4>${resolvedHeading}</h4>
@@ -89,14 +125,122 @@
     `;
   }
 
-  function renderEbookProvenanceBadge(lang) {
-    if (lang === 'sv') {
-      return '<p class="ebook__provenance-badge" aria-label="Källtyp: Redaktionell. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Redaktionell</span> · Egen studieguide; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>';
-    }
-    return '<p class="ebook__provenance-badge" aria-label="Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material."><span>Editorial</span> · Original study guide; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>';
+  function getEbookChapterSourceKeys(chapterId) {
+    const externalByChapter = {
+      intro: [],
+      1: ['governmentNato'],
+      7: ['scbLandUse'],
+      10: ['riksbankHistory'],
+      11: ['governmentNato'],
+      12: ['governmentNato'],
+    };
+    return ['uhrStudyMaterial', ...(externalByChapter[chapterId] || []), 'editorialCommentary'];
   }
 
-  function svStudyBrief(points, facts, practiceHint, afterPracticeHtml = '') {
+  function labelForSourceKey(key, lang) {
+    const note = EBOOK_FACTBOX_SOURCE_NOTES[key];
+    if (!note) return key;
+    if (key === 'uhrStudyMaterial') return 'UHR';
+    if (key === 'editorialCommentary')
+      return tr({
+        sv: 'Redaktionellt',
+        en: 'Editorial',
+        'zh-Hans': '编辑说明',
+        'zh-Hant': '編輯說明',
+        ar: 'تعليق تحريري',
+        ckb: 'لێدوانی دەستکاری',
+        fa: 'یادداشت تحریریه',
+        pl: 'Komentarz redakcyjny',
+        so: 'Faallo tifaftireed',
+        ti: 'ርእይቶ ኣዳላዊ',
+        tr: 'Editoryal',
+        uk: 'Редакційний коментар',
+      });
+    return note.label.replace(/\s+(statistics|timeline|notice)$/i, '');
+  }
+
+  function chooseEbookFootnoteKey(chapterSourceKeys, index) {
+    const external = chapterSourceKeys.filter(
+      (key) => key !== 'uhrStudyMaterial' && key !== 'editorialCommentary',
+    );
+    if (index === 0 && external.length > 0) return external[0];
+    if (index % 3 === 2) return 'editorialCommentary';
+    return 'uhrStudyMaterial';
+  }
+
+  function renderEbookProvenanceBadge(lang, sourceCounts) {
+    const summary = Object.entries(sourceCounts)
+      .filter(([, count]) => count > 0)
+      .map(([key, count]) => `${labelForSourceKey(key, lang)} (${count})`)
+      .join(' · ');
+    if (lang === 'sv') {
+      return `<p class="ebook__provenance-badge" aria-label="Källor: ${summary}."><span>Källor:</span> ${summary}</p>`;
+    }
+    return `<p class="ebook__provenance-badge" aria-label="Sources: ${summary}."><span>Sources:</span> ${summary}</p>`;
+  }
+
+  function renderEbookFootnoteList(lang, footnotes) {
+    if (footnotes.length === 0) return '';
+    const heading = tr({
+      sv: 'Källnoter för kapitlet',
+      en: 'Chapter source notes',
+      'zh-Hans': '章节来源说明',
+      'zh-Hant': '章節來源說明',
+      ar: 'ملاحظات مصادر الفصل',
+      ckb: 'تێبینییەکانی سەرچاوەی بەش',
+      fa: 'یادداشت‌های منبع فصل',
+      pl: 'Przypisy źródłowe rozdziału',
+      so: 'Qoraallada ilaha cutubka',
+      ti: 'ምንጪ ሓበሬታታት ምዕራፍ',
+      tr: 'Bölüm kaynak notları',
+      uk: 'Джерельні примітки розділу',
+    });
+    return `
+      <section class="ebook__footnotes" aria-label="${heading}">
+        <h2>${heading}</h2>
+        <ol class="ebook__footnote-list">
+          ${footnotes
+            .map(
+              (footnote) =>
+                `<li id="ebook-fn-${footnote.id}" data-source-key="${footnote.sourceKey}"><a href="#ebook-fnref-${footnote.id}" aria-label="${tr({ sv: 'Tillbaka till texten', en: 'Back to text', 'zh-Hans': '返回正文', 'zh-Hant': '返回正文', ar: 'العودة إلى النص', ckb: 'گەڕانەوە بۆ دەق', fa: 'بازگشت به متن', pl: 'Powrót do tekstu', so: 'Ku noqo qoraalka', ti: 'ናብ ጽሑፍ ተመለስ', tr: 'Metne dön', uk: 'Повернутися до тексту' })}">↩</a> ${sourceLink(EBOOK_FACTBOX_SOURCE_NOTES[footnote.sourceKey])}</li>`,
+            )
+            .join('')}
+        </ol>
+      </section>
+    `;
+  }
+
+  function addEbookSectionFootnotes(lang, chapterId, html) {
+    const chapterSourceKeys = getEbookChapterSourceKeys(chapterId);
+    const sourceCounts = Object.fromEntries(chapterSourceKeys.map((key) => [key, 0]));
+    const footnotes = [];
+    let proseIndex = 0;
+    const withRefs = html.replace(/<(p|li)\b[^>]*>[\s\S]*?<\/\1>/g, (match, tag) => {
+      if (/ebook__source-note/.test(match) || /ebook__footnote-ref/.test(match)) {
+        return match;
+      }
+      const sourceKey = chooseEbookFootnoteKey(chapterSourceKeys, proseIndex);
+      const id = `${chapterId}-${proseIndex + 1}`;
+      proseIndex += 1;
+      sourceCounts[sourceKey] = (sourceCounts[sourceKey] || 0) + 1;
+      footnotes.push({ id, sourceKey });
+      return match.replace(
+        new RegExp(`</${tag}>$`),
+        `<sup id="ebook-fnref-${id}" class="ebook__footnote-ref"><a href="#ebook-fn-${id}" aria-label="${tr({ sv: 'Källnot', en: 'Source note', 'zh-Hans': '来源注释', 'zh-Hant': '來源註釋', ar: 'ملاحظة مصدر', ckb: 'تێبینی سەرچاوە', fa: 'یادداشت منبع', pl: 'Przypis źródłowy', so: 'Qoraal il', ti: 'ምንጪ ሓበሬታ', tr: 'Kaynak notu', uk: 'Джерельна примітка' })} ${footnotes.length}">${footnotes.length}</a></sup></${tag}>`,
+      );
+    });
+    return {
+      html: withRefs,
+      sourceCounts,
+      footnotesHtml: renderEbookFootnoteList(lang, footnotes),
+    };
+  }
+
+  function svStudyBrief(points, facts, practiceHint, sourceKeys, afterPracticeHtml = '') {
+    if (Array.isArray(practiceHint) && sourceKeys === undefined) {
+      sourceKeys = practiceHint;
+      practiceHint = '';
+    }
     const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
@@ -104,18 +248,70 @@
       <h2>Plugga smart</h2>
       <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
-      ${ebookFactBox('sv', 'Fakta att repetera', facts)}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
     `;
   }
 
   const CHAPTERS = {
     intro: {
-      kicker: { en: 'How to read this book', sv: 'Hur man läser den här boken', 'zh-Hans': '如何阅读本书', 'zh-Hant': '如何閱讀本書', 'ar': 'كيف تقرأ هذا الكتاب', 'ckb': 'چۆن ئەم کتێبە بخوێنیتەوە', 'fa': 'چگونه این کتاب را بخوانید', 'pl': 'Jak czytać tę książkę', 'so': 'Sida loo akhriyo buugan', 'ti': 'ነዚ መጽሓፍ ብኸመይ ከም እተንብቦ', 'tr': 'Bu kitap nasıl okunur', 'uk': 'Як читати цю книжку' },
-      title: { en: 'Slow down.', sv: 'Sakta in.', 'zh-Hans': '慢慢来。', 'zh-Hant': '慢慢來。', 'ar': 'تمهّل.', 'ckb': 'هێواش بکەوە.', 'fa': 'آهسته پیش بروید.', 'pl': 'Zwolnij.', 'so': 'Iska deji.', 'ti': 'ቀስ በል።', 'tr': 'Yavaşlayın.', 'uk': 'Не поспішайте.' },
-      title_em: { en: "We've got coffee.", sv: 'Vi har kaffe.', 'zh-Hans': '咖啡我们备好了。', 'zh-Hant': '咖啡我們備好了。', 'ar': 'لدينا قهوة.', 'ckb': 'قاوەمان هەیە.', 'fa': 'ما قهوه داریم.', 'pl': 'Mamy kawę.', 'so': 'Qaxwo baannu haynaa.', 'ti': 'ቡን ኣሎና።', 'tr': 'Kahvemiz var.', 'uk': 'У нас є кава.' },
+      kicker: {
+        en: 'How to read this book',
+        sv: 'Hur man läser den här boken',
+        'zh-Hans': '如何阅读本书',
+        'zh-Hant': '如何閱讀本書',
+        ar: 'كيف تقرأ هذا الكتاب',
+        ckb: 'چۆن ئەم کتێبە بخوێنیتەوە',
+        fa: 'چگونه این کتاب را بخوانید',
+        pl: 'Jak czytać tę książkę',
+        so: 'Sida loo akhriyo buugan',
+        ti: 'ነዚ መጽሓፍ ብኸመይ ከም እተንብቦ',
+        tr: 'Bu kitap nasıl okunur',
+        uk: 'Як читати цю книжку',
+      },
+      title: {
+        en: 'Slow down.',
+        sv: 'Sakta in.',
+        'zh-Hans': '慢慢来。',
+        'zh-Hant': '慢慢來。',
+        ar: 'تمهّل.',
+        ckb: 'هێواش بکەوە.',
+        fa: 'آهسته پیش بروید.',
+        pl: 'Zwolnij.',
+        so: 'Iska deji.',
+        ti: 'ቀስ በል።',
+        tr: 'Yavaşlayın.',
+        uk: 'Не поспішайте.',
+      },
+      title_em: {
+        en: "We've got coffee.",
+        sv: 'Vi har kaffe.',
+        'zh-Hans': '咖啡我们备好了。',
+        'zh-Hant': '咖啡我們備好了。',
+        ar: 'لدينا قهوة.',
+        ckb: 'قاوەمان هەیە.',
+        fa: 'ما قهوه داریم.',
+        pl: 'Mamy kawę.',
+        so: 'Qaxwo baannu haynaa.',
+        ti: 'ቡን ኣሎና።',
+        tr: 'Kahvemiz var.',
+        uk: 'У нас є кава.',
+      },
       lede: {
         en: "This is a companion, not a textbook. Read a chapter, take a quiz, take a fika. The order doesn't matter — but if you finish in order you get a feel for how Sweden's pieces fit together.",
-        sv: 'Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör en övning, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.', 'zh-Hans': '这是一本陪读手册，而不是教科书。读一章、做一次测验、来一次 fika（瑞典式咖啡歇）。顺序无所谓——但如果你按顺序读完，你会更能体会到瑞典各个部分是如何拼合在一起的。', 'zh-Hant': '這是一本陪讀手冊，而不是教科書。讀一章、做一次測驗、來一次 fika（瑞典式咖啡歇）。順序無所謂——但如果你按順序讀完，你會更能體會到瑞典各個部分是如何拼合在一起的。', 'ar': 'هذا رفيقٌ، لا كتاب مدرسي. اقرأ فصلًا، وأجرِ اختبارًا قصيرًا، وخذ fika (استراحة قهوة). الترتيب لا يهمّ — لكن إن أنهيته بالترتيب فستتكوّن لديك حسّ بكيفية تلاؤم أجزاء السويد معًا.', 'ckb': 'ئەمە هاوڕێیەکە، نەک کتێبێکی خوێندن. بەشێک بخوێنەوە، تاقیکردنەوەیەکی کورت بکە، و fikaیەک (پشووی قاوە) ببە. ڕیزبەندییەکە گرنگ نییە — بەڵام ئەگەر بە ڕیز تەواوی بکەیت، هەستێکت بۆ ئەوەی پارچەکانی سوید چۆن بەیەکەوە دەگونجێن دروست دەبێت.', 'fa': 'این یک همراه است، نه یک کتاب درسی. یک فصل بخوانید، یک آزمون کوتاه بدهید، و یک fika (استراحت با قهوه) داشته باشید. ترتیب اهمیتی ندارد — اما اگر به‌ترتیب تمام کنید، حسی از چگونگی کنار هم نشستن بخش‌های سوئد پیدا می‌کنید.', 'pl': 'To towarzysz, nie podręcznik. Przeczytaj rozdział, zrób quiz, zrób sobie fikę (fika — przerwa na kawę). Kolejność nie ma znaczenia — ale jeśli skończysz po kolei, wyczujesz, jak elementy Szwecji łączą się w całość.', 'so': 'Kani waa wehel, ma aha buug-waxbarasho. Akhri cutub, qaado imtixaan, qaado fika (nasasho qaxwo). Habka kuma xiqo — laakiin haddii aad si kala dambeysa u dhammayso waxaad dareemi doontaa sida qaybaha Iswiidhan u wada habboon yihiin.', 'ti': 'እዚ ብጻይ እዩ፣ መጽሓፍ ትምህርቲ ኣይኮነን። ምዕራፍ ኣንብብ፣ ፈተና ውሰድ፣ fika (ናይ ቡን ዕረፍቲ) ግበር። ቅደም ተኸተል ኣገዳሲ ኣይኮነን — ግን ብቕደም ተኸተል እንተ ወዲእካ፣ ክፍልታት ሽወደን ብኸመይ ብሓባር ከም ዝሰማምዑ ትስምዖ።', 'tr': 'Bu bir ders kitabı değil, bir yol arkadaşıdır. Bir bölüm okuyun, bir test çözün, bir fika (kahve molası) yapın. Sıra önemli değil — ama sırayla bitirirseniz İsveç\'in parçalarının nasıl bir araya geldiğini sezersiniz.', 'uk': 'Це супутник, а не підручник. Прочитайте розділ, пройдіть тест, влаштуйте fika (перерву на каву). Порядок не має значення — але якщо завершите по порядку, відчуєте, як частини Швеції складаються докупи.' },
+        sv: 'Det här är ett sällskap, inte en lärobok. Läs ett kapitel, gör en övning, ta en fika. Ordningen spelar mindre roll — men i ordning får du en känsla för hur Sveriges delar passar ihop.',
+        'zh-Hans':
+          '这是一本陪读手册，而不是教科书。读一章、做一次测验、来一次 fika（瑞典式咖啡歇）。顺序无所谓——但如果你按顺序读完，你会更能体会到瑞典各个部分是如何拼合在一起的。',
+        'zh-Hant':
+          '這是一本陪讀手冊，而不是教科書。讀一章、做一次測驗、來一次 fika（瑞典式咖啡歇）。順序無所謂——但如果你按順序讀完，你會更能體會到瑞典各個部分是如何拼合在一起的。',
+        ar: 'هذا رفيقٌ، لا كتاب مدرسي. اقرأ فصلًا، وأجرِ اختبارًا قصيرًا، وخذ fika (استراحة قهوة). الترتيب لا يهمّ — لكن إن أنهيته بالترتيب فستتكوّن لديك حسّ بكيفية تلاؤم أجزاء السويد معًا.',
+        ckb: 'ئەمە هاوڕێیەکە، نەک کتێبێکی خوێندن. بەشێک بخوێنەوە، تاقیکردنەوەیەکی کورت بکە، و fikaیەک (پشووی قاوە) ببە. ڕیزبەندییەکە گرنگ نییە — بەڵام ئەگەر بە ڕیز تەواوی بکەیت، هەستێکت بۆ ئەوەی پارچەکانی سوید چۆن بەیەکەوە دەگونجێن دروست دەبێت.',
+        fa: 'این یک همراه است، نه یک کتاب درسی. یک فصل بخوانید، یک آزمون کوتاه بدهید، و یک fika (استراحت با قهوه) داشته باشید. ترتیب اهمیتی ندارد — اما اگر به‌ترتیب تمام کنید، حسی از چگونگی کنار هم نشستن بخش‌های سوئد پیدا می‌کنید.',
+        pl: 'To towarzysz, nie podręcznik. Przeczytaj rozdział, zrób quiz, zrób sobie fikę (fika — przerwa na kawę). Kolejność nie ma znaczenia — ale jeśli skończysz po kolei, wyczujesz, jak elementy Szwecji łączą się w całość.',
+        so: 'Kani waa wehel, ma aha buug-waxbarasho. Akhri cutub, qaado imtixaan, qaado fika (nasasho qaxwo). Habka kuma xiqo — laakiin haddii aad si kala dambeysa u dhammayso waxaad dareemi doontaa sida qaybaha Iswiidhan u wada habboon yihiin.',
+        ti: 'እዚ ብጻይ እዩ፣ መጽሓፍ ትምህርቲ ኣይኮነን። ምዕራፍ ኣንብብ፣ ፈተና ውሰድ፣ fika (ናይ ቡን ዕረፍቲ) ግበር። ቅደም ተኸተል ኣገዳሲ ኣይኮነን — ግን ብቕደም ተኸተል እንተ ወዲእካ፣ ክፍልታት ሽወደን ብኸመይ ብሓባር ከም ዝሰማምዑ ትስምዖ።',
+        tr: "Bu bir ders kitabı değil, bir yol arkadaşıdır. Bir bölüm okuyun, bir test çözün, bir fika (kahve molası) yapın. Sıra önemli değil — ama sırayla bitirirseniz İsveç'in parçalarının nasıl bir araya geldiğini sezersiniz.",
+        uk: 'Це супутник, а не підручник. Прочитайте розділ, пройдіть тест, влаштуйте fika (перерву на каву). Порядок не має значення — але якщо завершите по порядку, відчуєте, як частини Швеції складаються докупи.',
+      },
       body: {
         en: `
           <h2>What this book is</h2>
@@ -173,7 +369,7 @@
           </ul>
           <blockquote><p>你不需要記住所有東西。你需要記住對的東西。這正是我們存在的意義。</p></blockquote>
           <div class="ebook__factbox"><h4>提示</h4><p>用手機在 10 分鐘的零碎時段裡閱讀。短而反覆的學習，會讓你在打開練習題之前更容易察覺到哪些內容需要複習。</p></div>`,
-        'ar': `<h2>ما هذا الكتاب</h2>
+        ar: `<h2>ما هذا الكتاب</h2>
           <p>قارئٌ بلغة مبسّطة لاختبار الجنسية السويدية (medborgarskapsprovet). يحوّل المواد الدراسية العامة إلى قراءة تدريبية هادئة وغير رسمية للبالغين الذين يبنون مفرداتهم وسياقهم المدني السويدي من الصفر.</p>
           <h2>ما <em>ليس</em> هو</h2>
           <p>ليس المادة الرسمية. وليس وثيقة قانونية. وليس بديلًا عن المواد الدراسية العامة الصادرة عن UHR. استخدم <a href="#/sources">صفحة المصادر</a> للاطلاع على مراجع بنك الأسئلة، وراجع مواد UHR حين تكون الحقيقة مهمة.</p>
@@ -186,7 +382,7 @@
           </ul>
           <blockquote><p>لست بحاجة إلى تذكّر كل شيء. أنت بحاجة إلى تذكّر الأشياء الصحيحة. ولهذا نحن هنا.</p></blockquote>
           <div class="ebook__factbox"><h4>نصيحة</h4><p>اقرأ على هاتفك في نوافذ من 10 دقائق. الجلسات القصيرة المتكرّرة تجعل من الأسهل أن تلاحظ ما يحتاج إلى مراجعة قبل أن تفتح أسئلة التدريب.</p></div>`,
-        'ckb': `<h2>ئەم کتێبە چییە</h2>
+        ckb: `<h2>ئەم کتێبە چییە</h2>
           <p>دەقێکی خوێندنەوەی زمانساکار بۆ تاقیکردنەوەی هاووڵاتیبوونی سوید (medborgarskapsprovet). کەرەستەی خوێندنی گشتی دەگۆڕێت بۆ خوێندنەوەیەکی مەشقیی هێمن و نافەرمی بۆ گەورەسالان کە وشەسازی و ناوەڕۆکی شارستانیی سویدی لە سفرەوە دروست دەکەن.</p>
           <h2>چی <em>نییە</em></h2>
           <p>کەرەستەی فەرمی نییە. بەڵگەنامەی یاسایی نییە. جێگرەوەی کەرەستەی خوێندنی گشتیی UHR نییە. بۆ ئاماژەکانی بانکی پرسیار <a href="#/sources">پەڕەی سەرچاوەکان</a> بەکاربهێنە، و کاتێک ڕاستییەک گرنگە کەرەستەی UHR بپشکنە.</p>
@@ -199,7 +395,7 @@
           </ul>
           <blockquote><p>پێویست نییە هەموو شتێک لەبیر بکەیت. پێویستە شتە ڕاستەکان لەبیر بکەیت. ئێمە لەبەر ئەوە لێرەین.</p></blockquote>
           <div class="ebook__factbox"><h4>ئامۆژگاری</h4><p>لەسەر مۆبایلەکەت لە ماوەی 10 خولەکیدا بیخوێنەوە. دانیشتنی کورت و دووبارە وادەکات ئاسانتر تێبگەیت کە پێش کردنەوەی پرسیارەکانی مەشق چی پێویستی بە پێداچوونەوە هەیە.</p></div>`,
-        'fa': `<h2>این کتاب چیست</h2>
+        fa: `<h2>این کتاب چیست</h2>
           <p>یک متن خواندنی به زبان ساده برای آزمون شهروندی سوئد (medborgarskapsprovet). مواد آموزشی عمومی را به مطالعهٔ تمرینیِ آرام و غیررسمی برای بزرگ‌سالانی بدل می‌کند که واژگان و زمینهٔ مدنی سوئد را از صفر می‌سازند.</p>
           <h2>چه <em>نیست</em></h2>
           <p>مادهٔ رسمی نیست. سند حقوقی نیست. جایگزین مواد آموزشی عمومی UHR نیست. برای ارجاعات بانک سؤال از <a href="#/sources">صفحهٔ منابع</a> استفاده کنید، و هنگامی که یک واقعیت اهمیت دارد، مواد UHR را بررسی کنید.</p>
@@ -212,7 +408,7 @@
           </ul>
           <blockquote><p>لازم نیست همه‌چیز را به خاطر بسپارید. باید چیزهای درست را به خاطر بسپارید. ما برای همین اینجاییم.</p></blockquote>
           <div class="ebook__factbox"><h4>نکته</h4><p>روی گوشی خود در بازه‌های 10 دقیقه‌ای بخوانید. جلسه‌های کوتاه و مکرر باعث می‌شود راحت‌تر متوجه شوید پیش از باز کردن سؤال‌های تمرین چه چیزی نیاز به مرور دارد.</p></div>`,
-        'pl': `<h2>Czym jest ta książka</h2>
+        pl: `<h2>Czym jest ta książka</h2>
           <p>Przystępny czytnik do szwedzkiego testu na obywatelstwo (medborgarskapsprovet — egzamin na obywatelstwo). Zamienia publiczne materiały do nauki w spokojną, nieoficjalną lekturę ćwiczeniową dla dorosłych, którzy budują szwedzkie słownictwo i kontekst obywatelski od podstaw.</p>
           <h2>Czym <em>nie jest</em></h2>
           <p>To nie jest materiał oficjalny. To nie dokument prawny. To nie zastępstwo publicznych materiałów do nauki od UHR. Skorzystaj ze <a href="#/sources">strony Źródła</a>, by znaleźć odniesienia do bazy pytań, i sprawdź materiały UHR, gdy fakt ma znaczenie.</p>
@@ -225,7 +421,7 @@
           </ul>
           <blockquote><p>Nie musisz pamiętać wszystkiego. Musisz pamiętać właściwe rzeczy. Po to tu jesteśmy.</p></blockquote>
           <div class="ebook__factbox"><h4>Wskazówka</h4><p>Czytaj na telefonie w 10-minutowych okienkach. Krótkie, powtarzane sesje ułatwiają zauważenie, co wymaga powtórki, zanim otworzysz pytania ćwiczeniowe.</p></div>`,
-        'so': `<h2>Buugani waa maxay</h2>
+        so: `<h2>Buugani waa maxay</h2>
           <p>Akhriste luqad fudud ah oo loogu talagalay imtixaanka muwaadinimada Iswiidhan (medborgarskapsprovet — imtixaanka muwaadinimada). Wuxuu agabka waxbarasho ee dadweynaha u beddelaa akhris tababar oo deggan, oo aan rasmi ahayn, oo loogu talagalay dadka waaweyn ee ka dhisaya erey-bixinta iyo macnaha bulshada Iswiidhan ee marka hore.</p>
           <h2>Waxa aanu <em>ahayn</em></h2>
           <p>Ma aha agabka rasmiga ah. Ma aha dukumenti sharci. Ma aha bedel agabka waxbarasho ee dadweynaha ee UHR. U isticmaal <a href="#/sources">bogga Ilaha</a> tixraacyada bangiga su'aalaha, oo hubi agabka UHR marka xaqiiqo ay muhiim tahay.</p>
@@ -238,7 +434,7 @@
           </ul>
           <blockquote><p>Uma baahnid inaad wax walba xasuusato. Waxaad u baahan tahay inaad xasuusato waxyaabaha saxda ah. Taasi waa waxa aannu halkan u joognaa.</p></blockquote>
           <div class="ebook__factbox"><h4>Talo</h4><p>Ku akhri telefoonkaaga muddooyin 10 daqiiqo ah. Fadhiyo gaagaaban oo soo noqnoqda ayaa fududeeya in la ogaado waxa u baahan dib-u-eegis ka hor inta aadan furin su'aalaha tababarka.</p></div>`,
-        'ti': `<h2>እዚ መጽሓፍ እንታይ እዩ</h2>
+        ti: `<h2>እዚ መጽሓፍ እንታይ እዩ</h2>
           <p>ንፈተና ዜግነት ሽወደን (medborgarskapsprovet — ፈተና ዜግነት) ብቐሊል ቋንቋ ዝቐረበ መንበቢ። ንህዝባዊ ናይ ትምህርቲ ጽሑፋት ናብ ህዱእ፣ ዘይወግዓዊ ናይ ልምምድ ንባብ ይቕይሮ፣ ንዓበይቲ ሰባት ሽወደናዊ ሲቪካዊ መዝገበ-ቃላትን ኣገባብን ካብ መሰረት ንዝሃንጹ።</p>
           <h2>እንታይ <em>ከም ዘይኮነ</em></h2>
           <p>እቲ ወግዓዊ ጽሑፍ ኣይኮነን። ሕጋዊ ሰነድ ኣይኮነን። ንህዝባዊ ናይ ትምህርቲ ጽሑፍ UHR ምትካእ ኣይኮነን። ንመወከሲታት ባንክ ሕቶ <a href="#/sources">ገጽ ምንጪታት</a> ተጠቐም፣ ሓቂ ኣገዳሲ ኣብ ዝኾነሉ ድማ ንጽሑፍ UHR ኣረጋግጽ።</p>
@@ -251,7 +447,7 @@
           </ul>
           <blockquote><p>ኩሉ ክትዝክር ኣየድልየካን። እቲ ቅኑዕ ነገራት ክትዝክር የድልየካ። ንሕና ድማ ስለዚ ኢና ኣብዚ ዘሎና።</p></blockquote>
           <div class="ebook__factbox"><h4>ምኽሪ</h4><p>ኣብ ተሌፎንካ ብ10-ደቓይቕ መስኮታት ኣንብብ። ሓጸርቲ፣ ዝድገሙ ክፍለ ግዜታት ነቲ ናይ ልምምድ ሕቶታት ቅድሚ ምኽፋትካ እንታይ ምድጋም ከም ዘድልዮ ንምልላይ የቕልሉ።</p></div>`,
-        'tr': `<h2>Bu kitap nedir</h2>
+        tr: `<h2>Bu kitap nedir</h2>
           <p>İsveç vatandaşlık sınavı (medborgarskapsprovet — vatandaşlık sınavı) için sade dilde bir okuma kitabı. Kamuya açık çalışma materyallerini, sıfırdan İsveç yurttaşlık kelime dağarcığı ve bağlamı oluşturan yetişkinler için sakin, gayriresmî bir alıştırma okumasına dönüştürür.</p>
           <h2>Ne <em>değildir</em></h2>
           <p>Resmî materyal değildir. Hukuki bir belge değildir. UHR'nin kamuya açık çalışma materyalinin yerini tutmaz. Soru bankası kaynakları için <a href="#/sources">Kaynaklar sayfasını</a> kullanın ve bir bilgi önemliyse UHR'nin materyalini kontrol edin.</p>
@@ -264,7 +460,7 @@
           </ul>
           <blockquote><p>Her şeyi hatırlamanız gerekmez. Doğru şeyleri hatırlamanız gerekir. Biz bunun için buradayız.</p></blockquote>
           <div class="ebook__factbox"><h4>İpucu</h4><p>Telefonunuzda 10 dakikalık aralıklarla okuyun. Kısa, tekrarlanan oturumlar, alıştırma sorularını açmadan önce neyin tekrar gerektirdiğini fark etmeyi kolaylaştırır.</p></div>`,
-        'uk': `<h2>Чим є ця книжка</h2>
+        uk: `<h2>Чим є ця книжка</h2>
           <p>Читанка простою мовою для шведського тесту на громадянство (medborgarskapsprovet — іспит на громадянство). Вона перетворює публічні навчальні матеріали на спокійне, неофіційне тренувальне читання для дорослих, які з нуля будують шведський громадянський словник і контекст.</p>
           <h2>Чим вона <em>не є</em></h2>
           <p>Це не офіційний матеріал. Не юридичний документ. Не заміна публічних навчальних матеріалів UHR. Скористайтеся <a href="#/sources">сторінкою Джерела</a> для посилань на банк питань і перевіряйте матеріали UHR, коли факт має значення.</p>
@@ -281,12 +477,64 @@
     },
 
     1: {
-      kicker: { en: 'Chapter 01 · History', sv: 'Kapitel 01 · Historia', 'zh-Hans': '第 01 章 · 历史', 'zh-Hant': '第 01 章 · 歷史', 'ar': 'الفصل 01 · التاريخ', 'ckb': 'بەشی 01 · مێژوو', 'fa': 'فصل 01 · تاریخ', 'pl': 'Rozdział 01 · Historia', 'so': 'Cutubka 01 · Taariikh', 'ti': 'ምዕራፍ 01 · ታሪኽ', 'tr': 'Bölüm 01 · Tarih', 'uk': 'Розділ 01 · Історія' },
-      title: { en: 'A very short', sv: 'En kort historia', 'zh-Hans': '一部极简的', 'zh-Hant': '一部極簡的', 'ar': 'تاريخ موجز جدًا', 'ckb': 'مێژوویەکی زۆر کورت', 'fa': 'تاریخی بسیار کوتاه', 'pl': 'Bardzo krótka', 'so': 'Aad u gaaban', 'ti': 'ኣዝዩ ሓጺር', 'tr': 'Çok kısa', 'uk': 'Дуже коротка' },
-      title_em: { en: 'history of Sweden.', sv: 'om Sverige.', 'zh-Hans': '瑞典史。', 'zh-Hant': '瑞典史。', 'ar': 'للسويد.', 'ckb': 'لە سوید.', 'fa': 'از سوئد.', 'pl': 'historia Szwecji.', 'so': 'taariikhda Iswiidhan.', 'ti': 'ታሪኽ ሽወደን።', 'tr': 'İsveç tarihi.', 'uk': 'історія Швеції.' },
+      kicker: {
+        en: 'Chapter 01 · History',
+        sv: 'Kapitel 01 · Historia',
+        'zh-Hans': '第 01 章 · 历史',
+        'zh-Hant': '第 01 章 · 歷史',
+        ar: 'الفصل 01 · التاريخ',
+        ckb: 'بەشی 01 · مێژوو',
+        fa: 'فصل 01 · تاریخ',
+        pl: 'Rozdział 01 · Historia',
+        so: 'Cutubka 01 · Taariikh',
+        ti: 'ምዕራፍ 01 · ታሪኽ',
+        tr: 'Bölüm 01 · Tarih',
+        uk: 'Розділ 01 · Історія',
+      },
+      title: {
+        en: 'A very short',
+        sv: 'En kort historia',
+        'zh-Hans': '一部极简的',
+        'zh-Hant': '一部極簡的',
+        ar: 'تاريخ موجز جدًا',
+        ckb: 'مێژوویەکی زۆر کورت',
+        fa: 'تاریخی بسیار کوتاه',
+        pl: 'Bardzo krótka',
+        so: 'Aad u gaaban',
+        ti: 'ኣዝዩ ሓጺር',
+        tr: 'Çok kısa',
+        uk: 'Дуже коротка',
+      },
+      title_em: {
+        en: 'history of Sweden.',
+        sv: 'om Sverige.',
+        'zh-Hans': '瑞典史。',
+        'zh-Hant': '瑞典史。',
+        ar: 'للسويد.',
+        ckb: 'لە سوید.',
+        fa: 'از سوئد.',
+        pl: 'historia Szwecji.',
+        so: 'taariikhda Iswiidhan.',
+        ti: 'ታሪኽ ሽወደን።',
+        tr: 'İsveç tarihi.',
+        uk: 'історія Швеції.',
+      },
       lede: {
         en: 'From Vikings to NATO in under 4,000 words. The dynasties are skippable. The patterns are not.',
-        sv: 'Från vikingar till NATO på under 4 000 ord. Dynastierna kan du hoppa över. Mönstren kan du inte.', 'zh-Hans': '用不到 4,000 字，从维京人讲到 NATO（北约）。王朝世系可以略过，但其中的规律不能。', 'zh-Hant': '用不到 4,000 字，從維京人講到 NATO（北約）。王朝世系可以略過，但其中的規律不能。', 'ar': 'من الفايكنغ إلى NATO في أقل من 4,000 كلمة. السلالات الحاكمة يمكن تجاوزها. الأنماط لا يمكن.', 'ckb': 'لە ڤایکینگەکانەوە بۆ NATO لە کەمتر لە 4,000 وشەدا. بنەماڵە پاشایەتییەکان دەکرێت تێپەڕێنرێن، بەڵام شێوازەکان نا.', 'fa': 'از وایکینگ‌ها تا NATO در کمتر از 4,000 واژه. سلسله‌های پادشاهی را می‌توان نادیده گرفت، اما الگوها را نه.', 'pl': 'Od wikingów do NATO w mniej niż 4000 słów. Dynastie można pominąć. Wzorców już nie.', 'so': 'Laga soo bilaabo Vikingyada ilaa NATO ka yar 4,000 oo eray. Boqortooyooyinka waa la boodi karaa. Qaababka lama boodi karo.', 'ti': 'ካብ ቫይኪንግ ክሳብ NATO ብትሕቲ 4,000 ቃላት። ስርወ-መንግስታት ክትዘሎም ይከኣል። ነቶም ኣገባባት ግን ኣይከኣልን።', 'tr': 'Vikinglerden NATO\'ya 4.000 kelimeden az. Hanedanları atlayabilirsiniz. Örüntüleri atlayamazsınız.', 'uk': 'Від вікінгів до NATO менш ніж за 4000 слів. Династії можна пропустити. Закономірності — ні.' },
+        sv: 'Från vikingar till NATO på under 4 000 ord. Dynastierna kan du hoppa över. Mönstren kan du inte.',
+        'zh-Hans':
+          '用不到 4,000 字，从维京人讲到 NATO（北约）。王朝世系可以略过，但其中的规律不能。',
+        'zh-Hant':
+          '用不到 4,000 字，從維京人講到 NATO（北約）。王朝世系可以略過，但其中的規律不能。',
+        ar: 'من الفايكنغ إلى NATO في أقل من 4,000 كلمة. السلالات الحاكمة يمكن تجاوزها. الأنماط لا يمكن.',
+        ckb: 'لە ڤایکینگەکانەوە بۆ NATO لە کەمتر لە 4,000 وشەدا. بنەماڵە پاشایەتییەکان دەکرێت تێپەڕێنرێن، بەڵام شێوازەکان نا.',
+        fa: 'از وایکینگ‌ها تا NATO در کمتر از 4,000 واژه. سلسله‌های پادشاهی را می‌توان نادیده گرفت، اما الگوها را نه.',
+        pl: 'Od wikingów do NATO w mniej niż 4000 słów. Dynastie można pominąć. Wzorców już nie.',
+        so: 'Laga soo bilaabo Vikingyada ilaa NATO ka yar 4,000 oo eray. Boqortooyooyinka waa la boodi karaa. Qaababka lama boodi karo.',
+        ti: 'ካብ ቫይኪንግ ክሳብ NATO ብትሕቲ 4,000 ቃላት። ስርወ-መንግስታት ክትዘሎም ይከኣል። ነቶም ኣገባባት ግን ኣይከኣልን።',
+        tr: "Vikinglerden NATO'ya 4.000 kelimeden az. Hanedanları atlayabilirsiniz. Örüntüleri atlayamazsınız.",
+        uk: 'Від вікінгів до NATO менш ніж за 4000 слів. Династії можна пропустити. Закономірності — ні.',
+      },
       body: {
         en: `
           <h2>Vikings (793 – ~1066)</h2>
@@ -318,6 +566,7 @@
             'I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.',
           ],
           'Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>维京时代（793 – 约 1066）</h2>
           <p>戴角头盔的形象其实是 19 世纪歌剧的杜撰。真实情况更有意思：那是一群说古诺尔斯语的商人、农民、劫掠者和探险者。瑞典人大多向东而行——沿河流深入今天的俄罗斯和乌克兰——用白银、奴隶和琥珀去换取来自拜占庭的货物。</p>
@@ -361,7 +610,7 @@
           </ul>
           ${ebookFactBox('zh-Hant', null, '國慶日：6 月 6 日 · 加入 EU：1995 · 加入 NATO：2024 · 長期和平：通常被描述為自 1814 年起從未中斷。', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ar': `<h2>الفايكنغ (793 – ~1066)</h2>
+        ar: `<h2>الفايكنغ (793 – ~1066)</h2>
           <p>صورة الخوذات ذات القرون هي اختراع أوبرالي من القرن التاسع عشر. الواقع أكثر إثارة للاهتمام: تجار ومزارعون وغزاة ومستكشفون يتحدثون اللغة النوردية القديمة. توجّه السويديون في الغالب شرقًا — عبر الأنهار إلى ما يُعرف اليوم بروسيا وأوكرانيا — لمقايضة الفضة والعبيد والكهرمان ببضائع من بيزنطة.</p>
           <p>تنتهي الحقبة تدريجيًا مع تنصّر السويد (الملك Olof Skötkonung، عُمّد نحو عام 1000) وتوحّدها تحت الحكم الملكي.</p>
           <h2>اتحاد كالمار (1397 – 1523)</h2>
@@ -382,7 +631,7 @@
           </ul>
           ${ebookFactBox('ar', null, 'اليوم الوطني: 6 يونيو · الانضمام إلى EU: 1995 · الانضمام إلى NATO: 2024 · فترة السلام الطويلة: تُوصَف عادةً بأنها متواصلة منذ 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ckb': `<h2>ڤایکینگەکان (793 – ~1066)</h2>
+        ckb: `<h2>ڤایکینگەکان (793 – ~1066)</h2>
           <p>وێنەی کڵاوە قۆچدارەکان داهێنانێکی ئۆپێرایی سەدەی نۆزدەهەمە. ڕاستییەکە سەرنجڕاکێشترە: بازرگان، جوتیار، تاڵانکەر و گەڕیدەی نۆرسیزمان. سویدییەکان زۆربەی کات بەرەو ڕۆژهەڵات دەچوون — بە ڕووبارەکاندا بۆ ناو ئەوەی ئەمڕۆ پێی دەوترێت ڕووسیا و ئۆکرانیا — بۆ ئاڵوگۆڕی زیو، کۆیلە و کاهرەبا بە کاڵای بیزەنتی.</p>
           <p>ئەم سەردەمە بە تەدریجی کۆتایی دێت لەگەڵ مەسیحیبوونی سوید (پاشا Olof Skötkonung، نزیکەی ساڵی 1000 لە ئاو هەڵکێشرا) و یەکگرتنی لەژێر فەرمانڕەواییی پاشایەتیدا.</p>
           <h2>یەکێتیی کالمار (1397 – 1523)</h2>
@@ -403,7 +652,7 @@
           </ul>
           ${ebookFactBox('ckb', null, 'ڕۆژی نیشتمانی: 6ی ژوئن · چوونە ناو EU: 1995 · چوونە ناو NATO: 2024 · ماوەی ئاشتیی درێژ: زۆرتر وەک بەردەوام لە 1814ەوە باس دەکرێت.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'fa': `<h2>وایکینگ‌ها (793 – ~1066)</h2>
+        fa: `<h2>وایکینگ‌ها (793 – ~1066)</h2>
           <p>تصویر کلاهخودهای شاخ‌دار ساختهٔ یک اپرای قرن نوزدهمی است. واقعیت جالب‌تر است: بازرگانان، کشاورزان، مهاجمان و کاشفانی که به زبان نورس کهن سخن می‌گفتند. سوئدی‌ها بیشتر به سمت شرق می‌رفتند — از مسیر رودخانه‌ها به روسیه و اوکراین امروزی — تا نقره، برده و کهربا را با کالاهای بیزانس مبادله کنند.</p>
           <p>این دوران به‌تدریج با مسیحی‌شدن سوئد (پادشاه Olof Skötkonung که حدود سال 1000 غسل تعمید یافت) و یکپارچه‌شدن زیر حکومت پادشاهی به پایان می‌رسد.</p>
           <h2>اتحادیهٔ کالمار (1397 – 1523)</h2>
@@ -424,7 +673,7 @@
           </ul>
           ${ebookFactBox('fa', null, 'روز ملی: 6 ژوئن · پیوستن به EU: 1995 · پیوستن به NATO: 2024 · دورهٔ صلح طولانی: معمولاً پیوسته از 1814 توصیف می‌شود.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'pl': `<h2>Wikingowie (793 – ~1066)</h2>
+        pl: `<h2>Wikingowie (793 – ~1066)</h2>
           <p>Obraz hełmów z rogami to wynalazek dziewiętnastowiecznej opery. Rzeczywistość jest ciekawsza: mówiący po nordyjsku kupcy, rolnicy, najeźdźcy i odkrywcy. Szwedzi ruszali głównie na wschód — w dół rzek, na tereny dzisiejszej Rosji i Ukrainy — by wymieniać srebro, niewolników i bursztyn na towary z Bizancjum.</p>
           <p>Epoka kończy się stopniowo, gdy Szwecja przyjmuje chrześcijaństwo (król Olof Skötkonung, ochrzczony ok. 1000) i konsoliduje się pod władzą monarchiczną.</p>
           <h2>Unia kalmarska (1397 – 1523)</h2>
@@ -445,7 +694,7 @@
           </ul>
           ${ebookFactBox('pl', null, 'Święto narodowe: 6 czerwca · Przystąpienie do EU: 1995 · Przystąpienie do NATO: 2024 · Długi okres pokoju: zwykle opisywany jako nieprzerwany od 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'so': `<h2>Vikingyada (793 – ~1066)</h2>
+        so: `<h2>Vikingyada (793 – ~1066)</h2>
           <p>Sawirka koofiyadaha geesaha leh waa alaab opera oo qarniga 19-aad la hindisay. Xaqiiqdu way ka xiiso badan tahay: ganacsato, beeraley, weerarleyaal iyo sahamiyayaal ku hadlay luqadda Norse. Iswiidhishku inta badan waxay u kaceen bari — wabiyada hoosta iyo Ruushka iyo Ukrayn ee maanta — si ay lacagta qalin, addoommada iyo cambarka ugu baddalaan badeecadaha Byzantium.</p>
           <p>Xilligu si tartiib ah ayuu u dhammaadaa markii Iswiidhan Masiixiyad noqotay (Boqor Olof Skötkonung, waxaa la baabtiisay qiyaastii 1000) oo ay isku ururtay xukunka boqortooyada.</p>
           <h2>Midowga Kalmar (1397 – 1523)</h2>
@@ -466,7 +715,7 @@
           </ul>
           ${ebookFactBox('so', null, 'Maalinta qaranka: 6 Juun · Ku biiristii EU: 1995 · Ku biiristii NATO: 2024 · Muddo nabadeed dheer: badanaa lagu tilmaamo mid joogto ah tan iyo 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'ti': `<h2>ቫይኪንግ (793 – ~1066)</h2>
+        ti: `<h2>ቫይኪንግ (793 – ~1066)</h2>
           <p>እቲ ቀርኒ ዘለዎ ቆብዕ ስእሊ ናይ 19 ክፍለ ዘመን ኦፐራ ፈጠራ እዩ። እቲ ሓቂ ግን ዝያዳ ዝስሕብ እዩ፦ ብኖርስ ቋንቋ ዝዛረቡ ነጋዶ፣ ሓረስቶት፣ ወረርትን መርመርትን። ሽወደናውያን መብዛሕትኦም ናብ ምብራቕ ይኸዱ ነበሩ — ብወሓይዝ ናብ ሎሚ ሩስያን ዩክሬንን — ብሩር፣ ባሮትን ኣምበርን ብኣቕሑ ቢዛንቲየም ንምልውዋጥ።</p>
           <p>እቲ ዘመን ሽወደን ናብ ክርስትና ምስ ኣተወት (ንጉስ Olof Skötkonung፣ ኣስታት 1000 ተጠሚቑ) ኣብ ትሕቲ ንጉሳዊ ምሕደራ ምስ ተወሃሃደት ቀስ ብቐስ ይውዳእ።</p>
           <h2>ሕብረት ካልማር (1397 – 1523)</h2>
@@ -487,7 +736,7 @@
           </ul>
           ${ebookFactBox('ti', null, 'ሃገራዊ መዓልቲ፦ 6 ሰነ · ናብ EU ምእታው፦ 1995 · ናብ NATO ምእታው፦ 2024 · ነዊሕ ናይ ሰላም እዋን፦ መብዛሕትኡ ግዜ ካብ 1814 ጀሚሩ ከም ቀጻሊ ይግለጽ።', ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'tr': `<h2>Vikingler (793 – ~1066)</h2>
+        tr: `<h2>Vikingler (793 – ~1066)</h2>
           <p>Boynuzlu miğfer imgesi 19. yüzyıla ait bir opera icadıdır. Gerçek daha ilginç: Nors dili konuşan tüccarlar, çiftçiler, akıncılar ve kâşifler. İsveçliler çoğunlukla doğuya gitti — nehirlerden aşağı, bugünkü Rusya ve Ukrayna'ya — gümüş, köle ve kehribarı Bizans mallarıyla takas etmek için.</p>
           <p>Dönem, İsveç Hristiyanlaştıkça (Kral Olof Skötkonung, yaklaşık 1000'de vaftiz edildi) ve monarşik yönetim altında birleştikçe yavaş yavaş sona erer.</p>
           <h2>Kalmar Birliği (1397 – 1523)</h2>
@@ -506,9 +755,9 @@
             <li>2003 — euroyu benimsemeye karşı oy verir.</li>
             <li>2024 — 200 yılı aşkın askeri tarafsızlığı sona erdirerek NATO'ya katılır.</li>
           </ul>
-          ${ebookFactBox('tr', null, 'Ulusal gün: 6 Haziran · EU\'ya katılım: 1995 · NATO\'ya katılım: 2024 · Uzun barış dönemi: genellikle 1814\'ten beri kesintisiz olarak tanımlanır.', ['uhrStudyMaterial', 'governmentNato'])}
+          ${ebookFactBox('tr', null, "Ulusal gün: 6 Haziran · EU'ya katılım: 1995 · NATO'ya katılım: 2024 · Uzun barış dönemi: genellikle 1814'ten beri kesintisiz olarak tanımlanır.", ['uhrStudyMaterial', 'governmentNato'])}
         `,
-        'uk': `<h2>Вікінги (793 – ~1066)</h2>
+        uk: `<h2>Вікінги (793 – ~1066)</h2>
           <p>Образ рогатих шоломів — це винахід опери XIX століття. Реальність цікавіша: торговці, фермери, нападники та дослідники, що розмовляли давньоскандинавською. Шведи здебільшого рушали на схід — униз річками, на терени сучасних Росії та України — щоб обмінювати срібло, рабів і бурштин на товари з Візантії.</p>
           <p>Епоха завершується поступово, коли Швеція християнізується (король Olof Skötkonung, охрещений бл. 1000) та консолідується під монархічним правлінням.</p>
           <h2>Кальмарська унія (1397 – 1523)</h2>
@@ -533,12 +782,64 @@
     },
 
     2: {
-      kicker: { en: 'Chapter 02 · Government', sv: 'Kapitel 02 · Statsskick', 'zh-Hans': '第 02 章 · 政府', 'zh-Hant': '第 02 章 · 政府', 'ar': 'الفصل 02 · الحكم', 'ckb': 'بەشی 02 · فەرمانڕەوایی', 'fa': 'فصل 02 · حکومت', 'pl': 'Rozdział 02 · Władza', 'so': 'Cutubka 02 · Dawladnimo', 'ti': 'ምዕራፍ 02 · ምሕደራ', 'tr': 'Bölüm 02 · Yönetim', 'uk': 'Розділ 02 · Влада' },
-      title: { en: 'How Sweden', sv: 'Hur Sverige', 'zh-Hans': '瑞典', 'zh-Hant': '瑞典', 'ar': 'كيف تُحكَم', 'ckb': 'سوید چۆن', 'fa': 'سوئد چگونه', 'pl': 'Jak rządzona jest', 'so': 'Sida Iswiidhan', 'ti': 'ሽወደን ብኸመይ', 'tr': 'İsveç nasıl', 'uk': 'Як управляється' },
-      title_em: { en: 'is governed.', sv: 'styrs.', 'zh-Hans': '如何治理。', 'zh-Hant': '如何治理。', 'ar': 'السويد.', 'ckb': 'بەڕێوە دەبردرێت.', 'fa': 'اداره می‌شود.', 'pl': 'Szwecja.', 'so': 'loo maamulo.', 'ti': 'ከም እትመሓደር።', 'tr': 'yönetilir.', 'uk': 'Швеція.' },
+      kicker: {
+        en: 'Chapter 02 · Government',
+        sv: 'Kapitel 02 · Statsskick',
+        'zh-Hans': '第 02 章 · 政府',
+        'zh-Hant': '第 02 章 · 政府',
+        ar: 'الفصل 02 · الحكم',
+        ckb: 'بەشی 02 · فەرمانڕەوایی',
+        fa: 'فصل 02 · حکومت',
+        pl: 'Rozdział 02 · Władza',
+        so: 'Cutubka 02 · Dawladnimo',
+        ti: 'ምዕራፍ 02 · ምሕደራ',
+        tr: 'Bölüm 02 · Yönetim',
+        uk: 'Розділ 02 · Влада',
+      },
+      title: {
+        en: 'How Sweden',
+        sv: 'Hur Sverige',
+        'zh-Hans': '瑞典',
+        'zh-Hant': '瑞典',
+        ar: 'كيف تُحكَم',
+        ckb: 'سوید چۆن',
+        fa: 'سوئد چگونه',
+        pl: 'Jak rządzona jest',
+        so: 'Sida Iswiidhan',
+        ti: 'ሽወደን ብኸመይ',
+        tr: 'İsveç nasıl',
+        uk: 'Як управляється',
+      },
+      title_em: {
+        en: 'is governed.',
+        sv: 'styrs.',
+        'zh-Hans': '如何治理。',
+        'zh-Hant': '如何治理。',
+        ar: 'السويد.',
+        ckb: 'بەڕێوە دەبردرێت.',
+        fa: 'اداره می‌شود.',
+        pl: 'Szwecja.',
+        so: 'loo maamulo.',
+        ti: 'ከም እትመሓደር።',
+        tr: 'yönetilir.',
+        uk: 'Швеція.',
+      },
       lede: {
         en: "A king who can't decide, a Riksdag that does, and 290 municipalities you'll mostly only meet at the recycling station.",
-        sv: 'En kung som inte bestämmer, en riksdag som gör det, och 290 kommuner du oftast bara träffar vid återvinningen.', 'zh-Hans': '一位无权决断的国王、一个真正做决定的 Riksdag（议会），以及 290 个你大概只会在回收站碰到的 kommun（市镇）。', 'zh-Hant': '一位無權決斷的國王、一個真正做決定的 Riksdag（議會），以及 290 個你大概只會在回收站碰到的 kommun（市鎮）。', 'ar': 'ملكٌ لا يستطيع أن يقرّر، و Riksdag (البرلمان) يقرّر، و290 بلدية لن تلتقي بها في الغالب إلا عند محطة إعادة التدوير.', 'ckb': 'پاشایەک کە ناتوانێت بڕیار بدات، Riksdagـێک (پەرلەمان) کە بڕیار دەدات، و 290 شارەوانی کە زۆرتر تەنها لە وێستگەی پیتاندنەوەدا دەیانبینیت.', 'fa': 'پادشاهی که نمی‌تواند تصمیم بگیرد، یک Riksdag (پارلمان) که تصمیم می‌گیرد، و 290 کمون که بیشتر فقط در ایستگاه بازیافت با آن‌ها سروکار خواهید داشت.', 'pl': 'Król, który nie może decydować, Riksdag (parlament), który decyduje, oraz 290 gmin (kommuner), które spotkasz głównie przy stacji recyklingu.', 'so': 'Boqor aan go\'aan qaadan karin, Riksdag (baarlamaan) oo qaada, iyo 290 degmo (kommuner) oo aad badanaa kula kulmi doonto saldhigga dib-u-warshadaynta.', 'ti': 'ክውስን ዘይክእል ንጉስ፣ ዝውስን Riksdag (ባይቶ)፣ ከምኡ’ውን መብዛሕትኡ ግዜ ኣብ መደበር ዳግመ-ምጥቃም ጥራይ እትረኽቦም 290 kommun (ምምሕዳር ከተማ)።', 'tr': 'Karar veremeyen bir kral, karar veren bir Riksdag (parlamento) ve çoğunlukla yalnızca geri dönüşüm istasyonunda karşılaşacağınız 290 belediye (kommuner).', 'uk': 'Король, який не може вирішувати, Riksdag (парламент), який вирішує, та 290 муніципалітетів (kommuner), які ви здебільшого зустрінете лише на станції переробки.' },
+        sv: 'En kung som inte bestämmer, en riksdag som gör det, och 290 kommuner du oftast bara träffar vid återvinningen.',
+        'zh-Hans':
+          '一位无权决断的国王、一个真正做决定的 Riksdag（议会），以及 290 个你大概只会在回收站碰到的 kommun（市镇）。',
+        'zh-Hant':
+          '一位無權決斷的國王、一個真正做決定的 Riksdag（議會），以及 290 個你大概只會在回收站碰到的 kommun（市鎮）。',
+        ar: 'ملكٌ لا يستطيع أن يقرّر، و Riksdag (البرلمان) يقرّر، و290 بلدية لن تلتقي بها في الغالب إلا عند محطة إعادة التدوير.',
+        ckb: 'پاشایەک کە ناتوانێت بڕیار بدات، Riksdagـێک (پەرلەمان) کە بڕیار دەدات، و 290 شارەوانی کە زۆرتر تەنها لە وێستگەی پیتاندنەوەدا دەیانبینیت.',
+        fa: 'پادشاهی که نمی‌تواند تصمیم بگیرد، یک Riksdag (پارلمان) که تصمیم می‌گیرد، و 290 کمون که بیشتر فقط در ایستگاه بازیافت با آن‌ها سروکار خواهید داشت.',
+        pl: 'Król, który nie może decydować, Riksdag (parlament), który decyduje, oraz 290 gmin (kommuner), które spotkasz głównie przy stacji recyklingu.',
+        so: "Boqor aan go'aan qaadan karin, Riksdag (baarlamaan) oo qaada, iyo 290 degmo (kommuner) oo aad badanaa kula kulmi doonto saldhigga dib-u-warshadaynta.",
+        ti: 'ክውስን ዘይክእል ንጉስ፣ ዝውስን Riksdag (ባይቶ)፣ ከምኡ’ውን መብዛሕትኡ ግዜ ኣብ መደበር ዳግመ-ምጥቃም ጥራይ እትረኽቦም 290 kommun (ምምሕዳር ከተማ)።',
+        tr: 'Karar veremeyen bir kral, karar veren bir Riksdag (parlamento) ve çoğunlukla yalnızca geri dönüşüm istasyonunda karşılaşacağınız 290 belediye (kommuner).',
+        uk: 'Король, який не може вирішувати, Riksdag (парламент), який вирішує, та 290 муніципалітетів (kommuner), які ви здебільшого зустрінете лише на станції переробки.',
+      },
       body: {
         en: `
           <h2>Three levels of government</h2>
@@ -562,7 +863,7 @@
           </ul>
           <h2>Voting</h2>
           <p>You vote in three separate elections on the same day: Riksdag, region, and kommun. You also vote in EU elections every five years. Swedish citizens vote in all four; permanent residents vote in regional and municipal elections after three years.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.')}
+          ${ebookFactBox('en', 'Facts to review', 'Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -572,6 +873,7 @@
             'Allmänna val hålls vart fjärde år. Svenska medborgare röstar till riksdagen, regionen och kommunen.',
           ],
           'Riksdag: 349 ledamöter · Val: vart fjärde år · Regioner: 21 · Kommuner: 290.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>三级政府</h2>
           <p>瑞典是一个 <em>君主立宪制国家</em>，也是一个 <em>议会民主制国家</em>。权力在三个层级上运作：</p>
@@ -619,7 +921,7 @@
           <p>你會在同一天參加三場各自獨立的選舉：Riksdag、region 和 kommun。此外，你每五年還會參加一次 EU（歐盟）選舉。瑞典公民這四種選舉都能參加；永久居民在居住滿三年後，可以參加區域和市鎮選舉。</p>
           ${ebookFactBox('zh-Hant', null, 'Riksdag 席位數：349 · 門檻：4% · 選舉間隔：4 年 · region 數量：21 · kommun 數量：290。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>ثلاثة مستويات للحكم</h2>
+        ar: `<h2>ثلاثة مستويات للحكم</h2>
           <p>السويد <em>ملكية دستورية</em> و<em>ديمقراطية برلمانية</em>. وتجري السلطة على ثلاثة مستويات:</p>
           <ul>
             <li><b>الوطني</b> — Riksdag (البرلمان)، وregering (الحكومة)، والملك (دور تشريفي).</li>
@@ -642,7 +944,7 @@
           <p>تصوّت في ثلاثة انتخابات منفصلة في اليوم نفسه: Riksdag، والإقليم (region)، والبلدية (kommun). كما تصوّت في انتخابات EU كل خمس سنوات. ويصوّت المواطنون السويديون في الأربعة جميعًا؛ أما المقيمون الدائمون فيصوّتون في الانتخابات الإقليمية والبلدية بعد ثلاث سنوات.</p>
           ${ebookFactBox('ar', null, 'حجم Riksdag: 349 · العتبة: 4% · فترة الانتخابات: 4 سنوات · عدد الأقاليم: 21 · عدد البلديات: 290.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>سێ ئاستی فەرمانڕەوایی</h2>
+        ckb: `<h2>سێ ئاستی فەرمانڕەوایی</h2>
           <p>سوید <em>پاشایەتییەکی دەستوورییە</em> و <em>دیموکراسییەکی پەرلەمانی</em>یە. هێز لە سێ ئاستدا کاردەکات:</p>
           <ul>
             <li><b>نیشتمانی</b> — Riksdag (پەرلەمان)، regering (حکومەت) و پاشا (ڕێوڕەسمی).</li>
@@ -665,7 +967,7 @@
           <p>لە یەک ڕۆژدا لە سێ هەڵبژاردنی جیاوازدا دەنگ دەدەیت: Riksdag، هەرێم (region) و شارەوانی (kommun). هەروەها هەر پێنج ساڵ جارێک لە هەڵبژاردنی EUدا دەنگ دەدەیت. هاووڵاتیانی سویدی لە هەر چوارەکەدا دەنگ دەدەن؛ نیشتەجێ هەمیشەییەکان دوای سێ ساڵ لە هەڵبژاردنی هەرێمی و شارەوانیدا دەنگ دەدەن.</p>
           ${ebookFactBox('ckb', null, 'قەبارەی Riksdag: 349 · سنوور: 4% · ماوەی هەڵبژاردن: 4 ساڵ · ژمارەی هەرێمەکان: 21 · ژمارەی شارەوانییەکان: 290.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>سه سطح حکومت</h2>
+        fa: `<h2>سه سطح حکومت</h2>
           <p>سوئد یک <em>پادشاهی مشروطه</em> و <em>دموکراسی پارلمانی</em> است. قدرت در سه سطح جریان دارد:</p>
           <ul>
             <li><b>ملی</b> — Riksdag (پارلمان)، regering (دولت) و پادشاه (تشریفاتی).</li>
@@ -688,7 +990,7 @@
           <p>شما در یک روز در سه انتخابات جداگانه رأی می‌دهید: Riksdag، منطقه (region) و کمون (kommun). همچنین هر پنج سال در انتخابات EU رأی می‌دهید. شهروندان سوئدی در هر چهار انتخابات رأی می‌دهند؛ مقیمان دائم پس از سه سال در انتخابات منطقه‌ای و کمونی رأی می‌دهند.</p>
           ${ebookFactBox('fa', null, 'اندازهٔ Riksdag: 349 · آستانه: 4% · فاصلهٔ انتخابات: 4 سال · تعداد مناطق: 21 · تعداد کمون‌ها: 290.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Trzy poziomy władzy</h2>
+        pl: `<h2>Trzy poziomy władzy</h2>
           <p>Szwecja jest <em>monarchią konstytucyjną</em> i <em>demokracją parlamentarną</em>. Władza działa na trzech poziomach:</p>
           <ul>
             <li><b>Krajowy</b> — Riksdag (parlament), regering (rząd) i król (ceremonialny).</li>
@@ -711,7 +1013,7 @@
           <p>Głosujesz w trzech odrębnych wyborach tego samego dnia: Riksdag, region i kommun. Głosujesz też w wyborach do EU co pięć lat. Obywatele szwedzcy głosują we wszystkich czterech; stali rezydenci głosują w wyborach regionalnych i gminnych po trzech latach.</p>
           ${ebookFactBox('pl', null, 'Liczebność Riksdagu: 349 · Próg: 4% · Częstotliwość wyborów: 4 lata · Liczba regionów: 21 · Liczba gmin: 290.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Saddex heer oo dawladnimo</h2>
+        so: `<h2>Saddex heer oo dawladnimo</h2>
           <p>Iswiidhan waa <em>boqortooyo dastuuri ah</em> iyo <em>dimoqraadiyad baarlamaani ah</em>. Awooddu waxay ka shaqaysaa saddex heer:</p>
           <ul>
             <li><b>Heer qaran</b> — Riksdag (baarlamaan), regering (dawlad) iyo boqorka (xafladeed).</li>
@@ -734,7 +1036,7 @@
           <p>Waxaad ka codaysaa saddex doorasho oo kala duwan maalin isku mid ah: Riksdag, region iyo kommun. Waxaad sidoo kale ka codaysaa doorashooyinka EU shantii sanaba mar. Muwaadiniinta Iswiidhan waxay ka codeeyaan dhammaan afarta; dadka deganaanshaha joogtada ah waxay ka codeeyaan doorashooyinka gobolka iyo degmada saddex sano ka dib.</p>
           ${ebookFactBox('so', null, 'Cabbirka Riksdag: 349 · Xadka: 4% · Muddada doorashada: 4 sano · Tirada region: 21 · Tirada degmooyinka: 290.', ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>ሰለስተ ደረጃታት ምሕደራ</h2>
+        ti: `<h2>ሰለስተ ደረጃታት ምሕደራ</h2>
           <p>ሽወደን <em>ቅዋማዊ ንግስና</em>ን <em>ፓርላሜንታዊ ደሞክራሲ</em>ን እያ። ስልጣን ኣብ ሰለስተ ደረጃ ይሰርሕ፦</p>
           <ul>
             <li><b>ሃገራዊ</b> — Riksdag (ባይቶ)፣ regering (መንግስቲ)ን ንጉስ (ስነ-ስርዓታዊ)ን።</li>
@@ -757,7 +1059,7 @@
           <p>ኣብ ሓደ መዓልቲ ኣብ ሰለስተ በበይኖም ምርጫታት ትመርጽ፦ Riksdag፣ region ከምኡ’ውን kommun። ከምኡ’ውን ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት ኣብ ምርጫታት EU ትመርጽ። ዜጋታት ሽወደን ኣብ ኩሉ ኣርባዕተ ይመርጹ፣ ቀወምቲ ነበርቲ ድሕሪ ሰለስተ ዓመት ኣብ ዞባውን ምምሕዳር ከተማን ምርጫታት ይመርጹ።</p>
           ${ebookFactBox('ti', null, 'ዓቐን Riksdag፦ 349 · ደረት፦ 4% · ግዜ ምርጫ፦ 4 ዓመት · ቍጽሪ region፦ 21 · ቍጽሪ kommun፦ 290።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Üç yönetim düzeyi</h2>
+        tr: `<h2>Üç yönetim düzeyi</h2>
           <p>İsveç bir <em>anayasal monarşi</em> ve <em>parlamenter demokrasi</em>dir. Erk üç düzeyde işler:</p>
           <ul>
             <li><b>Ulusal</b> — Riksdag (parlamento), regering (hükümet) ve kral (törensel).</li>
@@ -780,7 +1082,7 @@
           <p>Aynı gün üç ayrı seçimde oy verirsiniz: Riksdag, region ve kommun. Ayrıca beş yılda bir EU seçimlerinde oy verirsiniz. İsveç vatandaşları dördünde de oy verir; daimi oturum sahipleri üç yıl sonra bölge ve belediye seçimlerinde oy verir.</p>
           ${ebookFactBox('tr', null, 'Riksdag büyüklüğü: 349 · Baraj: %4 · Seçim aralığı: 4 yıl · region sayısı: 21 · belediye sayısı: 290.', ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Три рівні влади</h2>
+        uk: `<h2>Три рівні влади</h2>
           <p>Швеція є <em>конституційною монархією</em> та <em>парламентською демократією</em>. Влада діє на трьох рівнях:</p>
           <ul>
             <li><b>Загальнодержавний</b> — Riksdag (парламент), regering (уряд) і король (церемоніальний).</li>
@@ -807,12 +1109,64 @@
     },
 
     3: {
-      kicker: { en: 'Chapter 03 · Rights', sv: 'Kapitel 03 · Rättigheter', 'zh-Hans': '第 03 章 · 权利', 'zh-Hant': '第 03 章 · 權利', 'ar': 'الفصل 03 · الحقوق', 'ckb': 'بەشی 03 · مافەکان', 'fa': 'فصل 03 · حقوق', 'pl': 'Rozdział 03 · Prawa', 'so': 'Cutubka 03 · Xuquuq', 'ti': 'ምዕራፍ 03 · መሰላት', 'tr': 'Bölüm 03 · Haklar', 'uk': 'Розділ 03 · Права' },
-      title: { en: 'Four basic laws,', sv: 'Fyra grundlagar,', 'zh-Hans': '四部基本法，', 'zh-Hant': '四部基本法，', 'ar': 'أربعة قوانين أساسية،', 'ckb': 'چوار یاسای بنەڕەتی،', 'fa': 'چهار قانون اساسی،', 'pl': 'Cztery ustawy zasadnicze,', 'so': 'Afar sharci oo aasaasi ah,', 'ti': 'ኣርባዕተ መሰረታውያን ሕግታት፣', 'tr': 'Dört temel yasa,', 'uk': 'Чотири основні закони,' },
-      title_em: { en: 'one long list of rights.', sv: 'en lång lista av rättigheter.', 'zh-Hans': '一长串权利。', 'zh-Hant': '一長串權利。', 'ar': 'وقائمة طويلة من الحقوق.', 'ckb': 'یەک لیستی درێژی مافەکان.', 'fa': 'یک فهرست بلند از حقوق.', 'pl': 'jedna długa lista praw.', 'so': 'hal liis dheer oo xuquuq ah.', 'ti': 'ሓደ ነዊሕ ዝርዝር መሰላት።', 'tr': 'uzun bir haklar listesi.', 'uk': 'один довгий перелік прав.' },
+      kicker: {
+        en: 'Chapter 03 · Rights',
+        sv: 'Kapitel 03 · Rättigheter',
+        'zh-Hans': '第 03 章 · 权利',
+        'zh-Hant': '第 03 章 · 權利',
+        ar: 'الفصل 03 · الحقوق',
+        ckb: 'بەشی 03 · مافەکان',
+        fa: 'فصل 03 · حقوق',
+        pl: 'Rozdział 03 · Prawa',
+        so: 'Cutubka 03 · Xuquuq',
+        ti: 'ምዕራፍ 03 · መሰላት',
+        tr: 'Bölüm 03 · Haklar',
+        uk: 'Розділ 03 · Права',
+      },
+      title: {
+        en: 'Four basic laws,',
+        sv: 'Fyra grundlagar,',
+        'zh-Hans': '四部基本法，',
+        'zh-Hant': '四部基本法，',
+        ar: 'أربعة قوانين أساسية،',
+        ckb: 'چوار یاسای بنەڕەتی،',
+        fa: 'چهار قانون اساسی،',
+        pl: 'Cztery ustawy zasadnicze,',
+        so: 'Afar sharci oo aasaasi ah,',
+        ti: 'ኣርባዕተ መሰረታውያን ሕግታት፣',
+        tr: 'Dört temel yasa,',
+        uk: 'Чотири основні закони,',
+      },
+      title_em: {
+        en: 'one long list of rights.',
+        sv: 'en lång lista av rättigheter.',
+        'zh-Hans': '一长串权利。',
+        'zh-Hant': '一長串權利。',
+        ar: 'وقائمة طويلة من الحقوق.',
+        ckb: 'یەک لیستی درێژی مافەکان.',
+        fa: 'یک فهرست بلند از حقوق.',
+        pl: 'jedna długa lista praw.',
+        so: 'hal liis dheer oo xuquuq ah.',
+        ti: 'ሓደ ነዊሕ ዝርዝር መሰላት።',
+        tr: 'uzun bir haklar listesi.',
+        uk: 'один довгий перелік прав.',
+      },
       lede: {
         en: "Sweden's constitution is split across four laws. The Press Act is the oldest in the world. The rest is almost as interesting.",
-        sv: 'Sveriges författning står i fyra grundlagar. Tryckfrihetsförordningen är världens äldsta. Resten är nästan lika kul.', 'zh-Hans': '瑞典的宪法分散在四部法律之中。其中的《出版自由法》是全世界最古老的。其余几部也几乎同样有意思。', 'zh-Hant': '瑞典的憲法分散在四部法律之中。其中的《出版自由法》是全世界最古老的。其餘幾部也幾乎同樣有意思。', 'ar': 'دستور السويد موزّع على أربعة قوانين. وقانون حرية الصحافة هو الأقدم في العالم. والباقي مثيرٌ للاهتمام تقريبًا بالقدر نفسه.', 'ckb': 'دەستووری سوید بەسەر چوار یاسادا دابەش کراوە. یاسای ئازادیی چاپەمەنی کۆنترینە لە جیهاندا. ئەوانی تریش تەقریبەن بە هەمان ڕادە سەرنجڕاکێشن.', 'fa': 'قانون اساسی سوئد میان چهار قانون تقسیم شده است. قانون آزادی مطبوعات کهن‌ترین در جهان است. بقیه نیز تقریباً به همان اندازه جالب‌اند.', 'pl': 'Konstytucja Szwecji jest rozdzielona na cztery ustawy. Ustawa o wolności druku jest najstarsza na świecie. Reszta jest niemal równie ciekawa.', 'so': 'Dastuurka Iswiidhan waxaa loo qaybiyaa afar sharci. Sharciga Xorriyadda Saxaafadda waa kan ugu da\'da weyn adduunka. Inta kale ku dhowaad sidoo kale way xiiso badan tahay.', 'ti': 'ቅዋም ሽወደን ኣብ ኣርባዕተ ሕግታት ተኸፋፊሉ ኣሎ። ሕጊ ናጽነት ፕረስ ኣብ ዓለም እቲ ዝነበረ እዩ። እቲ ዝተረፈ ድማ ከባቢ ከምኡ ዝስሕብ እዩ።', 'tr': 'İsveç\'in anayasası dört yasaya bölünmüştür. Basın Özgürlüğü Yasası dünyanın en eskisidir. Gerisi neredeyse onun kadar ilginçtir.', 'uk': 'Конституція Швеції поділена на чотири закони. Акт про свободу преси — найдавніший у світі. Решта майже така ж цікава.' },
+        sv: 'Sveriges författning står i fyra grundlagar. Tryckfrihetsförordningen är världens äldsta. Resten är nästan lika kul.',
+        'zh-Hans':
+          '瑞典的宪法分散在四部法律之中。其中的《出版自由法》是全世界最古老的。其余几部也几乎同样有意思。',
+        'zh-Hant':
+          '瑞典的憲法分散在四部法律之中。其中的《出版自由法》是全世界最古老的。其餘幾部也幾乎同樣有意思。',
+        ar: 'دستور السويد موزّع على أربعة قوانين. وقانون حرية الصحافة هو الأقدم في العالم. والباقي مثيرٌ للاهتمام تقريبًا بالقدر نفسه.',
+        ckb: 'دەستووری سوید بەسەر چوار یاسادا دابەش کراوە. یاسای ئازادیی چاپەمەنی کۆنترینە لە جیهاندا. ئەوانی تریش تەقریبەن بە هەمان ڕادە سەرنجڕاکێشن.',
+        fa: 'قانون اساسی سوئد میان چهار قانون تقسیم شده است. قانون آزادی مطبوعات کهن‌ترین در جهان است. بقیه نیز تقریباً به همان اندازه جالب‌اند.',
+        pl: 'Konstytucja Szwecji jest rozdzielona na cztery ustawy. Ustawa o wolności druku jest najstarsza na świecie. Reszta jest niemal równie ciekawa.',
+        so: "Dastuurka Iswiidhan waxaa loo qaybiyaa afar sharci. Sharciga Xorriyadda Saxaafadda waa kan ugu da'da weyn adduunka. Inta kale ku dhowaad sidoo kale way xiiso badan tahay.",
+        ti: 'ቅዋም ሽወደን ኣብ ኣርባዕተ ሕግታት ተኸፋፊሉ ኣሎ። ሕጊ ናጽነት ፕረስ ኣብ ዓለም እቲ ዝነበረ እዩ። እቲ ዝተረፈ ድማ ከባቢ ከምኡ ዝስሕብ እዩ።',
+        tr: "İsveç'in anayasası dört yasaya bölünmüştür. Basın Özgürlüğü Yasası dünyanın en eskisidir. Gerisi neredeyse onun kadar ilginçtir.",
+        uk: 'Конституція Швеції поділена на чотири закони. Акт про свободу преси — найдавніший у світі. Решта майже така ж цікава.',
+      },
       body: {
         en: `
           <h2>The four basic laws (grundlagarna)</h2>
@@ -834,7 +1188,7 @@
           <p>Almost any document held by a public authority is, by default, public. Anyone can ask to see it, including journalists, foreign citizens, and your nosy neighbour. Exceptions exist (national security, personal data), but the default is openness — globally rare.</p>
           <h2>What it means in daily life</h2>
           <p>Your employer can't ask about your religion. Your landlord can't refuse you for your ethnicity. You can criticise the government on television, in writing, online — even meanly — without legal consequence. (Defamation, threats, and incitement remain crimes.)</p>
-          ${ebookFactBox('en', 'Facts to review', 'Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).')}
+          ${ebookFactBox('en', 'Facts to review', 'Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -844,6 +1198,7 @@
             'Rättigheter hör ihop med ansvar: hot, hets mot folkgrupp, förtal och diskriminering kan fortfarande vara förbjudet.',
           ],
           'Grundlagar: 4 · Tryckfrihetsförordningen: 1766 · Offentlighetsprincipen: insyn i myndigheter.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>四部基本法（grundlagarna）</h2>
           <ol>
@@ -887,7 +1242,7 @@
           <p>你的僱主不能詢問你的宗教信仰。你的房東不能因為你的族裔而拒絕你。你可以在電視上、在文字裡、在網路上批評政府——哪怕言辭刻薄——也不會承擔法律後果。（誹謗、威脅和煽動仍然屬於犯罪。）</p>
           ${ebookFactBox('zh-Hant', null, '基本法數量：4 · 最古老的：Tryckfrihetsförordningen（1766） · 繼承規則：由最年長的子女繼承，不論性別（自 1980 年起）。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>القوانين الأساسية الأربعة (grundlagarna)</h2>
+        ar: `<h2>القوانين الأساسية الأربعة (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — صك الحكم. القانون الأكبر. يحدّد بنية الدولة وحقوق المواطنين.</li>
             <li><b>Successionsordningen</b> — قانون وراثة العرش. من يرث العرش. (منذ 1980، الابن الأكبر بصرف النظر عن الجنس.)</li>
@@ -908,7 +1263,7 @@
           <p>لا يستطيع ربّ عملك أن يسألك عن دينك. ولا يستطيع مالك مسكنك أن يرفضك بسبب أصلك العرقي. ويمكنك انتقاد الحكومة على التلفزيون، وكتابةً، وعلى الإنترنت — حتى بقسوة — دون عواقب قانونية. (يبقى التشهير والتهديد والتحريض جرائم.)</p>
           ${ebookFactBox('ar', null, 'عدد القوانين الأساسية: 4 · الأقدم: Tryckfrihetsförordningen (1766) · قاعدة الوراثة: الابن الأكبر بصرف النظر عن الجنس (منذ 1980).', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>چوار یاسا بنەڕەتییەکە (grundlagarna)</h2>
+        ckb: `<h2>چوار یاسا بنەڕەتییەکە (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — بەڵگەنامەی فەرمانڕەوایی. یاسا گەورەکە. پێکهاتەی دەوڵەت و مافەکانی هاووڵاتیان دیاری دەکات.</li>
             <li><b>Successionsordningen</b> — یاسای میراتگرتنی تەخت. ئەوەی کێ تەخت بە میرات دەبات. (لە ساڵی 1980ەوە، گەورەترین منداڵ، بەبێ ڕەچاوکردنی ڕەگەز.)</li>
@@ -929,7 +1284,7 @@
           <p>کارفەرماکەت ناتوانێت پرسیار لە ئاینەکەت بکات. خاوەن‌ماڵەکەت ناتوانێت لەبەر نەتەوایەتییەکەت ڕەتت بکاتەوە. دەتوانیت لە تەلەفزیۆن، بە نووسین و لە ئۆنلاین ڕەخنە لە حکومەت بگریت — تەنانەت بە توندیش — بەبێ ئەنجامی یاسایی. (بوختان، هەڕەشە و هاندان هێشتا تاوانن.)</p>
           ${ebookFactBox('ckb', null, 'ژمارەی یاسا بنەڕەتییەکان: 4 · کۆنترین: Tryckfrihetsförordningen (1766) · ڕێسای میراتگرتن: گەورەترین منداڵ بەبێ ڕەچاوکردنی ڕەگەز (لە 1980ەوە).', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>چهار قانون اساسی (grundlagarna)</h2>
+        fa: `<h2>چهار قانون اساسی (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — سند حکومت. قانون بزرگ. ساختار دولت و حقوق شهروندان را تعریف می‌کند.</li>
             <li><b>Successionsordningen</b> — قانون جانشینی. اینکه چه کسی تخت را به ارث می‌برد. (از سال 1980، فرزند بزرگ‌تر، صرف‌نظر از جنسیت.)</li>
@@ -950,7 +1305,7 @@
           <p>کارفرمای شما نمی‌تواند دربارهٔ دین شما بپرسد. صاحب‌خانهٔ شما نمی‌تواند به‌خاطر قومیت شما را رد کند. می‌توانید دولت را در تلویزیون، به‌صورت نوشتاری و آنلاین نقد کنید — حتی تند — بدون پیامد قانونی. (هتک حرمت، تهدید و تحریک همچنان جرم‌اند.)</p>
           ${ebookFactBox('fa', null, 'تعداد قوانین اساسی: 4 · کهن‌ترین: Tryckfrihetsförordningen (1766) · قاعدهٔ وراثت: فرزند بزرگ‌تر صرف‌نظر از جنسیت (از 1980).', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Cztery ustawy zasadnicze (grundlagarna)</h2>
+        pl: `<h2>Cztery ustawy zasadnicze (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — Akt o formie rządu. Ten najważniejszy. Określa strukturę państwa i prawa obywateli.</li>
             <li><b>Successionsordningen</b> — Akt o sukcesji. Kto dziedziczy tron. (Od 1980 — najstarsze dziecko, niezależnie od płci.)</li>
@@ -971,7 +1326,7 @@
           <p>Twój pracodawca nie może pytać o twoją religię. Twój wynajmujący nie może odmówić ci ze względu na pochodzenie etniczne. Możesz krytykować rząd w telewizji, na piśmie, w internecie — nawet złośliwie — bez konsekwencji prawnych. (Zniesławienie, groźby i podżeganie pozostają przestępstwami.)</p>
           ${ebookFactBox('pl', null, 'Liczba ustaw zasadniczych: 4 · Najstarsza: Tryckfrihetsförordningen (1766) · Zasada dziedziczenia: najstarsze dziecko niezależnie od płci (od 1980).', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Afarta sharci ee aasaasiga ah (grundlagarna)</h2>
+        so: `<h2>Afarta sharci ee aasaasiga ah (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — Qoraalka Dawladnimada. Kan weyn. Wuxuu qeexaa qaab-dhismeedka dawladda iyo xuquuqda muwaadiniinta.</li>
             <li><b>Successionsordningen</b> — Sharciga Dhaxalka. Cidda dhaxasha carshiga. (Tan iyo 1980, ilmaha ugu weyn, iyadoon jinsi loo eegin.)</li>
@@ -990,9 +1345,9 @@
           <p>Ku dhowaad dukumenti kasta oo ay haysato hay'ad dawladeed, sida caadiga ah, waa mid dadweyne. Qof kastaa wuxuu codsan karaa inuu arko, oo ay ku jiraan saxafiyiinta, muwaadiniinta shisheeye, iyo deriskaaga xog-doonka ah. Waxaa jira ka reebban (amniga qaranka, xogta shakhsiga ah), laakiin sida caadiga ah waa furfurnaan — adduun ahaan dhif.</p>
           <h2>Maxay ka dhigan tahay nolosha maalinlaha ah</h2>
           <p>Loo-shaqeeyahaagu kaama weydiin karo diintaada. Mulkiilaha gurigu kuuma diidi karo qowmiyadaada awgeed. Waxaad dhaleecayn kartaa dawladda telefishinka, qoraal ahaan, internetka — xataa si xun — adigoon cawaaqib sharci ah la kulmin. (Sumcad-dilka, hanjabaadda iyo kicinta way sii ahaanayaan dembiyo.)</p>
-          ${ebookFactBox('so', null, 'Tirada sharciyada aasaasiga ah: 4 · Kan ugu da\'da weyn: Tryckfrihetsförordningen (1766) · Xeerka dhaxalka: ilmaha ugu weyn iyadoon jinsi loo eegin (tan iyo 1980).', ['uhrStudyMaterial'])}
+          ${ebookFactBox('so', null, "Tirada sharciyada aasaasiga ah: 4 · Kan ugu da'da weyn: Tryckfrihetsförordningen (1766) · Xeerka dhaxalka: ilmaha ugu weyn iyadoon jinsi loo eegin (tan iyo 1980).", ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>እተን ኣርባዕተ መሰረታውያን ሕግታት (grundlagarna)</h2>
+        ti: `<h2>እተን ኣርባዕተ መሰረታውያን ሕግታት (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — ሰነድ ምሕደራ መንግስቲ። እቲ ዓብዪ። ቅርጻ መንግስትን መሰላት ዜጋታትን ይገልጽ።</li>
             <li><b>Successionsordningen</b> — ሕጊ ውርሻ ዝፋን። ንዝፋን መን ከም ዝወርሶ። (ካብ 1980 ጀሚሩ፣ ብዘይ ኣፈላላይ ጾታ እቲ ዓብዪ ውሉድ።)</li>
@@ -1013,7 +1368,7 @@
           <p>ወሃብ ስራሕካ ብዛዕባ ሃይማኖትካ ክሓተካ ኣይክእልን። ኣካራዪ ገዛኻ ብሰንኪ ዓሌትካ ክነጽገካ ኣይክእልን። ንመንግስቲ ኣብ ተለቪዥን፣ ብጽሑፍ፣ ኣብ ኢንተርነት — ዋላ ብኸፊእ — ብዘይ ሕጋዊ መዘዝ ክትነቅፍ ትኽእል። (ጸለመ፣ ምፍርራህን ምልዕዓልን ገበናት ኮይኖም ይቕጽሉ።)</p>
           ${ebookFactBox('ti', null, 'ቍጽሪ መሰረታውያን ሕግታት፦ 4 · እቲ ዝነበረ፦ Tryckfrihetsförordningen (1766) · ሕጊ ውርሻ፦ ብዘይ ኣፈላላይ ጾታ እቲ ዓብዪ ውሉድ (ካብ 1980)።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>Dört temel yasa (grundlagarna)</h2>
+        tr: `<h2>Dört temel yasa (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — Yönetim Belgesi. En önemlisi. Devletin yapısını ve yurttaşların haklarını tanımlar.</li>
             <li><b>Successionsordningen</b> — Veraset Yasası. Tahtı kimin devralacağı. (1980'den beri, cinsiyetten bağımsız olarak en büyük çocuk.)</li>
@@ -1032,9 +1387,9 @@
           <p>Bir kamu kurumunun elindeki hemen her belge, varsayılan olarak aleni (kamuya açık)dır. Gazeteciler, yabancı yurttaşlar ve meraklı komşunuz dahil herkes onu görmek isteyebilir. İstisnalar vardır (ulusal güvenlik, kişisel veriler), ancak varsayılan açıklıktır — küresel olarak nadirdir.</p>
           <h2>Günlük hayatta ne anlama gelir</h2>
           <p>İşvereniniz dininizi soramaz. Ev sahibiniz etnik kökeniniz nedeniyle sizi reddedemez. Hükümeti televizyonda, yazılı olarak, çevrimiçi — hatta kırıcı biçimde — yasal sonuç olmadan eleştirebilirsiniz. (Hakaret, tehdit ve kışkırtma suç olmayı sürdürür.)</p>
-          ${ebookFactBox('tr', null, 'Temel yasa sayısı: 4 · En eskisi: Tryckfrihetsförordningen (1766) · Veraset kuralı: cinsiyetten bağımsız en büyük çocuk (1980\'den beri).', ['uhrStudyMaterial'])}
+          ${ebookFactBox('tr', null, "Temel yasa sayısı: 4 · En eskisi: Tryckfrihetsförordningen (1766) · Veraset kuralı: cinsiyetten bağımsız en büyük çocuk (1980'den beri).", ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Чотири основні закони (grundlagarna)</h2>
+        uk: `<h2>Чотири основні закони (grundlagarna)</h2>
           <ol>
             <li><b>Regeringsformen</b> — Акт про форму правління. Найголовніший. Визначає структуру держави та права громадян.</li>
             <li><b>Successionsordningen</b> — Акт про престолонаступництво. Хто успадковує трон. (Від 1980 — найстарша дитина, незалежно від статі.)</li>
@@ -1059,12 +1414,64 @@
     },
 
     4: {
-      kicker: { en: 'Chapter 04 · Work & taxes', sv: 'Kapitel 04 · Arbete & skatt', 'zh-Hans': '第 04 章 · 工作与税收', 'zh-Hant': '第 04 章 · 工作與稅收', 'ar': 'الفصل 04 · العمل والضرائب', 'ckb': 'بەشی 04 · کار و باج', 'fa': 'فصل 04 · کار و مالیات', 'pl': 'Rozdział 04 · Praca i podatki', 'so': 'Cutubka 04 · Shaqo & canshuuro', 'ti': 'ምዕራፍ 04 · ስራሕን ቀረጽን', 'tr': 'Bölüm 04 · İş ve vergiler', 'uk': 'Розділ 04 · Праця та податки' },
-      title: { en: 'Work,', sv: 'Arbete,', 'zh-Hans': '工作、', 'zh-Hant': '工作、', 'ar': 'العمل،', 'ckb': 'کار،', 'fa': 'کار،', 'pl': 'Praca,', 'so': 'Shaqo,', 'ti': 'ስራሕ፣', 'tr': 'İş,', 'uk': 'Праця,' },
-      title_em: { en: 'taxes, and the welfare state.', sv: 'skatt och välfärdsstaten.', 'zh-Hans': '税收，以及福利国家。', 'zh-Hant': '稅收，以及福利國家。', 'ar': 'والضرائب، ودولة الرفاه.', 'ckb': 'باج و دەوڵەتی خۆشگوزەرانی.', 'fa': 'مالیات و دولت رفاه.', 'pl': 'podatki i państwo opiekuńcze.', 'so': 'canshuuro, iyo dawladda daryeelka.', 'ti': 'ቀረጽን መንግስቲ ድሕነትን።', 'tr': 'vergiler ve refah devleti.', 'uk': 'податки та держава загального добробуту.' },
+      kicker: {
+        en: 'Chapter 04 · Work & taxes',
+        sv: 'Kapitel 04 · Arbete & skatt',
+        'zh-Hans': '第 04 章 · 工作与税收',
+        'zh-Hant': '第 04 章 · 工作與稅收',
+        ar: 'الفصل 04 · العمل والضرائب',
+        ckb: 'بەشی 04 · کار و باج',
+        fa: 'فصل 04 · کار و مالیات',
+        pl: 'Rozdział 04 · Praca i podatki',
+        so: 'Cutubka 04 · Shaqo & canshuuro',
+        ti: 'ምዕራፍ 04 · ስራሕን ቀረጽን',
+        tr: 'Bölüm 04 · İş ve vergiler',
+        uk: 'Розділ 04 · Праця та податки',
+      },
+      title: {
+        en: 'Work,',
+        sv: 'Arbete,',
+        'zh-Hans': '工作、',
+        'zh-Hant': '工作、',
+        ar: 'العمل،',
+        ckb: 'کار،',
+        fa: 'کار،',
+        pl: 'Praca,',
+        so: 'Shaqo,',
+        ti: 'ስራሕ፣',
+        tr: 'İş,',
+        uk: 'Праця,',
+      },
+      title_em: {
+        en: 'taxes, and the welfare state.',
+        sv: 'skatt och välfärdsstaten.',
+        'zh-Hans': '税收，以及福利国家。',
+        'zh-Hant': '稅收，以及福利國家。',
+        ar: 'والضرائب، ودولة الرفاه.',
+        ckb: 'باج و دەوڵەتی خۆشگوزەرانی.',
+        fa: 'مالیات و دولت رفاه.',
+        pl: 'podatki i państwo opiekuńcze.',
+        so: 'canshuuro, iyo dawladda daryeelka.',
+        ti: 'ቀረጽን መንግስቲ ድሕነትን።',
+        tr: 'vergiler ve refah devleti.',
+        uk: 'податки та держава загального добробуту.',
+      },
       lede: {
         en: "Sweden takes a lot of your salary and gives most of it back. The trick is knowing what it's paying for.",
-        sv: 'Sverige tar mycket av din lön och ger tillbaka det mesta. Knepet är att veta vad det går till.', 'zh-Hans': '瑞典从你的薪水里拿走很多，又把其中大部分还给你。诀窍在于弄清楚这些钱到底买了什么。', 'zh-Hant': '瑞典從你的薪水裡拿走很多，又把其中大部分還給你。訣竅在於弄清楚這些錢到底買了什麼。', 'ar': 'تأخذ السويد جزءًا كبيرًا من راتبك وتعيد معظمه. والحيلة هي أن تعرف ما الذي يُدفَع مقابله.', 'ckb': 'سوید بەشێکی زۆر لە موچەکەت دەبات و زۆربەی دەگەڕێنێتەوە. فێڵەکە ئەوەیە بزانیت لە بەرامبەر چیدا دەدرێت.', 'fa': 'سوئد بخش زیادی از حقوق شما را می‌گیرد و بیشتر آن را بازمی‌گرداند. ترفند کار این است که بدانید بابت چه چیزی پرداخت می‌شود.', 'pl': 'Szwecja zabiera dużą część twojej pensji i większość oddaje. Sztuką jest wiedzieć, za co płaci.', 'so': 'Iswiidhan waxay qaadataa qayb badan oo mushaharkaaga ah inteeda badanna way ku celisaa. Farsamadu waa inaad ogaato waxa ay bixinaysaa.', 'ti': 'ሽወደን ካብ ደሞዝካ ብዙሕ ትወስድ መብዛሕትኡ ድማ ትመልሶ። እቲ ብልሓት እንታይ ይኽፈለሉ ከም ዘሎ ምፍላጥ እዩ።', 'tr': 'İsveç maaşınızın büyük bölümünü alır ve çoğunu geri verir. İşin püf noktası, neyin karşılığını ödediğinizi bilmektir.', 'uk': 'Швеція забирає значну частину вашої зарплати й більшість повертає. Хитрість у тому, щоб знати, за що вона платить.' },
+        sv: 'Sverige tar mycket av din lön och ger tillbaka det mesta. Knepet är att veta vad det går till.',
+        'zh-Hans':
+          '瑞典从你的薪水里拿走很多，又把其中大部分还给你。诀窍在于弄清楚这些钱到底买了什么。',
+        'zh-Hant':
+          '瑞典從你的薪水裡拿走很多，又把其中大部分還給你。訣竅在於弄清楚這些錢到底買了什麼。',
+        ar: 'تأخذ السويد جزءًا كبيرًا من راتبك وتعيد معظمه. والحيلة هي أن تعرف ما الذي يُدفَع مقابله.',
+        ckb: 'سوید بەشێکی زۆر لە موچەکەت دەبات و زۆربەی دەگەڕێنێتەوە. فێڵەکە ئەوەیە بزانیت لە بەرامبەر چیدا دەدرێت.',
+        fa: 'سوئد بخش زیادی از حقوق شما را می‌گیرد و بیشتر آن را بازمی‌گرداند. ترفند کار این است که بدانید بابت چه چیزی پرداخت می‌شود.',
+        pl: 'Szwecja zabiera dużą część twojej pensji i większość oddaje. Sztuką jest wiedzieć, za co płaci.',
+        so: 'Iswiidhan waxay qaadataa qayb badan oo mushaharkaaga ah inteeda badanna way ku celisaa. Farsamadu waa inaad ogaato waxa ay bixinaysaa.',
+        ti: 'ሽወደን ካብ ደሞዝካ ብዙሕ ትወስድ መብዛሕትኡ ድማ ትመልሶ። እቲ ብልሓት እንታይ ይኽፈለሉ ከም ዘሎ ምፍላጥ እዩ።',
+        tr: 'İsveç maaşınızın büyük bölümünü alır ve çoğunu geri verir. İşin püf noktası, neyin karşılığını ödediğinizi bilmektir.',
+        uk: 'Швеція забирає значну частину вашої зарплати й більшість повертає. Хитрість у тому, щоб знати, за що вона платить.',
+      },
       body: {
         en: `
           <h2>The labour market</h2>
@@ -1076,7 +1483,7 @@
           <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
           <h2>The welfare state</h2>
           <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
-          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.')}
+          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -1086,6 +1493,7 @@
             'Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.',
           ],
           'Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>劳动力市场</h2>
           <p>在瑞典，薪资和工作条件大多由 <em>集体协议</em>（kollektivavtal）确定——这是工会与雇主组织之间谈判的结果。法律上没有最低工资，但在任何特定行业里，约定的最低工资通常都远高于生活成本。</p>
@@ -1109,7 +1517,7 @@
           <p>用你繳的稅，你能得到：由稅收提供資金的醫療（只收取少量費用）、學校和大學（對公民和永久居民免費）、育兒假（每個孩子 480 天，在父母之間分配）、失業津貼（透過你的 a-kassa 領取）、疾病津貼，以及一份基本的國家養老金。</p>
           ${ebookFactBox('zh-Hant', null, '增值稅標準稅率：25% · 增值稅食品稅率：12% · 育兒假：480 天 · 沒有法定最低工資 · 集體協議確定各行業最低工資。', ['uhrStudyMaterial'])}
         `,
-        'ar': `<h2>سوق العمل</h2>
+        ar: `<h2>سوق العمل</h2>
           <p>تُحدَّد الأجور وشروط العمل في السويد في الغالب عبر <em>الاتفاقات الجماعية</em> (kollektivavtal) — التي يتمّ التفاوض عليها بين النقابات ومنظمات أصحاب العمل. لا يوجد حدّ أدنى قانوني للأجور، لكن الحدّ الأدنى المتفَّق عليه في أيِّ قطاع عادةً ما يكون أعلى بكثير من تكلفة المعيشة.</p>
           <p>العضوية في نقابة طوعية. ينتمي نحو 65% من العمّال إلى نقابة. والانضمام يشمل عادةً تأمين البطالة (<em>a-kassa</em>).</p>
           <h2>الضرائب</h2>
@@ -1120,7 +1528,7 @@
           <p>مقابل ضرائبك تحصل على: رعاية صحية ممولة بالضرائب (برسوم بسيطة)، ومدارس وجامعة (مجانية للمواطنين والمقيمين الدائمين)، وإجازة والدية (480 يومًا لكل طفل، تُقسَّم بين الوالدين)، وإعانة بطالة (عبر a-kassa الخاص بك)، وإعانة مرضية، ومعاش دولة أساسي.</p>
           ${ebookFactBox('ar', null, 'ضريبة القيمة المضافة الافتراضية: 25% · ضريبة القيمة المضافة على الطعام: 12% · الإجازة الوالدية: 480 يومًا · لا حدّ أدنى قانوني للأجور · الاتفاقات الجماعية تحدّد الحدود الدنيا للقطاعات.', ['uhrStudyMaterial'])}
         `,
-        'ckb': `<h2>بازاڕی کار</h2>
+        ckb: `<h2>بازاڕی کار</h2>
           <p>موچە و مەرجەکانی کار لە سویددا زۆرتر بە <em>ڕێککەوتنی هاوبەش</em> (kollektivavtal) دیاری دەکرێن — کە لەنێوان سەندیکاکان و ڕێکخراوەکانی کارفەرمایاندا گفتوگۆیان لەسەر دەکرێت. هیچ کەمترین موچەیەکی یاسایی نییە، بەڵام کەمترینی ڕێککەوتووی هەر کەرتێک زۆرجار زۆر لە تێچووی ژیان بەرزترە.</p>
           <p>ئەندامێتی لە سەندیکا ئارەزوومەندانەیە. نزیکەی 65% کرێکاران ئەندامی سەندیکایەکن. چوونە ناوی زۆرجار بیمەی بێکاری (<em>a-kassa</em>) لەخۆ دەگرێت.</p>
           <h2>باجەکان</h2>
@@ -1131,7 +1539,7 @@
           <p>لە بەرامبەر باجەکانتدا ئەمانە وەردەگریت: خزمەتگوزاریی تەندروستیی باجدابین‌کراو (لەگەڵ کرێی بچووک)، قوتابخانە و زانکۆ (بێبەرامبەر بۆ هاووڵاتیان و نیشتەجێ هەمیشەییەکان)، مۆڵەتی دایک‌وباوکی (480 ڕۆژ بۆ هەر منداڵێک، دابەشکراو لەنێوان دایک و باوکدا)، یارمەتیی بێکاری (لە ڕێگەی a-kassaکەتەوە)، یارمەتیی نەخۆشی، و خانەنشینییەکی بنەڕەتیی دەوڵەتی.</p>
           ${ebookFactBox('ckb', null, 'ڕێژەی بنەڕەتیی moms: 25% · momsی خواردن: 12% · مۆڵەتی دایک‌وباوکی: 480 ڕۆژ · هیچ کەمترین موچەیەکی یاسایی نییە · ڕێککەوتنی هاوبەش کەمترینی کەرتەکان دیاری دەکات.', ['uhrStudyMaterial'])}
         `,
-        'fa': `<h2>بازار کار</h2>
+        fa: `<h2>بازار کار</h2>
           <p>دستمزدها و شرایط کار در سوئد بیشتر با <em>توافق‌های جمعی</em> (kollektivavtal) تعیین می‌شود — که میان اتحادیه‌ها و سازمان‌های کارفرمایان مذاکره می‌شود. حداقل دستمزد قانونی وجود ندارد، اما حداقل توافق‌شده در هر بخش معمولاً به‌مراتب بالاتر از هزینهٔ زندگی است.</p>
           <p>عضویت در اتحادیه داوطلبانه است. حدود 65% کارگران عضو یک اتحادیه‌اند. پیوستن معمولاً شامل بیمهٔ بیکاری (<em>a-kassa</em>) می‌شود.</p>
           <h2>مالیات</h2>
@@ -1142,7 +1550,7 @@
           <p>در ازای مالیات‌هایتان دریافت می‌کنید: خدمات بهداشتی تأمین‌شده با مالیات (با هزینه‌های اندک)، مدرسه و دانشگاه (رایگان برای شهروندان و مقیمان دائم)، مرخصی والدین (480 روز برای هر کودک، تقسیم‌شده میان والدین)، مزایای بیکاری (از طریق a-kassa شما)، مزایای بیماری و یک بازنشستگی پایهٔ دولتی.</p>
           ${ebookFactBox('fa', null, 'نرخ پیش‌فرض moms: 25% · moms مواد غذایی: 12% · مرخصی والدین: 480 روز · بدون حداقل دستمزد قانونی · توافق‌های جمعی حداقل‌های بخشی را تعیین می‌کنند.', ['uhrStudyMaterial'])}
         `,
-        'pl': `<h2>Rynek pracy</h2>
+        pl: `<h2>Rynek pracy</h2>
           <p>Płace i warunki pracy w Szwecji są w większości ustalane przez <em>układy zbiorowe</em> (kollektivavtal) — negocjowane między związkami zawodowymi a organizacjami pracodawców. Nie ma ustawowej płacy minimalnej, ale uzgodnione minimum w danym sektorze jest zwykle znacznie powyżej kosztów utrzymania.</p>
           <p>Członkostwo w związku zawodowym jest dobrowolne. Należy do niego około 65% pracowników. Przystąpienie zwykle obejmuje ubezpieczenie na wypadek bezrobocia (<em>a-kassa</em>).</p>
           <h2>Podatki</h2>
@@ -1153,7 +1561,7 @@
           <p>Za swoje podatki otrzymujesz: opiekę zdrowotną finansowaną z podatków (z niewielkimi opłatami), szkoły i uniwersytet (bezpłatne dla obywateli i stałych rezydentów), urlop rodzicielski (480 dni na dziecko, dzielony między rodziców), zasiłek dla bezrobotnych (przez twoją a-kassa), zasiłek chorobowy i podstawową emeryturę państwową.</p>
           ${ebookFactBox('pl', null, 'VAT podstawowy: 25% · VAT żywność: 12% · Urlop rodzicielski: 480 dni · Brak ustawowej płacy minimalnej · Układy zbiorowe ustalają minima sektorowe.', ['uhrStudyMaterial'])}
         `,
-        'so': `<h2>Suuqa shaqada</h2>
+        so: `<h2>Suuqa shaqada</h2>
           <p>Mushaharrada iyo shuruudaha shaqada ee Iswiidhan inta badan waxaa go'aamiya <em>heshiisyo wadareed</em> (kollektivavtal) — kuwaas oo laga gorgortamo ururrada shaqaalaha iyo ururrada loo-shaqeeyayaasha. Ma jiro mushahar ugu yar oo sharci ah, laakiin xadka ugu yar ee la isku raaco qayb kasta wuxuu badanaa aad uga sarreeyaa kharashka nolosha.</p>
           <p>Xubinnimada ururka shaqaaluhu waa ikhtiyaari. Qiyaastii 65% shaqaaluhu mid bay ka tirsan yihiin. Ku biiristu badanaa waxay ku jirtaa caymis shaqala'aaneed (<em>a-kassa</em>).</p>
           <h2>Canshuuraha</h2>
@@ -1162,9 +1570,9 @@
           <p>Skatteverket — Hay'adda Canshuuraha Iswiidhan — sidoo kale waa diiwaanka dadweynaha. <em>personnummer</em>-kaaga (lambar shakhsi) wuxuu kugu xiraa canshuuraha, daryeelka caafimaadka, iskuullada iyo cinwaankaaga. Ma guurtay? Toddobaad gudihiis u sheeg.</p>
           <h2>Dawladda daryeelka</h2>
           <p>Canshuurahaaga waxaad ku heshaa: daryeel caafimaad oo canshuur lagu maalgeliyo (oo leh khidmado yaryar), iskuullo iyo jaamacad (oo bilaash u ah muwaadiniinta iyo dadka deganaanshaha joogtada ah), fasax waalidnimo (480 maalmood ilmo kasta, oo la kala qaybsado waalidiinta), gunno shaqala'aaneed (iyada oo loo marayo a-kassa-daada), gunno jirro iyo hawlgab dawladeed oo aasaasi ah.</p>
-          ${ebookFactBox('so', null, 'VAT caadi: 25% · VAT cunto: 12% · Fasax waalidnimo: 480 maalmood · Ma jiro mushahar ugu yar oo sharci ah · Heshiisyada wadareed ayaa go\'aamiya xadka ugu yar ee qaybaha.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('so', null, "VAT caadi: 25% · VAT cunto: 12% · Fasax waalidnimo: 480 maalmood · Ma jiro mushahar ugu yar oo sharci ah · Heshiisyada wadareed ayaa go'aamiya xadka ugu yar ee qaybaha.", ['uhrStudyMaterial'])}
         `,
-        'ti': `<h2>ዕዳጋ ስራሕ</h2>
+        ti: `<h2>ዕዳጋ ስራሕ</h2>
           <p>ኣብ ሽወደን ደሞዝን ኩነታትን መብዛሕትኡ ግዜ ብ<em>ሓባራዊ ስምምዓት</em> (kollektivavtal) ይውሰን — ኣብ መንጎ ሰራሕተኛታት ማሕበራትን ትካላት ወሃብቲ ስራሕን ዝድራደር። ሕጋዊ ዝተሓተ ደሞዝ የለን፣ ኣብ ዝኾነ ጽላት ዝተሰማምዑሉ ዝተሓተ ግን መብዛሕትኡ ግዜ ካብ ወጻኢ መነባብሮ ኣዝዩ ላዕሊ እዩ።</p>
           <p>ኣባልነት ሰራሕተኛታት ማሕበር ብፍታው እዩ። ኣስታት 65% ሰራሕተኛታት ኣባል እዮም። ምእታው መብዛሕትኡ ግዜ መድሕን ስእነት ስራሕ (<em>a-kassa</em>) የጠቓልል።</p>
           <h2>ቀረጽ</h2>
@@ -1175,7 +1583,7 @@
           <p>ብቐረጽካ እዚ ትረክብ፦ ብቐረጽ ዝምወል ክንክን ጥዕና (ብናኣሽቱ ክፍሊት)፣ ኣብያተ ትምህርትን ዩኒቨርሲቲን (ንዜጋታትን ቀወምቲ ነበርትን ብናጻ)፣ ናይ ወለዲ ዕረፍቲ (480 መዓልታት ኣብ ሓደ ቆልዓ፣ ኣብ መንጎ ወለዲ ዝመቓራሕ)፣ ጥቕማጥቕሚ ስእነት ስራሕ (ብመንገዲ a-kassaካ)፣ ጥቕማጥቕሚ ሕማምን መሰረታዊ ጥሮታ መንግስትን።</p>
           ${ebookFactBox('ti', null, 'ነባሪ VAT፦ 25% · VAT ምግቢ፦ 12% · ናይ ወለዲ ዕረፍቲ፦ 480 መዓልታት · ሕጋዊ ዝተሓተ ደሞዝ የለን · ሓባራዊ ስምምዓት ዝተሓተ ናይ ጽላት ይውስኑ።', ['uhrStudyMaterial'])}
         `,
-        'tr': `<h2>İş gücü piyasası</h2>
+        tr: `<h2>İş gücü piyasası</h2>
           <p>İsveç'te maaşlar ve koşullar çoğunlukla <em>toplu sözleşmeler</em> (kollektivavtal) ile belirlenir — sendikalar ile işveren örgütleri arasında müzakere edilir. Yasal bir asgari ücret yoktur, ancak herhangi bir sektörde üzerinde anlaşılan asgari tutar genellikle geçim maliyetinin epey üzerindedir.</p>
           <p>Sendika üyeliği gönüllüdür. Çalışanların yaklaşık %65'i bir sendikaya üyedir. Üye olmak genellikle işsizlik sigortasını (<em>a-kassa</em>) içerir.</p>
           <h2>Vergiler</h2>
@@ -1186,7 +1594,7 @@
           <p>Vergilerinizin karşılığında şunları alırsınız: vergiyle finanse edilen sağlık hizmetleri (küçük ücretlerle), okullar ve üniversite (vatandaşlar ve daimi oturum sahipleri için ücretsiz), ebeveyn izni (çocuk başına 480 gün, ebeveynler arasında paylaşılır), işsizlik ödeneği (a-kassa'nız aracılığıyla), hastalık ödeneği ve temel bir devlet emekliliği.</p>
           ${ebookFactBox('tr', null, 'Varsayılan KDV: %25 · Gıda KDV: %12 · Ebeveyn izni: 480 gün · Yasal asgari ücret yok · Toplu sözleşmeler sektör asgarilerini belirler.', ['uhrStudyMaterial'])}
         `,
-        'uk': `<h2>Ринок праці</h2>
+        uk: `<h2>Ринок праці</h2>
           <p>Зарплати та умови у Швеції здебільшого встановлюються <em>колективними договорами</em> (kollektivavtal) — узгодженими між профспілками та організаціями роботодавців. Законодавчо встановленої мінімальної зарплати немає, але узгоджений мінімум у будь-якому секторі зазвичай значно вищий за прожитковий мінімум.</p>
           <p>Членство у профспілці добровільне. До неї належить близько 65% працівників. Вступ зазвичай включає страхування на випадок безробіття (<em>a-kassa</em>).</p>
           <h2>Податки</h2>
@@ -1219,7 +1627,7 @@
           <p>Cooking, cleaning, childcare, and household admin are not gendered tasks in Sweden — at least not officially. Surveys show this is the country with the most equal time spent on housework. (Statistics, like teenagers, lie a little.)</p>
           <h2>Women and work</h2>
           <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.')}
+          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -1229,6 +1637,7 @@
             'Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.',
           ],
           'Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>法律上的平等</h2>
           <p>《反歧视法》（<em>diskrimineringslagen</em>，2008）针对七种事由提供反歧视保护：性别、性别认同或表达、族裔、宗教或信仰、残障、性取向和年龄。它适用于工作、教育、医疗、住房和公共服务等领域。</p>
@@ -1372,7 +1781,7 @@
           <p>The municipality runs eldercare — home help (<em>hemtjänst</em>), special accommodation, and emergency alarms. The principle is the right to live independently for as long as possible; the practice is uneven by municipality.</p>
           <h2>Social services</h2>
           <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.')}
+          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -1382,6 +1791,7 @@
             'Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.',
           ],
           'Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>学校</h2>
           <p>义务教育学校（<em>grundskolan，基础学校</em>）为期十年，从 6 岁的 förskoleklass（学前班）一直到九年级。之后是三年的高中（<em>gymnasium</em>）——分学术方向或职业方向，两者都免费。对公民、EU/EEA（欧盟/欧洲经济区）居民以及持有瑞典居留许可的人来说，大学也是免费的。</p>
@@ -1534,6 +1944,7 @@
             'Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.',
           ],
           'Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>公众通行权（allemansrätten）</h2>
           <p>瑞典几乎任何土地——森林、田野、海岸——都向人们开放，可以行走、采摘浆果、游泳、觅食、露营（一晚）以及静静地享受自然。它是一种习俗，而非成文法律，但人们对它非常认真。</p>
@@ -1670,7 +2081,7 @@
           <p>June 6 — Sveriges nationaldag — marks Gustav Vasa's election in 1523 and the constitutional revision of 1809. A public holiday only since 2005, and still settling into the role.</p>
           <h2>New traditions</h2>
           <p>Sweden has long absorbed new traditions through migration: Eid al-Fitr (Muslim), Nouruz (Persian New Year), Newroz (Kurdish New Year, also 21 March), Diwali, and others. These are increasingly part of public life — celebrated in schools, workplaces, and city squares.</p>
-          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.')}
+          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -1680,6 +2091,7 @@
             'Nya traditioner från människor som flyttat till Sverige är också en del av dagens samhälle.',
           ],
           'Nationaldag: 6 juni · Midsommar: tredje fredagen i juni · Lucia: 13 december · Jul firas främst 24 december.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>四大节日</h2>
           <ul>
@@ -1863,6 +2275,7 @@
             'Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.',
           ],
           'Valuta: svensk krona · Euroomröstning: 2003 · Riksbanken · Swish · BankID.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>瑞典克朗（krona，SEK）</h2>
           <p>瑞典在 2003 年公投反对采用欧元，使用克朗（kr）。Riksbanken（瑞典中央银行）——成立于 1668 年——负责制定货币政策，并印制那几乎无人使用的现金。</p>
@@ -2016,6 +2429,7 @@
             'Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.',
           ],
           'EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>欧盟（EU）</h2>
           <p>瑞典在1994年公投后（52%赞成，47%反对），于1995年1月1日加入欧盟。它使用克朗（krona，瑞典货币），而非欧元。它在欧洲议会拥有21个席位。在欧盟有权限的领域——贸易、农业、渔业、环境、自由流动——欧盟法律优先于瑞典法律。</p>
@@ -2168,7 +2582,7 @@
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.')}
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -2179,6 +2593,7 @@
           ],
           'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>谁是谁</h2>
           <ul>
@@ -2595,7 +3010,7 @@
           </ul>
           <h2>New traditions</h2>
           <p>Migration has added more visible traditions to Swedish public life. Eid al-Fitr, Nouruz, Newroz, Diwali, and other celebrations may appear in schools, workplaces, neighbourhoods, and city events. The important pattern is simple: traditions can travel and adapt.</p>
-          ${ebookFactBox('en', 'Facts to review', 'National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.')}
+          ${ebookFactBox('en', 'Facts to review', 'National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.', ['uhrStudyMaterial', 'editorialCommentary'])}
         `,
         sv: svStudyBrief(
           [
@@ -2607,6 +3022,7 @@
           ],
           'Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.',
           'Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.',
+          ['uhrStudyMaterial', 'editorialCommentary'],
         ),
         'zh-Hans': `<h2>传统会变迁</h2>
           <p>传统是一个群体共有的习惯：一个节日、一首歌、食物、服装、一种仪式，或一种聚会的方式。传统可以古老，却不必凝固不变。人们迁徙，家庭融合，新的习俗也成为日常瑞典生活的一部分。</p>
@@ -2904,14 +3320,26 @@
 
     const ledeHtml = ch.lede ? `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>` : '';
 
-    const bodyHtml = ch.body
+    const baseBodyHtml = ch.body
       ? ch.body[lang] || ch.body.en
       : `<div class="ebook__stub">
           <h3>${tr({ sv: 'Kapitlet kunde inte öppnas', en: 'Chapter could not be opened', 'zh-Hans': '无法打开该章节', 'zh-Hant': '無法開啟該章節', ar: 'تعذّر فتح الفصل', ckb: 'بەشەکە نەکرایەوە', fa: 'فصل باز نشد', pl: 'Nie udało się otworzyć rozdziału', so: 'Cutubka lama furi karin', ti: 'እቲ ምዕራፍ ክኽፈት ኣይከኣለን', tr: 'Bölüm açılamadı', uk: 'Не вдалося відкрити розділ' })}</h3>
-          <p>${
-            tr({ sv: 'Välj ett kapitel i listan eller gå tillbaka till introduktionen.', en: 'Choose a chapter from the list or return to the introduction.', 'zh-Hans': '请从列表中选择一个章节，或返回简介。', 'zh-Hant': '請從列表中選擇一個章節，或返回簡介。', ar: 'اختر فصلًا من القائمة أو ارجع إلى المقدمة.', ckb: 'بەشێک لە لیستەکە هەڵبژێرە یان بگەڕێوە بۆ پێشەکی.', fa: 'یک فصل را از فهرست انتخاب کنید یا به مقدمه بازگردید.', pl: 'Wybierz rozdział z listy lub wróć do wprowadzenia.', so: 'Liiska ka dooro cutub ama ku noqo hordhaca.', ti: 'ካብ ዝርዝር ምዕራፍ ምረጽ ወይ ናብ መእተዊ ተመለስ።', tr: 'Listeden bir bölüm seçin veya girişe geri dönün.', uk: 'Виберіть розділ зі списку або поверніться до вступу.' })
-          }</p>
+          <p>${tr({
+            sv: 'Välj ett kapitel i listan eller gå tillbaka till introduktionen.',
+            en: 'Choose a chapter from the list or return to the introduction.',
+            'zh-Hans': '请从列表中选择一个章节，或返回简介。',
+            'zh-Hant': '請從列表中選擇一個章節，或返回簡介。',
+            ar: 'اختر فصلًا من القائمة أو ارجع إلى المقدمة.',
+            ckb: 'بەشێک لە لیستەکە هەڵبژێرە یان بگەڕێوە بۆ پێشەکی.',
+            fa: 'یک فصل را از فهرست انتخاب کنید یا به مقدمه بازگردید.',
+            pl: 'Wybierz rozdział z listy lub wróć do wprowadzenia.',
+            so: 'Liiska ka dooro cutub ama ku noqo hordhaca.',
+            ti: 'ካብ ዝርዝር ምዕራፍ ምረጽ ወይ ናብ መእተዊ ተመለስ።',
+            tr: 'Listeden bir bölüm seçin veya girişe geri dönün.',
+            uk: 'Виберіть розділ зі списку або поверніться до вступу.',
+          })}</p>
         </div>`;
+    const bodyProvenance = addEbookSectionFootnotes(lang, id, baseBodyHtml);
 
     const idx = ORDER.indexOf(id);
     const prev = idx > 0 ? ORDER[idx - 1] : null;
@@ -2923,9 +3351,20 @@
       <aside class="ebook__study-actions" aria-label="${tr({ sv: 'Nästa steg', en: 'Next study steps', 'zh-Hans': '下一步', 'zh-Hant': '下一步', ar: 'خطوات الدراسة التالية', ckb: 'هەنگاوەکانی دواتری خوێندن', fa: 'گام‌های بعدی مطالعه', pl: 'Następne kroki', so: 'Tallaabooyinka xiga', ti: 'ዝቕጽሉ ስጉምትታት', tr: 'Sonraki adımlar', uk: 'Наступні кроки' })}">
         <div>
           <span class="ebook__progress">${progressLabel}</span>
-          <p>${
-            tr({ sv: 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller gör ett övningsprov när du har läst klart.', en: 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.', 'zh-Hans': '让本章动起来：立即练习、查看来源，或在读完后做一次模拟考试。', 'zh-Hant': '讓本章動起來：立即練習、查看來源，或在讀完後做一次模擬考試。', ar: 'فعّل الفصل: تدرّب عليه الآن، أو تحقّق من المصادر، أو أجرِ اختبارًا تجريبيًا بعد أن تنتهي من القراءة.', ckb: 'بەشەکە چالاک بکە: ئێستا لەسەری مەشق بکە، سەرچاوەکان بپشکنە، یان دوای تەواوکردنی خوێندنەوە تاقیکردنەوەیەکی ئەزموونی ئەنجام بدە.', fa: 'فصل را فعال کنید: همین حالا روی آن تمرین کنید، منابع را بررسی کنید، یا پس از پایان خواندن یک آزمون آزمایشی بدهید.', pl: 'Wykorzystaj rozdział w praktyce: poćwicz od razu, sprawdź źródła lub zrób egzamin próbny, gdy skończysz czytać.', so: 'Cutubka firfircoon ka dhig: isla markiiba tababar, hubi ilaha, ama samee imtixaan tijaabo ah marka aad akhrinta dhammayso.', ti: 'ነቲ ምዕራፍ ንጡፍ ግበሮ፦ ብኡንብኡ ተለማመድ፣ ንምንጪታት ኣረጋግጽ፣ ወይ ምንባብ ምስ ወዳእካ ናይ ልምምድ ፈተና ግበር።', tr: 'Bölümü etkin kullanın: hemen alıştırma yapın, kaynakları kontrol edin veya okumayı bitirdiğinizde bir deneme sınavı yapın.', uk: 'Зробіть розділ активним: потренуйтеся одразу, перевірте джерела або пройдіть пробний іспит, коли дочитаєте.' })
-          }</p>
+          <p>${tr({
+            sv: 'Gör kapitlet aktivt: öva direkt, kontrollera källor eller gör ett övningsprov när du har läst klart.',
+            en: 'Make the chapter active: practice it now, check the sources, or run a mock exam once you finish reading.',
+            'zh-Hans': '让本章动起来：立即练习、查看来源，或在读完后做一次模拟考试。',
+            'zh-Hant': '讓本章動起來：立即練習、查看來源，或在讀完後做一次模擬考試。',
+            ar: 'فعّل الفصل: تدرّب عليه الآن، أو تحقّق من المصادر، أو أجرِ اختبارًا تجريبيًا بعد أن تنتهي من القراءة.',
+            ckb: 'بەشەکە چالاک بکە: ئێستا لەسەری مەشق بکە، سەرچاوەکان بپشکنە، یان دوای تەواوکردنی خوێندنەوە تاقیکردنەوەیەکی ئەزموونی ئەنجام بدە.',
+            fa: 'فصل را فعال کنید: همین حالا روی آن تمرین کنید، منابع را بررسی کنید، یا پس از پایان خواندن یک آزمون آزمایشی بدهید.',
+            pl: 'Wykorzystaj rozdział w praktyce: poćwicz od razu, sprawdź źródła lub zrób egzamin próbny, gdy skończysz czytać.',
+            so: 'Cutubka firfircoon ka dhig: isla markiiba tababar, hubi ilaha, ama samee imtixaan tijaabo ah marka aad akhrinta dhammayso.',
+            ti: 'ነቲ ምዕራፍ ንጡፍ ግበሮ፦ ብኡንብኡ ተለማመድ፣ ንምንጪታት ኣረጋግጽ፣ ወይ ምንባብ ምስ ወዳእካ ናይ ልምምድ ፈተና ግበር።',
+            tr: 'Bölümü etkin kullanın: hemen alıştırma yapın, kaynakları kontrol edin veya okumayı bitirdiğinizde bir deneme sınavı yapın.',
+            uk: 'Зробіть розділ активним: потренуйтеся одразу, перевірте джерела або пройдіть пробний іспит, коли дочитаєте.',
+          })}</p>
         </div>
         <div class="ebook__study-links">
           <a class="btn btn--gold btn--sm" href="${practice.href}">${practice[lang]} →</a>
@@ -2951,8 +3390,9 @@
       <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
       ${titleHtml}
       ${ledeHtml}
-      ${renderEbookProvenanceBadge(lang)}
-      ${bodyHtml}
+      ${renderEbookProvenanceBadge(lang, bodyProvenance.sourceCounts)}
+      ${bodyProvenance.html}
+      ${bodyProvenance.footnotesHtml}
       ${actions}
       ${notes}
       ${pager}

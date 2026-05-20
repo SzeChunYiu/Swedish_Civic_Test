@@ -186,6 +186,7 @@ function hasEbookCitationCoverage(value) {
     /data-source-claims="ebook"/i,
     /data-source-scope="ebook"/i,
     /EBOOK_SOURCE_NOTES/,
+    /EBOOK_FACTBOX_SOURCE_NOTES/,
     /ebookSourceNotes/,
   ].some((pattern) => pattern.test(value));
 }
@@ -199,9 +200,42 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoSwedishEbookMockExamUnnaturalness(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
-  assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
+  assert.match(source, /function renderEbookProvenanceBadge\(lang,\s*sourceCounts\)/);
   assert.match(source, /Starta [oö]vningsprov/);
   assert.match(source, /gör ett [oö]vningsprov/);
+});
+
+test('static ebook fact boxes require explicit source keys', () => {
+  const source = readSiteFile('site/ebook.js');
+
+  assert.doesNotMatch(
+    source,
+    /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\s*=\s*\[/,
+  );
+  assert.equal(
+    /ebookFactBox\([^,]+,[^,]+,[^,]+\)\s*\}/.test(source),
+    false,
+    'ebook fact boxes must not silently fall back to default source keys',
+  );
+});
+
+test('static ebook renders per-section footnotes and chapter source mixes', () => {
+  const harness = createEbookHarness();
+
+  for (const chapterId of getExpectedChapterIds()) {
+    const englishHtml = renderChapter(harness, 'en', chapterId);
+    const swedishHtml = renderChapter(harness, 'sv', chapterId);
+
+    for (const html of [englishHtml, swedishHtml]) {
+      assert.match(html, /class="ebook__footnote-ref"/);
+      assert.match(html, /class="ebook__footnote-list"/);
+      assert.match(html, /data-source-key="uhrStudyMaterial"/);
+      assert.match(html, /data-source-key="editorialCommentary"/);
+      assert.match(html, /class="ebook__provenance-badge"/);
+      assert.match(html, /(?:Sources|Källor):/);
+      assert.match(html, /(?:Editorial|Redaktionellt) \(\d+\)/);
+    }
+  }
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
@@ -270,16 +304,10 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(swedishHtml, /ebook__study-actions/);
     assert.match(englishHtml, /class="ebook__provenance-badge"/);
     assert.match(swedishHtml, /class="ebook__provenance-badge"/);
-    assert.match(
-      englishHtml,
-      /aria-label="Provenance: Editorial\. Original study guide; verify facts through the Sources page and UHR material\."/,
-    );
-    assert.match(
-      swedishHtml,
-      /aria-label="Källtyp: Redaktionell\. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet\."/,
-    );
-    assert.match(englishHtml, />Editorial<\/span>/);
-    assert.match(swedishHtml, />Redaktionell<\/span>/);
+    assert.match(englishHtml, /aria-label="Sources: UHR \(\d+\)[^"]*Editorial \(\d+\)\."/);
+    assert.match(swedishHtml, /aria-label="Källor: UHR \(\d+\)[^"]*Redaktionellt \(\d+\)\."/);
+    assert.match(englishHtml, />Sources:<\/span>/);
+    assert.match(swedishHtml, />Källor:<\/span>/);
     assert.match(englishHtml, /href="#\/mock"/);
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);
