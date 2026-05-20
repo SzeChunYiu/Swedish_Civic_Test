@@ -1,14 +1,20 @@
+import type { ComponentProps } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, space, typography } from '../../lib/theme';
 
 type Tone = 'default' | 'accent' | 'success' | 'warning';
 
-type StatCalloutProps = {
+/**
+ * Defaults: `tone="default"`, `accessible=true`, `accessibilityRole="summary"`,
+ * and an accessibility label derived from the visible label/value pair.
+ */
+export interface StatCalloutProps extends Omit<ComponentProps<typeof View>, 'children' | 'style'> {
   value: string | number;
   label: string;
   tone?: Tone;
-};
+  style?: ComponentProps<typeof View>['style'];
+}
 
 const toneStyles: Record<
   Tone,
@@ -40,10 +46,28 @@ const toneStyles: Record<
   },
 };
 
-export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps) {
+export function StatCallout({
+  accessible = true,
+  accessibilityLabel,
+  accessibilityRole = 'summary',
+  label,
+  style,
+  tone = 'default',
+  value,
+  ...viewProps
+}: StatCalloutProps) {
   const t = toneStyles[tone];
+  const statAccessibilityLabel = accessibilityLabel ?? `${label}: ${value}`;
+
   return (
-    <View style={[styles.card, { backgroundColor: t.background, borderColor: t.borderColor }]}>
+    <View
+      aria-label={statAccessibilityLabel}
+      accessible={accessible}
+      accessibilityLabel={statAccessibilityLabel}
+      accessibilityRole={accessibilityRole}
+      style={[styles.card, { backgroundColor: t.background, borderColor: t.borderColor }, style]}
+      {...viewProps}
+    >
       <Text style={[styles.value, { color: t.valueColor }]}>{value}</Text>
       <Text style={[styles.label, { color: t.labelColor }]}>{label}</Text>
     </View>
@@ -53,7 +77,7 @@ export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps
 const styles = StyleSheet.create({
   card: {
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flex: 1,
     gap: space[0.5],
     padding: space[1.5],

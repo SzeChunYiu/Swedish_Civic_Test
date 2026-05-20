@@ -37,7 +37,7 @@ function getStringLabel(children: ButtonProps['children']) {
 
 function getSpinnerColor(variant: ButtonVariant, disabled: boolean) {
   if (disabled) {
-    return colors.textPlaceholder;
+    return colors.textMuted;
   }
 
   return variant === 'primary' ? colors.surface : colors.accent;
@@ -179,6 +179,6 @@ const styles = StyleSheet.create({
     color: colors.accent,
   },
   disabledLabel: {
-    color: colors.textPlaceholder,
+    color: colors.textMuted,
   },
 });
