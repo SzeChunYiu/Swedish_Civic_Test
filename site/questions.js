@@ -5109,8 +5109,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Which Christian churches or communities exist in Sweden today?",
+      "sv": "Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -5156,8 +5156,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -5165,22 +5165,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -5489,8 +5489,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -5631,8 +5631,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -27118,8 +27118,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Which answer best matches? Which Christian churches or communities exist in Sweden today?",
+      "sv": "Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27167,8 +27167,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Orthodox churches, the Catholic Church, and Protestant churches are mentioned as examples in Sweden today.",
-      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor nämns som exempel i dagens Sverige."
+      "en": "Orthodox churches, the Catholic Church, and Protestant churches exist in Sweden today.",
+      "sv": "Ortodoxa kyrkor, katolska kyrkan och protestantiska kyrkor finns i dagens Sverige."
     },
     "opts": [
       {
@@ -27208,8 +27208,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Only the Church of Sweden and no other communities are mentioned as examples in Sweden today.",
-      "sv": "Bara Svenska kyrkan och inga andra samfund nämns som exempel i dagens Sverige."
+      "en": "Only the Church of Sweden and no other communities exist in Sweden today.",
+      "sv": "Bara Svenska kyrkan och inga andra samfund finns i dagens Sverige."
     },
     "opts": [
       {
@@ -27249,8 +27249,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which Christian churches or communities are mentioned as examples in Sweden today?",
-      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund nämns som exempel i dagens Sverige?"
+      "en": "Choose the correct option: Which Christian churches or communities exist in Sweden today?",
+      "sv": "Välj rätt alternativ: Vilka kristna kyrkor eller samfund finns i dagens Sverige?"
     },
     "opts": [
       {
@@ -27298,8 +27298,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Vilket svar stämmer bäst? Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Which answer best matches? What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Vilket svar stämmer bäst? Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -27307,22 +27307,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27348,8 +27348,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Travel to Asia and increased interest in meditation and yoga are mentioned as examples of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "Resor till Asien och ökat intresse för meditation och yoga nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "Travel to Asia and increased interest in meditation and yoga contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "Resor till Asien och ökat intresse för meditation och yoga bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
@@ -27363,8 +27363,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27390,8 +27390,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "The building of Sweden's first mosques during the 1970s is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century.",
-      "sv": "Byggandet av Sveriges första moskéer under 1970-talet nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet."
+      "en": "The building of Sweden's first mosques during the 1970s contributed to contacts with Hindus and Buddhists in Sweden during the 20th century.",
+      "sv": "Byggandet av Sveriges första moskéer under 1970-talet bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet."
     },
     "opts": [
       {
@@ -27405,8 +27405,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -27432,8 +27432,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is mentioned as an example of contacts with Hindus and Buddhists in Sweden during the 20th century?",
-      "sv": "Välj rätt alternativ: Vad nämns som exempel på kontakter med hinduer och buddhister i Sverige under 1900-talet?"
+      "en": "Choose the correct option: What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?",
+      "sv": "Välj rätt alternativ: Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?"
     },
     "opts": [
       {
@@ -27441,22 +27441,22 @@
         "sv": "Resor till Asien och ökat intresse för meditation och yoga"
       },
       {
-        "en": "That Sweden's first mosques were built during the 1970s",
-        "sv": "Att Sveriges första moskéer byggdes under 1970-talet"
+        "en": "The building of Sweden's first mosques during the 1970s",
+        "sv": "Byggandet av Sveriges första moskéer under 1970-talet"
       },
       {
-        "en": "That National Day became a public holiday through a Riksdag decision",
-        "sv": "Att nationaldagen blev helgdag genom riksdagsbeslut"
+        "en": "National Day becoming a public holiday through a Riksdag decision",
+        "sv": "Nationaldagen som helgdag genom ett riksdagsbeslut"
       },
       {
-        "en": "That the Church of Sweden and the state separated in 2000",
-        "sv": "Att Svenska kyrkan och staten skildes åt år 2000"
+        "en": "The Church of Sweden's separation from the state in 2000",
+        "sv": "Svenska kyrkans separation från staten år 2000"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or freedom of religion.",
-      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller religionsfrihet."
+      "en": "Contacts with Hindus and Buddhists in Sweden mainly began during the 20th century, including through travel to Asia and increased interest in meditation and yoga. The other options instead concern Islam, National Day, or the relationship between church and state.",
+      "sv": "Kontakterna med hinduer och buddhister i Sverige började främst under 1900-talet, bland annat genom resor till Asien och ett ökat intresse för meditation och yoga. De andra alternativen handlar i stället om islam, nationaldagen eller relationen mellan kyrka och stat."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -28574,8 +28574,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Which answer best matches? Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Vilket svar stämmer bäst? Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -28623,8 +28623,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Sunni and Shia are mentioned as examples in Swedish Muslim congregations.",
-      "sv": "Sunni och shia nämns som exempel i svenska muslimska församlingar."
+      "en": "Sunni and Shia are found in Swedish Muslim congregations.",
+      "sv": "Sunni och shia finns i svenska muslimska församlingar."
     },
     "opts": [
       {
@@ -28664,8 +28664,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Catholic and Orthodox churches are mentioned as examples in Swedish Muslim congregations.",
-      "sv": "Katolska och ortodoxa kyrkor nämns som exempel i svenska muslimska församlingar."
+      "en": "Catholic and Orthodox churches are found in Swedish Muslim congregations.",
+      "sv": "Katolska och ortodoxa kyrkor finns i svenska muslimska församlingar."
     },
     "opts": [
       {
@@ -28705,8 +28705,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which branches within Islam are mentioned as examples in Swedish Muslim congregations?",
-      "sv": "Välj rätt alternativ: Vilka riktningar inom islam nämns som exempel i svenska muslimska församlingar?"
+      "en": "Choose the correct option: Which branches of Islam are found in Swedish Muslim congregations?",
+      "sv": "Välj rätt alternativ: Vilka riktningar inom islam finns i svenska muslimska församlingar?"
     },
     "opts": [
       {
@@ -29118,8 +29118,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Vilket svar stämmer bäst? Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "Which answer best matches? What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Vilket svar stämmer bäst? Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
@@ -29167,8 +29167,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "The event from 1523 was that Gustav Vasa was elected king of Sweden.",
-      "sv": "Händelsen från 1523 var att Gustav Vasa valdes till svensk kung."
+      "en": "Gustav Vasa was elected king of Sweden.",
+      "sv": "Gustav Vasa valdes till svensk kung."
     },
     "opts": [
       {
@@ -29208,8 +29208,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "The event from 1523 was that Sweden joined the EU.",
-      "sv": "Händelsen från 1523 var att Sverige gick med i EU."
+      "en": "Sweden joined the EU.",
+      "sv": "Sverige gick med i EU."
     },
     "opts": [
       {
@@ -29249,8 +29249,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which event from 1523 is mentioned as a reason for Sweden's National Day on 6 June?",
-      "sv": "Välj rätt alternativ: Vilken händelse från 1523 nämns som en anledning till Sveriges nationaldag den 6 juni?"
+      "en": "Choose the correct option: What happened on 6 June 1523, a date connected with Sweden's National Day?",
+      "sv": "Välj rätt alternativ: Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?"
     },
     "opts": [
       {
