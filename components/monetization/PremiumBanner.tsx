@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -21,11 +21,13 @@ type PurchaseAction = 'buy' | 'restore';
 type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error';
 type PremiumBannerCopy = {
   body: (price: string) => string;
+  buyAccessibilityHint: string;
   buyAccessibilityLabel: (price: string) => string;
   buyIdle: (price: string) => string;
   buying: string;
   eyebrowActive: string;
   eyebrowIdle: string;
+  restoreAccessibilityHint: string;
   restoreAccessibilityLabel: string;
   restoreIdle: string;
   restoring: string;
@@ -38,12 +40,16 @@ type PremiumBannerCopy = {
 const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   sv: {
     body: (price) =>
-      `Den kostnadsfria versionen visar annonser från AdMob. Betala ${price} en gång för att ta bort annonser från studieskärmar. Tidsatta prov är fortsatt annonsfria.`,
+      `Den kostnadsfria versionen visar annonser från AdMob. Betala ${price} en gång för att ta bort annonser från studieskärmar medan prov förblir annonsfria.`,
+    buyAccessibilityHint:
+      'Köpet tar bort annonser efter butikens bekräftelse. Provläget är redan annonsfritt.',
     buyAccessibilityLabel: (price) => `Köp Ta bort annonser för ${price}`,
     buyIdle: (price) => `Köp ${price}`,
     buying: 'Köper...',
     eyebrowActive: 'Annonsfri aktiv',
     eyebrowIdle: 'Ta bort annonser',
+    restoreAccessibilityHint:
+      'Kontrollerar om Ta bort annonser redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ köp av Ta bort annonser',
     restoreIdle: 'Återställ',
     restoring: 'Återställer...',
@@ -53,6 +59,8 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       idle: 'Engångsköp. Återställning finns om du redan har köpt.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
+      persistence_failed:
+        'Köpet bekräftades, men annonsfri status kunde inte sparas på den här enheten. Försök återställa köpet.',
       purchased: 'Annonser är avstängda på den här enheten.',
       restored: 'Annonser är avstängda på den här enheten.',
     },
@@ -62,11 +70,15 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
   en: {
     body: (price) =>
       `Free study keeps AdMob ads on. Pay ${price} once to remove ads from study screens while exams stay ad-free.`,
+    buyAccessibilityHint:
+      'Purchase removes ads after store confirmation. Exam mode is already ad-free.',
     buyAccessibilityLabel: (price) => `Buy Remove Ads for ${price}`,
     buyIdle: (price) => `Buy ${price}`,
     buying: 'Buying...',
     eyebrowActive: 'Remove Ads active',
     eyebrowIdle: 'Remove Ads',
+    restoreAccessibilityHint:
+      'Checks whether Remove Ads was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Remove Ads purchase',
     restoreIdle: 'Restore',
     restoring: 'Restoring...',
@@ -76,6 +88,8 @@ const premiumBannerCopy: Record<AppLanguage, PremiumBannerCopy> = {
       idle: 'One-time purchase. Restore is available if you already bought it.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
+      persistence_failed:
+        'Purchase was confirmed, but ad-free status could not be saved on this device. Try restoring the purchase.',
       purchased: 'Ads are disabled on this device.',
       restored: 'Ads are disabled on this device.',
     },
@@ -107,7 +121,6 @@ export function PremiumBanner({
   const [currentEntitlements, setCurrentEntitlements] = useState(entitlements);
   const [activeAction, setActiveAction] = useState<PurchaseAction | null>(null);
   const [status, setStatus] = useState<PurchaseUiStatus>('idle');
-  const purchaseActionInFlightRef = useRef(false);
   const adsDisabled = currentEntitlements.adsDisabled;
   const updateEntitlements = useCallback(
     (nextEntitlements: PremiumEntitlements) => {
@@ -124,9 +137,6 @@ export function PremiumBanner({
   const statusMessage = getStatusMessage(adsDisabled ? 'purchased' : status, copy);
 
   async function runPurchaseAction(action: PurchaseAction) {
-    if (purchaseActionInFlightRef.current) return;
-
-    purchaseActionInFlightRef.current = true;
     setActiveAction(action);
 
     try {
@@ -140,7 +150,6 @@ export function PremiumBanner({
     } catch {
       setStatus('error');
     } finally {
-      purchaseActionInFlightRef.current = false;
       setActiveAction(null);
     }
   }
@@ -154,6 +163,7 @@ export function PremiumBanner({
       <Text style={styles.meta}>{copy.body(REMOVE_ADS_PRICE_LABEL)}</Text>
       <View style={styles.actions}>
         <Button
+          accessibilityHint={copy.buyAccessibilityHint}
           accessibilityLabel={copy.buyAccessibilityLabel(REMOVE_ADS_PRICE_LABEL)}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null || adsDisabled }}
@@ -164,6 +174,7 @@ export function PremiumBanner({
           {activeAction === 'buy' ? copy.buying : copy.buyIdle(REMOVE_ADS_PRICE_LABEL)}
         </Button>
         <Button
+          accessibilityHint={copy.restoreAccessibilityHint}
           accessibilityLabel={copy.restoreAccessibilityLabel}
           accessibilityRole="button"
           accessibilityState={{ disabled: activeAction !== null }}

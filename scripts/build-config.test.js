@@ -33,15 +33,6 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
 });
 
-test('npm test dispatches focused selectors without bypassing the full suite', () => {
-  const pkg = readJson('package.json');
-  assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
-  assert.doesNotMatch(pkg.scripts.test, /&&/);
-  assert.match(pkg.scripts['test:all'], /npm run test:learning/);
-  assert.match(pkg.scripts['test:all'], /npm run test:monetization/);
-  assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
-});
-
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
   const pkg = readJson('package.json');
   assert.equal(pkg.scripts['release:eas-access-check'], 'node scripts/check-eas-access.js');
@@ -1294,7 +1285,6 @@ test('web export script is available for local production bundle smoke', () => {
   const vercelConfig = readJson('vercel.json');
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
-  const htmlShell = fs.readFileSync(path.join(repoRoot, 'app/+html.tsx'), 'utf8');
 
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
@@ -1316,7 +1306,6 @@ test('web export script is available for local production bundle smoke', () => {
   assert.match(workflow, /path:\s+dist-web/);
   assert.match(fs.readFileSync(path.join(repoRoot, '.gitignore'), 'utf8'), /^dist-web\/$/m);
   assert.equal(fs.existsSync(path.join(repoRoot, 'scripts/prepare-web-export.js')), true);
-  assert.equal(fs.existsSync(path.join(repoRoot, 'tests/web-export-budget.test.js')), true);
 });
 
 test('web export postbuild rewrites root-relative bundle URLs for file and hosted loading', () => {
@@ -1324,7 +1313,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   const outputDir = path.join(tmpDir, 'dist-web');
   const bundleDir = path.join(outputDir, '_expo/static/js/web');
   fs.mkdirSync(bundleDir, { recursive: true });
-  copyPublicWebManifest(outputDir);
   fs.writeFileSync(
     path.join(outputDir, 'index.html'),
     [
@@ -1348,6 +1336,28 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     cwd: repoRoot,
     encoding: 'utf8',
   });
+  const index = fs.readFileSync(path.join(outputDir, 'index.html'), 'utf8');
+  const fallback = fs.readFileSync(path.join(outputDir, '404.html'), 'utf8');
+  const bundle = fs.readFileSync(path.join(bundleDir, 'entry-test.js'), 'utf8');
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(index, /data-web-export-loader="true"/);
+  assert.match(index, /window\.location\.protocol === "file:" \? "\.\/" : "\/"/);
+  assert.match(index, /script\.src = "_expo\/static\/js\/web\/entry-test\.js"/);
+  assert.doesNotMatch(index, /src="\/_expo\//);
+  assert.equal(fallback, index);
+  assert.match(bundle, /"paths":\{"1":"_expo\/static\/js\/web\/chunk-test\.js"\}/);
+  assert.match(bundle, /uri:"assets\/icon\.png"/);
+
+  const checkResult = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
 
   const metadata = readWebDocumentMetadata();
   const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';

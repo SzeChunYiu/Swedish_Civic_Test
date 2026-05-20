@@ -1,5 +1,5 @@
 import type { AppLanguage } from '../storage/settingsStore';
-import type { AdPlacement, AdUnitConfig } from '../../types/monetization';
+import type { AdPlacement } from '../../types/monetization';
 
 type AdBannerCopy = {
   accessibilityLabel: (placementLabel: string, statusLabel: string) => string;
@@ -12,8 +12,6 @@ type AdBannerCopy = {
 
 type NativeAdCardCopy = {
   accessibilityLabel: string;
-  ctaAccessibilityLabel: (callToAction: string) => string;
-  ctaHint: string;
   eyebrow: string;
   hint: string;
   meta: string;
@@ -33,7 +31,7 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
       results_native: 'Annons i resultat och misstag',
       rewarded_extra_exam: 'Annons för extra prov',
     },
-    previewHint: 'Förhandsvisning av annonsplats.',
+    previewHint: 'Sponsrad annonsförhandsvisning.',
     removeAdsHint: 'Döljs när Ta bort annonser är aktivt.',
     testStatus: 'AdMob-testannons aktiv - webbförhandsvisning',
   },
@@ -58,26 +56,18 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
 export const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy> = {
   sv: {
     accessibilityLabel:
-      'Inbyggd testannons: Annons i studieflödet. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
-    ctaAccessibilityLabel: (callToAction) => `Annonsknapp: ${callToAction}`,
-    ctaHint: 'Öppnar annonsörens erbjudande.',
+      'Inbyggd testannons: Annons i resultatvyn. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt.',
     eyebrow: 'Inbyggd testannons',
     hint: 'Annonsförhandsvisning. Döljs när Ta bort annonser är aktivt.',
     meta: 'Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov.',
-    title: 'Annons i studieflödet',
+    title: 'Annons i resultatvyn',
   },
   en: {
     accessibilityLabel:
-      'Test native ad: Study flow ad. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.',
-    ctaAccessibilityLabel: (callToAction) => `Ad button: ${callToAction}`,
-    ctaHint: 'Opens the advertiser offer.',
+      'Test native ad: Sponsored study placement. AdMob test placement preview. Keep out of timed exams. Hidden after Remove Ads is active.',
     eyebrow: 'Test native ad',
     hint: 'Sponsored ad preview. Hidden after Remove Ads is active.',
     meta: 'AdMob test placement preview. Keep out of timed exams.',
-    title: 'Study flow ad',
+    title: 'Sponsored study placement',
   },
 };
-
-export function getNativeAdCardCopy(language: AppLanguage, _unit?: AdUnitConfig): NativeAdCardCopy {
-  return nativeAdCardCopy[language];
-}
