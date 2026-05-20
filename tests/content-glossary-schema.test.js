@@ -19,7 +19,6 @@ function loadTs(relativePath, exportName) {
 
 test('glossary schema validates bundled glossary terms', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -30,6 +29,10 @@ test('glossary schema validates bundled glossary terms', () => {
   const ids = new Set(glossaryTerms.map((term) => term.id));
 
   assert.ok(Array.isArray(glossaryTerms));
+  assert.ok(
+    glossaryTerms.length >= 10,
+    'the bundled glossary should ship with a useful first set of civic reference terms',
+  );
   assert.equal(summary.glossaryTerms, glossaryTerms.length);
   assert.equal(summary.glossaryTermsValidated, glossaryTerms.length);
   assert.equal(summary.glossaryTermExactSchemaKeysValidated, glossaryTerms.length);
@@ -81,7 +84,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -129,7 +132,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);

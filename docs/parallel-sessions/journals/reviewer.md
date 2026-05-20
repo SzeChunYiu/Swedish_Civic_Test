@@ -3852,3 +3852,28 @@ Evidence: the public Privacy Policy URL artifact still tells store reviewers/use
 PR (number + merged?): pending at handoff commit time.
 Accepted by worker? yes
 Next suggested validator action: route RELEASE/COMPLY or SETUP/public-site to update the public privacy HTML/source copy and harden publishing/release guards against stale disabled-ads/no-data public privacy copy.
+
+Lane: REVIEWER
+Host/branch: git-plumbing commit on `task/reviewer/1779237900`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q073/q074 explanation naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/AI_FACTORY.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, and current queue/journal tails.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '1238,1270p'` shows q073/q074 explanations use `UHR-avsnittet...` and `The UHR section... says` in learner-facing explanation text.
+- Runtime path inspection: `rg -n "explanationEn|ExplanationPanel|language" app/quiz components/quiz app/'(tabs)'/practice.tsx -S` shows routed quiz and practice render selected-language explanations through `ExplanationPanel`.
+PR (number + merged?): #1460 pending at this handoff.
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q073/q074 naturalness atom; keep TRANSLATE-COMPLETE open because the current gates can miss source-note explanation wording.
+
+Lane: REVIEWER
+Host/branch: git-plumbing commit on `task/reviewer/1779237900`
+Role type and manager: fixed-quality / MANAGER
+Task / checklist item: P0 TRANSLATE-COMPLETE critical-review pass for q078-q081 explanation naturalness.
+Changed artifacts: `codex-tasks/validator.txt`; `docs/parallel-sessions/journals/reviewer.md`
+Verification (commands + result):
+- Re-read `docs/parallel-sessions.md`, `docs/parallel-sessions/TEAM_PLAN.md`, `docs/parallel-sessions/reviewer.md`, `GOAL.md`, `docs/architecture.md`, `codex-tasks/P0.md`, and the current validator/reviewer queue tails.
+- Static source review: `nl -ba data/additionalQuestions.ts | sed -n '1328,1420p'` shows q078-q081 explanations use `UHR-avsnittet...` / `The UHR section...` citation-scaffold wording in learner-facing explanation text.
+PR (number + merged?): #1460 pending at this handoff.
+Accepted by worker? yes
+Next suggested validator action: assign a CONTENT-owned q078-q081 naturalness atom; keep TRANSLATE-COMPLETE open because the current gates can miss source-note explanation wording.
