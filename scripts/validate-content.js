@@ -76,11 +76,14 @@ const EXPECTED_UHR_ABOUT_TEST_URL =
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/';
 const EXPECTED_UHR_ABOUT_TEST_RETRIEVED_AT = '2026-05-19';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
+const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
-  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestFirstSitting:
+    'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  civicKnowledgeTestFaq: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -4230,6 +4233,7 @@ function validateCitizenshipTimeline() {
   let countdownCopyParity = true;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
+  const firstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -4247,6 +4251,11 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
+  if (firstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
+    rejectDate(
+      `first civic knowledge test sitting must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
+    );
+  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -4254,14 +4263,25 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
+    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
+    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
     examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
+      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
   ) {
-    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
+    rejectDate(
+      'first civic knowledge sitting must stay after the citizenship rules date and before the assignment deadline',
+    );
   }
   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
+  }
+  if (
+    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_LOCATION?.sv !== 'Stockholm' ||
+    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_LOCATION?.en !== 'Stockholm'
+  ) {
+    rejectDate('first civic knowledge sitting location must be Stockholm in sv and en');
   }
 
   let sourceUrlsValidated = 0;
@@ -4285,11 +4305,13 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
+    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
     'Nya medborgarskapsregler gäller från',
-    'Samhällskunskapsprovet väntas starta i augusti 2026',
+    'Första samhällskunskapsprovet genomförs den',
+    'i Stockholm',
     'New citizenship rules apply from',
-    'The civic-knowledge test is expected in August 2026',
+    'The first civic-knowledge test will be held on',
+    'in Stockholm',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -4299,17 +4321,22 @@ function validateCitizenshipTimeline() {
   [
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
+    /Samhällskunskapsprovet väntas starta i augusti 2026/,
+    /The civic-knowledge test is expected in August 2026/,
+    /senast \${testDeadline}/,
+    /no later than \${testDeadline}/,
     /until new exam/,
     /tills nya provet/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
-      rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
+      rejectCountdown('CountdownBanner still uses stale civic knowledge test timeline copy');
     }
   });
 
   return {
     countdownCopyParity,
     dateParity,
+    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
@@ -7242,6 +7269,7 @@ let themeContrastPairsAAValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
+let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
@@ -7378,6 +7406,7 @@ derivedCivicStatementPromptMirrorValidated = validateDerivedCivicStatementPrompt
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
   civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
@@ -17032,6 +17061,7 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
+      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
