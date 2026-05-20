@@ -100,6 +100,7 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
 test('LanguagePicker menu rows expose menu-item state semantics', () => {
   const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
 
+  assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
@@ -109,6 +110,24 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
     source,
     /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
   );
+});
+
+test('LanguagePicker close control uses a compact icon instead of visible x text', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
+  const iconSource = fs.readFileSync(
+    path.join(ROOT, 'components', 'ui', 'icons', 'CloseIcon.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /import \{ CloseIcon \} from '\.\/icons\/CloseIcon';/);
+  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /<CloseIcon color=\{colors\.textSecondary\} size=\{closeIconSize\} \/>/);
+  assert.match(source, /minHeight:\s*44/);
+  assert.match(source, /minWidth:\s*44/);
+  assert.doesNotMatch(source, /<Text[^>]*>\s*x\s*<\/Text>/i);
+  assert.match(iconSource, /testID="language-picker-close-icon"/);
+  assert.match(iconSource, /importantForAccessibility="no-hide-descendants"/);
 });
 
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
