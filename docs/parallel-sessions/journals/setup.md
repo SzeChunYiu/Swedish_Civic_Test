@@ -1255,3 +1255,12 @@ Verification: clean SETUP worktree from current `origin/main` after claim commit
 PR: pending from `task/setup/playwright-e2e-port-guard-1779234942` at handoff commit time.
 Blocked? no for this e2e port-config guard.
 Next suggested validator action: inspect the Playwright config port wiring and rerun `npm run test:build-config`, typecheck, and an `E2E_PORT=<free-port> npx playwright test --list` smoke before accepting.
+
+## Iteration 260 - 2026-05-20
+
+Task completed: STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1 - added rendered static-site browser coverage for Swedish/English mock-exam wording across Home, Support, mobile nav, footer, and `#/mock`, and restored the localized footer route link that the guard requires.
+Artifacts changed: `site/index.html`, `tests/e2e/static-site-sv-mock-exam-copy.spec.ts`, `scripts/static-site-question-count-copy.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean SETUP worktree rebased onto current `origin/main` `9e023246`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/static-site-sv-mock-exam-copy.spec.ts --workers=1` exit 0 with 1/1 passing; `npm run validate:content` exit 0 with 795 questions and static parity true; `node --test scripts/static-site-question-count-copy.test.js scripts/static-site-mobile-nav.test.js` exit 0 with 9/9 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; repo format check plus targeted Prettier for the new static/e2e files exit 0; `git diff --check` exit 0.
+PR: pending from `setup/static-sv-mock-exam-browser-guard-1779236573` at handoff commit time.
+Blocked? no for this static browser wording/reachability guard; no Vercel CLI was run.
+Next suggested validator action: inspect the rendered static browser guard and rerun the focused e2e, content validation, and grouped static source/mobile-nav checks before accepting `STATIC-SV-MOCK-EXAM-TERM-BROWSER-GUARD-1`.
