@@ -1,5 +1,6 @@
 import type { PremiumEntitlements } from '../../types/monetization';
-import { shouldShowAd } from './ads';
+import type { AdConsentDecision } from './consent';
+import { shouldShowAd, WEB_AD_FALLBACK_CONSENT_DECISION } from './ads';
 import { REWARDED_EXTRA_EXAM_PLACEMENT } from './rewardedExam';
 
 export type RewardedExtraExamAdStatus =
@@ -22,18 +23,22 @@ export type RewardedExtraExamAdResult = {
 
 export type RewardedExtraExamRewardConfirmation = () => boolean | Promise<boolean>;
 
+export type RewardedExtraExamWebConsentDecision = Pick<AdConsentDecision, 'adServingAllowed'>;
+
 export type RewardedExtraExamAdOptions = {
   confirmReward?: RewardedExtraExamRewardConfirmation;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
   requestNonPersonalizedAdsOnly?: boolean;
   timeoutMs?: number;
+  webConsentDecision?: RewardedExtraExamWebConsentDecision;
 };
 
 export async function showRewardedExtraExamAd({
   confirmReward,
   entitlements = { adsDisabled: false },
+  webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION,
 }: RewardedExtraExamAdOptions = {}): Promise<RewardedExtraExamAdResult> {
-  if (!shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements)) {
+  if (!shouldShowAd(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, webConsentDecision, 'web')) {
     return { status: 'unavailable' };
   }
 

@@ -29,6 +29,11 @@ test('rewarded ad TypeScript schema stays in parity with validator expectations'
     /export type RewardedExtraExamRewardConfirmation = \(\) => boolean \| Promise<boolean>;/,
   );
   assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation;/);
+  assert.match(
+    rewardedAdSource,
+    /export type RewardedExtraExamWebConsentDecision = Pick<AdConsentDecision, 'adServingAllowed'>;/,
+  );
+  assert.match(rewardedAdSource, /webConsentDecision\?: RewardedExtraExamWebConsentDecision;/);
   assert.match(rewardedAdSource, /reward\?: RewardedExtraExamReward;/);
   assert.match(rewardedAdSource, /status: RewardedExtraExamAdStatus;/);
   assert.match(rewardedAdSource, /timeoutMs\?: number;/);
