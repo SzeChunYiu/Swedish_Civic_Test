@@ -70,6 +70,14 @@ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
+const ABOUT_REQUIREMENTS_CTA_REQUIRED_SNIPPETS = [
+  "openRequirements: 'Se kravguiden'",
+  "openRequirements: 'View requirements guide'",
+  'openRequirementsAccessibilityLabel',
+  'href="/citizenship-requirements"',
+  'accessibilityLabel={copy.openRequirementsAccessibilityLabel}',
+  'minHeight: space[6]',
+];
 function phrasePattern(...parts) {
   return new RegExp(parts.join(''), 'i');
 }
@@ -3721,6 +3729,22 @@ function validateCitizenshipTimeline() {
   };
 }
 
+function validateCitizenshipRequirementsDiscoverability() {
+  const aboutSource = loadText('app/about-the-test.tsx');
+  let snippetsValidated = 0;
+
+  ABOUT_REQUIREMENTS_CTA_REQUIRED_SNIPPETS.forEach((snippet) => {
+    if (!aboutSource.includes(snippet)) {
+      fail(`about-the-test citizenship requirements CTA missing ${snippet}`);
+      return;
+    }
+
+    snippetsValidated += 1;
+  });
+
+  return snippetsValidated;
+}
+
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -6211,6 +6235,8 @@ let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
+let citizenshipRequirementsDiscoverabilityFieldsValidated = 0;
+let citizenshipRequirementsDiscoverabilityParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -6327,6 +6353,11 @@ if (
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
 }
+citizenshipRequirementsDiscoverabilityFieldsValidated =
+  validateCitizenshipRequirementsDiscoverability();
+citizenshipRequirementsDiscoverabilityParityValidated =
+  citizenshipRequirementsDiscoverabilityFieldsValidated ===
+  ABOUT_REQUIREMENTS_CTA_REQUIRED_SNIPPETS.length;
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
   fail('buildExamReviewItems export is not a function');
@@ -14054,6 +14085,8 @@ console.log(
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
+      citizenshipRequirementsDiscoverabilityFieldsValidated,
+      citizenshipRequirementsDiscoverabilityParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,

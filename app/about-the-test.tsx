@@ -21,6 +21,8 @@ type AboutTheTestCopy = {
   sectionIndependenceBody: string;
   backHome: string;
   backHomeAccessibilityLabel: string;
+  openRequirements: string;
+  openRequirementsAccessibilityLabel: string;
   openPractice: string;
   openPracticeAccessibilityLabel: string;
 };
@@ -48,6 +50,9 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
     backHome: 'Tillbaka till start',
     backHomeAccessibilityLabel: 'Tillbaka till startsidan',
+    openRequirements: 'Se kravguiden',
+    openRequirementsAccessibilityLabel:
+      'Öppna den källbaserade kravguiden för svenskt medborgarskap',
     openPractice: 'Börja öva',
     openPracticeAccessibilityLabel: 'Öppna övningsläget',
   },
@@ -73,6 +78,8 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     backHome: 'Back to home',
     backHomeAccessibilityLabel: 'Back to home',
+    openRequirements: 'View requirements guide',
+    openRequirementsAccessibilityLabel: 'Open the sourced Swedish citizenship requirements guide',
     openPractice: 'Start practising',
     openPracticeAccessibilityLabel: 'Open practice mode',
   },
@@ -120,10 +127,18 @@ export default function Screen() {
 
       <View style={styles.actions}>
         <Link
+          accessibilityLabel={copy.openRequirementsAccessibilityLabel}
+          accessibilityRole="link"
+          href="/citizenship-requirements"
+          style={styles.primaryLink}
+        >
+          {copy.openRequirements}
+        </Link>
+        <Link
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
           accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
+          style={styles.secondaryLink}
         >
           {copy.openPractice}
         </Link>
@@ -205,6 +220,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -215,6 +231,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
