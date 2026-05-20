@@ -1576,6 +1576,25 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['language={language}', 'exam review components must receive settings language'],
   ['<UHRReferenceCard language={language}', 'exam UHR references must receive settings language'],
 ];
+const EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY = [
+  {
+    file: 'components/MockExamStatusBar.tsx',
+    snippets: [
+      ["eyebrowLabel: 'Övningsprov'", 'status bar must default to Swedish practice copy'],
+      ["eyebrowLabel: 'Mock exam'", 'status bar must preserve English mock exam copy'],
+    ],
+  },
+  {
+    file: 'components/MockExamConfigPanel.tsx',
+    snippets: [
+      [
+        "startLabel: 'Starta övningsprov'",
+        'config panel must default to Swedish practice start copy',
+      ],
+      ["startLabel: 'Start mock exam'", 'config panel must preserve English mock exam start copy'],
+    ],
+  },
+];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
     label: 'empty quiz title',
@@ -7272,6 +7291,8 @@ let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let examRouteCopyLabelsValidated = 0;
 let examRouteCopyParityValidated = false;
+let nativeMockExamComponentCopyLabelsValidated = 0;
+let nativeMockExamComponentLegalCopyValidated = false;
 let quizRouteHeadersValidated = 0;
 let quizRouteHeaderParityValidated = false;
 let quizRouteCopyLabelsValidated = 0;
@@ -9407,6 +9428,56 @@ function validateExamRouteCopyParity() {
   );
   if (valid && examRouteCopyLabelsValidated === expectedLabelCount) {
     examRouteCopyParityValidated = true;
+  }
+}
+
+function validateNativeMockExamComponentLegalCopy() {
+  let valid = true;
+  const swedishExamNoun = String.fromCharCode(116, 101, 110, 116, 97, 109, 101, 110);
+  const bannedTerms = [
+    new RegExp(`\\b${['skarp', swedishExamNoun].join('\\s+')}\\b`, 'i'),
+    new RegExp(`\\b${['starta', 'provet'].join('\\s+')}\\b`, 'i'),
+    new RegExp(`\\b${swedishExamNoun}\\b`, 'i'),
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY.forEach(({ file, snippets }) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+    } catch (error) {
+      reject(`${file} native mock exam copy source could not be read: ${error.message}`);
+      return;
+    }
+
+    snippets.forEach(([snippet, message]) => {
+      let labelIsValid = true;
+      if (!source.includes(snippet)) {
+        labelIsValid = false;
+        reject(message);
+      }
+      if (labelIsValid) nativeMockExamComponentCopyLabelsValidated += 1;
+    });
+
+    bannedTerms.forEach((pattern) => {
+      if (pattern.test(source)) {
+        reject(
+          `${file} native mock exam component copy must use clearly unofficial Swedish practice wording`,
+        );
+      }
+    });
+  });
+
+  const expectedLabelCount = EXPECTED_NATIVE_MOCK_EXAM_COMPONENT_COPY.reduce(
+    (count, expectedFile) => count + expectedFile.snippets.length,
+    0,
+  );
+  if (valid && nativeMockExamComponentCopyLabelsValidated === expectedLabelCount) {
+    nativeMockExamComponentLegalCopyValidated = true;
   }
 }
 
@@ -17611,6 +17682,7 @@ validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
+validateNativeMockExamComponentLegalCopy();
 validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validateSearchRouteCopyParity();
@@ -17752,6 +17824,8 @@ console.log(
       examRouteHeaderParityValidated,
       examRouteCopyLabelsValidated,
       examRouteCopyParityValidated,
+      nativeMockExamComponentCopyLabelsValidated,
+      nativeMockExamComponentLegalCopyValidated,
       quizRouteHeadersValidated,
       quizRouteHeaderParityValidated,
       quizRouteCopyLabelsValidated,
