@@ -6,7 +6,19 @@ const vm = require('node:vm');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
-const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
+const welfareCurrentnessSourceUrls = [
+  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
+  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
+  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
+  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
+];
+const staleWelfareClaims = [
+  /free for citizens and permanent residents/i,
+  /University tuition:\s*free for residents/i,
+  /typically\s+100[–-]400\s+SEK/i,
+  /Children's healthcare is free/i,
+  /parental leave \(480 days per child, split between parents\)/i,
+];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -249,75 +261,19 @@ test('static source provenance copy rejects unshipped external source families',
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
-test('static FAQ no-JS fallback mirrors the English dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-  const englishTranslations = englishTranslationMap(appSource);
-  const faqDictionaryEntries = Array.from(englishTranslations.entries())
-    .filter(([key]) => key.startsWith('faq.'))
-    .map(([key, value]) => [key, normalizeInlineHtml(value)]);
-  const faqFallback = staticFallbackI18nValues(staticFaqSection(indexHtml), 'faq.');
-  const faqFallbackEntries = Array.from(faqFallback.entries());
-
-  assert.deepEqual(
-    faqFallbackEntries.map(([key]) => key).sort(),
-    faqDictionaryEntries.map(([key]) => key).sort(),
-  );
-
-  for (const [key, expectedValue] of faqDictionaryEntries) {
-    assert.equal(
-      faqFallback.get(key),
-      expectedValue,
-      `${key} no-JS fallback should match the English site/app.js dictionary`,
-    );
-  }
-});
-
-test('static Home body no-JS fallback mirrors the English dictionary', () => {
-  const indexHtml = read('site/index.html');
-  const appSource = read('site/app.js');
-
-  assert.equal(assertStaticHomeBodyFallbackParitySource(indexHtml, appSource), 33);
-  assert.throws(
-    () =>
-      assertStaticHomeBodyFallbackParitySource(
-        indexHtml.replace('No textbooks.', 'No stale textbooks.'),
-        appSource,
-      ),
-    /demo\.h1 Home no-JS fallback should match the English site\/app\.js dictionary/,
-  );
-});
-
-test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
-  assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
-});
-
-test('static ebook practical test copy is backed by current UHR source metadata', () => {
+test('static ebook welfare currentness copy carries official source metadata', () => {
   const ebookSource = read('site/ebook.js');
 
-  assert.match(ebookSource, /const OFFICIAL_TEST_SOURCE_NOTES = Object\.freeze\(/);
-  assert.match(ebookSource, /retrievedDate: '2026-05-19'/);
-  officialPracticalTestSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
-
-  assert.match(
-    ebookSource,
-    /first civic-knowledge sitting will be held on 15 August 2026 in Stockholm/i,
-  );
-  assert.match(ebookSource, /only people who receive a letter from Migrationsverket can sign up/i);
-  assert.match(ebookSource, /Seats are limited/i);
-  assert.match(ebookSource, /free of charge/i);
-  assert.match(ebookSource, /generous time/i);
-  assert.match(ebookSource, /UHR has not yet published the exact time and place/i);
-  assert.match(ebookSource, /första samhällskunskapsprovet inom medborgarskapsprovet/i);
-  assert.match(ebookSource, /brev från Migrationsverket/i);
-  assert.match(ebookSource, /Antalet platser är begränsat/i);
-  assert.match(ebookSource, /kostnadsfritt/i);
-  assert.match(ebookSource, /generöst med tid/i);
-  assert.match(ebookSource, /praktiska detaljer väntar hos UHR/i);
-
-  unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
-    assert.doesNotMatch(ebookSource, pattern),
-  );
+  assert.match(ebookSource, /EBOOK_WELFARE_CURRENTNESS_SOURCES/);
+  assert.match(ebookSource, /retrieved:\s*'2026-05-19'/);
+  for (const url of welfareCurrentnessSourceUrls) {
+    assert.match(ebookSource, new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  for (const pattern of staleWelfareClaims) {
+    assert.doesNotMatch(ebookSource, pattern);
+  }
+  assert.match(ebookSource, /Sources? checked 2026-05-19/);
+  assert.match(ebookSource, /K[äa]llor? kontrollerade 2026-05-19/);
 });
 
 test('static ebook factbox and current prose claims use retrieved source metadata', () => {

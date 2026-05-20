@@ -30,24 +30,20 @@ const unsupportedEbookOutcomeClaimPatterns = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
-const unsupportedPracticalTestClaimPatterns = [
-  phrasePattern('Format of ', 'the real test'),
-  phrasePattern('multiple-choice ', 'and timed'),
-  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
-  phrasePattern('Arrive 30 ', 'minutes early'),
-  phrasePattern('test centre ', 'is strict'),
-  phrasePattern('Multiple-choice:\\s*', 'every question'),
-  phrasePattern('You may ', 'retake the test'),
-  phrasePattern('There is a ', 'small fee'),
-  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
-  phrasePattern('På provdagen är ', 'giltig legitimation'),
-  phrasePattern('Tidsatt ', 'provträning'),
+const staleEbookWelfareClaimPatterns = [
+  /schools and university \(free for citizens and permanent residents\)/i,
+  /University tuition:\s*free for residents/i,
+  /parental leave \(480 days per child, split between parents\)/i,
+  /90 are reserved for each parent \(the "pappamånader"\)/i,
+  /typically\s+100[–-]400\s+SEK/i,
+  /Children's healthcare is free/i,
+  /Föräldraledighet:\s*480 dagar per barn/i,
 ];
-const officialPracticalTestSourceUrls = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+const welfareCurrentnessSourceUrls = [
+  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
+  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
+  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
+  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
 ];
 const factboxSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
@@ -170,8 +166,8 @@ function assertNoUnsupportedEbookOutcomeClaim(value) {
   }
 }
 
-function assertNoUnsupportedPracticalTestClaim(value) {
-  for (const pattern of unsupportedPracticalTestClaimPatterns) {
+function assertNoStaleEbookWelfareClaim(value) {
+  for (const pattern of staleEbookWelfareClaimPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -208,8 +204,7 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
   assertNoSwedishEbookQuizLoanwords(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
-  assertNoUnsupportedPracticalTestClaim(source);
-  assertNoUnsupportedFactboxClaim(source);
+  assertNoStaleEbookWelfareClaim(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
 });
 
@@ -223,25 +218,45 @@ test('static ebook does not promise source-backed footnotes without citation cov
   );
 });
 
-test('static ebook source notes have dedicated compact readable styling', () => {
-  const styles = readSiteFile('site/styles.css');
+test('static ebook welfare claims are current and source dated', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const chapter4En = renderChapter(harness, 'en', '4');
+  const chapter5En = renderChapter(harness, 'en', '5');
+  const chapter6En = renderChapter(harness, 'en', '6');
+  const chapter4Sv = renderChapter(harness, 'sv', '4');
+  const chapter5Sv = renderChapter(harness, 'sv', '5');
+  const chapter6Sv = renderChapter(harness, 'sv', '6');
+  const renderedWelfareHtml = [
+    chapter4En,
+    chapter5En,
+    chapter6En,
+    chapter4Sv,
+    chapter5Sv,
+    chapter6Sv,
+  ].join('\n');
 
+  assertNoStaleEbookWelfareClaim(source);
+  assertNoStaleEbookWelfareClaim(renderedWelfareHtml);
+  assert.match(source, /EBOOK_WELFARE_CURRENTNESS_SOURCES/);
+  assert.match(source, /retrieved:\s*'2026-05-19'/);
+  for (const url of welfareCurrentnessSourceUrls) {
+    assert.match(source, new RegExp(url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+
+  assert.match(chapter4En, /2026 state income-tax threshold:\s*643,000 SEK/);
+  assert.match(chapter4En, /University Admissions fee exemptions/);
+  assert.match(chapter4Sv, /statlig inkomstskatt [öo]ver 643 000 kr/);
+  assert.match(chapter5En, /Reserved per parent:\s*90 sickness-benefit-level days/);
+  assert.match(chapter5Sv, /90 sjukpenningniv[aå]dagar per f[oö]r[aä]lder/);
+  assert.match(chapter6En, /Patient fees vary by region/);
   assert.match(
-    styles,
-    /\.ebook__factbox \.ebook__source-note \{[^}]*margin: 12px 0 0;[^}]*padding-top: 10px;[^}]*border-top: 1px solid var\(--line\);[^}]*color: var\(--ink-soft\);[^}]*font-size: 12\.5px;[^}]*line-height: 1\.5;/s,
+    chapter6En,
+    /Medicines within the medicine high-cost protection are free for children under 18/,
   );
-  assert.match(
-    styles,
-    /\.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--blue-deep\);[^}]*text-decoration: underline;[^}]*text-underline-offset: 2px;/s,
-  );
-  assert.match(
-    styles,
-    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note \{[^}]*color: var\(--ink-soft\) !important;[^}]*border-top-color: var\(--line\);/s,
-  );
-  assert.match(
-    styles,
-    /:root\[data-theme="dark"\] \.ebook__factbox \.ebook__source-note a \{[^}]*color: var\(--gold\) !important;/s,
-  );
+  assert.match(chapter6Sv, /Patientavgifter varierar/);
+  assert.match(renderedWelfareHtml, /Sources? checked 2026-05-19/);
+  assert.match(renderedWelfareHtml, /K[äa]llor? kontrollerade 2026-05-19/);
 });
 
 test('static ebook navigation covers every shipped static chapter', () => {

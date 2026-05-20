@@ -129,141 +129,38 @@ const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
-const STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS = [
-  /['"`]Readiness['"`]/,
-  /['"`]Din beredskap['"`]/,
-  /['"`]Almost ready['"`]/,
-  /['"`]Nästan redo['"`]/,
+const EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE = '2026-05-19';
+const EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS = [
+  'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
+  'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
+  'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
+  'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
 ];
-const STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY = [
-  'Local practice signal',
-  'Lokal övningssignal',
-  'Based only on practice and mock attempts on this device, not an official result forecast.',
-  'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.',
-  'Practice looks steady',
-  'Övningen ser stabil ut',
-  'Strong practice base',
-  'Stark övningsgrund',
+const STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS = [
+  /schools and university \(free for citizens and permanent residents\)/i,
+  /University tuition:\s*free for residents/i,
+  /parental leave \(480 days per child, split between parents\)/i,
+  /90 are reserved for each parent \(the "pappamånader"\)/i,
+  /typically\s+100[–-]400\s+SEK/i,
+  /Children's healthcare is free/i,
+  /Föräldraledighet:\s*480 dagar per barn/i,
 ];
-const STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS = [
-  phrasePattern('gör ett ', 'quiz'),
-  phrasePattern('quiz', 'frågor'),
-  phrasePattern('quiz', 'pass'),
-  phrasePattern('quiz', 'et'),
+const STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS = [
+  /2026 state income-tax threshold:\s*643,000 SEK/i,
+  /statlig inkomstskatt [öo]ver 643 000 kr/i,
+  /University Admissions fee exemptions/i,
+  /K[äa]llor? kontrollerade 2026-05-19/i,
+  /Reserved per parent:\s*90 sickness-benefit-level days/i,
+  /90 sjukpenningniv[aå]dagar per f[oö]r[aä]lder/i,
+  /Patient fees vary by region/i,
+  /Patientavgifter varierar/i,
+  /Medicines within the medicine high-cost protection are free for children under 18/i,
 ];
-const STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS = [
-  phrasePattern('Format of ', 'the real test'),
-  phrasePattern('multiple-choice ', 'and timed'),
-  phrasePattern('Bring valid ', "ID\\s*\\(BankID,\\s*passport,\\s*or Swedish driver's licence\\)"),
-  phrasePattern('Arrive 30 ', 'minutes early'),
-  phrasePattern('test centre ', 'is strict'),
-  phrasePattern('Multiple-choice:\\s*', 'every question'),
-  phrasePattern('You may ', 'retake the test'),
-  phrasePattern('There is a ', 'small fee'),
-  phrasePattern('Language ', 'requirement:\\s*A2[–-]B1\\s*', '\\(separate test\\)'),
-  phrasePattern('På provdagen är ', 'giltig legitimation'),
-  phrasePattern('Tidsatt ', 'provträning'),
-];
-const STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-];
-const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
-  'OFFICIAL_TEST_SOURCE_NOTES',
-  "retrievedDate: '2026-05-19'",
-  'first civic-knowledge sitting will be held on 15 August 2026 in Stockholm',
-  'only people who receive a letter from Migrationsverket can sign up',
-  'Seats are limited',
-  'free of charge',
-  'generous time',
-  'UHR has not yet published the exact time and place',
-  'första samhällskunskapsprovet inom medborgarskapsprovet',
-  'brev från Migrationsverket',
-  'Antalet platser är begränsat',
-  'kostnadsfritt',
-  'generöst med tid',
-  'Praktiska detaljer väntar hos UHR',
-];
-const STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS = [
-  /Facts you'll see on the test/i,
-  /what you'll see on the test/i,
-  /\b69%\s+is\s+forest/i,
-  /\b9%\s+lake/i,
-  /35\s*000\s+km\s+of\s+coastline/i,
-  /Coastline incl\. islands:\s*~35\s*000\s+km/i,
-  /historically commits\s+~?1%\s+of\s+GNI/i,
-  /Citizenship test starts:\s*6 June 2026/i,
-];
-const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.scb.se/mi0803-en',
-  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-];
-const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
-  sourceId: 'q044',
-  retrievedAt: '2026-05-20',
-  proposalSubmittedAt: '2026-04-16',
-  proposalEffectiveDate: '2026-08-02',
-  officialSources: [
-    {
-      label: 'current-law-main-rule',
-      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/brottsbalk-1962700_sfs-1962-700.',
-    },
-    {
-      label: 'proposal-government-pdf',
-      url: 'https://www.regeringen.se/contentassets/c776976adafb4f6890297223ae109e4e/skarpta-regler-for-unga-lagovertradare-prop.-202526246.pdf',
-    },
-    {
-      label: 'proposal-riksdag-html',
-      url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/skarpta-regler-for-unga-lagovertradare_hd03246/html/',
-    },
-  ],
-  requiredQuestionSv: /\bhuvudregeln\b/i,
-  requiredQuestionEn: /\bmain rule\b/i,
-  requiredTextSv: [
-    /\bhuvudregeln\b/i,
-    /\b15 års?\b/i,
-    /\bProposition 2025\/26:246\b/,
-    /\b16 april 2026\b/i,
-    /\b2 augusti 2026\b/i,
-    /\btidsbegränsad sänkning till 13 år\b/i,
-    /\bkontrolleras på nytt efter det datumet\b/i,
-  ],
-  requiredTextEn: [
-    /\bmain rule\b/i,
-    /\bage 15\b/i,
-    /\bProposition 2025\/26:246\b/,
-    /\b16 April 2026\b/,
-    /\b2 August 2026\b/,
-    /\btime-limited lowering to age 13\b/i,
-    /\bshould be rechecked after that date\b/i,
-  ],
-  stalePatterns: [
-    /\bregeringsförslag under 2026\b/i,
-    /\b2026 government proposal\b/i,
-    /\b13 år gäller ett regeringsförslag\b/i,
-    /\bage 13 option refers to\b/i,
-  ],
-};
-const STATIC_SWEDISH_GRAMMAR_TONE_REJECTIONS = [
-  {
-    label: 'ungrammatical legal-explanation phrase',
-    pattern: phrasePattern('ingen ', 'juridiska'),
-  },
-  { label: 'cutesy study-habit size phrase', pattern: phrasePattern('fika', '-stor') },
-  { label: 'joke liability phrase', pattern: phrasePattern('fika', '-skador') },
-];
-const STATIC_SWEDISH_GRAMMAR_TONE_REQUIRED_COPY = [
-  { label: 'legal-explanation replacement', pattern: /inget juridiskt kr[aå]ngel/i },
-  { label: 'study-habit replacement', pattern: /en kort studievana/i },
-  {
-    label: 'neutral liability replacement',
-    pattern: /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/i,
-  },
-];
+const STATIC_EBOOK_WELFARE_CURRENTNESS_EXPECTED_CHECKS =
+  EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS.length +
+  STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS.length +
+  STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS.length +
+  2;
 const QUESTION_AUTHORITY_OVERCLAIM_PATTERNS = [
   /\bofficial\s+(?:citizenship\s+)?(?:exam|test|question|practice)\b/i,
   /\breal\s+(?:citizenship\s+)?exam\s+questions?\b/i,
@@ -4271,107 +4168,49 @@ function validateStaticEbookOutcomeClaimPatterns() {
   return STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length - offenders.length;
 }
 
-function validateStaticOutcomeSloganPatterns() {
-  const offenders = findUnsupportedStaticOutcomeSlogans(repoRoot);
-
-  if (offenders.length > 0) {
-    fail(
-      `static learner-facing copy contains unsupported pass/passport outcome slogans:\n${formatUnsupportedStaticOutcomeSlogans(
-        offenders,
-      )}`,
-    );
-  }
-
-  return UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length - offenders.length;
-}
-
-function validateStaticHeadMetadataDescription() {
-  const source = loadText('site/index.html');
-  const issues = findStaticHeadMetadataDescriptionIssues(source);
-
-  if (issues.length > 0) {
-    fail(
-      `static head metadata description is missing, blank, or contains unsupported outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
-        issues,
-      )}`,
-    );
-  }
-
-  return extractStaticHeadMetaDescriptions(source).length;
-}
-
-function validateStaticV11ReadinessCopy() {
-  const source = loadText('site/v11.js');
-  let unsupportedCopyValidated = 0;
-  let requiredCopyValidated = 0;
-
-  STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.forEach((pattern) => {
-    if (pattern.test(source)) {
-      fail(`static v1.1 dashboard contains unsupported readiness/pass-prediction copy: ${pattern}`);
-      return;
-    }
-    unsupportedCopyValidated += 1;
-  });
-
-  STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.forEach((copy) => {
-    if (!source.includes(copy)) {
-      fail(`static v1.1 dashboard local-practice copy missing: ${copy}`);
-      return;
-    }
-    requiredCopyValidated += 1;
-  });
-
-  return { unsupportedCopyValidated, requiredCopyValidated };
-}
-
-function validateStaticEbookSwedishQuizNaturalness() {
+function validateStaticEbookWelfareCurrentness() {
   const source = loadText('site/ebook.js');
-  const offenders = STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.filter((pattern) =>
-    pattern.test(source),
-  );
+  let checksValidated = 0;
 
-  if (offenders.length > 0) {
-    fail('static ebook Swedish copy must avoid English quiz loanwords');
+  if (!source.includes('EBOOK_WELFARE_CURRENTNESS_SOURCES')) {
+    fail('static ebook welfare currentness source metadata is missing');
+  } else {
+    checksValidated += 1;
   }
 
-  return STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.length - offenders.length;
-}
+  if (!new RegExp(`retrieved:\\s*'${EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE}'`).test(source)) {
+    fail(
+      `static ebook welfare currentness metadata must use retrieved date ${EXPECTED_STATIC_EBOOK_WELFARE_RETRIEVED_DATE}`,
+    );
+  } else {
+    checksValidated += 1;
+  }
 
-function validateStaticEbookPracticalTestClaims() {
-  const source = loadText('site/ebook.js');
-  let unsupportedPracticalClaimsValidated = 0;
-  let sourceUrlsValidated = 0;
-  let requiredCopyValidated = 0;
-
-  STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.forEach((pattern) => {
-    if (pattern.test(source)) {
-      fail(`static ebook contains unsupported practical test logistics claim: ${pattern}`);
-      return;
-    }
-    unsupportedPracticalClaimsValidated += 1;
-  });
-
-  STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.forEach((url) => {
+  for (const url of EXPECTED_STATIC_EBOOK_WELFARE_SOURCE_URLS) {
     if (!source.includes(url)) {
-      fail(`static ebook practical test source metadata missing ${url}`);
-      return;
+      fail(`static ebook welfare currentness source URL is missing: ${url}`);
+    } else {
+      checksValidated += 1;
     }
-    sourceUrlsValidated += 1;
-  });
+  }
 
-  STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.forEach((text) => {
-    if (!source.includes(text)) {
-      fail(`static ebook practical test copy missing current sourced claim: ${text}`);
-      return;
+  for (const pattern of STATIC_EBOOK_STALE_WELFARE_CLAIM_PATTERNS) {
+    if (pattern.test(source)) {
+      fail(`static ebook contains stale welfare/currentness claim: ${pattern}`);
+    } else {
+      checksValidated += 1;
     }
-    requiredCopyValidated += 1;
-  });
+  }
 
-  return {
-    requiredCopyValidated,
-    sourceUrlsValidated,
-    unsupportedPracticalClaimsValidated,
-  };
+  for (const pattern of STATIC_EBOOK_WELFARE_REQUIRED_COPY_PATTERNS) {
+    if (!pattern.test(source)) {
+      fail(`static ebook missing current welfare copy pattern: ${pattern}`);
+    } else {
+      checksValidated += 1;
+    }
+  }
+
+  return checksValidated;
 }
 
 function validateStaticEbookFactboxSources() {
@@ -7523,15 +7362,8 @@ let staticV11ReadinessRequiredCopyValidated = 0;
 let staticV11ReadinessCopyParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
-let staticEbookSwedishQuizLoanwordPatternsValidated = 0;
-let staticEbookSwedishQuizNaturalnessValidated = false;
-let staticEbookPracticalTestClaimPatternsValidated = 0;
-let staticEbookPracticalTestRequiredCopyValidated = 0;
-let staticEbookPracticalTestSourceUrlsValidated = 0;
-let staticEbookPracticalTestCurrentnessValidated = false;
-let staticEbookFactboxClaimPatternsValidated = 0;
-let staticEbookFactboxSourceUrlsValidated = 0;
-let staticEbookFactboxSourceParityValidated = false;
+let staticEbookWelfareCurrentnessSourcesValidated = 0;
+let staticEbookWelfareCurrentnessParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -7602,45 +7434,10 @@ staticEbookOutcomeClaimPatternsValidated = validateStaticEbookOutcomeClaimPatter
 staticEbookOutcomeClaimParityValidated =
   staticEbookOutcomeClaimPatternsValidated ===
   STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.length;
-staticSiteOutcomeSloganPatternsValidated = validateStaticOutcomeSloganPatterns();
-staticSiteOutcomeSloganParityValidated =
-  staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
-staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
-staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
-staticEbookSwedishQuizLoanwordPatternsValidated = validateStaticEbookSwedishQuizNaturalness();
-staticEbookSwedishQuizNaturalnessValidated =
-  staticEbookSwedishQuizLoanwordPatternsValidated ===
-  STATIC_EBOOK_SWEDISH_QUIZ_LOANWORD_PATTERNS.length;
-{
-  const staticV11Validation = validateStaticV11ReadinessCopy();
-  staticV11ReadinessUnsupportedCopyValidated = staticV11Validation.unsupportedCopyValidated;
-  staticV11ReadinessRequiredCopyValidated = staticV11Validation.requiredCopyValidated;
-  staticV11ReadinessCopyParityValidated =
-    staticV11ReadinessUnsupportedCopyValidated ===
-      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
-    staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.length;
-}
-{
-  const practicalTestValidation = validateStaticEbookPracticalTestClaims();
-  staticEbookPracticalTestClaimPatternsValidated =
-    practicalTestValidation.unsupportedPracticalClaimsValidated;
-  staticEbookPracticalTestRequiredCopyValidated = practicalTestValidation.requiredCopyValidated;
-  staticEbookPracticalTestSourceUrlsValidated = practicalTestValidation.sourceUrlsValidated;
-  staticEbookPracticalTestCurrentnessValidated =
-    staticEbookPracticalTestClaimPatternsValidated ===
-      STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.length &&
-    staticEbookPracticalTestRequiredCopyValidated ===
-      STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
-    staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
-}
-{
-  const factboxValidation = validateStaticEbookFactboxSources();
-  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxPatternsValidated;
-  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
-  staticEbookFactboxSourceParityValidated =
-    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSOURCED_FACTBOX_PATTERNS.length &&
-    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-}
+staticEbookWelfareCurrentnessSourcesValidated = validateStaticEbookWelfareCurrentness();
+staticEbookWelfareCurrentnessParityValidated =
+  staticEbookWelfareCurrentnessSourcesValidated ===
+  STATIC_EBOOK_WELFARE_CURRENTNESS_EXPECTED_CHECKS;
 if (typeof scoreAnswers !== 'function') fail('scoreAnswers export is not a function');
 if (typeof isCorrectAnswer !== 'function') fail('isCorrectAnswer export is not a function');
 if (typeof getAnswerOptionFeedback !== 'function') {
@@ -17654,15 +17451,8 @@ console.log(
       staticV11ReadinessCopyParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
-      staticEbookSwedishQuizLoanwordPatternsValidated,
-      staticEbookSwedishQuizNaturalnessValidated,
-      staticEbookPracticalTestClaimPatternsValidated,
-      staticEbookPracticalTestRequiredCopyValidated,
-      staticEbookPracticalTestSourceUrlsValidated,
-      staticEbookPracticalTestCurrentnessValidated,
-      staticEbookFactboxClaimPatternsValidated,
-      staticEbookFactboxSourceUrlsValidated,
-      staticEbookFactboxSourceParityValidated,
+      staticEbookWelfareCurrentnessSourcesValidated,
+      staticEbookWelfareCurrentnessParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

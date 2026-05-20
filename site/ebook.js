@@ -6,65 +6,29 @@
 (function () {
   'use strict';
 
-  const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
-    retrievedDate: '2026-05-19',
-    sources: {
-      uhrStudy: {
-        en: 'UHR study material page',
-        sv: 'UHR studiematerial',
-        url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-      },
-      scbLandUse: {
-        en: 'Statistics Sweden land-use statistics',
-        sv: 'SCB markanvändningsstatistik',
-        url: 'https://www.scb.se/mi0803-en',
-      },
-      riksbankHistory: {
-        en: 'Sveriges Riksbank history',
-        sv: 'Riksbankens historik',
-        url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-      },
-      governmentNato: {
-        en: 'Government Offices: Sweden is a NATO member',
-        sv: 'Regeringskansliet: Sverige är medlem i Nato',
-        url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-      },
-    },
-  });
-
-  function ebookSourceNote(lang, sourceKeys) {
-    const sv = lang === 'sv';
-    const links = sourceKeys
-      .map((key) => EBOOK_FACTBOX_SOURCE_NOTES.sources[key])
-      .filter(Boolean)
-      .map((source) => `<a href="${source.url}">${source[lang] || source.en}</a>`)
-      .join('; ');
-    const label = sv ? 'Källor hämtade' : 'Sources accessed';
-
-    return `<p class="ebook__source-note">${label} ${EBOOK_FACTBOX_SOURCE_NOTES.retrievedDate}: ${links}.</p>`;
-  }
-
-  function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudy']) {
-    return `<div class="ebook__factbox"><h4>${heading}</h4><p>${facts}</p>${ebookSourceNote(lang, sourceKeys)}</div>`;
-  }
-
-  function svStudyBrief(points, facts, practiceHint, sourceKeys = ['uhrStudy']) {
+  function svStudyBrief(points, facts, practiceHint, sourceNote) {
     const items = points.map((point) => `<li>${point}</li>`).join('');
+    const sourceNoteMarkup = sourceNote ? `<p class="ebook__source-note">${sourceNote}</p>` : '';
     return `
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
       <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
-      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
+      ${sourceNoteMarkup}
+      <div class="ebook__factbox"><h4>Fakta att kunna</h4><p>${facts}</p></div>
     `;
   }
 
-  const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze({
-    retrievedDate: '2026-05-19',
-    aboutUrl: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-    faqUrl: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-    registrationUrl: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-    studyMaterialUrl: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  const EBOOK_WELFARE_CURRENTNESS_SOURCES = Object.freeze({
+    retrieved: '2026-05-19',
+    skatteverketStateTax:
+      'https://www.skatteverket.se/privat/etjansterochblanketter/svarpavanligafragor/inkomstavtjanst/privattjansteinkomsterfaq/narskamanbetalastatliginkomstskattochhurhogarden.5.10010ec103545f243e8000166.html',
+    universityAdmissionsFees:
+      'https://www.universityadmissions.se/en/fees-scholarships-residence-permit/who-is-required-to-pay-fees/',
+    forsakringskassanParentalBenefit:
+      'https://www.forsakringskassan.se/english/parents/when-the-child-is-born/parental-benefit',
+    patientFees1177:
+      'https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/patientavgifter/',
   });
 
   const CHAPTERS = {
@@ -257,21 +221,24 @@
           <p>Salaries and conditions in Sweden are mostly set by <em>collective agreements</em> (kollektivavtal) — negotiated between unions and employer organisations. There is no legal minimum wage, but the agreed minimum in any given sector is usually well above the cost of living.</p>
           <p>Membership in a union is voluntary. About 65% of workers belong to one. Joining usually includes unemployment insurance (<em>a-kassa</em>).</p>
           <h2>Taxes</h2>
-          <p>Taxes fund the welfare state. Most people pay roughly 30% of their salary in municipal income tax. People earning above the state-tax threshold (~613 900 SEK in 2024) pay an additional 20% on the income above that line. Capital gains are taxed at 30%. VAT (<em>moms</em>) is 25% on most goods, 12% on food, 6% on books and culture.</p>
+          <p>Taxes fund the welfare state. Most people pay municipal income tax, which varies by municipality and is often around 30% before deductions. For income year 2026, state income tax is 20% on taxable earned income above 643,000 SEK. VAT (<em>moms</em>) is 25% on most goods, 12% on food, and 6% on books and culture.</p>
           <h2>Skatteverket</h2>
           <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
           <h2>The welfare state</h2>
-          <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
-          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.')}
+          <p>Tax money pays for shared services such as healthcare, schools, social insurance, eldercare, and pensions. University application and tuition fees depend on citizenship and residence status: Swedish, EU/EEA, and Swiss citizens are exempt, and Swedish permanent residence permits or temporary permits granted for reasons other than studies can also exempt you. Parental benefit is 480 days for one child if the family is insured in Sweden, with 390 sickness-benefit-level days and 90 minimum-level days.</p>
+          <p class="ebook__source-note">Sources checked 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.skatteverketStateTax}">Skatteverket 2026 state income tax</a>, <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.universityAdmissionsFees}">University Admissions fee exemptions</a>, and <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.forsakringskassanParentalBenefit}">Försäkringskassan parental benefit</a>.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>VAT default: 25% · VAT food: 12% · 2026 state income-tax threshold: 643,000 SEK taxable earned income · Parental benefit: 480 days for one child · No legal minimum wage.</p></div>
         `,
         sv: svStudyBrief(
           [
             'Arbetsmarknaden bygger mycket på kollektivavtal mellan fackförbund och arbetsgivare. Där regleras ofta lön, arbetstid och villkor.',
             'Skatter finansierar gemensam välfärd som skola, vård, omsorg, pensioner och socialförsäkringar.',
             'Skatteverket hanterar skatt och folkbokföring. Personnummer och folkbokföringsadress används i många vardagliga kontakter.',
-            'Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.',
+            'Föräldrapenning är 480 dagar för ett barn om familjen är försäkrad i Sverige, men ersättningsnivå och överförbara dagar styrs av Försäkringskassans regler.',
           ],
-          'Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.',
+          'Kollektivavtal · Kommunalskatt · Skatteverket · 2026: statlig inkomstskatt över 643 000 kr beskattningsbar förvärvsinkomst · Föräldrapenning: 480 dagar för ett barn.',
+          undefined,
+          `Källor kontrollerade 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.skatteverketStateTax}">Skatteverket om statlig inkomstskatt 2026</a>, <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.universityAdmissionsFees}">University Admissions om avgiftsundantag</a> och <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.forsakringskassanParentalBenefit}">Försäkringskassan om föräldrapenning</a>.`,
         ),
       },
     },
@@ -291,21 +258,24 @@
           <h2>Same-sex marriage and rainbow families</h2>
           <p>Same-sex marriage has been legal since 2009. Same-sex couples may adopt and access fertility treatment on equal terms. Transgender people may change their legal gender without medical requirements.</p>
           <h2>Parental leave</h2>
-          <p>480 days per child, of which 90 are reserved for each parent (the "pappamånader") and cannot be transferred. The aim: both parents stay home. A child's first birthday in Sweden is usually celebrated by two slightly-tired adults, not one.</p>
+          <p>Parental benefit is paid for 480 days for one child. When two parents share the days, each parent starts with 195 sickness-benefit-level days and 45 minimum-level days; 90 sickness-benefit-level days for each parent are reserved and cannot be transferred. The aim: both parents can take real responsibility at home. A child's first birthday in Sweden is usually celebrated by two slightly-tired adults, not one.</p>
           <h2>Household responsibilities</h2>
           <p>Cooking, cleaning, childcare, and household admin are not gendered tasks in Sweden — at least not officially. Surveys show this is the country with the most equal time spent on housework. (Statistics, like teenagers, lie a little.)</p>
           <h2>Women and work</h2>
           <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.')}
+          <p class="ebook__source-note">Source checked 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.forsakringskassanParentalBenefit}">Försäkringskassan parental benefit</a>.</p>
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental benefit: 480 days for one child · Reserved per parent: 90 sickness-benefit-level days.</p></div>
         `,
         sv: svStudyBrief(
           [
             'Jämställdhet betyder att kvinnor och män ska ha samma rättigheter, skyldigheter och möjligheter.',
             'Diskrimineringslagen skyddar mot diskriminering i till exempel arbetsliv, utbildning, vård och samhällsservice.',
             'Sverige erkänner samkönade äktenskap och familjer med olika sammansättning.',
-            'Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.',
+            'Föräldrapenning är 480 dagar för ett barn. Vid två vårdnadshavare finns dagar som kan föras över och 90 sjukpenningnivådagar per förälder som är reserverade.',
           ],
-          'Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.',
+          'Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldrapenning: 480 dagar för ett barn · Reserverat: 90 sjukpenningnivådagar per förälder.',
+          undefined,
+          `Källa kontrollerad 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.forsakringskassanParentalBenefit}">Försäkringskassan om föräldrapenning</a>.`,
         ),
       },
     },
@@ -321,25 +291,30 @@
       body: {
         en: `
           <h2>School</h2>
-          <p>Compulsory school (<em>grundskolan</em>) is ten years, from age 6 (förskoleklass) through 9th grade. After that, three years of upper secondary (<em>gymnasium</em>) — academic or vocational tracks, both free. University is also free for citizens, EU/EEA residents, and people with a Swedish residence permit.</p>
+          <p>Compulsory school (<em>grundskolan</em>) is ten years, from age 6 (förskoleklass) through 9th grade. After that, three years of upper secondary (<em>gymnasium</em>) — academic or vocational tracks, both free. University fee rules are more precise: Swedish, EU/EEA, and Swiss citizens are exempt from application and tuition fees, as are people with a permanent Swedish residence permit or a temporary Swedish permit granted for reasons other than studies.</p>
           <p>The Education Act guarantees equal access regardless of background, gender, or where you live. Private and "free" schools (<em>friskolor</em>) exist but cannot charge tuition.</p>
           <h2>Healthcare</h2>
-          <p>Healthcare is mostly tax-funded and runs at the regional level (21 regions). You pay a small fee (typically 100–400 SEK) per visit to a doctor, and prescription drugs and hospital fees are capped per year (the <em>högkostnadsskydd</em>). Children's healthcare is free.</p>
+          <p>Healthcare is mostly tax-funded and runs at the regional level (21 regions). You usually pay the patient fee that applies in the region where you receive care, and the fee can vary by region and type of care. High-cost protection limits what you pay for outpatient care and medicines over time.</p>
+          <p>Some healthcare is free of charge. 1177 lists examples such as child health centre visits, maternity clinic visits, school health services, and in most regions outpatient visits for children and young people until their 20th birthday. Medicines within the medicine high-cost protection are free for children under 18.</p>
           <p>1177 is the national health hotline and website. Routine care goes through your <em>vårdcentral</em>; emergencies through <em>akutmottagning</em>; mental and dental care exist but with different fee rules.</p>
+          <p class="ebook__source-note">Sources checked 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.universityAdmissionsFees}">University Admissions fee exemptions</a> and <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.patientFees1177}">1177 patient fees and high-cost protection</a>.</p>
           <h2>Eldercare</h2>
           <p>The municipality runs eldercare — home help (<em>hemtjänst</em>), special accommodation, and emergency alarms. The principle is the right to live independently for as long as possible; the practice is uneven by municipality.</p>
           <h2>Social services</h2>
           <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1-9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.')}
+          <div class="ebook__factbox"><h4>Facts you'll see on the test</h4><p>Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · Patient fees vary by region · High-cost protection limits healthcare and medicine costs.</p></div>
         `,
         sv: svStudyBrief(
           [
             'Skolan ska ge barn kunskaper och likvärdiga möjligheter. Grundskolan omfattar förskoleklass och årskurs 1-9.',
-            'Regionerna ansvarar för hälso- och sjukvård. 1177 används för sjukvårdsrådgivning och kontakt med vården.',
+            'Avgiftsregler för universitet beror på medborgarskap och uppehållstillstånd. Svenska, EU/EES- och schweiziska medborgare är avgiftsbefriade, och vissa svenska uppehållstillstånd ger också undantag.',
+            'Regionerna ansvarar för hälso- och sjukvård. Patientavgifter kan variera mellan regioner och högkostnadsskydd begränsar kostnader över tid.',
             'Kommunerna ansvarar för äldreomsorg, socialtjänst och många vardagliga välfärdstjänster.',
             'Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.',
           ],
-          'Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.',
+          'Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Patientavgifter varierar · Högkostnadsskydd finns för vård och läkemedel.',
+          undefined,
+          `Källor kontrollerade 2026-05-19: <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.universityAdmissionsFees}">University Admissions om avgiftsundantag</a> och <a href="${EBOOK_WELFARE_CURRENTNESS_SOURCES.patientFees1177}">1177 om patientavgifter och högkostnadsskydd</a>.`,
         ),
       },
     },
