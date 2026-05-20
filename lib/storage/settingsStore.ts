@@ -9,6 +9,9 @@ const audioEnabledKey = 'audioEnabled';
 const dailyGoalKey = 'dailyGoalAnswers';
 const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
+const defaultDailyGoalAnswers = 10;
+const minDailyGoalAnswers = 1;
+const maxDailyGoalAnswers = 50;
 
 let settingsStorage: MMKV | null = null;
 
@@ -19,27 +22,73 @@ try {
 }
 
 function readLanguage(): AppLanguage {
-  const language = settingsStorage?.getString(languageKey);
+  let language: string | undefined;
+  try {
+    language = settingsStorage?.getString(languageKey);
+  } catch {
+    return 'sv';
+  }
+
   return language === 'en' ? 'en' : 'sv';
 }
 
 function readAudioEnabled(): boolean {
-  const storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(audioEnabledKey);
+  } catch {
+    return true;
+  }
+
   return storedValue ?? true;
 }
 
+function normalizeDailyGoalAnswers(answerCount: number | undefined): number {
+  if (
+    typeof answerCount !== 'number' ||
+    !Number.isFinite(answerCount) ||
+    !Number.isInteger(answerCount)
+  ) {
+    return defaultDailyGoalAnswers;
+  }
+
+  if (answerCount < minDailyGoalAnswers || answerCount > maxDailyGoalAnswers) {
+    return defaultDailyGoalAnswers;
+  }
+
+  return answerCount;
+}
+
 function readDailyGoalAnswers(): number {
-  const storedValue = settingsStorage?.getNumber(dailyGoalKey);
-  return storedValue && storedValue > 0 ? storedValue : 10;
+  let storedValue: number | undefined;
+  try {
+    storedValue = settingsStorage?.getNumber(dailyGoalKey);
+  } catch {
+    return defaultDailyGoalAnswers;
+  }
+
+  return normalizeDailyGoalAnswers(storedValue);
 }
 
 function readIncludeSupplementary(): boolean {
-  const storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(includeSupplementaryKey);
+  } catch {
+    return false;
+  }
+
   return storedValue ?? false;
 }
 
 function readHasSeenAboutTheTest(): boolean {
-  const storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  let storedValue: boolean | undefined;
+  try {
+    storedValue = settingsStorage?.getBoolean(hasSeenAboutTheTestKey);
+  } catch {
+    return false;
+  }
+
   return storedValue ?? false;
 }
 
@@ -71,7 +120,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ audioEnabled });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
-    const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
+    const safeGoal = normalizeDailyGoalAnswers(
+      Math.max(minDailyGoalAnswers, Math.min(maxDailyGoalAnswers, Math.round(dailyGoalAnswers))),
+    );
     settingsStorage?.set(dailyGoalKey, safeGoal);
     set({ dailyGoalAnswers: safeGoal });
   },

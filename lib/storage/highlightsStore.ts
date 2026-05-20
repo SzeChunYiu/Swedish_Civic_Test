@@ -2,6 +2,9 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import type { RecoverablePersistenceWarning } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
+
 // Ebook highlight + optional margin note. See
 // swedish_citizenship_app_project_plan/15_ebook_highlights.md.
 //
@@ -30,11 +33,12 @@ export interface Highlight {
 }
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
+const highlightsStorageId = 'ebook-highlights';
 
 let highlightsStorage: MMKV | null = null;
 
 try {
-  highlightsStorage = createMMKV({ id: 'ebook-highlights' });
+  highlightsStorage = createMMKV({ id: highlightsStorageId });
 } catch {
   highlightsStorage = null;
 }
@@ -91,18 +95,28 @@ function normalize(value: unknown): PersistedHighlights {
   return { byChapter };
 }
 
-function read(): PersistedHighlights {
-  const raw = highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedHighlights;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(highlightsStorage, highlightsStorageId, HIGHLIGHTS_STATE_KEY, () =>
+    highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return { state: normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
   } catch {
-    return EMPTY;
+    return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
-function write(state: PersistedHighlights): void {
-  highlightsStorage?.set(HIGHLIGHTS_STATE_KEY, JSON.stringify(state));
+function write(state: PersistedHighlights): RecoverablePersistenceWarning | null {
+  return writeRecoverably(
+    highlightsStorage,
+    highlightsStorageId,
+    HIGHLIGHTS_STATE_KEY,
+    JSON.stringify(state),
+  );
 }
 
 function genId(): string {
@@ -119,17 +133,20 @@ export interface AddHighlightInput {
 }
 
 interface HighlightsState extends PersistedHighlights {
+  persistenceWarning: RecoverablePersistenceWarning | null;
   addHighlight: (input: AddHighlightInput) => Highlight;
   updateHighlight: (id: string, patch: Partial<Pick<Highlight, 'color' | 'note'>>) => void;
   removeHighlight: (id: string) => void;
   clearChapter: (chapterId: string) => void;
   clearAll: () => void;
+  clearPersistenceWarning: () => void;
 }
 
 const initial = read();
 
 export const useHighlightsStore = create<HighlightsState>((set, get) => ({
-  ...initial,
+  ...initial.state,
+  persistenceWarning: initial.persistenceWarning,
   addHighlight: (input) => {
     const now = new Date().toISOString();
     const highlight: Highlight = {
@@ -148,8 +165,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
       const next = {
         byChapter: { ...state.byChapter, [input.chapterId]: [...existing, highlight] },
       };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
     return highlight;
   },
@@ -171,8 +188,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
       }
       if (!touched) return state;
       const next = { byChapter };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
   },
   removeHighlight: (id) => {
@@ -182,21 +199,22 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
         byChapter[chapterId] = list.filter((h) => h.id !== id);
       }
       const next = { byChapter };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
   },
   clearChapter: (chapterId) => {
     set((state) => {
       const next = { byChapter: { ...state.byChapter, [chapterId]: [] } };
-      write(next);
-      return next;
+      const persistenceWarning = write(next);
+      return { ...next, persistenceWarning };
     });
   },
   clearAll: () => {
-    write(EMPTY);
-    set(EMPTY);
+    const persistenceWarning = write(EMPTY);
+    set({ ...EMPTY, persistenceWarning });
   },
+  clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
 
 // Pure selector helpers — usable outside React.
