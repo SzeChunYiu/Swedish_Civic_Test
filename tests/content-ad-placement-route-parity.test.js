@@ -30,6 +30,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
+  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
@@ -53,6 +54,11 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     nativeAdCardSource,
     /shouldShowAd\('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION\)/,
   );
+  assert.match(nativeAdCardSource, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
+  assert.match(
+    nativeAdCardSource,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
   assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
   assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
@@ -63,9 +69,31 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(
     nativeAdCardNativeSource,
+    /const resultsNativeUnit = getAdUnit\('results_native'\);/,
+  );
+  assert.match(
+    nativeAdCardNativeSource,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
+  assert.match(
+    nativeAdCardNativeSource,
     /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
+  assert.match(adCopySource, /getNativeAdCardCopy/);
+  assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
+  assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
+  const liveCopyBlocks = Array.from(
+    adCopySource.matchAll(/live:\s*\{([\s\S]*?)\n    \},\n    test:/g),
+    (match) => match[1],
+  );
+  assert.equal(liveCopyBlocks.length, 2);
+  for (const liveCopyBlock of liveCopyBlocks) {
+    assert.doesNotMatch(
+      liveCopyBlock,
+      /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/,
+    );
+  }
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 

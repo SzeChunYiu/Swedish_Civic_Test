@@ -847,10 +847,20 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
   const source = read('components/monetization/NativeAdCard.tsx');
+  const nativeSource = read('components/monetization/NativeAdCard.native.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
 
   assert.match(source, /useSettingsStore/);
-  assert.match(source, /const copy = nativeAdCardCopy\[language\]/);
+  assert.match(source, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
+  assert.match(
+    source,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
+  assert.match(nativeSource, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
+  assert.match(
+    nativeSource,
+    /const copy = getNativeAdCardCopy\(language, \{ testOnly: resultsNativeUnit\?\.testOnly \}\);/,
+  );
   assert.match(
     source,
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
@@ -858,14 +868,28 @@ test('native ad preview card exposes a grouped accessibility summary', () => {
   assert.match(source, /\{copy\.eyebrow\}/);
   assert.match(source, /\{copy\.title\}/);
   assert.match(source, /\{copy\.meta\}/);
-  assert.match(copySource, /const nativeAdCardCopy: Record<AppLanguage, NativeAdCardCopy>/);
+  assert.match(copySource, /getNativeAdCardCopy/);
+  assert.match(copySource, /live:\s*\{[\s\S]*?eyebrow: 'Ad'/);
+  assert.match(copySource, /live:\s*\{[\s\S]*?eyebrow: 'Annons'/);
+  assert.match(copySource, /test:\s*\{[\s\S]*?eyebrow: 'Test native ad'/);
   assert.match(copySource, /Inbyggd testannons/);
   assert.match(copySource, /Annons i resultatvyn/);
   assert.match(copySource, /Förhandsvisning av AdMob-testplacering/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /Test native ad/);
-  assert.match(copySource, /Sponsored study placement/);
+  assert.match(copySource, /Results ad/);
   assert.match(copySource, /AdMob test placement preview/);
+  const liveCopyBlocks = Array.from(
+    copySource.matchAll(/live:\s*\{([\s\S]*?)\n    \},\n    test:/g),
+    (match) => match[1],
+  );
+  assert.equal(liveCopyBlocks.length, 2);
+  for (const liveCopyBlock of liveCopyBlocks) {
+    assert.doesNotMatch(
+      liveCopyBlock,
+      /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/,
+    );
+  }
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(copySource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
