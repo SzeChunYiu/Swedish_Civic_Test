@@ -64,7 +64,9 @@ export default function SearchScreen() {
           value={query}
         />
         <View style={styles.searchActions}>
-          <Text style={styles.resultSummary}>{resultSummary}</Text>
+          <Text accessibilityLiveRegion="polite" aria-live="polite" style={styles.resultSummary}>
+            {resultSummary}
+          </Text>
           <Button
             accessibilityLabel={copy.clearSearchAccessibilityLabel}
             accessibilityRole="button"
