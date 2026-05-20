@@ -3453,7 +3453,14 @@ const EXPECTED_MOCK_EXAM_ACCESS_INTERFACES = [
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
-  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const candidates = [
+    base,
+    `${base}.ts`,
+    `${base}.tsx`,
+    `${base}.js`,
+    `${base}.json`,
+    path.join(base, 'index.ts'),
+  ];
   const found = candidates.find(
     (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
   );
@@ -3466,6 +3473,12 @@ function loadTs(relativePath, exportName) {
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
     return exportName ? cached[exportName] : cached;
+  }
+
+  if (filePath.endsWith('.json')) {
+    const parsed = loadJson(path.relative(repoRoot, filePath));
+    moduleCache.set(filePath, parsed);
+    return exportName ? parsed[exportName] : parsed;
   }
 
   const source = fs.readFileSync(filePath, 'utf8');
@@ -6278,7 +6291,9 @@ const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
-const appConfig = loadJson('app.json');
+const appConfig = fs.existsSync(path.join(repoRoot, 'app.config.ts'))
+  ? { expo: loadTs('app.config.ts').default() }
+  : loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
