@@ -156,12 +156,12 @@ export function useMockExamAccess({
     ],
   );
 
-  const recordExamCompletion = useCallback(async () => {
+  const recordExamCompletion = useCallback(async (sessionId: string) => {
     if (shouldFailMockExamCompletionOnce()) {
       throw new Error('Mock exam completion write forced to fail once');
     }
 
-    const nextSnapshot = await recordStoredMockExamCompletion({ storage });
+    const nextSnapshot = await recordStoredMockExamCompletion({ sessionId, storage });
     setSnapshot(nextSnapshot);
     setAccessReady(true);
     return nextSnapshot;

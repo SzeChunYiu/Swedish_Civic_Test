@@ -17,10 +17,12 @@ export type MockExamAccessReason =
   | 'ads_unavailable';
 
 export type MockExamAccessState = {
+  accessReadFailed?: boolean;
   completedMockExamsToday: number;
   consentDecision?: Pick<AdConsentDecision, 'adServingAllowed'>;
   entitlements: Pick<PremiumEntitlements, 'adsDisabled' | 'unlimitedMockExams'>;
   freeMockExamLimit: number;
+  platform?: string;
   rewardedExtraExamCredits?: number;
 };
 

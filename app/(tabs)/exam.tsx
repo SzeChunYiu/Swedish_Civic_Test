@@ -257,7 +257,6 @@ export default function Screen() {
   useEffect(() => {
     if (
       shouldAutoSubmitExam({
-        examActive: examUnlocked,
         remainingSeconds,
         submitted,
         questionCount: examQuestions.length,

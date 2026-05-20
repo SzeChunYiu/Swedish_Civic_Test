@@ -15,6 +15,7 @@ import { PersistenceWarningNotice } from '../../components/storage/PersistenceWa
 import { questions } from '../../data/questions';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenceWarning';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
@@ -53,6 +54,19 @@ type MistakesReviewListItem =
       question: PracticeQuestion;
       type: 'question';
     };
+
+type AnswerReviewBlockProps = {
+  copy: MistakesCopy;
+  correctAnswer: string;
+  selectedWrongAnswer?: string;
+};
+
+type MistakesListHeaderProps = {
+  clearMistakeReviewPersistenceWarning: () => void;
+  copy: MistakesCopy;
+  language: AppLanguage;
+  mistakeReviewPersistenceWarning: RecoverablePersistenceWarning | null;
+};
 
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
@@ -108,29 +122,6 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
-export default function Screen() {
-  const router = useRouter();
-  const language = useSettingsStore((state) => state.language);
-  const copy = mistakesCopy[language];
-  const questionProgress = useProgressStore((state) => state.questionProgress);
-  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
-  const clearProgressPersistenceWarning = useProgressStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
-  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.persistenceWarning,
-  );
-  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const mistakenQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.wrongCount > 0,
-  );
-  const bookmarkedQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.bookmarked,
-  );
-
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
     <View
@@ -152,7 +143,12 @@ function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerR
   );
 }
 
-function renderListHeader(copy: MistakesCopy) {
+function renderListHeader({
+  clearMistakeReviewPersistenceWarning,
+  copy,
+  language,
+  mistakeReviewPersistenceWarning,
+}: MistakesListHeaderProps) {
   return (
     <View style={styles.headerStack}>
       <View style={styles.hero}>
@@ -163,11 +159,6 @@ function renderListHeader(copy: MistakesCopy) {
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
       </View>
       <QuestionDisclaimer />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearProgressPersistenceWarning}
-        warning={progressPersistenceWarning}
-      />
       <PersistenceWarningNotice
         language={language}
         onDismiss={clearMistakeReviewPersistenceWarning}
@@ -186,6 +177,12 @@ export default function Screen() {
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
     const mistakenQuestions = questions.filter(
       (question) => questionProgress[question.id]?.wrongCount > 0,
@@ -319,7 +316,12 @@ export default function Screen() {
       initialNumToRender={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader(copy)}
+      ListHeaderComponent={renderListHeader({
+        clearMistakeReviewPersistenceWarning,
+        copy,
+        language,
+        mistakeReviewPersistenceWarning,
+      })}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
       removeClippedSubviews
