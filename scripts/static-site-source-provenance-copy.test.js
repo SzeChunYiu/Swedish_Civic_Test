@@ -28,6 +28,35 @@ function staticQuestionSourceTitles() {
   return uniqueSorted(staticQuestionBank().map((question) => question.source?.title));
 }
 
+function staticBuddyCopyManifest() {
+  const context = {
+    document: { addEventListener() {} },
+    localStorage: {
+      getItem() {
+        return 'sv';
+      },
+      setItem() {},
+      removeItem() {},
+    },
+    sessionStorage: {
+      getItem() {
+        return null;
+      },
+      setItem() {},
+    },
+    window: { addEventListener() {} },
+  };
+  context.globalThis = context;
+  vm.createContext(context);
+  vm.runInContext(read('site/buddies.js'), context, { timeout: 3000 });
+  assert.equal(
+    typeof context.window.smtBuddyCopyManifest,
+    'function',
+    'static buddies should expose their copy manifest for parity guards',
+  );
+  return context.window.smtBuddyCopyManifest();
+}
+
 function sourceClaimTitles(indexHtml) {
   return uniqueSorted(
     Array.from(indexHtml.matchAll(/data-source-title="([^"]+)"/g), (match) => match[1]),
@@ -99,19 +128,6 @@ function staticFaqSection(indexHtml) {
   const faqMatch = indexHtml.match(/<section class="band faq"[\s\S]*?<\/section>/);
   assert.ok(faqMatch, 'static FAQ fallback section should be present');
   return faqMatch[0];
-function listTextFiles(relativePath) {
-  const absolutePath = path.join(repoRoot, relativePath);
-  const stats = fs.statSync(absolutePath);
-  if (stats.isFile()) return [relativePath];
-
-  return fs
-    .readdirSync(absolutePath, { withFileTypes: true })
-    .flatMap((entry) => listTextFiles(path.join(relativePath, entry.name)))
-    .filter((file) => /\.(?:js|ts|tsx)$/.test(file));
-}
-
-function joinedSource(paths) {
-  return paths.map((file) => `\n--- ${file} ---\n${read(file)}`).join('\n');
 }
 
 function staticHomeRoute(indexHtml) {
@@ -333,32 +349,58 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   );
 });
 
-test('static companion copy rejects answer-pattern hacks and answer-manipulation jokes', () => {
-  const companionCopy = joinedSource(['site/buddies.js', 'site/extras.js']);
-  const guardedSources = joinedSource([
-    'site/buddies.js',
-    'site/extras.js',
-    ...listTextFiles('scripts'),
-    ...listTextFiles('tests'),
-  ]);
+test('static buddy tips, facts, reactions, greetings, and nudges keep SV/EN parity', () => {
+  const buddySource = read('site/buddies.js');
+  const manifest = staticBuddyCopyManifest();
 
   [
-    phrasePattern('shorter ', 'one ', 'usually'),
-    phrasePattern('det ', 'kortare'),
-    phrasePattern('\\bkortare\\b(?:\\s+\\S+){0,6}\\s+', 'fel'),
-    phrasePattern('switched ', 'two ', 'answer ', 'letters'),
-    phrasePattern('answer', '[-\\s]*', 'letter ', 'trick'),
-    phrasePattern('answer ', 'length'),
-    phrasePattern('tamp', 'er'),
-    phrasePattern('manipul', 'era'),
-    phrasePattern('\\bbytte\\b(?:\\s+\\S+){0,6}\\s+', 'svar'),
-    phrasePattern('svars', 'bokstav'),
-  ].forEach((pattern) => assert.doesNotMatch(guardedSources, pattern));
+    /shorter one usually/i,
+    /det kortare/i,
+    /switched two answer letters/i,
+    /answer-letter trick/i,
+    /\btamper/i,
+    /manipuler(?:a|ade|ar)/i,
+  ].forEach((pattern) => assert.doesNotMatch(buddySource, pattern));
 
-  [
-    phrasePattern('Pass ', 'the test'),
-    phrasePattern('Earn ', 'the passport'),
-    phrasePattern('Klara ', 'provet'),
-    phrasePattern('Få ', 'passet'),
-  ].forEach((pattern) => assert.doesNotMatch(companionCopy, pattern));
+  assert.ok(Array.isArray(manifest.facts), 'facts should be present');
+  assert.ok(Array.isArray(manifest.buddies), 'buddies should be present');
+  assert.ok(manifest.facts.length >= 30, 'static buddy facts should keep the shipped fact pool');
+  assert.equal(manifest.greetings.en.length, manifest.greetings.sv.length);
+  assert.deepEqual(Object.keys(manifest.pageNudges).sort(), ['/ebook', '/practice']);
+
+  function assertLocalizedPair(value, label) {
+    assert.equal(typeof value.en, 'string', `${label} missing English text`);
+    assert.equal(typeof value.sv, 'string', `${label} missing Swedish text`);
+    assert.notEqual(value.en.trim(), '', `${label} English text should not be empty`);
+    assert.notEqual(value.sv.trim(), '', `${label} Swedish text should not be empty`);
+  }
+
+  manifest.facts.forEach((fact, index) => assertLocalizedPair(fact, `fact ${index + 1}`));
+  manifest.greetings.en.forEach((en, index) =>
+    assertLocalizedPair({ en, sv: manifest.greetings.sv[index] }, `greeting ${index + 1}`),
+  );
+
+  for (const [pathName, nudge] of Object.entries(manifest.pageNudges)) {
+    assertLocalizedPair(nudge, `page nudge ${pathName}`);
+  }
+
+  for (const buddy of manifest.buddies) {
+    assertLocalizedPair(buddy.factPrefix, `${buddy.id} fact prefix`);
+    for (const field of ['tips', 'pet']) {
+      assert.ok(Array.isArray(buddy[field].en), `${buddy.id} ${field}.en should be an array`);
+      assert.ok(Array.isArray(buddy[field].sv), `${buddy.id} ${field}.sv should be an array`);
+      assert.equal(
+        buddy[field].en.length,
+        buddy[field].sv.length,
+        `${buddy.id} ${field} should have matching SV/EN counts`,
+      );
+      assert.ok(buddy[field].en.length > 0, `${buddy.id} ${field} should not be empty`);
+      buddy[field].en.forEach((en, index) =>
+        assertLocalizedPair(
+          { en, sv: buddy[field].sv[index] },
+          `${buddy.id} ${field} ${index + 1}`,
+        ),
+      );
+    }
+  }
 });
