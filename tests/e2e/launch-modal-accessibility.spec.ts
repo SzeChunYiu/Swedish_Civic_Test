@@ -99,10 +99,14 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   await page.goto('/practice', { waitUntil: 'networkidle' });
 
   const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
+  const guideLink = page.getByRole('link', { name: 'Öppna om-provet-guiden' });
+  const searchLink = page.getByRole('link', { name: 'Sök' }).first();
+
   await expect(dialogs).toHaveCount(1);
   await expect(dialogs.first()).toHaveAttribute('aria-label', 'Vad är medborgarskapsprovet?');
   await expect(page.getByRole('heading', { name: 'Vad är medborgarskapsprovet?' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Öppna om-provet-guiden' })).toHaveCount(1);
+  await expect(guideLink).toHaveCount(1);
+  await expect(guideLink).toBeFocused();
 
   const skipGuideButtons = page.getByRole('button', { name: 'Hoppa över guiden' });
   await expect(skipGuideButtons).toHaveCount(1);
@@ -111,8 +115,55 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   expect(skipGuideBox?.width).toBeLessThan(220);
   expect(skipGuideBox?.height).toBeLessThan(96);
 
+  await page.keyboard.press('Tab');
+  await expect(skipGuideButtons).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(guideLink).toBeFocused();
+
+  await page.keyboard.press('Shift+Tab');
+  await expect(skipGuideButtons).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(dialogs).toHaveCount(0);
+  await expect(searchLink).toBeFocused();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('first-run about modal keeps backdrop dismissal and guide navigation working', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+
+  const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
+  await expect(dialogs).toHaveCount(1);
+
   await page.mouse.click(8, 8);
   await expect(dialogs).toHaveCount(0);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(dialogs).toHaveCount(0);
+
+  await page.evaluate(() => localStorage.clear());
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await expect(dialogs).toHaveCount(1);
+
+  await page.getByRole('link', { name: 'Öppna om-provet-guiden' }).click();
+  await expect(page).toHaveURL(/\/about-the-test/);
+  await expect(
+    page.getByRole('heading', { name: 'Vad är medborgarskapsprovet i samhällskunskap?' }),
+  ).toBeVisible();
+  await expect(
+    page.locator('[role="dialog"][aria-modal="true"][aria-label="Vad är medborgarskapsprovet?"]'),
+  ).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });

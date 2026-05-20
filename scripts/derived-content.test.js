@@ -324,6 +324,48 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
       reviewStatus: 'reviewed',
       tags: ['elections'],
     },
+    {
+      id: 'q034',
+      chapterId: 'ch04',
+      type: 'single_choice',
+      questionSv: 'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+      questionEn:
+        'What happens in a proportional election if a party receives 20 percent of the votes?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Partiet får 20 procent av platserna',
+          textEn: 'The party receives 20 percent of the seats',
+        },
+        {
+          id: 'b',
+          textSv: 'Partiet får alla platser',
+          textEn: 'The party receives all seats',
+        },
+        {
+          id: 'c',
+          textSv: 'Partiet får inga platser oavsett röstandel',
+          textEn: 'The party receives no seats regardless of vote share',
+        },
+        {
+          id: 'd',
+          textSv: 'Partiet får platser först om regeringen godkänner det',
+          textEn: 'The party receives seats only if the government approves it',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'I proportionella val får partier platser utifrån sin andel av rösterna.',
+      explanationEn:
+        'In proportional elections, parties receive seats based on their share of the votes.',
+      uhrReference: {
+        chapter: 'Politiska val och partier',
+        section: 'Proportionella val',
+        pageApprox: 15,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['proportional-elections'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 201);
@@ -351,6 +393,22 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   assert.equal(
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
+  assert.equal(
+    derived[13].questionSv,
+    'I ett proportionellt val får ett parti som får 20 procent av rösterna 20 procent av platserna.',
+  );
+  assert.equal(
+    derived[13].questionEn,
+    'In a proportional election, a party that receives 20 percent of the votes receives 20 percent of the seats.',
+  );
+  assert.equal(
+    derived[14].questionSv,
+    'I ett proportionellt val får ett parti som får 20 procent av rösterna alla platser.',
+  );
+  assert.equal(
+    derived[14].questionEn,
+    'In a proportional election, a party that receives 20 percent of the votes receives all seats.',
   );
 });
 
@@ -733,6 +791,14 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Sverige brukar inte delas in i Götaland, Svealand och Norrland.',
       'Sweden is not usually divided into Götaland, Svealand, and Norrland.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q146', 'trueStatement')]: [
+      'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
+      'In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q146', 'falseStatement')]: [
+      'I en demokrati har människor, grupper och partier rätt att hindra andra från att rösta.',
+      'In a democracy, people, groups, and parties have the right to stop others from voting.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q147', 'trueStatement')]: [
       'Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor.',
       'Democracy becomes stronger when many people vote, get involved, and learn about social issues.',
@@ -764,6 +830,30 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     [generatedQuestionId(sourceQuestions, 'q154', 'falseStatement')]: [
       'En anledning till att källkritik behövs när man använder medier är att allt som publiceras alltid är korrekt.',
       'One reason source criticism is needed when using media is that everything that is published is always correct.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q157', 'trueStatement')]: [
+      'Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler.',
+      'Primary care includes health centres, child health centres, and maternity clinics.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q157', 'falseStatement')]: [
+      'Primärvården omfattar domstolar, åklagare och kriminalvård.',
+      'Primary care includes courts, prosecutors, and prison and probation services.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q158', 'trueStatement')]: [
+      'Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor.',
+      'The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q158', 'falseStatement')]: [
+      'Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner.',
+      'The municipality is responsible for paying sickness insurance and state pensions.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q159', 'trueStatement')]: [
+      'Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen.',
+      'The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q159', 'falseStatement')]: [
+      'Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen.',
+      'The municipality can offer older people automatic study support and a university place to manage everyday life.',
     ],
   };
 
@@ -930,6 +1020,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sveriges fem nationella minoriteter är danskar, norrmän, islänningar, tyskar och fransmän.',
       "Sweden's five national minorities are Danes, Norwegians, Icelanders, Germans, and French.",
     ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'trueStatement')]: [
+      'Äktenskap mellan personer av samma kön är tillåtet i Sverige.',
+      'It is permitted to marry a person of the same sex.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'falseStatement')]: [
+      'Äktenskap mellan personer av samma kön är förbjudet i Sverige.',
+      'It is prohibited to marry a person of the same sex.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q064', 'trueStatement')]: [
       'Fackförbund företräder arbetstagare, förhandlar om löner och kan hjälpa medlemmar.',
       'Trade unions represent employees, negotiate wages, and can help members.',
@@ -1004,11 +1102,11 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'trueStatement')]: [
       'På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier.',
-      'On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.',
+      'New Year’s Eve on 31 December is commonly celebrated with parties and dinners and at night with fireworks.',
     ],
     [generatedQuestionId(sourceQuestions, 'q097', 'falseStatement')]: [
       'På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger.',
-      'On New Year’s Eve, 31 December, large bonfires and spring songs are common.',
+      'New Year’s Eve on 31 December is commonly celebrated with large bonfires and spring songs.',
     ],
     [generatedQuestionId(sourceQuestions, 'q098', 'falseStatement')]: [
       'På Sveriges nationaldag den 6 juni brukar arbetarrörelsen arrangera demonstrationer.',
@@ -1025,6 +1123,14 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     [generatedQuestionId(sourceQuestions, 'q102', 'trueStatement')]: [
       'Typiskt för valborgsmässoafton den 30 april är brasor, vårsånger och ibland ett tal till våren.',
       'Bonfires, spring songs, and sometimes a speech welcoming spring are typical of Walpurgis Night, 30 April.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q104', 'trueStatement')]: [
+      'På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött.',
+      'All Saints’ Day is commonly observed by lighting candles on graves to remember and honour people who have died.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q104', 'falseStatement')]: [
+      'På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton.',
+      'All Saints’ Day is commonly observed by opening an Advent calendar every day until Christmas Eve.',
     ],
     [generatedQuestionId(sourceQuestions, 'q105', 'trueStatement')]: [
       'Advent infaller de fyra söndagarna före juldagen den 25 december.',
@@ -1065,6 +1171,10 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     [generatedQuestionId(sourceQuestions, 'q120', 'trueStatement')]: [
       'Judar fick rätt att bo i Sverige och utöva sin religion.',
       'Jews gained the right to live in Sweden and practice their religion.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q120', 'falseStatement')]: [
+      'Judar blev Sveriges största religiösa grupp på 1700-talet.',
+      'Jews became Sweden’s largest religious group in the 18th century.',
     ],
     [generatedQuestionId(sourceQuestions, 'q128', 'trueStatement')]: [
       'Nouruz och Newroz firas vid vårdagjämningen den 21 mars.',
@@ -1115,7 +1225,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is\b|En anledning är\b|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that|^Many people voting|^Fewer people taking|^People with [^.?!]* living closer|^People living completely separated/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is\b|En anledning är\b|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|fick rätt att bli Sveriges största religiösa grupp|gained the right to become Sweden’s largest religious group|called Lucia procession|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that|^Many people voting|^Fewer people taking|^People with [^.?!]* living closer|^People living completely separated/im,
   );
   assert.doesNotMatch(
     residualText,

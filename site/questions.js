@@ -2002,8 +2002,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "What important roles do free media play in a democracy?",
+      "sv": "Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -3139,31 +3139,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which statement about tax and VAT is correct?",
-      "sv": "Vilket påstående om skatt och moms stämmer?"
+      "en": "Who pays tax in Sweden?",
+      "sv": "Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -3175,8 +3175,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
-      "companies"
+      "companies",
+      "tax-liability"
     ]
   },
   {
@@ -4359,7 +4359,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -4686,7 +4686,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What is common to do on All Saints’ Day in Sweden?",
+      "en": "How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
@@ -6198,31 +6198,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What kind of holiday is All Saints’ Day in Sweden?",
-      "sv": "Vilken typ av helgdag är Alla helgons dag i Sverige?"
+      "en": "What do many people do on All Saints’ Day in Sweden?",
+      "sv": "Vad gör många på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
-        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
-        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
+        "en": "Go to cemeteries and light candles on graves",
+        "sv": "Går till kyrkogården och tänder ljus på gravar"
       },
       {
-        "en": "A Midsummer celebration that welcomes summer",
-        "sv": "En midsommarfest för att välkomna sommaren"
+        "en": "Dance around a midsummer pole and make flower wreaths",
+        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
       },
       {
-        "en": "Workers' day with demonstrations and speeches",
-        "sv": "Arbetarnas dag med demonstrationer och tal"
+        "en": "Light large bonfires to welcome spring",
+        "sv": "Tänder stora brasor för att välkomna våren"
       },
       {
-        "en": "A period of preparation before Christmas",
-        "sv": "En förberedelseperiod inför julen"
+        "en": "Open one Advent calendar door each day",
+        "sv": "Öppnar en lucka i adventskalendern varje dag"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
-      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -6234,7 +6234,8 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "christian-holiday",
+      "cemetery",
+      "candles",
       "remembrance",
       "traditions"
     ]
@@ -7123,7 +7124,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -7146,7 +7147,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -13185,8 +13186,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "In a proportional election, the party receives 20 percent of the seats if a party receives 20 percent of the votes.",
-      "sv": "I ett proportionellt val får partiet 20 procent av platserna om ett parti får 20 procent av rösterna."
+      "en": "In a proportional election, a party that receives 20 percent of the votes receives 20 percent of the seats.",
+      "sv": "I ett proportionellt val får ett parti som får 20 procent av rösterna 20 procent av platserna."
     },
     "opts": [
       {
@@ -13225,8 +13226,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "In a proportional election, the party receives all seats if a party receives 20 percent of the votes.",
-      "sv": "I ett proportionellt val får partiet alla platser om ett parti får 20 procent av rösterna."
+      "en": "In a proportional election, a party that receives 20 percent of the votes receives all seats.",
+      "sv": "I ett proportionellt val får ett parti som får 20 procent av rösterna alla platser."
     },
     "opts": [
       {
@@ -15073,8 +15074,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes an important role of free media in a democracy?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Which answer best matches? What important roles do free media play in a democracy?",
+      "sv": "Vilket svar stämmer bäst? Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -15121,8 +15122,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "An important role of free media in a democracy is to inform, enable public debate, and scrutinize people with power.",
-      "sv": "En viktig uppgift för fria medier i en demokrati är att informera, möjliggöra samhällsdebatt och granska personer med makt."
+      "en": "In a democracy, free media play important roles: informing, enabling public debate, and scrutinizing people with power.",
+      "sv": "I en demokrati har fria medier viktiga uppgifter: att informera, möjliggöra samhällsdebatt och granska personer med makt."
     },
     "opts": [
       {
@@ -15161,8 +15162,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Free media in a democracy should replace political elections.",
-      "sv": "Fria medier i en demokrati ska ersätta politiska val."
+      "en": "In a democracy, free media should replace political elections.",
+      "sv": "I en demokrati ska fria medier ersätta politiska val."
     },
     "opts": [
       {
@@ -15201,8 +15202,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes an important role of free media in a democracy?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?"
+      "en": "Choose the correct option: What important roles do free media play in a democracy?",
+      "sv": "Välj rätt alternativ: Vilka viktiga uppgifter har fria medier i en demokrati?"
     },
     "opts": [
       {
@@ -17770,7 +17771,7 @@
     "type": "true_false",
     "q": {
       "en": "It is permitted to marry a person of the same sex.",
-      "sv": "Äktenskap mellan personer av samma kön i Sverige är tillåtet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
       {
@@ -17810,7 +17811,7 @@
     "type": "true_false",
     "q": {
       "en": "It is prohibited to marry a person of the same sex.",
-      "sv": "Äktenskap mellan personer av samma kön i Sverige är förbjudet att gifta sig med en person av samma kön."
+      "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
       {
@@ -19485,31 +19486,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement about tax and VAT is correct?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående om skatt och moms stämmer?"
+      "en": "Which answer best matches? Who pays tax in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19521,8 +19522,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "section-practice"
     ]
@@ -19533,8 +19534,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Companies also pay tax, and VAT is paid when buying goods and services.",
-      "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster."
+      "en": "Both people who work and companies pay tax in Sweden.",
+      "sv": "Både personer som arbetar och företag betalar skatt i Sverige."
     },
     "opts": [
       {
@@ -19548,8 +19549,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19561,8 +19562,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "true-false"
     ]
@@ -19573,8 +19574,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Only people who work pay tax.",
-      "sv": "Bara personer som arbetar betalar skatt."
+      "en": "Only people who work pay tax in Sweden.",
+      "sv": "Bara personer som arbetar betalar skatt i Sverige."
     },
     "opts": [
       {
@@ -19588,8 +19589,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19601,8 +19602,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "false-statement"
     ]
@@ -19613,31 +19614,31 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement about tax and VAT is correct?",
-      "sv": "Välj rätt alternativ: Vilket påstående om skatt och moms stämmer?"
+      "en": "Choose the correct option: Who pays tax in Sweden?",
+      "sv": "Välj rätt alternativ: Vilka betalar skatt i Sverige?"
     },
     "opts": [
       {
-        "en": "Companies also pay tax, and VAT is paid when buying goods and services",
-        "sv": "Företag betalar också skatt, och moms betalas vid köp av varor och tjänster"
+        "en": "Both people who work and companies pay tax in Sweden",
+        "sv": "Både personer som arbetar och företag betalar skatt i Sverige"
       },
       {
-        "en": "Only people who work pay tax",
-        "sv": "Bara personer som arbetar betalar skatt"
+        "en": "Only people who work pay tax in Sweden",
+        "sv": "Bara personer som arbetar betalar skatt i Sverige"
       },
       {
-        "en": "VAT is a payroll tax paid only by employers",
-        "sv": "Moms är en skatt på lön som bara arbetsgivare betalar"
+        "en": "Only companies pay tax in Sweden",
+        "sv": "Bara företag betalar skatt i Sverige"
       },
       {
-        "en": "Welfare is financed only by private fees",
-        "sv": "Välfärden finansieras bara av privata avgifter"
+        "en": "Neither people who work nor companies pay tax in Sweden",
+        "sv": "Varken personer som arbetar eller företag betalar skatt i Sverige"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.",
-      "sv": "Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna."
+      "en": "In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.",
+      "sv": "I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -19649,8 +19650,8 @@
     "difficulty": "easy",
     "tags": [
       "taxes",
-      "vat",
       "companies",
+      "tax-liability",
       "published-variant",
       "judgement"
     ]
@@ -24245,7 +24246,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -24293,7 +24294,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December, it is common to celebrate with parties and dinners and at night with fireworks.",
+      "en": "New Year’s Eve on 31 December is commonly celebrated with parties and dinners and at night with fireworks.",
       "sv": "På nyårsafton den 31 december är det vanligt att fira med fester och middagar och på natten med fyrverkerier."
     },
     "opts": [
@@ -24333,7 +24334,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On New Year’s Eve, 31 December, large bonfires and spring songs are common.",
+      "en": "New Year’s Eve on 31 December is commonly celebrated with large bonfires and spring songs.",
       "sv": "På nyårsafton den 31 december är det vanligt med stora brasor och vårsånger."
     },
     "opts": [
@@ -24373,7 +24374,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is common to do on New Year’s Eve, 31 December, in Sweden?",
+      "en": "Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?",
       "sv": "Välj rätt alternativ: Vad är vanligt att göra på nyårsafton den 31 december i Sverige?"
     },
     "opts": [
@@ -25497,7 +25498,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is common to do on All Saints’ Day in Sweden?",
+      "en": "Which answer best matches? How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
@@ -25546,7 +25547,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, it is common to light candles on graves to remember and honour people who have died.",
+      "en": "All Saints’ Day is commonly observed by lighting candles on graves to remember and honour people who have died.",
       "sv": "På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött."
     },
     "opts": [
@@ -25587,7 +25588,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "On All Saints’ Day, it is common to open an Advent calendar every day until Christmas Eve.",
+      "en": "All Saints’ Day is commonly observed by opening an Advent calendar every day until Christmas Eve.",
       "sv": "På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton."
     },
     "opts": [
@@ -25628,7 +25629,7 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is common to do on All Saints’ Day in Sweden?",
+      "en": "Choose the correct option: How is All Saints’ Day commonly observed in Sweden?",
       "sv": "Välj rätt alternativ: Vad är vanligt att göra på Alla helgons dag i Sverige?"
     },
     "opts": [
@@ -28483,8 +28484,8 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "Jews gained the right to become Sweden’s largest religious group.",
-      "sv": "Judar fick rätt att bli Sveriges största religiösa grupp."
+      "en": "Jews became Sweden’s largest religious group in the 18th century.",
+      "sv": "Judar blev Sveriges största religiösa grupp på 1700-talet."
     },
     "opts": [
       {
@@ -31289,31 +31290,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What kind of holiday is All Saints’ Day in Sweden ...?",
-      "sv": "Vilken typ av helgdag är Alla helgons dag i Sverige ...?"
+      "en": "Which answer best matches? What do many people do on All Saints’ Day in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gör många på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
-        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
-        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
+        "en": "Go to cemeteries and light candles on graves",
+        "sv": "Går till kyrkogården och tänder ljus på gravar"
       },
       {
-        "en": "A Midsummer celebration that welcomes summer",
-        "sv": "En midsommarfest för att välkomna sommaren"
+        "en": "Dance around a midsummer pole and make flower wreaths",
+        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
       },
       {
-        "en": "Workers' day with demonstrations and speeches",
-        "sv": "Arbetarnas dag med demonstrationer och tal"
+        "en": "Light large bonfires to welcome spring",
+        "sv": "Tänder stora brasor för att välkomna våren"
       },
       {
-        "en": "A period of preparation before Christmas",
-        "sv": "En förberedelseperiod inför julen"
+        "en": "Open one Advent calendar door each day",
+        "sv": "Öppnar en lucka i adventskalendern varje dag"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
-      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31325,7 +31326,8 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "christian-holiday",
+      "cemetery",
+      "candles",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31338,8 +31340,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died.",
-      "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on graves.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på gravar."
     },
     "opts": [
       {
@@ -31353,8 +31355,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
-      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31366,7 +31368,8 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "christian-holiday",
+      "cemetery",
+      "candles",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31379,8 +31382,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "A Midsummer celebration that welcomes summer.",
-      "sv": "En midsommarfest för att välkomna sommaren."
+      "en": "On All Saints’ Day, many people dance around a midsummer pole and make flower wreaths.",
+      "sv": "På Alla helgons dag dansar många runt midsommarstången och binder blomsterkransar."
     },
     "opts": [
       {
@@ -31394,8 +31397,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
-      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31407,7 +31410,8 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "christian-holiday",
+      "cemetery",
+      "candles",
       "remembrance",
       "traditions",
       "published-variant",
@@ -31420,31 +31424,31 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What kind of holiday is All Saints’ Day in Sweden?",
-      "sv": "Välj rätt alternativ: Vilken typ av helgdag är Alla helgons dag i Sverige?"
+      "en": "Choose the correct option: What do many people do on All Saints’ Day in Sweden?",
+      "sv": "Välj rätt alternativ: Vad gör många på Alla helgons dag i Sverige?"
     },
     "opts": [
       {
-        "en": "All Saints’ Day is a Christian holiday for remembering and honouring people who have died",
-        "sv": "Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött"
+        "en": "Go to cemeteries and light candles on graves",
+        "sv": "Går till kyrkogården och tänder ljus på gravar"
       },
       {
-        "en": "A Midsummer celebration that welcomes summer",
-        "sv": "En midsommarfest för att välkomna sommaren"
+        "en": "Dance around a midsummer pole and make flower wreaths",
+        "sv": "Dansar runt midsommarstången och binder blomsterkransar"
       },
       {
-        "en": "Workers' day with demonstrations and speeches",
-        "sv": "Arbetarnas dag med demonstrationer och tal"
+        "en": "Light large bonfires to welcome spring",
+        "sv": "Tänder stora brasor för att välkomna våren"
       },
       {
-        "en": "A period of preparation before Christmas",
-        "sv": "En förberedelseperiod inför julen"
+        "en": "Open one Advent calendar door each day",
+        "sv": "Öppnar en lucka i adventskalendern varje dag"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.",
-      "sv": "Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder."
+      "en": "On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.",
+      "sv": "På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -31456,7 +31460,8 @@
     "difficulty": "easy",
     "tags": [
       "all-saints-day",
-      "christian-holiday",
+      "cemetery",
+      "candles",
       "remembrance",
       "traditions",
       "published-variant",
@@ -33137,8 +33142,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Try to persuade others of their political ideas.",
-      "sv": "Försöka övertyga andra om sina politiska idéer."
+      "en": "In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas.",
+      "sv": "I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer."
     },
     "opts": [
       {
@@ -33177,8 +33182,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Stop others from voting.",
-      "sv": "Hindra andra från att rösta."
+      "en": "In a democracy, people, groups, and parties have the right to stop others from voting.",
+      "sv": "I en demokrati har människor, grupper och partier rätt att hindra andra från att rösta."
     },
     "opts": [
       {
@@ -34861,7 +34866,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Which answer best matches? Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Vilket svar stämmer bäst? Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -34884,7 +34889,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34925,7 +34930,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34966,7 +34971,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -34992,7 +34997,7 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which state security systems can provide financial support during illness, parenthood, or unemployment?",
+      "en": "Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?",
       "sv": "Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?"
     },
     "opts": [
@@ -35015,7 +35020,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.",
+      "en": "The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.",
       "sv": "Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete."
     },
     "source": {
@@ -35090,8 +35095,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Health centres, child health centres, and maternity clinics.",
-      "sv": "Vårdcentraler, barnavårdscentraler och mödravårdscentraler."
+      "en": "Primary care includes health centres, child health centres, and maternity clinics.",
+      "sv": "Primärvården omfattar vårdcentraler, barnavårdscentraler och mödravårdscentraler."
     },
     "opts": [
       {
@@ -35131,8 +35136,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Courts, prosecutors, and prison and probation services.",
-      "sv": "Domstolar, åklagare och kriminalvård."
+      "en": "Primary care includes courts, prosecutors, and prison and probation services.",
+      "sv": "Primärvården omfattar domstolar, åklagare och kriminalvård."
     },
     "opts": [
       {
@@ -35270,8 +35275,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.",
-      "sv": "Ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
+      "en": "The municipality is responsible for arranging preschools, after-school centres, compulsory schools, and upper-secondary schools.",
+      "sv": "Kommunen ansvarar för att ordna förskolor, fritidshem, grundskolor och gymnasieskolor."
     },
     "opts": [
       {
@@ -35311,8 +35316,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Pay sickness insurance and state pensions.",
-      "sv": "Betala sjukförsäkring och statliga pensioner."
+      "en": "The municipality is responsible for paying sickness insurance and state pensions.",
+      "sv": "Kommunen ansvarar för att betala sjukförsäkring och statliga pensioner."
     },
     "opts": [
       {
@@ -35450,8 +35455,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Care and services at home or housing adapted for older people.",
-      "sv": "Vård och service hemma eller boende som är anpassat för äldre personer."
+      "en": "The municipality can offer older people care and services at home or housing adapted for older people to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer vård och service hemma eller boende som är anpassat för äldre personer för att klara vardagen."
     },
     "opts": [
       {
@@ -35491,8 +35496,8 @@
     "chapter": "Ch. 09 · The welfare society",
     "type": "true_false",
     "q": {
-      "en": "Automatic study support and a university place.",
-      "sv": "Automatiskt studiestöd och plats på universitet."
+      "en": "The municipality can offer older people automatic study support and a university place to manage everyday life.",
+      "sv": "Kommunen kan erbjuda äldre personer automatiskt studiestöd och plats på universitet för att klara vardagen."
     },
     "opts": [
       {

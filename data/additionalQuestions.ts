@@ -553,8 +553,8 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q045',
     'ch06',
     { chapter: 'Mediernas roll', section: 'Fria medier', pageApprox: 20 },
-    'Vilket svar beskriver en viktig uppgift för fria medier i en demokrati?',
-    'Which answer describes an important role of free media in a democracy?',
+    'Vilka viktiga uppgifter har fria medier i en demokrati?',
+    'What important roles do free media play in a democracy?',
     [
       [
         'Att informera, möjliggöra samhällsdebatt och granska personer med makt',
@@ -1156,27 +1156,27 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q070',
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Skatter för Sveriges välfärd', pageApprox: 30 },
-    'Vilket påstående om skatt och moms stämmer?',
-    'Which statement about tax and VAT is correct?',
+    'Vilka betalar skatt i Sverige?',
+    'Who pays tax in Sweden?',
     [
       [
-        'Företag betalar också skatt, och moms betalas vid köp av varor och tjänster',
-        'Companies also pay tax, and VAT is paid when buying goods and services',
-      ],
-      ['Bara personer som arbetar betalar skatt', 'Only people who work pay tax'],
-      [
-        'Moms är en skatt på lön som bara arbetsgivare betalar',
-        'VAT is a payroll tax paid only by employers',
+        'Både personer som arbetar och företag betalar skatt i Sverige',
+        'Both people who work and companies pay tax in Sweden',
       ],
       [
-        'Välfärden finansieras bara av privata avgifter',
-        'Welfare is financed only by private fees',
+        'Bara personer som arbetar betalar skatt i Sverige',
+        'Only people who work pay tax in Sweden',
+      ],
+      ['Bara företag betalar skatt i Sverige', 'Only companies pay tax in Sweden'],
+      [
+        'Varken personer som arbetar eller företag betalar skatt i Sverige',
+        'Neither people who work nor companies pay tax in Sweden',
       ],
     ],
     0,
-    'Skatt betalas både av personer som arbetar och av företag. Moms är en skatt på varor och tjänster, och skatteintäkter bidrar till välfärdsbudgetar hos staten, regionerna och kommunerna.',
-    'Both people who work and companies pay tax. VAT is a tax on goods and services, and tax revenue helps fund welfare budgets for the state, regions, and municipalities.',
-    ['taxes', 'vat', 'companies'],
+    'I Sverige betalar både personer som arbetar och företag skatt. Skatteintäkter bidrar till välfärden, så det stämmer inte att bara personer eller bara företag betalar skatt.',
+    'In Sweden, both people who work and companies pay tax. Tax revenue helps fund welfare, so it is not correct that only people or only companies pay tax.',
+    ['taxes', 'companies', 'tax-liability'],
     'easy',
   ),
   single(
@@ -1734,7 +1734,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 45,
     },
     'Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
-    'What is common to do on New Year’s Eve, 31 December, in Sweden?',
+    'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
     [
       [
         'Fira med fester och middagar och på natten med fyrverkerier',
@@ -1890,7 +1890,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Alla helgons dag', pageApprox: 46 },
     'Vad är vanligt att göra på Alla helgons dag i Sverige?',
-    'What is common to do on All Saints’ Day in Sweden?',
+    'How is All Saints’ Day commonly observed in Sweden?',
     [
       [
         'Tända ljus på gravar för att minnas och hedra dem som har dött',
@@ -2678,27 +2678,24 @@ export const additionalQuestions: PracticeQuestion[] = [
     'q136',
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Alla helgons dag', pageApprox: 46 },
-    'Vilken typ av helgdag är Alla helgons dag i Sverige?',
-    'What kind of holiday is All Saints’ Day in Sweden?',
+    'Vad gör många på Alla helgons dag i Sverige?',
+    'What do many people do on All Saints’ Day in Sweden?',
     [
       [
-        'Alla helgons dag är en kristen helgdag för att minnas och hedra dem som har dött',
-        'All Saints’ Day is a Christian holiday for remembering and honouring people who have died',
+        'Går till kyrkogården och tänder ljus på gravar',
+        'Go to cemeteries and light candles on graves',
       ],
       [
-        'En midsommarfest för att välkomna sommaren',
-        'A Midsummer celebration that welcomes summer',
+        'Dansar runt midsommarstången och binder blomsterkransar',
+        'Dance around a midsummer pole and make flower wreaths',
       ],
-      [
-        'Arbetarnas dag med demonstrationer och tal',
-        "Workers' day with demonstrations and speeches",
-      ],
-      ['En förberedelseperiod inför julen', 'A period of preparation before Christmas'],
+      ['Tänder stora brasor för att välkomna våren', 'Light large bonfires to welcome spring'],
+      ['Öppnar en lucka i adventskalendern varje dag', 'Open one Advent calendar door each day'],
     ],
     0,
-    'Alla helgons dag är en kristen helgdag då människor minns och hedrar släktingar, vänner och andra som har dött. Midsommar, första maj och advent beskriver andra traditioner eller helgperioder.',
-    'All Saints’ Day is a Christian holiday when people remember and honour relatives, friends, and others who have died. Midsummer, First of May, and Advent describe other traditions or holiday periods.',
-    ['all-saints-day', 'christian-holiday', 'remembrance', 'traditions'],
+    'På Alla helgons dag går många till kyrkogården och tänder ljus på släktingars och vänners gravar för att minnas och hedra dem som har dött. Dans runt midsommarstången, brasor och adventskalendrar hör till midsommar, valborg och advent.',
+    'On All Saints’ Day, many people go to cemeteries and light candles on relatives’ and friends’ graves to remember and honor those who have died. Dancing around a midsummer pole, bonfires, and Advent calendars belong to Midsummer, Walpurgis Night, and Advent.',
+    ['all-saints-day', 'cemetery', 'candles', 'remembrance', 'traditions'],
     'easy',
   ),
   single(
@@ -3168,7 +3165,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch09',
     { chapter: 'Välfärdssamhället', section: 'Statligt finansierad välfärd', pageApprox: 30 },
     'Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
-    'Which state security systems can provide financial support during illness, parenthood, or unemployment?',
+    'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
     [
       [
         'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring',
@@ -3189,7 +3186,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Staten finansierar trygghetssystem som sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring. De hör till välfärden eftersom de kan ge ekonomiskt stöd när människor blir sjuka, får barn eller saknar arbete.',
-    'The state finances security systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of welfare because they can provide financial support when people are ill, have children, or are unemployed.',
+    'The state funds social insurance systems such as sickness insurance, parental insurance, and unemployment insurance. They are part of the welfare system because they can provide financial support when people are ill, have children, or are unemployed.',
     ['state-welfare', 'social-insurance', 'sickness-insurance', 'parental-insurance'],
   ),
   single(
