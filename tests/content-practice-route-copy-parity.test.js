@@ -11,10 +11,14 @@ function phrase(parts) {
 }
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-practice-route-copy-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -24,7 +28,7 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 54);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
@@ -35,10 +39,11 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /const filteredQuestions = useMemo\(/);
   assert.match(
     source,
-    /getCompletedQuestionIdsForQuestionBank\(filteredQuestions, completedQuestionIds\)/,
+    /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
   );
-  assert.match(source, /\{copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)\}/);
-  assert.doesNotMatch(source, /\{copy\.completedQuestions\(completedQuestionIds\.length\)\}/);
+  assert.match(source, /<Badge>\{isChallengeMode \? copy\.challengeBadge : copy\.badge\}<\/Badge>/);
+  assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
+  assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);
@@ -70,6 +75,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -100,6 +106,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -124,12 +131,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
-        '{copy.completedQuestions(completedQuestionIds.length)}',
+        'copy.completedQuestions(visibleCompletedQuestionIds.length)',
+        'copy.completedQuestions(completedQuestionIds.length)',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -160,6 +168,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -195,6 +204,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
