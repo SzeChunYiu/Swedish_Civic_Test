@@ -2,6 +2,7 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { ProPaywall } from '../../components/monetization/ProPaywall';
@@ -236,14 +237,11 @@ export default function Screen() {
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.dashboardTitle} subtitle={copy.dashboardSubtitle} />
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.dashboardAccessibilityLabel}
-          accessibilityRole="link"
           href="/dashboard"
-          style={styles.dashboardLink}
-        >
-          {copy.dashboardCta}
-        </Link>
+          label={copy.dashboardCta}
+        />
       </Card>
 
       <Card style={styles.cardWide}>
@@ -305,18 +303,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
-  },
-  dashboardLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
   settingsLink: {
     alignSelf: 'flex-start',
