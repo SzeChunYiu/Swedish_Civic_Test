@@ -3,7 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 // Ebook highlight + optional margin note. See
 // swedish_citizenship_app_project_plan/15_ebook_highlights.md.
@@ -95,13 +95,18 @@ function normalize(value: unknown): PersistedHighlights {
   return { byChapter };
 }
 
-function read(): PersistedHighlights {
-  const raw = highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY);
-  if (!raw) return EMPTY;
+function read(): {
+  state: PersistedHighlights;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(highlightsStorage, highlightsStorageId, HIGHLIGHTS_STATE_KEY, () =>
+    highlightsStorage?.getString(HIGHLIGHTS_STATE_KEY),
+  );
+  if (!result.value) return { state: EMPTY, persistenceWarning: result.warning };
   try {
-    return normalize(JSON.parse(raw));
+    return { state: normalize(JSON.parse(result.value)), persistenceWarning: result.warning };
   } catch {
-    return EMPTY;
+    return { state: EMPTY, persistenceWarning: result.warning };
   }
 }
 
@@ -140,8 +145,8 @@ interface HighlightsState extends PersistedHighlights {
 const initial = read();
 
 export const useHighlightsStore = create<HighlightsState>((set, get) => ({
-  ...initial,
-  persistenceWarning: null,
+  ...initial.state,
+  persistenceWarning: initial.persistenceWarning,
   addHighlight: (input) => {
     const now = new Date().toISOString();
     const highlight: Highlight = {

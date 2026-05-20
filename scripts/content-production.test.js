@@ -23,6 +23,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.tabNavigationRulesValidated, 11);
   assert.equal(summary.tabNavigationRoutesValidated, 6);
   assert.equal(summary.tabNavigationParityValidated, true);
+  assert.equal(summary.bannerAdPlacementTypeCasesValidated, 3);
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
@@ -134,13 +135,13 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.contentTypeUnionsValidated, 3);
   assert.equal(summary.contentTypeInterfacesValidated, 5);
   assert.equal(summary.contentTypeSchemaParityValidated, true);
-  assert.equal(summary.monetizationTypeUnionsValidated, 1);
+  assert.equal(summary.monetizationTypeUnionsValidated, 2);
   assert.equal(summary.monetizationTypeInterfacesValidated, 3);
   assert.equal(summary.monetizationTypeSchemaParityValidated, true);
   assert.equal(summary.purchaseTypeUnionsValidated, 2);
   assert.equal(summary.purchaseTypeInterfacesValidated, 8);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 17);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.equal(summary.adConsentTypeUnionsValidated, 6);
   assert.equal(summary.adConsentTypeInterfacesValidated, 3);
@@ -227,7 +228,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(summary.masteryRulesValidated, 7);
   assert.equal(summary.masteryRulesParityValidated, true);
-  assert.equal(summary.sourceQuestions, 154);
+  assert.equal(summary.sourceQuestions, 159);
   assert.equal(summary.generatedPublishedQuestions, expectedGeneratedQuestions);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.authoredSourcePartitionQuestionsValidated, summary.sourceQuestions);
