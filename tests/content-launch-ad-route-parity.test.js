@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -29,6 +30,27 @@ function launchSuppressedRoutes(source = read('lib/monetization/ads.ts')) {
   assert.ok(routeBlock, 'launch popup suppression list should be parseable');
   return [...routeBlock.matchAll(/'([^']+)'/g)].map((match) => match[1]);
 }
+
+function parseFocusedValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-launch-ad-route-suppression'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused launch-ad validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
+test('focused launch-ad route suppression validator reports route parity independently', () => {
+  const summary = parseFocusedValidationSummary();
+
+  assert.equal(summary.launchAdSuppressedRoutesValidated, expectedSuppressedRoutes.length);
+  assert.equal(summary.launchAdRouteSuppressionParityValidated, true);
+});
 
 test('launch popup ad route suppression stays aligned with release-safe routes', () => {
   const adsSource = read('lib/monetization/ads.ts');
