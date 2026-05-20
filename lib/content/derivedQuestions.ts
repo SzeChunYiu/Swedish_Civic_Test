@@ -407,46 +407,63 @@ function englishGainedRightStatement(subject: string, answer: string): string {
   )}`;
 }
 
-function reasonStatementSv(answer: string): string {
+function reasonAnswerClauseSv(answer: string): string {
   const stripped = stripLeadingPurposeSv(answer);
-  if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
-  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
-    return `En anledning är att ${stripped}`;
+  if (/^för att|^att\s+/i.test(answer.trim())) return `att ${lowerFirst(stripped)}`;
+  if (
+    /^[A-ZÅÄÖ]/.test(stripped) &&
+    /\b(?:hade|saknade|var|är|kan|ska|måste|gör|gjorde|ger|skapar|ersätter)\b/i.test(stripped)
+  ) {
+    return `att ${lowerFirst(stripped)}`;
   }
-  return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
+  return lowerFirst(stripped).replace(/\beU\b/g, 'EU');
 }
 
-function reasonStatementEn(answer: string): string {
+function reasonAnswerClauseEn(answer: string): string {
   const stripped = stripLeadingPurposeEn(answer);
-  if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
-  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
-    return `One reason is that ${stripped}`;
+  if (/^to\b/i.test(answer.trim())) return `to ${lowerFirst(stripped)}`;
+  if (
+    /^[A-ZÅÄÖ]/.test(stripped) &&
+    /\b(?:had|was|were|is|are|can|must|should|gives|gave|makes|made|creates|created|replaces|replaced)\b/i.test(
+      stripped,
+    )
+  ) {
+    return `that ${lowerFirst(stripped)}`;
   }
-  return `One reason is ${lowerFirst(stripped)}`;
+  return lowerFirst(stripped);
 }
 
-function swedishDemocracyThreatStatement(answer: string): string {
-  const stripped = stripLeadingPurposeSv(answer).trim();
-  if (/^Det kan skapa konflikter/i.test(stripped)) {
-    return 'Falsk information och hat kan hota demokratin eftersom sådant kan skapa konflikter och skrämma människor från demokratisk debatt';
-  }
-  if (/^Det gör att alla automatiskt får mer kunskap/i.test(stripped)) {
-    return 'Falsk information och hat ger automatiskt alla mer kunskap';
-  }
-  return `Falsk information och hat kan hota demokratin eftersom ${lowerFirst(stripped)}`;
+function whyTargetStatementSv(target: string): string {
+  const statement = stripFinalPunctuation(target).trim();
+  const modal = statement.match(
+    /^(kan|ska|måste|bör|får)\s+(.+?)\s+(vara|bli|ha|göra|skapa|hota|påverka|räknas|kallas|ses)\b(.*)$/i,
+  );
+  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
+  return lowerFirst(statement);
 }
 
-function englishDemocracyThreatStatement(answer: string): string {
-  const stripped = stripLeadingPurposeEn(answer).trim();
-  if (/^It can create conflicts/i.test(stripped)) {
-    return 'False information and hate can threaten democracy because they can create conflicts and scare people away from democratic debate';
-  }
-  if (/^It automatically gives everyone more knowledge/i.test(stripped)) {
-    return 'False information and hate automatically give everyone more knowledge';
-  }
-  return `False information and hate can threaten democracy because ${lowerLeadingEnglishClauseStart(
-    stripped,
-  )}`;
+function whyTargetStatementEn(target: string): string {
+  const statement = stripFinalPunctuation(target).trim();
+  const modal = statement.match(
+    /^(can|should|must|could|would|will)\s+(.+?)\s+(be|have|make|create|affect|threaten|replace|give)\b(.*)$/i,
+  );
+  if (modal) return `${lowerFirst(modal[2])} ${modal[1].toLowerCase()} ${modal[3]}${modal[4]}`;
+
+  const beVerb = statement.match(/^(is|are|was|were)\s+(.+?)\s+(.+)$/i);
+  if (beVerb) return `${lowerFirst(beVerb[2])} ${beVerb[1].toLowerCase()} ${beVerb[3]}`;
+
+  const doVerb = statement.match(/^(?:do|does|did)\s+(.+?)\s+(.+)$/i);
+  if (doVerb) return `${lowerFirst(doVerb[1])} ${doVerb[2]}`;
+
+  return lowerFirst(statement);
+}
+
+function reasonStatementSv(target: string, answer: string): string {
+  return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(answer)}`;
+}
+
+function reasonStatementEn(target: string, answer: string): string {
+  return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
 }
 
 function frontedManyActionSv(answer: string): string {
@@ -899,55 +916,6 @@ function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
   ];
 }
 
-function describesSourcePromptTopicSv(questionSv: string): string | null {
-  const match = stripFinalPunctuation(questionSv).match(/^Vilket påstående beskriver (.+)$/i);
-  return match?.[1].trim() ?? null;
-}
-
-function describesSourcePromptTopicEn(questionEn: string): string | null {
-  const match = stripFinalPunctuation(questionEn).match(/^Which statement describes (.+)$/i);
-  return match?.[1].trim() ?? null;
-}
-
-function directDescribesSourcePromptSv(
-  questionSv: string,
-  variant: 'section-practice' | 'judgement',
-): string | null {
-  const subject = describesSourcePromptTopicSv(questionSv);
-  if (!subject) return null;
-
-  if (variant === 'judgement') return `Vad stämmer om ${subject}?`;
-  if (/^rättssäkerhet\b/i.test(subject)) return `Vad innebär ${subject}?`;
-  if (/^polisens uppgift\b/i.test(subject)) return `Vad är ${subject}?`;
-  if (/^Sverige för tvåhundra år sedan\b/i.test(subject)) {
-    return 'Hur var Sverige för tvåhundra år sedan?';
-  }
-  if (/^integration\b/i.test(subject)) return `Vad innebär ${subject}?`;
-  return `Vad gäller för ${subject}?`;
-}
-
-function directDescribesSourcePromptEn(
-  questionEn: string,
-  variant: 'section-practice' | 'judgement',
-): string | null {
-  const subject = describesSourcePromptTopicEn(questionEn);
-  if (!subject) return null;
-
-  if (variant === 'judgement') {
-    if (/^Sweden two hundred years ago\b/i.test(subject)) {
-      return 'What was true about Sweden two hundred years ago?';
-    }
-    return `What is true about ${subject}?`;
-  }
-  if (/^legal certainty\b/i.test(subject)) return `What does ${subject} mean?`;
-  if (/^the role of the police\b/i.test(subject)) return `What is ${subject}?`;
-  if (/^Sweden two hundred years ago\b/i.test(subject)) {
-    return 'What was Sweden like two hundred years ago?';
-  }
-  if (/^integration\b/i.test(subject)) return `What does ${subject} mean?`;
-  return `What applies to ${subject}?`;
-}
-
 function generatedTrueFalseStatementSv(
   source: PracticeQuestion,
   option: QuestionOption,
@@ -970,8 +938,6 @@ function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
-  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'judgement');
-  if (directPrompt) return directPrompt;
   return `Välj rätt alternativ: ${source.questionSv}`;
 }
 
@@ -979,8 +945,6 @@ function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement best matches ${statementTopicEn(source)}?`;
   }
-  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'judgement');
-  if (directPrompt) return directPrompt;
   return `Choose the correct option: ${source.questionEn}`;
 }
 
@@ -988,8 +952,6 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'section-practice');
-  if (directPrompt) return directPrompt;
   return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
@@ -997,8 +959,6 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'section-practice');
-  if (directPrompt) return directPrompt;
   return `Which answer best matches? ${source.questionEn}`;
 }
 
@@ -1136,11 +1096,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
 
-  match = q.match(/^Varför kan falsk information och hat vara ett hot mot demokratin$/i);
-  if (match) return swedishDemocracyThreatStatement(answer);
-
   match = q.match(/^Varför (.+)$/i);
-  if (match) return reasonStatementSv(answer);
+  if (match) return reasonStatementSv(match[1], answer);
 
   match = q.match(/^Vad har (.+?) gemensamt$/i);
   if (match) return commonStatementSv(match[1], answer);
@@ -1572,11 +1529,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
       answer,
     )}`;
 
-  match = q.match(/^Why can false information and hate be a threat to democracy$/i);
-  if (match) return englishDemocracyThreatStatement(answer);
-
   match = q.match(/^Why (.+)$/i);
-  if (match) return reasonStatementEn(answer);
+  if (match) return reasonStatementEn(match[1], answer);
 
   match = q.match(/^What do (.+?) have in common$/i);
   if (match) return commonStatementEn(match[1], answer);
@@ -1843,6 +1797,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What do many people do on (.+?) in Sweden$/i);
   if (match) return `On ${match[1]}, ${manyPeopleActionEn(answer)}`;
+
+  match = q.match(/^At (.+?) in Sweden, what do many people do with (.+)$/i);
+  if (match) return `At ${match[1]}, ${manyPeopleActionEn(answer)}`;
 
   match = q.match(/^What can happen to (.+?) when (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
