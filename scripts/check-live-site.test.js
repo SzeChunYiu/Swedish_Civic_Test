@@ -176,6 +176,10 @@ test('site asset manifest generator writes and checks deterministic static finge
     pkg.scripts['update:site-asset-manifest'],
     'node scripts/update-site-asset-manifest.js',
   );
+  assert.equal(
+    pkg.scripts['test:static-site-asset-references'],
+    'node scripts/update-site-asset-manifest.js --check && node --test scripts/static-site-asset-references.test.js',
+  );
 
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-asset-manifest-'));
   const siteDir = path.join(tmpDir, 'site');
