@@ -569,7 +569,12 @@ test('mock exam time heatmap keeps its summary separate from jump buttons', () =
   );
   assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
   assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
+  assert.match(source, /pressed \? styles\.pressed : null/);
+  assert.match(source, /import \{ colors, motion, radius, space, typography \}/);
+  assert.match(source, /pressed: \{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.doesNotMatch(source, /pressed: \{[\s\S]*opacity:/);
   assert.match(source, /Nära median/);
   assert.match(source, /Near median/);
   assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
