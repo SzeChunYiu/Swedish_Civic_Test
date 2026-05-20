@@ -1,22 +1,24 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import {
+  LegalExternalLink,
+  LegalPage,
+  LegalSection,
+  LegalSectionParagraph,
+} from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, typography } from '../lib/theme';
 
 const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
-const UHR_ABOUT_TEST_URL = 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/';
+const UHR_EDUCATION_MATERIAL_DISPLAY_URL = 'uhr.se/medborgarskapsprovet/utbildningsmaterial';
 
 type LegalRouteSectionCopy = {
   body: string;
-  sourceLabel?: string;
   title: string;
 };
 
 type SourcesRouteCopy = {
-  openAuthorityBoundarySourceAccessibilityLabel: string;
   openEducationMaterialAccessibilityLabel: string;
+  openEducationMaterialHint: string;
+  openEducationMaterialLabel: string;
   sections: {
     authorityBoundaries: LegalRouteSectionCopy;
     primaryStudyMaterial: LegalRouteSectionCopy;
@@ -27,12 +29,12 @@ type SourcesRouteCopy = {
 
 const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
   sv: {
-    openAuthorityBoundarySourceAccessibilityLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
     openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial',
+    openEducationMaterialHint: 'Öppnas som extern webbsida',
+    openEducationMaterialLabel: 'Öppna utbildningsmaterialet',
     sections: {
       authorityBoundaries: {
-        body: 'UHR:s sida Om medborgarskapsprovet säger att UHR har tagit fram utbildningsmaterialet. Den säger också att övningsprov på internet kan vara gjorda av andra personer eller företag; UHR står inte bakom dem och kvaliteten är inte kontrollerad av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det här är oberoende övningsinnehåll. Källa hämtad 2026-05-19:',
-        sourceLabel: 'UHR, Om medborgarskapsprovet',
+        body: 'UHR varnar för att övningar som andra skapar inte är kvalitetsgranskade av UHR eller någon annan myndighet. Appen håller samma gräns tydlig: det är oberoende övningsinnehåll.',
         title: 'Myndighetsgräns',
       },
       primaryStudyMaterial: {
@@ -47,12 +49,12 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
     title: 'Källor',
   },
   en: {
-    openAuthorityBoundarySourceAccessibilityLabel: 'Open UHR About the citizenship test page',
     openEducationMaterialAccessibilityLabel: 'Open UHR education material',
+    openEducationMaterialHint: 'Opens as an external web page',
+    openEducationMaterialLabel: 'Open education material',
     sections: {
       authorityBoundaries: {
-        body: "UHR's About the citizenship test page says that UHR has produced the study material. It also says internet practice tests may be made by other people or companies; UHR does not stand behind them and their quality is not checked by UHR or any other authority. This app keeps the same boundary clear: it is independent practice content. Source accessed 2026-05-19:",
-        sourceLabel: 'UHR, About the citizenship test',
+        body: 'UHR warns that exercises created by others are not quality-controlled by UHR or another authority. This app keeps the same boundary clear: it is independent practice content.',
         title: 'Authority boundaries',
       },
       primaryStudyMaterial: {
@@ -75,29 +77,20 @@ export default function Screen() {
   return (
     <LegalPage title={copy.title}>
       <LegalSection title={copy.sections.primaryStudyMaterial.title}>
-        {copy.sections.primaryStudyMaterial.body}{' '}
-        <Link
+        <LegalSectionParagraph>{copy.sections.primaryStudyMaterial.body}</LegalSectionParagraph>
+        <LegalExternalLink
           accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}
-          accessibilityRole="link"
+          accessibilityHint={copy.openEducationMaterialHint}
+          displayUrl={UHR_EDUCATION_MATERIAL_DISPLAY_URL}
           href={UHR_EDUCATION_MATERIAL_URL}
-          style={styles.externalLink}
-        >
-          {UHR_EDUCATION_MATERIAL_URL}
-        </Link>
+          label={copy.openEducationMaterialLabel}
+        />
       </LegalSection>
       <LegalSection title={copy.sections.questionReferences.title}>
         {copy.sections.questionReferences.body}
       </LegalSection>
       <LegalSection title={copy.sections.authorityBoundaries.title}>
-        {copy.sections.authorityBoundaries.body}{' '}
-        <Link
-          accessibilityLabel={copy.openAuthorityBoundarySourceAccessibilityLabel}
-          accessibilityRole="link"
-          href={UHR_ABOUT_TEST_URL}
-          style={styles.externalLink}
-        >
-          {copy.sections.authorityBoundaries.sourceLabel}
-        </Link>
+        {copy.sections.authorityBoundaries.body}
       </LegalSection>
     </LegalPage>
   );

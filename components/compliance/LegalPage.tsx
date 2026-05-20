@@ -1,10 +1,12 @@
 import { Link } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ComponentProps, PropsWithChildren } from 'react';
+import { useState } from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type LegalBackHref = ComponentProps<typeof Link>['href'];
+type LegalExternalHref = ComponentProps<typeof Link>['href'];
 type LegalPageCopy = {
   defaultBackAccessibilityLabel: string;
   defaultBackLabel: string;
@@ -41,6 +43,25 @@ export interface LegalPageProps extends PropsWithChildren {
  */
 export interface LegalSectionProps extends PropsWithChildren {
   title: string;
+}
+
+/**
+ * Defaults: renders body copy with the shared legal paragraph style.
+ */
+export interface LegalSectionParagraphProps {
+  children: PropsWithChildren['children'];
+}
+
+/**
+ * Defaults: renders an external legal/source destination as a 48px token-sized
+ * link row with visible destination context and tokenized focus/press feedback.
+ */
+export interface LegalExternalLinkProps {
+  accessibilityHint: string;
+  accessibilityLabel: string;
+  displayUrl: string;
+  href: LegalExternalHref;
+  label: string;
 }
 
 export function LegalPage({
@@ -82,9 +103,60 @@ export function LegalSection({ title, children }: LegalSectionProps) {
       <Text accessibilityRole="header" style={styles.sectionTitle}>
         {title}
       </Text>
-      <Text style={styles.paragraph}>{children}</Text>
+      {isPlainText(children) ? <Text style={styles.paragraph}>{children}</Text> : children}
     </View>
   );
+}
+
+export function LegalSectionParagraph({ children }: LegalSectionParagraphProps) {
+  return <Text style={styles.paragraph}>{children}</Text>;
+}
+
+export function LegalExternalLink({
+  accessibilityHint,
+  accessibilityLabel,
+  displayUrl,
+  href,
+  label,
+}: LegalExternalLinkProps) {
+  const [isFocused, setIsFocused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const webInteractionHandlers =
+    Platform.OS === 'web'
+      ? {
+          onBlur: () => setIsFocused(false),
+          onFocus: () => setIsFocused(true),
+          onMouseEnter: () => setIsHovered(true),
+          onMouseLeave: () => setIsHovered(false),
+        }
+      : {};
+
+  return (
+    <Link
+      {...webInteractionHandlers}
+      accessibilityHint={accessibilityHint}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="link"
+      href={href}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[
+        styles.externalLink,
+        isFocused || isHovered ? styles.externalLinkFocused : null,
+        isPressed ? styles.externalLinkPressed : null,
+      ]}
+    >
+      <Text style={styles.externalLinkLabel}>{label}</Text>
+      <Text numberOfLines={2} style={styles.externalLinkUrl}>
+        {displayUrl}
+      </Text>
+    </Link>
+  );
+}
+
+function isPlainText(children: LegalSectionProps['children']) {
+  return typeof children === 'string' || typeof children === 'number';
 }
 
 function getBackAccessibilityLabel(label: string) {
@@ -130,5 +202,33 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  externalLink: {
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[0.5],
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  externalLinkFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+  },
+  externalLinkPressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  externalLinkLabel: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+  },
+  externalLinkUrl: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
 });

@@ -1321,10 +1321,17 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
+      'LegalExternalLink',
+      'LegalSectionParagraph',
+      'UHR_EDUCATION_MATERIAL_DISPLAY_URL',
       'Källor',
       'Primärt studiematerial',
+      'Öppna utbildningsmaterialet',
+      'Öppnas som extern webbsida',
       'Sources',
       'Primary study material',
+      'Open education material',
+      'Opens as an external web page',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
@@ -1341,12 +1348,19 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const supportCopy: Record<AppLanguage, SupportRouteCopy> = {',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = supportCopy[language];',
+      'LegalExternalLink',
+      'LegalSectionParagraph',
+      'PUBLIC_SUPPORT_DISPLAY_URL',
       'Support och återkoppling',
       'Vad du kan rapportera',
       'Support and feedback',
       'What to report',
       'Öppna den offentliga supportsidan',
+      'Öppna supportsidan',
+      'Öppnas som extern webbsida',
       'Open public support page',
+      'Open support page',
+      'Opens as an external web page',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
@@ -1622,7 +1636,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
 const EXPECTED_LEGAL_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import \{ Platform, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -7707,6 +7721,50 @@ function validateLegalRouteHeaderParity() {
     reject('legal route shared heading components must expose accessibilityRole="header"');
   }
 
+  const legalExternalLinkRules = [
+    {
+      label: 'shared external link component',
+      pattern: /export function LegalExternalLink\(/,
+    },
+    {
+      label: 'external link role and spoken label',
+      pattern:
+        /accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="link"/,
+    },
+    {
+      label: 'external link web focus and hover feedback',
+      pattern:
+        /onFocus:\s*\(\) => setIsFocused\(true\)[\s\S]*onMouseEnter:\s*\(\) => setIsHovered\(true\)/,
+    },
+    {
+      label: 'external link press feedback',
+      pattern:
+        /onPressIn=\{\(\) => setIsPressed\(true\)\}[\s\S]*onPressOut=\{\(\) => setIsPressed\(false\)\}/,
+    },
+    {
+      label: 'external link token-sized target',
+      pattern: /externalLink:\s*\{[\s\S]*minHeight:\s*space\[6\]/,
+    },
+    {
+      label: 'external link token border',
+      pattern: /externalLink:\s*\{[\s\S]*borderWidth:\s*space\.hairline/,
+    },
+    {
+      label: 'external link focus token',
+      pattern: /externalLinkFocused:\s*\{[\s\S]*backgroundColor:\s*colors\.focusSoft/,
+    },
+    {
+      label: 'external link pressed motion token',
+      pattern: /externalLinkPressed:\s*\{[\s\S]*transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
+    },
+  ];
+
+  for (const expectedRule of legalExternalLinkRules) {
+    if (!expectedRule.pattern.test(legalPage)) {
+      reject(`shared LegalExternalLink missing ${expectedRule.label}`);
+    }
+  }
+
   for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
     let routeSource = '';
     try {
@@ -7717,11 +7775,24 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (
-      !routeSource.includes(
-        "import { LegalPage, LegalSection } from '../components/compliance/LegalPage';",
+      !/import\s+\{[\s\S]*LegalPage[\s\S]*LegalSection[\s\S]*\}\s+from\s+'..\/components\/compliance\/LegalPage';/.test(
+        routeSource,
       )
     ) {
       reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
+    }
+
+    if (expectedRoute.file === 'app/sources.tsx' || expectedRoute.file === 'app/support.tsx') {
+      if (
+        !/<LegalExternalLink[\s\S]*displayUrl=\{[^}]+\}[\s\S]*href=\{[^}]+\}[\s\S]*label=\{[^}]+\}/.test(
+          routeSource,
+        )
+      ) {
+        reject(`${expectedRoute.file} must render its external URL with LegalExternalLink`);
+      }
+      if (/styles\.externalLink|textDecorationLine:\s*'underline'/.test(routeSource)) {
+        reject(`${expectedRoute.file} must not render external legal URLs as inline text links`);
+      }
     }
 
     if (expectedRoute.requiredSnippets) {
@@ -12825,8 +12896,8 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes('content/question-bank.csv')) {
     reject('app/sources.tsx must mention content/question-bank.csv');
   }
-  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
-    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
+  if (!/<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through LegalExternalLink');
   }
   if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
     reject('app/sources.tsx UHR material link needs the localized accessibility label');

@@ -1,11 +1,14 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import {
+  LegalExternalLink,
+  LegalPage,
+  LegalSection,
+  LegalSectionParagraph,
+} from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, typography } from '../lib/theme';
 
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const PUBLIC_SUPPORT_DISPLAY_URL = PUBLIC_SUPPORT_URL.replace(/^https:\/\//, '').replace(/\/$/, '');
 
 type LegalRouteSectionCopy = {
   body: string;
@@ -14,6 +17,8 @@ type LegalRouteSectionCopy = {
 
 type SupportRouteCopy = {
   openSupportPageAccessibilityLabel: string;
+  openSupportPageHint: string;
+  openSupportPageLabel: string;
   sections: {
     whatToReport: LegalRouteSectionCopy;
     noPersonalData: LegalRouteSectionCopy;
@@ -26,6 +31,8 @@ type SupportRouteCopy = {
 const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
   sv: {
     openSupportPageAccessibilityLabel: 'Öppna den offentliga supportsidan',
+    openSupportPageHint: 'Öppnas som extern webbsida',
+    openSupportPageLabel: 'Öppna supportsidan',
     sections: {
       whatToReport: {
         body: 'Skicka ett supportmeddelande om du hittar ett innehållsfel, oklar svensk formulering, trasig källreferens, ett ljudproblem eller ett fel i studieflödet.',
@@ -48,6 +55,8 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
   },
   en: {
     openSupportPageAccessibilityLabel: 'Open public support page',
+    openSupportPageHint: 'Opens as an external web page',
+    openSupportPageLabel: 'Open support page',
     sections: {
       whatToReport: {
         body: 'Send a support note if you find a content issue, confusing Swedish wording, a broken source reference, an audio problem, or a bug in the study flow.',
@@ -86,15 +95,14 @@ export default function Screen() {
         {copy.sections.independentStudyTool.body}
       </LegalSection>
       <LegalSection title={copy.sections.publicSupportPage.title}>
-        {copy.sections.publicSupportPage.body}{' '}
-        <Link
+        <LegalSectionParagraph>{copy.sections.publicSupportPage.body}</LegalSectionParagraph>
+        <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
-          accessibilityRole="link"
+          accessibilityHint={copy.openSupportPageHint}
+          displayUrl={PUBLIC_SUPPORT_DISPLAY_URL}
           href={PUBLIC_SUPPORT_URL}
-          style={styles.externalLink}
-        >
-          {PUBLIC_SUPPORT_URL}
-        </Link>
+          label={copy.openSupportPageLabel}
+        />
       </LegalSection>
     </LegalPage>
   );

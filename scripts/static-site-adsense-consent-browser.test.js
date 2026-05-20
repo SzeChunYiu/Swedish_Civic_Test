@@ -7,7 +7,6 @@ const { chromium } = require('@playwright/test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const siteRoot = path.join(repoRoot, 'site');
-const adSenseHostPattern = /pagead2\.googlesyndication\.com/;
 
 function contentType(filePath) {
   if (filePath.endsWith('.css')) return 'text/css';
@@ -82,184 +81,155 @@ function chromiumLaunchOptions() {
   return executablePath ? { executablePath } : {};
 }
 
-function installAdSenseProbe(page) {
-  return page.addInitScript(() => {
-    window.__staticAdSenseEvents = [];
-    const originalAppendChild = Element.prototype.appendChild;
-    Element.prototype.appendChild = function appendChildWithAdSenseProbe(node) {
-      if (
-        node &&
-        node.tagName === 'SCRIPT' &&
-        typeof node.src === 'string' &&
-        node.src.includes('pagead2.googlesyndication.com')
-      ) {
-        window.__staticAdSenseEvents.push({
-          requestNonPersonalizedAds:
-            window.adsbygoogle && window.adsbygoogle.requestNonPersonalizedAds,
-          type: 'append-script',
-        });
-      }
-      return originalAppendChild.call(this, node);
-    };
-  });
-}
+async function openStaticSiteWithStoredConsent(consent) {
+  const server = await createStaticServer();
+  const browser = await chromium.launch(chromiumLaunchOptions());
+  const page = await browser.newPage({ viewport: { width: 390, height: 840 } });
+  const adScriptRequests = [];
 
-async function prepareAdSenseQueue(page) {
-  await page.evaluate(() => {
-    const queue = [];
-    const originalPush = queue.push.bind(queue);
-    queue.push = function pushWithAdSenseProbe(payload) {
-      window.__staticAdSenseEvents.push({
-        payload,
-        requestNonPersonalizedAds: queue.requestNonPersonalizedAds,
+  await page.route('**/pagead2.googlesyndication.com/pagead/js/adsbygoogle.js**', (route) => {
+    adScriptRequests.push(route.request().url());
+    return route.fulfill({
+      body: 'window.__adsenseScriptLoaded = true;',
+      contentType: 'text/javascript',
+      status: 200,
+    });
+  });
+  await page.addInitScript((storedConsent) => {
+    window.__adsenseEvents = [];
+    window.localStorage.setItem('smt_consent', storedConsent);
+    window.localStorage.setItem('smt_buddy_hidden', '1');
+
+    const adsbygoogle = [];
+    adsbygoogle.push = function pushAd(...items) {
+      window.__adsenseEvents.push({
+        dataNpa: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) =>
+          node.getAttribute('data-npa'),
+        ),
+        npa: window.adsbygoogle?.requestNonPersonalizedAds ?? null,
         type: 'push',
       });
-      return originalPush(payload);
+      return Array.prototype.push.apply(this, items);
     };
-    window.adsbygoogle = queue;
-  });
+    window.adsbygoogle = adsbygoogle;
+
+    const originalAppendChild = Node.prototype.appendChild;
+    Node.prototype.appendChild = function appendChild(child) {
+      if (
+        this === document.head &&
+        child?.tagName === 'SCRIPT' &&
+        child.src.includes('pagead2.googlesyndication.com')
+      ) {
+        window.__adsenseEvents.push({
+          dataNpa: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) =>
+            node.getAttribute('data-npa'),
+          ),
+          npa: window.adsbygoogle?.requestNonPersonalizedAds ?? null,
+          type: 'append',
+        });
+      }
+      return originalAppendChild.call(this, child);
+    };
+  }, consent);
+
+  await page.goto(server.url, { waitUntil: 'domcontentloaded' });
+
+  return { adScriptRequests, browser, page, server };
 }
 
-async function runConsentScenario({
-  buttonId,
-  expectedChoice,
-  expectedDataNpa,
-  expectedSignal,
-  lang,
-}) {
-  const server = await createStaticServer();
-  let browser;
-  const pageErrors = [];
+for (const { consent } of [{ consent: 'min' }, { consent: 'all' }]) {
+  test(
+    `stored ${consent} AdSense consent does not load unconfigured web slots`,
+    chromiumTestOptions(),
+    async () => {
+      const { adScriptRequests, browser, page, server } =
+        await openStaticSiteWithStoredConsent(consent);
 
-  try {
-    browser = await chromium.launch(chromiumLaunchOptions());
-    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-    page.on('pageerror', (error) => pageErrors.push(error.message));
-    page.on('console', (message) => {
-      if (message.type() === 'error') pageErrors.push(message.text());
-    });
-    await page.route(/pagead2\.googlesyndication\.com/, (route) =>
-      route.fulfill({ body: '', contentType: 'application/javascript', status: 200 }),
-    );
-    await installAdSenseProbe(page);
-    await page.addInitScript((nextLang) => {
-      window.localStorage.removeItem('smt_consent');
-      window.localStorage.setItem('smt_buddy_hidden', '1');
-      window.localStorage.setItem('smt_lang', nextLang);
-    }, lang);
+      try {
+        const firstLoad = await page.evaluate(() => ({
+          adPlacements: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) => ({
+            placement: node.getAttribute('data-smt-ad-placement'),
+            slot: node.getAttribute('data-ad-slot'),
+          })),
+          anchorHidden: document.querySelector('[data-ad-slot="anchor"]')?.hidden,
+          events: window.__adsenseEvents,
+          inlineHidden: document.querySelector('[data-ad-slot="inline"]')?.hidden,
+          modalHidden: document.getElementById('consent')?.hidden,
+          storedConsent: window.localStorage.getItem('smt_consent'),
+        }));
 
-    await page.goto(server.url, { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('#consent:not([hidden])');
+        assert.equal(firstLoad.modalHidden, true);
+        assert.equal(firstLoad.storedConsent, consent);
+        assert.equal(adScriptRequests.length, 0);
+        assert.equal(firstLoad.inlineHidden, true);
+        assert.equal(firstLoad.anchorHidden, true);
+        assert.deepEqual(firstLoad.events, []);
+        assert.deepEqual(firstLoad.adPlacements, [
+          { placement: 'inline', slot: null },
+          { placement: 'anchor', slot: null },
+        ]);
 
-    if (lang === 'sv') {
-      await assertVisibleText(page, 'Cookies, på lagom-vis.', '#consent');
-      await assertVisibleText(page, 'Bara nödvändiga', '#consent');
-      await assertVisibleText(page, 'Godkänn allt', '#consent');
-    } else {
-      await assertVisibleText(page, 'Cookies, lagom-style.', '#consent');
-      await assertVisibleText(page, 'Necessary only', '#consent');
-      await assertVisibleText(page, 'Accept all', '#consent');
-    }
+        await page.reload({ waitUntil: 'domcontentloaded' });
 
-    await prepareAdSenseQueue(page);
-    await page.click(buttonId);
-    await page.waitForFunction(() =>
-      Boolean(window.__staticAdSenseEvents?.some((event) => event.type === 'push')),
-    );
+        const afterReload = await page.evaluate(() => ({
+          dataNpa: Array.from(document.querySelectorAll('ins.adsbygoogle')).map((node) =>
+            node.getAttribute('data-npa'),
+          ),
+          anchorHidden: document.querySelector('[data-ad-slot="anchor"]')?.hidden,
+          events: window.__adsenseEvents,
+          inlineHidden: document.querySelector('[data-ad-slot="inline"]')?.hidden,
+          modalHidden: document.getElementById('consent')?.hidden,
+          npa: window.adsbygoogle?.requestNonPersonalizedAds,
+          storedConsent: window.localStorage.getItem('smt_consent'),
+        }));
 
-    const snapshot = await page.evaluate(() => ({
-      adDataNpaValues: Array.from(document.querySelectorAll('ins.adsbygoogle'), (node) =>
-        node.getAttribute('data-npa'),
-      ),
-      adSlotHiddenStates: Array.from(document.querySelectorAll('[data-ad-slot]'), (node) => ({
-        hidden: node.hidden,
-        slot: node.getAttribute('data-ad-slot'),
-      })),
-      consentHidden: document.getElementById('consent')?.hidden,
-      events: window.__staticAdSenseEvents,
-      requestNonPersonalizedAds: window.adsbygoogle?.requestNonPersonalizedAds,
-      storedConsent: window.localStorage.getItem('smt_consent'),
-    }));
-
-    assert.equal(snapshot.storedConsent, expectedChoice);
-    assert.equal(snapshot.consentHidden, true, `${expectedChoice} consent modal should close`);
-    assert.equal(snapshot.requestNonPersonalizedAds, expectedSignal);
-    assert.ok(
-      snapshot.adDataNpaValues.length >= 2,
-      'static page should expose inline and anchor AdSense slots',
-    );
-    snapshot.adDataNpaValues.forEach((value) => assert.equal(value, expectedDataNpa));
-    assert.ok(
-      snapshot.adSlotHiddenStates.some((slot) => slot.slot === 'inline' && slot.hidden === false),
-      'accepted consent should reveal the inline ad slot',
-    );
-    assert.ok(
-      snapshot.adSlotHiddenStates.some((slot) => slot.slot === 'anchor' && slot.hidden === false),
-      'accepted consent should reveal the anchor ad slot',
-    );
-
-    const adRequests = snapshot.events.filter(
-      (event) => event.type === 'append-script' || event.type === 'push',
-    );
-    assert.ok(adRequests.length >= 2, 'AdSense script append and slot push should be observed');
-    adRequests.forEach((event) => {
-      assert.equal(
-        event.requestNonPersonalizedAds,
-        expectedSignal,
-        `${expectedChoice} ${event.type} should use the expected AdSense personalization signal`,
-      );
-    });
-
-    await page.goto(`${server.url}/#/privacy`, { waitUntil: 'domcontentloaded' });
-    if (lang === 'sv') {
-      await assertVisibleText(page, 'Annonser på webbplatsen', 'main[data-page="/privacy"]');
-      await assertVisibleText(page, 'Bara nödvändiga', 'main[data-page="/privacy"]');
-      await assertVisibleText(page, 'icke-personaliserade', 'main[data-page="/privacy"]');
-    } else {
-      await assertVisibleText(page, 'Ads on this website', 'main[data-page="/privacy"]');
-      await assertVisibleText(page, 'Necessary only', 'main[data-page="/privacy"]');
-      await assertVisibleText(page, 'non-personalised', 'main[data-page="/privacy"]');
-    }
-
-    assert.deepEqual(pageErrors, []);
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-    await server.close();
-  }
+        assert.equal(afterReload.modalHidden, true);
+        assert.equal(afterReload.storedConsent, consent);
+        assert.equal(afterReload.inlineHidden, true);
+        assert.equal(afterReload.anchorHidden, true);
+        assert.equal(adScriptRequests.length, 0);
+        assert.deepEqual(afterReload.events, []);
+        assert.deepEqual(afterReload.dataNpa, [null, null]);
+        assert.equal(afterReload.npa, undefined);
+      } finally {
+        await browser.close();
+        await server.close();
+      }
+    },
+  );
 }
 
-async function assertVisibleText(page, text, scopeSelector) {
-  const locator = page.locator(scopeSelector).getByText(text, { exact: false }).first();
-  await locator.waitFor({ state: 'visible' });
-  assert.ok(await locator.isVisible(), `${text} should be visible`);
-}
+test('static AdSense stored-consent source keeps NPA before load ordering explicit', () => {
+  const source = fs.readFileSync(path.join(siteRoot, 'app.js'), 'utf8');
+  const index = fs.readFileSync(path.join(siteRoot, 'index.html'), 'utf8');
+  const extras = fs.readFileSync(path.join(siteRoot, 'i18n-extras.js'), 'utf8');
+  const staticSurface = `${source}\n${index}\n${extras}`;
 
-test(
-  'static AdSense consent sends non-personalized signal before loading ads',
-  chromiumTestOptions(),
-  async () => {
-    await runConsentScenario({
-      buttonId: '#consent-min',
-      expectedChoice: 'min',
-      expectedDataNpa: '1',
-      expectedSignal: 1,
-      lang: 'en',
-    });
-  },
-);
+  assert.doesNotMatch(staticSurface, /data-ad-slot=["'](?:0{8,}|000000000[0-9])["']/);
+  assert.doesNotMatch(
+    staticSurface,
+    /Replace ca-pub-XXX|data-ad-slot value with your AdSense IDs/i,
+  );
+  assert.doesNotMatch(
+    staticSurface,
+    /Your AdSense slot will render here|AdSense-yta visas här|Anchor ad slot|AdSense 广告将显示在此处|AdSense 廣告將顯示在此處|ستظهر إعلانات AdSense هنا|AdSense halkan ayey ka soo bixi doontaa/i,
+  );
 
-test(
-  'static AdSense consent resets personalization signal for accept all in Swedish',
-  chromiumTestOptions(),
-  async () => {
-    await runConsentScenario({
-      buttonId: '#consent-all',
-      expectedChoice: 'all',
-      expectedDataNpa: null,
-      expectedSignal: 0,
-      lang: 'sv',
-    });
-  },
-);
+  assert.match(
+    source,
+    /slots:\s*{\s*['"]?inline['"]?:\s*['"]{2}\s*,\s*['"]?anchor['"]?:\s*['"]{2}/,
+  );
+  assert.match(source, /function smtIsRealAdSenseSlotId\(slotId\)/);
+  assert.match(source, /function smtStaticAdsAreConfigured\(\)/);
+  assert.match(source, /if \(!smtStaticAdsAreConfigured\(\)\) {\s*smtHideConsent\(\);/);
+  assert.match(source, /window\.adsbygoogle = window\.adsbygoogle \|\| \[\];/);
+  assert.match(
+    source,
+    /window\.adsbygoogle\.requestNonPersonalizedAds\s*=\s*choice === ['"]min['"] \? 1 : 0;/,
+  );
+  assert.ok(
+    source.indexOf('window.adsbygoogle.requestNonPersonalizedAds') <
+      source.indexOf('smtLoadAdSense();'),
+    'requestNonPersonalizedAds must be assigned before smtLoadAdSense runs',
+  );
+});
