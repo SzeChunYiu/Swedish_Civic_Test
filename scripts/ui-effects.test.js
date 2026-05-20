@@ -133,6 +133,7 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /if \(!option\.available\) return;/);
   assert.match(source, /disabled=\{!opt\.available\}/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.match(source, /aria-modal=\{true\}/);
   assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
   assert.doesNotMatch(
     source,
