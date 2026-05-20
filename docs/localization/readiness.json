@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-20",
+  "purpose": "Fail-closed localization readiness ledger. A source corpus or style guide is not the same as a complete translated locale.",
+  "releaseRule": "Only locales with complete UI strings, complete question/content translation, sourced glossary, native review, culture/humor review, accessibility review, and passing tests may be marked appAvailable=true in lib/i18n/locales.ts.",
+  "locales": {
+    "sv": {
+      "appAvailable": true,
+      "role": "source",
+      "sourceCorpus": "not_required_source_locale",
+      "glossary": "not_required_source_locale",
+      "uiStrings": "complete",
+      "questionContent": "complete",
+      "nativeReview": "source_language",
+      "cultureHumorReview": "source_language",
+      "accessibilityReview": "complete",
+      "releaseGate": "allowed"
+    },
+    "en": {
+      "appAvailable": true,
+      "role": "bridge_source",
+      "sourceCorpus": "complete_round1",
+      "glossary": "embedded_in_style_guide",
+      "uiStrings": "complete",
+      "questionContent": "complete",
+      "nativeReview": "needs_final_reader_review_before_major_rewrite",
+      "cultureHumorReview": "guarded_by_style_guide",
+      "accessibilityReview": "complete_for_current_app_surfaces",
+      "releaseGate": "allowed"
+    },
+    "ar": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing_rtl_runtime_review",
+      "releaseGate": "blocked"
+    },
+    "fa": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing_rtl_runtime_review",
+      "releaseGate": "blocked"
+    },
+    "so": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing",
+      "releaseGate": "blocked"
+    },
+    "ti": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing_geez_script_review",
+      "releaseGate": "blocked"
+    },
+    "pl": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing",
+      "releaseGate": "blocked"
+    },
+    "tr": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing",
+      "releaseGate": "blocked"
+    },
+    "zh-Hans": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "locales_zh_Hans_seed_plus_style_guide",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing_cjk_runtime_review",
+      "releaseGate": "blocked"
+    },
+    "zh-Hant": {
+      "appAvailable": false,
+      "role": "target",
+      "sourceCorpus": "complete_round1",
+      "glossary": "style_guide_only",
+      "uiStrings": "not_started",
+      "questionContent": "not_started",
+      "nativeReview": "missing",
+      "cultureHumorReview": "missing_native_review",
+      "accessibilityReview": "missing_cjk_runtime_review",
+      "releaseGate": "blocked"
+    }
+  }
+}
