@@ -522,6 +522,26 @@ test('mock exam config controls are not nested inside labelled summary container
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('mock exam time heatmap keeps its summary separate from jump buttons', () => {
+  const source = read('components/MockExamTimeHeatmap.tsx');
+  const surfaceOpening = source.match(/<Surface[\s\S]*?>/)?.[0] ?? '';
+
+  assert.match(source, /const summaryAccessibilityLabel =/);
+  assert.match(source, /<Surface[\s\S]*accessible=\{false\}[\s\S]*accessibilityRole="none"/);
+  assert.match(
+    source,
+    /<Text\s+accessibilityRole="summary"\s+style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
+  );
+  assert.match(source, /accessibilityLabel=\{copy\.questionLabel\(/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /onPress=\{\(\) => onSelectQuestion\?\.\(answer\.questionId\)\}/);
+  assert.match(source, /Nära median/);
+  assert.match(source, /Near median/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityLabel=/);
+  assert.doesNotMatch(surfaceOpening, /accessibilityRole="summary"/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
 test('settings controls use token pressed feedback on all direct controls', () => {
   const source = read('app/settings.tsx');
 
@@ -1669,6 +1689,47 @@ test('free dashboard surface is routed, localized, and accessible', () => {
     `${dashboard}\n${activity}\n${chapters}\n${sparkline}`,
     /#[0-9a-fA-F]{6}|rgba?\(/,
   );
+});
+
+test('home action links keep token targets and interaction feedback', () => {
+  const source = read('app/(tabs)/home.tsx');
+  const homeActionLinks = source.match(/<HomeActionLink/g) ?? [];
+  const targetStyles = ['readinessLink', 'primaryLink', 'secondaryLink', 'feedbackLink'];
+
+  assert.equal(homeActionLinks.length, 4);
+  assert.match(source, /const homeActionLinkClassName = 'home-action-link';/);
+  assert.match(source, /function useHomeActionLinkWebStyles\(\)/);
+  assert.match(
+    source,
+    /if \(Platform\.OS !== 'web' \|\| typeof document === 'undefined'\) return;/,
+  );
+  assert.match(source, /\$\{homeActionLinkClassName\}:hover,/);
+  assert.match(source, /transform: scale\(\$\{motion\.hoverScale\}\);/);
+  assert.match(source, /transform: scale\(\$\{motion\.pressedScale\}\);/);
+  assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
+  assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(
+    source,
+    /style=\{\[styles\.homeActionLink, style, isPressed \? styles\.homeActionLinkPressed : null\]\}/,
+  );
+  assert.match(source, /homeActionLink:\s*\{[\s\S]*?minHeight: space\[6\]/);
+  assert.match(
+    source,
+    /homeActionLinkPressed:\s*\{[\s\S]*?transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+
+  for (const styleName of targetStyles) {
+    const styleStart = source.indexOf(`${styleName}: {`);
+    assert.ok(styleStart >= 0, `${styleName} style should exist`);
+    const styleBlock = source.slice(styleStart, source.indexOf('  },', styleStart) + 4);
+    assert.match(
+      styleBlock,
+      /minHeight: space\[6\]/,
+      `${styleName} should keep a token-sized minimum target`,
+    );
+  }
+
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
 test('launch popup ad has native app-open implementation and safe web preview', () => {

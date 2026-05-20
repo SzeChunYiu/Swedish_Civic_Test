@@ -1088,6 +1088,90 @@ function generatedTrueFalseStatementEn(
   return truthStatementEn(civicStatementEn(source, option));
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function usableClozeCandidate(value: string): boolean {
+  const trimmed = value.trim();
+  return trimmed.length >= 3 || /^[A-ZÅÄÖ]{2,}$/.test(trimmed);
+}
+
+function uniqueClozeCandidates(candidates: string[]): string[] {
+  return [
+    ...new Set(
+      candidates
+        .map((candidate) => candidate.trim())
+        .filter((candidate) => candidate && usableClozeCandidate(candidate)),
+    ),
+  ].sort((a, b) => b.length - a.length);
+}
+
+function replaceClozeCandidate(statement: string, candidates: string[]): string | null {
+  for (const candidate of uniqueClozeCandidates(candidates)) {
+    const pattern = new RegExp(escapeRegExp(candidate), 'i');
+    if (pattern.test(statement)) {
+      const replaced = statement.replace(pattern, '...');
+      if (/[A-Za-zÅÄÖåäö0-9]/.test(replaced.replace(/\.\.\./g, ''))) return replaced;
+    }
+  }
+  return null;
+}
+
+function singleChoiceClozePromptSv(source: PracticeQuestion): string {
+  const option = correctOption(source);
+  const answer = stripFinalPunctuation(answerLabel(option));
+  const strippedPurpose = stripLeadingPurposeSv(answer);
+  const strippedMust = stripLeadingMustSv(answer);
+  const statement = stripFinalPunctuation(civicStatementSv(source, option));
+  const cloze = replaceClozeCandidate(statement, [
+    answer,
+    lowerFirst(answer),
+    upperFirst(answer),
+    strippedPurpose,
+    lowerFirst(strippedPurpose),
+    upperFirst(strippedPurpose),
+    strippedMust,
+    lowerFirst(strippedMust),
+    swedishCalledAnswer(answer),
+    swedishPurposeClause(answer),
+    frontedManyActionSv(answer),
+    reasonAnswerClauseSv(answer),
+    swedishTraditionalCelebrationAnswer(answer),
+  ]);
+
+  if (cloze) return ensureSentence(cloze);
+  return `${stripFinalPunctuation(source.questionSv)} ...?`;
+}
+
+function singleChoiceClozePromptEn(source: PracticeQuestion): string {
+  const option = correctOption(source);
+  const answer = stripFinalPunctuation(answerTextEn(option));
+  const strippedPurpose = stripLeadingPurposeEn(answer);
+  const strippedBy = stripLeadingByEn(answer);
+  const statement = stripFinalPunctuation(civicStatementEn(source, option));
+  const cloze = replaceClozeCandidate(statement, [
+    answer,
+    lowerFirst(answer),
+    upperFirst(answer),
+    strippedPurpose,
+    lowerFirst(strippedPurpose),
+    upperFirst(strippedPurpose),
+    strippedBy,
+    lowerFirst(strippedBy),
+    englishCalledAnswer(answer),
+    englishGerundPhrase(answer),
+    englishCivicActionClause(answer),
+    englishInfinitive(answer),
+    manyPeopleActionEn(answer),
+    reasonAnswerClauseEn(answer),
+    englishTraditionalCelebrationAnswer(answer),
+  ]);
+
+  if (cloze) return ensureSentence(cloze);
+  return `${stripFinalPunctuation(source.questionEn)} ...?`;
+}
+
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
@@ -1106,14 +1190,14 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return singleChoiceClozePromptSv(source);
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
     return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return `Which answer best matches? ${source.questionEn}`;
+  return singleChoiceClozePromptEn(source);
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {

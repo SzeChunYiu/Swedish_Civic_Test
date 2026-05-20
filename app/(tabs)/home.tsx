@@ -1,6 +1,7 @@
 import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type { ComponentProps, ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import {
   GuidedPracticePath,
@@ -36,8 +37,17 @@ import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore, type QuestionProgress } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { UserProgress } from '../../types/progress';
+
+type HomeActionHref = ComponentProps<typeof Link>['href'];
+type HomeActionStyle = ComponentProps<typeof Link>['style'];
+type HomeActionLinkProps = {
+  accessibilityLabel: string;
+  children: ReactNode;
+  href: HomeActionHref;
+  style: HomeActionStyle;
+};
 
 type StudyLoopItemCopy = {
   label: string;
@@ -129,6 +139,48 @@ const guidedPathChapterGroups = [
 const questionChapterIndex: Record<string, string> = Object.fromEntries(
   questions.map((question) => [question.id, question.chapterId]),
 );
+const homeActionLinkClassName = 'home-action-link';
+const homeActionLinkStyleElementId = 'home-action-link-style';
+
+function useHomeActionLinkWebStyles() {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    if (document.getElementById(homeActionLinkStyleElementId)) return;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = homeActionLinkStyleElementId;
+    styleElement.textContent = `
+.${homeActionLinkClassName}:hover,
+.${homeActionLinkClassName}:focus-visible {
+  transform: scale(${motion.hoverScale});
+}
+
+.${homeActionLinkClassName}:active {
+  transform: scale(${motion.pressedScale});
+}
+`;
+    document.head.appendChild(styleElement);
+  }, []);
+}
+
+function HomeActionLink({ accessibilityLabel, children, href, style }: HomeActionLinkProps) {
+  const [isPressed, setIsPressed] = useState(false);
+  const webClassName = Platform.OS === 'web' ? { className: homeActionLinkClassName } : {};
+
+  return (
+    <Link
+      {...webClassName}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="link"
+      href={href}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[styles.homeActionLink, style, isPressed ? styles.homeActionLinkPressed : null]}
+    >
+      {children}
+    </Link>
+  );
+}
 
 function buildResumeProgress(questionProgress: Record<string, QuestionProgress>): UserProgress {
   const answers = Object.values(questionProgress)
@@ -525,6 +577,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 };
 
 export default function Screen() {
+  useHomeActionLinkWebStyles();
+
   const {
     entitlements: monetizationEntitlements,
     entitlementsReady: monetizationEntitlementsReady,
@@ -718,14 +772,13 @@ export default function Screen() {
         {readiness.isSparse ? (
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          accessibilityRole="link"
           href="/exam"
           style={styles.readinessLink}
         >
           {copy.readinessCta}
-        </Link>
+        </HomeActionLink>
       </Card>
       <SocialProofRow language={language} />
       {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
@@ -736,22 +789,20 @@ export default function Screen() {
         />
       ) : null}
       <View style={styles.actions}>
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </HomeActionLink>
+        <HomeActionLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
           style={styles.secondaryLink}
         >
           {copy.browseChapters}
-        </Link>
+        </HomeActionLink>
       </View>
 
       <SectionHeader title={copy.guidedPathTitle} subtitle={copy.guidedPathSubtitle} />
@@ -797,14 +848,13 @@ export default function Screen() {
           {copy.feedbackTitle}
         </Text>
         <Text style={styles.feedbackText}>{copy.feedbackText}</Text>
-        <Link
+        <HomeActionLink
           accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          accessibilityRole="link"
           href="/mistakes"
           style={styles.feedbackLink}
         >
           {copy.feedbackLink}
-        </Link>
+        </HomeActionLink>
       </Card>
 
       <SectionHeader title={copy.studyLoopTitle} subtitle={copy.studyLoopSubtitle} />
@@ -836,6 +886,16 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
+  homeActionLink: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    minHeight: space[6],
+    textDecorationLine: 'none',
+  },
+  homeActionLinkPressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
   statRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -968,6 +1028,7 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -1007,6 +1068,7 @@ const styles = StyleSheet.create({
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -1017,6 +1079,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -1056,6 +1119,7 @@ const styles = StyleSheet.create({
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
     marginTop: space[0.5],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
