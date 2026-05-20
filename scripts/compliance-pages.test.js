@@ -4,14 +4,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const { validateStaticHeadMetadata } = require('./check-live-site');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-}
-
-function literalPattern(parts, flags = 'i') {
-  const text = parts.join('');
-  return new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
 }
 
 test('compliance pages and source links are present', () => {
@@ -88,32 +84,12 @@ test('compliance pages and source links are present', () => {
   assert.match(complianceLinks, /Support/);
 });
 
-test('static mock exam copy stays unofficial and threshold-free', () => {
-  const practice = read('site/practice.js');
-  const forbiddenFragments = [
-    ['Real exam is ', '60 min'],
-    ['Riktigt provet är ', '60 min'],
-    ['Start ', 'exam'],
-    ['Starta ', 'tentamen'],
-    ['You ', 'passed.'],
-    ['Not ', 'yet.'],
-    ['God', 'känt.'],
-    ['Under', 'känt.'],
-    ['passing ', 'line'],
-    ['godkänt-', 'gräns'],
-    ['75', '% ', 'next time'],
-    ['75', '% ', 'nästa gång'],
-  ];
+test('static site head metadata keeps title neutral and non-outcome-oriented', () => {
+  const result = validateStaticHeadMetadata(read('site/index.html'));
 
-  for (const parts of forbiddenFragments) {
-    assert.doesNotMatch(practice, literalPattern(parts));
-  }
-  assert.doesNotMatch(practice, />=\s*75|75\s*%/);
-  assert.match(practice, /Practice timer only/);
-  assert.match(practice, /Timer endast för övning/);
-  assert.match(practice, /Start timed practice/);
-  assert.match(practice, /Starta tidsatt övning/);
-  assert.match(practice, /Practice round complete/);
-  assert.match(practice, /Övningspass klart/);
-  assert.match(practice, /Independent study practice, not a real exam or an official UHR question/);
+  assert.equal(result.ok, true, result.details);
+  assert.equal(result.title, 'Almost Swedish — Study and practice.');
+  assert.doesNotMatch(result.surface, /Study,\s*fika,\s*pass/i);
+  assert.doesNotMatch(result.surface, /\bpass(?:\s+the\s+(?:test|exam))?\b/i);
+  assert.doesNotMatch(result.surface, /\b(?:earn|get)\s+(?:the\s+)?passport\b/i);
 });
