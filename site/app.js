@@ -685,8 +685,14 @@ const i18n = window.i18n = {
   }
 };
 
+const SMT_RTL_LANGUAGES = new Set(["ar", "fa"]);
+
 function applyLang(lang) {
+  const dir = SMT_RTL_LANGUAGES.has(lang) ? "rtl" : "ltr";
   document.documentElement.lang = lang;
+  document.documentElement.dir = dir;
+  document.documentElement.setAttribute("lang", lang);
+  document.documentElement.setAttribute("dir", dir);
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
     const value = (i18n[lang] && i18n[lang][key]);

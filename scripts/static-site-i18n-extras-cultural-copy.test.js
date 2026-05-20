@@ -30,9 +30,11 @@ test('extra-language i18n copy avoids pass/passport promises', () => {
     /Hel baasaboorka\./,
     /Sınavı geç\./i,
     /Pasaportu al\./i,
+    /آزمون را قبول شوید/i,
+    /گذرنامه بگیرید/i,
   ];
 
-  for (const locale of ['zh-Hans', 'zh-Hant', 'ar', 'so', 'tr']) {
+  for (const locale of ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'so', 'tr']) {
     const joined = valuesFor(locale).join('\n');
     for (const pattern of forbidden) {
       assert.doesNotMatch(joined, pattern, `${locale} contains unsupported outcome promise`);
@@ -58,13 +60,19 @@ test('Chinese hero and demo copy uses native study-app phrasing', () => {
 
 
 
-test('Arabic, Somali, and Turkish hero copy uses study-oriented wording', () => {
+test('Arabic, Persian, Somali, and Turkish hero copy uses study-oriented wording', () => {
   const extras = loadExtras();
 
   assert.equal(extras.ar['hero.h1a'], 'تدرّب على معرفة المجتمع السويدي.');
   assert.equal(extras.ar['hero.h1b'], 'استعدّ بخطوات واضحة.');
   assert.equal(extras.ar['hero.cta1'], 'ابدأ التدريب ←');
   assert.equal(extras.ar['footer.t1'], 'استعدّ بهدوء.');
+
+  assert.equal(extras.fa['hero.h1a'], 'آشنایی با جامعه سوئد را تمرین کنید.');
+  assert.equal(extras.fa['hero.h1b'], 'بر اساس منابع مطالعه کنید.');
+  assert.equal(extras.fa['hero.cta1'], 'شروع تمرین →');
+  assert.equal(extras.fa['settings.title'], 'تنظیمات');
+  assert.equal(extras.fa['footer.t1'], 'با آرامش مطالعه کنید.');
 
   assert.equal(extras.so['hero.h1a'], 'Baro aqoonta bulshada Iswiidhan.');
   assert.equal(extras.so['hero.h1b'], 'Isu diyaari tallaabo-tallaabo.');
