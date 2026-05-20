@@ -129,7 +129,7 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
 });
 
-test('derived civic statement handlers do not support source-recall prompts', () => {
+test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
     'utf8',
@@ -147,6 +147,25 @@ test('derived civic statement handlers do not support source-recall prompts', ()
     sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
     [],
   );
+  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
+  const handlerPatterns = [
+    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
+    ...civicStatementPromptPatterns(
+      productionSource,
+      'civicStatementEn',
+      'buildSingleChoiceVariant',
+    ),
+    ...civicStatementPromptPatterns(validatorSource, 'civicStatementSv', 'civicStatementEn'),
+    ...civicStatementPromptPatterns(validatorSource, 'civicStatementEn', 'correctOption'),
+  ];
+
+  for (const pattern of obsoletePromptPatterns) {
+    assert.deepEqual(
+      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
+      [],
+      `${pattern} should be limited to explicit source guards and mutation fixtures`,
+    );
+  }
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
@@ -528,8 +547,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q025',
       chapterId: 'ch03',
       type: 'single_choice',
-      questionSv: 'Vilket exempel beskriver kommunernas ansvar?',
-      questionEn: 'Which example describes municipal responsibilities?',
+      questionSv: 'Vilka vardagstjänster ansvarar kommuner för?',
+      questionEn: 'Which everyday services are municipalities responsible for?',
       options: [
         {
           id: 'a',
@@ -758,7 +777,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
+      'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
     ),
   );
   assert.ok(
