@@ -1203,6 +1203,32 @@ test('premium banner announces Remove Ads purchase status changes', () => {
   assert.doesNotMatch(placementCtaSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('pro paywall renders accessible tier summaries without changing Remove Ads wiring', () => {
+  const source = read('components/monetization/ProPaywall.tsx');
+  const profileSource = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /TIER_COLUMNS/);
+  assert.match(source, /TIER_ROWS/);
+  assert.match(source, /paywallCtaLabels/);
+  assert.match(source, /const proPaywallCopy: Record<AppLanguage, ProPaywallCopy>/);
+  assert.match(source, /Jämför Gratis, Annonsfri och Pro/);
+  assert.match(source, /Compare Free, Ad-Free, and Pro/);
+  assert.match(source, /copy\.priceAccessibilityLabel\(column\)/);
+  assert.match(source, /copy\.rowSummary\(/);
+  assert.match(source, /accessibilityRole="summary"/);
+  assert.match(source, /buyProLifetime/);
+  assert.match(source, /restoreProLifetime/);
+  assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
+  assert.doesNotMatch(source, /buyRemoveAds|restoreRemoveAdsPurchase/);
+  assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+  assert.match(profileSource, /import \{ ProPaywall \}/);
+  assert.match(profileSource, /<ProPaywall/);
+  assert.match(profileSource, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
+  assert.match(profileSource, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
+});
+
 test('profile shell copy follows Swedish and English settings language', () => {
   const source = read('app/(tabs)/profile.tsx');
 
