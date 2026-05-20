@@ -113,7 +113,10 @@
   function syncControls() {
     setSegment("theme",     ls("smt_theme", "auto"));
     setPalette(ls("smt_palette", "flag"));
-    setSegment("language",  ls("smt_lang", "en"));
+    const lang = window.smtNormalizeLanguage
+      ? window.smtNormalizeLanguage(ls("smt_lang", "en"))
+      : ls("smt_lang", "en");
+    setSegment("language",  lang);
     setSegment("textsize",  ls("smt_textsize", "100"));
     setCheckbox("motion",   ls("smt_motion", "") === "reduce");
     setCheckbox("aurora",   ls("smt_aurora", "on") !== "off");
@@ -152,7 +155,11 @@
       else if (group === "language") {
         if (window.smtSetLanguage) window.smtSetLanguage(v);
         else if (window.applyLang) window.applyLang(v);
-        else { lsSet("smt_lang", v); location.reload(); }
+        else {
+          if (window.smtApplyLanguageDirection) window.smtApplyLanguageDirection(v);
+          lsSet("smt_lang", v);
+          location.reload();
+        }
       }
       else if (group === "textsize") applyTextSize(v);
       setSegment(group, v);
