@@ -50,6 +50,8 @@ type GuidedPathStageCopy = {
     status: string,
   ) => string;
   chapterRange: string;
+  cta: (isCompleted: boolean) => string;
+  ctaAccessibilityLabel: (title: string, isCompleted: boolean) => string;
   description: string;
   levelLabel: string;
   progressLabel: (completedChapters: number, totalChapters: number) => string;
@@ -171,9 +173,7 @@ function buildGuidedPracticePathStages(
     const nextChapterId = group.chapterIds.find((chapterId) => !answeredChapterIds.has(chapterId));
     const href = nextChapterId
       ? (`/chapter/${nextChapterId}` as GuidedPracticePathStage['href'])
-      : group.id === 'advanced'
-        ? '/exam'
-        : '/learn';
+      : '/exam';
 
     return {
       accessibilityLabel: stageCopy.accessibilityLabel(
@@ -183,6 +183,8 @@ function buildGuidedPracticePathStages(
         statusLabel,
       ),
       chapterRange: stageCopy.chapterRange,
+      cta: stageCopy.cta(isCompleted),
+      ctaAccessibilityLabel: stageCopy.ctaAccessibilityLabel(stageCopy.title, isCompleted),
       description: stageCopy.description,
       href,
       id: group.id,
@@ -232,6 +234,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
         progressLabel: (completedChapters, totalChapters) =>
@@ -242,6 +249,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
         progressLabel: (completedChapters, totalChapters) =>
@@ -252,6 +264,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: gå till mockprov när steget är klart.`
+            : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
         levelLabel: 'Avancerad',
@@ -352,6 +369,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 1-4',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description: 'Start with Sweden, democracy, government, and elections.',
         levelLabel: 'Beginner',
         progressLabel: (completedChapters, totalChapters) =>
@@ -362,6 +384,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 5-9',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description: 'Build through law, media, rights, working life, and welfare.',
         levelLabel: 'Builder',
         progressLabel: (completedChapters, totalChapters) =>
@@ -372,6 +399,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Chapters 10-13',
+        cta: (isCompleted) => (isCompleted ? 'Go to mock exam' : 'Open next chapter'),
+        ctaAccessibilityLabel: (title, isCompleted) =>
+          isCompleted
+            ? `${title}: go to the mock exam after completing this stage.`
+            : `${title}: open the next chapter in this stage.`,
         description:
           'Finish with modern Sweden, international topics, freedom of religion, and holidays.',
         levelLabel: 'Advanced',

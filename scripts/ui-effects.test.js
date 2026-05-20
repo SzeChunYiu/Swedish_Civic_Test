@@ -1460,7 +1460,17 @@ test('home screen surfaces a guided civic readiness path', () => {
   assert.match(source, /buildGuidedPracticePathStages\(copy, questionProgress\)/);
   assert.match(source, /resumeHref=\{guidedPathResumeHref\}/);
   assert.match(source, /dailyProgress=\{progress\}/);
+  assert.match(source, /cta: stageCopy\.cta\(isCompleted\)/);
+  assert.match(
+    source,
+    /ctaAccessibilityLabel: stageCopy\.ctaAccessibilityLabel\(stageCopy\.title, isCompleted\)/,
+  );
+  assert.match(source, /: '\/exam';/);
+  assert.doesNotMatch(source, /group\.id === 'advanced'[\s\S]*'\/learn'/);
   assert.match(componentSource, /href="\/practice"/);
+  assert.match(componentSource, /href=\{stage\.href\}/);
+  assert.match(componentSource, /accessibilityLabel=\{stage\.ctaAccessibilityLabel\}/);
+  assert.match(componentSource, /\{stage\.cta\}/);
   assert.match(componentSource, /ProgressBar language=\{language\} progress=\{stage\.progress\}/);
   assert.match(componentSource, /minHeight: space\[6\]/);
   assert.doesNotMatch(`${source}\n${componentSource}`, /#[0-9a-fA-F]{6}|rgba?\(/);
