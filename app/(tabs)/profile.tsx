@@ -20,6 +20,7 @@ import {
   getBadgeProgressHint,
   getBadgeTitle,
   type BadgeInput,
+  type Badge as LearningBadge,
 } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -45,6 +46,7 @@ type ProfileCopy = {
   eyebrow: string;
   languageBadge: string;
   levelMetric: string;
+  noBadges: string;
   openSettings: string;
   openSettingsAccessibilityLabel: string;
   questionsHelper: string;
@@ -74,6 +76,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
+    noBadges: 'Inga märken ännu',
     openSettings: 'Öppna inställningar',
     openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
@@ -102,6 +105,7 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     eyebrow: 'Local profile',
     languageBadge: 'English support',
     levelMetric: 'level',
+    noBadges: 'No badges yet',
     openSettings: 'Open settings',
     openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
@@ -113,6 +117,21 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
       'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
     title: 'Progress without an account',
     xpMetric: 'XP',
+  },
+};
+
+const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
+  sv: {
+    first_practice: 'Första övningen',
+    level_2: 'Nivå 2',
+    mistake_reviewer: 'Misstagsrepetition',
+    streak_3: 'Tre dagars svit',
+  },
+  en: {
+    first_practice: 'First practice',
+    level_2: 'Level 2',
+    mistake_reviewer: 'Mistake reviewer',
+    streak_3: 'Three-day streak',
   },
 };
 
@@ -160,7 +179,8 @@ export default function Screen() {
     level,
     wrongAnswerCount,
   };
-  const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
+  const badges = deriveBadges(badgeInput);
+  const unlockedBadgeIds = new Set(badges.map((badge) => badge.id));
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -239,7 +259,11 @@ export default function Screen() {
         />
       </Card>
 
-      <Card style={styles.cardWide}>
+      <Card
+        accessible
+        accessibilityLabel={formatBadges(badges, language, copy.noBadges)}
+        style={styles.cardWide}
+      >
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
         <View style={styles.badgeList}>
           {getAllBadges().map((badge) => {
@@ -274,6 +298,13 @@ export default function Screen() {
       <ComplianceLinks />
     </ScreenShell>
   );
+}
+
+function formatBadges(badges: LearningBadge[], language: AppLanguage, noBadges: string) {
+  if (badges.length === 0) return noBadges;
+
+  const badgeTitles = localizedBadgeTitles[language];
+  return badges.map((badge) => badgeTitles[badge.id] ?? getBadgeTitle(badge, language)).join(', ');
 }
 
 const styles = StyleSheet.create({
