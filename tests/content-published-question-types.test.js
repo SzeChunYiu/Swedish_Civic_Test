@@ -2020,7 +2020,7 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
   const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+    /^(?:Välj rätt alternativ:|Choose the correct option:|Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -2290,6 +2290,43 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q001 contains a generated judgement meta-stem instead of a civic-study prompt/,
+  );
+});
+
+test('published question schema rejects generated single-choice answer-type meta-stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'return rephrasedSingleChoiceQuestionSv(source);',
+        'return \\\`Välj rätt alternativ: \\\${source.questionSv}\\\`;',
+      )
+      .replace(
+        'return rephrasedSingleChoiceQuestionEn(source);',
+        'return \\\`Choose the correct option: \\\${source.questionEn}\\\`;',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 generated variant\[0\] uses generated single-choice meta-stem wording/,
   );
 });
 

@@ -221,12 +221,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
+  assert.equal(derived[0].questionSv, 'I vilken del av världen ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'In which part of the world is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
-  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
+  assert.equal(derived[3].questionSv, 'Sverige ligger ...');
+  assert.equal(derived[3].questionEn, 'Sweden is located ...');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -828,8 +830,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
-  const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
-  assert.ok(sourceQ002, 'q002 source question should exist');
+  const sourceById = new Map(sourceQuestions.map((question) => [question.id, question]));
   const expectedRows = {
     [generatedQuestionId(sourceQuestions, 'q002', 'falseStatement')]: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
@@ -978,8 +979,8 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     byId.get(sourceQ002FalseStatementId)?.explanationEn,
     "Sweden's northernmost part lies north of the Arctic Circle.",
   );
-  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationSv, sourceQ002.explanationSv);
-  assert.equal(byId.get(sourceQ002TrueStatementId)?.explanationEn, sourceQ002.explanationEn);
+  assert.equal(byId.get('q150')?.explanationSv, sourceById.get('q002')?.explanationSv);
+  assert.equal(byId.get('q150')?.explanationEn, sourceById.get('q002')?.explanationEn);
 
   const falseExplanationOffenders = [...byId.values()]
     .filter(
