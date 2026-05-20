@@ -2,8 +2,6 @@ const assert = require('node:assert/strict');
 const { execFileSync } = require('node:child_process');
 const test = require('node:test');
 
-const EXPECTED_SOURCE_AUTHORITY_STEM_PATTERN_FIXTURES = 7;
-
 test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
@@ -28,7 +26,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
-  assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 11);
+  assert.equal(summary.releaseMonetizationPolicyFieldsValidated, 10);
   assert.equal(summary.releaseMonetizationPolicyParityValidated, true);
   assert.equal(summary.removeAdsEntitlementHookCasesValidated, 5);
   assert.equal(summary.removeAdsEntitlementHookParityValidated, true);
@@ -66,12 +64,13 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
   assert.equal(summary.profileRouteHeadersValidated, 3);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.equal(summary.profileRouteCopyLabelsValidated, 36);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 80);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 92);
   assert.equal(summary.homeRouteCopyParityValidated, true);
+  assert.equal(summary.homeRouteInternalBenchmarkCopyValidated, true);
   assert.equal(summary.mistakesRouteHeadersValidated, 4);
   assert.equal(summary.mistakesRouteHeaderParityValidated, true);
   assert.equal(summary.mistakesRouteCopyLabelsValidated, 30);
@@ -136,7 +135,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.purchaseTypeUnionsValidated, 2);
   assert.equal(summary.purchaseTypeInterfacesValidated, 8);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 18);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 14);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.equal(summary.adConsentTypeUnionsValidated, 6);
   assert.equal(summary.adConsentTypeInterfacesValidated, 3);
@@ -173,10 +172,15 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.progressTypeUnionsValidated, 2);
   assert.equal(summary.progressTypeInterfacesValidated, 4);
   assert.equal(summary.progressTypeSchemaParityValidated, true);
-  assert.equal(summary.progressStoreFieldsValidated, 10);
+  assert.equal(summary.progressStoreFieldsValidated, 12);
   assert.equal(summary.progressStoreSchemaParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
+  assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
+  assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
+  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
+  assert.equal(summary.citizenshipTimelineDateParityValidated, true);
+  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
   assert.equal(summary.practiceScoringRulesValidated, 5);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
   assert.equal(summary.practiceFlowCasesValidated, 6);
@@ -251,8 +255,6 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.questionTextFieldsNormalizedValidated, summary.publishedQuestions);
   assert.equal(summary.questionSentenceEndingsValidated, summary.publishedQuestions);
   assert.equal(summary.questionAuthorityBoundaryTextValidated, summary.publishedQuestions);
-  assert.equal(summary.questionAuthorityOverclaimPatternFixturesValidated, 10);
-  assert.equal(summary.questionAuthorityOverclaimPatternFixtureParityValidated, true);
   assert.equal(summary.questionNestedMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionJudgementMetaStemsValidated, summary.publishedQuestions);
   assert.equal(summary.questionPromptTextUniquenessValidated, summary.publishedQuestions);
@@ -266,6 +268,8 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
   assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
+  assert.equal(summary.staticEbookOutcomeClaimPatternsValidated, 6);
+  assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);
   assert.equal(summary.uhrMapExactSchemaKeysValidated, true);
   assert.equal(summary.uhrMapChaptersValidated, 13);

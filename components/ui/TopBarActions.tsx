@@ -129,13 +129,9 @@ const styles = StyleSheet.create({
   iconButton: {
     alignItems: 'center',
     borderRadius: radius.pill,
-    display: 'flex',
-    flexShrink: 0,
-    height: space[6],
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
-    width: space[6],
   },
   iconButtonPressed: {
     backgroundColor: colors.focusSoft,
@@ -144,13 +140,9 @@ const styles = StyleSheet.create({
   iconLink: {
     alignItems: 'center',
     borderRadius: radius.pill,
-    display: 'flex',
-    flexShrink: 0,
-    height: space[6],
     justifyContent: 'center',
     minHeight: space[6],
     minWidth: space[6],
-    width: space[6],
   },
   iconLinkHover: {
     backgroundColor: colors.focusSoft,

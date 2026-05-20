@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -11,7 +11,6 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
-import { RouteLink } from '../../components/ui/RouteLink';
 import { questions } from '../../data/questions';
 import { buildQuestionSpeechText } from '../../lib/audio/speak';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
@@ -38,13 +37,13 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
-    badge: 'Frågepass',
-    emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    badge: 'Quizpass',
+    emptyTitle: 'Det finns inga quizfrågor ännu.',
     scoreLabel: 'Poäng',
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
+    sessionTitle: (currentSessionId) => `Quizpass ${currentSessionId}`,
     tryAgain: 'Försök igen',
-    tryAgainAccessibilityLabel: 'Försök igen med den här övningsfrågan',
+    tryAgainAccessibilityLabel: 'Försök igen med den här quizfrågan',
   },
   en: {
     backToPractice: 'Back to Practice',
@@ -106,13 +105,14 @@ export default function QuizSessionScreen() {
         <Text accessibilityRole="header" style={styles.title}>
           {copy.emptyTitle}
         </Text>
-        <RouteLink
+        <Link
           accessibilityLabel={copy.backToPracticeAccessibilityLabel}
+          accessibilityRole="link"
           href="/practice"
-          variant="text"
+          style={styles.link}
         >
           {copy.backToPractice}
-        </RouteLink>
+        </Link>
       </View>
     );
   }
@@ -204,14 +204,14 @@ export default function QuizSessionScreen() {
             >
               {copy.tryAgain}
             </Button>
-            <RouteLink
+            <Link
               accessibilityLabel={copy.backToPracticeAccessibilityLabel}
+              accessibilityRole="link"
               href="/practice"
-              style={styles.actionButton}
-              variant="secondary"
+              style={styles.linkButton}
             >
               {copy.backToPractice}
-            </RouteLink>
+            </Link>
           </View>
         </View>
       ) : null}
@@ -274,5 +274,23 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     minHeight: space[5] + space[0.5],
+  },
+  linkButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.card,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[5] + space[0.5],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
+    textDecorationLine: 'none',
+  },
+  link: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
   },
 });

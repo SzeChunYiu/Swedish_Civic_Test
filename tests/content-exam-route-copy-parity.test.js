@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -37,32 +36,9 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ getQuestionDisplayText, getQuestionSourceCitation \} from '..\/..\/lib\/quiz\/questionText';/,
   );
-  assert.match(
-    source,
-    /import \{ QuestionNavigator \} from '..\/..\/components\/QuestionNavigator';/,
-  );
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
-  assert.match(source, /const \[activeQuestionIndex, setActiveQuestionIndex\] = useState\(0\);/);
-  assert.match(source, /const answeredQuestionIndexes = useMemo\(/);
-  assert.match(source, /const handleQuestionNavigatorSelect = useCallback\(\(index: number\) =>/);
-  assert.match(source, /scrollViewRef\.current\?\.scrollTo\(\{/);
-  assert.match(source, /const scrollTargetY = Math\.max\(0, questionOffset - space\[2\]\);/);
-  assert.match(
-    source,
-    /Platform\.OS === 'web' && typeof document !== 'undefined' && typeof window !== 'undefined'/,
-  );
-  assert.match(source, /document\.querySelector<HTMLElement>/);
-  assert.match(source, /exam-question-card-\$\{index \+ 1\}/);
-  assert.match(source, /target\.scrollIntoView\(\{ behavior: 'smooth', block: 'start' \}\)/);
-  assert.match(source, /<QuestionNavigator/);
-  assert.match(source, /answeredIndexes=\{answeredQuestionIndexes\}/);
-  assert.match(source, /currentIndex=\{activeQuestionIndex\}/);
-  assert.match(source, /itemStyle=\{styles\.questionNavigatorItem\}/);
-  assert.match(source, /languageOverride=\{language\}/);
-  assert.match(source, /onSelect=\{handleQuestionNavigatorSelect\}/);
-  assert.match(source, /totalCount=\{examQuestions\.length\}/);
   assert.match(
     source,
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,

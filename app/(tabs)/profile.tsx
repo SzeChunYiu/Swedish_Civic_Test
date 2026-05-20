@@ -1,4 +1,5 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../../components/compliance/ComplianceLinks';
@@ -8,7 +9,7 @@ import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { deriveBadges } from '../../lib/learning/badges';
-import { calculateStreak } from '../../lib/learning/streaks';
+import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -17,11 +18,10 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  audioEnabledBadge: string;
-  audioMutedBadge: string;
   badgesSubtitle: string;
   badgesTitle: string;
   completedMetric: string;
+  dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
   languageBadge: string;
@@ -29,9 +29,8 @@ type ProfileCopy = {
   noBadges: string;
   openSettings: string;
   openSettingsAccessibilityLabel: string;
-  openSettingsHint: string;
   questionsHelper: string;
-  removeAdsFocusCue: string;
+  streakFreezeBadge: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -42,11 +41,10 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    audioEnabledBadge: 'Ljud på',
-    audioMutedBadge: 'Ljud av',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
     badgesTitle: 'Märken',
     completedMetric: 'klara',
+    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
     languageBadge: 'Svenska',
@@ -54,24 +52,21 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     noBadges: 'Inga märken ännu',
     openSettings: 'Öppna inställningar',
     openSettingsAccessibilityLabel: 'Öppna inställningar',
-    openSettingsHint: 'Ändra dagligt mål, språk och ljud.',
     questionsHelper: 'frågor',
-    removeAdsFocusCue:
-      'Ta bort annonser är markerat här så att knapparna för köp och återställning är lätta att hitta.',
+    streakFreezeBadge: 'Svitskydd',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
-      'Dina mål, språkval, sviter och märken sparas bara på den här enheten, så att dina studier förblir privata.',
+      'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
     title: 'Framsteg utan konto',
     xpMetric: 'XP',
   },
   en: {
     answersPerDay: 'answers/day',
-    audioEnabledBadge: 'Audio on',
-    audioMutedBadge: 'Audio off',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
     badgesTitle: 'Badges',
     completedMetric: 'completed',
+    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
     languageBadge: 'English support',
@@ -79,10 +74,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     noBadges: 'No badges yet',
     openSettings: 'Open settings',
     openSettingsAccessibilityLabel: 'Open settings',
-    openSettingsHint: 'Change daily goal, language, and audio.',
     questionsHelper: 'questions',
-    removeAdsFocusCue:
-      'Remove Ads is highlighted here so the buy and restore buttons are easy to find.',
+    streakFreezeBadge: 'Streak freeze',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -113,7 +106,6 @@ function formatBadges(
 }
 
 export default function Screen() {
-  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
     entitlements: monetizationEntitlements,
     purchaseRuntime,
@@ -123,14 +115,26 @@ export default function Screen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
-  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
-  const audioBadge = audioEnabled ? copy.audioEnabledBadge : copy.audioMutedBadge;
-  const removeAdsFocused = focus === 'remove-ads';
   const level = calculateLevel(totalXp);
-  const currentStreak = calculateStreak(answerDates);
+  const streakWithFreeze = useMemo(
+    () =>
+      calculateStreakWithFreeze({
+        activeDayKeys: answerDates,
+        freezeState: streakFreezeState,
+      }),
+    [answerDates, streakFreezeState],
+  );
+  const currentStreak = streakWithFreeze.streakDays;
+  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
+  const dayStreakHelper =
+    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
+      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
+      : undefined;
   const wrongAnswerCount = Object.values(questionProgress).reduce(
     (count, progress) => count + progress.wrongCount,
     0,
@@ -142,6 +146,10 @@ export default function Screen() {
     wrongAnswerCount,
   });
 
+  useEffect(() => {
+    setStreakFreezeState(streakWithFreeze.freezeState);
+  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+
   return (
     <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
       <View style={styles.statsRow}>
@@ -149,13 +157,19 @@ export default function Screen() {
         <MetricCard label={copy.xpMetric} value={totalXp} />
       </View>
       <View style={styles.statsRow}>
-        <MetricCard label={copy.dayStreakMetric} value={currentStreak} />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
         <MetricCard
           label={copy.completedMetric}
           value={completedQuestionIds.length}
           helper={copy.questionsHelper}
         />
       </View>
+      {streakRescueMessage ? (
+        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
+          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
+          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
+        </Card>
+      ) : null}
 
       <Card style={styles.cardWide}>
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
@@ -164,7 +178,6 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
-          <Badge tone={audioEnabled ? 'green' : 'warm'}>{audioBadge}</Badge>
         </View>
       </Card>
 
@@ -173,30 +186,15 @@ export default function Screen() {
         <Text style={styles.value}>{formatBadges(badges, language, copy.noBadges)}</Text>
       </Card>
 
-      <View
-        nativeID="remove-ads-paywall"
-        style={[styles.removeAdsSection, removeAdsFocused ? styles.removeAdsFocused : null]}
-      >
-        {removeAdsFocused ? (
-          <Text
-            accessibilityLiveRegion="polite"
-            aria-live="polite"
-            style={styles.removeAdsFocusCue}
-          >
-            {copy.removeAdsFocusCue}
-          </Text>
-        ) : null}
-        <PremiumBanner
-          entitlements={monetizationEntitlements}
-          language={language}
-          onEntitlementsChange={setMonetizationEntitlements}
-          runtimeOptions={purchaseRuntime}
-        />
-      </View>
+      <PremiumBanner
+        entitlements={monetizationEntitlements}
+        language={language}
+        onEntitlementsChange={setMonetizationEntitlements}
+        runtimeOptions={purchaseRuntime}
+      />
       <ComplianceLinks />
 
       <Link
-        accessibilityHint={copy.openSettingsHint}
         accessibilityLabel={copy.openSettingsAccessibilityLabel}
         accessibilityRole="link"
         href="/settings"
@@ -216,6 +214,14 @@ const styles = StyleSheet.create({
   cardWide: {
     gap: space[1.5],
   },
+  streakFreezeCard: {
+    gap: space[1],
+  },
+  streakFreezeText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
   pillRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -226,21 +232,6 @@ const styles = StyleSheet.create({
     fontSize: typography.sectionTitle.fontSize,
     fontWeight: typography.sectionTitle.fontWeight,
     lineHeight: typography.sectionTitle.lineHeight,
-  },
-  removeAdsSection: {
-    gap: space[1],
-  },
-  removeAdsFocused: {
-    borderColor: colors.accent,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    padding: space[1],
-  },
-  removeAdsFocusCue: {
-    color: colors.accent,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
   },
   settingsLink: {
     alignSelf: 'flex-start',

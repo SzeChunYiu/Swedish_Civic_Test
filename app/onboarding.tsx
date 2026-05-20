@@ -1,8 +1,8 @@
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
-import { RouteLink } from '../components/ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -30,7 +30,7 @@ const onboardingCopy: Record<AppLanguage, OnboardingCopy> = {
       'Följ framsteg lokalt på din enhet utan konto.',
     ],
     subtitle:
-      'En liten, fristående studiekompis för daglig övning, provträning och genomgång av frågor du svarat fel på.',
+      'En liten, fristående studiekompis för daglig övning, provträning och repetition av misstag.',
     title: 'Förbered dig lugnt för samhällskunskapsprovet',
   },
   en: {
@@ -77,20 +77,22 @@ export default function Screen() {
       <ComplianceLinks />
 
       <View style={styles.actions}>
-        <RouteLink
+        <Link
           accessibilityLabel={copy.startStudyingAccessibilityLabel}
+          accessibilityRole="link"
           href="/home"
-          variant="primary"
+          style={styles.primaryLink}
         >
           {copy.startStudying}
-        </RouteLink>
-        <RouteLink
+        </Link>
+        <Link
           accessibilityLabel={copy.adjustSettingsAccessibilityLabel}
+          accessibilityRole="link"
           href="/settings"
-          variant="secondary"
+          style={styles.secondaryLink}
         >
           {copy.adjustSettings}
-        </RouteLink>
+        </Link>
       </View>
     </ScrollView>
   );
@@ -163,5 +165,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
+  },
+  primaryLink: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  secondaryLink: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
 });

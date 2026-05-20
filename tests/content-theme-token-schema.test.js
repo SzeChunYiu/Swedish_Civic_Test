@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 test('theme token schema validates the exported design-token catalog', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -25,6 +24,10 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.match(themeIndex, /export \{ colors \} from '\.\/colors';/);
+  assert.match(
+    themeIndex,
+    /export \{ flagColors, SWEDISH_FLAG_BLUE, SWEDISH_FLAG_GOLD \} from '\.\/flag';/,
+  );
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
 });

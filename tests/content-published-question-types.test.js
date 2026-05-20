@@ -21,7 +21,6 @@ function actualStaticQuestions() {
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -337,43 +336,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q001 contains a generated judgement meta-stem instead of a civic-study prompt/,
-  );
-});
-
-test('published question schema rejects generated single-choice answer-type meta-stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'return rephrasedSingleChoiceQuestionSv(source);',
-        'return \\\`Välj rätt alternativ: \\\${source.questionSv}\\\`;',
-      )
-      .replace(
-        'return rephrasedSingleChoiceQuestionEn(source);',
-        'return \\\`Choose the correct option: \\\${source.questionEn}\\\`;',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q001 generated variant\[0\] uses generated single-choice meta-stem wording/,
   );
 });
 

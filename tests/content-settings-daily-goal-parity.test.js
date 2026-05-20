@@ -31,7 +31,6 @@ require('./scripts/validate-content.js');
 
 test('daily goal settings stay in parity between storage and settings controls', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

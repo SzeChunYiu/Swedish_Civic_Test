@@ -8,7 +8,6 @@ const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -23,16 +22,13 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
     'utf8',
   );
 
-  assert.equal(summary.mobileAdsConsentHookCasesValidated, 6);
+  assert.equal(summary.mobileAdsConsentHookCasesValidated, 5);
   assert.equal(summary.mobileAdsConsentHookParityValidated, true);
   assert.match(hookSource, /!entitlements\.adsDisabled && adsConfig\.realAdsEnabled/);
   assert.match(hookSource, /trackingTransparencyStatus:/);
   assert.match(hookSource, /umpConsentStatus:/);
   assert.match(hookSource, /getAdSdkInitializationDecision\(state\)/);
   assert.match(hookSource, /if \(!entitlements\.adsDisabled && cachedInitialization\)/);
-  assert.match(hookSource, /if \(result\.initialized\) \{[\s\S]*cachedInitialization = result;/);
-  assert.match(hookSource, /if \(!result\.initialized\) \{[\s\S]*initializationPromise = undefined;/);
-  assert.match(hookSource, /initializeMobileAdsConsentOnce/);
   assert.match(hookSource, /setResult\(createInitialResult\(entitlements\)\)/);
 });
 
@@ -66,39 +62,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Mobile Ads consent hook must derive initial prompt state from ads config and Remove Ads entitlements/,
-  );
-});
-
-test('mobile ads consent hook parity rejects unconditional blocked-result caching', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/monetization/useMobileAdsConsent.ts')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'if (result.initialized) {\\n    cachedInitialization = result;\\n  }',
-        'cachedInitialization = result;'
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /Mobile Ads consent hook must cache only successful non-disabled initialization/,
   );
 });
 

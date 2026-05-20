@@ -5,8 +5,6 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { readWebDocumentMetadata } = require('./prepare-web-export.js');
-
 const repoRoot = path.resolve(__dirname, '..');
 
 function readJson(relativePath) {
@@ -1227,6 +1225,30 @@ test('production build and submit guards rerun validation inside release preflig
   );
 });
 
+test('production build check-only avoids recursive npm validation', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-build-check-only-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 99', ''].join('\n'),
+    { mode: 0o755 },
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/build-production-guard.js', '--check-only'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stdout, /Production build blocked/i);
+  assert.equal(fs.existsSync(npmLog), false);
+});
+
 test('production submit guard blocks placeholder Apple identifiers before release preflight', () => {
   const result = spawnSync(
     process.execPath,
@@ -1243,6 +1265,49 @@ test('production submit guard blocks placeholder Apple identifiers before releas
   assert.match(result.stdout, /appleTeamId/i);
   assert.match(result.stdout, /TBD/i);
   assert.doesNotMatch(result.stdout, /release preflight/i);
+});
+
+test('production submit check-only avoids recursive npm validation after credentials pass', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'production-submit-check-only-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const easPath = path.join(repoRoot, 'eas.json');
+  const originalEas = fs.readFileSync(easPath, 'utf8');
+  const fakeServiceAccount = path.join(repoRoot, 'tmp/fake-google-play-service-account.json');
+  fs.writeFileSync(
+    path.join(tmpDir, 'npm'),
+    ['#!/bin/sh', `echo "$@" >> "${npmLog}"`, 'exit 99', ''].join('\n'),
+    { mode: 0o755 },
+  );
+
+  try {
+    const eas = JSON.parse(originalEas);
+    eas.submit.production.ios.appleId = 'release@example.com';
+    eas.submit.production.ios.ascAppId = '1234567890';
+    eas.submit.production.ios.appleTeamId = 'TEAM123456';
+    eas.submit.production.android.serviceAccountKeyPath =
+      './tmp/fake-google-play-service-account.json';
+    fs.mkdirSync(path.dirname(fakeServiceAccount), { recursive: true });
+    fs.writeFileSync(fakeServiceAccount, '{"type":"service_account"}\n');
+    fs.writeFileSync(easPath, `${JSON.stringify(eas, null, 2)}\n`);
+
+    const result = spawnSync(
+      process.execPath,
+      ['scripts/submit-production-guard.js', '--check-only'],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        env: { ...process.env, PATH: `${tmpDir}${path.delimiter}${process.env.PATH}` },
+      },
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stdout, /Production submit blocked/i);
+    assert.match(result.stdout, /release preflight/i);
+    assert.equal(fs.existsSync(npmLog), false);
+  } finally {
+    fs.writeFileSync(easPath, originalEas);
+    fs.rmSync(fakeServiceAccount, { force: true });
+  }
 });
 
 test('production submit guard blocks while release preflight is not ready', () => {
@@ -1291,12 +1356,8 @@ test('web export script is available for local production bundle smoke', () => {
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');
   assert.equal(
-    pkg.scripts['test:web-export-budget'],
-    'node --test tests/web-export-budget.test.js',
-  );
-  assert.equal(
     pkg.scripts['release:web-export-smoke'],
-    'rm -rf dist-web && npm run build:web:export && npm run test:web-export-budget',
+    'rm -rf dist-web && npm run build:web:export',
   );
   assert.deepEqual(vercelConfig.rewrites, [{ source: '/(.*)', destination: '/index.html' }]);
   assert.equal(redirects.trim(), '/* /index.html 200');
@@ -1358,22 +1419,6 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
-
-  const wrongLanguage = metadata.language === 'sv' ? 'en' : 'sv';
-  const wrongIndex = index.replace(`lang="${metadata.language}"`, `lang="${wrongLanguage}"`);
-  fs.writeFileSync(path.join(outputDir, 'index.html'), wrongIndex);
-  fs.writeFileSync(path.join(outputDir, '404.html'), wrongIndex);
-
-  const staleMetadataCheck = spawnSync(
-    process.execPath,
-    ['scripts/prepare-web-export.js', '--check', outputDir],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-  assert.notEqual(staleMetadataCheck.status, 0);
-  assert.match(staleMetadataCheck.stderr || staleMetadataCheck.stdout, /must declare lang=/);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {

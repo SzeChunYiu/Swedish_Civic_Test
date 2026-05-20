@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { nativeAdCardCopy } from '../../lib/monetization/adCopy';
 import { shouldShowAd } from '../../lib/monetization/ads';
@@ -18,12 +18,7 @@ export function NativeAdCard({
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
 
-  if (
-    !entitlementsReady ||
-    !shouldShowAd('results_native', resolvedEntitlements, undefined, Platform.OS)
-  ) {
-    return null;
-  }
+  if (!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)) return null;
 
   return (
     <Card accessibilityHint={copy.hint} accessibilityLabel={copy.accessibilityLabel}>

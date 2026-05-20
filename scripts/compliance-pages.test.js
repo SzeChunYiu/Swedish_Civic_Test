@@ -25,13 +25,14 @@ test('compliance pages and source links are present', () => {
   assert.match(read('app/disclaimer.tsx'), /not real exam questions/i);
   assert.match(read('app/privacy.tsx'), /no account/i);
   assert.match(read('app/privacy.tsx'), /local/i);
+  assert.match(read('app/privacy.tsx'), /studiesviter/);
+  assert.doesNotMatch(
+    read('app/privacy.tsx').match(/sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy'/)?.[0] ?? '',
+    /\bstreaks\b/i,
+  );
   assert.match(read('app/privacy.tsx'), /ad-supported/i);
   assert.match(read('app/privacy.tsx'), /Remove Ads/i);
   assert.match(read('app/privacy.tsx'), /29 SEK/i);
-  assert.match(read('app/privacy.tsx'), /product ID/i);
-  assert.match(read('app/privacy.tsx'), /transaction ID or purchase token/i);
-  assert.match(read('app/privacy.tsx'), /receipt-validation timestamp/i);
-  assert.doesNotMatch(read('app/privacy.tsx'), /adsDisabled=true/);
   assert.match(read('app/privacy.tsx'), /App Tracking Transparency/i);
   assert.match(read('app/privacy.tsx'), /Google UMP consent/i);
   assert.match(read('app/terms.tsx'), /study/i);
@@ -48,8 +49,10 @@ test('compliance pages and source links are present', () => {
   assert.match(sourcesRoute, /Sverige i fokus/i);
   assert.match(sourcesRoute, /Källor/);
   assert.match(sourcesRoute, /Primärt studiematerial/);
+  assert.match(sourcesRoute, /Varje övningsfråga visar en källrad med UHR:s kapitel/);
   assert.match(sourcesRoute, /Sources/);
   assert.match(sourcesRoute, /Primary study material/);
+  assert.match(sourcesRoute, /Every practice question shows a source line with the UHR chapter/);
   assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
   assert.match(
     sourcesRoute,
@@ -57,6 +60,9 @@ test('compliance pages and source links are present', () => {
   );
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourcesRoute, /Open UHR education material/);
+  assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
+  assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
+  assert.doesNotMatch(sourcesRoute, /spreadsheet-friendly|kalkylbladsvänliga/);
   const supportRoute = read('app/support.tsx');
   assert.match(supportRoute, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
   assert.match(supportRoute, /const copy = supportCopy\[language\]/);

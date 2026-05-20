@@ -1,11 +1,5 @@
 import { expect, test } from '@playwright/test';
 
-import { questions } from '../../data/questions';
-
-const firstChapterQuestionCount = questions.filter(
-  (question) => question.chapterId === 'ch01',
-).length;
-
 test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
   page,
 }) => {
@@ -29,7 +23,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   const firstChapter = page.getByLabel(/Öppna kapitel Landet Sverige/);
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('Landet Sverige');
-  await expect(firstChapter).toContainText(`0/${firstChapterQuestionCount} besvarade`);
+  await expect(firstChapter).toContainText('0/50 besvarade');
 
   await firstChapter.click();
 
@@ -42,7 +36,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await expect(chapterScreen).toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  await expect(chapterScreen).toContainText(`Övningsfrågor (${firstChapterQuestionCount})`);
+  await expect(chapterScreen).toContainText('Övningsfrågor (50)');
   await expect(chapterScreen).toContainText('Var ligger Sverige?');
   await expect(chapterScreen).toContainText('Where is Sweden located?');
   await expect(chapterScreen).toContainText('UHR-källa');
@@ -98,7 +92,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(firstChapter).not.toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  await expect(firstChapter).toContainText(`0/${firstChapterQuestionCount} practiced`);
+  await expect(firstChapter).toContainText('0/50 practiced');
 
   await firstChapter.click();
 
@@ -106,9 +100,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(page.getByLabel('Start quiz for The country of Sweden')).toBeVisible();
   await expect(page.locator('body')).toContainText('The country of Sweden');
   await expect(page.locator('body')).toContainText('Geography, climate, nature');
-  await expect(page.locator('body')).toContainText(
-    `Practice questions (${firstChapterQuestionCount})`,
-  );
+  await expect(page.locator('body')).toContainText('Practice questions (50)');
 
   expect(consoleErrors).toEqual([]);
 });

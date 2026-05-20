@@ -1,7 +1,7 @@
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
-import { RouteLink } from '../components/ui/RouteLink';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -119,22 +119,22 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <RouteLink
+        <Link
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
+          accessibilityRole="link"
           href="/practice"
           style={styles.primaryLink}
-          variant="primary"
         >
           {copy.openPractice}
-        </RouteLink>
-        <RouteLink
+        </Link>
+        <Link
           accessibilityLabel={copy.backHomeAccessibilityLabel}
+          accessibilityRole="link"
           href="/home"
           style={styles.secondaryLink}
-          variant="secondary"
         >
           {copy.backHome}
-        </RouteLink>
+        </Link>
       </View>
     </ScrollView>
   );

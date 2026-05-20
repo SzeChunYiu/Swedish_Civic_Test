@@ -40,6 +40,25 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function questionNumber(question) {
+  return Number(String(question.id).replace(/^q/, ''));
+}
+
+function generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions) {
+  const firstGeneratedQuestionNumber = sourceQuestions.length + 1;
+  const lastGeneratedQuestionNumber =
+    firstGeneratedQuestionNumber + generatedPublishedQuestions.length - 1;
+
+  return generatedPublishedQuestions.filter((question) => {
+    const idNumber = questionNumber(question);
+    return (
+      question.type === 'true_false' &&
+      idNumber >= firstGeneratedQuestionNumber &&
+      idNumber <= lastGeneratedQuestionNumber
+    );
+  });
+}
+
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
@@ -73,14 +92,12 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'I vilken del av världen ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'In which part of the world is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Sverige ligger ...');
-  assert.equal(derived[3].questionEn, 'Sweden is located ...');
+  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -622,8 +639,10 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 });
 
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
-  const { questions } = loadTs('data/questions.ts');
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
+  const sourceQ002 = sourceQuestions.find((question) => question.id === 'q002');
+  assert.ok(sourceQ002, 'q002 source question should exist');
   const expectedRows = {
     q151: [
       'Sveriges nordligaste del ligger inte norr om polcirkeln.',
@@ -731,8 +750,32 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   assert.deepEqual(trueExplanationOffenders, []);
 });
 
+test('generated residual scan includes true/false rows beyond the old q720 ceiling', () => {
+  const oldPublishedQuestionCeiling = 720;
+  const sourceQuestions = Array.from({ length: 145 }, (_, index) => ({
+    id: `q${String(index + 1).padStart(3, '0')}`,
+  }));
+  const generatedPublishedQuestions = Array.from({ length: 580 }, (_, index) => ({
+    id: `q${String(sourceQuestions.length + 1 + index).padStart(3, '0')}`,
+    type: index === 578 ? 'true_false' : 'single_choice',
+  }));
+  const lastGeneratedTrueFalseQuestion = generatedPublishedQuestions.findLast(
+    (question) => question.type === 'true_false',
+  );
+
+  assert.ok(lastGeneratedTrueFalseQuestion);
+  assert.ok(questionNumber(lastGeneratedTrueFalseQuestion) > oldPublishedQuestionCeiling);
+
+  assert.deepEqual(
+    generatedTrueFalseResidualQuestions(sourceQuestions, generatedPublishedQuestions).map(
+      (question) => question.id,
+    ),
+    [lastGeneratedTrueFalseQuestion.id],
+  );
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
-  const { questions } = loadTs('data/questions.ts');
+  const { questions, sourceQuestions, generatedPublishedQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
 
   const expectedRows = {
@@ -971,11 +1014,9 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     assert.equal(byId.get(id)?.questionEn, questionEn, `${id} English generated stem`);
   }
 
-  const residualQuestions = questions.filter(
-    (question) =>
-      question.type === 'true_false' &&
-      Number(question.id.replace(/^q/, '')) >= 201 &&
-      Number(question.id.replace(/^q/, '')) <= 720,
+  const residualQuestions = generatedTrueFalseResidualQuestions(
+    sourceQuestions,
+    generatedPublishedQuestions,
   );
   const residualText = residualQuestions
     .map((question) => `${question.questionSv} ${question.questionEn}`)

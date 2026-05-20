@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
@@ -16,6 +17,23 @@ test('authored source questions stay reviewed and publish without field drift', 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.authoredSourceQuestionsValidated, summary.sourceQuestions);
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
+});
+
+test('derived q150 explanation expectation stays anchored to authored q002 source', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
+
+  assert.match(source, /const \{ questions, sourceQuestions \} = loadTs\('data\/questions\.ts'\);/);
+  assert.match(source, /question\.id === 'q002'/);
+  assert.match(source, /byId\.get\('q150'\)\?\.explanationSv, sourceQ002\.explanationSv/);
+  assert.match(source, /byId\.get\('q150'\)\?\.explanationEn, sourceQ002\.explanationEn/);
+  assert.doesNotMatch(
+    source,
+    /Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
+  );
+  assert.doesNotMatch(
+    source,
+    /Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area\./,
+  );
 });
 
 test('authored source schema rejects invalid review status values', () => {

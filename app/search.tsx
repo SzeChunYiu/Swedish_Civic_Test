@@ -1,6 +1,6 @@
+import { Link } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { RouteLink } from '../components/ui/RouteLink';
 import { colors, radius, space, typography } from '../lib/theme';
 
 export default function SearchScreen() {
@@ -11,22 +11,22 @@ export default function SearchScreen() {
         Question search is coming. For now, browse by chapter — each chapter groups its questions
         with explanations.
       </Text>
-      <RouteLink
+      <Link
         accessibilityLabel="Browse chapters"
+        accessibilityRole="link"
         href="/learn"
         style={styles.primaryButton}
-        variant="primary"
       >
         Browse chapters
-      </RouteLink>
-      <RouteLink
+      </Link>
+      <Link
         accessibilityLabel="Back to home"
+        accessibilityRole="link"
         href="/(tabs)/home"
         style={styles.backLink}
-        variant="text"
       >
         Back
-      </RouteLink>
+      </Link>
     </View>
   );
 }
@@ -70,8 +70,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.navButton.fontFamily,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    minHeight: space[6],
-    paddingVertical: space[1.25],
     textDecorationLine: 'none',
   },
 });

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { QuestionNavigator } from '../../components/QuestionNavigator';
+import { OptionCard } from '../../components/OptionCard';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
@@ -215,12 +215,9 @@ export default function Screen() {
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
-  const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
   );
-  const scrollViewRef = useRef<ScrollView | null>(null);
-  const questionOffsetsRef = useRef<Record<number, number>>({});
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
@@ -272,13 +269,6 @@ export default function Screen() {
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
-  const answeredQuestionIndexes = useMemo(
-    () =>
-      examQuestions
-        .map((question, index) => (answers[question.id] ? index : null))
-        .filter((index): index is number => index !== null),
-    [answers, examQuestions],
-  );
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const shouldAttemptRewardedAd =
@@ -300,35 +290,10 @@ export default function Screen() {
   const resetExamAttempt = useCallback(() => {
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
-    setActiveQuestionIndex(0);
     setSubmitted(false);
     setCompletionRecorded(false);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
-  }, []);
-
-  const handleQuestionNavigatorSelect = useCallback((index: number) => {
-    setActiveQuestionIndex(index);
-    const questionOffset = questionOffsetsRef.current[index] ?? 0;
-    const scrollTargetY = Math.max(0, questionOffset - space[2]);
-    scrollViewRef.current?.scrollTo({
-      animated: true,
-      y: scrollTargetY,
-    });
-    if (Platform.OS === 'web' && typeof document !== 'undefined' && typeof window !== 'undefined') {
-      window.requestAnimationFrame(() => {
-        const target = document.querySelector<HTMLElement>(
-          `[data-testid="exam-question-card-${index + 1}"]`,
-        );
-        if (target) {
-          target.setAttribute('tabindex', '-1');
-          target.focus({ preventScroll: true });
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          return;
-        }
-        window.scrollTo({ behavior: 'smooth', top: scrollTargetY });
-      });
-    }
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
@@ -565,7 +530,7 @@ export default function Screen() {
   }
 
   return (
-    <ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge tone="orange">{copy.timedSimulationBadge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
@@ -590,29 +555,8 @@ export default function Screen() {
         </Text>
       </View>
 
-      <QuestionNavigator
-        answeredIndexes={answeredQuestionIndexes}
-        currentIndex={activeQuestionIndex}
-        itemStyle={styles.questionNavigatorItem}
-        languageOverride={language}
-        onSelect={handleQuestionNavigatorSelect}
-        style={styles.questionNavigator}
-        totalCount={examQuestions.length}
-      />
-
       {examQuestions.map((question, index) => (
-        <View
-          accessibilityState={{ selected: activeQuestionIndex === index }}
-          key={question.id}
-          onLayout={(event) => {
-            questionOffsetsRef.current[index] = event.nativeEvent.layout.y;
-          }}
-          style={[
-            styles.questionCard,
-            activeQuestionIndex === index ? styles.questionCardActive : null,
-          ]}
-          testID={`exam-question-card-${index + 1}`}
-        >
+        <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <QuestionSourceCitation
@@ -626,22 +570,19 @@ export default function Screen() {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
-                <Pressable
+                <OptionCard
                   key={option.id}
+                  aria-checked={isSelected}
                   aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
                   accessibilityState={{ selected: isSelected }}
-                  onPress={() => {
-                    setActiveQuestionIndex(index);
-                    setAnswers((current) => ({ ...current, [question.id]: option.id }));
-                  }}
-                  style={[styles.option, isSelected ? styles.optionSelected : null]}
-                >
-                  <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
-                    {optionText}
-                  </Text>
-                </Pressable>
+                  label={optionText}
+                  languageOverride={language}
+                  onPress={() =>
+                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
+                  }
+                  state={isSelected ? 'selected' : 'idle'}
+                />
               );
             })}
           </View>
@@ -703,13 +644,6 @@ const styles = StyleSheet.create({
     gap: space[0.5],
     padding: space[2],
   },
-  questionNavigator: {
-    gap: space[1],
-  },
-  questionNavigatorItem: {
-    minHeight: space[6],
-    minWidth: space[6],
-  },
   accessCard: {
     backgroundColor: colors.surfaceWarm,
     borderRadius: radius.card,
@@ -727,10 +661,6 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.5],
     padding: space[2],
-  },
-  questionCardActive: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
   },
   questionMeta: {
     color: colors.badgeBlueText,
@@ -751,24 +681,6 @@ const styles = StyleSheet.create({
   },
   options: {
     gap: space[1],
-  },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
   },
   actionButton: {
     minHeight: space[5] + space[0.5],

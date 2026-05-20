@@ -59,7 +59,6 @@ function buildAlternatingExamAnswers(examQuestions) {
 
 test('default mock exam chapter breakdown preserves scored counts and chapter names', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

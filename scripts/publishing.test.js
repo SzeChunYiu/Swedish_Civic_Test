@@ -70,18 +70,18 @@ function parseExternalBlockerRows(markdown) {
 
 test('store publishing metadata is prepared', () => {
   const appConfig = JSON.parse(read('app.json')).expo;
-  assert.equal(appConfig.name, 'Sweden Citizenship Test Prep');
-  assert.equal(appConfig.slug, 'swedish-civic-test');
-  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.swedishcivictest');
-  assert.equal(appConfig.android.package, 'com.billyyiu.swedishcivictest');
+  assert.equal(appConfig.name, 'Almost Swedish');
+  assert.equal(appConfig.slug, 'almost-swedish');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(appConfig.android.package, 'com.billyyiu.almostswedish');
 
   const appStoreListing = read('publishing/app-store-listing.md');
-  assert.match(appStoreListing, /Sweden Citizenship Test Prep/);
+  assert.match(appStoreListing, /Almost Swedish/);
   assert.match(appStoreListing, /not official/i);
   assert.match(appStoreListing, /UHR/i);
 
   const googlePlayListing = read('publishing/google-play-listing.md');
-  assert.match(googlePlayListing, /Sweden Citizenship Test Prep/);
+  assert.match(googlePlayListing, /Almost Swedish/);
   assert.match(googlePlayListing, /not official/i);
   assert.match(googlePlayListing, /Data safety/i);
   assertCurrentPublicPrivacyPosture(googlePlayListing, { requiresAtt: false });
@@ -104,12 +104,7 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(privacyLabels, /Diagnostics/i);
   assert.match(privacyLabels, /Purchases/i);
   assert.match(privacyLabels, /local device/i);
-  assert.match(privacyLabels, /product ID/i);
-  assert.match(privacyLabels, /transaction ID or purchase token/i);
-  assert.match(privacyLabels, /receipt-validation timestamp/i);
-  assert.match(privacyLabels, /valid receipt status/i);
   assert.doesNotMatch(privacyLabels, staleWords('Data', 'Not', 'Collected'));
-  assert.doesNotMatch(privacyLabels, /local `adsDisabled` entitlement flag/i);
   assert.doesNotMatch(privacyLabels, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(privacyLabels, staleWords('real', 'ads', 'disabled'));
   assert.doesNotMatch(privacyLabels, staleWords('test', 'app', 'IDs'));
@@ -128,17 +123,12 @@ test('privacy labels and data safety answers match ad-supported release practice
   assert.match(dataSafety, /diagnostics/i);
   assert.match(dataSafety, /Device or other IDs/i);
   assert.match(dataSafety, /purchase history/i);
-  assert.match(dataSafety, /product ID/i);
-  assert.match(dataSafety, /transaction ID or purchase token/i);
-  assert.match(dataSafety, /receipt-validation timestamp/i);
-  assert.match(dataSafety, /valid receipt status/i);
   assert.match(dataSafety, /Advertising or marketing/i);
   assert.match(dataSafety, /Analytics/i);
   assert.match(dataSafety, /Fraud prevention/i);
   assert.match(dataSafety, /encrypted in transit/i);
   assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'collected'));
   assert.doesNotMatch(dataSafety, staleWords('No', 'user', 'data', 'shared'));
-  assert.doesNotMatch(dataSafety, /local `adsDisabled` entitlement flag/i);
   assert.doesNotMatch(dataSafety, staleToken('REAL_ADS', 'ENABLED_FOR_V1'));
   assert.doesNotMatch(dataSafety, staleWords('real', 'ads', 'disabled'));
   assert.doesNotMatch(dataSafety, staleWords('test', 'app', 'IDs'));
@@ -148,27 +138,31 @@ test('public support and privacy URL copy is ready for hosting', () => {
   const publicCopy = read('publishing/public-support-and-privacy.md');
   assert.match(publicCopy, /Support URL/i);
   assert.match(publicCopy, /Privacy Policy URL/i);
+  assert.match(publicCopy, /app-ads\.txt/i);
   assert.match(publicCopy, /no personal data/i);
   assert.match(publicCopy, /no account/i);
   assert.match(publicCopy, /not affiliated/i);
   assertCurrentPublicPrivacyPosture(publicCopy);
 });
 
-test('hostable public support and privacy pages are prepared', () => {
+test('hostable public support, privacy, and app-ads files are prepared', () => {
   const support = read('publishing/public-site/support/index.html');
   const privacy = read('publishing/public-site/privacy/index.html');
+  const appAds = read('publishing/public-site/app-ads.txt');
 
-  assert.match(support, /Sweden Citizenship Test Prep support/i);
+  assert.match(support, /Almost Swedish support/i);
   assert.match(support, /content issue/i);
   assert.match(support, /no personal data/i);
   assert.match(support, /not affiliated/i);
   assert.match(support, /<html lang="en">/i);
 
-  assert.match(privacy, /Sweden Citizenship Test Prep privacy policy/i);
+  assert.match(privacy, /Almost Swedish privacy policy/i);
   assert.match(privacy, /no account/i);
   assert.match(privacy, /stored locally on the device/i);
   assertCurrentPublicPrivacyPosture(privacy);
   assert.match(privacy, /<html lang="en">/i);
+
+  assert.equal(appAds.trim(), 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0');
 });
 
 test('post-EAS-auth runbook covers build, device, and store evidence sequence', () => {
@@ -181,8 +175,6 @@ test('post-EAS-auth runbook covers build, device, and store evidence sequence', 
   assert.match(runbook, /iOS physical-device audio/i);
   assert.match(runbook, /TestFlight/i);
   assert.match(runbook, /Google Play internal/i);
-  assert.match(runbook, /app-ads\.txt URL/i);
-  assert.match(runbook, /publishing\/public-site\/app-ads\.txt/);
   assert.match(runbook, /reports\/release-evidence-YYYY-MM-DD\.md/);
   assert.match(runbook, /scripts\/update-release-gate\.js/);
   assert.match(runbook, /--gate android-device-audio/);

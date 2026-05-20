@@ -1,11 +1,10 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
-import { RouteLink } from '../../components/ui/RouteLink';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
@@ -36,8 +35,8 @@ const chapterRouteCopy: Record<AppLanguage, ChapterRouteCopy> = {
     emptyQuestions: 'Frågor för det här kapitlet har inte lagts till ännu.',
     missingTitle: 'Kapitlet hittades inte',
     practiceQuestionsTitle: (count) => `Övningsfrågor (${count})`,
-    startQuiz: 'Starta kapitelövning',
-    startQuizAccessibilityLabel: (chapterTitle) => `Starta kapitelövning för ${chapterTitle}`,
+    startQuiz: 'Starta quiz',
+    startQuizAccessibilityLabel: (chapterTitle) => `Starta quiz för ${chapterTitle}`,
   },
   en: {
     backToListAccessibilityLabel: 'Back to chapter list',
@@ -67,13 +66,14 @@ export default function ChapterScreen() {
         <Text accessibilityRole="header" style={styles.title}>
           {copy.missingTitle}
         </Text>
-        <RouteLink
+        <Link
           accessibilityLabel={copy.backToListAccessibilityLabel}
+          accessibilityRole="link"
           href="/learn"
-          variant="text"
+          style={styles.link}
         >
           {copy.backToLearn}
-        </RouteLink>
+        </Link>
       </View>
     );
   }
@@ -83,13 +83,14 @@ export default function ChapterScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <RouteLink
+      <Link
         accessibilityLabel={copy.backToListAccessibilityLabel}
+        accessibilityRole="link"
         href="/learn"
-        variant="text"
+        style={styles.link}
       >
         ← {copy.backToLearn}
-      </RouteLink>
+      </Link>
       <Text accessibilityRole="header" style={styles.title}>
         {chapterTitle}
       </Text>
@@ -180,6 +181,12 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  link: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
   },
   startQuizButton: {
     alignSelf: 'flex-start',
