@@ -1,9 +1,136 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const {
+  collectExportQuestionBankExecFileSyncCalls,
+  sourceLineNumberForIndex,
+  summarizePinnedCwdCalls,
+} = require('../scripts/content-exec-cwd-guards');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function contentTestFiles() {
+  return fs
+    .readdirSync(path.join(repoRoot, 'tests'))
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .map((fileName) => `tests/${fileName}`)
+    .sort();
+}
+
+function findMatchingParen(source, openParenIndex) {
+  let depth = 0;
+  let quote = null;
+  let templateExpressionDepth = 0;
+
+  for (let index = openParenIndex; index < source.length; index += 1) {
+    const char = source[index];
+    const previous = source[index - 1];
+
+    if (quote) {
+      if (char === '\\') {
+        index += 1;
+        continue;
+      }
+      if (quote === '`' && char === '$' && source[index + 1] === '{') {
+        templateExpressionDepth += 1;
+        index += 1;
+        continue;
+      }
+      if (quote === '`' && templateExpressionDepth > 0) {
+        if (char === '{') templateExpressionDepth += 1;
+        if (char === '}') templateExpressionDepth -= 1;
+        continue;
+      }
+      if (char === quote && previous !== '\\') quote = null;
+      continue;
+    }
+
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+      continue;
+    }
+
+    if (char === '(') depth += 1;
+    if (char === ')') {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+
+  return -1;
+}
+
+function extractSpawnSyncCalls(source) {
+  const calls = [];
+  const needle = 'spawnSync(';
+  let start = source.indexOf(needle);
+
+  while (start !== -1) {
+    const openParenIndex = start + 'spawnSync'.length;
+    const closeParenIndex = findMatchingParen(source, openParenIndex);
+    if (closeParenIndex === -1) break;
+    calls.push(source.slice(start, closeParenIndex + 1));
+    start = source.indexOf(needle, closeParenIndex + 1);
+  }
+
+  return calls;
+}
+
+function isProcessNodeEvalSpawn(callSource) {
+  return /spawnSync\(\s*process\.execPath\s*,\s*\[\s*['"]-e['"]/.test(callSource);
+}
+
+function hasRepoRootCwd(callSource) {
+  return /cwd:\s*repoRoot/.test(callSource);
+}
+
+function collectValidateContentExecFileSyncCalls(sourceText) {
+  const calls = [];
+  const callPattern =
+    /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{([\s\S]*?)\}\s*\)/g;
+  let match;
+  while ((match = callPattern.exec(sourceText)) !== null) {
+    calls.push({
+      index: match.index,
+      hasPinnedCwd: /\bcwd\s*:\s*repoRoot\b/.test(match[2]),
+    });
+  }
+  return calls;
+}
+
+test('export-question-bank exec cwd guard is source-scanned without running validate-content', () => {
+  const exportParitySource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-export-parity.test.js'),
+    'utf8',
+  );
+  const calls = collectExportQuestionBankExecFileSyncCalls(exportParitySource);
+  const summary = summarizePinnedCwdCalls(calls);
+
+  assert.deepEqual(summary, {
+    total: 1,
+    pinned: 1,
+    parity: true,
+  });
+});
+
+test('export-question-bank exec cwd guard rejects ambient cwd mutations', () => {
+  const exportParitySource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-export-parity.test.js'),
+    'utf8',
+  );
+  const mutatedSource = exportParitySource.replace(/\n\s*cwd:\s*repoRoot,\n/, '\n');
+  const calls = collectExportQuestionBankExecFileSyncCalls(mutatedSource);
+  const summary = summarizePinnedCwdCalls(calls);
+
+  assert.deepEqual(summary, {
+    total: 1,
+    pinned: 0,
+    parity: false,
+  });
+  assert.equal(sourceLineNumberForIndex(mutatedSource, calls[0].index), 9);
+});
 
 test('test:content script includes every content test file exactly once', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -11,17 +138,17 @@ test('test:content script includes every content test file exactly once', () => 
 
   assert.equal(typeof testContentScript, 'string');
 
-  const contentTestFiles = fs
-    .readdirSync(path.join(repoRoot, 'tests'))
-    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
-    .map((fileName) => `tests/${fileName}`)
-    .sort();
+  const expectedContentTestFiles = contentTestFiles();
   const wiredContentTests = testContentScript
     .split(/\s+/)
     .filter((token) => token.startsWith('tests/content-') && token.endsWith('.test.js'));
 
-  const missingTests = contentTestFiles.filter((fileName) => !wiredContentTests.includes(fileName));
-  const unknownTests = wiredContentTests.filter((fileName) => !contentTestFiles.includes(fileName));
+  const missingTests = expectedContentTestFiles.filter(
+    (fileName) => !wiredContentTests.includes(fileName),
+  );
+  const unknownTests = wiredContentTests.filter(
+    (fileName) => !expectedContentTestFiles.includes(fileName),
+  );
   const duplicateTests = wiredContentTests.filter(
     (fileName, index) => wiredContentTests.indexOf(fileName) !== index,
   );
