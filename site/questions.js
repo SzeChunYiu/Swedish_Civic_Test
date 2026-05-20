@@ -6842,232 +6842,228 @@
   },
   {
     "id": "q150",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which activities were among Sweden's first larger industries in the mid-19th century?",
-      "sv": "Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
+      "en": "Which parts are included in what is called the state?",
+      "sv": "Vilka delar ingår i det som kallas staten?"
     },
     "opts": [
       {
-        "en": "Sawmills producing timber products and steel industries",
-        "sv": "Sågverk som producerade trävaror och stålindustrier"
+        "en": "The Riksdag, the government, agencies, and courts",
+        "sv": "Riksdag, regering, myndigheter och domstolar"
       },
       {
-        "en": "Mobile phone factories and game studios",
-        "sv": "Mobiltelefonfabriker och dataspelsstudior"
+        "en": "Regions, municipalities, and county museums",
+        "sv": "Regioner, kommuner och länsmuseer"
       },
       {
-        "en": "Space industry and nuclear power plants",
-        "sv": "Rymdindustri och kärnkraftverk"
+        "en": "Parties, banks, and companies",
+        "sv": "Partier, banker och företag"
       },
       {
-        "en": "Tourist resorts and airports",
-        "sv": "Turistanläggningar och flygplatser"
+        "en": "The royal house, the church, and the EU",
+        "sv": "Kungahuset, kyrkan och EU"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
-      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
+      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
+      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Industrialisering",
-      "page": 32
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "industrialization",
-      "sawmills",
-      "steel",
-      "modern-history"
+      "state",
+      "riksdag",
+      "government",
+      "courts"
     ]
   },
   {
     "id": "q151",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "How was Sweden affected by the First World War despite being neutral?",
-      "sv": "Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
+      "en": "What is a budget bill?",
+      "sv": "Vad är en budgetproposition?"
     },
     "opts": [
       {
-        "en": "There were shortages of food and important goods, which led to protests",
-        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
+        "en": "The government's proposal to the Riksdag on state income and expenditure",
+        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
       },
       {
-        "en": "All Swedish cities were occupied by foreign armies",
-        "sv": "Alla svenska städer ockuperades av främmande arméer"
+        "en": "A municipality’s decision on who should become prime minister",
+        "sv": "Kommunens beslut om vem som ska bli statsminister"
       },
       {
-        "en": "The Riksdag was abolished for the whole war",
-        "sv": "Riksdagen avskaffades under hela kriget"
+        "en": "The courts’ plan for criminal investigations",
+        "sv": "Domstolarnas plan för brottsutredningar"
       },
       {
-        "en": "Sweden joined a military alliance the same year",
-        "sv": "Sverige gick med i en militärallians samma år"
+        "en": "The regions’ list of all bus routes",
+        "sv": "Regionernas lista över alla busslinjer"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
-      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
+      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
+      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Första världskriget",
-      "page": 34
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "first-world-war",
-      "neutrality",
-      "shortages",
-      "protests"
+      "budget-bill",
+      "government",
+      "state-budget"
     ]
   },
   {
     "id": "q152",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What idea was behind the people’s home?",
-      "sv": "Vilken idé låg bakom folkhemmet?"
+      "en": "Which agency makes decisions about parental benefit, for example?",
+      "sv": "Vilken myndighet fattar till exempel beslut om föräldrapenning?"
     },
     "opts": [
       {
-        "en": "That everyone should be able to feel security and community regardless of background",
-        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
+        "en": "The Swedish Social Insurance Agency",
+        "sv": "Försäkringskassan"
       },
       {
-        "en": "That only rural areas should receive public support",
-        "sv": "Att bara landsbygden skulle få samhällsstöd"
+        "en": "The Swedish Tax Agency",
+        "sv": "Skatteverket"
       },
       {
-        "en": "That the state should abolish all general elections",
-        "sv": "Att staten skulle avskaffa alla allmänna val"
+        "en": "The Swedish Police Authority",
+        "sv": "Polismyndigheten"
       },
       {
-        "en": "That Sweden should stop expanding welfare",
-        "sv": "Att Sverige skulle sluta bygga ut välfärden"
+        "en": "The Parliamentary Ombudsmen",
+        "sv": "Justitieombudsmannen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
-      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
+      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
+      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Modernisering och folkhem",
-      "page": 35
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "folkhemmet",
-      "per-albin-hansson",
-      "security",
-      "community"
+      "agencies",
+      "social-insurance-agency",
+      "parental-benefit"
     ]
   },
   {
     "id": "q153",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "What helped more women work outside the home during the record years?",
-      "sv": "Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
+      "en": "Who can check that other agencies act correctly?",
+      "sv": "Vilka kan kontrollera att andra myndigheter gör rätt?"
     },
     "opts": [
       {
-        "en": "Childcare was expanded",
-        "sv": "Barnomsorgen byggdes ut"
+        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
+        "sv": "Justitieombudsmannen och Justitiekanslern"
       },
       {
-        "en": "Women were forbidden to study",
-        "sv": "Kvinnor förbjöds att utbilda sig"
+        "en": "Regional councils and county museums",
+        "sv": "Regionfullmäktige och länsmuseerna"
       },
       {
-        "en": "Women's voting rights were removed",
-        "sv": "Rösträtten för kvinnor togs bort"
+        "en": "The crown princess and municipal committees",
+        "sv": "Kronprinsessan och kommunala nämnder"
       },
       {
-        "en": "All households had to run farms",
-        "sv": "Alla hushåll måste driva jordbruk"
+        "en": "Banks and employers",
+        "sv": "Banker och arbetsgivare"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
-      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
+      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
+      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Jämställdhet och kulturförändringar",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
-      "gender-equality",
-      "daycare",
-      "record-years",
-      "women-work"
+      "agency-oversight",
+      "parliamentary-ombudsmen",
+      "chancellor-of-justice"
     ]
   },
   {
     "id": "q154",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Why did lifelong learning become more important as the information society emerged?",
-      "sv": "Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
+      "en": "What do municipal committees do?",
+      "sv": "Vad gör kommunala nämnder?"
     },
     "opts": [
       {
-        "en": "Knowledge quickly became outdated as technology developed faster",
-        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
+        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
+        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
       },
       {
-        "en": "All education ended after compulsory school",
-        "sv": "All utbildning avslutades efter grundskolan"
+        "en": "They choose the Speaker of the Riksdag",
+        "sv": "De väljer riksdagens talman"
       },
       {
-        "en": "Digital technology left work and studies unchanged",
-        "sv": "Digital teknik gjorde arbete och studier oförändrade"
+        "en": "They lead Sweden’s foreign policy",
+        "sv": "De leder Sveriges utrikespolitik"
       },
       {
-        "en": "Adults lost the right to study",
-        "sv": "Vuxna förlorade rätten att studera"
+        "en": "They supervise all courts",
+        "sv": "De kontrollerar alla domstolar"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
-      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
+      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
+      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Informationssamhället och globalisering",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Kommunernas ansvar",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "information-society",
-      "lifelong-learning",
-      "adult-education",
-      "technology"
+      "municipal-committees",
+      "municipal-council",
+      "local-government"
     ]
   },
   {
@@ -33562,60 +33558,60 @@
   },
   {
     "id": "q751",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which activities were among Sweden's first larger industries in the mid-19th century?",
-      "sv": "Vilket svar stämmer bäst? Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
+      "en": "Which answer best matches? Which parts are included in what is called the state?",
+      "sv": "Vilket svar stämmer bäst? Vilka delar ingår i det som kallas staten?"
     },
     "opts": [
       {
-        "en": "Sawmills producing timber products and steel industries",
-        "sv": "Sågverk som producerade trävaror och stålindustrier"
+        "en": "The Riksdag, the government, agencies, and courts",
+        "sv": "Riksdag, regering, myndigheter och domstolar"
       },
       {
-        "en": "Mobile phone factories and game studios",
-        "sv": "Mobiltelefonfabriker och dataspelsstudior"
+        "en": "Regions, municipalities, and county museums",
+        "sv": "Regioner, kommuner och länsmuseer"
       },
       {
-        "en": "Space industry and nuclear power plants",
-        "sv": "Rymdindustri och kärnkraftverk"
+        "en": "Parties, banks, and companies",
+        "sv": "Partier, banker och företag"
       },
       {
-        "en": "Tourist resorts and airports",
-        "sv": "Turistanläggningar och flygplatser"
+        "en": "The royal house, the church, and the EU",
+        "sv": "Kungahuset, kyrkan och EU"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
-      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
+      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
+      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Industrialisering",
-      "page": 32
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "industrialization",
-      "sawmills",
-      "steel",
-      "modern-history",
+      "state",
+      "riksdag",
+      "government",
+      "courts",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q752",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Sawmills producing timber products and steel industries.",
-      "sv": "Sågverk som producerade trävaror och stålindustrier."
+      "en": "The Riksdag, the government, agencies, and courts.",
+      "sv": "Riksdag, regering, myndigheter och domstolar."
     },
     "opts": [
       {
@@ -33629,33 +33625,33 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
-      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
+      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
+      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Industrialisering",
-      "page": 32
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "industrialization",
-      "sawmills",
-      "steel",
-      "modern-history",
+      "state",
+      "riksdag",
+      "government",
+      "courts",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q753",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Mobile phone factories and game studios.",
-      "sv": "Mobiltelefonfabriker och dataspelsstudior."
+      "en": "Regions, municipalities, and county museums.",
+      "sv": "Regioner, kommuner och länsmuseer."
     },
     "opts": [
       {
@@ -33669,129 +33665,128 @@
     ],
     "answer": 1,
     "why": {
-      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
-      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
+      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
+      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Industrialisering",
-      "page": 32
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "industrialization",
-      "sawmills",
-      "steel",
-      "modern-history",
+      "state",
+      "riksdag",
+      "government",
+      "courts",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q754",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which activities were among Sweden's first larger industries in the mid-19th century?",
-      "sv": "Välj rätt alternativ: Vilka verksamheter hörde till Sveriges första större industrier i mitten av 1800-talet?"
+      "en": "Choose the correct option: Which parts are included in what is called the state?",
+      "sv": "Välj rätt alternativ: Vilka delar ingår i det som kallas staten?"
     },
     "opts": [
       {
-        "en": "Sawmills producing timber products and steel industries",
-        "sv": "Sågverk som producerade trävaror och stålindustrier"
+        "en": "The Riksdag, the government, agencies, and courts",
+        "sv": "Riksdag, regering, myndigheter och domstolar"
       },
       {
-        "en": "Mobile phone factories and game studios",
-        "sv": "Mobiltelefonfabriker och dataspelsstudior"
+        "en": "Regions, municipalities, and county museums",
+        "sv": "Regioner, kommuner och länsmuseer"
       },
       {
-        "en": "Space industry and nuclear power plants",
-        "sv": "Rymdindustri och kärnkraftverk"
+        "en": "Parties, banks, and companies",
+        "sv": "Partier, banker och företag"
       },
       {
-        "en": "Tourist resorts and airports",
-        "sv": "Turistanläggningar och flygplatser"
+        "en": "The royal house, the church, and the EU",
+        "sv": "Kungahuset, kyrkan och EU"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When industrialization gained speed in Sweden in the mid-19th century, sawmills producing timber products and steel industries were important early industries. Mobile phones, games, nuclear power, and modern airports belong to later technological and economic development.",
-      "sv": "När industrialiseringen tog fart i Sverige i mitten av 1800-talet var sågverk som producerade trävaror och stålindustrier viktiga tidiga industrier. Mobiltelefoner, dataspel, kärnkraft och moderna flygplatser hör till senare teknisk och ekonomisk utveckling."
+      "en": "The state consists of the Riksdag, the government, agencies, and courts. Regions and municipalities have their own political responsibilities, while parties, companies, the church, and the EU do not together make up the state.",
+      "sv": "Staten består av riksdag, regering, myndigheter och domstolar. Regioner och kommuner har egna politiska ansvar, medan partier, företag, kyrkan och EU inte tillsammans utgör staten."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Industrialisering",
-      "page": 32
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "industrialization",
-      "sawmills",
-      "steel",
-      "modern-history",
+      "state",
+      "riksdag",
+      "government",
+      "courts",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q755",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? How was Sweden affected by the First World War despite being neutral?",
-      "sv": "Vilket svar stämmer bäst? Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
+      "en": "Which answer best matches? What is a budget bill?",
+      "sv": "Vilket svar stämmer bäst? Vad är en budgetproposition?"
     },
     "opts": [
       {
-        "en": "There were shortages of food and important goods, which led to protests",
-        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
+        "en": "The government's proposal to the Riksdag on state income and expenditure",
+        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
       },
       {
-        "en": "All Swedish cities were occupied by foreign armies",
-        "sv": "Alla svenska städer ockuperades av främmande arméer"
+        "en": "A municipality’s decision on who should become prime minister",
+        "sv": "Kommunens beslut om vem som ska bli statsminister"
       },
       {
-        "en": "The Riksdag was abolished for the whole war",
-        "sv": "Riksdagen avskaffades under hela kriget"
+        "en": "The courts’ plan for criminal investigations",
+        "sv": "Domstolarnas plan för brottsutredningar"
       },
       {
-        "en": "Sweden joined a military alliance the same year",
-        "sv": "Sverige gick med i en militärallians samma år"
+        "en": "The regions’ list of all bus routes",
+        "sv": "Regionernas lista över alla busslinjer"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
-      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
+      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
+      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Första världskriget",
-      "page": 34
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "first-world-war",
-      "neutrality",
-      "shortages",
-      "protests",
+      "budget-bill",
+      "government",
+      "state-budget",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q756",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "There were shortages of food and important goods, which led to protests.",
-      "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester."
+      "en": "The government's proposal to the Riksdag on state income and expenditure.",
+      "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter."
     },
     "opts": [
       {
@@ -33805,33 +33800,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
-      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
+      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
+      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Första världskriget",
-      "page": 34
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "first-world-war",
-      "neutrality",
-      "shortages",
-      "protests",
+      "budget-bill",
+      "government",
+      "state-budget",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q757",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "All Swedish cities were occupied by foreign armies.",
-      "sv": "Alla svenska städer ockuperades av främmande arméer."
+      "en": "A municipality’s decision on who should become prime minister.",
+      "sv": "Kommunens beslut om vem som ska bli statsminister."
     },
     "opts": [
       {
@@ -33845,129 +33839,126 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
-      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
+      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
+      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Första världskriget",
-      "page": 34
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "first-world-war",
-      "neutrality",
-      "shortages",
-      "protests",
+      "budget-bill",
+      "government",
+      "state-budget",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q758",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: How was Sweden affected by the First World War despite being neutral?",
-      "sv": "Välj rätt alternativ: Hur påverkades Sverige av första världskriget trots att landet var neutralt?"
+      "en": "Choose the correct option: What is a budget bill?",
+      "sv": "Välj rätt alternativ: Vad är en budgetproposition?"
     },
     "opts": [
       {
-        "en": "There were shortages of food and important goods, which led to protests",
-        "sv": "Det blev brist på mat och viktiga varor, vilket ledde till protester"
+        "en": "The government's proposal to the Riksdag on state income and expenditure",
+        "sv": "Regeringens förslag till riksdagen om statens inkomster och utgifter"
       },
       {
-        "en": "All Swedish cities were occupied by foreign armies",
-        "sv": "Alla svenska städer ockuperades av främmande arméer"
+        "en": "A municipality’s decision on who should become prime minister",
+        "sv": "Kommunens beslut om vem som ska bli statsminister"
       },
       {
-        "en": "The Riksdag was abolished for the whole war",
-        "sv": "Riksdagen avskaffades under hela kriget"
+        "en": "The courts’ plan for criminal investigations",
+        "sv": "Domstolarnas plan för brottsutredningar"
       },
       {
-        "en": "Sweden joined a military alliance the same year",
-        "sv": "Sverige gick med i en militärallians samma år"
+        "en": "The regions’ list of all bus routes",
+        "sv": "Regionernas lista över alla busslinjer"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "Sweden did not take part militarily in the First World War, but the war caused shortages of food and other important goods. The shortages created unrest and protests, while occupation, an abolished Riksdag, and joining a military alliance do not describe Sweden’s role during the war.",
-      "sv": "Sverige deltog inte militärt i första världskriget, men kriget gav brist på mat och andra viktiga varor. Bristen skapade oro och protester, medan ockupation, avskaffad riksdag och militärallians inte beskriver Sveriges roll under kriget."
+      "en": "Every autumn, the government submits a proposal to the Riksdag on state income and expenditure. The budget bill shows the policy the government wants to pursue and what the state should prioritize.",
+      "sv": "Varje höst lämnar regeringen ett förslag till riksdagen om statens inkomster och utgifter. Budgetpropositionen visar vilken politik regeringen vill föra och vad staten ska prioritera."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Första världskriget",
-      "page": 34
+      "chapter": "Så här styrs Sverige",
+      "section": "Staten",
+      "page": 12
     },
     "difficulty": "medium",
     "tags": [
-      "first-world-war",
-      "neutrality",
-      "shortages",
-      "protests",
+      "budget-bill",
+      "government",
+      "state-budget",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q759",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What idea was behind the people’s home?",
-      "sv": "Vilket svar stämmer bäst? Vilken idé låg bakom folkhemmet?"
+      "en": "Which answer best matches? Which agency makes decisions about parental benefit, for example?",
+      "sv": "Vilket svar stämmer bäst? Vilken myndighet fattar till exempel beslut om föräldrapenning?"
     },
     "opts": [
       {
-        "en": "That everyone should be able to feel security and community regardless of background",
-        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
+        "en": "The Swedish Social Insurance Agency",
+        "sv": "Försäkringskassan"
       },
       {
-        "en": "That only rural areas should receive public support",
-        "sv": "Att bara landsbygden skulle få samhällsstöd"
+        "en": "The Swedish Tax Agency",
+        "sv": "Skatteverket"
       },
       {
-        "en": "That the state should abolish all general elections",
-        "sv": "Att staten skulle avskaffa alla allmänna val"
+        "en": "The Swedish Police Authority",
+        "sv": "Polismyndigheten"
       },
       {
-        "en": "That Sweden should stop expanding welfare",
-        "sv": "Att Sverige skulle sluta bygga ut välfärden"
+        "en": "The Parliamentary Ombudsmen",
+        "sv": "Justitieombudsmannen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
-      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
+      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
+      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Modernisering och folkhem",
-      "page": 35
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "folkhemmet",
-      "per-albin-hansson",
-      "security",
-      "community",
+      "agencies",
+      "social-insurance-agency",
+      "parental-benefit",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q760",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "That everyone should be able to feel security and community regardless of background.",
-      "sv": "Alla skulle kunna känna trygghet och gemenskap oavsett bakgrund."
+      "en": "The Swedish Social Insurance Agency.",
+      "sv": "Försäkringskassan."
     },
     "opts": [
       {
@@ -33981,33 +33972,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
-      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
+      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
+      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Modernisering och folkhem",
-      "page": 35
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "folkhemmet",
-      "per-albin-hansson",
-      "security",
-      "community",
+      "agencies",
+      "social-insurance-agency",
+      "parental-benefit",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q761",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "That only rural areas should receive public support.",
-      "sv": "Bara landsbygden skulle få samhällsstöd."
+      "en": "The Swedish Tax Agency.",
+      "sv": "Skatteverket."
     },
     "opts": [
       {
@@ -34021,129 +34011,126 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
-      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
+      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
+      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Modernisering och folkhem",
-      "page": 35
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "folkhemmet",
-      "per-albin-hansson",
-      "security",
-      "community",
+      "agencies",
+      "social-insurance-agency",
+      "parental-benefit",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q762",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What idea was behind the people’s home?",
-      "sv": "Välj rätt alternativ: Vilken idé låg bakom folkhemmet?"
+      "en": "Choose the correct option: Which agency makes decisions about parental benefit, for example?",
+      "sv": "Välj rätt alternativ: Vilken myndighet fattar till exempel beslut om föräldrapenning?"
     },
     "opts": [
       {
-        "en": "That everyone should be able to feel security and community regardless of background",
-        "sv": "Att alla skulle kunna känna trygghet och gemenskap oavsett bakgrund"
+        "en": "The Swedish Social Insurance Agency",
+        "sv": "Försäkringskassan"
       },
       {
-        "en": "That only rural areas should receive public support",
-        "sv": "Att bara landsbygden skulle få samhällsstöd"
+        "en": "The Swedish Tax Agency",
+        "sv": "Skatteverket"
       },
       {
-        "en": "That the state should abolish all general elections",
-        "sv": "Att staten skulle avskaffa alla allmänna val"
+        "en": "The Swedish Police Authority",
+        "sv": "Polismyndigheten"
       },
       {
-        "en": "That Sweden should stop expanding welfare",
-        "sv": "Att Sverige skulle sluta bygga ut välfärden"
+        "en": "The Parliamentary Ombudsmen",
+        "sv": "Justitieombudsmannen"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "The people’s home was an idea of a society where people could feel security and community regardless of background. It was not about supporting only rural areas, abolishing elections, or stopping welfare expansion.",
-      "sv": "Folkhemmet var en idé om ett samhälle där människor skulle kunna känna trygghet och gemenskap oavsett bakgrund. Det handlade inte om att bara stödja landsbygden, avskaffa val eller stoppa välfärdens utbyggnad."
+      "en": "The Swedish Social Insurance Agency is an example of a government agency and makes decisions about parental benefit. The Swedish Tax Agency, the Swedish Police Authority, and the Parliamentary Ombudsmen have other tasks.",
+      "sv": "Försäkringskassan är ett exempel på en statlig myndighet och fattar beslut om föräldrapenning. Skatteverket, Polismyndigheten och Justitieombudsmannen har andra uppgifter."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Modernisering och folkhem",
-      "page": 35
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "folkhemmet",
-      "per-albin-hansson",
-      "security",
-      "community",
+      "agencies",
+      "social-insurance-agency",
+      "parental-benefit",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q763",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What helped more women work outside the home during the record years?",
-      "sv": "Vilket svar stämmer bäst? Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
+      "en": "Which answer best matches? Who can check that other agencies act correctly?",
+      "sv": "Vilket svar stämmer bäst? Vilka kan kontrollera att andra myndigheter gör rätt?"
     },
     "opts": [
       {
-        "en": "Childcare was expanded",
-        "sv": "Barnomsorgen byggdes ut"
+        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
+        "sv": "Justitieombudsmannen och Justitiekanslern"
       },
       {
-        "en": "Women were forbidden to study",
-        "sv": "Kvinnor förbjöds att utbilda sig"
+        "en": "Regional councils and county museums",
+        "sv": "Regionfullmäktige och länsmuseerna"
       },
       {
-        "en": "Women's voting rights were removed",
-        "sv": "Rösträtten för kvinnor togs bort"
+        "en": "The crown princess and municipal committees",
+        "sv": "Kronprinsessan och kommunala nämnder"
       },
       {
-        "en": "All households had to run farms",
-        "sv": "Alla hushåll måste driva jordbruk"
+        "en": "Banks and employers",
+        "sv": "Banker och arbetsgivare"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
-      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
+      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
+      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Jämställdhet och kulturförändringar",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
-      "gender-equality",
-      "daycare",
-      "record-years",
-      "women-work",
+      "agency-oversight",
+      "parliamentary-ombudsmen",
+      "chancellor-of-justice",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q764",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Childcare was expanded.",
-      "sv": "Barnomsorgen byggdes ut."
+      "en": "The Parliamentary Ombudsmen and the Chancellor of Justice.",
+      "sv": "Justitieombudsmannen och Justitiekanslern."
     },
     "opts": [
       {
@@ -34157,33 +34144,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
-      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
+      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
+      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Jämställdhet och kulturförändringar",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
-      "gender-equality",
-      "daycare",
-      "record-years",
-      "women-work",
+      "agency-oversight",
+      "parliamentary-ombudsmen",
+      "chancellor-of-justice",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q765",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "Women were forbidden to study.",
-      "sv": "Kvinnor förbjöds att utbilda sig."
+      "en": "Regional councils and county museums.",
+      "sv": "Regionfullmäktige och länsmuseerna."
     },
     "opts": [
       {
@@ -34197,129 +34183,126 @@
     ],
     "answer": 1,
     "why": {
-      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
-      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
+      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
+      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Jämställdhet och kulturförändringar",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
-      "gender-equality",
-      "daycare",
-      "record-years",
-      "women-work",
+      "agency-oversight",
+      "parliamentary-ombudsmen",
+      "chancellor-of-justice",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q766",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What helped more women work outside the home during the record years?",
-      "sv": "Välj rätt alternativ: Vad bidrog till att fler kvinnor kunde arbeta utanför hemmet under rekordåren?"
+      "en": "Choose the correct option: Who can check that other agencies act correctly?",
+      "sv": "Välj rätt alternativ: Vilka kan kontrollera att andra myndigheter gör rätt?"
     },
     "opts": [
       {
-        "en": "Childcare was expanded",
-        "sv": "Barnomsorgen byggdes ut"
+        "en": "The Parliamentary Ombudsmen and the Chancellor of Justice",
+        "sv": "Justitieombudsmannen och Justitiekanslern"
       },
       {
-        "en": "Women were forbidden to study",
-        "sv": "Kvinnor förbjöds att utbilda sig"
+        "en": "Regional councils and county museums",
+        "sv": "Regionfullmäktige och länsmuseerna"
       },
       {
-        "en": "Women's voting rights were removed",
-        "sv": "Rösträtten för kvinnor togs bort"
+        "en": "The crown princess and municipal committees",
+        "sv": "Kronprinsessan och kommunala nämnder"
       },
       {
-        "en": "All households had to run farms",
-        "sv": "Alla hushåll måste driva jordbruk"
+        "en": "Banks and employers",
+        "sv": "Banker och arbetsgivare"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "When childcare was expanded, it became easier for more women to work outside the home. Bans on education, removed voting rights, and requirements to farm would instead limit people’s opportunities.",
-      "sv": "När barnomsorgen byggdes ut blev det lättare för fler kvinnor att arbeta utanför hemmet. Förbud mot utbildning, borttagen rösträtt och krav på jordbruk skulle i stället begränsa människors möjligheter."
+      "en": "Agencies must follow the law and the government’s instructions. Special agencies, including the Parliamentary Ombudsmen and the Chancellor of Justice, check that other agencies act correctly.",
+      "sv": "Myndigheter måste följa lagen och regeringens instruktioner. Särskilda myndigheter, bland annat Justitieombudsmannen och Justitiekanslern, kontrollerar att andra myndigheter gör rätt."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Jämställdhet och kulturförändringar",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Myndigheter",
+      "page": 13
     },
-    "difficulty": "medium",
+    "difficulty": "hard",
     "tags": [
-      "gender-equality",
-      "daycare",
-      "record-years",
-      "women-work",
+      "agency-oversight",
+      "parliamentary-ombudsmen",
+      "chancellor-of-justice",
       "published-variant",
       "judgement"
     ]
   },
   {
     "id": "q767",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Why did lifelong learning become more important as the information society emerged?",
-      "sv": "Vilket svar stämmer bäst? Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
+      "en": "Which answer best matches? What do municipal committees do?",
+      "sv": "Vilket svar stämmer bäst? Vad gör kommunala nämnder?"
     },
     "opts": [
       {
-        "en": "Knowledge quickly became outdated as technology developed faster",
-        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
+        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
+        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
       },
       {
-        "en": "All education ended after compulsory school",
-        "sv": "All utbildning avslutades efter grundskolan"
+        "en": "They choose the Speaker of the Riksdag",
+        "sv": "De väljer riksdagens talman"
       },
       {
-        "en": "Digital technology left work and studies unchanged",
-        "sv": "Digital teknik gjorde arbete och studier oförändrade"
+        "en": "They lead Sweden’s foreign policy",
+        "sv": "De leder Sveriges utrikespolitik"
       },
       {
-        "en": "Adults lost the right to study",
-        "sv": "Vuxna förlorade rätten att studera"
+        "en": "They supervise all courts",
+        "sv": "De kontrollerar alla domstolar"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
-      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
+      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
+      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Informationssamhället och globalisering",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Kommunernas ansvar",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "information-society",
-      "lifelong-learning",
-      "adult-education",
-      "technology",
+      "municipal-committees",
+      "municipal-council",
+      "local-government",
       "published-variant",
       "section-practice"
     ]
   },
   {
     "id": "q768",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "One reason is knowledge quickly became outdated as technology developed faster.",
-      "sv": "En anledning är att Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare."
+      "en": "They are responsible for different areas in the municipality and are chosen by the municipal council.",
+      "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige."
     },
     "opts": [
       {
@@ -34333,33 +34316,32 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
-      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
+      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
+      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Informationssamhället och globalisering",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Kommunernas ansvar",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "information-society",
-      "lifelong-learning",
-      "adult-education",
-      "technology",
+      "municipal-committees",
+      "municipal-council",
+      "local-government",
       "published-variant",
       "true-false"
     ]
   },
   {
     "id": "q769",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "true_false",
     "q": {
-      "en": "One reason is all education ended after compulsory school.",
-      "sv": "En anledning är all utbildning avslutades efter grundskolan."
+      "en": "They choose the Speaker of the Riksdag.",
+      "sv": "De väljer riksdagens talman."
     },
     "opts": [
       {
@@ -34373,69 +34355,67 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
-      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
+      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
+      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Informationssamhället och globalisering",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Kommunernas ansvar",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "information-society",
-      "lifelong-learning",
-      "adult-education",
-      "technology",
+      "municipal-committees",
+      "municipal-council",
+      "local-government",
       "published-variant",
       "false-statement"
     ]
   },
   {
     "id": "q770",
-    "chapterId": 10,
-    "chapter": "Ch. 10 · Sweden's modern history",
+    "chapterId": 3,
+    "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Why did lifelong learning become more important as the information society emerged?",
-      "sv": "Välj rätt alternativ: Varför blev livslångt lärande viktigare när informationssamhället växte fram?"
+      "en": "Choose the correct option: What do municipal committees do?",
+      "sv": "Välj rätt alternativ: Vad gör kommunala nämnder?"
     },
     "opts": [
       {
-        "en": "Knowledge quickly became outdated as technology developed faster",
-        "sv": "Kunskap blev snabbt föråldrad när tekniken utvecklades snabbare"
+        "en": "They are responsible for different areas in the municipality and are chosen by the municipal council",
+        "sv": "De ansvarar för olika områden i kommunen och väljs av kommunfullmäktige"
       },
       {
-        "en": "All education ended after compulsory school",
-        "sv": "All utbildning avslutades efter grundskolan"
+        "en": "They choose the Speaker of the Riksdag",
+        "sv": "De väljer riksdagens talman"
       },
       {
-        "en": "Digital technology left work and studies unchanged",
-        "sv": "Digital teknik gjorde arbete och studier oförändrade"
+        "en": "They lead Sweden’s foreign policy",
+        "sv": "De leder Sveriges utrikespolitik"
       },
       {
-        "en": "Adults lost the right to study",
-        "sv": "Vuxna förlorade rätten att studera"
+        "en": "They supervise all courts",
+        "sv": "De kontrollerar alla domstolar"
       }
     ],
     "answer": 0,
     "why": {
-      "en": "In the information society, technology and working life changed faster, and knowledge could quickly become outdated. That made lifelong learning and adult education more important, not less.",
-      "sv": "I informationssamhället förändrades teknik och arbetsliv snabbare, och kunskap kunde snabbt bli föråldrad. Därför blev livslångt lärande och vuxenutbildning viktigare, inte mindre."
+      "en": "Municipalities have committees responsible for different areas. For example, a culture committee may be responsible for libraries and an education committee for schools; their members are chosen by the municipal council.",
+      "sv": "I kommuner finns nämnder som ansvarar för olika områden. Kulturnämnden kan till exempel ansvara för bibliotek och utbildningsnämnden för skolor; ledamöterna väljs av kommunfullmäktige."
     },
     "source": {
       "title": "Sverige i fokus",
-      "chapter": "Sveriges moderna historia",
-      "section": "Informationssamhället och globalisering",
-      "page": 37
+      "chapter": "Så här styrs Sverige",
+      "section": "Kommunernas ansvar",
+      "page": 13
     },
     "difficulty": "medium",
     "tags": [
-      "information-society",
-      "lifelong-learning",
-      "adult-education",
-      "technology",
+      "municipal-committees",
+      "municipal-council",
+      "local-government",
       "published-variant",
       "judgement"
     ]
@@ -34480,7 +34460,7 @@
       "en": "How political power is divided between the state, regions, and municipalities, plus Sweden's form of government.",
       "sv": "Hur politisk makt delas mellan stat, regioner och kommuner samt Sveriges statsskick."
     },
-    "questionCount": 55
+    "questionCount": 80
   },
   {
     "id": 4,
@@ -34571,7 +34551,7 @@
       "en": "From agricultural society to industrial society, democratization, the people's home, and globalization.",
       "sv": "Från jordbrukssamhälle till industrisamhälle, demokratisering, folkhemmet och globalisering."
     },
-    "questionCount": 75
+    "questionCount": 50
   },
   {
     "id": 11,
