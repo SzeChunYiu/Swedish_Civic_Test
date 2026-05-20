@@ -1,15 +1,16 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
-import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
+import {
+  getAdUnit,
+  shouldShowAd,
+  WEB_AD_FALLBACK_CONSENT_DECISION,
+} from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
-
-// Web cards are non-SDK placeholders; this lets real-unit web exports preview the slot.
-const WEB_FALLBACK_CONSENT_DECISION = { adServingAllowed: true } as const;
 
 export function AdBanner({
   placement = 'home_banner',
@@ -24,7 +25,7 @@ export function AdBanner({
     useResolvedAdEntitlements(entitlements);
   const shouldRenderFallback =
     shouldShowAd(placement, resolvedEntitlements) ||
-    shouldShowAd(placement, resolvedEntitlements, WEB_FALLBACK_CONSENT_DECISION);
+    shouldShowAd(placement, resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION);
 
   if (!entitlementsReady || !shouldRenderFallback) return null;
 

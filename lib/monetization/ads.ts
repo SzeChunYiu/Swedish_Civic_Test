@@ -2,9 +2,12 @@ import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types
 import type { AdConsentDecision } from './consent';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
-export type AdRuntimePlatform = 'android' | 'ios';
+export type AdRuntimePlatform = 'ios' | 'android';
 type AdUnitEnvKeys = Record<AdPlacement, Record<AdRuntimePlatform, string>>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
+
+// Web placeholders do not initialize the native ad SDK; this keeps real-unit web exports previewable.
+export const WEB_AD_FALLBACK_CONSENT_DECISION = { adServingAllowed: true } as const;
 
 export const LAUNCH_POPUP_AD_SUPPRESSED_ROUTES = [
   '/exam',
@@ -128,17 +131,28 @@ export function getAdUnit(placement: AdPlacement): AdUnitConfig | undefined {
   return getConfiguredAdUnits().find((unit) => unit.placement === placement);
 }
 
+export function isAdPlacementAvailableOnPlatform(
+  placement: AdPlacement,
+  platform?: AdRuntimePlatform | 'web' | string,
+): boolean {
+  const unit = getAdUnit(placement);
+  if (!unit?.enabled) return false;
+  if (platform === 'ios') return Boolean(unit.iosUnitId);
+  if (platform === 'android') return Boolean(unit.androidUnitId);
+  return Boolean(unit.androidUnitId || unit.iosUnitId);
+}
+
 export function shouldShowAd(
   placement: SafeAdPlacement,
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   consentDecision?: AdConsentGate,
+  platform?: AdRuntimePlatform | 'web' | string,
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
   if (entitlements.adsDisabled) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
-  const unit = getAdUnit(placement);
-  return Boolean(unit?.enabled);
+  return isAdPlacementAvailableOnPlatform(placement, platform);
 }
 
 export function shouldShowLaunchPopupAd({

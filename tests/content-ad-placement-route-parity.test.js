@@ -44,7 +44,11 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(practiceSource, /getPracticeInterstitialShowKey\(question\.id, shuffleSessionId\)/);
   assert.doesNotMatch(practiceSource, /showKey=\{[\s\S]{0,160}selectedOptionId/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
-  assert.match(nativeAdCardSource, /shouldShowAd\('results_native', resolvedEntitlements\)/);
+  assert.match(
+    nativeAdCardSource,
+    /shouldShowAd\('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION\)/,
+  );
+  assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
   assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
   assert.match(nativeAdCardNativeSource, /NativeAdView/);
@@ -167,7 +171,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        "!entitlementsReady || !shouldShowAd('results_native', resolvedEntitlements)",
+        /!entitlementsReady\\s*\\|\\|\\s*!shouldShowAd\\(\\s*'results_native'\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)/,
         "!entitlementsReady",
       );
   }
