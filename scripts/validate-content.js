@@ -63,6 +63,7 @@ const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
+const EXPECTED_MIN_GLOSSARY_TERMS = 30;
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
@@ -474,6 +475,76 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
+];
+const EXPECTED_SEARCH_ROUTE_COPY_LABELS = {
+  sv: [
+    'Begrepp och sök',
+    'Sök i ordlistan',
+    'Hitta centrala samhällsord snabbt och gå vidare till rätt kapitel när du vill läsa mer.',
+    'Sök begrepp',
+    'Sök bland samhällsbegrepp på svenska eller engelska.',
+    'Sök begrepp, till exempel riksdag',
+    '${count} begrepp',
+    'Ordlisteträffar',
+    'Varje träff pekar till kapitlet där begreppet hör hemma i UHR-materialet.',
+    'Begrepp',
+    'Kapitel',
+    'Inga begrepp hittades',
+    'Prova ett annat samhällsbegrepp eller bläddra via kapitel.',
+    'Bläddra bland kapitel',
+    'Tillbaka hem',
+  ],
+  en: [
+    'Terms and search',
+    'Search the glossary',
+    'Find core civic terms quickly, then open the right chapter when you want context.',
+    'Search glossary terms',
+    'Search civic terms in Swedish or English.',
+    'Search terms, for example Riksdag',
+    '${count} terms',
+    'Glossary results',
+    'Each match points to the chapter where the term belongs in the UHR material.',
+    'Term',
+    'Chapter',
+    'No terms found',
+    'Try another civic term or browse by chapter.',
+    'Browse chapters',
+    'Back home',
+  ],
+};
+const EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'search route must import AppLanguage from settings'],
+  ['type SearchCopy = {', 'search route must define a typed copy contract'],
+  [
+    'const searchCopy: Record<AppLanguage, SearchCopy> = {',
+    'search route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'search route must read language from settings store',
+  ],
+  ['const copy = searchCopy[language];', 'search route must select copy from settings language'],
+  ['searchGlossary(query, language, 8)', 'search route must query glossary results by language'],
+  ['getGlossaryChapterLabel(term, language)', 'search route must show localized chapter context'],
+  ['accessibilityLabel={copy.inputAccessibilityLabel}', 'search input must expose localized label'],
+  ['accessibilityHint={copy.inputAccessibilityHint}', 'search input must expose localized hint'],
+  ['placeholder={copy.placeholder}', 'search input must render localized placeholder'],
+  ['{copy.termBadge}', 'search results must label glossary terms'],
+  ['{copy.sourcePrefix}: {chapterLabel}', 'search results must show chapter context'],
+  [
+    'accessibilityLabel={copy.resultAccessibilityLabel(primaryTerm, chapterLabel)}',
+    'search result links must expose localized accessibility labels',
+  ],
+  [
+    'accessibilityLabel={copy.browseChaptersAccessibilityLabel}',
+    'search browse link must expose localized accessibility copy',
+  ],
+  ['{copy.browseChapters}', 'search browse link must render localized copy'],
+  [
+    'accessibilityLabel={copy.backHomeAccessibilityLabel}',
+    'search back-home link must expose localized accessibility copy',
+  ],
+  ['{copy.backHome}', 'search back-home link must render localized copy'],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
@@ -6159,6 +6230,8 @@ let examChapterBreakdownParityValidated = false;
 let examGeneratorTypeAliasesValidated = 0;
 let examGeneratorTypeInterfacesValidated = 0;
 let examGeneratorTypeSchemaParityValidated = false;
+let glossaryMinimumTermsValidated = false;
+let glossaryChapterLinksValidated = 0;
 let glossaryTermsValidated = 0;
 let glossaryTermExactSchemaKeysValidated = 0;
 let uxBenchmarksValidated = 0;
@@ -6172,6 +6245,8 @@ let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
+let searchRouteCopyLabelsValidated = 0;
+let searchRouteCopyParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
 let settingsStoreFieldsValidated = 0;
@@ -7812,6 +7887,58 @@ function validateLearnRouteLinkCopyParity() {
   );
   if (valid && learnRouteLinkCopyLabelsValidated === expectedLabelCount) {
     learnRouteLinkCopyParityValidated = true;
+  }
+}
+
+function validateSearchRouteCopyParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SEARCH_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!searchRoute.includes(snippet)) reject(message);
+  });
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_SEARCH_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`search route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!searchRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`search route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`search route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) searchRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  const expectedLabelCount = Object.values(EXPECTED_SEARCH_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (valid && searchRouteCopyLabelsValidated === expectedLabelCount) {
+    searchRouteCopyParityValidated = true;
   }
 }
 
@@ -11324,6 +11451,13 @@ function validateGlossaryTerms() {
   const seenTermsSv = new Set();
   const seenTermsEn = new Set();
   const chapterIds = new Set(Array.isArray(chapters) ? chapters.map((chapter) => chapter.id) : []);
+  if (glossaryTerms.length >= EXPECTED_MIN_GLOSSARY_TERMS) {
+    glossaryMinimumTermsValidated = true;
+  } else {
+    fail(
+      `glossaryTerms must include at least ${EXPECTED_MIN_GLOSSARY_TERMS} UHR-backed terms; found ${glossaryTerms.length}`,
+    );
+  }
 
   glossaryTerms.forEach((term, index) => {
     const label = hasText(term?.id) ? term.id : `glossary term[${index}]`;
@@ -11381,7 +11515,11 @@ function validateGlossaryTerms() {
           reject(`${label} chapterId must be trimmed and single-spaced`);
         } else if (chapterIds.size && !chapterIds.has(term.chapterId)) {
           reject(`${label} references unknown chapter ${term.chapterId}`);
+        } else {
+          glossaryChapterLinksValidated += 1;
         }
+      } else {
+        reject(`${label} must link to the UHR chapter that defines the term`);
       }
 
       for (const failure of glossaryTermExactSchemaKeyFailures(term, label)) {
@@ -13770,6 +13908,7 @@ validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
 validateLearnRouteLinkCopyParity();
+validateSearchRouteCopyParity();
 validateProfileRouteHeaderParity();
 validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
@@ -13902,6 +14041,8 @@ console.log(
       learnRouteHeaderParityValidated,
       learnRouteLinkCopyLabelsValidated,
       learnRouteLinkCopyParityValidated,
+      searchRouteCopyLabelsValidated,
+      searchRouteCopyParityValidated,
       profileRouteHeadersValidated,
       profileRouteHeaderParityValidated,
       profileRouteCopyLabelsValidated,
@@ -13999,6 +14140,8 @@ console.log(
       themeMotionTokensValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
+      glossaryMinimumTermsValidated,
+      glossaryChapterLinksValidated,
       glossaryTermsValidated,
       glossaryTermExactSchemaKeysValidated,
       uxBenchmarksValidated,

@@ -1,0 +1,102 @@
+import { chapters } from '../../data/chapters';
+import { glossaryTerms } from '../../data/glossary';
+import type { GlossaryTerm } from '../../types/content';
+import type { AppLanguage } from '../storage/settingsStore';
+
+export type GlossarySearchResult = GlossaryTerm & {
+  chapterNameEn?: string;
+  chapterNameSv?: string;
+};
+
+const chaptersById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+
+function normalizeSearchText(value: string) {
+  return value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('sv-SE')
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getTermForLanguage(term: GlossaryTerm, language: AppLanguage) {
+  return language === 'en' ? term.termEn : term.termSv;
+}
+
+function getSearchRank(term: GlossaryTerm, normalizedQuery: string) {
+  const normalizedTermSv = normalizeSearchText(term.termSv);
+  const normalizedTermEn = normalizeSearchText(term.termEn);
+  const normalizedExplanationSv = normalizeSearchText(term.explanationSv);
+  const normalizedExplanationEn = normalizeSearchText(term.explanationEn);
+  const chapter = term.chapterId ? chaptersById.get(term.chapterId) : undefined;
+  const normalizedChapterSv = chapter ? normalizeSearchText(chapter.nameSv) : '';
+  const normalizedChapterEn = chapter ? normalizeSearchText(chapter.nameEn) : '';
+
+  if (normalizedTermSv === normalizedQuery || normalizedTermEn === normalizedQuery) return 0;
+  if (
+    normalizedTermSv.startsWith(normalizedQuery) ||
+    normalizedTermEn.startsWith(normalizedQuery)
+  ) {
+    return 1;
+  }
+  if (normalizedTermSv.includes(normalizedQuery) || normalizedTermEn.includes(normalizedQuery)) {
+    return 2;
+  }
+  if (
+    normalizedExplanationSv.includes(normalizedQuery) ||
+    normalizedExplanationEn.includes(normalizedQuery)
+  ) {
+    return 3;
+  }
+  if (
+    normalizedChapterSv.includes(normalizedQuery) ||
+    normalizedChapterEn.includes(normalizedQuery)
+  ) {
+    return 4;
+  }
+
+  return Number.POSITIVE_INFINITY;
+}
+
+export function getGlossaryChapterLabel(term: GlossaryTerm, language: AppLanguage) {
+  if (!term.chapterId) return undefined;
+  const chapter = chaptersById.get(term.chapterId);
+  if (!chapter) return undefined;
+
+  return language === 'en' ? chapter.nameEn : chapter.nameSv;
+}
+
+export function searchGlossary(
+  query: string,
+  language: AppLanguage,
+  limit = 10,
+): GlossarySearchResult[] {
+  const normalizedQuery = normalizeSearchText(query);
+  const sortedTerms = [...glossaryTerms].sort((left, right) =>
+    getTermForLanguage(left, language).localeCompare(getTermForLanguage(right, language), language),
+  );
+
+  const terms = normalizedQuery
+    ? sortedTerms
+        .map((term) => ({ rank: getSearchRank(term, normalizedQuery), term }))
+        .filter((entry) => Number.isFinite(entry.rank))
+        .sort((left, right) => {
+          if (left.rank !== right.rank) return left.rank - right.rank;
+          return getTermForLanguage(left.term, language).localeCompare(
+            getTermForLanguage(right.term, language),
+            language,
+          );
+        })
+        .map((entry) => entry.term)
+    : sortedTerms;
+
+  return terms.slice(0, limit).map((term) => {
+    const chapter = term.chapterId ? chaptersById.get(term.chapterId) : undefined;
+    return {
+      ...term,
+      chapterNameEn: chapter?.nameEn,
+      chapterNameSv: chapter?.nameSv,
+    };
+  });
+}
