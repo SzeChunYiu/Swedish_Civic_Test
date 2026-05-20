@@ -95,7 +95,7 @@ type HomeCopy = {
   readinessCtaAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
-  readinessSparseNote: string;
+  readinessCaveat: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
   reviewWeakChapters: string;
@@ -267,20 +267,21 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} kapitel`,
     questionsMetric: 'frågor',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Redoindikator: ${score} procent. ${verdict}. ${details}`,
-    readinessCta: 'Gör ett mockprov',
-    readinessCtaAccessibilityLabel: 'Starta ett mockprov för att kontrollera din redoindikator',
+      `Förberedelsesignal: ${score} procent. ${verdict}. ${details}`,
+    readinessCta: 'Gör ett tidsatt övningsprov',
+    readinessCtaAccessibilityLabel:
+      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade`,
-    readinessMetricLabel: 'redo',
-    readinessSparseNote:
-      'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
-    readinessTitle: 'Redoindikator',
+      `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
+    readinessMetricLabel: 'lokalt',
+    readinessCaveat:
+      'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
+    readinessTitle: 'Förberedelsesignal',
     readinessVerdicts: {
-      not_ready_yet: 'Öva mer först',
-      getting_there: 'På rätt väg',
-      almost_ready: 'Nästan redo',
-      strong_preparation: 'Stark förberedelse',
+      not_ready_yet: 'Mer underlag behövs',
+      getting_there: 'Framsteg syns',
+      almost_ready: 'Bra övningstakt',
+      strong_preparation: 'Stark lokal övning',
     },
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
@@ -302,8 +303,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
       },
       {
-        label: 'Provredo',
-        lesson: 'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
+        label: 'Övningsläge',
+        lesson:
+          'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
       },
     ],
     studyLoopSubtitle:
@@ -387,20 +389,21 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     questionsHelper: (count) => `${count} chapters`,
     questionsMetric: 'questions',
     readinessAccessibilityLabel: (score, verdict, details) =>
-      `Readiness indicator: ${score} percent. ${verdict}. ${details}`,
-    readinessCta: 'Take a mock exam',
-    readinessCtaAccessibilityLabel: 'Start a mock exam to check your readiness indicator',
+      `Preparation signal: ${score} percent. ${verdict}. ${details}`,
+    readinessCta: 'Take a timed practice exam',
+    readinessCtaAccessibilityLabel:
+      'Start a timed practice exam to compare with your local preparation signal',
     readinessDetails: (accuracyPercent, coveragePercent) =>
-      `${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried`,
-    readinessMetricLabel: 'ready',
-    readinessSparseNote:
-      'Based on your answers so far. Answer more questions for a steadier signal.',
-    readinessTitle: 'Readiness indicator',
+      `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
+    readinessMetricLabel: 'local',
+    readinessCaveat:
+      'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
+    readinessTitle: 'Preparation signal',
     readinessVerdicts: {
-      not_ready_yet: 'Keep practicing first',
-      getting_there: 'Getting there',
-      almost_ready: 'Almost ready',
-      strong_preparation: 'Strong preparation',
+      not_ready_yet: 'More evidence needed',
+      getting_there: 'Progress is visible',
+      almost_ready: 'Solid practice pace',
+      strong_preparation: 'Strong local practice',
     },
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
@@ -422,9 +425,9 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
           'Get one simple next action and gentle habit feedback without blocking serious study.',
       },
       {
-        label: 'Exam readiness',
+        label: 'Timed practice',
         lesson:
-          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
+          'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
       },
     ],
     studyLoopSubtitle:
@@ -595,9 +598,7 @@ export default function Screen() {
         </View>
         <ProgressBar language={language} progress={readiness.score / 100} />
         <Text style={styles.readinessDetail}>{readinessDetails}</Text>
-        {readiness.isSparse ? (
-          <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
-        ) : null}
+        <Text style={styles.readinessCaveat}>{copy.readinessCaveat}</Text>
         <Link
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
@@ -801,7 +802,7 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  readinessSparseNote: {
+  readinessCaveat: {
     color: colors.textDisclaimer,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
