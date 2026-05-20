@@ -2877,7 +2877,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'Vad betyder det att val i en demokrati är hemliga?',
     'What does it mean that elections in a democracy are secret?',
     [
-      ['Ingen behöver avslöja hur den röstar', 'No one has to reveal how they vote'],
+      ['Att väljare inte behöver avslöja hur de röstar', 'No one has to reveal how they vote'],
       [
         'Bara myndigheter får veta hur varje person röstar',
         'Only authorities may know how each person votes',

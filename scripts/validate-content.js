@@ -268,6 +268,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
 ];
+const QUESTION_SWEDISH_BALLOT_PRONOUN_PATTERNS = [/\bhur den röstar\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -3749,6 +3750,8 @@ function validateStaticOutcomeSloganPatterns() {
   }
 
   return UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length - offenders.length;
+}
+
 function validateStaticHeadMetadataParity() {
   const result = validateStaticHeadMetadata(loadText('site/index.html'));
 
@@ -3936,6 +3939,16 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
+}
+
+function findQuestionSwedishBallotPronounIssue(question) {
+  const text = [
+    question.questionSv,
+    question.explanationSv,
+    ...question.options.map((option) => option.textSv),
+  ].join(' ');
+
+  return QUESTION_SWEDISH_BALLOT_PRONOUN_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionTrueFalseStemPrefix(question) {
@@ -6451,6 +6464,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let questionSwedishBallotPronounNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -14603,6 +14617,7 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const swedishBallotPronounIssue = findQuestionSwedishBallotPronounIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -14628,6 +14643,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (swedishBallotPronounIssue) {
+        fail(`${label} contains unnatural Swedish secret-ballot pronoun wording`);
+      } else {
+        questionSwedishBallotPronounNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -15078,6 +15098,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      questionSwedishBallotPronounNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
