@@ -7,6 +7,8 @@ import {
 } from '../quiz/questionText';
 
 type SpeakableQuestion = {
+  correctOptionId?: string;
+  explanationSv?: string;
   questionSv: string;
   options: QuestionOption[];
   correctOptionId?: string;
@@ -39,48 +41,18 @@ export function buildAnswerFeedbackSpeechText(
   question: SpeakableQuestion,
   selectedOptionId: string | null | undefined,
 ): string {
-  if (!selectedOptionId) return '';
-
-  const selectedOption = question.options.find((option) => option.id === selectedOptionId);
-  if (!selectedOption) return '';
+  if (!selectedOptionId || !question.correctOptionId) return '';
 
   const correctOption = question.options.find((option) => option.id === question.correctOptionId);
-  const selectedText = spokenSentenceText(getQuestionOptionText(selectedOption, 'sv'));
-  const correctText = correctOption
-    ? spokenSentenceText(getQuestionOptionText(correctOption, 'sv'))
+  const selectedIsCorrect = selectedOptionId === question.correctOptionId;
+  const resultText = selectedIsCorrect
+    ? 'Rätt.'
+    : `Fel. Rätt svar är ${correctOption?.textSv ?? 'det markerade rätta svaret'}.`;
+  const explanationText = question.explanationSv
+    ? stripSourceAuthorityPhrasing(question.explanationSv) || question.explanationSv
     : '';
-  const explanationText = spokenSentenceText(
-    getQuestionExplanationText(question, 'sv', question.explanationSv ?? ''),
-  );
-  const selectedIsCorrect = selectedOption.id === question.correctOptionId;
-  const answerFeedback = selectedIsCorrect
-    ? 'Det stämmer.'
-    : correctText
-      ? `Det rätta svaret är: ${correctText}`
-      : 'Det svaret är inte markerat som rätt.';
 
-  return [
-    `Du valde: ${selectedText}`,
-    answerFeedback,
-    explanationText ? `Förklaring: ${explanationText}` : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
-    .trim();
-}
-
-function spokenSentenceText(text: string): string {
-  const sourceTrimmedText = SOURCE_CITATION_REPLACEMENTS.reduce(
-    (current, replacement) => current.replace(replacement, ''),
-    text,
-  );
-  const cleaned = stripSourceAuthorityPhrasing(sourceTrimmedText)
-    .replace(/\s+([,.:;!?])/g, '$1')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-
-  if (!cleaned) return '';
-  return /[.!?]$/.test(cleaned) ? cleaned : `${cleaned}.`;
+  return `${resultText} ${explanationText}`.trim();
 }
 
 export interface SpeakSwedishOptions {
