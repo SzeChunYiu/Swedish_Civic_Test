@@ -28,6 +28,11 @@ test('shared MetricCard keeps visible metric text and accessibility summary in p
   assert.match(source, /accessible=\{accessible\}/);
   assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(source, /accessibilityLabel=\{metricAccessibilityLabel\}/);
+  assert.match(
+    source,
+    /style=\{\[styles\.card, tone === 'blue' \? styles\.blueCard : null, style\]\}/,
+  );
+  assert.match(source, /borderWidth:\s*space\.hairline/);
   assert.match(source, /<Text style=\{styles\.value\}>\{value\}<\/Text>/);
   assert.match(source, /<Text style=\{styles\.label\}>\{label\}<\/Text>/);
   assert.match(source, /\{helper \? <Text style=\{styles\.helper\}>\{helper\}<\/Text> : null\}/);

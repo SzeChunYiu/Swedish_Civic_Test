@@ -4,7 +4,6 @@ import { useId, type PropsWithChildren } from 'react';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
-
 export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
   style?: StyleProp<ViewStyle>;
   variant?: ButtonVariant;

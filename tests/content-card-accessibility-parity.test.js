@@ -29,6 +29,8 @@ test('shared Card mirrors labelled grouped surfaces to native and web accessibil
   assert.match(source, /accessible=\{groupedForAccessibility\}/);
   assert.match(source, /accessibilityHint=\{accessibilityHint\}/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(source, /const resolvedAccessibilityRole =\s*accessibilityRole \?\?/);
+  assert.match(source, /\(groupedForAccessibility \? 'summary' : undefined\)/);
   assert.match(source, /accessibilityRole=\{resolvedAccessibilityRole\}/);
   assert.match(source, /nativeID=\{cardAccessibilityHintId\}/);
   assert.match(source, /accessibilityHintText/);

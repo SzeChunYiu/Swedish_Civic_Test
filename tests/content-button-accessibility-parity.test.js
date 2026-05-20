@@ -31,6 +31,9 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /aria-expanded=\{mergedAccessibilityState\.expanded\}/);
   assert.match(source, /aria-selected=\{mergedAccessibilityState\.selected\}/);
   assert.match(source, /accessibilityState=\{mergedAccessibilityState\}/);
+  assert.match(source, /borderWidth:\s*space\.hairline/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
 });
 
 test('Button accessibility parity rejects web aria state drift', () => {
