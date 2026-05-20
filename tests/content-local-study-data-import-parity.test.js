@@ -43,6 +43,21 @@ function loadImportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataImport.ts', storageById);
 }
 
+test('local study data import summary keeps Swedish copy learner-facing', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const swedishCopyMatch = source.match(/sv:\s*\{[\s\S]*?\n\s*\},\n\s*en:/);
+  const englishCopyMatch = source.match(/en:\s*\{[\s\S]*?\n\s*\},\n\};/);
+
+  assert.ok(swedishCopyMatch, 'Settings must keep a Swedish import summary copy block');
+  assert.ok(englishCopyMatch, 'Settings must keep an English import summary copy block');
+  assert.match(swedishCopyMatch[0], /\$\{count\} repetitionsdagar/);
+  assert.match(swedishCopyMatch[0], /\$\{count\} repetitionskort/);
+  assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
+  assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus/);
+  assert.match(englishCopyMatch[0], /\$\{count\} FSRS review days/);
+  assert.match(englishCopyMatch[0], /\$\{count\} FSRS review cards/);
+});
+
 test('local study data import previews and applies all learner snapshot sections', () => {
   const storageById = createStorageById();
   const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
