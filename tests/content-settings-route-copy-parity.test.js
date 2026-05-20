@@ -6,20 +6,27 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    encoding: 'utf8',
-  });
+function parseFocusedSettingsRouteSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-settings-route-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
+  assert.ok(match, 'focused settings route validation should print JSON summary');
   return JSON.parse(match[0]);
 }
 
 test('settings route shell copy follows the persisted settings language', () => {
-  const summary = parseValidationSummary();
+  const summary = parseFocusedSettingsRouteSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 92);
+  assert.equal(summary.settingsRouteHeadersValidated, 6);
+  assert.equal(summary.settingsRouteHeaderParityValidated, true);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 96);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -36,6 +43,8 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
+  assert.match(source, /aria-checked=\{language === value\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: language === value \}\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
@@ -52,6 +61,7 @@ test('settings route copy parity rejects bypassing the settings language', () =>
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-settings-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -82,6 +92,7 @@ test('settings route copy parity rejects missing Swedish shell copy', () => {
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-settings-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -109,6 +120,7 @@ test('settings route copy parity rejects hardcoded language button labels', () =
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-settings-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -139,6 +151,7 @@ test('settings route copy parity rejects selected-button segmented controls', ()
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-settings-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');

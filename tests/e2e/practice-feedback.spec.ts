@@ -17,7 +17,7 @@ async function enableEnglishSupport(page: Page) {
     .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
   await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
 }
@@ -27,7 +27,7 @@ async function enableSwedish(page: Page) {
   await closeLaunchAdIfPresent(page);
   await page.getByLabel(/Byt studiespråk till Svenska|Set study language to Swedish/).click();
   await expect(page.getByLabel('Byt studiespråk till Svenska')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
 }
@@ -135,7 +135,9 @@ test('practice question source citation prefix follows the selected language', a
   await closeLaunchAdIfPresent(page);
 
   await expect(
-    page.getByText('Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5'),
+    page.getByText('Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5', {
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(
     page.getByLabel(
@@ -150,7 +152,9 @@ test('practice question source citation prefix follows the selected language', a
   await closeLaunchAdIfPresent(page);
 
   await expect(
-    page.getByText('Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5'),
+    page.getByText('Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5', {
+      exact: true,
+    }),
   ).toBeVisible();
   await expect(
     page.getByLabel(
@@ -188,9 +192,9 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toBeVisible();
   await expect(page.getByText('Completed questions: 1')).toBeVisible();
-  await expect(page.getByText('Explanation')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Explanation' })).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
-  await expect(page.getByText('UHR reference')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'UHR reference' })).toBeVisible();
   await expect(page.getByText('Landet Sverige · Geografi, klimat och natur')).toBeVisible();
   await expect(page.getByText('Approx. page 5')).toBeVisible();
 
@@ -198,7 +202,9 @@ test('practice flow answers a question, shows source feedback, and advances', as
 
   await expect(page.getByText('Question 2')).toBeVisible();
   await expect(
-    page.getByText("Sweden's northernmost part lies north of the Arctic Circle."),
+    page.getByRole('heading', {
+      name: "Sweden's northernmost part lies north of the Arctic Circle.",
+    }),
   ).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toHaveCount(0);
 
@@ -255,10 +261,10 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
 
   await expect(page).toHaveURL(/\/mistakes$/);
   const swedishMistakeReview = page.getByLabel(
-    'Svar att repetera. Ditt senaste felaktiga svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
+    'Fråga att öva igen. Ditt senaste svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
   );
-  await expect(page.getByText('Fel svar att repetera')).toBeVisible();
-  await expect(page.getByText('Ditt senaste felaktiga svar')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Frågor att öva igen' })).toBeVisible();
+  await expect(page.getByText('Ditt senaste svar')).toBeVisible();
   await expect(swedishMistakeReview.getByText('I södra Europa', { exact: true })).toBeVisible();
   await expect(swedishMistakeReview.getByText('Rätt svar', { exact: true })).toBeVisible();
   await expect(
