@@ -326,10 +326,15 @@ test('tierComparison: Swedish Pro labels use natural learner-facing copy', () =>
 
 test('tierComparison: three columns in canonical order', () => {
   const { TIER_COLUMNS } = loadTs('lib/monetization/tierComparison.ts');
+  const columnsById = Object.fromEntries(TIER_COLUMNS.map((column) => [column.id, column]));
   assert.deepEqual(
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
+  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
+  assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
+  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
+  assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
 test('tierComparison: every row has all three cells present', () => {
@@ -367,6 +372,9 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
+  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
+  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
+  assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
 });
@@ -386,8 +394,10 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /rowSummary:/);
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for 29 SEK stays available as its own simpler path/);
-  assert.match(source, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
+  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.doesNotMatch(source, /29 kr|29 kronor/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -878,6 +888,73 @@ test('computeReadinessScore: exam answers feed mock average, not practice accura
   assert.equal(result.components.mockAverage, 0.8);
 });
 
+test('computeReadinessScore: mock recency uses completedAt instead of exam answer rows', () => {
+  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+  const recentExamAnswers = Array.from({ length: 40 }, (_, index) => ({
+    questionId: `exam-${index}`,
+    selectedOptionIds: [],
+    isCorrect: index < 32,
+    answeredAt: '2026-05-19T10:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+  const now = new Date('2026-05-19T12:00:00.000Z');
+
+  const scoreOnlyMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'score-only-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: [],
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const countedMock = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'counted-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: '2026-05-19T10:00:00.000Z',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+  const invalidCompletedAt = computeReadinessScore({
+    progress: progressWithSessions([
+      {
+        id: 'invalid-completed-at-mock',
+        mode: 'exam',
+        questionIds: [],
+        startedAt: '2026-05-19T09:00:00.000Z',
+        completedAt: 'not-a-date',
+        score: 0.8,
+        answers: recentExamAnswers,
+      },
+    ]),
+    chapters: [{ id: 'a', questionCount: 10 }],
+    questionChapterIndex: {},
+    now,
+  });
+
+  assert.equal(scoreOnlyMock.components.recency, countedMock.components.recency);
+  assert.ok(scoreOnlyMock.components.recency > 0.99);
+  assert.equal(countedMock.components.accuracy, 0);
+  assert.equal(invalidCompletedAt.components.recency, 0);
+  assert.equal(invalidCompletedAt.components.accuracy, 0);
+});
+
 // -------------------------------------------------------- Calibration
 
 test('generateCalibration: empty input → insufficient verdict', () => {
@@ -934,6 +1011,48 @@ test('generateCalibration: overconfident user → over_confident verdict', () =>
   assert.equal(result.verdict, 'over_confident');
 });
 
+test('generateCalibration: invalid confidence ratings are skipped without corrupting buckets', () => {
+  const { generateCalibration, isConfidenceRating, normalizeConfidenceRating } = loadTs(
+    'lib/learning/calibration.ts',
+  );
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+  const events = [
+    {
+      questionId: 'valid-low',
+      isCorrect: false,
+      answeredAt: '2026-05-19',
+      confidenceRating: 1,
+    },
+    ...invalidRatings.map((confidenceRating, index) => ({
+      questionId: `invalid-${index}`,
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating,
+    })),
+    {
+      questionId: 'valid-high',
+      isCorrect: true,
+      answeredAt: '2026-05-19',
+      confidenceRating: 5,
+    },
+  ];
+
+  assert.doesNotThrow(() => generateCalibration(events));
+  const result = generateCalibration(events);
+
+  assert.equal(result.totalRatedAnswers, 2);
+  assert.deepEqual(
+    result.buckets.map((bucket) => bucket.count),
+    [1, 0, 0, 0, 1],
+  );
+  assert.equal(result.buckets[0].actualAccuracy, 0);
+  assert.equal(result.buckets[4].actualAccuracy, 1);
+  for (const rating of invalidRatings) {
+    assert.equal(isConfidenceRating(rating), false);
+    assert.equal(normalizeConfidenceRating(rating), null);
+  }
+});
+
 test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
   assert.equal(gradeFromConfidence(false, 1), 1);
@@ -945,4 +1064,15 @@ test('gradeFromConfidence + lapsePenaltyForWrong: map to FSRS grades', () => {
   assert.equal(lapsePenaltyForWrong(1), 0);
   assert.equal(lapsePenaltyForWrong(3), 1);
   assert.equal(lapsePenaltyForWrong(5), 2);
+});
+
+test('gradeFromConfidence + lapsePenaltyForWrong: invalid ratings use safe defaults', () => {
+  const { gradeFromConfidence, lapsePenaltyForWrong } = loadTs('lib/learning/calibration.ts');
+  const invalidRatings = [0, 6, NaN, Infinity, -Infinity, 'high', null, undefined, 3.5, {}, []];
+
+  for (const rating of invalidRatings) {
+    assert.equal(gradeFromConfidence(true, rating), 3);
+    assert.equal(gradeFromConfidence(false, rating), 1);
+    assert.equal(lapsePenaltyForWrong(rating), 0);
+  }
 });

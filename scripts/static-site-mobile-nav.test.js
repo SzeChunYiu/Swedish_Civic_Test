@@ -140,24 +140,22 @@ test('static icon-only controls use localized accessible-name keys', () => {
   ].forEach((pattern) => assert.match(html, pattern));
 
   assert.match(app, /function smtUpdateStaticControlLabels\(lang\)/);
-  assert.match(app, /querySelectorAll\(['"]\[data-a11y-label\]['"]\)/);
+  assert.match(app, /querySelectorAll\("\[data-a11y-label\]"\)/);
   assert.match(extras, /class="cheats__close" data-a11y-label="a11y\.close"/);
   assert.doesNotMatch(extras, /aria-label="Close"/);
 
   ['zh-Hans', 'zh-Hant', 'ar', 'so'].forEach((lang) => {
-    const dictionaryPattern = new RegExp(`(?:['"]${lang}['"]|${lang}):\\s*{`);
-    const dictionaryMatch = dictionaryPattern.exec(extraI18n);
-    const start = dictionaryMatch ? dictionaryMatch.index : -1;
+    const start = extraI18n.indexOf(`"${lang}": {`);
     assert.notEqual(start, -1, `${lang} dictionary should exist`);
     const nextMarker = extraI18n.indexOf(
       '\n    // ============================================================',
       start + 1,
     );
     const block = extraI18n.slice(start, nextMarker === -1 ? undefined : nextMarker);
-    assert.match(block, /['"]a11y\.settings\.open['"]/);
-    assert.match(block, /['"]a11y\.close['"]/);
-    assert.match(block, /['"]a11y\.ad\.close['"]/);
-    assert.match(block, /['"]a11y\.studyBuddy['"]/);
+    assert.match(block, /"a11y\.settings\.open"/);
+    assert.match(block, /"a11y\.close"/);
+    assert.match(block, /"a11y\.ad\.close"/);
+    assert.match(block, /"a11y\.studyBuddy"/);
   });
 });
 
