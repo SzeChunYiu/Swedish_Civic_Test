@@ -10897,8 +10897,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes government agencies?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?"
+      "en": "What applies to government agencies?",
+      "sv": "Vad gäller för statliga myndigheter?"
     },
     "opts": [
       {
@@ -11022,8 +11022,8 @@
     "chapter": "Ch. 03 · How Sweden is governed",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes government agencies?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver statliga myndigheter?"
+      "en": "What is true about government agencies?",
+      "sv": "Vad stämmer om statliga myndigheter?"
     },
     "opts": [
       {
@@ -13821,8 +13821,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes legal certainty in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "What does legal certainty in Sweden mean?",
+      "sv": "Vad innebär rättssäkerhet i Sverige?"
     },
     "opts": [
       {
@@ -13946,8 +13946,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes legal certainty in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver rättssäkerhet i Sverige?"
+      "en": "What is true about legal certainty in Sweden?",
+      "sv": "Vad stämmer om rättssäkerhet i Sverige?"
     },
     "opts": [
       {
@@ -14165,8 +14165,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes the role of the police in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "What is the role of the police in Sweden?",
+      "sv": "Vad är polisens uppgift i Sverige?"
     },
     "opts": [
       {
@@ -14290,8 +14290,8 @@
     "chapter": "Ch. 05 · Law and justice",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes the role of the police in Sweden?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver polisens uppgift i Sverige?"
+      "en": "What is true about the role of the police in Sweden?",
+      "sv": "Vad stämmer om polisens uppgift i Sverige?"
     },
     "opts": [
       {
@@ -19685,8 +19685,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes Sweden two hundred years ago?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "What was Sweden like two hundred years ago?",
+      "sv": "Hur var Sverige för tvåhundra år sedan?"
     },
     "opts": [
       {
@@ -19810,8 +19810,8 @@
     "chapter": "Ch. 10 · Sweden's modern history",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes Sweden two hundred years ago?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver Sverige för tvåhundra år sedan?"
+      "en": "What was true about Sweden two hundred years ago?",
+      "sv": "Vad stämmer om Sverige för tvåhundra år sedan?"
     },
     "opts": [
       {
@@ -32645,8 +32645,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which statement describes integration in a democratic society?",
-      "sv": "Vilket svar stämmer bäst? Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "What does integration in a democratic society mean?",
+      "sv": "Vad innebär integration i ett demokratiskt samhälle?"
     },
     "opts": [
       {
@@ -32773,8 +32773,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which statement describes integration in a democratic society?",
-      "sv": "Välj rätt alternativ: Vilket påstående beskriver integration i ett demokratiskt samhälle?"
+      "en": "What is true about integration in a democratic society?",
+      "sv": "Vad stämmer om integration i ett demokratiskt samhälle?"
     },
     "opts": [
       {

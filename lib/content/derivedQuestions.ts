@@ -788,9 +788,7 @@ function trueStatementExplanationEn(source: PracticeQuestion): string {
 
 function falseStatementExplanationSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactSv(
-      source,
-    )} Därför är påståendet i frågan falskt, och alternativet Falskt stämmer.`;
+    return ensureSentence(sourceTrueFactSv(source));
   }
 
   return source.explanationSv;
@@ -798,41 +796,29 @@ function falseStatementExplanationSv(source: PracticeQuestion): string {
 
 function falseStatementExplanationEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source) && source.correctOptionId === 'true') {
-    return `${sourceTrueFactEn(
-      source,
-    )} Therefore the statement in the question is false, so False is correct.`;
+    return ensureSentence(sourceTrueFactEn(source));
   }
 
   return source.explanationEn;
 }
 
 function trueFalseSingleChoiceExplanationSv(source: PracticeQuestion): string {
-  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationSv(source);
-  return source.explanationSv;
+  return `${ensureSentence(
+    trueFalseSourceStatementSv(source, true),
+  )} Därför stämmer påståendet som motsvarar den uppgiften, medan motsatsen inte stämmer.`;
 }
 
 function trueFalseSingleChoiceExplanationEn(source: PracticeQuestion): string {
-  if (source.correctOptionId === 'true') return cleanTrueFalseSourceExplanationEn(source);
-  return source.explanationEn;
+  return `${ensureSentence(
+    trueFalseSourceStatementEn(source, true),
+  )} Therefore the statement that matches that fact is correct, while the opposite statement is not.`;
 }
 
 function statementTopicSv(source: PracticeQuestion): string {
   const statement = stripFinalPunctuation(stripTrueFalsePromptSv(source.questionSv));
 
-  if (
-    /^Golfströmmen och den Nordatlantiska strömmen bidrar till Sveriges milda klimat\b/i.test(
-      statement,
-    )
-  ) {
-    return 'Sveriges klimat';
-  }
-
   if (/^År 2000 blev Svenska kyrkan\b/i.test(statement)) {
     return 'Svenska kyrkan och staten år 2000';
-  }
-
-  if (/^Sverige brukar delas in i\b/i.test(statement)) {
-    return 'Sveriges landsdelar';
   }
 
   const match = statement.match(
@@ -851,20 +837,8 @@ function statementTopicSv(source: PracticeQuestion): string {
 function statementTopicEn(source: PracticeQuestion): string {
   const statement = stripFinalPunctuation(stripTrueFalsePromptEn(source.questionEn));
 
-  if (
-    /^The Gulf Stream and the North Atlantic Current help make Sweden's climate mild\b/i.test(
-      statement,
-    )
-  ) {
-    return "Sweden's climate";
-  }
-
   if (/^In 2000, the Church of Sweden became\b/i.test(statement)) {
     return 'the Church of Sweden and the state in 2000';
-  }
-
-  if (/^Sweden is usually divided into\b/i.test(statement)) {
-    return "Sweden's major parts";
   }
 
   const match = statement.match(
@@ -890,37 +864,64 @@ function trueFalseStatementOptions(source: PracticeQuestion): QuestionOption[] {
     },
     {
       id: 'both-statements',
-      textSv: 'Båda beskrivningarna är korrekta',
-      textEn: 'Both descriptions are correct',
+      textSv: 'Båda påståendena är korrekta',
+      textEn: 'Both statements are correct',
     },
     {
       id: 'neither-statement',
-      textSv: 'Ingen av beskrivningarna är korrekt',
-      textEn: 'Neither description is correct',
+      textSv: 'Inget av påståendena är korrekt',
+      textEn: 'Neither statement is correct',
     },
   ];
 }
 
-function naturalSingleChoiceSourceQuestionSv(question: string): string {
-  const q = stripFinalPunctuation(question);
-  let match = q.match(/^Vilket påstående stämmer om (.+)$/i);
-  if (match) return `Vad stämmer om ${match[1]}?`;
-
-  match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
-  if (match) return `Vad stämmer om ${match[1]}?`;
-
-  return question;
+function describesSourcePromptTopicSv(questionSv: string): string | null {
+  const match = stripFinalPunctuation(questionSv).match(/^Vilket påstående beskriver (.+)$/i);
+  return match?.[1].trim() ?? null;
 }
 
-function naturalSingleChoiceSourceQuestionEn(question: string): string {
-  const q = stripFinalPunctuation(question);
-  let match = q.match(/^Which statement is correct about (.+)$/i);
-  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
+function describesSourcePromptTopicEn(questionEn: string): string | null {
+  const match = stripFinalPunctuation(questionEn).match(/^Which statement describes (.+)$/i);
+  return match?.[1].trim() ?? null;
+}
 
-  match = q.match(/^Which statement about (.+?) is correct$/i);
-  if (match) return `What is true about ${lowerLeadingEnglishArticle(match[1])}?`;
+function directDescribesSourcePromptSv(
+  questionSv: string,
+  variant: 'section-practice' | 'judgement',
+): string | null {
+  const subject = describesSourcePromptTopicSv(questionSv);
+  if (!subject) return null;
 
-  return question;
+  if (variant === 'judgement') return `Vad stämmer om ${subject}?`;
+  if (/^rättssäkerhet\b/i.test(subject)) return `Vad innebär ${subject}?`;
+  if (/^polisens uppgift\b/i.test(subject)) return `Vad är ${subject}?`;
+  if (/^Sverige för tvåhundra år sedan\b/i.test(subject)) {
+    return 'Hur var Sverige för tvåhundra år sedan?';
+  }
+  if (/^integration\b/i.test(subject)) return `Vad innebär ${subject}?`;
+  return `Vad gäller för ${subject}?`;
+}
+
+function directDescribesSourcePromptEn(
+  questionEn: string,
+  variant: 'section-practice' | 'judgement',
+): string | null {
+  const subject = describesSourcePromptTopicEn(questionEn);
+  if (!subject) return null;
+
+  if (variant === 'judgement') {
+    if (/^Sweden two hundred years ago\b/i.test(subject)) {
+      return 'What was true about Sweden two hundred years ago?';
+    }
+    return `What is true about ${subject}?`;
+  }
+  if (/^legal certainty\b/i.test(subject)) return `What does ${subject} mean?`;
+  if (/^the role of the police\b/i.test(subject)) return `What is ${subject}?`;
+  if (/^Sweden two hundred years ago\b/i.test(subject)) {
+    return 'What was Sweden like two hundred years ago?';
+  }
+  if (/^integration\b/i.test(subject)) return `What does ${subject} mean?`;
+  return `What applies to ${subject}?`;
 }
 
 function generatedTrueFalseStatementSv(
@@ -943,30 +944,38 @@ function generatedTrueFalseStatementEn(
 
 function judgementPromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vad stämmer om ${statementTopicSv(source)}?`;
+    return `Vilket påstående stämmer bäst om ${statementTopicSv(source)}?`;
   }
-  return `Välj rätt alternativ: ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
+  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'judgement');
+  if (directPrompt) return directPrompt;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `What is true about ${statementTopicEn(source)}?`;
+    return `Which statement best matches ${statementTopicEn(source)}?`;
   }
-  return `Choose the correct option: ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
+  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'judgement');
+  if (directPrompt) return directPrompt;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Vilken uppgift om ${statementTopicSv(source)} är korrekt?`;
+    return `Vilket påstående är korrekt om ${statementTopicSv(source)}?`;
   }
-  return `Vilket svar stämmer bäst? ${naturalSingleChoiceSourceQuestionSv(source.questionSv)}`;
+  const directPrompt = directDescribesSourcePromptSv(source.questionSv, 'section-practice');
+  if (directPrompt) return directPrompt;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
   if (isTrueFalseSource(source)) {
-    return `Which fact about ${statementTopicEn(source)} is correct?`;
+    return `Which statement is correct about ${statementTopicEn(source)}?`;
   }
-  return `Which answer best matches? ${naturalSingleChoiceSourceQuestionEn(source.questionEn)}`;
+  const directPrompt = directDescribesSourcePromptEn(source.questionEn, 'section-practice');
+  if (directPrompt) return directPrompt;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {

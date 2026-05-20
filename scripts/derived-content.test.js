@@ -199,6 +199,69 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   );
 });
 
+test('derivePublishedQuestions rewrites generated statement-describes prompts as direct questions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q024',
+    chapterId: 'ch03',
+    type: 'single_choice',
+    questionSv: 'Vilket påstående beskriver statliga myndigheter?',
+    questionEn: 'Which statement describes government agencies?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'De ersätter domstolarna i brottmål',
+        textEn: 'They replace courts in criminal cases',
+      },
+      {
+        id: 'b',
+        textSv: 'De genomför beslut och måste följa lagar och regeringens instruktioner',
+        textEn: 'They implement decisions and must follow laws and government instructions',
+      },
+      {
+        id: 'c',
+        textSv: 'De beslutar vem som blir kung eller drottning',
+        textEn: 'They decide who becomes king or queen',
+      },
+      {
+        id: 'd',
+        textSv: 'De skriver partiernas valprogram',
+        textEn: 'They write parties’ election platforms',
+      },
+    ],
+    correctOptionId: 'b',
+    explanationSv:
+      'Regeringen styr landet med hjälp av statliga myndigheter. Myndigheterna genomför beslut i praktiken och måste följa lagen samt regeringens instruktioner.',
+    explanationEn:
+      "The government governs the country with the help of government agencies. Agencies carry out decisions in practice and must follow the law and the government's instructions.",
+    uhrReference: { chapter: 'Så här styrs Sverige', section: 'Myndigheter', pageApprox: 13 },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['agencies', 'government', 'law'],
+  };
+
+  const singleChoiceVariants = derivePublishedQuestions([source], 201).filter(
+    (question) => question.type === 'single_choice',
+  );
+
+  assert.deepEqual(
+    singleChoiceVariants.map((question) => question.questionSv),
+    ['Vad gäller för statliga myndigheter?', 'Vad stämmer om statliga myndigheter?'],
+  );
+  assert.deepEqual(
+    singleChoiceVariants.map((question) => question.questionEn),
+    ['What applies to government agencies?', 'What is true about government agencies?'],
+  );
+  assert.ok(
+    singleChoiceVariants.every(
+      (question) =>
+        !/Vilket påstående beskriver|Which statement describes/.test(
+          `${question.questionSv} ${question.questionEn}`,
+        ),
+    ),
+  );
+});
+
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
