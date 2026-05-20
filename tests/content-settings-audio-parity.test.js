@@ -5,7 +5,11 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
-const { createThrowingReadMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
+const {
+  createMemoryMMKV,
+  createThrowingReadMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -23,6 +27,28 @@ function loadSettingsStateFromStorage(storage) {
     settings: storage,
   });
   return useSettingsStore.getState();
+}
+
+function loadSettingsStoreWithSpeechStub(storage) {
+  const speech = {
+    stopCalls: 0,
+    speak() {},
+    stop() {
+      this.stopCalls += 1;
+    },
+  };
+  const { useSettingsStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/settingsStore.ts',
+    {
+      settings: storage,
+    },
+    {
+      'expo-speech': () => speech,
+    },
+  );
+
+  return { speech, useSettingsStore };
 }
 
 function runValidationWithSettingsRoutePatch(search, replacement) {
@@ -96,6 +122,28 @@ test('audio setting hydration falls back when MMKV getBoolean throws', () => {
   const state = loadSettingsStateFromStorage(createThrowingReadMMKV('settings read failed'));
 
   assert.equal(state.audioEnabled, true);
+});
+
+test('audio muting stops active speech once and persists disabled state', () => {
+  const storage = createMemoryMMKV({ audioEnabled: true });
+  const { speech, useSettingsStore } = loadSettingsStoreWithSpeechStub(storage);
+
+  useSettingsStore.getState().setAudioEnabled(false);
+
+  assert.equal(speech.stopCalls, 1);
+  assert.equal(useSettingsStore.getState().audioEnabled, false);
+  assert.equal(storage.values.get('audioEnabled'), false);
+});
+
+test('invalid audio setter input no-ops without stopping speech or writing storage', () => {
+  const storage = createMemoryMMKV({ audioEnabled: true });
+  const { speech, useSettingsStore } = loadSettingsStoreWithSpeechStub(storage);
+
+  useSettingsStore.getState().setAudioEnabled('nope');
+
+  assert.equal(speech.stopCalls, 0);
+  assert.equal(useSettingsStore.getState().audioEnabled, true);
+  assert.equal(storage.values.get('audioEnabled'), true);
 });
 
 test('audio setting parity rejects missing route labels', () => {

@@ -13004,6 +13004,9 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
     reject('setAudioEnabled(false) must stop any in-flight speech before muting');
   }
+  if (!normalizedSettingsStore.includes("if (typeof audioEnabled !== 'boolean') return;")) {
+    reject('setAudioEnabled must ignore invalid runtime input');
+  }
 
   if (
     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')

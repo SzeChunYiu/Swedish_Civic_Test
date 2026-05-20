@@ -178,7 +178,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ language, persistenceWarning });
   },
   setAudioEnabled: (audioEnabled) => {
-    audioEnabled = normalizeBoolean(audioEnabled, true);
+    if (typeof audioEnabled !== 'boolean') return;
     if (!audioEnabled) {
       stopSpeech();
     }

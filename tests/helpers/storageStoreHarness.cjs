@@ -84,12 +84,14 @@ function clearModuleCache(modulePath) {
   }
 }
 
-function loadTsWithStorage(repoRoot, relativePath, storageById) {
+function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}) {
   const targetPath = path.join(repoRoot, relativePath);
   clearModuleCache(targetPath);
   const storageDir = path.join(repoRoot, 'lib/storage');
+  const audioDir = path.join(repoRoot, 'lib/audio');
   for (const cacheKey of Object.keys(require.cache)) {
     if (cacheKey.startsWith(storageDir)) delete require.cache[cacheKey];
+    if (cacheKey.startsWith(audioDir)) delete require.cache[cacheKey];
   }
 
   const originalResolve = Module._resolveFilename;
@@ -103,6 +105,7 @@ function loadTsWithStorage(repoRoot, relativePath, storageById) {
       createMMKV: ({ id }) => storageById[id] ?? null,
     }),
     zustand: createZustandStub,
+    ...moduleStubs,
   };
 
   Module._resolveFilename = function patchedResolve(request, ...args) {
