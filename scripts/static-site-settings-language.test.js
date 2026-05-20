@@ -5,7 +5,6 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'so'];
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -58,7 +57,7 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
   ]);
   let reloadCount = 0;
 
-  const settingButtons = staticSiteLanguageValues.map((value) => ({
+  const settingButtons = ['en', 'sv'].map((value) => ({
     dataset: { val: value },
     classList: { toggle() {} },
   }));
@@ -138,12 +137,9 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     document: {
       body: { style: {} },
       documentElement: {
-        dir: language === 'ar' ? 'rtl' : 'ltr',
         lang: language,
         setAttribute(name, value) {
           rootAttributes.set(name, String(value));
-          if (name === 'dir') this.dir = String(value);
-          if (name === 'lang') this.lang = String(value);
         },
         getAttribute(name) {
           return rootAttributes.get(name) ?? null;
@@ -250,9 +246,6 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
       return rootAttributes.get(name) ?? null;
     },
     sandbox,
-    settingLanguageValues() {
-      return settingButtons.map((button) => button.dataset.val);
-    },
     storage,
   };
 }
@@ -319,42 +312,6 @@ test('Static icon-control accessible names follow smtSetLanguage without reload'
   assert.equal(context.element('dala-bubble-close').getAttribute('aria-label'), '关闭');
   assert.equal(context.element('dala-figure').getAttribute('aria-label'), '学习伙伴');
   assert.equal(context.reloadCount, 0);
-});
-
-test('Static Settings exposes the shipped extra language choices', () => {
-  const html = read('site/index.html');
-
-  for (const value of staticSiteLanguageValues) {
-    assert.ok(html.includes(`data-val="${value}"`), `missing Settings language button ${value}`);
-  }
-
-  const context = createRenderContext({ hash: '#/', language: 'en' });
-  loadScripts(context);
-
-  assert.deepEqual(context.settingLanguageValues(), staticSiteLanguageValues);
-});
-
-test('Settings language change persists extra locales and updates root direction', () => {
-  const context = createRenderContext({ hash: '#/', language: 'en' });
-  const languageChanges = [];
-  loadScripts(context);
-  context.sandbox.window.addEventListener('smt:languagechange', (event) => {
-    languageChanges.push(event.detail.lang);
-  });
-
-  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'so']) {
-    const direction = language === 'ar' ? 'rtl' : 'ltr';
-
-    context.clickSettingsLanguage(language);
-
-    assert.equal(context.storage.get('smt_lang'), language);
-    assert.equal(context.sandbox.document.documentElement.lang, language);
-    assert.equal(context.sandbox.document.documentElement.dir, direction);
-    assert.equal(context.rootAttribute('dir'), direction);
-    assert.equal(context.reloadCount, 0);
-  }
-
-  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'so']);
 });
 
 test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {

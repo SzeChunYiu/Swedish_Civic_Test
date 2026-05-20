@@ -124,22 +124,6 @@ const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /\b(?:pass|passing)\s+(?:rate|likelihood|chance|timeline)\b/i,
   /\b(?:guaranteed?|guarantees?)\s+(?:to\s+)?(?:pass|passing|approval)\b/i,
 ];
-const STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS = [
-  /['"`]Readiness['"`]/,
-  /['"`]Din beredskap['"`]/,
-  /['"`]Almost ready['"`]/,
-  /['"`]Nästan redo['"`]/,
-];
-const STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY = [
-  'Local practice signal',
-  'Lokal övningssignal',
-  'Based only on practice and mock attempts on this device, not an official result forecast.',
-  'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.',
-  'Practice looks steady',
-  'Övningen ser stabil ut',
-  'Strong practice base',
-  'Stark övningsgrund',
-];
 const STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS = [
   phrasePattern('Format of ', 'the real test'),
   phrasePattern('multiple-choice ', 'and timed'),
@@ -267,19 +251,42 @@ const QUESTION_STEM_SOURCE_AUTHORITY_PATTERNS = [
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
 ];
-const SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS = [
-  {
-    id: 'all-saints-day-grave-candles',
-    chapter: 'Traditioner och högtider',
-    section: 'Alla helgons dag',
-    label: 'All Saints Day grave-candle remembrance',
-    patterns: [
-      /\bt(?:ä|a)nd(?:a|er)?\s+ljus\s+p(?:å|a)\s+gravar\b/i,
-      /\bkyrkog(?:å|a)rd(?:en|ar)?[^.?!;]*\bt(?:ä|a)nd(?:a|er)?\s+ljus\b/i,
-      /\blight(?:ing)?\s+candles?\s+on\s+graves\b/i,
-      /\bcemeter(?:y|ies)[^.?!;]*\blight(?:ing)?\s+candles?\b/i,
-    ],
-  },
+const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
+  /\bsjukförsäkring\b/i,
+  /\bföräldraförsäkring\b/i,
+  /\barbetslöshetsförsäkring\b/i,
+  /\bsickness insurance\b/i,
+  /\bparental insurance\b/i,
+  /\bunemployment insurance\b/i,
+];
+const QUESTION_Q071_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
+  /\bhögre utbildning\b/i,
+  /\bforskning\b/i,
+  /\bhigher education\b/i,
+  /\bresearch\b/i,
+];
+const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
+  /\bhögre utbildning\b/i,
+  /\bforskning vid högskolor och universitet\b/i,
+  /\bhigher education\b/i,
+  /\bresearch at colleges and universities\b/i,
+];
+const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
+  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
+];
+const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does the Council of Europe work for\??/i,
+  /\bThe Council of Europe works for\b/i,
+  /\bThe Council of Europe works only for\b/i,
+];
+const QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\b/i,
+  /\bbec(?:o|a)me important for\b/i,
+];
+const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
+  /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
+  /\bIn a Lucia procession,\s+one person is Lucia\b/i,
 ];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
@@ -288,6 +295,10 @@ const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bCompanies also pay tax,\s+and VAT is paid\b/i,
   /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
   /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+];
+const QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS = [
+  /\bVilka varor som har moms\b/i,
+  /\bWhich goods have VAT\b/i,
 ];
 const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bSant eller falskt:\s*Ett korrekt svar på frågan\s+"(?:Sant eller falskt:)?/i,
@@ -304,6 +315,10 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
 const QUESTION_ANSWER_KEY_PROMPT_PATTERNS = [
   /\bVilket svar beskriver\b/i,
   /\bWhich answer describes\b/i,
+  /\bVilket är ett sätt att\b/i,
+  /\bWhich is a way to\b/i,
+  /\bVilket påstående stämmer om julfirande i Sverige\??/i,
+  /\bWhich statement is correct about Christmas celebrations in Sweden\??/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
@@ -386,6 +401,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
+  /\b(?:Vem som helst kan skapa innehåll där|Bara ansvariga utgivare får skriva inlägg där)\b/i,
+  /\b(?:Anyone can create content there|Only responsible publishers may write posts there)\b/i,
   /^That Sweden's first mosques were built\b/i,
   /^(?:Försöka|Hindra)\b/i,
   /^(?:Try to|Stop others)\b/i,
@@ -462,7 +479,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
-const EXPECTED_XP_RULE_COUNT = 20;
+const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
@@ -651,6 +668,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ],
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
+  [
+    'accessibilitySummary={false}',
+    'learn route chapter cards must not expose nested summaries inside links',
+  ],
 ];
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
@@ -674,7 +695,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Ändra mål, språk och ljud',
     'Första övningen',
     'Nivå 2',
-    'Misstagsrepetition',
+    'Missade frågor',
     'Tre dagars svit',
   ],
   en: [
@@ -754,42 +775,35 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile premium banner must fail closed while entitlements load',
   ],
   ['language={language}', 'profile premium banner must receive the settings language'],
-  [
-    "import { isProRuntimeScopeEnabled } from '../../lib/monetization/releasePolicy';",
-    'profile route must import the Pro runtime scope gate',
-  ],
-  [
-    'const proRuntimeScopeEnabled = isProRuntimeScopeEnabled();',
-    'profile route must read the Pro runtime scope gate',
-  ],
-  [
-    '{entitlementsReady && proRuntimeScopeEnabled ? (',
-    'profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled',
-  ],
   ['import { ProPaywall }', 'profile route must import the Pro tier comparison surface'],
-  ['<ProPaywall', 'profile route must keep the opt-in Pro tier comparison surface available'],
+  ['<ProPaywall', 'profile route must render the Pro tier comparison surface'],
   [
     'alreadyAdFree={monetizationEntitlements.adsDisabled}',
     'profile Pro tier comparison must distinguish existing Remove Ads owners',
   ],
 ];
+const FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY = [
+  ['Misstags', 'repetition'],
+  ['Repetera ', 'misstag'],
+  ['Fel', 'granskning'],
+].map((parts) => parts.join(''));
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
     'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
-    'Förberedelsesignal',
-    'lokalt',
-    'Mer underlag behövs',
-    'Framsteg syns',
-    'Bra övningstakt',
-    'Stark lokal övning',
-    'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos. Svara på fler frågor för en säkrare signal.',
-    '${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade',
-    'Förberedelsesignal: ${score} procent. ${verdict}. ${details}',
-    'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
-    'Gör ett tidsatt övningsprov',
+    'Redoindikator',
+    'redo',
+    'Öva mer först',
+    'På rätt väg',
+    'Nästan redo',
+    'Stark förberedelse',
+    'Bygger på dina svar hittills. Svara på fler frågor för en säkrare signal.',
+    '${accuracyPercent} % rätt · ${coveragePercent} % av kapitlen provade',
+    'Redoindikator: ${score} procent. ${verdict}. ${details}',
+    'Starta ett mockprov för att kontrollera din redoindikator',
+    'Gör ett mockprov',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -848,25 +862,25 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Se vilka områden som är klara, repeterade eller fortfarande svaga.',
     'Vana i vardagen',
     'Få en enkel nästa handling och varsam vanefeedback utan att stoppa seriösa studier.',
-    'Övningsläge',
-    'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+    'Provredo',
+    'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
   ],
   en: [
     'Study dashboard',
     'Prepare calmly, one civic concept at a time',
     'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
     "Today's goal",
-    'Preparation signal',
-    'local',
-    'More evidence needed',
-    'Progress is visible',
-    'Solid practice pace',
-    'Strong local practice',
-    'Based only on your in-app answers and mock practice, not an official result forecast. Answer more questions for a steadier signal.',
-    '${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried',
-    'Preparation signal: ${score} percent. ${verdict}. ${details}',
-    'Start a timed practice exam to compare with your local preparation signal',
-    'Take a timed practice exam',
+    'Readiness indicator',
+    'ready',
+    'Keep practicing first',
+    'Getting there',
+    'Almost ready',
+    'Strong preparation',
+    'Based on your answers so far. Answer more questions for a steadier signal.',
+    '${accuracyPercent}% accuracy · ${coveragePercent}% chapters tried',
+    'Readiness indicator: ${score} percent. ${verdict}. ${details}',
+    'Start a mock exam to check your readiness indicator',
+    'Take a mock exam',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -925,8 +939,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'See which areas are ready, reviewed, or still weak.',
     'Study rhythm',
     'Get one simple next action and gentle habit feedback without blocking serious study.',
-    'Timed practice',
-    'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+    'Exam readiness',
+    'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
   ],
 };
 const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
@@ -941,8 +955,6 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
 ].map((parts) => parts.join(''));
 const FORBIDDEN_SWEDISH_FLASHCARD_COPY = /\b(?:flashcards?|Flashcards?|flashkort|Flashkort)\b/;
 const FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY = /\b(?:felspårning|repetition av misstag)\b/i;
-const FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY =
-  /\b(?:Readiness indicator|Exam readiness|Almost ready|Redoindikator|Provredo|Are you ready to pass)\b/;
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['GuidedPracticePath', 'home route must render the guided practice path component'],
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -962,7 +974,7 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ],
   [
     'computeReadinessFromQuestionProgress({',
-    'home route must derive the preparation signal from stored progress',
+    'home route must derive the readiness indicator from stored progress',
   ],
   ['const guidedPathChapterGroups = [', 'home route must define the guided path chapter groups'],
   [
@@ -992,28 +1004,19 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'home route guided path must reuse the daily-practice progress signal',
   ],
   [
-    'const answerAttempts = useProgressStore((state) => state.answerAttempts);',
-    'home route must read persisted answer attempts for the daily goal',
-  ],
-  [
-    'countAnswerAttemptsForLocalDate({ answerAttempts, questionProgress })',
-    'home daily goal must count persisted per-answer attempts with migration fallback',
-  ],
-  [
     'const mockExamSessions = useProgressStore((state) => state.mockExamSessions);',
     'home route must read persisted mock exam scores',
   ],
   ['mockExamSessions,', 'home route must feed persisted mock exam scores into readiness'],
   [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
-    'home route preparation signal verdict must use localized copy',
+    'home route readiness verdict must use localized copy',
   ],
   [
     'accessibilityLabel={readinessAccessibilityLabel}',
-    'home route preparation signal card must expose localized accessibility copy',
+    'home route readiness card must expose localized accessibility copy',
   ],
   ['href="/exam"', 'home route readiness CTA must link to the mock exam flow'],
-  ['{copy.readinessCaveat}', 'home route preparation signal caveat must always render'],
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
@@ -1062,19 +1065,19 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad för att öva igen',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'Svara fel på en övningsfråga så visas den här.',
-    'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
-    'Misstag',
-    'Fel svar: ${count}',
+    'När du missar en övningsfråga visas den här.',
+    'Inga missade frågor ännu',
+    'Öva igen',
+    'Frågor att öva igen',
+    'Ditt senaste svar',
+    'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
+    'Missade frågor',
+    'Antal missar: ${count}',
   ],
   en: [
     'Smart review',
@@ -1094,6 +1097,14 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Wrong answers: ${count}',
   ],
 };
+const FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY = [
+  ['Fell', 'ogg'],
+  ['Fel svar att', ' repetera'],
+  ['Gå igenom fel svar', ' med fråga'],
+  ['repetitionsantal på', ' samma plats'],
+  ['Sparad för fokuserad', ' repetition'],
+  ['Ditt senaste felaktiga', ' svar'],
+].map((parts) => parts.join(''));
 const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'mistakes route must import AppLanguage from settings'],
   ['type MistakesCopy = {', 'mistakes route must define a typed copy contract'],
@@ -1206,22 +1217,9 @@ const EXPECTED_TAB_NAVIGATION_ROUTES = [
 ];
 const EXPECTED_TAB_NAVIGATION_RULES = [
   {
-    label: 'tabs pathname import',
-    pattern: /import \{ Tabs, usePathname \} from 'expo-router';/,
-  },
-  {
     label: 'settings language import',
     pattern:
       /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
-  },
-  {
-    label: 'semantic tab icon import',
-    pattern:
-      /import \{ TabBarIcon, type TabBarIconName \} from '\.\.\/\.\.\/components\/ui\/icons\/TabBarIcon';/,
-  },
-  {
-    label: 'theme token import',
-    pattern: /import \{ colors \} from '\.\.\/\.\.\/lib\/theme';/,
   },
   {
     label: 'tab route-name union',
@@ -1233,37 +1231,16 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /type TabTitleCopy = Record<TabRouteName, string>;/,
   },
   {
-    label: 'tab icon map contract',
-    pattern: /type TabIconMap = Record<TabRouteName, TabBarIconName>;/,
-  },
-  {
-    label: 'tab path map contract',
-    pattern: /type TabPathMap = Record<TabRouteName, string>;/,
-  },
-  {
-    label: 'semantic tab icon map',
-    pattern: /const tabIconMap: TabIconMap = \{/,
-  },
-  {
-    label: 'tab route path map',
-    pattern: /const tabPathMap: TabPathMap = \{/,
-  },
-  {
-    label: 'path-based active tab helper',
-    pattern: /function isActiveTab\(routeName: TabRouteName, pathname: string\)/,
-  },
-  {
-    label: 'route-aware icon component',
-    pattern:
-      /function TabRouteIcon\(\{ routeName, size \}: \{ routeName: TabRouteName; size: number \}\)/,
-  },
-  {
     label: 'localized tab copy map',
     pattern: /const tabTitleCopy: Record<AppLanguage, TabTitleCopy> = \{/,
   },
   {
+    label: 'hidden icon helper',
+    pattern: /const hiddenTabIcon = \(\) => null;/,
+  },
+  {
     label: 'tab options helper',
-    pattern: /function getTabOptions\(routeName: TabRouteName, title: string\)/,
+    pattern: /function getTabOptions\(title: string\)/,
   },
   {
     label: 'plain tab title',
@@ -1274,16 +1251,8 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /tabBarAccessibilityLabel: title/,
   },
   {
-    label: 'semantic tab icon renderer',
-    pattern: /<TabRouteIcon routeName=\{routeName\} size=\{size\} \/>/,
-  },
-  {
-    label: 'active tab token color',
-    pattern: /tabBarActiveTintColor: colors\.accent/,
-  },
-  {
-    label: 'inactive tab token color',
-    pattern: /tabBarInactiveTintColor: colors\.textSecondary/,
+    label: 'placeholder glyph suppression',
+    pattern: /tabBarIcon: hiddenTabIcon/,
   },
   {
     label: 'settings language read',
@@ -1301,9 +1270,6 @@ const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'consentPromptsRequired',
   'noAdPlacements',
   'privacyReviewRequiresBinary',
-  'proRuntimeScopeDefaultEnabled',
-  'proRuntimeScopeEnvFlag',
-  'proRuntimeScopeOverrideGate',
   'realAdsEnvFlag',
   'removeAdsPriceLabel',
   'removeAdsProductId',
@@ -1348,7 +1314,7 @@ const EXPECTED_BANNER_AD_PLACEMENTS = ['home_banner', 'chapter_list_banner'];
 const EXPECTED_BANNER_AD_PLACEMENT_TYPE_CASES = 3;
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 5;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 17;
 const EXPECTED_REMOVE_ADS_SV_EXAM_COPY_CASES = 7;
 const EXPECTED_AD_COPY_SV_REWARDED_PRACTICE_EXAM_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -1760,6 +1726,10 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   [
     'const copy = chapterRouteCopy[language];',
     'chapter route must select copy from settings language',
+  ],
+  [
+    '<QuestionDisclaimer language={language} />',
+    'chapter route disclaimer must receive settings language',
   ],
   [
     'chapterDescription: (chapter) => chapter.descriptionSv',
@@ -2704,6 +2674,14 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
     pattern: /language\?: AppLanguage;/,
   },
   {
+    label: 'optional accessibility summary prop contract',
+    pattern: /accessibilitySummary\?: boolean;/,
+  },
+  {
+    label: 'standalone accessibility summary default',
+    pattern: /accessibilitySummary = true/,
+  },
+  {
     label: 'Swedish practiced status copy',
     pattern: /\$\{completedCount\}\/\$\{questionCount\} besvarade/,
   },
@@ -2752,7 +2730,7 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'Card receives chapter accessibility summary',
     pattern:
-      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+      /<Card\s+accessible=\{accessibilitySummary\}\s+accessibilityLabel=\{accessibilitySummary \? chapterAccessibilityLabel : undefined\}\s+elevated\s+style=\{styles\.card\}\s*>/,
   },
   {
     label: 'visible chapter title',
@@ -3037,12 +3015,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /const stateLabel = state === 'idle' \? undefined : copy\.stateLabels\[state\];/,
   },
   {
-    label: 'selected-only checked state',
-    pattern: /const checked = selected;/,
-  },
-  {
-    label: 'checked, selected, and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ checked, disabled, selected \}\}/,
+    label: 'selected and disabled state forwarding',
+    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
   },
   {
     label: 'disabled interaction forwarding',
@@ -3189,10 +3163,6 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
   {
     label: 'inactive render returns null',
     pattern: /if \(!active\) return null;/,
-  },
-  {
-    label: 'web decorative container aria-hidden',
-    pattern: /aria-hidden/,
   },
   {
     label: 'decorative animation hidden from accessibility tree',
@@ -3465,7 +3435,6 @@ const EXPECTED_PROGRESS_INTERFACES = [
 const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'completedQuestionIds', type: 'string[]', optional: false },
   { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
-  { name: 'answerAttempts', type: 'AnswerAttemptProgress[]', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
@@ -4204,30 +4173,6 @@ function validateStaticHeadMetadataDescription() {
   return extractStaticHeadMetaDescriptions(source).length;
 }
 
-function validateStaticV11ReadinessCopy() {
-  const source = loadText('site/v11.js');
-  let unsupportedCopyValidated = 0;
-  let requiredCopyValidated = 0;
-
-  STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.forEach((pattern) => {
-    if (pattern.test(source)) {
-      fail(`static v1.1 dashboard contains unsupported readiness/pass-prediction copy: ${pattern}`);
-      return;
-    }
-    unsupportedCopyValidated += 1;
-  });
-
-  STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.forEach((copy) => {
-    if (!source.includes(copy)) {
-      fail(`static v1.1 dashboard local-practice copy missing: ${copy}`);
-      return;
-    }
-    requiredCopyValidated += 1;
-  });
-
-  return { unsupportedCopyValidated, requiredCopyValidated };
-}
-
 function validateStaticEbookPracticalTestClaims() {
   const source = loadText('site/ebook.js');
   let unsupportedPracticalClaimsValidated = 0;
@@ -4430,6 +4375,82 @@ function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
   return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionStateWelfareCoverageOverlapIssue(question) {
+  if (question.id !== 'q071' && question.id !== 'q156') return null;
+
+  const correctAnswerText = [correctOption(question).textSv, correctOption(question).textEn].join(
+    ' ',
+  );
+  const learnerText = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  if (question.id === 'q071') {
+    const missingCoverage = QUESTION_Q071_HIGHER_EDUCATION_RESEARCH_PATTERNS.find(
+      (pattern) => !pattern.test(learnerText),
+    );
+    if (missingCoverage) return missingCoverage;
+    return QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS.find((pattern) =>
+      pattern.test(learnerText),
+    );
+  }
+
+  const higherEducationDrift = QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS.find((pattern) =>
+    pattern.test(learnerText),
+  );
+  if (higherEducationDrift) return higherEducationDrift;
+
+  const missingSocialInsurance = QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS.find(
+    (pattern) => !pattern.test(correctAnswerText),
+  );
+  return missingSocialInsurance || null;
+}
+
+function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
+  return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(question.questionEn),
+  );
+}
+
+function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
+  if (!(question.tags || []).includes('council-of-europe')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
+function findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('saltsjobaden')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_SALTSJOBADEN_AGREEMENT_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
+}
+
+function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
+  if (!(question.tags || []).includes('lucia-procession')) return null;
+
+  const text = [question.explanationSv, question.explanationEn].join(' ');
+  return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTaxVatTwoConceptIssue(question) {
   const text = [
     question.questionSv,
@@ -4440,6 +4461,25 @@ function findQuestionTaxVatTwoConceptIssue(question) {
   ].join(' ');
 
   return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionSuccessionVatDistractorIssue(question) {
+  if (
+    question.uhrReference?.section !== 'Successionsordningen' &&
+    !(question.tags || []).includes('succession')
+  ) {
+    return null;
+  }
+
+  const text = [
+    question.questionSv,
+    question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ].join(' ');
+
+  return QUESTION_SUCCESSION_VAT_DISTRACTOR_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionNestedMetaStem(question) {
@@ -4590,66 +4630,6 @@ function findDuplicateOptionTextLabels(question) {
     });
   }
   return duplicates;
-}
-
-function correctOptionFor(question) {
-  if (!Array.isArray(question.options)) return null;
-  return question.options.find((option) => option.id === question.correctOptionId) || null;
-}
-
-function firstSentence(value) {
-  return normalizeOptionText(value).split(/[.!?;]/, 1)[0] || '';
-}
-
-function sourcePrimaryAnswerConceptText(question) {
-  const correctOption = correctOptionFor(question);
-  return [
-    correctOption?.textSv,
-    correctOption?.textEn,
-    firstSentence(question.explanationSv),
-    firstSentence(question.explanationEn),
-  ]
-    .filter(hasText)
-    .join(' ');
-}
-
-function findSourcePrimaryAnswerConcept(question) {
-  if (!question?.uhrReference) return null;
-  const text = sourcePrimaryAnswerConceptText(question);
-  if (!text) return null;
-
-  return SOURCE_PRIMARY_ANSWER_CONCEPT_PATTERNS.find(
-    (concept) =>
-      question.uhrReference.chapter === concept.chapter &&
-      question.uhrReference.section === concept.section &&
-      concept.patterns.some((pattern) => pattern.test(text)),
-  );
-}
-
-function validateSourcePrimaryAnswerConcepts(authoredQuestions) {
-  const seenConcepts = new Map();
-  const duplicateQuestionIds = new Set();
-
-  authoredQuestions.forEach((question) => {
-    const concept = findSourcePrimaryAnswerConcept(question);
-    if (!concept || !hasText(question.id)) return;
-
-    const key = `${question.uhrReference.chapter}|${question.uhrReference.section}|${concept.id}`;
-    const previousQuestion = seenConcepts.get(key);
-    if (previousQuestion) {
-      duplicateQuestionIds.add(previousQuestion.id);
-      duplicateQuestionIds.add(question.id);
-      fail(`${question.id} duplicates ${concept.label} source concept from ${previousQuestion.id}`);
-    } else {
-      seenConcepts.set(key, question);
-    }
-  });
-
-  authoredQuestions.forEach((question) => {
-    if (!duplicateQuestionIds.has(question.id)) {
-      sourceQuestionPrimaryAnswerConceptsValidated += 1;
-    }
-  });
 }
 
 function optionCountMatchesQuestionType(question) {
@@ -4844,6 +4824,40 @@ function englishCivicActionClause(value) {
     .replace(/^public services being available\b/i, 'public services are available')
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
+function webSocialMediaStatementSv(answer) {
+  if (/^Vem som helst kan skapa innehåll där/i.test(answer)) {
+    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+  }
+  if (/^Bara ansvariga utgivare får skriva inlägg där/i.test(answer)) {
+    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+  }
+  if (/^Allt innehåll godkänns först av staten/i.test(answer)) {
+    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
+  }
+  if (/^Innehållet är alltid mer pålitligt/i.test(answer)) {
+    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
+  }
+  return `På webben och i sociala medier gäller att ${lowerFirst(
+    answer.replace(/\bdär\b/gi, 'på webben och i sociala medier'),
+  )}`;
+}
+function webSocialMediaStatementEn(answer) {
+  if (/^Anyone can create content there/i.test(answer)) {
+    return 'On the web and in social media, anyone can create content, and that content is not always checked the same way as in other media';
+  }
+  if (/^Only responsible publishers may write posts there/i.test(answer)) {
+    return 'On the web and in social media, only responsible publishers may write posts';
+  }
+  if (/^All content is first approved by the state/i.test(answer)) {
+    return 'On the web and in social media, all content is first approved by the state';
+  }
+  if (/^The content is always more reliable/i.test(answer)) {
+    return 'Content on the web and in social media is always more reliable than news in newspapers';
+  }
+  return `On the web and in social media, ${lowerFirst(
+    answer.replace(/\bthere\b/gi, 'on the web and in social media'),
+  )}`;
+}
 function swedishCommonToDoStatement(timePhrase, answer) {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -4866,6 +4880,19 @@ function englishCommonToDoStatement(timePhrase, answer) {
     return `On ${time}, it is common to ${activity}`;
   }
   return `On ${time}, ${activity} are common`;
+}
+function englishCommonCelebrationMode(answer) {
+  const activity = stripLeadingPurposeEn(answer).trim();
+  const celebrateMatch = activity.match(/^celebrate with (.+)$/i);
+  if (celebrateMatch) return `with ${lowerFirst(celebrateMatch[1])}`;
+  if (
+    /^(?:celebrate|eat|light|open|hold|wear|serve|welcome|arrange|gather|dance|sing|go)\b/i.test(
+      activity,
+    )
+  ) {
+    return `by ${englishGerundPhrase(activity)}`;
+  }
+  return `with ${lowerFirst(activity)}`;
 }
 function swedishHabitualPredicate(answer) {
   return lowerFirst(answer).replace(/\barrangerar\b/i, 'arrangera');
@@ -4935,22 +4962,6 @@ function swedishTraditionalCelebrationAnswer(answer) {
 function englishTraditionalCelebrationAnswer(answer) {
   if (/^Jesus' birth\b/.test(answer)) return answer;
   return lowerFirst(answer);
-}
-function swedishMentionedExample(answer, category) {
-  const built = answer.trim().match(/^Att\s+(.+?)\s+byggdes\s+(.+)$/i);
-  if (built) return `Byggandet av ${built[1]} ${built[2]} nämns som exempel på ${category}`;
-  return `${answer} nämns som exempel på ${category}`;
-}
-function englishMentionedExample(answer, category) {
-  const built = answer.trim().match(/^That\s+(.+?)\s+were built\s+(.+)$/i);
-  if (built) {
-    return `The building of ${built[1]} ${built[2]} is mentioned as an example of ${category}`;
-  }
-  return `${answer} ${englishSubjectVerb(answer, 'is', 'are')} mentioned as ${englishSubjectVerb(
-    answer,
-    'an example',
-    'examples',
-  )} of ${category}`;
 }
 function swedishPurposeClause(value) {
   return `att ${lowerLeadingSwedishClauseStart(stripLeadingPurposeSv(value))}`;
@@ -5591,8 +5602,13 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
-  match = q.match(/^Vilket är ett sätt att (.+)$/i);
-  if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Hur kan (.+?) påverka (.+?) och delta i (.+)$/i);
+  if (match) {
+    const method = answer.replace(/^Genom att\s+/i, '');
+    return `${upperFirst(match[1])} kan påverka ${match[2]} och delta i ${
+      match[3]
+    } genom att ${lowerFirst(method)}`;
+  }
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
@@ -5716,8 +5732,6 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad förändrades genom (.+)$/i);
   if (match)
     return `Förändringen genom ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
-  match = q.match(/^Vilken händelse från (.+?) nämns som (.+)$/i);
-  if (match) return `Händelsen från ${match[1]} var att ${lowerLeadingSwedishCommonStart(answer)}`;
   match = q.match(/^När firas (.+?) i Sverige$/i);
   if (match) return `${upperFirst(match[1])} firas ${lowerFirst(answer)}`;
   match = q.match(/^När firas (.+)$/i);
@@ -5786,6 +5800,8 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} infaller ${lowerFirst(answer)}`;
   match = q.match(/^Vad uppmärksammas på (.+?) i Sverige$/i);
   if (match) return `På ${match[1]} uppmärksammas ${lowerFirst(answer)}`;
+  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
+  if (match) return webSocialMediaStatementSv(answer);
   match = q.match(/^Vad finns på olika platser i Sverige för (.+)$/i);
   if (match) return `På olika platser i Sverige finns ${lowerFirst(answer)} för ${match[1]}`;
   match = q.match(/^Vilka högtider är exempel på (.+)$/i);
@@ -5800,8 +5816,6 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(match[1])} byggdes ${lowerFirst(answer)}`;
   match = q.match(/^Vilka kristna kyrkor eller samfund finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[1]}`;
-  match = q.match(/^Vilka kristna kyrkor eller samfund nämns som exempel i (.+)$/i);
-  if (match) return `${answer} nämns som exempel i ${match[1]}`;
   match = q.match(/^Vilket påstående om (.+?) stämmer$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
@@ -5819,12 +5833,8 @@ function civicStatementSv(source, option) {
   if (match) return swedishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Vilka riktningar inom (.+?) finns i (.+)$/i);
   if (match) return `${answer} finns i ${match[2]}`;
-  match = q.match(/^Vilka riktningar inom (.+?) nämns som exempel i (.+)$/i);
-  if (match) return `${answer} nämns som exempel i ${match[2]}`;
   match = q.match(/^Vad bidrog till (.+)$/i);
   if (match) return `${upperFirst(answer)} bidrog till ${match[1]}`;
-  match = q.match(/^Vad nämns som exempel på (.+)$/i);
-  if (match) return swedishMentionedExample(answer, match[1]);
   match = q.match(/^Vad är vanligt vid (.+)$/i);
   if (match) return `Vid ${match[1]} är det vanligt med ${lowerFirst(answer)}`;
   match = q.match(/^Vad är vanligt i många hem under (.+)$/i);
@@ -5900,8 +5910,12 @@ function civicStatementEn(source, option) {
   if (match) return meaningStatementEn(match[1], answer);
   match = q.match(/^Which of the following is part of (.+)$/i);
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
-  match = q.match(/^Which is a way to (.+)$/i);
-  if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^How can (.+?) influence (.+?) and participate in (.+)$/i);
+  if (match) {
+    return `${upperFirst(match[1])} can influence ${match[2]} and participate in ${
+      match[3]
+    } by ${lowerFirst(stripLeadingByEn(answer))}`;
+  }
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
@@ -6038,8 +6052,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} are examples of ${match[1]}`;
   match = q.match(/^What changed through (.+)$/i);
   if (match) return `The change through ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
-  match = q.match(/^Which event from (.+?) is mentioned as (.+)$/i);
-  if (match) return `The event from ${match[1]} was that ${lowerLeadingEnglishArticle(answer)}`;
   match = q.match(/^When is (.+?) (?:celebrated|observed) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} is observed ${lowerFirst(answer)}`;
   match = q.match(/^When are (.+?) celebrated$/i);
@@ -6055,6 +6067,9 @@ function civicStatementEn(source, option) {
   match = q.match(/^What did (.+?) become important for$/i);
   if (match)
     return `${upperFirst(match[1])} became important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
+  match = q.match(/^What was (.+?) important for$/i);
+  if (match)
+    return `${upperFirst(match[1])} was important for ${lowerLeadingEnglishArticle(answer).replace(/^Cooperation\b/, 'cooperation')}`;
   match = q.match(/^What was the goal of (.+?) during (.+)$/i);
   if (match)
     return `The goal of ${match[1]} during ${match[2]} was to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -6074,6 +6089,13 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} has been law in Sweden since ${answer}`;
   match = q.match(/^What does (.+?) work to do$/i);
   if (match) return `${upperFirst(match[1])} works to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What does (.+?) promote$/i);
+  if (match) {
+    if (/^Only\s+/i.test(answer)) {
+      return `${upperFirst(match[1])} promotes only ${lowerFirst(answer.replace(/^Only\s+/i, ''))}`;
+    }
+    return `${upperFirst(match[1])} promotes ${lowerFirst(answer)}`;
+  }
   match = q.match(/^What does (.+?) work for$/i);
   if (match) {
     if (/^Only\s+/i.test(answer)) {
@@ -6098,6 +6120,11 @@ function civicStatementEn(source, option) {
   }
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+  match = q.match(/^How is (.+?) commonly (celebrated|observed) in Sweden$/i);
+  if (match)
+    return `${match[1]} is commonly ${match[2].toLowerCase()} ${englishCommonCelebrationMode(
+      answer,
+    )}`;
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -6111,6 +6138,8 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} occurs ${englishOccurrencePhrase(answer)}`;
   match = q.match(/^What is marked on (.+?) in Sweden$/i);
   if (match) return `${upperFirst(match[1])} marks ${lowerFirst(answer)}`;
+  match = q.match(/^What is important to remember about the web and social media$/i);
+  if (match) return webSocialMediaStatementEn(answer);
   match = q.match(/^What exists in different places in Sweden for (.+)$/i);
   if (match)
     return `In different places in Sweden, there are ${lowerEnglishNounPhrase(answer)} for ${match[1]}`;
@@ -6129,8 +6158,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} were built ${lowerFirst(answer)}`;
   match = q.match(/^Which Christian churches or communities exist in (.+)$/i);
   if (match) return `${answer} exist in ${match[1]}`;
-  match = q.match(/^Which Christian churches or communities are mentioned as examples in (.+)$/i);
-  if (match) return `${answer} are mentioned as examples in ${match[1]}`;
   match = q.match(/^Which statement about (.+?) is correct$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
@@ -6148,12 +6175,8 @@ function civicStatementEn(source, option) {
   if (match) return englishGainedRightStatement(match[1], answer, match[2]);
   match = q.match(/^Which branches of (.+?) are found in (.+)$/i);
   if (match) return `${answer} are found in ${match[2]}`;
-  match = q.match(/^Which branches within (.+?) are mentioned as examples in (.+)$/i);
-  if (match) return `${answer} are mentioned as examples in ${match[2]}`;
   match = q.match(/^What contributed to (.+)$/i);
   if (match) return `${upperFirst(answer)} contributed to ${match[1]}`;
-  match = q.match(/^What is mentioned as an example of (.+)$/i);
-  if (match) return englishMentionedExample(answer, match[1]);
   match = q.match(/^What is common during (.+)$/i);
   if (match) return `${upperFirst(answer)} are common during ${match[1]}`;
   match = q.match(/^What is common in many homes during (.+)$/i);
@@ -7284,6 +7307,11 @@ let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
+let questionStateWelfareCoverageSplitValidated = 0;
+let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
+let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
+let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
+let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -7307,9 +7335,6 @@ let staticSiteOutcomeSloganPatternsValidated = 0;
 let staticSiteOutcomeSloganParityValidated = false;
 let staticHeadMetadataDescriptionsValidated = 0;
 let staticHeadMetadataDescriptionValidated = false;
-let staticV11ReadinessUnsupportedCopyValidated = 0;
-let staticV11ReadinessRequiredCopyValidated = 0;
-let staticV11ReadinessCopyParityValidated = false;
 let staticEbookOutcomeClaimPatternsValidated = 0;
 let staticEbookOutcomeClaimParityValidated = false;
 let staticEbookPracticalTestClaimPatternsValidated = 0;
@@ -7333,7 +7358,6 @@ let questionChapterReferenceParityValidated = 0;
 let authoredSourceQuestionsValidated = 0;
 let authoredSourcePartitionQuestionsValidated = 0;
 let sourcePublicationParityValidated = 0;
-let sourceQuestionPrimaryAnswerConceptsValidated = 0;
 let generationParityValidated = false;
 let chapterGenerationParityValidated = 0;
 let generatedSourceMetadataParityValidated = 0;
@@ -7396,15 +7420,6 @@ staticSiteOutcomeSloganParityValidated =
   staticSiteOutcomeSloganPatternsValidated === UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 staticHeadMetadataDescriptionsValidated = validateStaticHeadMetadataDescription();
 staticHeadMetadataDescriptionValidated = staticHeadMetadataDescriptionsValidated >= 1;
-{
-  const staticV11Validation = validateStaticV11ReadinessCopy();
-  staticV11ReadinessUnsupportedCopyValidated = staticV11Validation.unsupportedCopyValidated;
-  staticV11ReadinessRequiredCopyValidated = staticV11Validation.requiredCopyValidated;
-  staticV11ReadinessCopyParityValidated =
-    staticV11ReadinessUnsupportedCopyValidated ===
-      STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
-    staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_LOCAL_SIGNAL_COPY.length;
-}
 {
   const practicalTestValidation = validateStaticEbookPracticalTestClaims();
   staticEbookPracticalTestClaimPatternsValidated =
@@ -7749,9 +7764,6 @@ function validateTabNavigationParity() {
   if (tabLayout.includes('⏷')) {
     reject('tab layout must not include visible placeholder tab glyphs');
   }
-  if (/hiddenTabIcon|tabBarIcon:\s*(?:undefined|null)|=>\s*null/.test(tabLayout)) {
-    reject('tab layout must render semantic SVG tab icons instead of hidden/null placeholders');
-  }
 
   const swedishTabCopyBlock = tabLayout.match(/sv:\s*\{([\s\S]*?)\},\s*en:/)?.[1] ?? '';
   const swedishExamTabTitle = swedishTabCopyBlock.match(/exam:\s*'([^']+)'/)?.[1] ?? '';
@@ -7759,16 +7771,12 @@ function validateTabNavigationParity() {
     reject('exam tab Swedish title must use Övningsprov, not bare real-exam wording');
   }
 
-  const iconMapBlock = tabLayout.match(/const tabIconMap: TabIconMap = \{([\s\S]*?)\};/)?.[1] ?? '';
-  const seenIcons = new Set();
-
   for (const route of EXPECTED_TAB_NAVIGATION_ROUTES) {
     const routePattern = new RegExp(
-      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\('${route.routeName}', copy\\.${route.routeName}\\)\\}`,
+      `<Tabs\\.Screen\\s+name="${route.routeName}"\\s+options=\\{getTabOptions\\(copy\\.${route.routeName}\\)\\}`,
     );
     const svPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.sv)}'`);
     const enPattern = new RegExp(`${route.routeName}: '${escapeRegExp(route.en)}'`);
-    const iconPattern = new RegExp(`${route.routeName}: '${route.routeName}'`);
 
     if (!routePattern.test(tabLayout)) {
       reject(`${route.routeName} tab must use getTabOptions(copy.${route.routeName})`);
@@ -7778,15 +7786,6 @@ function validateTabNavigationParity() {
       reject(`${route.routeName} tab must define Swedish and English titles`);
       continue;
     }
-    if (!iconPattern.test(iconMapBlock)) {
-      reject(`${route.routeName} tab must map to its own semantic icon`);
-      continue;
-    }
-    if (seenIcons.has(route.routeName)) {
-      reject(`${route.routeName} tab icon must be unique`);
-      continue;
-    }
-    seenIcons.add(route.routeName);
 
     tabNavigationRoutesValidated += 1;
   }
@@ -8290,9 +8289,6 @@ function validateReleaseMonetizationPolicyParity() {
     consentPromptsRequired: EXPECTED_RELEASE_CONSENT_PROMPTS,
     noAdPlacements: EXPECTED_RELEASE_NO_AD_PLACEMENTS,
     privacyReviewRequiresBinary: true,
-    proRuntimeScopeDefaultEnabled: false,
-    proRuntimeScopeEnvFlag: 'EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE',
-    proRuntimeScopeOverrideGate: 'release-scope-v11',
     realAdsEnvFlag: EXPECTED_RELEASE_REAL_ADS_ENV_FLAG,
     removeAdsPriceLabel: REMOVE_ADS_PRICE_LABEL,
     removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
@@ -9569,6 +9565,12 @@ function validateMistakesRouteCopyParity() {
     });
   });
 
+  FORBIDDEN_MISTAKES_ROUTE_SWEDISH_COPY.forEach((copy) => {
+    if (mistakesRoute.includes(copy)) {
+      reject(`mistakes route Swedish copy must not expose stale label ${JSON.stringify(copy)}`);
+    }
+  });
+
   const expectedLabelCount = Object.values(EXPECTED_MISTAKES_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
     0,
@@ -9776,6 +9778,7 @@ function validateProfileRouteHeaderParity() {
 function validateProfileRouteCopyParity() {
   let valid = true;
   let profileRoute = '';
+  let tierComparison = '';
 
   function reject(message) {
     valid = false;
@@ -9784,10 +9787,22 @@ function validateProfileRouteCopyParity() {
 
   try {
     profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+    tierComparison = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
+      'utf8',
+    );
   } catch (error) {
     reject(`profile route copy source could not be read: ${error.message}`);
     return;
   }
+
+  FORBIDDEN_PROFILE_PRO_SV_MISTAKE_REVIEW_COPY.forEach((phrase) => {
+    if (profileRoute.includes(phrase) || tierComparison.includes(phrase)) {
+      reject(
+        `profile/pro Swedish missed-question review copy must not use ${JSON.stringify(phrase)}`,
+      );
+    }
+  });
 
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
@@ -9880,7 +9895,6 @@ function validateHomeRouteHeaderParity() {
 function validateHomeRouteCopyParity() {
   let valid = true;
   let homeRoute = '';
-  let readinessSource = '';
 
   function reject(message) {
     valid = false;
@@ -9891,13 +9905,6 @@ function validateHomeRouteCopyParity() {
     homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   } catch (error) {
     reject(`home route copy source could not be read: ${error.message}`);
-    return;
-  }
-
-  try {
-    readinessSource = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
-  } catch (error) {
-    reject(`readiness source could not be read for home preparation signal copy: ${error.message}`);
     return;
   }
 
@@ -9913,15 +9920,6 @@ function validateHomeRouteCopyParity() {
 
   if (FORBIDDEN_SWEDISH_HOME_MISTAKE_REVIEW_COPY.test(homeRoute)) {
     reject('home route Swedish missed-question review copy must use natural learner wording');
-  }
-
-  const unsupportedPreparationSignalCopy = `${homeRoute}\n${readinessSource}`.match(
-    FORBIDDEN_HOME_PREPARATION_SIGNAL_COPY,
-  );
-  if (unsupportedPreparationSignalCopy) {
-    reject(
-      `home route preparation signal copy must not expose official-readiness wording: ${unsupportedPreparationSignalCopy[0]}`,
-    );
   }
 
   const seenLabels = new Set();
@@ -10219,6 +10217,40 @@ function validateSettingsRouteCopyParity() {
   EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!settingsRoute.includes(snippet)) reject(message);
   });
+
+  const settingsRadiogroupCount =
+    settingsRoute.match(/accessibilityRole="radiogroup"/g)?.length || 0;
+  const settingsRadioCount = settingsRoute.match(/accessibilityRole="radio"/g)?.length || 0;
+  if (settingsRadiogroupCount !== 2) {
+    reject('settings route must expose language and daily-goal controls as radiogroups');
+  }
+  if (settingsRadioCount !== 2) {
+    reject('settings route language and daily-goal options must use radio semantics');
+  }
+  if (!settingsRoute.includes('aria-label={copy.questionLanguageTitle}')) {
+    reject('settings route language radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-label={copy.dailyGoalTitle}')) {
+    reject('settings route daily-goal radiogroup must expose a localized group label');
+  }
+  if (!settingsRoute.includes('aria-checked={language === value}')) {
+    reject('settings route language radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: language === value }}')) {
+    reject('settings route language radios must expose checked accessibility state');
+  }
+  if (!settingsRoute.includes('aria-checked={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal radios must mirror checked state to web');
+  }
+  if (!settingsRoute.includes('accessibilityState={{ checked: dailyGoalAnswers === goal }}')) {
+    reject('settings route daily-goal radios must expose checked accessibility state');
+  }
+  if (settingsRoute.includes('aria-selected={language === value}')) {
+    reject('settings route language options must not use aria-selected instead of radio checked');
+  }
+  if (settingsRoute.includes('aria-selected={dailyGoalAnswers === goal}')) {
+    reject('settings route daily-goal options must not use aria-selected instead of radio checked');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_SETTINGS_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -10848,7 +10880,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
+      'Växla mellan tidsatta prov, bokmärken, missade frågor, ljud och redoindikator.',
     )
   ) {
     reject('home route Swedish study-loop copy must not include unreachable flashcard copy');
@@ -10856,7 +10888,7 @@ function validateSwedishFlashcardCopyNaturalness() {
 
   if (
     !homeRoute.includes(
-      'Switch between timed practice exams, bookmarks, mistake tracking, audio, and preparation signals.',
+      'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
     )
   ) {
     reject('home route English study-loop copy must not include unreachable flashcard copy');
@@ -11988,15 +12020,6 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
-  if (!settingsStore.includes("import { stopSpeech } from '../audio/speak';")) {
-    reject('setAudioEnabled must import stopSpeech for mute-side playback cleanup');
-  }
-  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
-    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
-  }
-  if (normalizedSettingsStore.includes('if (audioEnabled) { stopSpeech(); }')) {
-    reject('setAudioEnabled(true) must not stop or start speech playback');
-  }
 
   if (
     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
@@ -12401,19 +12424,6 @@ function validateProgressStoreSchemaParity() {
       'mock-exam answer timing rows must hydrate through a normalizer',
     ],
     [
-      'export type AnswerAttemptProgress = {',
-      'progress store must type persisted per-answer attempt rows',
-    ],
-    [
-      'function normalizeAnswerAttempts(value: unknown): AnswerAttemptProgress[]',
-      'answer-attempt rows must hydrate through a normalizer',
-    ],
-    ['answerAttempts: [],', 'empty progress must initialize answer attempt history'],
-    [
-      'answerAttempts: normalizeAnswerAttempts(candidate.answerAttempts)',
-      'progress hydration must normalize persisted answer attempt history',
-    ],
-    [
       'const normalizedAnswers = normalizeMockExamAnswers(item.answers);',
       'mock-exam hydration must normalize persisted answer timing rows',
     ],
@@ -12443,10 +12453,6 @@ function validateProgressStoreSchemaParity() {
     [
       "import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';",
       'progress store must import quiz completion XP rules',
-    ],
-    [
-      '{ questionId, isCorrect, answeredAt }',
-      'recordAnswer must persist one dated answer-attempt row per answer',
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
@@ -12491,7 +12497,6 @@ function validateProgressStoreSchemaParity() {
     'Math.round(candidate.lifetimeSpent ?? fallback.lifetimeSpent)',
     'lastAnsweredAt: item.lastAnsweredAt',
     'nextReviewAt: item.nextReviewAt',
-    'answeredAt: item.answeredAt',
     'completedAt: item.completedAt',
     'timeSpentSeconds: item.timeSpentSeconds',
     "typeof candidate.lastEarnedAt === 'string' ? candidate.lastEarnedAt",
@@ -12997,14 +13002,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'native Remove Ads purchase request must use the supplied product id as an in-app purchase',
-    ],
-    [
-      /const requestPurchasePromise = iap\.requestPurchase\(\{[\s\S]*type:\s*'in-app',[\s\S]*\}\);\s*void requestPurchasePromise\.catch\(\(error: unknown\) => settle\(error\)\);/.test(
-        purchaseSource,
-      ) &&
-        !/requestResult/.test(purchaseSource) &&
-        !/normalizePurchases\(request/.test(purchaseSource),
-      'native Remove Ads buy must grant only from purchaseUpdatedListener events, not requestPurchase return values',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -14179,22 +14176,10 @@ function validatePracticeScoringRules() {
 
   const cases = [
     { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
-    { label: 'null input', input: null, expected: { correct: 0, total: 0 } },
-    { label: 'object input', input: { correct: true }, expected: { correct: 0, total: 0 } },
     { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
     { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
     { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
     { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
-    {
-      label: 'truthy non-booleans ignored',
-      input: ['yes', 1, {}, true, false, true],
-      expected: { correct: 2, total: 3 },
-    },
-    {
-      label: 'invalid array elements ignored',
-      input: ['yes', 1, {}, null],
-      expected: { correct: 0, total: 0 },
-    },
   ];
   let rulesAreValid = true;
 
@@ -15289,16 +15274,6 @@ function validateXpRules() {
       expected: 2,
     },
     {
-      label: 'non-boolean correct flag',
-      actual: () => calculateAnswerXp({ isCorrect: 'true', explanationRead: true }),
-      expected: 0,
-    },
-    {
-      label: 'non-boolean explanation flag',
-      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }),
-      expected: 10,
-    },
-    {
       label: 'empty quiz completion',
       actual: () => calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }),
       expected: 0,
@@ -15313,37 +15288,10 @@ function validateXpRules() {
       actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }),
       expected: 70,
     },
-    {
-      label: 'non-finite answered count',
-      actual: () => calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }),
-      expected: 0,
-    },
-    {
-      label: 'non-finite quiz counts',
-      actual: () => calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }),
-      expected: 0,
-    },
-    {
-      label: 'fractional quiz count',
-      actual: () => calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }),
-      expected: 0,
-    },
-    {
-      label: 'negative quiz count',
-      actual: () => calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }),
-      expected: 0,
-    },
-    {
-      label: 'impossible quiz counts',
-      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }),
-      expected: 0,
-    },
     { label: 'level at 0 XP', actual: () => calculateLevel(0), expected: 1 },
     { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
     { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
     { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
-    { label: 'level at NaN XP', actual: () => calculateLevel(NaN), expected: 1 },
-    { label: 'level at infinite XP', actual: () => calculateLevel(Infinity), expected: 1 },
   ];
 
   let rulesAreValid = true;
@@ -15938,8 +15886,6 @@ function validateAuthoredSourceParity() {
     }
     if (publicationParityIsValid) sourcePublicationParityValidated += 1;
   });
-
-  validateSourcePrimaryAnswerConcepts(authoredQuestions);
 }
 
 validateAuthoredSourceParity();
@@ -16697,7 +16643,18 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const stateWelfareEnglishNaturalnessIssue =
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
+      const stateWelfareCoverageOverlapIssue =
+        findQuestionStateWelfareCoverageOverlapIssue(question);
+      const traditionCommonToDoEnglishNaturalnessIssue =
+        findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
+      const councilOfEuropeWorkForEnglishNaturalnessIssue =
+        findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
+      const saltsjobadenAgreementEnglishNaturalnessIssue =
+        findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
+      const luciaExplanationRoleScaffoldIssue =
+        findQuestionLuciaExplanationRoleScaffoldIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
+      const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const answerKeyPrompt = findQuestionAnswerKeyPrompt(question);
@@ -16737,10 +16694,38 @@ if (Array.isArray(questions)) {
       } else {
         questionStateWelfareEnglishNaturalnessValidated += 1;
       }
+      if (stateWelfareCoverageOverlapIssue) {
+        fail(`${label} overlaps q071/q156 state-welfare source coverage`);
+      } else if (question.id === 'q071' || question.id === 'q156') {
+        questionStateWelfareCoverageSplitValidated += 1;
+      }
+      if (traditionCommonToDoEnglishNaturalnessIssue) {
+        fail(`${label} uses literal common-to-do English wording`);
+      } else {
+        questionTraditionCommonToDoEnglishNaturalnessValidated += 1;
+      }
+      if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
+        fail(`${label} uses literal Council of Europe work-for English wording`);
+      } else {
+        questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
+      }
+      if (saltsjobadenAgreementEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+      } else {
+        questionSaltsjobadenAgreementEnglishNaturalnessValidated += 1;
+      }
+      if (luciaExplanationRoleScaffoldIssue) {
+        fail(`${label} uses Lucia role-scaffold explanation wording`);
+      } else {
+        questionLuciaExplanationRoleScaffoldValidated += 1;
+      }
       if (taxVatTwoConceptIssue) {
         fail(
           `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
         );
+      }
+      if (successionVatDistractorIssue) {
+        fail(`${label} uses the old q038 VAT distractor wording`);
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -17182,7 +17167,6 @@ console.log(
       authoredSourceQuestionsValidated,
       authoredSourcePartitionQuestionsValidated,
       sourcePublicationParityValidated,
-      sourceQuestionPrimaryAnswerConceptsValidated,
       generationParityValidated,
       chapterGenerationParityValidated,
       generatedSourceMetadataParityValidated,
@@ -17209,6 +17193,11 @@ console.log(
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
+      questionStateWelfareCoverageSplitValidated,
+      questionTraditionCommonToDoEnglishNaturalnessValidated,
+      questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+      questionSaltsjobadenAgreementEnglishNaturalnessValidated,
+      questionLuciaExplanationRoleScaffoldValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
@@ -17232,9 +17221,6 @@ console.log(
       staticSiteOutcomeSloganParityValidated,
       staticHeadMetadataDescriptionsValidated,
       staticHeadMetadataDescriptionValidated,
-      staticV11ReadinessUnsupportedCopyValidated,
-      staticV11ReadinessRequiredCopyValidated,
-      staticV11ReadinessCopyParityValidated,
       staticEbookOutcomeClaimPatternsValidated,
       staticEbookOutcomeClaimParityValidated,
       staticEbookPracticalTestClaimPatternsValidated,

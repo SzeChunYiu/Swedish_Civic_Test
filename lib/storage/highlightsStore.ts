@@ -34,8 +34,6 @@ export interface Highlight {
 
 const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';
 const highlightsStorageId = 'ebook-highlights';
-const maxHighlightOffset = 200_000;
-const maxHighlightNoteLength = 2_000;
 
 let highlightsStorage: MMKV | null = null;
 
@@ -56,31 +54,6 @@ function isHighlightColor(value: unknown): value is HighlightColor {
   return value === 'yellow' || value === 'green' || value === 'blue' || value === 'pink';
 }
 
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
-}
-
-function isCanonicalIsoTimestamp(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) && date.toISOString() === value;
-}
-
-function isValidOffset(value: unknown): value is number {
-  return (
-    typeof value === 'number' &&
-    Number.isInteger(value) &&
-    value >= 0 &&
-    value <= maxHighlightOffset
-  );
-}
-
-function isValidNote(value: unknown): value is string | undefined {
-  return (
-    value === undefined || (typeof value === 'string' && value.length <= maxHighlightNoteLength)
-  );
-}
-
 function normalize(value: unknown): PersistedHighlights {
   if (!value || typeof value !== 'object') return EMPTY;
   const candidate = value as Partial<PersistedHighlights>;
@@ -88,22 +61,18 @@ function normalize(value: unknown): PersistedHighlights {
 
   if (candidate.byChapter && typeof candidate.byChapter === 'object') {
     for (const [chapterId, list] of Object.entries(candidate.byChapter)) {
-      if (!isNonEmptyString(chapterId)) continue;
       if (!Array.isArray(list)) continue;
       const cleaned: Highlight[] = [];
       for (const item of list) {
         if (!item || typeof item !== 'object') continue;
         const h = item as Partial<Highlight>;
         if (
-          !isNonEmptyString(h.id) ||
-          !isNonEmptyString(h.blockId) ||
-          !isValidOffset(h.startOffset) ||
-          !isValidOffset(h.endOffset) ||
-          h.endOffset <= h.startOffset ||
+          typeof h.id !== 'string' ||
+          typeof h.blockId !== 'string' ||
+          typeof h.startOffset !== 'number' ||
+          typeof h.endOffset !== 'number' ||
           !isHighlightColor(h.color) ||
-          !isCanonicalIsoTimestamp(h.createdAt) ||
-          (h.updatedAt !== undefined && !isCanonicalIsoTimestamp(h.updatedAt)) ||
-          !isValidNote(h.note)
+          typeof h.createdAt !== 'string'
         ) {
           continue;
         }
@@ -114,9 +83,9 @@ function normalize(value: unknown): PersistedHighlights {
           startOffset: h.startOffset,
           endOffset: h.endOffset,
           color: h.color,
-          note: h.note,
+          note: typeof h.note === 'string' ? h.note : undefined,
           createdAt: h.createdAt,
-          updatedAt: h.updatedAt ?? h.createdAt,
+          updatedAt: typeof h.updatedAt === 'string' ? h.updatedAt : h.createdAt,
         });
       }
       byChapter[chapterId] = cleaned;
@@ -163,62 +132,9 @@ export interface AddHighlightInput {
   note?: string;
 }
 
-function normalizeNoteInput(value: unknown): string | undefined | null {
-  if (value === undefined) return undefined;
-  if (typeof value !== 'string') return null;
-  return value.length <= maxHighlightNoteLength ? value : value.slice(0, maxHighlightNoteLength);
-}
-
-function normalizeAddHighlightInput(input: AddHighlightInput): AddHighlightInput | null {
-  if (!input || typeof input !== 'object') return null;
-  const candidate = input as Partial<AddHighlightInput>;
-  const note = normalizeNoteInput(candidate.note);
-  if (
-    !isNonEmptyString(candidate.chapterId) ||
-    !isNonEmptyString(candidate.blockId) ||
-    !isValidOffset(candidate.startOffset) ||
-    !isValidOffset(candidate.endOffset) ||
-    candidate.endOffset <= candidate.startOffset ||
-    !isHighlightColor(candidate.color) ||
-    note === null
-  ) {
-    return null;
-  }
-
-  return {
-    chapterId: candidate.chapterId.trim(),
-    blockId: candidate.blockId.trim(),
-    startOffset: candidate.startOffset,
-    endOffset: candidate.endOffset,
-    color: candidate.color,
-    note,
-  };
-}
-
-function normalizeHighlightPatch(
-  patch: Partial<Pick<Highlight, 'color' | 'note'>>,
-): Partial<Pick<Highlight, 'color' | 'note'>> | null {
-  if (!patch || typeof patch !== 'object') return null;
-  const candidate = patch as Partial<Record<'color' | 'note', unknown>>;
-  const normalized: Partial<Pick<Highlight, 'color' | 'note'>> = {};
-
-  if ('color' in candidate) {
-    if (!isHighlightColor(candidate.color)) return null;
-    normalized.color = candidate.color;
-  }
-
-  if ('note' in candidate && candidate.note !== undefined) {
-    const note = normalizeNoteInput(candidate.note);
-    if (note === null) return null;
-    normalized.note = note;
-  }
-
-  return Object.keys(normalized).length > 0 ? normalized : null;
-}
-
 interface HighlightsState extends PersistedHighlights {
   persistenceWarning: RecoverablePersistenceWarning | null;
-  addHighlight: (input: AddHighlightInput) => Highlight | null;
+  addHighlight: (input: AddHighlightInput) => Highlight;
   updateHighlight: (id: string, patch: Partial<Pick<Highlight, 'color' | 'note'>>) => void;
   removeHighlight: (id: string) => void;
   clearChapter: (chapterId: string) => void;
@@ -232,24 +148,22 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
   ...initial.state,
   persistenceWarning: initial.persistenceWarning,
   addHighlight: (input) => {
-    const normalizedInput = normalizeAddHighlightInput(input);
-    if (!normalizedInput) return null;
     const now = new Date().toISOString();
     const highlight: Highlight = {
       id: genId(),
-      chapterId: normalizedInput.chapterId,
-      blockId: normalizedInput.blockId,
-      startOffset: normalizedInput.startOffset,
-      endOffset: normalizedInput.endOffset,
-      color: normalizedInput.color,
-      note: normalizedInput.note,
+      chapterId: input.chapterId,
+      blockId: input.blockId,
+      startOffset: input.startOffset,
+      endOffset: input.endOffset,
+      color: input.color,
+      note: input.note,
       createdAt: now,
       updatedAt: now,
     };
     set((state) => {
-      const existing = state.byChapter[normalizedInput.chapterId] ?? [];
+      const existing = state.byChapter[input.chapterId] ?? [];
       const next = {
-        byChapter: { ...state.byChapter, [normalizedInput.chapterId]: [...existing, highlight] },
+        byChapter: { ...state.byChapter, [input.chapterId]: [...existing, highlight] },
       };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
@@ -257,8 +171,6 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     return highlight;
   },
   updateHighlight: (id, patch) => {
-    const normalizedPatch = normalizeHighlightPatch(patch);
-    if (!normalizedPatch) return;
     set((state) => {
       const byChapter: Record<string, Highlight[]> = {};
       let touched = false;
@@ -268,8 +180,8 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
           touched = true;
           return {
             ...h,
-            color: normalizedPatch.color ?? h.color,
-            note: normalizedPatch.note !== undefined ? normalizedPatch.note : h.note,
+            color: patch.color ?? h.color,
+            note: patch.note !== undefined ? patch.note : h.note,
             updatedAt: new Date().toISOString(),
           };
         });
