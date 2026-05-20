@@ -27,6 +27,77 @@ function staticQuestionBank() {
   return context.window.SMT_QUESTIONS;
 }
 
+function staticBuddyRuntime() {
+  const source = read('site/buddies.js').replace(
+    /\}\)\(\);\s*$/,
+    `
+  window.__staticBuddyRuntime = {
+    BUDDIES,
+    SMT_FACTS,
+    BUDDY_GREETING_LINES,
+    BUDDY_PAGE_NUDGES,
+  };
+})();
+`,
+  );
+  const noop = () => {};
+  const storageStub = {
+    getItem() {
+      return null;
+    },
+    setItem: noop,
+    removeItem: noop,
+  };
+  const context = {
+    window: { addEventListener: noop },
+    document: {
+      addEventListener: noop,
+      getElementById() {
+        return null;
+      },
+    },
+    localStorage: storageStub,
+    sessionStorage: storageStub,
+    location: { hash: '#/' },
+    requestAnimationFrame: noop,
+    setTimeout: noop,
+    clearTimeout: noop,
+    Date,
+    Math,
+  };
+  vm.createContext(context);
+  vm.runInContext(source, context, { timeout: 3000 });
+  return context.window.__staticBuddyRuntime;
+}
+
+function assertTranslatedString(value, label) {
+  assert.equal(typeof value, 'string', `${label} should be a string`);
+  assert.notEqual(value.trim(), '', `${label} should not be empty`);
+  assert.doesNotMatch(value, /\b(?:TODO|TBD|undefined|null)\b/i, `${label} should be final copy`);
+}
+
+function assertTranslatedPair(pair, label) {
+  assert.ok(pair, `${label} should exist`);
+  assertTranslatedString(pair.en, `${label}.en`);
+  assertTranslatedString(pair.sv, `${label}.sv`);
+}
+
+function assertEqualTranslatedPool(pool, label) {
+  assert.ok(pool, `${label} should exist`);
+  assert.ok(Array.isArray(pool.en), `${label}.en should be an array`);
+  assert.ok(Array.isArray(pool.sv), `${label}.sv should be an array`);
+  assert.ok(pool.en.length > 0, `${label}.en should not be empty`);
+  assert.equal(
+    pool.sv.length,
+    pool.en.length,
+    `${label} should expose the same number of Swedish and English lines`,
+  );
+
+  for (const lang of ['en', 'sv']) {
+    pool[lang].forEach((line, index) => assertTranslatedString(line, `${label}.${lang}[${index}]`));
+  }
+}
+
 function staticQuestionSourceTitles() {
   return uniqueSorted(staticQuestionBank().map((question) => question.source?.title));
 }
@@ -268,6 +339,31 @@ test('static question bank exports visible question provenance', () => {
   assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
   assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
+});
+
+test('static study-buddy copy keeps complete Swedish and English line pools', () => {
+  const { BUDDIES, SMT_FACTS, BUDDY_GREETING_LINES, BUDDY_PAGE_NUDGES } = staticBuddyRuntime();
+
+  assert.ok(Array.isArray(BUDDIES), 'BUDDIES should be exported to the static buddy runtime');
+  assert.ok(BUDDIES.length > 0, 'BUDDIES should not be empty');
+  for (const buddy of BUDDIES) {
+    assertTranslatedString(buddy.id, `${buddy.id}.id`);
+    assertTranslatedString(buddy.name, `${buddy.id}.name`);
+    assertTranslatedPair(buddy.subtitle, `${buddy.id}.subtitle`);
+    assertTranslatedPair(buddy.factPrefix, `${buddy.id}.factPrefix`);
+    assertEqualTranslatedPool(buddy.tips, `${buddy.id}.tips`);
+    assertEqualTranslatedPool(buddy.pet, `${buddy.id}.pet`);
+  }
+
+  assertEqualTranslatedPool(BUDDY_GREETING_LINES, 'buddy greetings');
+  for (const [pathName, line] of Object.entries(BUDDY_PAGE_NUDGES)) {
+    assertTranslatedString(pathName, `buddy page nudge route ${pathName}`);
+    assertTranslatedPair(line, `buddy page nudge ${pathName}`);
+  }
+
+  assert.ok(Array.isArray(SMT_FACTS), 'SMT_FACTS should be exported to the static buddy runtime');
+  assert.ok(SMT_FACTS.length > 0, 'SMT_FACTS should not be empty');
+  SMT_FACTS.forEach((fact, index) => assertTranslatedPair(fact, `SMT_FACTS[${index}]`));
 });
 
 test('static source provenance copy rejects unshipped external source families', () => {

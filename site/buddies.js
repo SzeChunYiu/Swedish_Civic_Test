@@ -67,6 +67,7 @@
           "Plugga lite, kolla källan och säg att hästen höll dig sällskap.",
           "När två svar verkar rätt — det kortare är oftast fel.",
           "Min hemstad är Mora. Mycket hästar, få sandstränder.",
+          "Tryck på ett alternativ även när du gissar. Fel svar kommer tillbaka senare.",
         ],
       },
       pet: {
@@ -111,6 +112,8 @@
           "Pluggat 25 minuter? Dags för fika. Det är ju lag.",
           "Kanelbullens dag är 4 oktober. Men varje dag funkar egentligen.",
           "Fastnat? Ät något sött. Hjärnan går på socker.",
+          "Proffstips: förklaringar fastnar bättre med smör på.",
+          "Lagom står inte på provet. Men det borde göra det.",
         ],
       },
       pet: {
@@ -147,6 +150,8 @@
           "...",
           "Jag stod här i en timme. Du klarar ett kapitel.",
           "Vinka inte åt mig vid vägkanten. Jag vinkar inte tillbaka.",
+          "Vi är omkring 300 000. Fler frågor än älgar? Då ligger du bra till.",
+          "Älgar kan springa 60 km/h. Du kan ta ett tiominuterskapitel.",
         ],
       },
       pet: {
@@ -190,6 +195,8 @@
           "Ledtråden finns i frågan. Läs två gånger. Jag väntar.",
           "Sätt fram gröt så levererar jag rätt svar i sömnen. Förmodligen.",
           "Fyra grundlagar. INTE tre. Jag fick också plugga in det.",
+          "Jag flyttar bara grötskålar. Läs två gånger, välj lugnt och lita på de blandade svaren.",
+          "Känns något för lätt är det ofta just det.",
         ],
       },
       pet: {
@@ -228,6 +235,9 @@
         sv: [
           "Det finns minst sju sätt att lägga in mig. Inte på provet, lugn.",
           "Jag är en fisk, inte lärare. Men jag tror på dig.",
+          "Låt inte surströmming representera oss. Vi luktar inte allihop.",
+          "Midsommarbord utan mig blir mest sorgligt.",
+          "Om frågan nämner \"sill\" eller \"strömming\" är den nog inte med på samhällskunskapsprovet.",
         ],
       },
       pet: {
@@ -263,6 +273,8 @@
           "KÖR. PLUGGA. KÖR.",
           "En klunk. En fråga. En klunk till.",
           "Svenskar dricker bland mest kaffe per capita. Hänger du med?",
+          "Jag toppade på 200 mg. Du klarar dig fint på vatten.",
+          "Kaffe + kanelbulle = optimalt.",
         ],
       },
       pet: {
@@ -295,6 +307,9 @@
         sv: [
           "Jag sjönk på jungfrufärden 1628. Du klarar bättre.",
           "Tips: lasta inte överdäcket med för många kanoner.",
+          "Jag bor på museum nu. Folk betalar för att se mig. Även misslyckanden kan få en comeback.",
+          "Om första försöket sjunker: lägg till kaj i 333 år och försök igen.",
+          "Vasamuseet är ett av Sveriges mest besökta museer. Ta med barnen.",
         ],
       },
       pet: {
@@ -333,6 +348,8 @@
           "Dansa runt mig tre varv så kommer rätt svar. Påstås.",
           "Regn eller sol, vi dansar. Regn eller sol, du pluggar.",
           "\"Små grodorna\" — fråga inte varför grodor.",
+          "Sex ringar på mig. Sex kapitel före nästa fika. Deal?",
+          "Midsommarafton är alltid en fredag mellan 19 och 25 juni. Festen är nästan obligatorisk.",
         ],
       },
       pet: {
@@ -368,6 +385,9 @@
         sv: [
           "Tänd ett ljus. Eller en lampa. Båda funkar.",
           "Bär vitt om du kan. Förbättrar minnet, sägs det.",
+          "Sjung tyst om du måste. Din granne pluggar också.",
+          "Saffran hör hemma i bullarna, inte i provet.",
+          "Lucia är den 13 december. Skriv in mörker plus ljus i kalendern.",
         ],
       },
       pet: {
@@ -408,6 +428,9 @@
         sv: [
           "Jag smälter för din skull. Bokstavligen, till april.",
           "Plugga nu när det är mörkt. Belöning: ljusa sommarkvällar.",
+          "Moroten är dekoration. Ät inte upp mig.",
+          "Byggd på fem minuter. Pluggat i sex. Du ligger redan före.",
+          "Vintern är tuff. Det är också då svenskar pluggar som bäst.",
         ],
       },
       pet: {
@@ -451,6 +474,35 @@
   function currentLang() {
     try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
   }
+
+  const BUDDY_GREETING_LINES = {
+    en: [
+      "Hej. I'm {name}. I'll be your study buddy. Tap me anytime.",
+      "{name} reporting for duty. Click me for tips and Swedish facts.",
+      "Welcome. {name} here. Click me, I have things to say.",
+    ],
+    sv: [
+      "Hej. Jag är {name}. Din pluggkompis. Tryck när du vill.",
+      "{name} här. Klicka för tips och svenska fakta.",
+      "Välkommen. {name} här. Klicka på mig, jag har saker att säga.",
+    ],
+  };
+
+  const BUDDY_PAGE_NUDGES = {
+    "/practice": {
+      en: "{name} says: ten questions, no penalty for wrong ones. Just tap and learn.",
+      sv: "{name} säger: tio frågor, inget straff för fel. Tryck och lär.",
+    },
+    "/ebook": {
+      en: "{name} loves a quiet read. Pick a chapter from the left.",
+      sv: "{name} gillar en lugn läsning. Välj kapitel till vänster.",
+    },
+  };
+
+  function buddyCopy(template, buddy) {
+    return template.replace(/\{name\}/g, buddy.name);
+  }
+
   function getBuddyId() {
     try { return localStorage.getItem("smt_buddy") || seasonalDefault(); } catch { return "dala"; }
   }
@@ -522,18 +574,9 @@
   function showGreeting() {
     const b = getBuddy();
     const lang = currentLang();
-    const greetings = {
-      en: [
-        `Hej. I'm ${b.name}. I'll be your study buddy. Tap me anytime.`,
-        `${b.name} reporting for duty. Click me for tips and Swedish facts.`,
-        `Welcome. ${b.name} here. Click me, I have things to say.`,
-      ],
-      sv: [
-        `Hej. Jag är ${b.name}. Din pluggkompis. Tryck när du vill.`,
-        `${b.name} här. Klicka för tips och svenska fakta.`,
-      ],
-    };
-    const list = greetings[lang] || greetings.en;
+    const list = (BUDDY_GREETING_LINES[lang] || BUDDY_GREETING_LINES.en).map((line) =>
+      buddyCopy(line, b)
+    );
     showMessage(list[Math.floor(Math.random() * list.length)]);
   }
 
@@ -550,17 +593,8 @@
     const path = (location.hash || "#/").replace(/^#/, "").split("?")[0];
     const b = getBuddy();
     const lang = currentLang();
-    const lines = {
-      "/practice": {
-        en: `${b.name} says: ten questions, no penalty for wrong ones. Just tap and learn.`,
-        sv: `${b.name} säger: tio frågor, inget straff för fel. Tryck och lär.`,
-      },
-      "/ebook": {
-        en: `${b.name} loves a quiet read. Pick a chapter from the left.`,
-        sv: `${b.name} gillar en lugn läsning. Välj kapitel till vänster.`,
-      },
-    };
-    if (lines[path]) showMessage(lines[path][lang] || lines[path].en);
+    const line = BUDDY_PAGE_NUDGES[path];
+    if (line) showMessage(buddyCopy(line[lang] || line.en, b));
   }
 
   // ---------- Public API ----------
