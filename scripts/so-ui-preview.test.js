@@ -44,7 +44,12 @@ test('Somali preview uses public-information study wording from the style guide'
 
 test('Somali preview avoids outcome promises and keeps local privacy wording', () => {
   const source = read(previewPath);
-  for (const forbidden of ['baasaboor', 'dammaanad', 'waad gudbaysaa', 'muwaadinimo ayaad helaysaa']) {
+  for (const forbidden of [
+    'baasaboor',
+    'dammaanad',
+    'waad gudbaysaa',
+    'muwaadinimo ayaad helaysaa',
+  ]) {
     assert.doesNotMatch(source, new RegExp(forbidden));
   }
   assert.match(source, /qalabkan/);

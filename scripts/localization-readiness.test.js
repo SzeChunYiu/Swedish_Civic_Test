@@ -14,7 +14,11 @@ function readJson(filePath) {
 
 function parsePickerLocales() {
   const source = fs.readFileSync(localesPath, 'utf8');
-  const blocks = [...source.matchAll(/\{\s*code: '([^']+)'[\s\S]*?available: (true|false),[\s\S]*?fallback: '([^']+)'[\s\S]*?\}/g)];
+  const blocks = [
+    ...source.matchAll(
+      /\{\s*code: '([^']+)'[\s\S]*?available: (true|false),[\s\S]*?fallback: '([^']+)'[\s\S]*?\}/g,
+    ),
+  ];
   assert.ok(blocks.length >= 2, 'expected to parse locale entries from lib/i18n/locales.ts');
   return blocks.map((match) => ({
     code: match[1],
@@ -26,7 +30,10 @@ function parsePickerLocales() {
 function assertSampleCorpusExists(code) {
   const dir = path.join(sampleRoot, code);
   for (const fileName of ['README.md', 'sources.tsv', 'style-guide.md']) {
-    assert.ok(fs.existsSync(path.join(dir, fileName)), `${code} missing sample-corpus/${code}/${fileName}`);
+    assert.ok(
+      fs.existsSync(path.join(dir, fileName)),
+      `${code} missing sample-corpus/${code}/${fileName}`,
+    );
   }
 }
 
@@ -49,35 +56,64 @@ test('runtime availability stays fail-closed until readiness gate allows it', ()
   const readiness = readJson(readinessPath);
   for (const locale of parsePickerLocales()) {
     const entry = readiness.locales[locale.code];
-    assert.equal(entry.appAvailable, locale.available, `${locale.code} readiness appAvailable must match picker available`);
+    assert.equal(
+      entry.appAvailable,
+      locale.available,
+      `${locale.code} readiness appAvailable must match picker available`,
+    );
 
     if (locale.available) {
-      assert.equal(entry.uiStrings, 'complete', `${locale.code} cannot be available without complete UI strings`);
-      assert.equal(entry.questionContent, 'complete', `${locale.code} cannot be available without complete question content`);
-      assert.equal(entry.releaseGate, 'allowed', `${locale.code} cannot be available unless releaseGate is allowed`);
-      assert.notEqual(entry.nativeReview, 'missing', `${locale.code} cannot be available without native review/source-language equivalent`);
+      assert.equal(
+        entry.uiStrings,
+        'complete',
+        `${locale.code} cannot be available without complete UI strings`,
+      );
+      assert.equal(
+        entry.questionContent,
+        'complete',
+        `${locale.code} cannot be available without complete question content`,
+      );
+      assert.equal(
+        entry.releaseGate,
+        'allowed',
+        `${locale.code} cannot be available unless releaseGate is allowed`,
+      );
+      assert.notEqual(
+        entry.nativeReview,
+        'missing',
+        `${locale.code} cannot be available without native review/source-language equivalent`,
+      );
       assert.ok(
-        entry.accessibilityReview === 'complete' || entry.accessibilityReview === 'complete_for_current_app_surfaces',
+        entry.accessibilityReview === 'complete' ||
+          entry.accessibilityReview === 'complete_for_current_app_surfaces',
         `${locale.code} cannot be available without accessibility review`,
       );
     } else {
-      assert.equal(entry.releaseGate, 'blocked', `${locale.code} unavailable locale should remain blocked in readiness ledger`);
+      assert.equal(
+        entry.releaseGate,
+        'blocked',
+        `${locale.code} unavailable locale should remain blocked in readiness ledger`,
+      );
     }
   }
 });
 
-
 test('target picker rows carry native coming-soon badges without enabling release', () => {
   const localesSource = fs.readFileSync(localesPath, 'utf8');
-  const pickerSource = fs.readFileSync(path.join(repoRoot, 'components/ui/LanguagePicker.tsx'), 'utf8');
+  const pickerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/LanguagePicker.tsx'),
+    'utf8',
+  );
   const readiness = readJson(readinessPath);
   const expectedBadges = {
     ar: 'قيد الإعداد',
+    ckb: 'ئامادە دەکرێت',
     fa: 'در حال آماده‌سازی',
     so: 'Weli waa la diyaarinayaa',
     ti: 'ይዳሎ ኣሎ',
     pl: 'W przygotowaniu',
     tr: 'Hazırlanıyor',
+    uk: 'Готується',
     'zh-Hans': '正在准备',
     'zh-Hant': '準備中',
   };

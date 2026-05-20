@@ -88,7 +88,8 @@ export const soUiPreview = {
       dailyPracticeTitle: 'Layli maalinle ah',
       dailyPracticeTextTemplate: 'Maanta waxaad ka jawaabtay {completed}/{goal} su’aalood.',
       readinessTitle: 'Calaamadda diyaargarowga',
-      readinessSparseNote: 'Waxay ku dhisan tahay jawaabahaaga ilaa hadda. Jawaabo badan bixi si calaamaddu u noqoto mid ka hubsan.',
+      readinessSparseNote:
+        'Waxay ku dhisan tahay jawaabahaaga ilaa hadda. Jawaabo badan bixi si calaamaddu u noqoto mid ka hubsan.',
       feedbackTitle: 'Meel ku hay waxa u baahan dib-u-eegis',
       feedbackText:
         'Su’aalaha la keydiyay iyo kuwa aad qalday waxay joogaan hal meel, iyagoo wata sharaxaad tixraac leh.',

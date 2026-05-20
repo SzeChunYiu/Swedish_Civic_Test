@@ -14,7 +14,6 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { questions } from '../../data/questions';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
-import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenceWarning';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';

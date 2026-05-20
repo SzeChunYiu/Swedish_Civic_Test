@@ -5,7 +5,20 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const staticSiteLanguageValues = [
+  'en',
+  'sv',
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -358,7 +371,18 @@ test('Settings language change persists extra locales and updates root direction
     assert.equal(context.reloadCount, 0);
   }
 
-  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk']);
+  assert.deepEqual(languageChanges, [
+    'zh-Hans',
+    'zh-Hant',
+    'ar',
+    'ckb',
+    'fa',
+    'pl',
+    'so',
+    'ti',
+    'tr',
+    'uk',
+  ]);
 });
 
 test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {
@@ -427,10 +451,7 @@ test('Static Settings selected visuals mirror aria-pressed state', () => {
     1,
     'Settings should toggle .is-on only through setPressedState so aria-pressed stays in sync',
   );
-  assert.match(
-    settingsSource,
-    /setAttribute\("aria-pressed", on \? "true" : "false"\)/,
-  );
+  assert.match(settingsSource, /setAttribute\("aria-pressed", on \? "true" : "false"\)/);
   assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === String\(value\)\)/);
   assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === value\)/);
   assert.match(settingsSource, /setPressedState\(c, c\.dataset\.buddy === id\)/);

@@ -57,8 +57,10 @@ export interface Chapter {
   id: string;
   nameSv: string;
   nameEn: string;
+  nameText?: LocalizedContentText;
   descriptionSv: string;
   descriptionEn: string;
+  descriptionText?: LocalizedContentText;
   questionCount: number;
 }
 
