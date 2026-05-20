@@ -1219,3 +1219,30 @@ Verification: clean worktree from current `origin/main`; linked shared ignored `
 PR: pending from `task/scheduled-deploy-cadence-1779200400` at handoff commit time.
 Blocked? no for this release/deploy source guard; SITE-P0-5 remains external production freshness, and no Vercel CLI was run.
 Next suggested validator action: inspect the scheduled workflow cadence guard and rerun `npm run test:build-config` plus workflow source scan before acceptance.
+
+## Iteration 254 - 2026-05-19
+
+Task completed: AD-COPY-SV-REWARDED-OVNINGSPROV-LABEL-1 - changed the shared Swedish rewarded extra-exam ad label from bare `extra prov` wording to `Annons för extra övningsprov`, and added validator/source guards for web/native ad labels plus the adjacent Remove Ads CTA title path.
+Artifacts changed: `lib/monetization/adCopy.ts`, `scripts/validate-content.js`, `scripts/monetization.test.js`, `tests/content-ad-placement-route-parity.test.js`, `scripts/ui-effects.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree rebased onto current `origin/main` `2086b964`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/monetization.test.js tests/content-ad-placement-route-parity.test.js scripts/ui-effects.test.js` exit 0 with 100/100 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `adCopySvRewardedPracticeExamCasesValidated:7` and `adCopySvRewardedPracticeExamNaturalnessValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; `node --check` for the changed JS test/validator files exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0.
+PR: pending from `task/ad-copy-sv-rewarded-pane2-1779228086` at handoff commit time.
+Blocked? no for this ad-copy naturalness guard.
+Next suggested validator action: inspect the shared rewarded ad copy and rerun `npm run validate:content` plus the focused monetization/ad-placement/UI tests before accepting the route.
+
+## Iteration 255 - 2026-05-20
+
+Task completed: STATIC-HERO-PASSPORT-OUTCOME-COPY-1 follow-up - neutralized the static no-JS hero/footer fallback slogans and expanded the shared outcome-copy guard to scan `site/index.html`.
+Artifacts changed: `site/index.html`, `scripts/static-outcome-copy-guard.js`, `scripts/compliance-pages.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from current `origin/main` `3590ee03`; linked shared ignored `node_modules`; `node --test scripts/compliance-pages.test.js scripts/static-site-source-provenance-copy.test.js tests/content-static-site-ebook-parity.test.js --test-name-pattern 'compliance|ebook|source|pass|guarantee|outcome|static'` exit 0 with 18/18 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `staticSiteOutcomeSloganParityValidated:true`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; `node --check scripts/static-outcome-copy-guard.js` and `node --check scripts/compliance-pages.test.js` exit 0; targeted Prettier check exit 0; direct `findUnsupportedStaticOutcomeSlogans()` scan returned `[]`; direct `rg` scan for the listed pass/passport slogans across `site/index.html`, `site/app.js`, `site/i18n-extras.js`, `site/buddies.js`, and `site/tweaks.jsx` returned no matches; `git diff --check` exit 0.
+PR: pending from `task/setup/static-hero-fallback-copy-1779229718-4134892` at handoff commit time.
+Blocked? no for this static outcome-copy guard follow-up; no Vercel CLI was run.
+Next suggested validator action: inspect the no-JS fallback copy and rerun the shared static outcome-copy guard tests before accepting `STATIC-HERO-PASSPORT-OUTCOME-COPY-1`.
+
+## Iteration 256 - 2026-05-20
+
+Task completed: DARK-MODE-FREE-ACCESSIBILITY-SURFACE-1 - added the free persisted Settings theme preference (`system`/`light`/`dark`), dark theme tokens, root chrome application, localized Settings controls, and contrast/route guards for both palettes without Pro or Remove Ads gating.
+Artifacts changed: `lib/theme/colors.ts`, `lib/theme/index.ts`, `lib/storage/accessibilityStore.ts`, `app/_layout.tsx`, `app/settings.tsx`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `scripts/theme-discipline.test.js`, `scripts/ui-effects.test.js`, `tests/v1-1-accessibility.test.js`, `tests/content-theme-token-schema.test.js`, `tests/content-settings-route-header-parity.test.js`, `tests/content-settings-route-copy-parity.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: clean worktree from claimed `origin/main` `847a41d5`, then rebased onto current `origin/main` `7e94b372`; linked shared ignored `node_modules`; `npm run validate:content && node --test tests/v1-1-accessibility.test.js tests/content-theme-token-schema.test.js tests/content-settings-route-header-parity.test.js tests/content-settings-route-copy-parity.test.js scripts/theme-discipline.test.js scripts/ui-effects.test.js && npm run typecheck -- --pretty false` exit 0 with `settingsRouteHeadersValidated:5`, `settingsRouteCopyLabelsValidated:44`, `themeDarkColorTokensValidated:37`, `themeDarkContrastPairsValidated:20`, `themeDarkContrastPairsAAValidated:true`, focused node tests 85/85 passing, and typecheck clean; targeted Prettier write completed; `git diff --check` exit 0.
+PR: https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/1360 from `task/dark-mode-accessibility-1779235600`.
+Blocked? no for this dark-mode accessibility surface; no Vercel CLI was run.
+Next suggested validator action: inspect the persisted accessibility store field, Settings control copy, and light/dark token contrast guards; rerun the exact verification command above before accepting `DARK-MODE-FREE-ACCESSIBILITY-SURFACE-1`.

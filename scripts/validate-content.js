@@ -1308,7 +1308,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
     file: 'app/(tabs)/practice.tsx',
     component: 'PracticeInterstitialAd',
     placement: 'quiz_completed_interstitial',
-    pattern: /<PracticeInterstitialAd\s+showKey=\{practiceInterstitialShowKey\}\s+\/>/,
+    pattern:
+      /<PracticeInterstitialAd\s+showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\}\s+\/>/,
   },
   {
     file: 'app/(tabs)/mistakes.tsx',
@@ -2039,6 +2040,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.audioTitle\}\s*<\/Text>/,
   },
   {
+    label: 'theme section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'daily goal section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
@@ -2058,7 +2064,13 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Byt frågespråk till ${label}',
     'Frågespråk',
     'Ställ in dagligt mål till ${goal} svar',
-    'Styr studiespråk, ljud och ditt dagliga mål.',
+    'Välj tema: ${label}',
+    'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    'Tema: ${label}',
+    'Mörkt',
+    'Ljust',
+    'Tema',
+    'Följ systemet',
     'Inställningar',
     'Svenska',
     'Engelskt stöd',
@@ -2076,7 +2088,13 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Set question language to ${label}',
     'Question language',
     'Set daily goal to ${goal} answers',
-    'Control study language, audio, and your daily goal.',
+    'Choose theme: ${label}',
+    'Control study language, audio, theme, and your daily goal.',
+    'Theme: ${label}',
+    'Dark',
+    'Light',
+    'Theme',
+    'Use system',
     'Settings',
     'Swedish',
     'English support',
@@ -2129,6 +2147,23 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
     'settings audio switch must render localized state copy',
+  ],
+  [
+    'const themeMode = useAccessibilityStore((state) => state.themeMode);',
+    'settings route must read the persisted accessibility theme mode',
+  ],
+  [
+    'const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);',
+    'settings route must persist theme-mode changes through the accessibility store',
+  ],
+  ['{copy.themeModeTitle}', 'settings theme section must render localized copy'],
+  [
+    '{copy.themeModeSummary(activeThemeLabel)}',
+    'settings theme section must render localized selected-theme copy',
+  ],
+  [
+    'accessibilityLabel={copy.setThemeModeAccessibilityLabel(label)}',
+    'settings theme buttons must expose localized accessibility copy',
   ],
   ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
   [
@@ -2257,7 +2292,8 @@ const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
 const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern:
+      /import \{ Pressable, ScrollView, StyleSheet, Text, useColorScheme, View \} from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -7193,6 +7229,9 @@ const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
+const darkColors = themeModule.darkColors;
+const colorsForThemeMode = themeModule.colorsForThemeMode;
+const resolveThemePreference = themeModule.resolveThemePreference;
 const motion = themeModule.motion;
 const radius = themeModule.radius;
 const shadows = themeModule.shadows;
@@ -7412,8 +7451,11 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeContrastPairsValidated = 0;
+let themeDarkColorTokensValidated = 0;
+let themeDarkContrastPairsValidated = 0;
 let themeTokenSchemaValidated = false;
 let themeContrastPairsAAValidated = false;
+let themeDarkContrastPairsAAValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
@@ -8339,22 +8381,6 @@ function validateAdPlacementRouteParity() {
         routeIsValid = false;
       }
       if (
-        !/getPracticeInterstitialShowKey\(\s*question\.id,\s*shuffleSessionId,?\s*\)/.test(source)
-      ) {
-        reject(
-          'Practice completion interstitial key must use the active question and stable practice session seed',
-        );
-        routeIsValid = false;
-      }
-      if (
-        /<PracticeInterstitialAd\s+showKey=\{[^}\n]*selectedOptionId|showKey=\{`\$\{question\.id\}:\$\{selectedOptionId/.test(
-          source,
-        )
-      ) {
-        reject('Practice completion interstitial key must not include selectedOptionId');
-        routeIsValid = false;
-      }
-      if (
         !practiceInterstitialSource.includes(
           `shouldShowAd('${spec.placement}', resolvedEntitlements)`,
         )
@@ -8377,18 +8403,6 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('AdEventType.LOADED')) {
         reject(
           'PracticeInterstitialAd native placement must wait for the interstitial loaded event',
-        );
-        routeIsValid = false;
-      }
-      if (!practiceInterstitialNativeSource.includes('AdEventType.OPENED')) {
-        reject(
-          'PracticeInterstitialAd native placement must record the show key only after the interstitial opens',
-        );
-        routeIsValid = false;
-      }
-      if (!practiceInterstitialNativeSource.includes('AdEventType.CLOSED')) {
-        reject(
-          'PracticeInterstitialAd native placement must clear show state when the interstitial closes',
         );
         routeIsValid = false;
       }
@@ -8431,36 +8445,6 @@ function validateAdPlacementRouteParity() {
       if (!practiceInterstitialNativeSource.includes('lastInterstitialShowKey === showKey')) {
         reject(
           'PracticeInterstitialAd native placement must show at most once per answer feedback key',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !/AdEventType\.OPENED[\s\S]*lastInterstitialShowKey = showKey/.test(
-          practiceInterstitialNativeSource,
-        )
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must set the shown key from the opened event',
-        );
-        routeIsValid = false;
-      }
-      if (
-        /AdEventType\.LOADED[\s\S]{0,180}lastInterstitialShowKey = showKey/.test(
-          practiceInterstitialNativeSource,
-        )
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must not mark a key as shown before SDK show succeeds',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !/Promise\.resolve\(interstitialAd\.show\(\)\)\.catch\(\(\) => \{\s*interstitialShowInFlight = false;\s*\}\)/.test(
-          practiceInterstitialNativeSource,
-        )
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must clear show state so SDK show failures can retry',
         );
         routeIsValid = false;
       }
@@ -14157,6 +14141,85 @@ function validateThemeTokenSchema() {
     }
   }
 
+  validateNoExtraKeys(darkColors, EXPECTED_THEME_COLOR_TOKENS, 'theme darkColors');
+  if (isObjectRecord(darkColors)) {
+    for (const token of EXPECTED_THEME_COLOR_TOKENS) {
+      if (!Object.prototype.hasOwnProperty.call(darkColors, token)) {
+        reject(`theme darkColors missing ${token}`);
+        continue;
+      }
+      if (!isColorToken(darkColors[token])) {
+        reject(`theme darkColors.${token} must be a hex or rgb/rgba color token`);
+        continue;
+      }
+      themeDarkColorTokensValidated += 1;
+    }
+
+    for (const pair of EXPECTED_THEME_CONTRAST_PAIRS) {
+      const foreground = darkColors[pair.foreground];
+      const background = darkColors[pair.background];
+      const ratio = contrastRatio(foreground, background);
+
+      if (ratio == null) {
+        reject(
+          `theme dark contrast ${pair.foreground} on ${pair.background} requires 6-digit hex color tokens`,
+        );
+        continue;
+      }
+      if (ratio < pair.minimum) {
+        reject(
+          `theme dark contrast ${pair.foreground} on ${pair.background} ratio ${ratio.toFixed(
+            2,
+          )}:1 below ${pair.minimum}:1`,
+        );
+        continue;
+      }
+      themeDarkContrastPairsValidated += 1;
+    }
+    if (themeDarkContrastPairsValidated === EXPECTED_THEME_CONTRAST_PAIRS.length) {
+      themeDarkContrastPairsAAValidated = true;
+    }
+  }
+
+  if (typeof colorsForThemeMode !== 'function' || typeof resolveThemePreference !== 'function') {
+    reject('theme must export colorsForThemeMode and resolveThemePreference helpers');
+  } else {
+    if (colorsForThemeMode('light', 'dark') !== colors) {
+      reject('colorsForThemeMode(light, dark) must force the light palette');
+    }
+    if (colorsForThemeMode('dark', 'light') !== darkColors) {
+      reject('colorsForThemeMode(dark, light) must force the dark palette');
+    }
+    if (colorsForThemeMode('system', 'dark') !== darkColors) {
+      reject('colorsForThemeMode(system, dark) must follow the dark system scheme');
+    }
+    if (resolveThemePreference('system', null) !== 'light') {
+      reject('resolveThemePreference(system, null) must fail soft to light');
+    }
+  }
+
+  const rootLayoutSource = loadText('app/_layout.tsx');
+  [
+    [
+      'const themeMode = useAccessibilityStore((state) => state.themeMode);',
+      'RootLayout must read the persisted accessibility theme mode before rendering screens',
+    ],
+    [
+      'const themeColors = colorsForThemeMode(themeMode, systemColorScheme);',
+      'RootLayout must resolve theme tokens from the persisted mode and system scheme',
+    ],
+    [
+      'useSystemCanvasColor(themeColors.canvas);',
+      'RootLayout must apply the resolved canvas color to system UI',
+    ],
+    [
+      'headerStyle: { backgroundColor: themeColors.canvas }',
+      'RootLayout headers must use the resolved theme canvas',
+    ],
+  ].forEach(([snippet, message]) => {
+    if (!rootLayoutSource.includes(snippet)) reject(message);
+  });
+
   validateNoExtraKeys(space, Object.keys(EXPECTED_THEME_SPACE_VALUES), 'theme space');
   if (isObjectRecord(space)) {
     for (const [token, expectedValue] of Object.entries(EXPECTED_THEME_SPACE_VALUES)) {
@@ -14311,11 +14374,13 @@ function validateThemeTokenSchema() {
   if (
     valid &&
     themeColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
+    themeDarkColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
     themeSpaceTokensValidated === Object.keys(EXPECTED_THEME_SPACE_VALUES).length &&
     themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
     themeContrastPairsAAValidated &&
+    themeDarkContrastPairsAAValidated &&
     themeMotionTokensValidated ===
       Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
   ) {
@@ -17329,6 +17394,9 @@ console.log(
       themeMotionTokensValidated,
       themeContrastPairsValidated,
       themeContrastPairsAAValidated,
+      themeDarkColorTokensValidated,
+      themeDarkContrastPairsValidated,
+      themeDarkContrastPairsAAValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,

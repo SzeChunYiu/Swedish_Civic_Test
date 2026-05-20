@@ -82,7 +82,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.equal(summary.settingsRouteHeadersValidated, 5);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 84);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 44);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
   assert.equal(summary.onboardingRouteHeaderParityValidated, true);
@@ -159,6 +159,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.themeMotionTokensValidated, 7);
   assert.equal(summary.themeContrastPairsValidated, 20);
   assert.equal(summary.themeContrastPairsAAValidated, true);
+  assert.equal(summary.themeDarkColorTokensValidated, 37);
+  assert.equal(summary.themeDarkContrastPairsValidated, 20);
+  assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
   assert.equal(summary.glossaryTermsValidated, summary.glossaryTerms);
   assert.equal(summary.glossaryTermExactSchemaKeysValidated, summary.glossaryTerms);

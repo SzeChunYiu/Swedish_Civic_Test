@@ -82,3 +82,65 @@ export const colors = {
   swedishBlue,
   swedishGold,
 } as const satisfies Record<string, ColorToken>;
+
+export type ThemePreference = 'system' | 'light' | 'dark';
+export type ResolvedColorScheme = 'light' | 'dark';
+export type ThemeColorName = keyof typeof colors;
+export type ThemeColors = Record<ThemeColorName, ColorToken>;
+
+export const lightColors = colors;
+
+export const darkColors = {
+  canvas: '#08111f',
+  surface: '#101b2b',
+  surfaceWarm: '#17263a',
+  surfaceMuted: 'rgba(245, 247, 250, 0.1)',
+  text: '#f5f7fa',
+  textSoft: '#e4ebf5',
+  textSecondary: '#c6d3e1',
+  textDisclaimer: '#b4c2d1',
+  textMuted: '#b4c2d1',
+  textPlaceholder: '#b4c2d1',
+  warmDark: '#f5f7fa',
+  accent: '#73c7ff',
+  accentActive: '#9ad7ff',
+  focus: '#93c5fd',
+  focusSoft: '#1b3558',
+  badgeBlueBg: '#3d3210',
+  badgeBlueText: '#ffdf7e',
+  border: '#31455d',
+  success: '#72d998',
+  successSoft: '#0f3320',
+  correctBg: '#0f3320',
+  warning: '#ffd083',
+  warningSoft: '#3b2a10',
+  incorrectBg: '#3b2a10',
+  teal: '#77d6e2',
+  navy: '#80c7f2',
+  purple: '#b9a8ff',
+  pink: '#f2a6c3',
+  brown: '#d4a76a',
+  brandGoogleBlue: '#8ec5ff',
+  brandGoogleGreen: '#88d996',
+  brandGoogleRed: '#ff9c87',
+  brandGoogleYellow: '#ffdc69',
+  brandFacebook: '#8ab9ff',
+  brandWhite: '#ffffff',
+  swedishBlue: '#73c7ff',
+  swedishGold: '#ffdf7e',
+} as const satisfies Record<ThemeColorName, ColorToken>;
+
+export function resolveThemePreference(
+  preference: ThemePreference,
+  systemColorScheme: ResolvedColorScheme | null | undefined,
+): ResolvedColorScheme {
+  if (preference === 'dark' || preference === 'light') return preference;
+  return systemColorScheme === 'dark' ? 'dark' : 'light';
+}
+
+export function colorsForThemeMode(
+  preference: ThemePreference,
+  systemColorScheme: ResolvedColorScheme | null | undefined,
+): ThemeColors {
+  return resolveThemePreference(preference, systemColorScheme) === 'dark' ? darkColors : colors;
+}

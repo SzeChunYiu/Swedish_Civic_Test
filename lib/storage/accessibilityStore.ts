@@ -11,12 +11,14 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import type { ThemePreference } from '../theme';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { readRecoverably, writeRecoverably } from './persistenceWarning';
 
 const easyReadFontKey = 'a11y.easyReadFont.v1';
 const fontSizeStepKey = 'a11y.fontSizeStep.v1';
 const audioPlaybackRateKey = 'a11y.audioPlaybackRate.v1';
+const themeModeKey = 'a11y.themeMode.v1';
 const accessibilityStorageId = 'accessibility';
 
 /** Four discrete steps for the text-size stepper. */
@@ -32,6 +34,10 @@ export const FONT_SIZE_MULTIPLIERS: Record<FontSizeStep, number> = {
 export type AudioPlaybackRate = 0.5 | 0.75 | 1.0 | 1.25;
 export const AUDIO_PLAYBACK_RATES: readonly AudioPlaybackRate[] = [0.5, 0.75, 1.0, 1.25];
 
+/** Free visual theme preference. "system" follows the device color scheme. */
+export type ThemeMode = ThemePreference;
+export const THEME_MODE_VALUES: readonly ThemeMode[] = ['system', 'light', 'dark'];
+
 let accessibilityStorage: MMKV | null = null;
 
 try {
@@ -40,30 +46,100 @@ try {
   accessibilityStorage = null;
 }
 
-function readEasyReadFont(): boolean {
-  return accessibilityStorage?.getBoolean(easyReadFontKey) ?? false;
+type InitialAccessibilityState = {
+  easyReadFont: boolean;
+  fontSizeStep: FontSizeStep;
+  audioPlaybackRate: AudioPlaybackRate;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+};
+
+function readEasyReadFont(): {
+  value: boolean;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    easyReadFontKey,
+    () => accessibilityStorage?.getBoolean(easyReadFontKey),
+  );
+  return { value: result.value ?? false, persistenceWarning: result.warning };
 }
 
-function readFontSizeStep(): FontSizeStep {
-  const v = accessibilityStorage?.getNumber(fontSizeStepKey);
-  if (v === 0 || v === 1 || v === 2 || v === 3) return v;
-  return 1;
+function readFontSizeStep(): {
+  value: FontSizeStep;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    fontSizeStepKey,
+    () => accessibilityStorage?.getNumber(fontSizeStepKey),
+  );
+  const v = result.value;
+  if (v === 0 || v === 1 || v === 2 || v === 3) {
+    return { value: v, persistenceWarning: result.warning };
+  }
+  return { value: 1, persistenceWarning: result.warning };
 }
 
-function readAudioPlaybackRate(): AudioPlaybackRate {
-  const v = accessibilityStorage?.getNumber(audioPlaybackRateKey);
-  if (v === 0.5 || v === 0.75 || v === 1.0 || v === 1.25) return v;
-  return 1.0;
+function readAudioPlaybackRate(): {
+  value: AudioPlaybackRate;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    audioPlaybackRateKey,
+    () => accessibilityStorage?.getNumber(audioPlaybackRateKey),
+  );
+  const v = result.value;
+  if (v === 0.5 || v === 0.75 || v === 1.0 || v === 1.25) {
+    return { value: v, persistenceWarning: result.warning };
+  }
+  return { value: 1.0, persistenceWarning: result.warning };
+}
+
+function readInitialAccessibilityState(): InitialAccessibilityState {
+  const easyReadFont = readEasyReadFont();
+  const fontSizeStep = readFontSizeStep();
+  const audioPlaybackRate = readAudioPlaybackRate();
+  return {
+    easyReadFont: easyReadFont.value,
+    fontSizeStep: fontSizeStep.value,
+    audioPlaybackRate: audioPlaybackRate.value,
+    persistenceWarning:
+      easyReadFont.persistenceWarning ??
+      fontSizeStep.persistenceWarning ??
+      audioPlaybackRate.persistenceWarning,
+  };
+}
+
+function isThemeMode(value: unknown): value is ThemeMode {
+  return value === 'system' || value === 'light' || value === 'dark';
+}
+
+function readThemeMode(): ThemeMode {
+  try {
+    const v = accessibilityStorage?.getString(themeModeKey);
+    if (isThemeMode(v)) return v;
+  } catch {
+    return 'system';
+  }
+
+  return 'system';
 }
 
 type AccessibilityState = {
   easyReadFont: boolean;
   fontSizeStep: FontSizeStep;
   audioPlaybackRate: AudioPlaybackRate;
+  themeMode: ThemeMode;
   persistenceWarning: RecoverablePersistenceWarning | null;
   setEasyReadFont: (enabled: boolean) => void;
   setFontSizeStep: (step: FontSizeStep) => void;
   setAudioPlaybackRate: (rate: AudioPlaybackRate) => void;
+  setThemeMode: (themeMode: ThemeMode) => void;
   clearPersistenceWarning: () => void;
 };
 
@@ -71,6 +147,7 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
   easyReadFont: readEasyReadFont(),
   fontSizeStep: readFontSizeStep(),
   audioPlaybackRate: readAudioPlaybackRate(),
+  themeMode: readThemeMode(),
   persistenceWarning: null,
   setEasyReadFont: (enabled) => {
     const persistenceWarning = writeRecoverably(
@@ -100,6 +177,16 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
       clamped,
     );
     set({ audioPlaybackRate: clamped, persistenceWarning });
+  },
+  setThemeMode: (themeMode) => {
+    const clamped: ThemeMode = isThemeMode(themeMode) ? themeMode : 'system';
+    const persistenceWarning = writeRecoverably(
+      accessibilityStorage,
+      accessibilityStorageId,
+      themeModeKey,
+      clamped,
+    );
+    set({ themeMode: clamped, persistenceWarning });
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));

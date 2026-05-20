@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AudioButton } from '../../components/learning/AudioButton';
 import { FeedbackAudioButton } from '../../components/learning/FeedbackAudioButton';
 import { Badge } from '../../components/ui/Badge';
-import { AdBanner } from '../../components/monetization/AdBanner';
+import { PracticeInterstitialAd } from '../../components/monetization/PracticeInterstitialAd';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { AnswerOption } from '../../components/quiz/AnswerOption';
 import { CelebrationBurst } from '../../components/quiz/CelebrationBurst';
@@ -13,9 +13,7 @@ import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { PostAnswerRewardPanel } from '../../components/quiz/PostAnswerRewardPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
-import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
-import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
@@ -32,7 +30,10 @@ import {
   getQuestionsForPracticeScope,
   type PracticeScope,
 } from '../../lib/quiz/practiceFlow';
-import { usePracticeSessionStore } from '../../lib/quiz/practiceSessionStore';
+import {
+  getPracticeInterstitialShowKey,
+  usePracticeSessionStore,
+} from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -269,18 +270,8 @@ export default function Screen() {
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
-  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
-  const clearProgressPersistenceWarning = useProgressStore(
-    (state) => state.clearPersistenceWarning,
-  );
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
-  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.persistenceWarning,
-  );
-  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.clearPersistenceWarning,
-  );
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
@@ -479,6 +470,7 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const practiceInterstitialShowKey = getPracticeInterstitialShowKey(question.id, shuffleSessionId);
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
@@ -602,16 +594,6 @@ export default function Screen() {
         ) : null}
       </View>
       <QuestionDisclaimer />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearProgressPersistenceWarning}
-        warning={progressPersistenceWarning}
-      />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearMistakeReviewPersistenceWarning}
-        warning={mistakeReviewPersistenceWarning}
-      />
       <QuestionCard question={question} language={language} />
       <AudioButton
         enabled={audioEnabled}
@@ -676,13 +658,7 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <QuestionReportLink
-            language={language}
-            question={question}
-            screen="practice"
-            selectedOptionId={selectedOptionId}
-          />
-          <AdBanner placement="quiz_completed_interstitial" />
+          <PracticeInterstitialAd showKey={`${question.id}:${selectedOptionId ?? ''}`} />
           <RemoveAdsPlacementCta placement="quiz_completed_interstitial" />
           <View style={styles.feedbackActions}>
             <Button

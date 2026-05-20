@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useMemo } from 'react';
+import { Link } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
-import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+import type { ThemeMode } from '../lib/storage/accessibilityStore';
+import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colors, motion, radius, shadows, space, typography } from '../lib/theme';
+import { colorsForThemeMode, radius, shadows, space, typography } from '../lib/theme';
+import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
@@ -43,7 +46,13 @@ type SettingsCopy = {
   languageAccessibilityLabel: (label: string) => string;
   questionLanguageTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
+  setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
+  themeDarkLabel: string;
+  themeLightLabel: string;
+  themeModeSummary: (label: string) => string;
+  themeModeTitle: string;
+  themeSystemLabel: string;
   title: string;
 };
 
@@ -100,7 +109,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     languageAccessibilityLabel: (label) => `Byt frågespråk till ${label}`,
     questionLanguageTitle: 'Frågespråk',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
-    subtitle: 'Styr studiespråk, ljud och ditt dagliga mål.',
+    setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
+    subtitle: 'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    themeDarkLabel: 'Mörkt',
+    themeLightLabel: 'Ljust',
+    themeModeSummary: (label) => `Tema: ${label}`,
+    themeModeTitle: 'Tema',
+    themeSystemLabel: 'Följ systemet',
     title: 'Inställningar',
   },
   en: {
@@ -156,7 +171,13 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     languageAccessibilityLabel: (label) => `Set question language to ${label}`,
     questionLanguageTitle: 'Question language',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
-    subtitle: 'Control study language, audio, and your daily goal.',
+    setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
+    subtitle: 'Control study language, audio, theme, and your daily goal.',
+    themeDarkLabel: 'Dark',
+    themeLightLabel: 'Light',
+    themeModeSummary: (label) => `Theme: ${label}`,
+    themeModeTitle: 'Theme',
+    themeSystemLabel: 'Use system',
     title: 'Settings',
   },
 };
@@ -184,55 +205,25 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
+  const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
-  const persistenceWarning = useSettingsStore((state) => state.persistenceWarning);
-  const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+  const themeMode = useAccessibilityStore((state) => state.themeMode);
+  const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
   const copy = settingsCopy[language];
-  const [importText, setImportText] = useState('');
-  const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
-  const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
-
-  const handleImportTextChange = (value: string) => {
-    setImportText(value);
-    setImportPreview(null);
-    setImportFeedback(null);
-  };
-
-  const handlePreviewImport = () => {
-    const result = previewLocalStudyDataImport(importText);
-    if (!result.ok) {
-      setImportPreview(null);
-      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
-      return;
-    }
-
-    setImportPreview(result.preview);
-    setImportFeedback(null);
-  };
-
-  const handleConfirmImport = () => {
-    const result = previewLocalStudyDataImport(importText);
-    if (!result.ok) {
-      setImportPreview(null);
-      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
-      return;
-    }
-
-    applyLocalStudyDataImport(result.preview);
-    setImportPreview(result.preview);
-    setImportFeedback({ tone: 'success', text: copy.importSuccess });
-  };
-
-  const handleResetImport = () => {
-    setImportText('');
-    setImportPreview(null);
-    setImportFeedback(null);
-  };
+  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const themeOptions: { value: ThemeMode; label: string }[] = [
+    { value: 'system', label: copy.themeSystemLabel },
+    { value: 'light', label: copy.themeLightLabel },
+    { value: 'dark', label: copy.themeDarkLabel },
+  ];
+  const activeThemeLabel =
+    themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
@@ -259,6 +250,25 @@ export default function Screen() {
     );
   };
 
+  const renderThemeButton = (value: ThemeMode, label: string) => {
+    const selected = themeMode === value;
+
+    return (
+      <Pressable
+        key={value}
+        aria-selected={selected}
+        accessibilityLabel={copy.setThemeModeAccessibilityLabel(label)}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        hitSlop={space[1]}
+        onPress={() => setThemeMode(value)}
+        style={[styles.pill, selected ? styles.pillActive : null]}
+      >
+        <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <ComplianceActionLink
@@ -270,11 +280,6 @@ export default function Screen() {
         {copy.title}
       </Text>
       <Text style={styles.subtitle}>{copy.subtitle}</Text>
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearPersistenceWarning}
-        warning={persistenceWarning}
-      />
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -315,6 +320,16 @@ export default function Screen() {
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
           </Text>
         </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.themeModeTitle}
+        </Text>
+        <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
+        <View style={styles.row}>
+          {themeOptions.map((option) => renderThemeButton(option.value, option.label))}
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -443,179 +458,108 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.canvas,
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    gap: space[2.25],
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  section: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.5],
-    padding: space[2],
-    ...shadows.card,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  pill: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: space[5] + space[0.5],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  pillActive: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  controlPressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  pillText: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  pillTextActive: {
-    color: colors.badgeBlueText,
-  },
-  goalPill: {
-    alignItems: 'flex-start',
-    gap: space.hairline,
-    minWidth: space[12],
-  },
-  goalNumberText: {
-    color: colors.text,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  goalPresetText: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.card,
-    justifyContent: 'center',
-    minHeight: space[5] + space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-  },
-  secondaryButtonPressed: {
-    backgroundColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  secondaryButtonText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  outlineButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surface,
-    borderColor: colors.accent,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: space[5] + space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-  },
-  outlineButtonPressed: {
-    backgroundColor: colors.badgeBlueBg,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  outlineButtonText: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  importActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  importInput: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-    minHeight: space[15],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.25],
-  },
-  disclaimerText: {
-    color: colors.textDisclaimer,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  importSummary: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.75],
-    padding: space[1.5],
-  },
-  summaryTitle: {
-    color: colors.text,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  summaryText: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  feedbackText: {
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  feedbackError: {
-    color: colors.warning,
-  },
-  feedbackSuccess: {
-    color: colors.success,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.canvas,
+      flex: 1,
+    },
+    content: {
+      flexGrow: 1,
+      gap: space[2.25],
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    backLink: {
+      color: themeColors.accent,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      textDecorationLine: 'none',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    section: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.5],
+      padding: space[2],
+      ...shadows.card,
+    },
+    sectionTitle: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    row: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    pill: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[5] + space[0.5],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    pillActive: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    pillText: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+    pillTextActive: {
+      color: themeColors.badgeBlueText,
+    },
+    goalPill: {
+      alignItems: 'flex-start',
+      gap: space.hairline,
+      minWidth: space[12],
+    },
+    goalNumberText: {
+      color: themeColors.text,
+      fontSize: typography.bodyBold.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.bodyBold.lineHeight,
+    },
+    goalPresetText: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    secondaryButton: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.card,
+      justifyContent: 'center',
+      minHeight: space[5] + space[0.5],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.25],
+    },
+    secondaryButtonText: {
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+  });
+}

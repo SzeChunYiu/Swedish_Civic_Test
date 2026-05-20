@@ -19,7 +19,7 @@ test('settings route title and preference sections stay accessible as headers', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteHeadersValidated, 4);
+  assert.equal(summary.settingsRouteHeadersValidated, 5);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
   assert.match(source, /const copy = settingsCopy\[language\]/);
   assert.match(
@@ -28,7 +28,7 @@ test('settings route title and preference sections stay accessible as headers', 
   );
   assert.match(
     source,
-    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.studyLanguageTitle\}\s*<\/Text>/,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.questionLanguageTitle\}\s*<\/Text>/,
   );
   assert.match(
     source,
@@ -36,16 +36,20 @@ test('settings route title and preference sections stay accessible as headers', 
   );
   assert.match(
     source,
+    /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
+  );
+  assert.match(
+    source,
     /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   );
   assert.match(source, /Inställningar/);
-  assert.match(source, /Studiespråk/);
+  assert.match(source, /Frågespråk/);
   assert.match(source, /Dagligt mål/);
+  assert.match(source, /Tema/);
   assert.match(source, /Settings/);
-  assert.match(source, /Study language/);
+  assert.match(source, /Question language/);
   assert.match(source, /Daily goal/);
-  assert.doesNotMatch(source, new RegExp(['Fråge', 'språk'].join('')));
-  assert.doesNotMatch(source, new RegExp(['Question ', 'language'].join('')));
+  assert.match(source, /Theme/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
 });
 

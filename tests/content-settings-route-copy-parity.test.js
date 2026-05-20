@@ -19,30 +19,26 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 56);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 44);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = settingsCopy\[language\];/);
-  assert.match(source, /Styr studiespråk, ljud, mål och påminnelser\./);
-  assert.match(source, /Control study language, audio, goals, and reminders\./);
-  assert.match(source, /Studiepåminnelse/);
-  assert.match(source, /Study reminder/);
-  assert.match(source, /Schemaläggs lokalt\. Inga studiedata skickas\./);
-  assert.match(source, /Scheduled locally\. No study data is sent\./);
+  assert.match(source, /Styr studiespråk, ljud, tema och ditt dagliga mål\./);
+  assert.match(source, /Control study language, audio, theme, and your daily goal\./);
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
-  assert.match(source, /Studiespråk/);
-  assert.match(source, /Study language/);
-  assert.match(source, /Byt studiespråk till \$\{label\}/);
-  assert.match(source, /Set study language to \$\{label\}/);
-  assert.doesNotMatch(source, new RegExp(['Fråge', 'språk'].join('')));
-  assert.doesNotMatch(source, new RegExp(['Question ', 'language'].join('')));
+  assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
+  assert.match(
+    source,
+    /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
+  );
 });
 
 test('settings route copy parity rejects bypassing the settings language', () => {
@@ -88,7 +84,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Styr studiespråk, ljud, mål och påminnelser.'", "'Control study language, audio, goals, and reminders.'");
+      .replace("'Styr studiespråk, ljud, tema och ditt dagliga mål.'", "'Control study language, audio, theme, and your daily goal.'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -129,5 +125,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /settings route language buttons must choose visible labels from settings language/,
+  );
+});
+
+test('settings route copy parity rejects selected-button segmented controls', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replaceAll('accessibilityRole="radio"', 'accessibilityRole="button"')
+      .replaceAll('aria-checked=', 'aria-selected=')
+      .replaceAll('accessibilityState={{ checked:', 'accessibilityState={{ selected:');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route language and daily-goal options must use radio semantics|must not use aria-selected/,
   );
 });

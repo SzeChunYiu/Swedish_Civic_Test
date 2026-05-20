@@ -507,6 +507,47 @@ test('practice completion placement uses a native interstitial and web preview',
   assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
 });
 
+test('practice completion placement uses a native interstitial and web preview', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const nativeInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+  const webInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(
+    practiceSource,
+    /<PracticeInterstitialAd showKey=\{`\$\{question\.id\}:\$\{selectedOptionId \?\? ''\}`\} \/>/,
+  );
+  assert.doesNotMatch(practiceSource, /<AdBanner placement="quiz_completed_interstitial" \/>/);
+  assert.match(nativeInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(nativeInterstitialSource, /AdEventType\.LOADED/);
+  assert.match(nativeInterstitialSource, /AdEventType\.ERROR/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.load\(\)/);
+  assert.match(nativeInterstitialSource, /interstitialAd\.show\(\)/);
+  assert.match(
+    nativeInterstitialSource,
+    /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
+  );
+  assert.match(
+    nativeInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.match(nativeInterstitialSource, /useMobileAdsConsent/);
+  assert.match(nativeInterstitialSource, /requestNonPersonalizedAdsOnly/);
+  assert.match(nativeInterstitialSource, /lastInterstitialShowKey === showKey/);
+  assert.match(
+    webInterstitialSource,
+    /shouldShowAd\('quiz_completed_interstitial', resolvedEntitlements\)/,
+  );
+  assert.match(webInterstitialSource, /<Card[\s\S]*accessibilityLabel=\{accessibilityLabel\}/);
+  assert.doesNotMatch(webInterstitialSource, /react-native-google-mobile-ads/);
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
