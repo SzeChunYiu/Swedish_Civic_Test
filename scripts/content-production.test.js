@@ -81,7 +81,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 47);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 49);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.equal(summary.settingsRouteHeadersValidated, 4);
   assert.equal(summary.settingsRouteHeaderParityValidated, true);
