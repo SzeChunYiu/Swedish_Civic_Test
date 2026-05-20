@@ -746,7 +746,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /Bookmarked questions/);
   assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
-  assert.match(source, /\{copy\.bookmarkedTitle\}/);
+  assert.match(source, /title: copy\.bookmarkedTitle/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
 });
 
@@ -758,10 +758,33 @@ test('mistakes screen exposes page and review section headings as headers', () =
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.emptyTitle\}>/);
   assert.match(source, /\{copy\.title\}/);
-  assert.match(source, /\{copy\.mistakeTitle\}/);
+  assert.match(source, /title: copy\.mistakeTitle/);
+  assert.match(source, /\{section\.title\}/);
   assert.match(source, /\{copy\.emptyTitle\}/);
-  assert.equal(headerMatches?.length, 4);
+  assert.equal(headerMatches?.length, 3);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
+});
+
+test('mistakes screen virtualizes saved and wrong-answer review lists', () => {
+  const source = read('app/(tabs)/mistakes.tsx');
+
+  assert.match(source, /import \{ SectionList, StyleSheet, Text, View \}/);
+  assert.match(source, /<SectionList/);
+  assert.match(source, /sections=\{reviewSections\}/);
+  assert.match(source, /renderSectionHeader=\{\(\{ section \}\) => <ReviewSectionHeading/);
+  assert.match(source, /ListHeaderComponent=\{<MistakesListHeader copy=\{copy\} \/>\}/);
+  assert.match(source, /ListEmptyComponent=\{<MistakesEmptyState copy=\{copy\} \/>\}/);
+  assert.match(source, /initialNumToRender=\{4\}/);
+  assert.match(source, /maxToRenderPerBatch=\{6\}/);
+  assert.match(source, /windowSize=\{5\}/);
+  assert.match(source, /keyExtractor=\{\(item\) => `\$\{item\.kind\}-\$\{item\.question\.id\}`\}/);
+  assert.match(source, /buildReviewItems\(bookmarkedQuestions, 'bookmarked'\)/);
+  assert.match(source, /buildReviewItems\(mistakenQuestions, 'mistake'\)/);
+  assert.doesNotMatch(source, /<ScrollView/);
+  assert.doesNotMatch(source, /<\/ScrollView>/);
+  assert.doesNotMatch(source, /bookmarkedQuestions\.map\(/);
+  assert.doesNotMatch(source, /mistakenQuestions\.map\(/);
+  assert.match(source, /<ExplanationPanel[\s\S]*<UHRReferenceCard/);
 });
 
 test('chapter detail route exposes page and question section headings as headers', () => {
@@ -801,7 +824,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
 
   assert.match(source, /useMistakeReviewStore/);
   assert.match(source, /const wrongAnswerReviews = useMistakeReviewStore/);
-  assert.match(source, /wrongAnswerReviews\[question\.id\]/);
+  assert.match(source, /wrongAnswerReviews\[item\.question\.id\]/);
   assert.match(source, /selectedOptionTextEn/);
   assert.match(source, /selectedOptionTextSv/);
   assert.match(source, /question\.correctOptionId/);
