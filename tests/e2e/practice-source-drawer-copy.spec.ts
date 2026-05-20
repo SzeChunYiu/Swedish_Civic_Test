@@ -14,8 +14,11 @@ async function switchQuestionLanguage(page: Page, language: 'sv' | 'en') {
   const selectedLabel =
     language === 'sv' ? 'Byt frågespråk till Svenska' : 'Set question language to English support';
 
-  await page.getByLabel(label).click();
-  await expect(page.getByLabel(selectedLabel)).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('radio', { name: label }).click();
+  await expect(page.getByRole('radio', { name: selectedLabel })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
   await page.evaluate((nextLanguage) => {
     window.localStorage.setItem('settings\\language', nextLanguage);
   }, language);
