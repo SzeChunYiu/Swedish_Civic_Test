@@ -37,6 +37,37 @@ const somaliHighFrequencyKeys = [
   'footer.h.fika',
 ];
 
+const arabicHighFrequencyKeys = [
+  'hero.eyebrow',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'nav.ebook',
+  'consent.title',
+  'consent.body',
+  'consent.min',
+  'consent.all',
+  'settings.title',
+  'settings.theme',
+  'settings.theme.light',
+  'settings.theme.dark',
+  'settings.theme.auto',
+  'settings.language',
+  'settings.text',
+  'settings.misc',
+  'settings.consent.reset',
+  'settings.savedHint',
+  'settings.done',
+  'footer.t1',
+  'footer.t2',
+  'footer.h.study',
+  'footer.h.legal',
+  'footer.h.about',
+  'footer.h.fika',
+  'footer.about.p',
+  'footer.fika',
+];
+
 const expectedSomaliCopy = {
   'hero.h1a': expectedHomepageSlogans.so['hero.h1a'],
   'hero.lede': expectedHomepageSlogans.so['hero.lede'],
@@ -53,6 +84,25 @@ const expectedSomaliCopy = {
   'settings.done': 'Dhammay',
 };
 
+const expectedArabicCopy = {
+  'hero.h1a': expectedHomepageSlogans.ar['hero.h1a'],
+  'hero.lede': expectedHomepageSlogans.ar['hero.lede'],
+  'hero.cta1': expectedHomepageSlogans.ar['hero.cta1'],
+  'hero.cta2': expectedHomepageSlogans.ar['hero.cta2'],
+  'demo.h1': expectedHomepageSlogans.ar['demo.h1'],
+  'demo.h2': expectedHomepageSlogans.ar['demo.h2'],
+  'footer.t1': expectedHomepageSlogans.ar['footer.t1'],
+  'footer.t2': expectedHomepageSlogans.ar['footer.t2'],
+  'nav.ebook': 'دليل الدراسة',
+  'consent.body':
+    'نستخدم Google AdSense لعرض عدد قليل من الإعلانات. قد يستخدم AdSense ملفات تعريف الارتباط، وقد يستعملها للإعلانات المخصّصة. اقبل الكل، أو الضروري فقط، أو اقرأ <a href="#/privacy">صفحة الخصوصية</a>.',
+  'settings.theme': 'المظهر',
+  'settings.consent.reset': 'إعادة ضبط موافقة ملفات تعريف الارتباط / الإعلانات…',
+  'footer.about.p':
+    'هذه أداة دراسة مستقلة. يمكنك البدء مجاناً، ومراجعة الدروس، وتجربة الاختبارات التدريبية.',
+  'footer.fika': 'صُنع بروح لاغوم · جُرِّب مع القهوة.',
+};
+
 const forbiddenSomaliFragments = [
   'Goobinta',
   'Toosan',
@@ -61,13 +111,24 @@ const forbiddenSomaliFragments = [
   'ka yaraan cabsida ka yaraan',
 ];
 
+const forbiddenArabicFragments = [
+  'اختبار وهمي',
+  'موافقة الكوكيز',
+  'مُختبر بالقهوة',
+  'بناها أشخاص اجتازوا الاختبار',
+];
+
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
   'consent.body': 'We use Google AdSense',
   'settings.title': 'Settings',
   'settings.theme': 'Theme',
   'settings.theme.auto': 'Auto',
+  'settings.consent.reset': 'Reset cookie',
   'settings.done': 'Done',
+  'footer.about.p': 'built by people',
+  'footer.fika': 'Fika-tested',
+  'nav.ebook': 'Ebook',
 };
 const chineseScriptLocales = ['zh-Hans', 'zh-Hant'];
 const chineseTextPattern = /[\u3400-\u9fff]/;
@@ -151,4 +212,40 @@ test('Chinese static-site labels use script-native sentence punctuation', () => 
   }
 
   assert.ok(checkedValues > 0, 'Chinese punctuation guard must inspect learner-facing text');
+});
+
+test('Arabic static-site high-frequency labels use reviewed local copy', () => {
+  const extra = loadExtraI18n();
+  const arabic = extra?.ar;
+
+  assert.equal(typeof arabic, 'object');
+  for (const [key, expected] of Object.entries(expectedArabicCopy)) {
+    assert.equal(arabic[key], expected, `Arabic ${key} should use reviewed copy`);
+  }
+});
+
+test('Arabic static-site labels reject known machine-like strings and English fallback', () => {
+  const extra = loadExtraI18n();
+  const arabic = extra?.ar;
+
+  assert.equal(typeof arabic, 'object');
+  for (const key of arabicHighFrequencyKeys) {
+    const value = arabic[key];
+    assert.equal(typeof value, 'string', `Arabic ${key} must be a string`);
+    assert.notEqual(value.trim(), '', `Arabic ${key} must not be empty`);
+
+    const englishFallback = englishFallbacksByKey[key];
+    if (englishFallback) {
+      assert.doesNotMatch(value, new RegExp(englishFallback, 'i'), `${key} uses English fallback`);
+    }
+  }
+
+  const serializedArabic = Object.values(arabic).join('\n');
+  for (const fragment of forbiddenArabicFragments) {
+    assert.doesNotMatch(
+      serializedArabic,
+      new RegExp(fragment, 'i'),
+      `Arabic dictionary still contains ${fragment}`,
+    );
+  }
 });
