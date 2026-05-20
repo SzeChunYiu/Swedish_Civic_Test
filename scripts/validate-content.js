@@ -1261,8 +1261,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -8524,6 +8524,14 @@ function validateRemoveAdsEntitlementHookParity() {
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
     ],
     [
+      normalizedHookSource.includes(
+        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+      ) &&
+        normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),') &&
+        !normalizedHookSource.includes("if (Platform.OS !== 'web') return undefined;"),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+    ],
+    [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
         normalizedHookSource.includes('publishRemoveAdsEntitlements(storedEntitlements);'),
       'Remove Ads entitlement hook must publish persisted purchase entitlements',
@@ -12390,6 +12398,7 @@ function validatePurchaseTypeSchemaParity() {
 
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
+  let placementCtaSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -12398,12 +12407,17 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   try {
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
-    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
   }
 
+  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -12497,6 +12511,27 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+    ],
+    [
+      normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&
+        normalizedPlacementCtaSource.includes(
+          "onPress={() => void runPurchaseAction('restore', restoreRemoveAdsPurchase)}",
+        ),
+      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+      ) &&
+        normalizedPlacementCtaSource.includes('accessibilityHint={copy.restoreAccessibilityHint}'),
+      'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint',
+    ],
+    [
+      normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
+        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
+      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 
@@ -14906,6 +14941,30 @@ if (process.argv.includes('--focus-exam-generator-schema')) {
     examGeneratorTypeAliasesValidated,
     examGeneratorTypeInterfacesValidated,
     examGeneratorTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-remove-ads-hook-parity')) {
+  validateRemoveAdsEntitlementHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    removeAdsEntitlementHookCasesValidated,
+    removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-remove-ads-purchase-runtime-parity')) {
+  validatePurchaseTypeSchemaParity();
+  validateRemoveAdsPurchaseRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    purchaseTypeUnionsValidated,
+    purchaseTypeInterfacesValidated,
+    purchaseTypeSchemaParityValidated,
+    removeAdsPurchaseRuntimeCasesValidated,
+    removeAdsPurchaseRuntimeParityValidated,
   });
   process.exit(0);
 }

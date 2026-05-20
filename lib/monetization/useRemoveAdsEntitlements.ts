@@ -5,6 +5,8 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
   createMockPurchaseProvider,
+  createNativePurchaseProvider,
+  createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
@@ -17,6 +19,7 @@ const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
 
 export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
 
+let defaultNativePurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let defaultWebPurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
 let sharedRemoveAdsEntitlements: PremiumEntitlements | undefined;
 let sharedRemoveAdsEntitlementsVersion = 0;
@@ -37,17 +40,28 @@ function subscribeToRemoveAdsEntitlements(listener: (entitlements: PremiumEntitl
   return () => removeAdsEntitlementListeners.delete(listener);
 }
 
+function getNativePurchasePlatform(): 'android' | 'ios' {
+  return Platform.OS === 'android' ? 'android' : 'ios';
+}
+
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
-): PurchaseRuntimeOptions | undefined {
-  if (Platform.OS !== 'web') return undefined;
+): PurchaseRuntimeOptions {
+  if (Platform.OS === 'web') {
+    defaultWebPurchaseRuntimeOptions ??= {
+      provider: createMockPurchaseProvider(),
+      storage: createWebPurchaseStorage(initialAdsDisabled),
+    };
 
-  defaultWebPurchaseRuntimeOptions ??= {
-    provider: createMockPurchaseProvider(),
-    storage: createWebPurchaseStorage(initialAdsDisabled),
+    return defaultWebPurchaseRuntimeOptions;
+  }
+
+  defaultNativePurchaseRuntimeOptions ??= {
+    provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+    storage: createSecureStorePurchaseStorage(),
   };
 
-  return defaultWebPurchaseRuntimeOptions;
+  return defaultNativePurchaseRuntimeOptions;
 }
 
 export function useRemoveAdsEntitlements({
