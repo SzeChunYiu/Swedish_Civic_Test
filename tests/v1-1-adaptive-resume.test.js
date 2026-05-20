@@ -132,6 +132,49 @@ test('pickAdaptiveSession: low accuracy biases toward easy questions', () => {
   assert.equal(picked[0], 'easy1');
 });
 
+test('adaptivePractice: picker and explanation share the scoring helper', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/adaptivePractice.ts'), 'utf8');
+  const picker = source.match(/export function pickAdaptiveSession[\s\S]*?\n}/)?.[0] ?? '';
+  const explanation = source.match(/export function explainAdaptivePick[\s\S]*?\n}/)?.[0] ?? '';
+
+  assert.match(source, /function scoreAdaptiveQuestions\(input: AdaptivePracticeInput\)/);
+  assert.match(picker, /scoreAdaptiveQuestions\(input\)/);
+  assert.match(explanation, /scoreAdaptiveQuestions\(input\)/);
+  assert.equal((source.match(/eligible\.map/g) ?? []).length, 1);
+});
+
+test('explainAdaptivePick: reports the same difficulty-adjusted bucket that was picked', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const answers = [
+    {
+      questionId: 'a-stale-hard',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-04-14T12:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+  ];
+  const bankMixed = [
+    { id: 'a-stale-hard', difficulty: 'hard', chapterId: 'c1' },
+    { id: 'z-unseen-easy', difficulty: 'easy', chapterId: 'c1' },
+  ];
+  const input = {
+    progress: progressFromAnswers(answers),
+    bank: bankMixed,
+    size: 1,
+    recentAccuracyOverride: 0.95,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  assert.deepEqual(pickAdaptiveSession(input), ['a-stale-hard']);
+  assert.deepEqual(explainAdaptivePick(input), {
+    'recently-wrong': 0,
+    unseen: 0,
+    mastered: 0,
+    stale: 1,
+  });
+});
+
 test('explainAdaptivePick: bucket counts roll up correctly', () => {
   const { explainAdaptivePick } = loadTs('lib/learning/adaptivePractice.ts');
   const answers = [

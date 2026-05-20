@@ -21,7 +21,7 @@ export interface AdaptiveQuestion {
 
 export interface AdaptivePracticeInput {
   progress: UserProgress;
-  bank: ReadonlyArray<AdaptiveQuestion>;
+  bank: readonly AdaptiveQuestion[];
   /** Session size. Default 10. */
   size?: number;
   /** Frozen clock for tests. */
@@ -42,6 +42,11 @@ interface ScoredQuestion {
   score: number;
   /** For deterministic tiebreaking. */
   bucket: 'recently-wrong' | 'unseen' | 'mastered' | 'stale';
+}
+
+interface AdaptiveScoringResult {
+  scored: ScoredQuestion[];
+  size: number;
 }
 
 function recentAccuracy(progress: UserProgress, now: Date): number {
@@ -86,7 +91,7 @@ const DIFFICULTY_WEIGHT: Record<NonNullable<AdaptiveQuestion['difficulty']>, num
   hard: 2,
 };
 
-export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
+function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringResult {
   const now = input.now ?? new Date();
   const size = input.size ?? 10;
   const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
@@ -140,6 +145,11 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
   // Sort descending score; ties break on question id for determinism.
   scored.sort((a, b) => b.score - a.score || a.question.id.localeCompare(b.question.id));
 
+  return { scored, size };
+}
+
+export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
+  const { scored, size } = scoreAdaptiveQuestions(input);
   return scored.slice(0, size).map((s) => s.question.id);
 }
 
@@ -147,37 +157,7 @@ export function pickAdaptiveSession(input: AdaptivePracticeInput): string[] {
 export function explainAdaptivePick(
   input: AdaptivePracticeInput,
 ): Record<ScoredQuestion['bucket'], number> {
-  const now = input.now ?? new Date();
-  const size = input.size ?? 10;
-  const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
-  const seen = lastSeenMap(input.progress, now);
-  const eligible = input.chapterId
-    ? input.bank.filter((q) => q.chapterId === input.chapterId)
-    : input.bank.slice();
-
-  const scored: ScoredQuestion[] = eligible.map((question) => {
-    const last = seen[question.id];
-    let score = 0;
-    let bucket: ScoredQuestion['bucket'];
-    if (!last) {
-      score = 80 + (accuracy > 0.5 ? 10 : 0);
-      bucket = 'unseen';
-    } else if (last.correctStreak === 0) {
-      score = 100;
-      bucket = 'recently-wrong';
-    } else {
-      const daysSince = (now.getTime() - last.lastAtMs) / DAY_MS;
-      if (last.correctStreak >= 3 && daysSince < 14) {
-        score = 30;
-        bucket = 'mastered';
-      } else {
-        score = 50 + Math.min(daysSince, 30);
-        bucket = 'stale';
-      }
-    }
-    return { question, score, bucket };
-  });
-  scored.sort((a, b) => b.score - a.score || a.question.id.localeCompare(b.question.id));
+  const { scored, size } = scoreAdaptiveQuestions(input);
   const picked = scored.slice(0, size);
   const counts: Record<ScoredQuestion['bucket'], number> = {
     'recently-wrong': 0,
