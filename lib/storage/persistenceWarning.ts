@@ -19,6 +19,11 @@ type ReadRecoverablyResult<T> = {
   warning: RecoverablePersistenceWarning | null;
 };
 
+type ParseJsonRecoverablyResult<T> = {
+  value: T;
+  warning: RecoverablePersistenceWarning | null;
+};
+
 function describeError(error: unknown): string | undefined {
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === 'string' && error.length > 0) return error;
@@ -66,6 +71,28 @@ export function writeRecoverably(
       operation: 'write',
       storageId,
     });
+  }
+}
+
+export function parseJsonRecoverably<T>(
+  rawValue: string,
+  storageId: string,
+  key: string,
+  parse: (rawValue: string) => T,
+  fallbackValue: T,
+): ParseJsonRecoverablyResult<T> {
+  try {
+    return { value: parse(rawValue), warning: null };
+  } catch (error) {
+    return {
+      value: fallbackValue,
+      warning: createRecoverablePersistenceWarning({
+        error,
+        key,
+        operation: 'read',
+        storageId,
+      }),
+    };
   }
 }
 

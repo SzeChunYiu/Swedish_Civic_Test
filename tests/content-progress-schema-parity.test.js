@@ -589,6 +589,11 @@ test('progress hydration falls back when MMKV reads throw', () => {
   assert.equal(state.streakFreezeState.lifetimeEarned, 1);
   assert.equal(state.streakFreezeState.lifetimeSpent, 0);
   assert.deepEqual(state.streakFreezeState.rescuedDayKeys, []);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, 'progress');
+  assert.equal(state.persistenceWarning.key, 'progressState');
+  assert.match(state.persistenceWarning.errorMessage, /progress read failed/);
 });
 
 test('progress type schema parity rejects session optionality drift', () => {

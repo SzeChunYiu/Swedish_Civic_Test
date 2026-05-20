@@ -4,7 +4,7 @@ import { create } from 'zustand';
 
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export type MistakeAnswerReview = {
   answeredAt: string;
@@ -88,15 +88,31 @@ export function normalizeImportedMistakeReview(value: unknown): PersistedMistake
   return normalizeMistakeReview(value);
 }
 
-function readMistakeReview(): PersistedMistakeReview {
-  const rawReview = mistakeReviewStorage?.getString(mistakeReviewStateKey);
-  if (!rawReview) return emptyMistakeReview;
+function parseMistakeReview(rawReview: string): PersistedMistakeReview {
+  return normalizeMistakeReview(JSON.parse(rawReview));
+}
 
-  try {
-    return normalizeMistakeReview(JSON.parse(rawReview));
-  } catch {
-    return emptyMistakeReview;
+function readMistakeReview(): PersistedMistakeReview & {
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const readResult = readRecoverably(
+    mistakeReviewStorage,
+    mistakeReviewStorageId,
+    mistakeReviewStateKey,
+    () => mistakeReviewStorage?.getString(mistakeReviewStateKey),
+  );
+  if (!readResult.value) {
+    return { ...emptyMistakeReview, persistenceWarning: readResult.warning };
   }
+
+  const parseResult = parseJsonRecoverably(
+    readResult.value,
+    mistakeReviewStorageId,
+    mistakeReviewStateKey,
+    parseMistakeReview,
+    emptyMistakeReview,
+  );
+  return { ...parseResult.value, persistenceWarning: parseResult.warning ?? readResult.warning };
 }
 
 function writeMistakeReview(review: PersistedMistakeReview): RecoverablePersistenceWarning | null {
@@ -123,7 +139,7 @@ const initialMistakeReview = readMistakeReview();
 
 export const useMistakeReviewStore = create<MistakeReviewState>((set) => ({
   ...initialMistakeReview,
-  persistenceWarning: null,
+  persistenceWarning: initialMistakeReview.persistenceWarning,
   clearWrongAnswerReviews: () => {
     const persistenceWarning = writeMistakeReview(emptyMistakeReview);
     set({ ...emptyMistakeReview, persistenceWarning });
