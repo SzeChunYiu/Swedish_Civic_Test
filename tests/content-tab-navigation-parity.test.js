@@ -94,7 +94,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /tab layout must not expose Swedish mistakes tab bare error label/,
+    /mistakes tab must define Swedish and English titles/,
   );
 });
 
