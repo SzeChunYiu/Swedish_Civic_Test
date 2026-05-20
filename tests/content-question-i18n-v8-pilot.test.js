@@ -8,11 +8,11 @@ function completeMap(value = 'x') {
   return Object.fromEntries(REQUIRED_LOCALES.map((locale) => [locale, value]));
 }
 
-test('question localization v8 pilot covers q001-q003 in every picker locale', () => {
+test('question localization v8 pilot covers the current pilot ids in every picker locale', () => {
   const output = execFileSync(process.execPath, ['scripts/check-question-i18n-v8.js'], {
     encoding: 'utf8',
   });
-  assert.match(output, /Question i18n pilot OK \(3 questions, 12 locales\)/);
+  assert.match(output, /Question i18n pilot OK \(10 questions, 12 locales\)/);
 });
 
 test('question localization v8 pilot rejects missing target-language option text', () => {
