@@ -3,8 +3,24 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const {
+  createMemoryMMKV,
+  createThrowingGetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
 
 function parseValidationSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -24,8 +40,15 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /const mistakesCopy: Record<AppLanguage, MistakesCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = mistakesCopy\[language\];/);
-  assert.match(source, /Gå igenom fel svar med fråga, förklaring, källreferens/);
+  assert.match(source, /Här finns frågor du har missat, med förklaring, källhänvisning/);
   assert.match(source, /Review wrong answers with the question, explanation, source reference/);
+  [
+    ['Fell', 'ogg'],
+    ['Fel svar att', ' repetera'],
+    ['Gå igenom fel svar', ' med fråga'],
+    ['repetitionsantal på', ' samma plats'],
+    ['Sparad för fokuserad', ' repetition'],
+  ].forEach((parts) => assert.doesNotMatch(source, new RegExp(parts.join(''))));
   assert.match(source, /accessibilityLabel=\{copy\.emptyPracticeAccessibilityLabel\}/);
   assert.match(source, /useMistakeReviewStore/);
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
@@ -80,7 +103,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/mistakes.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Svara fel på en övningsfråga så visas den här.'", "'No mistakes yet'");
+      .replace("'När du missar en övningsfråga visas den här.'", "'No mistakes yet'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -155,4 +178,85 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /mistakes route must read stored wrong-answer review text/,
   );
+});
+
+test('mistake review store drops corrupt persisted selected-answer reviews', () => {
+  const answeredAt = '2026-05-19T10:00:00.000Z';
+  const longAnswer = 'x'.repeat(501);
+  const storage = createMemoryMMKV({
+    mistakeReviewState: JSON.stringify({
+      wrongAnswerReviews: {
+        q001: {
+          answeredAt,
+          questionId: 'q001',
+          selectedOptionTextEn: '  Wrong answer  ',
+          selectedOptionTextSv: '  Fel svar  ',
+        },
+        qBadDate: {
+          answeredAt: 'not-a-date',
+          questionId: 'qBadDate',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qMismatched: {
+          answeredAt,
+          questionId: 'other-id',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        '': {
+          answeredAt,
+          questionId: '',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankEn: {
+          answeredAt,
+          questionId: 'qBlankEn',
+          selectedOptionTextEn: '   ',
+          selectedOptionTextSv: 'Fel svar',
+        },
+        qBlankSv: {
+          answeredAt,
+          questionId: 'qBlankSv',
+          selectedOptionTextEn: 'Wrong answer',
+          selectedOptionTextSv: '   ',
+        },
+        qTooLong: {
+          answeredAt,
+          questionId: 'qTooLong',
+          selectedOptionTextEn: longAnswer,
+          selectedOptionTextSv: 'Fel svar',
+        },
+      },
+    }),
+  });
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': storage,
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {
+    q001: {
+      answeredAt,
+      questionId: 'q001',
+      selectedOptionTextEn: 'Wrong answer',
+      selectedOptionTextSv: 'Fel svar',
+    },
+  });
+});
+
+test('mistake review store falls back when MMKV reads throw', () => {
+  const { useMistakeReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/mistakeReviewStore.ts',
+    {
+      'mistake-review': createThrowingGetMMKV('mistake review read failed'),
+    },
+  );
+
+  assert.deepEqual(useMistakeReviewStore.getState().wrongAnswerReviews, {});
 });
