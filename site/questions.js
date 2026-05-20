@@ -1459,16 +1459,16 @@
         "sv": "Gemensamma idéer om hur samhället ska styras"
       },
       {
-        "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "en": "The power to replace the courts",
+        "sv": "Makt att ersätta domstolarna"
       },
       {
-        "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "en": "Responsibility for passports and national ID cards",
+        "sv": "Ansvar för pass och nationella id-kort"
       },
       {
-        "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "en": "Direct power over all wages",
+        "sv": "Direkt makt över alla löner"
       }
     ],
     "answer": 0,
@@ -12971,16 +12971,16 @@
         "sv": "Gemensamma idéer om hur samhället ska styras"
       },
       {
-        "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "en": "The power to replace the courts",
+        "sv": "Makt att ersätta domstolarna"
       },
       {
-        "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "en": "Responsibility for passports and national ID cards",
+        "sv": "Ansvar för pass och nationella id-kort"
       },
       {
-        "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "en": "Direct power over all wages",
+        "sv": "Direkt makt över alla löner"
       }
     ],
     "answer": 0,
@@ -13050,8 +13050,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "true_false",
     "q": {
-      "en": "People in a political party replace the courts.",
-      "sv": "Människor i ett politiskt parti ersätter domstolarna."
+      "en": "People in a political party have the power to replace the courts.",
+      "sv": "Människor i ett politiskt parti har makt att ersätta domstolarna."
     },
     "opts": [
       {
@@ -13099,16 +13099,16 @@
         "sv": "Gemensamma idéer om hur samhället ska styras"
       },
       {
-        "en": "They replace the courts",
-        "sv": "De ersätter domstolarna"
+        "en": "The power to replace the courts",
+        "sv": "Makt att ersätta domstolarna"
       },
       {
-        "en": "They handle passports and national ID cards",
-        "sv": "De ansvarar för pass och nationella id-kort"
+        "en": "Responsibility for passports and national ID cards",
+        "sv": "Ansvar för pass och nationella id-kort"
       },
       {
-        "en": "They directly decide all wages",
-        "sv": "De bestämmer alla löner direkt"
+        "en": "Direct power over all wages",
+        "sv": "Direkt makt över alla löner"
       }
     ],
     "answer": 0,
