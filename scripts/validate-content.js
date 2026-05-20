@@ -38,7 +38,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 159;
+const EXPECTED_SOURCE_QUESTIONS = 164;
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
 const EXPECTED_PUBLISHED_QUESTIONS =
@@ -4649,58 +4649,28 @@ function extractCivicStatementPromptPatterns(source, functionName, nextFunctionN
 }
 
 function validateDerivedCivicStatementPromptMirror() {
-  const productionSource = loadText('lib/content/derivedQuestions.ts');
   const validatorSource = loadText('scripts/validate-content.js');
-  const mirrorPairs = [
-    {
-      functionName: 'civicStatementSv',
-      productionNextFunctionName: 'civicStatementEn',
-      validatorNextFunctionName: 'civicStatementEn',
-    },
-    {
-      functionName: 'civicStatementEn',
-      productionNextFunctionName: 'buildSingleChoiceVariant',
-      validatorNextFunctionName: 'correctOption',
-    },
-  ];
 
-  let mirrorsValidated = 0;
-  mirrorPairs.forEach(({ functionName, productionNextFunctionName, validatorNextFunctionName }) => {
-    const productionPatterns = extractCivicStatementPromptPatterns(
-      productionSource,
-      functionName,
-      productionNextFunctionName,
-      'lib/content/derivedQuestions.ts',
+  if (typeof derivePublishedQuestionVariants !== 'function') {
+    fail(
+      'validate-content must load derivePublishedQuestionVariants from lib/content/derivedQuestions.ts',
     );
-    const validatorPatterns = extractCivicStatementPromptPatterns(
-      validatorSource,
-      functionName,
-      validatorNextFunctionName,
-      'scripts/validate-content.js',
-    );
+    return 0;
+  }
+  if (!/\bderivePublishedQuestionVariants\b/.test(validatorSource)) {
+    fail('validate-content must use the production generated-question helper');
+    return 0;
+  }
+  const staleExpectationName = ['expected', 'Generated'].join('');
+  const staleExpectationPattern = new RegExp(
+    `\\b${staleExpectationName}(?:Tags|Prompt|Explanation|AnswerShape)\\b`,
+  );
+  if (staleExpectationPattern.test(validatorSource)) {
+    fail('validate-content must not keep generated-question expectation mirrors');
+    return 0;
+  }
 
-    if (productionPatterns.length < 1 || validatorPatterns.length < 1) {
-      fail(`${functionName} prompt-pattern mirror must include generated civic statement cases`);
-      return;
-    }
-
-    if (!jsonEqual(productionPatterns, validatorPatterns)) {
-      fail(
-        `${functionName} prompt patterns differ between lib/content/derivedQuestions.ts and scripts/validate-content.js`,
-      );
-      return;
-    }
-
-    mirrorsValidated += 1;
-  });
-
-  return mirrorsValidated;
-}
-
-function expectedGeneratedTags(sourceQuestion, convention) {
-  return [
-    ...new Set([...sourceQuestion.tags, 'published-variant', convention?.tag].filter(Boolean)),
-  ];
+  return 2;
 }
 
 function answerLabel(option) {
@@ -6231,64 +6201,6 @@ function wrongOption(question) {
   );
 }
 
-function expectedGeneratedPrompt(sourceQuestion, variantIndex) {
-  if (variantIndex === 0) {
-    return {
-      questionSv: singleChoicePromptSv(sourceQuestion),
-      questionEn: singleChoicePromptEn(sourceQuestion),
-    };
-  }
-
-  if (variantIndex === 1) {
-    const option = correctOption(sourceQuestion);
-    return {
-      questionSv: ensureSentence(generatedTrueFalseStatementSv(sourceQuestion, option, true)),
-      questionEn: ensureSentence(generatedTrueFalseStatementEn(sourceQuestion, option, true)),
-    };
-  }
-
-  if (variantIndex === 2) {
-    const option = wrongOption(sourceQuestion);
-    return {
-      questionSv: ensureSentence(generatedTrueFalseStatementSv(sourceQuestion, option, false)),
-      questionEn: ensureSentence(generatedTrueFalseStatementEn(sourceQuestion, option, false)),
-    };
-  }
-
-  return {
-    questionSv: judgementPromptSv(sourceQuestion),
-    questionEn: judgementPromptEn(sourceQuestion),
-  };
-}
-
-function expectedGeneratedExplanation(sourceQuestion, variantIndex) {
-  if (variantIndex === 1) {
-    return {
-      explanationSv: trueStatementExplanationSv(sourceQuestion),
-      explanationEn: trueStatementExplanationEn(sourceQuestion),
-    };
-  }
-
-  if (variantIndex === 2) {
-    return {
-      explanationSv: falseStatementExplanationSv(sourceQuestion),
-      explanationEn: falseStatementExplanationEn(sourceQuestion),
-    };
-  }
-
-  if ((variantIndex === 0 || variantIndex === 3) && isTrueFalseSource(sourceQuestion)) {
-    return {
-      explanationSv: trueFalseSingleChoiceExplanationSv(sourceQuestion),
-      explanationEn: trueFalseSingleChoiceExplanationEn(sourceQuestion),
-    };
-  }
-
-  return {
-    explanationSv: sourceQuestion.explanationSv,
-    explanationEn: sourceQuestion.explanationEn,
-  };
-}
-
 function singleChoiceOptions(sourceQuestion) {
   if (sourceQuestion.options?.length === SINGLE_CHOICE_OPTION_IDS.length) {
     return sourceQuestion.options;
@@ -6312,39 +6224,6 @@ function normalizeSingleChoiceOptions(options, correctOptionId) {
     })),
     correctOptionId: correctIndex >= 0 ? SINGLE_CHOICE_OPTION_IDS[correctIndex] : correctOptionId,
   };
-}
-
-function expectedGeneratedAnswerShape(sourceQuestion, variantIndex) {
-  if (variantIndex === 0) {
-    return normalizeSingleChoiceOptions(
-      singleChoiceOptions(sourceQuestion),
-      isTrueFalseSource(sourceQuestion) ? 'true-statement' : sourceQuestion.correctOptionId,
-    );
-  }
-
-  if (variantIndex === 1) {
-    return {
-      options: TRUE_FALSE_OPTIONS,
-      correctOptionId: 'true',
-    };
-  }
-
-  if (variantIndex === 2) {
-    return {
-      options: TRUE_FALSE_OPTIONS,
-      correctOptionId: 'false',
-    };
-  }
-
-  const correct = correctOption(sourceQuestion);
-  const sourceIsTrueFalse =
-    sourceQuestion.options?.length === 2 &&
-    ['true', 'false'].includes(sourceQuestion.correctOptionId);
-  const options = sourceIsTrueFalse
-    ? trueFalseStatementOptions(sourceQuestion)
-    : singleChoiceOptions(sourceQuestion);
-
-  return normalizeSingleChoiceOptions(options, sourceIsTrueFalse ? 'true-statement' : correct.id);
 }
 
 function isIsoDate(value) {
@@ -6975,6 +6854,8 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const derivedQuestionsModule = loadTs('lib/content/derivedQuestions.ts');
+const derivePublishedQuestionVariants = derivedQuestionsModule.derivePublishedQuestionVariants;
 const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
@@ -6998,6 +6879,22 @@ const answerOptionShuffleModule = loadTs('lib/quiz/answerOptionShuffle.ts');
 const shuffleQuestionOptionsForSession = answerOptionShuffleModule.shuffleQuestionOptionsForSession;
 const summarizeAnswerShuffleDistribution =
   answerOptionShuffleModule.summarizeAnswerShuffleDistribution;
+
+const generatedVariantExpectationCache = new Map();
+
+function generatedVariantExpectation(sourceQuestion, sourceIndex, variantIndex) {
+  const cacheKey = `${sourceQuestion?.id ?? sourceIndex}:${sourceIndex}`;
+  if (!generatedVariantExpectationCache.has(cacheKey)) {
+    const startId = sourceQuestions.length + 1 + sourceIndex * GENERATED_VARIANTS_PER_SOURCE;
+    const variants =
+      typeof derivePublishedQuestionVariants === 'function'
+        ? derivePublishedQuestionVariants(sourceQuestion, startId)
+        : [];
+    generatedVariantExpectationCache.set(cacheKey, Array.isArray(variants) ? variants : []);
+  }
+
+  return generatedVariantExpectationCache.get(cacheKey)?.[variantIndex] ?? null;
+}
 const answerShuffleDistributionIsBalanced =
   answerOptionShuffleModule.answerShuffleDistributionIsBalanced;
 const ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE =
@@ -16015,6 +15912,11 @@ function validateGeneratedSourceMetadataParity() {
       if (!variant) return;
       let variantIsValid = true;
       const convention = GENERATED_VARIANT_CONVENTIONS[variantIndex];
+      const expectedVariant = generatedVariantExpectation(
+        sourceQuestion,
+        sourceIndex,
+        variantIndex,
+      );
       const expectedId = `q${String(
         EXPECTED_SOURCE_QUESTIONS + 1 + sourceIndex * GENERATED_VARIANTS_PER_SOURCE + variantIndex,
       ).padStart(3, '0')}`;
@@ -16043,7 +15945,7 @@ function validateGeneratedSourceMetadataParity() {
       if (!Array.isArray(variant.tags)) {
         reject(`${label} tags is not an array`);
       } else {
-        const expectedTags = expectedGeneratedTags(sourceQuestion, convention);
+        const expectedTags = expectedVariant?.tags ?? [];
         const variantTags = new Set(variant.tags);
         sourceQuestion.tags.forEach((tag) => {
           if (!variantTags.has(tag)) reject(`${label} is missing source tag ${tag}`);
@@ -16087,13 +15989,16 @@ function validateGeneratedExplanationTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedExplanation(sourceQuestion, variantIndex);
+      const expected = generatedVariantExpectation(sourceQuestion, sourceIndex, variantIndex);
 
-      if (variant.explanationSv !== expected.explanationSv) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} is missing a production generated-variant expectation`);
+      } else if (variant.explanationSv !== expected.explanationSv) {
         variantIsValid = false;
         fail(`${label} explanationSv does not match generated explanation template`);
       }
-      if (variant.explanationEn !== expected.explanationEn) {
+      if (expected && variant.explanationEn !== expected.explanationEn) {
         variantIsValid = false;
         fail(`${label} explanationEn does not match generated explanation template`);
       }
@@ -16132,13 +16037,16 @@ function validateGeneratedPromptTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedPrompt(sourceQuestion, variantIndex);
+      const expected = generatedVariantExpectation(sourceQuestion, sourceIndex, variantIndex);
 
-      if (variant.questionSv !== expected.questionSv) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} is missing a production generated-variant expectation`);
+      } else if (variant.questionSv !== expected.questionSv) {
         variantIsValid = false;
         fail(`${label} questionSv does not match generated prompt template`);
       }
-      if (variant.questionEn !== expected.questionEn) {
+      if (expected && variant.questionEn !== expected.questionEn) {
         variantIsValid = false;
         fail(`${label} questionEn does not match generated prompt template`);
       }
@@ -16169,13 +16077,16 @@ function validateGeneratedAnswerTemplateParity() {
       }
 
       let variantIsValid = true;
-      const expected = expectedGeneratedAnswerShape(sourceQuestion, variantIndex);
+      const expected = generatedVariantExpectation(sourceQuestion, sourceIndex, variantIndex);
 
-      if (!jsonEqual(variant.options, expected.options)) {
+      if (!expected) {
+        variantIsValid = false;
+        fail(`${label} is missing a production generated-variant expectation`);
+      } else if (!jsonEqual(variant.options, expected.options)) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }
-      if (variant.correctOptionId !== expected.correctOptionId) {
+      if (expected && variant.correctOptionId !== expected.correctOptionId) {
         variantIsValid = false;
         fail(`${label} correctOptionId does not match generated answer template`);
       }

@@ -63,41 +63,97 @@ function civicStatementPromptPatterns(source, functionName, nextFunctionName) {
   ].map((match) => match[1]);
 }
 
-test('validate-content mirrors production civic statement prompt patterns', () => {
-  const productionSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
-    'utf8',
-  );
+function sourceRecallHandlerFindings(source, svNextFunctionName, enNextFunctionName) {
+  const findings = [];
+  const svSlice = extractFunctionSlice(source, 'civicStatementSv', svNextFunctionName);
+  const enSlice = extractFunctionSlice(source, 'civicStatementEn', enNextFunctionName);
+  const activeCivicStatementSource = `${svSlice}\n${enSlice}`;
+  const bannedActivePatterns = [
+    /\bnämns som exempel\b/i,
+    /\bmentioned as (?:an example|examples)\b/i,
+    /\bVilken händelse från\b/i,
+    /\bWhich event from\b/i,
+    /\bVad nämns som exempel på\b/i,
+    /\bWhat is mentioned as an example of\b/i,
+  ];
+
+  if (/function swedishMentionedExample\b/.test(source)) {
+    findings.push('swedishMentionedExample helper still exists');
+  }
+  if (/function englishMentionedExample\b/.test(source)) {
+    findings.push('englishMentionedExample helper still exists');
+  }
+  for (const pattern of bannedActivePatterns) {
+    if (pattern.test(activeCivicStatementSource)) {
+      findings.push(`active civic statement handler still matches ${pattern}`);
+    }
+  }
+
+  return findings;
+}
+
+test('validate-content delegates generated variant expectations to the production generator', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
   );
 
-  const svProductionPatterns = civicStatementPromptPatterns(
-    productionSource,
-    'civicStatementSv',
-    'civicStatementEn',
-  );
-  const svValidatorPatterns = civicStatementPromptPatterns(
+  assert.match(
     validatorSource,
-    'civicStatementSv',
-    'civicStatementEn',
+    /const derivePublishedQuestionVariants = derivedQuestionsModule\.derivePublishedQuestionVariants;/,
   );
-  const enProductionPatterns = civicStatementPromptPatterns(
-    productionSource,
-    'civicStatementEn',
-    'buildSingleChoiceVariant',
-  );
-  const enValidatorPatterns = civicStatementPromptPatterns(
+  assert.match(validatorSource, /\bgeneratedVariantExpectation\(/);
+  assert.match(validatorSource, /\bderivePublishedQuestionVariants\(sourceQuestion, startId\)/);
+  assert.doesNotMatch(
     validatorSource,
-    'civicStatementEn',
-    'correctOption',
+    /prompt patterns differ between lib\/content\/derivedQuestions\.ts and scripts\/validate-content\.js/,
+  );
+});
+
+test('validate-content uses production helper for expected generated variant output', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
   );
 
-  assert.ok(svProductionPatterns.length > 100, 'Swedish mirror should cover source shapes');
-  assert.ok(enProductionPatterns.length > 100, 'English mirror should cover source shapes');
-  assert.deepEqual(svValidatorPatterns, svProductionPatterns);
-  assert.deepEqual(enValidatorPatterns, enProductionPatterns);
+  assert.match(validatorSource, /\bderivePublishedQuestionVariants\b/);
+  assert.doesNotMatch(
+    validatorSource,
+    /\bfunction expectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\b/,
+  );
+  assert.doesNotMatch(
+    validatorSource,
+    /\bexpectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\(/,
+  );
+});
+
+test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
+  const productionSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
+    'utf8',
+  );
+
+  assert.deepEqual(
+    sourceRecallHandlerFindings(productionSource, 'civicStatementEn', 'buildSingleChoiceVariant'),
+    [],
+  );
+  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
+  const handlerPatterns = [
+    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
+    ...civicStatementPromptPatterns(
+      productionSource,
+      'civicStatementEn',
+      'buildSingleChoiceVariant',
+    ),
+  ];
+
+  for (const pattern of obsoletePromptPatterns) {
+    assert.deepEqual(
+      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
+      [],
+      `${pattern} should be limited to explicit source guards and mutation fixtures`,
+    );
+  }
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
