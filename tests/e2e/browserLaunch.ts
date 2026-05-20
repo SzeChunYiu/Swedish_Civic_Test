@@ -45,6 +45,20 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
   );
 }
 
+export async function seedFreshFirstRunSettingsLanguage(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.addInitScript(
+    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(languageKey, seededLanguage);
+    },
+    { language, languageKey: settingsLanguageKey },
+  );
+}
+
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
     ({ seenKey }: { seenKey: string }) => {

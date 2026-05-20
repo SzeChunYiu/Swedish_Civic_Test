@@ -54,7 +54,7 @@ const firstRunCopy: Record<AppLanguage, FirstRunCopy> = {
   },
   en: {
     eyebrow: 'Welcome',
-    title: 'What is the Swedish civic test?',
+    title: 'What is the citizenship test?',
     body: "A short guide to what the test is, who takes it, and how this study tool relates to UHR's official material.",
     open: 'Read the guide',
     openAccessibilityLabel: 'Open the about-the-test guide',
