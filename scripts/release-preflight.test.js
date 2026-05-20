@@ -1023,6 +1023,7 @@ test('release preflight blocks v1.1 surfaces while v1.0 Remove Ads acceptance is
   assert.equal(scopeGate.status, 'BLOCKED');
   assert.match(scopeGate.evidence, /v1\.1 runtime\/test surfaces are present/i);
   assert.match(scopeGate.evidence, /tests\/v1-1-/i);
+  assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is missing/i);
   assert.match(scopeGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
   assert.match(scopeGate.evidence, /reports\/release-device-qa\/ios\.json/i);
   assert.match(scopeGate.nextAction, /Remove Ads structural gate/i);
