@@ -45,13 +45,6 @@ export type MockExamQuestionTiming = {
   timeSpentSeconds: number;
 };
 
-export type AnswerHistoryEntry = {
-  questionId: string;
-  isCorrect: boolean;
-  answeredAt: string;
-  timeSpentSeconds?: number;
-};
-
 const progressStateKey = 'progressState';
 const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
@@ -74,7 +67,6 @@ try {
 }
 
 export type PersistedProgress = {
-  answerHistory?: AnswerHistoryEntry[];
   completedQuestionIds: string[];
   questionProgress: Record<string, QuestionProgress>;
   totalXp: number;
