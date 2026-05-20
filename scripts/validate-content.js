@@ -3783,9 +3783,11 @@ const EXPECTED_REWARDED_AD_INTERFACES = [
   {
     name: 'RewardedExtraExamAdOptions',
     fields: [
+      { name: 'confirmReward', type: 'RewardedExtraExamRewardConfirmation', optional: true },
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
       { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
       { name: 'timeoutMs', type: 'number', optional: true },
+      { name: 'webConsentDecision', type: 'RewardedExtraExamWebConsentDecision', optional: true },
     ],
   },
 ];

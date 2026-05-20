@@ -848,6 +848,16 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     },
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
+  const { showRewardedExtraExamAd: showRealWebRewardedExtraExamAd } = withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-3940256099942544/5224354917',
+      EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: undefined,
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
+  );
   const defaultResult = await showRewardedExtraExamAd();
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
@@ -868,12 +878,26 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   const confirmedResult = await showRewardedExtraExamAd({
     confirmReward: () => true,
   });
+  const realWebConfirmedResult = await showRealWebRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+  const realWebBlockedResult = await showRealWebRewardedExtraExamAd({
+    confirmReward: () => true,
+    webConsentDecision: { adServingAllowed: false },
+  });
 
   assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
   assert.equal(confirmedResult.status, 'earned_reward');
+  assert.equal(realWebConfirmedResult.status, 'earned_reward');
+  assert.deepEqual(realWebBlockedResult, { status: 'unavailable' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
-  assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(webRewardedAdSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(webRewardedAdSource, /webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webRewardedAdSource,
+    /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, webConsentDecision, 'web'\)/,
+  );
   assert.match(
     webRewardedAdSource,
     /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};/,
@@ -905,6 +929,10 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   assert.match(
     examSource,
     /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+  assert.match(
+    examSource,
+    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
   );
   assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
   assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
