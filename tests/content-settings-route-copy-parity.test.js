@@ -19,14 +19,18 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 32);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 56);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = settingsCopy\[language\];/);
-  assert.match(source, /Styr studiespråk, ljud och ditt dagliga mål\./);
-  assert.match(source, /Control study language, audio, and your daily goal\./);
+  assert.match(source, /Styr studiespråk, ljud, mål och påminnelser\./);
+  assert.match(source, /Control study language, audio, goals, and reminders\./);
+  assert.match(source, /Studiepåminnelse/);
+  assert.match(source, /Study reminder/);
+  assert.match(source, /Schemaläggs lokalt\. Inga studiedata skickas\./);
+  assert.match(source, /Scheduled locally\. No study data is sent\./);
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
@@ -78,7 +82,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/settings.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("'Styr studiespråk, ljud och ditt dagliga mål.'", "'Control study language, audio, and your daily goal.'");
+      .replace("'Styr studiespråk, ljud, mål och påminnelser.'", "'Control study language, audio, goals, and reminders.'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

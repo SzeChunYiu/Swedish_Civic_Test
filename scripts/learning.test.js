@@ -103,6 +103,175 @@ test('daily goal counts question answers for the requested local day only', () =
   assert.equal(countAnswersForLocalDate({}, today), 0);
 });
 
+function createStudyReminderRuntime({
+  existingStatus = 'undetermined',
+  requestedStatus = 'granted',
+} = {}) {
+  const calls = {
+    cancelledIds: [],
+    channels: [],
+    permissionRequests: 0,
+    permissionReads: 0,
+    schedules: [],
+  };
+
+  return {
+    calls,
+    runtime: {
+      androidImportanceDefault: 5,
+      dailyTriggerType: 'daily',
+      getPermissionsAsync: async () => {
+        calls.permissionReads += 1;
+        return { status: existingStatus };
+      },
+      requestPermissionsAsync: async () => {
+        calls.permissionRequests += 1;
+        return { status: requestedStatus };
+      },
+      scheduleNotificationAsync: async (request) => {
+        calls.schedules.push(request);
+        return `study-reminder-${calls.schedules.length}`;
+      },
+      cancelScheduledNotificationAsync: async (identifier) => {
+        calls.cancelledIds.push(identifier);
+      },
+      setNotificationChannelAsync: async (channelId, channel) => {
+        calls.channels.push({ channelId, channel });
+      },
+      platformOS: 'android',
+    },
+  };
+}
+
+function createStudyReminderState(overrides = {}) {
+  return {
+    studyReminderEnabled: false,
+    studyReminderHour: 18,
+    studyReminderMinute: 0,
+    studyReminderPermissionStatus: 'undetermined',
+    studyReminderNotificationId: null,
+    ...overrides,
+  };
+}
+
+test('study reminder enabling requests permission once and schedules a local daily reminder', async () => {
+  const { STUDY_REMINDER_CHANNEL_ID, enableStudyReminder, formatStudyReminderTime } = loadAllTs(
+    'lib/notifications/studyReminder.ts',
+  );
+  const { calls, runtime } = createStudyReminderRuntime();
+
+  const nextState = await enableStudyReminder({
+    current: createStudyReminderState(),
+    hour: 8,
+    minute: 0,
+    language: 'sv',
+    runtime,
+  });
+
+  assert.equal(formatStudyReminderTime(8, 0), '08:00');
+  assert.equal(calls.permissionReads, 1);
+  assert.equal(calls.permissionRequests, 1);
+  assert.equal(calls.schedules.length, 1);
+  assert.equal(calls.channels.length, 1);
+  assert.equal(calls.channels[0].channelId, STUDY_REMINDER_CHANNEL_ID);
+  assert.deepEqual(calls.schedules[0].trigger, {
+    type: 'daily',
+    hour: 8,
+    minute: 0,
+    channelId: STUDY_REMINDER_CHANNEL_ID,
+  });
+  assert.equal(calls.schedules[0].content.title, 'Dagens lilla pass väntar');
+  assert.equal(nextState.studyReminderEnabled, true);
+  assert.equal(nextState.studyReminderPermissionStatus, 'granted');
+  assert.equal(nextState.studyReminderNotificationId, 'study-reminder-1');
+});
+
+test('study reminder rescheduling replaces the prior local notification id', async () => {
+  const { enableStudyReminder } = loadAllTs('lib/notifications/studyReminder.ts');
+  const { calls, runtime } = createStudyReminderRuntime({ existingStatus: 'granted' });
+
+  const nextState = await enableStudyReminder({
+    current: createStudyReminderState({
+      studyReminderEnabled: true,
+      studyReminderPermissionStatus: 'granted',
+      studyReminderNotificationId: 'old-reminder',
+    }),
+    hour: 20,
+    minute: 30,
+    language: 'en',
+    runtime,
+  });
+
+  assert.deepEqual(calls.cancelledIds, ['old-reminder']);
+  assert.equal(calls.permissionRequests, 0);
+  assert.equal(calls.schedules.length, 1);
+  assert.deepEqual(calls.schedules[0].trigger, {
+    type: 'daily',
+    hour: 20,
+    minute: 30,
+    channelId: 'study-reminders',
+  });
+  assert.equal(calls.schedules[0].content.title, 'Your study check-in is ready');
+  assert.equal(nextState.studyReminderHour, 20);
+  assert.equal(nextState.studyReminderMinute, 30);
+  assert.equal(nextState.studyReminderNotificationId, 'study-reminder-1');
+});
+
+test('study reminder disabling cancels the stored local notification', async () => {
+  const { disableStudyReminder } = loadAllTs('lib/notifications/studyReminder.ts');
+  const { calls, runtime } = createStudyReminderRuntime();
+
+  const nextState = await disableStudyReminder({
+    current: createStudyReminderState({
+      studyReminderEnabled: true,
+      studyReminderPermissionStatus: 'granted',
+      studyReminderNotificationId: 'old-reminder',
+    }),
+    runtime,
+  });
+
+  assert.deepEqual(calls.cancelledIds, ['old-reminder']);
+  assert.equal(nextState.studyReminderEnabled, false);
+  assert.equal(nextState.studyReminderNotificationId, null);
+});
+
+test('study reminder denied permission leaves reminders off with no schedule', async () => {
+  const { enableStudyReminder } = loadAllTs('lib/notifications/studyReminder.ts');
+  const { calls, runtime } = createStudyReminderRuntime({ requestedStatus: 'denied' });
+
+  const nextState = await enableStudyReminder({
+    current: createStudyReminderState({ studyReminderNotificationId: 'old-reminder' }),
+    hour: 18,
+    minute: 0,
+    language: 'en',
+    runtime,
+  });
+
+  assert.deepEqual(calls.cancelledIds, ['old-reminder']);
+  assert.equal(calls.schedules.length, 0);
+  assert.equal(nextState.studyReminderEnabled, false);
+  assert.equal(nextState.studyReminderPermissionStatus, 'denied');
+  assert.equal(nextState.studyReminderNotificationId, null);
+});
+
+test('study reminder implementation stays local-only and avoids push token upload paths', () => {
+  const reminderSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/notifications/studyReminder.ts'),
+    'utf8',
+  );
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+
+  assert.doesNotMatch(reminderSource, /getExpoPushTokenAsync|getDevicePushTokenAsync/);
+  assert.doesNotMatch(reminderSource, /addPushTokenListener|setAutoServerRegistrationEnabledAsync/);
+  assert.doesNotMatch(reminderSource, /\bfetch\s*\(|XMLHttpRequest|axios/i);
+  assert.match(settingsSource, /Schemaläggs lokalt\. Inga studiedata skickas\./);
+  assert.match(settingsSource, /Scheduled locally\. No study data is sent\./);
+  assert.match(settingsSource, /Aviseringar är nekade/);
+  assert.match(settingsSource, /Notifications are denied/);
+  assert.match(settingsSource, /studyReminderPermissionStatus === 'denied'/);
+  assert.match(settingsSource, /copy\.studyReminderDeniedSummary/);
+});
+
 test('progress answer dates use the shared local calendar key', () => {
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
