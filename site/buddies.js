@@ -602,15 +602,26 @@
 
   // ---------- Wire up ----------
 
+  function activateBuddyFigure() {
+    const bubble = document.getElementById("dala-bubble");
+    if (bubble && !bubble.hidden) hideMessage();
+    else if (Math.random() < 0.4) petReaction();
+    else showRandomTip();
+  }
+
   document.addEventListener("click", (e) => {
     if (e.target.closest("#dala-figure")) {
-      const bubble = document.getElementById("dala-bubble");
-      if (bubble && !bubble.hidden) hideMessage();
-      else if (Math.random() < 0.4) petReaction();
-      else showRandomTip();
+      activateBuddyFigure();
       return;
     }
     if (e.target.closest("#dala-bubble-close")) { hideMessage(); return; }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!e.target.closest("#dala-figure")) return;
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    activateBuddyFigure();
   });
 
   window.addEventListener("hashchange", () => setTimeout(pageNudge, 400));

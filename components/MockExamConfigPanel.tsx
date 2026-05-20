@@ -57,7 +57,7 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
     practiceLabel: 'Öva först',
     questionCountLabel: 'Frågor',
     resetLabel: 'Återställ',
-    scoreModeLabel: 'Resultat är övning',
+    scoreModeLabel: 'Övningsresultat',
     selectedChaptersValueLabel: (count) => (count === 1 ? '1 valt' : `${count} valda`),
     sourceScopeLabel: 'UHR-baserade frågor',
     startLabel: 'Starta provet',
@@ -87,9 +87,9 @@ const mockExamConfigPanelCopy: Record<AppLanguage, MockExamConfigPanelCopy> = {
 /**
  * Defaults: localized labels from settings, `minQuestionCount=5`,
  * `questionStep=1`, `minDurationMinutes=2`, `maxDurationMinutes=90`,
- * `durationStep=1`, `accessibilityRole="summary"`, and token-sized press
- * targets. Pass localized labels and callbacks from
- * the owning screen for screen-specific copy.
+ * `durationStep=1`, a non-interactive summary header with
+ * `accessibilityRole="summary"`, and token-sized press targets. Pass localized
+ * labels and callbacks from the owning screen for screen-specific copy.
  */
 export interface MockExamConfigPanelProps extends Omit<SurfaceProps, 'children'> {
   allChaptersLabel?: string;
@@ -355,28 +355,33 @@ export function MockExamConfigPanel({
   const resolvedDurationValueLabel = resolvedDurationValueLabelGetter(safeDuration);
   const resolvedSelectedChaptersValueLabel =
     resolvedSelectedChaptersValueLabelGetter(selectedChapterCount);
+  const resolvedPanelAccessibilityLabel =
+    accessibilityLabel ??
+    getPanelAccessibilityLabel({
+      chaptersLabel: resolvedChaptersLabel,
+      durationLabel: resolvedDurationLabel,
+      durationValueLabel: resolvedDurationValueLabel,
+      questionCount: safeQuestionCount,
+      questionCountLabel: resolvedQuestionCountLabel,
+      selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
+      title,
+    });
 
   return (
     <Surface
-      accessibilityLabel={
-        accessibilityLabel ??
-        getPanelAccessibilityLabel({
-          chaptersLabel: resolvedChaptersLabel,
-          durationLabel: resolvedDurationLabel,
-          durationValueLabel: resolvedDurationValueLabel,
-          questionCount: safeQuestionCount,
-          questionCountLabel: resolvedQuestionCountLabel,
-          selectedChaptersValueLabel: resolvedSelectedChaptersValueLabel,
-          title,
-        })
-      }
-      accessibilityRole={accessibilityRole}
+      accessibilityRole="none"
       elevation={elevation}
       style={[styles.panel, style]}
       tone={tone}
       {...surfaceProps}
+      accessible={false}
     >
-      <View style={styles.header}>
+      <View
+        accessible
+        accessibilityLabel={resolvedPanelAccessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        style={styles.header}
+      >
         <View style={styles.headerCopy}>
           <Text variant="h2">{title}</Text>
           {subtitle ? (
@@ -466,11 +471,7 @@ export function MockExamConfigPanel({
           </View>
         </View>
 
-        <View
-          accessibilityLabel={resolvedChaptersLabel}
-          accessibilityRole="summary"
-          style={styles.chips}
-        >
+        <View style={styles.chips}>
           {chapters.map((chapter) => {
             const selected = selectedChapterIds.some((selectedId) =>
               idsMatch(selectedId, chapter.id),

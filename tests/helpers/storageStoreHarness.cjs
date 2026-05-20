@@ -40,6 +40,21 @@ function createThrowingSetMMKV(message = 'MMKV set failed') {
   };
 }
 
+function createThrowingGetMMKV(message = 'MMKV read failed') {
+  return {
+    getBoolean() {
+      throw new Error(message);
+    },
+    getNumber() {
+      throw new Error(message);
+    },
+    getString() {
+      throw new Error(message);
+    },
+    set() {},
+  };
+}
+
 function createZustandStub() {
   return {
     create: (factory) => {
@@ -101,6 +116,7 @@ function loadTsWithStorage(repoRoot, relativePath, storageById) {
 
 module.exports = {
   createMemoryMMKV,
+  createThrowingGetMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
 };
