@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { dismissBlockingModals } from './browserLaunch';
+
 test('settings controls expose selected and checked state on web', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -9,12 +11,7 @@ test('settings controls expose selected and checked state on web', async ({ page
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
-  const closeLaunchSponsorAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchSponsorAd.isVisible()) {
-    await closeLaunchSponsorAd.click();
-  }
+  await dismissBlockingModals(page);
 
   await page.getByLabel('Byt frågespråk till Engelskt stöd').click();
   const swedishLanguage = page.getByLabel('Set question language to Swedish');
