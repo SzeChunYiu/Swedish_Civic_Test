@@ -1,6 +1,7 @@
 import type { Chapter, PracticeQuestion } from '../../types/content';
 import { isUhrQuestion } from '../content/provenance';
 import { shuffleQuestionOptionsForSession } from './answerOptionShuffle';
+import { getQuestionExplanationText, getQuestionOptionText } from './questionText';
 
 export type ExamOptions = {
   questionCount?: number;
@@ -39,6 +40,7 @@ export type ExamReviewItem = {
   isCorrect: boolean;
   explanationSv: string;
   explanationEn: string;
+  explanationText?: PracticeQuestion['explanationText'];
   uhrReference: PracticeQuestion['uhrReference'];
 };
 
@@ -169,13 +171,22 @@ export function buildExamReviewItems(
       questionSv: question.questionSv,
       questionEn: question.questionEn,
       chapterId: question.chapterId,
-      selectedOptionTextSv: selectedOption?.textSv ?? 'Inte besvarad',
-      selectedOptionTextEn: selectedOption?.textEn ?? 'Not answered',
-      correctOptionTextSv: correctOption?.textSv ?? 'Rätt svar saknas',
-      correctOptionTextEn: correctOption?.textEn ?? 'Correct answer missing',
+      selectedOptionTextSv: selectedOption
+        ? getQuestionOptionText(selectedOption, 'sv')
+        : 'Inte besvarad',
+      selectedOptionTextEn: selectedOption
+        ? getQuestionOptionText(selectedOption, 'en')
+        : 'Not answered',
+      correctOptionTextSv: correctOption
+        ? getQuestionOptionText(correctOption, 'sv')
+        : 'Rätt svar saknas',
+      correctOptionTextEn: correctOption
+        ? getQuestionOptionText(correctOption, 'en')
+        : 'Correct answer missing',
       isCorrect: answers[question.id] === question.correctOptionId,
-      explanationSv: question.explanationSv,
-      explanationEn: question.explanationEn,
+      explanationSv: getQuestionExplanationText(question, 'sv', question.explanationSv),
+      explanationEn: getQuestionExplanationText(question, 'en', question.explanationEn),
+      explanationText: question.explanationText,
       uhrReference: question.uhrReference,
     };
   });

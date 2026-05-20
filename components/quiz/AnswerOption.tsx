@@ -1,4 +1,5 @@
 import type { QuestionOption } from '../../types/content';
+import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { OptionCard } from '../OptionCard';
 import type { OptionCardState } from '../OptionCard';
 
@@ -71,7 +72,7 @@ export function AnswerOption({
 }
 
 function getOptionLabel(option: QuestionOption, language: AnswerLanguage) {
-  return language === 'en' ? option.textEn : option.textSv;
+  return getQuestionOptionText(option, language);
 }
 
 function getOptionCardState(tone: AnswerTone, selected: boolean): OptionCardState {

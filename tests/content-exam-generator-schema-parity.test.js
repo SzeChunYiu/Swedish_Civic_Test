@@ -30,6 +30,7 @@ test('exam generator TypeScript schema stays in parity with validator expectatio
   assert.match(examGeneratorSource, /selectedOptionTextEn: string;/);
   assert.match(examGeneratorSource, /correctOptionTextEn: string;/);
   assert.match(examGeneratorSource, /explanationEn: string;/);
+  assert.match(examGeneratorSource, /explanationText\?: PracticeQuestion\['explanationText'\];/);
   assert.match(examGeneratorSource, /uhrReference: PracticeQuestion\['uhrReference'\];/);
   assert.match(examGeneratorSource, /export type ExamAutoSubmitState = \{/);
 });

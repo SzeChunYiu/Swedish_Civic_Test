@@ -1,6 +1,8 @@
 import { StyleSheet, Text } from 'react-native';
 import { Card } from '../ui/Card';
+import { getQuestionExplanationText } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
+import type { LocalizedContentText } from '../../types/content';
 import { colors, space, typography } from '../../lib/theme';
 
 type ExplanationPanelCopy = {
@@ -25,15 +27,20 @@ const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy> = {
 export function ExplanationPanel({
   explanationEn,
   explanationSv,
+  explanationText,
   language = 'sv',
 }: {
   explanationEn?: string;
   explanationSv?: string;
+  explanationText?: Partial<LocalizedContentText>;
   language?: AppLanguage;
 }) {
   const copy = explanationPanelCopy[language];
-  const explanation =
-    language === 'en' && explanationEn ? explanationEn : (explanationSv ?? copy.fallback);
+  const explanation = getQuestionExplanationText(
+    { explanationEn, explanationSv, explanationText },
+    language,
+    copy.fallback,
+  );
   const panelAccessibilityLabel = `${copy.accessibilityLabelPrefix}: ${explanation}`;
 
   return (

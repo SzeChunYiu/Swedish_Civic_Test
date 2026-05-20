@@ -1,8 +1,23 @@
 import type { AppLanguage } from '../storage/settingsStore';
 
+export const localeCodes = [
+  'sv',
+  'en',
+  'ar',
+  'fa',
+  'so',
+  'ti',
+  'pl',
+  'tr',
+  'zh-Hans',
+  'zh-Hant',
+] as const;
+
+export type LocaleCode = (typeof localeCodes)[number];
+
 export type LocaleOption = {
   /** BCP-47-ish code, used as picker key. */
-  code: string;
+  code: LocaleCode;
   /** English label, e.g. "Swedish". */
   label: string;
   /** Native rendering, e.g. "Svenska", "العربية". */

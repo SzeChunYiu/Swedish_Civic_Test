@@ -23,7 +23,11 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
-import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
+import {
+  getQuestionDisplayText,
+  getQuestionOptionText,
+  getQuestionSourceCitation,
+} from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { useProgressStore } from '../../lib/storage/progressStore';
@@ -559,6 +563,7 @@ export default function Screen() {
             <ExplanationPanel
               explanationEn={item.explanationEn}
               explanationSv={item.explanationSv}
+              explanationText={item.explanationText}
               language={language}
             />
             <UHRReferenceCard language={language} reference={item.uhrReference} />
@@ -607,7 +612,7 @@ export default function Screen() {
           <View style={styles.options}>
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
-              const optionText = language === 'en' ? option.textEn : option.textSv;
+              const optionText = getQuestionOptionText(option, language);
               return (
                 <Pressable
                   key={option.id}

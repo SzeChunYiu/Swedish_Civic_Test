@@ -511,7 +511,7 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.match(source, /Välj svaret \$\{label\}/);
   assert.match(source, /Select answer \$\{label\}/);
   assert.match(source, /function getOptionLabel/);
-  assert.match(source, /language === 'en' \? option\.textEn : option\.textSv/);
+  assert.match(source, /getQuestionOptionText\(option, language\)/);
   assert.match(source, /const accessibilityLabel = resultLabel/);
   assert.match(source, /\$\{label\}, \$\{resultLabel\}/);
   assert.match(source, /copy\.selectAccessibilityLabel\(label\)/);
@@ -676,7 +676,7 @@ test('quiz feedback cards expose accessible summaries', () => {
   assert.match(explanationSource, /Förklaring saknas för den här frågan\./);
   assert.match(
     explanationSource,
-    /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
+    /const explanation = getQuestionExplanationText\([\s\S]*explanationText[\s\S]*copy\.fallback/,
   );
   assert.match(explanationSource, /const panelAccessibilityLabel =/);
   assert.match(explanationSource, /`\$\{copy\.accessibilityLabelPrefix\}: \$\{explanation\}`/);
@@ -1132,6 +1132,7 @@ test('English support reaches quiz options, explanations, and exam review text',
   assert.match(practiceSource, /getAnswerOptionFeedback\([\s\S]*language,[\s\S]*\);/);
   assert.match(practiceSource, /language=\{language\}[\s\S]*option=\{option\}/);
   assert.match(practiceSource, /explanationEn=\{question\.explanationEn\}/);
+  assert.match(practiceSource, /explanationText=\{question\.explanationText\}/);
   assert.match(practiceSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(quizSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -1140,6 +1141,7 @@ test('English support reaches quiz options, explanations, and exam review text',
   assert.match(quizSource, /getAnswerOptionFeedback\([\s\S]*language,[\s\S]*\);/);
   assert.match(quizSource, /language=\{language\}[\s\S]*option=\{option\}/);
   assert.match(quizSource, /explanationEn=\{question\.explanationEn\}/);
+  assert.match(quizSource, /explanationText=\{question\.explanationText\}/);
   assert.match(quizSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(answerValidationSource, /en: \{[\s\S]*correct: 'Correct'/);
@@ -1148,7 +1150,7 @@ test('English support reaches quiz options, explanations, and exam review text',
 
   assert.match(examSource, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(examSource, /const copy = examRouteCopy\[language\];/);
-  assert.match(examSource, /language === 'en' \? option\.textEn : option\.textSv/);
+  assert.match(examSource, /getQuestionOptionText\(option, language\)/);
   assert.match(examSource, /getQuestionDisplayText\(question, language\)/);
   assert.match(examSource, /getQuestionDisplayText\(item, language\)/);
   assert.match(
@@ -1158,12 +1160,22 @@ test('English support reaches quiz options, explanations, and exam review text',
   assert.match(examSource, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(examSource, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
   assert.match(examSource, /explanationEn=\{item\.explanationEn\}/);
+  assert.match(examSource, /explanationText=\{item\.explanationText\}/);
   assert.match(examSource, /<UHRReferenceCard language=\{language\}/);
 
   assert.match(examGeneratorSource, /questionEn: question\.questionEn/);
-  assert.match(examGeneratorSource, /selectedOptionTextEn: selectedOption\?\.textEn/);
-  assert.match(examGeneratorSource, /correctOptionTextEn: correctOption\?\.textEn/);
-  assert.match(examGeneratorSource, /explanationEn: question\.explanationEn/);
+  assert.match(
+    examGeneratorSource,
+    /selectedOptionTextEn: selectedOption[\s\S]*getQuestionOptionText\(selectedOption, 'en'\)/,
+  );
+  assert.match(
+    examGeneratorSource,
+    /correctOptionTextEn: correctOption[\s\S]*getQuestionOptionText\(correctOption, 'en'\)/,
+  );
+  assert.match(
+    examGeneratorSource,
+    /explanationEn: getQuestionExplanationText\(question, 'en', question\.explanationEn\)/,
+  );
 });
 
 test('exam route exposes page and review section headings as headers', () => {

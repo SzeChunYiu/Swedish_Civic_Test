@@ -81,3 +81,53 @@ test('question text helper localizes fallback, source citation, and secondary te
   assert.equal(getQuestionSourceCitation(undefined, 'sv'), 'Källhänvisning saknas');
   assert.equal(getQuestionSourceCitation(undefined, 'en'), 'Source citation unavailable');
 });
+
+test('question text helper prefers locale maps and falls back through configured languages', () => {
+  const {
+    getQuestionDisplayText,
+    getQuestionExplanationText,
+    getQuestionOptionText,
+    getQuestionTranslationText,
+  } = loadTs('lib/quiz/questionText.ts');
+  const question = {
+    questionSv: 'Legacy svensk fråga?',
+    questionEn: 'Legacy English question?',
+    questionText: {
+      sv: 'Ny svensk fråga?',
+      en: 'New English question?',
+      ar: 'سؤال عربي؟',
+    },
+    explanationSv: 'Gammal svensk förklaring.',
+    explanationEn: 'Old English explanation.',
+    explanationText: {
+      sv: 'Ny svensk förklaring.',
+      en: 'New English explanation.',
+      ar: 'شرح عربي.',
+    },
+  };
+  const option = {
+    id: 'a',
+    textSv: 'Gammalt svenskt svar',
+    textEn: 'Old English answer',
+    text: {
+      sv: 'Nytt svenskt svar',
+      en: 'New English answer',
+      ar: 'إجابة عربية',
+    },
+  };
+
+  assert.equal(getQuestionDisplayText(question, 'sv'), 'Ny svensk fråga?');
+  assert.equal(getQuestionDisplayText(question, 'en'), 'New English question?');
+  assert.equal(getQuestionDisplayText(question, 'ar'), 'سؤال عربي؟');
+  assert.equal(getQuestionDisplayText(question, 'zh-Hans'), 'New English question?');
+  assert.equal(getQuestionTranslationText(question, 'sv'), 'New English question?');
+  assert.equal(getQuestionTranslationText(question, 'en'), 'Ny svensk fråga?');
+  assert.equal(getQuestionExplanationText(question, 'ar', 'fallback'), 'شرح عربي.');
+  assert.equal(
+    getQuestionExplanationText(question, 'zh-Hant', 'fallback'),
+    'New English explanation.',
+  );
+  assert.equal(getQuestionOptionText(option, 'sv'), 'Nytt svenskt svar');
+  assert.equal(getQuestionOptionText(option, 'ar'), 'إجابة عربية');
+  assert.equal(getQuestionOptionText(option, 'fa'), 'New English answer');
+});

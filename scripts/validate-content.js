@@ -327,6 +327,18 @@ const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
+const EXPECTED_CONTENT_LOCALE_CODES = [
+  'sv',
+  'en',
+  'ar',
+  'fa',
+  'so',
+  'ti',
+  'pl',
+  'tr',
+  'zh-Hans',
+  'zh-Hant',
+];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
   en: 'English support',
@@ -2533,7 +2545,12 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+  },
+  {
+    label: 'localized content maps are preferred before legacy question fields',
+    pattern:
+      /resolveLocalizedText\(question\?\.questionText, language,[\s\S]*question\?\.questionEn[\s\S]*question\?\.questionSv/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2543,7 +2560,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -2623,7 +2640,7 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   },
   {
     label: 'English and Swedish option label switch',
-    pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
+    pattern: /return getQuestionOptionText\(option, language\);/,
   },
 ];
 const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
@@ -2650,7 +2667,7 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   {
     label: 'language-specific explanation selection',
     pattern:
-      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
+      /const explanation = getQuestionExplanationText\([\s\S]*explanationText[\s\S]*copy\.fallback/,
   },
   {
     label: 'localized explanation in accessibility summary',
@@ -3075,6 +3092,7 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'textSv', type: 'string', optional: false },
       { name: 'textEn', type: 'string', optional: false },
+      { name: 'text', type: 'LocalizedContentText', optional: true },
     ],
   },
   {
@@ -3085,10 +3103,12 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'type', type: 'QuestionType', optional: false },
       { name: 'questionSv', type: 'string', optional: false },
       { name: 'questionEn', type: 'string', optional: false },
+      { name: 'questionText', type: 'LocalizedContentText', optional: true },
       { name: 'options', type: 'QuestionOption[]', optional: false },
       { name: 'correctOptionId', type: 'string', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'explanationText', type: 'LocalizedContentText', optional: true },
       { name: 'uhrReference', type: 'UHRReference', optional: false },
       { name: 'difficulty', type: 'Difficulty', optional: false },
       { name: 'reviewStatus', type: 'ReviewStatus', optional: false },
@@ -3190,6 +3210,7 @@ const EXPECTED_EXAM_GENERATOR_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'explanationSv', type: 'string', optional: false },
       { name: 'explanationEn', type: 'string', optional: false },
+      { name: 'explanationText', type: "PracticeQuestion['explanationText']", optional: true },
       { name: 'uhrReference', type: "PracticeQuestion['uhrReference']", optional: false },
     ],
   },
@@ -5976,6 +5997,8 @@ function validateQuestionSchema(question, index) {
   ]) {
     requireText(field);
   }
+  validateLocalizedContentTextField(question.questionText, `${label}.questionText`, reject);
+  validateLocalizedContentTextField(question.explanationText, `${label}.explanationText`, reject);
 
   if (!QUESTION_TYPES.has(question.type)) reject(`${label} has invalid type ${question.type}`);
   if (!DIFFICULTIES.has(question.difficulty)) {
@@ -6023,6 +6046,7 @@ function validateQuestionSchema(question, index) {
       if (hasText(option.textEn) && !textIsTrimmedSingleSpaced(option.textEn)) {
         reject(`${optionLabel} textEn must be trimmed and single-spaced`);
       }
+      validateLocalizedContentTextField(option.text, `${optionLabel}.text`, reject);
       if (!optionTextPairIsTranslatedOrInvariant(option)) {
         reject(`${optionLabel} textSv and textEn must be translated or a short invariant label`);
       }
@@ -6077,6 +6101,36 @@ function validateQuestionSchema(question, index) {
   }
 
   return valid;
+}
+
+function validateLocalizedContentTextField(localizedText, label, reject) {
+  if (localizedText === undefined) return;
+
+  if (!isObjectRecord(localizedText)) {
+    reject(`${label} must be a localized text object`);
+    return;
+  }
+
+  const allowedLocaleCodes = new Set(EXPECTED_CONTENT_LOCALE_CODES);
+  Object.entries(localizedText).forEach(([localeCode, value]) => {
+    if (!allowedLocaleCodes.has(localeCode)) {
+      reject(`${label}.${localeCode} is not an allowed LocaleCode`);
+      return;
+    }
+    if (!hasText(value)) {
+      reject(`${label}.${localeCode} must be non-empty text`);
+      return;
+    }
+    if (!textIsTrimmedSingleSpaced(value)) {
+      reject(`${label}.${localeCode} must be trimmed and single-spaced`);
+    }
+  });
+
+  for (const requiredLocale of EXPECTED_SUPPORTED_LANGUAGES) {
+    if (!hasText(localizedText[requiredLocale])) {
+      reject(`${label}.${requiredLocale} is required when localized text is present`);
+    }
+  }
 }
 
 const chapters = loadTs('data/chapters.ts', 'chapters');
