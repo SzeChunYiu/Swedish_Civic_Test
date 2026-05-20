@@ -2,6 +2,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const { assertQuestionBankProvenanceComposition } = require('./questionBankProvenanceCounts');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
@@ -44,10 +45,28 @@ function csvCell(value) {
   return `"${String(value ?? '').replaceAll('"', '""')}"`;
 }
 
+function optionPayload(question, field) {
+  return JSON.stringify(
+    question.options.map((option) => ({
+      id: option.id,
+      text: option[field],
+    })),
+  );
+}
+
 const questions = loadTs('data/questions.ts', 'questions');
-const uhrSectionMap = JSON.parse(
+const sourceQuestions = loadTs('data/questions.ts', 'sourceQuestions');
+const generatedPublishedQuestions = loadTs('data/questions.ts', 'generatedPublishedQuestions');
+const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
+const provenanceComposition = assertQuestionBankProvenanceComposition({
+  questions,
+  sourceQuestions,
+  generatedPublishedQuestions,
+  getQuestionProvenance,
+});
+const uhrSource = JSON.parse(
   fs.readFileSync(path.join(repoRoot, 'content', 'uhr-section-map.json'), 'utf8'),
-);
+).source;
 const rows = [
   [
     'id',
@@ -55,14 +74,22 @@ const rows = [
     'type',
     'questionSv',
     'questionEn',
+    'explanationSv',
+    'explanationEn',
     'correctOptionId',
+    'optionSv',
+    'optionEn',
     'uhrChapter',
     'uhrSection',
     'uhrPageApprox',
+    'uhrSourceTitle',
     'uhrSourcePublisher',
+    'uhrSourceUrl',
+    'uhrSourceRetrievedAt',
     'difficulty',
     'reviewStatus',
     'tags',
+    'questionProvenance',
   ],
   ...questions.map((question) => [
     question.id,
@@ -70,14 +97,22 @@ const rows = [
     question.type,
     question.questionSv,
     question.questionEn,
+    question.explanationSv,
+    question.explanationEn,
     question.correctOptionId,
+    optionPayload(question, 'textSv'),
+    optionPayload(question, 'textEn'),
     question.uhrReference.chapter,
     question.uhrReference.section,
     question.uhrReference.pageApprox,
-    uhrSectionMap.source.publisher,
+    uhrSource.title,
+    uhrSource.publisher,
+    uhrSource.url,
+    uhrSource.retrievedDate,
     question.difficulty,
     question.reviewStatus,
     question.tags.join('|'),
+    getQuestionProvenance(question),
   ]),
 ];
 
@@ -90,7 +125,9 @@ if (checkMode) {
     console.error('content/question-bank.csv is out of sync; run npm run content:export');
     process.exit(1);
   }
-  console.log(`Question bank export parity OK (${questions.length} questions)`);
+  console.log(
+    `Question bank export parity OK (${questions.length} questions; provenance uhr=${provenanceComposition.counts.uhr}, derived=${provenanceComposition.counts.derived}, editorial=${provenanceComposition.counts.editorial})`,
+  );
   process.exit(0);
 }
 
