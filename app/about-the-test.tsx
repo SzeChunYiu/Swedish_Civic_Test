@@ -43,7 +43,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Flervalsfrågor på svenska. Du svarar på en dator i en provlokal. Provet täcker tretton områden, från geografi och historia till lag och rätt, arbetsmarknad och välfärd.',
     sectionMaterialTitle: 'Vilket material bygger appen på?',
     sectionMaterialBody:
-      'Allt grundinnehåll följer UHR:s utbildningsmaterial Sverige i fokus. Mock-provet visar bara UHR-frågor; tilläggsfrågor och redaktionellt innehåll markeras tydligt och kan slås av.',
+      'Allt grundinnehåll följer UHR:s utbildningsmaterial Sverige i fokus. Övningsprovet visar bara UHR-frågor; tilläggsfrågor och redaktionellt innehåll markeras tydligt och kan slås av.',
     sectionIndependenceTitle: 'Är appen officiell?',
     sectionIndependenceBody:
       'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
@@ -73,7 +73,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
     sectionIndependenceBody:
       'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     backHome: 'Back to home',
-    backHomeAccessibilityLabel: 'Back to home',
+    backHomeAccessibilityLabel: 'Go back to home',
     openPractice: 'Start practising',
     openPracticeAccessibilityLabel: 'Open practice mode',
   },
