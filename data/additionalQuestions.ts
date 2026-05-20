@@ -1734,7 +1734,7 @@ export const additionalQuestions: PracticeQuestion[] = [
       pageApprox: 45,
     },
     'Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
-    'What is common to do on New Year’s Eve, 31 December, in Sweden?',
+    'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
     [
       [
         'Fira med fester och middagar och på natten med fyrverkerier',
@@ -1890,7 +1890,7 @@ export const additionalQuestions: PracticeQuestion[] = [
     'ch13',
     { chapter: 'Traditioner och högtider', section: 'Alla helgons dag', pageApprox: 46 },
     'Vad är vanligt att göra på Alla helgons dag i Sverige?',
-    'What is common to do on All Saints’ Day in Sweden?',
+    'How is All Saints’ Day commonly observed in Sweden?',
     [
       [
         'Tända ljus på gravar för att minnas och hedra dem som har dött',
