@@ -776,3 +776,4 @@ CLAIMED PRACTICE-CHAPTER-HUB-DRAFT-WIRING-1 by pane3-uiux-1779260904 2026-05-20T
 CLAIMED PROFILE-STUDY-SETUP-CTA-E2E-1 by pane2-setup-1779262400 2026-05-20T07:33:20Z
 CLAIMED STATIC-BUDDY-TRUST-HUMOR-COPY-1 by billy-laptop-old-3035582 2026-05-20T07:14:12Z (takeover: prior branch is 663 commits behind origin/main, no open PR, and current origin/main still ships answer-pattern/tamper buddy copy)
 CLAIMED Q138-CHRISTMAS-TREE-EN-NATURALNESS-1 by pane4-data-integrity-4188865 2026-05-20T07:15:50Z
+CLAIMED QUESTION-OPTION-GRAMMAR-SHAPE-GUARD-1 by pane0-manager-build-14117 2026-05-20T07:18:19Z
