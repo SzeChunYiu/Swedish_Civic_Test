@@ -16,9 +16,12 @@ const repoRoot = path.resolve(__dirname, '..');
 const trueFalsePrefixPattern = /^\s*(?:Sant eller falskt|True or false)\s*:/i;
 const stateWelfareStiltedEnglishPattern =
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i;
-const sidaWorkToDoEnglishPattern = /\bWhat does\s+Sida\s+work\s+to\s+do\b/i;
+const privateWelfareTaxFundingStiltedEnglishPattern = /\b(?:tax-funded|tax revenue pays for it)\b/i;
+const q071SocialInsuranceOverlapPattern =
+  /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring|sickness insurance|parental insurance|unemployment insurance)\b/i;
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
+const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
@@ -901,62 +904,55 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('Sida source and exports use natural responsibility English', () => {
+test('religious-freedom 1951 source and exports use natural English', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    sidaWorkToDoEnglishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
   );
+  const q093GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q093', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q093', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'judgement'),
+  ];
+  const q093Ids = ['q093', ...q093GeneratedIds];
   const textForQuestion = (question) =>
     [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
       ' ',
     );
   const generatedOffenders = generatedSiteBank
-    .filter((question) => sidaWorkToDoEnglishPattern.test(textForQuestion(question)))
+    .filter((question) => q093Ids.includes(question.id))
+    .filter((question) => religiousFreedom1951StiltedEnglishPattern.test(textForQuestion(question)))
     .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => sidaWorkToDoEnglishPattern.test(textForQuestion(question)))
+  const actualOffenders = actualSiteBank
+    .filter((question) => q093Ids.includes(question.id))
+    .filter((question) => religiousFreedom1951StiltedEnglishPattern.test(textForQuestion(question)))
     .map((question) => question.id);
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q089 = generatedSiteBank.find((question) => question.id === 'q089');
-  const q089SingleChoice = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q089', 'singleChoice'),
-  );
-  const q089True = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q089', 'trueStatement'),
-  );
-  const q089False = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q089', 'falseStatement'),
-  );
-  const q089Judgement = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q089', 'judgement'),
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q093Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => religiousFreedom1951StiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q093 = generatedSiteBank.find((question) => question.id === 'q093');
+  const q093True = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q093', 'trueStatement'),
   );
 
-  assert.deepEqual(fileFindings, []);
   assert.deepEqual(generatedOffenders, []);
   assert.deepEqual(actualOffenders, []);
-  assert.ok(q089, 'q089 should be published in the site bank');
-  assert.ok(q089SingleChoice, 'q089 generated single-choice variant should be published');
-  assert.ok(q089True, 'q089 generated true statement should be published');
-  assert.ok(q089False, 'q089 generated false statement should be published');
-  assert.ok(q089Judgement, 'q089 generated judgement variant should be published');
-  assert.equal(q089.q.en, 'What is Sida responsible for?');
-  assert.equal(q089SingleChoice.q.en, 'Which answer best matches? What is Sida responsible for?');
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q093, 'q093 should be published in the site bank');
   assert.equal(
-    q089True.q.en,
-    'Sida is responsible for reducing poverty and oppression in the world.',
+    q093.why.en,
+    'The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.',
   );
-  assert.equal(q089False.q.en, 'Sida is responsible for judging criminal cases in Swedish courts.');
-  assert.equal(q089Judgement.q.en, 'Choose the correct option: What is Sida responsible for?');
+  assert.ok(q093True, 'q093 true generated variant should be published');
+  assert.equal(q093True.why.en, q093.why.en);
 });
 
-test('Sida English naturalness guard rejects work-to-do prompt wording', () => {
+test('religious-freedom 1951 English naturalness guard rejects the old phrasing', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -969,8 +965,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
     return String(contents).replace(
-      'What is Sida responsible for?',
-      'What does Sida work to do?',
+      'The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.',
+      'The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.',
     );
   }
   return contents;
@@ -984,7 +980,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q089 uses stilted Sida English prompt wording/,
+    /q093 uses stilted 1951 religious-freedom English wording/,
   );
 });
 

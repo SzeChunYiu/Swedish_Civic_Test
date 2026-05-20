@@ -4206,7 +4206,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.",
       "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
@@ -23565,7 +23565,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.",
       "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
@@ -23605,7 +23605,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.",
       "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
@@ -23645,7 +23645,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.",
       "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
@@ -23693,7 +23693,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose a religion completely freely or not belong to any religion at all, so the Religious Freedom Act is the correct answer.",
+      "en": "The Religious Freedom Act in 1951 marked the final breakthrough for religious freedom. The law made it possible to choose any religion freely, or not belong to a religion at all, so the Religious Freedom Act is the correct answer.",
       "sv": "Religionsfrihetslagen 1951 markerade religionsfrihetens slutliga genombrott. Lagen gjorde det möjligt att helt fritt välja religion eller att inte tillhöra någon religion alls, därför är Religionsfrihetslagen rätt svar."
     },
     "source": {
