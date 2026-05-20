@@ -5,7 +5,7 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const staticSiteLanguageValues = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
 
 const sampleQuestion = {
   id: 'q-settings-language',
@@ -142,7 +142,7 @@ function createRenderContext({ hash, language = 'en', reducedMotion = false }) {
     document: {
       body: { style: {} },
       documentElement: {
-        dir: language === 'ar' || language === 'fa' ? 'rtl' : 'ltr',
+        dir: language === 'ar' || language === 'ckb' || language === 'fa' ? 'rtl' : 'ltr',
         lang: language,
         setAttribute(name, value) {
           rootAttributes.set(name, String(value));
@@ -346,8 +346,8 @@ test('Settings language change persists extra locales and updates root direction
     languageChanges.push(event.detail.lang);
   });
 
-  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'ti', 'tr', 'uk']) {
-    const direction = language === 'ar' || language === 'fa' ? 'rtl' : 'ltr';
+  for (const language of ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk']) {
+    const direction = language === 'ar' || language === 'ckb' || language === 'fa' ? 'rtl' : 'ltr';
 
     context.clickSettingsLanguage(language);
 
@@ -358,7 +358,7 @@ test('Settings language change persists extra locales and updates root direction
     assert.equal(context.reloadCount, 0);
   }
 
-  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'ti', 'tr', 'uk']);
+  assert.deepEqual(languageChanges, ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk']);
 });
 
 test('Settings Reduce motion toggle persists smt_motion and updates the static root flag', () => {

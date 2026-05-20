@@ -10,7 +10,7 @@ declare global {
 }
 
 const siteRoot = path.resolve('site');
-const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'] as const;
+const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'] as const;
 
 type ExtraLocale = (typeof extraLocales)[number];
 
@@ -50,6 +50,8 @@ const forbiddenOutcomeSlogans = [
   /ዜግነት ትረክብ/,
   /складете іспит/i,
   /отримаєте паспорт/i,
+  /پاسپۆرت دەست دەکەوێت/,
+  /هاووڵاتیبوون دەست دەکەوێت/,
 ];
 
 type StaticSite = {
@@ -149,7 +151,7 @@ async function expectRootLocale(page: Page, locale: ExtraLocale) {
       })),
     )
     .toEqual({
-      dir: locale === 'ar' || locale === 'fa' ? 'rtl' : 'ltr',
+      dir: locale === 'ar' || locale === 'ckb' || locale === 'fa' ? 'rtl' : 'ltr',
       lang: locale,
       stored: locale,
     });
