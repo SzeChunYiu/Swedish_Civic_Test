@@ -55,6 +55,38 @@ test('chapter source and generated question counts stay in parity', () => {
   });
 });
 
+test('chapter question-count guard reports focused metadata drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/chapters.ts')) {
+    return String(contents).replace(
+      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 55,",
+      "    id: 'ch07',\\n    nameSv: 'Mänskliga rättigheter',\\n    nameEn: 'Human rights',\\n    descriptionSv:\\n      'Mänskliga rättigheter, jämställdhet, barns rättigheter, minoriteters rättigheter och diskriminering.',\\n    descriptionEn:\\n      \\"Human rights, gender equality, children's rights, minority rights, and discrimination.\\",\\n    questionCount: 60,",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /ch07 questionCount is 60, expected 55 published questions/,
+  );
+});
+
 test('published question chapter schema rejects unknown chapter ids', () => {
   const result = spawnSync(
     process.execPath,
