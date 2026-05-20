@@ -78,6 +78,11 @@ function assertDashboardAccessibilitySeparation(sources) {
     /<Link[\s\S]*?accessibilityLabel=\{copy\.linkLabel\(chapterName\)\}[\s\S]*?accessibilityRole="link"/,
     'PerChapterProgressBars chapter rows must remain independently reachable links',
   );
+  assert.match(
+    sources.chapters,
+    /const coverageGap = 1 - ratio\(bar\.coverage\);/,
+    'PerChapterProgressBars weakness sorting must use bounded coverage ratios',
+  );
   assert.doesNotMatch(
     sources.chapters,
     /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,

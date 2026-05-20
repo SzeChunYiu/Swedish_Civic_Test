@@ -7707,6 +7707,8 @@ const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
+const perChapterProgress = dashboardStatsModule.perChapterProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const mockExamLibraryModule = loadTs('lib/learning/mockExamLibrary.ts');
@@ -7987,6 +7989,8 @@ let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let dashboardPerChapterInputRulesValidated = 0;
+let dashboardPerChapterInputParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -16104,6 +16108,143 @@ function validateMasteryRules() {
   }
 }
 
+function validateDashboardPerChapterInputRules() {
+  if (typeof perChapterProgress !== 'function') return;
+
+  const progress = {
+    sessions: [
+      {
+        id: 'dashboard-input-guard',
+        mode: 'study',
+        questionIds: [],
+        startedAt: '2026-05-19T00:00:00.000Z',
+        answers: [
+          {
+            questionId: 'nan-1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'negative-1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:01:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'fractional-1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:02:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'small-1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:03:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'small-2',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:04:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'valid-1',
+            selectedOptionIds: [],
+            isCorrect: 'yes',
+            answeredAt: '2026-05-19T10:05:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'valid-2',
+            selectedOptionIds: [],
+            isCorrect: 1,
+            answeredAt: '2026-05-19T10:06:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'valid-3',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:07:00.000Z',
+            timeSpentSeconds: 5,
+          },
+        ],
+      },
+    ],
+  };
+  const result = perChapterProgress(
+    progress,
+    [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -5 },
+      { id: 'fractional-count', questionCount: 2.5 },
+      { id: 'undersized-count', questionCount: 1 },
+      { id: 'valid-count', questionCount: 3 },
+    ],
+    {
+      'nan-1': 'nan-count',
+      'negative-1': 'negative-count',
+      'fractional-1': 'fractional-count',
+      'small-1': 'undersized-count',
+      'small-2': 'undersized-count',
+      'valid-1': 'valid-count',
+      'valid-2': 'valid-count',
+      'valid-3': 'valid-count',
+    },
+    { now: new Date('2026-05-20T12:00:00.000Z') },
+  );
+  const byId = new Map(result.map((bar) => [bar.chapterId, bar]));
+  const cases = [
+    { label: 'NaN questionCount coverage', actual: byId.get('nan-count')?.coverage, expected: 0 },
+    {
+      label: 'negative questionCount coverage',
+      actual: byId.get('negative-count')?.coverage,
+      expected: 0,
+    },
+    {
+      label: 'fractional questionCount coverage',
+      actual: byId.get('fractional-count')?.coverage,
+      expected: 0,
+    },
+    {
+      label: 'undersized questionCount coverage',
+      actual: byId.get('undersized-count')?.coverage,
+      expected: 1,
+    },
+    {
+      label: 'non-boolean correctness accuracy',
+      actual: byId.get('valid-count')?.accuracy,
+      expected: 1 / 3,
+    },
+  ];
+  let rulesAreValid = true;
+
+  result.forEach((bar) => {
+    if (!Number.isFinite(bar.coverage) || bar.coverage < 0 || bar.coverage > 1) {
+      rulesAreValid = false;
+      fail(`${bar.chapterId} dashboard per-chapter coverage is out of range: ${bar.coverage}`);
+    }
+  });
+  cases.forEach(({ label, actual, expected }) => {
+    if (actual !== expected) {
+      rulesAreValid = false;
+      fail(`dashboard per-chapter ${label} returned ${actual}, expected ${expected}`);
+    } else {
+      dashboardPerChapterInputRulesValidated += 1;
+    }
+  });
+  if (rulesAreValid && dashboardPerChapterInputRulesValidated === cases.length) {
+    dashboardPerChapterInputParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -17660,6 +17801,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateDashboardPerChapterInputRules();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -17926,6 +18068,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      dashboardPerChapterInputRulesValidated,
+      dashboardPerChapterInputParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

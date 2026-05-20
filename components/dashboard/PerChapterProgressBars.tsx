@@ -40,8 +40,8 @@ function percent(value: number | null): number {
 }
 
 function chapterWeaknessScore(bar: ChapterProgressBar): number {
-  const accuracyGap = bar.accuracy === null ? 1 : 1 - bar.accuracy;
-  const coverageGap = 1 - bar.coverage;
+  const accuracyGap = bar.accuracy === null ? 1 : 1 - ratio(bar.accuracy);
+  const coverageGap = 1 - ratio(bar.coverage);
   return accuracyGap * 0.7 + coverageGap * 0.3;
 }
 

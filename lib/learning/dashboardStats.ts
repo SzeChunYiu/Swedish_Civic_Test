@@ -18,6 +18,11 @@ function normalizeDashboardDaysBack(daysBack: number, fallback: number): number 
   return Math.min(MAX_DASHBOARD_DAYS_BACK, Math.max(1, Math.floor(daysBack)));
 }
 
+function normalizeChapterQuestionCount(questionCount: number): number {
+  if (!Number.isInteger(questionCount) || questionCount < 0) return 0;
+  return questionCount;
+}
+
 // ----------------------------------------------------------- daily activity
 
 export interface DailyActivityBin {
@@ -110,7 +115,7 @@ export function perChapterProgress(
       const bucket = perChapter.get(chapterId);
       if (!bucket) continue;
       bucket.total += 1;
-      if (answer.isCorrect) bucket.correct += 1;
+      if (answer.isCorrect === true) bucket.correct += 1;
       bucket.questionIds.add(answer.questionId);
       if (bucket.lastAnsweredAtMs === null || answeredAtMs > bucket.lastAnsweredAtMs) {
         bucket.lastAnsweredAtMs = answeredAtMs;
@@ -121,10 +126,11 @@ export function perChapterProgress(
 
   return chapters.map((chapter) => {
     const bucket = perChapter.get(chapter.id)!;
+    const questionCount = normalizeChapterQuestionCount(chapter.questionCount);
     return {
       chapterId: chapter.id,
       accuracy: bucket.total === 0 ? null : bucket.correct / bucket.total,
-      coverage: chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount,
+      coverage: questionCount === 0 ? 0 : Math.min(1, bucket.questionIds.size / questionCount),
       answers: bucket.total,
       uniqueQuestionsAnswered: bucket.questionIds.size,
       lastAnsweredAt: bucket.lastAnsweredAt,
