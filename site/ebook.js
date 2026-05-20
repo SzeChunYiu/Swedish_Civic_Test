@@ -1,4 +1,4 @@
-/* Almost Swedish — Ebook reader
+/* Sveriges Medborgartest — Ebook reader
    Intro + 13 study chapters with EN reader text and SV study briefs.
    Hash: #/ebook?c=intro|1|2|...|13
 */

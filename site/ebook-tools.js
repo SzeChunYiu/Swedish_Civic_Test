@@ -1,4 +1,4 @@
-/* Almost Swedish — Ebook highlights + custom notes
+/* Sveriges Medborgartest — Ebook highlights + custom notes
    - Highlight selected text
    - Add a note to a highlight, edit later
    - Persisted locally in localStorage per chapter

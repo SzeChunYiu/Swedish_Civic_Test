@@ -6193,6 +6193,7 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let staticSiteSwedishStreakCopyNaturalnessValidated = false;
 let settingsRouteHeadersValidated = 0;
 let settingsRouteHeaderParityValidated = false;
 let settingsRouteCopyLabelsValidated = 0;
@@ -8448,6 +8449,66 @@ function validateLegalRouteHeaderParity() {
   );
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
+  }
+}
+
+function validateStaticSiteSwedishStreakCopyNaturalness() {
+  let valid = true;
+  let staticSiteSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    staticSiteSource = fs.readFileSync(path.join(repoRoot, 'site/app.js'), 'utf8');
+  } catch (error) {
+    reject(
+      `site/app.js should be readable for static Swedish streak wording check: ${error.message}`,
+    );
+  }
+
+  if (!staticSiteSource) return;
+
+  const swedishDictionaryBlock = staticSiteSource.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/)?.[1];
+  if (!swedishDictionaryBlock) {
+    reject('site/app.js Swedish dictionary block must stay parseable');
+    return;
+  }
+
+  const entries = [
+    ...swedishDictionaryBlock.matchAll(/^\s+"([^"]+)":\s+"((?:\\"|[^"])*)",?$/gm),
+  ].map(([, key, value]) => ({ key, value }));
+
+  if (!entries.length) {
+    reject('site/app.js Swedish dictionary must expose parseable localized strings');
+    return;
+  }
+
+  const offenders = entries.filter(({ value }) => /\bstreaks?\b/i.test(value));
+  if (offenders.length) {
+    reject(
+      `site/app.js Swedish dictionary must use natural svit wording, not English streak loanwords: ${offenders
+        .map(({ key }) => key)
+        .join(', ')}`,
+    );
+  }
+
+  if (!entries.some(({ value }) => value.includes('18 dagars svit'))) {
+    reject('site/app.js Swedish phone hint must use "18 dagars svit"');
+  }
+
+  if (!entries.some(({ value }) => value.includes('studiesviter'))) {
+    reject('site/app.js Swedish privacy copy must name study streaks as studiesviter');
+  }
+
+  if (!entries.some(({ value }) => value.includes('en studiesvit som bröts utan anledning'))) {
+    reject('site/app.js Swedish support copy must describe a broken study svit naturally');
+  }
+
+  if (valid) {
+    staticSiteSwedishStreakCopyNaturalnessValidated = true;
   }
 }
 
@@ -13859,6 +13920,7 @@ validateHomeRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateLegalRouteHeaderParity();
+validateStaticSiteSwedishStreakCopyNaturalness();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -14000,6 +14062,7 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      staticSiteSwedishStreakCopyNaturalnessValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
