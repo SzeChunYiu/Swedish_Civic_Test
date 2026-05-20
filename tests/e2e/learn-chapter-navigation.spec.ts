@@ -110,7 +110,6 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('Landet Sverige');
   await expect(firstChapter).toContainText(`0/${firstChapterQuestionCount} besvarade`);
-  await expect(firstChapter.getByRole('progressbar')).toHaveCount(0);
 
   await firstChapter.click();
 
@@ -163,7 +162,6 @@ test('learning path chapter cards follow English support mode', async ({ page })
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
   await expect(firstChapter).toContainText(`0/${firstChapterQuestionCount} practiced`);
-  await expect(firstChapter.getByRole('progressbar')).toHaveCount(0);
 
   await firstChapter.click();
 

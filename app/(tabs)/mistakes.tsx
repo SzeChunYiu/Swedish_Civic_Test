@@ -1,7 +1,5 @@
-import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import type { ListRenderItemInfo } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NativeAdCard } from '../../components/monetization/NativeAdCard';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
@@ -39,19 +37,6 @@ type MistakesCopy = {
   title: string;
   wrongAnswers: (count: number) => string;
 };
-
-type MistakesReviewListItem =
-  | {
-      id: string;
-      kind: 'bookmarked' | 'mistake';
-      type: 'section';
-    }
-  | {
-      id: string;
-      kind: 'bookmarked' | 'mistake';
-      question: PracticeQuestion;
-      type: 'question';
-    };
 
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
   sv: {
@@ -107,36 +92,21 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
-type AnswerReviewBlockProps = {
-  copy: MistakesCopy;
-  correctAnswer: string;
-  selectedWrongAnswer?: string;
-};
-
-function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
-  return (
-    <View
-      accessible
-      accessibilityLabel={copy.answerReviewAccessibilityLabel(correctAnswer, selectedWrongAnswer)}
-      style={styles.answerReview}
-    >
-      {selectedWrongAnswer ? (
-        <View style={styles.answerReviewRow}>
-          <Text style={styles.answerReviewLabel}>{copy.selectedWrongAnswerLabel}</Text>
-          <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
-        </View>
-      ) : null}
-      <View style={styles.answerReviewRow}>
-        <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
-        <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
-      </View>
-    </View>
+export default function Screen() {
+  const router = useRouter();
+  const language = useSettingsStore((state) => state.language);
+  const copy = mistakesCopy[language];
+  const questionProgress = useProgressStore((state) => state.questionProgress);
+  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakenQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.wrongCount > 0,
   );
-}
+  const bookmarkedQuestions = questions.filter(
+    (question) => questionProgress[question.id]?.bookmarked,
+  );
 
-function renderListHeader(copy: MistakesCopy) {
   return (
-    <View style={styles.headerStack}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge tone="orange">{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
@@ -148,157 +118,103 @@ function renderListHeader(copy: MistakesCopy) {
 
       <NativeAdCard />
       <RemoveAdsPlacementCta placement="results_native" />
-    </View>
-  );
-}
 
-export default function Screen() {
-  const router = useRouter();
-  const language = useSettingsStore((state) => state.language);
-  const copy = mistakesCopy[language];
-  const questionProgress = useProgressStore((state) => state.questionProgress);
-  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
-  const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
-    const mistakenQuestions = questions.filter(
-      (question) => questionProgress[question.id]?.wrongCount > 0,
-    );
-    const bookmarkedReviewQuestions = questions.filter(
-      (question) =>
-        questionProgress[question.id]?.bookmarked &&
-        (questionProgress[question.id]?.wrongCount ?? 0) === 0,
-    );
-    const items: MistakesReviewListItem[] = [];
-
-    if (bookmarkedReviewQuestions.length > 0) {
-      items.push({
-        id: 'section-bookmarked',
-        kind: 'bookmarked',
-        type: 'section',
-      });
-      bookmarkedReviewQuestions.forEach((question) => {
-        items.push({
-          id: `bookmarked-${question.id}`,
-          kind: 'bookmarked',
-          question,
-          type: 'question',
-        });
-      });
-    }
-
-    if (mistakenQuestions.length > 0) {
-      items.push({
-        id: 'section-mistakes',
-        kind: 'mistake',
-        type: 'section',
-      });
-      mistakenQuestions.forEach((question) => {
-        items.push({
-          id: `mistake-${question.id}`,
-          kind: 'mistake',
-          question,
-          type: 'question',
-        });
-      });
-    }
-
-    return items;
-  }, [questionProgress]);
-
-  const renderReviewItem = ({ item }: ListRenderItemInfo<MistakesReviewListItem>) => {
-    if (item.type === 'section') {
-      return item.kind === 'bookmarked' ? (
-        <View style={styles.sectionHeading}>
-          <Badge tone="blue">{copy.bookmarkedBadge}</Badge>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            {copy.bookmarkedTitle}
-          </Text>
+      {bookmarkedQuestions.length > 0 ? (
+        <View style={styles.list}>
+          <View style={styles.sectionHeading}>
+            <Badge tone="blue">{copy.bookmarkedBadge}</Badge>
+            <Text accessibilityRole="header" style={styles.sectionTitle}>
+              {copy.bookmarkedTitle}
+            </Text>
+          </View>
+          {bookmarkedQuestions.map((question) => (
+            <View key={question.id} style={styles.questionBlock}>
+              <QuestionCard question={question} language={language} />
+              <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
+              <ExplanationPanel
+                explanationEn={question.explanationEn}
+                explanationSv={question.explanationSv}
+                language={language}
+              />
+              <UHRReferenceCard language={language} reference={question.uhrReference} />
+            </View>
+          ))}
         </View>
-      ) : (
-        <View style={styles.sectionHeading}>
-          <Badge tone="orange">{copy.mistakeBadge}</Badge>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            {copy.mistakeTitle}
-          </Text>
+      ) : null}
+
+      {mistakenQuestions.length > 0 ? (
+        <View style={styles.list}>
+          <View style={styles.sectionHeading}>
+            <Badge tone="orange">{copy.mistakeBadge}</Badge>
+            <Text accessibilityRole="header" style={styles.sectionTitle}>
+              {copy.mistakeTitle}
+            </Text>
+          </View>
+          {mistakenQuestions.map((question) => {
+            const wrongAnswerReview = wrongAnswerReviews[question.id];
+            const selectedWrongAnswer = wrongAnswerReview
+              ? language === 'en'
+                ? wrongAnswerReview.selectedOptionTextEn
+                : wrongAnswerReview.selectedOptionTextSv
+              : undefined;
+            const correctAnswer = getOptionLabel(question, question.correctOptionId, language);
+
+            return (
+              <View key={question.id} style={styles.questionBlock}>
+                <QuestionCard question={question} language={language} />
+                <Text style={styles.meta}>
+                  {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
+                </Text>
+                {correctAnswer ? (
+                  <View
+                    accessible
+                    accessibilityLabel={copy.answerReviewAccessibilityLabel(
+                      correctAnswer,
+                      selectedWrongAnswer,
+                    )}
+                    style={styles.answerReview}
+                  >
+                    {selectedWrongAnswer ? (
+                      <View style={styles.answerReviewRow}>
+                        <Text style={styles.answerReviewLabel}>
+                          {copy.selectedWrongAnswerLabel}
+                        </Text>
+                        <Text style={styles.answerReviewValue}>{selectedWrongAnswer}</Text>
+                      </View>
+                    ) : null}
+                    <View style={styles.answerReviewRow}>
+                      <Text style={styles.answerReviewLabel}>{copy.correctAnswerLabel}</Text>
+                      <Text style={styles.correctAnswerValue}>{correctAnswer}</Text>
+                    </View>
+                  </View>
+                ) : null}
+                <ExplanationPanel
+                  explanationEn={question.explanationEn}
+                  explanationSv={question.explanationSv}
+                  language={language}
+                />
+                <UHRReferenceCard language={language} reference={question.uhrReference} />
+              </View>
+            );
+          })}
         </View>
-      );
-    }
-
-    const question = item.question;
-    const wrongAnswerReview = item.kind === 'mistake' ? wrongAnswerReviews[question.id] : undefined;
-    const selectedWrongAnswer = wrongAnswerReview
-      ? language === 'en'
-        ? wrongAnswerReview.selectedOptionTextEn
-        : wrongAnswerReview.selectedOptionTextSv
-      : undefined;
-    const correctAnswer = getOptionLabel(question, question.correctOptionId, language);
-
-    return (
-      <View
-        nativeID={`mistakes-review-card-${question.id}`}
-        testID="mistakes-review-card"
-        style={styles.questionBlock}
-      >
-        <QuestionCard question={question} language={language} />
-        {item.kind === 'bookmarked' ? (
-          <Text style={styles.bookmarkMeta}>{copy.bookmarkedMeta}</Text>
-        ) : (
-          <Text style={styles.meta}>
-            {copy.wrongAnswers(questionProgress[question.id]?.wrongCount ?? 0)}
+      ) : bookmarkedQuestions.length === 0 ? (
+        <View style={styles.emptyCard}>
+          <Text accessibilityRole="header" style={styles.emptyTitle}>
+            {copy.emptyTitle}
           </Text>
-        )}
-        {correctAnswer ? (
-          item.kind === 'bookmarked' ? (
-            <AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />
-          ) : (
-            <AnswerReviewBlock
-              copy={copy}
-              correctAnswer={correctAnswer}
-              selectedWrongAnswer={selectedWrongAnswer}
-            />
-          )
-        ) : null}
-        <ExplanationPanel
-          explanationEn={question.explanationEn}
-          explanationSv={question.explanationSv}
-          language={language}
-        />
-        <UHRReferenceCard language={language} reference={question.uhrReference} />
-      </View>
-    );
-  };
-
-  const renderEmptyState = () => (
-    <View style={styles.emptyCard}>
-      <Text accessibilityRole="header" style={styles.emptyTitle}>
-        {copy.emptyTitle}
-      </Text>
-      <Text style={styles.emptyText}>{copy.emptyText}</Text>
-      <Button
-        accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
-        accessibilityRole="button"
-        onPress={() => router.push('/practice')}
-        style={styles.practiceButton}
-      >
-        {copy.emptyPracticeLink}
-      </Button>
-    </View>
-  );
-
-  return (
-    <FlatList
-      contentContainerStyle={styles.content}
-      data={reviewItems}
-      initialNumToRender={10}
-      keyExtractor={(item) => item.id}
-      ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader(copy)}
-      maxToRenderPerBatch={8}
-      renderItem={renderReviewItem}
-      removeClippedSubviews
-      style={styles.container}
-      testID="mistakes-review-list"
-      windowSize={5}
-    />
+          <Text style={styles.emptyText}>{copy.emptyText}</Text>
+          <Button
+            accessibilityLabel={copy.emptyPracticeAccessibilityLabel}
+            accessibilityRole="button"
+            onPress={() => router.push('/practice')}
+            style={styles.practiceButton}
+          >
+            {copy.emptyPracticeLink}
+          </Button>
+        </View>
+      ) : null}
+    </ScrollView>
   );
 }
 
@@ -311,9 +227,6 @@ const styles = StyleSheet.create({
     gap: space[2],
     padding: space[3],
     paddingBottom: space[10],
-  },
-  headerStack: {
-    gap: space[2],
   },
   hero: {
     backgroundColor: colors.surface,
@@ -333,6 +246,9 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  list: {
+    gap: space[2],
   },
   sectionHeading: {
     gap: space[0.75],

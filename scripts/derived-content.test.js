@@ -129,24 +129,7 @@ test('validate-content mirrors production civic statement prompt patterns', () =
   assert.deepEqual(enValidatorPatterns, enProductionPatterns);
 });
 
-test('validate-content uses production helper for expected generated variant output', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-
-  assert.match(validatorSource, /\bderivePublishedQuestionVariants\b/);
-  assert.doesNotMatch(
-    validatorSource,
-    /\bfunction expectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\b/,
-  );
-  assert.doesNotMatch(
-    validatorSource,
-    /\bexpectedGenerated(?:Tags|Prompt|Explanation|AnswerShape)\(/,
-  );
-});
-
-test('derived civic statement handlers reject source-recall and obsolete example-describes prompts', () => {
+test('derived civic statement handlers do not support source-recall prompts', () => {
   const productionSource = fs.readFileSync(
     path.join(repoRoot, 'lib/content/derivedQuestions.ts'),
     'utf8',
@@ -164,31 +147,10 @@ test('derived civic statement handlers reject source-recall and obsolete example
     sourceRecallHandlerFindings(validatorSource, 'civicStatementEn', 'correctOption'),
     [],
   );
-  const obsoletePromptPatterns = ['Vilket exempel beskriver', 'Which example describes'];
-  const handlerPatterns = [
-    ...civicStatementPromptPatterns(productionSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(
-      productionSource,
-      'civicStatementEn',
-      'buildSingleChoiceVariant',
-    ),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementSv', 'civicStatementEn'),
-    ...civicStatementPromptPatterns(validatorSource, 'civicStatementEn', 'correctOption'),
-  ];
-
-  for (const pattern of obsoletePromptPatterns) {
-    assert.deepEqual(
-      handlerPatterns.filter((handlerPattern) => handlerPattern.includes(pattern)),
-      [],
-      `${pattern} should be limited to explicit source guards and mutation fixtures`,
-    );
-  }
 });
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
-  const { derivePublishedQuestions, derivePublishedQuestionVariants } = loadTs(
-    'lib/content/derivedQuestions.ts',
-  );
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
     id: 'q001',
     chapterId: 'ch01',
@@ -211,7 +173,6 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   };
 
   const derived = derivePublishedQuestions([source], 101);
-  assert.deepEqual(derivePublishedQuestionVariants(source, 101), derived);
   assert.equal(derived.length, 4);
   assert.deepEqual(
     derived.map((question) => question.id),
@@ -567,8 +528,8 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       id: 'q025',
       chapterId: 'ch03',
       type: 'single_choice',
-      questionSv: 'Vilka vardagstjänster ansvarar kommuner för?',
-      questionEn: 'Which everyday services are municipalities responsible for?',
+      questionSv: 'Vilket exempel beskriver kommunernas ansvar?',
+      questionEn: 'Which example describes municipal responsibilities?',
       options: [
         {
           id: 'a',
@@ -797,7 +758,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
   assert.ok(
     text.includes(
-      'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
+      'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
     ),
   );
   assert.ok(

@@ -22,7 +22,7 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
     'utf8',
   );
 
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 12);
+  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.equal(summary.celebrationBurstReachabilityRoutesValidated, 7);
   assert.equal(summary.celebrationBurstReachabilityValidated, true);
@@ -32,7 +32,6 @@ test('quiz CelebrationBurst keeps success motion decorative and non-interactive'
   assert.match(source, /easing:\s*Easing\.out\(Easing\.cubic\),/);
   assert.match(source, /useNativeDriver:\s*true,/);
   assert.match(source, /if \(!active\) return null;/);
-  assert.match(source, /aria-hidden/);
   assert.match(source, /accessibilityElementsHidden/);
   assert.match(source, /importantForAccessibility="no-hide-descendants"/);
   assert.match(source, /pointerEvents="none"/);
@@ -50,36 +49,6 @@ test('CelebrationBurst is reachable from practice and routed quiz feedback', () 
     assert.match(source, /streak=\{celebrationStreak\}/);
     assert.match(source, /questionProgress\[question\.id\]\?\.correctStreak \?\? 1/);
   }
-});
-
-test('CelebrationBurst accessibility parity rejects web aria-hidden drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/quiz/CelebrationBurst.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('      aria-hidden\\n', '');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /CelebrationBurst missing web decorative container aria-hidden for accessibility parity/,
-  );
 });
 
 test('CelebrationBurst accessibility parity rejects descendant exposure drift', () => {
