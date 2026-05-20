@@ -1,5 +1,4 @@
 import { Link } from 'expo-router';
-import type { Href } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
