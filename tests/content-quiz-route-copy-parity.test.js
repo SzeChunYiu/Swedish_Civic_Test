@@ -53,7 +53,7 @@ test('native routed Swedish study copy avoids learner-facing quiz loanwords', ()
   for (const pattern of bannedSwedishLearnerCopy) {
     assert.doesNotMatch(sources, pattern);
   }
-  assert.match(sources, /Starta frågepass/);
+  assert.match(sources, /Starta kapitelövning/);
   assert.match(sources, /Frågepass/);
   assert.match(sources, /övningsfrågor/);
   assert.match(sources, /övningsfrågan/);
