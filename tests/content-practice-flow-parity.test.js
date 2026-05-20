@@ -4,6 +4,7 @@ const test = require('node:test');
 
 test('practice flow runtime selection stays in parity with the published question bank', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

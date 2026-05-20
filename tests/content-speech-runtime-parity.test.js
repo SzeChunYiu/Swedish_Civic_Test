@@ -10,6 +10,7 @@ function parseValidationSummary(output) {
 
 test('speech runtime parity validates Swedish TTS language and stop handling', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const summary = parseValidationSummary(output);

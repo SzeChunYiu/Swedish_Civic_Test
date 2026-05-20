@@ -5,6 +5,7 @@ const path = require('node:path');
 const test = require('node:test');
 const {
   collectExportQuestionBankExecFileSyncCalls,
+  collectValidateContentExecFileSyncCalls,
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('../scripts/content-exec-cwd-guards');
@@ -86,20 +87,6 @@ function hasRepoRootCwd(callSource) {
   return /cwd:\s*repoRoot/.test(callSource);
 }
 
-function collectValidateContentExecFileSyncCalls(sourceText) {
-  const calls = [];
-  const callPattern =
-    /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{([\s\S]*?)\}\s*\)/g;
-  let match;
-  while ((match = callPattern.exec(sourceText)) !== null) {
-    calls.push({
-      index: match.index,
-      hasPinnedCwd: /\bcwd\s*:\s*repoRoot\b/.test(match[2]),
-    });
-  }
-  return calls;
-}
-
 test('export-question-bank exec cwd guard is source-scanned without running validate-content', () => {
   const exportParitySource = fs.readFileSync(
     path.join(repoRoot, 'tests/content-export-parity.test.js'),
@@ -130,6 +117,69 @@ test('export-question-bank exec cwd guard rejects ambient cwd mutations', () => 
     parity: false,
   });
   assert.equal(sourceLineNumberForIndex(mutatedSource, calls[0].index), 9);
+});
+
+test('validate-content exec cwd guard is source-scanned without running validate-content', () => {
+  let total = 0;
+  let pinned = 0;
+  const unpinnedCalls = [];
+
+  for (const fileName of contentTestFiles()) {
+    const source = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
+    const calls = collectValidateContentExecFileSyncCalls(source);
+    const summary = summarizePinnedCwdCalls(calls);
+    total += summary.total;
+    pinned += summary.pinned;
+
+    calls.forEach((call) => {
+      if (!call.hasPinnedCwd) {
+        unpinnedCalls.push(`${fileName}:${sourceLineNumberForIndex(source, call.index)}`);
+      }
+    });
+  }
+
+  assert.ok(total > 100, 'content suite should contain direct validate-content exec guards');
+  assert.equal(pinned, total, `unpinned validate-content exec calls: ${unpinnedCalls.join(', ')}`);
+});
+
+test('validate-content exec cwd guard rejects ambient cwd mutations', () => {
+  const validateScript = 'scripts/' + 'validate-content.js';
+  const mutatedSource = `
+const output = execFileSync(process.execPath, ['${validateScript}'], {
+  encoding: 'utf8',
+});
+`;
+  const calls = collectValidateContentExecFileSyncCalls(mutatedSource);
+  const summary = summarizePinnedCwdCalls(calls);
+
+  assert.deepEqual(summary, {
+    total: 1,
+    pinned: 0,
+    parity: false,
+  });
+  assert.equal(sourceLineNumberForIndex(mutatedSource, calls[0].index), 2);
+});
+
+test('validate-content focus reports direct exec cwd guard summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-content-exec-cwd'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused validator should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.ok(summary.contentTestValidateContentExecCallsValidated > 100);
+  assert.equal(
+    summary.contentTestValidateContentExecCwdPinnedValidated,
+    summary.contentTestValidateContentExecCallsValidated,
+  );
+  assert.equal(summary.contentTestValidateContentExecCwdParityValidated, true);
 });
 
 test('test:content script includes every content test file exactly once', () => {

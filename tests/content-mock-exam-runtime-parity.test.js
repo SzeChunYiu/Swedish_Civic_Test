@@ -46,6 +46,7 @@ function loadTs(relativePath, exportName) {
 
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -65,14 +66,17 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
 
   assert.equal(summary.mockExamRuntimeParityValidated, true);
   assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation/);
+  assert.match(rewardedAdSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(rewardedAdSource, /webConsentDecision\?: RewardedExtraExamWebConsentDecision/);
+  assert.match(
+    rewardedAdSource,
+    /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, webConsentDecision, 'web'\)/,
+  );
   assert.match(
     rewardedAdSource,
     /if \(!rewardConfirmed\) \{[\s\S]*status: 'closed_without_reward'/,
   );
-  assert.match(
-    examRouteSource,
-    /Platform,/,
-  );
+  assert.match(examRouteSource, /Platform,/);
   assert.match(
     examRouteSource,
     /const usesWebRewardPreview = Platform\.OS === 'web' && shouldAttemptRewardedAd;/,
@@ -80,6 +84,11 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   assert.match(
     examRouteSource,
     /confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,/,
+  );
+  assert.match(examRouteSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    examRouteSource,
+    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
   );
   assert.match(examRouteSource, /\{copy\.rewardPreviewTitle\}/);
   assert.match(examRouteSource, /\{copy\.rewardPreviewBody\}/);
@@ -117,9 +126,14 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     rewardedAdSource,
     /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
   );
+  assert.match(rewardedAdSource, /webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION/);
   assert.match(
     examSource,
     /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) \{[\s\S]*return;[\s\S]*\}[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+  assert.match(
+    examSource,
+    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
   );
   assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
   assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);

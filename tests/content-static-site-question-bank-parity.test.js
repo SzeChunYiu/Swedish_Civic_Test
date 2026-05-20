@@ -28,6 +28,29 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
 });
 
+test('static site chapter metadata exposes canonical sv/en localized text', () => {
+  const bank = buildSiteQuestionBank();
+  const context = { window: {} };
+  vm.runInNewContext(generateStaticSiteQuestionBankJs(), context);
+
+  assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
+  context.window.SMT_CHAPTERS_META.forEach((chapter, index) => {
+    const expected = bank.chapters[index];
+    assert.equal(chapter.title.sv, expected.title.sv, `${chapter.id} title.sv should export`);
+    assert.equal(chapter.title.en, expected.title.en, `${chapter.id} title.en should export`);
+    assert.equal(
+      chapter.description.sv,
+      expected.description.sv,
+      `${chapter.id} description.sv should export`,
+    );
+    assert.equal(
+      chapter.description.en,
+      expected.description.en,
+      `${chapter.id} description.en should export`,
+    );
+  });
+});
+
 test('static site question bank preserves canonical question provenance', () => {
   const bank = buildSiteQuestionBank();
   const context = { window: {} };

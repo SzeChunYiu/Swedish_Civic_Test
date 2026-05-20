@@ -19,6 +19,7 @@ function loadTs(relativePath, exportName) {
 
 test('UX benchmark schema validates the home-screen benchmark data', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

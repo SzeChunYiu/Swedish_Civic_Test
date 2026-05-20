@@ -52,6 +52,7 @@ function expectedFormattedTime(totalSeconds) {
 
 test('default mock exam timer stays in parity with configured duration', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

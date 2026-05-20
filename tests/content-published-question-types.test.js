@@ -23,14 +23,23 @@ const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
+const workersDayHolidayEnglishPatterns = [
+  /\bDemonstrations on workers[’'] day\b/i,
+  /\bHolding demonstrations on workers[’'] day\b/i,
+  /\bWorkers[’'] day with demonstrations and speeches\b/,
+  /\bmarks workers[’'] day with demonstrations and speeches\b/i,
+];
 const euCooperationMissingArticleEnglishPattern =
   /\bThe EU is political and economic cooperation between European countries\b/i;
+const goodFridayRemembersEnglishPattern =
+  /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
+const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -118,6 +127,7 @@ function contentMutationFixtureFiles() {
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -131,6 +141,7 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -488,6 +499,67 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Umeå demonym source and exports use natural Swedish spelling', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    umeaDemonymOldSwedishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+  );
+  const textForQuestion = (question) =>
+    [question.q?.sv, ...(question.opts || []).map((option) => option.sv)].join(' ');
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => umeaDemonymOldSwedishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const umeaDemonymRows = generatedSiteBank.filter((question) =>
+    textForQuestion(question).includes('Stockholmare, göteborgare, malmöbor, uppsalabor'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.ok(umeaDemonymRows.length >= 1, 'Umeå demonym distractor should be published');
+  for (const question of umeaDemonymRows) {
+    assert.match(textForQuestion(question), /umeåbor/);
+  }
+});
+
+test('Umeå demonym naturalness guard rejects learner-facing umebor', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor',
+      'Stockholmare, göteborgare, malmöbor, uppsalabor och umebor',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+      '--',
+      '--focus-umea-demonym',
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q058 uses nonstandard Umeå demonym Swedish wording/,
+  );
+});
+
 test('state welfare source coverage separates q071 higher education from q156 social insurance', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
@@ -728,6 +800,203 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /q103 uses literal First of May English wording/);
+});
+
+test('May Day holiday options use natural International Workers Day English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const holidayIds = [
+    'q097',
+    generatedQuestionId(sourceQuestions, 'q097', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q097', 'judgement'),
+    'q100',
+    generatedQuestionId(sourceQuestions, 'q100', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q100', 'judgement'),
+    'q103',
+    generatedQuestionId(sourceQuestions, 'q103', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q103', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q103', 'judgement'),
+  ];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    workersDayHolidayEnglishPatterns.some((pattern) =>
+      pattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
+    ),
+  );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => holidayIds.includes(question.id))
+    .filter((question) =>
+      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
+    )
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => holidayIds.includes(question.id))
+    .filter((question) =>
+      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
+    )
+    .map((question) => question.id);
+  const q097 = generatedSiteBank.find((question) => question.id === 'q097');
+  const q100 = generatedSiteBank.find((question) => question.id === 'q100');
+  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.ok(q097?.opts.some((option) => option.en === 'May Day demonstrations'));
+  assert.ok(q100?.opts.some((option) => option.en === 'Holding May Day demonstrations'));
+  assert.ok(
+    q103?.opts.some(
+      (option) => option.en === "International Workers' Day with demonstrations and speeches",
+    ),
+  );
+});
+
+test('May Day holiday English guard rejects lower-case workers day labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('May Day demonstrations', 'Demonstrations on workers’ day')
+      .replace('Holding May Day demonstrations', 'Holding demonstrations on workers’ day')
+      .replace(
+        "International Workers' Day with demonstrations and speeches",
+        "Workers' day with demonstrations and speeches",
+      );
+  }
+  return contents;
+};
+const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
+const bad = buildSiteQuestionBank().questions
+  .filter((question) => {
+    const text = [
+      question.q?.en,
+      question.why?.en,
+      ...(question.opts || []).map((option) => option.en),
+    ].join(' ');
+    return /(?:Demonstrations on workers[’'] day|Holding demonstrations on workers[’'] day|Workers[’'] day with demonstrations and speeches|marks workers[’'] day with demonstrations and speeches)/i.test(text);
+  })
+  .map((question) => question.id);
+console.log(JSON.stringify(bad));
+if (!bad.includes('q097') || !bad.includes('q100') || !bad.includes('q103') || bad.length < 8) {
+  process.exit(1);
+}
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 0, output);
+  assert.match(output, /q097/);
+  assert.match(output, /q100/);
+  assert.match(output, /q103/);
+});
+
+test('Good Friday source and exports use natural commemorates English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q101GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q101', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q101', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q101', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q101', 'judgement'),
+  ];
+  const q101Ids = ['q101', ...q101GeneratedIds];
+  const naturalExplanation =
+    "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection";
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    goodFridayRemembersEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q101Ids.includes(question.id))
+    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q101Ids.includes(question.id))
+    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  for (const id of q101Ids) {
+    assert.match(
+      generatedSiteBank.find((question) => question.id === id)?.why.en ?? '',
+      new RegExp(naturalExplanation),
+    );
+    assert.match(
+      actualSiteBank.find((question) => question.id === id)?.why.en ?? '',
+      new RegExp(naturalExplanation),
+    );
+  }
+});
+
+test('Good Friday English naturalness guard rejects remembers wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection",
+      "Good Friday remembers Jesus' death and Easter Sunday his resurrection",
+    );
+  }
+  return contents;
+};
+const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
+const bad = buildSiteQuestionBank().questions
+  .filter((question) =>
+    /Good Friday remembers Jesus' death and Easter Sunday his resurrection/i.test(question.why.en),
+  )
+  .map((question) => question.id);
+console.log(JSON.stringify(bad));
+if (!bad.includes('q101') || bad.length < 5) process.exit(1);
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.equal(result.status, 0, output);
+  assert.match(output, /q101/);
 });
 
 test('EU cooperation source and exports use natural English article', () => {
@@ -2862,6 +3131,16 @@ test('published question schema guards capitalized generated reason clauses', ()
 
   assert.match(validatorSource, /\/\^En anledning är att Det\\b\//);
   assert.match(validatorSource, /\/\^One reason is that It\\b\//);
+});
+
+test('published question schema guards targetless generated why-reason stems', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /\/\^En anledning är\\b\//);
+  assert.match(validatorSource, /\/\^One reason is\\b\//);
 });
 
 test('published question schema rejects residual q306-q355 true/false wording', () => {

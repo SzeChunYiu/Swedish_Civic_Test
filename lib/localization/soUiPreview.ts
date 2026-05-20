@@ -123,6 +123,189 @@ export const soUiPreview = {
       sourceCitationLabel: 'Ilaha macluumaadka',
       encouragement: 'Hal qalad wax ma yeelo; hadda qodobkan waad xasuusan doontaa.',
     },
+    mockExam: {
+      title: 'Imtixaan tijaabo',
+      subtitle:
+        'Ku tababar qaab wakhti leh oo kuu muujinaya halka aad weli u baahan tahay dib-u-eegis. Tani ma aha imtixaan rasmi ah.',
+      setupTitle: 'Diyaari imtixaanka tijaabada ah',
+      start: 'Bilow imtixaanka tijaabada ah',
+      startAccessibilityLabel: 'Bilow imtixaanka tijaabada ah ee waxbarashada',
+      questionProgressTemplate: 'Su’aal {current} ee {total}',
+      timeRemainingTemplate: 'Waqti haray: {minutes} daqiiqo',
+      submit: 'Dhammee oo eeg natiijada',
+      resultTitle: 'Natiijada imtixaanka tijaabada ah',
+      resultSummaryTemplate: '{correct} jawaabood oo sax ah {total} su’aalood',
+      reviewAnswers: 'Eeg jawaabaha iyo sharaxaadaha',
+      localPracticeNote:
+        'Natiijadani waxay kaa caawinaysaa waxbarashada gudaha app-kan; ma saadaalinayso natiijo rasmi ah.',
+    },
+    mistakes: {
+      title: 'Dib-u-eeg khaladaadka',
+      subtitle:
+        'Ku celi su’aalaha aad hore u qalday, adigoo arkaya jawaabta saxda ah, sharaxaadda, iyo tixraaca.',
+      emptyTitle: 'Weli khaladaad ma jiraan',
+      emptyBody:
+        'Markaad su’aal layli ah qaladdo, waxay halkan uga muuqan doontaa dib-u-eegis deggan.',
+      savedForReview: 'Waxaa loo keydiyay dib-u-eegis diirran',
+      wrongAnswersTemplate: 'Jawaabo khaldan: {count}',
+      latestWrongAnswer: 'Jawaabtii ugu dambaysay ee khaldan',
+      reviewQuestion: 'Dib u eeg su’aashan',
+      clearReviewed: 'Ka saar marka la fahmo',
+    },
+    dashboard: {
+      eyebrow: 'Dulmar waxbarasho',
+      title: 'Dulmarka horumarka',
+      subtitle:
+        'Eeg sida layligaagu u socdo, waxa aad dhammaysay, iyo meelaha mudan in si deggan loogu noqdo.',
+      completedQuestions: 'Su’aalaha la dhammaystiray',
+      correctAnswers: 'Jawaabaha saxda ah',
+      currentStreak: 'Maalmaha isku xiga ee waxbarashada',
+      reviewQueue: 'Su’aalo dib-u-eegis u baahan',
+      sparseDataNote:
+        'Dulmarku wuu fiicnaanayaa marka aad ka jawaabto su’aalo badan. Ha u qaadan saadaal rasmi ah.',
+    },
+    learning: {
+      title: 'Jidka waxbarashada',
+      subtitle:
+        'Raac cutubyada mawduuc ahaan, akhri sharaxaadaha, ka dibna ku tababar su’aalo tixraac leh.',
+      chapterCardQuestionCountTemplate: '{count} su’aalood',
+      chapterProgressTemplate: '{completed} ee {total} la dhammaystiray',
+      startChapter: 'Bilow cutubkan',
+      reviewChapter: 'Eeg cutubkan',
+      continueLearning: 'Sii wad waxbarashada',
+      lockedReleaseNote:
+        'Tarjumaaddan waa hordhac dib-u-eegis ah; luqadda lama furi doono ilaa dhammaan hubinnada la dhammeeyo.',
+    },
+  },
+  complianceAndMonetization: {
+    complianceLinks: {
+      title: 'Macluumaad sharci iyo ilo',
+      openLabelTemplate: 'Fur: {label}',
+      links: {
+        aboutTheTest: 'Ku saabsan imtixaanka',
+        disclaimer: 'Qeexid',
+        privacy: 'Asturnaan',
+        terms: 'Shuruudo',
+        sources: 'Ilaha waxbarashada',
+        support: 'Taageero',
+      },
+    },
+    legalPage: {
+      defaultBackLabel: '← Ku noqo boggaaga',
+      defaultBackAccessibilityLabel: 'Ku noqo boggaaga',
+      externalLinkAccessibilityTemplate: 'Fur bog dibadda ah: {label}',
+    },
+    privacy: {
+      title: 'Siyaasadda asturnaanta',
+      noAccountRequired: {
+        title: 'Akoon looma baahna',
+        body: 'App-kan ma dalbado akoon, iimayl, telefoon, ama xog profile. Waxaad isticmaali kartaa qaybaha waxbarashada adigoo aan is diiwaangelin.',
+      },
+      localProgressStorage: {
+        title: 'Horumarka waxbarashadu wuxuu ku kaydsan yahay qalabkan',
+        body: 'Horumarka, dejinta, su’aalaha la calaamadeeyay, khaladaadka, XP, maalmaha isku xiga, iyo doorashada codka waxay ku kaydsan yihiin qalabkan si app-ku u xusuusto halka aad joogto.',
+      },
+      adsAndPurchases: {
+        title: 'Xayeysiis iyo iibsi',
+        body: 'Nooca bilaashka ah wuxuu xayeysiis ku muujin karaa bogagga waxbarashada. Bogagga imtixaanka tijaabada ah ee wakhtiga leh xayeysiis kuma jiraan. Ka saar xayeysiiska waa hal iibsi oo laga soo celin karo dukaanka app-ka.',
+      },
+      dataBoundary: {
+        title: 'Xuduudda xogta xasaasiga ah',
+        body: 'Ha gelin magacaaga, lambarkaaga shakhsiga, faahfaahinta kiis socdaal, ama dukumenti dowladeed fariimaha taageerada. App-kan uma baahna xogtaas si uu kuugu caawiyo waxbarashada.',
+      },
+    },
+    monetization: {
+      removeAdsTitle: 'Ka saar xayeysiiska',
+      removeAdsActiveTitle: 'Waxbarasho aan xayeysiis lahayn waa shidan tahay',
+      removeAdsBodyTemplate:
+        'Bogagga waxbarashada bilaashka ah waxay yeelan karaan xayeysiis. Hal mar bixi {price} si aad uga saarto xayeysiiska bogagga waxbarashada; imtixaanka tijaabada ah xayeysiis kuma laha.',
+      pricingPitchTemplate:
+        'Hal mar bixi {price} si aad uga saarto xayeysiiska. Ma jiro isdiiwaangelin bille ah.',
+      buyLabelTemplate: 'Iibso {price}',
+      restoreLabel: 'Soo celi iibsigii hore',
+      statusMessages: {
+        idle: 'Haddii aad hore u iibsatay, waad soo celin kartaa.',
+        pending: 'Waxaan sugaynaa xaqiijinta dukaanka app-ka.',
+        purchased: 'Xayeysiiska qalabkan waa la damiyay.',
+        restored: 'Iibsigii waa la soo celiyay, xayeysiiskana waa la damiyay.',
+        error: 'Hadda iibsi lama samayn karo. Mar kale isku day goor dambe.',
+      },
+    },
+  },
+  remainingHighFrequencyRoutes: {
+    onboarding: {
+      eyebrow: 'Soo dhowow',
+      title: 'Si deggan ugu diyaargarow aqoonta bulshada Iswiidhan',
+      subtitle:
+        'Qalab waxbarasho oo madax-bannaan: layli maalinle ah, imtixaan tijaabo ah, iyo dib-u-eegis khaladaad.',
+      steps: [
+        'Baro ereyada iyo fikradaha bulshada Iswiidhan.',
+        'Ku tababar su’aalo leh tixraac iyo sharaxaad.',
+        'Akoon looma baahna; horumarku wuxuu ku kaydsan yahay qalabkan.',
+      ],
+      startStudying: 'Bilow waxbarashada',
+      adjustSettings: 'Hagaaji dejinta',
+      decideLater: 'Go’aanso mar dambe',
+    },
+    aboutTheTest: {
+      eyebrow: 'Ku saabsan imtixaanka',
+      title: 'Waa maxay imtixaanka aqoonta bulshada ee jinsiyadda Iswiidhan?',
+      subtitle:
+        'UHR waxay sharxaysaa in qaybta koowaad ay tijaabiso aqoonta aasaasiga ah ee bulshada Iswiidhan. App-kan waa qalab waxbarasho oo madax-bannaan.',
+      sections: {
+        what: {
+          title: 'Waa maxay imtixaankani?',
+          body: 'Imtixaanka jinsiyadda waa imtixaan aqoon ah oo UHR mas’uul ka tahay. Qaybta koowaad waxay ku saabsan tahay aqoonta bulshada.',
+        },
+        independence: {
+          title: 'Ma aha qalab rasmi ah',
+          body: 'App-kan ma matalo UHR, Skolverket, ama Migrationsverket. Su’aalaha halkan ku jira ma aha su’aalo imtixaan rasmi ah.',
+        },
+        material: {
+          title: 'Maxaa sal u ah layliga?',
+          body: 'Qaabka UHR ee app-kan wuxuu ku salaysan yahay agabka waxbarasho ee Sverige i fokus, iyadoo la ilaalinayo in layligu yahay mid madax-bannaan.',
+        },
+      },
+      openPractice: 'Fur layliga',
+      backHome: 'Ku noqo bogga hore',
+    },
+    support: {
+      title: 'Taageero iyo jawaab-celin',
+      whatToReportTitle: 'Waxaad soo sheegi karto',
+      whatToReportBody:
+        'Soo sheeg qalad nuxur, weedh aan caddayn, xiriir il oo jaban, dhibaato cod, ama qalad ku jira socodka waxbarashada.',
+      noPersonalDataTitle: 'Ha dirin xog shakhsi ah',
+      noPersonalDataBody:
+        'Ha ku darin magaca, lambarka shakhsiga, lambarka kiis, faahfaahinta socdaalka, ama xog kale oo xasaasi ah.',
+      independentStudyToolTitle: 'Qalab waxbarasho oo madax-bannaan',
+      independentStudyToolBody:
+        'Taageeradu waxay caawin kartaa app-ka iyo saxitaanka nuxurka, laakiin ma bixin karto jawaabo rasmi ah, talo socdaal, ama go’aanno myndighet.',
+      questionReportContextTitle: 'Macluumaadka su’aasha lagu soo sheegayo',
+      noPersonalDataWarning: 'Ha gelin xog shakhsi ah markaad jawaab-celin dirayso.',
+    },
+    sources: {
+      title: 'Ilaha waxbarashada',
+      primaryStudyMaterialTitle: 'Agabka waxbarasho ee ugu muhiimsan',
+      primaryStudyMaterialBody:
+        'Sverige i fokus. Agab waxbarasho oo loogu talagalay imtixaanka jinsiyadda, aqoonta aasaasiga ah ee bulshada Iswiidhan.',
+      questionReferencesTitle: 'Tixraacyada su’aalaha',
+      questionReferencesBody:
+        'Su’aal kasta waxay leedahay tixraac kooban oo muujinaya cutubka UHR, qaybta, iyo bog qiyaas ah si aad ugu noqoto agabka waxbarashada.',
+      authorityBoundariesTitle: 'Xuduudda hay’adaha',
+      authorityBoundariesBody:
+        'UHR waxay sheegtay in su’aalaha internetka ee ay sameeyaan dad ama shirkado kale aanay ahayn kuwo UHR ansixisay. App-kan wuxuu hayaa xuduuddaas: waa layli madax-bannaan.',
+    },
+    search: {
+      eyebrow: 'Tixraac la raadin karo',
+      title: 'Raadi ereyo iyo cutubyo',
+      subtitle: 'Eeg ereyada muhiimka ah ee aqoonta bulshada iyo cutubyada ay la xiriiraan.',
+      searchLabel: 'Raadi erey',
+      searchPlaceholder: 'Raadi dimoqraadiyad, kommun, välfärd…',
+      clearSearch: 'Nadiifi raadinta',
+      emptyTitle: 'Erey ku habboon lama helin',
+      emptyBody: 'Isku day erey kale, magaca hay’ad, ama cinwaan cutub.',
+      browseChapters: 'Eeg cutubyada',
+    },
   },
   languagePicker: {
     triggerLabelTemplate: 'Luqadda hadda waa {currentLabel}. Fur doorashada luqadda.',
