@@ -108,28 +108,22 @@ function getOptionLabel(question: PracticeQuestion, optionId: string, language: 
   return language === 'en' ? option.textEn : option.textSv;
 }
 
-export default function Screen() {
-  const router = useRouter();
-  const language = useSettingsStore((state) => state.language);
-  const copy = mistakesCopy[language];
-  const questionProgress = useProgressStore((state) => state.questionProgress);
-  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
-  const clearProgressPersistenceWarning = useProgressStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
-  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.persistenceWarning,
-  );
-  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
-    (state) => state.clearPersistenceWarning,
-  );
-  const mistakenQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.wrongCount > 0,
-  );
-  const bookmarkedQuestions = questions.filter(
-    (question) => questionProgress[question.id]?.bookmarked,
-  );
+type AnswerReviewBlockProps = {
+  copy: MistakesCopy;
+  correctAnswer: string;
+  selectedWrongAnswer?: string;
+};
+
+type MistakesListHeaderProps = {
+  clearMistakeReviewPersistenceWarning: () => void;
+  clearProgressPersistenceWarning: () => void;
+  copy: MistakesCopy;
+  language: AppLanguage;
+  mistakeReviewPersistenceWarning: ReturnType<
+    typeof useMistakeReviewStore.getState
+  >['persistenceWarning'];
+  progressPersistenceWarning: ReturnType<typeof useProgressStore.getState>['persistenceWarning'];
+};
 
 function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
   return (
@@ -152,7 +146,14 @@ function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerR
   );
 }
 
-function renderListHeader(copy: MistakesCopy) {
+function renderListHeader({
+  clearMistakeReviewPersistenceWarning,
+  clearProgressPersistenceWarning,
+  copy,
+  language,
+  mistakeReviewPersistenceWarning,
+  progressPersistenceWarning,
+}: MistakesListHeaderProps) {
   return (
     <View style={styles.headerStack}>
       <View style={styles.hero}>
@@ -185,7 +186,17 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
+  const clearProgressPersistenceWarning = useProgressStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const wrongAnswerReviews = useMistakeReviewStore((state) => state.wrongAnswerReviews);
+  const mistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearMistakeReviewPersistenceWarning = useMistakeReviewStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const reviewItems = useMemo<MistakesReviewListItem[]>(() => {
     const mistakenQuestions = questions.filter(
       (question) => questionProgress[question.id]?.wrongCount > 0,
@@ -319,7 +330,14 @@ export default function Screen() {
       initialNumToRender={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={renderEmptyState}
-      ListHeaderComponent={renderListHeader(copy)}
+      ListHeaderComponent={renderListHeader({
+        clearMistakeReviewPersistenceWarning,
+        clearProgressPersistenceWarning,
+        copy,
+        language,
+        mistakeReviewPersistenceWarning,
+        progressPersistenceWarning,
+      })}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
       removeClippedSubviews

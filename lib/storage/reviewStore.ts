@@ -29,7 +29,7 @@ try {
   reviewStorage = null;
 }
 
-interface PersistedReviews {
+export interface PersistedReviews {
   byId: Record<string, ReviewCard>;
   /** Day key → number of reviews graded that day. Caps the Free tier. */
   gradedPerDay: Record<string, number>;
@@ -72,6 +72,10 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
+export function normalizeImportedReviewState(value: unknown): PersistedReviews {
+  return normalize(value);
+}
+
 function read(): PersistedReviews {
   const raw = reviewStorage?.getString(REVIEW_STORE_KEY);
   if (!raw) return EMPTY;
@@ -84,6 +88,18 @@ function read(): PersistedReviews {
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
   return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
+}
+
+function mergeReviews(current: PersistedReviews, imported: PersistedReviews): PersistedReviews {
+  const gradedPerDay = { ...current.gradedPerDay };
+  for (const [day, count] of Object.entries(imported.gradedPerDay)) {
+    gradedPerDay[day] = Math.max(gradedPerDay[day] ?? 0, count);
+  }
+
+  return {
+    byId: { ...current.byId, ...imported.byId },
+    gradedPerDay,
+  };
 }
 
 type ReviewState = PersistedReviews & {
@@ -198,4 +214,13 @@ export function reviewStats(state: PersistedReviews): ReviewStats {
   }
   const reviewDaysCount = Object.values(state.gradedPerDay).filter((n) => n > 0).length;
   return { totalCards, masteredCards, reviewDaysCount };
+}
+
+export function importReviewSnapshot(value: unknown): PersistedReviews {
+  const importedReviews = normalizeImportedReviewState(value);
+  const currentReviews = normalize(useReviewStore.getState());
+  const nextReviews = mergeReviews(currentReviews, importedReviews);
+  const persistenceWarning = write(nextReviews);
+  useReviewStore.setState({ ...nextReviews, persistenceWarning });
+  return nextReviews;
 }
