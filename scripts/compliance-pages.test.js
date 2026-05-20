@@ -173,3 +173,23 @@ test('static Swedish mock exam copy stays clearly unofficial practice wording', 
   assert.doesNotMatch(practice, /Skarp tentamen|Bygg din tentamen|Starta tentamen|\btentamen\b/i);
   assert.match(practice, /['"]Mock exam['"]/);
 });
+
+test('static Swedish legal and study copy keeps adult grammar and tone', () => {
+  const staticApp = read('site/app.js');
+  const staleFragments = [
+    ['ingen', 'juridiska'].join(' '),
+    ['fika', 'stor'].join('-'),
+    ['fika', 'skador'].join('-'),
+  ];
+
+  staleFragments.forEach((fragment) => {
+    assert.doesNotMatch(staticApp, new RegExp(fragment, 'i'));
+  });
+
+  assert.match(staticApp, /inget juridiskt kr[aå]ngel/);
+  assert.match(staticApp, /en kort studievana/);
+  assert.match(
+    staticApp,
+    /inte ansvariga f[oö]r missade deadlines, avslagna ans[oö]kningar eller beslut/,
+  );
+});
