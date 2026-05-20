@@ -4,9 +4,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const {
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
+  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
+const expectedStaticHeadMetadataOutcomePatterns =
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS.length + UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -337,8 +343,13 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.staticSiteQuestionBankQuestionsValidated, summary.publishedQuestions);
   assert.equal(summary.staticSiteQuestionBankChaptersValidated, 13);
   assert.equal(summary.staticSiteQuestionBankParityValidated, true);
-  assert.equal(summary.staticHeadMetadataDescriptionsValidated, 1);
-  assert.equal(summary.staticHeadMetadataDescriptionValidated, true);
+  assert.equal(summary.staticHeadMetadataTitleValidated, 1);
+  assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
+  assert.equal(
+    summary.staticHeadMetadataOutcomeClaimPatternsValidated,
+    expectedStaticHeadMetadataOutcomePatterns,
+  );
+  assert.equal(summary.staticHeadMetadataParityValidated, true);
   assert.equal(summary.staticEbookOutcomeClaimPatternsValidated, 6);
   assert.equal(summary.staticEbookOutcomeClaimParityValidated, true);
   assert.equal(summary.uhrSourceMetadataValidated, true);

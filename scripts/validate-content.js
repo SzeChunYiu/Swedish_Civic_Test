@@ -9,6 +9,15 @@ const {
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
+const {
+  UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
+  UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
+  extractStaticHeadMetaDescriptions,
+  extractStaticHeadTitles,
+  findStaticHeadMetadataDescriptionIssues,
+  findStaticHeadMetadataTitleIssues,
+  formatUnsupportedStaticOutcomeSlogans,
+} = require('./static-outcome-copy-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -3959,6 +3968,43 @@ function textHasSentenceEnding(value) {
   return typeof value === 'string' && /[.!?]$/.test(value.trim());
 }
 
+function validateStaticHeadMetadataParity() {
+  const indexHtml = loadText('site/index.html');
+  const titleIssues = findStaticHeadMetadataTitleIssues(indexHtml, 'site/index.html');
+  const descriptionIssues = findStaticHeadMetadataDescriptionIssues(indexHtml, 'site/index.html');
+
+  if (titleIssues.length > 0) {
+    fail(
+      `static head title must be branded, non-empty, and avoid pass/passport outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
+        titleIssues,
+      )}`,
+    );
+  } else {
+    staticHeadMetadataTitleValidated = extractStaticHeadTitles(indexHtml).length;
+  }
+
+  if (descriptionIssues.length > 0) {
+    fail(
+      `static meta description must be non-empty and avoid pass/passport outcome copy:\n${formatUnsupportedStaticOutcomeSlogans(
+        descriptionIssues,
+      )}`,
+    );
+  } else {
+    staticHeadMetadataDescriptionValidated = extractStaticHeadMetaDescriptions(indexHtml).length;
+  }
+
+  const expectedOutcomeClaimPatterns =
+    UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS.length +
+    UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS.length;
+  if (titleIssues.length === 0 && descriptionIssues.length === 0) {
+    staticHeadMetadataOutcomeClaimPatternsValidated = expectedOutcomeClaimPatterns;
+  }
+  staticHeadMetadataParityValidated =
+    staticHeadMetadataTitleValidated > 0 &&
+    staticHeadMetadataDescriptionValidated > 0 &&
+    staticHeadMetadataOutcomeClaimPatternsValidated === expectedOutcomeClaimPatterns;
+}
+
 function validateStaticEbookOutcomeClaimPatterns() {
   const source = loadText('site/ebook.js');
   const offenders = STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS.filter((pattern) =>
@@ -7202,6 +7248,10 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticHeadMetadataTitleValidated = 0;
+let staticHeadMetadataDescriptionValidated = 0;
+let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
+let staticHeadMetadataParityValidated = false;
 let staticValidationSyntaxFilesValidated = 0;
 let staticValidationImportChecksValidated = 0;
 let staticValidationSyntaxGateValidated = false;
@@ -7247,6 +7297,22 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-static-head-metadata')) {
+  validateStaticValidationSyntaxGate();
+  validateStaticHeadMetadataParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticHeadMetadataTitleValidated,
+    staticHeadMetadataDescriptionValidated,
+    staticHeadMetadataOutcomeClaimPatternsValidated,
+    staticHeadMetadataParityValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
   });
   process.exit(0);
 }
@@ -15132,6 +15198,7 @@ if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   );
   process.exit(0);
 }
+validateStaticHeadMetadataParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
@@ -15570,6 +15637,10 @@ console.log(
       staticI18nChinesePunctuationLocalesValidated,
       staticI18nChinesePunctuationValuesValidated,
       staticI18nChinesePunctuationParityValidated,
+      staticHeadMetadataTitleValidated,
+      staticHeadMetadataDescriptionValidated,
+      staticHeadMetadataOutcomeClaimPatternsValidated,
+      staticHeadMetadataParityValidated,
       settingsRouteHeadersValidated,
       settingsRouteHeaderParityValidated,
       settingsRouteCopyLabelsValidated,
