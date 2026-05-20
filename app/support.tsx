@@ -1,14 +1,15 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
-
+import {
+  ComplianceActionLink,
+  getVisibleLinkDestination,
+} from '../components/compliance/ComplianceActionLink';
 import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, typography } from '../lib/theme';
 
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
 
 type LegalRouteSectionCopy = {
   body: string;
+  sourceLabel?: string;
   title: string;
 };
 
@@ -41,6 +42,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       },
       publicSupportPage: {
         body: 'Skicka återkoppling via den offentliga supportsidan:',
+        sourceLabel: 'Offentlig supportsida',
         title: 'Offentlig supportsida',
       },
     },
@@ -63,6 +65,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       },
       publicSupportPage: {
         body: 'Send feedback through the public support page:',
+        sourceLabel: 'Public support page',
         title: 'Public support page',
       },
     },
@@ -85,26 +88,19 @@ export default function Screen() {
       <LegalSection title={copy.sections.independentStudyTool.title}>
         {copy.sections.independentStudyTool.body}
       </LegalSection>
-      <LegalSection title={copy.sections.publicSupportPage.title}>
-        {copy.sections.publicSupportPage.body}{' '}
-        <Link
-          accessibilityLabel={copy.openSupportPageAccessibilityLabel}
-          accessibilityRole="link"
-          href={PUBLIC_SUPPORT_URL}
-          style={styles.externalLink}
-        >
-          {PUBLIC_SUPPORT_URL}
-        </Link>
+      <LegalSection
+        title={copy.sections.publicSupportPage.title}
+        action={
+          <ComplianceActionLink
+            accessibilityLabel={copy.openSupportPageAccessibilityLabel}
+            detail={getVisibleLinkDestination(PUBLIC_SUPPORT_URL)}
+            href={PUBLIC_SUPPORT_URL}
+            label={copy.sections.publicSupportPage.sourceLabel ?? PUBLIC_SUPPORT_URL}
+          />
+        }
+      >
+        {copy.sections.publicSupportPage.body}
       </LegalSection>
     </LegalPage>
   );
 }
-
-const styles = StyleSheet.create({
-  externalLink: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'underline',
-  },
-});
