@@ -1967,16 +1967,16 @@
         "sv": "Att informera, möjliggöra samhällsdebatt och granska personer med makt"
       },
       {
-        "en": "They should replace political elections",
-        "sv": "De ska ersätta politiska val"
+        "en": "To replace political elections",
+        "sv": "Att ersätta politiska val"
       },
       {
-        "en": "They should always be controlled by the state",
-        "sv": "De ska alltid styras av staten"
+        "en": "To be controlled by the state",
+        "sv": "Att styras av staten"
       },
       {
-        "en": "They should only publish entertainment",
-        "sv": "De ska bara publicera underhållning"
+        "en": "To publish only entertainment",
+        "sv": "Att bara publicera underhållning"
       }
     ],
     "answer": 0,
@@ -14066,16 +14066,16 @@
         "sv": "Att informera, möjliggöra samhällsdebatt och granska personer med makt"
       },
       {
-        "en": "They should replace political elections",
-        "sv": "De ska ersätta politiska val"
+        "en": "To replace political elections",
+        "sv": "Att ersätta politiska val"
       },
       {
-        "en": "They should always be controlled by the state",
-        "sv": "De ska alltid styras av staten"
+        "en": "To be controlled by the state",
+        "sv": "Att styras av staten"
       },
       {
-        "en": "They should only publish entertainment",
-        "sv": "De ska bara publicera underhållning"
+        "en": "To publish only entertainment",
+        "sv": "Att bara publicera underhållning"
       }
     ],
     "answer": 0,
@@ -14143,8 +14143,8 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "Free media in a democracy should replace political elections.",
-      "sv": "Fria medier i en demokrati ska ersätta politiska val."
+      "en": "In a democracy, free media play an important role: replacing political elections.",
+      "sv": "I en demokrati har fria medier viktiga uppgifter: att ersätta politiska val."
     },
     "opts": [
       {
@@ -14191,16 +14191,16 @@
         "sv": "Att informera, möjliggöra samhällsdebatt och granska personer med makt"
       },
       {
-        "en": "They should replace political elections",
-        "sv": "De ska ersätta politiska val"
+        "en": "To replace political elections",
+        "sv": "Att ersätta politiska val"
       },
       {
-        "en": "They should always be controlled by the state",
-        "sv": "De ska alltid styras av staten"
+        "en": "To be controlled by the state",
+        "sv": "Att styras av staten"
       },
       {
-        "en": "They should only publish entertainment",
-        "sv": "De ska bara publicera underhållning"
+        "en": "To publish only entertainment",
+        "sv": "Att bara publicera underhållning"
       }
     ],
     "answer": 0,
