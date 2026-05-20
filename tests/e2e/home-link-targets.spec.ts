@@ -24,6 +24,10 @@ const homeActionLinks = [
     name: 'feedback review CTA',
   },
   {
+    label: 'Öppna framstegsöversikten',
+    name: 'dashboard CTA',
+  },
+  {
     label: 'Öppna källor och transparens',
     name: 'source trust CTA',
   },
