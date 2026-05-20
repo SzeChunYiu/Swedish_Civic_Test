@@ -897,9 +897,12 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {
     REMOVE_ADS_PRICE_LABEL,
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
     REMOVE_ADS_RECORD_SCHEMA_VERSION,
     REMOVE_ADS_PRODUCT_ID,
     REMOVE_ADS_STORAGE_KEY,
+    REMOVE_ADS_STORE_PRODUCT_IDS,
     buyRemoveAds,
     createMemoryPurchaseStorage,
     createMockPurchaseProvider,
@@ -914,8 +917,18 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   const removedVerifierExportName = ['REMOVE_ADS', 'VERIFIER', 'TOKEN'].join('_');
 
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const appConfig = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8')).expo;
+  const expectedIosProductId = `${appConfig.ios.bundleIdentifier}.removeads`;
   assert.equal(packageJson.dependencies['expo-secure-store'], '~15.0.8');
   assert.equal(packageJson.dependencies['react-native-iap'], '^15.3.0');
+  assert.equal(appConfig.ios.bundleIdentifier, 'com.billyyiu.almostswedish');
+  assert.equal(REMOVE_ADS_PRODUCT_ID, expectedIosProductId);
+  assert.equal(REMOVE_ADS_IOS_PRODUCT_ID, expectedIosProductId);
+  assert.equal(REMOVE_ADS_ANDROID_PRODUCT_ID, 'removeads');
+  assert.deepEqual(REMOVE_ADS_STORE_PRODUCT_IDS, {
+    android: 'removeads',
+    ios: expectedIosProductId,
+  });
   assert.match(REMOVE_ADS_PRODUCT_ID, /removeads$/);
   assert.equal(REMOVE_ADS_PRICE_LABEL, '29 SEK');
   assert.equal(REMOVE_ADS_RECORD_SCHEMA_VERSION, 1);

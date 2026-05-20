@@ -1,3 +1,5 @@
+import { REMOVE_ADS_PRODUCT_ID } from './purchases';
+
 export const releaseMonetizationPolicy = {
   adSupportedByDefault: true,
   adMobAppRecordRequired: true,
@@ -7,7 +9,7 @@ export const releaseMonetizationPolicy = {
   privacyReviewRequiresBinary: true,
   realAdsEnvFlag: 'EXPO_PUBLIC_REAL_ADS_ENABLED',
   removeAdsPriceLabel: '29 SEK',
-  removeAdsProductId: 'com.billyyiu.swedishcivictest.removeads',
+  removeAdsProductId: REMOVE_ADS_PRODUCT_ID,
   storeDisclosureTopics: [
     'Google Mobile Ads',
     'Remove Ads in-app purchase',

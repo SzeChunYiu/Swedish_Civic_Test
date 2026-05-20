@@ -11093,6 +11093,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads product id must stay a reverse-DNS removeads identifier',
     ],
     [
+      REMOVE_ADS_PRODUCT_ID === `${appConfig.expo?.ios?.bundleIdentifier}.removeads`,
+      'Remove Ads product id must match the current iOS bundle identifier namespace',
+    ],
+    [
       /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
         purchaseSource,
       ),

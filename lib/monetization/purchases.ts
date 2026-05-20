@@ -1,8 +1,9 @@
 import type { Purchase } from 'react-native-iap';
 
 import type { PremiumEntitlements } from '../../types/monetization';
+import { APP_NATIVE_IDENTIFIER } from './appStoreIdentity';
 
-export const REMOVE_ADS_PRODUCT_ID = 'com.billyyiu.swedishcivictest.removeads';
+export const REMOVE_ADS_PRODUCT_ID = `${APP_NATIVE_IDENTIFIER}.removeads` as const;
 export const REMOVE_ADS_IOS_PRODUCT_ID = REMOVE_ADS_PRODUCT_ID;
 export const REMOVE_ADS_ANDROID_PRODUCT_ID = 'removeads';
 export const REMOVE_ADS_STORE_PRODUCT_IDS = {
