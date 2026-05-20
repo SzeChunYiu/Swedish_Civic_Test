@@ -107,7 +107,6 @@ const routerShellRuntimeFiles = [
   'app/_layout.tsx',
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
-  'app/dashboard.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -129,6 +128,7 @@ const designSystemSupportComponentFiles = [
 const themeRuntimeFiles = [
   'lib/theme/index.ts',
   'lib/theme/colors.ts',
+  'lib/theme/flag.ts',
   'lib/theme/motion.ts',
   'lib/theme/radius.ts',
   'lib/theme/shadows.ts',
@@ -212,7 +212,6 @@ const monetizationRuntimeFiles = [
   'components/monetization/LaunchPopupAd.tsx',
   'components/monetization/NativeAdCard.tsx',
   'components/monetization/PremiumBanner.tsx',
-  'components/monetization/RemoveAdsPlacementCta.tsx',
   'app/_layout.tsx',
   'app/(tabs)/home.tsx',
   'app/(tabs)/learn.tsx',
@@ -501,7 +500,7 @@ test('Expo Router scaffold wiring matches the TypeScript architecture', () => {
   assert.equal(typeof packageJson.dependencies['react-native-mmkv'], 'string');
   assert.equal(typeof packageJson.dependencies['expo-speech'], 'string');
   assert.equal(appJson.plugins.includes('expo-router'), true);
-  assert.equal(appJson.scheme, 'swedish-civic-test');
+  assert.equal(appJson.scheme, 'almost-swedish');
   assert.equal(tsconfig.extends, 'expo/tsconfig.base');
   assert.equal(tsconfig.compilerOptions.strict, true);
   assert.match(babelConfig, /babel-preset-expo/);
@@ -531,8 +530,9 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Övningsprov'/);
-  assert.match(tabLayout, /mistakes: 'Misstag'/);
+  assert.match(tabLayout, /exam: 'Prov'/);
+  assert.match(tabLayout, /mistakes: 'Repetition'/);
+  assert.doesNotMatch(tabLayout, /mistakes:\s*'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
   assert.match(tabLayout, /home: 'Home'/);
   assert.match(tabLayout, /learn: 'Learn'/);
@@ -561,7 +561,6 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
-    'dashboard',
     'index',
     'search',
   ]);

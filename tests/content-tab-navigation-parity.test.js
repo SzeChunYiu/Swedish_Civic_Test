@@ -22,10 +22,11 @@ test('tab navigation uses localized labels and suppresses placeholder glyph outp
   assert.equal(summary.tabNavigationRulesValidated, 11);
   assert.equal(summary.tabNavigationRoutesValidated, 6);
   assert.equal(summary.tabNavigationParityValidated, true);
-  assert.match(tabLayout, /exam: 'Övningsprov'/);
-  assert.doesNotMatch(tabLayout, /exam: 'Prov'/);
   assert.match(tabLayout, /tabBarAccessibilityLabel: title/);
   assert.match(tabLayout, /tabBarIcon: hiddenTabIcon/);
+  assert.match(tabLayout, /mistakes: 'Repetition'/);
+  assert.match(tabLayout, /mistakes: 'Mistakes'/);
+  assert.doesNotMatch(tabLayout, /mistakes:\s*'Misstag'/);
   assert.match(
     tabLayout,
     /<Tabs\.Screen name="practice" options=\{getTabOptions\(copy\.practice\)\}/,
@@ -33,7 +34,7 @@ test('tab navigation uses localized labels and suppresses placeholder glyph outp
   assert.doesNotMatch(tabLayout, /⏷/);
 });
 
-test('tab navigation parity rejects bare Swedish exam labels', () => {
+test('tab navigation parity rejects bare Swedish mistakes tab copy', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -46,7 +47,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/_layout.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("exam: 'Övningsprov'", "exam: 'Prov'");
+      .replace("mistakes: 'Repetition'", "mistakes: 'Misstag'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -57,7 +58,10 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /exam tab Swedish title must use Övningsprov/);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /tab layout must not expose Swedish mistakes tab bare error label/,
+  );
 });
 
 test('tab navigation parity rejects placeholder icon drift', () => {
