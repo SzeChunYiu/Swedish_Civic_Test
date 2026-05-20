@@ -157,6 +157,7 @@ export default function Screen() {
               style={styles.link}
             >
               <ChapterCard
+                accessibilitySummary={false}
                 chapter={chapter}
                 completedCount={completedCount}
                 language={language}
