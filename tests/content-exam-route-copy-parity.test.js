@@ -19,7 +19,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 56);
+  assert.equal(summary.examRouteCopyLabelsValidated, 92);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -29,6 +29,17 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
   assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
+  assert.match(source, /startExtraExam: 'Lås upp extra övningsprov'/);
+  assert.match(source, /startExtraExam: 'Unlock extra mock exam'/);
+  assert.match(source, /checkingAccess: 'Kontrollerar åtkomst till övningsprov.'/);
+  assert.match(source, /checkingAccess: 'Checking mock exam access.'/);
+  assert.match(
+    source,
+    /timed_out: 'Belöningsannonsen hann löpa ut innan det extra övningsprovet låstes upp.'/,
+  );
+  assert.match(source, /timed_out: 'Rewarded ad timed out before the extra mock exam unlocked.'/);
+  assert.match(source, /savingCompletion: 'Sparar dagens övningsprov.'/);
+  assert.match(source, /savingCompletion: "Saving today's mock exam completion."/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
@@ -46,6 +57,81 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /recordMockExamSession\(\{/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
+});
+
+test('exam route copy parity rejects ambiguous Swedish mock-exam wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Lås upp extra övningsprov', 'Lås upp extra prov')
+      .replace('Kontrollerar åtkomst till övningsprov.', 'Kontrollerar provåtkomst.')
+      .replace('inga annonser under övningsprovet', 'inga annonser under provet');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam route Swedish extra mock-exam copy must use extra övningsprov/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam route Swedish access copy must say åtkomst till övningsprov/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam route Swedish no-ads copy must say under övningsprovet/,
+  );
+});
+
+test('exam route copy parity rejects ambiguous English mock-exam wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Unlock extra mock exam', 'Unlock extra exam')
+      .replace('no ads during the mock exam', 'no ads during exam');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam route English extra mock-exam copy must say extra mock exam/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam route English no-ads copy must say during the mock exam/,
+  );
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {
