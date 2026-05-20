@@ -29,7 +29,7 @@ try {
   reviewStorage = null;
 }
 
-interface PersistedReviews {
+export interface PersistedReviews {
   byId: Record<string, ReviewCard>;
   /** Day key → number of reviews graded that day. Caps the Free tier. */
   gradedPerDay: Record<string, number>;
@@ -115,6 +115,10 @@ function normalize(value: unknown): PersistedReviews {
   return { byId, gradedPerDay };
 }
 
+export function normalizeImportedReviewState(value: unknown): PersistedReviews {
+  return normalize(value);
+}
+
 function read(): {
   state: PersistedReviews;
   persistenceWarning: RecoverablePersistenceWarning | null;
@@ -132,6 +136,18 @@ function read(): {
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
   return writeRecoverably(reviewStorage, reviewStorageId, REVIEW_STORE_KEY, JSON.stringify(state));
+}
+
+function mergeReviewState(current: PersistedReviews, imported: PersistedReviews): PersistedReviews {
+  const gradedPerDay = { ...current.gradedPerDay };
+  for (const [day, count] of Object.entries(imported.gradedPerDay)) {
+    gradedPerDay[day] = Math.max(gradedPerDay[day] ?? 0, count);
+  }
+
+  return normalize({
+    byId: { ...current.byId, ...imported.byId },
+    gradedPerDay,
+  });
 }
 
 type ReviewState = PersistedReviews & {
@@ -183,6 +199,14 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
+
+export function importReviewSnapshot(value: unknown): PersistedReviews {
+  const importedState = normalizeImportedReviewState(value);
+  const nextState = mergeReviewState(useReviewStore.getState(), importedState);
+  const persistenceWarning = write(nextState);
+  useReviewStore.setState({ ...nextState, persistenceWarning });
+  return nextState;
+}
 
 // ---- Pure selectors (usable outside React) ---------------------------------
 
