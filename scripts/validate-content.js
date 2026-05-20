@@ -861,11 +861,25 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'studyReminderEnabled', type: 'boolean', optional: false },
+  { name: 'studyReminderHour', type: 'number', optional: false },
+  { name: 'studyReminderMinute', type: 'number', optional: false },
+  {
+    name: 'studyReminderPermissionStatus',
+    type: 'StudyReminderPermissionStatus',
+    optional: false,
+  },
+  { name: 'studyReminderNotificationId', type: 'string | null', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
+  {
+    name: 'setStudyReminderState',
+    type: '(reminderState: StudyReminderPersistedState) => void',
+    optional: false,
+  },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',
@@ -1550,6 +1564,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
   },
+  {
+    label: 'study reminder section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.studyReminderTitle\}\s*<\/Text>/,
+  },
 ];
 const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   sv: [
@@ -1565,7 +1584,19 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Byt frågespråk till ${label}',
     'Frågespråk',
     'Ställ in dagligt mål till ${goal} svar',
-    'Styr studiespråk, ljud och ditt dagliga mål.',
+    'Ställ in påminnelsetid till ${time}',
+    'Aviseringar är nekade. Aktivera dem i enhetens inställningar för att använda påminnelser.',
+    'Påminnelse av',
+    'Påminnelse på',
+    'Påminner dig varje dag kl. ${time}',
+    'Välj en tid och slå på den när du vill få en daglig påminnelse.',
+    'Schemaläggs lokalt. Inga studiedata skickas.',
+    'Tid',
+    'Studiepåminnelse',
+    'Påminnelser stöds inte i webbläsaren. Öppna appen på mobilen.',
+    'Stäng av daglig studiepåminnelse',
+    'Slå på daglig studiepåminnelse',
+    'Styr studiespråk, ljud, mål och påminnelser.',
     'Inställningar',
     'Svenska',
     'Engelskt stöd',
@@ -1583,14 +1614,29 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Set question language to ${label}',
     'Question language',
     'Set daily goal to ${goal} answers',
-    'Control study language, audio, and your daily goal.',
+    'Set reminder time to ${time}',
+    'Notifications are denied. Enable them in your device settings to use reminders.',
+    'Reminder off',
+    'Reminder on',
+    'Reminds you every day at ${time}',
+    'Pick a time and turn it on when you want a daily reminder.',
+    'Scheduled locally. No study data is sent.',
+    'Time',
+    'Study reminder',
+    'Reminders are not supported in the browser. Open the mobile app.',
+    'Disable daily study reminder',
+    'Enable daily study reminder',
+    'Control study language, audio, goals, and reminders.',
     'Settings',
     'Swedish',
     'English support',
   ],
 };
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
-  ['import type { AppLanguage }', 'settings route must import AppLanguage'],
+  [
+    'import type { AppLanguage, StudyReminderPersistedState }',
+    'settings route must import AppLanguage',
+  ],
   ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
   [
     'const settingsCopy: Record<AppLanguage, SettingsCopy> = {',
@@ -1646,6 +1692,33 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}',
     'settings daily-goal buttons must expose localized accessibility copy',
   ],
+  [
+    'const studyReminderEnabled = useSettingsStore((state) => state.studyReminderEnabled);',
+    'settings route must read persisted study reminder enabled state',
+  ],
+  [
+    'const setStudyReminderState = useSettingsStore((state) => state.setStudyReminderState);',
+    'settings route must persist study reminder state through settings store',
+  ],
+  ['{copy.studyReminderTitle}', 'settings study reminder section must render localized copy'],
+  [
+    'copy.studyReminderEnabledSummary(studyReminderTimeLabel)',
+    'settings study reminder summary must render the selected time',
+  ],
+  ['copy.studyReminderOffSummary', 'settings study reminder must render localized off copy'],
+  [
+    'copy.disableStudyReminderAccessibilityLabel',
+    'settings study reminder switch must expose localized disable copy',
+  ],
+  [
+    'copy.enableStudyReminderAccessibilityLabel',
+    'settings study reminder switch must expose localized enable copy',
+  ],
+  [
+    'accessibilityLabel={copy.setStudyReminderTimeAccessibilityLabel(timeLabel)}',
+    'settings study reminder time buttons must expose localized accessibility copy',
+  ],
+  ['{copy.studyReminderPrivacyLabel}', 'settings study reminder must explain reminders stay local'],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {
@@ -9715,6 +9788,23 @@ function validateSettingsStoreSchemaParity() {
   const languageKey = extractStringConstantFromTs(settingsStore, 'languageKey');
   const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
   const dailyGoalKey = extractStringConstantFromTs(settingsStore, 'dailyGoalKey');
+  const studyReminderEnabledKey = extractStringConstantFromTs(
+    settingsStore,
+    'studyReminderEnabledKey',
+  );
+  const studyReminderHourKey = extractStringConstantFromTs(settingsStore, 'studyReminderHourKey');
+  const studyReminderMinuteKey = extractStringConstantFromTs(
+    settingsStore,
+    'studyReminderMinuteKey',
+  );
+  const studyReminderPermissionStatusKey = extractStringConstantFromTs(
+    settingsStore,
+    'studyReminderPermissionStatusKey',
+  );
+  const studyReminderNotificationIdKey = extractStringConstantFromTs(
+    settingsStore,
+    'studyReminderNotificationIdKey',
+  );
   if (languageKey !== 'language') {
     reject(`languageKey is ${JSON.stringify(languageKey)}, expected "language"`);
   }
@@ -9727,6 +9817,41 @@ function validateSettingsStoreSchemaParity() {
   }
   if (dailyGoalKey !== 'dailyGoalAnswers') {
     reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
+  }
+  if (studyReminderEnabledKey !== 'studyReminderEnabled') {
+    reject(
+      `studyReminderEnabledKey is ${JSON.stringify(
+        studyReminderEnabledKey,
+      )}, expected "studyReminderEnabled"`,
+    );
+  }
+  if (studyReminderHourKey !== 'studyReminderHour') {
+    reject(
+      `studyReminderHourKey is ${JSON.stringify(
+        studyReminderHourKey,
+      )}, expected "studyReminderHour"`,
+    );
+  }
+  if (studyReminderMinuteKey !== 'studyReminderMinute') {
+    reject(
+      `studyReminderMinuteKey is ${JSON.stringify(
+        studyReminderMinuteKey,
+      )}, expected "studyReminderMinute"`,
+    );
+  }
+  if (studyReminderPermissionStatusKey !== 'studyReminderPermissionStatus') {
+    reject(
+      `studyReminderPermissionStatusKey is ${JSON.stringify(
+        studyReminderPermissionStatusKey,
+      )}, expected "studyReminderPermissionStatus"`,
+    );
+  }
+  if (studyReminderNotificationIdKey !== 'studyReminderNotificationId') {
+    reject(
+      `studyReminderNotificationIdKey is ${JSON.stringify(
+        studyReminderNotificationIdKey,
+      )}, expected "studyReminderNotificationId"`,
+    );
   }
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
@@ -9742,6 +9867,26 @@ function validateSettingsStoreSchemaParity() {
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
     [
+      'studyReminderEnabled: settingsStorage?.getBoolean(studyReminderEnabledKey) ?? false',
+      'SettingsState must initialize studyReminderEnabled from persisted storage',
+    ],
+    [
+      'studyReminderHour: readStudyReminderHour()',
+      'SettingsState must initialize studyReminderHour from persisted storage',
+    ],
+    [
+      'studyReminderMinute: readStudyReminderMinute()',
+      'SettingsState must initialize studyReminderMinute from persisted storage',
+    ],
+    [
+      'studyReminderPermissionStatus: readStudyReminderPermissionStatus()',
+      'SettingsState must initialize studyReminderPermissionStatus from persisted storage',
+    ],
+    [
+      'studyReminderNotificationId: readStudyReminderNotificationId()',
+      'SettingsState must initialize studyReminderNotificationId from persisted storage',
+    ],
+    [
       'settingsStorage?.set(languageKey, language);',
       'setLanguage must persist through languageKey',
     ],
@@ -9752,6 +9897,26 @@ function validateSettingsStoreSchemaParity() {
     [
       'settingsStorage?.set(dailyGoalKey, safeGoal);',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
+    ],
+    [
+      'settingsStorage?.set(studyReminderEnabledKey, reminderState.studyReminderEnabled);',
+      'setStudyReminderState must persist studyReminderEnabled',
+    ],
+    [
+      'settingsStorage?.set(studyReminderHourKey, safeHour);',
+      'setStudyReminderState must persist studyReminderHour',
+    ],
+    [
+      'settingsStorage?.set(studyReminderMinuteKey, safeMinute);',
+      'setStudyReminderState must persist studyReminderMinute',
+    ],
+    [
+      'settingsStorage?.set( studyReminderPermissionStatusKey, reminderState.studyReminderPermissionStatus, );',
+      'setStudyReminderState must persist studyReminderPermissionStatus',
+    ],
+    [
+      "settingsStorage?.set( studyReminderNotificationIdKey, reminderState.studyReminderNotificationId ?? '', );",
+      'setStudyReminderState must persist studyReminderNotificationId without push tokens',
     ],
   ];
 
