@@ -4,6 +4,10 @@ const path = require('node:path');
 const test = require('node:test');
 const vm = require('node:vm');
 const ts = require('typescript');
+const {
+  webDocumentMetaDescriptions,
+  webDocumentMetadata,
+} = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -13,6 +17,13 @@ function read(relativePath) {
 
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
+}
+
+function readThemeCanvasColor() {
+  const themeSource = read('lib/theme/colors.ts');
+  const match = themeSource.match(/const\s+canvas\s*=\s*'([^']+)'\s+satisfies\s+ColorToken/);
+  assert.notEqual(match, null, 'colors.canvas should stay parseable for web manifest checks');
+  return match[1];
 }
 
 function assertContains(source, literal, message) {
@@ -103,16 +114,9 @@ function readRouterShellManifest() {
     notFoundFileProtocolFallbacks: valuesForFieldInSource(manifest, 'notFoundFileProtocolFallback'),
     webLanguages: valuesForFieldInSource(manifest, 'webLanguage'),
     webAppShellMarkers: valuesForFieldInSource(manifest, 'webAppShellMarker'),
-    webMetaDescriptionLanguages: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'language',
-    ),
-    webMetaDescriptions: valuesForFieldInConstArray(
-      manifest,
-      'expoRouterWebDocumentMetaDescriptions',
-      'description',
-    ),
+    webMetaDescriptionLanguages: webDocumentMetaDescriptions.map((entry) => entry.language),
+    webMetaDescriptions: webDocumentMetaDescriptions.map((entry) => entry.description),
+    webDocumentMetadata,
     themeColorTokens: valuesForFieldInSource(manifest, 'themeColorToken'),
     statusBarStyles: valuesForFieldInSource(manifest, 'statusBarStyle'),
     nativeFallbackHrefs: valuesForFieldInSource(manifest, 'nativeFallbackHref'),
@@ -246,13 +250,16 @@ test('not-found route redirects unknown routes to Home with a file-export fallba
 test('web document shell keeps Swedish metadata and React Native web reset', () => {
   const htmlShell = read('app/+html.tsx');
   const manifest = readRouterShellManifest();
+  const pwaManifest = readJson('public/manifest.webmanifest');
+  const appConfig = readJson('app.json').expo;
+  const canvasColor = readThemeCanvasColor();
   const webLanguage = manifest.webLanguages[0];
   const localizedDescription = metaDescriptionForLanguage(manifest, webLanguage);
   const englishDescription = metaDescriptionForLanguage(manifest, 'en');
 
   assertContains(
     htmlShell,
-    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${webLanguage}">`,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, '<meta charSet="utf-8" />');
   assertMatches(
@@ -265,6 +272,7 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /name=["']theme-color["'][\s\S]*content=\{colors\.canvas\}|content=\{colors\.canvas\}[\s\S]*name=["']theme-color["']/,
     'web shell theme color should follow theme canvas',
   );
+  assertContains(htmlShell, '<link href="manifest.webmanifest" rel="manifest" />');
   assertContains(htmlShell, '<ScrollViewStyleReset />');
   assertMatches(
     htmlShell,
@@ -282,13 +290,72 @@ test('web document shell keeps Swedish metadata and React Native web reset', () 
     /\b(?:offline)?quiz(?:zes)?\b/i,
     'Swedish web metadata should avoid English quiz loanwords',
   );
-  assertContains(htmlShell, `content="${localizedDescription}"`);
+  assert.equal(manifest.webDocumentMetadata.language, webLanguage);
+  assert.equal(manifest.webDocumentMetadata.title, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.applicationName, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.appleMobileWebAppTitle, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.description, localizedDescription);
+  assert.equal(manifest.webDocumentMetadata.openGraphSiteName, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.openGraphTitle, appConfig.name);
+  assert.equal(manifest.webDocumentMetadata.openGraphDescription, localizedDescription);
+  assertContains(
+    htmlShell,
+    "import { webDocumentMetadata } from '../lib/scaffold/webDocumentMetadata';",
+  );
+  assertContains(htmlShell, '<title>{webDocumentMetadata.title}</title>');
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.applicationName} name="application-name" />',
+  );
+  assertMatches(
+    htmlShell,
+    /<meta[\s\S]*content=\{webDocumentMetadata\.appleMobileWebAppTitle\}[\s\S]*name="apple-mobile-web-app-title"[\s\S]*\/>/,
+    'web shell should source the Apple web app title from shared metadata',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.description} name="description" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphSiteName} property="og:site_name" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphTitle} property="og:title" />',
+  );
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.openGraphDescription} property="og:description" />',
+  );
   if (webLanguage === 'sv') {
     assert.equal(
-      htmlShell.includes(`content="${englishDescription}"`),
+      manifest.webDocumentMetadata.description === englishDescription,
       false,
       'the Swedish web shell should not pair lang="sv" with the English meta description',
     );
+  }
+  assert.equal(pwaManifest.name, appConfig.name);
+  assert.equal(pwaManifest.short_name, appConfig.name);
+  assert.equal(pwaManifest.lang, webLanguage);
+  assert.equal(pwaManifest.start_url, '.');
+  assert.equal(pwaManifest.scope, '.');
+  assert.equal(pwaManifest.display, 'standalone');
+  assert.equal(pwaManifest.theme_color, canvasColor);
+  assert.equal(pwaManifest.background_color, canvasColor);
+  assert.equal(pwaManifest.description, localizedDescription);
+  assert.deepEqual(
+    pwaManifest.icons.map((icon) => [icon.src, icon.sizes, icon.purpose]),
+    [
+      ['icons/pwa-icon-192.png', '192x192', 'any'],
+      ['icons/pwa-icon-512.png', '512x512', 'any'],
+      ['icons/pwa-maskable-512.png', '512x512', 'maskable'],
+    ],
+  );
+  for (const icon of pwaManifest.icons) {
+    assert.equal(path.isAbsolute(icon.src), false, `${icon.src} should be host-agnostic`);
+    assert.equal(icon.src.includes('..'), false, `${icon.src} should stay inside public/`);
+    assert.equal(fs.existsSync(path.join(repoRoot, 'public', icon.src)), true);
   }
 });
 
@@ -438,7 +505,16 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   );
   assertContains(
     htmlShell,
-    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang="${manifest.webLanguages[0]}">`,
+    `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
+  );
+  assertContains(
+    htmlShell,
+    "import { webDocumentMetadata } from '../lib/scaffold/webDocumentMetadata';",
+  );
+  assertContains(htmlShell, '<title>{webDocumentMetadata.title}</title>');
+  assertContains(
+    htmlShell,
+    '<meta content={webDocumentMetadata.applicationName} name="application-name" />',
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);

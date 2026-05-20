@@ -7,8 +7,11 @@
 // Takes a completed QuizSession (mode='exam') + question→chapter index and
 // returns per-chapter performance + weakest chapters within this single mock.
 
-import type { QuizSession } from '../../types/progress';
+import type { PracticeQuestion } from '../../types/content';
+import type { QuizAnswer, QuizSession } from '../../types/progress';
 import { MOCK_EXAM_PRACTICE_TARGET_ACCURACY } from './mockExamLibrary';
+
+const maxQuestionTimingSeconds = 12 * 60 * 60;
 
 export interface ChapterBreakdown {
   chapterId: string;
@@ -56,6 +59,61 @@ export interface ExamDiagnosticInput {
   weakestN?: number;
   /** Override the practice target for this diagnostic. */
   practiceTarget?: number;
+}
+
+export interface CompletedExamQuizSessionInput {
+  answerTimingsSeconds?: Record<string, number>;
+  answers: Record<string, string>;
+  completedAt: string;
+  questions: PracticeQuestion[];
+  score?: number;
+  sessionId: string;
+  startedAt: string;
+}
+
+function clampScore(value: unknown): number | undefined {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return undefined;
+  return Math.max(0, Math.min(1, value));
+}
+
+export function clampQuestionTimingSeconds(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(maxQuestionTimingSeconds, Math.round(value)));
+}
+
+export function buildCompletedExamQuizSession({
+  answerTimingsSeconds = {},
+  answers,
+  completedAt,
+  questions,
+  score,
+  sessionId,
+  startedAt,
+}: CompletedExamQuizSessionInput): QuizSession {
+  const quizAnswers: QuizAnswer[] = questions.map((question) => {
+    const selectedOptionId = answers[question.id];
+    const selectedOptionIds = typeof selectedOptionId === 'string' ? [selectedOptionId] : [];
+
+    return {
+      answeredAt: completedAt,
+      isCorrect: selectedOptionId === question.correctOptionId,
+      questionId: question.id,
+      selectedOptionIds,
+      timeSpentSeconds: clampQuestionTimingSeconds(answerTimingsSeconds[question.id]),
+    };
+  });
+  const correctCount = quizAnswers.filter((answer) => answer.isCorrect).length;
+  const derivedScore = quizAnswers.length > 0 ? correctCount / quizAnswers.length : 0;
+
+  return {
+    answers: quizAnswers,
+    completedAt,
+    id: sessionId,
+    mode: 'exam',
+    questionIds: questions.map((question) => question.id),
+    score: clampScore(score) ?? derivedScore,
+    startedAt,
+  };
 }
 
 export function buildExamDiagnostic(input: ExamDiagnosticInput): ExamDiagnostic {

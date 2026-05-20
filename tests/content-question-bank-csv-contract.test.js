@@ -207,6 +207,122 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('question-bank CSV contract summarizes shared UHR source metadata drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/uhr-section-map.json')) {
+    return String(contents).replace(
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf"',
+      '"url": "https://www.uhr.se/globalassets/_uhr.se/other/sverige-i-fokus.pdf"',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /content\/question-bank\.csv uhrSourceUrl metadata drift: \d+ rows disagree with content\/uhr-section-map\.json source\.url/,
+  );
+  assert.match(output, /UHR section map source URL must be under the UHR education material path/);
+  assert.equal(
+    (output.match(/content\/question-bank\.csv row \d+ q\d+ uhrSourceUrl is/g) || []).length,
+    0,
+    'whole-bank UHR source URL drift should be summarized instead of repeated per row',
+  );
+});
+
+test('question-bank CSV contract summarizes row order drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    const lines = String(contents).trimEnd().split('\\n');
+    const firstRow = lines[1];
+    lines[1] = lines[2];
+    lines[2] = firstRow;
+    return \`\${lines.join('\\n')}\\n\`;
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /content\/question-bank\.csv row-order\/id drift: 2 row ids do not match exporter order; first mismatch at row 2: saw "q002", expected "q001"; CSV has \d+ data rows, expected \d+; Regenerate with npm run content:export\./,
+  );
+  assert.equal(
+    (output.match(/content\/question-bank\.csv row \d+ q\d+ [A-Za-z]+ is/g) || []).length,
+    0,
+    'row order drift should be summarized before field-level mismatch cascades',
+  );
+});
+
+test('question-bank CSV contract summarizes shifted row ids', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    const lines = String(contents).trimEnd().split('\\n');
+    lines.splice(1, 1);
+    return \`\${lines.join('\\n')}\\n\`;
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    /content\/question-bank\.csv row-order\/id drift: \d+ row ids do not match exporter order; first mismatch at row 2: saw "q002", expected "q001"; CSV has \d+ data rows, expected \d+; Regenerate with npm run content:export\./,
+  );
+  assert.doesNotMatch(output, /content\/question-bank\.csv has \d+ data rows/);
+  assert.equal(
+    (output.match(/content\/question-bank\.csv row \d+ q\d+ [A-Za-z]+ is/g) || []).length,
+    0,
+    'shifted rows should not cascade into per-field mismatch output',
+  );
+});
+
 test('question-bank CSV contract rejects option payload drift', () => {
   const result = spawnSync(
     process.execPath,

@@ -45,6 +45,20 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
   );
 }
 
+export async function seedFreshFirstRunSettingsLanguage(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.addInitScript(
+    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(languageKey, seededLanguage);
+    },
+    { language, languageKey: settingsLanguageKey },
+  );
+}
+
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
     ({ seenKey }: { seenKey: string }) => {
@@ -114,4 +128,25 @@ export async function dismissBlockingModals(page: Page): Promise<BlockingModalDi
     languagePickerDismissed,
     launchOverlayDismissed,
   };
+}
+
+export async function selectQuestionLanguageInSettings(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const targetLanguageLabel =
+    language === 'en'
+      ? /Byt frågespråk till Engelskt stöd|Set question language to English support/
+      : /Byt frågespråk till Svenska|Set question language to Swedish/;
+  const selectedLanguageLabel =
+    language === 'en' ? 'Set question language to English support' : 'Byt frågespråk till Svenska';
+
+  await page.getByRole('radio', { name: targetLanguageLabel }).click();
+  await expect(page.getByRole('radio', { name: selectedLanguageLabel })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 }

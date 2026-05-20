@@ -42,9 +42,61 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /formatBadges\(badges, language, copy\.noBadges\)/);
   assert.match(source, /entitlementsReady/);
   assert.match(source, /\{entitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(source, /import \{ ProPaywall \}/);
+  assert.match(source, /<ProPaywall/);
+  assert.match(source, /alreadyAdFree=\{monetizationEntitlements\.adsDisabled\}/);
+  assert.match(source, /onEntitlementsChange=\{\(nextEntitlements\) =>/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Ändra mål, språk och ljud/);
   assert.match(source, /Edit goal, language, and audio/);
+  assert.match(source, /Missade frågor/);
+  assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
+});
+
+test('profile route keeps Pro comparison separate from the Remove Ads purchase flow', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const proPaywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+  const premiumBannerIndex = source.indexOf('<PremiumBanner');
+  const proPaywallIndex = source.indexOf('<ProPaywall');
+
+  assert.ok(premiumBannerIndex >= 0, 'Profile should still render the Remove Ads banner');
+  assert.ok(proPaywallIndex > premiumBannerIndex, 'Pro comparison should follow Remove Ads');
+  assert.match(source, /runtimeOptions=\{purchaseRuntime\}/);
+  assert.match(proPaywallSource, /buyProLifetime/);
+  assert.match(proPaywallSource, /restoreProLifetime/);
+  assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
+  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
+  assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
+});
+
+test('profile premium banner has distinct paid-state copy and recovery action', () => {
+  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const bannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+    'utf8',
+  );
+
+  assert.match(profileSource, /\{entitlementsReady \? \(\s*<PremiumBanner/);
+  assert.match(profileSource, /entitlements=\{monetizationEntitlements\}/);
+  assert.match(bannerSource, /bodyActive:/);
+  assert.match(bannerSource, /bodyIdle: \(price\) =>/);
+  assert.match(bannerSource, /Purchase confirmed\. Study ads are disabled on this device/);
+  assert.match(bannerSource, /Köpet är bekräftat\. Studieannonser är avstängda/);
+  assert.match(
+    bannerSource,
+    /\{adsDisabled \? copy\.bodyActive : copy\.bodyIdle\(REMOVE_ADS_PRICE_LABEL\)\}/,
+  );
+  assert.match(
+    bannerSource,
+    /\{!adsDisabled \? \(\s*<Button[\s\S]*copy\.buyAccessibilityLabel\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*\) : null\}/,
+  );
+  assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+  assert.match(bannerSource, /status === 'restored' \? 'restored' : 'purchased'/);
+  assert.doesNotMatch(bannerSource, /adsDisabled \? copy\.bodyIdle/);
+  assert.doesNotMatch(bannerSource, /activeAction !== null \|\| adsDisabled/);
 });
 
 test('profile study setup card owns the localized settings shortcut', () => {
