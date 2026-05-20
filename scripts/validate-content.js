@@ -613,6 +613,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Redoindikator: ${score} procent. ${verdict}. ${details}',
     'Starta ett mockprov för att kontrollera din redoindikator',
     'Gör ett mockprov',
+    'Fortsätt där du slutade i ${chapterTitle}. ${subtitle}',
+    'Fortsätt ${chapterTitle}',
+    'Senaste övning',
     'Repetera svaga kapitel',
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
@@ -661,6 +664,9 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Readiness indicator: ${score} percent. ${verdict}. ${details}',
     'Start a mock exam to check your readiness indicator',
     'Take a mock exam',
+    'Continue where you left off in ${chapterTitle}. ${subtitle}',
+    'Resume ${chapterTitle}',
+    'Recent practice',
     'Review weak chapters',
     'Start a 5-minute practice set',
     'Start the recommended practice session',
@@ -734,6 +740,36 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
     'const readinessVerdict = copy.readinessVerdicts[readiness.verdict];',
     'home route readiness verdict must use localized copy',
   ],
+  [
+    "import { resumeBannerCopy, resumeWhereLeftOff } from '../../lib/learning/resumeWhereLeftOff';",
+    'home route must import the resume selector and localized banner copy',
+  ],
+  [
+    'const questionChapterIndex = Object.fromEntries(',
+    'home route must build a question-to-chapter index for resume targeting',
+  ],
+  [
+    'function buildResumeProgress(',
+    'home route must adapt stored question progress into the resume selector',
+  ],
+  [
+    'const resumeCandidate = useMemo(',
+    'home route must memoize the resume candidate from stored progress',
+  ],
+  [
+    'const resumeChapter = chapters.find((chapter) => chapter.id === resumeCandidate.chapterId);',
+    'home route must resolve the resume candidate to a real chapter',
+  ],
+  [
+    'const resumeCopy = resumeBannerCopy(resumeCandidate, language);',
+    'home route must use shared localized resume banner copy',
+  ],
+  [
+    'resumeChapter && resumeChapterTitle && resumeAccessibilityLabel ? (',
+    'home route must render the resume card only when a recent chapter candidate exists',
+  ],
+  ['href={`/chapter/${resumeChapter.id}`}', 'home resume CTA must link to the selected chapter'],
+  ['minHeight: space[6]', 'home resume CTA must keep a token-sized tap target'],
   [
     'accessibilityLabel={readinessAccessibilityLabel}',
     'home route readiness card must expose localized accessibility copy',

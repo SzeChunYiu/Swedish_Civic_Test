@@ -7,6 +7,7 @@ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
@@ -16,11 +17,14 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
+import { dashboardSummary } from '../../lib/learning/dashboardStats';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
+import { resumeBannerCopy, resumeWhereLeftOff } from '../../lib/learning/resumeWhereLeftOff';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -28,6 +32,7 @@ import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEnt
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { UserProgress } from '../../types/progress';
 
 type StudyLoopItemCopy = {
   label: string;
@@ -38,6 +43,10 @@ type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: (summary: string) => string;
+  dashboardCta: string;
+  dashboardSummary: (count: number) => string;
+  dashboardTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -58,6 +67,9 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  resumeAccessibilityLabel: (chapterTitle: string, subtitle: string) => string;
+  resumeCta: (chapterTitle: string) => string;
+  resumeKicker: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -78,6 +90,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
     dailyGoalTitle: 'Dagens mål',
+    dashboardAccessibilityLabel: (summary) => `Öppna framstegsöversikten. ${summary}`,
+    dashboardCta: 'Visa översikt',
+    dashboardSummary: (count) => `${count} svar den här veckan`,
+    dashboardTitle: 'Framstegsöversikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
@@ -107,6 +123,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Nästan redo',
       strong_preparation: 'Stark förberedelse',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Fortsätt där du slutade i ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Fortsätt ${chapterTitle}`,
+    resumeKicker: 'Senaste övning',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -128,15 +148,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       },
       {
         label: 'Provredo',
-        lesson:
-          'Växla mellan tidsatta prov, flashcards, bokmärken, missade frågor, ljud och redoindikator.',
+        lesson: 'Växla mellan tidsatta prov, bokmärken, felspårning, ljud och redoindikator.',
       },
     ],
     studyLoopSubtitle:
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, repetition av misstag och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -146,6 +165,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
     dailyGoalTitle: "Today's goal",
+    dashboardAccessibilityLabel: (summary) => `Open the progress dashboard. ${summary}`,
+    dashboardCta: 'View dashboard',
+    dashboardSummary: (count) => `${count} answers this week`,
+    dashboardTitle: 'Progress dashboard',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
@@ -175,6 +198,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Almost ready',
       strong_preparation: 'Strong preparation',
     },
+    resumeAccessibilityLabel: (chapterTitle, subtitle) =>
+      `Continue where you left off in ${chapterTitle}. ${subtitle}`,
+    resumeCta: (chapterTitle) => `Resume ${chapterTitle}`,
+    resumeKicker: 'Recent practice',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -197,7 +224,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       {
         label: 'Exam readiness',
         lesson:
-          'Switch between timed exams, flashcards, bookmarks, mistake tracking, audio, and readiness signals.',
+          'Switch between timed exams, bookmarks, mistake tracking, audio, and readiness signals.',
       },
     ],
     studyLoopSubtitle:
@@ -212,9 +239,47 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   },
 };
 
+const questionChapterIndex = Object.fromEntries(
+  questions.map((question) => [question.id, question.chapterId]),
+);
+
+function buildResumeProgress(
+  questionProgress: ReturnType<typeof useProgressStore.getState>['questionProgress'],
+): UserProgress {
+  const answers = Object.values(questionProgress)
+    .filter((progress) => progress.lastAnsweredAt)
+    .map((progress) => ({
+      answeredAt: progress.lastAnsweredAt ?? '',
+      isCorrect: progress.correctStreak > 0 || progress.correctCount > progress.wrongCount,
+      questionId: progress.questionId,
+      selectedOptionIds: [],
+      timeSpentSeconds: 0,
+    }));
+
+  return {
+    currentStreak: 0,
+    dailyGoalAnswers: 0,
+    level: 1,
+    questionProgress: {},
+    sessions: answers.length
+      ? [
+          {
+            answers,
+            id: 'local-progress-resume',
+            mode: 'study',
+            questionIds: answers.map((answer) => answer.questionId),
+            startedAt: answers[0]?.answeredAt ?? new Date(0).toISOString(),
+          },
+        ]
+      : [],
+    totalXp: 0,
+  };
+}
+
 export default function Screen() {
   const {
     entitlements: monetizationEntitlements,
+    entitlementsReady: monetizationEntitlementsReady,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
   } = useRemoveAdsEntitlements();
@@ -262,6 +327,46 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
+  const resumeCandidate = useMemo(
+    () =>
+      resumeWhereLeftOff({
+        progress: buildResumeProgress(questionProgress),
+        questionChapterIndex,
+      }),
+    [questionProgress],
+  );
+  const resumeChapter = chapters.find((chapter) => chapter.id === resumeCandidate.chapterId);
+  const resumeCopy = resumeBannerCopy(resumeCandidate, language);
+  const resumeChapterTitle = resumeChapter
+    ? language === 'sv'
+      ? resumeChapter.nameSv
+      : resumeChapter.nameEn
+    : null;
+  const resumeSubtitle = resumeCopy.subtitle ?? '';
+  const resumeAccessibilityLabel =
+    resumeChapter && resumeChapterTitle
+      ? copy.resumeAccessibilityLabel(resumeChapterTitle, resumeSubtitle)
+      : undefined;
+  const dashboardProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  );
+  const dashboardQuestionChapterIndex = useMemo(
+    () => Object.fromEntries(questions.map((question) => [question.id, question.chapterId])),
+    [],
+  );
+  const dashboard = useMemo(
+    () => dashboardSummary(dashboardProgress, dashboardQuestionChapterIndex),
+    [dashboardProgress, dashboardQuestionChapterIndex],
+  );
+  const dashboardSummaryLine = copy.dashboardSummary(dashboard.questionsAnsweredThisWeek);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -286,6 +391,7 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
+      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -294,6 +400,18 @@ export default function Screen() {
           tone="accent"
         />
       </View>
+      <Link
+        accessibilityLabel={copy.dashboardAccessibilityLabel(dashboardSummaryLine)}
+        accessibilityRole="link"
+        href="/dashboard"
+        style={styles.dashboardLink}
+      >
+        <View style={styles.dashboardLinkContent}>
+          <Text style={styles.dashboardTitle}>{copy.dashboardTitle}</Text>
+          <Text style={styles.dashboardSummaryText}>{dashboardSummaryLine}</Text>
+          <Text style={styles.dashboardCta}>{copy.dashboardCta}</Text>
+        </View>
+      </Link>
       <Card style={styles.readinessCard}>
         <View
           accessible
@@ -327,12 +445,32 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      {!monetizationEntitlements.adsDisabled ? (
+      {monetizationEntitlementsReady && !monetizationEntitlements.adsDisabled ? (
         <PricingWedge
           questionCount={questions.length}
           chapterCount={chapters.length}
           language={language}
         />
+      ) : null}
+      {resumeChapter && resumeChapterTitle && resumeAccessibilityLabel ? (
+        <Card accessible accessibilityLabel={resumeAccessibilityLabel} style={styles.resumeCard}>
+          <Badge tone="warm">{copy.resumeKicker}</Badge>
+          <Text accessibilityRole="header" style={styles.resumeTitle}>
+            {resumeCopy.title}
+          </Text>
+          <Text style={styles.resumeChapter}>{resumeChapterTitle}</Text>
+          {resumeCopy.subtitle ? (
+            <Text style={styles.resumeText}>{resumeCopy.subtitle}</Text>
+          ) : null}
+          <Link
+            accessibilityLabel={resumeAccessibilityLabel}
+            accessibilityRole="link"
+            href={`/chapter/${resumeChapter.id}`}
+            style={styles.resumeLink}
+          >
+            {copy.resumeCta(resumeChapterTitle)}
+          </Link>
+        </Card>
       ) : null}
       <View style={styles.actions}>
         <Link
@@ -412,13 +550,15 @@ export default function Screen() {
         })}
       </View>
 
-      <PremiumBanner
-        entitlements={monetizationEntitlements}
-        language={language}
-        onEntitlementsChange={setMonetizationEntitlements}
-        runtimeOptions={purchaseRuntime}
-      />
-      <AdBanner entitlements={monetizationEntitlements} placement="home_banner" />
+      {monetizationEntitlementsReady ? (
+        <PremiumBanner
+          entitlements={monetizationEntitlements}
+          language={language}
+          onEntitlementsChange={setMonetizationEntitlements}
+          runtimeOptions={purchaseRuntime}
+        />
+      ) : null}
+      <AdBanner placement="home_banner" />
     </ScreenShell>
   );
 }
@@ -428,6 +568,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  dashboardLink: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    minHeight: space[6],
+    padding: space[2],
+    textDecorationLine: 'none',
+  },
+  dashboardLinkContent: {
+    gap: space[0.5],
+  },
+  dashboardTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dashboardSummaryText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  dashboardCta: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.navButton.lineHeight,
   },
   readinessCard: {
     gap: space[1.5],
@@ -557,6 +726,39 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
+  },
+  resumeCard: {
+    gap: space[1],
+  },
+  resumeTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  resumeChapter: {
+    color: colors.textSecondary,
+    fontSize: typography.bodySemibold.fontSize,
+    fontWeight: typography.bodySemibold.fontWeight,
+    lineHeight: typography.bodySemibold.lineHeight,
+  },
+  resumeText: {
+    color: colors.textDisclaimer,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  resumeLink: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1.5],
+    textDecorationLine: 'none',
   },
   feedbackCard: {
     gap: space[1],
