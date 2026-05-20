@@ -1,46 +1,26 @@
 # Release Ads/IAP Device QA
 
-This report is the manual gate for the ad-supported v1.0 release. It must be
-filled with final iOS and Android evidence before release preflight can treat
-Remove Ads device QA as closed.
+This report is the manual gate for the ad-supported v1.0 release. Release
+preflight reads the per-platform JSON artifacts below and treats the gate as
+closed only after both artifacts record concrete device, build, reviewer,
+timestamp, proof-file, and observed check results.
 
-Required evidence rules:
+## Platform Artifacts
 
-- Replace every placeholder with concrete device, build, reviewer, timestamp,
-  and artifact evidence.
-- Use ISO UTC for `Reviewed at`.
-- Link either an HTTPS artifact URL or a repo-local artifact path under
-  `reports/`, `publishing/`, `content/`, or `assets/`.
-- Check every item only after observing the behavior on that platform.
+- iOS artifact: `reports/release-device-qa/ios.json`
+- Android artifact: `reports/release-device-qa/android.json`
 
-## iOS
+## Required Checks
 
-- Device: TBD
-- Build: TBD
-- Evidence artifact: reports/release-device-qa/TBD-ios.md
-- Reviewer: TBD
-- Reviewed at: TBD
+Each platform artifact must record these check ids with `result: "passed"`:
 
-- [ ] AdMob test ads rendered on study screens
-- [ ] Remove Ads purchase removed ads
-- [ ] Entitlement persisted after relaunch
-- [ ] Restore purchase restored entitlement
-- [ ] ATT prompt/status documented
-- [ ] EEA UMP consent prompt rendered
-- [ ] Timed exam screens showed no ads
+- `admob-test-ads-study-screens`
+- `remove-ads-purchase-hides-ads`
+- `entitlement-persists-after-relaunch`
+- `restore-purchase-restores-entitlement`
+- `att-status-documented`
+- `ump-consent-documented`
+- `mock-exam-shows-no-ads`
 
-## Android
-
-- Device: TBD
-- Build: TBD
-- Evidence artifact: reports/release-device-qa/TBD-android.md
-- Reviewer: TBD
-- Reviewed at: TBD
-
-- [ ] AdMob test ads rendered on study screens
-- [ ] Remove Ads purchase removed ads
-- [ ] Entitlement persisted after relaunch
-- [ ] Restore purchase restored entitlement
-- [ ] ATT prompt/status documented
-- [ ] EEA UMP consent prompt rendered
-- [ ] Timed exam screens showed no ads
+Use ISO UTC for `reviewedAt`. Proof entries may be repo-local files beside the
+JSON artifact or HTTPS artifact URLs.

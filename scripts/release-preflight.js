@@ -737,8 +737,8 @@ function validateRemoveAdsDeviceQaArtifact(artifactPath, expectedPlatform) {
     if (!check?.id || !String(check.id).trim()) {
       errors.push(`checks[${index}].id is required`);
     }
-    if (!/^(passed|failed|not_applicable)$/i.test(check?.result || '')) {
-      errors.push(`checks[${index}].result must be passed, failed, or not_applicable`);
+    if (!/^(passed|failed|not_applicable|pending)$/i.test(check?.result || '')) {
+      errors.push(`checks[${index}].result must be passed, failed, not_applicable, or pending`);
     }
     if (check?.result !== 'passed') {
       errors.push(`${check?.id || `checks[${index}]`} result must be passed`);

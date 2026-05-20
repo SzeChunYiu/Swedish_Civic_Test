@@ -12,8 +12,44 @@
   "reviewer": "",
   "reviewedAt": "",
   "proof": {
-    "screenshots": [],
-    "logs": []
+    "screenshots": ["ios-remove-ads.png"],
+    "logs": ["ios-remove-ads.log"]
   },
-  "checks": []
+  "checks": [
+    {
+      "id": "admob-test-ads-study-screens",
+      "result": "pending",
+      "notes": "Observe AdMob test ads on non-exam study screens."
+    },
+    {
+      "id": "remove-ads-purchase-hides-ads",
+      "result": "pending",
+      "notes": "Complete the Remove Ads purchase flow and verify ads disappear."
+    },
+    {
+      "id": "entitlement-persists-after-relaunch",
+      "result": "pending",
+      "notes": "Relaunch the app and verify the Remove Ads entitlement persists."
+    },
+    {
+      "id": "restore-purchase-restores-entitlement",
+      "result": "pending",
+      "notes": "Use Restore purchase and verify ads stay hidden."
+    },
+    {
+      "id": "att-status-documented",
+      "result": "pending",
+      "notes": "Record the ATT prompt or status observed on device."
+    },
+    {
+      "id": "ump-consent-documented",
+      "result": "pending",
+      "notes": "Record the UMP consent prompt or stored consent status."
+    },
+    {
+      "id": "mock-exam-shows-no-ads",
+      "result": "pending",
+      "notes": "Run a timed mock exam screen and verify no ads render."
+    }
+  ]
 }

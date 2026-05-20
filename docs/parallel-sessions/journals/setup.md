@@ -1342,6 +1342,14 @@ Known red broader gates: `NODE_OPTIONS='--v8-pool-size=1' npm run validate:conte
 Blocked? no for this router-shell metadata parity atom; broader content/type gate failures are outside this bounded SETUP task and already visible on current main. No Vercel CLI was run.
 Next suggested validator action: inspect the shared metadata helper wiring plus router/architecture manifest updates, rerun `npm run test:router-shell`, `node --test scripts/architecture-scaffold.test.js`, and the targeted formatting/syntax checks before accepting `ROUTER-SHELL-METADATA-HTML-PARITY-1`.
 
+## Iteration 272 - 2026-05-20
+
+Task completed: REMOVE-ADS-DEVICE-QA-SCHEMA-1 - converted the checked-in Remove Ads device-QA report from Markdown placeholders to JSON-linked iOS/Android evidence stubs, seeded every required ads/IAP manual check in the per-platform artifacts, and added release-preflight guards that keep the template aligned with the validator.
+Artifacts changed: `reports/release-ads-iap-device-qa.md`, `reports/release-device-qa/ios.json`, `reports/release-device-qa/android.json`, `scripts/release-preflight.js`, `scripts/release-preflight.test.js`, `tests/release-scope-v11-guard.test.js`, `docs/parallel-sessions/journals/setup.md`.
+Verification: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'Remove Ads device QA|v1\\.1 surfaces while v1\\.0' scripts/release-preflight.test.js` exit 0 with 6/6 passing; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/release-scope-v11-guard.test.js` exit 0; `node --check scripts/release-preflight.js` exit 0; `node --check scripts/release-preflight.test.js` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0. Broader `NODE_OPTIONS='--v8-pool-size=1' npm run test:release-preflight` exits 1 with 58/59 passing; the remaining red is the existing release-evidence-template/app.json identity mismatch (`com.billyyiu.swedishcivictest` vs the current almostswedish release template) covered by separate release-identity queue work.
+Blocked? no for this device-QA schema/template atom; real device execution remains an operator/manual evidence gate.
+Next suggested validator action: inspect the JSON artifact schema and rerun the focused release-preflight device-QA tests plus the release-scope guard before accepting `REMOVE-ADS-DEVICE-QA-SCHEMA-1`.
+
 ## Iteration 271 - 2026-05-20
 
 Task completed: TEST-CLI-MONETIZATION-ARG-1 - restored the project test dispatcher as the `npm test` entry point, moved the existing full-suite chain to `test:all`, kept `npm test -- monetization` routed to `test:monetization`, and expanded the routing guard to prove both dispatcher-level and package-level selector behavior before any suite runs.
