@@ -584,7 +584,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Supplementary',
     'Editorial',
     'About the sources',
-    'Close about-the-sources',
+    'Close source details',
     "Questions written from UHR's study material Sverige i fokus. The mock exam uses only UHR-referenced questions.",
     'Variant of an app-authored, UHR-referenced practice question to practise the same knowledge from another angle. Only shown when you turn supplementary questions on.',
     'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
@@ -610,7 +610,12 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ['{copy.questionTitle(questionNumber)}', 'question title must render localized copy'],
   ['<Text style={styles.subtitle}>{copy.subtitle}</Text>', 'subtitle must render localized copy'],
   [
-    '{copy.completedQuestions(completedQuestionIds.length)}',
+    '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
+    'completed-question metadata must scope persisted progress to the visible question bank',
+  ],
+  ['visibleCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
+  [
+    '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
   ],
   [

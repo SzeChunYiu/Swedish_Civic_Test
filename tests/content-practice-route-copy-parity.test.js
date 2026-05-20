@@ -23,27 +23,21 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 72);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
   assert.match(source, /const practiceCopy: Record<AppLanguage, PracticeCopy> = \{/);
-  assert.match(source, /type PracticeScope/);
-  assert.match(source, /const QUICK_ROUND_SIZE = 10;/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = practiceCopy\[language\];/);
-  assert.match(source, /const \[practiceStarted, setPracticeStarted\]/);
   assert.match(source, /5-minutersövning/);
-  assert.match(source, /Övningsnav/);
-  assert.match(source, /Practice hub/);
-  assert.match(source, /href="\/exam"/);
-  assert.match(source, /getQuestionsForPracticeScope\(/);
+  assert.match(source, /const filteredQuestions = useMemo\(/);
   assert.match(
     source,
-    /getCompletedQuestionIdsForQuestionBank\(selectedPracticeQuestions, completedQuestionIds\)/,
+    /getCompletedQuestionIdsForQuestionBank\(filteredQuestions, completedQuestionIds\)/,
   );
-  assert.match(source, /\{copy\.completedQuestions\(scopedCompletedQuestionIds\.length\)\}/);
-  assert.match(source, /startPractice\(\{ type: 'chapter', chapterId: chapter\.id \}\)/);
+  assert.match(source, /\{copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)\}/);
+  assert.doesNotMatch(source, /\{copy\.completedQuestions\(completedQuestionIds\.length\)\}/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);
@@ -113,6 +107,39 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /practice route is missing sv copy/);
+});
+
+test('practice route copy parity rejects raw completed-question counts', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+        '{copy.completedQuestions(completedQuestionIds.length)}',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /completed-question metadata must render localized copy/,
+  );
 });
 
 test('practice route copy parity rejects stale English source drawer close copy', () => {
