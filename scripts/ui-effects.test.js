@@ -989,6 +989,7 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
+  assert.match(source, /Aktivitet, kapitelframsteg och XP visas på en egen sida/);
   assert.match(source, /Märken/);
   assert.match(source, /badgeLocked: 'Låst'/);
   assert.match(source, /Öppna inställningar/);
