@@ -13,6 +13,10 @@ const {
   findUnsupportedStaticOutcomeSlogans,
   formatUnsupportedStaticOutcomeSlogans,
 } = require('./static-outcome-copy-guard');
+const {
+  webDocumentMetaDescriptions,
+  webDocumentMetadata,
+} = require('../lib/scaffold/webDocumentMetadata');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -6692,6 +6696,7 @@ const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
 const packageMetadata = loadJson('package.json');
 const appConfig = loadJson('app.json');
+const publicWebManifest = loadJson('public/manifest.webmanifest');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
@@ -7202,6 +7207,38 @@ function validateAppConfigSchema() {
   }
   if (expo.android?.package !== EXPECTED_APP_NATIVE_IDENTIFIER) {
     reject(`app.json android.package must be ${EXPECTED_APP_NATIVE_IDENTIFIER}`);
+  }
+  if (webDocumentMetadata.title !== expo.name) {
+    reject('web document title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.applicationName !== expo.name) {
+    reject('web document application-name must match app.json expo.name');
+  }
+  if (webDocumentMetadata.appleMobileWebAppTitle !== expo.name) {
+    reject('web document apple-mobile-web-app-title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.openGraphSiteName !== expo.name) {
+    reject('web document og:site_name must match app.json expo.name');
+  }
+  if (webDocumentMetadata.openGraphTitle !== expo.name) {
+    reject('web document og:title must match app.json expo.name');
+  }
+  if (webDocumentMetadata.language !== publicWebManifest.lang) {
+    reject('web document language must match public manifest lang');
+  }
+  const localizedWebDescription = webDocumentMetaDescriptions.find(
+    (entry) => entry.language === webDocumentMetadata.language,
+  )?.description;
+  if (!localizedWebDescription) {
+    reject('web document metadata must have a localized description for its language');
+  } else if (webDocumentMetadata.description !== localizedWebDescription) {
+    reject('web document description must come from the shared localized description list');
+  }
+  if (webDocumentMetadata.openGraphDescription !== webDocumentMetadata.description) {
+    reject('web document og:description must match the canonical document description');
+  }
+  if (publicWebManifest.description !== webDocumentMetadata.description) {
+    reject('public web manifest description must match shared web document metadata');
   }
 
   const plugins = expo.plugins;
