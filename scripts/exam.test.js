@@ -365,6 +365,85 @@ test('buildExamReviewItems localizes unanswered and missing-correct fallbacks', 
   assert.equal(review.correctOptionTextEn, 'Correct answer missing');
 });
 
+test('buildMockExamQuizSession keeps submitted answers with per-question timing', () => {
+  const { buildMockExamQuizSession } = loadTs('lib/quiz/examGenerator.ts');
+  const questions = [
+    {
+      ...baseQuestion,
+      id: 'q1',
+      correctOptionId: 'a',
+      options: [
+        { id: 'a', textSv: 'Rätt', textEn: 'Correct' },
+        { id: 'b', textSv: 'Fel', textEn: 'Wrong' },
+      ],
+    },
+    {
+      ...baseQuestion,
+      id: 'q2',
+      correctOptionId: 'b',
+      options: [
+        { id: 'a', textSv: 'Fel', textEn: 'Wrong' },
+        { id: 'b', textSv: 'Rätt', textEn: 'Correct' },
+      ],
+    },
+    { ...baseQuestion, id: 'q3', correctOptionId: 'a' },
+  ];
+
+  const session = buildMockExamQuizSession({
+    answers: { q1: 'a', q2: 'a' },
+    completedAt: '2026-05-20T10:05:00.000Z',
+    questionTimings: { q1: 12.3, q2: 35, q3: Number.NaN },
+    questions,
+    sessionId: 'mock-exam-42',
+    startedAt: '2026-05-20T09:45:00.000Z',
+  });
+
+  assert.equal(session.id, 'mock-exam-42');
+  assert.equal(session.mode, 'exam');
+  assert.deepEqual(session.questionIds, ['q1', 'q2', 'q3']);
+  assert.equal(session.score, 1 / 3);
+  assert.deepEqual(
+    session.answers.map((answer) => ({
+      isCorrect: answer.isCorrect,
+      questionId: answer.questionId,
+      selectedOptionIds: answer.selectedOptionIds,
+      timeSpentSeconds: answer.timeSpentSeconds,
+    })),
+    [
+      { isCorrect: true, questionId: 'q1', selectedOptionIds: ['a'], timeSpentSeconds: 12 },
+      { isCorrect: false, questionId: 'q2', selectedOptionIds: ['a'], timeSpentSeconds: 35 },
+      { isCorrect: false, questionId: 'q3', selectedOptionIds: [], timeSpentSeconds: 0 },
+    ],
+  );
+});
+
+test('exam route wires timed quiz-session diagnostics to the review heatmap', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const progressStoreSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+  const heatmapSource = fs.readFileSync(
+    path.join(repoRoot, 'components/MockExamTimeHeatmap.tsx'),
+    'utf8',
+  );
+
+  assert.match(examRouteSource, /buildMockExamQuizSession/);
+  assert.match(examRouteSource, /buildExamDiagnostic/);
+  assert.match(examRouteSource, /MockExamTimeHeatmap/);
+  assert.match(examRouteSource, /recordQuestionAnswer/);
+  assert.match(examRouteSource, /examActive: examUnlocked/);
+  assert.match(examRouteSource, /!examUnlocked \|\| submitted/);
+  assert.match(examRouteSource, /questionTimings:/);
+  assert.match(examRouteSource, /scrollTo\(\{ animated: true/);
+  assert.match(progressStoreSource, /export type MockExamQuestionTiming = \{/);
+  assert.match(progressStoreSource, /questionTimings: MockExamQuestionTiming\[\]/);
+  assert.match(progressStoreSource, /normalizeMockExamQuestionTimings/);
+  assert.match(heatmapSource, /rushed/);
+  assert.match(heatmapSource, /overthought/);
+  assert.match(heatmapSource, /stuck/);
+});
+
 test('formatExamTime renders remaining seconds as mm:ss', () => {
   const { formatExamTime } = loadTs('lib/quiz/examGenerator.ts');
 

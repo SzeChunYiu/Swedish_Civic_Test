@@ -185,6 +185,8 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /export type QuestionProgress = \{/);
   assert.match(progressStore, /export type AnswerHistoryEntry = \{/);
   assert.match(progressStore, /export type MockExamProgress = \{/);
+  assert.match(progressStore, /export type MockExamQuestionTiming = \{/);
+  assert.match(progressStore, /questionTimings: MockExamQuestionTiming\[\];/);
   assert.match(progressStore, /type ProgressState = PersistedProgress & \{/);
   assert.match(progressStore, /questionProgress: Record<string, QuestionProgress>;/);
   assert.match(progressStore, /completedQuestionIds: string\[\];/);
@@ -292,6 +294,13 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         score: 2,
         completedAt: '2026-05-19T10:00:00.000Z',
         correctCount: 999999999,
+        questionTimings: [
+          { questionId: ' q001 ', timeSpentSeconds: 12 },
+          { questionId: 'q001', timeSpentSeconds: 99 },
+          { questionId: 'q002', timeSpentSeconds: 3.5 },
+          { questionId: 'q003', timeSpentSeconds: 999999999 },
+          { questionId: '', timeSpentSeconds: 8 },
+        ],
         totalCount: 1000,
       },
       {
@@ -362,9 +371,14 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.mockExamSessions.length, 2);
   assert.equal(state.mockExamSessions[0].score, 1);
   assert.equal(state.mockExamSessions[0].correctCount, 720);
+  assert.deepEqual(state.mockExamSessions[0].questionTimings, [
+    { questionId: 'q001', timeSpentSeconds: 12 },
+    { questionId: 'q003', timeSpentSeconds: 14400 },
+  ]);
   assert.equal(state.mockExamSessions[0].totalCount, 720);
   assert.equal(state.mockExamSessions[1].score, 0);
   assert.equal(state.mockExamSessions[1].correctCount, 0);
+  assert.deepEqual(state.mockExamSessions[1].questionTimings, []);
   assert.equal(state.mockExamSessions[1].totalCount, 0);
   assert.equal(state.streakFreezeState.available, 4);
   assert.match(state.streakFreezeState.lastEarnedAt, /^\d{4}-\d{2}-\d{2}$/);
@@ -456,10 +470,17 @@ test('progress mutations return the same shape as persisted JSON readback', () =
     sessionId: 'mock-1',
     score: 0.8,
     correctCount: 16,
+    questionTimings: [
+      { questionId: 'q001', timeSpentSeconds: 18 },
+      { questionId: 'q002', timeSpentSeconds: -1 },
+    ],
     totalCount: 20,
   });
   assertReturnedStateMatchesReadback();
   assert.equal(useProgressStore.getState().mockExamSessions[0].sessionId, 'mock-1');
+  assert.deepEqual(useProgressStore.getState().mockExamSessions[0].questionTimings, [
+    { questionId: 'q001', timeSpentSeconds: 18 },
+  ]);
 
   useProgressStore.getState().resetProgress();
   assertReturnedStateMatchesReadback();

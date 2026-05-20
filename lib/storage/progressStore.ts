@@ -29,6 +29,12 @@ export type MockExamProgress = {
   completedAt: string;
   correctCount: number;
   totalCount: number;
+  questionTimings: MockExamQuestionTiming[];
+};
+
+export type MockExamQuestionTiming = {
+  questionId: string;
+  timeSpentSeconds: number;
 };
 
 const progressStateKey = 'progressState';
@@ -36,6 +42,7 @@ const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
+const maxHydratedMockQuestionTimeSeconds = 4 * 60 * 60;
 const maxHydratedFreezeLifetimeCount = 10000;
 const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -72,6 +79,7 @@ type MockExamProgressInput = {
   score: number;
   completedAt?: string;
   correctCount?: number;
+  questionTimings?: MockExamQuestionTiming[];
   totalCount?: number;
 };
 
@@ -154,6 +162,31 @@ function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
     ),
     rescuedDayKeys,
   };
+}
+
+function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTiming[] {
+  if (!Array.isArray(value)) return [];
+
+  const timings: MockExamQuestionTiming[] = [];
+  const seenQuestionIds = new Set<string>();
+
+  for (const timing of value) {
+    if (!timing || typeof timing !== 'object') continue;
+    const item = timing as Partial<MockExamQuestionTiming>;
+    const questionId = typeof item.questionId === 'string' ? item.questionId.trim() : '';
+    if (!questionId || seenQuestionIds.has(questionId)) continue;
+    const timeSpentSeconds = normalizeNonNegativeInteger(
+      item.timeSpentSeconds,
+      0,
+      maxHydratedMockQuestionTimeSeconds,
+    );
+    if (timeSpentSeconds <= 0) continue;
+
+    seenQuestionIds.add(questionId);
+    timings.push({ questionId, timeSpentSeconds });
+  }
+
+  return timings;
 }
 
 function streakFreezeStatesEqual(a: StreakFreezeState, b: StreakFreezeState): boolean {
@@ -242,6 +275,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
         score: clampScore(item.score ?? 0),
         completedAt,
         correctCount,
+        questionTimings: normalizeMockExamQuestionTimings(item.questionTimings),
         totalCount,
       });
     }
@@ -400,6 +434,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         score: clampScore(session.score),
         completedAt,
         correctCount: Math.max(0, session.correctCount ?? 0),
+        questionTimings: normalizeMockExamQuestionTimings(session.questionTimings),
         totalCount: Math.max(0, session.totalCount ?? 0),
       };
       const existingSession = state.mockExamSessions.find(

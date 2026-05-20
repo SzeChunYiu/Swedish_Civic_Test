@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
+import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
@@ -11,6 +13,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
+import { buildExamDiagnostic } from '../../lib/learning/examDiagnostic';
 import {
   showRewardedExtraExamAd,
   type RewardedExtraExamAdStatus,
@@ -18,6 +21,7 @@ import {
 import {
   buildExamChapterBreakdownItems,
   buildExamReviewItems,
+  buildMockExamQuizSession,
   formatExamTime,
   generateExam,
   scoreExam,
@@ -204,6 +208,10 @@ function getRewardedAdStatusText(status: RewardedExtraExamAdStatus, language: Ap
 }
 
 export default function Screen() {
+  const scrollViewRef = useRef<ScrollView | null>(null);
+  const reviewCardRefs = useRef<Record<string, View | null>>({});
+  const examStartedAtIsoRef = useRef(new Date().toISOString());
+  const timingCheckpointMsRef = useRef(Date.now());
   const [examAttemptIndex, setExamAttemptIndex] = useState(0);
   const examSessionId = `mock-exam-${examAttemptIndex}`;
   const examQuestions = useMemo(
@@ -215,10 +223,13 @@ export default function Screen() {
     [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answerTimings, setAnswerTimings] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [examUnlocked, setExamUnlocked] = useState(false);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
+  const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
     defaultMockExamConfig.durationMinutes * 60,
@@ -239,30 +250,35 @@ export default function Screen() {
   const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
-    if (submitted || remainingSeconds <= 0) return undefined;
+    if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;
 
     const interval = setInterval(() => {
       setRemainingSeconds((current) => Math.max(0, current - 1));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remainingSeconds, submitted]);
+  }, [examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (
       shouldAutoSubmitExam({
+        examActive: examUnlocked,
         remainingSeconds,
         submitted,
         questionCount: examQuestions.length,
       })
     ) {
+      setSubmittedAt((current) => current ?? new Date().toISOString());
       setSubmitted(true);
     }
-  }, [examQuestions.length, remainingSeconds, submitted]);
+  }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
 
   useEffect(() => {
     if (examUnlocked || submitted || accessLoading) return;
     if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
+      const now = Date.now();
+      examStartedAtIsoRef.current = new Date(now).toISOString();
+      timingCheckpointMsRef.current = now;
       setExamUnlocked(true);
     }
   }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
@@ -277,6 +293,37 @@ export default function Screen() {
   const answeredCount = Object.keys(answers).length;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
+  const submittedExamSession = useMemo(
+    () =>
+      submitted && submittedAt
+        ? buildMockExamQuizSession({
+            answers,
+            completedAt: submittedAt,
+            questionTimings: answerTimings,
+            questions: examQuestions,
+            sessionId: examSessionId,
+            startedAt: examStartedAtIsoRef.current,
+          })
+        : null,
+    [answerTimings, answers, examQuestions, examSessionId, submitted, submittedAt],
+  );
+  const questionChapterIndex = useMemo(
+    () =>
+      Object.fromEntries(
+        examQuestions.map((question) => [question.id, question.chapterId] as const),
+      ),
+    [examQuestions],
+  );
+  const examDiagnostic = useMemo(
+    () =>
+      submittedExamSession
+        ? buildExamDiagnostic({
+            questionChapterIndex,
+            session: submittedExamSession,
+          })
+        : null,
+    [questionChapterIndex, submittedExamSession],
+  );
   const shouldAttemptRewardedAd =
     accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
   const shouldRetryAccessRead = accessDecision.reason === 'access_read_failed';
@@ -298,12 +345,52 @@ export default function Screen() {
     : getAccessStatusText(accessDecision.reason, language);
 
   const resetExamAttempt = useCallback(() => {
+    const now = Date.now();
+    examStartedAtIsoRef.current = new Date(now).toISOString();
+    timingCheckpointMsRef.current = now;
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
+    setAnswerTimings({});
     setSubmitted(false);
+    setSubmittedAt(null);
     setCompletionRecorded(false);
+    setFocusedReviewQuestionId(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
+  }, []);
+
+  const submitExam = useCallback(() => {
+    setSubmittedAt((current) => current ?? new Date().toISOString());
+    setSubmitted(true);
+  }, []);
+
+  const recordQuestionAnswer = useCallback((questionId: string, optionId: string) => {
+    const now = Date.now();
+    const elapsedSeconds = Math.max(1, Math.round((now - timingCheckpointMsRef.current) / 1000));
+    timingCheckpointMsRef.current = now;
+    setAnswers((current) => ({ ...current, [questionId]: optionId }));
+    setAnswerTimings((current) => ({
+      ...current,
+      [questionId]: Math.min(
+        defaultMockExamConfig.durationMinutes * 60,
+        (current[questionId] ?? 0) + elapsedSeconds,
+      ),
+    }));
+  }, []);
+
+  const jumpToReviewQuestion = useCallback((questionId: string) => {
+    setFocusedReviewQuestionId(questionId);
+
+    const scrollView = scrollViewRef.current;
+    const reviewCard = reviewCardRefs.current[questionId];
+    const scrollHandle = scrollView ? findNodeHandle(scrollView) : null;
+    if (!scrollView || !reviewCard || !scrollHandle) return;
+
+    reviewCard.measureLayout(
+      scrollHandle,
+      (_x, y) => scrollView.scrollTo({ animated: true, y: Math.max(0, y - space[2]) }),
+      () => {},
+    );
   }, []);
 
   const handleStartAccessibleExam = useCallback(async () => {
@@ -365,8 +452,15 @@ export default function Screen() {
     recordMockExamSession({
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
+      completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
+      questionTimings:
+        submittedExamSession?.answers
+          .filter((answer) => answer.timeSpentSeconds > 0)
+          .map((answer) => ({
+            questionId: answer.questionId,
+            timeSpentSeconds: answer.timeSpentSeconds,
+          })) ?? [],
       totalCount: resultTotalCount,
     });
 
@@ -392,6 +486,7 @@ export default function Screen() {
     resultCorrectCount,
     resultTotalCount,
     submitted,
+    submittedExamSession,
   ]);
 
   if (!result && !examUnlocked) {
@@ -433,7 +528,11 @@ export default function Screen() {
 
   if (result) {
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.hero}>
           <Badge tone={result.percent >= 75 && !endedByTime ? 'green' : 'orange'}>
             {endedByTime ? copy.timeExpiredBadge : copy.resultBadge}
@@ -447,13 +546,13 @@ export default function Screen() {
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.resultCard}>
-          <Text style={styles.metric}>{result.percent}%</Text>
-          <Text style={styles.subtitle}>
-            {copy.correctCount(result.correctCount, result.totalCount)}
-          </Text>
-          <Text style={styles.resultNote}>{copy.resultNote}</Text>
-        </View>
+        <ResultSummary
+          correctCount={result.correctCount}
+          languageOverride={language}
+          status={result.percent >= 75 && !endedByTime ? 'strong' : 'review'}
+          subtitle={copy.resultNote}
+          totalCount={result.totalCount}
+        />
         <View style={styles.accessCard}>
           <View style={styles.reviewHeader}>
             <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -505,8 +604,26 @@ export default function Screen() {
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.questionReviewTitle}
         </Text>
+        {submittedExamSession && examDiagnostic ? (
+          <MockExamTimeHeatmap
+            answers={submittedExamSession.answers}
+            language={language}
+            medianMs={examDiagnostic.medianMs}
+            onSelectQuestion={jumpToReviewQuestion}
+          />
+        ) : null}
         {reviewItems.map((item, index) => (
-          <View key={item.questionId} style={styles.reviewCard}>
+          <View
+            accessibilityState={{ selected: focusedReviewQuestionId === item.questionId }}
+            key={item.questionId}
+            ref={(node) => {
+              reviewCardRefs.current[item.questionId] = node;
+            }}
+            style={[
+              styles.reviewCard,
+              focusedReviewQuestionId === item.questionId ? styles.reviewCardFocused : null,
+            ]}
+          >
             <View style={styles.reviewHeader}>
               <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
               <Badge tone={item.isCorrect ? 'green' : 'orange'}>
@@ -593,9 +710,7 @@ export default function Screen() {
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
                   accessibilityRole="button"
                   accessibilityState={{ selected: isSelected }}
-                  onPress={() =>
-                    setAnswers((current) => ({ ...current, [question.id]: option.id }))
-                  }
+                  onPress={() => recordQuestionAnswer(question.id, option.id)}
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
                   <Text style={[styles.optionText, isSelected ? styles.optionTextSelected : null]}>
@@ -614,7 +729,7 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ disabled: !canSubmit }}
         disabled={!canSubmit}
-        onPress={() => setSubmitted(true)}
+        onPress={submitExam}
         style={styles.actionButton}
       >
         {copy.submitLabel}
@@ -722,22 +837,6 @@ const styles = StyleSheet.create({
   actionButton: {
     minHeight: space[5] + space[0.5],
   },
-  resultCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    padding: space[2],
-  },
-  metric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  resultNote: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
-  },
   breakdownRow: {
     alignItems: 'center',
     borderColor: colors.border,
@@ -771,6 +870,10 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.5],
     padding: space[2],
+  },
+  reviewCardFocused: {
+    borderColor: colors.focus,
+    borderWidth: 2,
   },
   reviewHeader: {
     alignItems: 'center',
