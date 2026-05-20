@@ -7,13 +7,13 @@ import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent'
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, radius, space } from '../../lib/theme';
-import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
+import type { BannerAdPlacement, PremiumEntitlements } from '../../types/monetization';
 
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
 }: {
-  placement?: AdPlacement;
+  placement?: BannerAdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const language = useSettingsStore((state) => state.language);
@@ -25,7 +25,12 @@ export function AdBanner({
   const visible =
     entitlementsReady &&
     mobileAdsConsent.initialized &&
-    shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision);
+    shouldShowAd(
+      placement,
+      resolvedEntitlements,
+      mobileAdsConsent.decision.consentDecision,
+      Platform.OS,
+    );
 
   if (!visible || !unitId) return null;
 

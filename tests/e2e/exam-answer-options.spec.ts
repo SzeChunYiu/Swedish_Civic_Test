@@ -1,107 +1,106 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+import { dismissBlockingModals, selectQuestionLanguageInSettings } from './browserLaunch';
 
 const totalQuestions = 20;
-const viewport = { width: 390, height: 844 };
+const minimumTargetSizePx = 44;
 
-function collectPageErrors(page: Page) {
-  const errors: string[] = [];
+function collectConsoleErrors(page: Page): string[] {
+  const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text());
+    if (message.type() === 'error') consoleErrors.push(message.text());
   });
-  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  return errors;
+  return consoleErrors;
 }
 
-async function enableEnglishSupportFromSettings(page: Page) {
-  await page.setViewportSize(viewport);
-  await markAboutTheTestSeen(page);
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-  await page
-    .getByLabel(/Byt frågespråk till Engelskt stöd|Set question language to English support/)
-    .click();
-
-  await expect(page.getByLabel('Set question language to English support')).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
+function englishAnswerLabel(questionNumber: number): RegExp {
+  return new RegExp(`^Select answer .+ for question ${questionNumber}$`);
 }
 
-async function expectReachableRadioTarget(option: Locator, label: string) {
-  await option.scrollIntoViewIfNeeded();
-  await expect(option).toBeVisible();
-  await expect(option).toHaveAttribute('role', 'radio');
-  await expect(option).toHaveAttribute('aria-checked', 'false');
-
-  const box = await option.boundingBox();
-  expect(box, `${label} should have measurable geometry`).not.toBeNull();
-  expect(box!.width, `${label} should keep a 44px minimum width`).toBeGreaterThanOrEqual(44);
-  expect(box!.height, `${label} should keep a 44px minimum height`).toBeGreaterThanOrEqual(44);
+function swedishAnswerLabel(questionNumber: number): RegExp {
+  return new RegExp(`^Välj svaret .+ för fråga ${questionNumber}$`);
 }
 
-test('mock exam answer options keep English radio labels and checked state', async ({ page }) => {
-  const pageErrors = collectPageErrors(page);
+async function expectMinimumTargetSize(locator: Locator): Promise<void> {
+  const box = await locator.boundingBox();
 
-  await enableEnglishSupportFromSettings(page);
+  expect(box, 'answer option should have a rendered target box').not.toBeNull();
+  expect(box!.width, 'answer option target width').toBeGreaterThanOrEqual(minimumTargetSizePx);
+  expect(box!.height, 'answer option target height').toBeGreaterThanOrEqual(minimumTargetSizePx);
+}
+
+test('mock exam English answer options expose radio state through submit and review', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await selectQuestionLanguageInSettings(page, 'en');
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
+  await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
+  await expect(page.getByText('Övningsprov')).toHaveCount(0);
+
   const start = page.getByLabel('Start mock exam');
   await expect(start).toBeEnabled();
+  await page.waitForTimeout(2000);
   await start.click();
 
   await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
-  await expect(page.getByLabel(/^Välj svaret /)).toHaveCount(0);
+  await expect(page.getByText(/^Time left/)).toBeVisible();
 
-  const questionOneOptions = page.getByRole('radio', {
-    name: /^Select answer .+ for question 1$/,
-  });
-  await expect(questionOneOptions).toHaveCount(4);
+  const submit = page.getByLabel('Submit mock exam');
+  await expect(submit).toBeDisabled();
 
-  for (let index = 0; index < 4; index += 1) {
-    await expectReachableRadioTarget(
-      questionOneOptions.nth(index),
-      `question 1 option ${index + 1}`,
+  for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+    const englishOptions = page.getByRole('radio', { name: englishAnswerLabel(questionNumber) });
+    const optionCount = await englishOptions.count();
+
+    expect(
+      optionCount,
+      `question ${questionNumber} should expose answer radio options`,
+    ).toBeGreaterThanOrEqual(2);
+    await expect(page.getByRole('radio', { name: swedishAnswerLabel(questionNumber) })).toHaveCount(
+      0,
     );
-  }
 
-  const selectedOption = questionOneOptions.first();
-  await selectedOption.click();
-  await expect(selectedOption).toHaveAttribute('aria-checked', 'true');
+    for (let optionIndex = 0; optionIndex < optionCount; optionIndex += 1) {
+      const option = englishOptions.nth(optionIndex);
 
-  for (let index = 1; index < 4; index += 1) {
-    await expect(questionOneOptions.nth(index)).toHaveAttribute('aria-checked', 'false');
-  }
+      await expect(option).toHaveAttribute('aria-checked', 'false');
+      await expectMinimumTargetSize(option);
+    }
 
-  for (let questionNumber = 2; questionNumber <= totalQuestions; questionNumber += 1) {
-    await page
-      .getByRole('radio', { name: new RegExp(`^Select answer .+ for question ${questionNumber}$`) })
-      .first()
-      .click();
+    const selectedOption = englishOptions.first();
+    await selectedOption.click();
+    await expect(selectedOption).toHaveAttribute('aria-checked', 'true');
+    await expect(englishOptions.nth(1)).toHaveAttribute('aria-checked', 'false');
   }
 
   await expect(page.getByText(`${totalQuestions}/${totalQuestions} answered`)).toBeVisible();
-  await expect(page.getByLabel('Submit mock exam')).toBeEnabled();
-  await page.getByLabel('Submit mock exam').click();
+  await expect(submit).toBeEnabled();
+
+  await submit.click();
 
   await expect(page.getByText('Exam result', { exact: true })).toBeVisible();
-  await expect(page.getByText('Mock exam result')).toBeVisible();
   await expect(page.getByText('Question review')).toBeVisible();
   await expect(page.getByText('Selected answer').first()).toBeVisible();
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText('Submitted results are final')).toBeVisible();
 
-  await expect(page.getByLabel(/^Välj svaret /)).toHaveCount(0);
+  await expect(page.getByRole('radio', { name: /^Välj svaret/ })).toHaveCount(0);
+  await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
+  await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Valt svar')).toHaveCount(0);
   await expect(page.getByText('Rätt svar')).toHaveCount(0);
-  await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
+  await expect(page.getByText('UHR-källa')).toHaveCount(0);
 
-  expect(pageErrors).toEqual([]);
+  expect(consoleErrors).toEqual([]);
 });

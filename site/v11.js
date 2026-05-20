@@ -13,19 +13,13 @@
 
   /* ------------------------------------------------------------------ utils */
 
-  function clamp01(v) {
-    return isFinite(v) ? Math.max(0, Math.min(1, v)) : 0;
-  }
+  function clamp01(v) { return isFinite(v) ? Math.max(0, Math.min(1, v)) : 0; }
 
   function localDateKey(date) {
     const d = date || new Date();
-    return (
-      d.getFullYear() +
-      '-' +
-      String(d.getMonth() + 1).padStart(2, '0') +
-      '-' +
-      String(d.getDate()).padStart(2, '0')
-    );
+    return d.getFullYear() + '-' +
+      String(d.getMonth() + 1).padStart(2, '0') + '-' +
+      String(d.getDate()).padStart(2, '0');
   }
 
   function mondayOfWeek(date) {
@@ -50,53 +44,30 @@
   /* ----------------------------------------------- storage helpers */
 
   function getProgress() {
-    try {
-      return JSON.parse(localStorage.getItem('smt_progress') || '{}');
-    } catch {
-      return {};
-    }
+    try { return JSON.parse(localStorage.getItem('smt_progress') || '{}'); } catch { return {}; }
   }
 
   function getMocks() {
-    try {
-      return JSON.parse(localStorage.getItem('smt_mocks') || '[]');
-    } catch {
-      return [];
-    }
+    try { return JSON.parse(localStorage.getItem('smt_mocks') || '[]'); } catch { return []; }
   }
 
   function getStreak() {
-    try {
-      return JSON.parse(localStorage.getItem('smt_streak') || 'null');
-    } catch {
-      return null;
-    }
+    try { return JSON.parse(localStorage.getItem('smt_streak') || 'null'); } catch { return null; }
   }
 
   function getFreeze() {
     try {
-      return (
-        JSON.parse(localStorage.getItem('smt_freeze') || 'null') || {
-          available: 1,
-          lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
-          lifetimeSpent: 0,
-          rescuedDays: [],
-        }
-      );
-    } catch {
-      return {
-        available: 1,
-        lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
-        lifetimeSpent: 0,
-        rescuedDays: [],
+      return JSON.parse(localStorage.getItem('smt_freeze') || 'null') || {
+        available: 1, lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
+        lifetimeSpent: 0, rescuedDays: []
       };
+    } catch {
+      return { available: 1, lastEarnedWeek: localDateKey(mondayOfWeek(new Date())), lifetimeSpent: 0, rescuedDays: [] };
     }
   }
 
   function saveFreeze(f) {
-    try {
-      localStorage.setItem('smt_freeze', JSON.stringify(f));
-    } catch {}
+    try { localStorage.setItem('smt_freeze', JSON.stringify(f)); } catch {}
   }
 
   /* ----------------------------------------------- streak with freeze */
@@ -108,9 +79,7 @@
     const activeDaySet = new Set();
 
     if (saved && Array.isArray(saved.activeDays)) {
-      saved.activeDays.forEach(function (d) {
-        activeDaySet.add(d);
-      });
+      saved.activeDays.forEach(function (d) { activeDaySet.add(d); });
     }
 
     let freeze = getFreeze();
@@ -124,15 +93,13 @@
       if (earned > 0) {
         freeze = Object.assign({}, freeze, {
           available: freeze.available + earned,
-          lastEarnedWeek: currentWeekKey,
+          lastEarnedWeek: currentWeekKey
         });
         saveFreeze(freeze);
       }
     }
 
-    (freeze.rescuedDays || []).forEach(function (d) {
-      activeDaySet.add(d);
-    });
+    (freeze.rescuedDays || []).forEach(function (d) { activeDaySet.add(d); });
 
     let cursor = activeDaySet.has(today) ? today : prevDayKey(today);
     let streakDays = 0;
@@ -158,7 +125,7 @@
       freeze = Object.assign({}, freeze, {
         available: available,
         lifetimeSpent: freeze.lifetimeSpent + rescuedThisRun.length,
-        rescuedDays: (freeze.rescuedDays || []).concat(rescuedThisRun),
+        rescuedDays: (freeze.rescuedDays || []).concat(rescuedThisRun)
       });
       saveFreeze(freeze);
     }
@@ -189,54 +156,33 @@
 
     const streak = getStreak();
     const today = localDateKey(new Date());
-    const recency =
-      streak && streak.lastDate
-        ? clamp01(
-            1 - Math.abs(new Date() - new Date(streak.lastDate + 'T00:00:00')) / (14 * 86400000),
-          )
-        : 0;
+    const recency = (streak && streak.lastDate)
+      ? clamp01(1 - Math.abs(new Date() - new Date(streak.lastDate + 'T00:00:00')) / (14 * 86400000))
+      : 0;
 
     const recentMocks = mocks.slice(0, 3);
-    const mockAvg =
-      recentMocks.length === 0
-        ? 0
-        : clamp01(
-            recentMocks.reduce(function (s, m) {
-              return s + (m.pct || 0);
-            }, 0) /
-              (recentMocks.length * 100),
-          );
+    const mockAvg = recentMocks.length === 0 ? 0 :
+      clamp01(recentMocks.reduce(function (s, m) { return s + (m.pct || 0); }, 0) / (recentMocks.length * 100));
 
     const hasMocks = mocks.length > 0;
     const w = hasMocks
       ? { accuracy: 0.35, coverage: 0.25, recency: 0.1, mock: 0.3 }
       : { accuracy: 0.55, coverage: 0.3, recency: 0.15, mock: 0 };
 
-    const score = Math.round(
-      clamp01(
-        accuracy * w.accuracy + coverage * w.coverage + recency * w.recency + mockAvg * w.mock,
-      ) * 100,
-    );
+    const score = Math.round(clamp01(
+      accuracy * w.accuracy + coverage * w.coverage + recency * w.recency + mockAvg * w.mock
+    ) * 100);
 
     const verdict =
-      score < 50
-        ? 'not_ready_yet'
-        : score < 70
-          ? 'getting_there'
-          : score < 85
-            ? 'almost_ready'
-            : 'strong_preparation';
+      score < 50 ? 'not_ready_yet' :
+      score < 70 ? 'getting_there' :
+      score < 85 ? 'almost_ready' : 'strong_preparation';
 
     return {
       score: score,
       verdict: verdict,
       isSparse: totalAnswered < 30,
-      components: {
-        accuracy: accuracy,
-        coverage: coverage,
-        recency: recency,
-        mockAverage: mockAvg,
-      },
+      components: { accuracy: accuracy, coverage: coverage, recency: recency, mockAverage: mockAvg }
     };
   }
 
@@ -249,8 +195,7 @@
     const weekStartT = mondayOfWeek(now).getTime();
     const weekEndT = weekStartT + 7 * 86400000;
 
-    let totalA = 0,
-      correctA = 0;
+    let totalA = 0, correctA = 0;
     Object.values(progress).forEach(function (ch) {
       totalA += ch.answered || 0;
       correctA += ch.correct || 0;
@@ -263,12 +208,9 @@
     const mocksThisWeek = mocks.filter(function (m) {
       return m.t && m.t >= weekStartT && m.t < weekEndT;
     });
-    const bestMock =
-      mocksThisWeek.length > 0
-        ? mocksThisWeek.reduce(function (b, m) {
-            return m.pct > b ? m.pct : b;
-          }, 0)
-        : null;
+    const bestMock = mocksThisWeek.length > 0
+      ? mocksThisWeek.reduce(function (b, m) { return m.pct > b ? m.pct : b; }, 0)
+      : null;
 
     const unresolvedMistakes = Object.values(progress).filter(function (ch) {
       return ch.answered > 0 && ch.correct < ch.answered;
@@ -291,76 +233,47 @@
     const progress = getProgress();
     const chapters = window.SMT_CHAPTERS_META || [];
 
-    return chapters
-      .map(function (ch) {
-        const key = 'ch' + ch.id;
-        const data = progress[key] || { answered: 0, correct: 0 };
-        const accuracy = data.answered === 0 ? null : data.correct / data.answered;
-        const coverage = ch.questionCount > 0 ? Math.min(1, data.answered / ch.questionCount) : 0;
-        const isSparse = data.answered < 5;
-        const eff = accuracy === null ? 0.5 : isSparse ? 0.5 : accuracy;
-        return {
-          id: ch.id,
-          title: ch.title || 'Chapter ' + ch.id,
-          accuracy: accuracy,
-          answers: data.answered,
-          weaknessScore: 0.7 * (1 - eff) + 0.3 * (1 - coverage),
-          isSparse: isSparse,
-        };
-      })
-      .sort(function (a, b) {
-        return b.weaknessScore - a.weaknessScore;
-      })
-      .slice(0, n);
+    return chapters.map(function (ch) {
+      const key = 'ch' + ch.id;
+      const data = progress[key] || { answered: 0, correct: 0 };
+      const accuracy = data.answered === 0 ? null : data.correct / data.answered;
+      const coverage = ch.questionCount > 0 ? Math.min(1, data.answered / ch.questionCount) : 0;
+      const isSparse = data.answered < 5;
+      const eff = accuracy === null ? 0.5 : isSparse ? 0.5 : accuracy;
+      return {
+        id: ch.id,
+        title: ch.title || ('Chapter ' + ch.id),
+        accuracy: accuracy,
+        answers: data.answered,
+        weaknessScore: 0.7 * (1 - eff) + 0.3 * (1 - coverage),
+        isSparse: isSparse
+      };
+    })
+    .sort(function (a, b) { return b.weaknessScore - a.weaknessScore; })
+    .slice(0, n);
   }
 
   /* ----------------------------------------------- UI rendering */
 
   const VERDICT_COPY = {
-    en: {
-      not_ready_yet: 'Keep practicing',
-      getting_there: 'Progress is building',
-      almost_ready: 'Practice looks steady',
-      strong_preparation: 'Strong practice base',
-    },
-    sv: {
-      not_ready_yet: 'Fortsätt öva',
-      getting_there: 'Framstegen växer',
-      almost_ready: 'Övningen ser stabil ut',
-      strong_preparation: 'Stark övningsgrund',
-    },
+    en: { not_ready_yet: 'Keep going', getting_there: 'Getting there', almost_ready: 'Almost ready', strong_preparation: 'Strong prep' },
+    sv: { not_ready_yet: 'Fortsätt öva', getting_there: 'På god väg', almost_ready: 'Nästan redo', strong_preparation: 'Stark förberedelse' }
   };
   const VERDICT_COLOR = {
-    not_ready_yet: '#e05b2e',
-    getting_there: '#d4930a',
-    almost_ready: '#2e86c1',
-    strong_preparation: '#1aae39',
+    not_ready_yet: '#e05b2e', getting_there: '#d4930a', almost_ready: '#2e86c1', strong_preparation: '#1aae39'
   };
 
-  function lang() {
-    try {
-      return localStorage.getItem('smt_lang') || 'en';
-    } catch {
-      return 'en';
-    }
-  }
-  function pct(v) {
-    return Math.round(v * 100) + '%';
-  }
+  function lang() { try { return localStorage.getItem('smt_lang') || 'en'; } catch { return 'en'; } }
+  function pct(v) { return Math.round(v * 100) + '%'; }
 
   function renderDashboard() {
     const el = document.getElementById('v11-dashboard');
     if (!el) return;
 
     const progress = getProgress();
-    const hasAnyProgress = Object.values(progress).some(function (ch) {
-      return (ch.answered || 0) > 0;
-    });
+    const hasAnyProgress = Object.values(progress).some(function (ch) { return (ch.answered || 0) > 0; });
 
-    if (!hasAnyProgress) {
-      el.style.display = 'none';
-      return;
-    }
+    if (!hasAnyProgress) { el.style.display = 'none'; return; }
     el.style.display = '';
 
     const l = lang();
@@ -375,7 +288,7 @@
     const verdictLabel = (VERDICT_COPY[l] || VERDICT_COPY.en)[readiness.verdict];
     const verdictColor = VERDICT_COLOR[readiness.verdict];
     const circumference = 2 * Math.PI * 34;
-    const dashLen = Math.round((readiness.score / 100) * circumference);
+    const dashLen = Math.round(readiness.score / 100 * circumference);
 
     // Build grid using safe DOM construction
     el.textContent = '';
@@ -389,7 +302,7 @@
 
     const rlabel = document.createElement('span');
     rlabel.className = 'v11-label';
-    rlabel.textContent = l === 'sv' ? 'Lokal övningssignal' : 'Local practice signal';
+    rlabel.textContent = l === 'sv' ? 'Din beredskap' : 'Readiness';
     readinessCard.appendChild(rlabel);
 
     const ringWrap = document.createElement('div');
@@ -400,34 +313,22 @@
     svg.setAttribute('width', '80');
     svg.setAttribute('height', '80');
     const track = document.createElementNS(svgNS, 'circle');
-    track.setAttribute('cx', '40');
-    track.setAttribute('cy', '40');
-    track.setAttribute('r', '34');
-    track.setAttribute('fill', 'none');
-    track.setAttribute('stroke', '#e8e8e8');
-    track.setAttribute('stroke-width', '8');
+    track.setAttribute('cx', '40'); track.setAttribute('cy', '40'); track.setAttribute('r', '34');
+    track.setAttribute('fill', 'none'); track.setAttribute('stroke', '#e8e8e8'); track.setAttribute('stroke-width', '8');
     const fill = document.createElementNS(svgNS, 'circle');
-    fill.setAttribute('cx', '40');
-    fill.setAttribute('cy', '40');
-    fill.setAttribute('r', '34');
-    fill.setAttribute('fill', 'none');
-    fill.setAttribute('stroke', verdictColor);
-    fill.setAttribute('stroke-width', '8');
+    fill.setAttribute('cx', '40'); fill.setAttribute('cy', '40'); fill.setAttribute('r', '34');
+    fill.setAttribute('fill', 'none'); fill.setAttribute('stroke', verdictColor); fill.setAttribute('stroke-width', '8');
     fill.setAttribute('stroke-dasharray', dashLen + ' ' + Math.round(circumference));
-    fill.setAttribute('stroke-linecap', 'round');
-    fill.setAttribute('transform', 'rotate(-90 40 40)');
-    svg.appendChild(track);
-    svg.appendChild(fill);
+    fill.setAttribute('stroke-linecap', 'round'); fill.setAttribute('transform', 'rotate(-90 40 40)');
+    svg.appendChild(track); svg.appendChild(fill);
     const inner = document.createElement('div');
     inner.className = 'v11-score-inner';
     const scoreStrong = document.createElement('strong');
     scoreStrong.textContent = readiness.score;
     const scoreSmall = document.createElement('small');
     scoreSmall.textContent = '/100';
-    inner.appendChild(scoreStrong);
-    inner.appendChild(scoreSmall);
-    ringWrap.appendChild(svg);
-    ringWrap.appendChild(inner);
+    inner.appendChild(scoreStrong); inner.appendChild(scoreSmall);
+    ringWrap.appendChild(svg); ringWrap.appendChild(inner);
     readinessCard.appendChild(ringWrap);
 
     const verdictEl = document.createElement('span');
@@ -439,29 +340,15 @@
     if (readiness.isSparse) {
       const sparse = document.createElement('span');
       sparse.className = 'v11-sparse';
-      sparse.textContent =
-        l === 'sv'
-          ? 'Svara på fler frågor för en stabilare lokal signal'
-          : 'Answer more questions for a steadier local signal';
+      sparse.textContent = l === 'sv' ? 'Mer data behövs' : 'Keep going — more data needed';
       readinessCard.appendChild(sparse);
     }
 
-    const caveat = document.createElement('p');
-    caveat.className = 'v11-sparse';
-    caveat.textContent =
-      l === 'sv'
-        ? 'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.'
-        : 'Based only on practice and mock attempts on this device, not an official result forecast.';
-    readinessCard.appendChild(caveat);
-
     const comps = document.createElement('div');
     comps.className = 'v11-components';
-    [
-      [l === 'sv' ? 'Rätt' : 'Practice accuracy', readiness.components.accuracy],
-      [l === 'sv' ? 'Kapiteltäckning' : 'Chapter coverage', readiness.components.coverage],
-      readiness.components.mockAverage > 0
-        ? [l === 'sv' ? 'Övningsprov' : 'Mock average', readiness.components.mockAverage]
-        : null,
+    [[l === 'sv' ? 'Nogg.' : 'Acc.', readiness.components.accuracy],
+     [l === 'sv' ? 'Täckn.' : 'Cov.', readiness.components.coverage],
+     readiness.components.mockAverage > 0 ? ['Mock', readiness.components.mockAverage] : null
     ].forEach(function (item) {
       if (!item) return;
       const s = document.createElement('span');
@@ -489,14 +376,9 @@
     if (rescuedThisRun.length > 0) {
       const banner = document.createElement('p');
       banner.className = 'v11-freeze-banner';
-      banner.textContent =
-        l === 'sv'
-          ? 'Strecket räddades — ' + freeze.available + ' frysar kvar'
-          : 'Streak protected — ' +
-            freeze.available +
-            ' freeze' +
-            (freeze.available !== 1 ? 's' : '') +
-            ' left';
+      banner.textContent = l === 'sv'
+        ? ('Strecket räddades — ' + freeze.available + ' frysar kvar')
+        : ('Streak protected — ' + freeze.available + ' freeze' + (freeze.available !== 1 ? 's' : '') + ' left');
       streakCard.appendChild(banner);
     }
     const freezeBar = document.createElement('div');
@@ -525,12 +407,8 @@
     [
       [recap.questionsAnswered, l === 'sv' ? 'Svar' : 'Answers'],
       [recap.chaptersTouched, l === 'sv' ? 'Kapitel' : 'Chapters'],
-      recap.bestMockScore !== null
-        ? [recap.bestMockScore + '%', l === 'sv' ? 'Bästa prov' : 'Best mock']
-        : null,
-      recap.unresolvedMistakes > 0
-        ? [recap.unresolvedMistakes, l === 'sv' ? 'Misstag' : 'Mistakes', true]
-        : null,
+      recap.bestMockScore !== null ? [recap.bestMockScore + '%', l === 'sv' ? 'Bästa prov' : 'Best mock'] : null,
+      recap.unresolvedMistakes > 0 ? [recap.unresolvedMistakes, l === 'sv' ? 'Misstag' : 'Mistakes', true] : null
     ].forEach(function (item) {
       if (!item) return;
       const stat = document.createElement('div');
@@ -539,8 +417,7 @@
       strong.textContent = item[0];
       const small = document.createElement('small');
       small.textContent = item[1];
-      stat.appendChild(strong);
-      stat.appendChild(small);
+      stat.appendChild(strong); stat.appendChild(small);
       statsRow.appendChild(stat);
     });
     recapCard.appendChild(statsRow);
@@ -566,17 +443,13 @@
       if (ch.accuracy !== null && ch.accuracy < 0.6) acc.style.color = '#e05b2e';
       else acc.style.color = '#888';
       acc.textContent = ch.isSparse
-        ? l === 'sv'
-          ? 'Ej testad'
-          : 'Not tried'
+        ? (l === 'sv' ? 'Ej testad' : 'Not tried')
         : Math.round(ch.accuracy * 100) + '%';
       const link = document.createElement('a');
       link.className = 'v11-weak-link';
       link.href = '#/practice?ch=' + encodeURIComponent(ch.id);
       link.textContent = l === 'sv' ? 'Öva →' : 'Practice →';
-      row.appendChild(title);
-      row.appendChild(acc);
-      row.appendChild(link);
+      row.appendChild(title); row.appendChild(acc); row.appendChild(link);
       weakList.appendChild(row);
     });
     weakCard.appendChild(weakList);
@@ -614,4 +487,5 @@
   } else {
     tryInit();
   }
+
 })();

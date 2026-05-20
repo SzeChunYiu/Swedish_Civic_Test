@@ -1,4 +1,5 @@
 import { Link } from 'expo-router';
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -80,12 +81,15 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
+  const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const copy = aboutTheTestCopy[language];
 
-  if (!useSettingsStore.getState().hasSeenAboutTheTest) {
-    markAboutTheTestSeen();
-  }
+  useEffect(() => {
+    if (!hasSeenAboutTheTest) {
+      markAboutTheTestSeen();
+    }
+  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);
 
   const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },

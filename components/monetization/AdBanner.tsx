@@ -1,22 +1,18 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
-import {
-  getAdUnit,
-  shouldShowAd,
-  WEB_AD_FALLBACK_CONSENT_DECISION,
-} from '../../lib/monetization/ads';
+import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
-import type { AdPlacement, PremiumEntitlements } from '../../types/monetization';
+import type { BannerAdPlacement, PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 
 export function AdBanner({
   placement = 'home_banner',
   entitlements,
 }: {
-  placement?: AdPlacement;
+  placement?: BannerAdPlacement;
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const language = useSettingsStore((state) => state.language);
@@ -24,12 +20,7 @@ export function AdBanner({
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
 
-  if (
-    !entitlementsReady ||
-    !shouldShowAd(placement, resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION)
-  ) {
-    return null;
-  }
+  if (!entitlementsReady || !shouldShowAd(placement, resolvedEntitlements)) return null;
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
