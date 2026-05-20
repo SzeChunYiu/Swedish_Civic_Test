@@ -4,9 +4,48 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 
 function readSearchRouteSource() {
   return fs.readFileSync(searchRoutePath, 'utf8');
+}
+
+function assertSearchRouteQuestionResults(source) {
+  const requiredRules = [
+    [/import \{ questions \} from '\.\.\/data\/questions';/, 'question bank import'],
+    [/searchQuestions,/, 'question search helper import'],
+    [/getQuestionSearchTitle,/, 'localized question title helper import'],
+    [/getQuestionSearchExcerpt,/, 'localized question excerpt helper import'],
+    [/getQuestionSearchChapterName,/, 'localized question chapter helper import'],
+    [/const questionResults = useMemo\(\(\) => \{/, 'question results memo'],
+    [/return searchQuestions\(\{/, 'searchQuestions call'],
+    [/query: trimmedQuery,/, 'trimmed query passed to question search'],
+    [/questions,/, 'question bank passed to question search'],
+    [
+      /copy\.filteredSummary\(filteredTerms\.length, termsWithChapters\.length, questionResults\.length\)/,
+      'live summary includes question count',
+    ],
+    [/const title = getQuestionSearchTitle\(result\.question, language\);/, 'localized title use'],
+    [
+      /const excerpt = getQuestionSearchExcerpt\(result\.question, language\);/,
+      'localized excerpt use',
+    ],
+    [/href=\{`\/quiz\/\$\{result\.question\.id\}`\}/, 'routed quiz question link'],
+    [/questionSectionTitle: 'Övningsfrågor'/, 'Swedish question section copy'],
+    [/questionSectionTitle: 'Practice questions'/, 'English question section copy'],
+    [
+      /openQuestionAccessibilityLabel: \(title\) => `Öppna övningsfrågan: \$\{title\}`/,
+      'Swedish question link label',
+    ],
+    [
+      /openQuestionAccessibilityLabel: \(title\) => `Open practice question: \$\{title\}`/,
+      'English question link label',
+    ],
+  ];
+
+  for (const [pattern, label] of requiredRules) {
+    assert.match(source, pattern, `Search route missing ${label}`);
+  }
 }
 
 function assertSearchRouteQueryHydration(source) {
@@ -47,6 +86,7 @@ function assertSearchRouteQueryHydration(source) {
 
 test('Search route hydrates q or query URL params before typing', () => {
   assertSearchRouteQueryHydration(readSearchRouteSource());
+  assertSearchRouteQuestionResults(readSearchRouteSource());
 });
 
 test('Search route hydration rejects blank initial query drift', () => {
@@ -65,4 +105,19 @@ test('Search route hydration rejects dropping the query fallback param', () => {
   );
 
   assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+});
+
+test('Search route question results reject dropping routed quiz links', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    'href={`/quiz/${result.question.id}`}',
+    'href="/(tabs)/learn"',
+  );
+
+  assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /routed quiz question link/);
+});
+
+test('Search route question results reject dropping ranked helper usage', () => {
+  const mutatedSource = readSearchRouteSource().replace('return searchQuestions({', 'return [];');
+
+  assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /searchQuestions call/);
 });

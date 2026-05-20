@@ -8,16 +8,18 @@ type Language = 'sv' | 'en';
 const copy = {
   sv: {
     clear: 'Rensa sökfältet',
-    filteredSummary: /\d+ av \d+ samhällsbegrepp visas/,
+    filteredSummary: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
     initialSummary: /\d+ samhällsbegrepp i referensen/,
-    inputName: 'Sök samhällsbegrepp',
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
   },
   en: {
     clear: 'Clear the search field',
-    filteredSummary: /\d+ of \d+ civic reference terms shown/,
+    filteredSummary: /\d+ of \d+ terms and \d+ practice questions match/,
     initialSummary: /\d+ civic reference terms/,
-    inputName: 'Search civic terms',
+    inputName: 'Search civic terms and practice questions',
+    questionLink: /Open practice question:/,
     query: 'municipality',
   },
 } as const;
@@ -47,9 +49,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await page.goto('/search', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
 
-    const liveSummary = page.locator('[aria-live="polite"]').filter({
-      hasText: language === 'sv' ? /samhällsbegrepp/ : /civic reference terms/,
-    });
+    const liveSummary = page.locator('[aria-live="polite"]');
     await expect(liveSummary).toHaveCount(1);
     await expect(liveSummary).toHaveText(t.initialSummary);
 
@@ -58,6 +58,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
+    await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
 
     await page.getByRole('button', { name: t.clear }).click();
     await expect(liveSummary).toHaveText(t.initialSummary);

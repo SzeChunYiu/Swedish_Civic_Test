@@ -36,6 +36,9 @@ function assertSearchRouteAccessibilityParity(source) {
   const termCardTag = cardOpeningTags.find(
     (tag) => tag.includes('termSummary') || tag.includes('copy.termAccessibilityLabel'),
   );
+  const questionCardTag = cardOpeningTags.find(
+    (tag) => tag.includes('questionSummary') || tag.includes('copy.questionAccessibilityLabel'),
+  );
 
   assert.equal(
     searchCardTag,
@@ -46,6 +49,11 @@ function assertSearchRouteAccessibilityParity(source) {
     termCardTag,
     undefined,
     'glossary result Card must not group the nested chapter link',
+  );
+  assert.equal(
+    questionCardTag,
+    undefined,
+    'question result Card must not group the nested routed question link',
   );
 
   assert.match(source, /const searchDescriptionId = 'search-route-glossary-description';/);
@@ -58,8 +66,19 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /nativeID=\{termSummaryId\}/);
   assert.match(source, /aria-describedby=\{termSummaryId\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openChapterAccessibilityLabel\(chapterName\)\}/);
+  assert.match(source, /const questionSummary = copy\.questionAccessibilityLabel\(\{/);
+  assert.match(
+    source,
+    /const questionSummaryId = `search-question-summary-\$\{result\.question\.id\}`;/,
+  );
+  assert.match(source, /nativeID=\{questionSummaryId\}/);
+  assert.match(source, /aria-describedby=\{questionSummaryId\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.openQuestionAccessibilityLabel\(title\)\}/);
+  assert.match(source, /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /accessibilitySummaryText/);
+  assert.match(source, /Övningsfrågor/);
+  assert.match(source, /Practice questions/);
   assert.match(source, /No terms match your search/);
   assert.match(source, /Inga begrepp matchar din sökning/);
 }
@@ -89,6 +108,18 @@ test('search route accessibility parity rejects grouped glossary result Cards', 
   assert.throws(
     () => assertSearchRouteAccessibilityParity(mutatedSource),
     /glossary result Card must not group the nested chapter link/,
+  );
+});
+
+test('search route accessibility parity rejects grouped question result Cards', () => {
+  const mutatedSource = readSearchRoute().replace(
+    'style={styles.questionCard}',
+    'accessible accessibilityLabel={questionSummary} style={styles.questionCard}',
+  );
+
+  assert.throws(
+    () => assertSearchRouteAccessibilityParity(mutatedSource),
+    /question result Card must not group the nested routed question link/,
   );
 });
 
