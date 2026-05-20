@@ -1486,6 +1486,16 @@ test('exam screen does not import ad components', () => {
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion/);
+  assert.match(examSource, /setCompletionWriteFailed\(true\)/);
+  assert.match(
+    examSource,
+    /completionRecorded \|\| accessDecision\.reason === 'premium_unlimited_mock_exams'/,
+  );
+  assert.doesNotMatch(
+    examSource,
+    /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/,
+    'failed completion writes must not mark mock-exam completion as recorded',
+  );
   assert.match(examSource, /handleStartAccessibleExam/);
   assert.match(examSource, /Unlock extra mock exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);

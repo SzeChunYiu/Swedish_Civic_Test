@@ -1197,7 +1197,7 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
   assert.match(source, /aria-disabled=\{!canStartAccessibleExam \|\| startingAccessibleExam\}/);
   assert.match(
     source,
-    /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
+    /aria-disabled=\{\s*!completionAccessConfirmed \|\| !canStartAccessibleExam \|\| startingAccessibleExam\s*\}/,
   );
   assert.match(source, /aria-selected=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
