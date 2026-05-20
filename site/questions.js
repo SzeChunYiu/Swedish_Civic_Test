@@ -4904,7 +4904,7 @@
       },
       {
         "en": "People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå",
-        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umebor"
+        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor"
       }
     ],
     "answer": 0,
@@ -23556,7 +23556,7 @@
       },
       {
         "en": "People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå",
-        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umebor"
+        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor"
       }
     ],
     "answer": 0,
@@ -23684,7 +23684,7 @@
       },
       {
         "en": "People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå",
-        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umebor"
+        "sv": "Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor"
       }
     ],
     "answer": 0,

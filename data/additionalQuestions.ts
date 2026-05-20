@@ -863,7 +863,7 @@ export const additionalQuestions: PracticeQuestion[] = [
         'Students, pensioners, entrepreneurs, teachers, and doctors',
       ],
       [
-        'Stockholmare, göteborgare, malmöbor, uppsalabor och umebor',
+        'Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor',
         'People from Stockholm, Gothenburg, Malmö, Uppsala, and Umeå',
       ],
     ],
