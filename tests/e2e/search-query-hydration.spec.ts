@@ -23,6 +23,16 @@ type SearchNavigationScenario = {
   url: string;
 };
 
+type SearchPunctuationScenario = {
+  chapterLinkName: string;
+  filteredSummary: RegExp;
+  inputName: string;
+  language: AppLanguage;
+  query: string;
+  termName: string;
+  url: string;
+};
+
 const searchNavigationScenarios: SearchNavigationScenario[] = [
   {
     clearName: 'Rensa sökfältet',
@@ -53,6 +63,27 @@ const searchNavigationScenarios: SearchNavigationScenario[] = [
     sessionTitle: (questionId) => `Session ${questionId}`,
     sourceCitation: /Source: Sverige i fokus/,
     url: '/search?query=kommun',
+  },
+];
+
+const searchPunctuationScenarios: SearchPunctuationScenario[] = [
+  {
+    chapterLinkName: 'Öppna kapitlet Så här styrs Sverige',
+    filteredSummary: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    language: 'sv',
+    query: 'kommun,',
+    termName: 'Kommun',
+    url: '/search?q=kommun%2C',
+  },
+  {
+    chapterLinkName: 'Open the chapter How Sweden is governed',
+    filteredSummary: /\d+ of \d+ terms and \d+ practice questions match/,
+    inputName: 'Search civic terms and practice questions',
+    language: 'en',
+    query: 'riksdag?',
+    termName: 'Riksdag',
+    url: '/search?query=riksdag%3F',
   },
 ];
 
@@ -141,6 +172,31 @@ for (const scenario of searchNavigationScenarios) {
 
     await changeMountedSearchParams(page, scenario.mountedUrl);
     await expectVisibleSearchResults(page, scenario, scenario.mountedQuery);
+
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+for (const scenario of searchPunctuationScenarios) {
+  test(`search glossary normalizes trailing punctuation from ${scenario.url}`, async ({ page }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await seedSettingsLanguage(page, scenario.language);
+    await markAboutTheTestSeen(page);
+    await page.goto(scenario.url, { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('textbox', { name: scenario.inputName })).toHaveValue(
+      scenario.query,
+    );
+    await expect(page.getByText(scenario.filteredSummary)).toBeVisible();
+    await expect(page.getByText(scenario.termName, { exact: true }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: scenario.chapterLinkName }).first()).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
   });

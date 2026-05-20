@@ -10,7 +10,7 @@ export type GlossarySearchResult = GlossaryTerm & {
 
 const chaptersById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
 
-function normalizeSearchText(value: string) {
+export function normalizeGlossarySearchText(value: string) {
   return value
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -25,13 +25,13 @@ function getTermForLanguage(term: GlossaryTerm, language: AppLanguage) {
 }
 
 function getSearchRank(term: GlossaryTerm, normalizedQuery: string) {
-  const normalizedTermSv = normalizeSearchText(term.termSv);
-  const normalizedTermEn = normalizeSearchText(term.termEn);
-  const normalizedExplanationSv = normalizeSearchText(term.explanationSv);
-  const normalizedExplanationEn = normalizeSearchText(term.explanationEn);
+  const normalizedTermSv = normalizeGlossarySearchText(term.termSv);
+  const normalizedTermEn = normalizeGlossarySearchText(term.termEn);
+  const normalizedExplanationSv = normalizeGlossarySearchText(term.explanationSv);
+  const normalizedExplanationEn = normalizeGlossarySearchText(term.explanationEn);
   const chapter = term.chapterId ? chaptersById.get(term.chapterId) : undefined;
-  const normalizedChapterSv = chapter ? normalizeSearchText(chapter.nameSv) : '';
-  const normalizedChapterEn = chapter ? normalizeSearchText(chapter.nameEn) : '';
+  const normalizedChapterSv = chapter ? normalizeGlossarySearchText(chapter.nameSv) : '';
+  const normalizedChapterEn = chapter ? normalizeGlossarySearchText(chapter.nameEn) : '';
 
   if (normalizedTermSv === normalizedQuery || normalizedTermEn === normalizedQuery) return 0;
   if (
@@ -72,7 +72,7 @@ export function searchGlossary(
   language: AppLanguage,
   limit = 10,
 ): GlossarySearchResult[] {
-  const normalizedQuery = normalizeSearchText(query);
+  const normalizedQuery = normalizeGlossarySearchText(query);
   const sortedTerms = [...glossaryTerms].sort((left, right) =>
     getTermForLanguage(left, language).localeCompare(getTermForLanguage(right, language), language),
   );
