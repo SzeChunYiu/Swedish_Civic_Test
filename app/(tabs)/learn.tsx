@@ -1,14 +1,18 @@
+import { useMemo } from 'react';
 import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
+import { Flashcard } from '../../components/learning/Flashcard';
 import { AdBanner } from '../../components/monetization/AdBanner';
+import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { PracticeQuestion } from '../../types/content';
 
 type ChapterLinkCopy = {
   contentQueued: string;
@@ -26,6 +30,8 @@ type ChapterLinkCopy = {
 
 type LearnRouteCopy = {
   eyebrow: string;
+  flashcardSectionSubtitle: string;
+  flashcardSectionTitle: string;
   sectionSubtitle: string;
   sectionTitle: string;
   subtitle: string;
@@ -35,6 +41,9 @@ type LearnRouteCopy = {
 const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
   sv: {
     eyebrow: 'Studieväg',
+    flashcardSectionSubtitle:
+      'Tre källstödda kort från frågebanken. Läs frågan, säg svaret högt och jämför direkt.',
+    flashcardSectionTitle: 'Snabba flashkort',
     sectionSubtitle: 'Studera med källnära kapitel och öva sedan på samma material.',
     sectionTitle: '13 samhällsområden',
     subtitle: 'Varje kapitel visar omfång och lokal progression så att du kan fokusera studierna.',
@@ -42,6 +51,9 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
   },
   en: {
     eyebrow: 'Learning path',
+    flashcardSectionSubtitle:
+      'Three source-backed cards from the question bank. Read the prompt, answer aloud, then compare.',
+    flashcardSectionTitle: 'Quick flashcards',
     sectionSubtitle: 'Study in source-aligned chapters, then practice from the same material.',
     sectionTitle: '13 civic areas',
     subtitle:
@@ -49,6 +61,8 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
     title: 'Browse chapters with a clear next step',
   },
 };
+
+const FLASHCARD_PREVIEW_LIMIT = 3;
 
 const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
   sv: {
@@ -67,15 +81,48 @@ const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {
   },
 };
 
-function questionCountForChapter(chapterId: string) {
-  return questions.filter((question) => question.chapterId === chapterId).length;
+type ChapterProgressCounts = {
+  completedCount: number;
+  questionCount: number;
+};
+
+function buildChapterProgressById(completedQuestionIds: readonly string[]) {
+  const completed = new Set(completedQuestionIds);
+  const progressById = Object.fromEntries(
+    chapters.map((chapter) => [
+      chapter.id,
+      {
+        completedCount: 0,
+        questionCount: 0,
+      },
+    ]),
+  ) as Record<string, ChapterProgressCounts>;
+
+  for (const question of questions) {
+    const progress = progressById[question.chapterId];
+    if (!progress) continue;
+
+    progress.questionCount += 1;
+    if (completed.has(question.id)) {
+      progress.completedCount += 1;
+    }
+  }
+
+  return progressById;
 }
 
-function completedCountForChapter(chapterId: string, completedQuestionIds: string[]) {
-  const completed = new Set(completedQuestionIds);
-  return questions.filter(
-    (question) => question.chapterId === chapterId && completed.has(question.id),
-  ).length;
+function getFlashcardPrompt(question: PracticeQuestion, language: AppLanguage) {
+  return language === 'en' ? question.questionEn : question.questionSv;
+}
+
+function getFlashcardAnswer(question: PracticeQuestion, language: AppLanguage) {
+  const answer = question.options.find((option) => option.id === question.correctOptionId);
+
+  if (!answer) {
+    return language === 'en' ? question.explanationEn : question.explanationSv;
+  }
+
+  return language === 'en' ? answer.textEn : answer.textSv;
 }
 
 function getChapterLinkAccessibilityLabel({
@@ -106,14 +153,36 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const routeCopy = learnRouteCopy[language];
   const copy = chapterLinkCopy[language];
+  const flashcardQuestions = questions.slice(0, FLASHCARD_PREVIEW_LIMIT);
+  const chapterProgressById = useMemo(
+    () => buildChapterProgressById(completedQuestionIds),
+    [completedQuestionIds],
+  );
 
   return (
     <ScreenShell eyebrow={routeCopy.eyebrow} title={routeCopy.title} subtitle={routeCopy.subtitle}>
+      <SectionHeader
+        title={routeCopy.flashcardSectionTitle}
+        subtitle={routeCopy.flashcardSectionSubtitle}
+      />
+      <View style={styles.flashcardDeck}>
+        {flashcardQuestions.map((question) => (
+          <Flashcard
+            key={question.id}
+            front={getFlashcardPrompt(question, language)}
+            back={getFlashcardAnswer(question, language)}
+            language={language}
+          />
+        ))}
+      </View>
+
       <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>
         {chapters.map((chapter) => {
-          const questionCount = questionCountForChapter(chapter.id);
-          const completedCount = completedCountForChapter(chapter.id, completedQuestionIds);
+          const { completedCount, questionCount } = chapterProgressById[chapter.id] ?? {
+            completedCount: 0,
+            questionCount: 0,
+          };
           return (
             <Link
               key={chapter.id}
@@ -148,6 +217,9 @@ export default function Screen() {
 }
 
 const styles = StyleSheet.create({
+  flashcardDeck: {
+    gap: space[1.5],
+  },
   list: {
     gap: space[1.5],
   },
