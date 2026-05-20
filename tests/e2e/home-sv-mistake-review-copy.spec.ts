@@ -56,7 +56,9 @@ test('home renders natural Swedish missed-question review copy', async ({ page }
   await dismissBlockingModals(page);
 
   await expect(page.getByText(/genomgång av frågor du missat/i).first()).toBeVisible();
-  await expect(page.getByText(/missade frågor, ljud och redoindikator/i).first()).toBeVisible();
+  await expect(
+    page.getByText(/missade frågor, ljud och förberedelsesignal/i).first(),
+  ).toBeVisible();
   await expect(page.locator('body')).not.toContainText(forbiddenSwedishMistakeCopy);
   await expectHomeWithoutHorizontalOverflow(page);
   expect(consoleErrors).toEqual([]);
@@ -71,7 +73,7 @@ test('home keeps intentional English mistake-review copy in support mode', async
 
   await expect(page.getByText(/mistake review/i).first()).toBeVisible();
   await expect(
-    page.getByText(/mistake tracking, audio, and readiness signals/i).first(),
+    page.getByText(/mistake tracking, audio, and preparation signals/i).first(),
   ).toBeVisible();
   await expect(page.locator('body')).not.toContainText(/genomgång av frågor du missat/i);
   await expectHomeWithoutHorizontalOverflow(page);
