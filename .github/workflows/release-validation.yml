@@ -80,3 +80,20 @@ jobs:
           name: release-evidence-index
           path: reports/release-evidence-index-latest.md
           if-no-files-found: ignore
+
+      - name: Build web export for visual smoke
+        run: npm run build:web:export -- --max-workers 2
+
+      - name: Run visual smoke screenshots
+        run: npm run test:e2e -- tests/e2e/visual-smoke.spec.ts --workers=1
+
+      - name: Upload visual smoke artifacts
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: release-validation-visual-smoke-artifacts
+          path: |
+            test-results/
+            playwright-report/
+            reports/2026-05-15-uiux-screenshots/
+          if-no-files-found: ignore

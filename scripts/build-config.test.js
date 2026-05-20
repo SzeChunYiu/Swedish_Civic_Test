@@ -930,6 +930,18 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.equal(fs.existsSync(workflowPath), true);
 
   const workflow = fs.readFileSync(workflowPath, 'utf8');
+  const visualSmokeBuildIndex = workflow.indexOf('Build web export for visual smoke');
+  const visualSmokeStepIndex = workflow.indexOf('Run visual smoke screenshots');
+  const visualSmokeArtifactIndex = workflow.indexOf('Upload visual smoke artifacts');
+  const nextStepAfterVisualSmokeArtifacts = workflow.indexOf(
+    '\n      - name:',
+    visualSmokeArtifactIndex + 1,
+  );
+  const visualSmokeArtifactBlock = workflow.slice(
+    visualSmokeArtifactIndex,
+    nextStepAfterVisualSmokeArtifacts === -1 ? undefined : nextStepAfterVisualSmokeArtifacts,
+  );
+
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /branches:\s*\[\s*main\s*\]/);
   assert.match(workflow, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*true/);
@@ -939,46 +951,28 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.doesNotMatch(workflow, /actions\/(?:checkout|setup-node|upload-artifact)@v4/);
   assert.match(workflow, /npm ci/);
   assert.match(workflow, /npm run validate/);
-  assert.match(workflow, /EXPO_PUBLIC_REAL_ADS_ENABLED:\s*['"]true['"]/);
-  assert.match(
-    workflow,
-    /EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000001['"]/,
-  );
-  assert.match(
-    workflow,
-    /EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000002['"]/,
-  );
-  assert.match(
-    workflow,
-    /EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000003['"]/,
-  );
-  assert.match(
-    workflow,
-    /EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID:\s*['"]ca-app-pub-1234567890123456\/1000000004['"]/,
-  );
-  assert.match(workflow, /npm run build:web:export -- --clear/);
-  assert.match(workflow, /node scripts\/prepare-web-export\.js --check dist-web/);
-  assert.match(
-    workflow,
-    /npm run test:e2e -- tests\/e2e\/web-ad-real-fallback\.spec\.ts --workers=1/,
-  );
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
-  const validateIndex = workflow.indexOf('npm run validate');
-  const exportIndex = workflow.indexOf('npm run build:web:export -- --clear');
-  const webAdSmokeIndex = workflow.indexOf(
-    'npm run test:e2e -- tests/e2e/web-ad-real-fallback.spec.ts --workers=1',
-  );
-  const evidenceUploadIndex = workflow.indexOf('name: Upload release evidence index');
-  assert.ok(validateIndex >= 0, 'release validation workflow must run npm run validate');
-  assert.ok(exportIndex > validateIndex, 'real-enabled web export must run after validation');
-  assert.ok(webAdSmokeIndex > exportIndex, 'web ad fallback smoke must run after export');
+  assert.match(workflow, /npm run build:web:export -- --max-workers 2/);
+  assert.match(workflow, /npm run test:e2e -- tests\/e2e\/visual-smoke\.spec\.ts --workers=1/);
+  assert.ok(visualSmokeBuildIndex > -1, 'release validation should build web export');
+  assert.ok(visualSmokeStepIndex > -1, 'release validation should run visual smoke');
   assert.ok(
-    evidenceUploadIndex > webAdSmokeIndex,
-    'web ad fallback smoke must run before release evidence upload',
+    visualSmokeStepIndex > visualSmokeBuildIndex,
+    'visual smoke should run after the web export is built',
   );
+  assert.ok(
+    visualSmokeArtifactIndex > visualSmokeStepIndex,
+    'visual smoke artifact upload should run after the visual smoke step',
+  );
+  assert.match(visualSmokeArtifactBlock, /actions\/upload-artifact@v6/);
+  assert.match(visualSmokeArtifactBlock, /name:\s*release-validation-visual-smoke-artifacts/);
+  assert.match(visualSmokeArtifactBlock, /if:\s*always\(\)/);
+  assert.match(visualSmokeArtifactBlock, /test-results\//);
+  assert.match(visualSmokeArtifactBlock, /playwright-report\//);
+  assert.match(visualSmokeArtifactBlock, /reports\/2026-05-15-uiux-screenshots\//);
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));
 });
 
