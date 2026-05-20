@@ -1086,7 +1086,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     ],
     [generatedQuestionId(sourceQuestions, 'q088', 'falseStatement')]: [
       'Europarådet arbetar endast för jordbrukspolitik.',
-      'The Council of Europe works only for agricultural policy.',
+      'The Council of Europe promotes only agricultural policy.',
     ],
     [generatedQuestionId(sourceQuestions, 'q079', 'trueStatement')]: [
       'Arbetarrörelsen, frikyrkorörelsen, kvinnorörelsen och nykterhetsrörelsen var bland de största folkrörelserna i Sverige under 1800-talet.',
