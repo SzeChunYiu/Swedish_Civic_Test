@@ -1088,6 +1088,47 @@ test('E2E specs centralize blocking modal cleanup helpers', () => {
   }
 });
 
+test('language-sensitive E2E specs seed question language before route load', () => {
+  const e2eDir = path.join(repoRoot, 'tests/e2e');
+  const languageSensitiveSpecs = [
+    'practice-feedback.spec.ts',
+    'exam-submit-review.spec.ts',
+    'learn-chapter-navigation.spec.ts',
+  ];
+
+  for (const fileName of languageSensitiveSpecs) {
+    const source = fs.readFileSync(path.join(e2eDir, fileName), 'utf8');
+
+    assert.match(
+      source,
+      /seedSettingsLanguage/,
+      `${fileName} should seed language through browserLaunch.ts`,
+    );
+    assert.match(
+      source,
+      /markAboutTheTestSeen/,
+      `${fileName} should suppress first-run route overlays before route load`,
+    );
+    assert.doesNotMatch(
+      source,
+      /page\.goto\(['"`]\/settings['"`]/,
+      `${fileName} should not use Settings as language setup`,
+    );
+    assert.doesNotMatch(
+      source,
+      /Byt frågespråk|Set question language/,
+      `${fileName} should not click Settings language controls as setup`,
+    );
+  }
+
+  const settingsSpec = fs.readFileSync(
+    path.join(e2eDir, 'settings-accessibility-state.spec.ts'),
+    'utf8',
+  );
+  assert.match(settingsSpec, /page\.goto\(['"`]\/settings['"`]/);
+  assert.match(settingsSpec, /Set question language/);
+});
+
 test('Playwright exported-web server port is configurable per worker', () => {
   const config = fs.readFileSync(path.join(repoRoot, 'playwright.config.ts'), 'utf8');
   const staticServer = fs.readFileSync(path.join(repoRoot, 'tests/e2e/serve-dist-web.cjs'), 'utf8');
