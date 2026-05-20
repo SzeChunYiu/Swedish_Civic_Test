@@ -66,30 +66,56 @@ function englishTranslationMap(appSource) {
   const englishMatch = appSource.match(/en:\s*{([\s\S]*?)\n\s*},\n\s*sv:/);
   assert.ok(englishMatch, 'static English dictionary should be present');
 
-  const values = new Map();
-  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
-  let match;
-  while ((match = entryPattern.exec(englishMatch[1]))) {
-    const [, key, rawValue] = match;
-    values.set(key, JSON.parse(`"${rawValue}"`));
-  }
-  return values;
+  const dictionary = vm.runInNewContext(`({${englishMatch[1]}\n})`, {}, { timeout: 3000 });
+  return new Map(Object.entries(dictionary));
 }
 
 function normalizeInlineHtml(value) {
   return value.replace(/\s+/g, ' ').trim();
 }
 
-function staticFallbackI18nValues(indexHtml, keyPrefix) {
+function parseStaticFallbackI18nValues(html, includeKey) {
   const values = new Map();
-  const elementPattern = /<([a-z][a-z0-9-]*)\b[^>]*\bdata-i18n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/g;
-
+  const elementStack = [];
+  const htmlTokenPattern =
+    /<!--[\s\S]*?-->|<\/([a-z][a-z0-9-]*)\s*>|<([a-z][a-z0-9-]*)\b([^>]*)>|([^<]+)/gi;
   let match;
-  while ((match = elementPattern.exec(indexHtml))) {
-    const [, , key, rawValue] = match;
-    if (key.startsWith(keyPrefix)) values.set(key, normalizeInlineHtml(rawValue));
+
+  while ((match = htmlTokenPattern.exec(html))) {
+    const [token, closingTag, openingTag, rawAttrs, text] = match;
+    if (typeof text === 'string') {
+      elementStack.at(-1)?.parts.push(text);
+      continue;
+    }
+
+    if (openingTag) {
+      elementStack.at(-1)?.parts.push(token);
+      const key = rawAttrs.match(/\bdata-i18n="([^"]+)"/)?.[1];
+      const selfClosing = /\/\s*>$/.test(token);
+      if (key && includeKey(key) && !selfClosing) {
+        elementStack.push({ key, parts: [], tag: openingTag.toLowerCase() });
+      }
+      continue;
+    }
+
+    if (closingTag) {
+      const closingTagName = closingTag.toLowerCase();
+      const currentElement = elementStack.at(-1);
+      if (currentElement?.tag === closingTagName) {
+        const completedElement = elementStack.pop();
+        values.set(completedElement.key, normalizeInlineHtml(completedElement.parts.join('')));
+        elementStack.at(-1)?.parts.push(token);
+      } else {
+        elementStack.at(-1)?.parts.push(token);
+      }
+    }
   }
+
   return values;
+}
+
+function staticFallbackI18nValues(indexHtml, keyPrefix) {
+  return parseStaticFallbackI18nValues(indexHtml, (key) => key.startsWith(keyPrefix));
 }
 
 function staticFaqSection(indexHtml) {
@@ -159,6 +185,40 @@ const unsupportedEbookFactboxPatterns = [
   /historically commits\s+~?1%\s+of\s+GNI/i,
   /Citizenship test starts:\s*6 June 2026/i,
 ];
+
+const homeHeroFooterFallbackKeys = [
+  'hero.eyebrow',
+  'hero.h1a',
+  'hero.h1c',
+  'hero.lede',
+  'hero.cta1',
+  'hero.cta2',
+  'footer.t1',
+  'footer.t2',
+  'footer.honest.p',
+];
+
+function assertStaticHomeHeroFooterFallbackParity(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const fallbackValues = parseStaticFallbackI18nValues(indexHtml, (key) =>
+    homeHeroFooterFallbackKeys.includes(key),
+  );
+
+  assert.deepEqual(
+    Array.from(fallbackValues.keys()).sort(),
+    [...homeHeroFooterFallbackKeys].sort(),
+    'static Home hero and footer should expose every guarded no-JS fallback key',
+  );
+
+  for (const key of homeHeroFooterFallbackKeys) {
+    assert.equal(typeof englishTranslations.get(key), 'string', `${key} should be in site/app.js`);
+    assert.equal(
+      fallbackValues.get(key),
+      normalizeInlineHtml(englishTranslations.get(key)),
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+}
 
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
@@ -285,6 +345,24 @@ test('static FAQ no-JS fallback keeps ordered question and answer pairs', () => 
   }
 });
 
+test('static Home hero and footer no-JS fallback mirrors the English dictionary', () => {
+  assertStaticHomeHeroFooterFallbackParity(read('site/index.html'), read('site/app.js'));
+});
+
+test('static Home hero and footer no-JS fallback rejects stale copy drift', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.throws(
+    () =>
+      assertStaticHomeHeroFooterFallbackParity(
+        indexHtml.replace('>Start practising</a', '>Start studying to pass</a'),
+        appSource,
+      ),
+    /hero\.cta1 no-JS fallback should match/,
+  );
+});
+
 test('shared static copy guard rejects unsupported pass and passport outcome slogans', () => {
   assertNoUnsupportedStaticOutcomeSlogans(repoRoot);
 
@@ -295,7 +373,7 @@ test('shared static copy guard rejects unsupported pass and passport outcome slo
       indexHtml.replace(/(<title>)[\s\S]*?(<\/title>)/, '$1Almost Swedish — Study, fika, pass.$2'),
     )
       .map((issue) => issue.match)
-      .join('\n'),
+      .join('\\n'),
     /Study,\s*fika,\s*pass/,
   );
 });
