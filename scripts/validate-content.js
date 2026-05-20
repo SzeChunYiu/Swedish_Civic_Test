@@ -1155,13 +1155,13 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
     'Tillbaka till övning',
-    'Quizpass',
-    'Det finns inga quizfrågor ännu.',
+    'Frågepass',
+    'Det finns inga övningsfrågor ännu.',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
-    'Quizpass ${currentSessionId}',
+    'Frågepass ${currentSessionId}',
     'Försök igen',
-    'Försök igen med den här quizfrågan',
+    'Försök igen med den här övningsfrågan',
   ],
   en: [
     'Back to Practice',
@@ -1174,6 +1174,20 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Try this quiz question again',
   ],
 };
+const FORBIDDEN_QUIZ_ROUTE_SWEDISH_LOANWORD_PATTERNS = [
+  {
+    label: 'old Swedish routed-session badge copy',
+    pattern: new RegExp(['Quiz', 'pass'].join('')),
+  },
+  {
+    label: 'old Swedish empty-state copy',
+    pattern: new RegExp(['quiz', 'frågor'].join('')),
+  },
+  {
+    label: 'old Swedish retry accessibility copy',
+    pattern: new RegExp(['quiz', 'frågan'].join('')),
+  },
+];
 const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'quiz route must import AppLanguage from settings'],
   ['type QuizSessionCopy = {', 'quiz route must define a typed copy contract'],
@@ -1231,8 +1245,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Frågor för det här kapitlet har inte lagts till ännu.',
     'Kapitlet hittades inte',
     'Övningsfrågor (${count})',
-    'Starta quiz',
-    'Starta quiz för ${chapterTitle}',
+    'Starta kapitelövning',
+    'Starta kapitelövning för ${chapterTitle}',
   ],
   en: [
     'Back to chapter list',
@@ -1244,6 +1258,12 @@ const EXPECTED_CHAPTER_ROUTE_COPY_LABELS = {
     'Start quiz for ${chapterTitle}',
   ],
 };
+const FORBIDDEN_CHAPTER_ROUTE_SWEDISH_LOANWORD_PATTERNS = [
+  {
+    label: 'old Swedish chapter-start CTA copy',
+    pattern: new RegExp(['Starta ', 'quiz'].join('')),
+  },
+];
 const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'chapter route must import AppLanguage from settings'],
   ['type ChapterRouteCopy = {', 'chapter route must define a typed copy contract'],
@@ -7938,6 +7958,9 @@ function validateQuizRouteCopyParity() {
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  FORBIDDEN_QUIZ_ROUTE_SWEDISH_LOANWORD_PATTERNS.forEach(({ label, pattern }) => {
+    if (pattern.test(quizRoute)) reject(`quiz route still contains ${label}`);
+  });
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -8214,6 +8237,9 @@ function validateChapterRouteCopyParity() {
 
   EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!chapterRoute.includes(snippet)) reject(message);
+  });
+  FORBIDDEN_CHAPTER_ROUTE_SWEDISH_LOANWORD_PATTERNS.forEach(({ label, pattern }) => {
+    if (pattern.test(chapterRoute)) reject(`chapter route still contains ${label}`);
   });
 
   const seenLabels = new Set();
