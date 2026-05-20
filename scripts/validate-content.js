@@ -1234,7 +1234,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Öva svåra frågor',
     'Starta övning',
     'När du missar en övningsfråga visas den här.',
-    'Inga misstag ännu',
+    'Inga missade frågor ännu',
     'Missade frågor',
     'Frågor att öva på',
     'Ditt senaste svar',
