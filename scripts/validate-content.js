@@ -272,12 +272,9 @@ const QUESTION_Q156_HIGHER_EDUCATION_RESEARCH_PATTERNS = [
   /\bhigher education\b/i,
   /\bresearch at colleges and universities\b/i,
 ];
-const QUESTION_SIDA_WORK_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat does\s+Sida\s+work\s+to\s+do\b/i,
-];
 const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat is common to do on New Year(?:’|’)s Eve\b/i,
-  /\bWhat is common to do on All Saints(?:’|’) Day\b/i,
+  /\bWhat is common to do on New Year(?:’|')s Eve\b/i,
+  /\bWhat is common to do on All Saints(?:’|') Day\b/i,
 ];
 const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
 const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
@@ -293,10 +290,9 @@ const QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS = [
   /\bI ett luciatåg\s+(?:är\s+en\s+person\s+Lucia|en\s+person\s+är\s+Lucia)\b/i,
   /\bIn a Lucia procession,\s+one person is Lucia\b/i,
 ];
-const QUESTION_RELIGIOUS_FREEDOM_1860_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat became permitted for Swedes in 1860\b/i,
-  /\bIn 1860,\s+Swedes were permitted to choose any religion or no religion at all completely freely\b/i,
-  /\bTo choose any religion or no religion at all completely freely\b/i,
+const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bcompletely freely\b/i,
+  /\bchoose a religion completely freely\b/i,
 ];
 const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
   /\bskatt och moms\b/i,
@@ -4542,18 +4538,6 @@ function findQuestionStateWelfareCoverageOverlapIssue(question) {
   return missingSocialInsurance || null;
 }
 
-function findQuestionSidaWorkToDoEnglishNaturalnessIssue(question) {
-  const text = [
-    question.questionEn,
-    question.explanationEn,
-    ...(question.options || []).map((option) => option.textEn),
-  ].join(' ');
-
-  return QUESTION_SIDA_WORK_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
-    pattern.test(text),
-  );
-}
-
 function findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question) {
   return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(question.questionEn),
@@ -4605,8 +4589,8 @@ function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
   return QUESTION_LUCIA_EXPLANATION_ROLE_SCAFFOLD_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionReligiousFreedom1860EnglishNaturalnessIssue(question) {
-  if (!question.tags?.includes('1860')) return null;
+function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('1951')) return null;
 
   const text = [
     question.questionEn,
@@ -4614,7 +4598,7 @@ function findQuestionReligiousFreedom1860EnglishNaturalnessIssue(question) {
     ...(question.options || []).map((option) => option.textEn),
   ].join(' ');
 
-  return QUESTION_RELIGIOUS_FREEDOM_1860_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+  return QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(text),
   );
 }
@@ -6300,8 +6284,6 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(match[1])} in Sweden are set ${lowerFirst(answer)}`;
   match = q.match(/^What support can (.+?) provide to (.+)$/i);
   if (match) return supportStatementEn(match[1], answer);
-  match = q.match(/^What is (.+?) responsible for$/i);
-  if (match) return `${upperFirst(match[1])} is responsible for ${englishGerundPhrase(answer)}`;
   match = q.match(/^How does (.+?) help with (.+)$/i);
   if (match) {
     if (/^To\s+/i.test(answer)) {
@@ -6445,9 +6427,6 @@ function civicStatementEn(source, option) {
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;
-  match = q.match(/^What were (.+?) allowed to do starting in (.+)$/i);
-  if (match)
-    return `Starting in ${match[2]}, ${match[1]} were allowed to ${stripLeadingPurposeEn(answer)}`;
   match = q.match(/^Which Christian holidays do (.+?) celebrate even if (.+)$/i);
   if (match) return englishChristianHolidayStatement(match[1], match[2], answer);
   match = q.match(/^Which religious rituals are still common in Sweden$/i);
@@ -7485,14 +7464,13 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionStateWelfareEnglishNaturalnessValidated = 0;
 let questionStateWelfareCoverageSplitValidated = 0;
-let questionSidaWorkToDoEnglishNaturalnessValidated = 0;
 let questionTraditionCommonToDoEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionSaltsjobadenAgreementEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
-let questionReligiousFreedom1860EnglishNaturalnessValidated = 0;
+let questionReligiousFreedom1951EnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17415,8 +17393,6 @@ if (Array.isArray(questions)) {
         findQuestionStateWelfareEnglishNaturalnessIssue(question);
       const stateWelfareCoverageOverlapIssue =
         findQuestionStateWelfareCoverageOverlapIssue(question);
-      const sidaWorkToDoEnglishNaturalnessIssue =
-        findQuestionSidaWorkToDoEnglishNaturalnessIssue(question);
       const traditionCommonToDoEnglishNaturalnessIssue =
         findQuestionTraditionCommonToDoEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -17426,8 +17402,8 @@ if (Array.isArray(questions)) {
         findQuestionSaltsjobadenAgreementEnglishNaturalnessIssue(question);
       const luciaExplanationRoleScaffoldIssue =
         findQuestionLuciaExplanationRoleScaffoldIssue(question);
-      const religiousFreedom1860EnglishNaturalnessIssue =
-        findQuestionReligiousFreedom1860EnglishNaturalnessIssue(question);
+      const religiousFreedom1951EnglishNaturalnessIssue =
+        findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question);
       const taxVatTwoConceptIssue = findQuestionTaxVatTwoConceptIssue(question);
       const successionVatDistractorIssue = findQuestionSuccessionVatDistractorIssue(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
@@ -17476,11 +17452,6 @@ if (Array.isArray(questions)) {
       } else if (question.id === 'q071' || question.id === 'q156') {
         questionStateWelfareCoverageSplitValidated += 1;
       }
-      if (sidaWorkToDoEnglishNaturalnessIssue) {
-        fail(`${label} uses stilted Sida English prompt wording`);
-      } else {
-        questionSidaWorkToDoEnglishNaturalnessValidated += 1;
-      }
       if (traditionCommonToDoEnglishNaturalnessIssue) {
         fail(`${label} uses literal common-to-do English wording`);
       } else {
@@ -17506,10 +17477,10 @@ if (Array.isArray(questions)) {
       } else {
         questionLuciaExplanationRoleScaffoldValidated += 1;
       }
-      if (religiousFreedom1860EnglishNaturalnessIssue) {
-        fail(`${label} uses stilted 1860 religious-freedom English wording`);
+      if (religiousFreedom1951EnglishNaturalnessIssue) {
+        fail(`${label} uses stilted 1951 religious-freedom English wording`);
       } else {
-        questionReligiousFreedom1860EnglishNaturalnessValidated += 1;
+        questionReligiousFreedom1951EnglishNaturalnessValidated += 1;
       }
       if (taxVatTwoConceptIssue) {
         fail(
@@ -18002,14 +17973,13 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionStateWelfareEnglishNaturalnessValidated,
       questionStateWelfareCoverageSplitValidated,
-      questionSidaWorkToDoEnglishNaturalnessValidated,
       questionTraditionCommonToDoEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionSaltsjobadenAgreementEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionSecretBallotSvPronounNaturalnessValidated,
-      questionReligiousFreedom1860EnglishNaturalnessValidated,
+      questionReligiousFreedom1951EnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
