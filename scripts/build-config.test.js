@@ -1283,7 +1283,12 @@ test('web export script is available for local production bundle smoke', () => {
   const vercelConfig = readJson('vercel.json');
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
+  const entry = fs.readFileSync(path.join(repoRoot, 'index.js'), 'utf8');
 
+  assert.equal(pkg.main, 'index.js');
+  assert.match(entry, /require\.context\(\s*['"]\.\/app['"]/);
+  assert.match(entry, /<ExpoRoot context=\{ctx\} \/>/);
+  assert.match(entry, /renderRootComponent\(App\)/);
   assert.equal(appConfig.web.output, 'single');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
@@ -1323,7 +1328,12 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
   );
   fs.writeFileSync(
     path.join(bundleDir, 'entry-test.js'),
-    'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}}; const icon = {uri:"/assets/icon.png"};',
+    [
+      'const chunks = {"paths":{"1":"/_expo/static/js/web/chunk-test.js"}};',
+      'const icon = {uri:"/assets/icon.png"};',
+      'const routes = ["./_layout.tsx","./(tabs)/home.tsx","./(tabs)/practice.tsx","./(tabs)/mistakes.tsx","./about-the-test.tsx"];',
+      '',
+    ].join('\n'),
   );
 
   const result = spawnSync(process.execPath, ['scripts/prepare-web-export.js', outputDir], {
@@ -1352,6 +1362,44 @@ test('web export postbuild rewrites root-relative bundle URLs for file and hoste
     },
   );
   assert.equal(checkResult.status, 0, checkResult.stderr || checkResult.stdout);
+});
+
+test('web export postbuild check fails when Expo Router emits an empty route context', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'web-export-empty-context-'));
+  const outputDir = path.join(tmpDir, 'dist-web');
+  const bundleDir = path.join(outputDir, '_expo/static/js/web');
+  fs.mkdirSync(bundleDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(outputDir, 'index.html'),
+    [
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head><title>Export</title></head>',
+      '<body>',
+      '<div id="root"></div>',
+      '<script data-web-export-loader="true">document.body.appendChild(document.createElement("script"));</script>',
+      '</body>',
+      '</html>',
+      '',
+    ].join('\n'),
+  );
+  fs.copyFileSync(path.join(outputDir, 'index.html'), path.join(outputDir, '404.html'));
+  fs.writeFileSync(
+    path.join(bundleDir, 'entry-test.js'),
+    'function o(){throw new Error("No modules in context")} o.keys=()=>[];',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/prepare-web-export.js', '--check', outputDir],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /route context is missing app route modules/i);
 });
 
 test('scheduled Vercel deploy has a site-only main trigger and deploy-hook live smoke gate', () => {

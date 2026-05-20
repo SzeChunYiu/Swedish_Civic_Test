@@ -3,6 +3,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const HTML_LOADER_MARKER = 'data-web-export-loader="true"';
+const REQUIRED_ROUTE_CONTEXT_KEYS = [
+  './_layout.tsx',
+  './(tabs)/home.tsx',
+  './(tabs)/practice.tsx',
+  './(tabs)/mistakes.tsx',
+  './about-the-test.tsx',
+];
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -114,11 +121,23 @@ function check(outputDir) {
   }
 
   const jsFiles = walkFiles(path.join(outputDir, '_expo'), (filePath) => filePath.endsWith('.js'));
+  const jsSources = [];
   for (const jsFile of jsFiles) {
     const source = fs.readFileSync(jsFile, 'utf8');
+    jsSources.push(source);
     if (/["']\/(_expo|assets)\//.test(source)) {
       throw new Error(`${jsFile} still contains root-relative exported asset URLs`);
     }
+  }
+
+  const combinedJs = jsSources.join('\n');
+  const missingRouteKeys = REQUIRED_ROUTE_CONTEXT_KEYS.filter((routeKey) => {
+    return !combinedJs.includes(routeKey);
+  });
+  if (missingRouteKeys.length > 0 || combinedJs.includes('No modules in context')) {
+    throw new Error(
+      `Web export route context is missing app route modules: ${missingRouteKeys.join(', ')}`,
+    );
   }
 }
 
@@ -148,6 +167,7 @@ if (require.main === module) {
 module.exports = {
   check,
   prepare,
+  REQUIRED_ROUTE_CONTEXT_KEYS,
   rewriteHtml,
   rewriteRootRelativeBundlePaths,
 };
