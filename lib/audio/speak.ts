@@ -9,11 +9,9 @@ import {
 type SpeakableQuestion = {
   correctOptionId?: string;
   explanationSv?: string;
-  questionSv: string;
-  options: QuestionOption[];
-  correctOptionId?: string;
-  explanationSv?: string;
   explanationText?: Partial<LocalizedContentText>;
+  options: QuestionOption[];
+  questionSv: string;
 };
 
 const SOURCE_CITATION_REPLACEMENTS = [
