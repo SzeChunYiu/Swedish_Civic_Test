@@ -12,9 +12,12 @@ export type BlockingModalDismissal = {
   launchOverlayDismissed: boolean;
 };
 
-// Storage keys matching the app's settingsStore constants.
-const settingsLanguageKey = 'language';
-const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+// Storage keys matching the web MMKV keys plus the legacy localStorage keys
+// that older tests used before settings moved behind the "settings" store id.
+const legacySettingsLanguageKey = 'language';
+const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 
 // Selector for modal overlays that block route screenshots in the rendered app.
 export const blockingModalOverlayLocator =
@@ -45,19 +48,29 @@ export function getChromiumLaunchOptions(): ChromiumLaunchOptions | undefined {
 
 export async function seedSettingsLanguage(page: Page, language: AppLanguage): Promise<void> {
   await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+    ({
+      language: seededLanguage,
+      languageKey,
+      legacyLanguageKey,
+    }: {
+      language: AppLanguage;
+      languageKey: string;
+      legacyLanguageKey: string;
+    }) => {
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
     },
-    { language, languageKey: settingsLanguageKey },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ seenKey }: { seenKey: string }) => {
+    ({ legacySeenKey, seenKey }: { legacySeenKey: string; seenKey: string }) => {
+      window.localStorage.setItem(legacySeenKey, 'true');
       window.localStorage.setItem(seenKey, 'true');
     },
-    { seenKey: settingsSeenAboutKey },
+    { legacySeenKey: legacySettingsSeenAboutKey, seenKey: settingsSeenAboutKey },
   );
 }
 
@@ -69,18 +82,30 @@ export async function seedFreshFirstRunSettingsLanguage(
     ({
       language: seededLanguage,
       languageKey,
+      legacyLanguageKey,
+      legacySeenKey,
       seenKey,
     }: {
       language: AppLanguage;
       languageKey: string;
+      legacyLanguageKey: string;
+      legacySeenKey: string;
       seenKey: string;
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.removeItem(legacySeenKey);
       window.localStorage.removeItem(seenKey);
     },
-    { language, languageKey: settingsLanguageKey, seenKey: settingsSeenAboutKey },
+    {
+      language,
+      languageKey: settingsLanguageKey,
+      legacyLanguageKey: legacySettingsLanguageKey,
+      legacySeenKey: legacySettingsSeenAboutKey,
+      seenKey: settingsSeenAboutKey,
+    },
   );
 }
 
@@ -175,9 +200,18 @@ export async function selectQuestionLanguageInSettings(
   language: AppLanguage,
 ): Promise<void> {
   await page.addInitScript(
-    ({ language: seededLanguage, languageKey }: { language: AppLanguage; languageKey: string }) => {
+    ({
+      language: seededLanguage,
+      languageKey,
+      legacyLanguageKey,
+    }: {
+      language: AppLanguage;
+      languageKey: string;
+      legacyLanguageKey: string;
+    }) => {
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
       window.localStorage.setItem(languageKey, seededLanguage);
     },
-    { language, languageKey: settingsLanguageKey },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }
