@@ -1431,6 +1431,45 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
     pattern: /const copy = tabTitleCopy\[language\];/,
   },
 ];
+const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = [
+  {
+    label: 'route params import',
+    pattern: /import \{ Link, useLocalSearchParams \} from 'expo-router';/,
+  },
+  { label: 'route params type', pattern: /type SearchRouteParams = \{/ },
+  { label: 'q param support', pattern: /q\?: string \| string\[\];/ },
+  { label: 'query param support', pattern: /query\?: string \| string\[\];/ },
+  {
+    label: 'local search params read',
+    pattern: /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
+  },
+  {
+    label: 'route query resolution',
+    pattern: /const routeQuery = getRouteSearchQuery\(searchParams\);/,
+  },
+  {
+    label: 'route query initial state',
+    pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
+  },
+  { label: 'single-value route param helper', pattern: /function getFirstSearchParamValue/ },
+  {
+    label: 'array route param support',
+    pattern: /Array\.isArray\(value\) \? value\[0\] : value/,
+  },
+  {
+    label: 'route query helper',
+    pattern: /function getRouteSearchQuery\(params: SearchRouteParams\)/,
+  },
+  {
+    label: 'q then query fallback order',
+    pattern:
+      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+  },
+  { label: 'manual typing remains controlled', pattern: /onChangeText=\{setQuery\}/ },
+  { label: 'clear search remains local', pattern: /onPress=\{\(\) => setQuery\(''\)\}/ },
+  { label: 'hydrated query reaches visible input', pattern: /value=\{query\}/ },
+  { label: 'hydrated query feeds filtering', pattern: /const trimmedQuery = query\.trim\(\);/ },
+];
 const EXPECTED_RELEASE_MONETIZATION_POLICY_FIELDS = [
   'adSupportedByDefault',
   'adMobAppRecordRequired',
@@ -7854,6 +7893,8 @@ let launchAdRouteSuppressionParityValidated = false;
 let tabNavigationRulesValidated = 0;
 let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
+let searchRouteQueryHydrationRulesValidated = 0;
+let searchRouteQueryHydrationParityValidated = false;
 let releaseMonetizationPolicyFieldsValidated = 0;
 let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
@@ -8612,6 +8653,16 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
     examRouteHeaderParityValidated,
     examRouteCopyLabelsValidated,
     examRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-search-route-query-hydration')) {
+  validateSearchRouteQueryHydrationParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    searchRouteQueryHydrationRulesValidated,
+    searchRouteQueryHydrationParityValidated,
   });
   process.exit(0);
 }
@@ -10730,6 +10781,42 @@ function validatePracticeRouteCopyParity() {
   );
   if (valid && practiceRouteCopyLabelsValidated === expectedLabelCount) {
     practiceRouteCopyParityValidated = true;
+  }
+}
+
+function validateSearchRouteQueryHydrationParity() {
+  let valid = true;
+  let searchRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/search.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(searchRoute)) {
+      reject(`search route missing ${expectedRule.label}`);
+      return;
+    }
+    searchRouteQueryHydrationRulesValidated += 1;
+  });
+
+  if (/const \[query, setQuery\] = useState\(''\);/.test(searchRoute)) {
+    reject('search route must not ignore q/query route params by initializing blank');
+  }
+
+  if (
+    valid &&
+    searchRouteQueryHydrationRulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length
+  ) {
+    searchRouteQueryHydrationParityValidated = true;
   }
 }
 
@@ -18206,6 +18293,7 @@ validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
+validateSearchRouteQueryHydrationParity();
 validateProvenanceAuthorityCopyBoundary();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
@@ -18310,6 +18398,8 @@ console.log(
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,
+      searchRouteQueryHydrationRulesValidated,
+      searchRouteQueryHydrationParityValidated,
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       adPlacementRouteParityValidated,

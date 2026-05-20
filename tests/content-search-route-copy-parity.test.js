@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -93,6 +94,20 @@ function assertSearchRouteQueryHydration(source) {
 test('Search route hydrates and resyncs q or query URL params around typing', () => {
   assertSearchRouteQueryHydration(readSearchRouteSource());
   assertSearchRouteQuestionResults(readSearchRouteSource());
+});
+
+test('validate-content reports Search route query hydration parity', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-search-route-query-hydration'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*15/);
+  assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
 });
 
 test('Search route hydration rejects blank initial query drift', () => {
