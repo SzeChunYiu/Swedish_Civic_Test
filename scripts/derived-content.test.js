@@ -1141,8 +1141,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Sweden has labour-market laws to decide who becomes head of state.',
     ],
     [generatedQuestionId(sourceQuestions, 'q067', 'falseStatement')]: [
-      'A-kassan är en myndighet som kontrollerar arbetsmiljöer.',
-      'A-kassan is a government agency that inspects work environments.',
+      'A-kassan kan kontrollera arbetsmiljöer.',
+      'A-kassan can inspect work environments.',
     ],
     [generatedQuestionId(sourceQuestions, 'q076', 'trueStatement')]: [
       'Sveriges befolkning ökade under 1800-talet på grund av bättre jordbruksmetoder och medicinska framsteg.',

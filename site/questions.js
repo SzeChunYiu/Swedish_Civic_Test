@@ -3009,16 +3009,16 @@
         "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "A government agency that inspects work environments",
-        "sv": "En myndighet som kontrollerar arbetsmiljöer"
+        "en": "It can inspect work environments",
+        "sv": "Den kan kontrollera arbetsmiljöer"
       },
       {
-        "en": "It sets all wages in Sweden",
-        "sv": "Den bestämmer alla löner i Sverige"
+        "en": "It can set all wages in Sweden",
+        "sv": "Den kan bestämma alla löner i Sverige"
       },
       {
-        "en": "It reviews public-service programmes",
-        "sv": "Den granskar public service-program"
+        "en": "It can review public-service programmes",
+        "sv": "Den kan granska public service-program"
       }
     ],
     "answer": 0,
@@ -18963,16 +18963,16 @@
         "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "A government agency that inspects work environments",
-        "sv": "En myndighet som kontrollerar arbetsmiljöer"
+        "en": "It can inspect work environments",
+        "sv": "Den kan kontrollera arbetsmiljöer"
       },
       {
-        "en": "It sets all wages in Sweden",
-        "sv": "Den bestämmer alla löner i Sverige"
+        "en": "It can set all wages in Sweden",
+        "sv": "Den kan bestämma alla löner i Sverige"
       },
       {
-        "en": "It reviews public-service programmes",
-        "sv": "Den granskar public service-program"
+        "en": "It can review public-service programmes",
+        "sv": "Den kan granska public service-program"
       }
     ],
     "answer": 0,
@@ -19042,8 +19042,8 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "A-kassan is a government agency that inspects work environments.",
-      "sv": "A-kassan är en myndighet som kontrollerar arbetsmiljöer."
+      "en": "A-kassan can inspect work environments.",
+      "sv": "A-kassan kan kontrollera arbetsmiljöer."
     },
     "opts": [
       {
@@ -19091,16 +19091,16 @@
         "sv": "Den kan betala ut arbetslöshetsersättning till medlemmar"
       },
       {
-        "en": "A government agency that inspects work environments",
-        "sv": "En myndighet som kontrollerar arbetsmiljöer"
+        "en": "It can inspect work environments",
+        "sv": "Den kan kontrollera arbetsmiljöer"
       },
       {
-        "en": "It sets all wages in Sweden",
-        "sv": "Den bestämmer alla löner i Sverige"
+        "en": "It can set all wages in Sweden",
+        "sv": "Den kan bestämma alla löner i Sverige"
       },
       {
-        "en": "It reviews public-service programmes",
-        "sv": "Den granskar public service-program"
+        "en": "It can review public-service programmes",
+        "sv": "Den kan granska public service-program"
       }
     ],
     "answer": 0,

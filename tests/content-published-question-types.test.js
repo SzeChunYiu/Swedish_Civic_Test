@@ -133,6 +133,8 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.publishedQuestions,
   );
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
+  assert.equal(summary.questionPoliticalPartyOptionShapeValidated, 3);
+  assert.equal(summary.questionAkassanSupportOptionShapeValidated, 3);
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
@@ -1733,6 +1735,55 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q106 mixes Christmas Eve option grammar shapes/,
+  );
+});
+
+test('A-kassan support options publish action-clause distractors', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'data/additionalQuestions.ts'), 'utf8');
+  const csv = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
+  const staticSource = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
+  const oldNounPhrasePattern =
+    /\b(?:En myndighet som kontrollerar arbetsmiljöer|A government agency that inspects work environments)\b/;
+
+  assert.equal(oldNounPhrasePattern.test(source), false);
+  assert.equal(oldNounPhrasePattern.test(csv), false);
+  assert.equal(oldNounPhrasePattern.test(staticSource), false);
+  assert.equal(source.includes('Den kan kontrollera arbetsmiljöer'), true);
+  assert.equal(source.includes('It can inspect work environments'), true);
+  assert.equal(csv.includes('Den kan kontrollera arbetsmiljöer'), true);
+  assert.equal(csv.includes('It can inspect work environments'), true);
+  assert.equal(staticSource.includes('Den kan kontrollera arbetsmiljöer'), true);
+  assert.equal(staticSource.includes('It can inspect work environments'), true);
+});
+
+test('A-kassan support options reject noun-phrase distractors', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace('Den kan kontrollera arbetsmiljöer', 'En myndighet som kontrollerar arbetsmiljöer')
+      .replace('It can inspect work environments', 'A government agency that inspects work environments');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q067 mixes A-kassan support option grammar shapes/,
   );
 });
 

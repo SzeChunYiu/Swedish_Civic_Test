@@ -4823,6 +4823,32 @@ function findQuestionChristmasEveOptionShapeIssue(question) {
   return null;
 }
 
+function isAkassanSupportOptionShapeQuestion(question) {
+  const tags = question.tags || [];
+  const promptText = [question.questionSv, question.questionEn].join(' ');
+  return (
+    question.type === 'single_choice' &&
+    tags.includes('a-kassa') &&
+    /\bVilket stöd kan A-kassan ge\b/i.test(promptText) &&
+    /\bWhat support can A-kassan provide\b/i.test(promptText)
+  );
+}
+
+function findQuestionAkassanSupportOptionShapeIssue(question) {
+  if (!isAkassanSupportOptionShapeQuestion(question) || !Array.isArray(question.options)) {
+    return null;
+  }
+
+  const svOptions = question.options.map((option) => normalizeOptionText(option?.textSv));
+  const enOptions = question.options.map((option) => normalizeOptionText(option?.textEn));
+
+  if (svOptions.some((text) => /^(?:En|Ett|Att)\s+/i.test(text))) return 'noun-sv-option';
+  if (enOptions.some((text) => /^(?:A|An|To)\s+/i.test(text))) return 'noun-en-option';
+  if (!svOptions.every((text) => /^Den\s+/i.test(text))) return 'mixed-sv-option-shape';
+  if (!enOptions.every((text) => /^It\s+/i.test(text))) return 'mixed-en-option-shape';
+  return null;
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -7626,6 +7652,7 @@ let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionSecretBallotSvPronounNaturalnessValidated = 0;
 let questionPoliticalPartyOptionShapeValidated = 0;
 let questionChristmasEveOptionShapeValidated = 0;
+let questionAkassanSupportOptionShapeValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17474,6 +17501,7 @@ if (Array.isArray(questions)) {
         findQuestionSecretBallotSvPronounNaturalnessIssue(question);
       const politicalPartyOptionShapeIssue = findQuestionPoliticalPartyOptionShapeIssue(question);
       const christmasEveOptionShapeIssue = findQuestionChristmasEveOptionShapeIssue(question);
+      const akassanSupportOptionShapeIssue = findQuestionAkassanSupportOptionShapeIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17565,6 +17593,11 @@ if (Array.isArray(questions)) {
         fail(`${label} mixes Christmas Eve option grammar shapes`);
       } else if (isChristmasEveOptionShapeQuestion(question)) {
         questionChristmasEveOptionShapeValidated += 1;
+      }
+      if (akassanSupportOptionShapeIssue) {
+        fail(`${label} mixes A-kassan support option grammar shapes`);
+      } else if (isAkassanSupportOptionShapeQuestion(question)) {
+        questionAkassanSupportOptionShapeValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -18050,6 +18083,7 @@ console.log(
       questionSecretBallotSvPronounNaturalnessValidated,
       questionPoliticalPartyOptionShapeValidated,
       questionChristmasEveOptionShapeValidated,
+      questionAkassanSupportOptionShapeValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
