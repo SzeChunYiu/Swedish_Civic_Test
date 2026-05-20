@@ -1,7 +1,7 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -180,14 +180,12 @@ export default function Screen() {
       </LegalSection>
       <LegalSection title={copy.sections.publicSupportPage.title}>
         {copy.sections.publicSupportPage.body}{' '}
-        <Link
+        <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
-          accessibilityRole="link"
+          destination={PUBLIC_SUPPORT_URL}
           href={PUBLIC_SUPPORT_URL}
-          style={styles.externalLink}
-        >
-          {PUBLIC_SUPPORT_URL}
-        </Link>
+          label={copy.sections.publicSupportPage.title}
+        />
       </LegalSection>
     </LegalPage>
   );
@@ -280,11 +278,5 @@ const styles = StyleSheet.create({
     color: colors.textDisclaimer,
     fontSize: typography.disclaimer.fontSize,
     lineHeight: typography.disclaimer.lineHeight,
-  },
-  externalLink: {
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textDecorationLine: 'underline',
   },
 });
