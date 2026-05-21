@@ -13,6 +13,7 @@ const staticRoutes = new Set([
   '/citizenship-requirements',
   '/dashboard',
   '/disclaimer',
+  '/ebook',
   '/exam',
   '/home',
   '/learn',

@@ -357,6 +357,11 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     'native intent static route allowlist should include the registered dashboard route',
   );
   assert.equal(
+    manifest.nativeIntentStaticRoutes.includes('/ebook'),
+    true,
+    'native intent static route allowlist should include the native ebook route',
+  );
+  assert.equal(
     manifest.nativeIntentStaticRoutes.includes('/citizenship-requirements'),
     true,
     'native intent static route allowlist should include the citizenship requirements guide',
@@ -367,7 +372,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     '/about-the-test',
     '/citizenship-requirements',
     '/search?q=riksdag',
-    `${appScheme}://app/chapter/ch01?from=learn`,
+    '/ebook',
   ]);
   assert.deepEqual(manifest.nativeIntentRuntimeSampleExpectedPaths.slice(0, 6), [
     '/home',
@@ -375,7 +380,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     '/about-the-test',
     '/citizenship-requirements',
     '/search?q=riksdag',
-    '/chapter/ch01?from=learn',
+    '/ebook',
   ]);
 
   for (const file of manifest.files) {
@@ -534,6 +539,25 @@ test('native intent resolves search deep links before the Home fallback', () => 
     '/search?q=riksdag',
   );
   assert.equal(redirectSystemPath({ initial: true, path: '/searching' }), '/home');
+});
+
+test('native intent resolves ebook deep links before the Home fallback', () => {
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(redirectSystemPath({ initial: true, path: '/ebook' }), '/ebook');
+  assert.equal(redirectSystemPath({ initial: true, path: '/ebook?c=1' }), '/ebook?c=1');
+  assert.equal(
+    redirectSystemPath({
+      initial: true,
+      path: 'almost-swedish://app/ebook?c=1',
+    }),
+    '/ebook?c=1',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://ebook?c=1' }),
+    '/ebook?c=1',
+  );
+  assert.equal(redirectSystemPath({ initial: true, path: '/ebook/intro' }), '/home');
 });
 
 test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {
