@@ -4,6 +4,11 @@ export type VisualSmokeRoute = {
   route: string;
 };
 
+export type VisualSmokeDuplicateExplanation = {
+  names: readonly string[];
+  reason: string;
+};
+
 export const visualSmokeRoutes = [
   { name: 'index', route: '/', file: 'index.png' },
   { name: 'onboarding', route: '/onboarding', file: 'onboarding.png' },
@@ -21,3 +26,22 @@ export const visualSmokeRoutes = [
   { name: 'sources', route: '/sources', file: 'sources.png' },
   { name: 'support', route: '/support', file: 'support.png' },
 ] as const satisfies readonly VisualSmokeRoute[];
+
+export const visualSmokeDuplicateExplanations = [
+  {
+    names: ['home', 'index'],
+    reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
+  },
+] as const satisfies readonly VisualSmokeDuplicateExplanation[];
+
+export function visualSmokeDuplicateExplanationKey(names: readonly string[]): string {
+  return [...names].sort().join(',');
+}
+
+export function isExplainedVisualSmokeDuplicate(names: readonly string[]): boolean {
+  const duplicateKey = visualSmokeDuplicateExplanationKey(names);
+
+  return visualSmokeDuplicateExplanations.some(
+    (explanation) => visualSmokeDuplicateExplanationKey(explanation.names) === duplicateKey,
+  );
+}

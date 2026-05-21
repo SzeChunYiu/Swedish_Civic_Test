@@ -82,13 +82,6 @@ export default function ChapterScreen() {
 
   const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
   const chapterTitle = copy.chapterTitle(chapter);
-  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
-    <View style={styles.questionBlock}>
-      <QuestionCard question={question} language={language} />
-      <UHRReferenceCard language={language} reference={question.uhrReference} />
-      <QuestionReportLink language={language} question={question} screen="chapter" />
-    </View>
-  );
   const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;
   const renderEmptyQuestions = () => <Text style={styles.empty}>{copy.emptyQuestions}</Text>;
   const renderListHeader = () => (
@@ -128,6 +121,14 @@ export default function ChapterScreen() {
       </Text>
     </View>
   );
+  const renderQuestionItem: ListRenderItem<PracticeQuestion> = ({ item: question }) => (
+    <View style={styles.questionBlock}>
+      <QuestionCard question={question} language={language} />
+      <UHRReferenceCard language={language} reference={question.uhrReference} />
+      <QuestionReportLink language={language} question={question} screen="chapter" />
+    </View>
+  );
+
   return (
     <FlatList
       contentContainerStyle={styles.content}

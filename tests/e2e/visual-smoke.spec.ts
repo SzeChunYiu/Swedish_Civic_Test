@@ -5,7 +5,12 @@ import path from 'node:path';
 
 import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
-import { visualSmokeRoutes, type VisualSmokeRoute } from './visualSmokeRoutes';
+import {
+  isExplainedVisualSmokeDuplicate,
+  visualSmokeDuplicateExplanations,
+  visualSmokeRoutes,
+  type VisualSmokeRoute,
+} from './visualSmokeRoutes';
 
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
 const visualSmokeOutput = resolveVisualSmokeOutput();
@@ -28,13 +33,6 @@ const requiredRouteContextKeys = [
   './(tabs)/practice.tsx',
   './about-the-test.tsx',
   './chapter/[chapterId].tsx',
-] as const;
-
-const explainedDuplicateScreenshotGroups = [
-  {
-    names: ['home', 'index'],
-    reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
-  },
 ] as const;
 
 function readWebBundleText(): string {
@@ -77,12 +75,7 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
 
   return [...namesByHash.entries()]
     .filter(([, names]) => names.length > 1)
-    .filter(([, names]) => {
-      const sortedNames = [...names].sort();
-      return !explainedDuplicateScreenshotGroups.some(
-        (group) => JSON.stringify([...group.names].sort()) === JSON.stringify(sortedNames),
-      );
-    })
+    .filter(([, names]) => !isExplainedVisualSmokeDuplicate(names))
     .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
 }
 
@@ -154,7 +147,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
           'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible dialog or modal menu overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
-        duplicateExplanations: explainedDuplicateScreenshotGroups,
+        duplicateExplanations: visualSmokeDuplicateExplanations,
         routes: manifest,
       },
       null,
