@@ -1,9 +1,7 @@
 import { Path, Svg } from 'react-native-svg';
 
-import { colors } from '../../../lib/theme';
-
-export function CloseIcon({ size = 16, color }: { size?: number; color?: string }) {
-  const stroke = color ?? colors.text;
+export function CloseIcon({ size = 16, color }: { size?: number; color: string }) {
+  const stroke = color;
   return (
     <Svg
       accessibilityElementsHidden

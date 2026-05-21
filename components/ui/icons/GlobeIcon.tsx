@@ -1,9 +1,7 @@
 import { Circle, Path, Svg } from 'react-native-svg';
 
-import { colors } from '../../../lib/theme';
-
-export function GlobeIcon({ size = 22, color }: { size?: number; color?: string }) {
-  const stroke = color ?? colors.text;
+export function GlobeIcon({ size = 22, color }: { size?: number; color: string }) {
+  const stroke = color;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx={12} cy={12} r={9} stroke={stroke} strokeWidth={1.75} />

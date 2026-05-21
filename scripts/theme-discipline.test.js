@@ -18,6 +18,18 @@ const MONETIZATION_THEME_SURFACES = [
   'components/monetization/ProPaywall.tsx',
   'components/monetization/RemoveAdsPlacementCta.tsx',
 ];
+const HEADER_THEME_SURFACES = [
+  'components/ui/LanguagePicker.tsx',
+  'components/ui/TopBarActions.tsx',
+];
+const HEADER_THEME_ICONS = [
+  'components/ui/icons/AudioIcon.tsx',
+  'components/ui/icons/BookmarkIcon.tsx',
+  'components/ui/icons/CloseIcon.tsx',
+  'components/ui/icons/GlobeIcon.tsx',
+  'components/ui/icons/SearchIcon.tsx',
+  'components/ui/icons/SettingsIcon.tsx',
+];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
@@ -280,6 +292,66 @@ test('monetization surfaces resolve semantic colors from the active theme', () =
       /\bcolors\./,
       `${componentPath} must not read static colors.* values`,
     );
+  }
+});
+
+test('TopBarActions LanguagePicker GlobeIcon SearchIcon AudioIcon focusSoft avoid the static colors singleton', () => {
+  for (const componentPath of HEADER_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.match(
+      source,
+      /themeColors\.focusSoft/,
+      `${componentPath} should resolve focus feedback from ThemeColors`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
+
+  const topBarActionsSource = read('components/ui/TopBarActions.tsx');
+  const languagePickerSource = read('components/ui/LanguagePicker.tsx');
+
+  assert.match(topBarActionsSource, /useTopBarActionLinkWebStyles\(themeColors\)/);
+  assert.match(topBarActionsSource, /background-color: \$\{themeColors\.focusSoft\}/);
+  assert.match(topBarActionsSource, /<SearchIcon size=\{iconSize\} color=\{themeColors\.text\}/);
+  assert.match(topBarActionsSource, /<AudioIcon size=\{iconSize\} color=\{themeColors\.text\}/);
+  assert.match(
+    languagePickerSource,
+    /<GlobeIcon size=\{triggerIconSize\} color=\{themeColors\.textMuted\}/,
+  );
+  assert.match(
+    languagePickerSource,
+    /<CloseIcon size=\{closeIconSize\} color=\{themeColors\.textMuted\}/,
+  );
+
+  for (const iconPath of HEADER_THEME_ICONS) {
+    const source = read(iconPath);
+
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/\.\.\/lib\/theme['"]/,
+      `${iconPath} must not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(source, /\bcolors\./, `${iconPath} must not read colors.* values`);
+    assert.match(source, /color: string/, `${iconPath} should receive an explicit icon color`);
   }
 });
 

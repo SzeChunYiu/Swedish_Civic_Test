@@ -358,10 +358,10 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   );
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
-  assert.match(source, /iconButtonHover:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/);
+  assert.match(source, /iconButtonHover:\s*\{[\s\S]*backgroundColor: themeColors\.focusSoft/);
   assert.match(
     source,
-    /iconButtonHoverReducedMotion:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/,
+    /iconButtonHoverReducedMotion:\s*\{[\s\S]*backgroundColor: themeColors\.focusSoft/,
   );
   assert.match(
     source,
@@ -369,7 +369,7 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   );
   assert.match(
     source,
-    /iconButtonPressedReducedMotion:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/,
+    /iconButtonPressedReducedMotion:\s*\{[\s\S]*backgroundColor: themeColors\.focusSoft/,
   );
   assert.match(
     source,

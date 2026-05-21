@@ -1,9 +1,7 @@
 import { Path, Svg } from 'react-native-svg';
 
-import { colors } from '../../../lib/theme';
-
-export function SettingsIcon({ size = 22, color }: { size?: number; color?: string }) {
-  const stroke = color ?? colors.text;
+export function SettingsIcon({ size = 22, color }: { size?: number; color: string }) {
+  const stroke = color;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke={stroke} strokeWidth={1.5} />

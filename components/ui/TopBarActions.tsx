@@ -1,13 +1,14 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space } from '../../lib/theme';
+import { motion, radius, space, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { LanguagePicker } from './LanguagePicker';
 import { AudioIcon } from './icons/AudioIcon';
 import { BookmarkIcon } from './icons/BookmarkIcon';
@@ -26,6 +27,8 @@ type TopBarActionLinkProps = {
   accessibilityLabel: string;
   children: ReactNode;
   href: Href;
+  styles: TopBarStyles;
+  themeColors: ThemeColors;
 };
 
 type TopBarAudioSwitchProps = {
@@ -33,7 +36,11 @@ type TopBarAudioSwitchProps = {
   audioEnabled: boolean;
   iconSize: number;
   onToggle: () => void;
+  styles: TopBarStyles;
+  themeColors: ThemeColors;
 };
+
+type TopBarStyles = ReturnType<typeof createStyles>;
 
 const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
   sv: {
@@ -61,46 +68,48 @@ function isKeyboardActivationKey(key: string | undefined) {
   return key ? keyboardActivationKeys.has(key) : false;
 }
 
-function useTopBarActionLinkWebStyles() {
+function useTopBarActionLinkWebStyles(themeColors: ThemeColors) {
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof document === 'undefined') return;
-    if (document.getElementById(topBarActionLinkStyleElementId)) return;
+    let styleElement = document.getElementById(topBarActionLinkStyleElementId);
+    if (!styleElement) {
+      styleElement = document.createElement('style');
+      styleElement.id = topBarActionLinkStyleElementId;
+      document.head.appendChild(styleElement);
+    }
 
-    const styleElement = document.createElement('style');
-    styleElement.id = topBarActionLinkStyleElementId;
     styleElement.textContent = `
 .${topBarActionLinkClassName} {
   -webkit-tap-highlight-color: transparent;
-  transition: background-color ${motion.duration.fast}ms ${motion.easing.press}, transform ${motion.duration.fast}ms ${motion.easing.press};
+  transition: transform ${motion.duration.fast}ms ${motion.easing.press};
 }
 
-.${topBarActionLinkClassName}:hover,
-.${topBarActionLinkClassName}:focus,
-.${topBarActionLinkClassName}:focus-visible {
-  background-color: ${colors.focusSoft};
+.${topBarActionLinkClassName}.${topBarActionLinkClassName}:hover,
+.${topBarActionLinkClassName}.${topBarActionLinkClassName}:focus,
+.${topBarActionLinkClassName}.${topBarActionLinkClassName}:focus-visible {
+  background-color: ${themeColors.focusSoft};
   transform: scale(${motion.hoverScale});
 }
 
-.${topBarActionLinkClassName}:active {
-  background-color: ${colors.focusSoft};
+.${topBarActionLinkClassName}.${topBarActionLinkClassName}:active {
+  background-color: ${themeColors.focusSoft};
   transform: scale(${motion.pressedScale});
 }
 
 @media (prefers-reduced-motion: reduce) {
   .${topBarActionLinkClassName} {
-    transition: background-color ${motion.duration.fast}ms ${motion.easing.press};
+    transition: none;
   }
 
-  .${topBarActionLinkClassName}:hover,
-  .${topBarActionLinkClassName}:focus,
-  .${topBarActionLinkClassName}:focus-visible,
-  .${topBarActionLinkClassName}:active {
+  .${topBarActionLinkClassName}.${topBarActionLinkClassName}:hover,
+  .${topBarActionLinkClassName}.${topBarActionLinkClassName}:focus,
+  .${topBarActionLinkClassName}.${topBarActionLinkClassName}:focus-visible,
+  .${topBarActionLinkClassName}.${topBarActionLinkClassName}:active {
     transform: none;
   }
 }
 `;
-    document.head.appendChild(styleElement);
-  }, []);
+  }, [themeColors.focusSoft]);
 }
 
 /**
@@ -115,25 +124,44 @@ export function TopBarActions({ iconSize = defaultIconSize }: TopBarActionsProps
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = topBarActionsCopy[language];
 
   return (
     <View style={styles.row}>
-      <LanguagePicker />
+      <LanguagePicker themeColors={themeColors} />
       <TopBarAudioSwitch
         accessibilityLabel={audioEnabled ? copy.audioEnabled : copy.audioMuted}
         audioEnabled={audioEnabled}
         iconSize={iconSize}
         onToggle={() => setAudioEnabled(!audioEnabled)}
+        styles={styles}
+        themeColors={themeColors}
       />
-      <TopBarActionLink href="/search" accessibilityLabel={copy.search}>
-        <SearchIcon size={iconSize} />
+      <TopBarActionLink
+        href="/search"
+        accessibilityLabel={copy.search}
+        styles={styles}
+        themeColors={themeColors}
+      >
+        <SearchIcon size={iconSize} color={themeColors.text} />
       </TopBarActionLink>
-      <TopBarActionLink href="/mistakes" accessibilityLabel={copy.savedQuestions}>
-        <BookmarkIcon size={iconSize} />
+      <TopBarActionLink
+        href="/mistakes"
+        accessibilityLabel={copy.savedQuestions}
+        styles={styles}
+        themeColors={themeColors}
+      >
+        <BookmarkIcon size={iconSize} color={themeColors.text} />
       </TopBarActionLink>
-      <TopBarActionLink href="/settings" accessibilityLabel={copy.settings}>
-        <SettingsIcon size={iconSize} />
+      <TopBarActionLink
+        href="/settings"
+        accessibilityLabel={copy.settings}
+        styles={styles}
+        themeColors={themeColors}
+      >
+        <SettingsIcon size={iconSize} color={themeColors.text} />
       </TopBarActionLink>
     </View>
   );
@@ -144,6 +172,8 @@ function TopBarAudioSwitch({
   audioEnabled,
   iconSize,
   onToggle,
+  styles,
+  themeColors,
 }: TopBarAudioSwitchProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -187,13 +217,19 @@ function TopBarAudioSwitch({
           : null,
       ]}
     >
-      <AudioIcon size={iconSize} muted={!audioEnabled} />
+      <AudioIcon size={iconSize} color={themeColors.text} muted={!audioEnabled} />
     </Pressable>
   );
 }
 
-function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
-  useTopBarActionLinkWebStyles();
+function TopBarActionLink({
+  accessibilityLabel,
+  children,
+  href,
+  styles,
+  themeColors,
+}: TopBarActionLinkProps) {
+  useTopBarActionLinkWebStyles(themeColors);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -257,61 +293,63 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[0.75],
-    paddingHorizontal: space[1.5],
-  },
-  iconButton: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    display: 'flex',
-    flexShrink: 0,
-    height: space[6],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-    width: space[6],
-  },
-  iconButtonHover: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  iconButtonHoverReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  iconButtonPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  iconButtonPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  iconLink: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    display: 'flex',
-    flexShrink: 0,
-    height: space[6],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-    width: space[6],
-  },
-  iconLinkHover: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  iconLinkHoverReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  iconLinkPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  iconLinkPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[0.75],
+      paddingHorizontal: space[1.5],
+    },
+    iconButton: {
+      alignItems: 'center',
+      borderRadius: radius.pill,
+      display: 'flex',
+      flexShrink: 0,
+      height: space[6],
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[6],
+      width: space[6],
+    },
+    iconButtonHover: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.hoverScale }],
+    },
+    iconButtonHoverReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    iconButtonPressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    iconButtonPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    iconLink: {
+      alignItems: 'center',
+      borderRadius: radius.pill,
+      display: 'flex',
+      flexShrink: 0,
+      height: space[6],
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[6],
+      width: space[6],
+    },
+    iconLinkHover: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.hoverScale }],
+    },
+    iconLinkHoverReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    iconLinkPressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    iconLinkPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+  });
+}
