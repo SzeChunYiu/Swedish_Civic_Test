@@ -13205,15 +13205,22 @@ export function applyQuestionLocalizationPilot(question: PracticeQuestion): Prac
   const protectedExplanationText = preserveProtectedTerms(explanationText, question);
   assertCompleteLocalizationMap(protectedExplanationText, `${question.id}.explanationText`);
 
+  const optionLocalizationIds = new Set(Object.keys(localization.options));
+  const questionOptionIds = question.options.map((option) => option.id);
+  const canLocalizeOptions =
+    questionOptionIds.length === optionLocalizationIds.size &&
+    questionOptionIds.every((optionId) => optionLocalizationIds.has(optionId));
+
+  if (!canLocalizeOptions) {
+    return question;
+  }
+
   return {
     ...question,
     questionText,
     explanationText: protectedExplanationText,
     options: question.options.map((option) => {
-      const optionLocalization = localization.options[option.id];
-      if (!optionLocalization) {
-        throw new Error(`${question.id}.options.${option.id}.text missing localization map`);
-      }
+      const optionLocalization = localization.options[option.id]!;
       const text = localizedContentText(option.textSv, option.textEn, optionLocalization);
       assertCompleteLocalizationMap(text, `${question.id}.options.${option.id}.text`);
       return { ...option, text };
