@@ -188,8 +188,15 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
   assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 59);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
+  assert.equal(summary.legalInternalMonetizationKeyGuardValidated, 7);
+  assert.equal(summary.legalInternalMonetizationKeyGuardParityValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
+
+  const privacyRoute = fs.readFileSync(path.join(repoRoot, 'app/privacy.tsx'), 'utf8');
+  assert.doesNotMatch(privacyRoute, /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i);
+  assert.match(privacyRoute, /gör att annonser inte visas på den här enheten/);
+  assert.match(privacyRoute, /turns off ads on this device/);
 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
@@ -213,6 +220,37 @@ test('legal, source, and support routes stay on shared accessible header path', 
       );
     }
   }
+});
+
+test('legal route parity rejects internal monetization keys in learner-facing privacy copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('turns off ads on this device', 'sets adsDisabled=true on this device');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-legal-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /learner-facing legal\/privacy copy must not expose internal monetization implementation key "adsDisabled flag" in app\/privacy\.tsx/,
+  );
 });
 
 test('privacy route parity rejects English streaks in Swedish legal copy', () => {

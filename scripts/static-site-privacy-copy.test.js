@@ -18,6 +18,14 @@ const unqualifiedNoTrackingPatterns = [
   /\bspårar inte\b/i,
   /\bInga tredjepartssp[aå]rare\b/i,
 ];
+const internalMonetizationCopyPatterns = [
+  /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i,
+  /\bmonetization\.removeAds\.adsDisabled\.v\d+\b/i,
+  /\bremove[_-]ads[_-]entitlement\b/i,
+  /\bpurchase_fields_rejected\b/i,
+  /\b(?:unlimitedMockExams|fullMistakeReview|predictedPassProbability|multiColorHighlights)\b/i,
+  /\bentitlement flag\b/i,
+];
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
@@ -72,14 +80,14 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static site privacy callout uses locale-natural plain-language labels', () => {
+test('static site privacy copy hides internal monetization implementation keys', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
-  const swedishDictionary = staticSiteSwedishDictionary();
 
-  assert.doesNotMatch(surface, /In plain Swedish:/);
-  assert.match(surface, /data-i18n="privacy\.s4\.callout\.b">In plain English:<\/b>/);
-  assert.match(surface, /'privacy\.s4\.callout\.b': 'In plain English:'/);
-  assert.match(swedishDictionary, /'privacy\.s4\.callout\.b': 'På klarspråk:'/);
+  internalMonetizationCopyPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+
+  const mutated = `${surface}\nRemove Ads sets adsDisabled=true through the entitlement flag.`;
+  assert.match(mutated, internalMonetizationCopyPatterns[0]);
+  assert.match(mutated, internalMonetizationCopyPatterns[5]);
 });
 
 test('static site public copy does not label the release as MVP', () => {

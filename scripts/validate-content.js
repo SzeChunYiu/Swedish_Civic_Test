@@ -2730,6 +2730,34 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 ];
 const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
+const EXPECTED_LEGAL_INTERNAL_MONETIZATION_KEY_SURFACES = 7;
+const FORBIDDEN_LEGAL_INTERNAL_MONETIZATION_COPY_PATTERNS = Object.freeze([
+  {
+    label: 'adsDisabled flag',
+    pattern: /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i,
+  },
+  {
+    label: 'Remove Ads storage key',
+    pattern: /\bmonetization\.removeAds\.adsDisabled\.v\d+\b/i,
+  },
+  {
+    label: 'raw Remove Ads entitlement key',
+    pattern: /\bremove[_-]ads[_-]entitlement\b/i,
+  },
+  {
+    label: 'raw purchase-field rejection key',
+    pattern: /\bpurchase_fields_rejected\b/i,
+  },
+  {
+    label: 'raw premium entitlement flag',
+    pattern:
+      /\b(?:unlimitedMockExams|fullMistakeReview|spacedRepetition|nativeLangExplanations|predictedPassProbability|multiColorHighlights|customStudyPlan|notesExport|confidenceSlider)\b/i,
+  },
+  {
+    label: 'raw entitlement flag wording',
+    pattern: /\bentitlement flag\b/i,
+  },
+]);
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -8775,6 +8803,8 @@ let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
+let legalInternalMonetizationKeyGuardValidated = 0;
+let legalInternalMonetizationKeyGuardParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticSiteSwedishGrammarToneValidated = 0;
@@ -9283,6 +9313,7 @@ if (focusedValidationRequested('nativeQuizCopy')) {
 if (focusedValidationRequested('legalRouteParity')) {
   validateLegalRouteHeaderParity();
   validateLegalSwedishEnglishTokenGuard();
+  validateLegalInternalMonetizationKeyGuard();
   exitWithValidationFailures();
   printValidationSummary({
     legalRouteHeadersValidated,
@@ -9290,6 +9321,8 @@ if (focusedValidationRequested('legalRouteParity')) {
     swedishPrivacyStreakCopyNaturalnessValidated,
     legalSwedishEnglishTokenGuardValidated,
     legalSwedishEnglishTokenGuardParityValidated,
+    legalInternalMonetizationKeyGuardValidated,
+    legalInternalMonetizationKeyGuardParityValidated,
   });
   process.exit(0);
 }
@@ -12718,6 +12751,81 @@ function validateLegalSwedishEnglishTokenGuard() {
   }
 
   if (valid) legalSwedishEnglishTokenGuardParityValidated = true;
+}
+
+function extractStaticPrivacyHtmlSurface(source) {
+  const match = source.match(
+    /<main\s+data-screen-label="02 Privacy"\s+data-page="\/privacy">[\s\S]*?<\/main>/,
+  );
+  return match?.[0] ?? source;
+}
+
+function extractLegalCopySurface(source) {
+  return extractStaticStringLiterals(source).join('\n');
+}
+
+function validateLegalInternalMonetizationKeyGuard() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const surfaces = EXPECTED_LEGAL_ROUTE_HEADERS.map((expectedRoute) => ({
+    label: expectedRoute.file,
+    read() {
+      const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
+      return extractLegalCopySurface(routeSource);
+    },
+  })).concat([
+    {
+      label: 'site/app.js privacy i18n copy',
+      read() {
+        return fs.readFileSync(path.join(repoRoot, 'site/app.js'), 'utf8');
+      },
+    },
+    {
+      label: 'site/index.html privacy page',
+      read() {
+        const htmlSource = fs.readFileSync(path.join(repoRoot, 'site/index.html'), 'utf8');
+        return extractStaticPrivacyHtmlSurface(htmlSource);
+      },
+    },
+  ]);
+
+  for (const surface of surfaces) {
+    let surfaceText = '';
+    try {
+      surfaceText = surface.read();
+    } catch (error) {
+      reject(
+        `${surface.label} could not be read for internal monetization key guard: ${error.message}`,
+      );
+      continue;
+    }
+
+    let surfaceIsValid = true;
+    for (const { label, pattern } of FORBIDDEN_LEGAL_INTERNAL_MONETIZATION_COPY_PATTERNS) {
+      if (pattern.test(surfaceText)) {
+        surfaceIsValid = false;
+        reject(
+          `learner-facing legal/privacy copy must not expose internal monetization implementation key "${label}" in ${surface.label}`,
+        );
+      }
+    }
+    if (surfaceIsValid) legalInternalMonetizationKeyGuardValidated += 1;
+  }
+
+  if (
+    legalInternalMonetizationKeyGuardValidated !== EXPECTED_LEGAL_INTERNAL_MONETIZATION_KEY_SURFACES
+  ) {
+    reject(
+      `legal internal monetization key guard validated ${legalInternalMonetizationKeyGuardValidated} surfaces, expected ${EXPECTED_LEGAL_INTERNAL_MONETIZATION_KEY_SURFACES}`,
+    );
+  }
+
+  if (valid) legalInternalMonetizationKeyGuardParityValidated = true;
 }
 
 function validateSettingsRouteHeaderParity() {
@@ -19645,6 +19753,7 @@ validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
 validateLegalSwedishEnglishTokenGuard();
+validateLegalInternalMonetizationKeyGuard();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -19816,6 +19925,8 @@ console.log(
       swedishPrivacyStreakCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
+      legalInternalMonetizationKeyGuardValidated,
+      legalInternalMonetizationKeyGuardParityValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticSiteSwedishGrammarToneValidated,
