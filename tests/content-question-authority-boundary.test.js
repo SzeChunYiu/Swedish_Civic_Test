@@ -39,7 +39,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -71,7 +71,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -95,12 +95,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents)
       .replace(
-        'Sant eller falskt: Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Sant eller falskt enligt UHR-materialet: Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Sveriges nordligaste del ligger norr om polcirkeln.',
+        'Enligt UHR-materialet ligger Sveriges nordligaste del norr om polcirkeln.',
       )
       .replace(
-        "True or false: Sweden's northernmost part lies north of the Arctic Circle.",
-        "True or false according to the UHR material: Sweden's northernmost part lies north of the Arctic Circle.",
+        "Sweden's northernmost part lies north of the Arctic Circle.",
+        "According to the UHR material, Sweden's northernmost part lies north of the Arctic Circle.",
       );
   }
   return contents;
@@ -108,12 +108,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /q002 carries source-authority wording in the stem/,
+    /q002 generated variant\[0\] option\[1\] uses source-material fallback wording/,
   );
 });
