@@ -5,6 +5,8 @@ export type ExpoRouterShellRole =
   | 'web-document'
   | 'native-intent';
 
+export const expoRouterShellAppScheme = 'almost-swedish' as const;
+
 export type ExpoRouterShellFile = {
   readonly file: string;
   readonly role: ExpoRouterShellRole;
@@ -271,39 +273,39 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/ebook?c=1',
   },
   {
-    input: 'almost-swedish://app/chapter/ch01?from=learn',
+    input: `${expoRouterShellAppScheme}://app/chapter/ch01?from=learn`,
     expectedPath: '/chapter/ch01?from=learn',
   },
   {
-    input: 'almost-swedish://app/ebook?c=1',
+    input: `${expoRouterShellAppScheme}://app/ebook?c=1`,
     expectedPath: '/ebook?c=1',
   },
   {
-    input: 'almost-swedish://ebook?c=1',
+    input: `${expoRouterShellAppScheme}://ebook?c=1`,
     expectedPath: '/ebook?c=1',
   },
   {
-    input: 'almost-swedish://app/search?q=riksdag',
+    input: `${expoRouterShellAppScheme}://app/search?q=riksdag`,
     expectedPath: '/search?q=riksdag',
   },
   {
-    input: 'almost-swedish://search?q=riksdag',
+    input: `${expoRouterShellAppScheme}://search?q=riksdag`,
     expectedPath: '/search?q=riksdag',
   },
   {
-    input: 'almost-swedish://app/about-the-test',
+    input: `${expoRouterShellAppScheme}://app/about-the-test`,
     expectedPath: '/about-the-test',
   },
   {
-    input: 'almost-swedish://app/citizenship-requirements',
+    input: `${expoRouterShellAppScheme}://app/citizenship-requirements`,
     expectedPath: '/citizenship-requirements',
   },
   {
-    input: 'almost-swedish://quiz/q001',
+    input: `${expoRouterShellAppScheme}://quiz/q001`,
     expectedPath: '/quiz/q001',
   },
   {
-    input: 'almost-swedish://app/not-real',
+    input: `${expoRouterShellAppScheme}://app/not-real`,
     expectedPath: '/home',
   },
   {
@@ -419,7 +421,7 @@ export const expoRouterShellContract = {
   themeColorToken: 'colors.canvas',
   statusBarStyle: 'resolved-theme',
   nativeFallbackHref: '/home',
-  appScheme: 'almost-swedish',
+  appScheme: expoRouterShellAppScheme,
 } as const;
 
 export type ExpoRouterShellFilePath = (typeof expoRouterShellFiles)[number]['file'];
