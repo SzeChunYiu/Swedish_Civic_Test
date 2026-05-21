@@ -106,10 +106,14 @@ function assertSharedGlossaryPunctuationNormalizer(source) {
 
 function assertSearchRouteQueryHydration(source) {
   const requiredRules = [
-    [/import \{ Link, useLocalSearchParams \} from 'expo-router';/, 'route params import'],
+    [
+      /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
+      'route params and router import',
+    ],
     [/type SearchRouteParams = \{/, 'route params type'],
     [/q\?: string \| string\[\];/, 'q param support'],
     [/query\?: string \| string\[\];/, 'query param support'],
+    [/const router = useRouter\(\);/, 'router replacement hook'],
     [
       /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
       'local search params read',
@@ -130,7 +134,10 @@ function assertSearchRouteQueryHydration(source) {
       'q then query fallback order',
     ],
     [/onChangeText=\{setQuery\}/, 'manual typing remains controlled'],
-    [/onPress=\{\(\) => setQuery\(''\)\}/, 'clear search remains local'],
+    [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
+    [/setQuery\(''\);/, 'clear search state reset'],
+    [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
+    [/onPress=\{handleClearSearch\}/, 'clear search uses URL-aware handler'],
     [/value=\{query\}/, 'hydrated query reaches visible input'],
     [/const trimmedQuery = query\.trim\(\);/, 'hydrated query feeds filtering'],
   ];
@@ -165,7 +172,7 @@ test('validate-content reports Search route query hydration parity', () => {
     },
   );
 
-  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*15/);
+  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*19/);
   assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
 });
 
@@ -196,6 +203,17 @@ test('Search route hydration rejects overwriting local typing without a route-pa
   assert.throws(
     () => assertSearchRouteQueryHydration(mutatedSource),
     /unchanged route query guard/,
+  );
+});
+
+test('Search route hydration rejects leaving clear search local-only', () => {
+  const mutatedSource = readSearchRouteSource()
+    .replace("router.replace('/search');", '')
+    .replace('onPress={handleClearSearch}', "onPress={() => setQuery('')}");
+
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /clear search URL replacement/,
   );
 });
 

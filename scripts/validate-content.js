@@ -1487,12 +1487,13 @@ const EXPECTED_TAB_NAVIGATION_RULES = [
 ];
 const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = [
   {
-    label: 'route params import',
-    pattern: /import \{ Link, useLocalSearchParams \} from 'expo-router';/,
+    label: 'route params and router import',
+    pattern: /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
   },
   { label: 'route params type', pattern: /type SearchRouteParams = \{/ },
   { label: 'q param support', pattern: /q\?: string \| string\[\];/ },
   { label: 'query param support', pattern: /query\?: string \| string\[\];/ },
+  { label: 'router replacement hook', pattern: /const router = useRouter\(\);/ },
   {
     label: 'local search params read',
     pattern: /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
@@ -1520,7 +1521,10 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = [
       /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
   },
   { label: 'manual typing remains controlled', pattern: /onChangeText=\{setQuery\}/ },
-  { label: 'clear search remains local', pattern: /onPress=\{\(\) => setQuery\(''\)\}/ },
+  { label: 'clear search handler', pattern: /const handleClearSearch = \(\) => \{/ },
+  { label: 'clear search state reset', pattern: /setQuery\(''\);/ },
+  { label: 'clear search URL replacement', pattern: /router\.replace\('\/search'\);/ },
+  { label: 'clear search uses URL-aware handler', pattern: /onPress=\{handleClearSearch\}/ },
   { label: 'hydrated query reaches visible input', pattern: /value=\{query\}/ },
   { label: 'hydrated query feeds filtering', pattern: /const trimmedQuery = query\.trim\(\);/ },
 ];

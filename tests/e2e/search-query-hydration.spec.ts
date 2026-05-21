@@ -122,6 +122,18 @@ async function changeMountedSearchParams(page: Page, url: string) {
   }, url);
 }
 
+async function expectSearchUrlCleared(page: Page) {
+  await expect
+    .poll(() => {
+      const url = new URL(page.url());
+      return {
+        hasQ: url.searchParams.has('q'),
+        hasQuery: url.searchParams.has('query'),
+      };
+    })
+    .toEqual({ hasQ: false, hasQuery: false });
+}
+
 async function expectFirstQuestionResultNavigates(page: Page, scenario: SearchNavigationScenario) {
   const questionLink = page.getByRole('link', { name: scenario.questionLinkName }).first();
   const accessibleName = await questionLink.evaluate((node) => {
@@ -168,7 +180,17 @@ for (const scenario of searchNavigationScenarios) {
     const input = await expectHydratedSearch(page, scenario);
     await page.getByRole('button', { name: scenario.clearName }).click();
     await expect(input).toHaveValue('');
+    await expectSearchUrlCleared(page);
     await expect(page.getByText(scenario.initialSummary)).toBeVisible();
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    const clearedInput = page.getByRole('textbox', { name: scenario.inputName });
+    await expect(clearedInput).toHaveValue('');
+    await expect(page.getByText(scenario.initialSummary)).toBeVisible();
+    await clearedInput.fill(scenario.mountedQuery);
+    await expect(clearedInput).toHaveValue(scenario.mountedQuery);
+    await expectSearchUrlCleared(page);
 
     await changeMountedSearchParams(page, scenario.mountedUrl);
     await expectVisibleSearchResults(page, scenario, scenario.mountedQuery);

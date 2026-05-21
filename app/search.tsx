@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -24,6 +24,7 @@ type SearchRouteParams = {
 };
 
 export default function SearchScreen() {
+  const router = useRouter();
   const searchParams = useLocalSearchParams<SearchRouteParams>();
   const routeQuery = getRouteSearchQuery(searchParams);
   const [query, setQuery] = useState(() => routeQuery);
@@ -36,6 +37,14 @@ export default function SearchScreen() {
     previousRouteQueryRef.current = routeQuery;
     setQuery(routeQuery);
   }, [routeQuery]);
+  const handleClearSearch = () => {
+    setQuery('');
+    previousRouteQueryRef.current = '';
+
+    if (routeQuery.length > 0) {
+      router.replace('/search');
+    }
+  };
   const trimmedQuery = query.trim();
   const filteredTerms = useMemo(
     () =>
@@ -95,7 +104,7 @@ export default function SearchScreen() {
             accessibilityRole="button"
             accessibilityState={{ disabled: query.length === 0 }}
             disabled={query.length === 0}
-            onPress={() => setQuery('')}
+            onPress={handleClearSearch}
             variant="secondary"
           >
             {copy.clearSearch}
