@@ -46,6 +46,7 @@ const ts = require('typescript');
 const vm = require('node:vm');
 const {
   buildSiteQuestionBank,
+  classifyStaticSiteQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
@@ -18615,7 +18616,7 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankChaptersValidated = bank.chapters.length;
 
   if (actual !== expected) {
-    fail('site/questions.js is out of sync; run node scripts/export-site-question-bank.js');
+    fail(classifyStaticSiteQuestionBankDrift(actual, expected).message);
     return;
   }
 
