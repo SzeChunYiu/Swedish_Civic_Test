@@ -26,6 +26,24 @@ const internalMonetizationCopyPatterns = [
   /\b(?:unlimitedMockExams|fullMistakeReview|predictedPassProbability|multiColorHighlights)\b/i,
   /\bentitlement flag\b/i,
 ];
+const adSensePreparedDisabledCopyPatterns = [
+  /AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured/i,
+  /prepared for <b>Google AdSense<\/b>, but the static build does not load AdSense until reviewed web slot IDs are configured/i,
+  /When reviewed web ad slots are configured, Google AdSense can set cookies/i,
+  /annonsytor förberedda för Google AdSense, men de är avstängda tills granskade annonsplats-ID:n är konfigurerade/i,
+  /förberedd för <b>Google AdSense<\/b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade/i,
+  /När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies/i,
+];
+const adSenseCurrentUseCopyPatterns = [
+  /This website\s+uses\s+(?:<[^>]+>\s*)?Google AdSense/i,
+  /We use\s+(?:<[^>]+>\s*)?Google AdSense to show/i,
+  /Google AdSense on the website and Google Mobile Ads/i,
+  /Google AdSense web ads/i,
+  /Den h[aä]r webbplatsen anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense/i,
+  /Vi anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense f[oö]r att visa/i,
+  /Google AdSense p[aå] webbplatsen och Google Mobile Ads/i,
+  /Google AdSense-annonser p[aå] webben/i,
+];
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
@@ -33,6 +51,51 @@ function read(filePath) {
 
 function assertNoInternalMonetizationCopy(surface) {
   internalMonetizationCopyPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+}
+
+function readStaticAdSenseStringProperty(source, propertyName) {
+  const pattern = new RegExp(`\\b${propertyName}\\s*:\\s*(['"])([\\s\\S]*?)\\1`);
+  const match = String(source || '').match(pattern);
+  return match ? match[2] : '';
+}
+
+function readStaticAdSenseSlotConfig(appSource) {
+  const source = String(appSource || '');
+  const slotsBlock = source.match(/\bslots\s*:\s*{([\s\S]*?)}/);
+  return {
+    anchor: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'anchor') : '',
+    inline: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'inline') : '',
+    publisherId: readStaticAdSenseStringProperty(source, 'publisherId'),
+  };
+}
+
+function staticAdSenseSlotsAreConfiguredInSource(appSource) {
+  const config = readStaticAdSenseSlotConfig(appSource);
+  const isRealSlotId = (slotId) =>
+    typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
+  return (
+    /^ca-pub-[0-9]{16}$/.test(config.publisherId || '') &&
+    isRealSlotId(config.inline) &&
+    isRealSlotId(config.anchor)
+  );
+}
+
+function findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource) {
+  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
+
+  return adSenseCurrentUseCopyPatterns
+    .filter((pattern) => pattern.test(surface))
+    .map(
+      (pattern) =>
+        `current-use AdSense copy requires reviewed inline and anchor slot IDs: ${pattern.source}`,
+    );
+}
+
+function configureStaticAdSenseSlots(appSource) {
+  return appSource
+    .replace(/publisherId:\s*'[^']*'/, "publisherId: 'ca-pub-2451892671779738'")
+    .replace(/inline:\s*'[^']*'/, "inline: '1234567890'")
+    .replace(/anchor:\s*'[^']*'/, "anchor: '1234567891'");
 }
 
 function staticSiteSwedishDictionary() {
@@ -82,6 +145,41 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
     /ads never collect study answers or progress/,
     /annonser samlar aldrig in dina studiesvar eller framsteg/,
   ].forEach((pattern) => assert.match(surface, pattern));
+});
+
+test('static site privacy and consent copy describe unconfigured AdSense slots', () => {
+  const appSource = read('site/app.js');
+  const surface = [appSource, read('site/index.html')].join('\n');
+
+  assert.equal(staticAdSenseSlotsAreConfiguredInSource(appSource), false);
+  adSensePreparedDisabledCopyPatterns.forEach((pattern) => assert.match(surface, pattern));
+  assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource), []);
+});
+
+test('static site current-use AdSense copy is gated by reviewed slot IDs', () => {
+  const appSource = read('site/app.js');
+  const staleCurrentUseCopy = [
+    "'privacy.s5.p': 'This website uses Google AdSense.';",
+    "'consent.body': 'We use Google AdSense to show ads.';",
+    "'privacy.s5.p': 'Den här webbplatsen använder Google AdSense.';",
+    "'consent.body': 'Vi använder Google AdSense för att visa annonser.';",
+  ].join('\n');
+  const staleSurface = `${appSource}\n${read('site/index.html')}\n${staleCurrentUseCopy}`;
+
+  const unconfiguredIssues = findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, appSource);
+  assert.equal(staticAdSenseSlotsAreConfiguredInSource(appSource), false);
+  assert.equal(unconfiguredIssues.length, 4);
+
+  const oneSlotOnlyApp = configureStaticAdSenseSlots(appSource).replace(
+    /anchor:\s*'1234567891'/,
+    "anchor: ''",
+  );
+  assert.equal(staticAdSenseSlotsAreConfiguredInSource(oneSlotOnlyApp), false);
+  assert.equal(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, oneSlotOnlyApp).length, 4);
+
+  const configuredApp = configureStaticAdSenseSlots(appSource);
+  assert.equal(staticAdSenseSlotsAreConfiguredInSource(configuredApp), true);
+  assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, configuredApp), []);
 });
 
 test('static site privacy and consent copy hides internal monetization implementation keys', () => {
