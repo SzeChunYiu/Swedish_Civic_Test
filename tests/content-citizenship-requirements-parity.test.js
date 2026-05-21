@@ -153,6 +153,15 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /aria-checked=\{checked\}/);
   assert.match(routeSource, /buildSummary\(/);
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
+  assert.match(
+    routeSource,
+    /accessibilityLabel=\{`\$\{copy\.openSourceHint\}: \$\{source\.title\[language\]\}`\}/,
+  );
+  assert.match(routeSource, /href=\{source\.url\}/);
+  assert.match(routeSource, /target="_blank"/);
+  assert.match(routeSource, /rel="noreferrer"/);
+  assert.match(routeSource, /<Text style=\{styles\.sourceUrl\}>\{source\.url\}<\/Text>/);
+  assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
   assert.match(routeSource, /const \{ colors: themeColors \} = useTheme\(\);/);
@@ -170,9 +179,8 @@ test('citizenship requirements screen renders interactive sourced checklist with
 
 test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
   const routeSource = read('app/citizenship-requirements.tsx');
-  const sourceLinkCount = (routeSource.match(/Linking\.openURL\(source\.url\)/g) || []).length;
+  const sourceHrefCount = (routeSource.match(/href=\{source\.url\}/g) || []).length;
   const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
-  const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
 
   assert.match(routeSource, /areaSourceAccessibilityPrefix/);
   assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Källa för'/);
@@ -183,18 +191,16 @@ test('citizenship requirements cards surface precise source titles and currentne
   assert.match(routeSource, /source\.retrievedDate/);
   assert.match(routeSource, /source\.url/);
   assert.match(routeSource, /styles\.sourceRefRow/);
-  assert.match(routeSource, /focusedSourceRefKey === sourceFocusKey/);
-  assert.match(routeSource, /onFocus=\{\(\) => setFocusedSourceRefKey\(sourceFocusKey\)\}/);
-  assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRefKey\(null\)\}/);
   assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(routeSource, /rel="noreferrer"/);
+  assert.match(routeSource, /target="_blank"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
-  assert.match(sourceRefRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
-  assert.match(sourceRefRowFocusedStyle, /borderColor: themeColors\.focus/);
   assert.equal(
-    sourceLinkCount >= 2,
+    sourceHrefCount >= 2,
     true,
-    'area source refs and official source list should both open source URLs',
+    'area source refs and official source list should both render source URL anchors',
   );
+  assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
   assert.doesNotMatch(
     routeSource,
     /areaSources\.map\(\(source\) => source\.publisher\)\.join\(' · '\)/,

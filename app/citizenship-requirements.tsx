@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -203,7 +203,6 @@ export default function CitizenshipRequirementsScreen() {
   const copy = copyByLanguage[language];
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
-  const [focusedSourceRefKey, setFocusedSourceRefKey] = useState<string | null>(null);
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -275,38 +274,27 @@ export default function CitizenshipRequirementsScreen() {
               <View style={styles.sourceRefs}>
                 <Text style={styles.sourceRefsLabel}>{copy.sourceRefsLabel}</Text>
                 <View style={styles.sourceRefList}>
-                  {areaSources.map((source) => {
-                    const sourceFocusKey = `${area.id}-${source.id}`;
-                    return (
-                      <Pressable
-                        key={sourceFocusKey}
-                        accessibilityHint={copy.openSourceHint}
-                        accessibilityLabel={buildAreaSourceAccessibilityLabel(
-                          copy,
-                          area.title[language],
-                          source,
-                          language,
-                        )}
-                        accessibilityRole="link"
-                        onBlur={() => setFocusedSourceRefKey(null)}
-                        onFocus={() => setFocusedSourceRefKey(sourceFocusKey)}
-                        onPress={() => {
-                          void Linking.openURL(source.url);
-                        }}
-                        style={({ pressed }) => [
-                          styles.sourceRefRow,
-                          focusedSourceRefKey === sourceFocusKey
-                            ? styles.sourceRefRowFocused
-                            : null,
-                          pressed ? styles.sourceRefRowPressed : null,
-                        ]}
-                      >
-                        <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
-                        <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
-                        <Text style={styles.sourceRefUrl}>{source.url}</Text>
-                      </Pressable>
-                    );
-                  })}
+                  {areaSources.map((source) => (
+                    <Link
+                      key={`${area.id}-${source.id}`}
+                      accessibilityHint={copy.openSourceHint}
+                      accessibilityLabel={buildAreaSourceAccessibilityLabel(
+                        copy,
+                        area.title[language],
+                        source,
+                        language,
+                      )}
+                      accessibilityRole="link"
+                      href={source.url}
+                      rel="noreferrer"
+                      style={styles.sourceRefRow}
+                      target="_blank"
+                    >
+                      <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
+                      <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
+                      <Text style={styles.sourceRefUrl}>{source.url}</Text>
+                    </Link>
+                  ))}
                 </View>
               </View>
               <Pressable
@@ -341,20 +329,20 @@ export default function CitizenshipRequirementsScreen() {
         <Text style={styles.sourcesSubtitle}>{copy.sourceListSubtitle}</Text>
         <View style={styles.sourceList}>
           {citizenshipRequirementSources.map((source) => (
-            <Pressable
+            <Link
               key={source.id}
               accessibilityHint={copy.openSourceHint}
-              accessibilityLabel={`${source.publisher}: ${source.title[language]}`}
+              accessibilityLabel={`${copy.openSourceHint}: ${source.title[language]}`}
               accessibilityRole="link"
-              onPress={() => {
-                void Linking.openURL(source.url);
-              }}
-              style={({ pressed }) => [styles.sourceRow, pressed ? styles.sourceRowPressed : null]}
+              href={source.url}
+              rel="noreferrer"
+              style={styles.sourceRow}
+              target="_blank"
             >
               <Text style={styles.sourceTitle}>{source.title[language]}</Text>
               <Text style={styles.sourceMeta}>{formatSourceMeta(source, copy)}</Text>
               <Text style={styles.sourceUrl}>{source.url}</Text>
-            </Pressable>
+            </Link>
           ))}
         </View>
       </Card>
