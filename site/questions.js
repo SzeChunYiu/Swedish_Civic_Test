@@ -17979,7 +17979,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which example is part of work for gender equality?",
+      "en": "Which example is part of efforts to promote gender equality?",
       "sv": "Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
@@ -18073,7 +18073,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is one aim of work for people with disabilities?",
+      "en": "What is one aim of disability rights work?",
       "sv": "Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
@@ -18096,7 +18096,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -61939,7 +61939,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example is part of work for gender equality?",
+      "en": "Which answer best matches? Which example is part of efforts to promote gender equality?",
       "sv": "Vilket svar stämmer bäst? Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
@@ -62070,7 +62070,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example is part of work for gender equality?",
+      "en": "Choose the correct option: Which example is part of efforts to promote gender equality?",
       "sv": "Välj rätt alternativ: Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
@@ -62299,7 +62299,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one aim of work for people with disabilities?",
+      "en": "Which answer best matches? What is one aim of disability rights work?",
       "sv": "Vilket svar stämmer bäst? Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
@@ -62322,7 +62322,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62362,7 +62362,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62402,7 +62402,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -62427,7 +62427,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is one aim of work for people with disabilities?",
+      "en": "Choose the correct option: What is one aim of disability rights work?",
       "sv": "Välj rätt alternativ: Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
@@ -62450,7 +62450,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
