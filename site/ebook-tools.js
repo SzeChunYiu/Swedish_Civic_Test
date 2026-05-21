@@ -256,7 +256,7 @@
     const hls = loadHighlights(chId);
     const hl = hls.find((h) => h.id === hlId);
     if (!hl) return;
-    const mark = document.querySelector(`mark.eb-hl[data-hl-id="${hlId}"]`);
+    const mark = document.querySelector(highlightSelector(hlId));
     if (!mark) return;
     const r = mark.getBoundingClientRect();
     let panel = document.getElementById('eb-note');
@@ -345,7 +345,7 @@
     host.innerHTML = hls
       .map(
         (h) => `
-      <div class="eb-notes-item ${h.note ? 'has-note' : ''}" data-hl-id="${h.id}">
+      <div class="eb-notes-item ${h.note ? 'has-note' : ''}" data-hl-id="${escapeHtmlAttribute(h.id)}">
         <div class="eb-notes-item__text">${escapeHtml(h.text)}</div>
         ${h.note ? `<div class="eb-notes-item__note">${escapeHtml(h.note)}</div>` : ''}
         <div class="eb-notes-item__actions">
@@ -364,6 +364,29 @@
       /[&<>"]/g,
       (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c],
     );
+  }
+
+  function escapeHtmlAttribute(s) {
+    return String(s).replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+    );
+  }
+
+  function escapeCssString(s) {
+    if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+      return CSS.escape(String(s));
+    }
+    return String(s)
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/\n/g, '\\a ')
+      .replace(/\r/g, '\\d ')
+      .replace(/\f/g, '\\c ');
+  }
+
+  function highlightSelector(hlId) {
+    return `mark.eb-hl[data-hl-id="${escapeCssString(hlId)}"]`;
   }
 
   /* ---------- listeners ---------- */
@@ -417,7 +440,7 @@
       if (act === 'edit') {
         openNoteEditor(hlId);
       } else if (act === 'goto') {
-        const mark = document.querySelector(`mark.eb-hl[data-hl-id="${hlId}"]`);
+        const mark = document.querySelector(highlightSelector(hlId));
         if (mark) {
           mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
           mark.classList.add('is-flash');
