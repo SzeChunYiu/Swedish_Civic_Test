@@ -909,6 +909,8 @@ const FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   /repetition av misstag/i,
   /upprepning av misstag/i,
 ];
+
+const FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY = [/\bmockprov(?:et)?\b/i, /\bmock-provet\b/i];
 const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   'Redoindikator',
   'redoindikator',
@@ -7298,6 +7300,8 @@ let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
 let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
+let nativeSwedishMockExamCopyLabelsValidated = 0;
+let nativeSwedishMockExamCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -9901,6 +9905,62 @@ function validateHomeRouteCopyParity() {
   if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
+  }
+}
+
+function validateFocusedNativeMockExamCopy() {
+  const focusFailureStart = failures.length;
+  let homeRoute = '';
+  let practiceRoute = '';
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+    practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  } catch (error) {
+    fail(`native mock exam copy sources could not be read: ${error.message}`);
+    return;
+  }
+
+  function rejectSwedishLoanword(label, source) {
+    const swedishCopyStart = source.indexOf('  sv: {');
+    const englishCopyStart = source.indexOf('  en: {', swedishCopyStart);
+    if (swedishCopyStart < 0 || englishCopyStart < 0) {
+      fail(`${label} route Swedish copy block could not be read`);
+      return;
+    }
+    const swedishCopy = source.slice(swedishCopyStart, englishCopyStart);
+    FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY.forEach((pattern) => {
+      if (pattern.test(swedishCopy)) {
+        fail(`${label} route Swedish native copy must use övningsprov, not mockprov/mock-provet`);
+      }
+    });
+  }
+
+  function requireCopy(label, source, copy) {
+    if (!source.includes(copy)) {
+      fail(`${label} native mock exam copy is missing ${JSON.stringify(copy)}`);
+      return;
+    }
+    nativeSwedishMockExamCopyLabelsValidated += 1;
+  }
+
+  rejectSwedishLoanword('home', homeRoute);
+  requireCopy('home route', homeRoute, 'Gå till övningsprov');
+  requireCopy('home route', homeRoute, '${title}: gå till övningsprov när steget är klart.');
+  requireCopy('home route', homeRoute, 'Go to mock exam');
+  requireCopy(
+    'home route',
+    homeRoute,
+    '${title}: go to the mock exam after completing this stage.',
+  );
+
+  rejectSwedishLoanword('practice', practiceRoute);
+  requireCopy('practice route', practiceRoute, 'Övningsprovet använder bara UHR-hänvisade frågor.');
+  requireCopy('practice route', practiceRoute, 'Aldrig en del av övningsprovet.');
+  requireCopy('practice route', practiceRoute, 'The mock exam uses only UHR-referenced questions.');
+  requireCopy('practice route', practiceRoute, 'Never part of the mock exam.');
+
+  if (failures.length === focusFailureStart && nativeSwedishMockExamCopyLabelsValidated === 8) {
+    nativeSwedishMockExamCopyParityValidated = true;
   }
 }
 
@@ -15673,6 +15733,28 @@ function validateUhrSourceMaterialLinkParity() {
 }
 
 validateStaticValidationSyntaxGate();
+if (process.argv.includes('--focus-sv-native-mock-exam-copy')) {
+  const focusFailureStart = failures.length;
+  validateFocusedNativeMockExamCopy();
+  const focusFailures = failures.slice(focusFailureStart);
+  if (focusFailures.length > 0) {
+    console.error('Content validation failed:');
+    for (const failure of focusFailures) console.error(`- ${failure}`);
+    process.exit(1);
+  }
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        nativeSwedishMockExamCopyLabelsValidated,
+        nativeSwedishMockExamCopyParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
