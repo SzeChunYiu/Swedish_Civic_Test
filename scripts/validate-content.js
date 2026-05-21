@@ -650,7 +650,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 10;
+const EXPECTED_STREAK_RULE_COUNT = 13;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -8374,6 +8374,16 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-streak-rules')) {
+  validateStreakRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    streakRulesValidated,
+    streakRulesParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-practice-scoring-parity')) {
   validatePracticeScoringRules();
   exitWithValidationFailures();
@@ -15800,6 +15810,21 @@ function validateStreakRules() {
     {
       label: 'future-only answers',
       actual: () => calculateStreak(['2026-05-16'], today),
+      expected: 0,
+    },
+    {
+      label: 'malformed answer days ignored',
+      actual: () => calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today),
+      expected: 2,
+    },
+    {
+      label: 'invalid today returns zero',
+      actual: () => calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'),
+      expected: 0,
+    },
+    {
+      label: 'non-array answer history returns zero',
+      actual: () => calculateStreak('2026-05-15', today),
       expected: 0,
     },
   ];
