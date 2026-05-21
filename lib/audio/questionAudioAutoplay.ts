@@ -6,7 +6,7 @@ type QuestionAudioAutoplayGate = {
   audioEnabled: boolean;
   listenFirstAudioEnabled: boolean;
   questionKey: string | null | undefined;
-  speechText: string;
+  speechText: unknown;
   stopSignal?: boolean;
   suppressAutoplay?: boolean;
 };
@@ -14,6 +14,10 @@ type QuestionAudioAutoplayGate = {
 export type QuestionAudioAutoplayOptions = QuestionAudioAutoplayGate & {
   rate?: number;
 };
+
+function normalizeAutoplaySpeechText(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
 
 export function shouldAutoplayQuestionAudio({
   audioEnabled,
@@ -29,7 +33,7 @@ export function shouldAutoplayQuestionAudio({
     !stopSignal &&
     !suppressAutoplay &&
     questionKey &&
-    speechText.trim().length > 0,
+    normalizeAutoplaySpeechText(speechText).length > 0,
   );
 }
 
@@ -43,7 +47,7 @@ export function useQuestionAudioAutoplay({
   suppressAutoplay = false,
 }: QuestionAudioAutoplayOptions): void {
   const lastPlayedQuestionKeyRef = useRef<string | null>(null);
-  const normalizedSpeechText = speechText.trim();
+  const normalizedSpeechText = normalizeAutoplaySpeechText(speechText);
   const canAutoplay = shouldAutoplayQuestionAudio({
     audioEnabled,
     listenFirstAudioEnabled,

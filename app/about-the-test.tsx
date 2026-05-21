@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
@@ -92,7 +93,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     sectionWhoTitle: 'Vem ska göra det?',
     sectionWhoBody:
-      'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+      'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
       'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
@@ -126,7 +127,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     sectionWhoTitle: 'Who takes it?',
     sectionWhoBody:
-      'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+      'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
       'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
@@ -154,12 +155,15 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
+  const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const copy = aboutTheTestCopy[language];
 
-  if (!useSettingsStore.getState().hasSeenAboutTheTest) {
-    markAboutTheTestSeen();
-  }
+  useEffect(() => {
+    if (!hasSeenAboutTheTest) {
+      markAboutTheTestSeen();
+    }
+  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);
 
   const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },
