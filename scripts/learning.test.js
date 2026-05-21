@@ -313,6 +313,56 @@ test('mastery blends accuracy, coverage, and recency', () => {
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
 });
 
+test('mastery ignores malformed runtime counters and unsafe thresholds', () => {
+  const { calculateChapterMastery, calculateMastery, findWeakChapterIds } =
+    loadAllTs('lib/learning/mastery.ts');
+  const questions = [
+    { id: 'q1', chapterId: 'ch01' },
+    { id: 'q2', chapterId: 'ch01' },
+    { id: 'q3', chapterId: 'ch02' },
+  ];
+  const progress = {
+    q1: { correctCount: 0, seenCount: 2, wrongCount: 2 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
+  };
+
+  [
+    { correctCount: Number.NaN, seenCount: 10, totalQuestions: 20, recent: true },
+    { correctCount: 8, seenCount: Infinity, totalQuestions: 20, recent: true },
+    { correctCount: -1, seenCount: 10, totalQuestions: 20, recent: true },
+    { correctCount: 5, seenCount: 10, totalQuestions: 20.5, recent: true },
+    { correctCount: '5', seenCount: 10, totalQuestions: 20, recent: true },
+  ].forEach((input) => {
+    assert.equal(calculateMastery(input), 0);
+  });
+  assert.equal(
+    calculateMastery({ correctCount: 8, seenCount: 10, totalQuestions: 20, recent: 'yes' }),
+    0.55,
+  );
+  assert.equal(
+    calculateChapterMastery('ch01', questions, {
+      q1: { correctCount: Number.NaN, seenCount: 2, wrongCount: 0 },
+      q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    }),
+    0.85,
+  );
+  assert.deepEqual(
+    findWeakChapterIds(
+      questions,
+      {
+        q1: { correctCount: Number.NaN, seenCount: 2, wrongCount: 0 },
+        q2: { correctCount: 1, seenCount: Infinity, wrongCount: 0 },
+        q3: { correctCount: 0, seenCount: 0, wrongCount: Number.NaN },
+      },
+      0.7,
+    ),
+    [],
+  );
+  assert.deepEqual(findWeakChapterIds(questions, progress, Number.NaN), []);
+  assert.deepEqual(findWeakChapterIds(questions, progress, -1), []);
+});
+
 test('readiness score can be derived from the persisted question progress snapshot', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
 

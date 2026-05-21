@@ -199,6 +199,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'masteryRules',
+    flags: ['--focus-mastery-rules'],
+    summaryKeys: ['masteryRulesValidated', 'masteryRulesParityValidated'],
+  },
+  {
     id: 'xpRules',
     flags: ['--focus-xp-rules'],
     summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],

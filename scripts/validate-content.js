@@ -531,7 +531,7 @@ const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_re
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
-const EXPECTED_MASTERY_RULE_COUNT = 7;
+const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -7569,6 +7569,16 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mastery-rules')) {
+  validateMasteryRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    masteryRulesValidated,
+    masteryRulesParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -14443,6 +14453,16 @@ function validateMasteryRules() {
     q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
     q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
   };
+  const malformedProgress = {
+    q1: { correctCount: Number.NaN, seenCount: 2, wrongCount: 0 },
+    q2: { correctCount: 1, seenCount: 1, wrongCount: 0 },
+    q3: { correctCount: 3, seenCount: Infinity, wrongCount: 0 },
+  };
+  const malformedOnlyProgress = {
+    q1: { correctCount: Number.NaN, seenCount: 2, wrongCount: 0 },
+    q2: { correctCount: 1, seenCount: Infinity, wrongCount: 0 },
+    q3: { correctCount: 0, seenCount: 0, wrongCount: Number.NaN },
+  };
   const cases = [
     {
       label: 'no progress mastery',
@@ -14489,6 +14509,72 @@ function validateMasteryRules() {
       expected: 0.4,
     },
     {
+      label: 'NaN correct count returns zero mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: Number.NaN,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'infinite seen count returns zero mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: 8,
+          seenCount: Infinity,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'negative correct count returns zero mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: -1,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'fractional total questions returns zero mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: 5,
+          seenCount: 10,
+          totalQuestions: 20.5,
+          recent: true,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'string counters return zero mastery',
+      actual: () =>
+        calculateMastery({
+          correctCount: '5',
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: true,
+        }),
+      expected: 0,
+    },
+    {
+      label: 'truthy recency is ignored unless boolean true',
+      actual: () =>
+        calculateMastery({
+          correctCount: 8,
+          seenCount: 10,
+          totalQuestions: 20,
+          recent: 'yes',
+        }),
+      expected: 0.55,
+    },
+    {
       label: 'chapter mastery aggregate',
       actual: () => calculateChapterMastery('ch01', questions, progress),
       expected: 0.67,
@@ -14499,9 +14585,29 @@ function validateMasteryRules() {
       expected: 0,
     },
     {
+      label: 'chapter mastery ignores malformed progress rows',
+      actual: () => calculateChapterMastery('ch01', questions, malformedProgress),
+      expected: 0.85,
+    },
+    {
       label: 'weak chapter ids',
       actual: () => findWeakChapterIds(questions, progress, 0.7),
       expected: ['ch01'],
+    },
+    {
+      label: 'weak chapter ids ignore malformed progress rows',
+      actual: () => findWeakChapterIds(questions, malformedOnlyProgress, 0.7),
+      expected: [],
+    },
+    {
+      label: 'NaN weak threshold falls back to default',
+      actual: () => findWeakChapterIds(questions, progress, Number.NaN),
+      expected: [],
+    },
+    {
+      label: 'negative weak threshold falls back to default',
+      actual: () => findWeakChapterIds(questions, progress, -1),
+      expected: [],
     },
   ];
 
