@@ -1402,6 +1402,26 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   return null;
 }
 
+function politicalDemocracyRightStatementSv(answer: string): string | null {
+  if (/^(?:Att\s+)?försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+  }
+  if (/^(?:Att\s+)?hindra andra från att rösta$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+  }
+  return null;
+}
+
+function politicalDemocracyRightStatementEn(answer: string): string | null {
+  if (/^(?:To\s+)?try to persuade others of their political ideas$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+  }
+  if (/^(?:To\s+)?stop others from voting$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1529,6 +1549,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+
+  match = q.match(/^Vilken rätt har människor, grupper och partier i en demokrati$/i);
+  if (match) {
+    const statement = politicalDemocracyRightStatementSv(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) {
@@ -2129,6 +2155,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const predicate = match[1].replace(/^(.+?)\s+(criminally responsible\b.*)$/i, '$1 is $2');
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
+  }
+
+  match = q.match(/^What right do people, groups, and parties have in a democracy$/i);
+  if (match) {
+    const statement = politicalDemocracyRightStatementEn(answer);
+    if (statement) return statement;
   }
 
   match = q.match(/^What does it mean that (.+)$/i);
