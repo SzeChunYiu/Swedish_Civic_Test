@@ -13,7 +13,13 @@ import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/l
  * - auth modals
  * - the about-the-test screen itself (otherwise the modal sits on top of the page it sends you to)
  */
-const SUPPRESSED_PATH_PREFIXES = ['/exam', '/quiz', '/(auth)', '/about-the-test'] as const;
+const SUPPRESSED_PATH_PREFIXES = [
+  '/exam',
+  '/quiz',
+  '/(auth)',
+  '/about-the-test',
+  '/onboarding',
+] as const;
 const firstRunAboutDialogTitleId = 'first-run-about-dialog-title';
 const firstRunAboutDialogBodyId = 'first-run-about-dialog-body';
 

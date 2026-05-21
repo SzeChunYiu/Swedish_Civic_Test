@@ -322,6 +322,43 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
   ],
   ['href={source.url}', 'about-the-test official source links must use their source URLs as hrefs'],
 ];
+const ABOUT_THE_TEST_SEEN_EFFECT_PATTERN =
+  /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
+const EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES = [
+  {
+    message: 'about-the-test route must import useEffect for first-run seen effect',
+    validate: (source) => /import \{ useEffect \} from 'react';/.test(source),
+  },
+  {
+    message: 'about-the-test route must subscribe to hasSeenAboutTheTest',
+    validate: (source) =>
+      /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/.test(
+        source,
+      ),
+  },
+  {
+    message: 'about-the-test route must subscribe to markAboutTheTestSeen',
+    validate: (source) =>
+      /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/.test(
+        source,
+      ),
+  },
+  {
+    message: 'about-the-test route missing effect-scoped seen marker for first-run seen effect',
+    validate: (source) => ABOUT_THE_TEST_SEEN_EFFECT_PATTERN.test(source),
+  },
+  {
+    message:
+      'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    validate: (source) => !/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(source),
+  },
+  {
+    message: 'about-the-test route must call markAboutTheTestSeen() only inside useEffect',
+    validate: (source) =>
+      !source.replace(ABOUT_THE_TEST_SEEN_EFFECT_PATTERN, '').includes('markAboutTheTestSeen();'),
+  },
+];
+const FORBIDDEN_FIRST_RUN_ABOUT_GUIDE_COPY = [/\bmock\s*-?\s*prov(?:et)?\b/i];
 const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
   sv: [
     'Om provet',
@@ -2298,6 +2335,20 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
+];
+const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES = [
+  '/exam',
+  '/quiz',
+  '/(auth)',
+  '/about-the-test',
+  '/onboarding',
+];
+const FIRST_RUN_ABOUT_MODAL_ALLOWED_STUDY_PATHS = [
+  '/home',
+  '/learn',
+  '/practice',
+  '/mistakes',
+  '/profile',
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -7891,6 +7942,8 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = null;
+let aboutTheTestSeenEffectRulesValidated = 0;
+let aboutTheTestSeenEffectParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -7921,6 +7974,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let firstRunAboutModalSuppressedRoutesValidated = 0;
+let firstRunAboutModalSuppressionParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -8270,6 +8325,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+    aboutTheTestSeenEffectRulesValidated,
+    aboutTheTestSeenEffectParityValidated,
   });
   process.exit(0);
 }
@@ -8296,6 +8353,22 @@ if (process.argv.includes('--focus-settings-route')) {
     settingsRouteCopyParityValidated,
     settingsRouteScrollRulesValidated,
     settingsRouteScrollParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-onboarding-route-copy')) {
+  validateOnboardingRouteHeaderParity();
+  validateOnboardingRouteCopyParity();
+  validateFirstRunAboutModalSuppressionParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteHeadersValidated,
+    onboardingRouteHeaderParityValidated,
+    onboardingRouteCopyLabelsValidated,
+    onboardingRouteCopyParityValidated,
+    firstRunAboutModalSuppressedRoutesValidated,
+    firstRunAboutModalSuppressionParityValidated,
   });
   process.exit(0);
 }
@@ -10805,6 +10878,7 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
 function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
+  let firstRunModal = '';
   let legalPage = '';
 
   function reject(message) {
@@ -10828,9 +10902,35 @@ function validateAboutTheTestRouteCopyParity() {
     return;
   }
 
+  try {
+    firstRunModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`first-run about modal source could not be read: ${error.message}`);
+    return;
+  }
+
   for (const [snippet, message] of EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS) {
     if (!aboutRoute.includes(snippet)) reject(message);
   }
+
+  for (const rule of EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES) {
+    if (rule.validate(aboutRoute)) {
+      aboutTheTestSeenEffectRulesValidated += 1;
+    } else {
+      reject(rule.message);
+    }
+  }
+
+  FORBIDDEN_FIRST_RUN_ABOUT_GUIDE_COPY.forEach((pattern) => {
+    if (pattern.test(firstRunModal)) {
+      reject(
+        'first-run about guide Swedish copy must use övningsprov wording, not mockprov/mock-provet',
+      );
+    }
+  });
 
   if (!legalPage.includes('target="_blank"')) {
     reject('about-the-test official source links must inherit target="_blank"');
@@ -10924,6 +11024,9 @@ function validateAboutTheTestRouteCopyParity() {
       ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
   ) {
     aboutTheTestRouteCopyParityValidated = true;
+  }
+  if (aboutTheTestSeenEffectRulesValidated === EXPECTED_ABOUT_THE_TEST_SEEN_EFFECT_RULES.length) {
+    aboutTheTestSeenEffectParityValidated = true;
   }
 }
 
@@ -11399,6 +11502,61 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
+  }
+}
+
+function validateFirstRunAboutModalSuppressionParity() {
+  let valid = true;
+  let firstRunModal = '';
+  let adsSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    firstRunModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`first-run about modal source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  } catch (error) {
+    reject(`launch ad policy source could not be read: ${error.message}`);
+    return;
+  }
+
+  FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES.forEach((pathPrefix) => {
+    const quotedPath = `'${pathPrefix}'`;
+    if (!firstRunModal.includes(quotedPath)) {
+      reject(`first-run about modal must suppress ${pathPrefix}`);
+      return;
+    }
+    firstRunAboutModalSuppressedRoutesValidated += 1;
+  });
+
+  if (!adsSource.includes("'/onboarding'")) {
+    reject('launch popup ad policy must also suppress /onboarding');
+  }
+
+  FIRST_RUN_ABOUT_MODAL_ALLOWED_STUDY_PATHS.forEach((pathPrefix) => {
+    if (firstRunModal.includes(`'${pathPrefix}'`)) {
+      reject(`first-run about modal must not suppress ${pathPrefix}`);
+    }
+  });
+
+  if (
+    valid &&
+    firstRunAboutModalSuppressedRoutesValidated ===
+      FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES.length
+  ) {
+    firstRunAboutModalSuppressionParityValidated = true;
   }
 }
 
@@ -17795,6 +17953,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateFirstRunAboutModalSuppressionParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -17939,6 +18098,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      aboutTheTestSeenEffectRulesValidated,
+      aboutTheTestSeenEffectParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
@@ -17978,6 +18139,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      firstRunAboutModalSuppressedRoutesValidated,
+      firstRunAboutModalSuppressionParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
