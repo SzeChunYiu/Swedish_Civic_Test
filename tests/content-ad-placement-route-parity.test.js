@@ -35,6 +35,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
   const practiceInterstitialNativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
@@ -87,15 +91,22 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     nativeAdCardNativeSource,
     /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(nativeBannerSource, /BannerAdSize\.ANCHORED_ADAPTIVE_BANNER/);
+  assert.match(
+    nativeBannerSource,
+    /requestNonPersonalizedAdsOnly:\s*mobileAdsConsent\.decision\.requestNonPersonalizedAdsOnly/,
+  );
+  assert.match(
+    nativeBannerSource,
+    /const unitId = getPlatformAdUnitId\(placement, Platform\.OS\);/,
+  );
+  assert.match(
+    nativeBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
   assert.match(
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
-  );
-  assert.match(practiceInterstitialNativeSource, /INTERSTITIAL_LOAD_TIMEOUT_MS/);
-  assert.match(practiceInterstitialNativeSource, /INTERSTITIAL_SHOW_TIMEOUT_MS/);
-  assert.match(
-    practiceInterstitialNativeSource,
-    /AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/,
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.match(adCopySource, /getNativeAdCardCopy/);
@@ -118,7 +129,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
 });
 
-test('ad placement route parity rejects native practice interstitial show timeout drift', () => {
+test('ad placement route parity rejects native banner request option drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -128,12 +139,12 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'startAttemptTimeout(INTERSTITIAL_SHOW_TIMEOUT_MS);',
-        'finishAttempt();',
+        'requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly',
+        'requestNonPersonalizedAdsOnly: false',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -148,7 +159,38 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /PracticeInterstitialAd native placement must bound load and show in-flight attempts with timeouts/,
+    /AdBanner native placement must pass consent-derived non-personalized request options/,
+  );
+});
+
+test('ad placement route parity rejects native banner size drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('BannerAdSize.ANCHORED_ADAPTIVE_BANNER', 'BannerAdSize.BANNER');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must render adaptive banner size/,
   );
 });
 
