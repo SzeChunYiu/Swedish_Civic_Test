@@ -267,6 +267,102 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'Sources accessed',
   'Källor hämtade',
 ];
+const ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
+const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+];
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
+  [
+    "import { LegalExternalLink, LegalLinkList } from '../components/compliance/LegalPage';",
+    'about-the-test route must use shared legal external-link components',
+  ],
+  ['type OfficialTestSourceNote = {', 'about-the-test route must type official source notes'],
+  [
+    'const officialTestSourceNotes = [',
+    'about-the-test route must define official source metadata',
+  ],
+  [
+    'const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {',
+    'about-the-test route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'about-the-test route must read settings language',
+  ],
+  [
+    'const copy = aboutTheTestCopy[language];',
+    'about-the-test route must select copy from settings language',
+  ],
+  [
+    '<LegalLinkList>',
+    'about-the-test route must render official sources in the shared legal link list',
+  ],
+  [
+    '<LegalExternalLink',
+    'about-the-test route must render each official source as an external link',
+  ],
+  [
+    'accessibilityLabel={`${copy.officialSourceOpenPrefix}: ${title}`}',
+    'about-the-test official source links need localized accessibility labels',
+  ],
+  [
+    'destination={`${copy.officialSourcePublisherLabel}: ${source.publisher}\\n${copy.officialSourceRetrievedLabel}: ${source.retrievedDate}\\n${copy.officialSourceUrlLabel}: ${source.url}`}',
+    'about-the-test official source links must show publisher, retrieved date, and URL',
+  ],
+  ['href={source.url}', 'about-the-test official source links must use their source URLs as hrefs'],
+];
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
+  sv: [
+    'Om provet',
+    'Vad är medborgarskapsprovet i samhällskunskap?',
+    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+    'Vad är det?',
+    'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
+    'Vem ska göra det?',
+    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    'Vad är känt om första provet?',
+    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+    'Vilket material bygger appen på?',
+    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
+    'Är appen officiell?',
+    'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
+    'Källäge kontrollerat',
+    'Lägesbilden är kontrollerad',
+    'Officiella källor',
+    'Öppna officiell källa',
+    'Utgivare',
+    'Hämtad',
+    'Börja öva',
+    'Se kravguiden',
+  ],
+  en: [
+    'About the test',
+    'What is the Swedish civic test?',
+    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+    'What is it?',
+    'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
+    'Who takes it?',
+    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    'What is known about the first test?',
+    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+    'What material does this app use?',
+    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
+    'Is this app official?',
+    'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
+    'Source status checked',
+    'This status was checked on',
+    'Official sources',
+    'Open official source',
+    'Publisher',
+    'Retrieved',
+    'Start practising',
+    'View requirements guide',
+  ],
+};
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   sourceId: 'q044',
@@ -7318,6 +7414,10 @@ let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
 let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
+let aboutTheTestRouteCopyLabelsValidated = 0;
+let aboutTheTestRouteCopyParityValidated = false;
+let aboutTheTestOfficialSourceUrlsValidated = 0;
+let aboutTheTestOfficialSourceRetrievedDateValidated = null;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -7638,6 +7738,18 @@ if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
   printValidationSummary({
     dashboardProgressSnapshotCasesValidated,
     dashboardProgressSnapshotParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-about-the-test-route-copy')) {
+  validateAboutTheTestRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    aboutTheTestRouteCopyLabelsValidated,
+    aboutTheTestRouteCopyParityValidated,
+    aboutTheTestOfficialSourceUrlsValidated,
+    aboutTheTestOfficialSourceRetrievedDateValidated,
   });
   process.exit(0);
 }
@@ -9985,6 +10097,131 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
   });
 
   if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
+}
+
+function validateAboutTheTestRouteCopyParity() {
+  let valid = true;
+  let aboutRoute = '';
+  let legalPage = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  } catch (error) {
+    reject(`about-the-test route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    legalPage = fs.readFileSync(path.join(repoRoot, 'components/compliance/LegalPage.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `LegalPage source could not be read for about-the-test external links: ${error.message}`,
+    );
+    return;
+  }
+
+  for (const [snippet, message] of EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS) {
+    if (!aboutRoute.includes(snippet)) reject(message);
+  }
+
+  if (!legalPage.includes('target="_blank"')) {
+    reject('about-the-test official source links must inherit target="_blank"');
+  }
+  if (!legalPage.includes('rel="noreferrer"')) {
+    reject('about-the-test official source links must inherit rel="noreferrer"');
+  }
+  if (!legalPage.includes('minHeight: space[6]') || !legalPage.includes('minWidth: space[6]')) {
+    reject('about-the-test official source links must inherit touch-safe external link sizing');
+  }
+
+  const unsupportedLogisticsPatterns = [
+    /Ett kort\s+prov|short\s+test/i,
+    /digitalt\s+prov|digital\s+exam/i,
+    /Flervalsfr[aå]gor|Multiple-choice\s+questions/i,
+    /dator i en\s+provlokal|computer at a\s+test centre/i,
+  ];
+  for (const pattern of unsupportedLogisticsPatterns) {
+    if (pattern.test(aboutRoute)) {
+      reject('about-the-test route must not make unsupported logistics claim');
+    }
+  }
+
+  const seenLabels = new Set();
+  for (const [language, labels] of Object.entries(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS)) {
+    for (const label of labels) {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`about-the-test ${language} label ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!aboutRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`about-the-test route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`about-the-test route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) aboutTheTestRouteCopyLabelsValidated += 1;
+    }
+  }
+
+  for (const url of ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS) {
+    if (aboutRoute.includes(url)) {
+      aboutTheTestOfficialSourceUrlsValidated += 1;
+    } else {
+      reject(`about-the-test route official source metadata missing ${url}`);
+    }
+  }
+
+  const retrievedDatePattern = new RegExp(
+    `retrievedDate: '${ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE}'`,
+    'g',
+  );
+  const retrievedDateCount = (aboutRoute.match(retrievedDatePattern) || []).length;
+  if (retrievedDateCount === ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length) {
+    aboutTheTestOfficialSourceRetrievedDateValidated =
+      ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE;
+  } else {
+    reject(
+      `about-the-test route official source metadata must use retrievedDate ${ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE} for every source`,
+    );
+  }
+
+  for (const requiredSourceSnippet of [
+    "publisher: 'Universitets- och högskolerådet (UHR)'",
+    "publisher: 'Migrationsverket'",
+    "titleSv: 'UHR: Om medborgarskapsprovet'",
+    "titleEn: 'UHR: About the citizenship test'",
+    "titleSv: 'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026'",
+    "titleEn: 'Migrationsverket: New rules for Swedish citizenship from 6 June 2026'",
+  ]) {
+    if (!aboutRoute.includes(requiredSourceSnippet)) {
+      reject(`about-the-test route official source metadata missing ${requiredSourceSnippet}`);
+    }
+  }
+
+  const expectedLabelCount = Object.values(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (
+    valid &&
+    aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
+    aboutTheTestOfficialSourceUrlsValidated === ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
+    aboutTheTestOfficialSourceRetrievedDateValidated ===
+      ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
+  ) {
+    aboutTheTestRouteCopyParityValidated = true;
+  }
 }
 
 function validateMistakeReviewHydrationEvidence() {
@@ -16257,6 +16494,7 @@ validateProfileRouteCopyParity();
 validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
+validateAboutTheTestRouteCopyParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -16402,6 +16640,10 @@ console.log(
       homeRouteCopyParityValidated,
       homeRouteInternalBenchmarkCopyValidated,
       homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+      aboutTheTestRouteCopyLabelsValidated,
+      aboutTheTestRouteCopyParityValidated,
+      aboutTheTestOfficialSourceUrlsValidated,
+      aboutTheTestOfficialSourceRetrievedDateValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
