@@ -47,6 +47,10 @@ const UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /(?:pasaport|vatandaşlık)[^.?!]*(?:garanti|kesin)/i,
   /(?:паспорт|громадянство)[^.?!]*(?:гарант|точно)/i,
 ];
+const UNLOCALIZED_CIVIC_TERM_PATTERNS_BY_LOCALE = {
+  so: [/\bkommun\b/i, /\bvälfärd\b/i, /\bmyndighet\b/i],
+  'zh-Hans': [/\bmyndighet\b/i],
+};
 
 function sanitize(value) {
   return String(value ?? '')
@@ -181,6 +185,16 @@ function assertNoUnsupportedOutcomeClaim(preview, uiPath, text) {
   }
 }
 
+function assertNoUnlocalizedCivicTerm(preview, uiPath, text) {
+  const normalizedText = sanitize(text);
+  if (!normalizedText) return;
+  const civicTermPatterns = UNLOCALIZED_CIVIC_TERM_PATTERNS_BY_LOCALE[preview.locale] ?? [];
+  const matchedPattern = civicTermPatterns.find((pattern) => pattern.test(normalizedText));
+  if (matchedPattern) {
+    throw new Error(`unlocalized civic term in ${preview.locale} ${uiPath}: ${normalizedText}`);
+  }
+}
+
 function collectRows(preview) {
   const rows = [];
   const skipRoot = new Set(['locale', 'status', 'sourceStyleGuide', 'sourcePhrasebook']);
@@ -192,6 +206,7 @@ function collectRows(preview) {
       const surface = pathParts[0];
       assertPlaceholdersWellFormed(preview, uiPath, value);
       assertNoUnsupportedOutcomeClaim(preview, uiPath, value);
+      assertNoUnlocalizedCivicTerm(preview, uiPath, value);
       rows.push([
         preview.locale,
         uiPath,

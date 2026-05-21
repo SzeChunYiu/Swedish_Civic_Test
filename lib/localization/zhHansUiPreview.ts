@@ -493,7 +493,7 @@ export const zhHansUiPreview = {
           body: '本应用的 UHR 模式依据学习材料《Sverige i fokus》。我们的练习题不是 UHR 考题；UHR 说明，其他机构或个人制作的网上练习题没有经过 UHR 质量审核。',
         },
         independence: {
-          title: '这是 myndighet 出品吗？',
+          title: '这是官方机构出品吗？',
           body: '不是。本应用是独立学习工具，不代表 UHR、瑞典国家教育署或瑞典移民局。这里的问题不是真实考试题。',
         },
       },
@@ -512,7 +512,7 @@ export const zhHansUiPreview = {
         '请不要在支持消息中写入姓名、个人身份号码、案件编号、移民案件细节或其他敏感私人信息。',
       independentStudyToolTitle: '独立学习工具',
       independentStudyToolBody:
-        '支持可以帮助处理应用功能和内容修正，但不能提供官方考试答案、移民建议或 myndighet 决定。',
+        '支持可以帮助处理应用功能和内容修正，但不能提供官方考试答案、移民建议或官方机构决定。',
       publicSupportPageTitle: '公开支持页面',
       openSupportPageAccessibilityLabel: '打开公开支持页面',
       questionReportContextTitle: '问题反馈上下文',
@@ -535,9 +535,9 @@ export const zhHansUiPreview = {
       questionReferencesTitle: '题目参考信息',
       questionReferencesBody:
         '每道练习题都会显示一行资料来源，包含 UHR 章节、小节和大致页码。资料来源与题干分开显示，方便你回到学习材料核对。',
-      authorityBoundariesTitle: '与 myndighet 的界限',
+      authorityBoundariesTitle: '与官方机构的界限',
       authorityBoundariesBody:
-        'UHR 的考试说明页写明，UHR 制作了学习材料；网上练习题可能由其他个人或公司制作，UHR 不为其背书，也没有经过 UHR 或其他 myndighet 的质量审核。本应用保持同样界限：这里是独立练习内容。',
+        'UHR 的考试说明页写明，UHR 制作了学习材料；网上练习题可能由其他个人或公司制作，UHR 不为其背书，也没有经过 UHR 或其他官方机构的质量审核。本应用保持同样界限：这里是独立练习内容。',
       openEducationMaterialAccessibilityLabel: '打开 UHR 学习材料',
       openAuthorityBoundarySourceAccessibilityLabel: '打开 UHR 关于公民身份考试的页面',
     },
@@ -556,7 +556,7 @@ export const zhHansUiPreview = {
       allTermsSummaryTemplate: '共有 {count} 个社会知识参考术语',
       filteredSummaryTemplate: '显示 {visibleCount}/{totalCount} 个社会知识参考术语',
       emptyTitle: '没有匹配的术语',
-      emptyBody: '可以换一个词、myndighet 名称或章节名再试。',
+      emptyBody: '可以换一个词、官方机构名称或章节名再试。',
       openChapterAccessibilityLabelTemplate: '打开章节：{chapterName}',
       termAccessibilityTemplate: '{primaryTerm}。{explanation}。关联章节：{chapterName}。',
       browseChapters: '浏览章节',

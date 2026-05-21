@@ -279,7 +279,7 @@ export const soUiPreview = {
         'Ha ku darin magaca, lambarka shakhsiga, lambarka kiis, faahfaahinta socdaalka, ama xog kale oo xasaasi ah.',
       independentStudyToolTitle: 'Qalab waxbarasho oo madax-bannaan',
       independentStudyToolBody:
-        'Taageeradu waxay caawin kartaa app-ka iyo saxitaanka nuxurka, laakiin ma bixin karto jawaabo rasmi ah, talo socdaal, ama go’aanno myndighet.',
+        'Taageeradu waxay caawin kartaa app-ka iyo saxitaanka nuxurka, laakiin ma bixin karto jawaabo rasmi ah, talo socdaal, ama go’aanno hay’ad rasmi ah.',
       questionReportContextTitle: 'Macluumaadka su’aasha lagu soo sheegayo',
       noPersonalDataWarning: 'Ha gelin xog shakhsi ah markaad jawaab-celin dirayso.',
     },
@@ -300,7 +300,7 @@ export const soUiPreview = {
       title: 'Raadi ereyo iyo cutubyo',
       subtitle: 'Eeg ereyada muhiimka ah ee aqoonta bulshada iyo cutubyada ay la xiriiraan.',
       searchLabel: 'Raadi erey',
-      searchPlaceholder: 'Raadi dimoqraadiyad, kommun, välfärd…',
+      searchPlaceholder: 'Raadi dimoqraadiyad, degmo, daryeel bulsho…',
       clearSearch: 'Nadiifi raadinta',
       emptyTitle: 'Erey ku habboon lama helin',
       emptyBody: 'Isku day erey kale, magaca hay’ad, ama cinwaan cutub.',
