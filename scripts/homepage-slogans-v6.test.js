@@ -72,14 +72,44 @@ function loadStaticDictionaries() {
   return { ...app, ...extras };
 }
 
-function loadLanguageHelpers() {
+function loadLanguageHelpers({
+  preloadedExtras = false,
+  readyState = 'loading',
+  savedLanguage = null,
+} = {}) {
   const source = read('site/app.js');
   const start = source.indexOf('const i18n =');
   const end = source.indexOf("document.addEventListener('click', (e) => {", start);
   assert.notEqual(start, -1, 'missing i18n helper start');
   assert.notEqual(end, -1, 'missing i18n helper end');
 
+  const extras = vm.runInNewContext(
+    `(${extractObjectLiteral(read('site/i18n-extras.js'), 'const extra =')})`,
+  );
   const attributes = new Map();
+  const translatedElement = {
+    dataset: { i18n: 'hero.cta1' },
+    innerHTML: '',
+  };
+  const a11yAttributes = new Map();
+  const a11yElement = {
+    dataset: { a11yLabel: 'a11y.settings.open' },
+    setAttribute(name, value) {
+      a11yAttributes.set(name, String(value));
+    },
+  };
+  const languageButtons = homepageLocales.map((locale) => ({
+    dataset: { lang: locale },
+    classList: {
+      toggle(name, on) {
+        attributes.set(`button:${locale}:${name}`, String(on));
+      },
+    },
+    setAttribute(name, value) {
+      attributes.set(`button:${locale}:${name}`, String(value));
+    },
+  }));
+  const storage = new Map(savedLanguage ? [['smt_lang', savedLanguage]] : []);
   const sandbox = {
     CustomEvent: function CustomEvent(type, init = {}) {
       return { type, detail: init.detail || null };
@@ -94,6 +124,7 @@ function loadLanguageHelpers() {
           this[name] = String(value);
         },
       },
+      readyState,
       querySelectorAll(selector) {
         assert.ok(
           selector === '[data-i18n]' ||
@@ -101,15 +132,30 @@ function loadLanguageHelpers() {
             selector === '.lang button[data-lang]',
           `unexpected selector ${selector}`,
         );
-        return [];
+        if (selector === '[data-i18n]') return [translatedElement];
+        if (selector === '[data-a11y-label]') return [a11yElement];
+        return languageButtons;
+      },
+      querySelector(selector) {
+        assert.equal(selector, 'meta[name="description"]');
+        return {
+          setAttribute(name, value) {
+            attributes.set(`meta:${name}`, String(value));
+          },
+        };
       },
     },
     localStorage: {
+      getItem(key) {
+        return storage.has(key) ? storage.get(key) : null;
+      },
       setItem(key, value) {
+        storage.set(key, String(value));
         attributes.set(`localStorage:${key}`, String(value));
       },
     },
     window: {
+      __i18n_extra: preloadedExtras ? extras : undefined,
       dispatchEvent() {
         return true;
       },
@@ -118,11 +164,8 @@ function loadLanguageHelpers() {
   sandbox.window.window = sandbox.window;
   vm.createContext(sandbox);
   vm.runInContext(source.slice(start, end), sandbox, { timeout: 3000 });
-  const extras = vm.runInNewContext(
-    `(${extractObjectLiteral(read('site/i18n-extras.js'), 'const extra =')})`,
-  );
-  Object.assign(sandbox.window.i18n, extras);
-  return { sandbox, attributes };
+  if (!preloadedExtras) Object.assign(sandbox.window.i18n, extras);
+  return { a11yAttributes, attributes, extras, sandbox, translatedElement };
 }
 
 test('homepage slogans v6 exact replacement keys are merged for every supported locale', () => {
@@ -202,4 +245,37 @@ test('homepage language helpers set rtl direction for Arabic, Persian, and Centr
   vm.runInContext('smtSetLanguage("not-a-locale")', sandbox, { timeout: 3000 });
   assert.equal(attributes.get('lang'), 'en');
   assert.equal(attributes.get('dir'), 'ltr');
+});
+
+test('homepage language helpers consume preloaded extra locales before saved language apply', () => {
+  const { a11yAttributes, attributes, extras, sandbox, translatedElement } = loadLanguageHelpers({
+    preloadedExtras: true,
+    savedLanguage: 'so',
+  });
+
+  assert.equal(sandbox.window.__i18n_extra, undefined);
+  assert.equal(typeof sandbox.window.i18n.so, 'object');
+
+  vm.runInContext('smtApplySavedLanguage()', sandbox, { timeout: 3000 });
+
+  assert.equal(attributes.get('lang'), 'so');
+  assert.equal(attributes.get('dir'), 'ltr');
+  assert.equal(attributes.get('localStorage:smt_lang'), 'so');
+  assert.equal(translatedElement.innerHTML, expected.so['hero.cta1']);
+  assert.equal(a11yAttributes.get('aria-label'), extras.so['a11y.settings.open']);
+});
+
+test('homepage language helpers apply preloaded saved locale after DOM is ready', () => {
+  const { a11yAttributes, attributes, extras, sandbox, translatedElement } = loadLanguageHelpers({
+    preloadedExtras: true,
+    readyState: 'complete',
+    savedLanguage: 'so',
+  });
+
+  assert.equal(sandbox.window.__i18n_extra, undefined);
+  assert.equal(attributes.get('lang'), 'so');
+  assert.equal(attributes.get('dir'), 'ltr');
+  assert.equal(attributes.get('localStorage:smt_lang'), 'so');
+  assert.equal(translatedElement.innerHTML, expected.so['hero.cta1']);
+  assert.equal(a11yAttributes.get('aria-label'), extras.so['a11y.settings.open']);
 });
