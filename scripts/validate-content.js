@@ -1685,6 +1685,48 @@ const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-tracking-transparency',
 ];
 const EXPECTED_WEB_DOCUMENT_METADATA_DESCRIPTION_LANGUAGES = ['sv', 'en'];
+const EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES = [
+  {
+    label: 'html lang to webDocumentMetadata.language',
+    pattern: /<html\s+data-app-shell="expo-router"\s+lang=\{webDocumentMetadata\.language\}>/,
+  },
+  {
+    label: 'title to webDocumentMetadata.title',
+    pattern: /<title>\{webDocumentMetadata\.title\}<\/title>/,
+  },
+  {
+    label: 'theme-color to theme canvas token',
+    pattern: /<meta\s+content=\{colors\.canvas\}\s+name="theme-color"\s+\/>/,
+  },
+  {
+    label: 'application-name to webDocumentMetadata.applicationName',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.applicationName\}\s+name="application-name"\s+\/>/,
+  },
+  {
+    label: 'apple mobile title to webDocumentMetadata.appleMobileWebAppTitle',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.appleMobileWebAppTitle\}\s+name="apple-mobile-web-app-title"\s+\/>/,
+  },
+  {
+    label: 'description to webDocumentMetadata.description',
+    pattern: /<meta\s+content=\{webDocumentMetadata\.description\}\s+name="description"\s+\/>/,
+  },
+  {
+    label: 'og site name to webDocumentMetadata.openGraphSiteName',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.openGraphSiteName\}\s+property="og:site_name"\s+\/>/,
+  },
+  {
+    label: 'og title to webDocumentMetadata.openGraphTitle',
+    pattern: /<meta\s+content=\{webDocumentMetadata\.openGraphTitle\}\s+property="og:title"\s+\/>/,
+  },
+  {
+    label: 'og description to webDocumentMetadata.openGraphDescription',
+    pattern:
+      /<meta\s+content=\{webDocumentMetadata\.openGraphDescription\}\s+property="og:description"\s+\/>/,
+  },
+];
 const EXPECTED_APP_NATIVE_IDENTIFIER = 'com.billyyiu.almostswedish';
 const EXPECTED_TRACKING_PERMISSION =
   'This identifier may be used to deliver relevant study app ads after consent.';
@@ -9364,6 +9406,8 @@ let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
 let staticHeadMetadataParityValidated = false;
+let webDocumentMetadataUsageRulesValidated = 0;
+let webDocumentMetadataUsageParityValidated = false;
 let staticI18nArabicRequiredCopyValidated = 0;
 let staticI18nArabicHighFrequencyLabelsValidated = 0;
 let staticI18nArabicForbiddenFragmentsValidated = 0;
@@ -9758,6 +9802,7 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
 if (process.argv.includes('--focus-app-config-schema')) {
   validateValidationScriptSyntax();
   validateAppConfigSchema();
+  validateWebDocumentMetadataUsageParity();
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
   exitWithValidationFailures();
@@ -9765,6 +9810,8 @@ if (process.argv.includes('--focus-app-config-schema')) {
     validationScriptSyntaxChecksValidated,
     appConfigPluginsValidated,
     appConfigSchemaValidated,
+    webDocumentMetadataUsageRulesValidated,
+    webDocumentMetadataUsageParityValidated,
     staticHeadMetadataTitleValidated,
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
@@ -10786,6 +10833,27 @@ function validateWebDocumentMetadataParity(expo, reject) {
         'webDocumentOpenGraphDescription must match the default localized metadata description',
       );
     }
+  }
+}
+
+function validateWebDocumentMetadataUsageParity() {
+  const source = loadText('app/+html.tsx');
+  let valid = true;
+
+  for (const rule of EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES) {
+    if (!rule.pattern.test(source)) {
+      valid = false;
+      fail(`web document shell must bind ${rule.label}`);
+    } else {
+      webDocumentMetadataUsageRulesValidated += 1;
+    }
+  }
+
+  if (
+    valid &&
+    webDocumentMetadataUsageRulesValidated === EXPECTED_WEB_DOCUMENT_METADATA_USAGE_RULES.length
+  ) {
+    webDocumentMetadataUsageParityValidated = true;
   }
 }
 
@@ -23193,6 +23261,7 @@ validateMockExamConfig(
 );
 validateValidationScriptSyntax();
 validateAppConfigSchema();
+validateWebDocumentMetadataUsageParity();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
@@ -23328,6 +23397,8 @@ console.log(
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
+      webDocumentMetadataUsageRulesValidated,
+      webDocumentMetadataUsageParityValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
       tabNavigationRulesValidated,

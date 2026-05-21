@@ -154,7 +154,7 @@ test('app config schema parity uses focused content validation routing', () => {
   assert.match(validatorSource, /--focus-app-config-schema/);
   assert.match(
     validatorSource,
-    /validateAppConfigSchema\(\);[\s\S]*validateStaticHeadMetadataParity\(\);[\s\S]*appConfigSchemaValidated[\s\S]*staticHeadMetadataParityValidated/,
+    /validateAppConfigSchema\(\);[\s\S]*validateWebDocumentMetadataUsageParity\(\);[\s\S]*validateStaticHeadMetadataParity\(\);[\s\S]*appConfigSchemaValidated[\s\S]*webDocumentMetadataUsageParityValidated[\s\S]*staticHeadMetadataParityValidated/,
   );
   assert.match(appConfigTestSource, /--focus-app-config-schema/);
   assert.doesNotMatch(
