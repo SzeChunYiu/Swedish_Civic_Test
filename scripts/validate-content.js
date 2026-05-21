@@ -5068,6 +5068,18 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function isGeneratedPublishedVariant(question) {
+  return question.tags?.includes('published-variant');
+}
+
+function findGeneratedSwedenScopeParityIssue(question) {
+  if (!isGeneratedPublishedVariant(question)) return null;
+
+  const swedishHasInSwedenScope = /\bi Sverige\b/i.test(question.questionSv || '');
+  const englishKeepsSwedenScope = /\bSweden(?:[’']s)?\b/i.test(question.questionEn || '');
+  return swedishHasInSwedenScope && !englishKeepsSwedenScope;
+}
+
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
   const text = [
     question.questionEn,
@@ -5629,6 +5641,16 @@ function embeddedEnglishClause(value) {
   return lowerLeadingEnglishClauseStart(stripLeadingPurposeEn(value));
 }
 function replaceLeadingSwedishSubject(subject, value) {
+  if (/^att köpa sex i Sverige$/i.test(subject.trim())) {
+    if (
+      /^Det är olagligt att köpa sex, men personen som säljer straffas inte$/i.test(value.trim())
+    ) {
+      return 'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte';
+    }
+    if (/^Det är alltid lagligt att köpa sex$/i.test(value.trim())) {
+      return 'Att köpa sex är alltid lagligt i Sverige';
+    }
+  }
   if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
     if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
       return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
@@ -5859,6 +5881,24 @@ function policyGoalStatementEn(subject, answer) {
   return `${policyName} aims for ${lowerFirst(normalizedAnswer)}`;
 }
 function appliesStatementEn(subject, answer) {
+  if (/^buying sex in Sweden$/i.test(subject.trim())) {
+    if (
+      /^It is illegal to buy sex, but the person who sells it is not punished$/i.test(answer.trim())
+    ) {
+      return 'Buying sex is illegal in Sweden, but the person who sells sex is not punished';
+    }
+    if (/^It is always legal to buy sex$/i.test(answer.trim())) {
+      return 'Buying sex is always legal in Sweden';
+    }
+  }
+  if (/^marriage between people of the same sex in Sweden$/i.test(subject.trim())) {
+    if (/^It is permitted to marry a person of the same sex$/i.test(answer.trim())) {
+      return 'Marriage between people of the same sex is permitted in Sweden';
+    }
+    if (/^It is prohibited to marry a person of the same sex$/i.test(answer.trim())) {
+      return 'Marriage between people of the same sex is prohibited in Sweden';
+    }
+  }
   if (/^They are\s+/i.test(answer)) {
     return replaceLeadingEnglishSubject(subject, answer);
   }
@@ -8086,6 +8126,7 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let generatedSwedenScopeParityValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
@@ -8333,10 +8374,7 @@ if (
 if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   if (Array.isArray(questions)) {
     questions
-      .filter(
-        (question) =>
-          question.type === 'true_false' && question.tags?.includes('published-variant'),
-      )
+      .filter((question) => question.type === 'true_false' && isGeneratedPublishedVariant(question))
       .forEach((question) => {
         const issue = findQuestionGeneratedTrueFalseNaturalnessIssue(question);
         if (issue) {
@@ -8350,6 +8388,24 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   printValidationSummary({
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-generated-sweden-scope-parity')) {
+  if (Array.isArray(questions)) {
+    questions.filter(isGeneratedPublishedVariant).forEach((question) => {
+      if (findGeneratedSwedenScopeParityIssue(question)) {
+        fail(`${question.id} drops Sweden scope from generated English question`);
+      } else {
+        generatedSwedenScopeParityValidated += 1;
+      }
+    });
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedSwedenScopeFocusValidated: true,
+    generatedSwedenScopeParityValidated,
   });
   process.exit(0);
 }
@@ -17631,6 +17687,7 @@ if (Array.isArray(questions)) {
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
       const generatedTrueFalseNaturalnessIssue =
         findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+      const generatedSwedenScopeParityIssue = findGeneratedSwedenScopeParityIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -17660,6 +17717,11 @@ if (Array.isArray(questions)) {
         fail(`${label} contains a generated true/false grammar-splice stem`);
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
+      if (generatedSwedenScopeParityIssue) {
+        fail(`${label} drops Sweden scope from generated English question`);
+      } else if (isGeneratedPublishedVariant(question)) {
+        generatedSwedenScopeParityValidated += 1;
       }
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
@@ -18159,6 +18221,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      generatedSwedenScopeParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
