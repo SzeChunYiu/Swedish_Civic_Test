@@ -171,6 +171,43 @@ test('theme discipline rejects raw shadow and elevation style declarations', () 
   }
 });
 
+test('shared elevated surfaces consume tokenized native and web shadows', () => {
+  const shadowsSource = read('lib/theme/shadows.ts');
+  const surfaceSource = read('components/Surface.tsx');
+  const cardSource = read('components/ui/Card.tsx');
+
+  assert.match(
+    shadowsSource,
+    /card:\s*\{[\s\S]*boxShadow:\s*'0px 6px 20px rgba\(11, 31, 51, 0\.06\)'[\s\S]*shadowColor:\s*whisperShadowColor[\s\S]*elevation:\s*1,/,
+    'card shadow token should expose native values plus a matching web boxShadow token',
+  );
+  assert.match(
+    shadowsSource,
+    /deep:\s*\{[\s\S]*boxShadow:\s*'0px 8px 24px rgba\(11, 31, 51, 0\.08\)'[\s\S]*shadowColor:\s*whisperShadowColor[\s\S]*elevation:\s*2,/,
+    'deep shadow token should expose native values plus a matching web boxShadow token',
+  );
+  assert.match(
+    surfaceSource,
+    /cardElevation:\s*\{[\s\S]*\.\.\.shadows\.card[\s\S]*\}/,
+    'Surface card elevation should consume the shared card shadow token',
+  );
+  assert.match(
+    surfaceSource,
+    /elevated:\s*\{[\s\S]*\.\.\.shadows\.deep[\s\S]*\}/,
+    'Surface elevated mode should consume the shared deep shadow token',
+  );
+  assert.match(
+    cardSource,
+    /elevated:\s*\{[\s\S]*\.\.\.shadows\.card[\s\S]*\}/,
+    'Card elevated mode should consume the shared card shadow token',
+  );
+  assert.doesNotMatch(
+    `${surfaceSource}\n${cardSource}`,
+    /\b(?:shadowColor|shadowOpacity|shadowRadius|shadowOffset|boxShadow):\s*|\belevation:\s*\d/,
+    'Surface and Card should not declare route-local raw shadow styles',
+  );
+});
+
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
   for (const { label, colors } of readThemeColorPalettes()) {
     for (const [foreground, background] of REQUIRED_CONTRAST_PAIRS) {

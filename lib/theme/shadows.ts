@@ -5,6 +5,7 @@ const whisperShadowColor = '#0b1f33';
 
 export const shadows = {
   card: {
+    boxShadow: '0px 6px 20px rgba(11, 31, 51, 0.06)',
     shadowColor: whisperShadowColor,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.06,
@@ -12,6 +13,7 @@ export const shadows = {
     elevation: 1,
   } satisfies ViewStyle,
   deep: {
+    boxShadow: '0px 8px 24px rgba(11, 31, 51, 0.08)',
     shadowColor: whisperShadowColor,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,

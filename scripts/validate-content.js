@@ -17842,6 +17842,19 @@ function validateThemeTokenSchema() {
         if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0 || shadow.elevation > 2) {
           rejectToken(`theme shadows.${token}.elevation must be no higher than 2`);
         }
+        if (
+          isObjectRecord(shadow.shadowOffset) &&
+          Number.isFinite(shadow.shadowOffset.height) &&
+          Number.isFinite(shadow.shadowOpacity) &&
+          Number.isFinite(shadow.shadowRadius)
+        ) {
+          const expectedBoxShadow = `0px ${shadow.shadowOffset.height}px ${shadow.shadowRadius}px rgba(11, 31, 51, ${shadow.shadowOpacity})`;
+          if (shadow.boxShadow !== expectedBoxShadow) {
+            rejectToken(
+              `theme shadows.${token}.boxShadow must match tokenized web shadow ${expectedBoxShadow}`,
+            );
+          }
+        }
       }
 
       if (tokenIsValid) themeShadowTokensValidated += 1;
