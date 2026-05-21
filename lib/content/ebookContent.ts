@@ -305,7 +305,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
         heading: { sv: 'Aktuell officiell status', en: 'Current official status' },
         body: {
           sv: 'Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket, och antalet platser är begränsat.',
-          en: 'UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required, and seats are limited.',
+          en: 'The first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required, and seats are limited.',
         },
         sourceNoteKeys: [
           'officialTestOverview',

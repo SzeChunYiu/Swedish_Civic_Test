@@ -49,6 +49,21 @@ const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('På provdagen är ', 'giltig legitimation'),
   phrasePattern('Tidsatt ', 'provträning'),
 ];
+const staticEbookSourceAuthorityPhrasingPatterns = [
+  /\bUHR says\b/i,
+  /\bUHR\s+describes\b/i,
+  /\bUHR\s+beskriver\b/i,
+  /UHR\s+表示/,
+  /تقول\s+UHR|وتقول\s+UHR/,
+  /UHR\s+دەڵێت/,
+  /UHR\s+می.?گوید/,
+  /\bUHR\s+podaje\b/i,
+  /\bUHR\s+wyraźnie\s+podaje\b/i,
+  /UHR\s+waxay\s+sheeg(?:aysaa|tay)/i,
+  /\bUHR[^.?!<]{0,80}(?:söylüyor|belirtiyor)\b/i,
+  /UHR\s+повідомляє/i,
+  /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
+];
 const staleChildApplicationClaimPatterns = [
   /children are usually included with a parent's application/i,
   /children can be included on a parent's citizenship application/i,
@@ -224,6 +239,12 @@ function assertNoUnsupportedEbookOutcomeClaim(value) {
 
 function assertNoUnsupportedPracticalTestClaim(value) {
   for (const pattern of unsupportedPracticalTestClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoStaticEbookSourceAuthorityPhrasing(value) {
+  for (const pattern of staticEbookSourceAuthorityPhrasingPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -857,6 +878,23 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
     assert.match(englishHtml, new RegExp(url));
     assert.match(swedishHtml, new RegExp(url));
   });
+});
+
+test('static ebook current-status prose avoids source-authority phrasing', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const currentStatusHtml = getStaticSiteLanguages()
+    .flatMap((language) =>
+      ['11', '12'].map((chapterId) => renderChapter(harness, language, chapterId)),
+    )
+    .join('\n');
+
+  assertNoStaticEbookSourceAuthorityPhrasing(source);
+  assertNoStaticEbookSourceAuthorityPhrasing(currentStatusHtml);
+  assert.match(currentStatusHtml, /15 August 2026 in Stockholm/);
+  assert.match(currentStatusHtml, /15 augusti 2026 i Stockholm/);
+  assert.match(currentStatusHtml, /Migrationsverket letter/);
+  assert.match(currentStatusHtml, /brev från Migrationsverket/);
 });
 
 test('static ebook chapter 11 keeps child citizenship application rules current', () => {

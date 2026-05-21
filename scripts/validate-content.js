@@ -280,6 +280,21 @@ const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
   /historically commits\s+~?1%\s+of\s+GNI/i,
   /Citizenship test starts:\s*6 June 2026/i,
 ];
+const STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS = [
+  /\bUHR says\b/i,
+  /\bUHR\s+describes\b/i,
+  /\bUHR\s+beskriver\b/i,
+  /UHR\s+表示/,
+  /تقول\s+UHR|وتقول\s+UHR/,
+  /UHR\s+دەڵێت/,
+  /UHR\s+می.?گوید/,
+  /\bUHR\s+podaje\b/i,
+  /\bUHR\s+wyraźnie\s+podaje\b/i,
+  /UHR\s+waxay\s+sheeg(?:aysaa|tay)/i,
+  /\bUHR[^.?!<]{0,80}(?:söylüyor|belirtiyor)\b/i,
+  /UHR\s+повідомляє/i,
+  /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
+];
 const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'EBOOK_FACTBOX_SOURCE_NOTES',
   "retrievedDate: '2026-05-19'",
@@ -5365,6 +5380,21 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function validateStaticEbookSourceAuthorityCopy() {
+  const source = loadText('site/ebook.js');
+  let patternsValidated = 0;
+
+  STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook prose repeats source-authority phrasing: ${pattern}`);
+      return;
+    }
+    patternsValidated += 1;
+  });
+
+  return patternsValidated;
+}
+
 function readStaticEbookChapterIds() {
   const context = { console, window: {} };
   context.globalThis = context;
@@ -8757,6 +8787,8 @@ let staticEbookFactboxRawParagraphsTotal = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticEbookSourceAuthorityPatternsValidated = 0;
+let staticEbookSourceAuthorityCopyParityValidated = false;
 let staticEbookFootnoteHashChaptersValidated = 0;
 let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
@@ -9112,6 +9144,10 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+  staticEbookSourceAuthorityPatternsValidated = validateStaticEbookSourceAuthorityCopy();
+  staticEbookSourceAuthorityCopyParityValidated =
+    staticEbookSourceAuthorityPatternsValidated ===
+    STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS.length;
   exitWithValidationFailures();
   printValidationSummary({
     staticEbookFactboxClaimPatternsValidated,
@@ -9120,6 +9156,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFactboxProvenanceValidated,
     staticEbookProseSourceMetadataRulesValidated,
     staticEbookProseSourceMetadataParityValidated,
+    staticEbookSourceAuthorityPatternsValidated,
+    staticEbookSourceAuthorityCopyParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -9883,6 +9921,10 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
+staticEbookSourceAuthorityPatternsValidated = validateStaticEbookSourceAuthorityCopy();
+staticEbookSourceAuthorityCopyParityValidated =
+  staticEbookSourceAuthorityPatternsValidated ===
+  STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS.length;
 {
   const proseValidation = validateStaticEbookProseSourceMetadata();
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
@@ -13261,8 +13303,10 @@ function validateSettingsRouteCopyParity() {
     return;
   }
 
+  const normalizedSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
+
   EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
-    if (!settingsRoute.includes(snippet)) reject(message);
+    if (!normalizedSettingsRoute.includes(snippet)) reject(message);
   });
   UNSUPPORTED_SETTINGS_LANGUAGE_SCOPE_LABELS.forEach((label) => {
     if (settingsRoute.includes(label)) {
@@ -15172,8 +15216,9 @@ function validateSettingsAudioParity() {
   if (!settingsRoute.includes('accessibilityState={{ checked: audioEnabled }}')) {
     reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
   }
+  const normalizedSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
   if (
-    !settingsRoute.includes(
+    !normalizedSettingsRoute.includes(
       'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
     )
   ) {
@@ -15182,7 +15227,11 @@ function validateSettingsAudioParity() {
   if (!settingsRoute.includes('onPress={() => setAudioEnabled(!audioEnabled)}')) {
     reject('app/settings.tsx audio switch must toggle persisted audio state');
   }
-  if (!settingsRoute.includes('audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel')) {
+  if (
+    !normalizedSettingsRoute.includes(
+      'audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel',
+    )
+  ) {
     reject('app/settings.tsx audio switch must render the current audio state label');
   }
 
@@ -22611,6 +22660,8 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticEbookSourceAuthorityPatternsValidated,
+      staticEbookSourceAuthorityCopyParityValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
       staticEbookFootnoteHashChaptersValidated,
