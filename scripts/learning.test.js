@@ -636,6 +636,23 @@ test('spaced repetition schedules wrong answers soon and known answers later', (
   );
 });
 
+test('spaced repetition legacy helper falls back safely for malformed inputs', () => {
+  const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
+  const answeredAt = '2026-05-15T10:00:00.000Z';
+
+  assert.equal(
+    getNextReviewAt({ isCorrect: 'false', correctStreak: 3, answeredAt }),
+    '2026-05-16T10:00:00.000Z',
+  );
+  assert.equal(
+    getNextReviewAt({ isCorrect: true, correctStreak: Number.POSITIVE_INFINITY, answeredAt }),
+    '2026-05-16T10:00:00.000Z',
+  );
+  assert.doesNotThrow(() =>
+    getNextReviewAt({ isCorrect: true, correctStreak: 1, answeredAt: 'not-a-date' }),
+  );
+});
+
 test('badges unlock from progress milestones', () => {
   const { deriveBadges, getAllBadges, getBadgeProgressHint, getBadgeTitle } =
     loadAllTs('lib/learning/badges.ts');

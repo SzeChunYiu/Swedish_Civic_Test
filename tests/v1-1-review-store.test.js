@@ -180,6 +180,38 @@ test('review store: throwing MMKV writes keep graded card in memory and record w
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
 });
 
+test('review store: invalid grade inputs do not create cards or increment daily caps', () => {
+  const storage = createMemoryMMKV();
+  const { REVIEW_STORE_KEY, useReviewStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/reviewStore.ts',
+    {
+      reviews: storage,
+    },
+  );
+  const t0 = '2026-05-19T12:00:00.000Z';
+  const t1 = '2026-05-20T12:00:00.000Z';
+
+  assert.equal(useReviewStore.getState().grade('qBad', 5, t0), null);
+  assert.deepEqual(useReviewStore.getState().byId, {});
+  assert.deepEqual(useReviewStore.getState().gradedPerDay, {});
+  assert.equal(storage.values.has(REVIEW_STORE_KEY), false);
+
+  const valid = useReviewStore.getState().grade('q1', 3, t0);
+  const afterValid = useReviewStore.getState();
+  assert.equal(valid.questionId, 'q1');
+  assert.equal(
+    Object.values(afterValid.gradedPerDay).reduce((sum, count) => sum + count, 0),
+    1,
+  );
+
+  assert.equal(useReviewStore.getState().grade('q1', 5, t1), afterValid.byId.q1);
+  assert.equal(useReviewStore.getState().grade('q1', 3, 'not-a-date'), afterValid.byId.q1);
+  const afterInvalid = useReviewStore.getState();
+  assert.deepEqual(afterInvalid.byId, afterValid.byId);
+  assert.deepEqual(afterInvalid.gradedPerDay, afterValid.gradedPerDay);
+});
+
 test('review store: throwing MMKV reads fall back to empty state and record warning', () => {
   const storage = createThrowingGetMMKV('review read failed');
   const { useReviewStore } = loadTsWithStorage(repoRoot, 'lib/storage/reviewStore.ts', {

@@ -17,6 +17,7 @@ export const spacedRepetitionSchedule: number[] = [1, 3, 7, 15, 30];
 export type ReviewGrade = 1 | 2 | 3 | 4;
 // 1 = again (lapse), 2 = hard, 3 = good, 4 = easy
 export const REVIEW_GRADES = { AGAIN: 1, HARD: 2, GOOD: 3, EASY: 4 } as const;
+const REVIEW_GRADE_VALUES: ReadonlySet<number> = new Set(Object.values(REVIEW_GRADES));
 
 export type ReviewState = 'new' | 'learning' | 'review' | 'relearning';
 
@@ -48,6 +49,26 @@ function addDays(iso: string, days: number): string {
   return new Date(new Date(iso).getTime() + days * DAY_MS).toISOString();
 }
 
+export function isReviewGrade(value: unknown): value is ReviewGrade {
+  return typeof value === 'number' && Number.isInteger(value) && REVIEW_GRADE_VALUES.has(value);
+}
+
+export function isCanonicalReviewTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
+}
+
+function safeReviewTimestamp(value: unknown): string {
+  return isCanonicalReviewTimestamp(value) ? value : new Date().toISOString();
+}
+
+function cardCanBeGraded(card: ReviewCard, isNew: boolean): boolean {
+  if (!Number.isFinite(card.difficulty) || !Number.isFinite(card.stability)) return false;
+  if (!Number.isFinite(card.reps) || !Number.isFinite(card.lapses)) return false;
+  return isNew || isCanonicalReviewTimestamp(card.lastReviewAt);
+}
+
 // Retrievability under exponential-decay forgetting curve: R(t) = exp(-t/S).
 export function retrievability(stabilityDays: number, elapsedDays: number): number {
   if (stabilityDays <= 0) return 0;
@@ -66,6 +87,7 @@ export function createNewCard(
   questionId: string,
   now: string = new Date().toISOString(),
 ): ReviewCard {
+  const dueAt = safeReviewTimestamp(now);
   return {
     questionId,
     difficulty: 5,
@@ -74,7 +96,7 @@ export function createNewCard(
     lapses: 0,
     state: 'new',
     lastReviewAt: null,
-    dueAt: now,
+    dueAt,
   };
 }
 
@@ -84,10 +106,13 @@ export function createNewCard(
  */
 export function gradeCard(
   card: ReviewCard,
-  grade: ReviewGrade,
+  grade: unknown,
   now: string = new Date().toISOString(),
 ): ReviewCard {
   const isNew = card.state === 'new' || card.lastReviewAt === null;
+  if (!isReviewGrade(grade) || !isCanonicalReviewTimestamp(now) || !cardCanBeGraded(card, isNew)) {
+    return card;
+  }
   const elapsed = isNew ? 0 : Math.max(0, daysBetween(card.lastReviewAt!, now));
   const R = isNew ? 1 : retrievability(card.stability, elapsed);
 
@@ -158,24 +183,39 @@ export function getNextReviewAt({
   correctStreak,
   answeredAt = new Date().toISOString(),
 }: {
-  isCorrect: boolean;
-  correctStreak: number;
-  answeredAt?: string;
+  isCorrect: unknown;
+  correctStreak: unknown;
+  answeredAt?: unknown;
 }): string {
-  const baseDate = new Date(answeredAt);
-  const scheduleIndex = isCorrect
-    ? Math.max(0, Math.min(correctStreak, spacedRepetitionSchedule.length - 1))
+  const baseIso = safeReviewTimestamp(answeredAt);
+  const hasValidCorrectness = typeof isCorrect === 'boolean';
+  const hasValidStreak =
+    typeof correctStreak === 'number' &&
+    Number.isFinite(correctStreak) &&
+    Number.isInteger(correctStreak) &&
+    correctStreak >= 0;
+  const safeCorrectStreak = hasValidStreak ? correctStreak : 0;
+  const answeredCorrectly = hasValidCorrectness && isCorrect === true && hasValidStreak;
+  const scheduleIndex = answeredCorrectly
+    ? Math.max(0, Math.min(safeCorrectStreak, spacedRepetitionSchedule.length - 1))
     : 0;
-  const daysUntilReview = isCorrect ? spacedRepetitionSchedule[scheduleIndex] : 1;
-  return new Date(baseDate.getTime() + daysUntilReview * DAY_MS).toISOString();
+  const daysUntilReview = answeredCorrectly ? spacedRepetitionSchedule[scheduleIndex] : 1;
+  return addDays(baseIso, daysUntilReview);
 }
 
 // ---- Queue selection helpers -------------------------------------------------
 
 export function isDue(card: ReviewCard, now: string = new Date().toISOString()): boolean {
-  return new Date(card.dueAt).getTime() <= new Date(now).getTime();
+  const dueAt = Date.parse(card.dueAt);
+  const current = Date.parse(now);
+  if (!Number.isFinite(dueAt) || !Number.isFinite(current)) return false;
+  return dueAt <= current;
 }
 
 export function sortByDueAscending(a: ReviewCard, b: ReviewCard): number {
-  return new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime();
+  const aTime = Date.parse(a.dueAt);
+  const bTime = Date.parse(b.dueAt);
+  const safeATime = Number.isFinite(aTime) ? aTime : Number.POSITIVE_INFINITY;
+  const safeBTime = Number.isFinite(bTime) ? bTime : Number.POSITIVE_INFINITY;
+  return safeATime - safeBTime;
 }

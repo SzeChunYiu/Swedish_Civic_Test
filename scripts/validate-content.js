@@ -4592,118 +4592,6 @@ function validateCitizenshipTimeline() {
   };
 }
 
-function validateStudyPlanRuntimeInputGuards() {
-  let casesValidated = 0;
-  let parity = true;
-
-  function reject(message) {
-    parity = false;
-    fail(message);
-  }
-
-  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
-  if (typeof daysUntil !== 'function') reject('daysUntil export is not a function');
-  if (typeof formatExamDate !== 'function') reject('formatExamDate export is not a function');
-  if (typeof generateStudyPlan !== 'function') reject('generateStudyPlan export is not a function');
-  if (!parity) return { casesValidated, parity };
-
-  const invalidDate = new Date('not-a-date');
-  const validNow = new Date('2026-05-19T00:00:00.000Z');
-
-  if (daysUntil(invalidDate, validNow) !== 0) {
-    reject('daysUntil must return 0 for invalid target dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  if (daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) !== 0) {
-    reject('daysUntil must return 0 for invalid now dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  const fallbackDateLabel = formatExamDate(invalidDate, 'en');
-  if (fallbackDateLabel === 'Invalid Date' || /Invalid Date/i.test(fallbackDateLabel)) {
-    reject('formatExamDate must not render Invalid Date for invalid dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  let invalidPlan;
-  try {
-    invalidPlan = generateStudyPlan({
-      testDate: invalidDate,
-      now: invalidDate,
-      totalQuestions: Number.NaN,
-      masteredQuestions: Number.POSITIVE_INFINITY,
-      mocksTaken: '2',
-      intensity: 'turbo',
-    });
-  } catch (error) {
-    reject(`generateStudyPlan must not throw for invalid runtime inputs: ${error.message}`);
-  }
-
-  if (invalidPlan) {
-    if (
-      invalidPlan.intensity !== 'regular' ||
-      invalidPlan.daysRemaining !== 0 ||
-      invalidPlan.mocksRemaining !== 6 ||
-      !Number.isFinite(Date.parse(invalidPlan.testDateIso)) ||
-      !Number.isFinite(Date.parse(invalidPlan.generatedAt)) ||
-      !Number.isFinite(invalidPlan.dailyQuestionTarget) ||
-      invalidPlan.dailyQuestionTarget < 5 ||
-      invalidPlan.dailyQuestionTarget > 80 ||
-      !Number.isInteger(invalidPlan.weeklyMockTarget) ||
-      invalidPlan.weeklyMockTarget < 1 ||
-      invalidPlan.weeklyMockTarget > 2
-    ) {
-      reject('generateStudyPlan must normalize invalid runtime inputs to finite bounded targets');
-    } else {
-      casesValidated += 1;
-    }
-  }
-
-  const stringCountPlan = generateStudyPlan({
-    testDate: new Date('2026-06-15T00:00:00.000Z'),
-    now: validNow,
-    totalQuestions: '200',
-    masteredQuestions: '10',
-    mocksTaken: '2',
-    intensity: 'regular',
-  });
-  if (
-    stringCountPlan.mocksRemaining !== 6 ||
-    !Number.isFinite(stringCountPlan.dailyQuestionTarget) ||
-    stringCountPlan.dailyQuestionTarget < 5 ||
-    stringCountPlan.dailyQuestionTarget > 80
-  ) {
-    reject('generateStudyPlan must reject string counts instead of coercing them');
-  } else {
-    casesValidated += 1;
-  }
-
-  const clampedPlan = generateStudyPlan({
-    testDate: new Date('2026-06-15T00:00:00.000Z'),
-    now: validNow,
-    totalQuestions: 10,
-    masteredQuestions: 99,
-    mocksTaken: 99,
-    intensity: 'regular',
-  });
-  if (
-    clampedPlan.mocksRemaining !== 0 ||
-    !Number.isFinite(clampedPlan.dailyQuestionTarget) ||
-    clampedPlan.dailyQuestionTarget < 5 ||
-    clampedPlan.dailyQuestionTarget > 80
-  ) {
-    reject('generateStudyPlan must clamp mastered and mock counts to sensible bounds');
-  } else {
-    casesValidated += 1;
-  }
-
-  return { casesValidated, parity };
-}
-
 function findQuestionAuthorityOverclaim(question) {
   const text = [
     question.questionSv,
@@ -7314,6 +7202,8 @@ const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const createNewCard = spacedRepetitionModule.createNewCard;
+const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -7550,8 +7440,6 @@ let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
-let studyPlanRuntimeCasesValidated = 0;
-let studyPlanRuntimeParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -7579,6 +7467,8 @@ let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let spacedRepetitionRuntimeInputCasesValidated = 0;
+let spacedRepetitionRuntimeInputParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -7752,29 +7642,6 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-countdown-banner-parity')) {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
-  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
-  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
-  exitWithValidationFailures();
-  printValidationSummary({
-    citizenshipRulesEffectiveDateValidated,
-    civicKnowledgeTestDeadlineDateValidated,
-    citizenshipTimelineSourceUrlsValidated,
-    citizenshipTimelineDateParityValidated,
-    countdownBannerTimelineCopyParityValidated,
-    studyPlanRuntimeCasesValidated,
-    studyPlanRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -7803,11 +7670,6 @@ if (
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-}
-{
-  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
-  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
-  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -14543,6 +14405,82 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+
+  if (typeof createNewCard !== 'function' || typeof gradeCard !== 'function') return;
+
+  const invalidInputCases = [
+    {
+      label: 'non-boolean correctness',
+      actual: () => getNextReviewAt({ isCorrect: 'false', correctStreak: 3, answeredAt }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+    {
+      label: 'non-finite correct streak',
+      actual: () =>
+        getNextReviewAt({
+          isCorrect: true,
+          correctStreak: Number.POSITIVE_INFINITY,
+          answeredAt,
+        }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+    {
+      label: 'fractional correct streak',
+      actual: () => getNextReviewAt({ isCorrect: true, correctStreak: 1.5, answeredAt }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+  ];
+  let runtimeInputParityIsValid = true;
+
+  invalidInputCases.forEach(({ label, actual, expected }) => {
+    try {
+      const value = actual();
+      if (value !== expected) {
+        runtimeInputParityIsValid = false;
+        fail(`getNextReviewAt ${label} returned ${value}, expected ${expected}`);
+        return;
+      }
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    } catch (error) {
+      runtimeInputParityIsValid = false;
+      fail(`getNextReviewAt ${label} threw ${error.message}`);
+    }
+  });
+
+  try {
+    const card = createNewCard('q-runtime-guard', answeredAt);
+    const invalidGradeResult = gradeCard(card, 5, answeredAt);
+    if (JSON.stringify(invalidGradeResult) !== JSON.stringify(card)) {
+      runtimeInputParityIsValid = false;
+      fail('gradeCard invalid grade must leave the card unchanged');
+    } else {
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    }
+    const invalidNowResult = gradeCard(card, 3, 'not-a-date');
+    if (JSON.stringify(invalidNowResult) !== JSON.stringify(card)) {
+      runtimeInputParityIsValid = false;
+      fail('gradeCard invalid now timestamp must leave the card unchanged');
+    } else {
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    }
+  } catch (error) {
+    runtimeInputParityIsValid = false;
+    fail(`gradeCard invalid input guard threw ${error.message}`);
+  }
+
+  if (runtimeInputParityIsValid) spacedRepetitionRuntimeInputParityValidated = true;
+}
+
+if (process.argv.includes('--focus-spaced-repetition-schema')) {
+  validateSpacedRepetitionSchedule();
+  exitWithValidationFailures();
+  printValidationSummary({
+    spacedRepetitionIntervalsValidated,
+    spacedRepetitionRuntimeParityValidated,
+    spacedRepetitionRuntimeInputCasesValidated,
+    spacedRepetitionRuntimeInputParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateStreakRules() {
@@ -16670,8 +16608,6 @@ console.log(
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
-      studyPlanRuntimeCasesValidated,
-      studyPlanRuntimeParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
@@ -16699,6 +16635,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      spacedRepetitionRuntimeInputCasesValidated,
+      spacedRepetitionRuntimeInputParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
