@@ -62,18 +62,23 @@ function createZustandStub() {
       const setFn = (partial) => {
         const next = typeof partial === 'function' ? partial(state) : partial;
         if (next && next !== state) {
-          Object.assign(state, next);
+          state = { ...state, ...next };
         }
       };
       const getFn = () => state;
       state = factory(setFn, getFn);
 
-      const useStore = (selector) => (selector ? selector(state) : state);
+      const useStore = (selector) => (typeof selector === 'function' ? selector(state) : state);
       useStore.getState = () => state;
       useStore.setState = (partial) => setFn(partial);
       return useStore;
     },
   };
+}
+
+function resolveStorage(storageById, id) {
+  if (typeof storageById === 'function') return storageById(id);
+  return storageById[id] ?? null;
 }
 
 function createStorageModuleStubs(storageById = {}, moduleStubs = {}) {
@@ -83,7 +88,7 @@ function createStorageModuleStubs(storageById = {}, moduleStubs = {}) {
       stop() {},
     }),
     'react-native-mmkv': () => ({
-      createMMKV: ({ id }) => storageById[id] ?? null,
+      createMMKV: ({ id } = {}) => resolveStorage(storageById, id),
     }),
     zustand: createZustandStub,
     ...moduleStubs,
