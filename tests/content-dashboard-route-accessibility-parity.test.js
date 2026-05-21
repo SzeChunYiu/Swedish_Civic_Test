@@ -11,6 +11,7 @@ const sourcePaths = {
   chapters: 'components/dashboard/PerChapterProgressBars.tsx',
   history: 'components/dashboard/MockExamHistoryCard.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
+  stats: 'lib/learning/dashboardStats.ts',
 };
 
 function read(relativePath) {
@@ -88,6 +89,26 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.chapters,
     /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}/,
     'PerChapterProgressBars parent Card must not group sort buttons or chapter links',
+  );
+  assert.match(
+    sources.stats,
+    /function normalizedChapterQuestionCount\(questionCount: number\): number \{[\s\S]*Number\.isInteger\(questionCount\)[\s\S]*questionCount >= 0/,
+    'Dashboard per-chapter stats must require finite non-negative integer question counts',
+  );
+  assert.match(
+    sources.stats,
+    /coverage:\s*safeRatio\(bucket\.questionIds\.size, questionCount\)/,
+    'Dashboard per-chapter coverage must clamp malformed or undersized totals',
+  );
+  assert.match(
+    sources.stats,
+    /answer\.isCorrect === true/,
+    'Dashboard selectors must count correct answers only from strict boolean true',
+  );
+  assert.match(
+    sources.chapters,
+    /const coverageGap = 1 - ratio\(bar\.coverage\);/,
+    'PerChapterProgressBars weakness sort must sanitize coverage before ranking',
   );
 
   assert.match(

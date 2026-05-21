@@ -890,6 +890,86 @@ test('readiness and dashboard selectors ignore invalid or future answer dates', 
   assert.equal(summary.chaptersWithAnyAnswer, 1);
 });
 
+test('dashboard per-chapter guards clamp NaN coverage and non-boolean correctness', () => {
+  const { dashboardSummary, perChapterProgress } = loadAllTs('lib/learning/dashboardStats.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 's1',
+        mode: 'study',
+        questionIds: [],
+        startedAt: '2026-05-19T00:00:00.000Z',
+        answers: [
+          {
+            questionId: 'bad-total',
+            selectedOptionIds: [],
+            isCorrect: 'yes',
+            answeredAt: '2026-05-19T10:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'over-total-1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:01:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'over-total-2',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-19T10:02:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'unresolved',
+            selectedOptionIds: [],
+            isCorrect: false,
+            answeredAt: '2026-05-18T10:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+          {
+            questionId: 'unresolved',
+            selectedOptionIds: [],
+            isCorrect: 'true',
+            answeredAt: '2026-05-19T10:03:00.000Z',
+            timeSpentSeconds: 5,
+          },
+        ],
+      },
+    ],
+  };
+  const questionChapterIndex = {
+    'bad-total': 'bad',
+    'over-total-1': 'over',
+    'over-total-2': 'over',
+    unresolved: 'bad',
+  };
+  const bars = perChapterProgress(
+    progress,
+    [
+      { id: 'bad', questionCount: Number.NaN },
+      { id: 'over', questionCount: 1 },
+    ],
+    questionChapterIndex,
+    { now },
+  );
+  const bad = bars.find((bar) => bar.chapterId === 'bad');
+  const over = bars.find((bar) => bar.chapterId === 'over');
+
+  assert.equal(bad.coverage, 0);
+  assert.equal(bad.accuracy, 0);
+  assert.equal(over.coverage, 1);
+  assert.equal(over.accuracy, 1);
+  assert.equal(dashboardSummary(progress, questionChapterIndex, { now }).unresolvedMistakes, 1);
+});
+
 test('spaced repetition schedules wrong answers soon and known answers later', () => {
   const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
 
