@@ -60,6 +60,10 @@ type ProfileCopy = {
   studySetupTitle: string;
   subtitle: string;
   title: string;
+  weeklyRecapAccessibilityLabel: string;
+  weeklyRecapCta: string;
+  weeklyRecapSubtitle: string;
+  weeklyRecapTitle: string;
   xpMetric: string;
 };
 
@@ -96,6 +100,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     subtitle:
       'Dina mål, språkval, sviter och märken sparas på den här enheten för privat studierutin.',
     title: 'Framsteg utan konto',
+    weeklyRecapAccessibilityLabel: 'Öppna veckans översikt',
+    weeklyRecapCta: 'Visa veckan',
+    weeklyRecapSubtitle: 'Sammanfatta veckans svar och välj nästa steg utan konto.',
+    weeklyRecapTitle: 'Veckans översikt',
     xpMetric: 'XP',
   },
   en: {
@@ -130,6 +138,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     subtitle:
       'Your goals, language mode, streaks, and badges stay on this device for a private study experience.',
     title: 'Progress without an account',
+    weeklyRecapAccessibilityLabel: 'Open weekly recap',
+    weeklyRecapCta: 'View this week',
+    weeklyRecapSubtitle:
+      'Summarize this week of answers and choose the next step without an account.',
+    weeklyRecapTitle: 'Weekly recap',
     xpMetric: 'XP',
   },
 };
@@ -265,6 +278,15 @@ export default function Screen() {
           accessibilityLabel={copy.dashboardAccessibilityLabel}
           href="/dashboard"
           label={copy.dashboardCta}
+        />
+      </Card>
+
+      <Card style={styles.cardWide}>
+        <SectionHeader title={copy.weeklyRecapTitle} subtitle={copy.weeklyRecapSubtitle} />
+        <ComplianceActionLink
+          accessibilityLabel={copy.weeklyRecapAccessibilityLabel}
+          href="/recap"
+          label={copy.weeklyRecapCta}
         />
       </Card>
 

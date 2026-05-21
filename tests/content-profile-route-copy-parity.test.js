@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 38);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -79,6 +79,13 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.dashboardAccessibilityLabel\}/);
   assert.match(source, /href="\/dashboard"/);
   assert.match(source, /label=\{copy\.dashboardCta\}/);
+  assert.match(source, /weeklyRecapTitle: 'Veckans översikt'/);
+  assert.match(source, /weeklyRecapTitle: 'Weekly recap'/);
+  assert.match(source, /weeklyRecapCta: 'Visa veckan'/);
+  assert.match(source, /weeklyRecapCta: 'View this week'/);
+  assert.match(source, /accessibilityLabel=\{copy\.weeklyRecapAccessibilityLabel\}/);
+  assert.match(source, /href="\/recap"/);
+  assert.match(source, /label=\{copy\.weeklyRecapCta\}/);
   assert.match(source, /copy\.removeAdsFocusCue/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
   assert.match(source, /Ta bort annonser är markerat/);
@@ -215,6 +222,34 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
   assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
+});
+
+test('profile weekly recap card owns the localized recap shortcut', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+  const dashboardStart = source.indexOf('<SectionHeader title={copy.dashboardTitle}');
+  const weeklyRecapStart = source.indexOf('<SectionHeader title={copy.weeklyRecapTitle}');
+  const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
+  const weeklyRecapCard = source.slice(weeklyRecapStart, badgesStart);
+  const recapLinks = source.match(/href="\/recap"/g) ?? [];
+
+  assert.equal(recapLinks.length, 1);
+  assert.notEqual(dashboardStart, -1);
+  assert.notEqual(weeklyRecapStart, -1);
+  assert.notEqual(badgesStart, -1);
+  assert.ok(
+    dashboardStart < weeklyRecapStart,
+    'weekly recap card should follow the progress dashboard card',
+  );
+  assert.ok(weeklyRecapStart < badgesStart, 'weekly recap card should render before badges');
+  assert.match(
+    weeklyRecapCard,
+    /<SectionHeader title=\{copy\.weeklyRecapTitle\} subtitle=\{copy\.weeklyRecapSubtitle\}/,
+  );
+  assert.match(
+    weeklyRecapCard,
+    /<ComplianceActionLink[\s\S]*accessibilityLabel=\{copy\.weeklyRecapAccessibilityLabel\}[\s\S]*href="\/recap"[\s\S]*label=\{copy\.weeklyRecapCta\}[\s\S]*\/>/,
+  );
+  assert.doesNotMatch(source.slice(badgesStart), /href="\/recap"/);
 });
 
 test('profile route copy parity rejects bypassing the settings language', () => {
