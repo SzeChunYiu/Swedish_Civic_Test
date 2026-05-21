@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+import { startAllVisiblePractice } from './practiceHub';
 
 async function switchStudyLanguage(page: Page, language: 'sv' | 'en') {
   await page.goto('/settings', { waitUntil: 'networkidle' });
@@ -45,7 +46,7 @@ test('practice source drawer renders natural English close copy and preserves Sw
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await expect(page.getByText('Question 1')).toBeVisible();
+  await startAllVisiblePractice(page, 'en');
 
   const aboutSources = page.getByRole('button', { name: 'About the sources' });
   await expect(aboutSources).toHaveAttribute('aria-expanded', 'false');
@@ -67,6 +68,7 @@ test('practice source drawer renders natural English close copy and preserves Sw
   await switchStudyLanguage(page, 'sv');
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'sv');
 
   const omKallorna = page.getByRole('button', { name: 'Om källorna' });
   await expect(omKallorna).toHaveAttribute('aria-expanded', 'false');

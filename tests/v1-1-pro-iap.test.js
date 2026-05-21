@@ -453,3 +453,28 @@ assert.throws(
 
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 });
+
+test('focus-pro-lifetime validator reports relaunch receipt-backed counters', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-pro-lifetime-relaunch-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused Pro Lifetime validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.deepEqual(summary, {
+    proLifetimeBareTrueRejectionValidated: 1,
+    proLifetimeStructuredRecordParsingValidated: 1,
+    proLifetimeProviderReceiptRevalidationValidated: 1,
+    proLifetimeFailClosedClearingValidated: 1,
+    proLifetimeNativeHookProviderWiringValidated: 1,
+    proLifetimeRelaunchParityValidated: true,
+  });
+});

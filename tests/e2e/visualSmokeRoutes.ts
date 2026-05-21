@@ -4,6 +4,8 @@ export type VisualSmokeRoute = {
   route: string;
 };
 
+export type VisualSmokeRouteManifestEntry = Pick<VisualSmokeRoute, 'file' | 'name' | 'route'>;
+
 export type VisualSmokeDuplicateExplanation = {
   names: readonly string[];
   reason: string;
@@ -27,6 +29,12 @@ export const visualSmokeRoutes = [
   { name: 'support', route: '/support', file: 'support.png' },
 ] as const satisfies readonly VisualSmokeRoute[];
 
+export function visualSmokeRouteManifestEntries(
+  routes: readonly VisualSmokeRoute[] = visualSmokeRoutes,
+): VisualSmokeRouteManifestEntry[] {
+  return routes.map(({ file, name, route }) => ({ file, name, route }));
+}
+
 export const visualSmokeDuplicateExplanations = [
   {
     names: ['home', 'index'],
@@ -38,10 +46,26 @@ export function visualSmokeDuplicateExplanationKey(names: readonly string[]): st
   return [...names].sort().join(',');
 }
 
-export function isExplainedVisualSmokeDuplicate(names: readonly string[]): boolean {
+export function hasValidVisualSmokeDuplicateExplanation(
+  explanation: VisualSmokeDuplicateExplanation,
+): boolean {
+  return (
+    explanation.names.length > 1 &&
+    explanation.names.every((name) => typeof name === 'string' && name.trim().length > 0) &&
+    typeof explanation.reason === 'string' &&
+    explanation.reason.trim().length > 0
+  );
+}
+
+export function isExplainedVisualSmokeDuplicate(
+  names: readonly string[],
+  explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
+): boolean {
   const duplicateKey = visualSmokeDuplicateExplanationKey(names);
 
-  return visualSmokeDuplicateExplanations.some(
-    (explanation) => visualSmokeDuplicateExplanationKey(explanation.names) === duplicateKey,
+  return explanations.some(
+    (explanation) =>
+      hasValidVisualSmokeDuplicateExplanation(explanation) &&
+      visualSmokeDuplicateExplanationKey(explanation.names) === duplicateKey,
   );
 }

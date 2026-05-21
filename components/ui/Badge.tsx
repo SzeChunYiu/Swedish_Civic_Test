@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography } from '../../lib/theme';
 import type { ThemeColors } from '../../lib/theme';
+import { useResolvedThemeColors } from '../useResolvedThemeColors';
 
 type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
 export interface BadgeProps extends PropsWithChildren {
@@ -20,7 +21,8 @@ export function Badge({
   themeColors,
   tone = 'blue',
 }: BadgeProps) {
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+  const resolvedThemeColors = useResolvedThemeColors(themeColors);
+  const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const badgeAccessibilityLabel =
     accessibilityLabel ??
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
