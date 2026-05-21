@@ -292,6 +292,34 @@ test('local study data export round-trips citizenship requirements without purch
   ]);
 });
 
+test('local study data import omits malformed daily-goal settings before applying', () => {
+  const storageById = createStorageById();
+  storageById.settings.set('dailyGoalAnswers', 20);
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    settings: {
+      language: 'en',
+      dailyGoalAnswers: 19.6,
+      audioEnabled: false,
+    },
+  });
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+  assert.deepEqual(previewResult.preview.settings, {
+    language: 'en',
+    audioEnabled: false,
+  });
+  assert.equal(previewResult.preview.summary.settingCount, 2);
+
+  applyLocalStudyDataImport(previewResult.preview);
+
+  assert.equal(storageById.settings.values.get('language'), 'en');
+  assert.equal(storageById.settings.values.get('audioEnabled'), false);
+  assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
+});
+
 test('local study data import rejects purchase fields before any snapshot writes', () => {
   const storageById = createStorageById();
   const { previewLocalStudyDataImport } = loadImportModule(storageById);

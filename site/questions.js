@@ -32203,8 +32203,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
+      "en": "In Sweden, buying sex is illegal, but the person who sells sex is not punished.",
+      "sv": "Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte."
     },
     "opts": [
       {
@@ -32243,8 +32243,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is always legal to buy sex.",
-      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
+      "en": "In Sweden, buying sex is always legal.",
+      "sv": "Att köpa sex är alltid lagligt i Sverige."
     },
     "opts": [
       {
@@ -33483,7 +33483,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is permitted to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is permitted.",
       "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
@@ -33523,7 +33523,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is prohibited to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is prohibited.",
       "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
@@ -55415,8 +55415,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Try to persuade others of their political ideas.",
-      "sv": "Försöka övertyga andra om sina politiska idéer."
+      "en": "In a democracy, people, groups, and parties may try to persuade others of their political ideas.",
+      "sv": "I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer."
     },
     "opts": [
       {
@@ -55455,8 +55455,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Stop others from voting.",
-      "sv": "Hindra andra från att rösta."
+      "en": "In a democracy, people, groups, and parties may not stop others from voting.",
+      "sv": "I en demokrati får människor, grupper och partier inte hindra andra från att rösta."
     },
     "opts": [
       {
@@ -64538,4 +64538,14 @@
     "questionCount": 145
   }
 ];
+
+  window.SMT_QUESTION_BANK_META = {
+  "questionCount": 895,
+  "chapterCount": 13,
+  "provenanceCounts": {
+    "uhr": 179,
+    "derived": 716,
+    "editorial": 0
+  }
+};
 })();

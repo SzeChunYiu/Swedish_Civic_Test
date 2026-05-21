@@ -1,5 +1,5 @@
 import { Link, type Href } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -9,7 +9,8 @@ import {
   daysUntil,
   formatExamDate,
 } from '../../lib/learning/examDate';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type TimelineSourceLink = {
   accessibilityLabel: string;
@@ -70,6 +71,8 @@ export interface CountdownBannerProps {
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
   const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   useEffect(() => {
     const interval = setInterval(
@@ -121,69 +124,71 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
   );
 }
 
-const styles = StyleSheet.create({
-  banner: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.warning,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[2],
-    padding: space[2],
-  },
-  daysBlock: {
-    alignItems: 'center',
-    gap: space[0.5],
-  },
-  daysNumber: {
-    color: colors.warning,
-    fontFamily: typography.displaySecondary.fontFamily,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.displaySecondary.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  daysLabel: {
-    color: colors.warning,
-    fontFamily: typography.micro.fontFamily,
-    fontSize: typography.micro.fontSize,
-    letterSpacing: typography.micro.letterSpacing,
-    lineHeight: typography.micro.lineHeight,
-    textTransform: 'uppercase',
-  },
-  contentBlock: {
-    flex: 1,
-    gap: space[1],
-  },
-  body: {
-    color: colors.text,
-    flex: 1,
-    fontFamily: typography.bodyTight.fontFamily,
-    fontSize: typography.bodyTight.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  sourceRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  sourceLabel: {
-    color: colors.textSecondary,
-    fontFamily: typography.micro.fontFamily,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  sourceLink: {
-    color: colors.accent,
-    fontFamily: typography.micro.fontFamily,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.5],
-    textDecorationLine: 'underline',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    banner: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[2],
+      padding: space[2],
+    },
+    daysBlock: {
+      alignItems: 'center',
+      gap: space[0.5],
+    },
+    daysNumber: {
+      color: themeColors.warning,
+      fontFamily: typography.displaySecondary.fontFamily,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.displaySecondary.fontWeight,
+      letterSpacing: typography.cardTitle.letterSpacing,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    daysLabel: {
+      color: themeColors.warning,
+      fontFamily: typography.micro.fontFamily,
+      fontSize: typography.micro.fontSize,
+      letterSpacing: typography.micro.letterSpacing,
+      lineHeight: typography.micro.lineHeight,
+      textTransform: 'uppercase',
+    },
+    contentBlock: {
+      flex: 1,
+      gap: space[1],
+    },
+    body: {
+      color: themeColors.text,
+      flex: 1,
+      fontFamily: typography.bodyTight.fontFamily,
+      fontSize: typography.bodyTight.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    sourceRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    sourceLabel: {
+      color: themeColors.textSecondary,
+      fontFamily: typography.micro.fontFamily,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    sourceLink: {
+      color: themeColors.accent,
+      fontFamily: typography.micro.fontFamily,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+      minHeight: space[6],
+      minWidth: space[6],
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.5],
+      textDecorationLine: 'underline',
+    },
+  });
+}

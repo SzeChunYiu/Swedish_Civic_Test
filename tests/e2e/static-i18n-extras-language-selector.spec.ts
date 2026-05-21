@@ -211,11 +211,11 @@ async function switchToHomeRoute(page: Page) {
   await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
 }
 
-async function assertLongFormFallback(page: Page) {
+async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await switchToPrivacyRoute(page);
-  await expect(page.locator(i18nSelector('privacy.kicker'))).toHaveText('Privacy policy');
+  await expectDictionaryText(page, locale, 'privacy.kicker');
   await expect(page.locator(i18nSelector('privacy.lede'))).toContainText(
-    'Almost Swedish is an independent study app.',
+    await dictionaryText(page, locale, 'privacy.lede'),
   );
   await switchToHomeRoute(page);
 }
@@ -265,7 +265,7 @@ test('static Settings selects extra languages without overflow or outcome slogan
     await expectDictionaryText(page, locale, 'consent.min');
     await expectDictionaryText(page, locale, 'footer.t1');
     await expectDictionaryText(page, locale, 'footer.honest.p');
-    await assertLongFormFallback(page);
+    await assertLongFormRouteCopy(page, locale);
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
     await expectNoHorizontalOverflow(page);
