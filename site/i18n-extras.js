@@ -143,13 +143,13 @@
         '它会帮助你<em>学习</em>。其他取决于你、官方资料，以及你休息喝 fika 的次数。我们从公开题库整理问题，并用简单语言解释。',
       'faq.3.q': '我需要账号吗？',
       'faq.3.a':
-        '不需要。MVP 不要求注册。没有邮箱、没有手机号，也不用上传尴尬头像。学习进度保存在你的设备上。',
+        '不需要——不注册也能使用全部功能，学习进度保存在你的设备上。登录是可选的，但能解锁更多：你的标注、笔记和学习面板会在所有设备间同步。',
       'faq.4.q': '它是免费的吗？',
       'faq.4.a':
         '可以免费开始、免费学习，也可以免费做模拟考。广告帮助保持核心功能可用；“移除广告”是可选的一次性 29 SEK 购买。',
       'faq.5.q': '也可以用瑞典语吗？',
       'faq.5.a':
-        '可以。在导航里切换 EN / SV，或在应用内更改。很多学习者会同时使用两种语言：先读瑞典语，卡住时看英文。',
+        '可以。点击顶部栏的语言按钮即可切换——瑞典语、英语，还有另外十种语言。很多人会同时用两种：先读瑞典语，卡住时再看另一种。',
       'faq.6.q': '我的数据会分享给别人吗？',
       'faq.6.a':
         '你的学习进度、答案、错题和设置保存在本地。网站的 Google AdSense 和应用内的 Google Mobile Ads（AdMob）可能处理广告和同意信号，但广告不会收到你的学习答案或进度。',
@@ -507,13 +507,13 @@
         '它會幫助你<em>學習</em>。其他取決於你、官方資料，以及你休息喝 fika 的次數。我們整理公開題庫，並用簡單語言解釋每一題。',
       'faq.3.q': '我需要帳號嗎？',
       'faq.3.a':
-        '不需要。MVP 不要求註冊。沒有電子郵件、沒有電話號碼，也不用上傳尷尬大頭照。學習進度保存在你的裝置上。',
+        '不需要——不註冊也能使用全部功能，學習進度保存在你的裝置上。登入是可選的，但能解鎖更多：你的標註、筆記和學習面板會在所有裝置間同步。',
       'faq.4.q': '它是免費的嗎？',
       'faq.4.a':
         '可以免費開始、免費學習，也可以免費做模擬考。廣告幫助維持核心功能可用；「移除廣告」是可選的一次性 29 SEK 購買。',
       'faq.5.q': '也可以用瑞典語嗎？',
       'faq.5.a':
-        '可以。在導覽列切換 EN / SV，或在應用程式內更改。很多學習者會同時使用兩種語言：先讀瑞典語，卡住時看英文。',
+        '可以。點擊頂部列的語言按鈕即可切換——瑞典語、英語，還有另外十種語言。很多人會同時用兩種：先讀瑞典語，卡住時再看另一種。',
       'faq.6.q': '我的資料會分享給別人嗎？',
       'faq.6.a':
         '你的學習進度、答案、錯題和設定保存在本機。網站的 Google AdSense 和應用程式內的 Google Mobile Ads（AdMob）可能處理廣告和同意訊號，但廣告不會收到你的學習答案或進度。',
@@ -877,13 +877,13 @@
         'سيساعدك على <em>الدراسة</em>. الباقي يعتمد عليك، وعلى المواد الرسمية، وعلى مقدار الراحة التي تأخذها. نجمع الأسئلة من المصادر العامة ونشرح كل سؤال بلغة بسيطة.',
       'faq.3.q': 'هل أحتاج إلى حساب؟',
       'faq.3.a':
-        'لا. نسخة MVP لا تحتاج إلى تسجيل. لا بريد إلكتروني ولا رقم هاتف ولا صورة ملف محرجة. تقدمك يبقى على جهازك.',
+        'لا — يمكنك فعل كل شيء دون تسجيل، وتقدّمك محفوظ على جهازك. تسجيل الدخول اختياري، لكنه يفتح المزيد: تتزامن تظليلاتك وملاحظاتك ولوحتك عبر كل أجهزتك.',
       'faq.4.q': 'هل هو مجاني؟',
       'faq.4.a':
         'مجاني للبدء والدراسة وأداء الاختبارات التجريبية. الإعلانات تساعد على بقاء التطبيق الأساسي متاحاً؛ إزالة الإعلانات شراء اختياري لمرة واحدة بقيمة 29 كرونة.',
       'faq.5.q': 'هل يعمل باللغة السويدية أيضاً؟',
       'faq.5.a':
-        'نعم. بدّل EN / SV في شريط التنقل أو غيّره داخل التطبيق. كثير من المتعلمين يستخدمون اللغتين معاً: اقرأ السؤال بالسويدية وانظر إلى الإنجليزية عند الحاجة.',
+        'نعم. اضغط على زر اللغة في الشريط العلوي للتبديل — السويدية والإنجليزية وعشر لغات أخرى. كثيرون يستخدمون لغتين معًا: اقرأ بالسويدية ثم ألقِ نظرة على لغة أخرى عند التعثّر.',
       'faq.6.q': 'هل تُشارك بياناتي مع أحد؟',
       'faq.6.a':
         'تقدمك وإجاباتك وأخطاؤك وإعداداتك تبقى محلية. يمكن لـ Google AdSense على الموقع وGoogle Mobile Ads (AdMob) في التطبيق معالجة إشارات الإعلان والموافقة، لكن الإعلانات لا تتلقى إجاباتك أو تقدمك.',
@@ -1259,13 +1259,13 @@
         'یارمەتیت دەدات <em>بخوێنیتەوە</em>. ئەوەی تر بە تۆ، سەرچاوە فەرمییەکان و چەند پشووێکی fika دەگریت پەیوەستە. پرسیارەکان لە سەرچاوە گشتییەکان وەردەگرین و بە زمانی سادە ڕوونیان دەکەینەوە.',
       'faq.3.q': 'پێویستم بە هەژمار هەیە؟',
       'faq.3.a':
-        'نەخێر. MVP هیچ تۆمارکردنێک ناوێت. نە ئیمەیڵ، نە ژمارەی مۆبایل، نە وێنەیەکی کۆنی نەگونجاو. پێشکەوتنت لەسەر ئامێرەکەت دەمێنێتەوە.',
+        'نەخێر — دەتوانیت هەموو شتێک بکەیت بەبێ تۆمارکردن، و پێشکەوتنت لەسەر ئامێرەکەت دەمێنێتەوە. چوونەژوورەوە ئیختیارییە، بەڵام زیاتر دەکاتەوە: هایلایت، تێبینی و داشبۆردەکەت لەنێوان هەموو ئامێرەکانت هاوکات دەبن.',
       'faq.4.q': 'ئایا بەخۆڕاییە؟',
       'faq.4.a':
         'دەستپێکردن، خوێندنەوە و تاقیکردنەوەی ئەزموونی بەخۆڕایین. ڕیکلامەکان یارمەتی دەدەن بەشە سەرەکییەکە بەردەست بێت؛ لابردنی ڕیکلام کڕینی جارێکی ئارەزوومەندانەی 29 SEK ـە.',
       'faq.5.q': 'ئایا بە سویدییش کار دەکات؟',
       'faq.5.a':
-        'بەڵێ. لە ناڤیگێیشن EN / SV بگۆڕە، یان لە ناو ئەپەکەدا. زۆر فێرخواز هەردوو زمانیان پێکەوە بەکاردەهێنن.',
+        'بەڵێ. دوگمەی زمان لە تووڵە سەرەوە دابگرە بۆ گۆڕین — سویدی، ئینگلیزی و دە زمانی تر. زۆر کەس دوو زمان پێکەوە بەکاردەهێنن: بە سویدی بخوێنەوە، کاتێک گیرت خوارد سەیری یەکێکی تر بکە.',
       'faq.6.q': 'ئایا داتاکەم لەگەڵ کەسدا هاوبەش دەکرێت؟',
       'faq.6.a':
         'پێشکەوتن، وەڵامەکان، هەڵەکان و ڕێکخستنەکانت ناوخۆیی دەمێننەوە. Google AdSense لە وێبسایت و Google Mobile Ads (AdMob) لە ئەپ دەتوانن نیشانەکانی ڕیکلام و ڕەزامەندی پرۆسێس بکەن، بەڵام ڕیکلامەکان وەڵام و پێشکەوتنت وەرناگرن.',
@@ -1646,13 +1646,13 @@
         'به شما کمک می‌کند <em>مطالعه</em> کنید. بقیه به شما، منابع رسمی و مقدار استراحت fika بستگی دارد. پرسش‌ها را از منابع عمومی می‌گیریم و ساده توضیح می‌دهیم.',
       'faq.3.q': 'آیا حساب لازم دارم؟',
       'faq.3.a':
-        'نه. MVP هیچ ثبت‌نامی نمی‌خواهد. نه ایمیل، نه شماره تلفن، نه عکس پروفایل قدیمی. پیشرفت روی دستگاه شما می‌ماند.',
+        'نه — می‌توانی همه‌چیز را بدون ثبت‌نام انجام دهی و پیشرفتت روی دستگاهت می‌ماند. ورود اختیاری است اما امکانات بیشتری باز می‌کند: هایلایت‌ها، یادداشت‌ها و داشبوردت بین همه دستگاه‌هایت همگام می‌شوند.',
       'faq.4.q': 'رایگان است؟',
       'faq.4.a':
         'شروع، مطالعه و آزمون‌های آزمایشی رایگان است. تبلیغات کمک می‌کند بخش اصلی در دسترس بماند؛ حذف تبلیغات خرید اختیاری یک‌باره 29 کرون است.',
       'faq.5.q': 'به سوئدی هم کار می‌کند؟',
       'faq.5.a':
-        'بله. EN / SV را در ناوبری تغییر دهید یا داخل برنامه عوض کنید. بسیاری از زبان‌آموزان هر دو را با هم استفاده می‌کنند.',
+        'بله. روی دکمه زبان در نوار بالا بزن تا عوض شود — سوئدی، انگلیسی و ده زبان دیگر. خیلی‌ها هم‌زمان از دو زبان استفاده می‌کنند: به سوئدی بخوان و وقتی گیر کردی نگاهی به زبان دیگر بینداز.',
       'faq.6.q': 'آیا داده‌هایم با کسی به اشتراک گذاشته می‌شود؟',
       'faq.6.a':
         'پیشرفت، پاسخ‌ها، اشتباهات و تنظیمات شما محلی می‌ماند. Google AdSense در وب‌سایت و Google Mobile Ads (AdMob) در برنامه می‌توانند سیگنال‌های تبلیغ و رضایت را پردازش کنند، اما پاسخ‌ها یا پیشرفت مطالعه را دریافت نمی‌کنند.',
@@ -2033,13 +2033,13 @@
         'Pomoże Ci <em>się uczyć</em>. Reszta zależy od Ciebie, materiałów oficjalnych i liczby przerw na fika. Bierzemy pytania z publicznych źródeł i wyjaśniamy je prostym językiem.',
       'faq.3.q': 'Czy potrzebuję konta?',
       'faq.3.a':
-        'Nie. MVP nie wymaga rejestracji. Bez e-maila, telefonu i niezręcznego zdjęcia profilowego. Postęp zostaje na Twoim urządzeniu.',
+        'Nie — wszystko zrobisz bez rejestracji, a Twoje postępy zostają na urządzeniu. Logowanie jest opcjonalne, ale odblokowuje więcej: Twoje zaznaczenia, notatki i panel synchronizują się na wszystkich urządzeniach.',
       'faq.4.q': 'Czy to darmowe?',
       'faq.4.a':
         'Start, nauka i egzaminy próbne są bezpłatne. Reklamy pomagają utrzymać podstawową aplikację; Usuń reklamy to opcjonalny jednorazowy zakup za 29 SEK.',
       'faq.5.q': 'Czy działa też po szwedzku?',
       'faq.5.a':
-        'Tak. Przełącz EN / SV w nawigacji albo w aplikacji. Wielu uczących się używa obu języków naraz.',
+        'Tak. Dotknij przycisku języka na górnym pasku, aby przełączyć — szwedzki, angielski i dziesięć innych. Wielu uczy się na dwóch naraz: czytaj po szwedzku, a gdy utkniesz, zerknij na inny język.',
       'faq.6.q': 'Czy moje dane są komuś udostępniane?',
       'faq.6.a':
         'Postępy, odpowiedzi, błędy i ustawienia zostają lokalnie. Google AdSense na stronie i Google Mobile Ads (AdMob) w aplikacji mogą przetwarzać sygnały reklam i zgody, ale reklamy nie dostają Twoich odpowiedzi ani postępów.',
@@ -2429,13 +2429,13 @@
         'Wuxuu kaa caawinayaa <em>barashada</em>. Inta kale waxay ku xiran tahay adiga, ilaha rasmiga ah iyo inta nasasho fika aad qaadato. Su’aalaha waxaan ka soo qaadnaa ilo dadweyne oo si fudud u sharaxnaa.',
       'faq.3.q': 'Akoon ma u baahanahay?',
       'faq.3.a':
-        'Maya. MVP-ku diiwaangelin uma baahna. Email ma jiro, telefoon ma jiro, sawir profile oo dhib badan ma jiro. Horumarkaagu wuxuu ku jiraa qalabkaaga.',
+        'Maya — wax walba waad samayn kartaa adigoon diiwaangelin, horumarkaaguna wuxuu ku hadhaa qalabkaaga. Soo gelitaanku waa ikhtiyaari, laakiin wuxuu furaa wax dheeraad ah: calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa isugu dhban dhammaan qalabkaaga.',
       'faq.4.q': 'Ma bilaash baa?',
       'faq.4.a':
         'Bilaabid, barasho iyo imtixaannada tijaabada ah waa bilaash. Xayeysiisyadu waxay caawiyaan in app-ku sii furnaado; Ka saar xayeysiisyada waa iibsasho ikhtiyaari ah oo hal mar ah, 29 SEK.',
       'faq.5.q': 'Af Iswiidhish ma ku shaqeeyaa?',
       'faq.5.a':
-        'Haa. EN / SV ka beddel navigation-ka ama app-ka dhexdiisa. Dad badan waxay isticmaalaan labada luqadood mar qura.',
+        'Haa. Taabo badhanka luqadda ee shareerka sare si aad u beddesho — Iswiidhish, Ingiriisi, iyo toban kale. Dad badan ayaa isticmaala laba isku mar: ku akhri Iswiidhish, markaad istaagto fiiri mid kale.',
       'faq.6.q': 'Xogtayda cid ma lala wadaagaa?',
       'faq.6.a':
         'Horumarkaaga, jawaabahaaga, khaladaadkaaga iyo dejintaadu waxay ku sii jiraan qalabkaaga. Google AdSense ee website-ka iyo Google Mobile Ads (AdMob) ee app-ka waxay farsameyn karaan calaamadaha xayeysiiska iyo oggolaanshaha, laakiin xayeysiisyadu ma helaan jawaabahaaga ama horumarkaaga.',
@@ -2815,12 +2815,12 @@
         '<em>ክትጽናዕ</em> ይሕግዘካ። ዝተረፈ ኣባኻ፣ ኣብ ፋዊ ምንጭታትን ክንደይ fika ከምትወስድን ይምርኮስ። ሕቶታት ካብ ህዝባዊ ምንጭታት ንወስድ እና ብቀሊል ቋንቋ ንገልጾም።',
       'faq.3.q': 'ሕሳብ የድልየኒ ድዩ?',
       'faq.3.a':
-        'ኣይፋልን። MVP ምዝገባ ኣይደልን። ኢሜይል የለን፣ ቁጽሪ ስልኪ የለን፣ ዘሕፍር ስእሊ ፕሮፋይል የለን። ምዕባለኻ ኣብ መሳርሒኻ ይቕመጥ።',
+        'ኣይፋልን — ብዘይ ምዝገባ ኩሉ ክትገብር ትኽእል፣ ምዕባለኻ ኣብ መሳርሒኻ ይተርፍ። ምእታው ኣማራጺ እዩ፣ ግን ዝያዳ ይኸፍት፦ ምልክታትካ፣ መዘኻኸርን ዳሽቦርድካን ኣብ ኩሎም መሳርሕታትካ ይሳነዩ።',
       'faq.4.q': 'ብነጻ ድዩ?',
       'faq.4.a':
         'ምጅማር፣ ምጽናዕን ፈተናታት ልምምድን ብነጻ እዮም። ምልክታት ነቲ ዋና ኣፕ ክቕጽል ይሕግዙ፤ ምልክታት ምውጋድ ናይ ሓደ ግዜ 29 SEK ክፍሊት እዩ።',
       'faq.5.q': 'ብሽወደንኛውን ይሰርሕ ድዩ?',
-      'faq.5.a': 'እወ። ኣብ navigation EN / SV ቀይር፣ ወይ ኣብ ውሽጢ ኣፕ። ብዙሓት ተማሃሮ ክልቲኡ ቋንቋታት ብሓንሳብ ይጥቀሙ።',
+      'faq.5.a': 'እወ። ንምቕያር ኣብ ላዕለዋይ ሰሌዳ ዘሎ መልጎም ቋንቋ ጠውቕ — ሽወደንኛ፣ እንግሊዝኛን ካልኦት ዓሰርተ ቋንቋታትን። ብዙሓት ብክልተ ቋንቋ ሓቢሮም ይጥቀሙ፦ ብሽወደንኛ ኣንብብ፣ ምስ ተሸገርካ ናብ ካልእ ጠምት።',
       'faq.6.q': 'ዳታይ ምስ ካልኦት ይካፈል ድዩ?',
       'faq.6.a':
         'ምዕባለኻ፣ መልስታትካ፣ ጌጋታትካን ቅጥዕታትካን ኣብ መሳርሒኻ ይቕመጡ። Google AdSense ኣብ ዌብሳይትን Google Mobile Ads (AdMob) ኣብ ኣፕን ምልክታት ረክላምን ፍቓድን ክሰርሑ ይኽእሉ፣ ግን መልስታትካ ወይ ምዕባለኻ ኣይቕበሉን።',
@@ -3185,13 +3185,13 @@
         '<em>Çalışmanıza</em> yardım eder. Gerisi size, resmî kaynaklara ve ne kadar fika molası verdiğinize bağlı. Soruları kamusal kaynaklardan alır ve sade bir dille açıklarız.',
       'faq.3.q': 'Hesap gerekli mi?',
       'faq.3.a':
-        'Hayır. MVP kayıt istemez. E-posta yok, telefon yok, 2017’den kalma garip profil fotoğrafı yok. İlerlemeniz cihazınızda kalır.',
+        'Hayır — kayıt olmadan her şeyi yapabilirsin ve ilerlemen cihazında kalır. Giriş yapmak isteğe bağlıdır ama daha fazlasını açar: vurguların, notların ve panon tüm cihazlarında senkronize olur.',
       'faq.4.q': 'Ücretsiz mi?',
       'faq.4.a':
         'Başlamak, çalışmak ve deneme sınavı yapmak ücretsizdir. Reklamlar temel uygulamayı erişilebilir tutar; Reklamları Kaldır isteğe bağlı, tek seferlik 29 SEK satın almadır.',
       'faq.5.q': 'İsveççe de çalışıyor mu?',
       'faq.5.a':
-        'Evet. Gezinmede EN / SV anahtarını kullanın veya uygulama içinde değiştirin. Birçok öğrenci iki dili birlikte kullanır.',
+        'Evet. Üst çubuktaki dil düğmesine dokunarak geçiş yap — İsveççe, İngilizce ve on dil daha. Çoğu kişi ikisini birlikte kullanır: İsveççe oku, takılınca başka bir dile göz at.',
       'faq.6.q': 'Verilerim biriyle paylaşılır mı?',
       'faq.6.a':
         'Çalışma ilerlemeniz, yanıtlarınız, hatalarınız ve ayarlarınız yerel kalır. Web sitesindeki Google AdSense ve uygulamadaki Google Mobile Ads (AdMob), reklam ve onay sinyallerini işleyebilir; ancak reklamlar çalışma yanıtlarınızı veya ilerlemenizi almaz.',
@@ -3572,13 +3572,13 @@
         'Це допоможе вам <em>навчатися</em>. Решта залежить від вас, офіційних джерел і кількості перерв fika. Ми беремо питання з публічних джерел і пояснюємо їх простою мовою.',
       'faq.3.q': 'Чи потрібен акаунт?',
       'faq.3.a':
-        'Ні. MVP не потребує реєстрації. Без електронної пошти, телефону чи незручного фото профілю. Прогрес зберігається на вашому пристрої.',
+        'Ні — усе можна робити без реєстрації, а ваш прогрес зберігається на пристрої. Вхід необов\'язковий, але відкриває більше: ваші виділення, нотатки та панель синхронізуються на всіх пристроях.',
       'faq.4.q': 'Це безкоштовно?',
       'faq.4.a':
         'Почати, навчатися і проходити пробні тести можна безкоштовно. Реклама допомагає підтримувати основну частину доступною; Прибрати рекламу — необов’язкова одноразова покупка за 29 SEK.',
       'faq.5.q': 'Чи працює шведською теж?',
       'faq.5.a':
-        'Так. Перемкніть EN / SV у навігації або змініть у застосунку. Багато учнів використовують обидві мови одночасно.',
+        'Так. Натисніть кнопку мови на верхній панелі, щоб перемкнути — шведська, англійська та ще десять. Багато хто вчиться двома одразу: читайте шведською, а коли застрягли — зазирніть в іншу.',
       'faq.6.q': 'Чи передаються мої дані комусь?',
       'faq.6.a':
         'Ваш прогрес, відповіді, помилки й налаштування залишаються локально. Google AdSense на сайті та Google Mobile Ads (AdMob) у застосунку можуть обробляти рекламні сигнали й сигнали згоди, але реклама не отримує ваших навчальних відповідей або прогресу.',
