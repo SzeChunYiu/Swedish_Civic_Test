@@ -105,6 +105,7 @@ export function FirstRunAboutTheTestModal({
       <Pressable
         accessible={false}
         hitSlop={space[1]}
+        importantForAccessibility="no"
         onPress={markSeen}
         style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
       >

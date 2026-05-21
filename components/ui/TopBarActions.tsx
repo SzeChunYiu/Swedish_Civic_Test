@@ -1,8 +1,8 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
@@ -53,9 +53,40 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
 
 const defaultIconSize = space[3];
 const keyboardActivationKeys = new Set(['Enter', ' ', 'Spacebar']);
+const topBarActionLinkClassName = 'top-bar-action-link';
+const topBarActionLinkStyleElementId = 'top-bar-action-link-style';
 
 function isKeyboardActivationKey(key: string | undefined) {
   return key ? keyboardActivationKeys.has(key) : false;
+}
+
+function useTopBarActionLinkWebStyles() {
+  useEffect(() => {
+    if (Platform.OS !== 'web' || typeof document === 'undefined') return;
+    if (document.getElementById(topBarActionLinkStyleElementId)) return;
+
+    const styleElement = document.createElement('style');
+    styleElement.id = topBarActionLinkStyleElementId;
+    styleElement.textContent = `
+.${topBarActionLinkClassName} {
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color ${motion.duration.fast}ms ${motion.easing.press}, transform ${motion.duration.fast}ms ${motion.easing.press};
+}
+
+.${topBarActionLinkClassName}:hover,
+.${topBarActionLinkClassName}:focus,
+.${topBarActionLinkClassName}:focus-visible {
+  background-color: ${colors.focusSoft};
+  transform: scale(${motion.hoverScale});
+}
+
+.${topBarActionLinkClassName}:active {
+  background-color: ${colors.focusSoft};
+  transform: scale(${motion.pressedScale});
+}
+`;
+    document.head.appendChild(styleElement);
+  }, []);
 }
 
 /**
@@ -139,9 +170,17 @@ function TopBarAudioSwitch({
 }
 
 function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLinkProps) {
+  useTopBarActionLinkWebStyles();
+
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const webClassName =
+    Platform.OS === 'web'
+      ? {
+          className: topBarActionLinkClassName,
+        }
+      : {};
   const interactionHandlers = {
     onBlur: () => {
       setIsFocused(false);
@@ -169,6 +208,7 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   return (
     <Link
       {...interactionHandlers}
+      {...webClassName}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       href={href}

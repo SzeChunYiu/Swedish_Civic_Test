@@ -41,7 +41,8 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
         const isIntentionallyHidden =
           tag.includes('accessible={false}') &&
-          tag.includes('importantForAccessibility="no-hide-descendants"');
+          (tag.includes('importantForAccessibility="no"') ||
+            tag.includes('importantForAccessibility="no-hide-descendants"'));
 
         if (isIntentionallyHidden) return;
 
@@ -267,7 +268,10 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /onFocus: \(\) => setIsFocused\(true\)/);
-  assert.match(source, /onBlur: \(\) => setIsFocused\(false\)/);
+  assert.match(
+    source,
+    /onBlur: \(\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}/,
+  );
   assert.match(source, /onHoverIn: \(\) => setIsHovered\(true\)/);
   assert.match(
     source,
