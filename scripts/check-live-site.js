@@ -246,6 +246,60 @@ function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
   return issues;
 }
 
+function readStaticAdSenseStringProperty(source, propertyName) {
+  const pattern = new RegExp(`\\b${propertyName}\\s*:\\s*(['"])([\\s\\S]*?)\\1`);
+  const match = String(source || '').match(pattern);
+  return match ? match[2] : '';
+}
+
+function readStaticAdSenseSlotConfig(appSource) {
+  const source = String(appSource || '');
+  const slotsBlock = source.match(/\bslots\s*:\s*{([\s\S]*?)}/);
+  return {
+    publisherId: readStaticAdSenseStringProperty(source, 'publisherId'),
+    inline: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'inline') : '',
+    anchor: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'anchor') : '',
+  };
+}
+
+function staticAdSenseSlotsAreConfiguredInSource(appSource) {
+  const config = readStaticAdSenseSlotConfig(appSource);
+  const isRealSlotId = (slotId) =>
+    typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
+  return (
+    /^ca-pub-[0-9]{16}$/.test(config.publisherId || '') &&
+    isRealSlotId(config.inline) &&
+    isRealSlotId(config.anchor)
+  );
+}
+
+function findStaticAdSenseSlotStateCopyIssues(indexSource, appSource) {
+  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
+
+  const currentUsePatterns = [
+    /This website\s+uses\s+(?:<[^>]+>\s*)?Google AdSense/i,
+    /We use\s+(?:<[^>]+>\s*)?Google AdSense to show/i,
+    /Google AdSense on the website and Google Mobile Ads/i,
+    /Google AdSense web ads/i,
+    /Den h[aä]r webbplatsen anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense/i,
+    /Vi anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense f[oö]r att visa/i,
+    /Google AdSense p[aå] webbplatsen och Google Mobile Ads/i,
+    /Google AdSense-annonser p[aå] webben/i,
+  ];
+
+  return [
+    { label: 'index.html', source: String(indexSource || '') },
+    { label: 'app.js', source: String(appSource || '') },
+  ].flatMap(({ label, source }) =>
+    currentUsePatterns
+      .filter((pattern) => pattern.test(source))
+      .map(
+        (pattern) =>
+          `${label} claims live Google AdSense use while reviewed web slot IDs are not configured: ${pattern.source}`,
+      ),
+  );
+}
+
 function findStaticNoTrackingClaimIssues(indexSource, appSource) {
   const surface = `${indexSource}\n${appSource}`;
   const patterns = [
@@ -395,6 +449,13 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('static AdSense slot config', staticAdSenseIssues.join('; ')),
   );
 
+  const staticAdSenseSlotStateCopyIssues = findStaticAdSenseSlotStateCopyIssues(index, app);
+  checks.push(
+    staticAdSenseSlotStateCopyIssues.length === 0
+      ? pass('static AdSense slot-state copy')
+      : fail('static AdSense slot-state copy', staticAdSenseSlotStateCopyIssues.join('; ')),
+  );
+
   const staticNoTrackingIssues = findStaticNoTrackingClaimIssues(index, app);
   checks.push(
     staticNoTrackingIssues.length === 0
@@ -479,11 +540,13 @@ module.exports = {
   fetchText,
   findRequiredSecurityHeaderIssues,
   findStaticAdSenseSlotConfigIssues,
+  findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
   hashStaticQuestionBank,
   normalizeBaseUrl,
   readStaticQuestionCount,
   REQUIRED_SECURITY_HEADERS,
+  staticAdSenseSlotsAreConfiguredInSource,
   resolveRequiredHeadMetadata,
   resolveRequiredQuestionBankHash,
   resolveRequiredQuestionCount,
