@@ -5,12 +5,12 @@
   "packageName": "com.billyyiu.almostswedish",
   "supportUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/",
   "privacyUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/",
-  "appStoreConnectUrl": "TBD",
-  "googlePlayConsoleUrl": "TBD",
+  "appStoreConnectUrl": "pending-app-store-connect-url",
+  "googlePlayConsoleUrl": "pending-google-play-console-url",
   "accountOwnership": {
-    "appleDeveloperTeamId": "TBD",
+    "appleDeveloperTeamId": "pending-team-id",
     "appleBundleIdReviewed": false,
-    "googlePlayDeveloperId": "TBD",
+    "googlePlayDeveloperId": "pending-developer-id",
     "googlePackageNameReviewed": false
   },
   "adMob": {
@@ -22,7 +22,7 @@
     "appAdsTxtUrl": "https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt",
     "appAdsTxtPublisherLine": "google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0",
     "appAdsTxtReviewed": false,
-    "note": "AdMob app IDs exist for the ad-supported v1.0 release; review app-ads.txt and store records before marking READY."
+    "note": "AdMob app IDs exist for the ad-supported v1.0 release; review app-ads.txt before marking READY."
   },
   "listingMetadata": {
     "appStoreListingReviewed": false,

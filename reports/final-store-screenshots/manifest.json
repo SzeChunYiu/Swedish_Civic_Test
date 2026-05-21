@@ -1,7 +1,7 @@
 {
   "gate": "device-screenshots",
   "status": "blocked",
-  "screenshotStatus": "TBD_FINAL_DEVICE_OR_ACCEPTED_STORE_TOOLING",
+  "screenshotStatus": "pending-final-device-or-accepted-store-tooling",
   "contentReview": {
     "noOfficialAffiliationClaims": false,
     "noGuaranteedExamResultClaims": false,
@@ -9,5 +9,6 @@
     "noTestAdBanners": false,
     "privacyAndSourcePagesMatchPublishingDocs": false
   },
-  "screenshots": []
+  "screenshots": [],
+  "notes": "Keep blocked until at least five final iOS/Android screenshots from target devices or store-accepted tooling are recorded."
 }

@@ -4,9 +4,44 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
-const privacyPolicyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
-const bundleIdentifier = 'com.billyyiu.swedishcivictest';
-const packageName = 'com.billyyiu.swedishcivictest';
+const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
+const appAdsTxtUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/app-ads.txt';
+const bundleIdentifier = 'com.billyyiu.almostswedish';
+const packageName = 'com.billyyiu.almostswedish';
+const adMobAppId = 'ca-app-pub-2451892671779738~8452000382';
+const adMobAndroidAppId = 'ca-app-pub-2451892671779738~5027760693';
+const appAdsTxtPublisherLine = 'google.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0';
+
+const deviceAudioCheckIds = [
+  'sv-se-question-audio',
+  'audio-button-state',
+  'speech-engine-unavailable',
+  'onboarding',
+  'practice-answer-flow',
+  'mock-exam-no-ads',
+  'progress-restart',
+  'privacy-legal-pages',
+];
+
+function deviceAudioTemplate(platform) {
+  return {
+    gate: `${platform}-device-audio`,
+    status: 'pending',
+    platform,
+    device: 'pending-manual-device',
+    sourceBuild: 'pending-eas-build-url-or-id',
+    checks: deviceAudioCheckIds.map((id) => ({
+      id,
+      result: 'pending',
+      notes: 'Manual device evidence required before this gate can be READY.',
+    })),
+    artifacts: [],
+    tester: 'pending-manual-reviewer',
+    checkedAtUtc: 'pending-manual-review',
+    notes:
+      'Keep this stub pending until a real device run records passed checks and proof artifacts.',
+  };
+}
 
 const templates = {
   'eas-build-artifacts': {
@@ -15,55 +50,31 @@ const templates = {
       gate: 'eas-build-artifacts',
       status: 'blocked',
       appVersion: '1.0.0',
-      gitCommit: 'TBD',
+      gitCommit: 'pending-release-commit',
       android: {
         profile: 'preview',
-        buildId: 'TBD',
-        buildUrl: 'TBD',
+        buildId: 'pending-eas-android-build-id',
+        buildUrl: 'pending-eas-android-build-url',
         artifactType: 'apk',
-        installOrTestStatus: 'TBD',
+        installOrTestStatus: 'pending-manual-evidence',
       },
       ios: {
         profile: 'preview',
-        buildId: 'TBD',
-        buildUrl: 'TBD',
+        buildId: 'pending-eas-ios-build-id',
+        buildUrl: 'pending-eas-ios-build-url',
         artifactType: 'ipa',
-        installOrTestStatus: 'TBD',
+        installOrTestStatus: 'pending-manual-evidence',
       },
       notes: 'Record only non-secret build IDs, URLs, profiles, and readiness states.',
     },
   },
   'android-device-audio': {
     path: 'reports/device-smoke/android.json',
-    content: {
-      gate: 'android-device-audio',
-      status: 'blocked',
-      platform: 'android',
-      device: 'TBD',
-      osVersion: 'TBD',
-      buildIdOrUrl: 'TBD',
-      installedBuild: false,
-      swedishAudioSmoke: 'TBD',
-      proofArtifact: 'TBD',
-      tester: 'TBD',
-      checkedAtUtc: 'TBD',
-    },
+    content: deviceAudioTemplate('android'),
   },
   'ios-device-audio': {
     path: 'reports/device-smoke/ios.json',
-    content: {
-      gate: 'ios-device-audio',
-      status: 'blocked',
-      platform: 'ios',
-      device: 'TBD',
-      osVersion: 'TBD',
-      buildIdOrTestFlightUrl: 'TBD',
-      installedBuild: false,
-      swedishAudioSmoke: 'TBD',
-      proofArtifact: 'TBD',
-      tester: 'TBD',
-      checkedAtUtc: 'TBD',
-    },
+    content: deviceAudioTemplate('ios'),
   },
   'store-records': {
     path: 'reports/store-records/store-records.json',
@@ -73,16 +84,35 @@ const templates = {
       bundleIdentifier,
       packageName,
       supportUrl,
-      privacyPolicyUrl,
-      appStoreConnectUrl: 'TBD',
-      googlePlayConsoleUrl: 'TBD',
-      supportUrlEnteredInApple: false,
-      privacyPolicyUrlEnteredInApple: false,
-      supportUrlEnteredInGooglePlay: false,
-      privacyPolicyUrlEnteredInGooglePlay: false,
-      listingMetadataReviewed: false,
-      accountOwnershipReviewed: false,
-      notes: 'Do not include account secrets or private credentials.',
+      privacyUrl,
+      appStoreConnectUrl: 'pending-app-store-connect-url',
+      googlePlayConsoleUrl: 'pending-google-play-console-url',
+      accountOwnership: {
+        appleDeveloperTeamId: 'pending-team-id',
+        appleBundleIdReviewed: false,
+        googlePlayDeveloperId: 'pending-developer-id',
+        googlePackageNameReviewed: false,
+      },
+      adMob: {
+        status: 'created',
+        appId: adMobAppId,
+        iosAppId: adMobAppId,
+        androidAppId: adMobAndroidAppId,
+        realAdsEnabled: true,
+        appAdsTxtUrl,
+        appAdsTxtPublisherLine,
+        appAdsTxtReviewed: false,
+        note: 'AdMob app IDs exist for the ad-supported v1.0 release; review app-ads.txt before marking READY.',
+      },
+      listingMetadata: {
+        appStoreListingReviewed: false,
+        appStoreListingPath: 'publishing/app-store-listing.md',
+        googlePlayListingReviewed: false,
+        googlePlayListingPath: 'publishing/google-play-listing.md',
+        matchesStoreRecords: false,
+      },
+      notes:
+        'Blocked until Apple/Google store records, account ownership, listing metadata, and app-ads.txt review are completed. Do not include account secrets or private credentials.',
     },
   },
   'store-credentials': {
@@ -90,14 +120,19 @@ const templates = {
     content: {
       gate: 'store-credentials',
       status: 'blocked',
-      appStoreConnect: {
-        issuerOrTeamId: 'TBD_NON_SECRET_IDENTIFIER',
-        submitAccessVerified: false,
+      ios: {
+        appleId: 'pending-apple-id-email',
+        ascAppId: 'pending-app-store-connect-app-id',
+        appleTeamId: 'pending-team-id',
+        credentialsSource: 'pending-secure-source-outside-git',
+        credentialsCheckedAt: 'pending-manual-review',
       },
-      googlePlay: {
-        serviceAccountEmail: 'TBD_NON_SECRET_EMAIL',
-        keyFingerprint: 'TBD_NON_SECRET_FINGERPRINT',
-        submitAccessVerified: false,
+      android: {
+        serviceAccountEmail: 'pending-service-account@project.iam.gserviceaccount.com',
+        serviceAccountKeyFingerprint: 'pending-sha256-fingerprint',
+        packageName,
+        credentialsSource: 'pending-secure-source-outside-git',
+        credentialsCheckedAt: 'pending-manual-review',
       },
       notes: 'Record non-secret metadata only; never commit private keys or tokens.',
     },
@@ -106,22 +141,35 @@ const templates = {
     path: 'reports/store-policy-questionnaires/store-policy-questionnaires.json',
     content: {
       gate: 'store-policy-questionnaires',
-      status: 'blocked',
+      status: 'pending-review',
+      reviewedAt: 'pending-manual-review',
+      reviewer: 'pending-reviewer',
+      evidenceBasis: [
+        'publishing/app-store-listing.md',
+        'publishing/google-play-listing.md',
+        'publishing/admob-progress.md',
+        'publishing/privacy-labels.md',
+        'publishing/google-play-data-safety.md',
+        'reports/store-records/store-records.json',
+      ],
       apple: {
         ageRatingReviewed: false,
         exportComplianceReviewed: false,
         contentRightsReviewed: false,
-        noOfficialGovernmentAffiliationReviewed: false,
+        noOfficialAffiliationClaims: false,
+        usesNonExemptEncryption: false,
       },
-      googlePlay: {
+      google: {
         contentRatingReviewed: false,
         targetAudienceReviewed: false,
         adsDeclarationReviewed: false,
-        gamblingDeclarationReviewed: false,
-        governmentAffiliationReviewed: false,
+        containsRealMoneyGambling: false,
+        noGovernmentAffiliationClaims: false,
+        notes:
+          'Review Google Mobile Ads ads declaration, ATT/UMP consent disclosures, and Remove Ads IAP questionnaire before marking READY.',
       },
-      reviewer: 'TBD',
-      checkedAtUtc: 'TBD',
+      remainingCaveat:
+        'This is a pending local questionnaire stub. Final console submission still depends on store records, credentials, generated builds, privacy review, owner approval, screenshots, and submission gates.',
     },
   },
   'privacy-review': {
@@ -129,14 +177,41 @@ const templates = {
     content: {
       gate: 'privacy-review',
       status: 'blocked',
-      binaryBuildIdOrUrl: 'TBD',
-      applePrivacyLabelsReviewed: false,
-      googlePlayDataSafetyReviewed: false,
-      googleMobileAdsSdkPostureReviewed: false,
-      realAdsEnabledForV1: false,
-      reviewer: 'TBD',
-      checkedAtUtc: 'TBD',
-      notes: 'Review against the generated binary before marking READY.',
+      reviewedAt: 'pending-manual-review',
+      reviewer: 'pending-reviewer',
+      reviewedBuild: {
+        id: 'pending-eas-build-id-or-url',
+        version: '1.0.0',
+        commit: 'pending-release-commit',
+      },
+      storeQuestionnaires: {
+        appleAppStoreConnectReviewed: false,
+        googlePlayConsoleReviewed: false,
+      },
+      applePrivacyLabels: {
+        reviewed: false,
+        path: 'publishing/privacy-labels.md',
+        matchesBinary: false,
+      },
+      googlePlayDataSafety: {
+        reviewed: false,
+        path: 'publishing/google-play-data-safety.md',
+        matchesBinary: false,
+      },
+      googleMobileAds: {
+        sdkPresent: true,
+        testAppIds: true,
+        realAdsEnabled: true,
+        removeAdsIapReviewed: false,
+        consentFlowReviewed: false,
+        gate: 'EXPO_PUBLIC_REAL_ADS_ENABLED=true; Google Mobile Ads real-ad path; Remove Ads non-consumable in-app purchase at 29 SEK; ATT and UMP consent review required.',
+      },
+      disabledSdks: {
+        analytics: true,
+        crashReporting: true,
+      },
+      notes:
+        'Blocked until a generated binary is reviewed against Apple privacy labels, Google Play Data safety, Google Mobile Ads, ATT/UMP consent, and the 29 SEK Remove Ads IAP. Do not mark READY with placeholder evidence.',
     },
   },
   'release-owner-approval': {
@@ -144,12 +219,15 @@ const templates = {
     content: {
       gate: 'release-owner-approval',
       status: 'blocked',
-      approved: false,
-      approver: 'TBD',
-      approvedCommit: 'TBD',
-      approvedForStoreSubmission: false,
-      noKnownBlockersAssertion: false,
-      checkedAtUtc: 'TBD',
+      approvedAt: 'pending-owner-approval',
+      approver: 'pending-release-owner',
+      approvedCommit: 'pending-release-commit',
+      releaseDecision: 'pending-owner-decision',
+      noKnownBlockers: false,
+      evidenceReport: 'reports/release-evidence-2026-05-15.md',
+      checkedGates: [],
+      notes:
+        'Release owner approval must stay blocked until all build, device, store, policy, privacy, URL, and screenshot gates are READY.',
     },
   },
   'device-screenshots': {
@@ -157,7 +235,7 @@ const templates = {
     content: {
       gate: 'device-screenshots',
       status: 'blocked',
-      screenshotStatus: 'TBD_FINAL_DEVICE_OR_ACCEPTED_STORE_TOOLING',
+      screenshotStatus: 'pending-final-device-or-accepted-store-tooling',
       contentReview: {
         noOfficialAffiliationClaims: false,
         noGuaranteedExamResultClaims: false,
@@ -166,6 +244,8 @@ const templates = {
         privacyAndSourcePagesMatchPublishingDocs: false,
       },
       screenshots: [],
+      notes:
+        'Keep blocked until at least five final iOS/Android screenshots from target devices or store-accepted tooling are recorded.',
     },
   },
   submission: {
@@ -173,11 +253,30 @@ const templates = {
     content: {
       gate: 'submission',
       status: 'blocked',
-      testFlightBuild: 'TBD',
-      googlePlayInternalTrackUrl: 'TBD',
-      iosProductionSubmissionId: 'TBD',
-      androidProductionSubmissionId: 'TBD',
-      monitoringReportPath: 'reports/monitoring/v1-week1.md',
+      testFlightBuild: {
+        buildNumber: 'pending-testflight-build-number',
+        processingStatus: 'pending',
+        betaReviewStatus: 'pending',
+        url: 'pending-app-store-connect-testflight-url',
+      },
+      googlePlayInternal: {
+        trackUrl: 'pending-google-play-internal-track-url',
+        versionCode: 0,
+        testerGroup: 'pending-tester-group',
+      },
+      productionSubmissions: [
+        {
+          platform: 'ios',
+          submissionId: 'pending-ios-production-submission-id',
+          reviewStatus: 'pending',
+        },
+        {
+          platform: 'android',
+          submissionId: 'pending-android-production-submission-id',
+          reviewStatus: 'pending',
+        },
+      ],
+      monitoringReport: 'reports/monitoring/v1-week1.md',
       notes: 'Submit only after every pre-submission gate is READY.',
     },
   },

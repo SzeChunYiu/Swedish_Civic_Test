@@ -1,12 +1,12 @@
 {
   "gate": "privacy-review",
   "status": "blocked",
-  "reviewedAt": "TBD",
-  "reviewer": "TBD",
+  "reviewedAt": "pending-manual-review",
+  "reviewer": "pending-reviewer",
   "reviewedBuild": {
-    "id": "TBD",
+    "id": "pending-eas-build-id-or-url",
     "version": "1.0.0",
-    "commit": "TBD"
+    "commit": "pending-release-commit"
   },
   "storeQuestionnaires": {
     "appleAppStoreConnectReviewed": false,
