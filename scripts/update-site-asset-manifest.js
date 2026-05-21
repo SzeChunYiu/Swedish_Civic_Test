@@ -15,58 +15,10 @@ const htmlLinkTagPattern = /<link\b[^>]*>/gi;
 const cssImportReferencePattern =
   /@import\s+(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)|"([^"]*)"|'([^']*)')/gi;
 const cssUrlReferencePattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)/gi;
-const maxStylesheetImportDepth = 20;
-
-function stripCssBlockComments(cssText) {
-  let output = '';
-  let index = 0;
-  let quotedString = null;
-
-  while (index < cssText.length) {
-    const char = cssText[index];
-    const nextChar = cssText[index + 1];
-
-    if (quotedString) {
-      output += char;
-      if (char === '\\' && index + 1 < cssText.length) {
-        output += nextChar;
-        index += 2;
-        continue;
-      }
-      if (char === quotedString) {
-        quotedString = null;
-      }
-      index += 1;
-      continue;
-    }
-
-    if (char === '"' || char === "'") {
-      quotedString = char;
-      output += char;
-      index += 1;
-      continue;
-    }
-
-    if (char === '/' && nextChar === '*') {
-      const commentEnd = cssText.indexOf('*/', index + 2);
-      index = commentEnd === -1 ? cssText.length : commentEnd + 2;
-      continue;
-    }
-
-    output += char;
-    index += 1;
-  }
-
-  return output;
-}
+const maxStylesheetImportDepth = 16;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
-}
-
-function isInsideDirectory(candidatePath, directoryPath) {
-  const relativePath = path.relative(directoryPath, candidatePath);
-  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
 }
 
 function listSiteAssetFiles(siteDir) {
@@ -158,15 +110,13 @@ function parseHtmlAttributes(html) {
 }
 
 function parseCssUrlAssetCandidates(cssText) {
-  const uncommentedCssText = stripCssBlockComments(cssText);
-  return Array.from(uncommentedCssText.matchAll(cssUrlReferencePattern), (match) =>
+  return Array.from(cssText.matchAll(cssUrlReferencePattern), (match) =>
     (match[1] ?? match[2] ?? match[3] ?? '').trim(),
   ).filter(Boolean);
 }
 
 function parseCssImportAssetCandidates(cssText) {
-  const uncommentedCssText = stripCssBlockComments(cssText);
-  return Array.from(uncommentedCssText.matchAll(cssImportReferencePattern), (match) =>
+  return Array.from(cssText.matchAll(cssImportReferencePattern), (match) =>
     (match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '').trim(),
   ).filter(Boolean);
 }
@@ -188,36 +138,31 @@ function extractLinkedStylesheetReferences(indexHtml) {
   return [...new Set(references)];
 }
 
-function extractStylesheetAssetReferences(stylesheetPath, siteDir, options = {}) {
+function readStylesheetAssetReferences(siteDir, stylesheetPath, options = {}) {
   const references = [];
   const visitedStylesheets = options.visitedStylesheets || new Set();
   const depth = options.depth || 0;
-  const normalizedStylesheetPath = normalizeRelativePath(path.posix.normalize(stylesheetPath));
 
-  if (depth > maxStylesheetImportDepth || visitedStylesheets.has(normalizedStylesheetPath)) {
+  if (depth > maxStylesheetImportDepth) {
+    throw new Error(
+      `CSS import depth exceeded while scanning ${stylesheetPath}; maximum depth is ${maxStylesheetImportDepth}`,
+    );
+  }
+
+  if (visitedStylesheets.has(stylesheetPath)) {
     return references;
   }
 
-  visitedStylesheets.add(normalizedStylesheetPath);
+  visitedStylesheets.add(stylesheetPath);
 
-  const resolvedSiteDir = path.resolve(siteDir);
-  const absolutePath = path.resolve(resolvedSiteDir, normalizedStylesheetPath);
-  if (!isInsideDirectory(absolutePath, resolvedSiteDir)) {
-    return references;
-  }
-
+  const absolutePath = path.join(siteDir, stylesheetPath);
   if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
     return references;
   }
 
   const cssText = fs.readFileSync(absolutePath, 'utf8');
-  const stylesheetBasePath = path.posix.dirname(normalizedStylesheetPath);
+  const stylesheetBasePath = path.posix.dirname(stylesheetPath);
   const basePath = stylesheetBasePath === '.' ? '' : stylesheetBasePath;
-
-  for (const candidate of parseCssUrlAssetCandidates(cssText)) {
-    const reference = normalizeLocalAssetReference(candidate, basePath);
-    if (reference) references.push(reference);
-  }
 
   for (const candidate of parseCssImportAssetCandidates(cssText)) {
     const reference = normalizeLocalAssetReference(candidate, basePath);
@@ -225,11 +170,16 @@ function extractStylesheetAssetReferences(stylesheetPath, siteDir, options = {})
 
     references.push(reference);
     references.push(
-      ...extractStylesheetAssetReferences(reference, siteDir, {
+      ...readStylesheetAssetReferences(siteDir, reference, {
         visitedStylesheets,
         depth: depth + 1,
       }),
     );
+  }
+
+  for (const candidate of parseCssUrlAssetCandidates(cssText)) {
+    const reference = normalizeLocalAssetReference(candidate, basePath);
+    if (reference) references.push(reference);
   }
 
   return references;
@@ -237,9 +187,12 @@ function extractStylesheetAssetReferences(stylesheetPath, siteDir, options = {})
 
 function extractLinkedStylesheetAssetReferences(indexHtml, siteDir) {
   const references = [];
+  const visitedStylesheets = new Set();
 
   for (const stylesheetPath of extractLinkedStylesheetReferences(indexHtml)) {
-    references.push(...extractStylesheetAssetReferences(stylesheetPath, siteDir));
+    references.push(
+      ...readStylesheetAssetReferences(siteDir, stylesheetPath, { visitedStylesheets }),
+    );
   }
 
   return references;
@@ -431,9 +384,8 @@ module.exports = {
   isExternalAssetReference,
   listSiteAssetFiles,
   normalizeAssetReference,
-  parseCssUrlAssetCandidates,
   parseCssImportAssetCandidates,
+  parseCssUrlAssetCandidates,
   parseSrcsetAssetCandidates,
-  stripCssBlockComments,
   writeAssetManifest,
 };

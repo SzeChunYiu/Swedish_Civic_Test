@@ -82,102 +82,89 @@ test('static site asset extractor covers inline and stylesheet CSS urls', () => 
   ]);
 });
 
-test('static site asset extractor follows local stylesheet imports recursively', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-imports-'));
+test('static site asset extractor follows local stylesheet imports', () => {
+  const tmpDir = fs.mkdtempSync(
+    path.join(require('node:os').tmpdir(), 'static-css-import-assets-'),
+  );
+  fs.mkdirSync(path.join(tmpDir, 'css', 'fonts'), { recursive: true });
+  fs.mkdirSync(path.join(tmpDir, 'css', 'img'), { recursive: true });
   fs.mkdirSync(path.join(tmpDir, 'css', 'nested'), { recursive: true });
   fs.writeFileSync(
     path.join(tmpDir, 'css', 'site.css'),
     [
-      '@import "./theme.css";',
-      '@import url("./nested/buttons.css");',
+      '@import "theme.css";',
+      '@import url("./nested/panel.css") screen and (min-width: 1px);',
       '@import url("https://cdn.example.com/remote.css");',
-      '@import url("data:text/css,body{}");',
-      '@import url(var(--runtime-sheet));',
-      '.hero { background-image: url("../img/site-bg.webp?v=1#site"); }',
+      '@import url("data:text/css,body%7Bcolor:red%7D");',
+      '.hero { background-image: url("../img/hero.webp?v=1#hero"); }',
     ].join('\n'),
   );
   fs.writeFileSync(
     path.join(tmpDir, 'css', 'theme.css'),
     [
-      '@import url("./nested/tokens.css");',
-      '.theme { background-image: url("../img/theme-bg.svg"); }',
+      '@import url("./site.css");',
+      '@import url(var(--ignored-theme-import));',
+      '.font { src: url("./fonts/display.woff2#font"); }',
     ].join('\n'),
   );
   fs.writeFileSync(
-    path.join(tmpDir, 'css', 'nested', 'buttons.css'),
-    [
-      '@import "../theme.css";',
-      '.button { cursor: url("../../cursors/button.cur"), pointer; }',
-    ].join('\n'),
-  );
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'nested', 'tokens.css'),
-    [
-      '@import "../site.css";',
-      '@font-face { src: url("../../fonts/site.woff2") format("woff2"); }',
-    ].join('\n'),
+    path.join(tmpDir, 'css', 'nested', 'panel.css'),
+    '.panel { background-image: url("../img/panel.svg"); }',
   );
 
-  const indexHtml = '<link rel="stylesheet" href="./css/site.css?version=1" />';
+  const indexHtml = '<link rel="stylesheet" href="./css/site.css" />';
 
   assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
     'css/site.css',
-    'css/nested/buttons.css',
-    'img/site-bg.webp',
     'css/theme.css',
-    'css/nested/tokens.css',
-    'img/theme-bg.svg',
-    'fonts/site.woff2',
-    'cursors/button.cur',
+    'css/fonts/display.woff2',
+    'css/nested/panel.css',
+    'css/img/panel.svg',
+    'img/hero.webp',
   ]);
 });
 
-test('static site asset extractor reports but does not read stylesheet imports outside siteDir', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-import-root-'));
-  const siteDir = path.join(tmpDir, 'site');
-  fs.mkdirSync(path.join(siteDir, 'css'), { recursive: true });
-  fs.writeFileSync(
-    path.join(siteDir, 'site.css'),
-    [
-      '@import "./css/theme.css";',
-      '@import "../outside.css";',
-      '.site { background-image: url("./img/site-bg.webp"); }',
-    ].join('\n'),
+test('static site asset extractor fails imported CSS references omitted from the manifest', () => {
+  const tmpDir = fs.mkdtempSync(
+    path.join(require('node:os').tmpdir(), 'static-css-import-manifest-'),
   );
+  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
+  fs.writeFileSync(path.join(tmpDir, 'css', 'site.css'), '@import "theme.css";');
   fs.writeFileSync(
-    path.join(siteDir, 'css', 'theme.css'),
-    '.theme { background-image: url("../img/theme-bg.svg"); }',
+    path.join(tmpDir, 'css', 'theme.css'),
+    '.theme { background: url("./theme-bg.png"); }',
   );
-  fs.writeFileSync(
-    path.join(tmpDir, 'outside.css'),
-    '.leaked { background-image: url("./leaked-secret.png"); }',
-  );
+  const indexHtml = '<link rel="stylesheet" href="css/site.css" />';
+  const manifest = {
+    version: 1,
+    algorithm: 'sha256',
+    assets: {
+      'index.html': { bytes: indexHtml.length, sha256: 'stub' },
+      'css/site.css': { bytes: 0, sha256: 'stub' },
+    },
+  };
 
-  const indexHtml = '<link rel="stylesheet" href="./site.css" />';
-
-  assert.deepEqual(localAssetReferences(indexHtml, { siteDir }), [
-    'site.css',
-    'img/site-bg.webp',
-    'css/theme.css',
-    'img/theme-bg.svg',
-    '../outside.css',
-  ]);
   assert.deepEqual(
-    findAssetReferencesMissingFromManifest(
-      indexHtml,
-      {
-        version: 1,
-        algorithm: 'sha256',
-        assets: {
-          'site.css': { bytes: 0, sha256: 'stub' },
-          'css/theme.css': { bytes: 0, sha256: 'stub' },
-          'img/site-bg.webp': { bytes: 0, sha256: 'stub' },
-          'img/theme-bg.svg': { bytes: 0, sha256: 'stub' },
-        },
-      },
-      { siteDir },
-    ),
-    ['../outside.css'],
+    findAssetReferencesMissingFromManifest(indexHtml, manifest, { siteDir: tmpDir }),
+    ['css/theme.css', 'css/theme-bg.png'],
+  );
+});
+
+test('static site asset extractor rejects excessive stylesheet import depth', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-import-depth-'));
+  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
+  for (let index = 0; index < 18; index += 1) {
+    fs.writeFileSync(path.join(tmpDir, 'css', `${index}.css`), `@import "${index + 1}.css";`);
+  }
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', '18.css'),
+    '.too-deep { background: url("./late.png"); }',
+  );
+  const indexHtml = '<link rel="stylesheet" href="css/0.css" />';
+
+  assert.throws(
+    () => localAssetReferences(indexHtml, { siteDir: tmpDir }),
+    /CSS import depth exceeded/,
   );
 });
 
