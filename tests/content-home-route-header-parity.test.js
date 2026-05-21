@@ -41,7 +41,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 94);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -359,6 +359,44 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route Swedish native copy must use övningsprov/,
+  );
+});
+
+test('home route copy parity rejects duplicate timed-exam accessible labels', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'Starta ett tidsatt övningsprov från snabbåtgärderna',
+        'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
+      )
+      .replace(
+        'Start a timed practice exam from quick actions',
+        'Start a timed practice exam from the Preparation signal card',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route is missing .*quick actions|home route is missing .*snabbåtgärderna/,
   );
 });
 

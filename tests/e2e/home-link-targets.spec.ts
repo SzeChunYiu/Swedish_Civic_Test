@@ -12,7 +12,8 @@ const minimumTargetSizePx = 44;
 
 const homeActionLinks = [
   {
-    label: 'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    expectedCount: 1,
+    label: 'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
     name: 'preparation signal CTA',
   },
   {
@@ -22,6 +23,11 @@ const homeActionLinks = [
   {
     label: 'Bläddra bland alla samhällskapitel',
     name: 'secondary chapters CTA',
+  },
+  {
+    expectedCount: 1,
+    label: 'Starta ett tidsatt övningsprov från snabbåtgärderna',
+    name: 'quick timed exam CTA',
   },
   {
     label: 'Granska bokmärkta eller missade frågor',
@@ -123,10 +129,14 @@ test('Home action links keep mobile-safe targets', async ({ page }) => {
     const matchingLinks = page.getByRole('link', { exact: true, name: link.label });
     const matchingLinkCount = await matchingLinks.count();
 
-    expect(
-      matchingLinkCount,
-      `${link.name} should render at least one matching link`,
-    ).toBeGreaterThan(0);
+    if ('expectedCount' in link) {
+      expect(matchingLinkCount, `${link.name} should render exactly once`).toBe(link.expectedCount);
+    } else {
+      expect(
+        matchingLinkCount,
+        `${link.name} should render at least one matching link`,
+      ).toBeGreaterThan(0);
+    }
 
     for (let index = 0; index < matchingLinkCount; index += 1) {
       await expectMinimumTargetSize(matchingLinks.nth(index), `${link.name} ${index + 1}`);
@@ -149,11 +159,12 @@ test('Home action links keep mobile-safe targets', async ({ page }) => {
   expect(keyboardPressedStyle.backgroundColor).toBe(focusStyle.backgroundColor);
   expect(keyboardPressedStyle.transform).not.toBe(focusStyle.transform);
   expect(keyboardPressedStyle.transform).not.toBe('none');
+  await expect(page, 'primary practice Space should not navigate before release').toHaveURL(
+    /\/home$/,
+  );
 
   await page.keyboard.up('Space');
-  const keyboardReleasedStyle = await getComputedInteractionStyle(primaryPracticeLink);
-  expect(keyboardReleasedStyle.transform).toBe(focusStyle.transform);
-  await expect(page).toHaveURL(/\/home$/);
+  await expect(page).toHaveURL(/\/practice$/);
 
   expect(consoleErrors.get()).toEqual([]);
 });

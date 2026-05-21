@@ -100,6 +100,7 @@ type HomeCopy = {
   readinessCaveat: string;
   readinessCta: string;
   readinessCtaAccessibilityLabel: string;
+  readinessQuickActionAccessibilityLabel: string;
   readinessDetails: (accuracyPercent: number, coveragePercent: number) => string;
   readinessMetricLabel: string;
   readinessSparseNote: string;
@@ -107,9 +108,12 @@ type HomeCopy = {
   readinessVerdicts: Record<ReadinessVerdict, string>;
   rewardedExamBody: string;
   rewardedExamHeading: string;
+  rewardedExamPreviewAccessibilityLabel: string;
   rewardedExamPreviewButton: string;
+  rewardedExamUnlockAccessibilityLabel: string;
   rewardedExamUnlockButton: string;
   rewardedExamUnlockFailure: string;
+  rewardedExamUnlockedAccessibilityLabel: string;
   rewardedExamUnlockedCta: string;
   rewardedExamUnlockedStatus: string;
   reviewWeakChapters: string;
@@ -222,8 +226,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       `Förberedelsesignal: ${score} procent. ${verdict}. ${details}. Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.`,
     readinessCaveat: 'Bygger bara på dina svar och övningsprov i appen, inte en officiell prognos.',
     readinessCta: 'Gör ett tidsatt övningsprov',
-    readinessCtaAccessibilityLabel:
-      'Starta ett tidsatt övningsprov för att jämföra med din lokala förberedelsesignal',
+    readinessCtaAccessibilityLabel: 'Starta ett tidsatt övningsprov från kortet Förberedelsesignal',
+    readinessQuickActionAccessibilityLabel: 'Starta ett tidsatt övningsprov från snabbåtgärderna',
     readinessDetails: (accuracyPercent, coveragePercent) =>
       `${accuracyPercent} % rätt i appen · ${coveragePercent} % av kapitlen provade`,
     readinessMetricLabel: 'lokalt',
@@ -238,9 +242,13 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamBody:
       'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
     rewardedExamHeading: 'Lås upp ett extra övningsprov',
+    rewardedExamPreviewAccessibilityLabel:
+      'Slutför den sponsrade förhandsvisningen för ett extra övningsprov',
     rewardedExamPreviewButton: 'Slutför förhandsvisning',
+    rewardedExamUnlockAccessibilityLabel: 'Lås upp ett extra övningsprov efter förhandsvisningen',
     rewardedExamUnlockButton: 'Lås upp extra övningsprov',
     rewardedExamUnlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
+    rewardedExamUnlockedAccessibilityLabel: 'Starta det upplåsta extra övningsprovet',
     rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
     rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
     reviewWeakChapters: 'Repetera svaga kapitel',
@@ -374,8 +382,8 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     readinessCaveat:
       'Based only on your in-app answers and mock practice, not an official result forecast.',
     readinessCta: 'Take a timed practice exam',
-    readinessCtaAccessibilityLabel:
-      'Start a timed practice exam to compare with your local preparation signal',
+    readinessCtaAccessibilityLabel: 'Start a timed practice exam from the Preparation signal card',
+    readinessQuickActionAccessibilityLabel: 'Start a timed practice exam from quick actions',
     readinessDetails: (accuracyPercent, coveragePercent) =>
       `${accuracyPercent}% in-app accuracy · ${coveragePercent}% chapters tried`,
     readinessMetricLabel: 'local',
@@ -390,9 +398,12 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamBody:
       'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
     rewardedExamHeading: 'Unlock an extra mock exam',
+    rewardedExamPreviewAccessibilityLabel: 'Complete the sponsored preview for an extra mock exam',
     rewardedExamPreviewButton: 'Complete sponsor preview',
+    rewardedExamUnlockAccessibilityLabel: 'Unlock an extra mock exam after the preview',
     rewardedExamUnlockButton: 'Unlock extra mock exam',
     rewardedExamUnlockFailure: 'Extra mock exam could not be unlocked right now.',
+    rewardedExamUnlockedAccessibilityLabel: 'Start the unlocked extra mock exam',
     rewardedExamUnlockedCta: 'Start unlocked mock exam',
     rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
     reviewWeakChapters: 'Review weak chapters',
@@ -604,6 +615,7 @@ export default function Screen() {
           <Text style={styles.readinessSparseNote}>{copy.readinessSparseNote}</Text>
         ) : null}
         <Link
+          aria-label={copy.readinessCtaAccessibilityLabel}
           accessibilityLabel={copy.readinessCtaAccessibilityLabel}
           accessibilityRole="link"
           href="/exam"
@@ -633,7 +645,8 @@ export default function Screen() {
           ) : null}
           {rewardedExamUnlocked ? (
             <Link
-              accessibilityLabel={copy.rewardedExamUnlockedCta}
+              aria-label={copy.rewardedExamUnlockedAccessibilityLabel}
+              accessibilityLabel={copy.rewardedExamUnlockedAccessibilityLabel}
               accessibilityRole="link"
               href="/exam"
               style={styles.rewardedExamLink}
@@ -643,7 +656,7 @@ export default function Screen() {
           ) : (
             <View style={styles.rewardedExamActions}>
               <Button
-                accessibilityLabel={copy.rewardedExamPreviewButton}
+                accessibilityLabel={copy.rewardedExamPreviewAccessibilityLabel}
                 accessibilityRole="button"
                 accessibilityState={{ disabled: rewardPreviewCompleted }}
                 disabled={rewardPreviewCompleted}
@@ -654,7 +667,7 @@ export default function Screen() {
                 {copy.rewardedExamPreviewButton}
               </Button>
               <Button
-                accessibilityLabel={copy.rewardedExamUnlockButton}
+                accessibilityLabel={copy.rewardedExamUnlockAccessibilityLabel}
                 accessibilityRole="button"
                 accessibilityState={{
                   busy: rewardUnlockInFlight,
@@ -715,7 +728,7 @@ export default function Screen() {
           {copy.browseChapters}
         </RouteLink>
         <RouteLink
-          accessibilityLabel={copy.readinessCtaAccessibilityLabel}
+          accessibilityLabel={copy.readinessQuickActionAccessibilityLabel}
           href="/exam"
           style={styles.quickActionLink}
           variant="secondary"
