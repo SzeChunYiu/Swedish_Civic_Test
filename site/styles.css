@@ -1129,7 +1129,32 @@ p.deck {
   max-width: 40px;
   background: var(--line);
   border-radius: 999px;
-  transition: background 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.12s;
+  /* button reset (navigable dots render as <button>) */
+  padding: 0;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  position: relative;
+}
+button.quiz__dot.is-nav {
+  cursor: pointer;
+}
+/* enlarge the tap target without changing the slim visual */
+button.quiz__dot.is-nav::after {
+  content: '';
+  position: absolute;
+  inset: -9px -2px;
+}
+button.quiz__dot.is-nav:hover {
+  transform: scaleY(2);
+}
+button.quiz__dot:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
 }
 .quiz__dot.is-on {
   background: var(--blue);
@@ -1139,6 +1164,14 @@ p.deck {
 }
 .quiz__dot.is-wrong {
   background: #c2410c;
+}
+.quiz__screen-disclaimer {
+  max-width: 520px;
+  margin: 0 auto 18px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .quiz__card {

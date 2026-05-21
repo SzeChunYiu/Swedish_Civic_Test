@@ -822,11 +822,11 @@
 
         <div class="mock-grid" aria-label="${tr({ sv: 'Frågenavigering', en: 'Question navigation', 'zh-Hans': '题目导航', 'zh-Hant': '題目導覽', ar: 'التنقّل بين الأسئلة', ckb: 'گەشتکردن لە پرسیارەکاندا', fa: 'پیمایش سؤال‌ها', pl: 'Nawigacja po pytaniach', so: "Hagista su'aalaha", ti: 'ምልጋብ ሕቶታት', tr: 'Soru gezinmesi', uk: 'Навігація по питаннях' })}">${dots}</div>
 
+        <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
         <div class="mock-card">
           <div class="quiz__crumb">Ch ${q.chapterId}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
           ${questionSourceRow(q)}
-          <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           <div class="quiz__opts">${opts}</div>
         </div>
 
