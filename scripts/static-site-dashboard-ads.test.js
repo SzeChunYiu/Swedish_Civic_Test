@@ -112,6 +112,11 @@ test('static AdSense settings can load reviewed auto ads while manual panels rem
   const adsTxt = read('site/ads.txt');
 
   assert.match(adsTxt, /google\.com, pub-2451892671779738, DIRECT, f08c47fec0942fa0/);
+  assert.match(
+    read('site/index.html'),
+    /\bsrc=["']app\.js\?v=[0-9a-f]{8,}["']/,
+    'index.html should cache-bust app.js so Loopia/browser caches do not serve stale routing or ad settings',
+  );
   assert.match(app, /publisherId:\s*'ca-pub-2451892671779738'/);
   assert.match(app, /autoAds:\s*true/);
   assert.match(app, /function\s+smtAdSenseCanLoad\b/);

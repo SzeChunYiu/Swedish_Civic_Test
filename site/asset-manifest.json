@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 110618,
-      "sha256": "e4fe9cd803a835835f3e0b31f76bc94a2141d506aba9ffbbe5c9d7ebcc15396b"
+      "bytes": 110655,
+      "sha256": "8cb3db989002094ceda85f5c9a2cca7fdc91021652bc239d28dd203e30193742"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -96,8 +96,8 @@
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 71376,
-      "sha256": "2835e24f2cec9b25e5a3c9a839f22223e151185674e11707782891ab8e0486ab"
+      "bytes": 71388,
+      "sha256": "137a4c9c191947656f97bec83081bc5bb3d28ae7f0de9176133b9710ea73ac1a"
     },
     "practice.js": {
       "bytes": 68033,
