@@ -597,7 +597,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 13;
+const EXPECTED_STREAK_RULE_COUNT = 17;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -9055,9 +9055,11 @@ const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const getLocalDateKey = streakModule.getLocalDateKey;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
 const createInitialFreezeState = streakWithFreezeModule.createInitialFreezeState;
 const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
 const normalizeStreakFreezeState = streakWithFreezeModule.normalizeStreakFreezeState;
+const refillFreezes = streakWithFreezeModule.refillFreezes;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -9300,6 +9302,12 @@ let removeAdsPurchaseRuntimeCasesValidated = 0;
 let removeAdsPurchaseRuntimeParityValidated = false;
 let removeAdsSwedishExamCopyCasesValidated = 0;
 let removeAdsSwedishExamCopyParityValidated = false;
+let proLifetimeBareTrueRejectionValidated = 0;
+let proLifetimeStructuredRecordParsingValidated = 0;
+let proLifetimeProviderReceiptRevalidationValidated = 0;
+let proLifetimeFailClosedClearingValidated = 0;
+let proLifetimeNativeHookProviderWiringValidated = 0;
+let proLifetimeRelaunchParityValidated = false;
 let adConsentTypeUnionsValidated = 0;
 let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
@@ -10182,6 +10190,20 @@ if (process.argv.includes('--focus-purchase-schema')) {
     purchaseTypeUnionsValidated,
     purchaseTypeInterfacesValidated,
     purchaseTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-pro-lifetime-relaunch-parity')) {
+  validateProLifetimeRelaunchParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    proLifetimeBareTrueRejectionValidated,
+    proLifetimeStructuredRecordParsingValidated,
+    proLifetimeProviderReceiptRevalidationValidated,
+    proLifetimeFailClosedClearingValidated,
+    proLifetimeNativeHookProviderWiringValidated,
+    proLifetimeRelaunchParityValidated,
   });
   process.exit(0);
 }
@@ -16465,6 +16487,180 @@ function validateRemoveAdsSwedishExamCopyParity() {
   }
 }
 
+function validateProLifetimeRelaunchParity() {
+  let valid = true;
+  let proLifetimeSource = '';
+  let proHookSource = '';
+  let proIapTestSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const [label, filePath] of [
+    ['Pro Lifetime purchase runtime', 'lib/monetization/proLifetimePurchase.ts'],
+    ['Pro Lifetime entitlement hook', 'lib/monetization/useProLifetimeEntitlements.ts'],
+    ['Pro Lifetime runtime tests', 'tests/v1-1-pro-iap.test.js'],
+  ]) {
+    try {
+      const source = fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
+      if (filePath.endsWith('proLifetimePurchase.ts')) proLifetimeSource = source;
+      if (filePath.endsWith('useProLifetimeEntitlements.ts')) proHookSource = source;
+      if (filePath.endsWith('v1-1-pro-iap.test.js')) proIapTestSource = source;
+    } catch (error) {
+      reject(`${label} source could not be read: ${error.message}`);
+    }
+  }
+
+  if (!proLifetimeSource || !proHookSource || !proIapTestSource) return;
+
+  const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
+  const normalizedProHookSource = proHookSource.replace(/\s+/g, ' ');
+  const normalizedProIapTestSource = proIapTestSource.replace(/\s+/g, ' ');
+  const bareTrueCaseIsValid =
+    normalizedProLifetimeSource.includes(
+      'const record = parseStoredProLifetimeEntitlementRecord(storedValue);',
+    ) &&
+    !normalizedProLifetimeSource.includes('storedValue === STORED_TRUE') &&
+    !normalizedProLifetimeSource.includes("const STORED_TRUE = 'true';") &&
+    /if\s*\(\s*!isValidatedProLifetimeReceipt\(receiptValidation\)\s*\)\s*\{\s*return proLifetimeEntitlements\(false\);/s.test(
+      proLifetimeSource,
+    ) &&
+    normalizedProIapTestSource.includes(
+      "test('setProLifetimeEntitlement: rejects bare true and clears persisted state'",
+    ) &&
+    normalizedProIapTestSource.includes(
+      "await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'true');",
+    );
+  const structuredRecordCaseIsValid =
+    normalizedProLifetimeSource.includes('export const PRO_LIFETIME_RECORD_SCHEMA_VERSION = 1;') &&
+    normalizedProLifetimeSource.includes('interface StoredProLifetimeEntitlementRecord') &&
+    normalizedProLifetimeSource.includes('receiptValidationStatus:') &&
+    normalizedProLifetimeSource.includes('receiptValidatedAt:') &&
+    normalizedProLifetimeSource.includes('function parseStoredProLifetimeEntitlementRecord(') &&
+    normalizedProLifetimeSource.includes(
+      'if (record.schemaVersion !== PRO_LIFETIME_RECORD_SCHEMA_VERSION) return null;',
+    ) &&
+    normalizedProLifetimeSource.includes(
+      'if (record.productId !== PRO_LIFETIME_PRODUCT_ID) return null;',
+    ) &&
+    normalizedProLifetimeSource.includes(
+      "if (record.source !== 'purchase' && record.source !== 'restore') return null;",
+    ) &&
+    normalizedProLifetimeSource.includes('if (!hasStoreConfirmation(record)) return null;');
+  const providerRevalidationCaseIsValid =
+    normalizedProLifetimeSource.includes(
+      'return proLifetimeEntitlements( await revalidateStoredProLifetimeEntitlementRecord({ provider, record, storage, }), );',
+    ) &&
+    normalizedProLifetimeSource.includes(
+      'async function revalidateStoredProLifetimeEntitlementRecord(',
+    ) &&
+    normalizedProLifetimeSource.includes('await provider.connect();') &&
+    normalizedProLifetimeSource.includes(
+      'const availablePurchases = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);',
+    ) &&
+    normalizedProLifetimeSource.includes(
+      'const receiptValidation = await validateProLifetimeReceipt(provider, restoredPurchase);',
+    ) &&
+    normalizedProLifetimeSource.includes("source: 'restore'") &&
+    normalizedProIapTestSource.includes(
+      "test('getProLifetimeEntitlement: provider revalidates, refreshes, and clears stored records'",
+    );
+  const failClosedClearingCaseIsValid =
+    (
+      normalizedProLifetimeSource.match(/await clearStoredProLifetimeEntitlement\(storage\);/g) ??
+      []
+    ).length >= 4 &&
+    normalizedProLifetimeSource.includes(
+      "return createResult('pending', await getProLifetimeEntitlement({ storage }), purchase);",
+    ) &&
+    normalizedProLifetimeSource.includes(
+      "return createResult('not_found', await getProLifetimeEntitlement({ storage }), purchase);",
+    ) &&
+    normalizedProLifetimeSource.includes("return createResult('persistence_failed'") &&
+    normalizedProIapTestSource.includes(
+      "test('buyProLifetime: invalid receipt and persistence failure fail closed before finish'",
+    ) &&
+    normalizedProIapTestSource.includes(
+      'assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);',
+    ) &&
+    normalizedProIapTestSource.includes(
+      'assert.equal(await staleStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);',
+    ) &&
+    normalizedProIapTestSource.includes(
+      'assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);',
+    );
+  const nativeHookProviderCaseIsValid =
+    normalizedProHookSource.includes(
+      "import { createNativePurchaseProvider, createSecureStorePurchaseStorage, createWebPurchaseStorage, } from './purchases';",
+    ) &&
+    normalizedProHookSource.includes("if (Platform.OS !== 'web') {") &&
+    normalizedProHookSource.includes(
+      'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+    ) &&
+    normalizedProHookSource.includes('storage: createSecureStorePurchaseStorage(),') &&
+    normalizedProHookSource.includes('storage: createWebPurchaseStorage(),') &&
+    normalizedProHookSource.includes('return { storage: createWebPurchaseStorage(), };') &&
+    normalizedProHookSource.includes('void getProLifetimeEntitlement(proRuntime)') &&
+    (normalizedProHookSource.match(/\bprovider:/g) ?? []).length === 1;
+
+  for (const [caseIsValid, message, markValidated] of [
+    [
+      bareTrueCaseIsValid,
+      'Pro Lifetime relaunch validator must reject bare true grants without a validated receipt',
+      () => {
+        proLifetimeBareTrueRejectionValidated += 1;
+      },
+    ],
+    [
+      structuredRecordCaseIsValid,
+      'Pro Lifetime relaunch validator must require structured receipt-backed entitlement records',
+      () => {
+        proLifetimeStructuredRecordParsingValidated += 1;
+      },
+    ],
+    [
+      providerRevalidationCaseIsValid,
+      'Pro Lifetime relaunch validator must require provider-backed restore and receipt revalidation',
+      () => {
+        proLifetimeProviderReceiptRevalidationValidated += 1;
+      },
+    ],
+    [
+      failClosedClearingCaseIsValid,
+      'Pro Lifetime relaunch validator must require fail-closed clearing for stale, missing, invalid, or persistence-failed records',
+      () => {
+        proLifetimeFailClosedClearingValidated += 1;
+      },
+    ],
+    [
+      nativeHookProviderCaseIsValid,
+      'Pro Lifetime relaunch validator must require native provider and secure storage wiring while web remains providerless',
+      () => {
+        proLifetimeNativeHookProviderWiringValidated += 1;
+      },
+    ],
+  ]) {
+    if (!caseIsValid) {
+      reject(message);
+      continue;
+    }
+    markValidated();
+  }
+
+  if (
+    valid &&
+    proLifetimeBareTrueRejectionValidated === 1 &&
+    proLifetimeStructuredRecordParsingValidated === 1 &&
+    proLifetimeProviderReceiptRevalidationValidated === 1 &&
+    proLifetimeFailClosedClearingValidated === 1 &&
+    proLifetimeNativeHookProviderWiringValidated === 1
+  ) {
+    proLifetimeRelaunchParityValidated = true;
+  }
+}
+
 function validateAdConsentTypeSchemaParity() {
   let valid = true;
   let consentSource = '';
@@ -18774,8 +18970,16 @@ function validateStreakRules() {
     fail('getLocalDateKey export is not a function');
     return;
   }
+  if (typeof calculateStreakWithFreeze !== 'function') {
+    fail('calculateStreakWithFreeze export is not a function');
+    return;
+  }
   if (typeof freezeBannerCopy !== 'function') {
     fail('freezeBannerCopy export is not a function');
+    return;
+  }
+  if (typeof refillFreezes !== 'function') {
+    fail('refillFreezes export is not a function');
     return;
   }
 
@@ -18913,6 +19117,123 @@ function validateStreakRules() {
     if (forbidden && forbidden.test(actualValue)) {
       rulesAreValid = false;
       fail(`streak rule ${label} contains forbidden Swedish streak-freeze wording`);
+      return;
+    }
+
+    streakRulesValidated += 1;
+  });
+
+  const now = new Date('2026-05-19T08:00:00.000Z');
+  const runtimeCounterCases = [
+    {
+      label: 'refillFreezes rejects NaN, negative, and string counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: Number.NaN,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: '2',
+            lifetimeSpent: -1,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'refillFreezes clamps overstocked available and rejects fractional counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: 99,
+            lastEarnedAt: '2026-05-11',
+            lifetimeEarned: 3.5,
+            lifetimeSpent: Infinity,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 4, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'calculateStreakWithFreeze refuses string available freezes',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: '1',
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 1,
+            lifetimeSpent: 0,
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 0, lifetimeSpent: 0, rescuedThisRun: [], streakDays: 1 },
+    },
+    {
+      label: 'calculateStreakWithFreeze resets string lifetimeSpent before spending',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: 4,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 4,
+            lifetimeSpent: '2',
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 3, lifetimeSpent: 1, rescuedThisRun: ['2026-05-18'], streakDays: 3 },
+    },
+  ];
+
+  runtimeCounterCases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `streak rule ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
       return;
     }
 
@@ -21154,6 +21475,7 @@ validateMonetizationTypeSchemaParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSwedishExamCopyParity();
+validateProLifetimeRelaunchParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentRuntimeParity();
@@ -21383,6 +21705,12 @@ console.log(
       removeAdsPurchaseRuntimeParityValidated,
       removeAdsSwedishExamCopyCasesValidated,
       removeAdsSwedishExamCopyParityValidated,
+      proLifetimeBareTrueRejectionValidated,
+      proLifetimeStructuredRecordParsingValidated,
+      proLifetimeProviderReceiptRevalidationValidated,
+      proLifetimeFailClosedClearingValidated,
+      proLifetimeNativeHookProviderWiringValidated,
+      proLifetimeRelaunchParityValidated,
       adConsentTypeUnionsValidated,
       adConsentTypeInterfacesValidated,
       adConsentTypeSchemaParityValidated,
