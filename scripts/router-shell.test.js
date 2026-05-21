@@ -15,6 +15,15 @@ function readJson(relativePath) {
   return JSON.parse(read(relativePath));
 }
 
+function readAppScheme() {
+  const appConfig = readJson('app.json').expo;
+
+  assert.equal(typeof appConfig?.scheme, 'string');
+  assert.notEqual(appConfig.scheme, '');
+
+  return appConfig.scheme;
+}
+
 function assertContains(source, literal, message) {
   assert.equal(source.includes(literal), true, message ?? `expected source to include ${literal}`);
 }
@@ -114,6 +123,7 @@ function readRouterShellManifest() {
       'expoRouterNativeIntentRuntimeSamples',
       'expectedPath',
     ),
+    nativeIntentConfigFiles: valuesInConstArray(manifest, 'expoRouterNativeIntentConfigFiles'),
   };
 }
 
@@ -270,6 +280,7 @@ test('web document metadata descriptions stay aligned with the router shell mani
 });
 
 test('router shell manifest stays aligned with special Expo Router files', () => {
+  const appScheme = readAppScheme();
   const manifest = readRouterShellManifest();
   const rootLayout = read('app/_layout.tsx');
   const notFoundRoute = read('app/+not-found.tsx');
@@ -328,7 +339,8 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
   assert.deepEqual(manifest.themeColorTokens, ['colors.canvas']);
   assert.deepEqual(manifest.statusBarStyles, ['resolved-theme']);
   assert.deepEqual(manifest.nativeFallbackHrefs, ['/home']);
-  assert.deepEqual(manifest.appSchemes, ['almost-swedish']);
+  assert.deepEqual(manifest.appSchemes, [appScheme]);
+  assert.deepEqual(manifest.nativeIntentConfigFiles, ['app.json', 'app/+native-intent.ts']);
   assert.equal(
     manifest.nativeIntentStaticRoutes.includes('/about-the-test'),
     true,
@@ -355,7 +367,7 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     '/about-the-test',
     '/citizenship-requirements',
     '/search?q=riksdag',
-    'almost-swedish://app/chapter/ch01?from=learn',
+    `${appScheme}://app/chapter/ch01?from=learn`,
   ]);
   assert.deepEqual(manifest.nativeIntentRuntimeSampleExpectedPaths.slice(0, 6), [
     '/home',
@@ -370,6 +382,9 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
   }
   for (const file of manifest.rootStackScreenFiles) {
+    assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
+  }
+  for (const file of manifest.nativeIntentConfigFiles) {
     assert.equal(fs.existsSync(path.join(repoRoot, file)), true, `${file} should exist`);
   }
 
@@ -416,8 +431,22 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
-  assertContains(nativeIntent, `const APP_SCHEME = '${manifest.appSchemes[0]}:';`);
-  assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);
+  assertContains(nativeIntent, `const APP_SCHEME = '${appScheme}:';`);
+  assertContains(nativeIntent, `const APP_LINK_BASE = '${appScheme}://app';`);
+  assert.equal(
+    manifest.nativeIntentRuntimeSampleInputs.some((input) => input.startsWith(`${appScheme}://`)),
+    true,
+    'native intent manifest should include configured app-scheme runtime samples',
+  );
+  for (const input of manifest.nativeIntentRuntimeSampleInputs) {
+    if (/^[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(input) && !/^(https|ftp):\/\//.test(input)) {
+      assert.equal(
+        input.startsWith(`${appScheme}://`),
+        true,
+        `${input} should use app.json expo.scheme`,
+      );
+    }
+  }
   assertMatches(
     nativeIntent,
     new RegExp(`return ["']${escapeRegExp(manifest.nativeFallbackHrefs[0])}["']`, 'g'),
@@ -445,6 +474,7 @@ test('native intent runtime samples stay aligned with the router shell manifest'
 });
 
 test('native intent resolves about-the-test deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(typeof redirectSystemPath, 'function');
@@ -452,17 +482,15 @@ test('native intent resolves about-the-test deep links before the Home fallback'
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'almost-swedish://app/about-the-test',
+      path: `${appScheme}://app/about-the-test`,
     }),
     '/about-the-test',
   );
-  assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://app/not-real' }),
-    '/home',
-  );
+  assert.equal(redirectSystemPath({ initial: true, path: `${appScheme}://app/not-real` }), '/home');
 });
 
 test('native intent resolves citizenship requirements deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(
@@ -472,7 +500,7 @@ test('native intent resolves citizenship requirements deep links before the Home
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'almost-swedish://app/citizenship-requirements',
+      path: `${appScheme}://app/citizenship-requirements`,
     }),
     '/citizenship-requirements',
   );
@@ -483,6 +511,7 @@ test('native intent resolves citizenship requirements deep links before the Home
 });
 
 test('native intent resolves search deep links before the Home fallback', () => {
+  const appScheme = readAppScheme();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(redirectSystemPath({ initial: true, path: '/search' }), '/search');
@@ -493,14 +522,14 @@ test('native intent resolves search deep links before the Home fallback', () => 
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'almost-swedish://app/search?q=riksdag',
+      path: `${appScheme}://app/search?q=riksdag`,
     }),
     '/search?q=riksdag',
   );
   assert.equal(
     redirectSystemPath({
       initial: true,
-      path: 'almost-swedish://search?q=riksdag',
+      path: `${appScheme}://search?q=riksdag`,
     }),
     '/search?q=riksdag',
   );
@@ -508,6 +537,7 @@ test('native intent resolves search deep links before the Home fallback', () => 
 });
 
 test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {
+  const appScheme = readAppScheme();
   const { redirectSystemPath } = loadNativeIntentRuntime();
 
   assert.equal(
@@ -518,11 +548,11 @@ test('native intent rejects foreign absolute URL schemes before route allowlisti
   assert.equal(redirectSystemPath({ initial: true, path: 'https://quiz/q001' }), '/home');
   assert.equal(redirectSystemPath({ initial: true, path: '//app/search?q=riksdag' }), '/home');
   assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://app/search?q=riksdag' }),
+    redirectSystemPath({ initial: true, path: `${appScheme}://app/search?q=riksdag` }),
     '/search?q=riksdag',
   );
   assert.equal(
-    redirectSystemPath({ initial: true, path: 'almost-swedish://search?q=riksdag' }),
+    redirectSystemPath({ initial: true, path: `${appScheme}://search?q=riksdag` }),
     '/search?q=riksdag',
   );
 });
