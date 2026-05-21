@@ -1,4 +1,3 @@
-import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -13,47 +12,45 @@ import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPi
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
-import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
-import {
-  buildAnswerFeedbackSpeechText,
-  buildQuestionSpeechText,
-  stopSpeech,
-} from '../../lib/audio/speak';
+import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import {
-  buildDailyChallenge,
-  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-} from '../../lib/learning/dailyChallenge';
+import { explainAdaptivePick, pickAdaptiveSession } from '../../lib/learning/adaptivePractice';
+import { buildDashboardProgressSnapshot } from '../../lib/learning/dashboardProgressSnapshot';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
+  getAvailableQuestionsForPracticeSession,
   getCompletedQuestionIdsForQuestionBank,
-  getPracticeQuestionForSession,
+  getPracticeQuestionFromAdaptiveOrder,
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import {
-  getPracticeAnswerXpAwardKey,
   getPracticeInterstitialShowKey,
   usePracticeSessionStore,
 } from '../../lib/quiz/practiceSessionStore';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
-import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
-import type { PracticeQuestion } from '../../types/content';
 import type { ConfidenceRating } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
+const ADAPTIVE_PRACTICE_SESSION_SIZE = 10;
+
 type PracticeCopy = {
+  adaptiveSummary: (recentlyWrong: number, unseen: number, review: number) => string;
+  adaptiveSummaryAccessibilityLabel: (
+    recentlyWrong: number,
+    unseen: number,
+    review: number,
+  ) => string;
   badge: string;
   bookmark: string;
   bookmarked: string;
@@ -80,13 +77,14 @@ type PracticeCopy = {
   aboutSourcesSupplementaryBody: string;
   aboutSourcesEditorialTitle: string;
   aboutSourcesEditorialBody: string;
-  challengeBadge: string;
-  challengeTimer: (remainingSeconds: number) => string;
-  challengeTimedOut: string;
 };
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
   sv: {
+    adaptiveSummary: (recentlyWrong, unseen, review) =>
+      `Anpassat urval: ${recentlyWrong} missade, ${unseen} nya, ${review} för repetition.`,
+    adaptiveSummaryAccessibilityLabel: (recentlyWrong, unseen, review) =>
+      `Anpassat övningsurval med ${recentlyWrong} tidigare missade frågor, ${unseen} nya frågor och ${review} repetitionsfrågor.`,
     badge: '5-minutersövning',
     bookmark: 'Bokmärk',
     bookmarked: 'Bokmärkt',
@@ -116,12 +114,13 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
-    challengeBadge: 'Dagens utmaning',
-    challengeTimer: (remainingSeconds) => `${remainingSeconds} sekunder kvar`,
-    challengeTimedOut: 'Tiden är ute. Försök igen för att starta om dagens utmaning.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
   },
   en: {
+    adaptiveSummary: (recentlyWrong, unseen, review) =>
+      `Adaptive mix: ${recentlyWrong} missed, ${unseen} new, ${review} for review.`,
+    adaptiveSummaryAccessibilityLabel: (recentlyWrong, unseen, review) =>
+      `Adaptive practice mix with ${recentlyWrong} previously missed questions, ${unseen} new questions, and ${review} review questions.`,
     badge: '5-minute practice',
     bookmark: 'Bookmark',
     bookmarked: 'Bookmarked',
@@ -152,32 +151,27 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesEditorialTitle: 'Editorial',
     aboutSourcesEditorialBody:
       'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
-    challengeBadge: 'Daily challenge',
-    challengeTimer: (remainingSeconds) => `${remainingSeconds} seconds left`,
-    challengeTimedOut: "Time is up. Try again to restart today's challenge.",
   },
 };
 
 export default function Screen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const isChallengeMode = mode === 'challenge';
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
+  const answeredQuestionIds = usePracticeSessionStore((state) => state.answeredQuestionIds);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
-  const claimAnswerXpAward = usePracticeSessionStore((state) => state.claimAnswerXpAward);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const recordDailyChallengeCompletion = useProgressStore(
-    (state) => state.recordDailyChallengeCompletion,
-  );
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
   );
   const recordWrongAnswerReview = useMistakeReviewStore((state) => state.recordWrongAnswerReview);
+  const answerDates = useProgressStore((state) => state.answerDates);
+  const answerHistory = useProgressStore((state) => state.answerHistory);
+  const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const mistakeReviewPersistenceWarning = useMistakeReviewStore(
     (state) => state.persistenceWarning,
   );
@@ -185,11 +179,11 @@ export default function Screen() {
     (state) => state.clearPersistenceWarning,
   );
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const totalXp = useProgressStore((state) => state.totalXp);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+  const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
-  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
-  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -201,34 +195,59 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
-  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
-    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  );
-  const [challengeRetryActive, setChallengeRetryActive] = useState(false);
-  const [challengeAnswers, setChallengeAnswers] = useState<Record<string, boolean>>({});
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const challengeQuestions = useMemo(
-    () =>
-      dailyChallenge.questionIds
-        .map((questionId) => questions.find((candidate) => candidate.id === questionId))
-        .filter((question): question is PracticeQuestion => Boolean(question)),
-    [dailyChallenge.questionIds],
-  );
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const practiceQuestionBank = isChallengeMode ? challengeQuestions : filteredQuestions;
   const visibleCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
-    [completedQuestionIds, practiceQuestionBank],
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
   );
-  const rawQuestion = getPracticeQuestionForSession(
-    practiceQuestionBank,
-    visibleCompletedQuestionIds,
+  const sessionAnsweredVisibleQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, answeredQuestionIds),
+    [answeredQuestionIds, filteredQuestions],
+  );
+  const adaptiveProgress = useMemo(
+    () =>
+      buildDashboardProgressSnapshot({
+        answerDates,
+        answerHistory,
+        dailyGoalAnswers,
+        mockExamSessions,
+        questionProgress,
+        totalXp,
+      }),
+    [answerDates, answerHistory, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+  );
+  const adaptiveQuestionBank = useMemo(
+    () => getAvailableQuestionsForPracticeSession(filteredQuestions, answeredQuestionIds),
+    [answeredQuestionIds, filteredQuestions],
+  );
+  const adaptiveSessionSize = Math.min(ADAPTIVE_PRACTICE_SESSION_SIZE, adaptiveQuestionBank.length);
+  const adaptiveQuestionIds = useMemo(
+    () =>
+      pickAdaptiveSession({
+        bank: adaptiveQuestionBank,
+        progress: adaptiveProgress,
+        size: adaptiveSessionSize,
+      }),
+    [adaptiveProgress, adaptiveQuestionBank, adaptiveSessionSize],
+  );
+  const adaptiveSummary = useMemo(
+    () =>
+      explainAdaptivePick({
+        bank: adaptiveQuestionBank,
+        progress: adaptiveProgress,
+        size: adaptiveSessionSize,
+      }),
+    [adaptiveProgress, adaptiveQuestionBank, adaptiveSessionSize],
+  );
+  const rawQuestion = getPracticeQuestionFromAdaptiveOrder(
+    filteredQuestions,
+    adaptiveQuestionIds,
     activeQuestionId,
   );
   const question = useMemo(
@@ -237,49 +256,10 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
-  );
-  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
-  const questionSpeechText = useMemo(
-    () => (question ? buildQuestionSpeechText(question) : ''),
-    [question],
-  );
-
-  useQuestionAudioAutoplay({
-    audioEnabled,
-    listenFirstAudioEnabled,
-    questionKey: question ? `${shuffleSessionId}:${question.id}` : null,
-    rate: audioPlaybackRate,
-    speechText: questionSpeechText,
-    stopSignal: hasSelectedAnswer || challengeTimedOut,
-  });
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
-
-  useEffect(() => {
-    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-    setChallengeAnswers({});
-    setChallengeRetryActive(false);
-  }, [dailyChallenge.dayKey, isChallengeMode]);
-
-  useEffect(() => {
-    if (!isChallengeMode || hasSelectedAnswer || challengeTimedOut) return undefined;
-
-    const timer = setTimeout(() => {
-      setRemainingChallengeSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [
-    challengeRetryActive,
-    challengeTimedOut,
-    hasSelectedAnswer,
-    isChallengeMode,
-    remainingChallengeSeconds,
-  ]);
 
   if (!question) {
     return (
@@ -289,21 +269,21 @@ export default function Screen() {
     );
   }
 
+  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const adaptiveReviewCount = adaptiveSummary.mastered + adaptiveSummary.stale;
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
-  const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress =
-    practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
+  const questionNumber = Math.max(
+    1,
+    Math.min(adaptiveSessionSize || 1, sessionAnsweredVisibleQuestionIds.length + 1),
+  );
+  const bankProgress = adaptiveSessionSize > 0 ? questionNumber / adaptiveSessionSize : 0;
   const handleSelectOption = (optionId: string) => {
-    if (challengeTimedOut) return;
-    stopSpeech();
-
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -311,28 +291,7 @@ export default function Screen() {
       : undefined;
 
     selectOption(question.id, optionId);
-    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
-      awardXp: claimAnswerXpAward(getPracticeAnswerXpAwardKey(question.id, shuffleSessionId)),
-    });
-
-    if (isChallengeMode) {
-      const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };
-      setChallengeAnswers(nextChallengeAnswers);
-
-      if (Object.keys(nextChallengeAnswers).length >= challengeQuestions.length) {
-        const correctCount = Object.values(nextChallengeAnswers).filter(Boolean).length;
-        const totalCount = challengeQuestions.length;
-        recordDailyChallengeCompletion({
-          dayKey: dailyChallenge.dayKey,
-          questionIds: dailyChallenge.questionIds,
-          correctCount,
-          totalCount,
-          score: totalCount > 0 ? correctCount / totalCount : 0,
-          timeSpentSeconds: DAILY_CHALLENGE_TIME_LIMIT_SECONDS - remainingChallengeSeconds,
-          completedAt: new Date().toISOString(),
-        });
-      }
-    }
+    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -343,36 +302,40 @@ export default function Screen() {
     }
   };
   const handleAdvanceQuestion = () => {
-    stopSpeech();
     setSelectedConfidenceRating(null);
     advanceQuestion();
   };
   const handleTryAgain = () => {
-    stopSpeech();
     setSelectedConfidenceRating(null);
-    if (isChallengeMode) {
-      setChallengeRetryActive(true);
-      setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-      setChallengeAnswers({});
-    }
     resetSelection();
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>
+        <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.questionTitle(questionNumber)}
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
+        <Text
+          accessibilityLabel={copy.adaptiveSummaryAccessibilityLabel(
+            adaptiveSummary['recently-wrong'],
+            adaptiveSummary.unseen,
+            adaptiveReviewCount,
+          )}
+          style={styles.adaptiveSummary}
+        >
+          {copy.adaptiveSummary(
+            adaptiveSummary['recently-wrong'],
+            adaptiveSummary.unseen,
+            adaptiveReviewCount,
+          )}
+        </Text>
         <ProgressBar language={language} progress={bankProgress} />
         <Text style={styles.meta}>
-          {isChallengeMode
-            ? copy.challengeTimer(remainingChallengeSeconds)
-            : copy.completedQuestions(visibleCompletedQuestionIds.length)}
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
         </Text>
-        {challengeTimedOut ? <Text style={styles.meta}>{copy.challengeTimedOut}</Text> : null}
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -467,8 +430,7 @@ export default function Screen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        rate={audioPlaybackRate}
-        text={questionSpeechText}
+        text={buildQuestionSpeechText(question)}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -491,7 +453,7 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
-              disabled={hasSelectedAnswer || challengeTimedOut}
+              disabled={hasSelectedAnswer}
               language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
@@ -523,16 +485,9 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
-            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <QuestionReportLink
-            language={language}
-            question={question}
-            screen="practice"
-            selectedOptionId={selectedOptionId}
-          />
           <PracticeInterstitialAd
             showKey={getPracticeInterstitialShowKey(question.id, shuffleSessionId)}
           />
@@ -580,7 +535,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.large,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.25],
     padding: space[3],
   },
@@ -594,6 +549,11 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  adaptiveSummary: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
   },
   meta: {
     color: colors.textMuted,
@@ -628,7 +588,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.pill,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
     maxWidth: '100%',
     minHeight: space[6],
@@ -646,7 +606,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.small,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[0.5],
     padding: space[1.5],
   },
@@ -681,7 +641,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.pill,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     justifyContent: 'center',
     maxWidth: '100%',
     minHeight: space[6],
