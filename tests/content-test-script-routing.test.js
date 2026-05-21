@@ -67,6 +67,10 @@ function countSourceOccurrences(source, token) {
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
+  const studyReminderParitySource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-study-reminder-runtime-parity.test.js'),
+    'utf8',
+  );
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
@@ -80,6 +84,11 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   assert.equal(
     pkg.scripts['test:content-focused'],
     'node scripts/test-dispatch.js content-focused',
+  );
+  assert.match(
+    studyReminderParitySource,
+    /lib\/notifications\/studyReminderRouting\.ts/,
+    'study reminder content parity must cover notification tap routing helpers',
   );
 });
 

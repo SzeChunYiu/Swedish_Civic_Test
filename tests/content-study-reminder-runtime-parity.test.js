@@ -205,6 +205,157 @@ test('enableStudyReminder falls back to the preset when current reminder time is
   });
 });
 
+test('study reminder notification payload targets the public Practice route', () => {
+  const { buildStudyReminderNotificationContent } = loadTs('lib/notifications/studyReminder.ts');
+
+  for (const language of ['sv', 'en']) {
+    const content = buildStudyReminderNotificationContent(language);
+    assert.deepEqual(content.data, {
+      route: '/practice',
+      source: 'local-study-reminder',
+    });
+  }
+});
+
+test('study reminder notification response routing normalizes only local reminder payloads', () => {
+  const { normalizeStudyReminderNotificationRoute, routeFromStudyReminderNotificationResponse } =
+    loadTs('lib/notifications/studyReminderRouting.ts');
+
+  for (const route of ['/practice', ' /practice ', '/(tabs)/practice', ' /(tabs)/practice ']) {
+    assert.equal(
+      normalizeStudyReminderNotificationRoute({
+        route,
+        source: 'local-study-reminder',
+      }),
+      '/practice',
+    );
+  }
+
+  for (const data of [
+    null,
+    [],
+    { route: '/settings', source: 'local-study-reminder' },
+    { route: '/quiz/q001', source: 'local-study-reminder' },
+    { route: '/practice', source: 'other-source' },
+    { route: 'https://example.com/practice', source: 'local-study-reminder' },
+    { route: ['/(tabs)/practice'], source: 'local-study-reminder' },
+  ]) {
+    assert.equal(normalizeStudyReminderNotificationRoute(data), null);
+  }
+
+  assert.equal(
+    routeFromStudyReminderNotificationResponse({
+      notification: {
+        request: {
+          content: {
+            data: { route: '/(tabs)/practice', source: 'local-study-reminder' },
+          },
+        },
+      },
+    }),
+    '/practice',
+  );
+  assert.equal(
+    routeFromStudyReminderNotificationResponse({
+      notification: { request: { content: { data: { route: '/settings' } } } },
+    }),
+    null,
+  );
+});
+
+test('study reminder notification response listener navigates only validated routes', () => {
+  const { registerStudyReminderNotificationResponseRouting } = loadTs(
+    'lib/notifications/studyReminderRouting.ts',
+  );
+  const navigations = [];
+  const listeners = [];
+  let removeCount = 0;
+  const runtime = {
+    addNotificationResponseReceivedListener: (listener) => {
+      listeners.push(listener);
+      return {
+        remove: () => {
+          removeCount += 1;
+        },
+      };
+    },
+  };
+
+  const cleanup = registerStudyReminderNotificationResponseRouting(runtime, (route) => {
+    navigations.push(route);
+  });
+
+  assert.equal(listeners.length, 1);
+  listeners[0]({
+    notification: {
+      request: {
+        content: {
+          data: { route: '/settings', source: 'local-study-reminder' },
+        },
+      },
+    },
+  });
+  listeners[0]({
+    notification: {
+      request: {
+        content: {
+          data: { route: '/(tabs)/practice', source: 'local-study-reminder' },
+        },
+      },
+    },
+  });
+  listeners[0]({
+    notification: {
+      request: {
+        content: {
+          data: { route: '/practice', source: 'local-study-reminder' },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(navigations, ['/practice', '/practice']);
+  cleanup();
+  assert.equal(removeCount, 1);
+  assert.doesNotThrow(() =>
+    registerStudyReminderNotificationResponseRouting(null, () => undefined)(),
+  );
+});
+
+test('root layout registers fail-closed study reminder notification routing', () => {
+  const layoutSource = fs.readFileSync(path.join(repoRoot, 'app/_layout.tsx'), 'utf8');
+  const routingSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/notifications/studyReminderRouting.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    layoutSource,
+    /useStudyReminderNotificationRouting\(\);/,
+    'root layout should install the notification response routing hook',
+  );
+  assert.match(
+    layoutSource,
+    /createExpoStudyReminderNotificationRoutingRuntime\(\)\.then/,
+    'notification response routing should be created lazily',
+  );
+  assert.match(
+    layoutSource,
+    /registerStudyReminderNotificationResponseRouting\(runtime,[\s\S]*router\.push\(route\)/,
+    'validated study reminder routes should navigate through Expo Router',
+  );
+  assert.match(
+    routingSource,
+    /if \(String\(Platform\.OS\) === 'web'\) return null;/,
+    'web must fail closed without importing native notification listeners',
+  );
+  assert.match(
+    routingSource,
+    /import\(\s*'expo-notifications'\s*\)/,
+    'native notification listener module should be imported dynamically',
+  );
+});
+
 test('createExpoStudyReminderRuntime returns null when native notifications are unavailable', async () => {
   const { createExpoStudyReminderRuntime } = loadTsWithExternalModules(
     'lib/notifications/studyReminder.ts',
