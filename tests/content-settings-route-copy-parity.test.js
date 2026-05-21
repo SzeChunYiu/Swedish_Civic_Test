@@ -24,7 +24,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 100);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 119);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
@@ -51,6 +51,18 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const label = language === 'sv' \? labelSv : labelEn;/);
   assert.match(source, /renderLanguageButton\('sv', 'Swedish', 'Svenska'\)/);
   assert.match(source, /renderLanguageButton\('en', 'English support', 'Engelskt stöd'\)/);
+  assert.match(source, /one: 'repetitionsdag'/);
+  assert.match(source, /other: 'repetitionsdagar'/);
+  assert.match(source, /one: 'repetitionskort'/);
+  assert.match(source, /other: 'repetitionskort'/);
+  assert.match(source, /one: 'markerat kravområde'/);
+  assert.match(source, /other: 'markerade kravområden'/);
+  assert.match(source, /Studiesvit och svitskydd ingår/);
+  assert.match(source, /one: 'FSRS review day'/);
+  assert.match(source, /other: 'FSRS review days'/);
+  assert.match(source, /one: 'FSRS review card'/);
+  assert.match(source, /other: 'FSRS review cards'/);
+  assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
@@ -59,6 +71,40 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
+  );
+});
+
+test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("one: 'repetitionsdag'", "one: 'dag med FSRS-repetition'")
+      .replace("other: 'repetitionsdagar'", "other: 'dagar med FSRS-repetition'")
+      .replace("one: 'repetitionskort'", "one: 'FSRS-repetitionskort'")
+      .replace('Studiesvit och svitskydd ingår', 'Studiesvit och frysstatus ingår');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route Swedish import summary copy must hide scheduler jargon/,
   );
 });
 

@@ -35,9 +35,9 @@ const scenarios: Scenario[] = [
     successText: 'Importen är klar.',
     summaryTexts: [
       '2 frågor med sparad progression',
-      '1 granskningar av fel svar',
+      '1 granskning av fel svar',
       '1 repetitionskort',
-      '5 inställningar',
+      '5 sparade inställningar',
     ],
   },
   {
@@ -49,9 +49,9 @@ const scenarios: Scenario[] = [
     successText: 'Import complete.',
     summaryTexts: [
       '2 questions with saved progress',
-      '1 wrong-answer reviews',
-      '1 FSRS review cards',
-      '5 settings',
+      '1 wrong-answer review',
+      '1 FSRS review card',
+      '5 saved settings',
     ],
   },
 ];

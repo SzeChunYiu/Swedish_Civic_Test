@@ -14,6 +14,7 @@ import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { CompanionPicker } from '../components/mascot/CompanionPicker';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import {
+  LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
@@ -53,6 +54,7 @@ type SettingsCopy = {
   importSectionSubtitle: string;
   importSuccess: string;
   importSummaryBookmarks: (count: number) => string;
+  importSummaryCitizenshipRequirements: (count: number) => string;
   importSummaryCompletedQuestions: (count: number) => string;
   importSummaryFsrsDays: (count: number) => string;
   importSummaryFsrsCards: (count: number) => string;
@@ -74,6 +76,17 @@ type SettingsCopy = {
   themeSystemLabel: string;
   title: string;
 };
+
+type CountLabels = {
+  one: string;
+  other: string;
+};
+
+function formatCount(count: number, labels: CountLabels): string {
+  return `${count} ${count === 1 ? labels.one : labels.other}`;
+}
+
+const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
@@ -100,11 +113,14 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
+      if (code === 'input_too_large') {
+        return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Klistra in en export på högst ${localStudyDataImportMaxLabel}.`;
+      }
       if (code === 'invalid_json') return 'JSON kunde inte läsas.';
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
       if (code === 'purchase_fields_rejected') {
-        return 'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.';
+        return 'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.';
       }
       return 'Importen innehåller inga stödda studiedata.';
     },
@@ -113,20 +129,30 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPreview: 'Förhandsgranska import',
     importPreviewAccessibilityLabel: 'Förhandsgranska lokal studiedataimport',
     importPurchasesNote:
-      'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+      'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
     importReset: 'Återställ importfält',
-    importSectionSubtitle:
-      'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format på högst ${localStudyDataImportMaxLabel}. Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
-    importSummaryBookmarks: (count) => `${count} bokmärken`,
-    importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
-    importSummaryFsrsDays: (count) => `${count} dagar med FSRS-repetition`,
-    importSummaryFsrsCards: (count) => `${count} FSRS-repetitionskort`,
-    importSummaryMockExams: (count) => `${count} provhistorikposter`,
-    importSummarySettings: (count) => `${count} inställningar`,
-    importSummaryStreakFreeze: 'Studiesvit och frysstatus ingår',
+    importSummaryBookmarks: (count) => formatCount(count, { one: 'bokmärke', other: 'bokmärken' }),
+    importSummaryCitizenshipRequirements: (count) =>
+      formatCount(count, { one: 'markerat kravområde', other: 'markerade kravområden' }),
+    importSummaryCompletedQuestions: (count) =>
+      formatCount(count, {
+        one: 'fråga med sparad progression',
+        other: 'frågor med sparad progression',
+      }),
+    importSummaryFsrsDays: (count) =>
+      formatCount(count, { one: 'repetitionsdag', other: 'repetitionsdagar' }),
+    importSummaryFsrsCards: (count) =>
+      formatCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
+    importSummaryMockExams: (count) =>
+      formatCount(count, { one: 'provhistorikpost', other: 'provhistorikposter' }),
+    importSummarySettings: (count) =>
+      formatCount(count, { one: 'sparad inställning', other: 'sparade inställningar' }),
+    importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
     importSummaryTitle: 'Sammanfattning före import',
-    importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
+    importSummaryWrongAnswers: (count) =>
+      formatCount(count, { one: 'granskning av fel svar', other: 'granskningar av fel svar' }),
     importTitle: 'Importera studiedata',
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
@@ -164,6 +190,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
+      if (code === 'input_too_large') {
+        return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Paste an export under ${localStudyDataImportMaxLabel}.`;
+      }
       if (code === 'invalid_json') return 'JSON could not be read.';
       if (code === 'invalid_schema')
         return 'The import has the wrong format or unknown top-level fields.';
@@ -180,18 +209,31 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPurchasesNote:
       'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
     importReset: 'Reset import field',
-    importSectionSubtitle:
-      'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    importSectionSubtitle: `Paste a local study data export in JSON format under ${localStudyDataImportMaxLabel}. You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
-    importSummaryBookmarks: (count) => `${count} bookmarks`,
-    importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
-    importSummaryFsrsDays: (count) => `${count} FSRS review days`,
-    importSummaryFsrsCards: (count) => `${count} FSRS review cards`,
-    importSummaryMockExams: (count) => `${count} mock exam history entries`,
-    importSummarySettings: (count) => `${count} settings`,
+    importSummaryBookmarks: (count) => formatCount(count, { one: 'bookmark', other: 'bookmarks' }),
+    importSummaryCitizenshipRequirements: (count) =>
+      formatCount(count, { one: 'marked requirement', other: 'marked requirements' }),
+    importSummaryCompletedQuestions: (count) =>
+      formatCount(count, {
+        one: 'question with saved progress',
+        other: 'questions with saved progress',
+      }),
+    importSummaryFsrsDays: (count) =>
+      formatCount(count, { one: 'FSRS review day', other: 'FSRS review days' }),
+    importSummaryFsrsCards: (count) =>
+      formatCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
+    importSummaryMockExams: (count) =>
+      formatCount(count, {
+        one: 'mock exam history entry',
+        other: 'mock exam history entries',
+      }),
+    importSummarySettings: (count) =>
+      formatCount(count, { one: 'saved setting', other: 'saved settings' }),
     importSummaryStreakFreeze: 'Study streak and freeze status included',
     importSummaryTitle: 'Summary before import',
-    importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
+    importSummaryWrongAnswers: (count) =>
+      formatCount(count, { one: 'wrong-answer review', other: 'wrong-answer reviews' }),
     importTitle: 'Import study data',
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
@@ -224,6 +266,7 @@ function buildImportSummaryLines(
     copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
     copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
     copy.importSummarySettings(summary.settingCount),
+    copy.importSummaryCitizenshipRequirements(summary.citizenshipRequirementChecklistCount),
   ];
   if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
   return lines;
