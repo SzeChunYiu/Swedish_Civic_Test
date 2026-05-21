@@ -2,60 +2,13 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
+
+const { loadTsModule } = require('../tests/helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-  const output = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-    },
-  }).outputText;
-  const mod = { exports: {} };
-  function localRequire(request) {
-    if (request.startsWith('.')) {
-      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
-      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
-      return loadAllTs(normalized);
-    }
-    if (request === 'react-native-mmkv') {
-      const memory = new Map();
-      return {
-        createMMKV: () => ({
-          getString: (key) => memory.get(key),
-          set: (key, value) => memory.set(key, value),
-        }),
-      };
-    }
-    if (request === 'zustand') {
-      return {
-        create: (initializer) => {
-          let state;
-          const set = (updater) => {
-            const next = typeof updater === 'function' ? updater(state) : updater;
-            if (next === state) return;
-            state = { ...state, ...next };
-          };
-          const get = () => state;
-          const store = (selector) => (selector ? selector(state) : state);
-          store.getState = get;
-          store.setState = set;
-          state = initializer(set, get);
-          return store;
-        },
-      };
-    }
-    return require(request);
-  }
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
-  return exportName ? mod.exports[exportName] : mod.exports;
-}
-
 function loadAllTs(relativePath) {
-  return loadTs(relativePath);
+  return loadTsModule(repoRoot, relativePath);
 }
 
 test('XP rules follow the MVP gamification table', () => {

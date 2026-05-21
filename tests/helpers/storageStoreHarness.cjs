@@ -1,5 +1,7 @@
 const Module = require('node:module');
+const fs = require('node:fs');
 const path = require('node:path');
+const ts = require('typescript');
 
 function createMemoryMMKV(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -58,17 +60,20 @@ function createThrowingReadMMKV(message = 'MMKV read failed') {
 function createZustandStub() {
   return {
     create: (factory) => {
-      let state;
-      const setFn = (partial) => {
+      const state = {};
+      const setFn = (partial, replace = false) => {
         const next = typeof partial === 'function' ? partial(state) : partial;
-        if (next && next !== state) {
-          state = { ...state, ...next };
+        if (next && typeof next === 'object' && next !== state) {
+          if (replace) {
+            for (const key of Object.keys(state)) delete state[key];
+          }
+          Object.assign(state, next);
         }
       };
       const getFn = () => state;
-      state = factory(setFn, getFn);
+      Object.assign(state, factory(setFn, getFn));
 
-      const useStore = () => state;
+      const useStore = (selector) => (typeof selector === 'function' ? selector(state) : state);
       useStore.getState = () => state;
       useStore.setState = (partial) => setFn(partial);
       return useStore;
@@ -82,6 +87,63 @@ function clearModuleCache(modulePath) {
   } catch {
     // Module may not have been loaded yet.
   }
+}
+
+function compileTypeScriptModule(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+}
+
+function withTypeScriptLoader(callback) {
+  const originalTsLoader = require.extensions['.ts'];
+  const originalTsxLoader = require.extensions['.tsx'];
+
+  require.extensions['.ts'] = compileTypeScriptModule;
+  require.extensions['.tsx'] = compileTypeScriptModule;
+
+  try {
+    return callback();
+  } finally {
+    if (originalTsLoader) {
+      require.extensions['.ts'] = originalTsLoader;
+    } else {
+      delete require.extensions['.ts'];
+    }
+    if (originalTsxLoader) {
+      require.extensions['.tsx'] = originalTsxLoader;
+    } else {
+      delete require.extensions['.tsx'];
+    }
+  }
+}
+
+function resolveLocalTypeScriptModule(parent, request) {
+  if (!parent?.filename || (!request.startsWith('.') && !request.startsWith('..'))) {
+    return null;
+  }
+
+  const base = path.resolve(path.dirname(parent.filename), request);
+  const candidates = [
+    base,
+    `${base}.ts`,
+    `${base}.tsx`,
+    `${base}.js`,
+    `${base}.jsx`,
+    path.join(base, 'index.ts'),
+    path.join(base, 'index.tsx'),
+    path.join(base, 'index.js'),
+  ];
+  return candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
 }
 
 function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}) {
@@ -108,9 +170,15 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
     ...moduleStubs,
   };
 
-  Module._resolveFilename = function patchedResolve(request, ...args) {
+  Module._resolveFilename = function patchedResolve(request, parent, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
-    return originalResolve.call(this, request, ...args);
+    try {
+      return originalResolve.call(this, request, parent, ...args);
+    } catch (error) {
+      const localTypeScriptModule = resolveLocalTypeScriptModule(parent, request);
+      if (localTypeScriptModule) return localTypeScriptModule;
+      throw error;
+    }
   };
   Module._load = function patchedLoad(request, ...args) {
     if (stubs[request]) return stubs[request]();
@@ -118,16 +186,21 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
   };
 
   try {
-    return require(targetPath);
+    return withTypeScriptLoader(() => require(targetPath));
   } finally {
     Module._resolveFilename = originalResolve;
     Module._load = originalLoad;
   }
 }
 
+function loadTsModule(repoRoot, relativePath, moduleStubs = {}) {
+  return loadTsWithStorage(repoRoot, relativePath, {}, moduleStubs);
+}
+
 module.exports = {
   createMemoryMMKV,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
+  loadTsModule,
   loadTsWithStorage,
 };
