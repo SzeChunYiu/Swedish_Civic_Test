@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -16,6 +17,10 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
 
   assert.match(
     packageJson.scripts['test:release-preflight'],
+    /scripts\/run-release-preflight-tests\.js/,
+  );
+  assert.match(
+    readRepoFile('scripts/run-release-preflight-tests.js'),
     /tests\/release-scope-v11-guard\.test\.js/,
   );
   assert.match(releasePreflightScript, /release-scope-v11/);
@@ -52,4 +57,41 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
     releasePreflightTests,
     /allows v1\.1 surfaces only with explicit operator override evidence/,
   );
+});
+
+test('release preflight npm wrapper forwards test filters before files', () => {
+  const childEnv = { ...process.env };
+  Object.keys(childEnv).forEach((key) => {
+    if (key.startsWith('NODE_TEST')) {
+      delete childEnv[key];
+    }
+  });
+  childEnv.NODE_OPTIONS = [process.env.NODE_OPTIONS, '--v8-pool-size=1'].filter(Boolean).join(' ');
+
+  const result = spawnSync(
+    'npm',
+    [
+      'run',
+      'test:release-preflight',
+      '--',
+      '--test-name-pattern',
+      'text output preserves|classifier-discovered',
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: childEnv,
+    },
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, output);
+  assert.match(output, /release preflight detects classifier-discovered v1\.1 runtime surfaces/);
+  assert.match(
+    output,
+    /release preflight text output preserves v1\.1 scope reasons and custom-root redaction/,
+  );
+  assert.match(output, /tests 2/);
+  assert.doesNotMatch(output, /release preflight fails closed on external launch blockers/);
+  assert.doesNotMatch(output, /tests\/release-scope-v11-guard\.test\.js/);
 });
