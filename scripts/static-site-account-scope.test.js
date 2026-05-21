@@ -15,6 +15,7 @@ function createEbookToolsHarness() {
   const windowListeners = new Map();
   const elementsById = new Map();
   const storageValues = new Map();
+  const querySelectors = [];
   const appended = [];
 
   function makeElement(tagName) {
@@ -121,6 +122,7 @@ function createEbookToolsHarness() {
         return elementsById.get(id) ?? null;
       },
       querySelector(selector) {
+        querySelectors.push(selector);
         return selector.startsWith('mark.eb-hl') ? mark : null;
       },
     },
@@ -161,7 +163,15 @@ function createEbookToolsHarness() {
     filename: 'site/ebook-tools.js',
   });
 
-  return { appended, context, documentListeners, localStorage, notesHost, windowListeners };
+  return {
+    appended,
+    context,
+    documentListeners,
+    localStorage,
+    notesHost,
+    querySelectors,
+    windowListeners,
+  };
 }
 
 test('static site exposes no reachable sign-in, OAuth, or magic-link surface', () => {
@@ -253,4 +263,52 @@ test('ebook highlight and note controls expose localized accessible names', () =
   harness.documentListeners.get('mouseup')({ target: { closest: () => null } });
   assert.equal(highlightButton.getAttribute('aria-label'), 'Highlight');
   assert.equal(noteButton.getAttribute('aria-label'), 'Add note');
+});
+
+test('ebook highlight ids are escaped before note rendering and selector lookup', () => {
+  const harness = createEbookToolsHarness();
+  const unsafeId = 'h1"][autofocus][data-extra="x';
+  const rawSelector = `mark.eb-hl[data-hl-id="${unsafeId}"]`;
+
+  harness.localStorage.setItem(
+    'smt_hl_intro',
+    JSON.stringify([
+      {
+        id: unsafeId,
+        text: '<img src=x onerror=alert(1)>',
+        before: '',
+        after: '',
+        note: '<svg onload=alert(1)>',
+      },
+    ]),
+  );
+
+  harness.windowListeners.get('hashchange')();
+
+  assert.match(harness.notesHost.innerHTML, /data-hl-id="h1&quot;\]\[autofocus\]/);
+  assert.doesNotMatch(harness.notesHost.innerHTML, /data-hl-id="h1"\]\[autofocus\]/);
+  assert.match(harness.notesHost.innerHTML, /&lt;img src=x onerror=alert\(1\)&gt;/);
+  assert.match(harness.notesHost.innerHTML, /&lt;svg onload=alert\(1\)&gt;/);
+
+  const notesListEvent = (act) => ({
+    target: {
+      closest(selector) {
+        if (selector === '.eb-notes-item') return { dataset: { hlId: unsafeId } };
+        if (selector === 'button') return { dataset: { act } };
+        return null;
+      },
+    },
+  });
+
+  harness.documentListeners.get('click')(notesListEvent('goto'));
+  harness.documentListeners.get('click')(notesListEvent('edit'));
+
+  const highlightSelectors = harness.querySelectors.filter((selector) =>
+    selector.startsWith('mark.eb-hl'),
+  );
+  assert.equal(highlightSelectors.includes(rawSelector), false);
+  assert.ok(
+    highlightSelectors.every((selector) => selector.includes('\\"')),
+    `highlight selectors should escape quotes: ${highlightSelectors.join(' | ')}`,
+  );
 });
