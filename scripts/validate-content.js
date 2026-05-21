@@ -2709,6 +2709,11 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
   },
   {
+    label: 'caller style override after state styles',
+    pattern:
+      /style=\{\(\{ pressed \}\) => \[\s*styles\.button,\s*styles\[variant\],\s*pressed && !disabled \? styles\.pressed : null,\s*pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null,\s*pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null,\s*disabled \? styles\.disabled : null,\s*style,\s*\]\}/,
+  },
+  {
     label: 'reduced-motion hook',
     pattern: /const reduceMotion = useReducedMotion\(\);/,
   },
