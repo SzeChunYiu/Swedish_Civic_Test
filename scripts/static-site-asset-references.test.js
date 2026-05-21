@@ -154,6 +154,114 @@ test('asset manifest check rejects local CSS url references omitted by manifest 
   }
 });
 
+test('asset manifest check follows local CSS imports and ignores commented references', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-reference-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+  const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
+  const omittedReferences = new Set(['css/theme.css', 'hero.png', 'theme.png']);
+  const omitImportedReferences = (assetPath) => !omittedReferences.has(assetPath);
+
+  try {
+    fs.mkdirSync(path.join(tempSiteDir, 'css'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      '<!doctype html><link rel="stylesheet" href="css/styles.css">',
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'styles.css'),
+      [
+        '/* @import "../commented-import.css"; */',
+        '/* .old-hero { background-image: url("../commented-hero.png"); } */',
+        '@import url("./theme.css");',
+        '.hero { background-image: url("../hero.png"); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'theme.css'),
+      [
+        '/* .old-theme { background-image: url("../commented-theme.png"); } */',
+        '.theme { background-image: url("../theme.png"); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(path.join(tempSiteDir, 'hero.png'), 'hero');
+    fs.writeFileSync(path.join(tempSiteDir, 'theme.png'), 'theme');
+    fs.writeFileSync(path.join(tempSiteDir, 'commented-hero.png'), 'commented hero');
+    fs.writeFileSync(path.join(tempSiteDir, 'commented-theme.png'), 'commented theme');
+    fs.writeFileSync(path.join(tempSiteDir, 'commented-import.css'), '.old { color: red; }');
+    writeAssetManifest({
+      includeAsset: omitImportedReferences,
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+
+    const result = checkAssetManifest({
+      includeAsset: omitImportedReferences,
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+    const mismatchText = result.mismatches.join('\n');
+
+    assert.equal(result.ok, false);
+    for (const assetPath of omittedReferences) {
+      assert.match(
+        mismatchText,
+        new RegExp(
+          `${assetPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}: referenced by index\\.html but missing from committed manifest`,
+        ),
+      );
+    }
+    assert.doesNotMatch(
+      mismatchText,
+      /commented-import\.css|commented-hero\.png|commented-theme\.png/,
+    );
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
+test('asset manifest check reports escaped CSS imports without reading outside site root', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-escape-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+  const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
+
+  try {
+    fs.mkdirSync(tempSiteDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      '<!doctype html><link rel="stylesheet" href="styles.css">',
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'styles.css'),
+      ['@import "../outside.css";', '.inside { background-image: url("inside.png"); }'].join('\n'),
+    );
+    fs.writeFileSync(path.join(tempSiteDir, 'inside.png'), 'inside');
+    fs.writeFileSync(path.join(tempDir, 'outside.css'), '.leak { background: url("leak.png"); }');
+    fs.writeFileSync(path.join(tempDir, 'leak.png'), 'leak');
+    writeAssetManifest({
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+
+    const result = checkAssetManifest({
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+    const references = listIndexAssetReferences(tempSiteDir);
+    const mismatchText = result.mismatches.join('\n');
+
+    assert.deepEqual(references.includes('../outside.css'), true);
+    assert.deepEqual(references.includes('leak.png'), false);
+    assert.equal(result.ok, false);
+    assert.match(
+      mismatchText,
+      /\.\.\/outside\.css: referenced by index\.html but missing from committed manifest/,
+    );
+    assert.doesNotMatch(mismatchText, /leak\.png/);
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
 test('static site index does not depend on runtime CDN transpilation', () => {
   const indexHtml = readSiteIndex();
 

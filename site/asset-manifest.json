@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 107106,
-      "sha256": "2e561ba461d3b1c0a2df56dbb5092ae00da59bfe5cde1ef3d7c7f402b0ade2dd"
+      "bytes": 109341,
+      "sha256": "bffecaa41973138efb5e31aba673d885787781f1e3e3f64dc0fae3ae422c35eb"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -76,8 +76,8 @@
       "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
     },
     "ebook.js": {
-      "bytes": 514401,
-      "sha256": "26fcda0a69292838df88cbad0062bcbddc83179071a36063ffb08f37b7593041"
+      "bytes": 520921,
+      "sha256": "b160518296bd72d7916832f740a8575a0a7d3324161002d5bcd5437d82fa82fd"
     },
     "extras.js": {
       "bytes": 31378,
@@ -88,28 +88,28 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 337600,
-      "sha256": "960176526ef851cb41c44e84943d6273f71fd6ae0cd389f053eb44f92051a76c"
+      "bytes": 345495,
+      "sha256": "21bfea0fc42a41fa87479a9e5b7150394c09c6222aef35893086f62ef0c8f7fa"
     },
     "icon.png": {
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 71415,
-      "sha256": "7d48c132a1f0cb0e2b9966f82ab222848fa196f5ca066d1e00ab23fa3b4d526d"
+      "bytes": 71205,
+      "sha256": "733a1278e1cf0f1bb9bd058b35eda10e4013b9ad94ae7bbc75e0c8e8892a205f"
     },
     "practice.js": {
-      "bytes": 65476,
-      "sha256": "789d213f62cc3865a19259ab4706d7184dad334f561ac0c7d7c35b0140cd1bbf"
+      "bytes": 68033,
+      "sha256": "7ff596e541c6f3a54c0dd7c1b907c2d4d7eb97aa5db694dd0edfbb33e4d9ba4a"
     },
     "purchase.js": {
       "bytes": 4655,
       "sha256": "85229bcee3978b5dbda9af1facf94de26731d4b4a63fa6ddcb8b68a14ad13fa2"
     },
     "questions.js": {
-      "bytes": 3767964,
-      "sha256": "f661c2746220ea254cafcbae0685dba43b3f55dfe91a9ab5c5cce5463d5a1327"
+      "bytes": 3768102,
+      "sha256": "a58c9d4feda68a4740dced1d56fb591eb48b6e54a5d08e200b14efe430b1a442"
     },
     "settings.js": {
       "bytes": 11985,
@@ -136,8 +136,8 @@
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
-      "bytes": 40595,
-      "sha256": "e2a21bc7b892f7fea8c0f2152e46907a25862647f222a8cc08f5cc9a36bb20dd"
+      "bytes": 41167,
+      "sha256": "1b4e936da660acee54d57af83975e9923d8f74fe86834c791c7178bfb56f3aa0"
     }
   }
 }
