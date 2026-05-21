@@ -756,3 +756,24 @@ test('native ebook study article audio narrates article prose with persisted rat
   assert.match(narrationSource, /article\.sections\.map\(buildEbookSectionNarrationText\)/);
   assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
 });
+
+test('native ebook article navigation uses selected tab semantics', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const articleNavStart = routeSource.indexOf('<ScrollView');
+  const articleNavEnd = routeSource.indexOf('</ScrollView>', articleNavStart);
+
+  assert.ok(articleNavStart >= 0, 'native ebook route should render the article selector');
+  assert.ok(articleNavEnd > articleNavStart, 'native ebook article selector should close');
+
+  const articleNavSource = routeSource.slice(articleNavStart, articleNavEnd);
+
+  assert.match(routeSource, /articleNavGroupAccessibilityLabel: 'Välj studieartikel'/);
+  assert.match(routeSource, /articleNavGroupAccessibilityLabel: 'Choose study article'/);
+  assert.match(articleNavSource, /aria-label=\{copy\.articleNavGroupAccessibilityLabel\}/);
+  assert.match(articleNavSource, /accessibilityLabel=\{copy\.articleNavGroupAccessibilityLabel\}/);
+  assert.match(articleNavSource, /accessibilityRole="tablist"/);
+  assert.match(articleNavSource, /accessibilityRole="tab"/);
+  assert.match(articleNavSource, /aria-selected=\{selected\}/);
+  assert.match(articleNavSource, /accessibilityState=\{\{\s*selected\s*\}\}/);
+  assert.doesNotMatch(articleNavSource, /accessibilityRole="button"/);
+});
