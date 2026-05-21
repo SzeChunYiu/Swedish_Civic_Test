@@ -3284,6 +3284,15 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
     pattern: /if \(!active\) return null;/,
   },
   {
+    label: 'shared reduced-motion hook',
+    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
+  },
+  {
+    label: 'reduced-motion branch hidden from accessibility tree',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
     label: 'decorative animation hidden from accessibility tree',
     pattern: /accessibilityElementsHidden/,
   },
@@ -3717,6 +3726,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
   { name: 'activeQuestionId', type: 'string | null', optional: false },
+  { name: 'answeredQuestionIds', type: 'string[]', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
@@ -14880,6 +14890,7 @@ function validatePracticeSessionStoreParity() {
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
+      answeredQuestionIds: [],
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });
@@ -14891,6 +14902,9 @@ function validatePracticeSessionStoreParity() {
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session selectOption must keep the current shuffle session seed');
+    }
+    if (!Array.isArray(state.answeredQuestionIds) || state.answeredQuestionIds.length !== 0) {
+      rejectRuntime('practice session selectOption must not mark a question answered');
     }
     const firstFeedbackKey = getPracticeInterstitialShowKey(
       state.activeQuestionId,
@@ -14924,6 +14938,9 @@ function validatePracticeSessionStoreParity() {
     if (state.shuffleSessionId !== 'practice-session-1') {
       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
     }
+    if (!arrayEquals(state.answeredQuestionIds, ['q-validator'])) {
+      rejectRuntime('practice session advanceQuestion must record the answered question id once');
+    }
     if (
       firstFeedbackKey === getPracticeInterstitialShowKey('q-validator', state.shuffleSessionId)
     ) {
@@ -14932,6 +14949,7 @@ function validatePracticeSessionStoreParity() {
 
     usePracticeSessionStore.setState({
       activeQuestionId: null,
+      answeredQuestionIds: [],
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });
