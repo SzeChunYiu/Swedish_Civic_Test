@@ -928,6 +928,39 @@
     renderMockResult();
   }
 
+  function mockSubmitConfirmMessage(unanswered) {
+    if (unanswered) {
+      return tr({
+        sv: `Du har ${unanswered} obesvarade frågor. Lämna in ändå?`,
+        en: `${unanswered} questions are still unanswered. Submit anyway?`,
+        'zh-Hans': `还有 ${unanswered} 道题未作答。仍要交卷吗？`,
+        'zh-Hant': `還有 ${unanswered} 題未作答。仍要交卷嗎？`,
+        ar: `لا تزال هناك ${unanswered} أسئلة بلا إجابة. هل تريد الإرسال رغم ذلك؟`,
+        ckb: `${unanswered} پرسیار هێشتا وەڵام نەدراونەتەوە. هەر بنێردرێت؟`,
+        fa: `${unanswered} سؤال هنوز بی‌پاسخ مانده است. با این حال ثبت شود؟`,
+        pl: `${unanswered} pytań nadal jest bez odpowiedzi. Oddać mimo to?`,
+        so: `${unanswered} su'aalood wali lama jawaabin. Ma gudbinaysaa haddana?`,
+        ti: `${unanswered} ሕቶታት ገና ኣይተመለሱን። ከምኡ እናሃለወ ይቐርብ?`,
+        tr: `${unanswered} soru hâlâ yanıtlanmadı. Yine de gönderilsin mi?`,
+        uk: `${unanswered} питань ще без відповіді. Усе одно здати?`,
+      });
+    }
+    return tr({
+      sv: 'Lämna in?',
+      en: 'Submit?',
+      'zh-Hans': '确认交卷？',
+      'zh-Hant': '確認交卷？',
+      ar: 'إرسال؟',
+      ckb: 'بنێردرێت؟',
+      fa: 'ثبت شود؟',
+      pl: 'Oddać?',
+      so: 'Ma gudbinaysaa?',
+      ti: 'ይቐርብ?',
+      tr: 'Gönderilsin mi?',
+      uk: 'Здати?',
+    });
+  }
+
   function renderMockResult() {
     const stage = document.getElementById('mock-stage');
     if (!stage) return;
@@ -1138,25 +1171,7 @@
     }
     if (e.target.closest('#mock-submit')) {
       const unanswered = MOCK.answers.filter((a) => a === null).length;
-      const sv = lang() === 'sv';
-      const msg = unanswered
-        ? sv
-          ? `Du har ${unanswered} obesvarade frågor. Lämna in ändå?`
-          : `You have ${unanswered} unanswered questions. Submit anyway?`
-        : tr({
-            sv: 'Lämna in?',
-            en: 'Submit?',
-            'zh-Hans': '确认交卷？',
-            'zh-Hant': '確認交卷？',
-            ar: 'إرسال؟',
-            ckb: 'بنێردرێت؟',
-            fa: 'ثبت شود؟',
-            pl: 'Oddać?',
-            so: 'Ma gudbinaysaa?',
-            ti: 'ይቐርብ?',
-            tr: 'Gönderilsin mi?',
-            uk: 'Здати?',
-          });
+      const msg = mockSubmitConfirmMessage(unanswered);
       if (confirm(msg)) submitMock();
       return;
     }
