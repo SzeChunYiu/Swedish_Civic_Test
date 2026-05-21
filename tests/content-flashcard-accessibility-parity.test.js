@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-learn-flashcard-source'],
+    ['scripts/validate-content.js', '--focus-flashcard-accessibility'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -91,7 +91,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-flashcard-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -122,7 +122,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-flashcard-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],

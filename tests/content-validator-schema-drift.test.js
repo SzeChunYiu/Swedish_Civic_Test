@@ -19,8 +19,12 @@ function runValidateContent() {
 test('content validator schema expectations track current persisted release contracts', () => {
   const { status, output } = runValidateContent();
 
-  assert.notEqual(status, 0, 'current release/copy gates should still keep validate:content red');
-  assert.match(output, /launch popup suppressed routes are/);
+  assert.equal(status, 0, output);
+  assert.match(output, /Content validation OK/);
+  assert.doesNotMatch(output, /Content validation failed/);
+  assert.match(output, /"launchAdRouteSuppressionParityValidated": true/);
+  assert.match(output, /"progressStoreSchemaParityValidated": true/);
+  assert.match(output, /"practiceSessionStoreSchemaParityValidated": true/);
 
   const staleSchemaDriftMessages = [
     /types\/content\.ts Chapter\.nameText type is LocalizedContentTextOverrides, expected LocalizedContentText/,

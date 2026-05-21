@@ -44,6 +44,15 @@ function withQ020AdvisoryFixture(question) {
   };
 }
 
+function generatedQuestionId(sourceQuestions, sourceQuestionId, variantOffset) {
+  const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceQuestionId);
+  assert.notEqual(sourceIndex, -1, `expected source question ${sourceQuestionId}`);
+  return `q${String(sourceQuestions.length + 1 + sourceIndex * 4 + variantOffset).padStart(
+    3,
+    '0',
+  )}`;
+}
+
 test('static site question bank is semantically generated from canonical content', () => {
   const expectedBank = buildSiteQuestionBank();
   const generated = generateStaticSiteQuestionBankJs();
@@ -64,6 +73,10 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_QUESTIONS.length, bank.questions.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(context.window.SMT_QUESTION_BANK_META)),
+    bank.metadata,
+  );
 });
 
 test('static site question bank preserves canonical question provenance', () => {
@@ -118,13 +131,18 @@ test('static site question bank source fixture limits one-question localization 
   });
 
   const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
+  const localizedQ001OptionOverlayIds = [
+    generatedQuestionId(canonical.sourceQuestions, 'q001', 0),
+    generatedQuestionId(canonical.sourceQuestions, 'q001', 1),
+  ];
 
   assert.equal(drift.hasSemanticDrift, true);
   assert.equal(drift.questionIds[0], 'q020');
-  assert.equal(drift.questionIds.length, 5);
+  assert.equal(drift.questionIds.length, 7);
+  assert.deepEqual(drift.questionIds.slice(1, 3), localizedQ001OptionOverlayIds);
   assert.ok(
-    drift.questionIds.slice(1).every((questionId) => /^q\d{3}$/.test(questionId)),
-    `expected only generated q020 variants to drift, got ${drift.questionIds.join(', ')}`,
+    drift.questionIds.slice(3).every((questionId) => /^q\d{3}$/.test(questionId)),
+    `expected only localized q001 option overlays plus generated q020 variants to drift, got ${drift.questionIds.join(', ')}`,
   );
   assert.deepEqual(drift.chapterIds, []);
 });
