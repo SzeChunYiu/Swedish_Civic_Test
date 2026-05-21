@@ -287,6 +287,50 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
 });
 
+test('warningScope keeps studyData defaults and accessibilityPreferences settings copy', () => {
+  const componentSource = fs.readFileSync(
+    path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
+    'utf8',
+  );
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+
+  function noticeBlock(source, warningName) {
+    const blocks = source.match(/<PersistenceWarningNotice\b[\s\S]*?\/>/g) || [];
+    return blocks.find((block) => block.includes(`warning={${warningName}}`)) || '';
+  }
+
+  const settingsStudyDataBlock = noticeBlock(settingsSource, 'persistenceWarning');
+  const settingsAccessibilityBlock = noticeBlock(settingsSource, 'accessibilityPersistenceWarning');
+  const practiceProgressBlock = noticeBlock(practiceSource, 'progressPersistenceWarning');
+  const practiceMistakeReviewBlock = noticeBlock(practiceSource, 'mistakeReviewPersistenceWarning');
+  const mistakesProgressBlock = noticeBlock(mistakesSource, 'progressPersistenceWarning');
+  const mistakesReviewBlock = noticeBlock(mistakesSource, 'mistakeReviewPersistenceWarning');
+
+  assert.match(
+    componentSource.replace(/\s+/g, ' '),
+    /defaultPersistenceWarningNoticeScope: PersistenceWarningNoticeScope = 'studyData'/,
+  );
+  assert.match(
+    componentSource.replace(/\s+/g, ' '),
+    /getPersistenceWarningNoticeCopy\(language, warning\.operation, warningScope\)/,
+  );
+  assert.ok(settingsStudyDataBlock);
+  assert.doesNotMatch(settingsStudyDataBlock, /warningScope=/);
+  assert.match(settingsAccessibilityBlock, /warningScope="accessibilityPreferences"/);
+
+  for (const block of [
+    practiceProgressBlock,
+    practiceMistakeReviewBlock,
+    mistakesProgressBlock,
+    mistakesReviewBlock,
+  ]) {
+    assert.ok(block);
+    assert.doesNotMatch(block, /warningScope=/);
+  }
+});
+
 test('PersistenceWarningNotice copy selector returns scoped read and write copy', () => {
   const { getPersistenceWarningNoticeCopy } = loadPersistenceWarningNoticeModule();
 

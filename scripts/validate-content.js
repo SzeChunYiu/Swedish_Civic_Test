@@ -2,45 +2,12 @@
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const {
+  focusedValidationRequested,
+  rejectUnsupportedFocusedValidationFlags,
+} = require('./validate-content-focus-registry');
 
-function focusedValidationFlagsFromRegistrySource() {
-  const source = fs.readFileSync(__filename, 'utf8');
-  const declaration = '\nconst FOCUSED_VALIDATION_REGISTRY = Object.freeze(';
-  const registryStart = source.indexOf(declaration);
-  const registryEnd = source.indexOf(
-    '\n]);\n\nconst FOCUSED_VALIDATION_REGISTRY_BY_ID',
-    registryStart,
-  );
-  if (registryStart === -1 || registryEnd === -1) return new Set();
-
-  const registrySource = source.slice(registryStart, registryEnd);
-  const flags = new Set();
-  for (const match of registrySource.matchAll(/flags:\s*\[([^\]]+)\]/g)) {
-    for (const flagMatch of match[1].matchAll(/'(--focus-[^']+)'/g)) {
-      flags.add(flagMatch[1]);
-    }
-  }
-  return flags;
-}
-
-function rejectUnsupportedFocusedValidationFlagsFromRegistrySource() {
-  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
-  if (requestedFlags.length === 0) return;
-
-  const supportedFlags = focusedValidationFlagsFromRegistrySource();
-  const unsupportedFlags = requestedFlags.filter((flag) => !supportedFlags.has(flag));
-  if (unsupportedFlags.length === 0) return;
-
-  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
-  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
-  console.error('Supported focus modes:');
-  Array.from(supportedFlags)
-    .sort()
-    .forEach((flag) => console.error(`- ${flag}`));
-  process.exit(1);
-}
-
-rejectUnsupportedFocusedValidationFlagsFromRegistrySource();
+rejectUnsupportedFocusedValidationFlags();
 
 const ts = require('typescript');
 const vm = require('node:vm');
@@ -74,481 +41,6 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
-const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
-  {
-    id: 'authoredSourceParity',
-    flags: ['--focus-authored-source-parity'],
-    summaryKeys: [
-      'authoredSourceQuestionsValidated',
-      'authoredSourcePartitionQuestionsValidated',
-      'sourcePublicationParityValidated',
-      'sourceQuestions',
-    ],
-  },
-  {
-    id: 'staticV11ReadinessCopy',
-    flags: ['--focus-static-v11-readiness-copy'],
-    summaryKeys: [
-      'staticV11ReadinessUnsupportedPatternsValidated',
-      'staticV11ReadinessRequiredCopyValidated',
-      'staticV11ReadinessCopyParityValidated',
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'rewardedExamSchema',
-    flags: ['--focus-rewarded-exam-schema'],
-    summaryKeys: [
-      'rewardedAdTypeUnionsValidated',
-      'rewardedAdTypeInterfacesValidated',
-      'rewardedAdTypeSchemaParityValidated',
-      'mockExamAccessTypeUnionsValidated',
-      'mockExamAccessTypeInterfacesValidated',
-      'mockExamAccessTypeSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'nativeQuizCopy',
-    flags: ['--focus-native-quiz-copy'],
-    summaryKeys: [
-      'quizRouteHeadersValidated',
-      'quizRouteHeaderParityValidated',
-      'quizRouteCopyLabelsValidated',
-      'quizRouteCopyParityValidated',
-      'chapterRouteHeadersValidated',
-      'chapterRouteHeaderParityValidated',
-      'chapterRouteCopyLabelsValidated',
-      'chapterRouteCopyParityValidated',
-    ],
-  },
-  {
-    id: 'legalRouteParity',
-    flags: ['--focus-legal-route-parity'],
-    summaryKeys: [
-      'legalRouteHeadersValidated',
-      'legalRouteHeaderParityValidated',
-      'swedishPrivacyStreakCopyNaturalnessValidated',
-      'legalSwedishEnglishTokenGuardValidated',
-      'legalSwedishEnglishTokenGuardParityValidated',
-    ],
-  },
-  {
-    id: 'legalSectionRendering',
-    flags: ['--focus-legal-section-rendering'],
-    summaryKeys: [
-      'legalSectionRenderingTestsRoutedValidated',
-      'legalSectionRenderingCasesValidated',
-      'legalSectionRenderingParityValidated',
-    ],
-  },
-  {
-    id: 'settingsRouteCopy',
-    flags: ['--focus-settings-route-copy'],
-    summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
-  },
-  {
-    id: 'staticHeadMetadata',
-    flags: ['--focus-static-head-metadata'],
-    summaryKeys: [
-      'staticHeadMetadataTitleValidated',
-      'staticHeadMetadataDescriptionValidated',
-      'staticHeadMetadataOutcomeClaimPatternsValidated',
-      'staticHeadMetadataParityValidated',
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'staticEbookProvenance',
-    flags: ['--focus-static-ebook-provenance'],
-    summaryKeys: [
-      'staticEbookExternalSourceUrlsValidated',
-      'staticEbookExternalSourceLinkRulesValidated',
-      'staticEbookExternalSourceLinkSafetyValidated',
-    ],
-  },
-  {
-    id: 'settingsStore',
-    flags: ['--focus-settings-store', '--focus-settings-parity'],
-    summaryKeys: [
-      'settingsRouteHeadersValidated',
-      'settingsRouteHeaderParityValidated',
-      'settingsRouteCopyLabelsValidated',
-      'settingsRouteCopyParityValidated',
-      'settingsRouteScrollRulesValidated',
-      'settingsRouteScrollParityValidated',
-      'settingsStoreFieldsValidated',
-      'settingsStoreSchemaParityValidated',
-      'settingsDailyGoalOptionsValidated',
-      'settingsDailyGoalParityValidated',
-      'settingsAudioLabelsValidated',
-      'settingsAudioParityValidated',
-    ],
-  },
-  {
-    id: 'homeRouteCopy',
-    flags: ['--focus-home-route-copy'],
-    summaryKeys: [
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-      'homeRouteHeadersValidated',
-      'homeRouteHeaderParityValidated',
-      'homeRouteCopyLabelsValidated',
-      'homeRouteCopyParityValidated',
-      'homeRouteInternalBenchmarkCopyValidated',
-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
-      'countdownBannerHomeMountRulesValidated',
-      'countdownBannerHomeMountParityValidated',
-    ],
-  },
-  {
-    id: 'answerOptionAccessibility',
-    flags: ['--focus-answer-option-accessibility'],
-    summaryKeys: [
-      'answerOptionAccessibilityRulesValidated',
-      'answerOptionAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'audioButtonAccessibility',
-    flags: ['--focus-audio-button-accessibility'],
-    summaryKeys: [
-      'audioButtonAccessibilityRulesValidated',
-      'audioButtonAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'homeSvMistakeReviewCopy',
-    flags: ['--focus-home-sv-mistake-review-copy'],
-    summaryKeys: [
-      'staticValidationSyntaxFilesValidated',
-      'staticValidationImportChecksValidated',
-      'staticValidationSyntaxGateValidated',
-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
-    ],
-  },
-  {
-    id: 'progressSchemaParity',
-    flags: ['--focus-progress-schema-parity'],
-    summaryKeys: [
-      'progressQuestionFieldsValidated',
-      'progressQuestionSchemaParityValidated',
-      'progressTypeUnionsValidated',
-      'progressTypeInterfacesValidated',
-      'progressTypeSchemaParityValidated',
-      'progressStoreFieldsValidated',
-      'progressStoreSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'xpRules',
-    flags: ['--focus-xp-rules'],
-    summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],
-  },
-  {
-    id: 'badgeXpRuntime',
-    flags: ['--focus-badge-xp-runtime'],
-    summaryKeys: [
-      'badgesValidated',
-      'badgeMilestoneParityValidated',
-      'badgeRuntimeInputCasesValidated',
-      'badgeRuntimeInputParityValidated',
-      'xpRulesValidated',
-      'xpRulesParityValidated',
-    ],
-  },
-  {
-    id: 'streakRules',
-    flags: ['--focus-streak-rules'],
-    summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
-  },
-  {
-    id: 'weeklyRecapRuntime',
-    flags: ['--focus-weekly-recap-runtime'],
-    summaryKeys: ['weeklyRecapRuntimeCasesValidated', 'weeklyRecapRuntimeParityValidated'],
-  },
-  {
-    id: 'readinessAdapterRules',
-    flags: ['--focus-readiness-adapter-rules'],
-    summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
-  },
-  {
-    id: 'questionReportLinkParity',
-    flags: ['--focus-question-report-link-parity'],
-    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
-  },
-  {
-    id: 'answerFeedbackParity',
-    flags: ['--focus-answer-feedback-parity'],
-    summaryKeys: [
-      'publishedQuestions',
-      'answerValidationTypeUnionsValidated',
-      'answerValidationTypeInterfacesValidated',
-      'answerValidationTypeSchemaParityValidated',
-      'answerFeedbackQuestionsValidated',
-      'answerFeedbackOptionsValidated',
-      'answerFeedbackRuntimeParityValidated',
-    ],
-  },
-  {
-    id: 'aboutTheTestRouteCopy',
-    flags: ['--focus-about-the-test-route-copy'],
-    summaryKeys: [
-      'aboutTheTestRouteCopyLabelsValidated',
-      'aboutTheTestRouteCopyParityValidated',
-      'aboutTheTestOfficialSourceUrlsValidated',
-      'aboutTheTestOfficialSourceRetrievedDateValidated',
-      'aboutTheTestSeenEffectRulesValidated',
-      'aboutTheTestSeenEffectParityValidated',
-      'citizenshipRequirementsLimitedSeatCopyValidated',
-    ],
-  },
-  {
-    id: 'onboardingRouteCopy',
-    flags: ['--focus-onboarding-route-copy'],
-    summaryKeys: [
-      'onboardingRouteHeadersValidated',
-      'onboardingRouteHeaderParityValidated',
-      'onboardingRouteCopyLabelsValidated',
-      'onboardingRouteCopyParityValidated',
-      'firstRunAboutModalSuppressedRoutesValidated',
-      'firstRunAboutModalSuppressionParityValidated',
-    ],
-  },
-  {
-    id: 'mockExamRuntimeParity',
-    flags: ['--focus-mock-exam-runtime-parity'],
-    summaryKeys: [
-      'mockExamConfigTypeFieldsValidated',
-      'mockExamConfigTypeSchemaParityValidated',
-      'mockExamConfigExactSchemaKeysValidated',
-      'mockExamConfigValidated',
-      'mockExamRuntimeParityValidated',
-      'mockExamChapterBalanceParityValidated',
-      'mockExamTimerParityValidated',
-      'examRouteHeadersValidated',
-      'examRouteHeaderParityValidated',
-      'examRouteCopyLabelsValidated',
-      'examRouteCopyParityValidated',
-    ],
-  },
-  {
-    id: 'searchRouteQueryHydration',
-    flags: ['--focus-search-route-query-hydration'],
-    summaryKeys: [
-      'searchRouteQueryHydrationRulesValidated',
-      'searchRouteQueryHydrationParityValidated',
-    ],
-  },
-  {
-    id: 'answerShuffleParity',
-    flags: ['--focus-answer-shuffle-parity'],
-    summaryKeys: [
-      'answerShuffleSingleChoiceQuestionsValidated',
-      'answerShuffleTrueFalseQuestionsValidated',
-      'answerShuffleSeedDistributionsValidated',
-      'answerShuffleSessionMovementQuestionsValidated',
-      'answerShuffleDistributionParityValidated',
-      'publishedQuestions',
-    ],
-  },
-  {
-    id: 'adPlacementRouteParity',
-    flags: ['--focus-ad-placement-route-parity'],
-    summaryKeys: [
-      'adPlacementRoutesValidated',
-      'noAdRoutesValidated',
-      'adPlacementRouteParityValidated',
-    ],
-  },
-  {
-    id: 'examSubmissionFinalityParity',
-    flags: ['--focus-exam-submission-finality-parity'],
-    summaryKeys: ['examSubmissionFinalityParityValidated'],
-  },
-  {
-    id: 'mockExamCopyParity',
-    flags: ['--focus-mock-exam-copy-parity'],
-    summaryKeys: [
-      'nativeMockExamComponentCopyLabelsValidated',
-      'nativeMockExamComponentLegalCopyValidated',
-      'nativeMockExamLibraryLabelsValidated',
-      'nativeMockExamScoreSourceCopyValidated',
-      'nativeMockExamSwedishCopyNaturalnessValidated',
-      'nativeMockExamTierCopyValidated',
-    ],
-  },
-  {
-    id: 'profileRouteCopy',
-    flags: ['--focus-profile-route-copy'],
-    summaryKeys: [
-      'profileRouteHeadersValidated',
-      'profileRouteHeaderParityValidated',
-      'profileRouteCopyLabelsValidated',
-      'profileRouteCopyParityValidated',
-      'badgesValidated',
-      'badgeMilestoneParityValidated',
-    ],
-  },
-  {
-    id: 'uhrReferenceCardAccessibility',
-    flags: ['--focus-uhr-reference-card-accessibility'],
-    summaryKeys: [
-      'uhrReferenceCardAccessibilityRulesValidated',
-      'uhrReferenceCardAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'celebrationBurstAccessibility',
-    flags: ['--focus-celebration-burst-accessibility'],
-    summaryKeys: [
-      'celebrationBurstAccessibilityRulesValidated',
-      'celebrationBurstAccessibilityParityValidated',
-    ],
-  },
-  {
-    id: 'questionSpeechTextParity',
-    flags: ['--focus-question-speech-text-parity'],
-    summaryKeys: [
-      'publishedQuestions',
-      'questionSpeechTextQuestionsValidated',
-      'questionSpeechTextOptionsValidated',
-      'questionSpeechTextParityValidated',
-    ],
-  },
-  {
-    id: 'speechRuntimeParity',
-    flags: ['--focus-speech-runtime-parity'],
-    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
-  },
-  {
-    id: 'uhrSourceMetadata',
-    flags: ['--focus-uhr-source-metadata'],
-    summaryKeys: [
-      'uhrSourceMetadataValidated',
-      'uhrSourceRetrievedDateValidated',
-      'uhrMapSourceExactSchemaKeysValidated',
-      'uhrMapTextFieldsNormalizedValidated',
-    ],
-  },
-  {
-    id: 'questionBankCsv',
-    flags: ['--focus-question-bank-csv'],
-    summaryKeys: [
-      'questions',
-      'publishedQuestions',
-      'questionBankCsvHeaderColumnsValidated',
-      'questionBankCsvUniqueHeaderNamesValidated',
-      'questionBankCsvRowsValidated',
-      'questionBankCsvProvenanceCounts',
-      'questionBankCsvUhrSourcePublisherRowsValidated',
-      'questionBankCsvUhrSourcePublisherParityValidated',
-    ],
-  },
-  {
-    id: 'examGeneratorSchema',
-    flags: ['--focus-exam-generator-schema'],
-    summaryKeys: [
-      'examGeneratorTypeAliasesValidated',
-      'examGeneratorTypeInterfacesValidated',
-      'examGeneratorTypeSchemaParityValidated',
-    ],
-  },
-  {
-    id: 'removeAdsHookParity',
-    flags: ['--focus-remove-ads-hook-parity'],
-    summaryKeys: [
-      'removeAdsEntitlementHookCasesValidated',
-      'removeAdsEntitlementHookParityValidated',
-    ],
-  },
-  {
-    id: 'removeAdsPurchaseRuntimeParity',
-    flags: ['--focus-remove-ads-purchase-runtime-parity'],
-    summaryKeys: [
-      'purchaseTypeUnionsValidated',
-      'purchaseTypeInterfacesValidated',
-      'purchaseTypeSchemaParityValidated',
-      'removeAdsPurchaseRuntimeCasesValidated',
-      'removeAdsPurchaseRuntimeParityValidated',
-    ],
-  },
-  {
-    id: 'umeaDemonym',
-    flags: ['--focus-umea-demonym'],
-    summaryKeys: ['questionUmeaDemonymSwedishNaturalnessValidated'],
-  },
-  {
-    id: 'chapterLocalizedText',
-    flags: ['--focus-chapter-localized-text'],
-    summaryKeys: [
-      'chapters',
-      'chapterSchemasValidated',
-      'chapterTextFieldsNormalizedValidated',
-      'chapterExactSchemaKeysValidated',
-      'chapterLocalizedTextMapsValidated',
-    ],
-  },
-  {
-    id: 'practiceRouteCopyParity',
-    flags: ['--focus-practice-route-copy-parity'],
-    summaryKeys: [
-      'practiceRouteCopyLabelsValidated',
-      'practiceRouteCopyParityValidated',
-      'provenanceAuthorityCopyFilesValidated',
-      'provenanceAuthorityCopyParityValidated',
-    ],
-  },
-  {
-    id: 'practiceFlowParity',
-    flags: ['--focus-practice-flow-parity'],
-    summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
-  },
-  {
-    id: 'contentExecCwd',
-    flags: ['--focus-content-exec-cwd'],
-    summaryKeys: [
-      'contentTestValidateContentExecCallsValidated',
-      'contentTestValidateContentExecCwdPinnedValidated',
-      'contentTestValidateContentExecCwdParityValidated',
-    ],
-  },
-]);
-
-const FOCUSED_VALIDATION_REGISTRY_BY_ID = new Map(
-  FOCUSED_VALIDATION_REGISTRY.map((entry) => [entry.id, entry]),
-);
-const SUPPORTED_FOCUSED_VALIDATION_FLAGS = new Set(
-  FOCUSED_VALIDATION_REGISTRY.flatMap((entry) => entry.flags),
-);
-
-function rejectUnsupportedFocusedValidationFlags() {
-  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
-  const unsupportedFlags = requestedFlags.filter(
-    (flag) => !SUPPORTED_FOCUSED_VALIDATION_FLAGS.has(flag),
-  );
-  if (unsupportedFlags.length === 0) return;
-
-  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
-  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
-  console.error('Supported focus modes:');
-  Array.from(SUPPORTED_FOCUSED_VALIDATION_FLAGS)
-    .sort()
-    .forEach((flag) => console.error(`- ${flag}`));
-  process.exit(1);
-}
-
-function focusedValidationRequested(id) {
-  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
-  if (!entry) throw new Error(`Unknown focused validation registry id: ${id}`);
-  return entry.flags.some((flag) => process.argv.includes(flag));
-}
-
-rejectUnsupportedFocusedValidationFlags();
 const moduleCache = new Map();
 const speechEvents = [];
 const speechMock = {
@@ -1296,6 +788,7 @@ const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
+const EXPECTED_ADAPTIVE_PRACTICE_DIFFICULTY_RUNTIME_CASES = 3;
 const EXPECTED_WEEKLY_RECAP_RUNTIME_CASES = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
@@ -8839,6 +8332,9 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
 const perChapterProgress = dashboardStatsModule.perChapterProgress;
+const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
+const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
+const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
 const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
@@ -8984,9 +8480,6 @@ let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
 let legalInternalMonetizationKeyGuardValidated = 0;
 let legalInternalMonetizationKeyGuardParityValidated = false;
-let legalSectionRenderingTestsRoutedValidated = false;
-let legalSectionRenderingCasesValidated = 0;
-let legalSectionRenderingParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticSiteSwedishGrammarToneValidated = 0;
@@ -9073,6 +8566,8 @@ let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
 let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
+let persistenceWarningScopeCasesValidated = 0;
+let persistenceWarningScopeParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
@@ -9156,6 +8651,8 @@ let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
+let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
+let adaptivePracticeDifficultyRuntimeParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
 let streakRulesValidated = 0;
@@ -9514,17 +9011,6 @@ if (focusedValidationRequested('legalRouteParity')) {
   process.exit(0);
 }
 
-if (focusedValidationRequested('legalSectionRendering')) {
-  validateLegalSectionRenderingParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    legalSectionRenderingTestsRoutedValidated,
-    legalSectionRenderingCasesValidated,
-    legalSectionRenderingParityValidated,
-  });
-  process.exit(0);
-}
-
 if (focusedValidationRequested('settingsRouteCopy')) {
   validateSettingsRouteCopyParity();
   exitWithValidationFailures();
@@ -9572,6 +9058,16 @@ if (focusedValidationRequested('settingsStore')) {
     settingsDailyGoalParityValidated,
     settingsAudioLabelsValidated,
     settingsAudioParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('persistenceWarningScope')) {
+  validatePersistenceWarningScopeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    persistenceWarningScopeCasesValidated,
+    persistenceWarningScopeParityValidated,
   });
   process.exit(0);
 }
@@ -9669,6 +9165,16 @@ if (focusedValidationRequested('readinessAdapterRules')) {
   printValidationSummary({
     readinessAdapterRulesValidated,
     readinessAdapterRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('adaptivePracticeDifficulty')) {
+  validateAdaptivePracticeDifficultyRuntimeGuard();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeDifficultyRuntimeCasesValidated,
+    adaptivePracticeDifficultyRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -13084,132 +12590,6 @@ function validateLegalInternalMonetizationKeyGuard() {
   if (valid) legalInternalMonetizationKeyGuardParityValidated = true;
 }
 
-function validateLegalSectionRenderingParity() {
-  let valid = true;
-  const legalSectionTestPath = 'tests/content-legal-section-rendering.test.js';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  const contentScript = packageMetadata.scripts?.['test:content'];
-  const routedTestOccurrences =
-    typeof contentScript === 'string'
-      ? (contentScript.match(new RegExp(escapeRegExp(legalSectionTestPath), 'g')) ?? []).length
-      : 0;
-
-  if (routedTestOccurrences === 1) {
-    legalSectionRenderingTestsRoutedValidated = true;
-  } else {
-    reject(`test:content must include ${legalSectionTestPath} exactly once`);
-  }
-
-  const legalPageSource = loadText('components/compliance/LegalPage.tsx');
-  const legalSectionTestSource = loadText(legalSectionTestPath);
-  const routingTestSource = loadText('tests/content-test-script-routing.test.js');
-  const expectedCases = [
-    {
-      label: 'LegalSection export',
-      pattern: /export function LegalSection\(\{ title, body, children \}: LegalSectionProps\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'LegalSection child renderer',
-      pattern: /renderSectionChildren\(children\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'normalizer export',
-      pattern:
-        /export function normalizeLegalSectionChildren\(children: ReactNode\): ReactNode\[\]/,
-      source: legalPageSource,
-    },
-    {
-      label: 'recursive child normalizer',
-      pattern:
-        /function appendLegalSectionChild\(child: ReactNode, normalizedChildren: ReactNode\[\]\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'whitespace-only child filter',
-      pattern: /child\.trim\(\)\.length > 0/,
-      source: legalPageSource,
-    },
-    {
-      label: 'fragment flattening',
-      pattern: /child\.type === Fragment/,
-      source: legalPageSource,
-    },
-    {
-      label: 'text child grouping',
-      pattern: /isTextOnly\(child\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'text children render under Text',
-      pattern: /<Text key=\{`legal-section-text-\$\{renderedChildren\.length\}`\}/,
-      source: legalPageSource,
-    },
-    {
-      label: 'runtime test loads LegalPage module',
-      pattern: /function loadLegalPageModule\(\)/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'runtime test collects raw text nodes',
-      pattern: /type: 'raw-text'/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'whitespace runtime case',
-      pattern: /LegalSection ignores formatted whitespace-only children around links/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'fragment runtime case',
-      pattern: /LegalSection preserves nested fragment text, numbers, and link order/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'normalizer assertion',
-      pattern: /normalizeLegalSectionChildren\(children\)/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'raw whitespace rejection assertion',
-      pattern: /node\.type === 'raw-text' && node\.text\.trim\(\)\.length === 0/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'focused validator routing test flag',
-      pattern: /--focus-legal-section-rendering/,
-      source: routingTestSource,
-    },
-    {
-      label: 'test:content routing assertion',
-      pattern: /content-legal-section-rendering/,
-      source: routingTestSource,
-    },
-  ];
-
-  for (const { label, pattern, source } of expectedCases) {
-    if (pattern.test(source)) {
-      legalSectionRenderingCasesValidated += 1;
-    } else {
-      reject(`legal section rendering guard is missing ${label}`);
-    }
-  }
-
-  if (
-    valid &&
-    legalSectionRenderingTestsRoutedValidated &&
-    legalSectionRenderingCasesValidated === expectedCases.length
-  ) {
-    legalSectionRenderingParityValidated = true;
-  }
-}
-
 function validateSettingsRouteHeaderParity() {
   let valid = true;
   let settingsRoute = '';
@@ -15090,6 +14470,229 @@ function validateSettingsAudioParity() {
   if (valid && settingsAudioLabelsValidated === EXPECTED_AUDIO_LABELS.length) {
     settingsAudioParityValidated = true;
   }
+}
+
+function objectPropertyNameText(nameNode) {
+  if (ts.isIdentifier(nameNode) || ts.isStringLiteral(nameNode) || ts.isNumericLiteral(nameNode)) {
+    return nameNode.text;
+  }
+  return null;
+}
+
+function findObjectLiteralVariableInitializer(sourceFile, variableName) {
+  let initializer = null;
+
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === variableName &&
+      node.initializer &&
+      ts.isObjectLiteralExpression(node.initializer)
+    ) {
+      initializer = node.initializer;
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return initializer;
+}
+
+function objectLiteralProperty(objectNode, propertyName) {
+  if (!objectNode || !ts.isObjectLiteralExpression(objectNode)) return null;
+  const property = objectNode.properties.find(
+    (candidate) =>
+      ts.isPropertyAssignment(candidate) && objectPropertyNameText(candidate.name) === propertyName,
+  );
+  if (!property || !ts.isObjectLiteralExpression(property.initializer)) return null;
+  return property.initializer;
+}
+
+function stringLiteralPropertyValue(objectNode, propertyName) {
+  if (!objectNode || !ts.isObjectLiteralExpression(objectNode)) return null;
+  const property = objectNode.properties.find(
+    (candidate) =>
+      ts.isPropertyAssignment(candidate) && objectPropertyNameText(candidate.name) === propertyName,
+  );
+  if (!property) return null;
+  if (
+    ts.isStringLiteral(property.initializer) ||
+    ts.isNoSubstitutionTemplateLiteral(property.initializer)
+  ) {
+    return property.initializer.text;
+  }
+  return null;
+}
+
+function persistenceWarningNoticeBlock(source, warningName) {
+  const blocks = source.match(/<PersistenceWarningNotice\b[\s\S]*?\/>/g) || [];
+  return blocks.find((block) => block.includes(`warning={${warningName}}`)) || '';
+}
+
+function validatePersistenceWarningScopeParity() {
+  const expectedLanguages = ['sv', 'en'];
+  const expectedScopes = ['studyData', 'accessibilityPreferences'];
+  const expectedOperations = ['read', 'write'];
+  const expectedCopyFields = ['accessibilityLabel', 'body', 'dismiss', 'title'];
+  const expectedCopyCases =
+    expectedLanguages.length * expectedScopes.length * expectedOperations.length;
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const componentSource = loadText('components/storage/PersistenceWarningNotice.tsx');
+  const normalizedComponentSource = componentSource.replace(/\s+/g, ' ');
+
+  if (
+    !normalizedComponentSource.includes(
+      "const defaultPersistenceWarningNoticeScope: PersistenceWarningNoticeScope = 'studyData';",
+    )
+  ) {
+    reject('PersistenceWarningNotice must keep studyData as its default warning scope');
+  }
+  if (!normalizedComponentSource.includes('warningScope = defaultPersistenceWarningNoticeScope')) {
+    reject('PersistenceWarningNotice must default warningScope through the shared scope constant');
+  }
+  if (
+    !normalizedComponentSource.includes(
+      'const copy = getPersistenceWarningNoticeCopy(language, warning.operation, warningScope);',
+    )
+  ) {
+    reject('PersistenceWarningNotice must render copy through getPersistenceWarningNoticeCopy');
+  }
+
+  const sourceFile = ts.createSourceFile(
+    'PersistenceWarningNotice.tsx',
+    componentSource,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const copyObject = findObjectLiteralVariableInitializer(
+    sourceFile,
+    'persistenceWarningNoticeCopy',
+  );
+
+  if (!copyObject) {
+    reject(
+      'PersistenceWarningNotice must expose persistenceWarningNoticeCopy as an object literal',
+    );
+  } else {
+    for (const language of expectedLanguages) {
+      const languageObject = objectLiteralProperty(copyObject, language);
+      if (!languageObject) {
+        reject(`PersistenceWarningNotice copy is missing ${language} language copy`);
+        continue;
+      }
+
+      for (const scope of expectedScopes) {
+        const scopeObject = objectLiteralProperty(languageObject, scope);
+        if (!scopeObject) {
+          reject(`PersistenceWarningNotice copy is missing ${language}.${scope} scoped copy`);
+          continue;
+        }
+
+        for (const operation of expectedOperations) {
+          const operationObject = objectLiteralProperty(scopeObject, operation);
+          let caseIsValid = Boolean(operationObject);
+          if (!operationObject) {
+            reject(
+              `PersistenceWarningNotice copy is missing ${language}.${scope}.${operation} operation copy`,
+            );
+            continue;
+          }
+
+          for (const field of expectedCopyFields) {
+            const value = stringLiteralPropertyValue(operationObject, field);
+            if (!hasText(value)) {
+              caseIsValid = false;
+              reject(
+                `PersistenceWarningNotice copy ${language}.${scope}.${operation}.${field} must be non-empty`,
+              );
+            }
+          }
+
+          if (caseIsValid) persistenceWarningScopeCasesValidated += 1;
+        }
+      }
+    }
+  }
+
+  const routeScopeCases = [
+    {
+      expectedScope: null,
+      relativePath: 'app/settings.tsx',
+      source: loadText('app/settings.tsx'),
+      warningName: 'persistenceWarning',
+    },
+    {
+      expectedScope: 'accessibilityPreferences',
+      relativePath: 'app/settings.tsx',
+      source: loadText('app/settings.tsx'),
+      warningName: 'accessibilityPersistenceWarning',
+    },
+    {
+      expectedScope: null,
+      relativePath: 'app/(tabs)/practice.tsx',
+      source: loadText('app/(tabs)/practice.tsx'),
+      warningName: 'progressPersistenceWarning',
+    },
+    {
+      expectedScope: null,
+      relativePath: 'app/(tabs)/practice.tsx',
+      source: loadText('app/(tabs)/practice.tsx'),
+      warningName: 'mistakeReviewPersistenceWarning',
+    },
+    {
+      expectedScope: null,
+      relativePath: 'app/(tabs)/mistakes.tsx',
+      source: loadText('app/(tabs)/mistakes.tsx'),
+      warningName: 'progressPersistenceWarning',
+    },
+    {
+      expectedScope: null,
+      relativePath: 'app/(tabs)/mistakes.tsx',
+      source: loadText('app/(tabs)/mistakes.tsx'),
+      warningName: 'mistakeReviewPersistenceWarning',
+    },
+  ];
+
+  for (const { expectedScope, relativePath, source, warningName } of routeScopeCases) {
+    const block = persistenceWarningNoticeBlock(source, warningName);
+    if (!block) {
+      reject(`${relativePath} must render PersistenceWarningNotice for ${warningName}`);
+      continue;
+    }
+
+    if (expectedScope) {
+      if (!block.includes(`warningScope="${expectedScope}"`)) {
+        reject(`${relativePath} ${warningName} must pass warningScope="${expectedScope}"`);
+      }
+      continue;
+    }
+
+    if (/warningScope=/.test(block)) {
+      reject(`${relativePath} ${warningName} must keep the default studyData warning scope`);
+    }
+  }
+
+  if (
+    !loadText('app/settings.tsx').includes(
+      'const accessibilityPersistenceWarning = useAccessibilityStore(',
+    )
+  ) {
+    reject(
+      'app/settings.tsx must read accessibility persistence warnings from useAccessibilityStore',
+    );
+  }
+
+  persistenceWarningScopeParityValidated =
+    valid && persistenceWarningScopeCasesValidated === expectedCopyCases;
 }
 
 function validateProgressQuestionSchemaParity() {
@@ -18491,6 +18094,94 @@ function validateDashboardPerChapterInputRules() {
   }
 }
 
+function validateAdaptivePracticeDifficultyRuntimeGuard() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'adaptive-difficulty-runtime',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          {
+            questionId: 'a-stale-invalid',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-04-14T12:00:00.000Z',
+            timeSpentSeconds: 5,
+          },
+        ],
+        startedAt: '2026-04-14T12:00:00.000Z',
+      },
+    ],
+  };
+  const invalidDifficultyCases = [
+    { label: 'invalid string difficulty', difficulty: 'expert' },
+    { label: 'null difficulty', difficulty: null },
+    { label: 'object difficulty', difficulty: { level: 'expert' } },
+  ];
+  let runtimeParityIsValid = true;
+
+  invalidDifficultyCases.forEach(({ label, difficulty }) => {
+    const input = {
+      progress,
+      bank: [
+        { id: 'a-stale-invalid', difficulty, chapterId: 'c1' },
+        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'c1' },
+      ],
+      size: 1,
+      recentAccuracyOverride: 0.95,
+      now,
+    };
+    const picked = pickAdaptiveSession(input);
+    const counts = explainAdaptivePick(input);
+
+    if (!jsonEqual(picked, ['z-unseen-medium'])) {
+      runtimeParityIsValid = false;
+      fail(
+        `adaptive practice ${label} picked ${JSON.stringify(picked)}, expected ["z-unseen-medium"]`,
+      );
+      return;
+    }
+
+    if (
+      !jsonEqual(counts, {
+        'recently-wrong': 0,
+        unseen: 1,
+        mastered: 0,
+        stale: 0,
+      })
+    ) {
+      runtimeParityIsValid = false;
+      fail(
+        `adaptive practice ${label} counts ${JSON.stringify(
+          counts,
+        )}, expected one unseen neutral pick`,
+      );
+      return;
+    }
+
+    adaptivePracticeDifficultyRuntimeCasesValidated += 1;
+  });
+
+  if (
+    runtimeParityIsValid &&
+    adaptivePracticeDifficultyRuntimeCasesValidated ===
+      EXPECTED_ADAPTIVE_PRACTICE_DIFFICULTY_RUNTIME_CASES
+  ) {
+    adaptivePracticeDifficultyRuntimeParityValidated = true;
+  }
+}
+
 function validateReadinessAdapterRules() {
   if (typeof computeReadinessFromQuestionProgress !== 'function') return;
 
@@ -20315,7 +20006,6 @@ validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
 validateLegalSwedishEnglishTokenGuard();
 validateLegalInternalMonetizationKeyGuard();
-validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -20358,6 +20048,7 @@ validateLocalizationLanguageContract();
 validateSettingsStoreSchemaParity();
 validateSettingsDailyGoalParity();
 validateSettingsAudioParity();
+validatePersistenceWarningScopeParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
@@ -20373,6 +20064,7 @@ validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
+validateAdaptivePracticeDifficultyRuntimeGuard();
 validateReadinessAdapterRules();
 validateStreakRules();
 validateXpRules();
@@ -20490,9 +20182,6 @@ console.log(
       legalSwedishEnglishTokenGuardParityValidated,
       legalInternalMonetizationKeyGuardValidated,
       legalInternalMonetizationKeyGuardParityValidated,
-      legalSectionRenderingTestsRoutedValidated,
-      legalSectionRenderingCasesValidated,
-      legalSectionRenderingParityValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticSiteSwedishGrammarToneValidated,
@@ -20617,6 +20306,8 @@ console.log(
       settingsDailyGoalParityValidated,
       settingsAudioLabelsValidated,
       settingsAudioParityValidated,
+      persistenceWarningScopeCasesValidated,
+      persistenceWarningScopeParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
       progressTypeUnionsValidated,
@@ -20665,6 +20356,8 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       dashboardPerChapterInputRulesValidated,
       dashboardPerChapterInputParityValidated,
+      adaptivePracticeDifficultyRuntimeCasesValidated,
+      adaptivePracticeDifficultyRuntimeParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
       streakRulesValidated,

@@ -125,6 +125,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'persistenceWarningScope',
+    flags: ['--focus-persistence-warning-scope'],
+    summaryKeys: [
+      'persistenceWarningScopeCasesValidated',
+      'persistenceWarningScopeParityValidated',
+    ],
+  },
+  {
     id: 'homeRouteCopy',
     flags: ['--focus-home-route-copy'],
     summaryKeys: [
