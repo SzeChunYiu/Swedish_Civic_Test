@@ -2798,85 +2798,85 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'typed localized copy contract',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'localized progress copy',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'clamped progress source',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'percent value derived from clamped progress',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'language copy selection',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'readable localized progress label',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria label',
-    pattern: /aria-label=\{progressAccessibilityLabel\}/,
+    pattern: /aria-label=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria max value',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria min value',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria current value',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria localized value text',
-    pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
+    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native accessibility label',
-    pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
+    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native progressbar role',
-    pattern: /accessibilityRole="progressbar"/,
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native clamped accessibility value',
     pattern:
-      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
+      /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'animated fill uses clamped source',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'visual fill uses percent interpolation bounds',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
@@ -2894,11 +2894,12 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     filePath: 'components/ProgressBar.tsx',
     label: 'components/ProgressBar.tsx custom accessibility label fallback',
-    pattern: /const resolvedAccessibilityLabel = accessibilityLabel \?\? defaultAccessibilityText;/,
+    pattern:
+      /const resolvedAccessibilityLabel = accessibilityLabel \?\? progressAccessibilityLabel;/,
   },
   {
     filePath: 'components/ProgressBar.tsx',
-    label: 'components/ProgressBar.tsx must use the shared reduced-motion hook',
+    label: 'reduced-motion hook',
     pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
   },
   {
@@ -8220,6 +8221,43 @@ function extractMappedNumericArraysFromTs(source, parameterName) {
   return arrays;
 }
 
+function extractNumericArrayConstantFromTs(source, constantName) {
+  const sourceFile = ts.createSourceFile(
+    'source.ts',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  let values = null;
+
+  function unwrapArrayInitializer(node) {
+    if (ts.isArrayLiteralExpression(node)) return node;
+    if (ts.isAsExpression(node) || ts.isSatisfiesExpression?.(node)) {
+      return unwrapArrayInitializer(node.expression);
+    }
+    return null;
+  }
+
+  function visit(node) {
+    if (values) return;
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === constantName
+    ) {
+      const arrayInitializer = node.initializer ? unwrapArrayInitializer(node.initializer) : null;
+      if (arrayInitializer) {
+        values = arrayInitializer.elements.map((element) => numericLiteralValue(element));
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return values;
+}
+
 function parseCsvRows(csv) {
   const rows = [];
   let row = [];
@@ -13374,6 +13412,13 @@ function validateProgressBarAccessibilityParity() {
     progressBarAccessibilityRulesValidated += 1;
   });
 
+  const progressBarAdapterSource = progressBarSources.get('components/ui/ProgressBar.tsx') ?? '';
+  if (/ProgressBarCopy|progressBarCopy|progressAccessibilityLabel/.test(progressBarAdapterSource)) {
+    reject(
+      'components/ui/ProgressBar.tsx must stay a thin adapter without duplicate localized copy implementation',
+    );
+  }
+
   if (
     valid &&
     progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
@@ -14493,18 +14538,26 @@ function validateSettingsDailyGoalParity() {
     reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
-  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
-  const goalOptions = goalOptionArrays[0] || [];
+  const goalOptions = extractNumericArrayConstantFromTs(
+    settingsStore,
+    'supportedDailyGoalAnswerOptions',
+  );
   if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
     reject(
-      `app/settings.tsx daily goal options are ${JSON.stringify(
-        goalOptionArrays,
+      `supportedDailyGoalAnswerOptions is ${JSON.stringify(
+        goalOptions,
       )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
     );
   }
+  if (extractMappedNumericArraysFromTs(settingsRoute, 'goal').length > 0) {
+    reject('app/settings.tsx must render daily goal options from supportedDailyGoalAnswerOptions');
+  }
+  if (!settingsRoute.includes('supportedDailyGoalAnswerOptions.map((goal) =>')) {
+    reject('app/settings.tsx must map supportedDailyGoalAnswerOptions for daily-goal controls');
+  }
 
   const seenGoals = new Set();
-  goalOptions.forEach((goal, index) => {
+  (goalOptions || []).forEach((goal, index) => {
     let optionIsValid = true;
     if (!Number.isInteger(goal)) {
       optionIsValid = false;
