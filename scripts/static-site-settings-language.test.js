@@ -659,6 +659,38 @@ test('Static Settings text size falls back for corrupt stored and clicked values
   assert.deepEqual(context.textSizePressedValues(), ['100']);
 });
 
+test('Static document table-of-contents hashes preserve legal routes and focus headings', () => {
+  const html = read('site/index.html');
+  assert.match(html, /href="#\/privacy#p3" data-i18n="privacy\.s3\.t"/);
+  assert.match(html, /href="#\/terms#t3" data-i18n="terms\.s3\.t"/);
+  assert.match(html, /href="#\/sources#src2" data-i18n="sources\.s2\.t"/);
+
+  for (const [hash, headingId] of [
+    ['#/privacy#p3', 'p3'],
+    ['#/terms#t3', 't3'],
+    ['#/sources#src2', 'src2'],
+  ]) {
+    const context = createRenderContext({ hash, language: 'en' });
+    const heading = context.element(headingId);
+    let scrollOptions = null;
+    let focusOptions = null;
+    heading.scrollIntoView = (options) => {
+      scrollOptions = options;
+    };
+    heading.focus = (options) => {
+      focusOptions = options;
+    };
+
+    loadScripts(context);
+    vm.runInContext('route();', context.sandbox, { timeout: 3000 });
+
+    assert.equal(heading.getAttribute('tabindex'), '-1', `${hash} heading focus target`);
+    assert.equal(scrollOptions.block, 'start', `${hash} scroll block`);
+    assert.equal(scrollOptions.behavior, 'auto', `${hash} scroll behavior`);
+    assert.equal(focusOptions.preventScroll, true, `${hash} focus`);
+  }
+});
+
 test('Settings language change rerenders an active Practice question without reload', () => {
   const context = createRenderContext({ hash: '#/practice?c=1', language: 'en' });
   loadScripts(context);
