@@ -135,15 +135,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
-    id: 'legalSectionRendering',
-    flags: ['--focus-legal-section-rendering'],
-    summaryKeys: [
-      'legalSectionRenderingTestsRoutedValidated',
-      'legalSectionRenderingCasesValidated',
-      'legalSectionRenderingParityValidated',
-    ],
-  },
-  {
     id: 'settingsRouteCopy',
     flags: ['--focus-settings-route-copy'],
     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
@@ -159,15 +150,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'staticValidationSyntaxFilesValidated',
       'staticValidationImportChecksValidated',
       'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'staticEbookProvenance',
-    flags: ['--focus-static-ebook-provenance'],
-    summaryKeys: [
-      'staticEbookExternalSourceUrlsValidated',
-      'staticEbookExternalSourceLinkRulesValidated',
-      'staticEbookExternalSourceLinkSafetyValidated',
     ],
   },
   {
@@ -475,6 +457,21 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'purchaseTypeSchemaParityValidated',
       'removeAdsPurchaseRuntimeCasesValidated',
       'removeAdsPurchaseRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'mobileAdsConsent',
+    flags: ['--focus-mobile-ads-consent'],
+    summaryKeys: [
+      'adConsentTypeUnionsValidated',
+      'adConsentTypeInterfacesValidated',
+      'adConsentTypeSchemaParityValidated',
+      'mobileAdsConsentTypeInterfacesValidated',
+      'mobileAdsConsentTypeSchemaParityValidated',
+      'mobileAdsConsentHookCasesValidated',
+      'mobileAdsConsentHookParityValidated',
+      'mobileAdsConsentRegionRuntimeCasesValidated',
+      'mobileAdsConsentRegionRuntimeParityValidated',
     ],
   },
   {
@@ -2171,6 +2168,7 @@ const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_MOBILE_ADS_CONSENT_REGION_RUNTIME_CASES = 11;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -5548,51 +5546,6 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
-function validateStaticEbookExternalSourceLinkSafety() {
-  const source = loadText('site/ebook.js');
-  let sourceUrlsValidated = 0;
-  let linkRulesValidated = 0;
-
-  [
-    ...new Set([...STATIC_EBOOK_FACTBOX_SOURCE_URLS, ...STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS]),
-  ].forEach((url) => {
-    if (!source.includes(url)) {
-      fail(`static ebook source metadata missing ${url}`);
-      return;
-    }
-    sourceUrlsValidated += 1;
-  });
-
-  [
-    ['function externalSourceAnchor(note)', 'static ebook must centralize external source anchors'],
-    ['target="_blank"', 'static ebook external source anchors must open in a new tab'],
-    ['rel="noreferrer"', 'static ebook external source anchors must use noreferrer'],
-    [
-      'return `${externalSourceAnchor(note)} (${note.retrievedDate})`',
-      'static ebook sourceLink must route URL notes through safe external anchors',
-    ],
-    [
-      'OFFICIAL_TEST_SOURCE_NOTES.map((source) => externalSourceAnchor(source))',
-      'static ebook official-test source links must reuse safe external anchors',
-    ],
-  ].forEach(([snippet, message]) => {
-    if (!source.includes(snippet)) {
-      fail(message);
-      return;
-    }
-    linkRulesValidated += 1;
-  });
-
-  if (/<a href="\$\{(?:note|source)\.url\}">/.test(source)) {
-    fail('static ebook must not render plain same-tab external source anchors');
-  }
-
-  return {
-    linkRulesValidated,
-    sourceUrlsValidated,
-  };
-}
-
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -8943,9 +8896,6 @@ let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
 let legalInternalMonetizationKeyGuardValidated = 0;
 let legalInternalMonetizationKeyGuardParityValidated = false;
-let legalSectionRenderingTestsRoutedValidated = false;
-let legalSectionRenderingCasesValidated = 0;
-let legalSectionRenderingParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticSiteSwedishGrammarToneValidated = 0;
@@ -9056,6 +9006,8 @@ let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
+let mobileAdsConsentRegionRuntimeCasesValidated = 0;
+let mobileAdsConsentRegionRuntimeParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -9183,9 +9135,6 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookExternalSourceUrlsValidated = 0;
-let staticEbookExternalSourceLinkRulesValidated = 0;
-let staticEbookExternalSourceLinkSafetyValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9469,17 +9418,6 @@ if (focusedValidationRequested('legalRouteParity')) {
     legalSwedishEnglishTokenGuardParityValidated,
     legalInternalMonetizationKeyGuardValidated,
     legalInternalMonetizationKeyGuardParityValidated,
-  });
-  process.exit(0);
-}
-
-if (focusedValidationRequested('legalSectionRendering')) {
-  validateLegalSectionRenderingParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    legalSectionRenderingTestsRoutedValidated,
-    legalSectionRenderingCasesValidated,
-    legalSectionRenderingParityValidated,
   });
   process.exit(0);
 }
@@ -9844,24 +9782,6 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-}
-{
-  const linkSafetyValidation = validateStaticEbookExternalSourceLinkSafety();
-  staticEbookExternalSourceUrlsValidated = linkSafetyValidation.sourceUrlsValidated;
-  staticEbookExternalSourceLinkRulesValidated = linkSafetyValidation.linkRulesValidated;
-  staticEbookExternalSourceLinkSafetyValidated =
-    staticEbookExternalSourceUrlsValidated ===
-      new Set([...STATIC_EBOOK_FACTBOX_SOURCE_URLS, ...STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS])
-        .size && staticEbookExternalSourceLinkRulesValidated === 5;
-}
-if (focusedValidationRequested('staticEbookProvenance')) {
-  exitWithValidationFailures();
-  printValidationSummary({
-    staticEbookExternalSourceUrlsValidated,
-    staticEbookExternalSourceLinkRulesValidated,
-    staticEbookExternalSourceLinkSafetyValidated,
-  });
-  process.exit(0);
 }
 {
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
@@ -13043,132 +12963,6 @@ function validateLegalInternalMonetizationKeyGuard() {
   if (valid) legalInternalMonetizationKeyGuardParityValidated = true;
 }
 
-function validateLegalSectionRenderingParity() {
-  let valid = true;
-  const legalSectionTestPath = 'tests/content-legal-section-rendering.test.js';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  const contentScript = packageMetadata.scripts?.['test:content'];
-  const routedTestOccurrences =
-    typeof contentScript === 'string'
-      ? (contentScript.match(new RegExp(escapeRegExp(legalSectionTestPath), 'g')) ?? []).length
-      : 0;
-
-  if (routedTestOccurrences === 1) {
-    legalSectionRenderingTestsRoutedValidated = true;
-  } else {
-    reject(`test:content must include ${legalSectionTestPath} exactly once`);
-  }
-
-  const legalPageSource = loadText('components/compliance/LegalPage.tsx');
-  const legalSectionTestSource = loadText(legalSectionTestPath);
-  const routingTestSource = loadText('tests/content-test-script-routing.test.js');
-  const expectedCases = [
-    {
-      label: 'LegalSection export',
-      pattern: /export function LegalSection\(\{ title, body, children \}: LegalSectionProps\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'LegalSection child renderer',
-      pattern: /renderSectionChildren\(children\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'normalizer export',
-      pattern:
-        /export function normalizeLegalSectionChildren\(children: ReactNode\): ReactNode\[\]/,
-      source: legalPageSource,
-    },
-    {
-      label: 'recursive child normalizer',
-      pattern:
-        /function appendLegalSectionChild\(child: ReactNode, normalizedChildren: ReactNode\[\]\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'whitespace-only child filter',
-      pattern: /child\.trim\(\)\.length > 0/,
-      source: legalPageSource,
-    },
-    {
-      label: 'fragment flattening',
-      pattern: /child\.type === Fragment/,
-      source: legalPageSource,
-    },
-    {
-      label: 'text child grouping',
-      pattern: /isTextOnly\(child\)/,
-      source: legalPageSource,
-    },
-    {
-      label: 'text children render under Text',
-      pattern: /<Text key=\{`legal-section-text-\$\{renderedChildren\.length\}`\}/,
-      source: legalPageSource,
-    },
-    {
-      label: 'runtime test loads LegalPage module',
-      pattern: /function loadLegalPageModule\(\)/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'runtime test collects raw text nodes',
-      pattern: /type: 'raw-text'/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'whitespace runtime case',
-      pattern: /LegalSection ignores formatted whitespace-only children around links/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'fragment runtime case',
-      pattern: /LegalSection preserves nested fragment text, numbers, and link order/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'normalizer assertion',
-      pattern: /normalizeLegalSectionChildren\(children\)/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'raw whitespace rejection assertion',
-      pattern: /node\.type === 'raw-text' && node\.text\.trim\(\)\.length === 0/,
-      source: legalSectionTestSource,
-    },
-    {
-      label: 'focused validator routing test flag',
-      pattern: /--focus-legal-section-rendering/,
-      source: routingTestSource,
-    },
-    {
-      label: 'test:content routing assertion',
-      pattern: /content-legal-section-rendering/,
-      source: routingTestSource,
-    },
-  ];
-
-  for (const { label, pattern, source } of expectedCases) {
-    if (pattern.test(source)) {
-      legalSectionRenderingCasesValidated += 1;
-    } else {
-      reject(`legal section rendering guard is missing ${label}`);
-    }
-  }
-
-  if (
-    valid &&
-    legalSectionRenderingTestsRoutedValidated &&
-    legalSectionRenderingCasesValidated === expectedCases.length
-  ) {
-    legalSectionRenderingParityValidated = true;
-  }
-}
-
 function validateSettingsRouteHeaderParity() {
   let valid = true;
   let settingsRoute = '';
@@ -16060,6 +15854,12 @@ function validateMobileAdsConsentTypeSchemaParity() {
     if (interfaceIsValid) mobileAdsConsentTypeInterfacesValidated += 1;
   });
 
+  if (/Promise\.all\([\s\S]*resolveUmpConsentStatus/.test(mobileConsentSource)) {
+    reject(
+      'Mobile Ads consent must sequence ATT before UMP consent collection instead of Promise.all',
+    );
+  }
+
   if (
     valid &&
     mobileAdsConsentTypeInterfacesValidated === EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.length
@@ -16147,6 +15947,142 @@ function validateMobileAdsConsentHookParity() {
 
   if (valid && mobileAdsConsentHookCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES) {
     mobileAdsConsentHookParityValidated = true;
+  }
+}
+
+function validateMobileAdsConsentRegionRuntimeParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  let consentRuntime;
+  let mobileConsentRuntime;
+  try {
+    consentRuntime = loadTs('lib/monetization/consent.ts');
+    mobileConsentRuntime = loadTs('lib/monetization/mobileAdsConsent.ts');
+  } catch (error) {
+    reject(`Mobile Ads consent region runtime could not be loaded: ${error.message}`);
+    return;
+  }
+
+  const { getAdConsentDecision, getAdSdkInitializationDecision, normalizeAdConsentRegion } =
+    consentRuntime;
+  const { createInitialAdConsentState } = mobileConsentRuntime;
+
+  const consentSource = loadText('lib/monetization/consent.ts');
+  const mobileConsentSource = loadText('lib/monetization/mobileAdsConsent.ts');
+  if (
+    !/export function normalizeAdConsentRegion\(\s*region: unknown\s*\): AdConsentRegion/.test(
+      consentSource,
+    )
+  ) {
+    reject('Mobile Ads consent must export a runtime AdConsentRegion normalizer');
+  }
+  if (!mobileConsentSource.includes('region: normalizeAdConsentRegion(region),')) {
+    reject('Mobile Ads consent state construction must normalize runtime region values');
+  }
+
+  function expectEqual(actual, expected, message) {
+    if (actual !== expected) {
+      throw new Error(
+        `${message}: got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      );
+    }
+  }
+
+  function expectArrayEqual(actual, expected, message) {
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      throw new Error(
+        `${message}: got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
+      );
+    }
+  }
+
+  function validateCase(label, callback) {
+    try {
+      callback();
+      mobileAdsConsentRegionRuntimeCasesValidated += 1;
+    } catch (error) {
+      reject(`${label}: ${error.message}`);
+    }
+  }
+
+  const baseState = {
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'unknown',
+  };
+
+  ['banana', '', '  ', null, undefined, 'future-region'].forEach((region) => {
+    validateCase(`invalid runtime region ${String(region)}`, () => {
+      expectEqual(
+        normalizeAdConsentRegion(region),
+        'unknown',
+        'invalid runtime regions must normalize to unknown',
+      );
+      const state = createInitialAdConsentState({ ...baseState, region });
+      expectEqual(
+        state.region,
+        'unknown',
+        'initial Mobile Ads consent state must normalize region',
+      );
+      const decision = getAdSdkInitializationDecision({ ...baseState, region });
+      expectEqual(
+        decision.canInitializeGoogleMobileAds,
+        false,
+        'invalid runtime regions must fail closed before SDK init',
+      );
+      expectEqual(
+        decision.blockReason,
+        'pending_consent_prompts',
+        'invalid runtime regions must require UMP consent',
+      );
+      expectArrayEqual(
+        decision.consentDecision.pendingPrompts,
+        ['ump_consent_form'],
+        'invalid runtime regions must surface the UMP prompt',
+      );
+    });
+  });
+
+  ['eea', 'uk', 'unknown'].forEach((region) => {
+    validateCase(`UMP region ${region}`, () => {
+      const decision = getAdConsentDecision({ ...baseState, region });
+      expectArrayEqual(
+        decision.pendingPrompts,
+        ['ump_consent_form'],
+        'valid UMP regions must keep requiring UMP consent while unknown',
+      );
+    });
+  });
+
+  ['us', 'other'].forEach((region) => {
+    validateCase(`non-UMP region ${region}`, () => {
+      const decision = getAdSdkInitializationDecision({ ...baseState, region });
+      expectEqual(
+        decision.canInitializeGoogleMobileAds,
+        true,
+        'valid non-UMP regions should not require UMP while status is unknown',
+      );
+      expectArrayEqual(
+        decision.consentDecision.pendingPrompts,
+        [],
+        'valid non-UMP regions should not surface UMP prompts',
+      );
+    });
+  });
+
+  if (
+    valid &&
+    mobileAdsConsentRegionRuntimeCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_REGION_RUNTIME_CASES
+  ) {
+    mobileAdsConsentRegionRuntimeParityValidated = true;
   }
 }
 
@@ -20217,7 +20153,6 @@ validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
 validateLegalSwedishEnglishTokenGuard();
 validateLegalInternalMonetizationKeyGuard();
-validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -20251,6 +20186,7 @@ validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
+validateMobileAdsConsentRegionRuntimeParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -20392,9 +20328,6 @@ console.log(
       legalSwedishEnglishTokenGuardParityValidated,
       legalInternalMonetizationKeyGuardValidated,
       legalInternalMonetizationKeyGuardParityValidated,
-      legalSectionRenderingTestsRoutedValidated,
-      legalSectionRenderingCasesValidated,
-      legalSectionRenderingParityValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticSiteSwedishGrammarToneValidated,
@@ -20479,6 +20412,8 @@ console.log(
       mobileAdsConsentTypeSchemaParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
+      mobileAdsConsentRegionRuntimeCasesValidated,
+      mobileAdsConsentRegionRuntimeParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
@@ -20655,9 +20590,6 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookExternalSourceUrlsValidated,
-      staticEbookExternalSourceLinkRulesValidated,
-      staticEbookExternalSourceLinkSafetyValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,

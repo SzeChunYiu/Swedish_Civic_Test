@@ -41,8 +41,26 @@ export interface AdSdkInitializationDecision {
   requestNonPersonalizedAdsOnly: boolean;
 }
 
+export function normalizeAdConsentRegion(region: unknown): AdConsentRegion {
+  if (typeof region !== 'string') return 'unknown';
+
+  const normalizedRegion = region.trim().toLowerCase();
+  if (
+    normalizedRegion === 'eea' ||
+    normalizedRegion === 'uk' ||
+    normalizedRegion === 'us' ||
+    normalizedRegion === 'other' ||
+    normalizedRegion === 'unknown'
+  ) {
+    return normalizedRegion;
+  }
+
+  return 'unknown';
+}
+
 function regionRequiresUmpConsent(region: AdConsentRegion): boolean {
-  return region === 'eea' || region === 'uk' || region === 'unknown';
+  const normalizedRegion = normalizeAdConsentRegion(region);
+  return normalizedRegion === 'eea' || normalizedRegion === 'uk' || normalizedRegion === 'unknown';
 }
 
 function shouldRequestAttPrompt(state: AdConsentState): boolean {

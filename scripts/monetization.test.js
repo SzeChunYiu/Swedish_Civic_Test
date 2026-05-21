@@ -1836,9 +1836,12 @@ test('release monetization policy requires ad-supported free tier and Remove Ads
 test('ad consent decision covers ATT and UMP prompts before real ad serving', () => {
   const consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
-  const { consentConfig, getAdConsentDecision, getAdSdkInitializationDecision } = loadTs(
-    'lib/monetization/consent.ts',
-  );
+  const {
+    consentConfig,
+    getAdConsentDecision,
+    getAdSdkInitializationDecision,
+    normalizeAdConsentRegion,
+  } = loadTs('lib/monetization/consent.ts');
 
   assert.match(consentSource, /App Tracking Transparency/);
   assert.match(consentSource, /UMP consent/);
@@ -1867,6 +1870,53 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   ]);
   assert.equal(pendingIosInit.canInitializeGoogleMobileAds, false);
   assert.equal(pendingIosInit.blockReason, 'pending_consent_prompts');
+
+  for (const region of ['banana', '', '  ', null, undefined]) {
+    assert.equal(normalizeAdConsentRegion(region), 'unknown');
+    const invalidRegionInit = getAdSdkInitializationDecision({
+      entitlements: { adsDisabled: false },
+      googleMobileAdsEnabled: true,
+      platform: 'android',
+      realAdsEnabled: true,
+      region,
+      trackingTransparencyStatus: 'unavailable',
+      umpConsentStatus: 'unknown',
+    });
+
+    assert.equal(invalidRegionInit.canInitializeGoogleMobileAds, false);
+    assert.equal(invalidRegionInit.blockReason, 'pending_consent_prompts');
+    assert.deepEqual(invalidRegionInit.consentDecision.pendingPrompts, ['ump_consent_form']);
+  }
+
+  for (const region of ['eea', 'uk', 'unknown']) {
+    assert.deepEqual(
+      getAdConsentDecision({
+        entitlements: { adsDisabled: false },
+        googleMobileAdsEnabled: true,
+        platform: 'android',
+        realAdsEnabled: true,
+        region,
+        trackingTransparencyStatus: 'unavailable',
+        umpConsentStatus: 'unknown',
+      }).pendingPrompts,
+      ['ump_consent_form'],
+    );
+  }
+
+  for (const region of ['us', 'other']) {
+    assert.equal(
+      getAdSdkInitializationDecision({
+        entitlements: { adsDisabled: false },
+        googleMobileAdsEnabled: true,
+        platform: 'android',
+        realAdsEnabled: true,
+        region,
+        trackingTransparencyStatus: 'unavailable',
+        umpConsentStatus: 'unknown',
+      }).canInitializeGoogleMobileAds,
+      true,
+    );
+  }
 
   const nonPersonalizedState = {
     entitlements: { adsDisabled: false },
@@ -1969,6 +2019,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   );
   const {
     collectMobileAdsConsentState,
+    createInitialAdConsentState,
     initializeGoogleMobileAdsAfterConsent,
     mapTrackingTransparencyStatus,
     mapUmpConsentStatus,
@@ -1996,6 +2047,17 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(mapUmpConsentStatus({ status: 'OBTAINED' }), 'obtained');
   assert.equal(mapUmpConsentStatus({ status: 'NOT_REQUIRED' }), 'not_required');
   assert.equal(mapUmpConsentStatus({ canRequestAds: true, status: 'REQUIRED' }), 'obtained');
+
+  const invalidInitialRegionState = createInitialAdConsentState({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    region: 'banana',
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'unknown',
+  });
+  assert.equal(invalidInitialRegionState.region, 'unknown');
 
   const calls = [];
   const initializedResult = await initializeGoogleMobileAdsAfterConsent({
@@ -2076,6 +2138,30 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(canRequestAdsResult.state.umpConsentStatus, 'obtained');
   assert.equal(canRequestAdsResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(canRequestAdsCalls, ['ump', 'ads:init']);
+
+  const invalidRegionCalls = [];
+  const invalidRegionResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    region: 'banana',
+    runtime: {
+      async gatherUmpConsent() {
+        invalidRegionCalls.push('ump');
+        return { status: 'UNKNOWN' };
+      },
+      async initializeGoogleMobileAds() {
+        invalidRegionCalls.push('ads:init');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(invalidRegionResult.initialized, false);
+  assert.equal(invalidRegionResult.state.region, 'unknown');
+  assert.equal(invalidRegionResult.decision.canInitializeGoogleMobileAds, false);
+  assert.equal(invalidRegionResult.decision.blockReason, 'pending_consent_prompts');
+  assert.deepEqual(invalidRegionCalls, ['ump']);
 
   const consentInfoFallbackCalls = [];
   const consentInfoFallbackResult = await initializeGoogleMobileAdsAfterConsent({

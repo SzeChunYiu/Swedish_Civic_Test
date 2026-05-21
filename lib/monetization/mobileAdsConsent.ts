@@ -1,6 +1,7 @@
 import { adsConfig } from './ads';
 import {
   getAdSdkInitializationDecision,
+  normalizeAdConsentRegion,
   type AdConsentPlatform,
   type AdConsentRegion,
   type AdConsentState,
@@ -95,7 +96,7 @@ export function createInitialAdConsentState({
     googleMobileAdsEnabled,
     platform: normalizeAdConsentPlatform(platform),
     realAdsEnabled,
-    region,
+    region: normalizeAdConsentRegion(region),
     trackingTransparencyStatus,
     umpConsentStatus,
   };
@@ -163,7 +164,7 @@ export async function collectMobileAdsConsentState({
     googleMobileAdsEnabled,
     platform,
     realAdsEnabled,
-    region,
+    region: normalizeAdConsentRegion(region),
     trackingTransparencyStatus,
     umpConsentStatus,
   };
