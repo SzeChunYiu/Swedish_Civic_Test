@@ -267,10 +267,12 @@ export default function Screen() {
   const accessLoading = !accessReady || !entitlementsReady;
 
   useEffect(() => {
-    if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;
+    if (!examUnlocked || submitted || !Number.isFinite(remainingSeconds) || remainingSeconds <= 0) {
+      return undefined;
+    }
 
     const interval = setInterval(() => {
-      setRemainingSeconds((current) => Math.max(0, current - 1));
+      setRemainingSeconds((current) => (Number.isFinite(current) ? Math.max(0, current - 1) : 0));
     }, 1000);
 
     return () => clearInterval(interval);
