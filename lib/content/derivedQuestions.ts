@@ -773,9 +773,34 @@ function meaningStatementSv(subject: string, answer: string): string {
 }
 
 function meaningStatementEn(subject: string, answer: string): string {
+  const policyGoalStatement = policyGoalStatementEn(subject, answer);
+  if (policyGoalStatement) return policyGoalStatement;
   const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
   if (subjectStatement !== answer) return subjectStatement;
   return `${upperFirst(subject)} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+}
+
+function policyGoalStatementEn(subject: string, answer: string): string | null {
+  const subjectMatch = subject.trim().match(/^the goal of (.+?\bpolicy)$/i);
+  if (!subjectMatch) return null;
+
+  const policyName = upperFirst(subjectMatch[1]);
+  const normalizedAnswer = stripLeadingThatEn(answer).trim();
+  const shouldMatch = normalizedAnswer.match(/^(.+?) should (.+)$/i);
+  if (shouldMatch) {
+    const aimClause = `${lowerFirst(shouldMatch[1])} to ${shouldMatch[2]}`.replace(
+      /\bthe same rights and duties and equal power\b/i,
+      'the same rights, duties, and power',
+    );
+    return `${policyName} aims for ${aimClause}`;
+  }
+
+  const onlyAboutMatch = normalizedAnswer.match(/^(.+?) is only about (.+)$/i);
+  if (onlyAboutMatch) {
+    return `${policyName} is only about ${onlyAboutMatch[2]}`;
+  }
+
+  return `${policyName} aims for ${lowerFirst(normalizedAnswer)}`;
 }
 
 function appliesStatementEn(subject: string, answer: string): string {

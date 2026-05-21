@@ -806,6 +806,71 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
   );
 });
 
+test('derivePublishedQuestions turns policy-goal meanings into direct English propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q900',
+    chapterId: 'ch07',
+    type: 'single_choice',
+    questionSv: 'Vad innebär målet med Sveriges jämställdhetspolitik?',
+    questionEn: 'What does the goal of Sweden’s gender equality policy mean?',
+    options: [
+      {
+        id: 'a',
+        textSv:
+          'Att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv',
+        textEn:
+          'That women and men should have the same rights and duties and equal power to influence society and their own lives',
+      },
+      {
+        id: 'b',
+        textSv: 'Att jämställdhet bara handlar om hur många kvinnor som finns i politiken',
+        textEn: 'That gender equality is only about how many women are in politics',
+      },
+      {
+        id: 'c',
+        textSv: 'Att kvinnor och män ska ha olika rättigheter i arbetslivet',
+        textEn: 'That women and men should have different rights in working life',
+      },
+      {
+        id: 'd',
+        textSv: 'Att föräldraledighet bara ska tas av kvinnor',
+        textEn: 'That parental leave should only be taken by women',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv:
+      'Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
+    explanationEn:
+      'Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives.',
+    uhrReference: {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Jämställdhet mellan könen',
+      pageApprox: 23,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['gender-equality', 'rights', 'policy'],
+  };
+
+  const derived = derivePublishedQuestions([source], 901);
+  const trueVariant = derived[1];
+  const falseVariant = derived[2];
+
+  assert.equal(
+    trueVariant.questionEn,
+    'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
+  );
+  assert.equal(
+    falseVariant.questionEn,
+    'Sweden’s gender equality policy is only about how many women are in politics.',
+  );
+  assert.doesNotMatch(
+    `${trueVariant.questionEn}\n${falseVariant.questionEn}`,
+    /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
+  );
+});
+
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
   const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

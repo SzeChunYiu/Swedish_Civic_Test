@@ -41,7 +41,7 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const policyGoalCleftPattern = /\bThe goal of .+? policy means\b/i;
+const policyGoalCleftPattern = /\bThe goal of .+?\bpolicy means(?: that)?\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
@@ -3198,6 +3198,12 @@ require('./scripts/validate-content.js');
 });
 
 test('published question schema rejects policy-goal cleft true/false stems', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q053TrueId = generatedQuestionId(sourceQuestions, 'q053', 'trueStatement');
+  const q053FalseId = generatedQuestionId(sourceQuestions, 'q053', 'falseStatement');
   const result = spawnSync(
     process.execPath,
     [
@@ -3239,7 +3245,14 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+  assert.match(
+    output,
+    new RegExp(`${q053TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q053FalseId} contains a generated true/false grammar-splice stem`),
+  );
 });
 
 test('published question schema rejects residual generated true/false list and meaning splices', () => {

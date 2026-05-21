@@ -29,7 +29,7 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
-  /\bThe goal of .+? policy means\b/i,
+  /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
   /\binnebär att den ger\b/i,
   /\bfrom (?:13|15) years\b/i,
   /^En anledning är\b/i,
