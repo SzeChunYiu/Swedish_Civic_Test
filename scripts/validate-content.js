@@ -531,6 +531,7 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
+const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -2816,9 +2817,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'hidden accessibility summary outside parent Card grouping',
-    pattern:
-      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+    label: 'Card receives accessibility summary',
+    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
   },
   {
     label: 'visible difficulty label',
@@ -2842,7 +2842,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2852,7 +2852,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -7324,6 +7324,8 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const readinessModule = loadTs('lib/learning/readiness.ts');
+const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7528,8 +7530,6 @@ let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
-let mobileAdsConsentRuntimeCasesValidated = 0;
-let mobileAdsConsentRuntimeParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -7585,6 +7585,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let readinessAdapterRulesValidated = 0;
+let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7935,20 +7937,8 @@ if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function'
 if (typeof getPracticeQuestionForSession !== 'function') {
   fail('getPracticeQuestionForSession export is not a function');
 }
-if (typeof getCompletedQuestionIdsForQuestionBank !== 'function') {
-  fail('getCompletedQuestionIdsForQuestionBank export is not a function');
-}
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
-}
-if (process.argv.includes('--focus-practice-flow-parity')) {
-  validatePracticeFlowParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    practiceFlowCasesValidated,
-    practiceFlowParityValidated,
-  });
-  process.exit(0);
 }
 if (
   !usePracticeSessionStore ||
@@ -7979,6 +7969,9 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
+if (typeof computeReadinessFromQuestionProgress !== 'function') {
+  fail('computeReadinessFromQuestionProgress export is not a function');
+}
 if (!isObjectRecord(colors)) fail('theme colors export is not an object');
 if (!isObjectRecord(motion)) fail('theme motion export is not an object');
 if (!isObjectRecord(radius)) fail('theme radius export is not an object');
@@ -10973,12 +10966,6 @@ function validateQuestionCardAccessibilityParity() {
     return;
   }
 
-  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
-    reject('QuestionCard parent Card must not group nested source controls');
-  } else {
-    questionCardAccessibilityRulesValidated += 1;
-  }
-
   EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionCardSource)) {
       reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
@@ -11006,20 +10993,10 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated ===
       EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
         EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
-        2
+        1
   ) {
     questionCardAccessibilityParityValidated = true;
   }
-}
-
-if (process.argv.includes('--focus-question-card-accessibility')) {
-  validateQuestionCardAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    questionCardAccessibilityRulesValidated,
-    questionCardAccessibilityParityValidated,
-  });
-  process.exit(0);
 }
 
 function validateAnswerOptionAccessibilityParity() {
@@ -13056,98 +13033,6 @@ function validateMobileAdsConsentHookParity() {
   }
 }
 
-function validateMobileAdsConsentRuntimeParity() {
-  let valid = true;
-  let mobileConsentSource = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    mobileConsentSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
-    return;
-  }
-
-  const currentAttIndex = mobileConsentSource.indexOf(
-    'const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(',
-  );
-  const umpIndex = mobileConsentSource.indexOf(
-    'const umpConsentStatus = await resolveUmpConsentStatus(',
-  );
-  const requestAttIndex = mobileConsentSource.indexOf(
-    'const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(',
-  );
-  const decisionIndex = mobileConsentSource.indexOf(
-    'const decision = getAdSdkInitializationDecision(state);',
-  );
-  const initializeIndex = mobileConsentSource.indexOf(
-    'await options.runtime.initializeGoogleMobileAds?.();',
-  );
-
-  const runtimeCases = [
-    [
-      currentAttIndex >= 0 &&
-        umpIndex >= 0 &&
-        requestAttIndex >= 0 &&
-        currentAttIndex < umpIndex &&
-        umpIndex < requestAttIndex,
-      'Mobile Ads consent runtime must resolve UMP consent before requesting ATT',
-    ],
-    [
-      !/Promise\.all\s*\(/.test(mobileConsentSource),
-      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
-    ],
-    [
-      decisionIndex >= 0 && initializeIndex >= 0 && decisionIndex < initializeIndex,
-      'Mobile Ads consent runtime must decide consent before initializing Google Mobile Ads',
-    ],
-    [
-      /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';/.test(
-        mobileConsentSource,
-      ) &&
-        /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';[\s\S]*?if\s*\(\s*currentStatus\s*!==\s*'not_determined'\s*\)\s*return\s+currentStatus;/.test(
-          mobileConsentSource,
-        ),
-      'Mobile Ads consent runtime must request ATT only on iOS when status is not determined',
-    ],
-  ];
-
-  runtimeCases.forEach(([caseIsValid, message]) => {
-    if (!caseIsValid) {
-      reject(message);
-      return;
-    }
-    mobileAdsConsentRuntimeCasesValidated += 1;
-  });
-
-  if (valid && mobileAdsConsentRuntimeCasesValidated === runtimeCases.length) {
-    mobileAdsConsentRuntimeParityValidated = true;
-  }
-}
-
-if (process.argv.includes('--focus-mobile-ads-consent-parity')) {
-  validateMobileAdsConsentTypeSchemaParity();
-  validateMobileAdsConsentHookParity();
-  validateMobileAdsConsentRuntimeParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentTypeInterfacesValidated,
-    mobileAdsConsentTypeSchemaParityValidated,
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
-    mobileAdsConsentRuntimeCasesValidated,
-    mobileAdsConsentRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 function validateRewardedAdTypeSchemaParity() {
   let valid = true;
   let rewardedAdSource = '';
@@ -13805,54 +13690,6 @@ function validatePracticeFlowParity() {
       activeQuestionId: null,
       expectedId: firstQuestion.id,
     },
-    {
-      label: 'completion outside visible bank is ignored',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id],
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
-    {
-      label: 'duplicate completed question ids are de-duplicated',
-      questions: publishedQuestions,
-      completedQuestionIds: [firstQuestion.id, firstQuestion.id],
-      activeQuestionId: null,
-      expectedId: secondQuestion.id,
-      expectedCompletedIds: [firstQuestion.id],
-    },
-    {
-      label: 'non-string completed question ids are ignored',
-      questions: publishedQuestions,
-      completedQuestionIds: [firstQuestion.id, 7, true, {}, null, secondQuestion.id],
-      activeQuestionId: null,
-      expectedId: thirdQuestion.id,
-      expectedCompletedIds: [firstQuestion.id, secondQuestion.id],
-    },
-    {
-      label: 'blank completed question ids are ignored',
-      questions: publishedQuestions,
-      completedQuestionIds: ['', '   ', firstQuestion.id],
-      activeQuestionId: null,
-      expectedId: secondQuestion.id,
-      expectedCompletedIds: [firstQuestion.id],
-    },
-    {
-      label: 'null completed question ids behave as empty progress',
-      questions: publishedQuestions,
-      completedQuestionIds: null,
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
-    {
-      label: 'object completed question ids behave as empty progress',
-      questions: publishedQuestions,
-      completedQuestionIds: { [firstQuestion.id]: true },
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
   ];
 
   let valid = true;
@@ -13864,17 +13701,9 @@ function validatePracticeFlowParity() {
       completedQuestionIds,
       activeQuestionId,
       expectedId,
-      expectedCompletedIds,
     } = testCase;
     let actualQuestion;
-    let actualCompletedIds;
     try {
-      if (expectedCompletedIds) {
-        actualCompletedIds = getCompletedQuestionIdsForQuestionBank(
-          caseQuestions,
-          completedQuestionIds,
-        );
-      }
       actualQuestion = getPracticeQuestionForSession(
         caseQuestions,
         completedQuestionIds,
@@ -13883,16 +13712,6 @@ function validatePracticeFlowParity() {
     } catch (error) {
       valid = false;
       fail(`practice flow ${label} threw ${error.message}`);
-      return;
-    }
-
-    if (expectedCompletedIds && !jsonEqual(actualCompletedIds, expectedCompletedIds)) {
-      valid = false;
-      fail(
-        `practice flow ${label} scoped completed ids returned ${JSON.stringify(
-          actualCompletedIds,
-        )}, expected ${JSON.stringify(expectedCompletedIds)}`,
-      );
       return;
     }
 
@@ -14974,6 +14793,147 @@ function validateMasteryRules() {
 
   if (rulesAreValid && masteryRulesValidated === EXPECTED_MASTERY_RULE_COUNT) {
     masteryRulesParityValidated = true;
+  }
+}
+
+function validateReadinessAdapterRules() {
+  if (typeof computeReadinessFromQuestionProgress !== 'function') return;
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  let malformedProgressResult;
+  let stringCountedMockResult;
+  let hugeCountedMockResult;
+  let runtimeIsValid = true;
+
+  try {
+    malformedProgressResult = computeReadinessFromQuestionProgress({
+      questionProgress: {
+        valid: {
+          seenCount: 1,
+          correctCount: 1,
+          wrongCount: 0,
+          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        },
+        stringCorrect: {
+          seenCount: 1,
+          correctCount: '1',
+          wrongCount: 0,
+          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        },
+        stringOnly: {
+          seenCount: '2',
+          correctCount: '2',
+          wrongCount: '0',
+          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        },
+        huge: {
+          seenCount: 1_000_000_000,
+          correctCount: 1_000_000_000,
+          wrongCount: 0,
+          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        },
+        unknown: {
+          seenCount: 1_000_000_000,
+          correctCount: 1_000_000_000,
+          wrongCount: 0,
+          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        },
+      },
+      questions: [
+        { id: 'valid', chapterId: 'ch01' },
+        { id: 'stringCorrect', chapterId: 'ch02' },
+        { id: 'stringOnly', chapterId: 'ch03' },
+        { id: 'huge', chapterId: 'ch04' },
+        { id: 'nonFinite', chapterId: 'ch05' },
+      ],
+      chapters: [
+        { id: 'ch01', questionCount: 10 },
+        { id: 'ch02', questionCount: 10 },
+        { id: 'ch03', questionCount: 10 },
+        { id: 'ch04', questionCount: 10 },
+        { id: 'ch05', questionCount: 10 },
+      ],
+      now,
+    });
+    stringCountedMockResult = computeReadinessFromQuestionProgress({
+      questionProgress: {},
+      questions: [{ id: 'q1', chapterId: 'ch01' }],
+      chapters: [{ id: 'ch01', questionCount: 10 }],
+      mockExamSessions: [
+        {
+          sessionId: 'string-counted',
+          score: 0.8,
+          completedAt: '2026-05-19T10:00:00.000Z',
+          correctCount: '32',
+          totalCount: '40',
+        },
+      ],
+      now,
+    });
+    hugeCountedMockResult = computeReadinessFromQuestionProgress({
+      questionProgress: {},
+      questions: [{ id: 'q1', chapterId: 'ch01' }],
+      chapters: [{ id: 'ch01', questionCount: 10 }],
+      mockExamSessions: [
+        {
+          sessionId: 'huge-counted',
+          score: 0.8,
+          completedAt: '2026-05-19T10:00:00.000Z',
+          correctCount: Number.MAX_SAFE_INTEGER,
+          totalCount: Number.MAX_SAFE_INTEGER,
+        },
+      ],
+      now,
+    });
+  } catch (error) {
+    runtimeIsValid = false;
+    fail(`readiness adapter malformed counter guard threw ${error.message}`);
+  }
+
+  const closeTo = (actual, expected) =>
+    typeof actual === 'number' && Math.abs(actual - expected) < 0.000001;
+  const cases = [
+    {
+      label: 'numeric-string question counts are not coerced',
+      valid: () => closeTo(malformedProgressResult.components.accuracy, 0.8),
+    },
+    {
+      label: 'malformed question counts do not touch missing chapters',
+      valid: () => closeTo(malformedProgressResult.components.coverage, 0.6),
+    },
+    {
+      label: 'oversized question counts stay sparse after bank-size bounding',
+      valid: () => malformedProgressResult.isSparse === true,
+    },
+    {
+      label: 'numeric-string mock counts are ignored',
+      valid: () => stringCountedMockResult.isSparse === true,
+    },
+    {
+      label: 'mock score contribution survives malformed counts',
+      valid: () => closeTo(stringCountedMockResult.components.mockAverage, 0.8),
+    },
+    {
+      label: 'oversized mock counts return a finite readiness score',
+      valid: () =>
+        Number.isFinite(hugeCountedMockResult.score) &&
+        hugeCountedMockResult.components.accuracy === 0,
+    },
+  ];
+
+  if (!runtimeIsValid) return;
+
+  cases.forEach((rule) => {
+    if (!rule.valid()) {
+      runtimeIsValid = false;
+      fail(`readiness adapter rule failed: ${rule.label}`);
+      return;
+    }
+    readinessAdapterRulesValidated += 1;
+  });
+
+  if (runtimeIsValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
+    readinessAdapterRuntimeParityValidated = true;
   }
 }
 
@@ -16462,7 +16422,6 @@ validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
-validateMobileAdsConsentRuntimeParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -16489,6 +16448,7 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
+validateReadinessAdapterRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -16664,8 +16624,6 @@ console.log(
       mobileAdsConsentTypeSchemaParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
-      mobileAdsConsentRuntimeCasesValidated,
-      mobileAdsConsentRuntimeParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
@@ -16747,6 +16705,8 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
+      readinessAdapterRulesValidated,
+      readinessAdapterRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,

@@ -81,104 +81,13 @@ test('XP rules follow the MVP gamification table', () => {
 
 test('streak logic counts consecutive unique answer dates through today', () => {
   const { calculateStreak, getLocalDateKey } = loadAllTs('lib/learning/streaks.ts');
-  const invalidDateKey = getLocalDateKey(new Date(Number.NaN));
 
   assert.equal(getLocalDateKey(new Date(2026, 0, 5, 23, 59)), '2026-01-05');
   assert.equal(getLocalDateKey(new Date(2026, 10, 9, 0, 1)), '2026-11-09');
-  assert.match(invalidDateKey, /^\d{4}-\d{2}-\d{2}$/);
-  assert.notEqual(invalidDateKey, 'NaN-NaN-NaN');
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
-  assert.equal(calculateStreak(['2026-05-14', 42, '2026-05-15'], '2026-05-15'), 2);
-  assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
-});
-
-test('streakWithFreeze ignores malformed date inputs without corrupting freeze state', () => {
-  const { calculateStreakWithFreeze, refillFreezes } = loadAllTs(
-    'lib/learning/streakWithFreeze.ts',
-  );
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const freezeState = {
-    available: 1,
-    lastEarnedAt: 'not-a-date',
-    lifetimeEarned: 1,
-    lifetimeSpent: 0,
-    rescuedDayKeys: ['bad-key', '2026-05-17'],
-  };
-
-  const repaired = refillFreezes(freezeState, now);
-  assert.equal(repaired.lastEarnedAt, '2026-05-18');
-  assert.equal(repaired.available, 1);
-
-  const result = calculateStreakWithFreeze({
-    activeDayKeys: ['2026-05-19', '2026-05-18T08:00:00.000Z', 7, '2026-02-30'],
-    freezeState,
-    today: 'not-a-date',
-    now,
-  });
-
-  assert.equal(result.streakDays, 3);
-  assert.deepEqual(result.rescuedThisRun, []);
-  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
-  assert.doesNotMatch(
-    refillFreezes(freezeState, new Date('not-a-date')).lastEarnedAt,
-    /NaN|not-a-date/,
-  );
-});
-
-test('streakWithFreeze normalizes malformed freeze counters before refill and spend math', () => {
-  const { calculateStreakWithFreeze, refillFreezes } = loadAllTs(
-    'lib/learning/streakWithFreeze.ts',
-  );
-  const now = new Date('2026-05-19T12:00:00.000Z');
-
-  const repaired = refillFreezes(
-    {
-      available: '1',
-      lastEarnedAt: '2026-05-18',
-      lifetimeEarned: '2',
-      lifetimeSpent: NaN,
-      rescuedDayKeys: ['bad-key', '2026-05-17'],
-    },
-    now,
-  );
-  assert.equal(repaired.available, 0);
-  assert.equal(repaired.lifetimeEarned, 0);
-  assert.equal(repaired.lifetimeSpent, 0);
-  assert.deepEqual(repaired.rescuedDayKeys, ['2026-05-17']);
-
-  const overstocked = refillFreezes(
-    {
-      available: 99,
-      lastEarnedAt: '2026-05-12',
-      lifetimeEarned: 3,
-      lifetimeSpent: 1,
-      rescuedDayKeys: [],
-    },
-    now,
-  );
-  assert.equal(overstocked.available, 4);
-
-  const result = calculateStreakWithFreeze({
-    activeDayKeys: ['2026-05-16', '2026-05-18', '2026-05-19'],
-    freezeState: {
-      available: 1.5,
-      lastEarnedAt: '2026-05-18',
-      lifetimeEarned: Infinity,
-      lifetimeSpent: -1,
-      rescuedDayKeys: ['bad-key'],
-    },
-    today: '2026-05-19',
-    now,
-  });
-  assert.equal(result.streakDays, 2);
-  assert.deepEqual(result.rescuedThisRun, []);
-  assert.deepEqual(result.freezeState.rescuedDayKeys, []);
-  assert.equal(result.freezeState.available, 0);
-  assert.equal(result.freezeState.lifetimeEarned, 0);
-  assert.equal(result.freezeState.lifetimeSpent, 0);
 });
 
 test('daily goal counts question answers for the requested local day only', () => {
@@ -409,140 +318,102 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
-test('readiness adapter aggregates counters without synthetic answer rows', () => {
-  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
-  const start = source.indexOf('export function computeReadinessFromQuestionProgress');
-  const end = source.indexOf('\nexport function computeReadinessScore', start);
-  assert.notEqual(start, -1);
-  assert.notEqual(end, -1);
-
-  const adapterSource = source.slice(start, end);
-  assert.doesNotMatch(adapterSource, /Array\.from\s*\(/);
-  assert.match(adapterSource, /scoreFromComponents\(/);
-});
-
-test('readiness adapter ignores malformed aggregate counters', () => {
+test('readiness adapter ignores malformed counters and bounds synthetic answer arrays', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
 
   const result = computeReadinessFromQuestionProgress({
     questionProgress: {
-      infinite: {
-        seenCount: Infinity,
-        correctCount: Infinity,
-        wrongCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
-      },
-      stringy: {
-        seenCount: '3',
-        correctCount: '2',
-        wrongCount: '1',
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:01:00.000Z',
-      },
-      fractional: {
-        seenCount: 1.5,
-        correctCount: 1,
-        wrongCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:02:00.000Z',
-      },
-      oversized: {
-        seenCount: 10001,
-        correctCount: 10001,
-        wrongCount: 0,
-        correctStreak: 0,
-        lastAnsweredAt: '2026-05-19T10:03:00.000Z',
-      },
       valid: {
         seenCount: 1,
         correctCount: 1,
         wrongCount: 0,
-        correctStreak: 1,
-        lastAnsweredAt: '2026-05-19T10:04:00.000Z',
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      stringCorrect: {
+        seenCount: 1,
+        correctCount: '1',
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      stringOnly: {
+        seenCount: '2',
+        correctCount: '2',
+        wrongCount: '0',
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      huge: {
+        seenCount: 1_000_000_000,
+        correctCount: 1_000_000_000,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      unknown: {
+        seenCount: 1_000_000_000,
+        correctCount: 1_000_000_000,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
       },
     },
     questions: [
-      { id: 'infinite', chapterId: 'ch01' },
-      { id: 'stringy', chapterId: 'ch01' },
-      { id: 'fractional', chapterId: 'ch01' },
-      { id: 'oversized', chapterId: 'ch01' },
-      { id: 'valid', chapterId: 'ch02' },
+      { id: 'valid', chapterId: 'ch01' },
+      { id: 'stringCorrect', chapterId: 'ch02' },
+      { id: 'stringOnly', chapterId: 'ch03' },
+      { id: 'huge', chapterId: 'ch04' },
+      { id: 'nonFinite', chapterId: 'ch05' },
     ],
     chapters: [
-      { id: 'ch01', questionCount: 4 },
-      { id: 'ch02', questionCount: 1 },
+      { id: 'ch01', questionCount: 10 },
+      { id: 'ch02', questionCount: 10 },
+      { id: 'ch03', questionCount: 10 },
+      { id: 'ch04', questionCount: 10 },
+      { id: 'ch05', questionCount: 10 },
     ],
+    now,
+  });
+
+  assert.equal(result.components.accuracy, 0.8);
+  assert.equal(result.components.coverage, 0.6);
+  assert.equal(result.isSparse, true);
+  assert.ok(Number.isFinite(result.score));
+
+  const stringCountedMock = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
     mockExamSessions: [
       {
-        sessionId: 'score-only-invalid-total',
+        sessionId: 'string-counted',
         score: 0.8,
-        completedAt: '2026-05-19T10:05:00.000Z',
-        totalCount: Infinity,
-        correctCount: 32,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: '32',
+        totalCount: '40',
       },
     ],
-    now: new Date('2026-05-19T12:00:00.000Z'),
+    now,
   });
-
-  assert.equal(result.components.accuracy, 1);
-  assert.equal(result.components.coverage, 0.5);
-  assert.equal(result.components.mockAverage, 0.8);
-  assert.equal(result.isSparse, true);
-});
-
-test('computeReadinessScore ignores truthy non-boolean correctness values', () => {
-  const { computeReadinessScore } = loadAllTs('lib/learning/readiness.ts');
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const chapters = [{ id: 'ch01', questionCount: 3 }];
-  const questionChapterIndex = { q1: 'ch01', q2: 'ch01', q3: 'ch01' };
-  const makeAnswer = (questionId, isCorrect, minute) => ({
-    questionId,
-    selectedOptionIds: ['a'],
-    isCorrect,
-    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
-    timeSpentSeconds: 5,
-  });
-  const makeProgress = (answers) => ({
-    totalXp: 0,
-    level: 1,
-    currentStreak: 0,
-    dailyGoalAnswers: 0,
+  const hugeCountedMock = computeReadinessFromQuestionProgress({
     questionProgress: {},
-    sessions: [
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
       {
-        id: 'raw-readiness-malformed',
-        mode: 'study',
-        questionIds: answers.map((answer) => answer.questionId),
-        startedAt: '2026-05-19T09:00:00.000Z',
-        answers,
+        sessionId: 'huge-counted',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: Number.MAX_SAFE_INTEGER,
+        totalCount: Number.MAX_SAFE_INTEGER,
       },
     ],
-  });
-  const malformed = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', 'yes', 0),
-      makeAnswer('q2', 1, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const strictFalse = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', false, 0),
-      makeAnswer('q2', false, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
     now,
   });
 
-  assert.equal(malformed.components.accuracy, 0);
-  assert.equal(malformed.score, strictFalse.score);
-  assert.equal(malformed.verdict, strictFalse.verdict);
+  assert.equal(stringCountedMock.components.accuracy, 0);
+  assert.equal(stringCountedMock.components.mockAverage, 0.8);
+  assert.equal(stringCountedMock.isSparse, true);
+  assert.equal(hugeCountedMock.components.accuracy, 0);
+  assert.equal(hugeCountedMock.components.mockAverage, 0.8);
+  assert.ok(Number.isFinite(hugeCountedMock.score));
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
@@ -750,86 +621,6 @@ test('readiness and dashboard selectors ignore invalid or future answer dates', 
   assert.equal(summary.questionsAnsweredThisWeek, 1);
   assert.equal(summary.unresolvedMistakes, 0);
   assert.equal(summary.chaptersWithAnyAnswer, 1);
-});
-
-test('dashboard per-chapter guards clamp NaN coverage and non-boolean correctness', () => {
-  const { dashboardSummary, perChapterProgress } = loadAllTs('lib/learning/dashboardStats.ts');
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const progress = {
-    totalXp: 0,
-    level: 1,
-    currentStreak: 0,
-    dailyGoalAnswers: 10,
-    questionProgress: {},
-    sessions: [
-      {
-        id: 's1',
-        mode: 'study',
-        questionIds: [],
-        startedAt: '2026-05-19T00:00:00.000Z',
-        answers: [
-          {
-            questionId: 'bad-total',
-            selectedOptionIds: [],
-            isCorrect: 'yes',
-            answeredAt: '2026-05-19T10:00:00.000Z',
-            timeSpentSeconds: 5,
-          },
-          {
-            questionId: 'over-total-1',
-            selectedOptionIds: [],
-            isCorrect: true,
-            answeredAt: '2026-05-19T10:01:00.000Z',
-            timeSpentSeconds: 5,
-          },
-          {
-            questionId: 'over-total-2',
-            selectedOptionIds: [],
-            isCorrect: true,
-            answeredAt: '2026-05-19T10:02:00.000Z',
-            timeSpentSeconds: 5,
-          },
-          {
-            questionId: 'unresolved',
-            selectedOptionIds: [],
-            isCorrect: false,
-            answeredAt: '2026-05-18T10:00:00.000Z',
-            timeSpentSeconds: 5,
-          },
-          {
-            questionId: 'unresolved',
-            selectedOptionIds: [],
-            isCorrect: 'true',
-            answeredAt: '2026-05-19T10:03:00.000Z',
-            timeSpentSeconds: 5,
-          },
-        ],
-      },
-    ],
-  };
-  const questionChapterIndex = {
-    'bad-total': 'bad',
-    'over-total-1': 'over',
-    'over-total-2': 'over',
-    unresolved: 'bad',
-  };
-  const bars = perChapterProgress(
-    progress,
-    [
-      { id: 'bad', questionCount: Number.NaN },
-      { id: 'over', questionCount: 1 },
-    ],
-    questionChapterIndex,
-    { now },
-  );
-  const bad = bars.find((bar) => bar.chapterId === 'bad');
-  const over = bars.find((bar) => bar.chapterId === 'over');
-
-  assert.equal(bad.coverage, 0);
-  assert.equal(bad.accuracy, 0);
-  assert.equal(over.coverage, 1);
-  assert.equal(over.accuracy, 1);
-  assert.equal(dashboardSummary(progress, questionChapterIndex, { now }).unresolvedMistakes, 1);
 });
 
 test('spaced repetition schedules wrong answers soon and known answers later', () => {

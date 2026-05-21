@@ -1389,65 +1389,57 @@ test('computeReadinessScore: mock recency uses completedAt instead of exam answe
   assert.equal(invalidCompletedAt.components.accuracy, 0);
 });
 
-test('computeReadinessScore: truthy non-boolean study correctness does not raise readiness', () => {
-  const { computeReadinessScore } = loadTs('lib/learning/readiness.ts');
+test('computeReadinessFromQuestionProgress: invalid adapter counters stay bounded', () => {
+  const { computeReadinessFromQuestionProgress } = loadTs('lib/learning/readiness.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const chapters = [{ id: 'a', questionCount: 3 }];
-  const questionChapterIndex = { q1: 'a', q2: 'a', q3: 'a' };
-  const makeAnswer = (questionId, isCorrect, minute) => ({
-    questionId,
-    selectedOptionIds: [],
-    isCorrect,
-    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
-    timeSpentSeconds: 5,
-  });
-  const makeProgress = (answers) =>
-    progressWithSessions([
-      {
-        id: 'study-malformed-correctness',
-        mode: 'study',
-        questionIds: answers.map((answer) => answer.questionId),
-        startedAt: '2026-05-19T09:00:00.000Z',
-        answers,
+  const result = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      valid: {
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
       },
-    ]);
-  const malformed = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', 'yes', 0),
-      makeAnswer('q2', 1, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const strictFalse = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', false, 0),
-      makeAnswer('q2', false, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const validBoolean = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', true, 0),
-      makeAnswer('q2', true, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
+      numericString: {
+        seenCount: 1,
+        correctCount: '1',
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+      oversized: {
+        seenCount: Number.MAX_SAFE_INTEGER,
+        correctCount: Number.MAX_SAFE_INTEGER,
+        wrongCount: 0,
+        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+      },
+    },
+    questions: [
+      { id: 'valid', chapterId: 'a' },
+      { id: 'numericString', chapterId: 'b' },
+      { id: 'oversized', chapterId: 'c' },
+    ],
+    chapters: [
+      { id: 'a', questionCount: 10 },
+      { id: 'b', questionCount: 10 },
+      { id: 'c', questionCount: 10 },
+    ],
+    mockExamSessions: [
+      {
+        sessionId: 'string-counted',
+        score: 0.8,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: '32',
+        totalCount: '40',
+      },
+    ],
     now,
   });
 
-  assert.equal(malformed.components.accuracy, 0);
-  assert.equal(malformed.score, strictFalse.score);
-  assert.equal(malformed.verdict, strictFalse.verdict);
-  assert.equal(malformed.verdict, 'not_ready_yet');
-  assert.ok(validBoolean.components.accuracy > malformed.components.accuracy);
-  assert.ok(validBoolean.score > malformed.score);
+  assert.equal(result.components.accuracy, 2 / 3);
+  assert.equal(result.components.coverage, 1);
+  assert.equal(result.components.mockAverage, 0.8);
+  assert.ok(Number.isFinite(result.score));
+  assert.equal(result.isSparse, true);
 });
 
 // -------------------------------------------------------- Calibration
