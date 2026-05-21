@@ -147,6 +147,58 @@ export async function seedFreshFirstRunSettingsLanguage(
   );
 }
 
+export async function mockBrowserDate(page: Page, fixedDate: string | Date): Promise<void> {
+  const fixedTime = typeof fixedDate === 'string' ? Date.parse(fixedDate) : fixedDate.getTime();
+
+  if (!Number.isFinite(fixedTime)) {
+    throw new Error(`Invalid browser date mock: ${String(fixedDate)}`);
+  }
+
+  await page.addInitScript((mockedNow: number) => {
+    const RealDate = Date;
+
+    const MockDate = function (
+      this: Date,
+      valueOrYear?: string | number,
+      monthIndex?: number,
+      date?: number,
+      hours?: number,
+      minutes?: number,
+      seconds?: number,
+      ms?: number,
+    ) {
+      if (!new.target) {
+        return new RealDate(mockedNow).toString();
+      }
+
+      if (arguments.length === 0) {
+        return new RealDate(mockedNow);
+      }
+
+      if (arguments.length === 1) {
+        return new RealDate(valueOrYear as string | number);
+      }
+
+      return new RealDate(
+        valueOrYear as number,
+        monthIndex as number,
+        date,
+        hours,
+        minutes,
+        seconds,
+        ms,
+      );
+    } as unknown as DateConstructor;
+
+    Object.setPrototypeOf(MockDate, RealDate);
+    Object.defineProperty(MockDate, 'prototype', { value: RealDate.prototype });
+    MockDate.now = () => mockedNow;
+    MockDate.parse = RealDate.parse;
+    MockDate.UTC = RealDate.UTC;
+    window.Date = MockDate;
+  }, fixedTime);
+}
+
 async function clickFirstVisible(locator: Locator): Promise<boolean> {
   const target = locator.first();
 

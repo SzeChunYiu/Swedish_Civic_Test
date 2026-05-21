@@ -92,3 +92,62 @@ test('practice feedback specs target answer option accessibility result labels',
     );
   }
 });
+
+test('countdown browser date coverage uses the shared clock helper', () => {
+  const browserLaunchSource = readRelative('browserLaunch.ts');
+  const countdownSource = readRelative('countdown-banner-source-affordance.spec.ts');
+
+  assert.match(
+    browserLaunchSource,
+    /export async function mockBrowserDate\(page: Page, fixedDate: string \| Date\): Promise<void>/,
+    'browserLaunch should export the shared browser clock helper',
+  );
+  assert.match(
+    browserLaunchSource,
+    /page\.addInitScript\(\(mockedNow: number\) => \{/,
+    'mockBrowserDate should install the clock before the app script runs',
+  );
+  assert.match(
+    browserLaunchSource,
+    /if \(!new\.target\) \{\s+return new RealDate\(mockedNow\)\.toString\(\);/s,
+    'mockBrowserDate should preserve callable Date() behavior',
+  );
+  assert.match(
+    browserLaunchSource,
+    /MockDate\.now = \(\) => mockedNow/,
+    'mockBrowserDate should pin Date.now as well as new Date()',
+  );
+  assert.match(
+    countdownSource,
+    /import \{ dismissBlockingModals, mockBrowserDate \} from '\.\/browserLaunch';/,
+    'countdown e2e coverage should import the shared browser clock helper',
+  );
+  assert.match(
+    countdownSource,
+    /await mockBrowserDate\(page, '2026-05-21T12:00:00\.000Z'\);/,
+    'countdown e2e coverage should pin the browser before route navigation',
+  );
+});
+
+test('browser specs do not define local Date browser clock stubs', () => {
+  const forbiddenClockStubPatterns = [
+    /\b(?:window|globalThis)\.Date\s*=/g,
+    /\bDate\.now\s*=/g,
+    /\bclass\s+\w*Date\s+extends\s+Date\b/g,
+    /\b(?:RealDate|OriginalDate|NativeDate)\b/g,
+  ];
+
+  const violations = [];
+  for (const filePath of browserSpecPaths) {
+    const source = fs.readFileSync(filePath, 'utf8');
+    for (const pattern of forbiddenClockStubPatterns) {
+      violations.push(...collectMatches({ pattern, source, filePath }));
+    }
+  }
+
+  assert.deepEqual(
+    violations,
+    [],
+    'use mockBrowserDate from tests/e2e/browserLaunch.ts instead of local Date constructor or Date.now stubs',
+  );
+});
