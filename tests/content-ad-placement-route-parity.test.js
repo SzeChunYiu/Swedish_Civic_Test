@@ -110,6 +110,60 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
+test('practice completion interstitial is owned only by PracticeInterstitialAd', () => {
+  const obsoleteFiles = [
+    'components/monetization/AdInterstitial.tsx',
+    'components/monetization/AdInterstitial.native.tsx',
+  ];
+
+  for (const file of obsoleteFiles) {
+    assert.equal(fs.existsSync(path.join(repoRoot, file)), false, `${file} should not exist`);
+  }
+
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const webInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+  const nativeInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceSource, /PracticeInterstitialAd/);
+  assert.match(webInterstitialSource, /quiz_completed_interstitial/);
+  assert.match(nativeInterstitialSource, /quiz_completed_interstitial/);
+  assert.doesNotMatch(nativeInterstitialSource, /shownInterstitialTriggerKeys/);
+});
+
+test('ad placement route parity rejects the obsolete generic interstitial component', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalExistsSync = fs.existsSync;
+fs.existsSync = function existsSync(filePath) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdInterstitial.native.tsx')) {
+    return true;
+  }
+  return originalExistsSync.call(this, filePath);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd owns quiz_completed_interstitial/,
+  );
+});
+
 test('Home ad placement waits for Remove Ads entitlements before rendering', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 

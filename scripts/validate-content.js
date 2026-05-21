@@ -490,10 +490,6 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
-  /^\s*Vilket svar stämmer bäst\?/i,
-  /^\s*Välj rätt alternativ:/i,
-  /^\s*Which answer best matches\?/i,
-  /^\s*Choose the correct option:/i,
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
   /^\s*Vilket påstående är korrekt/i,
@@ -1262,6 +1258,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
+const OBSOLETE_INTERSTITIAL_COMPONENT_FILES = [
+  'components/monetization/AdInterstitial.tsx',
+  'components/monetization/AdInterstitial.native.tsx',
+];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
@@ -3308,7 +3308,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating, options?: RecordAnswerOptions) => void',
+    type: '(questionId: string, isCorrect: boolean) => void',
     optional: false,
   },
   {
@@ -3328,9 +3328,7 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'activeQuestionId', type: 'string | null', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
-  { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
-  { name: 'claimAnswerXpAward', type: '(awardKey: string) => boolean', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
 ];
@@ -5624,7 +5622,7 @@ function judgementPromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5632,7 +5630,7 @@ function judgementPromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
@@ -5640,7 +5638,7 @@ function singleChoicePromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5648,7 +5646,7 @@ function singleChoicePromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 function generatedSingleChoicePromptFromSourceSv(source, variant) {
   const q = stripFinalPunctuation(source.questionSv);
@@ -7126,7 +7124,6 @@ const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
-const getPracticeAnswerXpAwardKey = practiceSessionStoreModule.getPracticeAnswerXpAwardKey;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -7713,9 +7710,6 @@ if (
 if (typeof getPracticeInterstitialShowKey !== 'function') {
   fail('getPracticeInterstitialShowKey export is not a function');
 }
-if (typeof getPracticeAnswerXpAwardKey !== 'function') {
-  fail('getPracticeAnswerXpAwardKey export is not a function');
-}
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -8010,6 +8004,8 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
+  validateObsoleteInterstitialComponentsRemoved();
+
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
@@ -8208,14 +8204,6 @@ function validateAdPlacementRouteParity() {
         reject('Practice route must use getPracticeInterstitialShowKey for interstitial capping');
         routeIsValid = false;
       }
-      if (!source.includes('getPracticeAnswerXpAwardKey(question.id, shuffleSessionId)')) {
-        reject('Practice route must key answer XP awards by question and shuffle session');
-        routeIsValid = false;
-      }
-      if (!source.includes('awardXp: claimAnswerXpAward(')) {
-        reject('Practice route must guard retry answer XP awards before recording progress');
-        routeIsValid = false;
-      }
       if (
         !webInterstitialSource.includes(`shouldShowAd('${spec.placement}', resolvedEntitlements)`)
       ) {
@@ -8307,6 +8295,14 @@ function validateAdPlacementRouteParity() {
     noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
   ) {
     adPlacementRouteParityValidated = true;
+  }
+}
+
+function validateObsoleteInterstitialComponentsRemoved() {
+  for (const file of OBSOLETE_INTERSTITIAL_COMPONENT_FILES) {
+    if (fs.existsSync(path.join(repoRoot, file))) {
+      fail(`${file} must stay removed; PracticeInterstitialAd owns quiz_completed_interstitial`);
+    }
   }
 }
 
@@ -13533,14 +13529,12 @@ function validatePracticeSessionStoreParity() {
     usePracticeSessionStore &&
     typeof usePracticeSessionStore.getState === 'function' &&
     typeof usePracticeSessionStore.setState === 'function' &&
-    typeof getPracticeInterstitialShowKey === 'function' &&
-    typeof getPracticeAnswerXpAwardKey === 'function'
+    typeof getPracticeInterstitialShowKey === 'function'
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
-      answerXpAwardedKey: null,
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
@@ -13555,16 +13549,6 @@ function validatePracticeSessionStoreParity() {
       state.activeQuestionId,
       state.shuffleSessionId,
     );
-    const firstAnswerXpKey = getPracticeAnswerXpAwardKey(
-      state.activeQuestionId,
-      state.shuffleSessionId,
-    );
-    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== true) {
-      rejectRuntime('practice first answer must claim answer XP for the feedback cycle');
-    }
-    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== false) {
-      rejectRuntime('practice retry must not claim answer XP twice for one feedback cycle');
-    }
 
     usePracticeSessionStore.getState().resetSelection();
     state = usePracticeSessionStore.getState();
@@ -13582,9 +13566,6 @@ function validatePracticeSessionStoreParity() {
     ) {
       rejectRuntime('practice retry must keep the same interstitial feedback-cycle key');
     }
-    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== false) {
-      rejectRuntime('practice retry reset must keep the answer XP feedback-cycle guard');
-    }
 
     usePracticeSessionStore.getState().advanceQuestion();
     state = usePracticeSessionStore.getState();
@@ -13601,23 +13582,11 @@ function validatePracticeSessionStoreParity() {
     ) {
       rejectRuntime('practice advance must create a fresh interstitial feedback-cycle key');
     }
-    if (state.answerXpAwardedKey !== null) {
-      rejectRuntime('practice advance must reset the answer XP feedback-cycle guard');
-    }
-    if (
-      usePracticeSessionStore
-        .getState()
-        .claimAnswerXpAward(getPracticeAnswerXpAwardKey('q-validator', state.shuffleSessionId)) !==
-      true
-    ) {
-      rejectRuntime('practice advance must allow answer XP for the next feedback cycle');
-    }
 
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
-      answerXpAwardedKey: null,
     });
     if (runtimeValid) practiceInterstitialQuestionCapValidated = true;
   }
@@ -15631,6 +15600,7 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+validateObsoleteInterstitialComponentsRemoved();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
