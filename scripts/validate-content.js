@@ -1527,6 +1527,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
+const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -8831,6 +8832,8 @@ let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
+let mobileAdsConsentRuntimeCasesValidated = 0;
+let mobileAdsConsentRuntimeParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
@@ -9445,6 +9448,19 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
     spacedRepetitionRuntimeParityValidated,
     spacedRepetitionRuntimeInputCasesValidated,
     spacedRepetitionRuntimeInputParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-mobile-ads-consent')) {
+  validateMobileAdsConsentTypeSchemaParity();
+  validateMobileAdsConsentRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentTypeInterfacesValidated,
+    mobileAdsConsentTypeSchemaParityValidated,
+    mobileAdsConsentRuntimeCasesValidated,
+    mobileAdsConsentRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -15911,6 +15927,90 @@ function validateMobileAdsConsentTypeSchemaParity() {
   }
 }
 
+function validateMobileAdsConsentRuntimeParity() {
+  let valid = true;
+  let mobileConsentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mobileConsentSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedMobileConsentSource = mobileConsentSource.replace(/\s+/g, ' ');
+  const runtimeCases = [
+    [
+      normalizedMobileConsentSource.includes(
+        'const shouldCollectConsent = googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;',
+      ),
+      'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
+    ],
+    [
+      /const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);[\s\S]*region:\s*normalizedRegion,/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must normalize invalid regions before building consent state',
+    ],
+    [
+      /const\s+currentTrackingTransparencyStatus\s*=\s*await\s+getCurrentTrackingTransparencyStatus\([\s\S]*?\);\s*const\s+trackingTransparencyStatus\s*=\s*await\s+requestTrackingTransparencyStatusIfNeeded\([\s\S]*?currentTrackingTransparencyStatus[\s\S]*?\);\s*const\s+umpConsentStatus\s*=\s*await\s+resolveUmpConsentStatus\([\s\S]*?normalizedRegion[\s\S]*?\);/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must request ATT before resolving UMP consent',
+    ],
+    [
+      !/Promise\.all\([\s\S]*requestTrackingTransparencyStatusIfNeeded[\s\S]*resolveUmpConsentStatus/.test(
+        mobileConsentSource,
+      ) &&
+        !/Promise\.all\([\s\S]*resolveUmpConsentStatus[\s\S]*requestTrackingTransparencyStatusIfNeeded/.test(
+          mobileConsentSource,
+        ),
+      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
+    ],
+    [
+      /if\s*\(\s*!shouldCollectConsent\s*\|\|\s*!regionRequiresUmpConsent\(region\)\s*\)\s*return\s+'not_required';/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must skip UMP gathering for non-UMP regions',
+    ],
+    [
+      /try\s*\{\s*return\s+mapUmpConsentStatus\(await\s+runtime\.gatherUmpConsent\?\.\(\)\);\s*\}\s*catch\s*\{\s*return\s+mapUmpConsentStatus\(await\s+runtime\.getUmpConsentInfo\?\.\(\)\);\s*\}/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must fall back to cached UMP info when gathering fails',
+    ],
+    [
+      /const\s+decision\s*=\s*getAdSdkInitializationDecision\(state\);[\s\S]*if\s*\(\s*!decision\.canInitializeGoogleMobileAds\s*\)\s*\{[\s\S]*initialized:\s*false[\s\S]*\}[\s\S]*await\s+options\.runtime\.initializeGoogleMobileAds\?\.\(\);[\s\S]*initialized:\s*true/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must block SDK initialization until the consent decision allows it',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    mobileAdsConsentRuntimeCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    mobileAdsConsentRuntimeCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES
+  ) {
+    mobileAdsConsentRuntimeParityValidated = true;
+  }
+}
+
 function validateMobileAdsConsentHookParity() {
   let valid = true;
   let hookSource = '';
@@ -20117,6 +20217,7 @@ validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
+validateMobileAdsConsentRuntimeParity();
 validateMobileAdsConsentHookParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
@@ -20346,6 +20447,8 @@ console.log(
       adConsentTypeSchemaParityValidated,
       mobileAdsConsentTypeInterfacesValidated,
       mobileAdsConsentTypeSchemaParityValidated,
+      mobileAdsConsentRuntimeCasesValidated,
+      mobileAdsConsentRuntimeParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
       rewardedAdTypeUnionsValidated,
