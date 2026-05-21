@@ -63,7 +63,10 @@ test('mistakes route shell copy follows the persisted settings language', () => 
   assert.match(source, /initialNumToRender=\{10\}/);
   assert.match(source, /testID="mistakes-review-list"/);
   assert.match(source, /testID="mistakes-review-card"/);
-  assert.match(source, /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} \/>/);
+  assert.match(
+    source,
+    /<AnswerReviewBlock copy=\{copy\} correctAnswer=\{correctAnswer\} styles=\{styles\} \/>/,
+  );
   assert.match(source, /\{copy\.selectedWrongAnswerLabel\}/);
   assert.match(source, /\{copy\.correctAnswerLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.answerReviewAccessibilityLabel\(/);
@@ -237,7 +240,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+        '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} styles={styles} />',
         'null',
       );
   }

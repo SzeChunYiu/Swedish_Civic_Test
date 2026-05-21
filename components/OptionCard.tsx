@@ -1,8 +1,10 @@
 import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { useMemo } from 'react';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type OptionCardState = 'idle' | 'selected' | 'correct' | 'incorrect';
 
@@ -71,6 +73,8 @@ export function OptionCard({
   style,
   ...pressableProps
 }: OptionCardProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((settings) => settings.language);
   const language = languageOverride ?? settingsLanguage;
   const resolvedStateLabel = stateLabel ?? defaultStateLabels[language][state];
@@ -99,18 +103,18 @@ export function OptionCard({
       hitSlop={hitSlop ?? space[1]}
       style={({ pressed }) => [
         styles.base,
-        getCardStateStyle(state),
+        getCardStateStyle(styles, state),
         pressed && !isDisabled ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
         style,
       ]}
       {...pressableProps}
     >
-      <View pointerEvents="none" style={[styles.marker, getMarkerStateStyle(state)]}>
-        {isChecked ? <View style={[styles.markerDot, getMarkerDotStyle(state)]} /> : null}
+      <View pointerEvents="none" style={[styles.marker, getMarkerStateStyle(styles, state)]}>
+        {isChecked ? <View style={[styles.markerDot, getMarkerDotStyle(styles, state)]} /> : null}
       </View>
       <View style={styles.copy}>
-        <NativeText style={[styles.label, getLabelStateStyle(state), labelStyle]}>
+        <NativeText style={[styles.label, getLabelStateStyle(styles, state), labelStyle]}>
           {label}
         </NativeText>
         {description ? (
@@ -118,7 +122,7 @@ export function OptionCard({
         ) : null}
       </View>
       {resultLabel ? (
-        <NativeText style={[styles.resultLabel, getResultLabelStateStyle(state)]}>
+        <NativeText style={[styles.resultLabel, getResultLabelStateStyle(styles, state)]}>
           {resultLabel}
         </NativeText>
       ) : null}
@@ -126,7 +130,7 @@ export function OptionCard({
   );
 }
 
-function getCardStateStyle(state: OptionCardState) {
+function getCardStateStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   switch (state) {
     case 'selected':
       return styles.selected;
@@ -140,7 +144,7 @@ function getCardStateStyle(state: OptionCardState) {
   }
 }
 
-function getMarkerStateStyle(state: OptionCardState) {
+function getMarkerStateStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   switch (state) {
     case 'selected':
       return styles.selectedMarker;
@@ -154,7 +158,7 @@ function getMarkerStateStyle(state: OptionCardState) {
   }
 }
 
-function getMarkerDotStyle(state: OptionCardState) {
+function getMarkerDotStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   switch (state) {
     case 'correct':
       return styles.correctDot;
@@ -167,11 +171,11 @@ function getMarkerDotStyle(state: OptionCardState) {
   }
 }
 
-function getLabelStateStyle(state: OptionCardState) {
+function getLabelStateStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   return state === 'incorrect' ? styles.warningLabel : styles.standardLabel;
 }
 
-function getResultLabelStateStyle(state: OptionCardState) {
+function getResultLabelStateStyle(styles: ReturnType<typeof createStyles>, state: OptionCardState) {
   switch (state) {
     case 'correct':
       return styles.correctResultLabel;
@@ -184,101 +188,103 @@ function getResultLabelStateStyle(state: OptionCardState) {
   }
 }
 
-const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[1.5],
-    minHeight: space[8],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.5],
-  },
-  idle: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-  },
-  selected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  correct: {
-    backgroundColor: colors.correctBg,
-    borderColor: colors.success,
-  },
-  incorrect: {
-    backgroundColor: colors.incorrectBg,
-    borderColor: colors.warning,
-  },
-  pressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  disabled: {
-    opacity: motion.pressedScale,
-  },
-  marker: {
-    alignItems: 'center',
-    borderRadius: radius.circle,
-    borderWidth: space.hairline,
-    height: space[3],
-    justifyContent: 'center',
-    width: space[3],
-  },
-  idleMarker: {
-    borderColor: colors.border,
-  },
-  selectedMarker: {
-    borderColor: colors.badgeBlueText,
-  },
-  correctMarker: {
-    borderColor: colors.success,
-  },
-  incorrectMarker: {
-    borderColor: colors.warning,
-  },
-  markerDot: {
-    borderRadius: radius.circle,
-    height: space[1],
-    width: space[1],
-  },
-  selectedDot: {
-    backgroundColor: colors.badgeBlueText,
-  },
-  correctDot: {
-    backgroundColor: colors.success,
-  },
-  incorrectDot: {
-    backgroundColor: colors.warning,
-  },
-  copy: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  label: {
-    ...typography.bodySemibold,
-  },
-  standardLabel: {
-    color: colors.text,
-  },
-  warningLabel: {
-    color: colors.warmDark,
-  },
-  description: {
-    ...typography.captionLight,
-    color: colors.textSecondary,
-  },
-  resultLabel: {
-    ...typography.badge,
-    textTransform: 'uppercase',
-  },
-  selectedResultLabel: {
-    color: colors.badgeBlueText,
-  },
-  correctResultLabel: {
-    color: colors.success,
-  },
-  incorrectResultLabel: {
-    color: colors.warning,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      alignItems: 'center',
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[1.5],
+      minHeight: space[8],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.5],
+    },
+    idle: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+    },
+    selected: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    correct: {
+      backgroundColor: themeColors.correctBg,
+      borderColor: themeColors.success,
+    },
+    incorrect: {
+      backgroundColor: themeColors.incorrectBg,
+      borderColor: themeColors.warning,
+    },
+    pressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    disabled: {
+      opacity: motion.pressedScale,
+    },
+    marker: {
+      alignItems: 'center',
+      borderRadius: radius.circle,
+      borderWidth: space.hairline,
+      height: space[3],
+      justifyContent: 'center',
+      width: space[3],
+    },
+    idleMarker: {
+      borderColor: themeColors.border,
+    },
+    selectedMarker: {
+      borderColor: themeColors.badgeBlueText,
+    },
+    correctMarker: {
+      borderColor: themeColors.success,
+    },
+    incorrectMarker: {
+      borderColor: themeColors.warning,
+    },
+    markerDot: {
+      borderRadius: radius.circle,
+      height: space[1],
+      width: space[1],
+    },
+    selectedDot: {
+      backgroundColor: themeColors.badgeBlueText,
+    },
+    correctDot: {
+      backgroundColor: themeColors.success,
+    },
+    incorrectDot: {
+      backgroundColor: themeColors.warning,
+    },
+    copy: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    label: {
+      ...typography.bodySemibold,
+    },
+    standardLabel: {
+      color: themeColors.text,
+    },
+    warningLabel: {
+      color: themeColors.warmDark,
+    },
+    description: {
+      ...typography.captionLight,
+      color: themeColors.textSecondary,
+    },
+    resultLabel: {
+      ...typography.badge,
+      textTransform: 'uppercase',
+    },
+    selectedResultLabel: {
+      color: themeColors.badgeBlueText,
+    },
+    correctResultLabel: {
+      color: themeColors.success,
+    },
+    incorrectResultLabel: {
+      color: themeColors.warning,
+    },
+  });
+}

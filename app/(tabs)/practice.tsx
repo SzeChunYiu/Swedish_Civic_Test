@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -13,6 +13,7 @@ import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPi
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
@@ -39,24 +40,18 @@ import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
+import type { PracticeQuestion } from '../../types/content';
 import type { ConfidenceRating } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
-
-type ChallengeAnswer = {
-  questionId: string;
-  isCorrect: boolean;
-};
 
 type PracticeCopy = {
   badge: string;
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
-  challengeBadge: string;
-  challengeSubtitle: string;
-  challengeTimer: (seconds: number) => string;
   completedQuestions: (count: number) => string;
   emptyTitle: string;
   nextQuestion: string;
@@ -79,6 +74,9 @@ type PracticeCopy = {
   aboutSourcesSupplementaryBody: string;
   aboutSourcesEditorialTitle: string;
   aboutSourcesEditorialBody: string;
+  challengeBadge: string;
+  challengeTimer: (remainingSeconds: number) => string;
+  challengeTimedOut: string;
 };
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
@@ -88,10 +86,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
-    challengeBadge: 'Dagens utmaning',
-    challengeSubtitle:
-      'Fem frågor från dagens urval. Timern är lokal och försöket sparas som klart för dagen.',
-    challengeTimer: (seconds) => `${seconds} sekunder kvar`,
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
     nextQuestion: 'Nästa fråga',
@@ -116,7 +110,10 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
+    challengeBadge: 'Dagens utmaning',
+    challengeTimer: (remainingSeconds) => `${remainingSeconds} sekunder kvar`,
+    challengeTimedOut: 'Tiden är ute. Försök igen för att starta om dagens utmaning.',
   },
   en: {
     badge: '5-minute practice',
@@ -124,10 +121,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
-    challengeBadge: 'Daily challenge',
-    challengeSubtitle:
-      "Five questions from today's set. The timer is local and completion is saved for the day.",
-    challengeTimer: (seconds) => `${seconds} seconds left`,
     completedQuestions: (count) => `Completed questions: ${count}`,
     emptyTitle: 'No practice questions are available yet.',
     nextQuestion: 'Next question',
@@ -153,6 +146,9 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesEditorialTitle: 'Editorial',
     aboutSourcesEditorialBody:
       'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
+    challengeBadge: 'Daily challenge',
+    challengeTimer: (remainingSeconds) => `${remainingSeconds} seconds left`,
+    challengeTimedOut: "Time is up. Try again to restart today's challenge.",
   },
 };
 
@@ -170,7 +166,6 @@ export default function Screen() {
   const recordDailyChallengeCompletion = useProgressStore(
     (state) => state.recordDailyChallengeCompletion,
   );
-  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
@@ -186,6 +181,8 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -197,11 +194,11 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
-  const [challengeAnswers, setChallengeAnswers] = useState<ChallengeAnswer[]>([]);
   const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
     DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
   );
   const [challengeRetryActive, setChallengeRetryActive] = useState(false);
+  const [challengeAnswers, setChallengeAnswers] = useState<Record<string, boolean>>({});
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
@@ -210,7 +207,7 @@ export default function Screen() {
     () =>
       dailyChallenge.questionIds
         .map((questionId) => questions.find((candidate) => candidate.id === questionId))
-        .filter((candidate): candidate is (typeof questions)[number] => Boolean(candidate)),
+        .filter((question): question is PracticeQuestion => Boolean(question)),
     [dailyChallenge.questionIds],
   );
   const filteredQuestions = useMemo(
@@ -219,11 +216,8 @@ export default function Screen() {
   );
   const practiceQuestionBank = isChallengeMode ? challengeQuestions : filteredQuestions;
   const visibleCompletedQuestionIds = useMemo(
-    () =>
-      isChallengeMode
-        ? challengeAnswers.map((answer) => answer.questionId)
-        : getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
-    [challengeAnswers, completedQuestionIds, isChallengeMode, practiceQuestionBank],
+    () => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
+    [completedQuestionIds, practiceQuestionBank],
   );
   const rawQuestion = getPracticeQuestionForSession(
     practiceQuestionBank,
@@ -236,65 +230,35 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
-  const challengeQuestionTotal = challengeQuestions.length;
-  const challengeCompletedToday = Boolean(dailyChallengeCompletions[dailyChallenge.dayKey]);
-  const challengeInactive =
-    isChallengeMode &&
-    (challengeRetryActive || remainingChallengeSeconds <= 0 || challengeQuestionTotal === 0);
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
 
   useEffect(() => {
-    if (!isChallengeMode) return;
-
-    resetSelection();
-    setChallengeAnswers([]);
+    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
+    setChallengeAnswers({});
     setChallengeRetryActive(false);
-    setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
-  }, [dailyChallenge.dayKey, dailyChallenge.timeLimitSeconds, isChallengeMode, resetSelection]);
+  }, [dailyChallenge.dayKey, isChallengeMode]);
+
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
 
   useEffect(() => {
-    if (!isChallengeMode || challengeInactive || challengeCompletedToday) return;
+    if (!isChallengeMode || hasSelectedAnswer || challengeTimedOut) return undefined;
 
-    const timerId = setInterval(() => {
+    const timer = setTimeout(() => {
       setRemainingChallengeSeconds((seconds) => Math.max(0, seconds - 1));
     }, 1000);
 
-    return () => clearInterval(timerId);
-  }, [challengeCompletedToday, challengeInactive, isChallengeMode]);
-
-  useEffect(() => {
-    if (
-      !isChallengeMode ||
-      remainingChallengeSeconds > 0 ||
-      challengeRetryActive ||
-      challengeQuestionTotal === 0
-    ) {
-      return;
-    }
-
-    const correctCount = challengeAnswers.filter((answer) => answer.isCorrect).length;
-    recordDailyChallengeCompletion({
-      dayKey: dailyChallenge.dayKey,
-      questionIds: dailyChallenge.questionIds,
-      correctCount,
-      totalCount: challengeQuestionTotal,
-      score: challengeQuestionTotal > 0 ? correctCount / challengeQuestionTotal : 0,
-      timeSpentSeconds: dailyChallenge.timeLimitSeconds,
-      completedAt: new Date().toISOString(),
-    });
-    setChallengeRetryActive(true);
+    return () => clearTimeout(timer);
   }, [
-    challengeAnswers,
-    challengeQuestionTotal,
     challengeRetryActive,
-    dailyChallenge.dayKey,
-    dailyChallenge.questionIds,
-    dailyChallenge.timeLimitSeconds,
+    challengeTimedOut,
+    hasSelectedAnswer,
     isChallengeMode,
-    recordDailyChallengeCompletion,
     remainingChallengeSeconds,
   ]);
 
@@ -306,7 +270,6 @@ export default function Screen() {
     );
   }
 
-  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
@@ -317,16 +280,9 @@ export default function Screen() {
   const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
   const bankProgress =
-    isChallengeMode && challengeQuestionTotal > 0
-      ? challengeAnswers.length / challengeQuestionTotal
-      : practiceQuestionBank.length > 0
-        ? questionNumber / practiceQuestionBank.length
-        : 0;
-  const completedQuestionCount = isChallengeMode
-    ? challengeAnswers.length
-    : visibleCompletedQuestionIds.length;
+    practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
   const handleSelectOption = (optionId: string) => {
-    if (challengeInactive) return;
+    if (challengeTimedOut) return;
 
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -337,29 +293,22 @@ export default function Screen() {
     selectOption(question.id, optionId);
     recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
 
-    if (isChallengeMode && !challengeAnswers.some((answer) => answer.questionId === question.id)) {
-      const nextChallengeAnswers = [
-        ...challengeAnswers,
-        { questionId: question.id, isCorrect: optionIsCorrect },
-      ];
+    if (isChallengeMode) {
+      const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };
       setChallengeAnswers(nextChallengeAnswers);
 
-      if (nextChallengeAnswers.length >= challengeQuestionTotal) {
-        const correctCount = nextChallengeAnswers.filter((answer) => answer.isCorrect).length;
-        const timeSpentSeconds = Math.max(
-          0,
-          dailyChallenge.timeLimitSeconds - remainingChallengeSeconds,
-        );
+      if (Object.keys(nextChallengeAnswers).length >= challengeQuestions.length) {
+        const correctCount = Object.values(nextChallengeAnswers).filter(Boolean).length;
+        const totalCount = challengeQuestions.length;
         recordDailyChallengeCompletion({
           dayKey: dailyChallenge.dayKey,
           questionIds: dailyChallenge.questionIds,
           correctCount,
-          totalCount: challengeQuestionTotal,
-          score: challengeQuestionTotal > 0 ? correctCount / challengeQuestionTotal : 0,
-          timeSpentSeconds,
+          totalCount,
+          score: totalCount > 0 ? correctCount / totalCount : 0,
+          timeSpentSeconds: DAILY_CHALLENGE_TIME_LIMIT_SECONDS - remainingChallengeSeconds,
           completedAt: new Date().toISOString(),
         });
-        setChallengeRetryActive(true);
       }
     }
 
@@ -373,17 +322,14 @@ export default function Screen() {
   };
   const handleAdvanceQuestion = () => {
     setSelectedConfidenceRating(null);
-    if (isChallengeMode && challengeRetryActive) return;
     advanceQuestion();
   };
   const handleTryAgain = () => {
     setSelectedConfidenceRating(null);
-    if (isChallengeMode && challengeRetryActive) {
-      resetSelection();
-      setChallengeAnswers([]);
-      setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
-      setChallengeRetryActive(false);
-      return;
+    if (isChallengeMode) {
+      setChallengeRetryActive(true);
+      setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
+      setChallengeAnswers({});
     }
     resetSelection();
   };
@@ -395,19 +341,17 @@ export default function Screen() {
         <Text accessibilityRole="header" style={styles.title}>
           {copy.questionTitle(questionNumber)}
         </Text>
-        <Text style={styles.subtitle}>
-          {isChallengeMode ? copy.challengeSubtitle : copy.subtitle}
-        </Text>
-        {isChallengeMode ? (
-          <Text accessibilityRole="timer" style={styles.challengeTimer}>
-            {copy.challengeTimer(remainingChallengeSeconds)}
-          </Text>
-        ) : null}
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionCount)}</Text>
+        <Text style={styles.meta}>
+          {isChallengeMode
+            ? copy.challengeTimer(remainingChallengeSeconds)
+            : copy.completedQuestions(visibleCompletedQuestionIds.length)}
+        </Text>
+        {challengeTimedOut ? <Text style={styles.meta}>{copy.challengeTimedOut}</Text> : null}
         <View style={styles.headerControls}>
           <Pressable
-            android_ripple={{ color: colors.focusSoft }}
+            android_ripple={{ color: themeColors.focusSoft }}
             aria-selected={isBookmarked}
             accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
             accessibilityRole="button"
@@ -427,38 +371,33 @@ export default function Screen() {
               {isBookmarked ? copy.bookmarked : copy.bookmark}
             </Text>
           </Pressable>
-          {isChallengeMode ? null : (
-            <Pressable
-              android_ripple={{ color: colors.focusSoft }}
-              aria-checked={includeSupplementary}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: includeSupplementary }}
-              accessibilityLabel={
-                includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-              }
-              hitSlop={space[1]}
-              onBlur={() => setFocusedHeaderControl(null)}
-              onFocus={() => setFocusedHeaderControl('supplementary')}
-              onPress={() => setIncludeSupplementary(!includeSupplementary)}
-              style={({ pressed }) => [
-                styles.bookmarkButton,
-                includeSupplementary ? styles.bookmarkButtonActive : null,
-                focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-                pressed ? styles.headerControlPressed : null,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.bookmarkText,
-                  includeSupplementary ? styles.bookmarkTextActive : null,
-                ]}
-              >
-                {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-              </Text>
-            </Pressable>
-          )}
           <Pressable
-            android_ripple={{ color: colors.focusSoft }}
+            android_ripple={{ color: themeColors.focusSoft }}
+            aria-checked={includeSupplementary}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: includeSupplementary }}
+            accessibilityLabel={
+              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+            }
+            hitSlop={space[1]}
+            onBlur={() => setFocusedHeaderControl(null)}
+            onFocus={() => setFocusedHeaderControl('supplementary')}
+            onPress={() => setIncludeSupplementary(!includeSupplementary)}
+            style={({ pressed }) => [
+              styles.bookmarkButton,
+              includeSupplementary ? styles.bookmarkButtonActive : null,
+              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
+              pressed ? styles.headerControlPressed : null,
+            ]}
+          >
+            <Text
+              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
+            >
+              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+            </Text>
+          </Pressable>
+          <Pressable
+            android_ripple={{ color: themeColors.focusSoft }}
             aria-expanded={aboutSourcesOpen}
             accessibilityRole="button"
             accessibilityState={{ expanded: aboutSourcesOpen }}
@@ -527,7 +466,7 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
-              disabled={hasSelectedAnswer || challengeInactive}
+              disabled={hasSelectedAnswer || challengeTimedOut}
               language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
@@ -562,6 +501,12 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
+          <QuestionReportLink
+            language={language}
+            question={question}
+            screen="practice"
+            selectedOptionId={selectedOptionId}
+          />
           <PracticeInterstitialAd
             showKey={getPracticeInterstitialShowKey(question.id, shuffleSessionId)}
           />
@@ -591,175 +536,167 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-  },
-  content: {
-    gap: space[2],
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  emptyContainer: {
-    flex: 1,
-    padding: space[3],
-  },
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.25],
-    padding: space[3],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  challengeTimer: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-  },
-  provenanceBadge: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.pill,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    overflow: 'hidden',
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
-    textTransform: 'uppercase',
-  },
-  provenanceUhr: {
-    backgroundColor: colors.badgeBlueBg,
-    color: colors.badgeBlueText,
-  },
-  provenanceSupplementary: {
-    backgroundColor: colors.surfaceWarm,
-    color: colors.text,
-  },
-  provenanceEditorial: {
-    backgroundColor: colors.surfaceMuted,
-    color: colors.textMuted,
-  },
-  aboutSourcesTrigger: {
-    alignSelf: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  aboutSourcesTriggerText: {
-    color: colors.accent,
-    fontSize: typography.caption.fontSize,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-  },
-  aboutSourcesPanel: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.5],
-    padding: space[1.5],
-  },
-  aboutSourcesItemTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  aboutSourcesItemBody: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginBottom: space[0.5],
-  },
-  headerControls: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  headerControlFocused: {
-    borderColor: colors.focus,
-  },
-  headerControlPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  bookmarkButton: {
-    alignSelf: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    maxWidth: '100%',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  bookmarkButtonActive: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.focusSoft,
-  },
-  bookmarkText: {
-    color: colors.textSecondary,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-  },
-  bookmarkTextActive: {
-    color: colors.badgeBlueText,
-  },
-  options: {
-    gap: space[1],
-  },
-  feedback: {
-    gap: space[1.5],
-  },
-  feedbackActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  feedbackButton: {
-    minHeight: space[5] + space[0.5],
-  },
-  score: {
-    color: colors.success,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surface,
+      flex: 1,
+    },
+    content: {
+      gap: space[2],
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    emptyContainer: {
+      flex: 1,
+      padding: space[3],
+    },
+    hero: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.25],
+      padding: space[3],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    meta: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+    },
+    provenanceBadge: {
+      alignSelf: 'flex-start',
+      borderRadius: radius.pill,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      overflow: 'hidden',
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.5],
+      textTransform: 'uppercase',
+    },
+    provenanceUhr: {
+      backgroundColor: themeColors.badgeBlueBg,
+      color: themeColors.badgeBlueText,
+    },
+    provenanceSupplementary: {
+      backgroundColor: themeColors.surfaceWarm,
+      color: themeColors.text,
+    },
+    provenanceEditorial: {
+      backgroundColor: themeColors.surfaceMuted,
+      color: themeColors.textMuted,
+    },
+    aboutSourcesTrigger: {
+      alignSelf: 'flex-start',
+      alignItems: 'center',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      maxWidth: '100%',
+      minHeight: space[6],
+      minWidth: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    aboutSourcesTriggerText: {
+      color: themeColors.accent,
+      fontSize: typography.caption.fontSize,
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+    },
+    aboutSourcesPanel: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[0.5],
+      padding: space[1.5],
+    },
+    aboutSourcesItemTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    aboutSourcesItemBody: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginBottom: space[0.5],
+    },
+    headerControls: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    headerControlFocused: {
+      borderColor: themeColors.focus,
+    },
+    headerControlPressed: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    bookmarkButton: {
+      alignSelf: 'flex-start',
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      maxWidth: '100%',
+      minHeight: space[6],
+      minWidth: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    bookmarkButtonActive: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.focusSoft,
+    },
+    bookmarkText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+    },
+    bookmarkTextActive: {
+      color: themeColors.badgeBlueText,
+    },
+    options: {
+      gap: space[1],
+    },
+    feedback: {
+      gap: space[1.5],
+    },
+    feedbackActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    feedbackButton: {
+      minHeight: space[5] + space[0.5],
+    },
+    score: {
+      color: themeColors.success,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+  });
+}

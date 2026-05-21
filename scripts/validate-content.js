@@ -1287,7 +1287,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['{copy.bookmarkedTitle}', 'bookmarked title must render localized copy'],
   ['{copy.bookmarkedMeta}', 'bookmarked metadata must render localized copy'],
   [
-    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
+    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} styles={styles} />',
     'bookmarked review cards must show the localized correct answer',
   ],
   ['<Badge tone="orange">{copy.mistakeBadge}</Badge>', 'mistake badge must render localized copy'],
@@ -2595,7 +2595,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
     pattern:
-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
+      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',

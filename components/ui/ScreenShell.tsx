@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useMemo } from 'react';
 import type { PropsWithChildren, ReactNode } from 'react';
+import { useMemo } from 'react';
 import { Badge } from './Badge';
-import { colors, radius, shadows, space, typography } from '../../lib/theme';
-import type { ThemeColors } from '../../lib/theme';
+import { radius, shadows, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 export function ScreenShell({
   title,
@@ -11,22 +11,20 @@ export function ScreenShell({
   eyebrow,
   children,
   rightSlot,
-  themeColors,
 }: PropsWithChildren<{
   title: string;
   subtitle?: string;
   eyebrow?: string;
   rightSlot?: ReactNode;
-  themeColors?: ThemeColors;
 }>) {
-  const resolvedColors = themeColors ?? colors;
-  const styles = useMemo(() => createStyles(resolvedColors), [resolvedColors]);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <View style={styles.heroCopy}>
-          {eyebrow ? <Badge themeColors={resolvedColors}>{eyebrow}</Badge> : null}
+          {eyebrow ? <Badge>{eyebrow}</Badge> : null}
           <Text accessibilityRole="header" style={styles.title}>
             {title}
           </Text>
@@ -39,16 +37,9 @@ export function ScreenShell({
   );
 }
 
-export function SectionHeader({
-  title,
-  subtitle,
-  themeColors,
-}: {
-  title: string;
-  subtitle?: string;
-  themeColors?: ThemeColors;
-}) {
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+export function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
     <View style={styles.sectionHeader}>
@@ -75,7 +66,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.large,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       gap: space[2],
       padding: space[3],
       ...shadows.card,

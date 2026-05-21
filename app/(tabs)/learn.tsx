@@ -13,7 +13,8 @@ import { questions } from '../../data/questions';
 import { EBOOK_ARTICLE_COUNT } from '../../lib/content/ebookContent';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PracticeQuestion } from '../../types/content';
 
 type ChapterLinkCopy = {
@@ -177,6 +178,8 @@ export default function Screen() {
   const language = useSettingsStore((state) => state.language);
   const routeCopy = learnRouteCopy[language];
   const copy = chapterLinkCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const flashcardQuestions = questions.slice(0, FLASHCARD_PREVIEW_LIMIT);
   const chapterProgressById = useMemo(
     () => buildChapterProgressById(completedQuestionIds),
@@ -256,17 +259,19 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  flashcardDeck: {
-    gap: space[1.5],
-  },
-  list: {
-    gap: space[1.5],
-  },
-  link: {
-    borderRadius: radius.card,
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    textDecorationLine: 'none',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    flashcardDeck: {
+      gap: space[1.5],
+    },
+    list: {
+      gap: space[1.5],
+    },
+    link: {
+      borderRadius: radius.card,
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      textDecorationLine: 'none',
+    },
+  });
+}

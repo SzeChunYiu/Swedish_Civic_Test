@@ -1,13 +1,12 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
 import { useId, useMemo, type PropsWithChildren } from 'react';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
-import type { ThemeColors } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
   style?: StyleProp<ViewStyle>;
-  themeColors?: ThemeColors;
   variant?: ButtonVariant;
 }
 
@@ -22,15 +21,14 @@ export function Button({
   children,
   hitSlop,
   style,
-  themeColors,
   accessibilityRole = 'button',
   accessibilityState,
   disabled,
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
-  const resolvedColors = themeColors ?? colors;
-  const styles = useMemo(() => createStyles(resolvedColors), [resolvedColors]);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const mergedAccessibilityState = {
     ...accessibilityState,
     ...(disabled == null ? {} : { disabled }),
@@ -57,7 +55,7 @@ export function Button({
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
-      android_ripple={android_ripple ?? { color: resolvedColors.focusSoft, borderless: false }}
+      android_ripple={android_ripple ?? { color: themeColors.focusSoft, borderless: false }}
       disabled={disabled}
       hitSlop={hitSlop ?? space[0.5]}
       style={({ pressed }) => [

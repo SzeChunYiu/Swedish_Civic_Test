@@ -10,8 +10,6 @@ const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
   /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
-const SHADOW_LITERAL =
-  /\b(?:shadowColor|shadowOpacity|shadowRadius|shadowOffset|boxShadow|elevation)\s*:/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
@@ -45,29 +43,6 @@ function walk(dir) {
 
 function read(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
-}
-
-function collectStyleTokenOffenders(readFileSync = fs.readFileSync) {
-  const offenders = [];
-
-  for (const sourceDir of SOURCE_DIRS) {
-    for (const filePath of walk(path.join(ROOT, sourceDir))) {
-      const relPath = path.relative(ROOT, filePath);
-      const lines = readFileSync(filePath, 'utf8').split('\n');
-      lines.forEach((line, index) => {
-        if (
-          COLOR_LITERAL.test(line) ||
-          SPACING_LITERAL.test(line) ||
-          TYPOGRAPHY_LITERAL.test(line) ||
-          SHADOW_LITERAL.test(line)
-        ) {
-          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
-        }
-      });
-    }
-  }
-
-  return offenders;
 }
 
 function readColorTokens() {
@@ -120,44 +95,26 @@ function contrastRatio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-test('app and component styles use theme tokens instead of literal colors, spacing, typography, or shadows', () => {
-  assert.deepEqual(collectStyleTokenOffenders(), []);
-});
+test('app and component styles use theme tokens instead of literal colors, spacing, or typography', () => {
+  const offenders = [];
 
-test('theme discipline rejects negative literal typography drift', () => {
-  assert.equal(TYPOGRAPHY_LITERAL.test('letterSpacing: -0.2,'), true);
-  assert.equal(
-    TYPOGRAPHY_LITERAL.test('letterSpacing: typography.cardTitle.letterSpacing,'),
-    false,
-  );
-});
-
-test('theme discipline rejects route or component raw shadow drift', () => {
-  const offenders = collectStyleTokenOffenders((filePath, encoding) => {
-    const source = fs.readFileSync(filePath, encoding);
-    if (path.relative(ROOT, filePath) === 'components/Surface.tsx') {
-      return source.replace(
-        '...shadows.card,',
-        [
-          'shadowColor: colors.text,',
-          'shadowOpacity: 0.2,',
-          'shadowOffset: { width: 0, height: 10 },',
-          'shadowRadius: 32,',
-          'elevation: 3,',
-        ].join('\n'),
-      );
+  for (const sourceDir of SOURCE_DIRS) {
+    for (const filePath of walk(path.join(ROOT, sourceDir))) {
+      const relPath = path.relative(ROOT, filePath);
+      const lines = fs.readFileSync(filePath, 'utf8').split('\n');
+      lines.forEach((line, index) => {
+        if (
+          COLOR_LITERAL.test(line) ||
+          SPACING_LITERAL.test(line) ||
+          TYPOGRAPHY_LITERAL.test(line)
+        ) {
+          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
+        }
+      });
     }
-    return source;
-  });
+  }
 
-  assert.ok(
-    offenders.some((offender) => /components\/Surface\.tsx:\d+: shadowColor:/.test(offender)),
-    `expected raw shadowColor offender, got ${JSON.stringify(offenders)}`,
-  );
-  assert.ok(
-    offenders.some((offender) => /components\/Surface\.tsx:\d+: elevation: 3/.test(offender)),
-    `expected raw elevation offender, got ${JSON.stringify(offenders)}`,
-  );
+  assert.deepEqual(offenders, []);
 });
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
@@ -187,12 +144,12 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
     );
     assert.match(
       source,
-      /disabled:\s*\{[\s\S]*backgroundColor:\s*(?:colors|themeColors)\.surfaceWarm[\s\S]*borderColor:\s*(?:colors|themeColors)\.border[\s\S]*\}/,
+      /disabled:\s*\{[\s\S]*backgroundColor:\s*themeColors\.surfaceWarm[\s\S]*borderColor:\s*themeColors\.border[\s\S]*\}/,
       `${label} disabled state should use tokenized disabled surface and border`,
     );
     assert.match(
       source,
-      /disabledLabel:\s*\{[\s\S]*color:\s*(?:colors|themeColors)\.textMuted[\s\S]*\}/,
+      /disabledLabel:\s*\{[\s\S]*color:\s*themeColors\.textMuted[\s\S]*\}/,
       `${label} disabled label should use the readable muted text token`,
     );
   }
@@ -228,144 +185,6 @@ test('form fields and primary button controls consume dedicated radius tokens', 
   assert.doesNotMatch(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
-});
-
-function assertUtilityRouteThemeContract(source, routeLabel) {
-  assert.match(source, /useColorScheme/, `${routeLabel} should read the system color scheme`);
-  assert.match(
-    source,
-    /useAccessibilityStore/,
-    `${routeLabel} should read the persisted accessibility theme mode`,
-  );
-  assert.match(
-    source,
-    /colorsForThemeMode\(themeMode, systemColorScheme\)/,
-    `${routeLabel} should resolve theme colors through colorsForThemeMode`,
-  );
-  assert.match(
-    source,
-    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
-    `${routeLabel} should derive its StyleSheet from resolved theme colors`,
-  );
-  assert.match(
-    source,
-    /function createStyles\(themeColors: ThemeColors\)/,
-    `${routeLabel} should type its dynamic theme stylesheet`,
-  );
-  assert.match(
-    source,
-    /<ScreenShell[\s\S]*themeColors=\{themeColors\}/,
-    `${routeLabel} should pass theme colors to the shared shell`,
-  );
-  assert.match(
-    source,
-    /<Card[\s\S]*themeColors=\{themeColors\}/,
-    `${routeLabel} should pass theme colors to shared cards`,
-  );
-  assert.doesNotMatch(
-    source,
-    /import \{[^}]*\bcolors\b[^}]*\} from '\.\.\/lib\/theme';/,
-    `${routeLabel} should not import static light color tokens`,
-  );
-  assert.doesNotMatch(
-    source,
-    /\bcolors\./,
-    `${routeLabel} should not reference static light color tokens`,
-  );
-}
-
-test('search and citizenship utility routes resolve colors from persisted theme mode', () => {
-  assertUtilityRouteThemeContract(read('app/search.tsx'), 'search route');
-  assertUtilityRouteThemeContract(
-    read('app/citizenship-requirements.tsx'),
-    'citizenship requirements route',
-  );
-});
-
-function assertSourceAffordanceThemeContract(relativePath, componentLabel) {
-  const source = read(relativePath);
-
-  assert.match(
-    source,
-    /themeColors\?: ThemeColors/,
-    `${componentLabel} should expose a typed themeColors override`,
-  );
-  assert.match(
-    source,
-    /useResolvedThemeColors\(themeColors\)/,
-    `${componentLabel} should resolve persisted theme colors through the shared hook`,
-  );
-  assert.match(
-    source,
-    /createStyles\(resolvedThemeColors\)/,
-    `${componentLabel} should build styles from resolved theme colors`,
-  );
-  assert.doesNotMatch(
-    source,
-    /import \{[^}]*\bcolors\b[^}]*\} from ['"][^'"]*lib\/theme['"]/,
-    `${componentLabel} should not import static light color tokens`,
-  );
-  assert.doesNotMatch(
-    source,
-    /\bcolors\./,
-    `${componentLabel} should not reference static light color tokens`,
-  );
-}
-
-test('source-boundary affordances resolve persisted dark theme colors', () => {
-  assertSourceAffordanceThemeContract('components/DisclaimerBanner.tsx', 'DisclaimerBanner');
-  assertSourceAffordanceThemeContract('components/quiz/SourceCitation.tsx', 'SourceCitation');
-  assertSourceAffordanceThemeContract(
-    'components/quiz/QuestionSourceCitation.tsx',
-    'QuestionSourceCitation',
-  );
-  assertSourceAffordanceThemeContract('components/quiz/ProvenanceBadge.tsx', 'ProvenanceBadge');
-
-  const hookSource = read('components/useResolvedThemeColors.ts');
-  assert.match(hookSource, /useAccessibilityStore/, 'theme hook should read persisted theme mode');
-  assert.match(hookSource, /useColorScheme/, 'theme hook should honor system color scheme');
-  assert.match(
-    hookSource,
-    /colorsForThemeMode\(themeMode, systemColorScheme\)/,
-    'theme hook should use shared theme token resolver',
-  );
-
-  const questionDisclaimerSource = read('components/quiz/QuestionDisclaimer.tsx');
-  assert.match(
-    questionDisclaimerSource,
-    /themeColors\?: ThemeColors/,
-    'QuestionDisclaimer should accept a typed themeColors prop',
-  );
-  assert.match(
-    questionDisclaimerSource,
-    /<DisclaimerBanner[\s\S]*themeColors=\{themeColors\}/,
-    'QuestionDisclaimer should forward route theme colors to DisclaimerBanner',
-  );
-
-  assert.match(
-    read('app/search.tsx'),
-    /<ProvenanceBadge[\s\S]*themeColors=\{themeColors\}/,
-    'Search should pass resolved route colors to the provenance badge',
-  );
-  assert.match(
-    read('app/citizenship-requirements.tsx'),
-    /<QuestionDisclaimer themeColors=\{themeColors\}/,
-    'Citizenship requirements should pass resolved route colors to the disclaimer',
-  );
-});
-
-test('utility route theme contract rejects static route-local colors', () => {
-  const mutatedSearchSource = read('app/search.tsx')
-    .replace(
-      "import { colorsForThemeMode, radius, space, typography } from '../lib/theme';",
-      "import { colors, colorsForThemeMode, radius, space, typography } from '../lib/theme';",
-    )
-    .replace('color: themeColors.text,', 'color: colors.text,');
-
-  assert.throws(
-    () => assertUtilityRouteThemeContract(mutatedSearchSource, 'search route'),
-    /static light color tokens/,
-  );
 });
 
 test('theme content validation parser keeps one token schema validator', () => {

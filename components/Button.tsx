@@ -1,9 +1,11 @@
 import type { PropsWithChildren } from 'react';
+import { useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text as NativeText } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -35,12 +37,12 @@ function getStringLabel(children: ButtonProps['children']) {
     : undefined;
 }
 
-function getSpinnerColor(variant: ButtonVariant, disabled: boolean) {
+function getSpinnerColor(themeColors: ThemeColors, variant: ButtonVariant, disabled: boolean) {
   if (disabled) {
-    return colors.textMuted;
+    return themeColors.textMuted;
   }
 
-  return variant === 'primary' ? colors.surface : colors.accent;
+  return variant === 'primary' ? themeColors.surface : themeColors.accent;
 }
 
 export function Button({
@@ -59,6 +61,8 @@ export function Button({
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const resolvedLoadingLabel = loadingLabel ?? buttonLoadingCopy[language];
@@ -93,7 +97,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator
           accessibilityElementsHidden
-          color={getSpinnerColor(variant, isExplicitlyDisabled)}
+          color={getSpinnerColor(themeColors, variant, isExplicitlyDisabled)}
           importantForAccessibility="no"
           size={space[2]}
         />
@@ -112,73 +116,75 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    borderRadius: radius.button,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[1],
-    justifyContent: 'center',
-  },
-  sm: {
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  md: {
-    minHeight: space[7],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-  },
-  lg: {
-    minHeight: space[8],
-    paddingHorizontal: space[3],
-    paddingVertical: space[1.5],
-  },
-  primary: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  secondary: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-  },
-  ghost: {
-    borderColor: colors.surfaceMuted,
-  },
-  pressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  primaryPressed: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-  },
-  secondaryPressed: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.focus,
-  },
-  ghostPressed: {
-    backgroundColor: colors.focusSoft,
-    borderColor: colors.focus,
-  },
-  disabled: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
-  label: {
-    ...typography.navButton,
-  },
-  primaryLabel: {
-    color: colors.surface,
-  },
-  secondaryLabel: {
-    color: colors.text,
-  },
-  ghostLabel: {
-    color: colors.accent,
-  },
-  disabledLabel: {
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      alignItems: 'center',
+      borderRadius: radius.button,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[1],
+      justifyContent: 'center',
+    },
+    sm: {
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    md: {
+      minHeight: space[7],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+    },
+    lg: {
+      minHeight: space[8],
+      paddingHorizontal: space[3],
+      paddingVertical: space[1.5],
+    },
+    primary: {
+      backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+    },
+    secondary: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+    },
+    ghost: {
+      borderColor: themeColors.surfaceMuted,
+    },
+    pressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    primaryPressed: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+    },
+    secondaryPressed: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.focus,
+    },
+    ghostPressed: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    disabled: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
+    label: {
+      ...typography.navButton,
+    },
+    primaryLabel: {
+      color: themeColors.surface,
+    },
+    secondaryLabel: {
+      color: themeColors.text,
+    },
+    ghostLabel: {
+      color: themeColors.accent,
+    },
+    disabledLabel: {
+      color: themeColors.textMuted,
+    },
+  });
+}

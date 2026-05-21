@@ -2,15 +2,13 @@ import { useEffect } from 'react';
 import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
-import { useColorScheme } from 'react-native';
 
 import { LaunchPopupAd } from '../components/monetization/LaunchPopupAd';
 import { FirstRunAboutTheTestModal } from '../components/onboarding/FirstRunAboutTheTestModal';
 import { LanguagePicker } from '../components/ui/LanguagePicker';
 import { shouldSuppressLaunchPopupAdForPath } from '../lib/monetization/ads';
 import { useRemoveAdsEntitlements } from '../lib/monetization/useRemoveAdsEntitlements';
-import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
-import { colorsForThemeMode, resolveThemePreference } from '../lib/theme';
+import { ThemeProvider, useTheme } from '../lib/theme/ThemeProvider';
 
 function useSystemCanvasColor(canvasColor: string) {
   useEffect(() => {
@@ -18,12 +16,8 @@ function useSystemCanvasColor(canvasColor: string) {
   }, [canvasColor]);
 }
 
-export default function RootLayout() {
-  const systemColorScheme = useColorScheme();
-  const themeMode = useAccessibilityStore((state) => state.themeMode);
-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
-  const resolvedColorScheme = resolveThemePreference(themeMode, systemColorScheme);
-
+function RootLayoutContent() {
+  const { colors: themeColors, resolvedColorScheme } = useTheme();
   useSystemCanvasColor(themeColors.canvas);
   const pathname = usePathname();
   const suppressLaunchPopupAd = shouldSuppressLaunchPopupAdForPath(pathname);
@@ -54,5 +48,13 @@ export default function RootLayout() {
       <FirstRunAboutTheTestModal />
       <StatusBar style={resolvedColorScheme === 'dark' ? 'light' : 'dark'} />
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RootLayoutContent />
+    </ThemeProvider>
   );
 }

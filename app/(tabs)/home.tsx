@@ -1,4 +1,5 @@
 import { Link } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
@@ -6,8 +7,10 @@ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
 import { Card } from '../../components/ui/Card';
+import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { SocialProofRow } from '../../components/ui/SocialProofRow';
 import { StatCallout } from '../../components/ui/StatCallout';
@@ -25,12 +28,14 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
-import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
+import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type StudyLoopItemCopy = {
   label: string;
@@ -56,11 +61,12 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
-  dailyChallengeAccessibilityLabel: (title: string, subtitle: string) => string;
-  dailyChallengeCta: string;
-  dailyChallengeDoneCta: string;
-  dailyChallengeMeta: (questionCount: number) => string;
   dailyGoalTitle: string;
+  dashboardAccessibilityLabel: string;
+  dashboardLink: string;
+  dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
+  dailyChallengeCta: (completed: boolean) => string;
+  dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -101,6 +107,7 @@ type HomeCopy = {
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
+  streakFreezeBadge: string;
   studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
@@ -115,16 +122,19 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
-    dailyChallengeAccessibilityLabel: (title, subtitle) =>
-      `${title}. ${subtitle}. Öppna dagens utmaning.`,
-    dailyChallengeCta: 'Starta utmaning',
-    dailyChallengeDoneCta: 'Visa dagens utmaning',
-    dailyChallengeMeta: (questionCount) => `${questionCount} frågor · 60 sekunder`,
     dailyGoalTitle: 'Dagens mål',
+    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
+      `${title}. ${subtitle}. ${
+        completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
+      }`,
+    dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
+    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
+    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
+    dashboardLink: 'Visa framsteg',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
-    feedbackBadge: '10 000 elevers återkoppling',
+    feedbackBadge: 'Fokuserad repetition',
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
@@ -147,10 +157,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
@@ -162,10 +172,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
@@ -177,10 +187,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
@@ -220,6 +230,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
+    streakFreezeBadge: 'Svitskydd',
     studyLoopItems: [
       {
         label: 'Korta pass',
@@ -253,16 +264,19 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
-    dailyChallengeAccessibilityLabel: (title, subtitle) =>
-      `${title}. ${subtitle}. Open today's challenge.`,
-    dailyChallengeCta: 'Start challenge',
-    dailyChallengeDoneCta: "View today's challenge",
-    dailyChallengeMeta: (questionCount) => `${questionCount} questions · 60 seconds`,
     dailyGoalTitle: "Today's goal",
+    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
+      `${title}. ${subtitle}. ${
+        completed ? "Today's challenge is already complete." : "Start today's challenge."
+      }`,
+    dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
+    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
+    dashboardAccessibilityLabel: 'Open progress dashboard',
+    dashboardLink: 'View dashboard',
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
-    feedbackBadge: '10,000-learner feedback pass',
+    feedbackBadge: 'Focused review',
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
@@ -360,6 +374,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
+    streakFreezeBadge: 'Streak freeze',
     studyLoopItems: [
       {
         label: 'Bite-size practice',
@@ -403,16 +418,33 @@ export default function Screen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
+  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const dailyChallenge = buildDailyChallenge({ bank: questions });
   const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
   const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
-  const currentStreak = calculateStreak(answerDates);
+  const streakWithFreeze = useMemo(
+    () =>
+      calculateStreakWithFreeze({
+        activeDayKeys: answerDates,
+        freezeState: streakFreezeState,
+      }),
+    [answerDates, streakFreezeState],
+  );
+  const currentStreak = streakWithFreeze.streakDays;
+  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
+  const dayStreakHelper =
+    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
+      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
+      : copy.dayStreakHelper;
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
@@ -434,6 +466,10 @@ export default function Screen() {
   );
   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
 
+  useEffect(() => {
+    setStreakFreezeState(streakWithFreeze.freezeState);
+  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+
   return (
     <ScreenShell
       eyebrow={copy.eyebrow}
@@ -453,6 +489,7 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
+      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -495,6 +532,26 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
+      <Card style={styles.dailyChallengeCard}>
+        <Badge tone={dailyChallengeCompleted ? 'blue' : 'warm'}>{dailyChallengeCopy.title}</Badge>
+        <Text style={styles.dailyChallengeText}>{dailyChallengeCopy.subtitle}</Text>
+        <Text style={styles.dailyChallengeMeta}>
+          {dailyChallenge.questionIds.length}{' '}
+          {language === 'sv' ? 'frågor valda för idag' : 'questions selected for today'}
+        </Text>
+        <Link
+          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
+            dailyChallengeCopy.title,
+            dailyChallengeCopy.subtitle,
+            dailyChallengeCompleted,
+          )}
+          accessibilityRole="link"
+          href="/practice?mode=challenge"
+          style={styles.dailyChallengeLink}
+        >
+          {copy.dailyChallengeCta(dailyChallengeCompleted)}
+        </Link>
+      </Card>
       {showRemoveAdsOffer ? (
         <PricingWedge
           questionCount={questions.length}
@@ -502,52 +559,47 @@ export default function Screen() {
           language={language}
         />
       ) : null}
-      <Card style={styles.dailyChallengeCard}>
-        <View
-          accessible
-          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
-            dailyChallengeCopy.title,
-            dailyChallengeCopy.subtitle,
-          )}
-          aria-label={copy.dailyChallengeAccessibilityLabel(
-            dailyChallengeCopy.title,
-            dailyChallengeCopy.subtitle,
-          )}
-          style={styles.dailyChallengeText}
-        >
-          <Badge tone={dailyChallengeCompleted ? 'green' : 'orange'}>
-            {copy.dailyChallengeMeta(dailyChallenge.questionIds.length)}
-          </Badge>
-          <Text accessibilityRole="header" style={styles.dailyChallengeTitle}>
-            {dailyChallengeCopy.title}
-          </Text>
-          <Text style={styles.dailyChallengeSubtitle}>{dailyChallengeCopy.subtitle}</Text>
-        </View>
-        <Link
-          accessibilityRole="link"
-          href="/practice?mode=challenge"
-          style={dailyChallengeCompleted ? styles.secondaryLink : styles.primaryLink}
-        >
-          {dailyChallengeCompleted ? copy.dailyChallengeDoneCta : copy.dailyChallengeCta}
-        </Link>
-      </Card>
-      <View style={styles.actions}>
-        <Link
+      <View style={styles.quickActions}>
+        <RouteLink
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
+          style={styles.quickActionLink}
+          variant="primary"
         >
           {copy.startPractice}
-        </Link>
-        <Link
+        </RouteLink>
+        <RouteLink
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
-          accessibilityRole="link"
           href="/learn"
-          style={styles.secondaryLink}
+          style={styles.quickActionLink}
+          variant="secondary"
         >
           {copy.browseChapters}
-        </Link>
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.readinessCtaAccessibilityLabel}
+          href="/exam"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.readinessCta}
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
+          href="/mistakes"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.feedbackLink}
+        </RouteLink>
+        <RouteLink
+          accessibilityLabel={copy.dashboardAccessibilityLabel}
+          href="/dashboard"
+          style={styles.quickActionLink}
+          variant="secondary"
+        >
+          {copy.dashboardLink}
+        </RouteLink>
       </View>
 
       <View style={styles.statsRow}>
@@ -557,12 +609,14 @@ export default function Screen() {
           tone="blue"
           helper={copy.xpBasedHelper}
         />
-        <MetricCard
-          label={copy.dayStreakMetric}
-          value={currentStreak}
-          helper={copy.dayStreakHelper}
-        />
+        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
       </View>
+      {streakRescueMessage ? (
+        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
+          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
+          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
+        </Card>
+      ) : null}
       <View style={styles.statsRow}>
         <MetricCard
           label={copy.weakChaptersMetric}
@@ -622,191 +676,199 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  statRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  readinessCard: {
-    gap: space[1.5],
-  },
-  readinessHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1.5],
-    justifyContent: 'space-between',
-  },
-  readinessTitleBlock: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  readinessTitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  readinessVerdict: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  readinessScorePill: {
-    alignItems: 'center',
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.focusSoft,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    minWidth: space[9],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  readinessScore: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.subHeadingLarge.fontWeight,
-    lineHeight: typography.subHeadingLarge.lineHeight,
-  },
-  readinessMetric: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  readinessDetail: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  readinessCaveat: {
-    color: colors.textDisclaimer,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  readinessSparseNote: {
-    color: colors.textDisclaimer,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  readinessLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  goalCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1],
-    padding: space[2],
-  },
-  goalLabel: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-  },
-  goalMetric: {
-    color: colors.text,
-    fontSize: typography.subHeadingLarge.fontSize,
-    fontWeight: typography.subHeadingLarge.fontWeight,
-    lineHeight: typography.subHeadingLarge.lineHeight,
-  },
-  goalHint: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.5],
-  },
-  dailyChallengeCard: {
-    gap: space[1.5],
-  },
-  dailyChallengeText: {
-    gap: space[0.75],
-  },
-  dailyChallengeTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  dailyChallengeSubtitle: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: space[1.5],
-  },
-  feedbackCard: {
-    gap: space[1],
-  },
-  feedbackTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  feedbackText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  feedbackLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  loopGrid: {
-    gap: space[1.5],
-  },
-  loopCard: {
-    gap: space[1],
-  },
-  loopText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    statRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    readinessCard: {
+      gap: space[1.5],
+    },
+    readinessHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[1.5],
+      justifyContent: 'space-between',
+    },
+    readinessTitleBlock: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    readinessTitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    readinessVerdict: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    readinessScorePill: {
+      alignItems: 'center',
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.focusSoft,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      minWidth: space[9],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    readinessScore: {
+      color: themeColors.text,
+      fontSize: typography.subHeadingLarge.fontSize,
+      fontWeight: typography.subHeadingLarge.fontWeight,
+      lineHeight: typography.subHeadingLarge.lineHeight,
+    },
+    readinessMetric: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    readinessDetail: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    readinessCaveat: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    readinessSparseNote: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    readinessLink: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      justifyContent: 'center',
+      marginTop: space[0.5],
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    goalCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1],
+      padding: space[2],
+    },
+    goalLabel: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+    },
+    goalMetric: {
+      color: themeColors.text,
+      fontSize: typography.subHeadingLarge.fontSize,
+      fontWeight: typography.subHeadingLarge.fontWeight,
+      lineHeight: typography.subHeadingLarge.lineHeight,
+    },
+    goalHint: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    dailyChallengeCard: {
+      gap: space[1],
+    },
+    dailyChallengeText: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    dailyChallengeMeta: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    dailyChallengeLink: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.micro,
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      marginTop: space[0.5],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    quickActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1.5],
+    },
+    quickActionLink: {
+      flexBasis: 180,
+      flexGrow: 1,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      gap: space[1.5],
+    },
+    streakFreezeCard: {
+      gap: space[1],
+    },
+    streakFreezeText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    feedbackCard: {
+      gap: space[1],
+    },
+    feedbackTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      letterSpacing: typography.cardTitle.letterSpacing,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    feedbackText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    feedbackLink: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      justifyContent: 'center',
+      marginTop: space[0.5],
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    loopGrid: {
+      gap: space[1.5],
+    },
+    loopCard: {
+      gap: space[1],
+    },
+    loopText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+  });
+}
