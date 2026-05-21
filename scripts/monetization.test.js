@@ -1237,6 +1237,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   assert.equal(
     (
       await getPurchaseEntitlements({
@@ -1640,9 +1641,9 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
       transactionId: 'buy-remove-ads',
     }),
   );
-  const validPersistedRecord = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
+  const persistedRecord = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
-  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), validPersistedRecord);
+  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), persistedRecord);
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
