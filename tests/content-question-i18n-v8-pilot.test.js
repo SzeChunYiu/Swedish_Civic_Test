@@ -17,7 +17,7 @@ test('question localization v8 pilot covers the current pilot ids in every picke
   const output = execFileSync(process.execPath, ['scripts/check-question-i18n-v8.js'], {
     encoding: 'utf8',
   });
-  assert.match(output, /Question i18n pilot OK \(178 questions, 12 locales\)/);
+  assert.match(output, /Question i18n pilot OK \(179 questions, 12 locales\)/);
 });
 
 test('question localization v8 pilot rejects missing target-language option text', () => {
