@@ -841,10 +841,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
     'Öppna inställningar',
-    'Första övningen',
-    'Nivå 2',
-    'Misstagsrepetition',
-    'Tre dagars svit',
   ],
   en: [
     'Local profile',
@@ -874,10 +870,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'const profileCopy: Record<AppLanguage, ProfileCopy> = {',
     'profile route copy must cover every AppLanguage value',
   ],
-  [
-    'const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {',
-    'profile route must define localized badge-title overrides',
-  ],
+  ['getBadgeTitle,', 'profile route must read localized badge titles from the badge catalog'],
   [
     'const language = useSettingsStore((state) => state.language);',
     'profile route must read language from settings store',
@@ -904,9 +897,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+  ['<BadgeRow', 'profile badge summary must render localized badge rows'],
   [
-    'formatBadges(badges, language, copy.noBadges)',
-    'profile badge summary must use localized badge and empty-state copy',
+    'description={description}',
+    'profile badge rows must render localized badge descriptions or locked hints',
+  ],
+  [
+    'progressHint={getBadgeProgressHint(badge, badgeInput, language)}',
+    'profile badge rows must expose localized badge progress hints',
+  ],
+  [
+    'title={getBadgeTitle(badge, language)}',
+    'profile badge rows must render localized badge titles from the catalog',
   ],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
@@ -2763,7 +2765,7 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'Card receives chapter accessibility summary',
     pattern:
-      /<Card accessibilityLabel=\{chapterAccessibilityLabel\} elevated style=\{styles\.card\}>/,
+      /<Card[\s\S]*accessibilityLabel=\{shouldGroupForAccessibility \? chapterAccessibilityLabel : undefined\}[\s\S]*elevated[\s\S]*style=\{styles\.card\}/,
   },
   {
     label: 'visible chapter title',
@@ -2786,7 +2788,7 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
     label: 'optional front/back/language prop contract',
     pattern:
-      /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
+      /type FlashcardProps = \{[\s\S]*back\?: string;[\s\S]*front\?: string;[\s\S]*language\?: AppLanguage;[\s\S]*question\?: PracticeQuestion;[\s\S]*\};/,
   },
   {
     label: 'settings language import',
@@ -2799,7 +2801,7 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
     label: 'selected settings language fallback',
     pattern:
-      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const copy = flashcardCopy\[language \?\? settingsLanguage\];/,
+      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const resolvedLanguage = language \?\? settingsLanguage;[\s\S]*const copy = flashcardCopy\[resolvedLanguage\];/,
   },
   {
     label: 'release-safe Swedish fallbacks',
@@ -2824,11 +2826,13 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'localized accessibility summary helper',
-    pattern: /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+    pattern:
+      /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer, sourceCitation\);/,
   },
   {
     label: 'prompt and answer accessibility summary',
-    pattern: /<Card accessibilityLabel=\{flashcardAccessibilityLabel\} style=\{styles\.card\}>/,
+    pattern:
+      /<Card[\s\S]*accessibilityLabel=\{flashcardAccessibilityLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*style=\{styles\.card\}/,
   },
   {
     label: 'visible localized flashcard badge',
@@ -2897,7 +2901,7 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'disabled accessibility state follows playback guard',
-    pattern: /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/,
+    pattern: /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/,
   },
   {
     label: 'disabled interaction follows playback guard',
@@ -2905,7 +2909,8 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'trimmed speech playback',
-    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+    pattern:
+      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -3074,8 +3079,8 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
       /function getOptionCardState\(tone: AnswerTone, selected: boolean\): OptionCardState \{\s*if \(tone !== 'idle'\) return tone;\s*return selected \? 'selected' : 'idle';\s*\}/,
   },
   {
-    label: 'English and Swedish option label switch',
-    pattern: /return language === 'en' \? option\.textEn : option\.textSv;/,
+    label: 'shared bilingual option text helper',
+    pattern: /return getQuestionOptionText\(option, language\);/,
   },
 ];
 const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
@@ -3102,7 +3107,7 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
   {
     label: 'language-specific explanation selection',
     pattern:
-      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
+      /const localizedExplanation = explanationText\?\.\[language\] \?\? explanationText\?\.sv;[\s\S]*const explanation =[\s\S]*localizedExplanation \?\?[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\)\);/,
   },
   {
     label: 'localized explanation in accessibility summary',

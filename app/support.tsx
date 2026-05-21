@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalExternalLink } from '../components/compliance/LegalPage';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -178,10 +179,8 @@ export default function Screen() {
       <LegalSection title={copy.sections.independentStudyTool.title}>
         {copy.sections.independentStudyTool.body}
       </LegalSection>
-      <LegalSection
-        title={copy.sections.publicSupportPage.title}
-        body={copy.sections.publicSupportPage.body}
-      >
+      <LegalSection title={copy.sections.publicSupportPage.title}>
+        {copy.sections.publicSupportPage.body}
         <LegalExternalLink
           accessibilityLabel={copy.openSupportPageAccessibilityLabel}
           destination={PUBLIC_SUPPORT_URL}

@@ -1,4 +1,5 @@
-import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { LegalLinkList } from '../components/compliance/LegalPage';
 import {
   UHR_AUTHORITY_BOUNDARY_SOURCE,
   UhrAuthorityBoundaryLink,
@@ -74,10 +75,8 @@ export default function Screen() {
 
   return (
     <LegalPage title={copy.title}>
-      <LegalSection
-        title={copy.sections.primaryStudyMaterial.title}
-        body={copy.sections.primaryStudyMaterial.body}
-      >
+      <LegalSection title={copy.sections.primaryStudyMaterial.title}>
+        {copy.sections.primaryStudyMaterial.body}
         <LegalLinkList>
           <UhrEducationMaterialLink href={UHR_EDUCATION_MATERIAL_URL} language={language} />
         </LegalLinkList>
@@ -85,10 +84,8 @@ export default function Screen() {
       <LegalSection title={copy.sections.questionReferences.title}>
         {copy.sections.questionReferences.body}
       </LegalSection>
-      <LegalSection
-        title={copy.sections.authorityBoundaries.title}
-        body={copy.sections.authorityBoundaries.body}
-      >
+      <LegalSection title={copy.sections.authorityBoundaries.title}>
+        {copy.sections.authorityBoundaries.body}
         <LegalLinkList>
           <UhrAuthorityBoundaryLink language={language} />
         </LegalLinkList>
