@@ -9,7 +9,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Button } from '../../components/Button';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
-import { getChapterQuizSessionId } from '../../lib/quiz/practiceFlow';
+import { getChapterQuizRouteParams } from '../../lib/quiz/practiceFlow';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
 import type { Chapter, PracticeQuestion } from '../../types/content';
@@ -80,7 +80,7 @@ export default function ChapterScreen() {
     );
   }
 
-  const quizSessionId = getChapterQuizSessionId(questions, chapter.id);
+  const quizRouteParams = getChapterQuizRouteParams(questions, chapter.id);
   const chapterTitle = copy.chapterTitle(chapter);
   const renderQuestionSeparator = () => <View style={styles.questionSeparator} />;
   const renderEmptyQuestions = () => <Text style={styles.empty}>{copy.emptyQuestions}</Text>;
@@ -99,14 +99,14 @@ export default function ChapterScreen() {
       </Text>
       <Text style={styles.subtitle}>{copy.chapterSubtitle(chapter)}</Text>
       <Text style={styles.description}>{copy.chapterDescription(chapter)}</Text>
-      {quizSessionId ? (
+      {quizRouteParams ? (
         <Button
           accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}
           accessibilityRole="button"
           onPress={() =>
             router.push({
               pathname: '/quiz/[sessionId]',
-              params: { sessionId: quizSessionId },
+              params: quizRouteParams,
             })
           }
           style={styles.startQuizButton}

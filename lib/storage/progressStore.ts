@@ -12,6 +12,7 @@ import {
 } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
@@ -301,6 +302,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
     for (const [questionId, progress] of Object.entries(candidate.questionProgress)) {
+      if (!isSafeImportedMapKey(questionId)) continue;
       if (!progress || typeof progress !== 'object') continue;
       const item = progress as Partial<QuestionProgress>;
       const rawCorrectCount = normalizeNonNegativeInteger(

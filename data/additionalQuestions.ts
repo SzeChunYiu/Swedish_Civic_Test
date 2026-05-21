@@ -1,4 +1,3 @@
-import { applyQuestionLocalizationPilot } from './questionLocalizations';
 import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
@@ -65,29 +64,6 @@ function trueFalse(
     tags,
   };
 }
-
-const ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
-  'q021',
-  'q022',
-  'q023',
-  'q024',
-  'q025',
-  'q026',
-  'q027',
-  'q028',
-  'q029',
-  'q030',
-  'q031',
-  'q032',
-  'q033',
-  'q034',
-  'q035',
-  'q036',
-  'q037',
-  'q038',
-  'q039',
-  'q040',
-]);
 
 const rawAdditionalQuestions: PracticeQuestion[] = [
   single(
@@ -3858,8 +3834,4 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
   ),
 ];
 
-export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions.map((question) =>
-  ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id)
-    ? applyQuestionLocalizationPilot(question)
-    : question,
-);
+export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions;

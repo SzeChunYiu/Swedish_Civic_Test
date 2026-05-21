@@ -115,18 +115,10 @@ test('question bank CSV has no generated single-choice duplicate stems', () => {
 
 test('CSV generated single-choice duplicate guard rejects q001 variant collapse', () => {
   const rows = readQuestionBankCsvRows();
-  const sectionPractice = rows.find(
-    (row) =>
-      row.questionEn === 'Which answer best matches? Where is Sweden located?' &&
-      row.tags.includes('published-variant') &&
-      row.tags.includes('section-practice'),
-  );
-  const judgement = rows.find(
-    (row) =>
-      row.questionEn === 'Choose the correct option: Where is Sweden located?' &&
-      row.tags.includes('published-variant') &&
-      row.tags.includes('judgement'),
-  );
+  const firstGeneratedIndex = rows.findIndex((row) => row.tags.includes('published-variant'));
+  assert.notEqual(firstGeneratedIndex, -1, 'expected generated published variants');
+  const sectionPractice = rows[firstGeneratedIndex];
+  const judgement = rows[firstGeneratedIndex + 3];
   assert.ok(sectionPractice && judgement, 'expected q001 generated single-choice variants');
 
   judgement.questionSv = sectionPractice.questionSv;
@@ -146,6 +138,5 @@ test('CSV generated single-choice duplicate guard rejects q001 variant collapse'
     findings[0].includes(
       `content/question-bank.csv: ${judgement.id} duplicates ${sectionPractice.id}`,
     ),
-    findings[0],
   );
 });
