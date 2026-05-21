@@ -122,11 +122,62 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:innehåll där|content there|inlägg där|posts there)\b/i,
 ];
 
+function generatedTrueFalseNaturalnessCategory(pattern) {
+  const source = pattern.source;
+  if (/policy|folkhälsopolitik|jämställdhetspolitik|The goal|Målet/i.test(source)) {
+    return 'policy-goal';
+  }
+  if (
+    /describes|beskriver|means|betyder|innebär|applies|gäller|belongs|hör till|definition|rättigheter gäller/i.test(
+      source,
+    )
+  ) {
+    return 'definition-cleft';
+  }
+  if (
+    /One reason|En anledning|An authority|En myndighet|By\|Apply\|Leave\|Live|Genom|Through|De\|They|Påståendet|statement is true|Det stämmer|It is true/i.test(
+      source,
+    )
+  ) {
+    return 'answer-scaffold';
+  }
+  if (
+    /^\^|Vårdcentraler|Domstolar|Health centres|Courts|Ordna|Betala|Arrange|Pay|Care and services|Automatic study|Försöka|Hindra|Try to persuade|Stop others|Political elections|Important activities/i.test(
+      source,
+    )
+  ) {
+    return 'answer-fragment';
+  }
+  return 'grammar-splice';
+}
+
+const GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES =
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.map((pattern, index) => {
+    const category = generatedTrueFalseNaturalnessCategory(pattern);
+    return Object.freeze({
+      id: `${category}-${String(index + 1).padStart(3, '0')}`,
+      category,
+      pattern,
+    });
+  });
+
+function findGeneratedTrueFalseNaturalnessPatternMatch(text) {
+  return GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.find(({ pattern }) => pattern.test(text));
+}
+
 function findGeneratedTrueFalseNaturalnessPattern(text) {
-  return GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+  return findGeneratedTrueFalseNaturalnessPatternMatch(text)?.pattern;
+}
+
+function formatGeneratedTrueFalseNaturalnessPatternMatch(match) {
+  if (!match) return 'unknown generated true/false naturalness pattern';
+  return `${match.id} (${match.category}): ${match.pattern}`;
 }
 
 module.exports = {
   GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS,
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES,
   findGeneratedTrueFalseNaturalnessPattern,
+  findGeneratedTrueFalseNaturalnessPatternMatch,
+  formatGeneratedTrueFalseNaturalnessPatternMatch,
 };
