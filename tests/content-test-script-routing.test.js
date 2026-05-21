@@ -194,6 +194,32 @@ test('UHRReferenceCard accessibility parity uses focused content validation rout
   );
 });
 
+test('theme token schema uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const contentThemeTokenTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-theme-token-schema.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('themeTokenSchema');
+
+  assert.ok(registryEntry, 'theme token schema focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-theme-token-schema']);
+  assert.match(validatorSource, /--focus-theme-token-schema/);
+  assert.match(
+    validatorSource,
+    /validateThemeTokenSchema\(\);[\s\S]*themeBorderWidthTokenFilesValidated[\s\S]*themeTokenSchemaValidated/,
+  );
+  assert.match(contentThemeTokenTestSource, /--focus-theme-token-schema/);
+  assert.doesNotMatch(
+    contentThemeTokenTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'theme token schema tests must not route through full content validation',
+  );
+});
+
 test('Onboarding route scroll parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
