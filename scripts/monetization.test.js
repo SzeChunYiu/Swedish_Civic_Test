@@ -1071,6 +1071,37 @@ test('mock exam access persistence stores daily completions and rewarded credits
   });
   assert.equal(seededSnapshot.rewardedExtraExamCredits, 1);
 
+  const rawPersistedStorage = createMemoryMockExamAccessStorage();
+  await rawPersistedStorage.setItemAsync(
+    MOCK_EXAM_ACCESS_STORAGE_KEY,
+    JSON.stringify({
+      completedMockExamsByDate: {
+        '2026-05-17': 1.2,
+        '2026-05-17extra': 6,
+        '2026-05-17T00:00:00.000Z': 7,
+        '2026-02-30': 8,
+      },
+      completedMockExamSessionIdsByDate: {
+        '2026-05-17': ['mock-exam-session-e', 'mock-exam-session-f'],
+        '2026-05-17extra': ['mock-exam-session-suffix'],
+        '2026-05-17T00:00:00.000Z': ['mock-exam-session-timestamp'],
+        '2026-02-30': ['mock-exam-session-rollover'],
+      },
+      rewardedExtraExamCredits: 2.4,
+    }),
+  );
+  const rawPersistedSnapshot = await getStoredMockExamAccess({
+    date: '2026-05-17T09:00:00.000Z',
+    storage: rawPersistedStorage,
+  });
+
+  assert.equal(rawPersistedSnapshot.completedMockExamsToday, 2);
+  assert.deepEqual(rawPersistedSnapshot.completedMockExamsByDate, { '2026-05-17': 2 });
+  assert.deepEqual(rawPersistedSnapshot.completedMockExamSessionIdsByDate, {
+    '2026-05-17': ['mock-exam-session-e', 'mock-exam-session-f'],
+  });
+  assert.equal(rawPersistedSnapshot.rewardedExtraExamCredits, 2);
+
   const legacyCountOnlyStorage = createMemoryMockExamAccessStorage({
     completedMockExamsByDate: {
       '2026-05-19': 3,
