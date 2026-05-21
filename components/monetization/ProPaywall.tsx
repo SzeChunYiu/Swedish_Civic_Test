@@ -17,6 +17,7 @@ import {
   type ProLifetimePurchaseStatus,
   type ProLifetimeRuntimeOptions,
 } from '../../lib/monetization/proLifetimePurchase';
+import { REMOVE_ADS_PRICE_LABEL } from '../../lib/monetization/purchases';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
@@ -51,14 +52,14 @@ type ProPaywallCopy = {
 
 const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
   sv: {
-    body: 'Pro är ett separat engångsköp för avancerad repetition, studieplanering och fler språkstöd. Ta bort annonser för 29 kr finns kvar som en egen enklare väg.',
+    body: `Pro är ett separat engångsköp med annonsfri studie, avancerad repetition, studieplanering och fler språkstöd. Ta bort annonser för ${REMOVE_ADS_PRICE_LABEL} finns kvar som en egen enklare annonsfri väg.`,
     columnHeader: 'Funktion',
     excluded: 'Ingår inte',
     included: 'Ingår',
     includedAccessibilityLabel: 'Ingår i nivån',
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
     primaryAccessibilityHint:
-      'Köper Pro Lifetime för avancerade studiefunktioner. Ta bort annonser för 29 kronor finns kvar separat.',
+      'Köper Pro Lifetime med annonsfri studie och avancerade studiefunktioner.',
     restoring: 'Återställer...',
     restoreAccessibilityHint: 'Kontrollerar om Pro redan har köpts på samma butikskonto.',
     restoreAccessibilityLabel: 'Återställ Pro-köp',
@@ -73,7 +74,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     secondaryPathHint: (label, alreadyAdFree) =>
       alreadyAdFree
         ? `${label}: din annonsfria studie behålls när du lägger till Pro.`
-        : `${label} finns i Ta bort annonser-kortet ovan. Pro ändrar inte den vägen.`,
+        : `${label} finns i Ta bort annonser-kortet ovan. Pro innehåller också annonsfri studie, men den vägen finns kvar separat.`,
     statusAccessibilityLabel: (message) => `Status för Pro: ${message}`,
     statusMessages: {
       error: 'Pro-köp är inte tillgängligt. Försök igen senare.',
@@ -90,14 +91,13 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     upgrading: 'Köper...',
   },
   en: {
-    body: 'Pro is a separate one-time purchase for advanced review, study planning, and broader language support. Remove Ads for 29 SEK stays available as its own simpler path.',
+    body: `Pro is a separate one-time purchase with ad-free study, advanced review, study planning, and broader language support. Remove Ads for ${REMOVE_ADS_PRICE_LABEL} stays available as its own simpler ad-free path.`,
     columnHeader: 'Feature',
     excluded: 'Not included',
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
-    primaryAccessibilityHint:
-      'Buys Pro Lifetime for advanced study features. Remove Ads for 29 SEK remains separate.',
+    primaryAccessibilityHint: 'Buys Pro Lifetime with ad-free study and advanced study features.',
     restoring: 'Restoring...',
     restoreAccessibilityHint: 'Checks whether Pro was already bought with the same store account.',
     restoreAccessibilityLabel: 'Restore Pro purchase',
@@ -112,7 +112,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     secondaryPathHint: (label, alreadyAdFree) =>
       alreadyAdFree
         ? `${label}: your ad-free study stays active when you add Pro.`
-        : `${label} is still handled by the Remove Ads card above. Pro does not change that path.`,
+        : `${label} is still handled by the Remove Ads card above. Pro also includes ad-free study, but that path remains separate.`,
     statusAccessibilityLabel: (message) => `Pro status: ${message}`,
     statusMessages: {
       error: 'Pro purchase is unavailable. Try again later.',

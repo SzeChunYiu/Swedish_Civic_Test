@@ -171,6 +171,7 @@ test('resolveEffectiveEntitlement: unexpired referral grant promotes to Pro temp
     now: NOW,
   });
   assert.equal(r.primarySource, 'referral-grant-active');
+  assert.equal(r.entitlements.adsDisabled, true);
   assert.equal(r.entitlements.spacedRepetition, true);
   assert.equal(r.nextExpiryIso, future);
 });
@@ -209,6 +210,8 @@ test('resolveEffectiveEntitlement: trial + referral both active picks the earlie
     referralGrant: { expiresAtIso: earlier },
     now: NOW,
   });
+  assert.equal(r.entitlements.adsDisabled, true);
+  assert.equal(r.entitlements.spacedRepetition, true);
   assert.equal(r.nextExpiryIso, earlier);
 });
 

@@ -22,11 +22,11 @@ export const REMOVE_ADS_ENTITLEMENTS: PremiumEntitlements = {
   fullMistakeReview: false,
 };
 
-// v1.1 Pro Lifetime (59 SEK) — additive study features only while the v1.0
-// release contract keeps Remove Ads as the sole adsDisabled purchase.
+// v1.1 Pro Lifetime (59 SEK) — includes the ad-free entitlement plus the
+// advanced study feature set. Remove Ads remains a separate lower-cost path.
 // Distinct constant so v1.0 schema validators stay green.
 export const PRO_LIFETIME_ENTITLEMENTS: ProTierEntitlements = {
-  adsDisabled: false,
+  adsDisabled: true,
   unlimitedMockExams: true,
   fullMistakeReview: true,
   spacedRepetition: true,

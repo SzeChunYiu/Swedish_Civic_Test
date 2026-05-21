@@ -556,7 +556,7 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro Lifetime is study-only while Remove Ads stays non-Pro', () => {
+test('tierComparison: Pro Lifetime includes ad-free study while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
@@ -571,14 +571,10 @@ test('tierComparison: Pro Lifetime is study-only while Remove Ads stays non-Pro'
     }),
     false,
   );
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
-  assert.equal(adsRow.flag, undefined);
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
+  assert.equal(adsRow.flag, 'adsDisabled');
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, {
-    kind: 'text',
-    sv: 'vid sessionsskifte',
-    en: 'at session boundaries',
-  });
+  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -648,8 +644,8 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
-  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
-  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
+  assert.equal(fresh.primarySv, 'Köp Pro · 59 kr');
+  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 kr');
   assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
@@ -671,8 +667,16 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
   assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
-  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.match(source, /Pro is a separate one-time purchase with ad-free study/);
+  assert.match(
+    source,
+    /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available as its own simpler ad-free path/,
+  );
+  assert.match(source, /Pro är ett separat engångsköp med annonsfri studie/);
+  assert.match(
+    source,
+    /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar som en egen enklare annonsfri väg/,
+  );
   assert.doesNotMatch(source, /29 kr|29 kronor/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
