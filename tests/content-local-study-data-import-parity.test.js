@@ -2,20 +2,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const { createMemoryMMKV, loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
 
 function createStorageById() {
   return {
@@ -42,6 +32,50 @@ function validReviewCard(questionId = 'q001') {
 function loadImportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataImport.ts', storageById);
 }
+
+test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
+  const storageHarnessConsumers = [
+    'tests/v1-1-review-store.test.js',
+    'tests/v1-1-highlights-store.test.js',
+    'scripts/learning.test.js',
+    'tests/content-local-study-data-import-parity.test.js',
+    'tests/v1-1-companion-store.test.js',
+  ];
+
+  for (const relativePath of storageHarnessConsumers) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.match(
+      source,
+      /storageStoreHarness\.cjs/,
+      `${relativePath} must consume the shared storage harness`,
+    );
+    assert.doesNotMatch(
+      source,
+      /require\.extensions\[['"]\.ts['"]\]\s*=/,
+      `${relativePath} must not install its own TypeScript require hook`,
+    );
+    assert.doesNotMatch(
+      source,
+      /Module\._resolveFilename\s*=/,
+      `${relativePath} must not patch module resolution directly`,
+    );
+    assert.doesNotMatch(
+      source,
+      /['"]react-native-mmkv['"]\s*:/,
+      `${relativePath} must not define a local MMKV module stub`,
+    );
+    assert.doesNotMatch(
+      source,
+      /['"]zustand['"]\s*:/,
+      `${relativePath} must not define a local Zustand module stub`,
+    );
+    assert.doesNotMatch(
+      source,
+      /ts\.transpileModule\(/,
+      `${relativePath} must not duplicate the harness TypeScript transpiler`,
+    );
+  }
+});
 
 test('local study data import summary keeps Swedish copy learner-facing', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');

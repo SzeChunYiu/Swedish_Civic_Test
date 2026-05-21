@@ -2,53 +2,15 @@
 // Run with: node --test tests/v1-1-highlights-store.test.js
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
+
+const { loadTsModule } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-const origResolve = Module._resolveFilename;
-const origLoad = Module._load;
-
-function installStubs() {
-  const stubs = {
-    'react-native-mmkv': () => ({ createMMKV: () => null }),
-    zustand: () => ({
-      create: (factory) => {
-        const setFn = (partial) =>
-          Object.assign(state, typeof partial === 'function' ? partial(state) : partial);
-        const getFn = () => state;
-        const state = factory(setFn, getFn);
-        return () => state;
-      },
-    }),
-  };
-  Module._resolveFilename = function patchedResolve(request, ...args) {
-    if (stubs[request]) return `__stub__:${request}`;
-    return origResolve.call(this, request, ...args);
-  };
-  Module._load = function patchedLoad(request, ...args) {
-    if (stubs[request]) return stubs[request]();
-    return origLoad.call(this, request, ...args);
-  };
-}
-
-installStubs();
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
-
 function loadTs(rel) {
-  return require(path.join(repoRoot, rel));
+  return loadTsModule(repoRoot, rel);
 }
 
 const VALID_HIGHLIGHT = {
