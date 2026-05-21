@@ -433,6 +433,33 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   );
 });
 
+test('native AdBanner uses platform-aware unit lookup and shouldShowAd gate', () => {
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+
+  assert.match(nativeBannerSource, /getPlatformAdUnitId\(placement, Platform\.OS\)/);
+  assert.match(
+    nativeBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    nativeBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+  );
+  assert.match(webBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(webBannerSource, /react-native-google-mobile-ads/);
+});
+
 test('rewarded extra exam access uses free limits before offering ads', () => {
   withEnv(
     {
