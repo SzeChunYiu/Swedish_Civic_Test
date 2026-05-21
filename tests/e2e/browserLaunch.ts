@@ -25,8 +25,10 @@ const settingsSeenAboutStorageKeys = [
   `${settingsStorageId}\\${settingsSeenAboutKey}`,
 ] as const;
 
-// Selector for dialog/modal overlays in the rendered app.
-const dialogLocator = '[role="dialog"]';
+// Selector for blocking dialog/menu overlays in the rendered app.
+export const blockingModalOverlayLocator =
+  '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
+const dialogLocator = blockingModalOverlayLocator;
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,

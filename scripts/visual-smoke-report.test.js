@@ -82,6 +82,8 @@ test('visual smoke report records route-specific screenshots without launch over
   for (const route of routes) {
     assert.equal(typeof route.name, 'string');
     assert.equal(typeof route.file, 'string');
+    assert.equal(typeof route.firstRunAboutDismissed, 'boolean');
+    assert.equal(typeof route.languagePickerDismissed, 'boolean');
     assert.equal(route.launchOverlayVisibleAfterDismissal, false);
     assert.ok(
       route.launchOverlayDismissed ||
