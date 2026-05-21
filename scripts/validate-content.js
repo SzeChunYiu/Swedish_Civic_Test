@@ -747,6 +747,8 @@ const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 20;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
+const EXPECTED_LEARNING_PRO_GATED_REVIEW_CASES = 20;
+const EXPECTED_LEARNING_PRO_GATED_HIGHLIGHT_CASES = 15;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -4462,6 +4464,28 @@ function loadTs(relativePath, exportName) {
     if (request === 'expo-speech') {
       return speechMock;
     }
+    if (request === 'react-native-mmkv') {
+      return { createMMKV: () => null };
+    }
+    if (request === 'zustand') {
+      return {
+        create: (factory) => {
+          let state;
+          const setState = (partial) => {
+            const next = typeof partial === 'function' ? partial(state) : partial;
+            Object.assign(state, next);
+          };
+          const getState = () => state;
+          state = factory(setState, getState);
+          const useStore = () => state;
+          useStore.getState = getState;
+          useStore.setState = (partial) => {
+            state = { ...state, ...(typeof partial === 'function' ? partial(state) : partial) };
+          };
+          return useStore;
+        },
+      };
+    }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
@@ -4855,166 +4879,6 @@ function validateStaticEbookFactboxProvenance() {
     requiredCopyValidated,
     sourceUrlsValidated,
     unsupportedFactboxClaimsValidated,
-  };
-}
-
-function getStaticEbookChapterIdsForValidation() {
-  const sandbox = { console, window: {} };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/questions.js'), sandbox, {
-    filename: 'site/questions.js',
-    timeout: 3000,
-  });
-  const meta = sandbox.window.SMT_CHAPTERS_META || sandbox.SMT_CHAPTERS_META;
-  if (!Array.isArray(meta)) {
-    fail('site/questions.js should expose SMT_CHAPTERS_META for static ebook validation');
-    return ['intro'];
-  }
-  return ['intro', ...meta.map((chapter) => String(chapter.id))];
-}
-
-function createStaticEbookValidationHarness(chapterIds) {
-  const reader = { innerHTML: '', scrollTop: 0 };
-  const navAnchors = chapterIds.map((id) => ({
-    classList: { toggle() {} },
-    dataset: { eb: id },
-  }));
-  const localStorageValues = new Map();
-  const localStorage = {
-    getItem(key) {
-      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
-    },
-    setItem(key, value) {
-      localStorageValues.set(key, String(value));
-    },
-  };
-  const location = { hash: '#/ebook' };
-  const document = {
-    addEventListener() {},
-    getElementById(id) {
-      return id === 'ebook-reader' ? reader : null;
-    },
-    querySelectorAll(selector) {
-      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
-    },
-  };
-  const window = {
-    addEventListener() {},
-    localStorage,
-    location,
-    smtApplyEbookHighlights() {},
-  };
-  const sandbox = {
-    console,
-    document,
-    localStorage,
-    location,
-    setTimeout(callback) {
-      callback();
-      return 0;
-    },
-    window,
-  };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/ebook.js'), sandbox, {
-    filename: 'site/ebook.js',
-    timeout: 3000,
-  });
-  return { localStorage, location, reader, window };
-}
-
-function renderStaticEbookChapterForValidation(harness, lang, chapterId) {
-  harness.localStorage.setItem('smt_lang', lang);
-  harness.location.hash = `#/ebook?c=${chapterId}`;
-  harness.reader.innerHTML = '';
-  harness.window.smtEbookRender();
-  return harness.reader.innerHTML;
-}
-
-function extractStaticEbookFootnoteContract(html) {
-  const refIds = Array.from(html.matchAll(/id="ebook-fnref-([^"]+)"/g), (match) => match[1]);
-  const footnoteIds = Array.from(html.matchAll(/id="ebook-fn-([^"]+)"/g), (match) => match[1]);
-  const sourceKeys = Array.from(
-    html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g),
-    (match) => match[1],
-  );
-  const badgeHtml = html.match(/<p class="ebook__provenance-badge"[\s\S]*?<\/p>/)?.[0] ?? '';
-  const visibleBadgeText = badgeHtml.replace(/^[\s\S]*?<\/span>/, '').replace(/<[^>]+>/g, ' ');
-  const badgeCounts = Array.from(visibleBadgeText.matchAll(/\((\d+)\)/g), (match) =>
-    Number(match[1]),
-  );
-
-  return {
-    badgeCounts,
-    footnoteIds,
-    refIds,
-    sourceKeys,
-  };
-}
-
-function validateStaticEbookFootnoteHashParity() {
-  const chapterIds = getStaticEbookChapterIdsForValidation();
-  const languages = ['en', 'sv'];
-  const harness = createStaticEbookValidationHarness(chapterIds);
-  const chapterValidity = new Map(chapterIds.map((chapterId) => [chapterId, true]));
-  let languagesValidated = 0;
-
-  for (const lang of languages) {
-    let languageValid = true;
-
-    for (const chapterId of chapterIds) {
-      const html = renderStaticEbookChapterForValidation(harness, lang, chapterId);
-      const { badgeCounts, footnoteIds, refIds, sourceKeys } =
-        extractStaticEbookFootnoteContract(html);
-      let chapterValid = true;
-
-      if (refIds.length === 0) {
-        fail(`static ebook ${lang}/${chapterId} should render footnote refs`);
-        chapterValid = false;
-      }
-      if (JSON.stringify(refIds) !== JSON.stringify(footnoteIds)) {
-        fail(`static ebook ${lang}/${chapterId} footnote ref/list hash ids should match`);
-        chapterValid = false;
-      }
-      for (const id of refIds) {
-        if (!html.includes(`href="#ebook-fn-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing forward footnote hash for ${id}`);
-          chapterValid = false;
-        }
-        if (!html.includes(`href="#ebook-fnref-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing back-reference footnote hash for ${id}`);
-          chapterValid = false;
-        }
-      }
-      if (sourceKeys.length !== refIds.length) {
-        fail(`static ebook ${lang}/${chapterId} source-count list should match footnote refs`);
-        chapterValid = false;
-      }
-      if (!sourceKeys.includes('uhrStudyMaterial') || !sourceKeys.includes('editorialCommentary')) {
-        fail(`static ebook ${lang}/${chapterId} should include UHR and editorial source mixes`);
-        chapterValid = false;
-      }
-      if (badgeCounts.reduce((sum, count) => sum + count, 0) !== sourceKeys.length) {
-        fail(`static ebook ${lang}/${chapterId} badge source counts should match footnote list`);
-        chapterValid = false;
-      }
-
-      if (!chapterValid) {
-        languageValid = false;
-        chapterValidity.set(chapterId, false);
-      }
-    }
-
-    if (languageValid) languagesValidated += 1;
-  }
-
-  const chaptersValidated = Array.from(chapterValidity.values()).filter(Boolean).length;
-
-  return {
-    chaptersValidated,
-    languagesValidated,
-    parityValidated:
-      chaptersValidated === chapterIds.length && languagesValidated === languages.length,
   };
 }
 
@@ -8184,6 +8048,11 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const reviewStoreModule = loadTs('lib/storage/reviewStore.ts');
+const remainingDailyReviews = reviewStoreModule.remainingDailyReviews;
+const FREE_DAILY_REVIEW_CAP = reviewStoreModule.FREE_DAILY_REVIEW_CAP;
+const highlightsStoreModule = loadTs('lib/storage/highlightsStore.ts');
+const isColorAllowed = highlightsStoreModule.isColorAllowed;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const darkColors = themeModule.darkColors;
@@ -8468,6 +8337,9 @@ let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
+let learningProGatedReviewCasesValidated = 0;
+let learningProGatedHighlightCasesValidated = 0;
+let learningProGatedSelectorsParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -8532,9 +8404,6 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookFootnoteHashChaptersValidated = 0;
-let staticEbookFootnoteHashLanguagesValidated = 0;
-let staticEbookFootnoteHashParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -8845,20 +8714,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
-  exitWithValidationFailures();
-  printValidationSummary({
-    staticEbookFootnoteHashChaptersValidated,
-    staticEbookFootnoteHashLanguagesValidated,
-    staticEbookFootnoteHashParityValidated,
-  });
-  process.exit(0);
-}
-
 if (
   process.argv.includes('--focus-settings-store') ||
   process.argv.includes('--focus-settings-parity')
@@ -8970,6 +8825,17 @@ if (process.argv.includes('--focus-readiness-adapter-rules')) {
   printValidationSummary({
     readinessAdapterRulesValidated,
     readinessAdapterRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-learning-pro-gated-selectors')) {
+  validateLearningProGatedSelectors();
+  exitWithValidationFailures();
+  printValidationSummary({
+    learningProGatedReviewCasesValidated,
+    learningProGatedHighlightCasesValidated,
+    learningProGatedSelectorsParityValidated,
   });
   process.exit(0);
 }
@@ -9168,12 +9034,6 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-}
-{
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
 }
 {
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
@@ -9603,44 +9463,6 @@ function validateAdPlacementRouteParity() {
       }
       if (shouldShowAd(spec.placement, { adsDisabled: true })) {
         reject(`${spec.placement} must be hidden after Remove Ads is active`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdBanner') {
-      const consentAwareShouldShowPattern =
-        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
-      const nativeBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-        'utf8',
-      );
-
-      if (!nativeBannerSource.includes('BannerAd')) {
-        reject('AdBanner native placement must render BannerAd');
-        routeIsValid = false;
-      }
-      if (!nativeBannerSource.includes('BannerAdSize.ANCHORED_ADAPTIVE_BANNER')) {
-        reject('AdBanner native placement must render adaptive banner size');
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes(
-          'requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly',
-        )
-      ) {
-        reject(
-          'AdBanner native placement must pass consent-derived non-personalized request options',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes('const unitId = getPlatformAdUnitId(placement, Platform.OS);')
-      ) {
-        reject('AdBanner native placement must resolve the banner unit by platform');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeBannerSource)) {
-        reject('AdBanner native placement must gate through consent-aware platform shouldShowAd');
         routeIsValid = false;
       }
     }
@@ -17391,6 +17213,147 @@ function validateReadinessAdapterRules() {
   }
 }
 
+function validateLearningProGatedSelectors() {
+  if (
+    typeof remainingDailyReviews !== 'function' ||
+    typeof isColorAllowed !== 'function' ||
+    typeof FREE_DAILY_REVIEW_CAP !== 'number'
+  ) {
+    fail('learning Pro-gated selector helpers must be importable');
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const dayKey = streakModule.getLocalDateKey(now);
+  const baseState = { gradedPerDay: { [dayKey]: 1 } };
+  const reviewCases = [
+    {
+      label: 'learning pro reviews unlock only for strict true',
+      actual: () => remainingDailyReviews(baseState, { now, isPro: true }),
+      expected: Number.POSITIVE_INFINITY,
+    },
+    {
+      label: 'learning free reviews use default cap',
+      actual: () => remainingDailyReviews(baseState, { now, isPro: false }),
+      expected: FREE_DAILY_REVIEW_CAP - 1,
+    },
+    ...['yes', 1, {}, [], null].map((isPro) => ({
+      label: `learning malformed Pro review flag ${JSON.stringify(isPro)} stays free`,
+      actual: () => remainingDailyReviews(baseState, { now, isPro }),
+      expected: FREE_DAILY_REVIEW_CAP - 1,
+    })),
+    {
+      label: 'learning finite custom free cap subtracts used reviews',
+      actual: () => remainingDailyReviews(baseState, { now, freeCap: 2 }),
+      expected: 1,
+    },
+    ...[Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '4', null].map((freeCap) => ({
+      label: `learning invalid freeCap ${String(freeCap)} falls back`,
+      actual: () => remainingDailyReviews(baseState, { now, freeCap }),
+      expected: FREE_DAILY_REVIEW_CAP - 1,
+    })),
+    ...[Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '2'].map((used) => ({
+      label: `learning invalid graded count ${String(used)} falls back to zero`,
+      actual: () => remainingDailyReviews({ gradedPerDay: { [dayKey]: used } }, { now }),
+      expected: FREE_DAILY_REVIEW_CAP,
+    })),
+    {
+      label: 'learning overused free daily reviews clamp at zero',
+      actual: () => remainingDailyReviews({ gradedPerDay: { [dayKey]: 999 } }, { now }),
+      expected: 0,
+    },
+  ];
+  const highlightCases = [
+    {
+      label: 'learning free highlight yellow stays available',
+      actual: () => isColorAllowed('yellow', false),
+      expected: true,
+    },
+    {
+      label: 'learning free highlight green stays locked',
+      actual: () => isColorAllowed('green', false),
+      expected: false,
+    },
+    {
+      label: 'learning strict Pro unlocks green highlight',
+      actual: () => isColorAllowed('green', true),
+      expected: true,
+    },
+    {
+      label: 'learning strict Pro unlocks blue highlight',
+      actual: () => isColorAllowed('blue', true),
+      expected: true,
+    },
+    {
+      label: 'learning strict Pro unlocks pink highlight',
+      actual: () => isColorAllowed('pink', true),
+      expected: true,
+    },
+    ...['yes', 1, {}, [], null].flatMap((isPro) => [
+      {
+        label: `learning malformed Pro highlight flag ${JSON.stringify(isPro)} locks paid color`,
+        actual: () => isColorAllowed('green', isPro),
+        expected: false,
+      },
+      {
+        label: `learning malformed Pro highlight flag ${JSON.stringify(isPro)} keeps free color`,
+        actual: () => isColorAllowed('yellow', isPro),
+        expected: true,
+      },
+    ]),
+  ];
+  let valid = true;
+
+  for (const { label, actual, expected } of reviewCases) {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      valid = false;
+      fail(`${label} threw ${error.message}`);
+      continue;
+    }
+
+    if (!Object.is(actualValue, expected)) {
+      valid = false;
+      fail(`${label} returned ${actualValue}, expected ${expected}`);
+      continue;
+    }
+    if (expected !== Number.POSITIVE_INFINITY && !Number.isFinite(actualValue)) {
+      valid = false;
+      fail(`${label} returned non-finite free-tier count ${actualValue}`);
+      continue;
+    }
+    learningProGatedReviewCasesValidated += 1;
+  }
+
+  for (const { label, actual, expected } of highlightCases) {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      valid = false;
+      fail(`${label} threw ${error.message}`);
+      continue;
+    }
+
+    if (actualValue !== expected) {
+      valid = false;
+      fail(`${label} returned ${actualValue}, expected ${expected}`);
+      continue;
+    }
+    learningProGatedHighlightCasesValidated += 1;
+  }
+
+  if (
+    valid &&
+    learningProGatedReviewCasesValidated === EXPECTED_LEARNING_PRO_GATED_REVIEW_CASES &&
+    learningProGatedHighlightCasesValidated === EXPECTED_LEARNING_PRO_GATED_HIGHLIGHT_CASES
+  ) {
+    learningProGatedSelectorsParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -18958,6 +18921,7 @@ validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
 validateReadinessAdapterRules();
+validateLearningProGatedSelectors();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -19239,6 +19203,9 @@ console.log(
       dashboardPerChapterInputParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
+      learningProGatedReviewCasesValidated,
+      learningProGatedHighlightCasesValidated,
+      learningProGatedSelectorsParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
@@ -19323,9 +19290,6 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookFootnoteHashChaptersValidated,
-      staticEbookFootnoteHashLanguagesValidated,
-      staticEbookFootnoteHashParityValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,

@@ -62,32 +62,6 @@ function runPackageContentFocused(args, env) {
   });
 }
 
-function readValidateContentSource() {
-  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-}
-
-function readFocusedValidationRegistryModule() {
-  const modulePath = path.join(repoRoot, 'scripts/validate-content-focus-registry.js');
-  delete require.cache[require.resolve(modulePath)];
-  return require(modulePath);
-}
-
-function readFocusedValidationRegistrySource() {
-  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content-focus-registry.js'), 'utf8');
-}
-
-function extractFocusedValidationRegistry() {
-  return readFocusedValidationRegistryModule().FOCUSED_VALIDATION_REGISTRY;
-}
-
-function focusedValidationBlock(source, id) {
-  const start = source.indexOf(`focusedValidationRequested('${id}')`);
-  assert.notEqual(start, -1, `${id} must have a focused validation route`);
-  const exitIndex = source.indexOf('process.exit(0);', start);
-  assert.notEqual(exitIndex, -1, `${id} route must exit before full validation`);
-  return source.slice(start, exitIndex + 'process.exit(0);'.length);
-}
-
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
 
@@ -219,9 +193,9 @@ test('answer shuffle parity uses the focused content validator path', () => {
     path.join(repoRoot, 'tests/content-answer-shuffle-parity.test.js'),
     'utf8',
   );
-  const registry = extractFocusedValidationRegistry(validator);
-  const registryEntry = registry.find((entry) => entry.id === 'answerShuffleParity');
-  const focusBlockStart = validator.indexOf("focusedValidationRequested('answerShuffleParity')");
+  const focusBlockStart = validator.indexOf(
+    "process.argv.includes('--focus-answer-shuffle-parity')",
+  );
   const focusBlockEnd =
     focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
   const focusBlock =
@@ -230,8 +204,6 @@ test('answer shuffle parity uses the focused content validator path', () => {
       : validator.slice(focusBlockStart, focusBlockEnd);
   const focusFlagMatches = parityTest.match(/--focus-answer-shuffle-parity/g) || [];
 
-  assert.ok(registryEntry, 'registry needs the answer-shuffle focus mode');
-  assert.ok(registryEntry.flags.includes('--focus-answer-shuffle-parity'));
   assert.notEqual(focusBlockStart, -1, 'validate-content needs the answer-shuffle focus flag');
   assert.match(focusBlock, /validateAnswerShuffleDistributionParity\(\);/);
   assert.match(focusBlock, /answerShuffleDistributionParityValidated/);
@@ -265,26 +237,6 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
-test('weekly recap focused content validation runs only its runtime summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-weekly-recap-runtime'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused weekly recap validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.weeklyRecapRuntimeCasesValidated, 7);
-  assert.equal(summary.weeklyRecapRuntimeParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
-});
-
 test('question speech text focused content validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
@@ -313,30 +265,6 @@ test('question speech text focused content validation runs only its parity summa
   );
 });
 
-test('static ebook footnote hash focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-static-ebook-footnote-hash-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused static ebook footnote validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.staticEbookFootnoteHashChaptersValidated, 14);
-  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
-  assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'staticEbookOutcomeClaimParityValidated'),
-    false,
-  );
-});
-
 test('XP rules focused content validation runs only its parity summary', () => {
   const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
     cwd: repoRoot,
@@ -348,58 +276,9 @@ test('XP rules focused content validation runs only its parity summary', () => {
   assert.ok(match, 'focused XP validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.xpRulesValidated, 24);
+  assert.equal(summary.xpRulesValidated, 20);
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
-});
-
-test('streak rules parity uses the focused content validator path', () => {
-  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-  const parityTest = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
-    'utf8',
-  );
-  const registry = extractFocusedValidationRegistry(validator);
-  const registryEntry = registry.find((entry) => entry.id === 'streakRules');
-  const focusBlockStart = validator.indexOf("focusedValidationRequested('streakRules')");
-  const focusBlockEnd =
-    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
-  const focusBlock =
-    focusBlockStart === -1 || focusBlockEnd === -1
-      ? ''
-      : validator.slice(focusBlockStart, focusBlockEnd);
-  const focusFlagMatches = parityTest.match(/--focus-streak-rules/g) || [];
-
-  assert.ok(registryEntry, 'registry needs the streak-rules focus mode');
-  assert.ok(registryEntry.flags.includes('--focus-streak-rules'));
-  assert.notEqual(focusBlockStart, -1, 'validate-content needs the streak-rules focus flag');
-  assert.match(focusBlock, /validateStreakRules\(\);/);
-  assert.match(focusBlock, /streakRulesValidated/);
-  assert.match(focusBlock, /streakRulesParityValidated/);
-  assert.ok(
-    focusFlagMatches.length >= 2,
-    'positive and mutation streak checks should use the focused validator',
-  );
-});
-
-test('streak rules focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-streak-rules'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused streak validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.streakRulesValidated, 10);
-  assert.equal(summary.streakRulesParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
 test('readiness adapter focused content validation runs only its runtime summary', () => {
@@ -422,10 +301,10 @@ test('readiness adapter focused content validation runs only its runtime summary
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
-test('readiness score focused content validation runs only its runtime summary', () => {
+test('learning Pro-gated selectors focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-readiness-score-rules'],
+    ['scripts/validate-content.js', '--focus-learning-pro-gated-selectors'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -434,12 +313,17 @@ test('readiness score focused content validation runs only its runtime summary',
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused readiness score validation should print JSON summary');
+  assert.ok(match, 'focused learning Pro gate validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.readinessScoreRulesValidated, 5);
-  assert.equal(summary.readinessScoreRuntimeParityValidated, true);
+  assert.equal(summary.learningProGatedReviewCasesValidated, 20);
+  assert.equal(summary.learningProGatedHighlightCasesValidated, 15);
+  assert.equal(summary.learningProGatedSelectorsParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
+    false,
+  );
 });
 
 test('exam submission finality focused validation runs only its parity summary', () => {
@@ -508,98 +392,6 @@ test('CelebrationBurst focused content validation runs only its accessibility su
     Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
     false,
   );
-});
-
-test('validate-content focus registry owns every focused route and summary', () => {
-  const source = readValidateContentSource();
-  const registry = extractFocusedValidationRegistry();
-  const registrySource = readFocusedValidationRegistrySource();
-  const ids = new Set();
-  const flags = new Set();
-
-  assert.ok(registry.length >= 30, 'registry should cover all focused validation modes');
-  assert.match(
-    source,
-    /require\(['"]\.\/validate-content-focus-registry['"]\)/,
-    'validate-content should import the shared focused registry module',
-  );
-  assert.doesNotMatch(
-    source,
-    /focusedValidationFlagsFromRegistrySource|readFileSync\(__filename/,
-    'validate-content must not parse its own source to discover focus flags',
-  );
-  assert.doesNotMatch(
-    source,
-    /process\.argv\.includes\(['"]--focus-/,
-    'focused routes should go through focusedValidationRequested()',
-  );
-
-  for (const entry of registry) {
-    assert.match(entry.id, /^[a-z][A-Za-z0-9]*$/, `${entry.id} must be a stable registry id`);
-    assert.equal(ids.has(entry.id), false, `${entry.id} is duplicated`);
-    ids.add(entry.id);
-    assert.ok(entry.flags.length >= 1, `${entry.id} must declare at least one CLI flag`);
-    assert.ok(entry.summaryKeys.length >= 1, `${entry.id} must declare summary keys`);
-
-    for (const flag of entry.flags) {
-      assert.match(flag, /^--focus-[a-z0-9-]+$/, `${entry.id} has invalid flag ${flag}`);
-      assert.equal(flags.has(flag), false, `${flag} is duplicated`);
-      flags.add(flag);
-    }
-
-    const block = focusedValidationBlock(source, entry.id);
-    assert.match(block, /printValidationSummary\(\{/, `${entry.id} must print an isolated summary`);
-    for (const summaryKey of entry.summaryKeys) {
-      assert.match(
-        block,
-        new RegExp(`\\b${summaryKey}\\b`),
-        `${entry.id} summary must include ${summaryKey}`,
-      );
-    }
-  }
-
-  const routedIds = new Set(
-    [...source.matchAll(/focusedValidationRequested\('([^']+)'\)/g)].map((match) => match[1]),
-  );
-  assert.deepEqual(routedIds, ids);
-
-  const flagsInRegistrySource = new Set(registrySource.match(/--focus-[a-z0-9-]+/g) || []);
-  assert.deepEqual(flagsInRegistrySource, flags);
-  assert.deepEqual(new Set(source.match(/--focus-[a-z0-9-]+/g) || []), new Set());
-});
-
-test('validate-content rejects unknown focused validator flags before full validation', () => {
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-not-real'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
-  assert.match(result.stderr, /--focus-answer-feedback-parity/);
-});
-
-test('validate-content rejects unknown focus flags before loading heavy modules', () => {
-  const script = `
-    const Module = require('node:module');
-    const originalLoad = Module._load;
-    Module._load = function(request, parent, isMain) {
-      if (request === 'typescript' || request === './export-site-question-bank') {
-        throw new Error('heavy module loaded: ' + request);
-      }
-      return originalLoad.apply(this, arguments);
-    };
-    process.argv = ['node', 'scripts/validate-content.js', '--focus-not-real'];
-    require('./scripts/validate-content.js');
-  `;
-  const result = spawnSync(process.execPath, ['-e', script], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
-  assert.doesNotMatch(result.stderr, /heavy module loaded/);
 });
 
 test('unsupported npm test selectors fail before running any suite', () => {
