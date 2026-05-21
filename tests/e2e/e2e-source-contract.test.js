@@ -7,6 +7,7 @@ const path = require('node:path');
 const test = require('node:test');
 
 const e2eDir = __dirname;
+const repoRoot = path.resolve(e2eDir, '../..');
 const browserSpecPaths = fs
   .readdirSync(e2eDir)
   .filter((name) => name.endsWith('.spec.ts'))
@@ -215,13 +216,24 @@ test('learn chapter navigation covers localized back-link round trips', () => {
   );
   assert.match(
     source,
-    /const returnedFirstChapter = page\.getByLabel\(englishFirstChapterLabel\)\.last\(\);/,
-    'English chapter navigation should verify the returned Learn card after using the back link',
+    /const returnedFirstChapter = page\.getByRole\('link', \{ name: englishFirstChapterLabel \}\);/,
+    'English chapter navigation should verify the returned Learn card through a role-visible link query',
   );
   assert.match(
     source,
-    /await expect\(page\)\.toHaveURL\(\/\\\/learn\$\/\);\s+const returnedFirstChapter = page\.getByLabel\(englishFirstChapterLabel\)\.last\(\);/s,
+    /await expect\(page\)\.toHaveURL\(\/\\\/learn\$\/\);\s+const returnedFirstChapter = page\.getByRole\('link', \{ name: englishFirstChapterLabel \}\);\s+await expect\(returnedFirstChapter\)\.toHaveCount\(1\);/s,
     'English chapter navigation should verify the route returns to /learn before checking the returned card',
+  );
+  assert.doesNotMatch(
+    source,
+    /getByLabel\(englishFirstChapterLabel\)\.(?:first|last)\(\)/,
+    'English chapter navigation must not select around retained hidden chapter links',
+  );
+  const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  assert.match(
+    chapterSource,
+    /accessibilityLabel=\{copy\.backToListAccessibilityLabel\}[\s\S]*href="\/learn"[\s\S]*replace[\s\S]*style=\{styles\.link\}/,
+    'Chapter back links should replace the detail route instead of pushing a duplicate Learn route',
   );
   assert.match(
     source,

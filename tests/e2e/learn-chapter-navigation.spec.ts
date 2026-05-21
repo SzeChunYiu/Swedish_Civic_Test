@@ -122,7 +122,8 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await backToChapterList.click();
 
   await expect(page).toHaveURL(/\/learn$/);
-  const returnedFirstChapter = page.getByLabel(englishFirstChapterLabel).last();
+  const returnedFirstChapter = page.getByRole('link', { name: englishFirstChapterLabel });
+  await expect(returnedFirstChapter).toHaveCount(1);
   await expect(returnedFirstChapter).toBeVisible();
   await expect(returnedFirstChapter).toContainText('The country of Sweden');
   await expect(returnedFirstChapter).toContainText('Landet Sverige');
