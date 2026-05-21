@@ -2244,11 +2244,11 @@ function smtInitLangPicker() {
   if (!btn || !menu) return;
   function close() {
     menu.hidden = true;
-    btn.setAttribute('aria-expanded', 'false');
+    if (typeof btn.setAttribute === 'function') btn.setAttribute('aria-expanded', 'false');
   }
   function open() {
     menu.hidden = false;
-    btn.setAttribute('aria-expanded', 'true');
+    if (typeof btn.setAttribute === 'function') btn.setAttribute('aria-expanded', 'true');
     const cur = (function () {
       try {
         return localStorage.getItem('smt_lang') || 'en';
