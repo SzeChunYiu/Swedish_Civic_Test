@@ -2,6 +2,7 @@ import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
@@ -38,7 +39,6 @@ export const MAX_HIGHLIGHT_SPAN = 5000;
 export const MAX_HIGHLIGHT_NOTE_LENGTH = 1000;
 const ADD_HIGHLIGHT_INPUT_VALIDATION_ID = 'hl_input_validation';
 const ADD_HIGHLIGHT_INPUT_VALIDATION_TIMESTAMP = '2026-01-01T00:00:00.000Z';
-const UNSAFE_CHAPTER_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 
 let highlightsStorage: MMKV | null = null;
 
@@ -64,7 +64,7 @@ function isNonEmptyString(value: unknown): value is string {
 }
 
 function isSafeChapterId(value: unknown): value is string {
-  return isNonEmptyString(value) && !UNSAFE_CHAPTER_KEYS.has(value);
+  return isNonEmptyString(value) && isSafeImportedMapKey(value);
 }
 
 function createHighlightsByChapterMap(): Record<string, Highlight[]> {
@@ -353,6 +353,13 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
   },
   clearPersistenceWarning: () => set({ persistenceWarning: null }),
 }));
+
+export function importHighlightsSnapshot(value: unknown): PersistedHighlights {
+  const normalized = normalizeHighlightsState(value);
+  const persistenceWarning = write(normalized);
+  useHighlightsStore.setState({ ...normalized, persistenceWarning });
+  return normalized;
+}
 
 // Pure selector helpers — usable outside React.
 export function getHighlightsForChapter(

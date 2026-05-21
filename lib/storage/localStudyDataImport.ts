@@ -9,6 +9,11 @@ import {
   type PersistedMistakeReview,
 } from './mistakeReviewStore';
 import {
+  importHighlightsSnapshot,
+  normalizeHighlightsState,
+  type PersistedHighlights,
+} from './highlightsStore';
+import {
   importReviewSnapshot,
   normalizeImportedReviewState,
   type PersistedReviews,
@@ -46,6 +51,7 @@ export type LocalStudyDataImportSummary = {
   gradedReviewDayCount: number;
   settingCount: number;
   citizenshipRequirementChecklistCount: number;
+  highlightCount: number;
 };
 
 export type LocalStudyDataImportPreview = {
@@ -54,6 +60,7 @@ export type LocalStudyDataImportPreview = {
   reviews: PersistedReviews;
   settings: ImportableSettings;
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist;
+  highlights: PersistedHighlights;
   sections: {
     progress: boolean;
     mistakeReview: boolean;
@@ -61,6 +68,7 @@ export type LocalStudyDataImportPreview = {
     settings: boolean;
     streakFreezeState: boolean;
     citizenshipRequirements: boolean;
+    highlights: boolean;
   };
   summary: LocalStudyDataImportSummary;
 };
@@ -81,6 +89,7 @@ const allowedTopLevelKeys = new Set([
   'exportedFrom',
   'fsrsReviews',
   'gradedPerDay',
+  'highlights',
   'mistakeReview',
   'mistakeReviews',
   'progress',
@@ -235,6 +244,10 @@ function readCitizenshipRequirementsSection(value: Record<string, unknown>): unk
   return undefined;
 }
 
+function readHighlightsSection(value: Record<string, unknown>): unknown {
+  return value.highlights;
+}
+
 function hasOwnKey(value: Record<string, unknown>, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(value, key);
 }
@@ -243,12 +256,17 @@ function countImportedSettings(settings: ImportableSettings): number {
   return Object.values(settings).filter((value) => value !== undefined).length;
 }
 
+function countImportedHighlights(highlights: PersistedHighlights): number {
+  return Object.values(highlights.byChapter).reduce((count, list) => count + list.length, 0);
+}
+
 function buildSummary(
   progress: PersistedProgress,
   mistakeReview: PersistedMistakeReview,
   reviews: PersistedReviews,
   settings: ImportableSettings,
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist,
+  highlights: PersistedHighlights,
   sections: LocalStudyDataImportPreview['sections'],
 ): LocalStudyDataImportSummary {
   return {
@@ -267,6 +285,7 @@ function buildSummary(
     citizenshipRequirementChecklistCount: sections.citizenshipRequirements
       ? citizenshipRequirements.checkedAreaIds.length
       : 0,
+    highlightCount: sections.highlights ? countImportedHighlights(highlights) : 0,
   };
 }
 
@@ -280,7 +299,8 @@ function hasImportableData(summary: LocalStudyDataImportSummary): boolean {
     summary.fsrsReviewCardCount > 0 ||
     summary.gradedReviewDayCount > 0 ||
     summary.settingCount > 0 ||
-    summary.citizenshipRequirementChecklistCount > 0
+    summary.citizenshipRequirementChecklistCount > 0 ||
+    summary.highlightCount > 0
   );
 }
 
@@ -340,6 +360,7 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
   const reviewInput = readReviewSection(parsed);
   const settingsInput = readSettingsSection(parsed);
   const citizenshipRequirementsInput = readCitizenshipRequirementsSection(parsed);
+  const highlightsInput = readHighlightsSection(parsed);
   const sections = {
     progress: progressInput !== undefined,
     mistakeReview: mistakeReviewInput !== undefined,
@@ -347,6 +368,7 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     settings: settingsInput !== undefined,
     streakFreezeState: isRecord(progressInput) && hasOwnKey(progressInput, 'streakFreezeState'),
     citizenshipRequirements: citizenshipRequirementsInput !== undefined,
+    highlights: highlightsInput !== undefined,
   };
 
   const preview: LocalStudyDataImportPreview = {
@@ -357,6 +379,7 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     citizenshipRequirements: normalizeImportedCitizenshipRequirementsChecklist(
       citizenshipRequirementsInput,
     ),
+    highlights: normalizeHighlightsState(highlightsInput),
     sections,
     summary: {
       completedQuestionCount: 0,
@@ -368,6 +391,7 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
       gradedReviewDayCount: 0,
       settingCount: 0,
       citizenshipRequirementChecklistCount: 0,
+      highlightCount: 0,
     },
   };
   preview.summary = buildSummary(
@@ -376,6 +400,7 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     preview.reviews,
     preview.settings,
     preview.citizenshipRequirements,
+    preview.highlights,
     preview.sections,
   );
 
@@ -394,6 +419,7 @@ export function applyLocalStudyDataImport(
   if (preview.sections.citizenshipRequirements) {
     importCitizenshipRequirementsChecklistSnapshot(preview.citizenshipRequirements);
   }
+  if (preview.sections.highlights) importHighlightsSnapshot(preview.highlights);
 
   return preview.summary;
 }

@@ -61,6 +61,7 @@ type SettingsCopy = {
   importSummaryCompletedQuestions: (count: number) => string;
   importSummaryFsrsDays: (count: number) => string;
   importSummaryFsrsCards: (count: number) => string;
+  importSummaryHighlights: (count: number) => string;
   importSummaryMockExams: (count: number) => string;
   importSummarySettings: (count: number) => string;
   importSummaryStreakFreeze: string;
@@ -174,6 +175,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       formatCount(count, { one: 'repetitionsdag', other: 'repetitionsdagar' }),
     importSummaryFsrsCards: (count) =>
       formatCount(count, { one: 'repetitionskort', other: 'repetitionskort' }),
+    importSummaryHighlights: (count) =>
+      formatCount(count, { one: 'markering i e-boken', other: 'markeringar i e-boken' }),
     importSummaryMockExams: (count) =>
       formatCount(count, { one: 'genomfört övningsprov', other: 'genomförda övningsprov' }),
     importSummarySettings: (count) =>
@@ -265,6 +268,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       formatCount(count, { one: 'FSRS review day', other: 'FSRS review days' }),
     importSummaryFsrsCards: (count) =>
       formatCount(count, { one: 'FSRS review card', other: 'FSRS review cards' }),
+    importSummaryHighlights: (count) =>
+      formatCount(count, { one: 'ebook highlight', other: 'ebook highlights' }),
     importSummaryMockExams: (count) =>
       formatCount(count, {
         one: 'completed mock exam',
@@ -309,6 +314,7 @@ function buildImportSummaryLines(
     copy.importSummaryMockExams(summary.mockExamSessionCount),
     copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
     copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
+    copy.importSummaryHighlights(summary.highlightCount),
     copy.importSummarySettings(summary.settingCount),
     copy.importSummaryCitizenshipRequirements(summary.citizenshipRequirementChecklistCount),
   ];
