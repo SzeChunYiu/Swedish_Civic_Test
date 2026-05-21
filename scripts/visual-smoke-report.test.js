@@ -117,6 +117,79 @@ test('visual smoke report records route-specific screenshots without launch over
   assert.deepEqual(unexplainedDuplicates, []);
 });
 
+test('visual smoke duplicate helper accepts only exact known groups with human reasons', () => {
+  const {
+    findUnexplainedVisualSmokeDuplicateScreenshots,
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeRouteNamesKey,
+  } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+  const exactHomeRedirectGroup = [
+    {
+      names: ['home', 'index'],
+      reason: 'The root route redirects to Home, so these screenshots can match exactly.',
+    },
+  ];
+
+  const cases = [
+    {
+      expected: true,
+      groups: exactHomeRedirectGroup,
+      label: 'same group in any order',
+      names: ['index', 'home'],
+    },
+    {
+      expected: false,
+      groups: exactHomeRedirectGroup,
+      label: 'subset of an explained group',
+      names: ['home'],
+    },
+    {
+      expected: false,
+      groups: exactHomeRedirectGroup,
+      label: 'superset of an explained group',
+      names: ['home', 'index', 'settings'],
+    },
+    {
+      expected: false,
+      groups: [
+        {
+          names: ['home', 'unknown-route'],
+          reason: 'Unknown routes must not be accepted as visual smoke duplicate groups.',
+        },
+      ],
+      label: 'unknown route name',
+      names: ['home', 'unknown-route'],
+    },
+    {
+      expected: false,
+      groups: [{ names: ['home', 'index'], reason: '   ' }],
+      label: 'empty reason',
+      names: ['home', 'index'],
+    },
+  ];
+
+  for (const { expected, groups, label, names } of cases) {
+    assert.equal(
+      isExplainedVisualSmokeDuplicate(names, groups),
+      expected,
+      `${label}: ${visualSmokeRouteNamesKey(names)}`,
+    );
+  }
+
+  assert.deepEqual(
+    findUnexplainedVisualSmokeDuplicateScreenshots([
+      { name: 'home', sha256: 'allowed-home-index' },
+      { name: 'index', sha256: 'allowed-home-index' },
+      { name: 'home', sha256: 'too-wide-group' },
+      { name: 'index', sha256: 'too-wide-group' },
+      { name: 'settings', sha256: 'too-wide-group' },
+      { name: 'home', sha256: 'unknown-route-group' },
+      { name: 'unknown-route', sha256: 'unknown-route-group' },
+    ]),
+    ['too-wide-group: home,index,settings', 'unknown-route-group: home,unknown-route'],
+  );
+});
+
 test('visual smoke output resolver defaults to ignored temp artifacts', () => {
   const {
     isVisualSmokeCommittedBaselineOutput,
