@@ -1544,7 +1544,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['{copy.studySetupCta}', 'profile settings link must render localized copy'],
   [
     'accessibilityLabel={copy.dashboardAccessibilityLabel}',
     'profile dashboard link must expose localized accessibility copy',

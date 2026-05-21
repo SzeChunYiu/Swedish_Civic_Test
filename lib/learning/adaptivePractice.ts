@@ -91,6 +91,12 @@ const DIFFICULTY_WEIGHT: Record<NonNullable<AdaptiveQuestion['difficulty']>, num
   hard: 2,
 };
 
+function adaptiveDifficultyWeight(difficulty: AdaptiveQuestion['difficulty']): number | null {
+  if (typeof difficulty !== 'string') return null;
+  if (!Object.prototype.hasOwnProperty.call(DIFFICULTY_WEIGHT, difficulty)) return null;
+  return DIFFICULTY_WEIGHT[difficulty as keyof typeof DIFFICULTY_WEIGHT];
+}
+
 function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringResult {
   const now = input.now ?? new Date();
   const size = input.size ?? 10;
@@ -134,8 +140,9 @@ function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringRe
     }
 
     // Difficulty proximity adjustment.
-    if (question.difficulty) {
-      const dist = Math.abs(DIFFICULTY_WEIGHT[question.difficulty] - idealDifficulty);
+    const difficultyWeight = adaptiveDifficultyWeight(question.difficulty);
+    if (difficultyWeight !== null) {
+      const dist = Math.abs(difficultyWeight - idealDifficulty);
       score -= dist * 5;
     }
 
