@@ -111,6 +111,13 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
   assert.match(proPaywallSource, /Ta bort annonser för 29 kronor finns kvar separat/);
   assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
+  assert.match(proPaywallSource, /<View style=\{styles\.table\}>/);
+  assert.match(proPaywallSource, /<View style=\{styles\.actions\}>/);
+  assert.match(proPaywallSource, /aria-live="polite"/);
+  assert.doesNotMatch(proPaywallSource, /comparisonVisible|setComparisonVisible/);
+  assert.doesNotMatch(proPaywallSource, /Compare Pro features|Jämför Pro-funktioner/);
+  assert.doesNotMatch(proPaywallSource, /accessibilityState=\{\{ expanded:/);
+  assert.doesNotMatch(proPaywallSource, /\{comparisonVisible \? \(/);
 });
 
 test('profile premium banner keeps current Remove Ads purchase and recovery contract', () => {
