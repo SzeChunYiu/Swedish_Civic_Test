@@ -239,6 +239,15 @@ test('search and citizenship utility routes resolve colors from persisted theme 
   );
 });
 
+test('ProvenanceBadge accepts route theme colors for nested source affordances', () => {
+  const source = read('components/quiz/ProvenanceBadge.tsx');
+
+  assert.match(source, /themeColors\?: ThemeColors/);
+  assert.match(source, /createStyles\(themeColors \?\? colors\)/);
+  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.doesNotMatch(source, /(color|backgroundColor|borderColor):\s*colors\./);
+});
+
 test('utility route theme contract rejects static route-local colors', () => {
   const mutatedSearchSource = read('app/search.tsx')
     .replace(
