@@ -3849,6 +3849,62 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
+test('published question schema uses the shared generated true/false naturalness pattern source', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  assert.match(validatorSource, /require\('\.\/generated-true-false-naturalness-patterns'\)/);
+  assert.doesNotMatch(
+    validatorSource,
+    /const\s+QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS\s*=\s*\[/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const sharedPatternOnlyResiduals = {",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Det stämmer i sak att människor får övertyga andra.', questionEn: 'It is factually true that people may persuade others.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Det stämmer i sak att partier får hindra röster.', questionEn: 'It is factually true that parties may stop votes.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  sharedPatternOnlyResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...sharedPatternOnlyResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
+});
+
 test('published question schema rejects All Saints generated true/false English action fragments', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const sourceQuestions = generatedSiteBank.filter(
@@ -4215,13 +4271,13 @@ require('./scripts/validate-content.js');
 });
 
 test('published question schema guards capitalized generated reason clauses', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
+  const patternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
     'utf8',
   );
 
-  assert.match(validatorSource, /\/\^En anledning är att Det\\b\//);
-  assert.match(validatorSource, /\/\^One reason is that It\\b\//);
+  assert.match(patternSource, /\/\^En anledning är att Det\\b\//);
+  assert.match(patternSource, /\/\^One reason is that It\\b\//);
 });
 
 test('published question schema guards targetless generated why-reason stems', () => {

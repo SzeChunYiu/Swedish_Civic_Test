@@ -121,6 +121,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('Badge accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const badgeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-badge-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-badge-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateBadgeAccessibilityParity\(\);[\s\S]*badgeAccessibilityRulesValidated[\s\S]*badgeAccessibilityParityValidated/,
+  );
+  assert.match(badgeTestSource, /--focus-badge-accessibility/);
+  assert.doesNotMatch(
+    badgeTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Badge accessibility tests must not route through full content validation',
+  );
+});
+
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
