@@ -60,9 +60,21 @@ const complianceRouteCases: ComplianceRouteCase[] = [
     path: '/disclaimer',
   },
   {
-    expectedLinkLabels: ['Öppna övningsläget', 'Tillbaka till startsidan'],
+    expectedLinkLabels: [
+      'Öppna guiden för medborgarskapskrav',
+      'Öppna övningsläget',
+      'Tillbaka till startsidan',
+    ],
     marker: 'Vad är medborgarskapsprovet i samhällskunskap?',
     path: '/about-the-test',
+  },
+  {
+    expectedLinkLabels: [
+      'Öppna övningsläget för samhällskunskap',
+      'Gå tillbaka till sidan om medborgarskapsprovet',
+    ],
+    marker: 'Krav och behörighet',
+    path: '/citizenship-requirements',
   },
 ];
 
