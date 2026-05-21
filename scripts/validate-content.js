@@ -1394,7 +1394,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 11;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -8311,6 +8311,16 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-remove-ads-hook-parity')) {
+  validateRemoveAdsEntitlementHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    removeAdsEntitlementHookCasesValidated,
+    removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -9355,6 +9365,37 @@ function validateRemoveAdsEntitlementHookParity() {
         hookSource,
       ),
       'Remove Ads entitlement hook must fail closed while purchase state loads',
+    ],
+    [
+      normalizedHookSource.includes('__SMT_E2E__?: boolean;') &&
+        normalizedHookSource.includes('__SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;') &&
+        /function\s+createE2EWebPurchaseRuntimeOptions\([\s\S]*if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{\s*return\s+undefined;\s*\}/.test(
+          hookSource,
+        ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\)/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
+    ],
+    [
+      normalizedHookSource.includes(
+        'const e2eRuntimeOptions = createE2EWebPurchaseRuntimeOptions(initialAdsDisabled);',
+      ) &&
+        normalizedHookSource.includes('if (e2eRuntimeOptions) return e2eRuntimeOptions;') &&
+        normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
+        normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
+      'default web purchase runtime must fall back to normal mock provider',
+    ],
+    [
+      normalizedHookSource.includes('defaultNativePurchaseRuntimeOptions ??= {') &&
+        normalizedHookSource.includes(
+          'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+        ) &&
+        normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
     ],
     [
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
