@@ -2,10 +2,15 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { AdEventType, AppOpenAd } from 'react-native-google-mobile-ads';
 
-import { getPlatformAdUnitId, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
+import {
+  adsConfig,
+  getPlatformAdUnitId,
+  shouldShowLaunchPopupAd,
+} from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
+import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';
 
 const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;
 
@@ -18,23 +23,30 @@ export function LaunchPopupAd({
   entitlements?: Pick<PremiumEntitlements, 'adsDisabled'>;
 }) {
   const mobileAdsConsent = useMobileAdsConsent(entitlements);
+  const nativeLaunchPopupUnitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
+  const nativeLaunchPopupMayShow =
+    adsConfig.googleMobileAdsEnabled &&
+    !launchPopupShownThisRuntime &&
+    !launchPopupLoadInFlight &&
+    !entitlements.adsDisabled &&
+    Boolean(nativeLaunchPopupUnitId);
+  const launchPopupAdUnitId =
+    mobileAdsConsent.initialized &&
+    shouldShowLaunchPopupAd({
+      alreadyShownThisLaunch: launchPopupShownThisRuntime,
+      consentDecision: mobileAdsConsent.decision.consentDecision,
+      entitlements,
+      platform: Platform.OS,
+    })
+      ? nativeLaunchPopupUnitId
+      : undefined;
+
+  if (nativeLaunchPopupMayShow) {
+    deferFirstRunAboutModalForLaunchSession();
+  }
 
   useEffect(() => {
-    if (
-      launchPopupLoadInFlight ||
-      !mobileAdsConsent.initialized ||
-      !shouldShowLaunchPopupAd({
-        alreadyShownThisLaunch: launchPopupShownThisRuntime,
-        consentDecision: mobileAdsConsent.decision.consentDecision,
-        entitlements,
-        platform: Platform.OS,
-      })
-    ) {
-      return undefined;
-    }
-
-    const unitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
-    if (!unitId) return undefined;
+    if (!launchPopupAdUnitId) return undefined;
 
     let unsubscribe: (() => void) | undefined;
     let unsubscribeError: (() => void) | undefined;
@@ -62,7 +74,7 @@ export function LaunchPopupAd({
     };
 
     try {
-      const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
+      const appOpenAd = AppOpenAd.createForAdRequest(launchPopupAdUnitId, {
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
       });
 
@@ -105,7 +117,7 @@ export function LaunchPopupAd({
       finishLoadAttempt();
       return undefined;
     }
-  }, [entitlements, mobileAdsConsent]);
+  }, [launchPopupAdUnitId, mobileAdsConsent.decision.requestNonPersonalizedAdsOnly]);
 
   return null;
 }
