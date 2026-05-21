@@ -1,8 +1,6 @@
-import { useEffect } from 'react';
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { LegalExternalLink } from '../components/compliance/LegalPage';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
@@ -23,11 +21,6 @@ type AboutTheTestCopy = {
   sectionIndependenceBody: string;
   sectionSourceTitle: string;
   sectionSourceBody: string;
-  officialSourcesTitle: string;
-  officialSourcePublisherLabel: string;
-  officialSourceRetrievedLabel: string;
-  officialSourceUrlLabel: string;
-  openOfficialSourceAccessibilityLabelPrefix: string;
   backHome: string;
   backHomeAccessibilityLabel: string;
   openPractice: string;
@@ -38,39 +31,29 @@ type AboutTheTestCopy = {
 
 const officialTestSourceNotes = [
   {
-    publisher: 'Universitets- och högskolerådet (UHR)',
-    titleEn: 'UHR: About the citizenship test',
-    titleSv: 'UHR: Om medborgarskapsprovet',
+    title: 'UHR: Om medborgarskapsprovet',
     url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-    retrievedDate: '2026-05-20',
+    retrievedDate: '2026-05-19',
   },
   {
-    publisher: 'Universitets- och högskolerådet (UHR)',
-    titleEn: 'UHR: Questions and answers',
-    titleSv: 'UHR: Frågor och svar',
+    title: 'UHR: Frågor och svar',
     url: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-    retrievedDate: '2026-05-20',
+    retrievedDate: '2026-05-19',
   },
   {
-    publisher: 'Universitets- och högskolerådet (UHR)',
-    titleEn: 'UHR: Registration',
-    titleSv: 'UHR: Anmälan',
+    title: 'UHR: Anmälan',
     url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-    retrievedDate: '2026-05-20',
+    retrievedDate: '2026-05-19',
   },
   {
-    publisher: 'Universitets- och högskolerådet (UHR)',
-    titleEn: 'UHR: Study material about Swedish society',
-    titleSv: 'UHR: Utbildningsmaterial om det svenska samhället',
+    title: 'UHR: Utbildningsmaterial om det svenska samhället',
     url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-    retrievedDate: '2026-05-20',
+    retrievedDate: '2026-05-19',
   },
   {
-    publisher: 'Migrationsverket',
-    titleEn: 'Migrationsverket: New rules for Swedish citizenship from 6 June 2026',
-    titleSv: 'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026',
+    title: 'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026',
     url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-    retrievedDate: '2026-05-20',
+    retrievedDate: '2026-05-19',
   },
 ] as const;
 
@@ -85,7 +68,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     sectionWhoTitle: 'Vem ska göra det?',
     sectionWhoBody:
-      'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan också uppfylla kunskapskravet på andra sätt än genom provet.',
+      'Migrationsverket avgör vem som får skriva provet. UHR skriver att anmälan öppnar i början av juni 2026 och att du bara kan anmäla dig om du har fått ett brev från Migrationsverket. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
       'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
@@ -97,11 +80,6 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
     sectionSourceTitle: 'Källäge kontrollerat',
     sectionSourceBody: `Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate} mot UHR:s sidor om provet, anmälan, frågor och svar, utbildningsmaterial samt Migrationsverkets nyhet om reglerna från 6 juni 2026.`,
-    officialSourcesTitle: 'Officiella källor',
-    officialSourcePublisherLabel: 'Utgivare',
-    officialSourceRetrievedLabel: 'Hämtad',
-    officialSourceUrlLabel: 'URL',
-    openOfficialSourceAccessibilityLabelPrefix: 'Öppna officiell källa',
     backHome: 'Tillbaka till start',
     backHomeAccessibilityLabel: 'Tillbaka till startsidan',
     openPractice: 'Börja öva',
@@ -119,7 +97,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     sectionWhoTitle: 'Who takes it?',
     sectionWhoBody:
-      'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may also be able to meet the knowledge requirement in other ways.',
+      'Migrationsverket decides who may take the test. UHR says registration opens in early June 2026 and that only people who have received a letter from Migrationsverket can sign up. You may be able to meet the knowledge requirement in other ways.',
     sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
       'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
@@ -131,11 +109,6 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     sectionSourceTitle: 'Source status checked',
     sectionSourceBody: `This status was checked on ${officialTestSourceNotes[0].retrievedDate} against UHR's pages about the test, registration, FAQ, study material, and Migrationsverket's news about the rules from 6 June 2026.`,
-    officialSourcesTitle: 'Official sources',
-    officialSourcePublisherLabel: 'Publisher',
-    officialSourceRetrievedLabel: 'Retrieved',
-    officialSourceUrlLabel: 'URL',
-    openOfficialSourceAccessibilityLabelPrefix: 'Open official source',
     backHome: 'Back to home',
     backHomeAccessibilityLabel: 'Return to the home screen',
     openPractice: 'Start practising',
@@ -147,15 +120,12 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
 
 export default function Screen() {
   const language = useSettingsStore((state) => state.language);
-  const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const copy = aboutTheTestCopy[language];
 
-  useEffect(() => {
-    if (!hasSeenAboutTheTest) {
-      markAboutTheTestSeen();
-    }
-  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);
+  if (!useSettingsStore.getState().hasSeenAboutTheTest) {
+    markAboutTheTestSeen();
+  }
 
   const sections: readonly { title: string; body: string }[] = [
     { title: copy.sectionWhatTitle, body: copy.sectionWhatBody },
@@ -185,25 +155,6 @@ export default function Screen() {
             <Text style={styles.sectionBody}>{section.body}</Text>
           </View>
         ))}
-        <View style={styles.section}>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            {copy.officialSourcesTitle}
-          </Text>
-          <View style={styles.sourceLinks}>
-            {officialTestSourceNotes.map((source) => {
-              const sourceTitle = language === 'en' ? source.titleEn : source.titleSv;
-              return (
-                <LegalExternalLink
-                  key={source.url}
-                  accessibilityLabel={`${copy.openOfficialSourceAccessibilityLabelPrefix}: ${sourceTitle}`}
-                  destination={`${copy.officialSourcePublisherLabel}: ${source.publisher}\n${copy.officialSourceRetrievedLabel}: ${source.retrievedDate}\n${copy.officialSourceUrlLabel}: ${source.url}`}
-                  href={source.url}
-                  label={sourceTitle}
-                />
-              );
-            })}
-          </View>
-        </View>
       </View>
 
       <QuestionDisclaimer />
@@ -253,7 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.large,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.25],
     padding: space[3],
   },
@@ -281,9 +232,6 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: space[0.75],
-  },
-  sourceLinks: {
-    gap: space[1],
   },
   sectionTitle: {
     color: colors.text,
