@@ -50,6 +50,12 @@ interface AdaptiveScoringResult {
   size: number;
 }
 
+function normalizeSessionSize(size: AdaptivePracticeInput['size'], eligibleCount: number): number {
+  const requestedSize =
+    typeof size === 'number' && Number.isInteger(size) && size >= 0 ? size : DEFAULT_SESSION_SIZE;
+  return Math.min(requestedSize, eligibleCount);
+}
+
 function recentAccuracy(progress: UserProgress, now: Date): number {
   const cutoff = now.getTime() - 30 * DAY_MS;
   let total = 0;
