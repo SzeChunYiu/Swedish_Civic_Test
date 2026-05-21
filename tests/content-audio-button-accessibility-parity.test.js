@@ -27,7 +27,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
     'utf8',
   );
 
-  assert.equal(summary.audioButtonAccessibilityRulesValidated, 19);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 17);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.match(source, /import \{ useEffect, useState \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);

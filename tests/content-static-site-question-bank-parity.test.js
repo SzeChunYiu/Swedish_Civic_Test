@@ -166,5 +166,8 @@ test('static site question bank drift fixtures derive generated question ids', (
 
   assert.deepEqual(generatedQuestionIdLiteralsInSource(source, canonical.sourceQuestions), []);
   assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions,\s*'q020'/);
-  assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
+  assert.match(
+    source,
+    /assert\.deepEqual\(drift\.questionIds,\s*\[\s*'q020',\s*\.\.\.q020GeneratedVariantIds\s*\]\)/,
+  );
 });
