@@ -107,9 +107,14 @@ test('citizenship requirements data covers seven sourced bilingual planning area
     /anmälan öppnar i början av juni 2026/,
   );
   assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.sv,
+    /Antalet platser är begränsat/,
+  );
+  assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.en,
     /registration opens in early June 2026/,
   );
+  assert.match(areas.find((area) => area.id === 'civicKnowledge').detail.en, /Seats are limited/);
   assert.match(areas.find((area) => area.id === 'swedishLanguage').detail.en, /1 October 2027/);
 });
 
@@ -145,6 +150,30 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
+});
+
+test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
+  const routeSource = read('app/citizenship-requirements.tsx');
+  const sourceLinkCount = (routeSource.match(/Linking\.openURL\(source\.url\)/g) || []).length;
+
+  assert.match(routeSource, /areaSourceAccessibilityPrefix/);
+  assert.match(routeSource, /source\.title\[language\]/);
+  assert.match(routeSource, /formatSourceMeta\(source, copy\)/);
+  assert.match(routeSource, /source\.sourceDate/);
+  assert.match(routeSource, /source\.retrievedDate/);
+  assert.match(routeSource, /source\.url/);
+  assert.match(routeSource, /styles\.sourceRefRow/);
+  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.equal(
+    sourceLinkCount >= 2,
+    true,
+    'area source refs and official source list should both open source URLs',
+  );
+  assert.doesNotMatch(
+    routeSource,
+    /areaSources\.map\(\(source\) => source\.publisher\)\.join\(' · '\)/,
+    'area cards must not collapse source provenance to publisher-only labels',
+  );
 });
 
 test('citizenship requirements route is discoverable from about-the-test copy', () => {

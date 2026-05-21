@@ -2,49 +2,10 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
+const { createTsLoader } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks = {}) {
-  const filePath = path.join(repoRoot, relativePath);
-  if (moduleCache.has(filePath)) {
-    const cached = moduleCache.get(filePath);
-    return exportName ? cached[exportName] : cached;
-  }
-
-  const source = fs.readFileSync(filePath, 'utf8');
-  const output = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-  }).outputText;
-  const mod = { exports: {} };
-  moduleCache.set(filePath, mod.exports);
-
-  function localRequire(specifier) {
-    if (Object.hasOwn(moduleMocks, specifier)) {
-      return moduleMocks[specifier];
-    }
-
-    if (specifier.startsWith('.')) {
-      const resolvedPath = path.resolve(path.dirname(filePath), specifier);
-      const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
-      const tsxPath = fs.existsSync(`${resolvedPath}.tsx`) ? `${resolvedPath}.tsx` : undefined;
-      const indexTsPath = fs.existsSync(path.join(resolvedPath, 'index.ts'))
-        ? path.join(resolvedPath, 'index.ts')
-        : undefined;
-      const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
-
-      if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, moduleMocks);
-      }
-    }
-
-    return require(specifier);
-  }
-
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
-  return exportName ? mod.exports[exportName] : mod.exports;
-}
+const loadTs = createTsLoader(repoRoot);
 
 function withEnv(overrides, fn) {
   const previous = new Map();
@@ -1521,6 +1482,84 @@ test('remove-ads buy persists before native finish and leaves failed persistence
   assert.equal(failingEvents.includes('finish'), false);
 });
 
+test('native Remove Ads purchases require an injected receipt verifier', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createNativePurchaseProvider,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+  const nativePurchase = {
+    ids: [REMOVE_ADS_PRODUCT_ID],
+    productId: REMOVE_ADS_PRODUCT_ID,
+    purchaseToken: 'tok-native-remove-ads',
+    transactionId: 'tx-native-remove-ads',
+  };
+
+  const unverifiedPurchaseFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const unverifiedPurchaseStorage = createMemoryPurchaseStorage();
+  const unverifiedPurchase = await buyRemoveAds({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => unverifiedPurchaseFixture.iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage: unverifiedPurchaseStorage,
+  });
+
+  assert.equal(unverifiedPurchase.status, 'pending');
+  assert.equal(unverifiedPurchase.entitlements.adsDisabled, false);
+  assert.equal(await unverifiedPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const unverifiedRestoreFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const unverifiedRestoreStorage = createMemoryPurchaseStorage();
+  const unverifiedRestore = await restoreRemoveAdsPurchase({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => unverifiedRestoreFixture.iap,
+      purchaseTimeoutMs: 10,
+    }),
+    storage: unverifiedRestoreStorage,
+  });
+
+  assert.equal(unverifiedRestore.status, 'not_found');
+  assert.equal(unverifiedRestore.entitlements.adsDisabled, false);
+  assert.equal(await unverifiedRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+  assert.equal(unverifiedRestoreFixture.state.restored, true);
+
+  const verifiedFixture = makeNativeIapProductFixture({
+    availablePurchases: [nativePurchase],
+  });
+  const verifiedStorage = createMemoryPurchaseStorage();
+  const verifiedPurchase = await buyRemoveAds({
+    provider: createNativePurchaseProvider({
+      loadIap: async () => verifiedFixture.iap,
+      purchaseTimeoutMs: 10,
+      async receiptValidator(purchase, productId) {
+        return {
+          productId,
+          purchaseToken: purchase.purchaseToken ?? null,
+          status: 'valid',
+          transactionId: purchase.transactionId ?? null,
+          validatedAt: '2026-05-20T12:00:00.000Z',
+        };
+      },
+    }),
+    storage: verifiedStorage,
+  });
+
+  assert.equal(verifiedPurchase.status, 'purchased');
+  assert.equal(verifiedPurchase.entitlements.adsDisabled, true);
+  assert.equal(
+    JSON.parse(await verifiedStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    `tx-${REMOVE_ADS_PRODUCT_ID}`,
+  );
+});
+
 test('native purchase provider matches requested product ids instead of Remove Ads only', async () => {
   const { REMOVE_ADS_PRODUCT_ID, createNativePurchaseProvider } = loadTs(
     'lib/monetization/purchases.ts',
@@ -1897,17 +1936,14 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
     path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
-  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+  const { adBannerCopy, getAdBannerStatusLabel } = loadTs('lib/monetization/adCopy.ts');
 
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webBannerSource, /getAdBannerStatusLabel/);
+  assert.match(webBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(webBannerSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(nativeBannerSource, /getAdBannerStatusLabel/);
+  assert.match(nativeBannerSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
@@ -1920,6 +1956,9 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
   for (const copy of Object.values(adBannerCopy)) {
     assert.doesNotMatch(copy.testStatus, /web preview|webbförhandsvisning/);
     assert.doesNotMatch(copy.liveStatus, /test unit|testannons|testplacering|preview/i);
+    assert.equal(getAdBannerStatusLabel(copy, { testOnly: true }), copy.testStatus);
+    assert.equal(getAdBannerStatusLabel(copy, { testOnly: false }), copy.liveStatus);
+    assert.equal(getAdBannerStatusLabel(copy, undefined), copy.liveStatus);
   }
 
   assert.equal(
@@ -2107,6 +2146,52 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   });
   assert.equal(testUnitInit.canInitializeGoogleMobileAds, true);
   assert.equal(testUnitInit.blockReason, undefined);
+});
+
+test('AdConsentRegion runtime normalization fails closed for invalid Mobile Ads regions', () => {
+  const { getAdSdkInitializationDecision, normalizeAdConsentRegion, regionRequiresUmpConsent } =
+    loadTs('lib/monetization/consent.ts');
+  const { createInitialAdConsentState } = loadTs('lib/monetization/mobileAdsConsent.ts');
+  const baseState = {
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'unknown',
+  };
+
+  for (const region of ['banana', '', null, 'future_region']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(normalizeAdConsentRegion(region), 'unknown');
+    assert.equal(regionRequiresUmpConsent(region), true);
+    assert.equal(state.region, 'unknown');
+    assert.equal(decision.canInitializeGoogleMobileAds, false);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, ['ump_consent_form']);
+    assert.equal(decision.blockReason, 'pending_consent_prompts');
+  }
+
+  for (const region of ['eea', 'uk', 'unknown']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(state.region, region);
+    assert.equal(regionRequiresUmpConsent(region), true);
+    assert.equal(decision.canInitializeGoogleMobileAds, false);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, ['ump_consent_form']);
+  }
+
+  for (const region of ['us', 'other']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(state.region, region);
+    assert.equal(regionRequiresUmpConsent(region), false);
+    assert.equal(decision.canInitializeGoogleMobileAds, true);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, []);
+  }
 });
 
 test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
@@ -2303,7 +2388,7 @@ test('exam screen does not import ad components', () => {
     /showRewardedExtraExamAd|rewardPreview|sponsor preview|Sponsored preview|Sponsrad förhandsvisning|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
   assert.match(examSource, /useMockExamAccess/);
-  assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
+  assert.match(examSource, /recordExamCompletion\(examAttemptId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
   assert.match(examSource, /Start unlocked extra exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);

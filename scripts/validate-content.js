@@ -34,6 +34,9 @@ const {
 } = require('./content-exec-cwd-guards');
 const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
 const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
+const {
+  findGeneratedTrueFalseNaturalnessPatternMatch,
+} = require('./generated-true-false-naturalness-patterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -333,7 +336,7 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'Vad är det?',
     'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     'Vem ska göra det?',
-    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     'Vad är känt om första provet?',
     'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Anmälan öppnar i början av juni 2026. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
     'Vilket material bygger appen på?',
@@ -356,7 +359,7 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'What is it?',
     'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     'Who takes it?',
-    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket. Seats are limited, and when the seats are filled, registration closes. You may be able to meet the knowledge requirement in other ways.',
     'What is known about the first test?',
     'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Registration opens in early June 2026. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
     'What material does this app use?',
@@ -480,139 +483,6 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
-];
-const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
-  /\bIt is true that\s+(?:The|In|Approximately)\b/i,
-  /\bbelongs to\s+[a-zåäö][^.,"]*/i,
-  /\bhör till\s+[a-zåäö][^.,"]*/i,
-  /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
-  /\b(?:It is correct that\s+)?(?:the answer is)\b/i,
-  /\bdescribes that\b/i,
-  /\btillåtet att gifta sig\b/i,
-  /\bwhen false information affects democracy\b/i,
-  /\bnär falsk information påverkar demokratin\b/i,
-  /\bis\s+(?:be|judge)\b/i,
-  /\bis an example of municipal responsibilities\b/i,
-  /\b(?:has one vote each|may stand for election)\s+is part of\b/i,
-  /\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
-  /\bis a way to\b/i,
-  /\bär ett sätt att\b/i,
-  /\bapplies to\b/i,
-  /\bgäller för\b/i,
-  /\bare The\b/,
-  /^That hitting children is prohibited\b/i,
-  /\bdescribes\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)\b/i,
-  /\bbeskriver\s+(?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)\b/i,
-  /\bis the list that contains\b/i,
-  /\bär listan som innehåller\b/i,
-  /\babout public power in Sweden\b/i,
-  /\bom offentlig makt i Sverige\b/i,
-  /\bmeans it gives\b/i,
-  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
-  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i,
-  /\binnebär att den ger\b/i,
-  /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
-  /^Important activities such as school, work, and health care can continue to function\.?$/i,
-  /^Politiska val ersätts med militära beslut\.?$/i,
-  /^Political elections are replaced with military decisions\.?$/i,
-  /\bfrom (?:13|15) years\b/i,
-  /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
-  /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
-  /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
-  /^It was presented in (?:1918|1948)\b/i,
-  /^Den presenterades (?:1918|1948)\b/i,
-  /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
-  /^En anledning är att (?:valet är hemligt|rösterna ska räknas snabbare)\b/i,
-  /^One reason is (?:the vote is secret|votes are counted faster)\b/i,
-  /^En myndighet som\b/i,
-  /^An authority that\b/i,
-  /\beU membership\b/,
-  /\bOne reason is that so\b/i,
-  /\bhave\s+[^.?!]*\bin common\b/i,
-  /\bhar\s+[^.?!]*\bgemensamt\b/i,
-  /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
-  /\bcelebrates The\b/,
-  /\bfirar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]/,
-  /\bfirar traditionellt jesu födelse\b/,
-  /\bcelebrates jesus' birth\b/,
-  /^(?:By|Apply|Leave|Live)\b/i,
-  /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-  /\bPåståendet är sant:/i,
-  /\bThe statement is true:/i,
-  /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
-  /\b(?:It is not true that|It is true that)\b/i,
-  /^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)/i,
-  /^Sverige beslutade att barnkonventionen blev svensk lag\b/i,
-  /\bär (?:Judar|Danskar),/,
-  /^(?:De|They) (?:företräder|bestämmer|represent|decide)\b/i,
-  /\batt Kungens makt\b/,
-  /\bför Samarbetet mellan\b/,
-  /\bfor Cooperation between\b/,
-  /^En anledning är att Sverige (?:hade|saknade)\b/,
-  /^One reason is that Sweden had\b/,
-  /^En anledning är att Det\b/,
-  /^One reason is that It\b/,
-  /^En anledning är\b/i,
-  /^One reason is\b/i,
-  /\bhar förändrat bara hur\b/i,
-  /\bhas changed only how\b/i,
-  /\barbetar för endast\b/i,
-  /\bworks for only\b/i,
-  /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
-  /,\s*,/,
-  /\bit is common to large bonfires\b/i,
-  /\bbrukar\s+\S+\s+arrangerar\b/i,
-  /\b(?:spreadinging|welcominging)\b/i,
-  /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
-  /\bthere are buddhist and Hindu\b/,
-  /\bcalled Lucia procession\b/i,
-  /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
-  /^Light candles on graves to remember and honour people who have died\.?$/i,
-  /^Open an Advent calendar every day until Christmas Eve\.?$/i,
-  /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
-  /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
-  /\bMany people voting, getting involved, and learning about social issues\b/i,
-  /\bFewer people taking part in elections\b/i,
-  /\bPeople with different backgrounds and economic situations living closer\b/i,
-  /\bPeople living completely separated by income or ethnic background\b/i,
-  /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
-  /^That Sweden's first mosques were built\b/i,
-  /\bskyddar rätten [^.?!]* och skydd mot\b/i,
-  /\bprotects the right [^.?!]* and protection from\b/i,
-  /\bskyddar att staten väljer\b/i,
-  /\bprotects that the state chooses\b/i,
-  /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
-  /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
-  /\bfick rätt att bo i landet och utöva\b/i,
-  /\bgained the right to live in the country and practice\b/i,
-  /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
-  /\bwhen a low voter turnout affects democracy\b/i,
-  /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+/i,
-  /\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
-  /^De drivs ofta av privata företag och får inkomster genom reklam\.?$/i,
-  /^They are often run by private companies and earn income from advertising\.?$/i,
-  /^De får aldrig sälja reklamplats\.?$/i,
-  /^They may never sell advertising space\.?$/i,
-  /^De finns också på internet och uppdateras med nyheter flera gånger per dag\.?$/i,
-  /^They are also available online and updated with news several times per day\.?$/i,
-  /^De får bara säljas som ett exemplar per år\.?$/i,
-  /^They may be sold only as one copy per year\.?$/i,
-  /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier\.?$/i,
-  /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
-  /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
-  /^Only responsible publishers may write posts there\.?$/i,
-  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
-  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
-  /^Water and sewage\b/i,
-  /^Vatten och avlopp\b/i,
-  /^Sending ambassadors\b/i,
-  /^Skicka ambassadörer\b/i,
-  /^Incomplete answer fragment for naturalness guard\b/i,
-  /^Ofullständig svarsfras för naturlighetskontroll\b/i,
-  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
-  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
-  /\b(?:bli Sveriges största religiösa grupp|become Sweden’s largest religious group)\b/i,
 ];
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
@@ -856,7 +726,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
   ],
   [
     'sessionCompletedQuestionIds,',
-    'practice selection must use session completed-question ids',
+    'practice selection must use active-scope completed-question ids',
   ],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
@@ -1486,7 +1356,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -1654,9 +1524,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
+const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1716,6 +1587,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Starta upplåst extra prov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
+    'Svarsalternativ för fråga ${questionNumber}',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
     'Skicka övningsprov',
     'Skicka prov',
@@ -1747,6 +1619,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Start unlocked extra exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
+    'Answer options for question ${questionNumber}',
     'Select answer ${optionText} for question ${questionNumber}',
     'Submit mock exam',
     'Submit exam',
@@ -1809,8 +1682,27 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam progress count must render localized copy',
   ],
   [
+    'answerGroupAccessibilityLabel: (questionNumber: number) => string;',
+    'exam route must type localized answer group labels',
+  ],
+  [
+    'aria-label={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized web radiogroup labels',
+  ],
+  [
+    'accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized native radiogroup labels',
+  ],
+  ['accessibilityRole="radiogroup"', 'exam answer groups must expose radiogroup semantics'],
+  [
     'accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}',
     'exam answers must expose localized accessibility labels',
+  ],
+  ['aria-checked={isSelected}', 'exam answer radios must expose checked state on web'],
+  ['accessibilityRole="radio"', 'exam answer options must expose radio semantics'],
+  [
+    'accessibilityState={{ checked: isSelected }}',
+    'exam answer radios must mirror checked state natively',
   ],
   [
     'accessibilityLabel={copy.submitAccessibilityLabel}',
@@ -1909,9 +1801,14 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.emptyTitle[\s\S]{0,160}<\/Text>/,
   },
   {
+    label: 'not-found quiz title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.notFoundTitle[\s\S]{0,160}<\/Text>/,
+  },
+  {
     label: 'session title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.sessionTitle\(normalizedSessionId\)\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{sessionTitle\}\s*<\/Text>/,
   },
 ];
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
@@ -1922,6 +1819,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
+    'Frågepass: ${chapterTitle}',
+    'Besvara en fråga från ${chapterTitle} och gå sedan igenom den källbaserade återkopplingen.',
     'Försök igen',
     'Försök igen med den här frågan',
   ],
@@ -1932,6 +1831,8 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Score',
     'Answer the routed question, then review the source-backed feedback.',
     'Session ${currentSessionId}',
+    'Quiz session: ${chapterTitle}',
+    'Answer a question from ${chapterTitle}, then review the source-backed feedback.',
     'Try again',
     'Try this quiz question again',
   ],
@@ -1948,6 +1849,23 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz route must read language from settings store',
   ],
   ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
+  ['import { chapters }', 'quiz route must import chapter metadata for chapter-scoped sessions'],
+  ['chapterId?: string | string[];', 'quiz route must type the optional chapter route param'],
+  [
+    'const normalizedChapterId = normalizeOptionalRouteParam(chapterId);',
+    'quiz route must normalize the optional chapter route param',
+  ],
+  [
+    'getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId)',
+    'quiz route must resolve chapter context from the routed question',
+  ],
+  ['const sessionTitle = chapterContextTitle', 'quiz route must compute a chapter-aware title'],
+  [
+    'const sessionSubtitle = chapterContextTitle',
+    'quiz route must compute a chapter-aware subtitle',
+  ],
+  ['{sessionTitle}', 'quiz route title must render resolved session title'],
+  ['{sessionSubtitle}', 'quiz route subtitle must render resolved session subtitle'],
   [
     '<QuestionDisclaimer language={language} />',
     'routed quiz disclaimer must receive settings language',
@@ -2064,6 +1982,8 @@ const EXPECTED_CHAPTER_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.startQuizAccessibilityLabel(chapterTitle)}',
     'chapter route quiz link must expose localized accessibility copy',
   ],
+  ['getChapterQuizRouteParams', 'chapter route must build typed chapter quiz params'],
+  ['params: quizRouteParams', 'chapter route must pass chapter quiz context into the quiz route'],
   ['{copy.startQuiz}', 'chapter route quiz link must render localized copy'],
   [
     '{copy.practiceQuestionsTitle(chapterQuestions.length)}',
@@ -2654,7 +2574,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -2789,6 +2709,11 @@ const EXPECTED_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /transform:\s*\[\{ scale: motion\.pressedScale \}\]/,
   },
   {
+    label: 'caller style override after state styles',
+    pattern:
+      /style=\{\(\{ pressed \}\) => \[\s*styles\.button,\s*styles\[variant\],\s*pressed && !disabled \? styles\.pressed : null,\s*pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null,\s*pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null,\s*disabled \? styles\.disabled : null,\s*style,\s*\]\}/,
+  },
+  {
     label: 'reduced-motion hook',
     pattern: /const reduceMotion = useReducedMotion\(\);/,
   },
@@ -2873,85 +2798,85 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
     pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'typed localized copy contract',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'localized progress copy',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'clamped progress source',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'percent value derived from clamped progress',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'language copy selection',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'readable localized progress label',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria label',
-    pattern: /aria-label=\{progressAccessibilityLabel\}/,
+    pattern: /aria-label=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria max value',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria min value',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria current value',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'web aria localized value text',
-    pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
+    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native accessibility label',
-    pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
+    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native progressbar role',
-    pattern: /accessibilityRole="progressbar"/,
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'native clamped accessibility value',
     pattern:
-      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
+      /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'animated fill uses clamped source',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
-    filePath: 'components/ui/ProgressBar.tsx',
+    filePath: 'components/ProgressBar.tsx',
     label: 'visual fill uses percent interpolation bounds',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
@@ -2969,11 +2894,12 @@ const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     filePath: 'components/ProgressBar.tsx',
     label: 'components/ProgressBar.tsx custom accessibility label fallback',
-    pattern: /const resolvedAccessibilityLabel = accessibilityLabel \?\? defaultAccessibilityText;/,
+    pattern:
+      /const resolvedAccessibilityLabel = accessibilityLabel \?\? progressAccessibilityLabel;/,
   },
   {
     filePath: 'components/ProgressBar.tsx',
-    label: 'components/ProgressBar.tsx must use the shared reduced-motion hook',
+    label: 'reduced-motion hook',
     pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
   },
   {
@@ -3105,7 +3031,11 @@ const EXPECTED_BADGE_ACCESSIBILITY_RULES = [
     pattern: /accessibilityLabel=\{badgeAccessibilityLabel\}/,
   },
   {
-    label: 'tone style path with caller override',
+    label: 'tone style path',
+    pattern: /style=\{\[styles\.badge, styles\[tone\]/,
+  },
+  {
+    label: 'caller style override',
     pattern: /style=\{\[styles\.badge, styles\[tone\], style\]\}/,
   },
   {
@@ -3338,11 +3268,11 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'optional text, enabled, and language prop contract',
     pattern:
-      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
+      /enabled = true,[\s\S]*language = 'sv'[\s\S]*rate,[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*rate\?: number;[\s\S]*text\?: string \| null/,
   },
   {
-    label: 'trimmed speech text source',
-    pattern: /const speechText = text\.trim\(\);/,
+    label: 'string-safe trimmed speech text source',
+    pattern: /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/,
   },
   {
     label: 'nonblank speech text guard',
@@ -3380,9 +3310,27 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
-    label: 'trimmed speech playback',
+    label: 'trimmed speech playback with lifecycle cleanup',
     pattern:
-      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
+  },
+  {
+    label: 'second press stops active question audio',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
+  },
+  {
+    label: 'stop callback clears speaking state',
+    pattern: /onStopped: \(\) => setIsSpeaking\(false\),/,
+  },
+  {
+    label: 'error callback clears speaking state',
+    pattern: /onError: \(\) => setIsSpeaking\(false\),/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -5098,6 +5046,96 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function validateStaticEbookProseSourceMetadata() {
+  const source = loadText('site/ebook.js');
+  let rulesValidated = 0;
+
+  const forbiddenPatterns = [
+    {
+      pattern: /EBOOK_DEFAULT_PROSE_SOURCE_KEYS/,
+      message: 'static ebook prose source metadata must not define a default source-key fallback',
+    },
+    {
+      pattern: /fallbackSourceKeys\s*=\s*EBOOK_DEFAULT_PROSE_SOURCE_KEYS/,
+      message: 'static ebook annotate() must not default to broad UHR prose source keys',
+    },
+    {
+      pattern: /explicitSourceKeys\s*\|\|\s*fallbackSourceKeys/,
+      message: 'static ebook annotate() must not annotate prose through fallbackSourceKeys',
+    },
+    {
+      pattern: /typeof point === 'string' \? null : point\.sourceKeys/,
+      message: 'static ebook Swedish brief string points must carry local source keys',
+    },
+    {
+      pattern: /footnoteCollector\.annotate\(rawBodyHtml\)/,
+      message: 'static ebook body annotation must pass typed chapter source metadata',
+    },
+  ];
+  const requiredSnippets = [
+    {
+      snippet: 'const EBOOK_BODY_SOURCE_KEYS = Object.freeze({',
+      message: 'static ebook must define typed body source metadata per chapter',
+    },
+    {
+      snippet: 'function ebookBodySourceKeys(chapterId) {',
+      message: 'static ebook must resolve typed body source metadata before annotation',
+    },
+    {
+      snippet: 'annotate(html, typedSourceKeys) {',
+      message:
+        'static ebook annotate() must require typed source metadata when inline keys are absent',
+    },
+    {
+      snippet: 'const normalizedTypedSourceKeys = typedSourceKeys',
+      message: 'static ebook annotate() must normalize typed source metadata before footnotes',
+    },
+    {
+      snippet: 'data-source-metadata="${metadataKind}"',
+      message:
+        'static ebook rendered prose must expose whether source metadata was inline or typed',
+    },
+    {
+      snippet: 'footnoteCollector.annotate(rawBodyHtml, ebookBodySourceKeys(id))',
+      message: 'static ebook body render must pass typed chapter source metadata',
+    },
+    {
+      snippet:
+        "const normalizedBriefSourceKeys = normalizedEbookSourceKeys(\n      sourceKeys,\n      'svStudyBrief body source metadata',",
+      message: 'static ebook Swedish study brief must normalize local source keys',
+    },
+    {
+      snippet: '? normalizedBriefSourceKeys : point.sourceKeys;',
+      message: 'static ebook Swedish study brief string points must use local source metadata',
+    },
+    {
+      snippet: '<p${ebookSourceKeyDataAttr(EBOOK_EDITORIAL_ONLY_SOURCE_KEYS)}>',
+      message: 'static ebook Swedish practice hints must be marked as editorial prose',
+    },
+  ];
+
+  forbiddenPatterns.forEach(({ pattern, message }) => {
+    if (pattern.test(source)) {
+      fail(message);
+      return;
+    }
+    rulesValidated += 1;
+  });
+
+  requiredSnippets.forEach(({ snippet, message }) => {
+    if (!source.includes(snippet)) {
+      fail(message);
+      return;
+    }
+    rulesValidated += 1;
+  });
+
+  return {
+    rulesValidated,
+    rulesExpected: forbiddenPatterns.length + requiredSnippets.length,
+  };
+}
+
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -5496,9 +5534,17 @@ function findQuestionJudgementMetaStem(question) {
 
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
+  if (
+    question.tags?.includes('published-variant') &&
+    /\bi Sverige\b/i.test(question.questionSv) &&
+    !/\bSweden\b|\bin Sweden\b/i.test(question.questionEn)
+  ) {
+    return 'generated true/false English stem drops Sweden scope';
+  }
 
-  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
-    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  return (
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionSv) ||
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionEn)
   );
 }
 
@@ -6292,6 +6338,16 @@ function embeddedEnglishClause(value) {
   return lowerLeadingEnglishClauseStart(stripLeadingPurposeEn(value));
 }
 function replaceLeadingSwedishSubject(subject, value) {
+  if (/^att köpa sex i Sverige$/i.test(subject.trim())) {
+    if (
+      /^Det är olagligt att köpa sex, men personen som säljer straffas inte$/i.test(value.trim())
+    ) {
+      return 'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte';
+    }
+    if (/^Det är alltid lagligt att köpa sex$/i.test(value.trim())) {
+      return 'Att köpa sex är alltid lagligt i Sverige';
+    }
+  }
   if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
     if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
       return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
@@ -6307,6 +6363,24 @@ function replaceLeadingSwedishSubject(subject, value) {
     .replace(/^Det är\s+/i, `${normalizedSubject} är `);
 }
 function replaceLeadingEnglishSubject(subject, value) {
+  if (/^buying sex in Sweden$/i.test(subject.trim())) {
+    if (
+      /^It is illegal to buy sex, but the person who sells it is not punished$/i.test(value.trim())
+    ) {
+      return 'In Sweden, buying sex is illegal, but the person who sells sex is not punished';
+    }
+    if (/^It is always legal to buy sex$/i.test(value.trim())) {
+      return 'In Sweden, buying sex is always legal';
+    }
+  }
+  if (/^marriage between people of the same sex in Sweden$/i.test(subject.trim())) {
+    if (/^It is permitted to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is permitted';
+    }
+    if (/^It is prohibited to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is prohibited';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^They are\s+/i, `${normalizedSubject} are `)
@@ -6525,7 +6599,8 @@ function appliesStatementEn(subject, answer) {
   if (/^They are\s+/i.test(answer)) {
     return replaceLeadingEnglishSubject(subject, answer);
   }
-  return answer;
+  const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
+  return subjectStatement === answer ? answer : subjectStatement;
 }
 function decisionStatementSv(subject, context, answer) {
   const normalizedAnswer = lowerFirst(stripLeadingPurposeSv(answer));
@@ -8164,6 +8239,43 @@ function extractMappedNumericArraysFromTs(source, parameterName) {
   return arrays;
 }
 
+function extractNumericArrayConstantFromTs(source, constantName) {
+  const sourceFile = ts.createSourceFile(
+    'source.ts',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  let values = null;
+
+  function unwrapArrayInitializer(node) {
+    if (ts.isArrayLiteralExpression(node)) return node;
+    if (ts.isAsExpression(node) || ts.isSatisfiesExpression?.(node)) {
+      return unwrapArrayInitializer(node.expression);
+    }
+    return null;
+  }
+
+  function visit(node) {
+    if (values) return;
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === constantName
+    ) {
+      const arrayInitializer = node.initializer ? unwrapArrayInitializer(node.initializer) : null;
+      if (arrayInitializer) {
+        values = arrayInitializer.elements.map((element) => numericLiteralValue(element));
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return values;
+}
+
 function parseCsvRows(csv) {
   const rows = [];
   let row = [];
@@ -8548,10 +8660,13 @@ const ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE =
   answerOptionShuffleModule.ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE;
 const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
+const buildAnswerFeedbackSpeechText = audioModule.buildAnswerFeedbackSpeechText;
 const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getChapterContextForQuizSession = practiceFlowModule.getChapterContextForQuizSession;
+const getChapterQuizRouteParams = practiceFlowModule.getChapterQuizRouteParams;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -8815,6 +8930,8 @@ let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
+let mobileAdsConsentRuntimeCasesValidated = 0;
+let mobileAdsConsentRuntimeParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
@@ -8911,6 +9028,13 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let questionBankCsvHeaderColumnsValidated = 0;
+let questionBankCsvUniqueHeaderNamesValidated = false;
+let questionBankCsvUhrSourcePublisherRowsValidated = 0;
+let questionBankCsvUhrSourcePublisherParityValidated = false;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionProvenanceRuntimeCasesValidated = 0;
+let questionProvenanceRuntimeParityValidated = false;
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -8935,6 +9059,8 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticEbookProseSourceMetadataRulesValidated = 0;
+let staticEbookProseSourceMetadataParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9052,6 +9178,25 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-onboarding-route-scroll')) {
+  validateOnboardingRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteScrollRulesValidated,
+    onboardingRouteScrollParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-badge-accessibility')) {
+  validateBadgeAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    badgeAccessibilityRulesValidated,
+    badgeAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
 if (process.argv.includes('--focus-flashcard-accessibility')) {
   validateFlashcardAccessibilityParity();
   exitWithValidationFailures();
@@ -9069,6 +9214,26 @@ if (process.argv.includes('--focus-question-report-link-parity')) {
   printValidationSummary({
     questionReportLinkRulesValidated,
     questionReportLinkParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-audio-button-accessibility')) {
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-speech-runtime-parity')) {
+  validateSpeechRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    speechRuntimeCasesValidated,
+    speechRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -9101,6 +9266,35 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
     staticHeadMetadataParityValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-static-ebook-provenance')) {
+  validateStaticValidationSyntaxGate();
+  const factboxValidation = validateStaticEbookFactboxProvenance();
+  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
+  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
+  staticEbookFactboxProvenanceValidated =
+    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
+    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+  const proseValidation = validateStaticEbookProseSourceMetadata();
+  staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
+  staticEbookProseSourceMetadataParityValidated =
+    staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticEbookFactboxClaimPatternsValidated,
+    staticEbookFactboxRequiredCopyValidated,
+    staticEbookFactboxSourceUrlsValidated,
+    staticEbookFactboxProvenanceValidated,
+    staticEbookProseSourceMetadataRulesValidated,
+    staticEbookProseSourceMetadataParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -9149,6 +9343,22 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestOfficialSourceRetrievedDateValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-profile-route-copy')) {
+  validateProfileRouteHeaderParity();
+  validateProfileRouteCopyParity();
+  validateBadgeCatalog();
+  exitWithValidationFailures();
+  printValidationSummary({
+    profileRouteHeadersValidated,
+    profileRouteHeaderParityValidated,
+    profileRouteCopyLabelsValidated,
+    profileRouteCopyParityValidated,
+    badgesValidated,
+    badgeMilestoneParityValidated,
   });
   process.exit(0);
 }
@@ -9211,6 +9421,20 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-legal-section-rendering')) {
+  validateLegalSectionRenderingParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
   });
   process.exit(0);
 }
@@ -9346,12 +9570,35 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mobile-ads-consent')) {
+  validateMobileAdsConsentTypeSchemaParity();
+  validateMobileAdsConsentRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentTypeInterfacesValidated,
+    mobileAdsConsentTypeSchemaParityValidated,
+    mobileAdsConsentRuntimeCasesValidated,
+    mobileAdsConsentRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   validateMobileAdsConsentHookParity();
   exitWithValidationFailures();
   printValidationSummary({
     mobileAdsConsentHookCasesValidated,
     mobileAdsConsentHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-remove-ads-hook-parity')) {
+  validateRemoveAdsEntitlementHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    removeAdsEntitlementHookCasesValidated,
+    removeAdsEntitlementHookParityValidated,
   });
   process.exit(0);
 }
@@ -9452,6 +9699,35 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
     mockExamAccessTypeUnionsValidated,
     mockExamAccessTypeInterfacesValidated,
     mockExamAccessTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
+  validateMockExamConfig(
+    defaultMockExamConfig,
+    Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+  );
+  validateMockExamConfigTypeSchemaParity();
+  validateMockExamRuntimeParity(defaultMockExamConfig);
+  validateMockExamTimerParity(defaultMockExamConfig);
+  validateExamRouteHeaderParity();
+  validateExamRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mockExamConfigTypeFieldsValidated,
+    mockExamConfigTypeSchemaParityValidated,
+    mockExamConfigExactSchemaKeysValidated,
+    mockExamConfigValidated,
+    mockExamRuntimeParityValidated,
+    mockExamChapterBalanceParityValidated,
+    mockExamTimerParityValidated,
+    examRouteHeadersValidated,
+    examRouteHeaderParityValidated,
+    examRouteCopyLabelsValidated,
+    examRouteCopyParityValidated,
   });
   process.exit(0);
 }
@@ -9562,6 +9838,12 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 {
+  const proseValidation = validateStaticEbookProseSourceMetadata();
+  staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
+  staticEbookProseSourceMetadataParityValidated =
+    staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+}
+{
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
   staticI18nArabicRequiredCopyValidated = arabicI18nValidation.requiredCopyValidated;
   staticI18nArabicHighFrequencyLabelsValidated = arabicI18nValidation.highFrequencyLabelsValidated;
@@ -9605,6 +9887,9 @@ if (typeof ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE !== 'number') {
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
 }
+if (typeof buildAnswerFeedbackSpeechText !== 'function') {
+  fail('buildAnswerFeedbackSpeechText export is not a function');
+}
 if (typeof speakSwedish !== 'function') fail('speakSwedish export is not a function');
 if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function');
 if (typeof getPracticeQuestionForSession !== 'function') {
@@ -9612,6 +9897,12 @@ if (typeof getPracticeQuestionForSession !== 'function') {
 }
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (typeof getChapterQuizRouteParams !== 'function') {
+  fail('getChapterQuizRouteParams export is not a function');
+}
+if (typeof getChapterContextForQuizSession !== 'function') {
+  fail('getChapterContextForQuizSession export is not a function');
 }
 if (
   !usePracticeSessionStore ||
@@ -10023,6 +10314,28 @@ function validateAdPlacementRouteParity() {
     'utf8',
   );
 
+  function validateAdBannerStatusCopyContract(source, surfaceLabel) {
+    if (!source.includes('getAdBannerStatusLabel')) {
+      reject(`AdBanner ${surfaceLabel} placement must use the shared live/test status selector`);
+    }
+    if (!source.includes('const unit = getAdUnit(placement);')) {
+      reject(`AdBanner ${surfaceLabel} placement must read the active configured ad unit`);
+    }
+    if (!source.includes('const adStatusLabel = getAdBannerStatusLabel(copy, unit);')) {
+      reject(`AdBanner ${surfaceLabel} placement must derive status copy from unit.testOnly`);
+    }
+    if (
+      !source.includes(
+        'const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);',
+      )
+    ) {
+      reject(`AdBanner ${surfaceLabel} placement must announce the derived live/test status`);
+    }
+    if (source.includes('copy.accessibilityLabel(placementLabel, copy.liveStatus)')) {
+      reject(`AdBanner ${surfaceLabel} placement must not hardcode live status copy`);
+    }
+  }
+
   if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
     reject('AdBanner native placement must resolve banner units by Platform.OS');
   }
@@ -10040,6 +10353,8 @@ function validateAdPlacementRouteParity() {
   ) {
     reject('AdBanner web fallback must use the shared web fallback consent decision');
   }
+  validateAdBannerStatusCopyContract(webAdBannerSource, 'web');
+  validateAdBannerStatusCopyContract(nativeAdBannerSource, 'native');
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -10574,6 +10889,24 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
         normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+    ],
+    [
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+        hookSource,
+      ),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+    ],
+    [
+      /if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{[\s\S]*return\s+undefined;[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\),/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
     ],
     [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
@@ -11198,6 +11531,13 @@ function validateExamRouteCopyParity() {
     if (!examRoute.includes(snippet)) reject(message);
   });
 
+  if (
+    /aria-selected=\{isSelected\}/.test(examRoute) ||
+    /accessibilityState=\{\{\s*selected:\s*isSelected\s*\}\}/.test(examRoute)
+  ) {
+    reject('active exam answer options must use checked radio semantics, not selected buttons');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -11394,6 +11734,7 @@ function validateQuizRouteHeaderParity() {
 function validateQuizRouteCopyParity() {
   let valid = true;
   let quizRoute = '';
+  let searchRoute = '';
 
   function reject(message) {
     valid = false;
@@ -11406,10 +11747,19 @@ function validateQuizRouteCopyParity() {
     reject(`quiz route copy source could not be read: ${error.message}`);
     return;
   }
+  try {
+    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  } catch (error) {
+    reject(`search route source could not be read for quiz route parity: ${error.message}`);
+    return;
+  }
 
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+  if (!searchRoute.includes('href={`/quiz/${result.question.id}`}')) {
+    reject('search route links must keep exact question-id quiz sessions');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -11905,6 +12255,13 @@ function validateProfileRouteCopyParity() {
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
   });
+
+  if (!profileRoute.includes('const removeAdsPaywall = entitlementsReady ? (')) {
+    reject('profile premium banner must fail closed while entitlements load');
+  }
+  if (!profileRoute.includes('{entitlementsReady && proRuntimeScopeEnabled ? (')) {
+    reject('profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -13097,6 +13454,13 @@ function validateProgressBarAccessibilityParity() {
     progressBarAccessibilityRulesValidated += 1;
   });
 
+  const progressBarAdapterSource = progressBarSources.get('components/ui/ProgressBar.tsx') ?? '';
+  if (/ProgressBarCopy|progressBarCopy|progressAccessibilityLabel/.test(progressBarAdapterSource)) {
+    reject(
+      'components/ui/ProgressBar.tsx must stay a thin adapter without duplicate localized copy implementation',
+    );
+  }
+
   if (
     valid &&
     progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
@@ -14195,26 +14559,47 @@ function validateSettingsDailyGoalParity() {
   if (settingsStore.includes('Math.round(dailyGoalAnswers)')) {
     reject('setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp');
   }
+  if (!normalizedSettingsStore.includes('function normalizeImportedDailyGoalAnswers(')) {
+    reject('normalizeImportedSettings must use an import-specific daily-goal normalizer');
+  }
   if (
-    !normalizedSettingsStore.includes(
+    normalizedSettingsStore.includes(
       'settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);',
     )
   ) {
-    reject('normalizeImportedSettings must normalize imported daily-goal input');
+    reject('normalizeImportedSettings must not persist fallback daily-goal values for imports');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'const dailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);',
+    ) ||
+    !normalizedSettingsStore.includes(
+      'if (dailyGoalAnswers !== undefined) settings.dailyGoalAnswers = dailyGoalAnswers;',
+    )
+  ) {
+    reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
-  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
-  const goalOptions = goalOptionArrays[0] || [];
+  const goalOptions = extractNumericArrayConstantFromTs(
+    settingsStore,
+    'supportedDailyGoalAnswerOptions',
+  );
   if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
     reject(
-      `app/settings.tsx daily goal options are ${JSON.stringify(
-        goalOptionArrays,
+      `supportedDailyGoalAnswerOptions is ${JSON.stringify(
+        goalOptions,
       )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
     );
   }
+  if (extractMappedNumericArraysFromTs(settingsRoute, 'goal').length > 0) {
+    reject('app/settings.tsx must render daily goal options from supportedDailyGoalAnswerOptions');
+  }
+  if (!settingsRoute.includes('supportedDailyGoalAnswerOptions.map((goal) =>')) {
+    reject('app/settings.tsx must map supportedDailyGoalAnswerOptions for daily-goal controls');
+  }
 
   const seenGoals = new Set();
-  goalOptions.forEach((goal, index) => {
+  (goalOptions || []).forEach((goal, index) => {
     let optionIsValid = true;
     if (!Number.isInteger(goal)) {
       optionIsValid = false;
@@ -14648,11 +15033,11 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'progressStorage?.getString(progressStateKey)',
+      'readRecoverably(progressStorage, progressStorageId, progressStateKey, () => progressStorage?.getString(progressStateKey)',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
-      'normalizeProgress(JSON.parse(rawValue))',
+      '(rawValue) => normalizeProgress(JSON.parse(rawValue))',
       'readProgress must normalize parsed persisted JSON',
     ],
     [
@@ -14671,6 +15056,22 @@ function validateProgressStoreSchemaParity() {
     [
       "if (typeof isCorrect !== 'boolean') return state;",
       'recordAnswer must ignore non-boolean correctness before mutating progress',
+    ],
+    [
+      'const seenCount = normalizeNonNegativeInteger( item.seenCount, rawCorrectCount + rawWrongCount, maxHydratedQuestionAnswerCount, );',
+      'progress hydration must normalize seenCount with capped numeric helper',
+    ],
+    [
+      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
+    ],
+    [
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
+      'question progress hydration must preserve only boolean bookmark values',
+    ],
+    [
+      'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
+      'question progress hydration must preserve only valid 1..5 confidence ratings',
     ],
     ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
     ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
@@ -15240,6 +15641,11 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const nativeReceiptValidationBlock =
+    purchaseSource.match(
+      /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
+    )?.[1] ?? '';
+
   function assertInFlightCase(source, options) {
     try {
       assertPurchaseActionInFlightGuard(source, options);
@@ -15333,6 +15739,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
+        nativeReceiptValidationBlock,
+      ) && !/createReceiptValidationResult\s*\(/.test(nativeReceiptValidationBlock),
+      'native Remove Ads provider must fail closed without an injected receipt verifier',
     ],
     [
       normalizedPurchaseSource.includes(
@@ -15648,6 +16060,90 @@ function validateMobileAdsConsentTypeSchemaParity() {
     mobileAdsConsentTypeInterfacesValidated === EXPECTED_MOBILE_ADS_CONSENT_INTERFACES.length
   ) {
     mobileAdsConsentTypeSchemaParityValidated = true;
+  }
+}
+
+function validateMobileAdsConsentRuntimeParity() {
+  let valid = true;
+  let mobileConsentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mobileConsentSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const normalizedMobileConsentSource = mobileConsentSource.replace(/\s+/g, ' ');
+  const runtimeCases = [
+    [
+      normalizedMobileConsentSource.includes(
+        'const shouldCollectConsent = googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;',
+      ),
+      'Mobile Ads consent runtime must gate consent collection on ads config, real ads, and Remove Ads entitlements',
+    ],
+    [
+      /const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);[\s\S]*region:\s*normalizedRegion,/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must normalize invalid regions before building consent state',
+    ],
+    [
+      /const\s+currentTrackingTransparencyStatus\s*=\s*await\s+getCurrentTrackingTransparencyStatus\([\s\S]*?\);\s*const\s+trackingTransparencyStatus\s*=\s*await\s+requestTrackingTransparencyStatusIfNeeded\([\s\S]*?currentTrackingTransparencyStatus[\s\S]*?\);\s*const\s+umpConsentStatus\s*=\s*await\s+resolveUmpConsentStatus\([\s\S]*?normalizedRegion[\s\S]*?\);/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must request ATT before resolving UMP consent',
+    ],
+    [
+      !/Promise\.all\([\s\S]*requestTrackingTransparencyStatusIfNeeded[\s\S]*resolveUmpConsentStatus/.test(
+        mobileConsentSource,
+      ) &&
+        !/Promise\.all\([\s\S]*resolveUmpConsentStatus[\s\S]*requestTrackingTransparencyStatusIfNeeded/.test(
+          mobileConsentSource,
+        ),
+      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
+    ],
+    [
+      /if\s*\(\s*!shouldCollectConsent\s*\|\|\s*!regionRequiresUmpConsent\(region\)\s*\)\s*return\s+'not_required';/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must skip UMP gathering for non-UMP regions',
+    ],
+    [
+      /try\s*\{\s*return\s+mapUmpConsentStatus\(await\s+runtime\.gatherUmpConsent\?\.\(\)\);\s*\}\s*catch\s*\{\s*return\s+mapUmpConsentStatus\(await\s+runtime\.getUmpConsentInfo\?\.\(\)\);\s*\}/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must fall back to cached UMP info when gathering fails',
+    ],
+    [
+      /const\s+decision\s*=\s*getAdSdkInitializationDecision\(state\);[\s\S]*if\s*\(\s*!decision\.canInitializeGoogleMobileAds\s*\)\s*\{[\s\S]*initialized:\s*false[\s\S]*\}[\s\S]*await\s+options\.runtime\.initializeGoogleMobileAds\?\.\(\);[\s\S]*initialized:\s*true/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must block SDK initialization until the consent decision allows it',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    mobileAdsConsentRuntimeCasesValidated += 1;
+  });
+
+  if (
+    valid &&
+    mobileAdsConsentRuntimeCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES
+  ) {
+    mobileAdsConsentRuntimeParityValidated = true;
   }
 }
 
@@ -16270,6 +16766,28 @@ function validateBadgeCatalog() {
         reject(`${label} duplicates badge description`);
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+
+      for (const field of [
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing localized ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (
+        label === 'first_practice' &&
+        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
+      ) {
+        reject('first_practice titleSv must be localized separately from titleEn');
+      }
     }
 
     if (valid) badgesValidated += 1;
@@ -16400,6 +16918,13 @@ function validatePracticeFlowParity() {
       completedQuestionIds: [firstQuestion.id, secondQuestion.id],
       activeQuestionId: null,
       expectedId: thirdQuestion.id,
+    },
+    {
+      label: 'completion outside visible bank is ignored',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id, firstQuestion.id],
+      activeQuestionId: null,
+      expectedId: secondQuestion.id,
     },
     {
       label: 'completed question count wraps to the first question',
@@ -17161,7 +17686,12 @@ function resetSpeechEvents() {
 }
 
 function validateSpeechRuntimeParity() {
-  if (typeof speakSwedish !== 'function' || typeof stopSpeech !== 'function') {
+  if (
+    typeof buildQuestionSpeechText !== 'function' ||
+    typeof buildAnswerFeedbackSpeechText !== 'function' ||
+    typeof speakSwedish !== 'function' ||
+    typeof stopSpeech !== 'function'
+  ) {
     return;
   }
 
@@ -17172,53 +17702,154 @@ function validateSpeechRuntimeParity() {
     fail(message);
   }
 
+  function accept(condition, message) {
+    if (condition) {
+      speechRuntimeCasesValidated += 1;
+    } else {
+      reject(message);
+    }
+  }
+
   resetSpeechEvents();
   speakSwedish('');
-  if (speechEvents.length === 0) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must ignore empty text');
-  }
+  accept(speechEvents.length === 0, 'speakSwedish must ignore empty text');
 
   resetSpeechEvents();
   speakSwedish('   ');
-  if (speechEvents.length === 0) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must ignore whitespace-only text');
-  }
+  accept(speechEvents.length === 0, 'speakSwedish must ignore whitespace-only text');
 
   resetSpeechEvents();
-  speakSwedish('Hej Sverige');
+  speakSwedish(null);
+  speakSwedish(undefined);
+  speakSwedish(123);
+  accept(speechEvents.length === 0, 'speakSwedish must ignore non-string text');
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 1.25 });
   const speakEvent = speechEvents[0];
-  if (
+  accept(
     speechEvents.length === 1 &&
-    speakEvent &&
-    speakEvent.type === 'speak' &&
-    speakEvent.text === 'Hej Sverige' &&
-    speakEvent.options &&
-    speakEvent.options.language === EXPECTED_SWEDISH_SPEECH_LANGUAGE
-  ) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject(
-      `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
-    );
-  }
+      speakEvent &&
+      speakEvent.type === 'speak' &&
+      speakEvent.text === 'Hej Sverige' &&
+      speakEvent.options &&
+      speakEvent.options.language === EXPECTED_SWEDISH_SPEECH_LANGUAGE &&
+      speakEvent.options.rate === 1.25,
+    `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
+  );
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 99 });
+  const clampedRateEvent = speechEvents[0];
+  accept(
+    speechEvents.length === 1 &&
+      clampedRateEvent &&
+      clampedRateEvent.options &&
+      clampedRateEvent.options.rate === 2,
+    'speakSwedish must clamp finite playback rates to the supported range',
+  );
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', {
+    rate: Infinity,
+    onDone: 'not-a-function',
+    onError: 'not-a-function',
+    onStopped: 'not-a-function',
+  });
+  const unsafeOptionEvent = speechEvents[0];
+  accept(
+    speechEvents.length === 1 &&
+      unsafeOptionEvent &&
+      unsafeOptionEvent.options &&
+      !Object.prototype.hasOwnProperty.call(unsafeOptionEvent.options, 'rate') &&
+      unsafeOptionEvent.options.onDone === undefined &&
+      unsafeOptionEvent.options.onError === undefined &&
+      unsafeOptionEvent.options.onStopped === undefined,
+    'speakSwedish must omit non-finite rates and non-function callbacks',
+  );
 
   resetSpeechEvents();
   stopSpeech();
   const stopEvent = speechEvents[0];
-  if (speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop') {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('stopSpeech must call the Expo Speech stop handler');
+  accept(
+    speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop',
+    'stopSpeech must call the Expo Speech stop handler',
+  );
+
+  resetSpeechEvents();
+  const originalSpeak = speechMock.speak;
+  const originalWarn = console.warn;
+  let onErrorCalls = 0;
+  let onErrorMessage = '';
+  speechMock.speak = () => {
+    throw new Error('speech unavailable');
+  };
+  console.warn = () => {};
+  try {
+    speakSwedish('Hej Sverige', {
+      onError(error) {
+        onErrorCalls += 1;
+        onErrorMessage = error?.message || '';
+      },
+    });
+  } catch (error) {
+    reject(`speakSwedish must not throw when Speech.speak fails synchronously: ${error.message}`);
+  } finally {
+    speechMock.speak = originalSpeak;
+    console.warn = originalWarn;
   }
+  accept(
+    onErrorCalls === 1 && onErrorMessage === 'speech unavailable',
+    'speakSwedish must call onError once when Speech.speak throws synchronously',
+  );
+
+  let malformedQuestionSpeechText = '';
+  try {
+    malformedQuestionSpeechText = buildQuestionSpeechText({
+      questionSv: null,
+      options: [
+        null,
+        { id: 'a', textSv: null, textEn: null },
+        { id: 'b', textSv: 'Sverige', textEn: 'Sweden' },
+      ],
+    });
+  } catch (error) {
+    reject(`buildQuestionSpeechText must not throw for malformed question data: ${error.message}`);
+  }
+  accept(
+    malformedQuestionSpeechText.includes('Sverige') &&
+      !/\b(?:null|undefined)\b/i.test(malformedQuestionSpeechText),
+    'buildQuestionSpeechText must skip invalid prompt and option text',
+  );
+
+  let malformedFeedbackSpeechText = '';
+  try {
+    malformedFeedbackSpeechText = buildAnswerFeedbackSpeechText(
+      {
+        correctOptionId: 'a',
+        explanationSv: null,
+      },
+      'b',
+    );
+  } catch (error) {
+    reject(
+      `buildAnswerFeedbackSpeechText must not throw for malformed feedback data: ${error.message}`,
+    );
+  }
+  accept(
+    malformedFeedbackSpeechText.includes('Du valde: det valda svaret.') &&
+      !/\b(?:null|undefined)\b/i.test(malformedFeedbackSpeechText),
+    'buildAnswerFeedbackSpeechText must skip invalid explanation and option text',
+  );
 
   resetSpeechEvents();
 
   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
     speechRuntimeParityValidated = true;
+  } else if (runtimeParityIsValid) {
+    reject(
+      `speech runtime parity validated ${speechRuntimeCasesValidated} cases, expected ${EXPECTED_SPEECH_RUNTIME_CASES}`,
+    );
   }
 }
 
@@ -17226,6 +17857,8 @@ function validateChapterQuizSessionParity() {
   if (
     !Array.isArray(chapters) ||
     !Array.isArray(questions) ||
+    typeof getChapterContextForQuizSession !== 'function' ||
+    typeof getChapterQuizRouteParams !== 'function' ||
     typeof getChapterQuizSessionId !== 'function'
   ) {
     return;
@@ -17234,6 +17867,7 @@ function validateChapterQuizSessionParity() {
   chapters.forEach((chapter) => {
     const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
     const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const routeParams = getChapterQuizRouteParams(questions, chapter.id);
     const sessionQuestion = questions.find((question) => question.id === sessionId);
     let valid = true;
 
@@ -17248,6 +17882,12 @@ function validateChapterQuizSessionParity() {
       reject(
         `${chapter.id} chapter quiz session resolves to ${sessionId}, expected ${expectedQuestion.id}`,
       );
+    } else if (
+      !routeParams ||
+      routeParams.sessionId !== expectedQuestion.id ||
+      routeParams.chapterId !== chapter.id
+    ) {
+      reject(`${chapter.id} chapter quiz route params must carry sessionId and chapterId`);
     }
 
     if (!sessionQuestion) {
@@ -17258,6 +17898,10 @@ function validateChapterQuizSessionParity() {
       );
     } else if (sessionQuestion.reviewStatus !== 'published') {
       reject(`${chapter.id} chapter quiz session id ${sessionId} is not published`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, chapter.id) !== chapter) {
+      reject(`${chapter.id} chapter quiz context does not resolve from route chapter id`);
+    } else if (getChapterContextForQuizSession(chapters, sessionQuestion, 'missing-chapter')) {
+      reject(`${chapter.id} chapter quiz context must reject mismatched chapter ids`);
     }
 
     if (valid) chapterQuizSessionParityValidated += 1;
@@ -17268,6 +17912,18 @@ function validateChapterQuizSessionParity() {
   }
   if (getChapterQuizSessionId(questions, null) !== null) {
     fail('null chapter quiz session should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, 'missing-chapter') !== null) {
+    fail('missing chapter quiz route params should resolve to null');
+  }
+  if (getChapterQuizRouteParams(questions, null) !== null) {
+    fail('null chapter quiz route params should resolve to null');
+  }
+  if (getChapterContextForQuizSession(chapters, undefined, 'ch01') !== null) {
+    fail('chapter quiz context must require a resolved question');
+  }
+  if (getChapterContextForQuizSession(chapters, questions[0], null) !== null) {
+    fail('chapter quiz context must require an explicit chapter id');
   }
 }
 
@@ -17483,8 +18139,7 @@ function validateStreakRules() {
     },
     {
       label: 'invalid local date fallback',
-      actual: () =>
-        /^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0,
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
       expected: 1,
     },
   ];
@@ -17997,6 +18652,21 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  if (header.length === QUESTION_BANK_CSV_HEADER.length) {
+    questionBankCsvHeaderColumnsValidated = header.length;
+  }
+  if (duplicateHeaderNames.length) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    questionBankCsvUniqueHeaderNamesValidated = true;
+  }
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -18010,6 +18680,25 @@ function validateQuestionBankCsvContract() {
       `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
     );
   }
+
+  const metadataDriftCounts = {
+    uhrSourceTitle: 0,
+    uhrSourcePublisher: 0,
+    uhrSourceUrl: 0,
+    uhrSourceRetrievedAt: 0,
+  };
+  const metadataDriftFindings = {
+    uhrSourceTitle: [],
+    uhrSourcePublisher: [],
+    uhrSourceUrl: [],
+    uhrSourceRetrievedAt: [],
+  };
+  const metadataSourceFields = {
+    uhrSourceTitle: 'title',
+    uhrSourcePublisher: 'publisher',
+    uhrSourceUrl: 'url',
+    uhrSourceRetrievedAt: 'retrievedDate',
+  };
 
   dataRows.forEach((row, index) => {
     const question = questions[index];
@@ -18058,16 +18747,105 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        if (Object.prototype.hasOwnProperty.call(metadataDriftCounts, field)) {
+          rowIsValid = false;
+          metadataDriftCounts[field] += 1;
+          metadataDriftFindings[field].push(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        } else {
+          reject(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        }
       }
     });
 
+    const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
+    if (
+      publisherIndex >= 0 &&
+      row[publisherIndex] === uhrSectionMap?.source?.publisher &&
+      hasText(row[publisherIndex])
+    ) {
+      questionBankCsvUhrSourcePublisherRowsValidated += 1;
+    }
+
+    const provenanceIndex = QUESTION_BANK_CSV_HEADER.indexOf('questionProvenance');
+    const provenance = row[provenanceIndex];
+    if (Object.prototype.hasOwnProperty.call(questionBankCsvProvenanceCounts, provenance)) {
+      questionBankCsvProvenanceCounts[provenance] += 1;
+    }
+
     if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
+
+  Object.entries(metadataDriftCounts).forEach(([field, count]) => {
+    if (count <= 0) return;
+    if (count === dataRows.length && count > 1) {
+      fail(
+        `content/question-bank.csv ${field} metadata drift: ${count} rows disagree with content/uhr-section-map.json source.${metadataSourceFields[field]}`,
+      );
+      return;
+    }
+    metadataDriftFindings[field].forEach(fail);
+  });
+
+  questionBankCsvUhrSourcePublisherParityValidated =
+    questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
+}
+
+function validateQuestionProvenanceRuntime() {
+  if (typeof getQuestionProvenance !== 'function') {
+    fail('question provenance runtime guard cannot load getQuestionProvenance');
+    return;
+  }
+
+  const cases = [
+    ['undefined question', undefined, 'uhr'],
+    ['null question', null, 'uhr'],
+    ['empty object', {}, 'uhr'],
+    ['array question object', [], 'uhr'],
+    ['null tags', { tags: null }, 'uhr'],
+    ['string tags', { tags: 'published-variant' }, 'uhr'],
+    ['object tags with includes', { tags: { includes: () => true } }, 'uhr'],
+    ['mixed non-string tags', { tags: ['published-variant', 123] }, 'uhr'],
+    ['plain UHR tag', { tags: ['uhr'] }, 'uhr'],
+    ['published variant tag', { tags: ['published-variant'] }, 'derived'],
+    ['editorial tag', { tags: ['editorial'] }, 'editorial'],
+    ['editorial wins over derived', { tags: ['published-variant', 'editorial'] }, 'editorial'],
+    ['unknown string tag falls back', { tags: ['supplementary'] }, 'uhr'],
+  ];
+
+  let valid = true;
+  cases.forEach(([label, question, expected]) => {
+    let actual;
+    try {
+      actual = getQuestionProvenance(question);
+    } catch (error) {
+      valid = false;
+      fail(`question provenance runtime guard ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual !== expected) {
+      valid = false;
+      fail(
+        `question provenance runtime guard ${label} tags returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+
+    questionProvenanceRuntimeCasesValidated += 1;
+  });
+
+  questionProvenanceRuntimeParityValidated =
+    valid && questionProvenanceRuntimeCasesValidated === cases.length;
 }
 
 function criminalResponsibilityCurrentnessQuestionIds() {
@@ -18340,6 +19118,9 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
 }
 
 function expectedPublishedSourceField(question, field) {
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
+  }
   if (question.type === 'true_false' && field === 'questionSv') {
     return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
   }
@@ -18347,6 +19128,14 @@ function expectedPublishedSourceField(question, field) {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
   }
   return question[field];
+}
+
+function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
 }
 
 function validateAuthoredSourceParity() {
@@ -18372,9 +19161,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const localizedAdditionalQuestions = additionalQuestions.map(applyQuestionLocalizationPilot);
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
-  const expectedPublishedSourceQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
@@ -18421,7 +19208,7 @@ function validateAuthoredSourceParity() {
     }
 
     const publishedQuestion = sourceQuestions[index];
-    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
+    const expectedSourceQuestion = question;
     if (!publishedQuestion) return;
 
     let publicationParityIsValid = true;
@@ -18441,6 +19228,17 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    authoredSourcePartitionQuestionsValidated,
+    authoredSourceQuestionsValidated,
+    sourcePublicationParityValidated,
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+  });
+  process.exit(0);
+}
 
 function validateGenerationParity() {
   if (
@@ -19187,6 +19985,50 @@ function validatePublishedQuestionNaturalnessGuards() {
 validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-question-provenance-runtime')) {
+  validateQuestionProvenanceRuntime();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        questionProvenanceRuntimeCasesValidated,
+        questionProvenanceRuntimeParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
+if (process.argv.includes('--focus-question-bank-csv')) {
+  validateUhrSectionMapExactSchemaKeys();
+  validateUhrSourceMaterialLinkParity();
+  validateQuestionBankCsvContract();
+  if (failures.length) exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        publishedQuestions,
+        questionBankCsvRowsValidated,
+        questionBankCsvHeaderColumnsValidated,
+        questionBankCsvUniqueHeaderNamesValidated,
+        questionBankCsvUhrSourcePublisherRowsValidated,
+        questionBankCsvUhrSourcePublisherParityValidated,
+        questionBankCsvProvenanceCounts,
+        uhrMapExactSchemaKeysValidated,
+        uhrSourceMaterialLinkParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-legal-route-parity')) {
   validateLegalRouteHeaderParity();
   validateLegalSectionRenderingParity();
@@ -19206,26 +20048,6 @@ if (process.argv.includes('--focus-legal-route-parity')) {
         swedishPrivacyStreakCopyNaturalnessValidated,
         legalSwedishEnglishTokenGuardValidated,
         legalSwedishEnglishTokenGuardParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
-if (process.argv.includes('--focus-legal-section-rendering')) {
-  validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
       },
       null,
       2,
@@ -19637,6 +20459,7 @@ validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
+validateMobileAdsConsentRuntimeParity();
 validateMobileAdsConsentHookParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
@@ -19667,6 +20490,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -19865,6 +20689,8 @@ console.log(
       adConsentTypeSchemaParityValidated,
       mobileAdsConsentTypeInterfacesValidated,
       mobileAdsConsentTypeSchemaParityValidated,
+      mobileAdsConsentRuntimeCasesValidated,
+      mobileAdsConsentRuntimeParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
       rewardedAdTypeUnionsValidated,
@@ -20008,6 +20834,13 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvHeaderColumnsValidated,
+      questionBankCsvUniqueHeaderNamesValidated,
+      questionBankCsvUhrSourcePublisherRowsValidated,
+      questionBankCsvUhrSourcePublisherParityValidated,
+      questionBankCsvProvenanceCounts,
+      questionProvenanceRuntimeCasesValidated,
+      questionProvenanceRuntimeParityValidated,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
@@ -20032,6 +20865,8 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticEbookProseSourceMetadataRulesValidated,
+      staticEbookProseSourceMetadataParityValidated,
       staticI18nArabicRequiredCopyValidated,
       staticI18nArabicHighFrequencyLabelsValidated,
       staticI18nArabicForbiddenFragmentsValidated,

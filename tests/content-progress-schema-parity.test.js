@@ -258,7 +258,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(
     progressStore,
-    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: RecordAnswerOptions,\s*\): void;/,
+    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: \{ awardXp\?: boolean \},\s*\): void;/,
   );
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(progressStore, /function normalizeConfidenceRating\(value: unknown\)/);
@@ -651,6 +651,63 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assert.deepEqual(useProgressStore.getState().answerHistory, []);
 });
 
+test('recordMockExamSession preserves distinct durable attempt ids and dedupes same-attempt retries', () => {
+  const { useProgressStore, readPersistedProgress } = loadProgressStoreFromStorage({
+    completedQuestionIds: [],
+    questionProgress: {},
+    totalXp: 0,
+    answerDates: [],
+    answerHistory: [],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    streakFreezeState: {
+      available: 1,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+  });
+
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'mock-exam-attempt-a',
+    score: 1,
+    completedAt: '2026-05-21T10:00:00.000Z',
+    correctCount: 20,
+    totalCount: 20,
+  });
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'mock-exam-attempt-a',
+    score: 0.5,
+    completedAt: '2026-05-21T10:05:00.000Z',
+    correctCount: 10,
+    totalCount: 20,
+  });
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'mock-exam-attempt-b',
+    score: 0.5,
+    completedAt: '2026-05-21T12:00:00.000Z',
+    correctCount: 10,
+    totalCount: 20,
+  });
+
+  const state = useProgressStore.getState();
+
+  assert.deepEqual(
+    state.mockExamSessions.map((session) => session.sessionId),
+    ['mock-exam-attempt-a', 'mock-exam-attempt-b'],
+  );
+  assert.equal(state.mockExamSessions[0].completedAt, '2026-05-21T10:05:00.000Z');
+  assert.equal(state.mockExamSessions[0].score, 0.5);
+  assert.equal(state.mockExamSessions[1].completedAt, '2026-05-21T12:00:00.000Z');
+  assert.equal(state.totalXp, 90);
+  assert.deepEqual(
+    readPersistedProgress().mockExamSessions.map((session) => session.sessionId),
+    ['mock-exam-attempt-a', 'mock-exam-attempt-b'],
+  );
+  assert.equal(readPersistedProgress().totalXp, 90);
+});
+
 test('recordAnswer ignores non-boolean correctness before state or storage writes', () => {
   const initialProgress = {
     completedQuestionIds: [],
@@ -757,14 +814,18 @@ require('./scripts/validate-content.js');
 
 test('progress store schema parity rejects raw numeric hydration', () => {
   const result = runValidationWithProgressStorePatch(
-    'seenCount,',
-    'seenCount: Math.max(0, item.seenCount ?? 0),',
+    `const seenCount = normalizeNonNegativeInteger(
+        item.seenCount,
+        rawCorrectCount + rawWrongCount,
+        maxHydratedQuestionAnswerCount,
+      );`,
+    'const seenCount = Math.max(0, item.seenCount ?? 0);',
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /progress hydration must not use raw numeric expression Math\.max\(0, item\.seenCount \?\? 0\)/,
+    /progress hydration must normalize seenCount with capped numeric helper/,
   );
 });
 

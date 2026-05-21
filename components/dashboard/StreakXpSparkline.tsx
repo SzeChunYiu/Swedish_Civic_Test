@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { XpDayPoint } from '../../lib/learning/dashboardStats';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Card } from '../ui/Card';
 
 export type StreakXpSparklineCopy = {
@@ -21,6 +23,8 @@ type StreakXpSparklineProps = {
 };
 
 export function StreakXpSparkline({ copy, currentStreak, level, points }: StreakXpSparklineProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const totalXp = points.reduce((sum, point) => sum + point.xp, 0);
   const activeDays = points.filter((point) => point.xp > 0).length;
   const maxXp = Math.max(0, ...points.map((point) => point.xp));
@@ -69,72 +73,74 @@ export function StreakXpSparkline({ copy, currentStreak, level, points }: Streak
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    gap: space[0.5],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  metricRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  metricPill: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    minWidth: space[9],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  metricValue: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  metricLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  emptyState: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sparkline: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    gap: space[0.5],
-    height: space[8],
-  },
-  barTrack: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    flex: 1,
-    height: space[8],
-    justifyContent: 'flex-end',
-    minWidth: space[0.5],
-    overflow: 'hidden',
-  },
-  barFill: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    minHeight: space[0.5],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      gap: space[0.5],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    metricRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    metricPill: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      minWidth: space[9],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    metricValue: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    metricLabel: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    emptyState: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sparkline: {
+      alignItems: 'flex-end',
+      flexDirection: 'row',
+      gap: space[0.5],
+      height: space[8],
+    },
+    barTrack: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      flex: 1,
+      height: space[8],
+      justifyContent: 'flex-end',
+      minWidth: space[0.5],
+      overflow: 'hidden',
+    },
+    barFill: {
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.micro,
+      minHeight: space[0.5],
+    },
+  });
+}

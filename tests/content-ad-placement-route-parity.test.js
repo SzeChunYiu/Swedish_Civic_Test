@@ -133,9 +133,11 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(practiceInterstitialNativeSource, /dispatchAttemptEvent\('show_timeout'\)/);
   assert.doesNotMatch(practiceInterstitialNativeSource, /let attemptSettled|let showStarted/);
   assert.match(adBannerNativeSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(adBannerNativeSource, /getAdBannerStatusLabel/);
+  assert.match(adBannerNativeSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(
     adBannerNativeSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
   );
   assert.doesNotMatch(
     adBannerNativeSource,
@@ -183,15 +185,12 @@ test('AdBanner testStatus copy stays platform-neutral for native and web test pl
   assert.match(adCopySource, /testStatus: 'AdMob test unit active - test placement'/);
   assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - testplacering'/);
   assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/);
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webBannerSource, /getAdBannerStatusLabel/);
+  assert.match(webBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(webBannerSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(nativeBannerSource, /getAdBannerStatusLabel/);
+  assert.match(nativeBannerSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(
     nativeBannerSource,
     /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
@@ -200,6 +199,42 @@ test('AdBanner testStatus copy stays platform-neutral for native and web test pl
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
+});
+
+test('ad placement route parity rejects native banner live-only status copy drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const adStatusLabel = getAdBannerStatusLabel(copy, unit);', 'const adStatusLabel = copy.liveStatus;')
+      .replace('copy.accessibilityLabel(placementLabel, adStatusLabel)', 'copy.accessibilityLabel(placementLabel, copy.liveStatus)');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must derive status copy from unit\.testOnly/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must not hardcode live status copy/,
   );
 });
 

@@ -19,8 +19,9 @@ function runValidateContent() {
 test('content validator schema expectations track current persisted release contracts', () => {
   const { status, output } = runValidateContent();
 
-  assert.equal(status, 0, 'validate:content should pass with current release/schema contracts');
+  assert.equal(status, 0, output);
   assert.match(output, /Content validation OK/);
+  assert.doesNotMatch(output, /Content validation failed/);
   assert.match(output, /"launchAdRouteSuppressionParityValidated": true/);
   assert.match(output, /"progressStoreSchemaParityValidated": true/);
   assert.match(output, /"practiceSessionStoreSchemaParityValidated": true/);
