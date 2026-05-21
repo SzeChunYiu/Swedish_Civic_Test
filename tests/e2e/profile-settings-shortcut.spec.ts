@@ -25,6 +25,7 @@ const fixtures: Record<
     profileHeading: string;
     settingsCtaName: string;
     settingsHeading: string;
+    studyFocusCue: string;
     studySetupHeading: string;
   }
 > = {
@@ -32,28 +33,30 @@ const fixtures: Record<
     audioSwitchName: 'Stäng av ljud',
     backToProfileName: 'Tillbaka till profil',
     dailyGoalGroup: 'Dagligt mål',
-    dailyGoalSetupBadge: '10 svar/dag',
+    dailyGoalSetupBadge: 'Dagligt mål: 10 svar/dag',
     dailyGoalRadioName: 'Ställ in dagligt mål till 10 svar',
     languageGroup: 'Studiespråk',
-    languageSetupBadge: 'Svenska',
+    languageSetupBadge: 'Språk: Svenska',
     languageRadioName: 'Byt studiespråk till Svenska',
     profileHeading: 'Framsteg utan konto',
     settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
     settingsHeading: 'Inställningar',
+    studyFocusCue: 'Studieinställningarna från profilen är markerade här.',
     studySetupHeading: 'Studieinställningar',
   },
   en: {
     audioSwitchName: 'Disable audio',
     backToProfileName: 'Back to profile',
     dailyGoalGroup: 'Daily goal',
-    dailyGoalSetupBadge: '10 answers/day',
+    dailyGoalSetupBadge: 'Daily goal: 10 answers/day',
     dailyGoalRadioName: 'Set daily goal to 10 answers',
     languageGroup: 'Study language',
-    languageSetupBadge: 'English support',
+    languageSetupBadge: 'Language: English support',
     languageRadioName: 'Set study language to English support',
     profileHeading: 'Progress without an account',
     settingsCtaName: 'Open settings for daily goal, language, and audio',
     settingsHeading: 'Settings',
+    studyFocusCue: 'The study setup controls from Profile are highlighted here.',
     studySetupHeading: 'Study setup',
   },
 };
@@ -99,10 +102,11 @@ for (const language of ['sv', 'en'] as const) {
     await expectMinimumTargetSize(settingsShortcut, `${language} profile settings shortcut`);
     await settingsShortcut.click();
 
-    await expect(page).toHaveURL(/\/settings$/);
+    await expect(page).toHaveURL(/\/settings\?focus=study$/);
     await dismissBlockingModals(page);
 
     await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
+    await expect(page.getByText(copy.studyFocusCue)).toBeVisible();
     await expect(page.getByRole('radiogroup', { name: copy.dailyGoalGroup })).toBeVisible();
     await expect(page.getByRole('radio', { name: copy.dailyGoalRadioName })).toHaveAttribute(
       'aria-checked',
@@ -130,7 +134,7 @@ for (const language of ['sv', 'en'] as const) {
     await openProfile(page, language);
 
     await page.getByRole('link', { name: copy.settingsCtaName }).click();
-    await expect(page).toHaveURL(/\/settings$/);
+    await expect(page).toHaveURL(/\/settings(?:\?focus=study)?$/);
     await dismissBlockingModals(page);
     await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
 
