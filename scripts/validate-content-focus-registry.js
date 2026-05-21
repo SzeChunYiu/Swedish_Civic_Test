@@ -20,6 +20,16 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'generatedLocalizationTemplateParity',
+    flags: ['--focus-generated-localization-template-parity'],
+    summaryKeys: [
+      'generatedLocalizationTemplateParityValidated',
+      'generatedPromptTemplateParityValidated',
+      'generatedAnswerTemplateParityValidated',
+      'generatedPublishedQuestions',
+    ],
+  },
+  {
     id: 'staticV11ReadinessCopy',
     flags: ['--focus-static-v11-readiness-copy'],
     summaryKeys: [
@@ -310,6 +320,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'onboardingRouteScroll',
+    flags: ['--focus-onboarding-route-scroll'],
+    summaryKeys: ['onboardingRouteScrollRulesValidated', 'onboardingRouteScrollParityValidated'],
+  },
+  {
     id: 'mockExamRuntimeParity',
     flags: ['--focus-mock-exam-runtime-parity'],
     summaryKeys: [
@@ -402,6 +417,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'flashcardAccessibility',
+    flags: ['--focus-flashcard-accessibility'],
+    summaryKeys: [
+      'flashcardAccessibilityRulesValidated',
+      'flashcardAccessibilityParityValidated',
+      'swedishFlashcardCopyNaturalnessValidated',
+    ],
+  },
+  {
     id: 'audioButtonAccessibility',
     flags: ['--focus-audio-button-accessibility'],
     summaryKeys: [
@@ -429,7 +453,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
   },
   {
     id: 'speechRuntimeParity',
-    flags: ['--focus-speech-runtime-parity'],
+    flags: ['--focus-speech-runtime-parity', '--focus-speech-runtime'],
     summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
   },
   {

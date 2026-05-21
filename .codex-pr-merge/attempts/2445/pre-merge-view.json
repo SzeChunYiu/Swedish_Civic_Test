@@ -1,0 +1,19 @@
+{
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "number": 2445,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239759343/job/77222629165",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:41:52Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Add mobile ads consent runtime harness"
+}

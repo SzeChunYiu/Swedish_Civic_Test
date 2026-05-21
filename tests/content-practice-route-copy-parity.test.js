@@ -58,7 +58,7 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 54);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 70);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);

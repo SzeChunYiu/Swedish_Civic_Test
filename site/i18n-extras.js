@@ -11,6 +11,8 @@
   const extra = {
     'zh-Hans': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 学习与练习。',
+      'meta.description': '非官方瑞典公民知识练习，包含有来源的问题、短章节和从容复习工具。',
       'nav.home': '首页',
       'nav.practice': '练习',
       'nav.ebook': '电子书',
@@ -66,7 +68,7 @@
       'settings.sources.all': '全部来源',
       'settings.sources.uhr': '仅 UHR',
       'settings.sources.hint':
-        '全部来源包含带 UHR 引用的题目和派生练习题。仅 UHR 会把练习和模拟考限制为约 169 道可追溯到《Sverige i fokus》引用的题目。',
+        '全部来源包含 UHR 引用题和派生练习题。仅 UHR 会把练习和模拟考限制为约 179 道可追溯到《Sverige i fokus》引用的题目。',
       'settings.text': '文字大小',
       'settings.text.s': '小',
       'settings.text.m': '正常',
@@ -92,6 +94,29 @@
       'nav.mock': '模拟考',
       'nav.dashboard': '学习面板',
       'nav.cta': '获取应用 ↗',
+      'purchase.eyebrow': '账号购买',
+      'purchase.h1a': '登录后再升级。',
+      'purchase.h1b': '购买会保留在该账号下。',
+      'purchase.lede':
+        '网页升级需要先登录 Almost Swedish 账号。登录后，我们会为该用户创建 Supabase 购买意向，然后把 Android 用户带到 Google Play，用同一个应用账号完成一次性购买。',
+      'purchase.removeAds.eyebrow': '无广告',
+      'purchase.removeAds.title': '移除广告',
+      'purchase.removeAds.body': 'Google Play/App Store 确认后关闭学习广告。核心学习功能仍然免费。',
+      'purchase.removeAds.locked': '登录后购买无广告',
+      'purchase.removeAds.ready': '继续前往 Google Play — 29 kr',
+      'purchase.premium.eyebrow': '高级版',
+      'purchase.premium.title': '终身高级版',
+      'purchase.premium.body':
+        '包含“移除广告”的全部内容，外加高级学习工具——电子书标注、笔记等——绑定到你登录的账号。',
+      'purchase.premium.locked': '登录后购买高级版',
+      'purchase.premium.ready': '继续前往 Google Play — 59 kr',
+      'purchase.price.once': '一次性购买',
+      'purchase.status.locked': '请先登录，这样升级才能绑定到你的账号。',
+      'purchase.status.ready': '已准备好以 {account} 购买。',
+      'purchase.status.needSignIn': '请先登录。购买会绑定到你在这里使用的账号。',
+      'purchase.status.realSignin': '购买跳转前需要真实的 Supabase 登录。',
+      'purchase.status.preparing': '正在准备绑定账号的 Google Play 跳转…',
+      'purchase.status.error': '购买无法开始。请重新登录后再试。',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': '瑞典简史',
       'chap.2.t': '瑞典如何治理',
@@ -315,7 +340,7 @@
         '请用本应用来学习。不要抓取它、逆向工程它，或把它改头换面当作你自己的产品。不要用它来骚扰任何人。请像对待一辆借来的自行车那样对待本应用：好好爱惜。',
       'terms.s3.t': '内容与准确性',
       'terms.s3.p':
-        '当前的题库依据 UHR 的公开学习材料<em>Sverige i fokus</em>编写，每道题都会标明其章节和页码出处。人难免会有疏漏。如果你发现错误，<a href="#/support">支持页面</a>是最快的修复途径。',
+        '当前题库包含约 179 道直接引用 UHR 公开学习材料<em>Sverige i fokus</em>的题目，以及约 716 道根据同一 UHR 主题编辑派生的练习题。每道题都会显示 <strong>UHR</strong> 或 <strong>派生</strong> 出处标记；在“设置 → 题目来源”中可以只练习 UHR 题。人难免会有疏漏。如果你发现错误，<a href="#/support">支持页面</a>是最快的修复途径。',
       'terms.s4.t': '不作任何保证',
       'terms.s4.p':
         '我们不保证你能通过官方考试。我们不保证本应用在每台设备上每一天都完美运行。我们保证的是，我们会持续努力。',
@@ -329,18 +354,19 @@
       'sources.h1a': '答案究竟',
       'sources.h1b': '来自何处。',
       'sources.lede':
-        '当前的题库引用了 UHR 的公开学习材料<em>Sverige i fokus</em>。在以其他来源为依据的题目真正上线之前，我们不会列出其他来源系列。',
+        '当前题库有两个出处系列，并且每道题都有标记：<strong>UHR</strong>（约 179 道直接引用 <em>Sverige i fokus</em>）和 <strong>派生</strong>（约 716 道根据相同 UHR 主题编辑编写，用于增加练习量）。你可以在“设置 → 题目来源”中把练习和模拟考限制为仅 UHR。',
       'sources.meta1.b': '主要来源',
       'sources.meta1.v': '1',
       'sources.meta2.b': '最近审核',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': '当前题库',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + 派生',
       'sources.toc': '来源核查',
       'sources.s1.t': '当前题目来源',
       'sources.s1.li1': '<b>UHR — Sverige i fokus</b>——瑞典公民身份考试的公开学习材料。',
-      'sources.s1.li2': '每一道上线的题目都会引用该材料中的章、节和页码。',
-      'sources.s1.li3': '只有当上线的题库中包含具有该可见出处的题目时，公开来源清单才会变更。',
+      'sources.s1.li2':
+        '直接 UHR 题会引用该材料中的章、节和页码；派生题会单独标记，并根据相同 UHR 主题编写。',
+      'sources.s1.li3': '公开来源清单只会在已上线题库中出现具有可见出处标记的题目时变更。',
       'sources.s2.t': '引用如何运作',
       'sources.s2.li1': '题卡会在题目下方显示来源行，与题干分开。',
       'sources.s2.li2': '静态题库为每一行存储相同的来源标题、章、节和页码。',
@@ -350,7 +376,8 @@
       'sources.s3.li2':
         '本页面会与 <code>site/questions.js</code> 进行核对，因此来源文案不会超前于当前题库。',
       'sources.s4.t': '当前来源范围',
-      'sources.s4.li1': '今天的题库仅来自 UHR，依据的是<em>Sverige i fokus</em>。',
+      'sources.s4.li1':
+        '题库包含约 179 道 UHR 引用题和约 716 道编辑派生题；每题的标记会说明其系列，“设置 → 题目来源”可关闭派生内容。',
       'sources.s4.li2': '本应用是独立的，并非 UHR 的官方产品。',
       'sources.s5.t': '编辑方法',
       'sources.s5.callout.b': '内部规则：',
@@ -376,6 +403,8 @@
     },
     'zh-Hant': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 學習與練習。',
+      'meta.description': '非官方瑞典公民知識練習，包含有來源的題目、短章節和從容複習工具。',
       'nav.home': '首頁',
       'nav.practice': '練習',
       'nav.ebook': '電子書',
@@ -431,7 +460,7 @@
       'settings.sources.all': '全部來源',
       'settings.sources.uhr': '僅 UHR',
       'settings.sources.hint':
-        '全部來源包含有 UHR 引用的題目和衍生練習題。僅 UHR 會將練習和模擬考限制為約 169 題可追溯到《Sverige i fokus》引用的題目。',
+        '全部來源包含 UHR 引用題和衍生練習題。僅 UHR 會將練習和模擬考限制為約 179 題可追溯到《Sverige i fokus》引用的題目。',
       'settings.text': '文字大小',
       'settings.text.s': '小',
       'settings.text.m': '正常',
@@ -457,6 +486,29 @@
       'nav.mock': '模擬考',
       'nav.dashboard': '學習面板',
       'nav.cta': '取得應用 ↗',
+      'purchase.eyebrow': '帳號購買',
+      'purchase.h1a': '登入後再升級。',
+      'purchase.h1b': '購買會保留在該帳號下。',
+      'purchase.lede':
+        '網頁升級需要先登入 Almost Swedish 帳號。登入後，我們會為該使用者建立 Supabase 購買意向，然後把 Android 使用者帶到 Google Play，用同一個應用程式帳號完成一次性購買。',
+      'purchase.removeAds.eyebrow': '無廣告',
+      'purchase.removeAds.title': '移除廣告',
+      'purchase.removeAds.body': 'Google Play/App Store 確認後關閉學習廣告。核心學習功能仍然免費。',
+      'purchase.removeAds.locked': '登入後購買無廣告',
+      'purchase.removeAds.ready': '繼續前往 Google Play — 29 kr',
+      'purchase.premium.eyebrow': '進階版',
+      'purchase.premium.title': '終身進階版',
+      'purchase.premium.body':
+        '包含「移除廣告」的全部內容，外加進階學習工具——電子書標註、筆記等——綁定到你登入的帳號。',
+      'purchase.premium.locked': '登入後購買進階版',
+      'purchase.premium.ready': '繼續前往 Google Play — 59 kr',
+      'purchase.price.once': '一次性購買',
+      'purchase.status.locked': '請先登入，這樣升級才能綁定到你的帳號。',
+      'purchase.status.ready': '已準備好以 {account} 購買。',
+      'purchase.status.needSignIn': '請先登入。購買會綁定到你在這裡使用的帳號。',
+      'purchase.status.realSignin': '購買跳轉前需要真實的 Supabase 登入。',
+      'purchase.status.preparing': '正在準備綁定帳號的 Google Play 跳轉…',
+      'purchase.status.error': '購買無法開始。請重新登入後再試。',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': '瑞典簡史',
       'chap.2.t': '瑞典如何治理',
@@ -683,7 +735,7 @@
         '請用本 App 來學習。請勿擷取它的內容、對它進行逆向工程，或把它換個品牌當成你自己的產品。請勿用它來騷擾任何人。請像對待一輛借來的腳踏車那樣對待這個 App：好好地用。',
       'terms.s3.t': '內容與正確性',
       'terms.s3.p':
-        '目前的題庫是依據 UHR 的公開學習教材<em>Sverige i fokus</em>撰寫，每一題都會顯示其章節與頁碼出處。是人就會有疏漏。如果你發現錯誤，<a href="#/support">支援頁面</a>是最快的修正途徑。',
+        '目前題庫包含約 179 題直接引用 UHR 公開學習教材<em>Sverige i fokus</em>的題目，以及約 716 題依同一 UHR 主題編輯衍生的練習題。每一題都會顯示 <strong>UHR</strong> 或 <strong>衍生</strong> 出處標記；在「設定 → 題目來源」中可以只練習 UHR 題。是人就會有疏漏。如果你發現錯誤，<a href="#/support">支援頁面</a>是最快的修正途徑。',
       'terms.s4.t': '不作任何保證',
       'terms.s4.p':
         '我們不保證你會通過官方考試，也不保證本 App 在每一台裝置上每一天都運作得完美無缺。我們保證的是：我們會持續努力。',
@@ -697,18 +749,19 @@
       'sources.h1a': '這些答案',
       'sources.h1b': '究竟從何而來。',
       'sources.lede':
-        '目前的題庫引用 UHR 的公開學習教材<em>Sverige i fokus</em>。在有其他來源支撐的題目真正上線之前，我們不會列出其他來源類別。',
+        '目前題庫有兩個出處類別，而且每一題都有標記：<strong>UHR</strong>（約 179 題直接引用 <em>Sverige i fokus</em>）和 <strong>衍生</strong>（約 716 題依相同 UHR 主題編輯撰寫，用來增加練習量）。你可以在「設定 → 題目來源」中把練習和模擬考限制為僅 UHR。',
       'sources.meta1.b': '主要來源',
       'sources.meta1.v': '1',
       'sources.meta2.b': '最近審閱',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': '目前題庫',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + 衍生',
       'sources.toc': '來源查核',
       'sources.s1.t': '目前的題目來源',
       'sources.s1.li1': '<b>UHR — Sverige i fokus</b>——瑞典公民考試的公開學習教材。',
-      'sources.s1.li2': '每一道上線的題目都會引用此教材中的章、節與頁碼。',
-      'sources.s1.li3': '只有在上線的題庫確實包含具備該可見出處的題目時，公開的來源清單才會變動。',
+      'sources.s1.li2':
+        '直接 UHR 題會引用此教材中的章、節與頁碼；衍生題會另外標記，並依相同 UHR 主題撰寫。',
+      'sources.s1.li3': '公開的來源清單只會在上線題庫包含具備可見出處標記的題目時變動。',
       'sources.s2.t': '引用出處如何運作',
       'sources.s2.li1': '題目卡片會在題目下方顯示來源那一行，與題幹分開。',
       'sources.s2.li2': '靜態題庫會為每一筆資料儲存相同的來源標題、章、節與頁碼。',
@@ -718,7 +771,8 @@
       'sources.s3.li2':
         '本頁會與 <code>site/questions.js</code> 進行比對，因此來源文案不會超前目前的題庫。',
       'sources.s4.t': '目前來源的範圍',
-      'sources.s4.li1': '目前題庫僅採用 UHR，依據<em>Sverige i fokus</em>。',
+      'sources.s4.li1':
+        '題庫包含約 179 題 UHR 引用題和約 716 題編輯衍生題；每題標記會說明其類別，「設定 → 題目來源」可關閉衍生內容。',
       'sources.s4.li2': '本 App 為獨立產品，並非 UHR 的官方產品。',
       'sources.s5.t': '編輯方法',
       'sources.s5.callout.b': '內部準則：',
@@ -744,6 +798,9 @@
     },
     ar: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — دراسة وتدريب.',
+      'meta.description':
+        'تدريب غير رسمي على المعرفة المدنية السويدية مع أسئلة موثقة المصادر وفصول قصيرة وأدوات مراجعة هادئة.',
       'nav.home': 'الرئيسية',
       'nav.practice': 'تدريب',
       'nav.ebook': 'دليل الدراسة',
@@ -800,7 +857,7 @@
       'settings.sources.all': 'كل المصادر',
       'settings.sources.uhr': 'UHR فقط',
       'settings.sources.hint':
-        'كل المصادر تشمل أسئلة موثقة من UHR وأسئلة تدريبية مشتقة. خيار UHR فقط يحصر التدريب والاختبارات التجريبية في نحو 169 سؤالاً يمكن تتبعه إلى إحالات Sverige i fokus.',
+        'كل المصادر تشمل أسئلة موثقة من UHR وأسئلة تدريبية مشتقة. خيار UHR فقط يحصر التدريب والاختبارات التجريبية في نحو 179 سؤالاً يمكن تتبعه إلى إحالات Sverige i fokus.',
       'settings.text': 'حجم النص',
       'settings.text.s': 'صغير',
       'settings.text.m': 'عادي',
@@ -828,6 +885,30 @@
       'nav.mock': 'اختبار تدريبي',
       'nav.dashboard': 'لوحة المعلومات',
       'nav.cta': 'احصل على التطبيق ↗',
+      'purchase.eyebrow': 'مشتريات الحساب',
+      'purchase.h1a': 'الترقية بعد تسجيل الدخول فقط.',
+      'purchase.h1b': 'يبقى الشراء مرتبطًا بذلك الحساب.',
+      'purchase.lede':
+        'تتطلب ترقيات الويب تسجيل الدخول أولًا إلى حساب Almost Swedish. بعد تسجيل الدخول ننشئ نية شراء في Supabase لذلك المستخدم، ثم ننقل مشتري Android إلى Google Play لإكمال الشراء لمرة واحدة بالحساب نفسه في التطبيق.',
+      'purchase.removeAds.eyebrow': 'بلا إعلانات',
+      'purchase.removeAds.title': 'إزالة الإعلانات',
+      'purchase.removeAds.body':
+        'يوقف إعلانات الدراسة بعد تأكيد Google Play/App Store. تبقى الدراسة الأساسية مجانية.',
+      'purchase.removeAds.locked': 'سجّل الدخول لشراء إزالة الإعلانات',
+      'purchase.removeAds.ready': 'تابع إلى Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'مميز',
+      'purchase.premium.title': 'مميز مدى الحياة',
+      'purchase.premium.body':
+        'يشمل كل ما في خطة بلا إعلانات، بالإضافة إلى أدوات دراسة مميّزة — تظليل الكتاب الإلكتروني والملاحظات وغيرها — للحساب الذي تسجّل الدخول به.',
+      'purchase.premium.locked': 'سجّل الدخول لشراء Premium',
+      'purchase.premium.ready': 'تابع إلى Google Play — 59 kr',
+      'purchase.price.once': 'مرة واحدة',
+      'purchase.status.locked': 'سجّل الدخول أولًا حتى تُربط الترقية بحسابك.',
+      'purchase.status.ready': 'جاهز للمشتريات باسم {account}.',
+      'purchase.status.needSignIn': 'سجّل الدخول أولًا. ترتبط المشتريات بالحساب الذي تستخدمه هنا.',
+      'purchase.status.realSignin': 'يلزم تسجيل دخول Supabase حقيقي قبل تحويل الشراء.',
+      'purchase.status.preparing': 'نحضّر تحويل Google Play المرتبط بحسابك…',
+      'purchase.status.error': 'تعذر بدء الشراء. سجّل الدخول مرة أخرى وحاول مجددًا.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'تاريخ قصير جداً للسويد',
       'chap.2.t': 'كيف تُحكم السويد',
@@ -1061,7 +1142,7 @@
         'استخدم التطبيق للدراسة. لا تُجرِّد محتواه آليًا، ولا تُجرِ هندسة عكسية له، ولا تُعِد تسميته كأنه منتجك. ولا تستخدمه للتحرّش بأحد. عامل التطبيق كما تعامل دراجة مُستعارة: بعناية.',
       'terms.s3.t': 'المحتوى والدقّة',
       'terms.s3.p':
-        'بنك الأسئلة الحالي مكتوب استنادًا إلى مادة UHR الدراسية العامة <em>Sverige i fokus</em>، ويعرض كل سؤال القسم والصفحة المرجعية الخاصة به. والبشر يغفلون عن أشياء. فإذا وجدت خطأ، فإن <a href="#/support">صفحة الدعم</a> هي أسرع طريق للإصلاح.',
+        'يحتوي بنك الأسئلة الحالي على نحو 179 سؤالاً يستشهد مباشرة بمادة UHR الدراسية العامة <em>Sverige i fokus</em>، ونحو 716 سؤالاً مشتقاً تحريرياً من الموضوعات نفسها. يحمل كل سؤال شارة منشأ <strong>UHR</strong> أو <strong>مشتق</strong>، ويمكنك من الإعدادات → مصادر الأسئلة حصر التدريب بأسئلة UHR فقط. والبشر يغفلون عن أشياء. فإذا وجدت خطأ، فإن <a href="#/support">صفحة الدعم</a> هي أسرع طريق للإصلاح.',
       'terms.s4.t': 'لا ضمانات',
       'terms.s4.p':
         'لا نضمن أنك ستجتاز الاختبار الرسمي. ولا نضمن أن التطبيق يعمل بشكل مثالي على كل جهاز في كل يوم. لكننا نضمن أننا سنواصل المحاولة.',
@@ -1075,19 +1156,20 @@
       'sources.h1a': 'من أين تأتي الإجابات',
       'sources.h1b': 'في الواقع.',
       'sources.lede':
-        'يستشهد بنك الأسئلة الحالي بمادة UHR الدراسية العامة <em>Sverige i fokus</em>. ولا ندرج عائلات مصادر أخرى إلى أن تظهر فعليًا أسئلة مدعومة بها في البنك.',
+        'للبنك الحالي عائلتان للمصدر، وكل سؤال يحمل شارة واضحة: <strong>UHR</strong> (نحو 179 سؤالاً يستشهد مباشرة بـ <em>Sverige i fokus</em>) و<strong>مشتق</strong> (نحو 716 سؤالاً كُتب تحريرياً من موضوعات UHR نفسها لزيادة حجم التدريب). يمكنك حصر التدريب والاختبارات التجريبية بأسئلة UHR فقط من الإعدادات → مصادر الأسئلة.',
       'sources.meta1.b': 'المصدر الأساسي',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'آخر مراجعة',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'البنك الحالي',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + مشتق',
       'sources.toc': 'فحوصات المصادر',
       'sources.s1.t': 'مصدر الأسئلة الحالي',
       'sources.s1.li1': '<b>UHR — Sverige i fokus</b> — مادة دراسية عامة لاختبار الجنسية السويدية.',
-      'sources.s1.li2': 'كل سؤال منشور يستشهد بفصل وقسم وصفحة من هذه المادة.',
+      'sources.s1.li2':
+        'أسئلة UHR المباشرة تستشهد بفصل وقسم وصفحة من هذه المادة؛ أما الأسئلة المشتقة فتظهر بشارة منفصلة وتُكتب من موضوعات UHR نفسها.',
       'sources.s1.li3':
-        'لا تتغيّر قائمة المصادر العامة إلا عندما يحتوي بنك الأسئلة المنشور على أسئلة بتلك المرجعية الظاهرة.',
+        'لا تتغيّر قائمة المصادر العامة إلا عندما يحتوي بنك الأسئلة المنشور على أسئلة ذات شارة منشأ ظاهرة.',
       'sources.s2.t': 'كيف تعمل الاستشهادات',
       'sources.s2.li1': 'تعرض بطاقات الأسئلة سطر المصدر أسفل السؤال، منفصلًا عن نصّ السؤال.',
       'sources.s2.li2':
@@ -1098,7 +1180,8 @@
       'sources.s3.li2':
         'تُفحص هذه الصفحة مقابل <code>site/questions.js</code> كي لا يسبق نصّ المصادر البنك الحالي.',
       'sources.s4.t': 'نطاق المصدر الحالي',
-      'sources.s4.li1': 'يعتمد البنك اليوم على UHR فقط، استنادًا إلى <em>Sverige i fokus</em>.',
+      'sources.s4.li1':
+        'يضم البنك نحو 179 سؤالاً موثقاً من UHR ونحو 716 سؤالاً مشتقاً تحريرياً؛ شارة كل سؤال توضّح عائلته، ومن الإعدادات → مصادر الأسئلة يمكنك إيقاف المحتوى المشتق.',
       'sources.s4.li2': 'التطبيق مستقل وليس منتجًا رسميًا تابعًا لـ UHR.',
       'sources.s5.t': 'المنهجية التحريرية',
       'sources.s5.callout.b': 'قاعدة البيت:',
@@ -1124,6 +1207,9 @@
     },
     ckb: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — خوێندن و مەشق.',
+      'meta.description':
+        'مەشقی ناڕەسمی بۆ زانیاریی مەدەنیی سوید، بە پرسیاری پشتبەستوو بە سەرچاوە، بەشی کورت و ئامرازی دووبارەکردنەوەی ئارام.',
       'nav.home': 'سەرەتا',
       'nav.practice': 'مەشق',
       'nav.ebook': 'کتێبی ئەلیکترۆنی',
@@ -1182,7 +1268,7 @@
       'settings.sources.all': 'هەموو سەرچاوەکان',
       'settings.sources.uhr': 'تەنها UHR',
       'settings.sources.hint':
-        'هەموو سەرچاوەکان پرسیارە UHR-دارەکان و پرسیارە مەشقییە هەڵهێنجراوەکان دەگرێتەوە. تەنها UHR مەشق و تاقیکردنەوەی ئەزموونی بۆ نزیکەی 169 پرسیار سنووردار دەکات کە بۆ ئاماژەکانی Sverige i fokus دەگەڕێنەوە.',
+        'هەموو سەرچاوەکان پرسیارە UHR-دارەکان و پرسیارە مەشقییە هەڵهێنجراوەکان دەگرێتەوە. تەنها UHR مەشق و تاقیکردنەوەی ئەزموونی بۆ نزیکەی 179 پرسیار سنووردار دەکات کە بۆ ئاماژەکانی Sverige i fokus دەگەڕێنەوە.',
       'settings.text': 'قەبارەی نووسین',
       'settings.text.s': 'بچووک',
       'settings.text.m': 'ئاسایی',
@@ -1210,6 +1296,31 @@
       'nav.mock': 'تاقیکردنەوەی ئەزموونی',
       'nav.dashboard': 'داشبۆرد',
       'nav.cta': 'ئەپەکە وەربگرە ↗',
+      'purchase.eyebrow': 'کڕینی هەژمار',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'هەموو ئەوەی پلانی بێ‌ڕیکلام لەخۆدەگرێت، لەگەڵ ئامرازی خوێندنی پڕیمیەم — نیشانەکردن و تێبینی لە کتێبە ئەلیکترۆنییەکە و زیاتر — بۆ ئەو هەژمارەی پێیدا دەچیتە ژوورەوە.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'مێژوویەکی زۆر کورتی سوید',
       'chap.2.t': 'سوید چۆن بەڕێوە دەبرێت',
@@ -1445,7 +1556,7 @@
         'ئەپەکە بۆ خوێندن بەکاربهێنە. ڕایمەماڵە، پووچەڵی مەکەرەوە، یان وەکو بەرهەمی خۆت ناوی مەگۆڕە. بۆ بێزارکردنی کەس بەکاریمەهێنە. وەکو پاسکیلێکی بە قەرز مامەڵەی لەگەڵدا بکە: بە باشی.',
       'terms.s3.t': 'ناوەڕۆک و وردبینی',
       'terms.s3.p':
-        'بانکی پرسیاری ئێستا لەسەر بنەمای ماتریاڵی خوێندنی گشتیی UHR، <em>Sverige i fokus</em>، نووسراوە، و هەموو پرسیارێک بەش و لاپەڕەی سەرچاوەکەی پیشان دەدات. مرۆڤ شت لەبیر دەکات. ئەگەر هەڵەیەکت دۆزییەوە، <a href="#/support">پەڕەی پشتیوانی</a> خێراترین ڕێگایە بۆ چاککردنەوەی.',
+        'بانکی پرسیاری ئێستا نزیکەی 179 پرسیاری هەیە کە ڕاستەوخۆ بە ماتریاڵی خوێندنی گشتیی UHR، <em>Sverige i fokus</em>، ئاماژە دەکەن، و نزیکەی 716 پرسیاری هەڵهێنجراوی دەستکاری‌کراو لە هەمان بابەتەکانی UHR هەیە. هەموو پرسیارێک نیشانی <strong>UHR</strong> یان <strong>هەڵهێنجراو</strong> هەیە، و لە ڕێکخستنەکان → سەرچاوەکانی پرسیار دەتوانیت مەشقەکان تەنها بە UHR سنووردار بکەیت. مرۆڤ شت لەبیر دەکات. ئەگەر هەڵەیەکت دۆزییەوە، <a href="#/support">پەڕەی پشتیوانی</a> خێراترین ڕێگایە بۆ چاککردنەوەی.',
       'terms.s4.t': 'هیچ گەرەنتییەک نییە',
       'terms.s4.p':
         'گەرەنتی ناکەین کە لە تاقیکردنەوەی فەرمیدا سەرکەوتوو دەبیت. گەرەنتی ناکەین کە ئەپەکە لەسەر هەموو ئامێرێک و هەموو ڕۆژێک بە تەواوی کاردەکات. گەرەنتی دەکەین کە بەردەوام دەبین لە هەوڵدان.',
@@ -1459,21 +1570,21 @@
       'sources.h1a': 'وەڵامەکان لە کوێوە',
       'sources.h1b': 'بەڕاستی دێن.',
       'sources.lede':
-        'بانکی پرسیاری ئێستا ئاماژە بە ماتریاڵی خوێندنی گشتیی UHR، <em>Sverige i fokus</em>، دەکات. ئێمە خێزانە سەرچاوەکانی تر ناخەینە لیستەوە تا ئەو کاتەی پرسیاری پشتگیریکراو بەو سەرچاوانە بەڕاستی دەردەچن.',
+        'بانکی پرسیاری ئێستا دوو خێزانی سەرچاوەی هەیە و هەموو پرسیارێک نیشانەیەکی هەیە: <strong>UHR</strong> (نزیکەی 179 پرسیار کە ڕاستەوخۆ بە <em>Sverige i fokus</em> ئاماژە دەکەن) و <strong>هەڵهێنجراو</strong> (نزیکەی 716 پرسیار کە بە دەستکاری لە هەمان بابەتەکانی UHR نووسراون بۆ مەشقی زیاتر). لە ڕێکخستنەکان → سەرچاوەکانی پرسیار دەتوانیت مەشق و تاقیکردنەوەی ئەزموونی تەنها بە UHR سنووردار بکەیت.',
       'sources.meta1.b': 'سەرچاوەی سەرەکی',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'دوایین پێداچوونەوە',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'بانکی ئێستا',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + هەڵهێنجراو',
       'sources.toc': 'پشکنینی سەرچاوەکان',
       'sources.s1.t': 'سەرچاوەی ئێستای پرسیار',
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — ماتریاڵی خوێندنی گشتی بۆ تاقیکردنەوەی هاووڵاتیبوونی سویدی.',
       'sources.s1.li2':
-        'هەموو پرسیارێکی دەرچوو بەش، بەشی لاوەکی، و لاپەڕەیەک لەم ماتریاڵە ئاماژەی پێدەکات.',
+        'پرسیارە ڕاستەوخۆکانی UHR بەش، بەشی لاوەکی، و لاپەڕەیەک لەم ماتریاڵە ئاماژە پێدەکەن؛ پرسیارە هەڵهێنجراوەکان بە جیا نیشان دەدرێن و لە هەمان بابەتەکانی UHR نووسراون.',
       'sources.s1.li3':
-        'لیستی سەرچاوەی گشتی تەنها ئەو کاتە دەگۆڕێت کە بانکی پرسیاری دەرچوو پرسیاری بەو سەرچاوە بینراوەی تێدابێت.',
+        'لیستی سەرچاوەی گشتی تەنها ئەو کاتە دەگۆڕێت کە بانکی پرسیاری دەرچوو پرسیاری بە نیشانی سەرچاوەی بینراوەوە تێدابێت.',
       'sources.s2.t': 'ئاماژەکان چۆن کاردەکەن',
       'sources.s2.li1':
         'کارتی پرسیارەکان هێڵی سەرچاوە لەژێر پرسیارەکەدا پیشان دەدەن، جیا لە دەقی پرسیار.',
@@ -1485,7 +1596,8 @@
       'sources.s3.li2':
         'ئەم پەڕەیە بەرامبەر <code>site/questions.js</code> دەپشکنرێت تاکو دەقی سەرچاوە نەتوانێت لە بانکی ئێستا پێشبکەوێت.',
       'sources.s4.t': 'بەرفراوانیی سەرچاوەی ئێستا',
-      'sources.s4.li1': 'بانکەکە ئەمڕۆ تەنها UHRـە، لەسەر بنەمای <em>Sverige i fokus</em>.',
+      'sources.s4.li1':
+        'بانکەکە نزیکەی 179 پرسیاری UHR-ئاماژەدار و نزیکەی 716 پرسیاری هەڵهێنجراوی دەستکاری‌کراو هەیە؛ نیشانی هەر پرسیارێک خێزانەکەی دەردەخات، و لە ڕێکخستنەکان → سەرچاوەکانی پرسیار دەتوانیت ناوەڕۆکی هەڵهێنجراو ناچالاک بکەیت.',
       'sources.s4.li2': 'ئەپەکە سەربەخۆیە و بەرهەمێکی فەرمیی UHR نییە.',
       'sources.s5.t': 'میتۆدی نووسین',
       'sources.s5.callout.b': 'یاسای ماڵەوە:',
@@ -1512,6 +1624,9 @@
     },
     fa: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — مطالعه و تمرین.',
+      'meta.description':
+        'تمرین غیررسمی دانش مدنی سوئد با پرسش‌های دارای منبع، فصل‌های کوتاه و ابزارهای مرور آرام.',
       'nav.home': 'خانه',
       'nav.practice': 'تمرین',
       'nav.ebook': 'کتاب الکترونیکی',
@@ -1570,7 +1685,7 @@
       'settings.sources.all': 'همه منابع',
       'settings.sources.uhr': 'فقط UHR',
       'settings.sources.hint':
-        'همه منابع شامل پرسش‌های با ارجاع UHR و پرسش‌های تمرینی مشتق‌شده است. فقط UHR تمرین و آزمون آزمایشی را به حدود ۱۶۹ پرسش قابل پیگیری تا ارجاع‌های Sverige i fokus محدود می‌کند.',
+        'همه منابع شامل پرسش‌های با ارجاع UHR و پرسش‌های تمرینی مشتق‌شده است. فقط UHR تمرین و آزمون آزمایشی را به حدود 179 پرسش قابل پیگیری تا ارجاع‌های Sverige i fokus محدود می‌کند.',
       'settings.text': 'اندازه متن',
       'settings.text.s': 'کوچک',
       'settings.text.m': 'معمولی',
@@ -1598,6 +1713,31 @@
       'nav.mock': 'آزمون آزمایشی',
       'nav.dashboard': 'داشبورد',
       'nav.cta': 'دریافت برنامه ↗',
+      'purchase.eyebrow': 'خریدهای حساب',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'شامل همهٔ امکانات پلن بدون تبلیغات، به‌علاوهٔ ابزارهای مطالعهٔ ویژه — هایلایت و یادداشت در کتاب الکترونیکی و موارد دیگر — برای حسابی که با آن وارد می‌شوی.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'تاریخ بسیار کوتاه سوئد',
       'chap.2.t': 'سوئد چگونه اداره می‌شود',
@@ -1833,7 +1973,7 @@
         'از برنامه برای مطالعه استفاده کنید. آن را اسکرپ نکنید، مهندسی معکوس نکنید، و آن را با نام تجاری خودتان بازنشر ندهید. از آن برای آزار دیگران استفاده نکنید. با برنامه همان‌طور رفتار کنید که با یک دوچرخه‌ی امانتی رفتار می‌کنید: خوب.',
       'terms.s3.t': 'محتوا و درستی',
       'terms.s3.p':
-        'بانک پرسش کنونی از مطالب مطالعه‌ی عمومی UHR یعنی <em>Sverige i fokus</em> نوشته شده است و هر پرسش بخش و شماره‌ی صفحه‌ی منبع خود را نشان می‌دهد. انسان‌ها چیزهایی را از قلم می‌اندازند. اگر خطایی یافتید، <a href="#/support">صفحه‌ی پشتیبانی</a> سریع‌ترین راه اصلاح است.',
+        'بانک پرسش کنونی حدود 179 پرسش با ارجاع مستقیم به مطالب مطالعه‌ی عمومی UHR یعنی <em>Sverige i fokus</em> و حدود 716 پرسش مشتقِ تحریری از همان موضوع‌های UHR دارد. هر پرسش نشان منشأ <strong>UHR</strong> یا <strong>مشتق</strong> دارد، و در تنظیمات → منابع پرسش‌ها می‌توانید تمرین را فقط به UHR محدود کنید. انسان‌ها چیزهایی را از قلم می‌اندازند. اگر خطایی یافتید، <a href="#/support">صفحه‌ی پشتیبانی</a> سریع‌ترین راه اصلاح است.',
       'terms.s4.t': 'بدون تضمین',
       'terms.s4.p':
         'ما تضمین نمی‌کنیم که در آزمون رسمی قبول شوید. تضمین نمی‌کنیم که برنامه روی هر دستگاهی در هر روزی کامل کار کند. تضمین می‌کنیم که به تلاش ادامه می‌دهیم.',
@@ -1847,20 +1987,21 @@
       'sources.h1a': 'پاسخ‌ها از کجا',
       'sources.h1b': 'واقعاً می‌آیند.',
       'sources.lede':
-        'بانک پرسش کنونی به مطالب مطالعه‌ی عمومی UHR یعنی <em>Sverige i fokus</em> استناد می‌کند. ما خانواده‌های منبع دیگر را فهرست نمی‌کنیم تا زمانی که پرسش‌های پشتیبانی‌شده با آن‌ها واقعاً منتشر شوند.',
+        'بانک پرسش کنونی دو خانواده‌ی منشأ دارد و هر پرسش برچسب دارد: <strong>UHR</strong> (حدود 179 پرسش با ارجاع مستقیم به <em>Sverige i fokus</em>) و <strong>مشتق</strong> (حدود 716 پرسش که برای تمرین بیشتر، تحریری از همان موضوع‌های UHR نوشته شده‌اند). در تنظیمات → منابع پرسش‌ها می‌توانید تمرین و آزمون آزمایشی را فقط به UHR محدود کنید.',
       'sources.meta1.b': 'منبع اصلی',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'آخرین بازبینی',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'بانک کنونی',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + مشتق',
       'sources.toc': 'بررسی منابع',
       'sources.s1.t': 'منبع کنونی پرسش‌ها',
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — مطالب مطالعه‌ی عمومی برای آزمون شهروندی سوئد.',
-      'sources.s1.li2': 'هر پرسش منتشرشده به یک فصل، بخش و صفحه از این مطالب استناد می‌کند.',
+      'sources.s1.li2':
+        'پرسش‌های مستقیم UHR به فصل، بخش و صفحه‌ای از این مطالب استناد می‌کنند؛ پرسش‌های مشتق جداگانه برچسب می‌خورند و از همان موضوع‌های UHR نوشته شده‌اند.',
       'sources.s1.li3':
-        'فهرست منابع عمومی تنها زمانی تغییر می‌کند که بانک پرسش منتشرشده شامل پرسش‌هایی با آن خاستگاه قابل‌مشاهده باشد.',
+        'فهرست منابع عمومی تنها زمانی تغییر می‌کند که بانک پرسش منتشرشده شامل پرسش‌هایی با برچسب منشأ قابل‌مشاهده باشد.',
       'sources.s2.t': 'ارجاع‌ها چگونه کار می‌کنند',
       'sources.s2.li1': 'کارت‌های پرسش خط منبع را زیر پرسش نشان می‌دهند، جدا از متن اصلی پرسش.',
       'sources.s2.li2':
@@ -1871,7 +2012,8 @@
       'sources.s3.li2':
         'این صفحه در برابر <code>site/questions.js</code> بررسی می‌شود تا متن منابع نتواند از بانک کنونی جلو بیفتد.',
       'sources.s4.t': 'دامنه‌ی منبع کنونی',
-      'sources.s4.li1': 'بانک امروز تنها UHR است و بر پایه‌ی <em>Sverige i fokus</em> قرار دارد.',
+      'sources.s4.li1':
+        'بانک حدود 179 پرسش با ارجاع UHR و حدود 716 پرسش مشتقِ تحریری دارد؛ برچسب هر پرسش خانواده‌ی آن را نشان می‌دهد و در تنظیمات → منابع پرسش‌ها می‌توانید محتوای مشتق را خاموش کنید.',
       'sources.s4.li2': 'این برنامه مستقل است و یک محصول رسمی UHR نیست.',
       'sources.s5.t': 'روش تحریریه',
       'sources.s5.callout.b': 'قاعده‌ی خانه:',
@@ -1898,6 +2040,9 @@
     },
     pl: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — nauka i ćwiczenia.',
+      'meta.description':
+        'Nieoficjalne ćwiczenia z wiedzy obywatelskiej o Szwecji: pytania ze źródłami, krótkie rozdziały i spokojne narzędzia powtórkowe.',
       'nav.home': 'Strona główna',
       'nav.practice': 'Ćwiczenia',
       'nav.ebook': 'E-book',
@@ -1957,7 +2102,7 @@
       'settings.sources.all': 'Wszystkie źródła',
       'settings.sources.uhr': 'Tylko UHR',
       'settings.sources.hint':
-        'Wszystkie źródła obejmują pytania z odniesieniem do UHR oraz pytania ćwiczeniowe pochodne. Tylko UHR ogranicza ćwiczenia i egzaminy próbne do ok. 169 pytań możliwych do powiązania z odniesieniami do Sverige i fokus.',
+        'Wszystkie źródła obejmują pytania z odniesieniem do UHR oraz pytania ćwiczeniowe pochodne. Tylko UHR ogranicza ćwiczenia i egzaminy próbne do ok. 179 pytań możliwych do powiązania z odniesieniami do Sverige i fokus.',
       'settings.text': 'Rozmiar tekstu',
       'settings.text.s': 'Mały',
       'settings.text.m': 'Normalny',
@@ -1986,6 +2131,33 @@
       'nav.mock': 'Egzamin próbny',
       'nav.dashboard': 'Panel',
       'nav.cta': 'Pobierz aplikację ↗',
+      'purchase.eyebrow': 'Zakupy konta',
+      'purchase.h1a': 'Ulepsz dopiero po zalogowaniu.',
+      'purchase.h1b': 'Zakup zostaje przy tym koncie.',
+      'purchase.lede':
+        'Ulepszenia w sieci wymagają najpierw zalogowania na konto Almost Swedish. Po logowaniu tworzymy w Supabase zamiar zakupu dla tego użytkownika, a następnie kierujemy kupujących z Androida do Google Play, aby dokończyli jednorazowy zakup na tym samym koncie w aplikacji.',
+      'purchase.removeAds.eyebrow': 'Bez reklam',
+      'purchase.removeAds.title': 'Usuń reklamy',
+      'purchase.removeAds.body':
+        'Wyłącza reklamy nauki po potwierdzeniu Google Play/App Store. Podstawowa nauka zostaje bezpłatna.',
+      'purchase.removeAds.locked': 'Zaloguj się, aby kupić brak reklam',
+      'purchase.removeAds.ready': 'Przejdź do Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Premium dożywotnio',
+      'purchase.premium.body':
+        'Zawiera wszystko z planu bez reklam oraz narzędzia Premium do nauki — podświetlanie w e-booku, notatki i więcej — dla konta, na które się logujesz.',
+      'purchase.premium.locked': 'Zaloguj się, aby kupić Premium',
+      'purchase.premium.ready': 'Przejdź do Google Play — 59 kr',
+      'purchase.price.once': 'jednorazowo',
+      'purchase.status.locked': 'Najpierw się zaloguj, aby ulepszenie było przypisane do konta.',
+      'purchase.status.ready': 'Gotowe do zakupów jako {account}.',
+      'purchase.status.needSignIn':
+        'Najpierw się zaloguj. Zakupy są przypisane do konta użytego tutaj.',
+      'purchase.status.realSignin':
+        'Przed przekazaniem zakupu wymagane jest prawdziwe logowanie Supabase.',
+      'purchase.status.preparing': 'Przygotowujemy przekazanie do Google Play przypisane do konta…',
+      'purchase.status.error':
+        'Nie można rozpocząć zakupu. Zaloguj się ponownie i spróbuj jeszcze raz.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Bardzo krótka historia Szwecji',
       'chap.2.t': 'Jak rządzona jest Szwecja',
@@ -2228,7 +2400,7 @@
         'Korzystaj z aplikacji, by się uczyć. Nie pobieraj jej automatycznie, nie odtwarzaj jej kodu wstecznie ani nie zmieniaj jej marki na własny produkt. Nie używaj jej do nękania nikogo. Traktuj aplikację tak, jak traktowałbyś/traktowałabyś pożyczony rower: dobrze.',
       'terms.s3.t': 'Treść i poprawność',
       'terms.s3.p':
-        'Obecna baza pytań powstaje na podstawie publicznego materiału edukacyjnego UHR <em>Sverige i fokus</em>, a każde pytanie podaje odniesienie do sekcji i strony. Ludzie coś przeoczą. Jeśli znajdziesz błąd, <a href="#/support">strona pomocy</a> to najszybsza droga do poprawy.',
+        'Obecna baza ma ok. 179 pytań cytowanych bezpośrednio z publicznego materiału edukacyjnego UHR <em>Sverige i fokus</em> oraz ok. 716 pytań redakcyjnie pochodnych z tych samych tematów UHR. Każde pytanie ma znacznik pochodzenia <strong>UHR</strong> albo <strong>Pochodne</strong>, a w Ustawieniach → Źródła pytań możesz ograniczyć naukę tylko do UHR. Ludzie coś przeoczą. Jeśli znajdziesz błąd, <a href="#/support">strona pomocy</a> to najszybsza droga do poprawy.',
       'terms.s4.t': 'Brak gwarancji',
       'terms.s4.p':
         'Nie gwarantujemy, że zdasz oficjalny test. Nie gwarantujemy, że aplikacja działa idealnie na każdym urządzeniu każdego dnia. Gwarantujemy, że będziemy się starać dalej.',
@@ -2242,21 +2414,21 @@
       'sources.h1a': 'Skąd odpowiedzi',
       'sources.h1b': 'naprawdę pochodzą.',
       'sources.lede':
-        'Obecna baza pytań powołuje się na publiczny materiał edukacyjny UHR <em>Sverige i fokus</em>. Nie wymieniamy innych rodzin źródeł, dopóki w bazie nie pojawią się pytania na nich oparte.',
+        'Obecna baza pytań ma dwie rodziny pochodzenia i każde pytanie jest oznaczone: <strong>UHR</strong> (ok. 179 pytań cytowanych bezpośrednio z <em>Sverige i fokus</em>) oraz <strong>Pochodne</strong> (ok. 716 pytań napisanych redakcyjnie z tych samych tematów UHR, aby dać więcej ćwiczeń). W Ustawieniach → Źródła pytań możesz ograniczyć ćwiczenia i egzaminy próbne tylko do UHR.',
       'sources.meta1.b': 'Główne źródło',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'Ostatni przegląd',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'Obecna baza',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + pochodne',
       'sources.toc': 'Kontrola źródeł',
       'sources.s1.t': 'Obecne źródło pytań',
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — publiczny materiał edukacyjny do szwedzkiego testu na obywatelstwo.',
       'sources.s1.li2':
-        'Każde opublikowane pytanie podaje rozdział, sekcję i stronę z tego materiału.',
+        'Bezpośrednie pytania UHR podają rozdział, sekcję i stronę z tego materiału; pytania pochodne są oznaczone osobno i napisane z tych samych tematów UHR.',
       'sources.s1.li3':
-        'Publiczna lista źródeł zmienia się tylko wtedy, gdy opublikowana baza pytań zawiera pytania o tym widocznym pochodzeniu.',
+        'Publiczna lista źródeł zmienia się tylko wtedy, gdy opublikowana baza pytań zawiera pytania z widocznym znacznikiem pochodzenia.',
       'sources.s2.t': 'Jak działają odniesienia',
       'sources.s2.li1':
         'Karty pytań pokazują wiersz ze źródłem pod pytaniem, oddzielony od jego treści.',
@@ -2269,7 +2441,7 @@
         'Ta strona jest sprawdzana względem <code>site/questions.js</code>, więc treść o źródłach nie może wyprzedzić obecnej bazy.',
       'sources.s4.t': 'Zakres obecnego źródła',
       'sources.s4.li1':
-        'Baza opiera się dziś wyłącznie na UHR, na materiale <em>Sverige i fokus</em>.',
+        'Baza ma ok. 179 pytań z cytowaniem UHR i ok. 716 pytań redakcyjnie pochodnych; znacznik przy pytaniu pokazuje jego rodzinę, a w Ustawieniach → Źródła pytań możesz wyłączyć treści pochodne.',
       'sources.s4.li2': 'Aplikacja jest niezależna i nie jest oficjalnym produktem UHR.',
       'sources.s5.t': 'Metoda redakcyjna',
       'sources.s5.callout.b': 'Zasada domu:',
@@ -2296,6 +2468,9 @@
     },
     so: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — barasho iyo tababar.',
+      'meta.description':
+        'Tababar aan rasmi ahayn oo aqoonta bulshada Iswiidhan ah, leh su’aalo ilo leh, cutubyo gaagaaban iyo qalab dib-u-eegis deggan.',
       'nav.home': 'Bogga Hore',
       'nav.practice': 'Tababar',
       'nav.ebook': 'Buug',
@@ -2354,7 +2529,7 @@
       'settings.sources.all': 'Dhammaan ilaha',
       'settings.sources.uhr': 'UHR oo keliya',
       'settings.sources.hint':
-        "Dhammaan ilaha waxay ku jiraan su'aalo UHR lagu tixraacay iyo su'aalo tababar oo laga soo farcamay. UHR oo keliya waxay tababarka iyo imtixaannada tijaabada ku koobtaa qiyaastii 169 su'aalood oo lagu raadin karo tixraacyada Sverige i fokus.",
+        "Dhammaan ilaha waxay ku jiraan su'aalo UHR lagu tixraacay iyo su'aalo tababar oo laga soo farcamay. UHR oo keliya waxay tababarka iyo imtixaannada tijaabada ku koobtaa qiyaastii 179 su'aalood oo lagu raadin karo tixraacyada Sverige i fokus.",
       'settings.text': 'Cabbirka qoraalka',
       'settings.text.s': 'Yar',
       'settings.text.m': 'Caadi',
@@ -2383,6 +2558,31 @@
       'nav.mock': 'Imtixaan tijaabo ah',
       'nav.dashboard': 'Guudmar',
       'nav.cta': 'Hel app-ka ↗',
+      'purchase.eyebrow': 'Iibsiyada akoonka',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'Wuxuu ku jiraa dhammaan waxa ku jira qorshaha Xayeysiis-la’aanta, iyo agab waxbarasho oo premium ah — calaamadaynta buugga elegtarooniga ah, qoraallada iyo wax kale — oo loogu talagalay akoonkaaga aad ku gasho.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Taariikh aad u kooban oo Iswiidhan ah',
       'chap.2.t': 'Sida Iswiidhan loo maamulo',
@@ -2622,7 +2822,7 @@
         'U isticmaal app-ka si aad u barato. Ha soo xaynin, ha rogin gees ka hor, hana ku magacaabin inay tahay alaabtaada. Ha u isticmaalin si aad cidna ugu cadaadiso. U dhaqan app-ka sida aad ula dhaqmi lahayd baaskiil aad amaahatay: si fiican.',
       'terms.s3.t': 'Macluumaad & saxnaan',
       'terms.s3.p':
-        'Bangiga su\'aalaha ee hadda jira waxaa laga soo qoray agabka waxbarasho ee dadweynaha ee UHR <em>Sverige i fokus</em>, su\'aal walbana waxay muujisaa qaybteeda iyo tixraaca bogga. Dadku wax bay seegaan. Haddii aad cillad heshid, <a href="#/support">bogga taageeradu</a> waa jidka ugu dhakhsaha badan.',
+        "Bangiga su'aalaha ee hadda jira wuxuu leeyahay qiyaastii 179 su'aalood oo si toos ah loogu tixraacay agabka waxbarasho ee UHR <em>Sverige i fokus</em>, iyo qiyaastii 716 su'aalood oo tifaftir ahaan laga soo farcamiyay isla mawduucyada UHR. Su'aal walba waxay leedahay calaamad asal <strong>UHR</strong> ama <strong>La soo farcamay</strong>, waxaana Dejinta → Ilaha su'aalaha lagu xaddidi karaa tababarka UHR oo keliya. Dadku wax bay seegaan. Haddii aad cillad heshid, <a href=\"#/support\">bogga taageeradu</a> waa jidka ugu dhakhsaha badan.",
       'terms.s4.t': 'Dammaanad ma jirto',
       'terms.s4.p':
         'Ma dammaanad qaadno inaad ku gudbi doonto imtixaanka rasmiga ah. Ma dammaanad qaadno in app-ku si fiican ugu shaqeeyo qalab kasta maalin kasta. Waxaan dammaanad qaadnaa inaan sii wadno isku dayga.',
@@ -2636,21 +2836,21 @@
       'sources.h1a': 'Halka jawaabuhu',
       'sources.h1b': 'dhab ahaan ka yimaadaan.',
       'sources.lede':
-        "Bangiga su'aalaha ee hadda jira wuxuu tixraacayaa agabka waxbarasho ee dadweynaha ee UHR <em>Sverige i fokus</em>. Ma liiseyno qoysaska kale ee ilaha ilaa su'aalo ay taageeraan dhab ahaan la soo saaro.",
+        "Bangiga su'aalaha ee hadda jira wuxuu leeyahay laba qoys oo asal ah, su'aal walbana waa la calaamadeeyay: <strong>UHR</strong> (qiyaastii 179 su'aalood oo si toos ah u tixraaca <em>Sverige i fokus</em>) iyo <strong>La soo farcamay</strong> (qiyaastii 716 su'aalood oo tifaftir ahaan laga qoray isla mawduucyada UHR si tababar dheeraad ah loo helo). Dejinta → Ilaha su'aalaha waxaad ku xaddidi kartaa tababarka iyo imtixaannada tijaabada UHR oo keliya.",
       'sources.meta1.b': 'Isha aasaasiga ah',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'Eegistii ugu dambeysay',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'Bangiga hadda',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + la soo farcamay',
       'sources.toc': 'Hubinta ilaha',
       'sources.s1.t': "Isha su'aalaha ee hadda",
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — agab waxbarasho oo dadweyne oo loogu talagalay imtixaanka muwaadinimada Iswiidhan.',
       'sources.s1.li2':
-        "Su'aal kasta oo la soo saaro waxay tixraacdaa cutub, qayb, iyo bog ka mid ah agabkan.",
+        "Su'aalaha UHR ee tooska ah waxay tixraacaan cutub, qayb, iyo bog ka mid ah agabkan; su'aalaha la soo farcamay si gooni ah ayaa loo calaamadeeyaa, waxaana laga qoraa isla mawduucyada UHR.",
       'sources.s1.li3':
-        "Liiska ilaha dadweynaha wuxuu isbeddelaa kaliya marka bangiga su'aalaha la soo saaray uu ka kooban yahay su'aalo leh asalkaas muuqda.",
+        "Liiska ilaha dadweynaha wuxuu isbeddelaa kaliya marka bangiga su'aalaha la soo saaray uu ka kooban yahay su'aalo leh calaamad asal oo muuqata.",
       'sources.s2.t': 'Sida tixraacyadu u shaqeeyaan',
       'sources.s2.li1':
         "Kaararka su'aalaha waxay muujiyaan xariiqda isha oo ka hooseysa su'aasha, oo ka soocan qoraalka su'aasha.",
@@ -2662,7 +2862,8 @@
       'sources.s3.li2':
         'Boggan waxaa lala hubiyaa <code>site/questions.js</code> si copy-ga isha aanu uga sii dheereyn bangiga hadda jira.',
       'sources.s4.t': 'Baaxadda isha hadda',
-      'sources.s4.li1': 'Bangigu maanta waa UHR-kaliya, oo ku salaysan <em>Sverige i fokus</em>.',
+      'sources.s4.li1':
+        "Bangigu wuxuu leeyahay qiyaastii 179 su'aalood oo UHR lagu tixraacay iyo qiyaastii 716 su'aalood oo tifaftir ahaan laga soo farcamay; calaamadda su'aal walba waxay sheegtaa qoyskeeda, Dejinta → Ilaha su'aalahana waxaad ku demi kartaa waxyaabaha la soo farcamay.",
       'sources.s4.li2': 'App-ku waa madax-bannaan, mana aha alaab rasmi ah oo UHR.',
       'sources.s5.t': 'Habka tafatirka',
       'sources.s5.callout.b': 'Xeerka guriga:',
@@ -2689,6 +2890,9 @@
     },
     ti: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — መጽናዕቲን ልምምድን.',
+      'meta.description':
+        'ዘይወግዓዊ ልምምድ ንሽወደናዊ ሲቪክ ፍልጠት፣ ብምንጪ ዝተደገፉ ሕቶታት፣ ሓጸርቲ ምዕራፋትን ህዱእ መከለሲ መሳርሕታትን።',
       'nav.home': 'መበገሲ ገጽ',
       'nav.practice': 'ልምምድ',
       'nav.ebook': 'ኢ-መጽሓፍ',
@@ -2744,7 +2948,7 @@
       'settings.sources.all': 'ኩሎም ምንጪታት',
       'settings.sources.uhr': 'UHR ጥራይ',
       'settings.sources.hint':
-        'ኩሎም ምንጪታት ብ UHR ዝተጠቐሱ ሕቶታትን ዝተወጽኡ ልምምድ ሕቶታትን ይሓዙ። UHR ጥራይ ልምምድን ፈተና ልምምድን ናብ ብግምት 169 ሕቶታት ናብ ምንጪ ሓበሬታ Sverige i fokus ዝተኣሳሰሩ ይውስን።',
+        'ኩሎም ምንጪታት ብ UHR ዝተጠቐሱ ሕቶታትን ዝተወጽኡ ልምምድ ሕቶታትን ይሓዙ። UHR ጥራይ ልምምድን ፈተና ልምምድን ናብ ብግምት 179 ሕቶታት ናብ ምንጪ ሓበሬታ Sverige i fokus ዝተኣሳሰሩ ይውስን።',
       'settings.text': 'ዓቐን ጽሑፍ',
       'settings.text.s': 'ንእሽቶ',
       'settings.text.m': 'ልሙድ',
@@ -2771,6 +2975,31 @@
       'nav.mock': 'ፈተና ልምምድ',
       'nav.dashboard': 'ዳሽቦርድ',
       'nav.cta': 'ነቲ መተግበሪ ውሰድ ↗',
+      'purchase.eyebrow': 'ናይ ሕሳብ ዕድጊታት',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'ኩሉ ናይ ብዘይ መወዓውዒ መደብ ዘጠቓልል፣ ምስኡ ድማ ናይ ፕሪሚየም መሳርሒ መጽናዕቲ — ኣብ ኢ-ቡክ ምልክት ምግባር፣ መዘኻኸርን ካልእን — ነቲ እትኣትዎ ሕሳብ።',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'ኣዝዩ ሓጺር ታሪኽ ሽወደን',
       'chap.2.t': 'ሽወደን ከመይ ትመሓደር',
@@ -2828,7 +3057,8 @@
       'faq.4.a':
         'ምጅማር፣ ምጽናዕን ፈተናታት ልምምድን ብነጻ እዮም። ምልክታት ነቲ ዋና ኣፕ ክቕጽል ይሕግዙ፤ ምልክታት ምውጋድ ናይ ሓደ ግዜ 29 SEK ክፍሊት እዩ።',
       'faq.5.q': 'ብሽወደንኛውን ይሰርሕ ድዩ?',
-      'faq.5.a': 'እወ። ንምቕያር ኣብ ላዕለዋይ ሰሌዳ ዘሎ መልጎም ቋንቋ ጠውቕ — ሽወደንኛ፣ እንግሊዝኛን ካልኦት ዓሰርተ ቋንቋታትን። ብዙሓት ብክልተ ቋንቋ ሓቢሮም ይጥቀሙ፦ ብሽወደንኛ ኣንብብ፣ ምስ ተሸገርካ ናብ ካልእ ጠምት።',
+      'faq.5.a':
+        'እወ። ንምቕያር ኣብ ላዕለዋይ ሰሌዳ ዘሎ መልጎም ቋንቋ ጠውቕ — ሽወደንኛ፣ እንግሊዝኛን ካልኦት ዓሰርተ ቋንቋታትን። ብዙሓት ብክልተ ቋንቋ ሓቢሮም ይጥቀሙ፦ ብሽወደንኛ ኣንብብ፣ ምስ ተሸገርካ ናብ ካልእ ጠምት።',
       'faq.6.q': 'ዳታይ ምስ ካልኦት ይካፈል ድዩ?',
       'faq.6.a':
         'ምዕባለኻ፣ መልስታትካ፣ ጌጋታትካን ቅጥዕታትካን ኣብ መሳርሒኻ ይቕመጡ። Google AdSense ኣብ ዌብሳይትን Google Mobile Ads (AdMob) ኣብ ኣፕን ምልክታት ረክላምን ፍቓድን ክሰርሑ ይኽእሉ፣ ግን መልስታትካ ወይ ምዕባለኻ ኣይቕበሉን።',
@@ -2992,7 +3222,7 @@
         'ነቲ መተግበሪ ንምጽናዕ ተጠቐመሉ። ኣይትፍሕቆ፡ ብተገላቢጦሽ ኣይትመርምሮ፡ ከም ናትካ ፍርያት ጌርካ ድማ ኣይትሰይሞ። ንዝኾነ ሰብ ንምጭናቕ ኣይትጠቐመሉ። ነቲ መተግበሪ ከም ናይ ውሰት ብሽክለታ ጌርካ ኣተሓሕዞ፥ ብጽቡቕ።',
       'terms.s3.t': 'ትሕዝቶን ልክዕነትን',
       'terms.s3.p':
-        'እታ ህሉው ባንኪ ሕቶታት ካብ ናይ UHR ሓፋሽ ናይ ምጽናዕ ጽሑፍ <em>Sverige i fokus</em> ዝተጻሕፈት እያ፡ ነፍሲ ወከፍ ሕቶ ድማ ክፍላን ናይ ገጽ መወከስን ተርኢ። ሰባት ነገራት ይስሕቱ። ጌጋ እንተረኺብካ፡ እታ <a href="#/support">ገጽ ደገፍ</a> እታ ዝቐልጠፈት መፍትሒ እያ።',
+        'እታ ህሉው ባንኪ ሕቶታት ብግምት 179 ብቐጥታ ናብ ናይ UHR ሓፋሽ ናይ ምጽናዕ ጽሑፍ <em>Sverige i fokus</em> ዝጠቅሱ ሕቶታትን ብግምት 716 ካብ ተመሳሳሊ ናይ UHR ርእሰ-ጉዳያት ብኣርትዖት ዝተወጽኡ ሕቶታትን ኣለዋ። ነፍሲ ወከፍ ሕቶ <strong>UHR</strong> ወይ <strong>ዝተወጽአ</strong> ዝብል ምልክት ምንጪ ይሕዝ፣ ኣብ ቅጥዕታት → ምንጪታት ሕቶ ድማ ልምምድ ናብ UHR ጥራይ ክትውስን ትኽእል። ሰባት ነገራት ይስሕቱ። ጌጋ እንተረኺብካ፡ እታ <a href="#/support">ገጽ ደገፍ</a> እታ ዝቐልጠፈት መፍትሒ እያ።',
       'terms.s4.t': 'ዋሕስ የለን',
       'terms.s4.p':
         'ነቲ ወግዓዊ ፈተና ከም እትሓልፎ ዋሕስ ኣይንህብን። እቲ መተግበሪ ኣብ ነፍሲ ወከፍ መሳርሒ ኣብ ነፍሲ ወከፍ መዓልቲ ብፍጹም ከም ዝሰርሕ ዋሕስ ኣይንህብን። ምፍታን ከም እንቕጽል ግን ዋሕስ ንህብ።',
@@ -3006,19 +3236,20 @@
       'sources.h1a': 'እቶም መልስታት',
       'sources.h1b': 'ብሓቂ ካበይ ከም ዝመጹ።',
       'sources.lede':
-        'እታ ህሉው ባንኪ ሕቶታት ካብ ናይ UHR ሓፋሽ ናይ ምጽናዕ ጽሑፍ <em>Sverige i fokus</em> ትጠቅስ። ብኣታቶም ዝተደገፉ ሕቶታት ብሓቂ ክሳብ ዝወጹ ካልኦት ስድራቤታት ምንጪ ኣይንዝርዝርን።',
+        'እታ ህሉው ባንኪ ሕቶታት ክልተ ዓይነት መበቆል ኣለዋ፣ ነፍሲ ወከፍ ሕቶ ድማ ምልክት ኣለዎ፦ <strong>UHR</strong> (ብግምት 179 ብቐጥታ ናብ <em>Sverige i fokus</em> ዝጠቅሱ ሕቶታት) እና <strong>ዝተወጽአ</strong> (ብግምት 716 ካብ ተመሳሳሊ ናይ UHR ርእሰ-ጉዳያት ብኣርትዖት ዝተጻሕፉ ሕቶታት)። ኣብ ቅጥዕታት → ምንጪታት ሕቶ ልምምድን ፈተና ልምምድን ናብ UHR ጥራይ ክትውስን ትኽእል።',
       'sources.meta1.b': 'ቀንዲ ምንጪ',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'ናይ መወዳእታ ምርመራ',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'ህሉው ባንኪ',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + ዝተወጽአ',
       'sources.toc': 'ምርመራታት ምንጪ',
       'sources.s1.t': 'ህሉው ምንጪ ሕቶ',
       'sources.s1.li1': '<b>UHR — Sverige i fokus</b> — ንፈተና ዜግነት ሽወደን ዝኸውን ሓፋሽ ናይ ምጽናዕ ጽሑፍ።',
-      'sources.s1.li2': 'ነፍሲ ወከፍ ዝወጸ ሕቶ ካብዚ ጽሑፍ ምዕራፍ፡ ክፍሊ፡ ከምኡ ድማ ገጽ ይጠቅስ።',
+      'sources.s1.li2':
+        'ቀጥታዊ ናይ UHR ሕቶታት ካብዚ ጽሑፍ ምዕራፍ፡ ክፍሊ፡ ከምኡ ድማ ገጽ ይጠቅሱ፤ ዝተወጽኡ ሕቶታት ብፍሉይ ይምልከቱ እና ካብ ተመሳሳሊ ናይ UHR ርእሰ-ጉዳያት ይጻሕፉ።',
       'sources.s1.li3':
-        'እቲ ሓፋሽ ዝርዝር ምንጪ ዝቕየር እታ ዝወጸት ባንኪ ሕቶታት ነቲ ዝረአ ምንጪ ዘለዎም ሕቶታት ምስ ዝሓዘት ጥራይ እዩ።',
+        'እቲ ሓፋሽ ዝርዝር ምንጪ ዝቕየር እታ ዝወጸት ባንኪ ሕቶታት ዝረአ ምልክት መበቆል ዘለዎም ሕቶታት ምስ ዝሓዘት ጥራይ እዩ።',
       'sources.s2.t': 'ሓበሬታ ምንጪ ብኸመይ ይሰርሕ',
       'sources.s2.li1': 'ካርዲ ሕቶ መስመር ምንጪ ኣብ ትሕቲ እቲ ሕቶ፡ ካብ መሰረት ሕቶ ተፈልዩ የርኢ።',
       'sources.s2.li2':
@@ -3028,7 +3259,8 @@
       'sources.s3.li2':
         'እዛ ገጽ ምስ <code>site/questions.js</code> ትምርመር ስለዚ ናይ ምንጪ ጽሑፍ ካብታ ህሉው ባንኪ ቅድሚት ክኸይድ ኣይክእልን።',
       'sources.s4.t': 'ህሉው ዓቐን ምንጪ',
-      'sources.s4.li1': 'እታ ባንኪ ሎሚ UHR-only እያ፡ ኣብ <em>Sverige i fokus</em> ተመርኲሳ።',
+      'sources.s4.li1':
+        'እታ ባንኪ ብግምት 179 ብ UHR ዝተጠቐሱ ሕቶታትን ብግምት 716 ብኣርትዖት ዝተወጽኡ ሕቶታትን ኣለዋ፤ ምልክት ነፍሲ ወከፍ ሕቶ ስድራኡ የርኢ፣ ኣብ ቅጥዕታት → ምንጪታት ሕቶ ድማ ዝተወጽአ ትሕዝቶ ክትጠፍእ ትኽእል።',
       'sources.s4.li2': 'እቲ መተግበሪ ናጻ እዩ፡ ወግዓዊ ናይ UHR ፍርያት ኣይኮነን።',
       'sources.s5.t': 'ኣርትዖታዊ ኣገባብ',
       'sources.s5.callout.b': 'ናይ ቤት ሕጊ፥',
@@ -3054,6 +3286,9 @@
     },
     tr: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — çalış ve pratik yap.',
+      'meta.description':
+        'Kaynaklı sorular, kısa bölümler ve sakin tekrar araçlarıyla İsveç yurttaşlık bilgisi için resmi olmayan pratik.',
       'nav.home': 'Ana sayfa',
       'nav.practice': 'Alıştırma',
       'nav.ebook': 'E-kitap',
@@ -3113,7 +3348,7 @@
       'settings.sources.all': 'Tüm kaynaklar',
       'settings.sources.uhr': 'Yalnızca UHR',
       'settings.sources.hint':
-        'Tüm kaynaklar UHR atıflı soruları ve bunlardan türetilmiş alıştırma sorularını içerir. Yalnızca UHR, alıştırma ve deneme sınavlarını Sverige i fokus atıflarına izlenebilen yaklaşık 169 soruyla sınırlar.',
+        'Tüm kaynaklar UHR atıflı soruları ve bunlardan türetilmiş alıştırma sorularını içerir. Yalnızca UHR, alıştırma ve deneme sınavlarını Sverige i fokus atıflarına izlenebilen yaklaşık 179 soruyla sınırlar.',
       'settings.text': 'Yazı boyutu',
       'settings.text.s': 'Küçük',
       'settings.text.m': 'Normal',
@@ -3141,6 +3376,31 @@
       'nav.mock': 'Deneme sınavı',
       'nav.dashboard': 'Panel',
       'nav.cta': 'Uygulamayı edin ↗',
+      'purchase.eyebrow': 'Hesap satın almaları',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'Reklamsız paketteki her şeyi ve premium çalışma araçlarını — e-kitapta vurgulama, notlar ve daha fazlası — giriş yaptığınız hesap için içerir.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'İsveç’in çok kısa tarihi',
       'chap.2.t': 'İsveç nasıl yönetilir',
@@ -3376,7 +3636,7 @@
         'Uygulamayı çalışmak için kullanın. Veri kazımayın, tersine mühendislik yapmayın veya kendi ürününüzmüş gibi yeniden markalamayın. Birini taciz etmek için kullanmayın. Uygulamaya, ödünç aldığınız bir bisiklete davrandığınız gibi davranın: iyi.',
       'terms.s3.t': 'İçerik ve doğruluk',
       'terms.s3.p':
-        'Mevcut soru bankası, UHR\'nin kamuya açık çalışma materyali <em>Sverige i fokus</em>\'tan hazırlanmıştır ve her soru bölüm ve sayfa kaynağını gösterir. İnsanlar bazı şeyleri gözden kaçırır. Bir hata bulursanız <a href="#/support">destek sayfası</a> en hızlı çözümdür.',
+        'Mevcut soru bankasında UHR\'nin kamuya açık çalışma materyali <em>Sverige i fokus</em>\'a doğrudan atıflı yaklaşık 179 soru ve aynı UHR temalarından editoryal olarak türetilmiş yaklaşık 716 soru vardır. Her soru <strong>UHR</strong> veya <strong>Türetilmiş</strong> köken rozetini taşır; Ayarlar → Soru kaynakları bölümünden çalışmayı yalnızca UHR ile sınırlayabilirsiniz. İnsanlar bazı şeyleri gözden kaçırır. Bir hata bulursanız <a href="#/support">destek sayfası</a> en hızlı çözümdür.',
       'terms.s4.t': 'Garanti yok',
       'terms.s4.p':
         'Resmî sınavı geçeceğinizi garanti etmiyoruz. Uygulamanın her cihazda her gün kusursuz çalışacağını garanti etmiyoruz. Denemeyi sürdüreceğimizi garanti ediyoruz.',
@@ -3390,20 +3650,21 @@
       'sources.h1a': 'Cevaplar',
       'sources.h1b': 'aslında nereden geliyor.',
       'sources.lede':
-        "Mevcut soru bankası, UHR'nin kamuya açık çalışma materyali <em>Sverige i fokus</em>'a dayanır. Onlara dayanan sorular gerçekten yayınlanana kadar başka kaynak ailelerini listelemeyiz.",
+        "Mevcut soru bankasında iki köken ailesi vardır ve her soru rozetlidir: <strong>UHR</strong> (<em>Sverige i fokus</em>'a doğrudan atıflı yaklaşık 179 soru) ve <strong>Türetilmiş</strong> (daha fazla pratik için aynı UHR temalarından editoryal olarak yazılmış yaklaşık 716 soru). Ayarlar → Soru kaynakları bölümünde pratik ve deneme sınavlarını yalnızca UHR ile sınırlayabilirsiniz.",
       'sources.meta1.b': 'Birincil kaynak',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'Son inceleme',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'Mevcut banka',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + türetilmiş',
       'sources.toc': 'Kaynak kontrolleri',
       'sources.s1.t': 'Mevcut soru kaynağı',
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — İsveç vatandaşlık sınavı için kamuya açık çalışma materyali.',
-      'sources.s1.li2': 'Yayınlanan her soru, bu materyalden bir bölüm, kısım ve sayfa gösterir.',
+      'sources.s1.li2':
+        'Doğrudan UHR soruları bu materyalden bölüm, kısım ve sayfa gösterir; türetilmiş sorular ayrı rozetlenir ve aynı UHR temalarından yazılır.',
       'sources.s1.li3':
-        'Kamuya açık kaynak listesi, yalnızca yayınlanan soru bankası o görünür kökene sahip sorular içerdiğinde değişir.',
+        'Kamuya açık kaynak listesi, yalnızca yayınlanan soru bankasında görünür köken rozetli sorular olduğunda değişir.',
       'sources.s2.t': 'Kaynak gösterimi nasıl çalışır',
       'sources.s2.li1':
         'Soru kartları, kaynak satırını sorunun altında, soru metninden ayrı olarak gösterir.',
@@ -3416,7 +3677,7 @@
         'Bu sayfa <code>site/questions.js</code> ile karşılaştırılır, böylece kaynak metni mevcut bankanın önüne geçemez.',
       'sources.s4.t': 'Mevcut kaynak kapsamı',
       'sources.s4.li1':
-        "Banka bugün yalnızca UHR'ye dayanıyor ve <em>Sverige i fokus</em>'a dayalıdır.",
+        'Bankada yaklaşık 179 UHR atıflı ve yaklaşık 716 editoryal türetilmiş soru vardır; her sorunun rozeti ailesini gösterir, Ayarlar → Soru kaynakları bölümünden türetilmiş içeriği kapatabilirsiniz.',
       'sources.s4.li2': 'Uygulama bağımsızdır ve resmî bir UHR ürünü değildir.',
       'sources.s5.t': 'Yayın yöntemi',
       'sources.s5.callout.b': 'Temel kural:',
@@ -3442,6 +3703,9 @@
     },
     uk: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — навчання і практика.',
+      'meta.description':
+        'Неофіційна практика зі шведських громадянських знань із питаннями з джерелами, короткими розділами та спокійними інструментами повторення.',
       'nav.home': 'Головна',
       'nav.practice': 'Тренування',
       'nav.ebook': 'Електронна книга',
@@ -3501,7 +3765,7 @@
       'settings.sources.all': 'Усі джерела',
       'settings.sources.uhr': 'Лише UHR',
       'settings.sources.hint':
-        'Усі джерела містять питання з посиланнями на UHR і похідні тренувальні питання. Лише UHR обмежує практику та пробні тести приблизно 169 питаннями, які можна простежити до посилань на Sverige i fokus.',
+        'Усі джерела містять питання з посиланнями на UHR і похідні тренувальні питання. Лише UHR обмежує практику та пробні тести приблизно 179 питаннями, які можна простежити до посилань на Sverige i fokus.',
       'settings.text': 'Розмір тексту',
       'settings.text.s': 'Малий',
       'settings.text.m': 'Звичайний',
@@ -3529,6 +3793,33 @@
       'nav.mock': 'Пробний іспит',
       'nav.dashboard': 'Панель',
       'nav.cta': 'Отримати застосунок ↗',
+      'purchase.eyebrow': 'Покупки облікового запису',
+      'purchase.h1a': 'Оновлюйте лише після входу.',
+      'purchase.h1b': 'Покупка залишається з цим обліковим записом.',
+      'purchase.lede':
+        'Вебоновлення спершу потребують входу в обліковий запис Almost Swedish. Після входу ми створюємо в Supabase намір покупки для цього користувача, а потім спрямовуємо покупців Android до Google Play, щоб завершити одноразову покупку з тим самим обліковим записом у застосунку.',
+      'purchase.removeAds.eyebrow': 'Без реклами',
+      'purchase.removeAds.title': 'Прибрати рекламу',
+      'purchase.removeAds.body':
+        'Вимикає навчальну рекламу після підтвердження Google Play/App Store. Основне навчання залишається безкоштовним.',
+      'purchase.removeAds.locked': 'Увійдіть, щоб купити без реклами',
+      'purchase.removeAds.ready': 'Продовжити в Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Premium назавжди',
+      'purchase.premium.body':
+        'Містить усе з плану без реклами, а також преміум-інструменти навчання — виділення в електронній книзі, нотатки та інше — для облікового запису, з яким ви входите.',
+      'purchase.premium.locked': 'Увійдіть, щоб купити Premium',
+      'purchase.premium.ready': 'Продовжити в Google Play — 59 kr',
+      'purchase.price.once': 'одноразово',
+      'purchase.status.locked':
+        'Спершу увійдіть, щоб оновлення прив’язалося до вашого облікового запису.',
+      'purchase.status.ready': 'Готово до покупок як {account}.',
+      'purchase.status.needSignIn':
+        'Спершу увійдіть. Покупки прив’язуються до облікового запису, який ви використовуєте тут.',
+      'purchase.status.realSignin': 'Перед передачею покупки потрібен справжній вхід Supabase.',
+      'purchase.status.preparing':
+        'Готуємо передачу до Google Play, прив’язану до вашого облікового запису…',
+      'purchase.status.error': 'Не вдалося почати покупку. Увійдіть ще раз і повторіть спробу.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Дуже коротка історія Швеції',
       'chap.2.t': 'Як керується Швеція',
@@ -3582,7 +3873,7 @@
         'Це допоможе вам <em>навчатися</em>. Решта залежить від вас, офіційних джерел і кількості перерв fika. Ми беремо питання з публічних джерел і пояснюємо їх простою мовою.',
       'faq.3.q': 'Чи потрібен акаунт?',
       'faq.3.a':
-        'Ні — усе можна робити без реєстрації, а ваш прогрес зберігається на пристрої. Вхід необов\'язковий, але відкриває більше: ваші виділення, нотатки та панель синхронізуються на всіх пристроях.',
+        "Ні — усе можна робити без реєстрації, а ваш прогрес зберігається на пристрої. Вхід необов'язковий, але відкриває більше: ваші виділення, нотатки та панель синхронізуються на всіх пристроях.",
       'faq.4.q': 'Це безкоштовно?',
       'faq.4.a':
         'Почати, навчатися і проходити пробні тести можна безкоштовно. Реклама допомагає підтримувати основну частину доступною; Прибрати рекламу — необов’язкова одноразова покупка за 29 SEK.',
@@ -3767,7 +4058,7 @@
         'Користуйтеся застосунком, щоб навчатися. Не скрейпте його, не займайтеся зворотним інженерингом і не видавайте за власний продукт. Не використовуйте його для переслідування будь-кого. Ставтеся до застосунку так, як ви ставилися б до позиченого велосипеда: дбайливо.',
       'terms.s3.t': 'Матеріали та точність',
       'terms.s3.p':
-        'Поточний банк питань укладено на основі відкритого навчального матеріалу UHR <em>Sverige i fokus</em>, і кожне питання показує посилання на розділ та сторінку. Люди дещо пропускають. Якщо ви знайдете помилку, <a href="#/support">сторінка підтримки</a> — найшвидший спосіб це виправити.',
+        'Поточний банк має приблизно 179 питань із прямими посиланнями на відкритий навчальний матеріал UHR <em>Sverige i fokus</em> і приблизно 716 редакційно похідних питань із тих самих тем UHR. Кожне питання має позначку походження <strong>UHR</strong> або <strong>Похідне</strong>, а в Налаштуваннях → Джерела питань можна обмежити навчання лише UHR. Люди дещо пропускають. Якщо ви знайдете помилку, <a href="#/support">сторінка підтримки</a> — найшвидший спосіб це виправити.',
       'terms.s4.t': 'Без гарантій',
       'terms.s4.p':
         'Ми не гарантуємо, що ви складете офіційний іспит. Ми не гарантуємо, що застосунок працює бездоганно на кожному пристрої щодня. Ми гарантуємо, що продовжуватимемо старатися.',
@@ -3781,21 +4072,21 @@
       'sources.h1a': 'Звідки відповіді',
       'sources.h1b': 'беруться насправді.',
       'sources.lede':
-        "Поточний банк питань посилається на відкритий навчальний матеріал UHR <em>Sverige i fokus</em>. Ми не перелічуємо інші родини джерел, доки питання на їхній основі справді не з'являться.",
+        'Поточний банк питань має дві родини походження, і кожне питання позначене: <strong>UHR</strong> (приблизно 179 питань із прямими посиланнями на <em>Sverige i fokus</em>) і <strong>Похідне</strong> (приблизно 716 питань, редакційно написаних із тих самих тем UHR для додаткової практики). У Налаштуваннях → Джерела питань можна обмежити практику й пробні тести лише UHR.',
       'sources.meta1.b': 'Основне джерело',
       'sources.meta1.v': '1',
       'sources.meta2.b': 'Останній перегляд',
       'sources.meta2.v': '2026-05',
       'sources.meta3.b': 'Поточний банк',
-      'sources.meta3.v': 'Sverige i fokus',
+      'sources.meta3.v': 'UHR + похідні',
       'sources.toc': 'Перевірки джерел',
       'sources.s1.t': 'Поточне джерело питань',
       'sources.s1.li1':
         '<b>UHR — Sverige i fokus</b> — відкритий навчальний матеріал для іспиту на громадянство Швеції.',
       'sources.s1.li2':
-        'Кожне опубліковане питання посилається на розділ, підрозділ і сторінку з цього матеріалу.',
+        'Прямі питання UHR посилаються на розділ, підрозділ і сторінку з цього матеріалу; похідні питання позначені окремо й написані з тих самих тем UHR.',
       'sources.s1.li3':
-        'Відкритий перелік джерел змінюється лише тоді, коли в опублікованому банку питань є питання з таким видимим походженням.',
+        'Відкритий перелік джерел змінюється лише тоді, коли в опублікованому банку питань є питання з видимою позначкою походження.',
       'sources.s2.t': 'Як працюють посилання',
       'sources.s2.li1':
         'Картки питань показують рядок із джерелом під питанням, окремо від тексту питання.',
@@ -3807,7 +4098,8 @@
       'sources.s3.li2':
         'Ця сторінка звіряється з <code>site/questions.js</code>, тож текст про джерела не може випереджати поточний банк.',
       'sources.s4.t': 'Обсяг поточного джерела',
-      'sources.s4.li1': 'Сьогодні банк лише на основі UHR, за матеріалом <em>Sverige i fokus</em>.',
+      'sources.s4.li1':
+        'Банк має приблизно 179 питань із посиланнями на UHR і приблизно 716 редакційно похідних питань; позначка кожного питання показує його родину, а в Налаштуваннях → Джерела питань можна вимкнути похідний вміст.',
       'sources.s4.li2': 'Застосунок незалежний і не є офіційним продуктом UHR.',
       'sources.s5.t': 'Редакційний метод',
       'sources.s5.callout.b': 'Внутрішнє правило:',

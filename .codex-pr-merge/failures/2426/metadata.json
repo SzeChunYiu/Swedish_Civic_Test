@@ -1,0 +1,63 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n\n- Require spaced repetition due timestamps to be canonical UTC ISO strings before due checks or due sorting accept them.\n- Add validator parity coverage for malformed dueAt values and malformed now values that JavaScript Date parsing would otherwise reinterpret.\n- Extend focused runtime tests and SETUP journal handoff for SPACED-REPETITION-DUE-TIMESTAMP-CANONICAL-GUARD-1.\n\n## Root Cause\n\n`isDue` and `sortByDueAscending` used loose Date parsing, so date-only strings, offset timestamps, and rollover dates could be interpreted as valid due times even though the project already defines a stricter canonical timestamp contract.\n\n## Validation\n\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-spaced-repetition-schema.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'isDue|sortByDueAscending|dueCards|dueCount|rollover|date-only|timezone|spaced repetition' tests/v1-1-pro-foundations.test.js tests/content-spaced-repetition-schema.test.js tests/v1-1-review-store.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-spaced-repetition-schema`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run lint`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`\n- `NODE_OPTIONS='--v8-pool-size=1' npx --no-install prettier --check lib/learning/spacedRepetition.ts scripts/validate-content.js tests/content-spaced-repetition-schema.test.js tests/v1-1-pro-foundations.test.js tests/v1-1-review-store.test.js`\n- `git diff --check origin/main..HEAD`\n\nNote: the broader suggested pattern containing `canonical` also selects unrelated Pro pricing/paywall tests that are already red on current main (`29 kr` vs `29 SEK`, and missing `REMOVE_ADS_PRICE_LABEL`). The spaced-repetition-specific pattern above passed.\n\nNo Vercel CLI was run.",
+  "files": [
+    {
+      "path": "docs/parallel-sessions/journals/setup.md",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/learning/spacedRepetition.ts",
+      "additions": 14,
+      "deletions": 9,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 90,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-spaced-repetition-schema.test.js",
+      "additions": 52,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-pro-foundations.test.js",
+      "additions": 27,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-review-store.test.js",
+      "additions": 19,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/setup/spaced-due-canonical-1779370000",
+  "headRefOid": "dcbe584792ad721489e92f9befa7cae4e7fa0662",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2426,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:43:32Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229304953/job/77184955491",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T13:34:29Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] setup: require canonical spaced repetition due timestamps",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2426"
+}

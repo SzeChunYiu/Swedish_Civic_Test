@@ -36,7 +36,9 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { spacedRepetitionSchedule, getNextReviewAt } = loadTs('lib/learning/spacedRepetition.ts');
+  const { spacedRepetitionSchedule, getNextReviewAt, isDue, sortByDueAscending } = loadTs(
+    'lib/learning/spacedRepetition.ts',
+  );
   const answeredAt = '2026-05-15T10:00:00.000Z';
 
   assert.deepEqual(spacedRepetitionSchedule, expectedSchedule);
@@ -44,6 +46,8 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
   assert.equal(summary.spacedRepetitionRuntimeInputCasesValidated, 5);
   assert.equal(summary.spacedRepetitionRuntimeInputParityValidated, true);
+  assert.equal(summary.spacedRepetitionDueTimestampCasesValidated, 7);
+  assert.equal(summary.spacedRepetitionDueTimestampParityValidated, true);
   assert.equal(
     getNextReviewAt({ isCorrect: false, correctStreak: 99, answeredAt }),
     daysAfter(answeredAt, 1),
@@ -51,6 +55,21 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.equal(
     getNextReviewAt({ isCorrect: true, correctStreak: 50, answeredAt }),
     daysAfter(answeredAt, expectedSchedule.at(-1)),
+  );
+  assert.equal(isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-03-02T12:00:00.000Z'), true);
+  assert.equal(isDue({ dueAt: '2026-02-30T00:00:00.000Z' }, '2026-03-02T12:00:00.000Z'), false);
+  assert.equal(isDue({ dueAt: '2026-03-02' }, '2026-03-02T12:00:00.000Z'), false);
+  assert.equal(isDue({ dueAt: '2026-03-02T12:00:00+00:00' }, '2026-03-02T12:00:00.000Z'), false);
+  assert.deepEqual(
+    [
+      { questionId: 'date-only', dueAt: '2026-03-01' },
+      { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
+      { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
+      { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
+    ]
+      .sort(sortByDueAscending)
+      .map((card) => card.questionId),
+    ['past', 'future', 'date-only', 'rollover'],
   );
 });
 
@@ -84,4 +103,36 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.match(output, /spacedRepetitionSchedule is \[1,3,3,15,30\]/);
   assert.match(output, /spacedRepetitionSchedule\[2\] must be greater than the previous interval/);
+});
+
+test('spaced repetition schema rejects loose due timestamp parsing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/spacedRepetition.ts')) {
+    return String(contents).replace(
+      "if (typeof value !== 'string') return null;\\n  const timestamp = Date.parse(value);\\n  if (!Number.isFinite(timestamp)) return null;\\n  return new Date(timestamp).toISOString() === value ? timestamp : null;",
+      "if (typeof value !== 'string') return null;\\n  const timestamp = Date.parse(value);\\n  return Number.isFinite(timestamp) ? timestamp : null;",
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-spaced-repetition-schema');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /spaced repetition due timestamp rollover dueAt returned true/);
+  assert.match(output, /spaced repetition due timestamp date-only dueAt returned true/);
 });

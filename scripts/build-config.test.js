@@ -1394,7 +1394,9 @@ test('web export script is available for local production bundle smoke', () => {
   const redirects = fs.readFileSync(path.join(repoRoot, 'public/_redirects'), 'utf8');
   const workflow = fs.readFileSync(path.join(repoRoot, '.github/workflows/web-deploy.yml'), 'utf8');
 
+  assert.deepEqual(appConfig.platforms, ['ios', 'android', 'web']);
   assert.equal(appConfig.web.output, 'single');
+  assert.equal(appConfig.web.bundler, 'metro');
   assert.equal(Object.hasOwn(appConfig.web, 'baseUrl'), false);
   assert.equal(pkg.scripts['build:web:export'], 'expo export --platform web --output-dir dist-web');
   assert.equal(pkg.scripts['postbuild:web:export'], 'node scripts/prepare-web-export.js dist-web');

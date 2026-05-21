@@ -1,0 +1,28 @@
+{
+  "baseRefName": "main",
+  "body": "## What changed\n\n- Appended `REMOVE-ADS-ANDROID-PRODUCT-ID-PARITY-1` to `codex-tasks/open.txt` as a REVIEWER/Scrutinizer finding.\n\n## Why\n\nThe current operator runbook says the Google Play Remove Ads product id is `removeads`, while `lib/monetization/purchases.ts` currently passes the full iOS-style `com.billyyiu.swedishcivictest.removeads` id into both Apple and Google billing. Existing monetization and runtime parity tests pass while enforcing the single-id path, so Android purchase/restore can query the wrong Play product unless a producer splits platform product ids and adds coverage.\n\n## Validation\n\n- `npm run test:monetization` passed, showing the existing guard misses this issue.\n- `NODE_OPTIONS=--v8-pool-size=1 node --test tests/content-remove-ads-purchase-runtime-parity.test.js` passed, also showing the current parity guard misses this platform split.\n- `git diff --check` passed for the queue change.\n\nDirect `HEAD:main` push was attempted first per the flat protocol, but GitHub branch protection rejected it with `GH006: Changes must be made through a pull request`, so this draft PR carries the queue-only meta change.",
+  "files": [
+    { "path": "codex-tasks/open.txt", "additions": 1, "deletions": 0, "changeType": "MODIFIED" }
+  ],
+  "headRefName": "meta/reviewer-android-iap-product-1779385000",
+  "headRefOid": "4df00d8ea688ede8599198b3b5c883023e4d7cf1",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2472,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T15:43:05Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26236518552/job/77211098568",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T15:41:55Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Queue Android Remove Ads product-id parity finding",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2472"
+}

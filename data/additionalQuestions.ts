@@ -1,4 +1,3 @@
-import { applyQuestionLocalizationPilot } from './questionLocalizations';
 import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
@@ -65,29 +64,6 @@ function trueFalse(
     tags,
   };
 }
-
-const ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
-  'q021',
-  'q022',
-  'q023',
-  'q024',
-  'q025',
-  'q026',
-  'q027',
-  'q028',
-  'q029',
-  'q030',
-  'q031',
-  'q032',
-  'q033',
-  'q034',
-  'q035',
-  'q036',
-  'q037',
-  'q038',
-  'q039',
-  'q040',
-]);
 
 const rawAdditionalQuestions: PracticeQuestion[] = [
   single(
@@ -3451,8 +3427,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'q166',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
-    'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+    'Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+    'What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?',
     [
       [
         'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
@@ -3858,8 +3834,4 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
   ),
 ];
 
-export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions.map((question) =>
-  ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id)
-    ? applyQuestionLocalizationPilot(question)
-    : question,
-);
+export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions;

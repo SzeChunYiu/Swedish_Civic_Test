@@ -1,0 +1,39 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Restores the static-site asset reference extractor for scalar HTML attributes, responsive `srcset`/`imagesrcset`, media `poster`, inline CSS URLs, and linked stylesheet URLs.\n- Adds recursive local CSS `@import` traversal with a visited set/depth guard, resolving imported stylesheet URLs relative to each stylesheet.\n- Adds temp-site fixtures proving imported stylesheet assets and responsive/poster references fail manifest membership when omitted.\n\n## Validation\n- PASS: `NODE_OPTIONS='--v8-pool-size=1' node --check scripts/update-site-asset-manifest.js`\n- PASS: `NODE_OPTIONS='--v8-pool-size=1' node --check scripts/static-site-asset-references.test.js`\n- PASS: `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'linked CSS imports|CSS import and url assets|responsive images|responsive and poster|referenced assets omitted' scripts/static-site-asset-references.test.js`\n- PASS: `npm run typecheck -- --pretty false` with a temporary local `node_modules` symlink to the main checkout dependencies\n- PASS: `git diff --check`\n\nKnown current-main blockers outside this claim:\n- `npm run test:static-site-asset-references` still fails on the stale `signin.js` ban and stale committed `site/asset-manifest.json`.\n- `node --test scripts/check-live-site.test.js --test-name-pattern \"asset manifest\"` still fails because `package.json` does not yet wire `node scripts/update-site-asset-manifest.js --check` into `test:static-site-asset-references`.",
+  "files": [
+    {
+      "path": "scripts/static-site-asset-references.test.js",
+      "additions": 152,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/update-site-asset-manifest.js",
+      "additions": 206,
+      "deletions": 17,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/static-site-css-import-asset-reference-guard-1-1779378000",
+  "headRefOid": "7d94a88be0d7a10695bb492b47d78d61b3774e7b",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2467,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T15:27:23Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235636991/job/77207910923",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T15:26:14Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "static-site: follow CSS imports in asset guard",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2467"
+}

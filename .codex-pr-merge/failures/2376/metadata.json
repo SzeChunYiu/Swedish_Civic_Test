@@ -1,0 +1,58 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- rewrites the q146-derived political-rights true/false prompts as complete SV/EN propositions instead of answer fragments\n- mirrors the generator logic in `scripts/validate-content.js`\n- regenerates canonical CSV and static question-bank output, with focused regression tests for the q146 generated rows\n\n## Validation\n- `npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `node scripts/export-question-bank.js --check`\n- `node scripts/export-site-question-bank.js --check`\n- `git diff --check`\n- `node --test --test-name-pattern 'political-rights generated true/false exports use complete propositions' tests/content-published-question-types.test.js`\n- `node --test --test-name-pattern 'q146 political-rights' scripts/derived-content.test.js`\n- direct CSV/static scan for q761/q762 required and forbidden text\n\nNote: I initially ran `tests/content-published-question-types.test.js` with the filter after the file path, which executed the whole known-red mutation fixture file. The target political-rights test passed there and passed again with the filter placed correctly before the file path.",
+  "files": [
+    {
+      "path": "content/question-bank.csv",
+      "additions": 2,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/content/derivedQuestions.ts",
+      "additions": 30,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/derived-content.test.js",
+      "additions": 31,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 30,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/questions.js", "additions": 4, "deletions": 4, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-published-question-types.test.js",
+      "additions": 47,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/generated-tf-political-rights-takeover-1779364952",
+  "headRefOid": "bade0c1c8d3f9b54fcc6b3b680e4ee8dd491fecf",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2376,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T12:18:20Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224996501/job/77169584225",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T12:09:18Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Rewrite political-rights generated true/false prompts",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2376"
+}

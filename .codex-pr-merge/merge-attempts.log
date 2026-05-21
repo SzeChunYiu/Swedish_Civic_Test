@@ -1,0 +1,32 @@
+=== 2026-05-21T16:38:00Z PR #2497 auto-merge attempt ===
+=== 2026-05-21T16:38:00Z PR #2495 auto-merge attempt ===
+GraphQL: Pull request Pull request is in unstable status (enablePullRequestAutoMerge)
+=== 2026-05-21T16:38:02Z PR #2487 auto-merge attempt ===
+=== 2026-05-21T16:38:38Z PR #2495 direct merge attempt ===
+! Pull request SzeChunYiu/Swedish_Civic_Test#2495 was already merged
+failed to delete local branch task/ad-banner-status-copy-1779380584-3219388: failed to run git: error: cannot delete branch 'task/ad-banner-status-copy-1779380584-3219388' used by worktree at '/Users/billy/Desktop/projects/Swedish_Civic_Test/.claude/worktrees/agent-ad2c38bfa942f46c0'
+
+=== 2026-05-21T16:42:26Z PR #2501 direct merge attempt ===
+=== 2026-05-21T16:43:05Z PR #2383 direct merge attempt ===
+#2383 state=MERGED mergedAt=2026-05-21T16:43:11Z commit=9a207f2d401b715e65792b400f9178ed04a1fcf4 title=[codex] test badge style override parity
+=== 2026-05-21T16:43:13Z PR #2339 direct merge attempt ===
+GraphQL: Pull Request has merge conflicts (mergePullRequest)
+#2339 state=OPEN mergedAt= commit= title=test: harden question provenance validation
+=== 2026-05-21T16:43:15Z PR #2332 direct merge attempt ===
+#2332 state=MERGED mergedAt=2026-05-21T16:43:17Z commit=22bf305f52a9e214171082aa699a1b405daf51be title=test: add content-focused npm route
+=== 2026-05-21T16:43:19Z PR #2331 direct merge attempt ===
+#2331 state=MERGED mergedAt=2026-05-21T16:43:22Z commit=4ed4338e7bbc64c2329b316ed0e5ab36ed6f9fd0 title=test: add focused onboarding scroll validator
+=== 2026-05-21T16:43:24Z PR #2289 direct merge attempt ===
+! Pull request SzeChunYiu/Swedish_Civic_Test#2289 was already merged
+#2289 state=MERGED mergedAt=2026-05-21T16:43:12Z commit=eb3ddb3495182143103e9d3a49315eb5eeee19d0 title=[codex] Restore question bank CSV contract gate
+=== 2026-05-21T16:43:47Z PR #2445 direct merge attempt ===
+! Pull request SzeChunYiu/Swedish_Civic_Test#2445 was already merged
+#2445 state=MERGED mergedAt=2026-05-21T16:43:43Z commit=ac4118dbcb715a10957496d774383a6545187bbd title=[codex] Add mobile ads consent runtime harness
+=== 2026-05-21T16:43:48Z PR #2405 direct merge attempt ===
+#2405 state=MERGED mergedAt=2026-05-21T16:43:50Z commit=6e70c363100aeafd47799de30d4379b93efc4ac9 title=content: preserve Sweden scope in generated legal true-false
+=== 2026-05-21T16:43:53Z PR #2384 direct merge attempt ===
+#2384 state=MERGED mergedAt=2026-05-21T16:43:55Z commit=5a029c195f73c651ae91aabb9e69491ce4dc6cc6 title=[codex] test button style override parity
+=== 2026-05-21T16:43:57Z PR #2293 direct merge attempt ===
+#2293 state=MERGED mergedAt=2026-05-21T16:44:00Z commit=dba44ac20272d7aa5fb200303db769c720f03be1 title=test: cover release preflight v1.1 text evidence
+=== 2026-05-21T16:44:21Z PR #2502 direct merge attempt ===
+#2502 state=MERGED mergedAt=2026-05-21T16:44:23Z commit=83abb42c6b6aa84fa3943f0a3fecc5386c8484bf title=Share daily goal option source

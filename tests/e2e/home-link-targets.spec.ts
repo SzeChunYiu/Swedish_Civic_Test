@@ -1,6 +1,10 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
+import {
+  collectConsoleAndPageErrors,
+  dismissBlockingModals,
+  seedFreshSettingsLanguageAndAboutSeen,
+} from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -32,17 +36,6 @@ const homeActionLinks = [
     name: 'source trust CTA',
   },
 ];
-
-function collectConsoleErrors(page: Page): string[] {
-  const consoleErrors: string[] = [];
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
-  });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
-
-  return consoleErrors;
-}
 
 async function expectMinimumTargetSize(locator: Locator, name: string): Promise<void> {
   const count = await locator.count();
@@ -85,15 +78,6 @@ async function getComputedInteractionStyle(locator: Locator) {
   });
 }
 
-async function seedHomeDefaults(page: Page): Promise<void> {
-  await page.addInitScript(() => {
-    window.localStorage.clear();
-    window.sessionStorage.clear();
-    window.localStorage.setItem('settings\\language', 'sv');
-    window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
-  });
-}
-
 async function expectSecondaryKeyboardPressedFeedback({
   activationKey,
   expectedPath,
@@ -129,9 +113,9 @@ async function expectSecondaryKeyboardPressedFeedback({
 }
 
 test('Home action links keep mobile-safe targets', async ({ page }) => {
-  const consoleErrors = collectConsoleErrors(page);
+  const consoleErrors = collectConsoleAndPageErrors(page);
 
-  await seedHomeDefaults(page);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
@@ -171,15 +155,15 @@ test('Home action links keep mobile-safe targets', async ({ page }) => {
   expect(keyboardReleasedStyle.transform).toBe(focusStyle.transform);
   await expect(page).toHaveURL(/\/home$/);
 
-  expect(consoleErrors).toEqual([]);
+  expect(consoleErrors.get()).toEqual([]);
 });
 
 test('Home action links expose secondary keyboard pressed feedback before navigation', async ({
   page,
 }) => {
-  const consoleErrors = collectConsoleErrors(page);
+  const consoleErrors = collectConsoleAndPageErrors(page);
 
-  await seedHomeDefaults(page);
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
@@ -200,5 +184,5 @@ test('Home action links expose secondary keyboard pressed feedback before naviga
     page,
   });
 
-  expect(consoleErrors).toEqual([]);
+  expect(consoleErrors.get()).toEqual([]);
 });

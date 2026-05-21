@@ -1,5 +1,7 @@
 const Module = require('node:module');
+const fs = require('node:fs');
 const path = require('node:path');
+const ts = require('typescript');
 
 function createMemoryMMKV(initial = {}) {
   const values = new Map(Object.entries(initial));
@@ -62,17 +64,41 @@ function createZustandStub() {
       const setFn = (partial) => {
         const next = typeof partial === 'function' ? partial(state) : partial;
         if (next && next !== state) {
-          state = { ...state, ...next };
+          if (state && typeof state === 'object') {
+            Object.assign(state, next);
+          } else {
+            state = { ...next };
+          }
         }
       };
       const getFn = () => state;
       state = factory(setFn, getFn);
 
-      const useStore = () => state;
+      const useStore = (selector) => (selector ? selector(state) : state);
       useStore.getState = () => state;
       useStore.setState = (partial) => setFn(partial);
       return useStore;
     },
+  };
+}
+
+function resolveStorage(storageById, id) {
+  if (typeof storageById === 'function') return storageById(id) ?? null;
+  if (storageById && typeof storageById.get === 'function') return storageById.get(id) ?? null;
+  return storageById?.[id] ?? null;
+}
+
+function createStorageModuleStubs(storageById = {}, moduleStubs = {}) {
+  return {
+    'expo-speech': () => ({
+      speak() {},
+      stop() {},
+    }),
+    'react-native-mmkv': () => ({
+      createMMKV: ({ id }) => resolveStorage(storageById, id),
+    }),
+    zustand: createZustandStub,
+    ...moduleStubs,
   };
 }
 
@@ -96,18 +122,17 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
-  const stubs = {
-    'react-native-mmkv': () => ({
-      createMMKV: ({ id }) => storageById[id] ?? null,
-    }),
-    'expo-speech': () => ({
-      speak() {},
-      stop() {},
-    }),
-    zustand: createZustandStub,
-    ...moduleStubs,
-  };
+  const originalTsExtension = require.extensions['.ts'];
+  const stubs = createStorageModuleStubs(storageById, moduleStubs);
 
+  require.extensions['.ts'] = function tsLoader(module, filename) {
+    const source = fs.readFileSync(filename, 'utf8');
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+      fileName: filename,
+    }).outputText;
+    module._compile(transpiled, filename);
+  };
   Module._resolveFilename = function patchedResolve(request, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
     return originalResolve.call(this, request, ...args);
@@ -122,11 +147,17 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
   } finally {
     Module._resolveFilename = originalResolve;
     Module._load = originalLoad;
+    if (originalTsExtension) {
+      require.extensions['.ts'] = originalTsExtension;
+    } else {
+      delete require.extensions['.ts'];
+    }
   }
 }
 
 module.exports = {
   createMemoryMMKV,
+  createStorageModuleStubs,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
