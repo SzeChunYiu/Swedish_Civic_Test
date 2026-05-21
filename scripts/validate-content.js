@@ -8529,6 +8529,78 @@ function validateQuestionSchema(question, index) {
   return valid;
 }
 
+if (process.argv.includes('--focus-settings-store')) {
+  let settingsDailyGoalOptionsValidatedForFocus = 0;
+  let settingsDailyGoalParityValidatedForFocus = false;
+  let settingsStoreSchemaParityValidatedForFocus = false;
+  const settingsStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/settingsStore.ts'),
+    'utf8',
+  );
+  const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  const requiredSettingsStoreSnippets = [
+    "const dailyGoalKey = 'dailyGoalAnswers';",
+    'const defaultDailyGoalAnswers = 10;',
+    'function readStorageNumber(key: string): number | undefined',
+    'function normalizeDailyGoalAnswers',
+    'typeof answerCount !==',
+    'Number.isFinite(answerCount)',
+    'Number.isInteger(answerCount)',
+    'answerCount < minDailyGoalAnswers',
+    'answerCount > maxDailyGoalAnswers',
+    'const storedValue = readStorageNumber(dailyGoalKey);',
+    'return normalizeDailyGoalAnswers(storedValue);',
+    'const normalizedGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
+    'writeRecoverably( settingsStorage, settingsStorageId, dailyGoalKey, normalizedGoal, );',
+  ];
+
+  requiredSettingsStoreSnippets.forEach((snippet) => {
+    if (!normalizedSettingsStore.includes(snippet)) {
+      fail(`settings store focus missing ${snippet}`);
+    }
+  });
+  if (normalizedSettingsStore.includes('Math.round(dailyGoalAnswers)')) {
+    fail('setDailyGoalAnswers must not round unsafe runtime input directly');
+  }
+
+  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
+  const goalOptions = goalOptionArrays[0] || [];
+  if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
+    fail(
+      `app/settings.tsx daily goal options are ${JSON.stringify(
+        goalOptionArrays,
+      )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
+    );
+  } else {
+    settingsDailyGoalOptionsValidatedForFocus = goalOptions.length;
+  }
+  if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
+    fail('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
+  }
+  if (!settingsRoute.includes('Ställ in dagligt mål till ${goal} svar')) {
+    fail('app/settings.tsx daily goal buttons must expose Swedish accessibility text');
+  }
+  if (!settingsRoute.includes('${answerCount} svar per dag')) {
+    fail('app/settings.tsx must render the Swedish persisted daily-goal count');
+  }
+  if (!settingsRoute.includes('${answerCount} answers per day')) {
+    fail('app/settings.tsx must render the persisted daily-goal count');
+  }
+
+  if (!failures.length) {
+    settingsDailyGoalParityValidatedForFocus = true;
+    settingsStoreSchemaParityValidatedForFocus = true;
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsStoreSchemaParityValidated: settingsStoreSchemaParityValidatedForFocus,
+    settingsDailyGoalOptionsValidated: settingsDailyGoalOptionsValidatedForFocus,
+    settingsDailyGoalParityValidated: settingsDailyGoalParityValidatedForFocus,
+  });
+  process.exit(0);
+}
+
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
 const baseQuestions = questionModule.baseQuestions;
@@ -14161,11 +14233,48 @@ function validateSettingsDailyGoalParity() {
   }
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
-  const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
-  if (!normalizedSettingsStore.includes(expectedClamp)) {
-    reject(
-      `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
-    );
+  const requiredStoreSnippets = [
+    ['const defaultDailyGoalAnswers = 10;', 'settings store must define the daily-goal default'],
+    [
+      'function normalizeDailyGoalAnswers',
+      'settings store must centralize daily-goal normalization',
+    ],
+    [
+      'const storedValue = readStorageNumber(dailyGoalKey);',
+      'readDailyGoalAnswers must read the raw persisted daily goal safely',
+    ],
+    [
+      'return normalizeDailyGoalAnswers(storedValue);',
+      'readDailyGoalAnswers must normalize the raw persisted value',
+    ],
+    ['typeof answerCount !==', 'normalizeDailyGoalAnswers must reject non-numeric runtime values'],
+    [
+      'Number.isFinite(answerCount)',
+      'normalizeDailyGoalAnswers must reject non-finite runtime values',
+    ],
+    [
+      'Number.isInteger(answerCount)',
+      'normalizeDailyGoalAnswers must reject fractional runtime values',
+    ],
+    [
+      'answerCount < minDailyGoalAnswers',
+      'normalizeDailyGoalAnswers must reject values below the daily-goal minimum',
+    ],
+    [
+      'answerCount > maxDailyGoalAnswers',
+      'normalizeDailyGoalAnswers must reject values above the daily-goal maximum',
+    ],
+    [
+      'const normalizedGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
+      'setDailyGoalAnswers must normalize runtime input before persisting',
+    ],
+  ];
+
+  requiredStoreSnippets.forEach(([snippet, message]) => {
+    if (!normalizedSettingsStore.includes(snippet)) reject(message);
+  });
+  if (normalizedSettingsStore.includes('Math.round(dailyGoalAnswers)')) {
+    reject('setDailyGoalAnswers must not round unsafe runtime input directly');
   }
   if (!normalizedSettingsStore.includes('const storedValue = readStorageNumber(dailyGoalKey);')) {
     reject('readDailyGoalAnswers must read the persisted value through readStorageNumber');
