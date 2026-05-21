@@ -162,6 +162,13 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   );
   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
+  assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
+  assert.match(
+    source,
+    /const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;/,
+  );
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /disabled=\{importPayloadOverByteLimit\}/);
   assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
 });
 
@@ -638,10 +645,23 @@ test('local study data import rejects oversized payloads before parsing', () => 
   }
 });
 
+test('local study data import exposes the same UTF-8 byte counter used by preview guard', () => {
+  const storageById = createStorageById();
+  const { getLocalStudyDataImportPayloadByteCount } = loadImportModule(storageById);
+
+  assert.equal(getLocalStudyDataImportPayloadByteCount('abc'), 3);
+  assert.equal(getLocalStudyDataImportPayloadByteCount('å'), 2);
+  assert.equal(getLocalStudyDataImportPayloadByteCount('🙂'), 4);
+  assert.equal(getLocalStudyDataImportPayloadByteCount('aå🙂'), Buffer.byteLength('aå🙂', 'utf8'));
+});
+
 test('local study data import rejects multibyte payloads by UTF-8 byte size', () => {
   const storageById = createStorageById();
-  const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =
-    loadImportModule(storageById);
+  const {
+    LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
+    getLocalStudyDataImportPayloadByteCount,
+    previewLocalStudyDataImport,
+  } = loadImportModule(storageById);
   const originalParse = JSON.parse;
   let parseCalls = 0;
 
@@ -664,6 +684,14 @@ test('local study data import rejects multibyte payloads by UTF-8 byte size', ()
     );
     assert.equal(Buffer.byteLength(nonLatinPayload, 'utf8'), LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 2);
     assert.equal(Buffer.byteLength(emojiPayload, 'utf8'), LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 4);
+    assert.equal(
+      getLocalStudyDataImportPayloadByteCount(nonLatinPayload),
+      LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 2,
+    );
+    assert.equal(
+      getLocalStudyDataImportPayloadByteCount(emojiPayload),
+      LOCAL_STUDY_DATA_IMPORT_MAX_BYTES + 4,
+    );
 
     assert.deepEqual(previewLocalStudyDataImport(nonLatinPayload), {
       ok: false,

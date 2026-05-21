@@ -28,7 +28,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 123);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 125);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
   assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
   assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
@@ -88,6 +88,24 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'FSRS review cards'/);
   assert.match(source, /one: 'completed mock exam'/);
   assert.match(source, /other: 'completed mock exams'/);
+  assert.match(source, /getLocalStudyDataImportPayloadByteCount/);
+  assert.match(source, /\(\) => getLocalStudyDataImportPayloadByteCount\(importText\)/);
+  assert.match(
+    source,
+    /const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;/,
+  );
+  assert.match(
+    source,
+    /Importen är \$\{byteCountLabel\} byte\. Gränsen är \$\{maxLabel\}; klistra in en mindre export innan du förhandsgranskar\./,
+  );
+  assert.match(
+    source,
+    /The import is \$\{byteCountLabel\} bytes\. The limit is \$\{maxLabel\}; paste a smaller export before previewing\./,
+  );
+  assert.match(source, /aria-live="polite"/);
+  assert.match(source, /accessibilityState=\{\{ disabled: importPayloadOverByteLimit \}\}/);
+  assert.match(source, /disabled=\{importPayloadOverByteLimit\}/);
+  assert.match(source, /styles\.secondaryButtonDisabled/);
   assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
@@ -408,6 +426,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /settings route language buttons must choose visible labels from settings language/,
+  );
+});
+
+test('settings route copy parity rejects character-length import byte feedback', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('() => getLocalStudyDataImportPayloadByteCount(importText)', '() => importText.length');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route import preview byte feedback must count UTF-8 bytes, not characters/,
   );
 });
 

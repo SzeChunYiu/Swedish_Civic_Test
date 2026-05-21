@@ -10,7 +10,7 @@ import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
-  formatLocalStudyDataImportErrorDetail,
+  getLocalStudyDataImportPayloadByteCount,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
   type LocalStudyDataImportPreview,
@@ -45,7 +45,8 @@ type SettingsCopy = {
   enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
-  importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
+  importByteLimitExceeded: (byteCountLabel: string, maxLabel: string) => string;
+  importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
   importPreview: string;
@@ -89,9 +90,8 @@ function formatCount(count: number, labels: CountLabels): string {
   return `${count} ${count === 1 ? labels.one : labels.other}`;
 }
 
-function appendImportErrorDetail(message: string, detail: string | undefined, fieldLabel: string) {
-  const formattedDetail = formatLocalStudyDataImportErrorDetail(detail);
-  return formattedDetail ? `${message}\n${fieldLabel}: ${formattedDetail}` : message;
+function formatImportByteCount(byteCount: number, language: AppLanguage): string {
+  return new Intl.NumberFormat(language === 'sv' ? 'sv-SE' : 'en-US').format(byteCount);
 }
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
@@ -124,7 +124,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk uppläsning av nya frågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
-    importErrorMessage: (code, detail) => {
+    importByteLimitExceeded: (byteCountLabel, maxLabel) =>
+      `Importen är ${byteCountLabel} byte. Gränsen är ${maxLabel}; klistra in en mindre export innan du förhandsgranskar.`,
+    importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
       if (code === 'input_too_large') {
         return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Klistra in en export på högst ${localStudyDataImportMaxLabel}.`;
@@ -212,7 +214,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Enable automatic playback for new questions',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
-    importErrorMessage: (code, detail) => {
+    importByteLimitExceeded: (byteCountLabel, maxLabel) =>
+      `The import is ${byteCountLabel} bytes. The limit is ${maxLabel}; paste a smaller export before previewing.`,
+    importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
       if (code === 'input_too_large') {
         return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Paste an export under ${localStudyDataImportMaxLabel}.`;
@@ -346,6 +350,17 @@ export default function Screen() {
   ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+  const importPayloadByteCount = useMemo(
+    () => getLocalStudyDataImportPayloadByteCount(importText),
+    [importText],
+  );
+  const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;
+  const importByteLimitFeedback = importPayloadOverByteLimit
+    ? copy.importByteLimitExceeded(
+        formatImportByteCount(importPayloadByteCount, language),
+        localStudyDataImportMaxLabel,
+      )
+    : null;
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
@@ -418,6 +433,12 @@ export default function Screen() {
   };
 
   const handlePreviewImport = () => {
+    if (importPayloadOverByteLimit) {
+      setImportPreview(null);
+      setImportFeedback({ tone: 'error', text: copy.importErrorMessage('input_too_large') });
+      return;
+    }
+
     const result = previewLocalStudyDataImport(importText);
     if (!result.ok) {
       setImportPreview(null);
@@ -556,9 +577,7 @@ export default function Screen() {
           <Pressable
             aria-checked={audioEnabled}
             accessibilityLabel={
-              audioEnabled
-                ? copy.disableAudioAccessibilityLabel
-                : copy.enableAudioAccessibilityLabel
+              audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
             }
             accessibilityRole="switch"
             accessibilityState={{ checked: audioEnabled }}
@@ -668,22 +687,42 @@ export default function Screen() {
           textAlignVertical="top"
           value={importText}
         />
+        {importByteLimitFeedback ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={[styles.feedbackText, styles.feedbackError]}
+          >
+            {importByteLimitFeedback}
+          </Text>
+        ) : null}
         <View style={styles.importActions}>
           <Pressable
+            aria-disabled={importPayloadOverByteLimit}
             accessibilityLabel={copy.importPreviewAccessibilityLabel}
             accessibilityRole="button"
+            accessibilityState={{ disabled: importPayloadOverByteLimit }}
+            disabled={importPayloadOverByteLimit}
             hitSlop={space[1]}
             onPress={handlePreviewImport}
             style={({ pressed }) => [
               styles.secondaryButton,
-              pressed
+              importPayloadOverByteLimit ? styles.secondaryButtonDisabled : null,
+              pressed && !importPayloadOverByteLimit
                 ? reduceMotion
                   ? styles.secondaryButtonPressedReducedMotion
                   : styles.secondaryButtonPressed
                 : null,
             ]}
           >
-            <Text style={styles.secondaryButtonText}>{copy.importPreview}</Text>
+            <Text
+              style={[
+                styles.secondaryButtonText,
+                importPayloadOverByteLimit ? styles.secondaryButtonTextDisabled : null,
+              ]}
+            >
+              {copy.importPreview}
+            </Text>
           </Pressable>
           <Pressable
             accessibilityLabel={copy.importReset}
@@ -879,6 +918,10 @@ function createStyles(themeColors: ThemeColors) {
     secondaryButtonFocused: {
       borderColor: themeColors.focus,
     },
+    secondaryButtonDisabled: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
     secondaryButtonPressed: {
       backgroundColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
@@ -890,6 +933,9 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.surface,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
+    },
+    secondaryButtonTextDisabled: {
+      color: themeColors.textMuted,
     },
     disclaimerText: {
       color: themeColors.textDisclaimer,

@@ -2504,6 +2504,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Slå på ljud',
     'Bekräfta import',
     'Bekräfta lokal studiedataimport',
+    'Importen är ${byteCountLabel} byte. Gränsen är ${maxLabel}; klistra in en mindre export innan du förhandsgranskar.',
     'Klistra in JSON innan du förhandsgranskar.',
     'JSON-exporten är större än ${localStudyDataImportMaxLabel}. Klistra in en export på högst ${localStudyDataImportMaxLabel}.',
     'JSON kunde inte läsas.',
@@ -2567,6 +2568,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Enable audio',
     'Confirm import',
     'Confirm local study data import',
+    'The import is ${byteCountLabel} bytes. The limit is ${maxLabel}; paste a smaller export before previewing.',
     'Paste JSON before previewing.',
     'The JSON export is larger than ${localStudyDataImportMaxLabel}. Paste an export under ${localStudyDataImportMaxLabel}.',
     'JSON could not be read.',
@@ -2632,6 +2634,42 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     'const copy = settingsCopy[language];',
     'settings route must select copy from settings language',
+  ],
+  [
+    'getLocalStudyDataImportPayloadByteCount',
+    'settings route import preview byte feedback must use the shared UTF-8 byte counter',
+  ],
+  [
+    'const importPayloadByteCount = useMemo(',
+    'settings route import preview byte feedback must be derived live from pasted text',
+  ],
+  [
+    '() => getLocalStudyDataImportPayloadByteCount(importText)',
+    'settings route import preview byte feedback must count UTF-8 bytes, not characters',
+  ],
+  [
+    'const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;',
+    'settings route import preview byte feedback must compare against the local import byte limit',
+  ],
+  [
+    'copy.importByteLimitExceeded(',
+    'settings route import preview byte feedback must render localized over-limit copy',
+  ],
+  [
+    'aria-live="polite"',
+    'settings route import preview byte feedback must be announced politely while typing',
+  ],
+  [
+    'accessibilityState={{ disabled: importPayloadOverByteLimit }}',
+    'settings route import preview action must expose disabled state for over-limit text',
+  ],
+  [
+    'disabled={importPayloadOverByteLimit}',
+    'settings route import preview action must disable before parsing over-limit text',
+  ],
+  [
+    'styles.secondaryButtonDisabled',
+    'settings route import preview action must show a disabled visual state',
   ],
   [
     "const label = language === 'sv' ? labelSv : labelEn;",

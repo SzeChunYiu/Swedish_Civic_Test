@@ -284,9 +284,7 @@ function hasImportableData(summary: LocalStudyDataImportSummary): boolean {
   );
 }
 
-function isWithinImportPayloadSizeLimit(value: string): boolean {
-  if (value.length > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES) return false;
-
+export function getLocalStudyDataImportPayloadByteCount(value: string): number {
   let byteCount = 0;
   for (let index = 0; index < value.length; index += 1) {
     const code = value.charCodeAt(index);
@@ -302,11 +300,15 @@ function isWithinImportPayloadSizeLimit(value: string): boolean {
     } else {
       byteCount += 3;
     }
-
-    if (byteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES) return false;
   }
 
-  return true;
+  return byteCount;
+}
+
+function isWithinImportPayloadSizeLimit(value: string): boolean {
+  if (value.length > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES) return false;
+
+  return getLocalStudyDataImportPayloadByteCount(value) <= LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;
 }
 
 export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImportResult {
