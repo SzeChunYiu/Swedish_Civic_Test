@@ -233,7 +233,78 @@ test('explainAdaptivePick: reports the same difficulty-adjusted bucket that was 
   });
 });
 
-test('pickAdaptiveSession: unsupported runtime difficulty values are neutral', () => {
+test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const malformedDifficultyCases = [
+    { label: 'invalid string difficulty', difficulty: 'expert' },
+    { label: 'null difficulty', difficulty: null },
+    { label: 'object difficulty', difficulty: { level: 'expert' } },
+  ];
+  const answers = malformedDifficultyCases.map((item, index) => ({
+    questionId: `stale-invalid-${index + 1}`,
+    selectedOptionIds: [],
+    isCorrect: true,
+    answeredAt: '2026-04-14T12:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
+  const input = {
+    progress: progressFromAnswers(answers),
+    bank: [
+      ...malformedDifficultyCases.map((item, index) => ({
+        id: `stale-invalid-${index + 1}`,
+        difficulty: item.difficulty,
+        chapterId: 'c1',
+      })),
+      { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'c1' },
+    ],
+    size: 1,
+    recentAccuracyOverride: 0.95,
+    now,
+  };
+
+  assert.deepEqual(pickAdaptiveSession(input), ['z-unseen-medium']);
+  assert.deepEqual(explainAdaptivePick(input), {
+    'recently-wrong': 0,
+    unseen: 1,
+    mastered: 0,
+    stale: 0,
+  });
+
+  for (const { label, difficulty } of malformedDifficultyCases) {
+    const singleInvalidInput = {
+      progress: progressFromAnswers([
+        {
+          questionId: 'a-stale-invalid',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-04-14T12:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ]),
+      bank: [
+        { id: 'a-stale-invalid', difficulty, chapterId: 'c1' },
+        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'c1' },
+      ],
+      size: 1,
+      recentAccuracyOverride: 0.95,
+      now,
+    };
+
+    assert.deepEqual(
+      pickAdaptiveSession(singleInvalidInput),
+      ['z-unseen-medium'],
+      `${label} should be treated as neutral difficulty`,
+    );
+    assert.deepEqual(
+      explainAdaptivePick(singleInvalidInput),
+      { 'recently-wrong': 0, unseen: 1, mastered: 0, stale: 0 },
+      `${label} should not create a NaN-scored stale pick`,
+    );
+  }
+});
+
+test('pickAdaptiveSession: mixed unsupported runtime difficulty values are neutral', () => {
   const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
   const answers = [
