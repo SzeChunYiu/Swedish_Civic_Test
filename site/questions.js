@@ -18766,7 +18766,17 @@
     "type": "single_choice",
     "q": {
       "en": "Which answer best matches? Where is Sweden located?",
-      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
+      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?",
+      "zh-Hant": "哪個答案最符合？瑞典位於哪裡？",
+      "zh-Hans": "哪个答案最符合？瑞典位于哪里？",
+      "ar": "أي إجابة هي الأنسب؟ أين تقع السويد؟",
+      "ckb": "کام وەڵام باشترین گونجاوە؟ سوید لە کوێیە؟",
+      "fa": "کدام پاسخ مناسب‌تر است؟ سوئد کجا قرار دارد؟",
+      "pl": "Która odpowiedź najlepiej pasuje? Gdzie leży Szwecja?",
+      "so": "Jawaabtee ayaa ugu habboon? Iswiidhan xaggee ku taallaa?",
+      "ti": "ኣየናይ መልሲ ዝበለጸ ይሰማማዕ? ሽወደን ኣበይ ትርከብ?",
+      "tr": "Hangi cevap en iyi uyar? İsveç nerede bulunur?",
+      "uk": "Яка відповідь найкраще підходить? Де розташована Швеція?"
     },
     "opts": [
       {
@@ -18829,7 +18839,17 @@
     "answer": 0,
     "why": {
       "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",

@@ -642,6 +642,6 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
 export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(
   sourceQuestions,
   sourceQuestions.length + 1,
-);
+).map(applyQuestionLocalizationPilot);
 
 export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];

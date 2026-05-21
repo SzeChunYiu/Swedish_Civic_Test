@@ -96,6 +96,6 @@ test('Arabic preview does not enable runtime release', () => {
   assert.match(locales, /code: 'ar',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.ar.appAvailable, false);
   assert.equal(readiness.locales.ar.uiStrings, 'not_started');
-  assert.equal(readiness.locales.ar.questionContent, 'pilot_q001_q179_machine_assisted');
+  assert.equal(readiness.locales.ar.questionContent, 'pilot_q001_q180_machine_assisted');
   assert.equal(readiness.locales.ar.releaseGate, 'blocked');
 });
