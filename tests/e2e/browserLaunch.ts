@@ -12,19 +12,17 @@ export type BlockingModalDismissal = {
   launchOverlayDismissed: boolean;
 };
 
-// Storage keys matching settingsStore on web. react-native-mmkv prefixes keys
-// with the storage id, while older fixtures used unprefixed localStorage keys.
-const legacySettingsLanguageStorageKey = 'language';
-const legacySettingsSeenAboutStorageKey = 'hasSeenAboutTheTest';
-export const currentSettingsLanguageStorageKey = 'settings\\language';
-export const currentSettingsSeenAboutStorageKey = 'settings\\hasSeenAboutTheTest';
-export const settingsLanguageStorageKeys = [
-  legacySettingsLanguageStorageKey,
-  currentSettingsLanguageStorageKey,
+// Storage keys matching the app's settingsStore constants.
+const settingsStorageId = 'settings';
+const settingsLanguageKey = 'language';
+const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+const settingsLanguageStorageKeys = [
+  settingsLanguageKey,
+  `${settingsStorageId}\\${settingsLanguageKey}`,
 ] as const;
-export const settingsSeenAboutStorageKeys = [
-  legacySettingsSeenAboutStorageKey,
-  currentSettingsSeenAboutStorageKey,
+const settingsSeenAboutStorageKeys = [
+  settingsSeenAboutKey,
+  `${settingsStorageId}\\${settingsSeenAboutKey}`,
 ] as const;
 
 // Selector for dialog/modal overlays in the rendered app.
@@ -60,24 +58,24 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
       languageKeys,
     }: {
       language: AppLanguage;
-      languageKeys: string[];
+      languageKeys: readonly string[];
     }) => {
       for (const languageKey of languageKeys) {
         window.localStorage.setItem(languageKey, seededLanguage);
       }
     },
-    { language, languageKeys: [...settingsLanguageStorageKeys] },
+    { language, languageKeys: settingsLanguageStorageKeys },
   );
 }
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ seenKeys }: { seenKeys: string[] }) => {
+    ({ seenKeys }: { seenKeys: readonly string[] }) => {
       for (const seenKey of seenKeys) {
         window.localStorage.setItem(seenKey, 'true');
       }
     },
-    { seenKeys: [...settingsSeenAboutStorageKeys] },
+    { seenKeys: settingsSeenAboutStorageKeys },
   );
 }
 
@@ -92,8 +90,8 @@ export async function seedFreshFirstRunSettingsLanguage(
       seenKeys,
     }: {
       language: AppLanguage;
-      languageKeys: string[];
-      seenKeys: string[];
+      languageKeys: readonly string[];
+      seenKeys: readonly string[];
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
@@ -106,8 +104,8 @@ export async function seedFreshFirstRunSettingsLanguage(
     },
     {
       language,
-      languageKeys: [...settingsLanguageStorageKeys],
-      seenKeys: [...settingsSeenAboutStorageKeys],
+      languageKeys: settingsLanguageStorageKeys,
+      seenKeys: settingsSeenAboutStorageKeys,
     },
   );
 }
@@ -208,12 +206,12 @@ export async function selectQuestionLanguageInSettings(
       languageKeys,
     }: {
       language: AppLanguage;
-      languageKeys: string[];
+      languageKeys: readonly string[];
     }) => {
       for (const languageKey of languageKeys) {
         window.localStorage.setItem(languageKey, seededLanguage);
       }
     },
-    { language, languageKeys: [...settingsLanguageStorageKeys] },
+    { language, languageKeys: settingsLanguageStorageKeys },
   );
 }
