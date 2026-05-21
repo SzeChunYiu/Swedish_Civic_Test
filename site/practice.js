@@ -937,7 +937,6 @@
             </dl>
             <p class="mock-review__why">${escapeHtml(tr(q.why))}</p>
             ${questionSourceRow(q, 'mock-review__source')}
-            <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           </div>
         </details>
       `;
@@ -956,6 +955,7 @@
         <ul class="result-chapters">${chapterRows}</ul>
         <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
           <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
+          <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
           ${reviewRows}
         </section>
 
