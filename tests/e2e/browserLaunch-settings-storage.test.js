@@ -30,3 +30,15 @@ test('browser launch settings helpers seed current MMKV web keys', () => {
     'about-the-test seed helpers should write every supported seen flag key',
   );
 });
+
+test('rewarded preview e2e uses shared settings seed helpers', () => {
+  const rewardedPreviewSource = fs.readFileSync(
+    path.join(__dirname, 'rewarded-web-preview.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(rewardedPreviewSource, /seedSettingsLanguage\(page, language\);/);
+  assert.match(rewardedPreviewSource, /markAboutTheTestSeen\(page\);/);
+  assert.doesNotMatch(rewardedPreviewSource, /settings\\\\language/);
+  assert.doesNotMatch(rewardedPreviewSource, /settings\\\\hasSeenAboutTheTest/);
+});

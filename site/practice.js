@@ -576,7 +576,9 @@
           uk: 'Підказка: прогрес зберігається на цьому пристрої. Обліковий запис не потрібен.',
         })}</p>
       </div>
+      ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
     `;
+    if (window.smtMountAds) window.smtMountAds();
   }
   window.smtRenderPracticeHub = renderPracticeHub;
 
@@ -1111,6 +1113,7 @@
         <p class="mock-result__pct">${pct}% — ${correct}/${total} ${tr({ sv: 'rätt', en: 'correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'poprawnie', so: 'sax', ti: 'ቅኑዕ', tr: 'doğru', uk: 'правильно' })}</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
+        ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
         <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
           <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
           <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
@@ -1123,6 +1126,8 @@
         </div>
       </div>
     `;
+
+    if (window.smtMountAds) window.smtMountAds();
 
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById('mock-score-num'), 0, correct, 1100);

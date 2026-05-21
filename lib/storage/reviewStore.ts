@@ -24,7 +24,7 @@ import {
 import { getLocalDateKey } from '../learning/streaks';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -53,6 +53,23 @@ function isFiniteInRange(value: unknown, min: number, max: number): value is num
 
 function isNonNegativeInteger(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 0;
+}
+
+function normalizeDueCardsLimit(limit: unknown): number | undefined {
+  if (limit === undefined || limit === Number.POSITIVE_INFINITY) return undefined;
+  if (isNonNegativeInteger(limit)) return limit;
+  return undefined;
+}
+
+function assertSafeReviewQuestionId(questionId: unknown): asserts questionId is string {
+  if (
+    typeof questionId !== 'string' ||
+    questionId.trim() !== questionId ||
+    questionId.length === 0 ||
+    !isSafeImportedMapKey(questionId)
+  ) {
+    throw new Error('Review questionId must be a non-empty safe string');
+  }
 }
 
 function isValidDayKey(value: string): boolean {
@@ -121,11 +138,14 @@ function read(): {
     () => reviewStorage?.getString(REVIEW_STORE_KEY),
   );
   if (!raw) return { reviews: EMPTY, persistenceWarning: warning };
-  try {
-    return { reviews: normalize(JSON.parse(raw)), persistenceWarning: warning };
-  } catch {
-    return { reviews: EMPTY, persistenceWarning: warning };
-  }
+  const parsed = parseJsonRecoverably(
+    raw,
+    reviewStorageId,
+    REVIEW_STORE_KEY,
+    (value) => normalize(JSON.parse(value)),
+    EMPTY,
+  );
+  return { reviews: parsed.value, persistenceWarning: parsed.warning ?? warning };
 }
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
@@ -161,6 +181,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   ...initial.reviews,
   persistenceWarning: initial.persistenceWarning,
   ensureCard: (questionId, now) => {
+    assertSafeReviewQuestionId(questionId);
     const existing = get().byId[questionId];
     if (existing) return existing;
     const card = createNewCard(questionId, now);
@@ -175,6 +196,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     return card;
   },
   grade: (questionId, grade, now = new Date().toISOString()) => {
+    assertSafeReviewQuestionId(questionId);
     const state = get();
     if (!isReviewGrade(grade) || !isCanonicalReviewTimestamp(now)) {
       return state.byId[questionId] ?? null;
@@ -220,7 +242,8 @@ export function dueCards(
     return isDue(card, now);
   });
   list.sort(sortByDueAscending);
-  return options.limit !== undefined ? list.slice(0, options.limit) : list;
+  const limit = normalizeDueCardsLimit(options.limit);
+  return limit !== undefined ? list.slice(0, limit) : list;
 }
 
 export function dueCount(state: Pick<PersistedReviews, 'byId'>, now?: string): number {
@@ -235,10 +258,10 @@ export function remainingDailyReviews(
   state: Pick<PersistedReviews, 'gradedPerDay'>,
   options: { now?: Date; isPro?: boolean; freeCap?: number } = {},
 ): number {
-  if (options.isPro) return Number.POSITIVE_INFINITY;
-  const cap = options.freeCap ?? FREE_DAILY_REVIEW_CAP;
+  if (options.isPro === true) return Number.POSITIVE_INFINITY;
+  const cap = isNonNegativeInteger(options.freeCap) ? options.freeCap : FREE_DAILY_REVIEW_CAP;
   const dayKey = getLocalDateKey(options.now ?? new Date());
-  const used = state.gradedPerDay[dayKey] ?? 0;
+  const used = isNonNegativeInteger(state.gradedPerDay[dayKey]) ? state.gradedPerDay[dayKey] : 0;
   return Math.max(0, cap - used);
 }
 
