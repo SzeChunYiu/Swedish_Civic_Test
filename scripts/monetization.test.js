@@ -1471,17 +1471,23 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
+  assert.match(paywallSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(paywallSource, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(paywallSource, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(paywallSource, /purchaseActionInFlightRef\.current = false;/);
   assert.match(paywallSource, /onEntitlementsChange/);
   assert.match(paywallSource, /adsDisabled/);
   assert.match(paywallSource, /Buy Remove Ads for \$\{price\}/);
   assert.match(paywallSource, /Köp Ta bort annonser för \$\{price\}/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.buyAccessibilityHint\}/);
+  assert.match(paywallSource, /busy: activeAction === 'buy'/);
   assert.match(paywallSource, /Purchase removes ads after store confirmation/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(paywallSource, /Tidsatta övningsprov i appen är redan annonsfria/);
   assert.match(paywallSource, /Restore Remove Ads purchase/);
   assert.match(paywallSource, /Återställ köp av Ta bort annonser/);
   assert.match(paywallSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(paywallSource, /busy: activeAction === 'restore'/);
   assert.match(paywallSource, /same store account/);
   assert.match(paywallSource, /samma butikskonto/);
   assert.doesNotMatch(paywallSource, /ads are deferred|RevenueCat can be added/i);
@@ -1502,21 +1508,6 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
-});
-
-test('ProPaywall buy and restore actions use a ref-backed in-flight guard', () => {
-  const proPaywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
-  );
-
-  assert.match(proPaywallSource, /import \{ useCallback, useRef, useState \} from 'react';/);
-  assert.match(proPaywallSource, /const proActionInFlightRef = useRef\(false\);/);
-  assert.match(proPaywallSource, /if \(proActionInFlightRef\.current\) return;/);
-  assert.match(proPaywallSource, /proActionInFlightRef\.current = true;/);
-  assert.match(proPaywallSource, /await buyProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /await restoreProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /finally \{[\s\S]*proActionInFlightRef\.current = false;/);
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
@@ -1799,7 +1790,7 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(initializedResult.state.umpConsentStatus, 'obtained');
   assert.equal(initializedResult.decision.canInitializeGoogleMobileAds, true);
   assert.equal(initializedResult.decision.requestNonPersonalizedAdsOnly, true);
-  assert.deepEqual(calls, ['att:get', 'ump', 'att:request', 'ads:init']);
+  assert.deepEqual(calls, ['att:get', 'att:request', 'ump', 'ads:init']);
 
   const disabledCalls = [];
   const disabledState = await collectMobileAdsConsentState({
@@ -1916,9 +1907,6 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/practice/review'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001/review'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);

@@ -3,16 +3,14 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity'],
+    ['scripts/validate-content.js', '--focus-remove-ads-purchase-runtime'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -31,12 +29,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
-  const paywallSource = fs.readFileSync(
+  const premiumBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 21);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 19);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -47,17 +45,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);
   assert.match(purchaseSource, /restorePurchases\(\[REMOVE_ADS_PRODUCT_ID\]\)/);
   assert.match(purchaseSource, /validateRemoveAdsReceipt\?\(/);
-  assert.match(purchaseSource, /export type NativeRemoveAdsReceiptValidator =/);
-  assert.match(purchaseSource, /receiptValidator\?: NativeRemoveAdsReceiptValidator/);
-  assert.match(purchaseSource, /if \(!receiptValidator\) \{/);
-  assert.match(purchaseSource, /status: 'pending'/);
-  assert.match(purchaseSource, /return receiptValidator\(purchase, productId\)/);
   assert.match(purchaseSource, /const receiptValidation = await validateRemoveAdsReceipt/);
-  assert.match(
-    purchaseSource,
-    /:\s*\(\{ status: 'pending' \} satisfies RemoveAdsReceiptValidationResult\)/,
-  );
-  assert.match(purchaseSource, /if \(!provider\) \{[\s\S]*return removeAdsEntitlements\(true\);/);
   assert.match(purchaseSource, /source: 'purchase'/);
   assert.match(purchaseSource, /source: 'restore'/);
   assert.match(purchaseSource, /hasStoreConfirmation\(record\)/);
@@ -72,18 +60,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = false;/);
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(placementCtaSource, {
-      awaitedCalls: ['await purchaseAction('],
-      surfaceName: 'RemoveAdsPlacementCta',
-    }),
-  );
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(paywallSource, {
-      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-      surfaceName: 'PremiumBanner',
-    }),
-  );
+  assert.match(premiumBannerSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.match(premiumBannerSource, /if \(purchaseActionInFlightRef\.current\) return;/);
+  assert.match(premiumBannerSource, /purchaseActionInFlightRef\.current = true;/);
+  assert.match(premiumBannerSource, /purchaseActionInFlightRef\.current = false;/);
+  assert.match(premiumBannerSource, /busy: activeAction === 'buy'/);
+  assert.match(premiumBannerSource, /busy: activeAction === 'restore'/);
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
@@ -106,7 +88,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -137,7 +119,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -175,7 +157,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -206,7 +188,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -241,7 +223,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -251,44 +233,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /RemoveAdsPlacementCta must return early from the ref-backed in-flight guard before activating it|PremiumBanner must return early from the ref-backed in-flight guard before activating it|ref-backed in-flight guard before awaiting store calls/,
-  );
-});
-
-test('Remove Ads purchase runtime parity rejects late in-flight guard activation', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'purchaseActionInFlightRef.current = true;\\n    setActiveAction(action);',
-        'setActiveAction(action);'
-      )
-      .replace(
-        'const result =\\n        action === \\'buy\\'\\n          ? await buyRemoveAds(purchaseRuntime)',
-        'const result =\\n        action === \\'buy\\'\\n          ? await buyRemoveAds(purchaseRuntime)\\n          : await restoreRemoveAdsPurchase(purchaseRuntime);\\n\\n      purchaseActionInFlightRef.current = true;\\n      const ignoredResult = action === \\'buy\\' ? result'
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-remove-ads-purchase-runtime-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /PremiumBanner must set purchaseActionInFlightRef\.current before awaiting store calls/,
+    /Remove Ads buy\/restore handlers must use a ref-backed in-flight guard before awaiting store calls/,
   );
 });

@@ -1259,7 +1259,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 19;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -7539,12 +7539,12 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
+if (process.argv.includes('--focus-remove-ads-purchase-runtime')) {
+  validateRemoveAdsPurchaseRuntimeParity();
   exitWithValidationFailures();
   printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
+    removeAdsPurchaseRuntimeCasesValidated,
+    removeAdsPurchaseRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -12292,6 +12292,8 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let purchaseSource = '';
+  let premiumBannerSource = '';
+  let removeAdsPlacementCtaSource = '';
 
   function reject(message) {
     valid = false;
@@ -12305,7 +12307,23 @@ function validateRemoveAdsPurchaseRuntimeParity() {
     return;
   }
 
+  try {
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
+    removeAdsPlacementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Remove Ads component sources could not be read: ${error.message}`);
+    return;
+  }
+
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
+  const normalizedPlacementCtaSource = removeAdsPlacementCtaSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -12398,6 +12416,35 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
+      ),
+      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+    ],
+    [
+      /const purchaseActionInFlightRef = useRef\(false\);/.test(premiumBannerSource) &&
+        /const purchaseActionInFlightRef = useRef\(false\);/.test(removeAdsPlacementCtaSource),
+      'Remove Ads buy/restore handlers must declare ref-backed in-flight guards',
+    ],
+    [
+      normalizedPremiumBannerSource.includes(
+        'if (purchaseActionInFlightRef.current) return; purchaseActionInFlightRef.current = true; setActiveAction(action);',
+      ) &&
+        normalizedPlacementCtaSource.includes(
+          'if (purchaseActionInFlightRef.current) return; purchaseActionInFlightRef.current = true; setActiveAction(action);',
+        ),
+      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+    ],
+    [
+      /finally\s*\{[\s\S]*purchaseActionInFlightRef\.current = false;[\s\S]*setActiveAction\(null\);[\s\S]*\}/.test(
+        premiumBannerSource,
+      ) &&
+        /finally\s*\{[\s\S]*purchaseActionInFlightRef\.current = false;[\s\S]*setActiveAction\(null\);[\s\S]*\}/.test(
+          removeAdsPlacementCtaSource,
+        ),
+      'Remove Ads buy/restore handlers must clear ref-backed in-flight guards after store calls settle',
     ],
   ];
 
