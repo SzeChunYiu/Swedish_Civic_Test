@@ -52,6 +52,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     'utf8',
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
 
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
@@ -151,6 +152,9 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /testStatus:\s*'[^']*(?:web preview|webbförhandsvisning)[^']*'/,
   );
   assert.match(adCopySource, /getNativeAdCardCopy/);
+  assert.match(adsSource, /import \{ isStrictEntitlementFlag \} from '\.\/premium';/);
+  assert.match(adsSource, /isStrictEntitlementFlag\(entitlements\.adsDisabled\)/);
+  assert.doesNotMatch(adsSource, /if \(entitlements\.adsDisabled\) return false;/);
   assert.match(adCopySource, /getNativeAdSummaryAccessibilityLabel/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);

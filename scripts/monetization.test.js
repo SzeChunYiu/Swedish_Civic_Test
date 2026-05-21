@@ -557,6 +557,18 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
 
       assert.equal(REWARDED_EXTRA_EXAM_PLACEMENT, 'rewarded_extra_exam');
       assert.equal(shouldShowAd('exam_screen', { adsDisabled: false }), false);
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: 'false' }, { adServingAllowed: true }, 'web'),
+        true,
+      );
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: 1 }, { adServingAllowed: true }, 'web'),
+        true,
+      );
+      assert.equal(
+        shouldShowAd('home_banner', { adsDisabled: true }, { adServingAllowed: true }, 'web'),
+        false,
+      );
 
       assert.deepEqual(
         getMockExamAccessDecision({
@@ -594,6 +606,38 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
       assert.equal(grantedCredit, 1);
       assert.equal(consumeRewardedExtraExamCredit(grantedCredit), 0);
       assert.equal(consumeRewardedExtraExamCredit(0), 0);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: false, unlimitedMockExams: 'yes' },
+          freeMockExamLimit: 1,
+        }),
+        {
+          canOfferRewardedAd: true,
+          canStartExam: false,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'rewarded_ad_available',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: false, unlimitedMockExams: 1 },
+          freeMockExamLimit: 1,
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          completedMockExamsToday: 1,
+          entitlements: { adsDisabled: 'yes', unlimitedMockExams: false },
+          freeMockExamLimit: 1,
+        }).reason,
+        'rewarded_ad_available',
+      );
 
       assert.deepEqual(
         getMockExamAccessDecision({
@@ -649,7 +693,10 @@ test('mock exam access read failures fail closed until retry succeeds', () => {
 
   assert.match(accessHookSource, /const \[accessReadFailed, setAccessReadFailed\]/);
   assert.match(accessHookSource, /getMockExamAccessReadFailedDecision\(\)/);
-  assert.match(accessHookSource, /accessReadFailed && !entitlements\.unlimitedMockExams/);
+  assert.match(
+    accessHookSource,
+    /accessReadFailed && !isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)/,
+  );
   assert.match(accessHookSource, /setAccessReadFailed\(true\);\s*setAccessReady\(true\);/);
   assert.match(accessHookSource, /setAccessReadFailed\(false\);\s*setAccessReady\(true\);/);
   assert.doesNotMatch(

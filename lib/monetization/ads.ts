@@ -5,6 +5,7 @@ import {
   readRealAdUnitOverrides,
   type RealAdUnitOverride,
 } from './adUnitsReal';
+import { isStrictEntitlementFlag } from './premium';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 export type AdRuntimePlatform = 'ios' | 'android';
@@ -199,7 +200,7 @@ export function shouldShowAd(
 ): boolean {
   if (!GOOGLE_ADS_ENABLED) return false;
   if (placement === 'exam_screen') return false;
-  if (entitlements.adsDisabled) return false;
+  if (isStrictEntitlementFlag(entitlements.adsDisabled)) return false;
   if (REAL_ADS_ENABLED && consentDecision?.adServingAllowed !== true) return false;
   return isAdPlacementAvailableOnPlatform(placement, platform);
 }

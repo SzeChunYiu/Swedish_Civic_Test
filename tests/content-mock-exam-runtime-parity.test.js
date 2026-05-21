@@ -164,3 +164,56 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit|sponsor preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
 });
+
+test('mock exam access gates only strict boolean entitlement flags', () => {
+  const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+  const rewardedExamSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
+  const accessHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
+    'utf8',
+  );
+
+  assert.deepEqual(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: false, unlimitedMockExams: 'yes' },
+      freeMockExamLimit: 1,
+    }),
+    {
+      canOfferRewardedAd: true,
+      canStartExam: false,
+      freeExamsRemaining: 0,
+      placement: 'rewarded_extra_exam',
+      reason: 'rewarded_ad_available',
+      rewardedExtraExamCredits: 0,
+    },
+  );
+  assert.equal(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: false, unlimitedMockExams: 1 },
+      freeMockExamLimit: 1,
+    }).reason,
+    'rewarded_ad_available',
+  );
+  assert.equal(
+    getMockExamAccessDecision({
+      completedMockExamsToday: 1,
+      entitlements: { adsDisabled: 'yes', unlimitedMockExams: false },
+      freeMockExamLimit: 1,
+    }).reason,
+    'rewarded_ad_available',
+  );
+  assert.match(rewardedExamSource, /import \{ isStrictEntitlementFlag \} from '\.\/premium';/);
+  assert.match(rewardedExamSource, /isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)/);
+  assert.match(rewardedExamSource, /isStrictEntitlementFlag\(entitlements\.adsDisabled\)/);
+  assert.doesNotMatch(
+    rewardedExamSource,
+    /if \(entitlements\.(?:unlimitedMockExams|adsDisabled)\)/,
+  );
+  assert.match(accessHookSource, /import \{ FREE_ENTITLEMENTS, isStrictEntitlementFlag \}/);
+  assert.match(accessHookSource, /isStrictEntitlementFlag\(entitlements\.unlimitedMockExams\)/);
+});
