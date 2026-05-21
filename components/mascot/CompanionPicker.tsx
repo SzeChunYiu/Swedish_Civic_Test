@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import type { ImageSourcePropType, ViewStyle } from 'react-native';
 
 import {
   FAVORITE_COMPANION_IDS,
@@ -32,6 +33,20 @@ const companionPickerCopy: Record<AppLanguage, CompanionPickerCopy> = {
 };
 const favoriteCompanionIds: readonly MascotId[] = FAVORITE_COMPANION_IDS;
 
+const companionPreviewSources = {
+  'dala-horse': require('../../assets/mascot/dala-horse/idle.svg'),
+  kanelbulle: require('../../assets/mascot/kanelbulle/idle.svg'),
+  skoglimpa: require('../../assets/mascot/skoglimpa/idle.svg'),
+  moose: require('../../assets/mascot/moose/idle.svg'),
+  tomte: require('../../assets/mascot/tomte/idle.svg'),
+  salmon: require('../../assets/mascot/salmon/idle.svg'),
+  'fika-cup': require('../../assets/mascot/fika-cup/idle.svg'),
+  'vasa-ship': require('../../assets/mascot/vasa-ship/idle.svg'),
+  'midsummer-pole': require('../../assets/mascot/midsummer-pole/idle.svg'),
+  lucia: require('../../assets/mascot/lucia/idle.svg'),
+  snowman: require('../../assets/mascot/snowman/idle.svg'),
+} as const satisfies Record<MascotId, ImageSourcePropType>;
+
 type CompanionPickerProps = {
   language: AppLanguage;
   onSelect: (id: MascotId) => void;
@@ -46,6 +61,31 @@ function mascotAnchor(mascot: MascotDescriptor, language: AppLanguage) {
   return language === 'sv' ? mascot.anchorSv : mascot.anchorEn;
 }
 
+function companionPreviewSource(mascotId: MascotId) {
+  const source = companionPreviewSources[mascotId];
+
+  if (typeof source === 'object' && source !== null && 'uri' in source) {
+    return { uri: source.uri };
+  }
+
+  return source;
+}
+
+function companionPreviewUri(mascotId: MascotId) {
+  const source = companionPreviewSources[mascotId];
+
+  return typeof source === 'object' && source !== null && 'uri' in source ? source.uri : undefined;
+}
+
+function webPreviewImageStyle(uri: string): ViewStyle {
+  return {
+    backgroundImage: `url(${uri})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'contain',
+  } as ViewStyle;
+}
+
 export function CompanionPicker({ language, onSelect, selectedId }: CompanionPickerProps) {
   const copy = companionPickerCopy[language];
 
@@ -56,6 +96,7 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
         const anchor = mascotAnchor(mascot, language);
         const selected = mascot.id === selectedId;
         const favorite = favoriteCompanionIds.includes(mascot.id);
+        const previewUri = companionPreviewUri(mascot.id);
         const accessibilityLabel = selected
           ? copy.selectedLabel(label, anchor)
           : copy.selectLabel(label, anchor);
@@ -75,12 +116,34 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
               pressed ? styles.optionPressed : null,
             ]}
           >
-            <View style={styles.optionHeader}>
-              <Text style={styles.label}>{label}</Text>
-              {favorite ? <Text style={styles.badge}>{copy.favoriteBadge}</Text> : null}
+            <View style={styles.optionBody}>
+              <View
+                accessibilityElementsHidden
+                aria-hidden={true}
+                importantForAccessibility="no-hide-descendants"
+                style={styles.preview}
+                testID={`companion-preview-${mascot.id}`}
+              >
+                {Platform.OS === 'web' && previewUri ? (
+                  <View style={[styles.previewImage, webPreviewImageStyle(previewUri)]} />
+                ) : (
+                  <Image
+                    accessible={false}
+                    resizeMode="contain"
+                    source={companionPreviewSource(mascot.id)}
+                    style={styles.previewImage}
+                  />
+                )}
+              </View>
+              <View style={styles.optionText}>
+                <View style={styles.optionHeader}>
+                  <Text style={styles.label}>{label}</Text>
+                  {favorite ? <Text style={styles.badge}>{copy.favoriteBadge}</Text> : null}
+                </View>
+                <Text style={styles.anchor}>{anchor}</Text>
+                {selected ? <Text style={styles.selected}>{copy.selectedBadge}</Text> : null}
+              </View>
             </View>
-            <Text style={styles.anchor}>{anchor}</Text>
-            {selected ? <Text style={styles.selected}>{copy.selectedBadge}</Text> : null}
           </Pressable>
         );
       })}
@@ -108,6 +171,30 @@ const styles = StyleSheet.create({
   },
   optionPressed: {
     backgroundColor: colors.surfaceWarm,
+  },
+  optionBody: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: space[1.25],
+  },
+  preview: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceWarm,
+    borderRadius: radius.card,
+    flexShrink: 0,
+    height: space[6],
+    justifyContent: 'center',
+    overflow: 'hidden',
+    width: space[6],
+  },
+  previewImage: {
+    height: space[5],
+    width: space[5],
+  },
+  optionText: {
+    flex: 1,
+    gap: space[0.75],
+    minWidth: 0,
   },
   optionHeader: {
     alignItems: 'center',

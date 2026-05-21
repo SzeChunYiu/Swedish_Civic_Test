@@ -1,6 +1,21 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 import { dismissBlockingModals } from './browserLaunch';
+
+async function expectPreviewAsset(preview: Locator, pattern: RegExp) {
+  await expect
+    .poll(() =>
+      preview.evaluate((element) => {
+        const image = element.querySelector('img');
+        if (image) return image.getAttribute('src') ?? '';
+
+        return Array.from(element.querySelectorAll('*'))
+          .map((node) => getComputedStyle(node).backgroundImage)
+          .join('\n');
+      }),
+    )
+    .toMatch(pattern);
+}
 
 test('settings controls expose selected and checked state on web', async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -39,6 +54,24 @@ test('settings controls expose selected and checked state on web', async ({ page
       name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
     }),
   ).toHaveAttribute('aria-selected', 'true');
+
+  const cinnamonPreview = page.getByTestId('companion-preview-kanelbulle');
+  await expect(cinnamonPreview).toBeVisible();
+  await expect(cinnamonPreview).toHaveAttribute('aria-hidden', 'true');
+  await expectPreviewAsset(cinnamonPreview, /kanelbulle.*idle.*svg/);
+
+  const skoglimpaPreview = page.getByTestId('companion-preview-skoglimpa');
+  await expect(skoglimpaPreview).toBeVisible();
+  await expect(skoglimpaPreview).toHaveAttribute('aria-hidden', 'true');
+  await expectPreviewAsset(skoglimpaPreview, /skoglimpa.*idle.*svg/);
+
+  for (const preview of [cinnamonPreview, skoglimpaPreview]) {
+    const box = await preview.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(48);
+    expect(box!.height).toBeGreaterThanOrEqual(48);
+  }
+
   await page
     .getByRole('button', {
       name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,

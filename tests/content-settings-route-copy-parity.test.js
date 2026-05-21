@@ -192,6 +192,23 @@ test('settings import summary copy keeps singular and plural labels for bookmark
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
 });
 
+test('settings companion picker previews are decorative while labels stay on the option', () => {
+  const pickerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
+    'utf8',
+  );
+
+  assert.match(pickerSource, /const accessibilityLabel = selected/);
+  assert.match(pickerSource, /aria-label=\{accessibilityLabel\}/);
+  assert.match(pickerSource, /accessibilityLabel=\{accessibilityLabel\}/);
+  assert.match(pickerSource, /accessibilityElementsHidden/);
+  assert.match(pickerSource, /aria-hidden=\{true\}/);
+  assert.match(pickerSource, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(pickerSource, /testID=\{`companion-preview-\$\{mascot\.id\}`\}/);
+  assert.match(pickerSource, /accessible=\{false\}/);
+  assert.doesNotMatch(pickerSource, /assets\/mascots\//);
+});
+
 test('settings import reset coverage proves no-write preview and feedback clearing', () => {
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const e2eSource = fs.readFileSync(
