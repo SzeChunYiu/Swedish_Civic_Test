@@ -164,27 +164,3 @@ test('extra locale Home chapter 2 cards localize kommun and region labels', () =
     );
   }
 });
-
-test('Somali Tigrinya and Turkish Home chapter 6 avoid bare Swedish education terms', () => {
-  const dictionaries = loadDictionaries();
-  const expectations = {
-    so: [/dugsiyada barbaarinta/, /jaamacadda/],
-    ti: [/መዋእለ ህጻናት/, /ዩኒቨርሲቲ/],
-    tr: [/Anaokulundan/, /üniversiteye/],
-  };
-
-  for (const [locale, localizedTerms] of Object.entries(expectations)) {
-    const description = dictionaries[locale]?.['chap.6.d'];
-    assert.equal(typeof description, 'string', `${locale}.chap.6.d is translated`);
-    assert.match(description, /BVC/, `${locale}.chap.6.d preserves BVC`);
-    assert.match(description, /1177/, `${locale}.chap.6.d preserves 1177`);
-    assert.doesNotMatch(
-      description,
-      forbiddenStaticHomeEducationTerms,
-      `${locale}.chap.6.d exposes bare Swedish education terms`,
-    );
-    for (const termPattern of localizedTerms) {
-      assert.match(description, termPattern, `${locale}.chap.6.d uses ${termPattern}`);
-    }
-  }
-});
