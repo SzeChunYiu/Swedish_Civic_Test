@@ -1040,7 +1040,7 @@ function applyLang(lang) {
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
     const on = b.dataset.lang === lang;
     b.classList.toggle('is-on', on);
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (typeof b.setAttribute === 'function') b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   try {
     localStorage.setItem('smt_lang', lang);
@@ -2261,7 +2261,8 @@ function smtInitLangPicker() {
     menu.querySelectorAll('button[data-lang]').forEach(function (b) {
       const on = b.dataset.lang === cur;
       b.classList.toggle('is-on', on);
-      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (typeof b.setAttribute === 'function')
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
   btn.addEventListener('click', function (e) {
