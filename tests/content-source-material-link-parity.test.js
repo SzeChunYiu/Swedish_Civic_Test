@@ -90,6 +90,12 @@ test('legal source-material pages stay in parity with UHR source metadata', () =
   assert.match(sourcesRoute, /<UhrAuthorityBoundaryLink[\s\S]*language=\{language\}/);
   assert.match(disclaimerRoute, /<SourceMaterialLinkList\s+language=\{language\}\s*\/>/);
   assert.match(termsRoute, /<SourceMaterialLinkList\s+language=\{language\}\s*\/>/);
+  assert.match(disclaimerRoute, /Studera alltid det primära utbildningsmaterialet direkt/);
+  assert.match(disclaimerRoute, /Always study the primary education material directly/);
+  assert.doesNotMatch(
+    disclaimerRoute,
+    /UHR:s\s+egen\s+sida|UHR's\s+own\s+page|beskriver\s+också\s+källgränsen|provides\s+source-boundary\s+guidance/i,
+  );
   assert.match(sourceLinks, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourceLinks, /Open UHR education material/);
   assert.match(sourceLinks, /Öppna UHR:s sida Om medborgarskapsprovet/);
@@ -172,6 +178,36 @@ test('sources parity rejects source-authority phrasing in authority-boundary cop
   assert.match(
     `${swedishResult.stdout}\n${swedishResult.stderr}`,
     /authority-boundary copy must state facts neutrally/,
+  );
+});
+
+test('source material parity rejects Disclaimer body source-authority phrasing', () => {
+  const englishResult = runValidationWithRoutePatch(
+    'app/disclaimer.tsx',
+    `replace(
+      'Use the source links below to see which study material the app is based on and how practice tests from other actors should be kept separate from it.',
+      "UHR's own page about the test also provides source-boundary guidance for UHR material and practice tests from other actors.",
+    )`,
+  );
+
+  assert.notEqual(englishResult.status, 0);
+  assert.match(
+    `${englishResult.stdout}\n${englishResult.stderr}`,
+    /app\/disclaimer\.tsx source-material body must state study advice neutrally/,
+  );
+
+  const swedishResult = runValidationWithRoutePatch(
+    'app/disclaimer.tsx',
+    `replace(
+      'Använd källorna nedan för att se vilket studiematerial appen utgår från och hur övningsprov från andra aktörer ska skiljas från det.',
+      'UHR:s egen sida om provet beskriver också källgränsen mellan UHR:s material och övningsprov från andra aktörer.',
+    )`,
+  );
+
+  assert.notEqual(swedishResult.status, 0);
+  assert.match(
+    `${swedishResult.stdout}\n${swedishResult.stderr}`,
+    /app\/disclaimer\.tsx source-material body must state study advice neutrally/,
   );
 });
 
