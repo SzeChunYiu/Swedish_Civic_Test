@@ -42,6 +42,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
 const policyGoalCleftPattern = /\bThe goal of .+?\bpolicy means(?: that)?\b/i;
+const civilDefenceContextlessPattern =
+  /\b(?:Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera|Important activities such as school, work, and health care can continue to function|Politiska val ersätts med militära beslut|Political elections are replaced with military decisions)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
@@ -1669,6 +1671,66 @@ test('gender-equality policy goal true/false exports use direct English proposit
   );
 });
 
+test('civil-defence generated true/false exports keep war-or-crisis context', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q164TrueId = generatedQuestionId(sourceQuestions, 'q164', 'trueStatement');
+  const q164FalseId = generatedQuestionId(sourceQuestions, 'q164', 'falseStatement');
+  const expectedSv = [
+    'Vid krig eller kris hjälper det civila försvaret viktiga verksamheter som skola, arbete och hälso- och sjukvård att fortsätta fungera.',
+    'Vid krig eller kris ersätter det civila försvaret politiska val med militära beslut.',
+  ];
+  const expectedEn = [
+    'During war or crisis, civil defence helps important services such as school, work, and health care continue.',
+    'During war or crisis, civil defence replaces political elections with military decisions.',
+  ];
+  const generatedRows = [q164TrueId, q164FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q164TrueId, q164FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q164TrueId, q164FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+
+  assert.ok(generatedRows.every(Boolean), 'generated q164 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q164 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) =>
+        [question.q.sv, question.q.en].some((text) => civilDefenceContextlessPattern.test(text)),
+      )
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => civilDefenceContextlessPattern.test(line)),
+    [],
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -3252,6 +3314,64 @@ require('./scripts/validate-content.js');
   assert.match(
     output,
     new RegExp(`${q053FalseId} contains a generated true/false grammar-splice stem`),
+  );
+});
+
+test('published question schema rejects civil-defence contextless true/false stems', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q164TrueId = generatedQuestionId(sourceQuestions, 'q164', 'trueStatement');
+  const q164FalseId = generatedQuestionId(sourceQuestions, 'q164', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const civilDefenceContextlessResiduals = {",
+        "  [generatedFixtureId('q164', 1)]: { questionSv: 'Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera.', questionEn: 'Important activities such as school, work, and health care can continue to function.' },",
+        "  [generatedFixtureId('q164', 2)]: { questionSv: 'Politiska val ersätts med militära beslut.', questionEn: 'Political elections are replaced with military decisions.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  civilDefenceContextlessResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...civilDefenceContextlessResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q164TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q164FalseId} contains a generated true/false grammar-splice stem`),
   );
 });
 

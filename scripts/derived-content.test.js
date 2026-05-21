@@ -274,6 +274,48 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
       reviewStatus: 'reviewed',
       tags: ['elections'],
     },
+    {
+      id: 'q164',
+      chapterId: 'ch11',
+      type: 'single_choice',
+      questionSv: 'Vilket påstående beskriver det civila försvaret vid krig eller kris?',
+      questionEn: 'Which statement describes civil defence during war or crisis?',
+      options: [
+        {
+          id: 'a',
+          textSv:
+            'Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera',
+          textEn:
+            'Important activities such as school, work, and health care can continue to function',
+        },
+        {
+          id: 'b',
+          textSv: 'Politiska val ersätts med militära beslut',
+          textEn: 'Political elections are replaced with military decisions',
+        },
+        {
+          id: 'c',
+          textSv: 'Bara Försvarsmakten ansvarar för samhällets motståndskraft',
+          textEn: 'Only the Swedish Armed Forces are responsible for society’s resilience',
+        },
+        {
+          id: 'd',
+          textSv: 'EU bestämmer varje skolas dagliga schema',
+          textEn: 'The EU decides every school’s daily timetable',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Det civila försvaret hjälper viktiga verksamheter att fungera.',
+      explanationEn: 'Civil defence helps important services keep working.',
+      uhrReference: {
+        chapter: 'Sverige och omvärlden',
+        section: 'Det civila försvaret',
+        pageApprox: 41,
+      },
+      difficulty: 'medium',
+      reviewStatus: 'reviewed',
+      tags: ['civil-defence'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 201);
@@ -301,6 +343,22 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   assert.equal(
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
+  assert.equal(
+    derived[13].questionSv,
+    'Vid krig eller kris hjälper det civila försvaret viktiga verksamheter som skola, arbete och hälso- och sjukvård att fortsätta fungera.',
+  );
+  assert.equal(
+    derived[13].questionEn,
+    'During war or crisis, civil defence helps important services such as school, work, and health care continue.',
+  );
+  assert.equal(
+    derived[14].questionSv,
+    'Vid krig eller kris ersätter det civila försvaret politiska val med militära beslut.',
+  );
+  assert.equal(
+    derived[14].questionEn,
+    'During war or crisis, civil defence replaces political elections with military decisions.',
   );
 });
 
