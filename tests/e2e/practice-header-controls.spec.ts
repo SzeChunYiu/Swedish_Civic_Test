@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 import { dismissBlockingModals } from './browserLaunch';
+import { startAllVisiblePractice } from './practiceHub';
 
 type BoundingBox = { x: number; y: number; width: number; height: number };
 
@@ -51,8 +52,7 @@ test('practice header controls keep English labels, states, and mobile targets',
   await enableEnglishSupport(page);
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-
-  await expect(page.getByText('Question 1')).toBeVisible();
+  await startAllVisiblePractice(page, 'en');
 
   const bookmark = page.getByRole('button', { name: 'Bookmark this question' });
   const supplementary = page.getByRole('switch', { name: 'UHR questions only' });
@@ -87,9 +87,9 @@ test('practice header controls keep English labels, states, and mobile targets',
   await expect(sources).toHaveAttribute('aria-expanded', 'false');
   await sources.click();
 
-  const closeSources = page.getByRole('button', { name: 'Close about-the-sources' });
+  const closeSources = page.getByRole('button', { name: 'Close source details' });
   await expect(closeSources).toHaveAttribute('aria-expanded', 'true');
-  await expectStableTarget(closeSources, 'Close about-the-sources control');
+  await expectStableTarget(closeSources, 'Close source details control');
 
   await expect(page.getByText('UHR source', { exact: true }).first()).toBeVisible();
   await expect(
