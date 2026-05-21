@@ -172,11 +172,13 @@ const EXPECTED_UHR_SOURCE = {
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
+const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
   civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -4943,8 +4945,11 @@ function questionSentenceEndingsAreComplete(question) {
 function validateCitizenshipTimeline() {
   let dateParity = true;
   let countdownCopyParity = true;
+  let countdownPhaseCasesValidated = 0;
+  let countdownHomeMountRulesValidated = 0;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
+  const testFirstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -4962,6 +4967,11 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
+  if (testFirstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
+    rejectDate(
+      `civic knowledge test first sitting date must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
+    );
+  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -4969,14 +4979,66 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
+    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
+    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
     examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
+      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
   ) {
-    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
+    rejectDate(
+      'civic knowledge test first sitting and deadline must stay after the citizenship rules date',
+    );
   }
   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
+  }
+
+  if (typeof examDateModule.getCitizenshipTimelineCountdown !== 'function') {
+    rejectCountdown('getCitizenshipTimelineCountdown must remain exported');
+  } else {
+    [
+      {
+        expectedDaysRemaining: 1,
+        expectedPhase: 'rules',
+        expectedTargetDate: EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE,
+        now: '2026-06-05T12:00:00.000Z',
+      },
+      {
+        expectedDaysRemaining: 69,
+        expectedPhase: 'civicKnowledgeTest',
+        expectedTargetDate: EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+        now: '2026-06-07T12:00:00.000Z',
+      },
+      {
+        expectedDaysRemaining: null,
+        expectedPhase: null,
+        expectedTargetDate: null,
+        now: '2026-08-16T12:00:00.000Z',
+      },
+    ].forEach(({ expectedDaysRemaining, expectedPhase, expectedTargetDate, now }) => {
+      const countdown = examDateModule.getCitizenshipTimelineCountdown(new Date(now));
+      if (!expectedPhase) {
+        if (countdown !== null) {
+          rejectCountdown(`countdown banner must hide after launch window for ${now}`);
+        } else {
+          countdownPhaseCasesValidated += 1;
+        }
+        return;
+      }
+
+      if (
+        !countdown ||
+        countdown.phase !== expectedPhase ||
+        countdown.daysRemaining !== expectedDaysRemaining ||
+        dateIsoDay(countdown.targetDate) !== expectedTargetDate
+      ) {
+        rejectCountdown(`countdown banner phase case failed for ${now}`);
+        return;
+      }
+
+      countdownPhaseCasesValidated += 1;
+    });
   }
 
   let sourceUrlsValidated = 0;
@@ -4997,13 +5059,21 @@ function validateCitizenshipTimeline() {
     path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
     'utf8',
   );
+  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
+    'getCitizenshipTimelineCountdown',
     'Nya medborgarskapsregler gäller från',
     'UHR har bekräftat att den första provomgången i samhällskunskap är',
+    'De nya medborgarskapsreglerna gäller nu sedan',
+    'Nästa viktiga fas är samhällskunskapsprovet',
+    'till första provet',
     'New citizenship rules apply from',
     'UHR has confirmed that the first civic-knowledge test sitting is',
+    'The new citizenship rules have applied since',
+    'The next key phase is the civic-knowledge test',
+    'until the first test',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -5015,17 +5085,36 @@ function validateCitizenshipTimeline() {
     /The new civic knowledge test takes effect/,
     /until new exam/,
     /tills nya provet/,
+    /daysUntil\(\s*CITIZENSHIP_RULES_EFFECTIVE_DATE\s*\)/,
+    /if\s*\(\s*days\s*<=\s*0\s*\)\s*return\s+null/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
       rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
     }
   });
 
+  if (/import \{ CountdownBanner \}/.test(homeRouteSource)) {
+    countdownHomeMountRulesValidated += 1;
+  } else {
+    rejectCountdown('Home route must import CountdownBanner');
+  }
+
+  if (homeRouteSource.includes('<CountdownBanner language={language} />')) {
+    countdownHomeMountRulesValidated += 1;
+  } else {
+    rejectCountdown('Home route must mount CountdownBanner with the selected language');
+  }
+
   return {
     countdownCopyParity,
+    countdownHomeMountRulesValidated,
+    countdownHomeMountParity: countdownHomeMountRulesValidated === 2,
+    countdownPhaseCasesValidated,
+    countdownPhaseParity: countdownPhaseCasesValidated === 3,
     dateParity,
     rulesDate,
     sourceUrlsValidated,
+    testFirstSittingDate,
     testDeadlineDate,
   };
 }
@@ -8032,10 +8121,15 @@ let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
+let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
+let countdownBannerHomeMountRulesValidated = 0;
+let countdownBannerHomeMountParityValidated = false;
+let countdownBannerPhaseCasesValidated = 0;
+let countdownBannerPhaseParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -8165,6 +8259,34 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-countdown-banner')) {
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.testFirstSittingDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  countdownBannerHomeMountRulesValidated = timelineValidation.countdownHomeMountRulesValidated;
+  countdownBannerHomeMountParityValidated = timelineValidation.countdownHomeMountParity;
+  countdownBannerPhaseCasesValidated = timelineValidation.countdownPhaseCasesValidated;
+  countdownBannerPhaseParityValidated = timelineValidation.countdownPhaseParity;
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestFirstSittingDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
+    countdownBannerHomeMountRulesValidated,
+    countdownBannerHomeMountParityValidated,
+    countdownBannerPhaseCasesValidated,
+    countdownBannerPhaseParityValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
@@ -8498,10 +8620,15 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.testFirstSittingDate;
   civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  countdownBannerHomeMountRulesValidated = timelineValidation.countdownHomeMountRulesValidated;
+  countdownBannerHomeMountParityValidated = timelineValidation.countdownHomeMountParity;
+  countdownBannerPhaseCasesValidated = timelineValidation.countdownPhaseCasesValidated;
+  countdownBannerPhaseParityValidated = timelineValidation.countdownPhaseParity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -18085,10 +18212,15 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
+      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
+      countdownBannerHomeMountRulesValidated,
+      countdownBannerHomeMountParityValidated,
+      countdownBannerPhaseCasesValidated,
+      countdownBannerPhaseParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,

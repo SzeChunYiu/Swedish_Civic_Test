@@ -3,8 +3,21 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function loadTs(relativePath) {
+  const filePath = path.join(repoRoot, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  return mod.exports;
+}
 
 function validateContentSummary() {
   const output = execFileSync(
@@ -29,6 +42,8 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 4);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.countdownBannerPhaseCasesValidated, 3);
+  assert.equal(summary.countdownBannerPhaseParityValidated, true);
   assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
   assert.equal(summary.countdownBannerHomeMountParityValidated, true);
   assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
@@ -41,12 +56,19 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.doesNotMatch(countdownBanner, /Det nya samhällskunskapstestet träder i kraft/i);
   assert.match(countdownBanner, /New citizenship rules apply from/);
   assert.match(countdownBanner, /UHR has confirmed that the first civic-knowledge test sitting is/);
+  assert.match(countdownBanner, /The new citizenship rules have applied since/);
+  assert.match(countdownBanner, /The next key phase is the civic-knowledge test/);
   assert.match(countdownBanner, /Nya medborgarskapsregler gäller från/);
   assert.match(
     countdownBanner,
     /UHR har bekräftat att den första provomgången i samhällskunskap är/,
   );
+  assert.match(countdownBanner, /De nya medborgarskapsreglerna gäller nu sedan/);
+  assert.match(countdownBanner, /Nästa viktiga fas är samhällskunskapsprovet/);
+  assert.match(countdownBanner, /till första provet/);
+  assert.match(countdownBanner, /until the first test/);
   assert.match(countdownBanner, /CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE/);
+  assert.match(countdownBanner, /getCitizenshipTimelineCountdown/);
   assert.match(countdownBanner, /Stockholm/);
   assert.doesNotMatch(countdownBanner, /expected in August 2026/i);
   assert.doesNotMatch(countdownBanner, /väntas starta i augusti 2026/i);
@@ -71,6 +93,29 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   assert.match(homeRoute, /import \{ CountdownBanner \}/);
   assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
+});
+
+test('citizenship timeline countdown phases cover rules, civic test, and post-launch dates', () => {
+  const {
+    getCitizenshipTimelineCountdown,
+    CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+    CITIZENSHIP_RULES_EFFECTIVE_DATE,
+  } = loadTs('lib/learning/examDate.ts');
+
+  const rulesPhase = getCitizenshipTimelineCountdown(new Date('2026-06-05T12:00:00.000Z'));
+  assert.equal(rulesPhase.phase, 'rules');
+  assert.equal(rulesPhase.daysRemaining, 1);
+  assert.equal(rulesPhase.targetDate.toISOString(), CITIZENSHIP_RULES_EFFECTIVE_DATE.toISOString());
+
+  const civicPhase = getCitizenshipTimelineCountdown(new Date('2026-06-07T12:00:00.000Z'));
+  assert.equal(civicPhase.phase, 'civicKnowledgeTest');
+  assert.equal(civicPhase.daysRemaining, 69);
+  assert.equal(
+    civicPhase.targetDate.toISOString(),
+    CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.toISOString(),
+  );
+
+  assert.equal(getCitizenshipTimelineCountdown(new Date('2026-08-16T12:00:00.000Z')), null);
 });
 
 test('validate:content rejects removing the Home countdown banner mount', () => {

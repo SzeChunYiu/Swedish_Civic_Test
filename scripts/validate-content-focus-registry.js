@@ -178,6 +178,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'countdownBannerTimelineCopyParityValidated',
       'countdownBannerHomeMountRulesValidated',
       'countdownBannerHomeMountParityValidated',
+      'countdownBannerPhaseCasesValidated',
+      'countdownBannerPhaseParityValidated',
     ],
   },
   {
