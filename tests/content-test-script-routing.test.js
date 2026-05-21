@@ -371,6 +371,41 @@ test('UHR reference card focused content validation runs only its accessibility 
   );
 });
 
+test('content schema source focused validations run only their schema summaries', () => {
+  const cases = [
+    {
+      absentKey: 'answerFeedbackRuntimeParityValidated',
+      flag: '--focus-uhr-reference-section-page-parity',
+      presentKey: 'uhrReferencesValidated',
+    },
+    {
+      absentKey: 'uhrReferencesValidated',
+      flag: '--focus-question-exact-schema-keys',
+      presentKey: 'questionExactSchemaKeysValidated',
+    },
+    {
+      absentKey: 'questionExactSchemaKeysValidated',
+      flag: '--focus-authored-source-partition',
+      presentKey: 'authoredSourcePartitionQuestionsValidated',
+    },
+  ];
+
+  for (const { absentKey, flag, presentKey } of cases) {
+    const result = spawnSync(process.execPath, ['scripts/validate-content.js', flag], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    });
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    const match = result.stdout.match(/\{[\s\S]*\}/);
+    assert.ok(match, `${flag} should print JSON summary`);
+    const summary = JSON.parse(match[0]);
+
+    assert.equal(summary[presentKey] > 0, true);
+    assert.equal(Object.prototype.hasOwnProperty.call(summary, absentKey), false);
+  }
+});
+
 test('CelebrationBurst focused content validation runs only its accessibility summary', () => {
   const result = spawnSync(
     process.execPath,
