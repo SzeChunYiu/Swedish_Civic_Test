@@ -68,7 +68,7 @@ test('sources route stays in parity with UHR source material metadata', () => {
   );
 
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);
-  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
