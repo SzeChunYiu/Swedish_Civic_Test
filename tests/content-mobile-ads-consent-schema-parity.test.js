@@ -28,6 +28,53 @@ test('mobile ads consent TypeScript schema stays in parity with validator expect
   assert.match(mobileConsentSource, /decision: AdSdkInitializationDecision;/);
 });
 
+test('mobile ads consent focus validates runtime region normalization', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mobile-ads-consent'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.mobileAdsConsentRegionRuntimeCasesValidated, 11);
+  assert.equal(summary.mobileAdsConsentRegionRuntimeParityValidated, true);
+});
+
+test('mobile ads consent focus rejects unnormalized runtime region state construction', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+process.argv = [process.argv[0], 'scripts/validate-content.js', '--focus-mobile-ads-consent'];
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/monetization/mobileAdsConsent.ts')) {
+    return String(contents).replaceAll('region: normalizeAdConsentRegion(region),', 'region,');
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Mobile Ads consent state construction must normalize runtime region values/,
+  );
+});
+
 test('mobile ads consent schema parity rejects runtime platform optionality drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -71,8 +118,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/lib/monetization/mobileAdsConsent.ts')) {
     return String(contents).replace(
-      /const trackingTransparencyStatus = await resolveTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\(runtime, shouldCollectConsent\\);/,
-      "const [trackingTransparencyStatus, umpConsentStatus] = await Promise.all([\\n    resolveTrackingTransparencyStatus(runtime, platform, shouldCollectConsent),\\n    resolveUmpConsentStatus(runtime, shouldCollectConsent),\\n  ]);",
+      /const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\(runtime, shouldCollectConsent\\);/,
+      "const [trackingTransparencyStatus, umpConsentStatus] = await Promise.all([\\n    requestTrackingTransparencyStatusIfNeeded(runtime, platform, shouldCollectConsent, 'not_determined'),\\n    resolveUmpConsentStatus(runtime, shouldCollectConsent),\\n  ]);",
     );
   }
   return contents;
