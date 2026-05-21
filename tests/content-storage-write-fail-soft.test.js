@@ -202,9 +202,15 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
-  assert.match(componentSource, /const persistenceWarningNoticeCopy: Record<AppLanguage/);
+  assert.match(componentSource, /const persistenceWarningNoticeCopy: Record</);
+  assert.match(componentSource, /RecoverablePersistenceWarning\['operation'\]/);
   assert.match(componentSource, /Sparades bara tillfälligt/);
   assert.match(componentSource, /Saved only for this session/);
+  assert.match(componentSource, /Lokal studiedata kunde inte läsas/);
+  assert.match(componentSource, /Local study data could not be loaded/);
+  assert.match(componentSource, /tomt tillfälligt läge i den här sessionen/);
+  assert.match(componentSource, /empty in-memory study data for this session/);
+  assert.match(componentSource, /warning\.operation/);
   assert.match(componentSource, /accessibilityRole="alert"/);
   assert.match(componentSource, /onPress=\{onDismiss\}/);
 

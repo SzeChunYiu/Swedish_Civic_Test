@@ -11,19 +11,40 @@ type PersistenceWarningNoticeCopy = {
   title: string;
 };
 
-const persistenceWarningNoticeCopy: Record<AppLanguage, PersistenceWarningNoticeCopy> = {
+const persistenceWarningNoticeCopy: Record<
+  AppLanguage,
+  Record<RecoverablePersistenceWarning['operation'], PersistenceWarningNoticeCopy>
+> = {
   sv: {
-    accessibilityLabel:
-      'Sparningen misslyckades. Ändringen fungerar tillfälligt i den här sessionen.',
-    body: 'Ändringen fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
-    dismiss: 'Jag förstår',
-    title: 'Sparades bara tillfälligt',
+    read: {
+      accessibilityLabel:
+        'Lokal studiedata kunde inte läsas. Appen använder ett tomt tillfälligt läge i den här sessionen.',
+      body: 'Lokal studiedata kunde inte läsas. Appen använder ett tomt tillfälligt läge i den här sessionen tills lagringen fungerar igen.',
+      dismiss: 'Jag förstår',
+      title: 'Lokal studiedata kunde inte läsas',
+    },
+    write: {
+      accessibilityLabel:
+        'Sparningen misslyckades. Ändringen fungerar tillfälligt i den här sessionen.',
+      body: 'Ändringen fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
+      dismiss: 'Jag förstår',
+      title: 'Sparades bara tillfälligt',
+    },
   },
   en: {
-    accessibilityLabel: 'Saving failed. The change is available temporarily in this session.',
-    body: 'The change works now, but could not be saved on this device. Try the same change again when storage is available.',
-    dismiss: 'Got it',
-    title: 'Saved only for this session',
+    read: {
+      accessibilityLabel:
+        'Local study data could not be loaded. The app is using empty in-memory state for this session.',
+      body: 'Local study data could not be loaded. The app is using empty in-memory study data for this session until storage is available again.',
+      dismiss: 'Got it',
+      title: 'Local study data could not be loaded',
+    },
+    write: {
+      accessibilityLabel: 'Saving failed. The change is available temporarily in this session.',
+      body: 'The change works now, but could not be saved on this device. Try the same change again when storage is available.',
+      dismiss: 'Got it',
+      title: 'Saved only for this session',
+    },
   },
 };
 
@@ -40,7 +61,7 @@ export function PersistenceWarningNotice({
 }: PersistenceWarningNoticeProps) {
   if (!warning) return null;
 
-  const copy = persistenceWarningNoticeCopy[language];
+  const copy = persistenceWarningNoticeCopy[language][warning.operation];
 
   return (
     <View
