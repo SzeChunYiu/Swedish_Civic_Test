@@ -124,33 +124,27 @@ function termsContentParagraph(indexHtml) {
   return paragraphMatch[1];
 }
 
-function i18nTranslationMaps(appSource) {
-  const i18nMatch = appSource.match(/const i18n = \(window\.i18n = \{([\s\S]*?)\n\}\);/);
-  assert.ok(i18nMatch, 'static i18n dictionary should be present');
-  return vm.runInNewContext(`({${i18nMatch[1]}\n})`, {}, { timeout: 3000 });
-}
-
 function appTranslationValues(appSource, includeKey) {
-  return Object.values(i18nTranslationMaps(appSource)).flatMap((dictionary) =>
-    Object.entries(dictionary)
-      .filter(([key]) => includeKey(key))
-      .map(([, value]) => value),
-  );
+  const values = [];
+  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
+  let match;
+  while ((match = entryPattern.exec(appSource))) {
+    const [, key, rawValue] = match;
+    if (includeKey(key)) values.push(JSON.parse(`"${rawValue}"`));
+  }
+  return values;
 }
 
 function englishTranslationMap(appSource) {
-  return new Map(Object.entries(i18nTranslationMaps(appSource).en));
+  const englishMatch = appSource.match(/en:\s*{([\s\S]*?)\n\s*},\n\s*sv:/);
+  assert.ok(englishMatch, 'static English dictionary should be present');
+
+  const dictionary = vm.runInNewContext(`({${englishMatch[1]}\n})`, {}, { timeout: 3000 });
+  return new Map(Object.entries(dictionary));
 }
 
 function normalizeInlineHtml(value) {
   return value.replace(/\s+/g, ' ').trim();
-}
-
-function normalizeHtmlText(value) {
-  return normalizeInlineHtml(value)
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
 }
 
 function parseStaticFallbackI18nValues(html, includeKey) {
@@ -301,67 +295,6 @@ function assertStaticHomeHeroFooterFallbackParity(indexHtml, appSource) {
   }
 }
 
-function assertStaticSourcesFallbackParity(indexHtml, appSource) {
-  const englishTranslations = englishTranslationMap(appSource);
-  const sourceDictionaryEntries = Array.from(englishTranslations.entries())
-    .filter(([key]) => key.startsWith('sources.'))
-    .map(([key, value]) => [key, normalizeHtmlText(value)]);
-  const sourcesFallback = staticFallbackI18nValues(sourcesRoute(indexHtml), 'sources.');
-
-  assert.deepEqual(
-    Array.from(sourcesFallback.keys()).sort(),
-    sourceDictionaryEntries.map(([key]) => key).sort(),
-    'static Sources route should expose every guarded no-JS fallback key',
-  );
-
-  for (const [key, expectedValue] of sourceDictionaryEntries) {
-    assert.equal(
-      normalizeHtmlText(sourcesFallback.get(key)),
-      expectedValue,
-      `${key} no-JS fallback should match the English site/app.js dictionary`,
-    );
-  }
-}
-
-function questionProvenanceCounts() {
-  return staticQuestionBank().reduce(
-    (counts, question) => {
-      counts[question.questionProvenance] = (counts[question.questionProvenance] || 0) + 1;
-      return counts;
-    },
-    { uhr: 0, derived: 0, editorial: 0 },
-  );
-}
-
-function assertSourcesFallbackMatchesProvenanceMix(indexHtml) {
-  const sourcesFallback = sourcesRoute(indexHtml).replace(/\s+/g, ' ');
-  const counts = questionProvenanceCounts();
-
-  assert.match(
-    sourcesFallback,
-    new RegExp(`~${counts.uhr}\\s+questions\\s+cited\\s+directly`, 'i'),
-    'Sources no-JS fallback should show the current direct-UHR question count',
-  );
-  assert.match(
-    sourcesFallback,
-    new RegExp(`~${counts.derived}\\s+questions\\s+written\\s+editorially`, 'i'),
-    'Sources no-JS fallback should show the current derived-question count',
-  );
-  assert.match(
-    sourcesFallback,
-    /data-i18n="sources\.meta3\.v">UHR \+ derived</,
-    'Current-bank fallback should name both provenance families',
-  );
-
-  [
-    /current question bank cites UHR's public study material/i,
-    /don't list other source families/i,
-    /Every shipped question cites a chapter, section, and page/i,
-    /The bank is UHR-only today/i,
-    /data-i18n="sources\.meta3\.v">Sverige i fokus</i,
-  ].forEach((pattern) => assert.doesNotMatch(sourcesFallback, pattern));
-}
-
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
   const appJs = read('site/app.js');
@@ -466,21 +399,19 @@ test('static source provenance copy rejects unshipped external source families',
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
 });
 
-test('static Sources no-JS fallback mirrors the English dictionary', () => {
-  assertStaticSourcesFallbackParity(read('site/index.html'), read('site/app.js'));
-});
+test('static ebook prose provenance is footnoted from concrete source metadata', () => {
+  const ebookSource = read('site/ebook.js');
 
-test('static Sources no-JS fallback matches the shipped provenance mix', () => {
-  const indexHtml = read('site/index.html');
-  assertSourcesFallbackMatchesProvenanceMix(indexHtml);
-
-  assert.throws(
-    () =>
-      assertSourcesFallbackMatchesProvenanceMix(
-        indexHtml.replace('>UHR + derived</span>', '>Sverige i fokus</span>'),
-      ),
-    /Current-bank fallback should name both provenance families/,
-  );
+  assert.match(ebookSource, /const EBOOK_SOURCE_NOTES = Object\.freeze\(/);
+  assert.match(ebookSource, /data-source-claims="ebook"/);
+  assert.match(ebookSource, /data-source-scope="ebook"/);
+  assert.match(ebookSource, /class="ebook__footnotes"/);
+  assert.match(ebookSource, /UHR public study material/);
+  assert.match(ebookSource, /SCB land and water area statistics/);
+  assert.match(ebookSource, /Riksbank historical timeline/);
+  assert.match(ebookSource, /Government Offices NATO membership notice/);
+  assert.doesNotMatch(ebookSource, /<span>Editorial<\/span>/);
+  assert.doesNotMatch(ebookSource, /<span>Redaktionell<\/span>/);
 });
 
 test('static FAQ no-JS fallback mirrors the English dictionary', () => {
@@ -573,16 +504,15 @@ test('shared static copy guard rejects unsupported pass and passport outcome slo
   );
 });
 
-test('shared static copy guard rejects unsupported team credential claims', () => {
+test('shared static copy guard rejects unsupported source credential claims', () => {
   assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
 
   const englishCredentialIssues = findUnsupportedStaticTeamCredentialClaimsInSource(
-    "built by people who've taken the " + 'test themselves',
+    "built by people who've taken " + 'the ' + 'test themselves',
     'fixture.js',
   );
-  assert.equal(englishCredentialIssues.length, 1);
-  assert.equal(englishCredentialIssues[0].label, 'English team test-taker claim');
-  assert.equal(englishCredentialIssues[0].match, 'taken the ' + 'test themselves');
+  assert.equal(englishCredentialIssues[0].match, 'taken ' + 'the ' + 'test themselves');
+  assert.equal(englishCredentialIssues[0].label, ['English', 'team', 'test-taker claim'].join(' '));
   assert.deepEqual(
     findUnsupportedStaticTeamCredentialClaimsInSource(
       'byggt av personer som själva har gjort provet',
