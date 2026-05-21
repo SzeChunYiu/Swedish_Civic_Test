@@ -114,3 +114,26 @@ test('first-run about guide follows Swedish settings copy without mockprov wordi
   await expectNoStaleSwedishMockprovCopy(page);
   expect(consoleErrors.get()).toEqual([]);
 });
+
+test('about route keeps intentional English guide copy available', async ({ page }) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+
+  await seedEnglishSettingsOnce(page);
+  await page.goto('/about-the-test', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(
+    page.getByRole('heading', { name: 'What is the Swedish civic test?' }),
+  ).toBeVisible();
+  await expect(page.getByText('practice tests from other actors')).toBeVisible();
+
+  await resetFirstRunAboutGuide(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(1);
+  await expect(
+    page.getByRole('heading', { name: 'What is the Swedish civic test?' }),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open the about-the-test guide' })).toBeVisible();
+  expect(consoleErrors.get()).toEqual([]);
+});
