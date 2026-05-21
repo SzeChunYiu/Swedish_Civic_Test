@@ -20,6 +20,7 @@
     "test:question-text": "node --test scripts/question-text.test.js",
     "test:answer-shuffle": "node --test scripts/answer-shuffle.test.js",
     "test:correct-display-position": "npm run test:answer-shuffle && npm run test:static-site-answer-shuffle && node scripts/validate-content.js --focus-answer-shuffle-parity",
+    "test:xp-rules": "node --test tests/content-test-script-routing.test.js tests/content-xp-rules-parity.test.js scripts/learning.test.js --test-name-pattern \"XP|xp|calculateAnswerXp|calculateQuizCompletionXp|calculateLevel|dispatcher|selector\"",
     "test": "node scripts/test-dispatch.js",
     "test:content-focused": "node scripts/test-dispatch.js content-focused",
     "test:audio": "node --test scripts/audio.test.js",

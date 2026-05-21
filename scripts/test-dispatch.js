@@ -17,6 +17,13 @@ const selectors = new Map([
       description: 'P0 answer-shuffle distribution, stability, and static scoring gate',
     },
   ],
+  [
+    'xp',
+    {
+      script: 'test:xp-rules',
+      description: 'focused XP rules parity gate',
+    },
+  ],
 ]);
 
 function supportedSelectorText() {
