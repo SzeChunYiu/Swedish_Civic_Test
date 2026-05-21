@@ -352,6 +352,12 @@ test('generated true/false naturalness guards share one pattern source', () => {
   assert.match(patternSource, /definition-cleft/);
   assert.match(patternSource, /answer-fragment/);
   assert.match(patternSource, /answer-scaffold/);
+  assert.match(patternSource, /stablePatternRuleId/);
+  assert.doesNotMatch(
+    patternSource,
+    /map\(\(pattern,\s*index\)/,
+    'generated true/false naturalness rule ids must not be derived from array position',
+  );
 });
 
 test('Mistakes route copy parity uses focused content validation routing', () => {
