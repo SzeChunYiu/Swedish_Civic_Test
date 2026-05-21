@@ -1,20 +1,14 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import type { AppLanguage } from './browserLaunch';
+import {
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
+  type AppLanguage,
+} from './browserLaunch';
 
 const removeAdsStorageKey = 'monetization.removeAds.adsDisabled.v1';
 const removeAdsProductId = 'com.billyyiu.almostswedish.removeads';
-const settingsLanguageKey = 'settings\\language';
-const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 const entitlementHydrationDelayMs = 4000;
-
-type RemoveAdsDelayWindow = Window &
-  typeof globalThis & {
-    __SMT_E2E__?: boolean;
-    __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS?: number;
-    __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
-  };
 
 type StoredRemoveAdsRecord = {
   grantedAt: string;
@@ -39,54 +33,28 @@ function collectConsoleErrors(page: Page) {
 }
 
 async function seedDelayedPurchasedProfile(page: Page, language: AppLanguage) {
-  await page.addInitScript(
-    ({
-      delayMs,
-      language,
-      languageKey,
-      productId,
-      seenKey,
-      storageKey,
-    }: {
-      delayMs: number;
-      language: AppLanguage;
-      languageKey: string;
-      productId: string;
-      seenKey: string;
-      storageKey: string;
-    }) => {
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-      window.localStorage.setItem(languageKey, language);
-      window.localStorage.setItem(seenKey, 'true');
+  const now = '2026-05-19T00:00:00.000Z';
+  const storedRecord: StoredRemoveAdsRecord = {
+    grantedAt: now,
+    productId: removeAdsProductId,
+    purchaseToken: 'e2e-profile-pending-token',
+    receiptValidatedAt: now,
+    receiptValidationStatus: 'valid',
+    schemaVersion: 1,
+    source: 'purchase',
+    transactionId: 'e2e-profile-pending-transaction',
+  };
 
-      const now = '2026-05-19T00:00:00.000Z';
-      const storedRecord: StoredRemoveAdsRecord = {
-        grantedAt: now,
-        productId,
-        purchaseToken: 'e2e-profile-pending-token',
-        receiptValidatedAt: now,
-        receiptValidationStatus: 'valid',
-        schemaVersion: 1,
-        source: 'purchase',
-        transactionId: 'e2e-profile-pending-transaction',
-      };
-
-      window.localStorage.setItem(storageKey, JSON.stringify(storedRecord));
-      const e2eWindow = window as RemoveAdsDelayWindow;
-      e2eWindow.__SMT_E2E__ = true;
-      e2eWindow.__SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS = delayMs;
-      e2eWindow.__SMT_REMOVE_ADS_MOCK_OWNED__ = true;
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: {
+      [removeAdsStorageKey]: JSON.stringify(storedRecord),
     },
-    {
-      delayMs: entitlementHydrationDelayMs,
-      language,
-      languageKey: settingsLanguageKey,
-      productId: removeAdsProductId,
-      seenKey: settingsSeenAboutKey,
-      storageKey: removeAdsStorageKey,
+    windowValues: {
+      __SMT_E2E__: true,
+      __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS: entitlementHydrationDelayMs,
+      __SMT_REMOVE_ADS_MOCK_OWNED__: true,
     },
-  );
+  });
 }
 
 test.use({ viewport: { width: 390, height: 844 } });

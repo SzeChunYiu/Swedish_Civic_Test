@@ -31,6 +31,12 @@ const settingsSeenAboutStorageKeys = [
 export const blockingModalOverlayLocator =
   '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
 const dialogLocator = blockingModalOverlayLocator;
+type BrowserInitWindowValue = boolean | null | number | string;
+
+type FreshSettingsSeedOptions = {
+  localStorageValues?: Record<string, string>;
+  windowValues?: Record<string, BrowserInitWindowValue>;
+};
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -87,15 +93,27 @@ export async function seedFreshSettingsLanguageAndAboutSeen(
   page: Page,
   language: AppLanguage,
 ): Promise<void> {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language);
+}
+
+export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
+  page: Page,
+  language: AppLanguage,
+  { localStorageValues = {}, windowValues = {} }: FreshSettingsSeedOptions = {},
+): Promise<void> {
   await page.addInitScript(
     ({
       language: seededLanguage,
       languageKeys,
       seenKeys,
+      storageValues,
+      windowValues,
     }: {
       language: AppLanguage;
       languageKeys: readonly string[];
       seenKeys: readonly string[];
+      storageValues: Record<string, string>;
+      windowValues: Record<string, BrowserInitWindowValue>;
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
@@ -105,11 +123,19 @@ export async function seedFreshSettingsLanguageAndAboutSeen(
       for (const seenKey of seenKeys) {
         window.localStorage.setItem(seenKey, 'true');
       }
+      for (const [key, value] of Object.entries(storageValues)) {
+        window.localStorage.setItem(key, value);
+      }
+      for (const [key, value] of Object.entries(windowValues)) {
+        (window as unknown as Record<string, BrowserInitWindowValue>)[key] = value;
+      }
     },
     {
       language,
       languageKeys: settingsLanguageStorageKeys,
       seenKeys: settingsSeenAboutStorageKeys,
+      storageValues: localStorageValues,
+      windowValues,
     },
   );
 }
