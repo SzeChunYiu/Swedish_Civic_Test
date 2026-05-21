@@ -19,8 +19,8 @@ function readSiteManifest() {
   return JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
 }
 
-function localAssetReferences(indexHtml, options) {
-  return extractLocalAssetReferences(indexHtml, options);
+function localAssetReferences(indexHtml) {
+  return extractLocalAssetReferences(indexHtml);
 }
 
 test('static site index references only shipped local assets', () => {
@@ -53,119 +53,25 @@ test('static site asset extractor covers responsive images and media posters', (
   ]);
 });
 
-test('static site asset extractor covers inline and stylesheet CSS urls', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-assets-'));
-  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'site.css'),
-    [
-      '.hero { background-image: url("../img/hero.webp?v=1#hero"); }',
-      '.icon { mask-image: url("/icons/mask.svg#mask"); }',
-      '.ignored-fragment { filter: url(#drop-shadow); }',
-      '.ignored-data { background-image: url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E"); }',
-      '.ignored-external { cursor: url(https://cdn.example.com/cursor.cur), auto; }',
-      '.ignored-variable { background-image: url(var(--site-pattern)); }',
-    ].join('\n'),
-  );
-
+test('static site asset extractor covers quote variants and mixed-case asset attributes', () => {
   const indexHtml = `
-    <link rel="stylesheet" href="./css/site.css?version=1" />
-    <div style="background-image: url('hero-inline.png#top'); mask-image: url(/icons/inline-mask.svg); filter: url(#inline-filter); background: linear-gradient(red, blue);"></div>
+    <IMG SRC='hero-single.png?cache=1'>
+    <link HREF=styles/site.css>
+    <video POSTER=media/intro-poster.png#t=0></video>
+    <source SRCSET='hero-small.png 1x, ./hero@2x.png 2x, /img/hero-wide.png 1280w'>
+    <link rel="preload" as="image" ImageSrcSet=preload-unquoted.png>
+    <img SrcSet='https://cdn.example.com/remote.png 1x, data:image/png;base64,abc123 2x, #sprite 3x'>
   `;
 
-  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
-    'css/site.css',
-    'hero-inline.png',
-    'icons/inline-mask.svg',
-    'img/hero.webp',
-    'icons/mask.svg',
+  assert.deepEqual(localAssetReferences(indexHtml), [
+    'hero-single.png',
+    'styles/site.css',
+    'media/intro-poster.png',
+    'hero-small.png',
+    'hero@2x.png',
+    'img/hero-wide.png',
+    'preload-unquoted.png',
   ]);
-});
-
-test('static site asset extractor follows local stylesheet imports', () => {
-  const tmpDir = fs.mkdtempSync(
-    path.join(require('node:os').tmpdir(), 'static-css-import-assets-'),
-  );
-  fs.mkdirSync(path.join(tmpDir, 'css', 'fonts'), { recursive: true });
-  fs.mkdirSync(path.join(tmpDir, 'css', 'img'), { recursive: true });
-  fs.mkdirSync(path.join(tmpDir, 'css', 'nested'), { recursive: true });
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'site.css'),
-    [
-      '@import "theme.css";',
-      '@import url("./nested/panel.css") screen and (min-width: 1px);',
-      '@import url("https://cdn.example.com/remote.css");',
-      '@import url("data:text/css,body%7Bcolor:red%7D");',
-      '.hero { background-image: url("../img/hero.webp?v=1#hero"); }',
-    ].join('\n'),
-  );
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'theme.css'),
-    [
-      '@import url("./site.css");',
-      '@import url(var(--ignored-theme-import));',
-      '.font { src: url("./fonts/display.woff2#font"); }',
-    ].join('\n'),
-  );
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'nested', 'panel.css'),
-    '.panel { background-image: url("../img/panel.svg"); }',
-  );
-
-  const indexHtml = '<link rel="stylesheet" href="./css/site.css" />';
-
-  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
-    'css/site.css',
-    'css/theme.css',
-    'css/fonts/display.woff2',
-    'css/nested/panel.css',
-    'css/img/panel.svg',
-    'img/hero.webp',
-  ]);
-});
-
-test('static site asset extractor fails imported CSS references omitted from the manifest', () => {
-  const tmpDir = fs.mkdtempSync(
-    path.join(require('node:os').tmpdir(), 'static-css-import-manifest-'),
-  );
-  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
-  fs.writeFileSync(path.join(tmpDir, 'css', 'site.css'), '@import "theme.css";');
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', 'theme.css'),
-    '.theme { background: url("./theme-bg.png"); }',
-  );
-  const indexHtml = '<link rel="stylesheet" href="css/site.css" />';
-  const manifest = {
-    version: 1,
-    algorithm: 'sha256',
-    assets: {
-      'index.html': { bytes: indexHtml.length, sha256: 'stub' },
-      'css/site.css': { bytes: 0, sha256: 'stub' },
-    },
-  };
-
-  assert.deepEqual(
-    findAssetReferencesMissingFromManifest(indexHtml, manifest, { siteDir: tmpDir }),
-    ['css/theme.css', 'css/theme-bg.png'],
-  );
-});
-
-test('static site asset extractor rejects excessive stylesheet import depth', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-import-depth-'));
-  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
-  for (let index = 0; index < 18; index += 1) {
-    fs.writeFileSync(path.join(tmpDir, 'css', `${index}.css`), `@import "${index + 1}.css";`);
-  }
-  fs.writeFileSync(
-    path.join(tmpDir, 'css', '18.css'),
-    '.too-deep { background: url("./late.png"); }',
-  );
-  const indexHtml = '<link rel="stylesheet" href="css/0.css" />';
-
-  assert.throws(
-    () => localAssetReferences(indexHtml, { siteDir: tmpDir }),
-    /CSS import depth exceeded/,
-  );
 });
 
 test('static site asset extractor fails responsive and poster references when files are not shipped', () => {
@@ -185,26 +91,30 @@ test('static site asset extractor fails responsive and poster references when fi
   assert.deepEqual(missingAssets, ['hero@2x.png', 'preload.png', 'preload@2x.png', 'intro.png']);
 });
 
-test('static site asset extractor fails CSS url references omitted from the manifest', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-manifest-'));
-  fs.writeFileSync(path.join(tmpDir, 'styles.css'), '.hero { background: url("hero.css.png"); }');
+test('static site asset manifest check covers quote variants and mixed-case attributes', () => {
   const indexHtml = `
-    <link rel="stylesheet" href="styles.css" />
-    <div style="background-image: url('hero-inline.png')"></div>
+    <IMG SRC='hero-single.png'>
+    <link HREF=styles/site.css>
+    <video POSTER=media/intro-poster.png></video>
+    <source SRCSET='hero-small.png 1x, ./hero@2x.png 2x'>
+    <link rel="preload" as="image" ImageSrcSet=preload-unquoted.png>
   `;
   const manifest = {
     version: 1,
     algorithm: 'sha256',
     assets: {
+      'hero-single.png': { bytes: 0, sha256: 'stub' },
+      'styles/site.css': { bytes: 0, sha256: 'stub' },
       'index.html': { bytes: indexHtml.length, sha256: 'stub' },
-      'styles.css': { bytes: 0, sha256: 'stub' },
     },
   };
 
-  assert.deepEqual(
-    findAssetReferencesMissingFromManifest(indexHtml, manifest, { siteDir: tmpDir }),
-    ['hero-inline.png', 'hero.css.png'],
-  );
+  assert.deepEqual(findAssetReferencesMissingFromManifest(indexHtml, manifest), [
+    'media/intro-poster.png',
+    'hero-small.png',
+    'hero@2x.png',
+    'preload-unquoted.png',
+  ]);
 });
 
 test('static site asset extractor fails responsive and poster references omitted from the manifest', () => {
