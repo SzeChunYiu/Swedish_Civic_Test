@@ -9538,6 +9538,38 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      const webAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
+      const nativeAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
+
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/.test(
+          webAdBannerSource,
+        )
+      ) {
+        reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('AdBanner native placement must resolve banner units by Platform.OS');
+        routeIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          nativeAdBannerSource,
+        )
+      ) {
+        reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
