@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { REMOVE_ADS_PRICE_LABEL } from '../../lib/monetization/purchases';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 /**
  * Defaults: renders a compact Remove Ads value statement with the canonical
@@ -28,6 +30,8 @@ const copy = {
 
 export function PricingWedge({ questionCount, chapterCount, language }: PricingWedgeProps) {
   const t = copy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const proof = t.proof(questionCount, chapterCount);
   const pitch = t.pitch(REMOVE_ADS_PRICE_LABEL);
 
@@ -43,27 +47,29 @@ export function PricingWedge({ questionCount, chapterCount, language }: PricingW
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: colors.successSoft,
-    borderColor: colors.success,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    padding: space[2],
-  },
-  proof: {
-    color: colors.success,
-    fontFamily: typography.badge.fontFamily,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textTransform: 'uppercase',
-  },
-  pitch: {
-    color: colors.text,
-    fontFamily: typography.bodyTight.fontFamily,
-    fontSize: typography.bodyTight.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    wrapper: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      padding: space[2],
+    },
+    proof: {
+      color: themeColors.success,
+      fontFamily: typography.badge.fontFamily,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textTransform: 'uppercase',
+    },
+    pitch: {
+      color: themeColors.text,
+      fontFamily: typography.bodyTight.fontFamily,
+      fontSize: typography.bodyTight.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+  });
+}

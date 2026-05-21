@@ -6,6 +6,18 @@ const test = require('node:test');
 
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
+const MONETIZATION_THEME_SURFACES = [
+  'components/monetization/AdBanner.tsx',
+  'components/monetization/AdBanner.native.tsx',
+  'components/monetization/LaunchPopupAd.tsx',
+  'components/monetization/NativeAdCard.tsx',
+  'components/monetization/NativeAdCard.native.tsx',
+  'components/monetization/PracticeInterstitialAd.tsx',
+  'components/monetization/PremiumBanner.tsx',
+  'components/monetization/PricingWedge.tsx',
+  'components/monetization/ProPaywall.tsx',
+  'components/monetization/RemoveAdsPlacementCta.tsx',
+];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
@@ -242,6 +254,33 @@ test('utility routes resolve semantic colors from the active theme', () => {
   assert.match(citizenshipSource, /function createStyles\(themeColors: ThemeColors\)/);
   assert.match(citizenshipSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
   assert.match(citizenshipSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+});
+
+test('monetization surfaces resolve semantic colors from the active theme', () => {
+  for (const componentPath of MONETIZATION_THEME_SURFACES) {
+    const source = read(componentPath);
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should read the active theme color context`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should derive styles from ThemeColors`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+      `${componentPath} must not import the static light color singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} must not read static colors.* values`,
+    );
+  }
 });
 
 test('theme content validation parser keeps one token schema validator', () => {

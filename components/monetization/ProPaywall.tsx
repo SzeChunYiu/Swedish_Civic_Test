@@ -18,7 +18,8 @@ import {
   type ProLifetimeRuntimeOptions,
 } from '../../lib/monetization/proLifetimePurchase';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { ProTierEntitlements } from '../../types/monetization';
 import { createDefaultProLifetimeRuntimeOptions } from '../../lib/monetization/useProLifetimeEntitlements';
 import { Button } from '../ui/Button';
@@ -155,6 +156,8 @@ export function ProPaywall({
   const [activeAction, setActiveAction] = useState<ProAction | null>(null);
   const [status, setStatus] = useState<ProPaywallStatus>('idle');
   const purchaseActionInFlightRef = useRef(false);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const purchaseRuntime = useMemo<ProLifetimeRuntimeOptions>(
     () => runtimeOptions ?? createDefaultProLifetimeRuntimeOptions(),
     [runtimeOptions],
@@ -295,101 +298,103 @@ export function ProPaywall({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    gap: space[0.75],
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  body: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  table: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: space.hairline,
-    overflow: 'hidden',
-  },
-  row: {
-    alignItems: 'stretch',
-    borderColor: colors.border,
-    borderTopWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[0.75],
-    paddingHorizontal: space[1],
-    paddingVertical: space[1],
-  },
-  headerRow: {
-    backgroundColor: colors.surfaceMuted,
-    borderTopWidth: space[0],
-  },
-  featureCell: {
-    color: colors.text,
-    flex: 1.35,
-    fontSize: typography.finePrint.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  columnHeader: {
-    color: colors.textMuted,
-  },
-  tierHeaderCell: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  tierName: {
-    color: colors.text,
-    fontSize: typography.finePrint.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  tierPrice: {
-    color: colors.textMuted,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  tierCell: {
-    color: colors.textSecondary,
-    flex: 1,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  actionButton: {
-    minWidth: 132,
-  },
-  secondaryPath: {
-    color: colors.textSecondary,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  status: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  priceNote: {
-    color: colors.textPlaceholder,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      gap: space[0.75],
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    body: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    table: {
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
+      overflow: 'hidden',
+    },
+    row: {
+      alignItems: 'stretch',
+      borderColor: themeColors.border,
+      borderTopWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[0.75],
+      paddingHorizontal: space[1],
+      paddingVertical: space[1],
+    },
+    headerRow: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderTopWidth: space[0],
+    },
+    featureCell: {
+      color: themeColors.text,
+      flex: 1.35,
+      fontSize: typography.finePrint.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    columnHeader: {
+      color: themeColors.textMuted,
+    },
+    tierHeaderCell: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    tierName: {
+      color: themeColors.text,
+      fontSize: typography.finePrint.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    tierPrice: {
+      color: themeColors.textMuted,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    tierCell: {
+      color: themeColors.textSecondary,
+      flex: 1,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    actionButton: {
+      minWidth: 132,
+    },
+    secondaryPath: {
+      color: themeColors.textSecondary,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    status: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    priceNote: {
+      color: themeColors.textPlaceholder,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+  });
+}

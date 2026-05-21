@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import {
   NativeAd,
@@ -18,7 +18,8 @@ import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetiza
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 export function NativeAdCard({
@@ -29,6 +30,8 @@ export function NativeAdCard({
   const language = useSettingsStore((state) => state.language);
   const resultsNativeUnit = getAdUnit('results_native');
   const copy = getNativeAdCardCopy(language, { testOnly: resultsNativeUnit?.testOnly });
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
   const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
@@ -172,70 +175,72 @@ export function NativeAdCard({
   );
 }
 
-const styles = StyleSheet.create({
-  advertiser: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    marginTop: space[0.5],
-  },
-  card: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1],
-    overflow: 'hidden',
-    padding: space[2],
-  },
-  cta: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.small,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.75],
-    textAlign: 'center',
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1],
-  },
-  headerCopy: {
-    flex: 1,
-  },
-  icon: {
-    borderRadius: radius.micro,
-    height: space[6],
-    width: space[6],
-  },
-  media: {
-    borderRadius: radius.micro,
-    minHeight: space[15],
-    overflow: 'hidden',
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  summary: {
-    gap: space[1],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    marginTop: space[0.5],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    advertiser: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      marginTop: space[0.5],
+    },
+    card: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1],
+      overflow: 'hidden',
+      padding: space[2],
+    },
+    cta: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.small,
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.75],
+      textAlign: 'center',
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    header: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[1],
+    },
+    headerCopy: {
+      flex: 1,
+    },
+    icon: {
+      borderRadius: radius.micro,
+      height: space[6],
+      width: space[6],
+    },
+    media: {
+      borderRadius: radius.micro,
+      minHeight: space[15],
+      overflow: 'hidden',
+    },
+    meta: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    summary: {
+      gap: space[1],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      marginTop: space[0.5],
+    },
+  });
+}

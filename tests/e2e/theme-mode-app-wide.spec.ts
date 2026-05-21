@@ -1,0 +1,183 @@
+import { expect, test, type Locator, type Page } from '@playwright/test';
+
+import { darkColors } from '../../lib/theme';
+import {
+  dismissBlockingModals,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
+} from './browserLaunch';
+
+const accessibilityThemeModeKey = 'accessibility\\a11y.themeMode.v1';
+const mobileViewport = { width: 390, height: 844 };
+
+function hexToRgb(hexColor: string) {
+  const hex = hexColor.replace('#', '');
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+
+  return `rgb(${red}, ${green}, ${blue})`;
+}
+
+async function computedColors(locator: Locator) {
+  return locator.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+
+    return {
+      backgroundColor: style.backgroundColor,
+      borderColor: style.borderTopColor,
+      color: style.color,
+    };
+  });
+}
+
+async function expectComputedColor(
+  locator: Locator,
+  property: 'backgroundColor' | 'borderColor' | 'color',
+  expectedHexColor: string,
+  message: string,
+) {
+  await expect
+    .poll(async () => (await computedColors(locator))[property], { message })
+    .toBe(hexToRgb(expectedHexColor));
+}
+
+async function seedDarkEnglishMonetization(page: Page) {
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
+    localStorageValues: {
+      [accessibilityThemeModeKey]: 'dark',
+    },
+    windowValues: {
+      __SMT_E2E__: true,
+      __SMT_ENABLE_PRO_RUNTIME_SCOPE__: true,
+      __SMT_PRO_LIFETIME_MOCK_OWNED__: false,
+      __SMT_REMOVE_ADS_MOCK_OWNED__: false,
+    },
+  });
+}
+
+test.use({ viewport: mobileViewport });
+
+test('home monetization ad surfaces use dark theme tokens', async ({ page }) => {
+  await seedDarkEnglishMonetization(page);
+  await page.goto('/home', { waitUntil: 'networkidle' });
+
+  const launchCloseButton = page.getByRole('button', { name: 'Close launch sponsor ad' });
+  if (await launchCloseButton.isVisible().catch(() => false)) {
+    await expectComputedColor(
+      page.getByText('Launch sponsor', { exact: true }),
+      'color',
+      darkColors.text,
+      'Launch popup title should use the dark text token',
+    );
+    await expectComputedColor(
+      launchCloseButton,
+      'backgroundColor',
+      darkColors.accent,
+      'Launch popup close button should use the dark accent token',
+    );
+  }
+
+  await dismissBlockingModals(page);
+
+  const pricingWedge = page
+    .getByLabel(/practice questions across \d+ chapters\. Remove ads forever for 29 SEK/)
+    .first();
+  await pricingWedge.scrollIntoViewIfNeeded();
+  await expect(pricingWedge).toBeVisible();
+  await expectComputedColor(
+    pricingWedge,
+    'backgroundColor',
+    darkColors.successSoft,
+    'Pricing wedge should use the dark success surface token',
+  );
+  await expectComputedColor(
+    pricingWedge,
+    'borderColor',
+    darkColors.success,
+    'Pricing wedge should use the dark success border token',
+  );
+  await expectComputedColor(
+    page.getByText(/practice questions across \d+ chapters/).first(),
+    'color',
+    darkColors.success,
+    'Pricing wedge proof text should use the dark success text token',
+  );
+
+  const adBanner = page.getByLabel(/Google AdMob: Home banner/).first();
+  await adBanner.scrollIntoViewIfNeeded();
+  await expect(adBanner).toBeVisible();
+  await expectComputedColor(
+    adBanner,
+    'backgroundColor',
+    darkColors.surface,
+    'Home ad fallback card should use the dark card surface token',
+  );
+  await expectComputedColor(
+    page.getByText('Google AdMob', { exact: true }).first(),
+    'color',
+    darkColors.badgeBlueText,
+    'Home ad fallback eyebrow should use the dark badge text token',
+  );
+  await expectComputedColor(
+    page.getByText('AdMob test unit active - preview', { exact: true }).first(),
+    'color',
+    darkColors.textMuted,
+    'Home ad fallback status should use the dark muted text token',
+  );
+});
+
+test('profile Remove Ads and Pro surfaces use dark theme tokens', async ({ page }) => {
+  await seedDarkEnglishMonetization(page);
+  await page.goto('/profile', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const removeAdsTitle = page.getByRole('heading', { name: 'Remove Ads' }).first();
+  await removeAdsTitle.scrollIntoViewIfNeeded();
+  await expect(removeAdsTitle).toBeVisible();
+  await expectComputedColor(
+    removeAdsTitle,
+    'color',
+    darkColors.text,
+    'Remove Ads title should use the dark text token',
+  );
+  await expectComputedColor(
+    page.getByText(/Free study keeps AdMob ads on/).first(),
+    'color',
+    darkColors.textMuted,
+    'Remove Ads body should use the dark muted text token',
+  );
+  await expectComputedColor(
+    page.getByLabel(/Remove Ads status:/).first(),
+    'color',
+    darkColors.textMuted,
+    'Remove Ads status should use the dark muted text token',
+  );
+
+  const proTitle = page.getByRole('heading', { name: 'Compare Free, Ad-Free, and Pro' }).first();
+  await proTitle.scrollIntoViewIfNeeded();
+  await expect(proTitle).toBeVisible();
+  await expectComputedColor(
+    page.getByText('Pro Lifetime', { exact: true }).first(),
+    'color',
+    darkColors.badgeBlueText,
+    'Pro eyebrow should use the dark badge text token',
+  );
+  await expectComputedColor(
+    proTitle,
+    'color',
+    darkColors.text,
+    'Pro title should use the dark text token',
+  );
+  await expectComputedColor(
+    page.getByLabel(/Pro status:/).first(),
+    'color',
+    darkColors.textMuted,
+    'Pro status should use the dark muted text token',
+  );
+  await expectComputedColor(
+    page.getByText('59 SEK', { exact: true }).last(),
+    'color',
+    darkColors.textPlaceholder,
+    'Pro price note should use the dark placeholder text token',
+  );
+});

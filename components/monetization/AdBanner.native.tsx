@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
@@ -6,7 +7,8 @@ import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetiza
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
-import { colors, radius, space } from '../../lib/theme';
+import { radius, space, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { BannerAdPlacement, PremiumEntitlements } from '../../types/monetization';
 
 export function AdBanner({
@@ -18,6 +20,8 @@ export function AdBanner({
 }) {
   const language = useSettingsStore((state) => state.language);
   const copy = adBannerCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
   const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
@@ -57,14 +61,16 @@ export function AdBanner({
   );
 }
 
-const styles = StyleSheet.create({
-  nativeSlot: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    overflow: 'hidden',
-    paddingVertical: space[1],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    nativeSlot: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      overflow: 'hidden',
+      paddingVertical: space[1],
+    },
+  });
+}
