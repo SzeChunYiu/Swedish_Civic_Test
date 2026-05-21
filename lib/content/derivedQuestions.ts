@@ -787,6 +787,26 @@ function decisionStatementEn(subject: string, context: string, answer: string): 
   return `${upperFirst(subject)} decided as ${context} that ${normalizedAnswer}`;
 }
 
+function compactEventContextSv(context: string): string {
+  return context.trim().replace(/,\s*ett datum\b.*$/i, '');
+}
+
+function compactEventContextEn(context: string): string {
+  return context.trim().replace(/,\s*a date\b.*$/i, '');
+}
+
+function eventStatementSv(context: string, answer: string): string {
+  return `Händelsen ${compactEventContextSv(context)} var att ${lowerLeadingSwedishCommonStart(
+    answer,
+  )}`;
+}
+
+function eventStatementEn(context: string, answer: string): string {
+  return `The event ${compactEventContextEn(context)} was that ${lowerLeadingEnglishArticle(
+    answer,
+  )}`;
+}
+
 function supportStatementSv(subject: string, answer: string): string {
   if (/^En\s+/i.test(answer)) return `${upperFirst(subject)} är ${lowerFirst(answer)}`;
   return replaceLeadingSwedishSubject(subject, answer);
@@ -1480,6 +1500,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad beslutade (.+?) som (.+)$/i);
   if (match) return decisionStatementSv(match[1], match[2], answer);
 
+  match = q.match(/^Vad hände (.+)$/i);
+  if (match) return eventStatementSv(match[1], answer);
+
   match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hölls ${answer}`;
 
@@ -1980,6 +2003,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What did (.+?) decide as (.+)$/i);
   if (match) return decisionStatementEn(match[1], match[2], answer);
+
+  match = q.match(/^What happened (.+)$/i);
+  if (match) return eventStatementEn(match[1], answer);
 
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
