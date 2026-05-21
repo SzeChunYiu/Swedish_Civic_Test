@@ -1,0 +1,132 @@
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..9c36463be 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -7887,6 +7887,8 @@ let homeRouteCopyLabelsValidated = 0;
+ let homeRouteCopyParityValidated = false;
+ let homeRouteInternalBenchmarkCopyValidated = false;
+ let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
++let searchRouteQueryHydrationRulesValidated = 0;
++let searchRouteQueryHydrationParityValidated = false;
+ let aboutTheTestRouteCopyLabelsValidated = 0;
+ let aboutTheTestRouteCopyParityValidated = false;
+ let aboutTheTestOfficialSourceUrlsValidated = 0;
+@@ -8311,6 +8313,16 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-search-route-query-hydration')) {
++  validateSearchRouteQueryHydrationParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    searchRouteQueryHydrationRulesValidated,
++    searchRouteQueryHydrationParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (!Array.isArray(chapters)) fail('chapters export is not an array');
+ if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
+ if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
+@@ -10802,6 +10814,84 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
+   if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
+ }
+ 
++function validateSearchRouteQueryHydrationParity() {
++  let valid = true;
++  let searchRoute = '';
++
++  function reject(message) {
++    valid = false;
++    fail(message);
++  }
++
++  try {
++    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
++  } catch (error) {
++    reject(`app/search.tsx could not be read for query hydration parity: ${error.message}`);
++    return;
++  }
++
++  const requiredRules = [
++    [
++      /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
++      'route params and router import',
++    ],
++    [
++      /type SearchRouteParams = \{[\s\S]*q\?: string \| string\[\];[\s\S]*query\?: string \| string\[\];[\s\S]*\};/,
++      'q and query route param support',
++    ],
++    [
++      /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
++      'local search params read',
++    ],
++    [/const routeQuery = getRouteSearchQuery\(searchParams\);/, 'route query resolution'],
++    [/const \[query, setQuery\] = useState\(\(\) => routeQuery\);/, 'route query initial state'],
++    [/const previousRouteQueryRef = useRef\(routeQuery\);/, 'route query sync ref'],
++    [
++      /useEffect\(\(\) => \{[\s\S]*if \(previousRouteQueryRef\.current === routeQuery\) return;/,
++      'unchanged route query guard',
++    ],
++    [/previousRouteQueryRef\.current = routeQuery;/, 'route query sync ref update'],
++    [/setQuery\(routeQuery\);/, 'route query state resync'],
++    [/\}, \[routeQuery\]\);/, 'route query sync dependency'],
++    [/function getFirstSearchParamValue/, 'single-value route param helper'],
++    [/Array\.isArray\(value\) \? value\[0\] : value/, 'array route param support'],
++    [/function getRouteSearchQuery\(params: SearchRouteParams\)/, 'route query helper'],
++    [
++      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
++      'q then query fallback order',
++    ],
++    [/onChangeText=\{setQuery\}/, 'manual typing remains controlled'],
++    [/const handleClearSearch = \(\) => \{/, 'clear search handler'],
++    [/setQuery\(''\);/, 'clear search state reset'],
++    [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
++    [/onPress=\{handleClearSearch\}/, 'clear search uses URL-aware handler'],
++    [/const handleSubmitSearch = \(\) => \{/, 'submit search handler'],
++    [/const submittedQuery = query\.trim\(\);/, 'submit trims typed query'],
++    [
++      /if \(submittedQuery\.length === 0\) \{[\s\S]*handleClearSearch\(\);/,
++      'empty submit clears URL state',
++    ],
++    [/setQuery\(submittedQuery\);/, 'submitted query normalizes visible input'],
++    [
++      /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
++      'non-empty submit writes q URL param',
++    ],
++    [/onSubmitEditing=\{handleSubmitSearch\}/, 'search return key submits query'],
++  ];
++
++  for (const [pattern, label] of requiredRules) {
++    if (pattern.test(searchRoute)) {
++      searchRouteQueryHydrationRulesValidated += 1;
++    } else {
++      reject(`Search route missing ${label}`);
++    }
++  }
++
++  if (valid && searchRouteQueryHydrationRulesValidated === requiredRules.length) {
++    searchRouteQueryHydrationParityValidated = true;
++  }
++}
++
+ function validateAboutTheTestRouteCopyParity() {
+   let valid = true;
+   let aboutRoute = '';
+@@ -17785,6 +17875,7 @@ validateProfileRouteCopyParity();
+ validateHomeRouteHeaderParity();
+ validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+ validateHomeRouteCopyParity();
++validateSearchRouteQueryHydrationParity();
+ validateAboutTheTestRouteCopyParity();
+ validateMistakesRouteHeaderParity();
+ validateMistakesRouteCopyParity();
+@@ -17935,6 +18026,8 @@ console.log(
+       homeRouteCopyParityValidated,
+       homeRouteInternalBenchmarkCopyValidated,
+       homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
++      searchRouteQueryHydrationRulesValidated,
++      searchRouteQueryHydrationParityValidated,
+       aboutTheTestRouteCopyLabelsValidated,
+       aboutTheTestRouteCopyParityValidated,
+       aboutTheTestOfficialSourceUrlsValidated,

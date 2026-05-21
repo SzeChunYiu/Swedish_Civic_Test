@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Add `--focus-readiness-adapter-rules` as a short-circuit content validator path.\n- Mirror six readiness adapter runtime cases into validator summary counters.\n- Add learning and routing tests for malformed study/mock counters and focused validator discovery.\n\n## Validation\n- `node scripts/validate-content.js --focus-readiness-adapter-rules`\n- `node --test tests/content-test-script-routing.test.js scripts/learning.test.js --test-name-pattern \"readiness adapter|focus-readiness|finite|counter|mock totals|string counts\"`\n- `npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `git diff --check HEAD~1..HEAD`",
+  "files": [
+    {
+      "path": "scripts/learning.test.js",
+      "additions": 63,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 216,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-test-script-routing.test.js",
+      "additions": 20,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/readiness-adapter-focus-1779354920-3866914",
+  "headRefOid": "99e0b3fa833e05b61e0e2a7bcace1fe80d52eb5c",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2299,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:23:34Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217316235/job/77142981317",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:22:37Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Add readiness adapter focused validator gate",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2299"
+}

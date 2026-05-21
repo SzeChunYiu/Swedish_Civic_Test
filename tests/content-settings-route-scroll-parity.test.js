@@ -28,7 +28,7 @@ test('settings route keeps mobile content inside a scrollable root', () => {
   assert.equal(summary.settingsRouteScrollParityValidated, true);
   assert.match(
     source,
-    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*useColorScheme,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
+    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
   );
   assert.match(
     source,

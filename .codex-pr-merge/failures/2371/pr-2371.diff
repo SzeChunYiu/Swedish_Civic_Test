@@ -1,0 +1,109 @@
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..0d6e7104c 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -33,6 +33,7 @@ const {
+   summarizePinnedCwdCalls,
+ } = require('./content-exec-cwd-guards');
+ const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
++const { validatePurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
+ 
+ const repoRoot = path.resolve(__dirname, '..');
+ const failures = [];
+@@ -1395,7 +1396,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
+ ];
+ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
+ const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
++const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
+ const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
+ const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
+ const EXPECTED_EXAM_ROUTE_HEADERS = [
+@@ -13626,6 +13627,8 @@ function validatePurchaseTypeSchemaParity() {
+ function validateRemoveAdsPurchaseRuntimeParity() {
+   let valid = true;
+   let purchaseSource = '';
++  let placementCtaSource = '';
++  let premiumBannerSource = '';
+ 
+   function reject(message) {
+     valid = false;
+@@ -13639,7 +13642,37 @@ function validateRemoveAdsPurchaseRuntimeParity() {
+     return;
+   }
+ 
++  try {
++    placementCtaSource = fs.readFileSync(
++      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
++      'utf8',
++    );
++  } catch (error) {
++    reject(`components/monetization/RemoveAdsPlacementCta.tsx could not be read: ${error.message}`);
++    return;
++  }
++
++  try {
++    premiumBannerSource = fs.readFileSync(
++      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
++      'utf8',
++    );
++  } catch (error) {
++    reject(`components/monetization/PremiumBanner.tsx could not be read: ${error.message}`);
++    return;
++  }
++
+   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
++  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
++  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
++  const placementCtaGuard = validatePurchaseActionInFlightGuard(placementCtaSource, {
++    awaitedCalls: ['await purchaseAction('],
++    surfaceName: 'RemoveAdsPlacementCta',
++  });
++  const premiumBannerGuard = validatePurchaseActionInFlightGuard(premiumBannerSource, {
++    awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
++    surfaceName: 'PremiumBanner',
++  });
+   const runtimeCases = [
+     [
+       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
+@@ -13733,6 +13766,40 @@ function validateRemoveAdsPurchaseRuntimeParity() {
+       ),
+       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+     ],
++    [
++      normalizedPlacementCtaSource.includes(
++        "onPress={() => void runPurchaseAction('buy', buyRemoveAds)}",
++      ),
++      'RemoveAdsPlacementCta must wire buyRemoveAds through the shared purchase runtime',
++    ],
++    [
++      normalizedPlacementCtaSource.includes(
++        "onPress={() => void runPurchaseAction('restore', restoreRemoveAdsPurchase)}",
++      ),
++      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
++    ],
++    [
++      placementCtaGuard.valid,
++      placementCtaGuard.message,
++    ],
++    [
++      normalizedPremiumBannerSource.includes("? await buyRemoveAds(purchaseRuntime)") &&
++        normalizedPremiumBannerSource.includes(
++          ': await restoreRemoveAdsPurchase(purchaseRuntime)',
++        ),
++      'PremiumBanner must route buy and restore actions through the shared purchase runtime',
++    ],
++    [
++      normalizedPremiumBannerSource.includes(
++        "onPress={() => void runPurchaseAction('buy')}",
++      ) &&
++        normalizedPremiumBannerSource.includes("onPress={() => void runPurchaseAction('restore')}"),
++      'PremiumBanner buttons must route buy and restore actions through the guarded purchase action handler',
++    ],
++    [
++      premiumBannerGuard.valid,
++      premiumBannerGuard.message,
++    ],
+   ];
+ 
+   runtimeCases.forEach(([caseIsValid, message]) => {

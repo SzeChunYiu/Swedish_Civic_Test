@@ -1,0 +1,327 @@
+From d5f9d6097d69fa370ce868f834e7c5dda53740d0 Mon Sep 17 00:00:00 2001
+From: billy <billy10384@gmail.com>
+Date: Thu, 21 May 2026 16:29:11 +0200
+Subject: [PATCH] guard generated localization template parity
+
+---
+ scripts/validate-content-focus-registry.js    |  10 ++
+ scripts/validate-content.js                   | 102 +++++++++++++++++-
+ .../content-published-question-types.test.js  |  61 +++++++++--
+ tests/content-test-script-routing.test.js     |  38 +++++++
+ 4 files changed, 201 insertions(+), 10 deletions(-)
+
+diff --git a/scripts/validate-content-focus-registry.js b/scripts/validate-content-focus-registry.js
+index 836be3503..449f811fe 100644
+--- a/scripts/validate-content-focus-registry.js
++++ b/scripts/validate-content-focus-registry.js
+@@ -19,6 +19,16 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+       'generatedWhyReasonTargetStemParityValidated',
+     ],
+   },
++  {
++    id: 'generatedLocalizationTemplateParity',
++    flags: ['--focus-generated-localization-template-parity'],
++    summaryKeys: [
++      'generatedLocalizationTemplateParityValidated',
++      'generatedPromptTemplateParityValidated',
++      'generatedAnswerTemplateParityValidated',
++      'generatedPublishedQuestions',
++    ],
++  },
+   {
+     id: 'staticV11ReadinessCopy',
+     flags: ['--focus-static-v11-readiness-copy'],
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 00a55bc1f..f436d0aee 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -8059,13 +8059,17 @@ const sourceQuestions = questionModule.sourceQuestions;
+ const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+ const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
+ const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
+-const expectedGeneratedPublishedQuestions =
+-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
+-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
+-    : [];
+ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+ const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
+ const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
++const expectedGeneratedPublishedQuestions =
++  Array.isArray(sourceQuestions) &&
++  typeof derivePublishedQuestions === 'function' &&
++  typeof applyQuestionLocalizationPilot === 'function'
++    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map(
++        applyQuestionLocalizationPilot,
++      )
++    : [];
+ const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
+ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
+ const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+@@ -8498,6 +8502,7 @@ let generatedSourceMetadataParityValidated = 0;
+ let generatedExplanationTemplateParityValidated = 0;
+ let generatedPromptTemplateParityValidated = 0;
+ let generatedAnswerTemplateParityValidated = 0;
++let generatedLocalizationTemplateParityValidated = 0;
+ let generatedOptionSourceMaterialWordingValidated = 0;
+ let generatedSingleChoiceFillerOptionsValidated = 0;
+ let generatedSingleChoiceMetaStemsValidated = 0;
+@@ -8669,6 +8674,95 @@ if (
+   fail('strings export is not an object');
+ }
+ 
++const GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG =
++  '--focus-generated-localization-template-parity';
++const requestedGeneratedLocalizationFocusFlags = process.argv.filter((arg) =>
++  arg.startsWith('--focus-generated-localization'),
++);
++const unsupportedGeneratedLocalizationFocusFlags =
++  requestedGeneratedLocalizationFocusFlags.filter(
++    (arg) => arg !== GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG,
++  );
++if (unsupportedGeneratedLocalizationFocusFlags.length > 0) {
++  console.error(
++    `Unsupported validate-content focus flag: ${unsupportedGeneratedLocalizationFocusFlags.join(
++      ', ',
++    )}`,
++  );
++  console.error(
++    `Supported generated localization focus flag: ${GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG}`,
++  );
++  process.exit(1);
++}
++
++function validateGeneratedLocalizationTemplateParity() {
++  validateGeneratedPromptTemplateParity();
++  validateGeneratedAnswerTemplateParity();
++
++  if (
++    !Array.isArray(generatedPublishedQuestions) ||
++    !Array.isArray(expectedGeneratedPublishedQuestions)
++  ) {
++    return;
++  }
++
++  let localizedGeneratedTrueFalseOptionMapsValidated = 0;
++
++  generatedPublishedQuestions.forEach((question, index) => {
++    if (question.type !== 'true_false') return;
++
++    const localizedOptions = question.options.filter(
++      (option) =>
++        option.text &&
++        typeof option.text === 'object' &&
++        !Array.isArray(option.text) &&
++        Object.keys(option.text).some((locale) => locale !== 'sv' && locale !== 'en'),
++    );
++    if (localizedOptions.length === 0) return;
++
++    const expectedQuestion = expectedGeneratedPublishedQuestions[index];
++    const label = `${question.id} generated localization overlay`;
++    if (!expectedQuestion) {
++      fail(`${label} expected generated variant is missing`);
++      return;
++    }
++
++    localizedOptions.forEach((option) => {
++      const expectedOption = expectedQuestion.options.find(
++        (expected) => expected.id === option.id,
++      );
++      if (!expectedOption) {
++        fail(`${label} option ${option.id} expected generated option is missing`);
++      } else if (!jsonEqual(option.text, expectedOption.text)) {
++        fail(`${label} option ${option.id} text map does not match localization overlay`);
++      } else {
++        localizedGeneratedTrueFalseOptionMapsValidated += 1;
++      }
++    });
++  });
++
++  if (localizedGeneratedTrueFalseOptionMapsValidated === 0) {
++    fail('no localized generated true/false option text maps were validated');
++  } else {
++    generatedLocalizationTemplateParityValidated =
++      localizedGeneratedTrueFalseOptionMapsValidated;
++  }
++}
++
++if (process.argv.includes(GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG)) {
++  validateGeneratedLocalizationTemplateParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    generatedLocalizationTemplateParityValidated,
++    generatedPromptTemplateParityValidated,
++    generatedAnswerTemplateParityValidated,
++    generatedPublishedQuestions: Array.isArray(generatedPublishedQuestions)
++      ? generatedPublishedQuestions.length
++      : 0,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+   if (Array.isArray(questions)) {
+     questions
+diff --git a/tests/content-published-question-types.test.js b/tests/content-published-question-types.test.js
+index d1e8351d5..3027a1721 100644
+--- a/tests/content-published-question-types.test.js
++++ b/tests/content-published-question-types.test.js
+@@ -4189,6 +4189,55 @@ test('published question schema reports focused generated why-reason guard cover
+   assert.equal(summary.generatedWhyReasonTargetStemParityValidated, true);
+ });
+ 
++test('published question schema reports focused generated localization overlay parity', () => {
++  const result = spawnSync(
++    process.execPath,
++    ['scripts/validate-content.js', '--focus-generated-localization-template-parity'],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
++  const match = result.stdout.match(
++    /\{\s*"generatedLocalizationTemplateParityValidated"[\s\S]*\}/,
++  );
++  assert.ok(match, 'focused generated localization validation should print JSON summary');
++  const summary = JSON.parse(match[0]);
++  assert.ok(summary.generatedLocalizationTemplateParityValidated > 0);
++  assert.ok(summary.generatedPromptTemplateParityValidated > 0);
++  assert.ok(summary.generatedAnswerTemplateParityValidated > 0);
++  assert.ok(summary.generatedPublishedQuestions > 0);
++});
++
++test('published question schema rejects unlocalized expected generated option text maps in focused mode', () => {
++  const result = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++const fs = require('node:fs');
++const Module = require('node:module');
++const path = require('node:path');
++const scriptPath = path.join(process.cwd(), 'scripts/validate-content.js');
++const source = fs
++  .readFileSync(scriptPath, 'utf8')
++  .replace(".map(\\n        applyQuestionLocalizationPilot,\\n      )", '');
++const mod = new Module(scriptPath, module);
++mod.filename = scriptPath;
++mod.paths = Module._nodeModulePaths(path.dirname(scriptPath));
++process.argv.push('scripts/validate-content.js', '--focus-generated-localization-template-parity');
++mod._compile(source, scriptPath);
++`,
++    ],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  assert.match(
++    `${result.stdout}\n${result.stderr}`,
++    /text map does not match localization overlay/,
++  );
++});
++
+ test('published question schema rejects targetless generated why-reason stems in focused mode', () => {
+   const result = spawnSync(
+     process.execPath,
+@@ -4800,13 +4849,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const contents = originalReadFileSync.call(this, filePath, ...args);
+   if (normalizedPath.endsWith('/data/questions.ts')) {
+     return String(contents).replace(
+-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
++      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+       [
+         ${JSON.stringify(generatedFixtureIdHelperSource())},
+         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+         "  sourceQuestions,",
+         "  sourceQuestions.length + 1,",
+-        ").map((question) =>",
++        ").map(applyQuestionLocalizationPilot).map((question) =>",
+         "  question.id === generatedFixtureId('q001', 0)",
+         "    ? {",
+         "        ...question,",
+@@ -4849,13 +4898,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const contents = originalReadFileSync.call(this, filePath, ...args);
+   if (normalizedPath.endsWith('/data/questions.ts')) {
+     return String(contents).replace(
+-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
++      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+       [
+         ${JSON.stringify(generatedFixtureIdHelperSource())},
+         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+         "  sourceQuestions,",
+         "  sourceQuestions.length + 1,",
+-        ").map((question) =>",
++        ").map(applyQuestionLocalizationPilot).map((question) =>",
+         "  question.id === generatedFixtureId('q001', 3)",
+         "    ? {",
+         "        ...question,",
+@@ -4898,13 +4947,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const contents = originalReadFileSync.call(this, filePath, ...args);
+   if (normalizedPath.endsWith('/data/questions.ts')) {
+     return String(contents).replace(
+-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
++      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+       [
+         ${JSON.stringify(generatedFixtureIdHelperSource())},
+         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+         "  sourceQuestions,",
+         "  sourceQuestions.length + 1,",
+-        ").map((question) =>",
++        ").map(applyQuestionLocalizationPilot).map((question) =>",
+         "  question.id === generatedFixtureId('q001', 0)",
+         "    ? {",
+         "        ...question,",
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..16a4b2e52 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -5,6 +5,8 @@ const os = require('node:os');
+ const path = require('node:path');
+ const test = require('node:test');
+ 
++const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
++
+ const repoRoot = path.resolve(__dirname, '..');
+ 
+ function readPackageJson() {
+@@ -121,6 +123,42 @@ test('answer feedback parity uses focused content validation routing', () => {
+   );
+ });
+ 
++test('generated localization overlay parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
++    'generatedLocalizationTemplateParity',
++  );
++
++  assert.ok(registryEntry, 'generated localization focus mode must be registered');
++  assert.deepEqual(registryEntry.flags, ['--focus-generated-localization-template-parity']);
++  assert.deepEqual(registryEntry.summaryKeys, [
++    'generatedLocalizationTemplateParityValidated',
++    'generatedPromptTemplateParityValidated',
++    'generatedAnswerTemplateParityValidated',
++    'generatedPublishedQuestions',
++  ]);
++  assert.match(validatorSource, /--focus-generated-localization-template-parity/);
++  assert.match(
++    validatorSource,
++    /validateGeneratedLocalizationTemplateParity\(\);[\s\S]*generatedLocalizationTemplateParityValidated[\s\S]*generatedPromptTemplateParityValidated[\s\S]*generatedAnswerTemplateParityValidated/,
++  );
++});
++
++test('generated localization overlay parity rejects typoed focus flags', () => {
++  const result = spawnSync(
++    process.execPath,
++    ['scripts/validate-content.js', '--focus-generated-localization-template-parit'],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  assert.match(result.stderr, /Unsupported validate-content focus flag/);
++  assert.match(result.stderr, /--focus-generated-localization-template-parity/);
++});
++
+ test('question report link parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),

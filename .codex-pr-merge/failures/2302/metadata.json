@@ -1,0 +1,58 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- rewrite q146 generated true/false political-rights prompts as complete bilingual propositions instead of bare answer fragments\n- mirror the q146 formatter in the validator and add focused regression coverage for derived, CSV, and static-site exports\n- update the canonical CSV and static question-bank rows for the current q146 derived true/false IDs\n\n## Verification\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'q146|political-rights|political ideas|politiska idéer' scripts/derived-content.test.js tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-static-site-question-bank-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-generated-true-false-naturalness --json`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `node scripts/export-site-question-bank.js --check`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "content/question-bank.csv",
+      "additions": 2,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/content/derivedQuestions.ts",
+      "additions": 30,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/derived-content.test.js",
+      "additions": 31,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 30,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/questions.js", "additions": 4, "deletions": 4, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-published-question-types.test.js",
+      "additions": 47,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/generated-tf-political-rights-fragments-1779355263-2623968",
+  "headRefOid": "f3a6ce4f96d263497e50a6f04453f200511533a7",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2302,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:27:46Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217537169/job/77143686163",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:26:50Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Rewrite political-rights generated true/false prompts",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2302"
+}

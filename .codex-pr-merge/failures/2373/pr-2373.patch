@@ -1,0 +1,83 @@
+From 3d08ef92a41e91b60ab12cd3f616261bb4864d5f Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 13:56:22 +0200
+Subject: [PATCH] test: guard native AdBanner platform gates
+
+---
+ scripts/validate-content.js                   | 36 +++++++++++++++++++
+ .../content-ad-placement-route-parity.test.js |  7 ++--
+ 2 files changed, 40 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..4e7163c4a 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -8980,6 +8980,42 @@ function validateAdPlacementRouteParity() {
+       }
+     }
+ 
++    if (spec.component === 'AdBanner') {
++      const consentAwareShouldShowPattern =
++        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
++      const webFallbackShouldShowPattern =
++        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/;
++      const webAdBannerSource = fs.readFileSync(
++        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
++        'utf8',
++      );
++      const nativeAdBannerSource = fs.readFileSync(
++        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
++        'utf8',
++      );
++
++      if (!webAdBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
++        reject('AdBanner web fallback must use the shared web fallback consent decision');
++        routeIsValid = false;
++      }
++      if (!webFallbackShouldShowPattern.test(webAdBannerSource)) {
++        reject('AdBanner web fallback must use the shared web fallback consent decision');
++        routeIsValid = false;
++      }
++      if (webAdBannerSource.includes('react-native-google-mobile-ads')) {
++        reject('AdBanner web fallback must not import native-only ad SDK APIs');
++        routeIsValid = false;
++      }
++      if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
++        reject('AdBanner native placement must resolve banner units by Platform.OS');
++        routeIsValid = false;
++      }
++      if (!consentAwareShouldShowPattern.test(nativeAdBannerSource)) {
++        reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
++        routeIsValid = false;
++      }
++    }
++
+     if (spec.component === 'NativeAdCard') {
+       const consentAwareShouldShowPattern = new RegExp(
+         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
+diff --git a/tests/content-ad-placement-route-parity.test.js b/tests/content-ad-placement-route-parity.test.js
+index 3510489de..144e33e3d 100644
+--- a/tests/content-ad-placement-route-parity.test.js
++++ b/tests/content-ad-placement-route-parity.test.js
+@@ -161,8 +161,8 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
+   );
+   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+ 
+-  assert.match(adCopySource, /testStatus: 'AdMob test unit active - preview'/);
+-  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - förhandsvisning'/);
++  assert.match(adCopySource, /testStatus: 'AdMob test unit active - test placement'/);
++  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - testplacering'/);
+   assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/);
+   assert.match(
+     webBannerSource,
+@@ -175,8 +175,9 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
+   );
+   assert.match(
+     nativeBannerSource,
+-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
++    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
+   );
++  assert.match(nativeBannerSource, /accessibilityLabel=\{accessibilityLabel\}/);
+   assert.doesNotMatch(
+     nativeBannerSource,
+     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,

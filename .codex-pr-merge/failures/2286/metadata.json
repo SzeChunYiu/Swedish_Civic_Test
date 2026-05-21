@@ -1,0 +1,33 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Assert active mock-exam questions expose localized provenance badges and source-note toggles.\n- Assert submitted review cards keep the provenance/source-note affordance in Swedish and English.\n- Remove the stale e2e expectation that UHR provenance is hidden before submission.\n\n## Verification\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-exam-route-copy-parity.test.js tests/content-question-card-accessibility-parity.test.js --test-name-pattern \"exam|mock exam|ProvenanceBadge|provenance|source note|UHR source|source citation\"`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1 --grep \"provenance|source\"`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "tests/e2e/exam-submit-review.spec.ts",
+      "additions": 25,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/exam-question-provenance-badge-1779353055",
+  "headRefOid": "854a45a37c65617c654a0bc8f315d35ac12aaa32",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2286,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T08:56:01Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26215982020/job/77138329304",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T08:55:03Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test(exam): cover provenance badges in mock exam flow",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2286"
+}

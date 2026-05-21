@@ -60,7 +60,7 @@ export function hasProEntitlement(entitlements: ProTierEntitlements): boolean {
   );
 }
 
-function isStrictEntitlementFlag(value: unknown): boolean {
+export function isStrictEntitlementFlag(value: unknown): value is true {
   return value === true;
 }
 

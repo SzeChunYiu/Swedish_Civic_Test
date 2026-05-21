@@ -1,0 +1,19 @@
+{
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "number": 2293,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239798268/job/77222764076",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:42:32Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: cover release preflight v1.1 text evidence"
+}

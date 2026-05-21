@@ -1,0 +1,64 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Rewrites q020-derived generated true/false referendum variants q257/q258 as direct propositions instead of definition-cleft stems.\n- Adds generator, validator, naturalness-pattern, and published-content regression coverage for the old Swedish/English cleft phrasing.\n- Updates canonical CSV and static site question bank entries for q257/q258 while preserving semantic/static parity.\n\n## Validation\n- `node --test --test-name-pattern 'q020|q257|q258|referendum|folkomröstningar|advisory|That referendums|Att folkomröstningar|generated true_false' scripts/derived-content.test.js tests/content-published-question-types.test.js tests/content-question-sentence-endings.test.js tests/content-static-site-question-bank-parity.test.js`\n- `npm run validate:content`\n- `node scripts/export-question-bank.js --check`\n- `node scripts/export-site-question-bank.js --check` (semantic parity OK; existing format-only drift remains)\n- `npm run typecheck -- --pretty false`\n- `npx prettier --check lib/content/derivedQuestions.ts scripts/derived-content.test.js scripts/generated-true-false-naturalness-patterns.js scripts/validate-content.js tests/content-published-question-types.test.js site/questions.js`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "content/question-bank.csv",
+      "additions": 2,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/content/derivedQuestions.ts",
+      "additions": 16,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/derived-content.test.js",
+      "additions": 10,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/generated-true-false-naturalness-patterns.js",
+      "additions": 1,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 16,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/questions.js", "additions": 4, "deletions": 4, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-published-question-types.test.js",
+      "additions": 78,
+      "deletions": 7,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/1779358954-182158-generated-tf-referendum",
+  "headRefOid": "3884991ee222e393bead221e6305172f6238c008",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2334,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:35:52Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220725519/job/77154711219",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:34:37Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "data-integrity: rewrite q020 referendum true-false variants",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2334"
+}

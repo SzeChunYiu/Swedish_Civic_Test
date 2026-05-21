@@ -1,0 +1,162 @@
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 9a78bd0bd..c5ebf3463 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -1,13 +1,5 @@
+ import { useMemo, useState } from 'react';
+-import {
+-  Pressable,
+-  ScrollView,
+-  StyleSheet,
+-  Text,
+-  TextInput,
+-  useColorScheme,
+-  View,
+-} from 'react-native';
++import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+ 
+ import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
+ import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
+@@ -27,7 +19,8 @@ import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+ import { useCompanionStore } from '../lib/storage/companionStore';
+ import type { AppLanguage } from '../lib/storage/settingsStore';
+ import { useSettingsStore } from '../lib/storage/settingsStore';
+-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
++import { motion, radius, shadows, space, typography } from '../lib/theme';
++import { useTheme } from '../lib/theme/ThemeProvider';
+ import type { ThemeColors } from '../lib/theme';
+ 
+ type SettingsCopy = {
+@@ -274,7 +267,6 @@ function buildImportSummaryLines(
+ }
+ 
+ export default function Screen() {
+-  const systemColorScheme = useColorScheme();
+   const language = useSettingsStore((state) => state.language);
+   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+@@ -284,7 +276,13 @@ export default function Screen() {
+   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+   const themeMode = useAccessibilityStore((state) => state.themeMode);
++  const accessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.persistenceWarning,
++  );
+   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
++  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.clearPersistenceWarning,
++  );
+   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
+   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
+   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
+@@ -293,7 +291,7 @@ export default function Screen() {
+   );
+   const copy = settingsCopy[language];
+   const reduceMotion = useReducedMotion();
+-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
++  const { colors: themeColors } = useTheme();
+   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+   const [importText, setImportText] = useState('');
+   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
+@@ -419,6 +417,12 @@ export default function Screen() {
+         onDismiss={clearPersistenceWarning}
+         warning={persistenceWarning}
+       />
++      <PersistenceWarningNotice
++        language={language}
++        onDismiss={clearAccessibilityPersistenceWarning}
++        warningScope="accessibilityPreferences"
++        warning={accessibilityPersistenceWarning}
++      />
+ 
+       <View style={styles.section}>
+         <Text accessibilityRole="header" style={styles.sectionTitle}>
+diff --git a/lib/storage/progressStore.ts b/lib/storage/progressStore.ts
+index 19464124f..93355e3c6 100644
+--- a/lib/storage/progressStore.ts
++++ b/lib/storage/progressStore.ts
+@@ -9,7 +9,7 @@ import { createInitialFreezeState, type StreakFreezeState } from '../learning/st
+ import { getLocalDateKey } from '../learning/streaks';
+ import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+-import { writeRecoverably } from './persistenceWarning';
++import { createRecoverablePersistenceWarning, writeRecoverably } from './persistenceWarning';
+ 
+ export type QuestionProgress = {
+   questionId: string;
+@@ -429,20 +429,38 @@ export function normalizeImportedProgress(value: unknown): PersistedProgress {
+   return normalizeProgress(value);
+ }
+ 
+-function readProgress(): PersistedProgress {
++function readProgress(): PersistedProgress & {
++  persistenceWarning: RecoverablePersistenceWarning | null;
++} {
+   let rawProgress: string | undefined;
+   try {
+     rawProgress = progressStorage?.getString(progressStateKey);
+-  } catch {
+-    return emptyProgress;
++  } catch (error) {
++    return {
++      ...emptyProgress,
++      persistenceWarning: createRecoverablePersistenceWarning({
++        error,
++        key: progressStateKey,
++        operation: 'read',
++        storageId: progressStorageId,
++      }),
++    };
+   }
+ 
+-  if (!rawProgress) return emptyProgress;
++  if (!rawProgress) return { ...emptyProgress, persistenceWarning: null };
+ 
+   try {
+-    return normalizeProgress(JSON.parse(rawProgress));
+-  } catch {
+-    return emptyProgress;
++    return { ...normalizeProgress(JSON.parse(rawProgress)), persistenceWarning: null };
++  } catch (error) {
++    return {
++      ...emptyProgress,
++      persistenceWarning: createRecoverablePersistenceWarning({
++        error,
++        key: progressStateKey,
++        operation: 'read',
++        storageId: progressStorageId,
++      }),
++    };
+   }
+ }
+ 
+@@ -480,7 +498,6 @@ const initialProgress = readProgress();
+ 
+ export const useProgressStore = create<ProgressState>((set) => ({
+   ...initialProgress,
+-  persistenceWarning: null,
+   markQuestionCompleted: (questionId) =>
+     set((state) => {
+       if (state.completedQuestionIds.includes(questionId)) return state;
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..3a842b513 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -2334,7 +2334,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
+   {
+     label: 'ScrollView import',
+     pattern:
+-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
++      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
+   },
+   {
+     label: 'scroll root container',
+@@ -13173,7 +13173,7 @@ function validateProgressStoreSchemaParity() {
+       'readProgress must read persisted JSON through progressStateKey',
+     ],
+     [
+-      'return normalizeProgress(JSON.parse(rawProgress));',
++      'normalizeProgress(JSON.parse(rawProgress))',
+       'readProgress must normalize parsed persisted JSON',
+     ],
+     [

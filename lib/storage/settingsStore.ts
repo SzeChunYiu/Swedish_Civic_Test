@@ -25,8 +25,9 @@ const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
-const minDailyGoalAnswers = 1;
-const maxDailyGoalAnswers = 50;
+export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;
+
+const dailyGoalAnswerOptions = new Set<number>(supportedDailyGoalAnswerOptions);
 
 let settingsStorage: MMKV | null = null;
 
@@ -71,17 +72,24 @@ function readAudioEnabled(): boolean {
 }
 
 function normalizeDailyGoalAnswers(answerCount: unknown): number {
-  if (
-    typeof answerCount !== 'number' ||
-    !Number.isFinite(answerCount) ||
-    !Number.isInteger(answerCount) ||
-    answerCount < minDailyGoalAnswers ||
-    answerCount > maxDailyGoalAnswers
-  ) {
+  if (!isDailyGoalAnswerOption(answerCount)) {
     return defaultDailyGoalAnswers;
   }
 
   return answerCount;
+}
+
+function normalizeImportedDailyGoalAnswers(answerCount: unknown): number | undefined {
+  return isDailyGoalAnswerOption(answerCount) ? answerCount : undefined;
+}
+
+function isDailyGoalAnswerOption(answerCount: unknown): answerCount is number {
+  return (
+    typeof answerCount === 'number' &&
+    Number.isFinite(answerCount) &&
+    Number.isInteger(answerCount) &&
+    dailyGoalAnswerOptions.has(answerCount)
+  );
 }
 
 function readDailyGoalAnswers(): number {
@@ -137,7 +145,8 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
     settings.audioEnabled = candidate.audioEnabled;
   }
   if (Object.prototype.hasOwnProperty.call(candidate, 'dailyGoalAnswers')) {
-    settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
+    const dailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (dailyGoalAnswers !== undefined) settings.dailyGoalAnswers = dailyGoalAnswers;
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
