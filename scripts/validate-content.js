@@ -13719,6 +13719,8 @@ function validateOnboardingRouteCopyParity() {
   let valid = true;
   let onboardingRoute = '';
   let firstRunAboutModal = '';
+  let firstRunAboutModalRoutes = '';
+  let firstRunAboutModalRoutePolicy = null;
   let adsSource = '';
 
   function reject(message) {
@@ -13744,6 +13746,17 @@ function validateOnboardingRouteCopyParity() {
   }
 
   try {
+    firstRunAboutModalRoutes = fs.readFileSync(
+      path.join(repoRoot, 'lib/onboarding/firstRunAboutModalRoutes.ts'),
+      'utf8',
+    );
+    firstRunAboutModalRoutePolicy = loadTs('lib/onboarding/firstRunAboutModalRoutes.ts');
+  } catch (error) {
+    reject(`first-run About modal route policy helper could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
     adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
   } catch (error) {
     reject(`ads route suppression source could not be read: ${error.message}`);
@@ -13763,25 +13776,53 @@ function validateOnboardingRouteCopyParity() {
   });
 
   const expectedFirstRunSuppressedRoutes = [
-    "'/exam'",
-    "'/quiz'",
-    "'/(auth)'",
-    "'/onboarding'",
-    "'/about-the-test'",
+    '/exam',
+    '/quiz',
+    '/(auth)',
+    '/onboarding',
+    '/about-the-test',
   ];
+  const helperSuppressedRoutes =
+    firstRunAboutModalRoutePolicy?.FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES;
+  const shouldSuppressFirstRunAboutModalForPath =
+    firstRunAboutModalRoutePolicy?.shouldSuppressFirstRunAboutModalForPath;
+
+  if (
+    !firstRunAboutModal.includes("from '../../lib/onboarding/firstRunAboutModalRoutes'") ||
+    !firstRunAboutModal.includes(
+      'shouldSuppressFirstRunAboutModalForPath(pathname, suppressedPathPrefixes)',
+    )
+  ) {
+    reject('first-run about modal must consume the shared route policy helper');
+  }
+  if (/function pathIsSuppressed|const SUPPRESSED_PATH_PREFIXES/.test(firstRunAboutModal)) {
+    reject('first-run about modal must not keep a private route suppression policy');
+  }
   for (const route of expectedFirstRunSuppressedRoutes) {
-    if (firstRunAboutModal.includes(route)) {
+    const routeIsSuppressed =
+      Array.isArray(helperSuppressedRoutes) &&
+      helperSuppressedRoutes.includes(route) &&
+      firstRunAboutModalRoutes.includes(`'${route}'`) &&
+      typeof shouldSuppressFirstRunAboutModalForPath === 'function' &&
+      shouldSuppressFirstRunAboutModalForPath(route) === true &&
+      shouldSuppressFirstRunAboutModalForPath(`${route}/nested?x=1#top`) === true;
+
+    if (routeIsSuppressed) {
       firstRunAboutModalSuppressedRoutesValidated += 1;
     } else {
-      reject(`first-run about modal must suppress ${route.slice(1, -1)}`);
+      reject(`first-run about modal must suppress ${route}`);
     }
   }
   if (!adsSource.includes("'/onboarding'")) {
     reject('launch popup route suppression must include /onboarding');
   }
-  for (const route of ["'/home'", "'/learn'", "'/practice'", "'/mistakes'", "'/profile'"]) {
-    if (firstRunAboutModal.includes(route)) {
-      reject(`first-run about modal must not suppress study route ${route.slice(1, -1)}`);
+  for (const route of ['/home', '/learn', '/practice', '/mistakes', '/profile']) {
+    if (
+      firstRunAboutModalRoutes.includes(`'${route}'`) ||
+      (typeof shouldSuppressFirstRunAboutModalForPath === 'function' &&
+        shouldSuppressFirstRunAboutModalForPath(route) !== false)
+    ) {
+      reject(`first-run about modal must not suppress study route ${route}`);
     }
   }
 

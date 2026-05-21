@@ -88,18 +88,29 @@ test('first-run about modal suppresses onboarding without blocking study routes'
     path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
     'utf8',
   );
+  const routePolicySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/onboarding/firstRunAboutModalRoutes.ts'),
+    'utf8',
+  );
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
 
   assert.equal(summary.firstRunAboutModalSuppressedRoutesValidated, 5);
   assert.equal(summary.firstRunAboutModalSuppressionParityValidated, true);
-  assert.match(source, /SUPPRESSED_PATH_PREFIXES/);
-  assert.match(source, /'\/onboarding'/);
+  assert.match(source, /FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES/);
+  assert.match(
+    source,
+    /shouldSuppressFirstRunAboutModalForPath\(pathname, suppressedPathPrefixes\)/,
+  );
+  assert.doesNotMatch(source, /function pathIsSuppressed|const SUPPRESSED_PATH_PREFIXES/);
+  assert.match(routePolicySource, /export const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES/);
+  assert.match(routePolicySource, /export function shouldSuppressFirstRunAboutModalForPath/);
+  assert.match(routePolicySource, /'\/onboarding'/);
   assert.match(adsSource, /'\/onboarding'/);
-  assert.doesNotMatch(source, /'\/home'/);
-  assert.doesNotMatch(source, /'\/learn'/);
-  assert.doesNotMatch(source, /'\/practice'/);
-  assert.doesNotMatch(source, /'\/mistakes'/);
-  assert.doesNotMatch(source, /'\/profile'/);
+  assert.doesNotMatch(routePolicySource, /'\/home'/);
+  assert.doesNotMatch(routePolicySource, /'\/learn'/);
+  assert.doesNotMatch(routePolicySource, /'\/practice'/);
+  assert.doesNotMatch(routePolicySource, /'\/mistakes'/);
+  assert.doesNotMatch(routePolicySource, /'\/profile'/);
 });
 
 test('first-run about modal suppression rejects dropping onboarding', () => {
@@ -112,7 +123,7 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
+  if (normalizedPath.endsWith('/lib/onboarding/firstRunAboutModalRoutes.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace("\\n  '/onboarding',", '');
