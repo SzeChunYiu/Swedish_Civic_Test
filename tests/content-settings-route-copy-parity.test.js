@@ -210,13 +210,38 @@ test('settings import summary copy keeps singular and plural labels for bookmark
     '1 FSRS review card',
     '1 FSRS review day',
   ];
+  const absentZeroRows = [
+    '0 markeringar i e-boken',
+    '0 markerade kravområden',
+    '0 ebook highlights',
+    '0 marked requirements',
+  ];
 
   for (const snippet of labelSnippets) {
     assertIncludes(settingsSource, snippet, 'settings import summary copy');
   }
+  assertIncludes(
+    settingsSource,
+    'function addPositiveImportSummaryLine(',
+    'settings import summary non-zero helper',
+  );
+  assertIncludes(
+    settingsSource,
+    'if (count > 0) lines.push(formatLine(count));',
+    'settings import summary non-zero helper',
+  );
+  assertIncludes(
+    settingsSource,
+    'if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);',
+    'settings import summary streak row',
+  );
   for (const row of [...pluralPreviewRows, ...singularPreviewRows]) {
     assertIncludes(e2eSource, row, 'settings import E2E preview assertions');
   }
+  for (const row of absentZeroRows) {
+    assertIncludes(e2eSource, row, 'settings import E2E zero-row rejection');
+  }
+  assertIncludes(e2eSource, 'absentSummaryTexts', 'settings import E2E zero-row cases');
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
 });
 

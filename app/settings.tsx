@@ -107,6 +107,14 @@ function appendImportErrorDetail(
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
+function addPositiveImportSummaryLine(
+  lines: string[],
+  count: number,
+  formatLine: (count: number) => string,
+) {
+  if (count > 0) lines.push(formatLine(count));
+}
+
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
@@ -307,17 +315,29 @@ function buildImportSummaryLines(
   copy: SettingsCopy,
   summary: LocalStudyDataImportSummary,
 ): string[] {
-  const lines = [
-    copy.importSummaryCompletedQuestions(summary.completedQuestionCount),
-    copy.importSummaryBookmarks(summary.bookmarkedQuestionCount),
-    copy.importSummaryWrongAnswers(summary.wrongAnswerReviewCount),
-    copy.importSummaryMockExams(summary.mockExamSessionCount),
-    copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
-    copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
-    copy.importSummaryHighlights(summary.highlightCount),
-    copy.importSummarySettings(summary.settingCount),
-    copy.importSummaryCitizenshipRequirements(summary.citizenshipRequirementChecklistCount),
-  ];
+  const lines: string[] = [];
+
+  addPositiveImportSummaryLine(
+    lines,
+    summary.completedQuestionCount,
+    copy.importSummaryCompletedQuestions,
+  );
+  addPositiveImportSummaryLine(lines, summary.bookmarkedQuestionCount, copy.importSummaryBookmarks);
+  addPositiveImportSummaryLine(
+    lines,
+    summary.wrongAnswerReviewCount,
+    copy.importSummaryWrongAnswers,
+  );
+  addPositiveImportSummaryLine(lines, summary.mockExamSessionCount, copy.importSummaryMockExams);
+  addPositiveImportSummaryLine(lines, summary.fsrsReviewCardCount, copy.importSummaryFsrsCards);
+  addPositiveImportSummaryLine(lines, summary.gradedReviewDayCount, copy.importSummaryFsrsDays);
+  addPositiveImportSummaryLine(lines, summary.highlightCount, copy.importSummaryHighlights);
+  addPositiveImportSummaryLine(lines, summary.settingCount, copy.importSummarySettings);
+  addPositiveImportSummaryLine(
+    lines,
+    summary.citizenshipRequirementChecklistCount,
+    copy.importSummaryCitizenshipRequirements,
+  );
   if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
   return lines;
 }
