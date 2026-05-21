@@ -22,6 +22,8 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
+const religiousFreedom1860StiltedEnglishPattern =
+  /\bchoose any religion or no religion at all completely freely\b/i;
 const religiousFreedomOptionParallelismPattern =
   /\b(?:Rätten att utöva sin religion och skydd mot diskriminering på grund av tro|The right to practice (?:one’s|one's) religion and protection from discrimination because of belief)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
@@ -60,6 +62,7 @@ const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
+const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -155,6 +158,10 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
   assert.equal(
     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
@@ -1542,6 +1549,179 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
+  );
+});
+
+test('source-criticism source and single-choice exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q050Ids = [
+    'q050',
+    generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
+  ];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q050Ids.includes(question.id))
+    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q050Ids.includes(question.id))
+    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q050Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => sourceCriticismStiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q050 = generatedSiteBank.find((question) => question.id === 'q050');
+  const q050SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
+  );
+  const q050Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q050, 'q050 should be published in the site bank');
+  assert.equal(q050.q.en, 'What does source criticism mean?');
+  assert.equal(
+    q050.why.en,
+    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+  );
+  assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
+  assert.equal(
+    q050SingleChoice.q.en,
+    'Which answer best matches? What does source criticism mean?',
+  );
+  assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
+  assert.equal(q050Judgement.q.en, 'Choose the correct option: What does source criticism mean?');
+});
+
+test('source-criticism English naturalness guard rejects source-critical wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What does source criticism mean?',
+        'What does it mean to be source-critical?',
+      )
+      .replace(
+        'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
+        'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q050 uses stilted source-criticism English wording/,
+  );
+});
+
+test('religious-freedom 1860 source and exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q115GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q115', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q115', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q115', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q115', 'judgement'),
+  ];
+  const q115Ids = ['q115', ...q115GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q115Ids.includes(question.id))
+    .filter((question) => religiousFreedom1860StiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q115Ids.includes(question.id))
+    .filter((question) => religiousFreedom1860StiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q115Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => religiousFreedom1860StiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q115 = generatedSiteBank.find((question) => question.id === 'q115');
+  const q115False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q115', 'falseStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q115, 'q115 should be published in the site bank');
+  assert.equal(q115.opts?.[1]?.en, 'To freely choose any religion or none');
+  assert.equal(
+    q115.why.en,
+    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+  );
+  assert.ok(q115False, 'q115 false generated variant should be published');
+  assert.equal(q115False.q.en, 'In 1860, Swedes were free to choose any religion or none.');
+});
+
+test('religious-freedom 1860 English naturalness guard rejects the old phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'To freely choose any religion or none',
+      'To choose any religion or no religion at all completely freely',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q115 uses stilted 1860 religious-freedom English wording/,
   );
 });
 

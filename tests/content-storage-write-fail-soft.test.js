@@ -2,7 +2,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const {
   createMemoryMMKV,
@@ -11,24 +10,6 @@ const {
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-function registerTypeScriptLoader(extension) {
-  require.extensions[extension] = function tsLoader(module, filename) {
-    const source = fs.readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: {
-        jsx: ts.JsxEmit.React,
-        module: ts.ModuleKind.CommonJS,
-        target: ts.ScriptTarget.ES2020,
-      },
-      fileName: filename,
-    }).outputText;
-    module._compile(transpiled, filename);
-  };
-}
-
-registerTypeScriptLoader('.ts');
-registerTypeScriptLoader('.tsx');
 
 function loadPersistenceWarningNoticeModule() {
   return loadTsWithStorage(

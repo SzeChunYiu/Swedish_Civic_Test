@@ -8,6 +8,12 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function parseValidationSummary(output) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 function runValidationWithProgressStorePatch(search, replacement) {
   return spawnSync(
     process.execPath,
@@ -212,10 +218,8 @@ test('progress question schema stays in parity with persisted progress records',
       encoding: 'utf8',
     },
   );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
 
-  const summary = JSON.parse(match[0]);
+  const summary = parseValidationSummary(output);
   const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
@@ -297,9 +301,7 @@ test('streak freeze normalizer focused validator mirrors shared storage policy',
       encoding: 'utf8',
     },
   );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
+  const summary = parseValidationSummary(output);
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
     'utf8',
@@ -338,6 +340,35 @@ test('streak freeze normalizer focused validator rejects progress store alias dr
     `${result.stdout}\n${result.stderr}`,
     /progressStore must import the shared streak-freeze normalizer by storage alias/,
   );
+});
+
+test('exam submission finality parity has focused readiness persistence coverage', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const summary = parseValidationSummary(output);
+  const examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.deepEqual(Object.keys(summary), ['examSubmissionFinalityParityValidated']);
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal((examRoute.match(/\brecordMockExamSession\s*\(\s*\{/g) ?? []).length, 1);
+  assert.match(examRoute, /sessionId: examAttemptId/);
+  assert.match(
+    examRoute,
+    /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/,
+  );
+  assert.match(
+    examRoute,
+    /completedAt: submittedExamSession\?\.completedAt \?\? new Date\(\)\.toISOString\(\)/,
+  );
+  assert.match(examRoute, /correctCount: resultCorrectCount/);
+  assert.match(examRoute, /totalCount: resultTotalCount/);
+  assert.match(examRoute, /questionTimings:/);
 });
 
 test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
@@ -531,7 +562,7 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.streakFreezeState.available, 4);
   assert.match(state.streakFreezeState.lastEarnedAt, /^\d{4}-\d{2}-\d{2}$/);
   assert.notEqual(state.streakFreezeState.lastEarnedAt, '2099-01-01');
-  assert.equal(state.streakFreezeState.lifetimeEarned, 1);
+  assert.equal(state.streakFreezeState.lifetimeEarned, 0);
   assert.equal(state.streakFreezeState.lifetimeSpent, 0);
   assert.deepEqual(state.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
 });
@@ -743,6 +774,67 @@ test('recordAnswer ignores non-boolean correctness before state or storage write
   assert.deepEqual(useProgressStore.getState().answerDates, []);
 });
 
+test('mock exam completion XP ignores malformed runtime counts', () => {
+  const initialProgress = {
+    completedQuestionIds: [],
+    questionProgress: {},
+    totalXp: 0,
+    answerDates: [],
+    answerHistory: [],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    streakFreezeState: {
+      available: 1,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+  };
+  const { useProgressStore } = loadProgressStoreFromStorage(initialProgress);
+
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'bad-string-counts',
+    score: 1,
+    correctCount: '10',
+    totalCount: '10',
+  });
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'bad-infinite-counts',
+    score: 1,
+    correctCount: Infinity,
+    totalCount: Infinity,
+  });
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'bad-fractional-counts',
+    score: 1,
+    correctCount: 9.5,
+    totalCount: 10.5,
+  });
+
+  assert.equal(useProgressStore.getState().totalXp, 0);
+  assert.deepEqual(
+    useProgressStore.getState().mockExamSessions.map((session) => ({
+      correctCount: session.correctCount,
+      totalCount: session.totalCount,
+    })),
+    [
+      { correctCount: 0, totalCount: 0 },
+      { correctCount: 0, totalCount: 0 },
+      { correctCount: 0, totalCount: 0 },
+    ],
+  );
+
+  useProgressStore.getState().recordMockExamSession({
+    sessionId: 'valid-perfect-counts',
+    score: 1,
+    correctCount: 10,
+    totalCount: 10,
+  });
+
+  assert.equal(useProgressStore.getState().totalXp, 70);
+});
+
 test('exam submission finality parity rejects losing the submitted completion timestamp', () => {
   const result = runFocusedExamSubmissionValidationWithRoutePatch(
     'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),',
@@ -752,7 +844,20 @@ test('exam submission finality parity rejects losing the submitted completion ti
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam result submission must persist a completed mock-exam score for readiness/,
+    /exam result submission must persist readiness field: completedAt/,
+  );
+});
+
+test('exam submission finality parity rejects duplicate mock-exam persistence calls', () => {
+  const result = runFocusedExamSubmissionValidationWithRoutePatch(
+    'recordMockExamSession({',
+    'recordMockExamSession({});\n    recordMockExamSession({',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result submission must persist exactly one completed mock-exam session/,
   );
 });
 

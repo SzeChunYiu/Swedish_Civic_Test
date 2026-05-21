@@ -6,6 +6,9 @@ const path = require('node:path');
 const test = require('node:test');
 
 const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
+const {
+  MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
+} = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -292,6 +295,43 @@ test('generated localization overlay parity uses focused content validation rout
   );
 });
 
+test('Search route query hydration parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const searchRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-search-route-copy-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('searchRouteQueryHydration');
+
+  assert.ok(registryEntry, 'Search route query hydration focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-search-route-query-hydration']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'searchRouteQueryHydrationRulesValidated',
+    'searchRouteQueryHydrationParityValidated',
+    'searchQuestionPunctuationRulesValidated',
+    'searchQuestionPunctuationParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-search-route-query-hydration/);
+  assert.match(
+    validatorSource,
+    /validateSearchRouteQueryHydrationParity\(\);[\s\S]*validateSearchQuestionPunctuationParity\(\);[\s\S]*searchRouteQueryHydrationRulesValidated[\s\S]*searchRouteQueryHydrationParityValidated[\s\S]*searchQuestionPunctuationRulesValidated[\s\S]*searchQuestionPunctuationParityValidated/,
+  );
+  assert.equal(
+    (validatorSource.match(/validateSearchRouteQueryHydrationParity\(\);/g) ?? []).length,
+    2,
+    'Search route query hydration validation should run once in focus mode and once in full validation',
+  );
+  assert.match(searchRouteTestSource, /--focus-search-route-query-hydration/);
+  assert.doesNotMatch(
+    searchRouteTestSource,
+    /searchRouteQueryHydrationRulesValidated":\\s\*\d+/,
+    'Search route focused test must derive the rule count instead of hardcoding it',
+  );
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,
@@ -406,6 +446,47 @@ test('Profile route copy parity uses focused content validation routing', () => 
   );
 });
 
+test('countdown banner parity uses focused countdown and study-plan validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const countdownTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-countdown-banner-parity.test.js'),
+    'utf8',
+  );
+  const registrySource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content-focus-registry.js'),
+    'utf8',
+  );
+
+  assert.match(registrySource, /--focus-countdown-banner-parity/);
+  assert.match(validatorSource, /--focus-countdown-banner-parity/);
+  assert.match(validatorSource, /validateCountdownBannerFocusedParity\(\);/);
+  assert.match(validatorSource, /studyPlanRuntimeCasesValidated/);
+  assert.match(countdownTestSource, /--focus-countdown-banner-parity/);
+  assert.doesNotMatch(
+    countdownTestSource,
+    /--focus-countdown-banner['"]/,
+    'countdown banner parity tests must use the explicit parity focus flag',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-countdown-banner-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused countdown validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.studyPlanRuntimeCasesValidated, 6);
+  assert.equal(summary.studyPlanRuntimeParityValidated, true);
+  assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
+  assert.equal(Object.hasOwn(summary, 'chapters'), false);
+});
+
 test('spaced repetition schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -427,6 +508,52 @@ test('spaced repetition schema parity uses focused content validation routing', 
     /\['scripts\/validate-content\.js'\]/,
     'spaced repetition tests must not route through full content validation',
   );
+});
+
+test('adaptive size focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('adaptivePracticeSize');
+
+  assert.ok(registryEntry, 'adaptive practice size focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-adaptive-practice-size']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'adaptivePracticeSizeRuntimeCasesValidated',
+    'adaptivePracticeSizeRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-adaptive-practice-size/);
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*adaptivePracticeSizeRuntimeCasesValidated[\s\S]*adaptivePracticeSizeRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateSpacedRepetitionSchedule\(\);[\s\S]*validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the adaptive practice size runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-adaptive-practice-size'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused adaptive size validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(
+    summary.adaptivePracticeSizeRuntimeCasesValidated,
+    MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES.length,
+  );
+  assert.equal(summary.adaptivePracticeSizeRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('Pro Lifetime relaunch parity uses focused content validation routing', () => {
@@ -527,6 +654,27 @@ test('weekly recap runtime guard uses focused content validation routing', () =>
     'full content validation must still invoke the weekly recap runtime guard',
   );
 });
+
+test('readiness adapter runtime guard uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const learningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/learning.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-readiness-adapter-rules/);
+  assert.match(
+    validatorSource,
+    /validateReadinessAdapterRules\(\);[\s\S]*readinessAdapterRulesValidated[\s\S]*readinessAdapterRuntimeParityValidated/,
+  );
+  assert.match(learningTestSource, /readiness adapter ignores malformed counters/);
+  assert.match(learningTestSource, /correctCount:\s*999/);
+  assert.match(learningTestSource, /totalCount:\s*999/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

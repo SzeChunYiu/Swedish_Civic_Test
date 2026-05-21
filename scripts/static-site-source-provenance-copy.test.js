@@ -291,6 +291,20 @@ const staleChildApplicationClaimPatterns = [
   /children can be included on a parent's citizenship application/i,
   /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
 ];
+const staleCitizenshipConductClaimPatterns = [
+  /Have led an orderly life\s*[—-]\s*no significant criminal record/i,
+  /Standard residence requirement:\s*5 years/i,
+  /Standardowy wymóg pobytu:\s*5 lat/i,
+  /Standart ikamet şartı:\s*5 yıl/i,
+  /Стандартна вимога щодо проживання:\s*5 років/i,
+  /شرط الإقامة المعتاد:\s*5 سنوات/i,
+  /شرط اقامت استاندارد:\s*5 سال/i,
+  /标准居留要求：5 年/i,
+  /標準居留要求：5 年/i,
+  /Shuruudda deganaanshaha caadiga ah:\s*5 sano/i,
+  /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
+  /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
+];
 
 const homeHeroFooterFallbackKeys = [
   'hero.eyebrow',
@@ -842,6 +856,27 @@ test('static ebook citizenship child-application copy is backed by current Migra
   assert.match(ebookSource, /barn inte längre stå med på en förälders medborgarskapsansökan/i);
   assert.match(ebookSource, /barnet behöver en egen ansökan/i);
   assert.match(ebookSource, /vårdnadshavare skriver under/i);
+  assert.match(
+    ebookSource,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
+  );
+});
+
+test('static ebook citizenship conduct copy is backed by current Migrationsverket source metadata', () => {
+  const ebookSource = read('site/ebook.js');
+
+  staleCitizenshipConductClaimPatterns.forEach((pattern) =>
+    assert.doesNotMatch(ebookSource, pattern),
+  );
+  assert.match(ebookSource, /From 6 June 2026, the adult main rule is eight years/i);
+  assert.match(ebookSource, /Meet the stricter conduct requirement/i);
+  assert.match(ebookSource, /Offences can mean a longer waiting period/i);
+  assert.match(ebookSource, /Migrationsverket decides individual cases/i);
+  assert.match(ebookSource, /Från 6 juni 2026 skärps skötsamhetskravet/i);
+  assert.match(ebookSource, /brott kan innebära längre karenstid/i);
+  assert.match(ebookSource, /Migrationsverket avgör det enskilda ärendet/i);
+  assert.match(ebookSource, /Adult main residence rule: 8 years/i);
+  assert.match(ebookSource, /Huvudregel för vuxnas hemvist: 8 år/i);
   assert.match(
     ebookSource,
     /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,

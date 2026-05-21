@@ -214,7 +214,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
   },
   {
     id: 'countdownBanner',
-    flags: ['--focus-countdown-banner'],
+    flags: ['--focus-countdown-banner-parity', '--focus-countdown-banner'],
     summaryKeys: [
       'citizenshipRulesEffectiveDateValidated',
       'civicKnowledgeTestFirstSittingDateValidated',
@@ -224,6 +224,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'countdownBannerTimelineCopyParityValidated',
       'countdownBannerHomeMountRulesValidated',
       'countdownBannerHomeMountParityValidated',
+      'studyPlanRuntimeCasesValidated',
+      'studyPlanRuntimeParityValidated',
     ],
   },
   {
@@ -434,6 +436,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'searchRouteQueryHydrationRulesValidated',
       'searchRouteQueryHydrationParityValidated',
+      'searchQuestionPunctuationRulesValidated',
+      'searchQuestionPunctuationParityValidated',
     ],
   },
   {

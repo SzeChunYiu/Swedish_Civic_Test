@@ -54,6 +54,20 @@ const staleChildApplicationClaimPatterns = [
   /children can be included on a parent's citizenship application/i,
   /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
 ];
+const staleCitizenshipConductClaimPatterns = [
+  /Have led an orderly life\s*[—-]\s*no significant criminal record/i,
+  /Standard residence requirement:\s*5 years/i,
+  /Standardowy wymóg pobytu:\s*5 lat/i,
+  /Standart ikamet şartı:\s*5 yıl/i,
+  /Стандартна вимога щодо проживання:\s*5 років/i,
+  /شرط الإقامة المعتاد:\s*5 سنوات/i,
+  /شرط اقامت استاندارد:\s*5 سال/i,
+  /标准居留要求：5 年/i,
+  /標準居留要求：5 年/i,
+  /Shuruudda deganaanshaha caadiga ah:\s*5 sano/i,
+  /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
+  /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
+];
 const migrationsverketCitizenshipRulesUrl =
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
 const officialPracticalTestSourceUrls = [
@@ -215,6 +229,12 @@ function assertNoUnsupportedPracticalTestClaim(value) {
 
 function assertNoStaleChildApplicationClaim(value) {
   for (const pattern of staleChildApplicationClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoStaleCitizenshipConductClaim(value) {
+  for (const pattern of staleCitizenshipConductClaimPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -808,6 +828,36 @@ test('static ebook chapter 11 keeps child citizenship application rules current'
   assert.match(source, /Migrationsverket citizenship rule changes from 6 June 2026/);
   assert.match(source, /retrievedDate: '2026-05-20'/);
   assert.match(source, new RegExp(migrationsverketCitizenshipRulesUrl));
+});
+
+test('static ebook chapter 11 keeps conduct requirement current and decision-safe', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '11');
+  const swedishHtml = renderChapter(harness, 'sv', '11');
+
+  assertNoStaleCitizenshipConductClaim(source);
+  assertNoStaleCitizenshipConductClaim(englishHtml);
+  assertNoStaleCitizenshipConductClaim(swedishHtml);
+
+  assert.match(englishHtml, /From 6 June 2026, the adult main rule is eight years/);
+  assert.match(englishHtml, /Meet the stricter conduct requirement/);
+  assert.match(englishHtml, /Offences can mean a longer waiting period/);
+  assert.match(englishHtml, /Migrationsverket decides individual cases/);
+  assert.match(
+    englishHtml,
+    /Stricter conduct requirement with longer waiting periods after offences/,
+  );
+  assert.match(englishHtml, /Adult main residence rule: 8 years/);
+
+  assert.match(swedishHtml, /Från 6 juni 2026 skärps skötsamhetskravet/);
+  assert.match(swedishHtml, /brott kan innebära längre karenstid/);
+  assert.match(swedishHtml, /Migrationsverket avgör det enskilda ärendet/);
+  assert.match(swedishHtml, /Huvudregel för vuxnas hemvist: 8 år/);
+  assert.match(swedishHtml, /Skärpt skötsamhetskrav med längre karenstider efter brott/);
+
+  assert.match(englishHtml, /data-source-keys="migrationsverketCitizenshipRules"/);
+  assert.match(swedishHtml, /migrationsverketCitizenshipRules/);
 });
 
 test('native ebook study article audio narrates article prose with persisted rate', () => {

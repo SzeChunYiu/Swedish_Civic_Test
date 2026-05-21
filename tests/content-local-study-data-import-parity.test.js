@@ -38,14 +38,47 @@ function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
+function listJavaScriptFiles(rootDir) {
+  const files = [];
+  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      listJavaScriptFiles(entryPath).forEach((file) => files.push(file));
+    } else if (/\.(?:cjs|js)$/.test(entry.name)) {
+      files.push(entryPath);
+    }
+  }
+
+  return files;
+}
+
+function findStorageHarnessConsumers() {
+  return ['tests', 'scripts']
+    .flatMap((relativeRoot) => listJavaScriptFiles(path.join(repoRoot, relativeRoot)))
+    .map((filePath) => path.relative(repoRoot, filePath))
+    .filter((relativePath) => {
+      if (relativePath === 'tests/helpers/storageStoreHarness.cjs') return false;
+      const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      return source.includes('storageStoreHarness.cjs');
+    })
+    .sort();
+}
+
 test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
-  const storageHarnessConsumers = [
-    'tests/v1-1-review-store.test.js',
-    'tests/v1-1-highlights-store.test.js',
-    'scripts/learning.test.js',
-    'tests/content-local-study-data-import-parity.test.js',
-    'tests/v1-1-companion-store.test.js',
-  ];
+  const storageHarnessConsumers = findStorageHarnessConsumers();
+
+  assert.deepEqual(
+    storageHarnessConsumers,
+    [...storageHarnessConsumers].sort(),
+    'storage harness consumers should be scanned in stable order',
+  );
+  assert.ok(
+    storageHarnessConsumers.includes('scripts/learning.test.js') &&
+      storageHarnessConsumers.includes('tests/content-local-study-data-import-parity.test.js'),
+    'guard should dynamically cover storage harness consumers in tests/ and scripts/',
+  );
 
   for (const relativePath of storageHarnessConsumers) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -55,8 +88,8 @@ test('storage-backed tests share the storage harness TypeScript loader and nativ
       `${relativePath} must consume the shared storage harness`,
     );
     assert.doesNotMatch(
-      source,
-      /require\.extensions\[['"]\.ts['"]\]\s*=/,
+      source.replace(/storageStoreHarness\.cjs/g, ''),
+      /require\.extensions\[['"]\.tsx?['"]\]\s*=/,
       `${relativePath} must not install its own TypeScript require hook`,
     );
     assert.doesNotMatch(
@@ -66,12 +99,12 @@ test('storage-backed tests share the storage harness TypeScript loader and nativ
     );
     assert.doesNotMatch(
       source,
-      /['"]react-native-mmkv['"]\s*:/,
+      /(?:request\s*===\s*['"]react-native-mmkv['"]|['"]react-native-mmkv['"]\s*:)/,
       `${relativePath} must not define a local MMKV module stub`,
     );
     assert.doesNotMatch(
       source,
-      /['"]zustand['"]\s*:/,
+      /(?:request\s*===\s*['"]zustand['"]|['"]zustand['"]\s*:)/,
       `${relativePath} must not define a local Zustand module stub`,
     );
     assert.doesNotMatch(

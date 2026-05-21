@@ -61,13 +61,17 @@ function normalizeDueCardsLimit(limit: unknown): number | undefined {
   return undefined;
 }
 
-function assertSafeReviewQuestionId(questionId: unknown): asserts questionId is string {
-  if (
-    typeof questionId !== 'string' ||
-    questionId.trim() !== questionId ||
-    questionId.length === 0 ||
-    !isSafeImportedMapKey(questionId)
-  ) {
+function isSafeReviewQuestionId(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    value.length > 0 &&
+    value.trim() === value &&
+    isSafeImportedMapKey(value)
+  );
+}
+
+function assertSafeReviewQuestionId(value: unknown): asserts value is string {
+  if (!isSafeReviewQuestionId(value)) {
     throw new Error('Review questionId must be a non-empty safe string');
   }
 }
@@ -82,9 +86,8 @@ function isReviewCard(value: unknown, id?: string): value is ReviewCard {
   if (!value || typeof value !== 'object') return false;
   const v = value as Partial<ReviewCard>;
   return (
-    (id === undefined || id !== '') &&
-    typeof v.questionId === 'string' &&
-    v.questionId.length > 0 &&
+    (id === undefined || isSafeReviewQuestionId(id)) &&
+    isSafeReviewQuestionId(v.questionId) &&
     (id === undefined || v.questionId === id) &&
     isFiniteInRange(v.difficulty, 1, 10) &&
     isFiniteInRange(v.stability, 1, 365 * 5) &&
@@ -142,7 +145,7 @@ function read(): {
     raw,
     reviewStorageId,
     REVIEW_STORE_KEY,
-    (value) => normalize(JSON.parse(value)),
+    (rawValue) => normalize(JSON.parse(rawValue)),
     EMPTY,
   );
   return { reviews: parsed.value, persistenceWarning: parsed.warning ?? warning };
