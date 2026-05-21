@@ -1053,6 +1053,22 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
       'Public service-företag ska inte vara oberoende av politiska och andra intressen.',
       'Public service companies should not be independent of political and other interests.',
     ],
+    [generatedQuestionId(sourceQuestions, 'q055', 'trueStatement')]: [
+      'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte.',
+      'In Sweden, buying sex is illegal, but the person who sells sex is not punished.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q055', 'falseStatement')]: [
+      'Att köpa sex är alltid lagligt i Sverige.',
+      'In Sweden, buying sex is always legal.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'trueStatement')]: [
+      'Äktenskap mellan personer av samma kön är tillåtet i Sverige.',
+      'In Sweden, marriage between people of the same sex is permitted.',
+    ],
+    [generatedQuestionId(sourceQuestions, 'q060', 'falseStatement')]: [
+      'Äktenskap mellan personer av samma kön är förbjudet i Sverige.',
+      'In Sweden, marriage between people of the same sex is prohibited.',
+    ],
     [generatedQuestionId(sourceQuestions, 'q074', 'falseStatement')]: [
       'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',
       'Swedish municipalities do not have to offer older people support and help.',
