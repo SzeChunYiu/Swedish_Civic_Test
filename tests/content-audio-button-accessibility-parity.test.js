@@ -34,7 +34,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
   assert.match(source, /language = 'sv'/);
   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
-  assert.match(source, /const speechText = text\.trim\(\);/);
+  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);
@@ -76,7 +76,7 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
   assert.match(source, /stopLabel: 'Stoppa återkoppling'/);
   assert.match(source, /playLabel: 'Listen to feedback'/);
   assert.match(source, /stopLabel: 'Stop feedback'/);
-  assert.match(source, /const speechText = text\.trim\(\);/);
+  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/);
