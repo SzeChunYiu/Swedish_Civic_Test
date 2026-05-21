@@ -2,6 +2,39 @@
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+
+function supportedContentValidationFocusFlags() {
+  const source = fs.readFileSync(__filename, 'utf8');
+  return [
+    ...new Set(
+      [...source.matchAll(/process\.argv\.includes\(['"](--focus-[^'"]+)['"]\)/g)].map(
+        (match) => match[1],
+      ),
+    ),
+  ].sort();
+}
+
+function rejectUnsupportedContentValidationFocusFlags() {
+  const requestedFocusFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
+  if (requestedFocusFlags.length === 0) return;
+
+  const supportedFocusFlags = supportedContentValidationFocusFlags();
+  const unsupportedFocusFlags = requestedFocusFlags.filter(
+    (flag) => !supportedFocusFlags.includes(flag),
+  );
+  if (unsupportedFocusFlags.length === 0) return;
+
+  const plural = unsupportedFocusFlags.length === 1 ? 'flag' : 'flags';
+  console.error(
+    `Unsupported validate-content focus ${plural}: ${unsupportedFocusFlags.join(', ')}`,
+  );
+  console.error('Supported focus modes:');
+  supportedFocusFlags.forEach((flag) => console.error(`- ${flag}`));
+  process.exit(1);
+}
+
+rejectUnsupportedContentValidationFocusFlags();
+
 const ts = require('typescript');
 const vm = require('node:vm');
 const {
@@ -46,7 +79,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 179;
+const EXPECTED_SOURCE_QUESTIONS = 169;
 const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
@@ -164,12 +197,11 @@ const EXPECTED_UHR_SOURCE = {
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
-const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
-  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -2120,6 +2152,135 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
+];
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
+  sv: [
+    'Om provet',
+    'Vad är medborgarskapsprovet i samhällskunskap?',
+    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+    'Vad är det?',
+    'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
+    'Vem ska göra det?',
+    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    'Vad är känt om första provet?',
+    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+    'Vilket material bygger appen på?',
+    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
+    'Är appen officiell?',
+    'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
+    'Källäge kontrollerat',
+    'Tillbaka till start',
+    'Börja öva',
+    'Öppna övningsläget',
+    'Se kravguiden',
+    'Öppna guiden för medborgarskapskrav',
+  ],
+  en: [
+    'About the test',
+    'What is the Swedish civic test?',
+    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+    'What is it?',
+    'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
+    'Who takes it?',
+    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    'What is known about the first test?',
+    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+    'What material does this app use?',
+    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
+    'Is this app official?',
+    'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
+    'Source status checked',
+    'Back to home',
+    'Start practising',
+    'Open practice mode',
+    'View requirements guide',
+    'Open the citizenship requirements guide',
+  ],
+};
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'about-the-test route must import AppLanguage'],
+  ['type AboutTheTestCopy = {', 'about-the-test route must define a typed copy contract'],
+  ['const officialTestSourceNotes = [', 'about-the-test route must define source notes'],
+  [
+    'const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {',
+    'about-the-test route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'about-the-test route must read language from settings store',
+  ],
+  [
+    'const copy = aboutTheTestCopy[language];',
+    'about-the-test route must select copy from settings language',
+  ],
+  [
+    'const sections: readonly { title: string; body: string }[] = [',
+    'about-the-test route must render section copy from one typed list',
+  ],
+  [
+    'accessibilityLabel={copy.openRequirementsAccessibilityLabel}',
+    'about-the-test route requirements link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.openPracticeAccessibilityLabel}',
+    'about-the-test route practice link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.backHomeAccessibilityLabel}',
+    'about-the-test route home link must expose localized accessibility copy',
+  ],
+];
+const EXPECTED_ABOUT_THE_TEST_REQUIRED_COPY = [
+  [
+    '15 augusti 2026 i Stockholm',
+    'about-the-test route Swedish copy must keep the confirmed first sitting date and city',
+  ],
+  [
+    '15 August 2026 in Stockholm',
+    'about-the-test route English copy must keep the confirmed first sitting date and city',
+  ],
+  [
+    'brev från Migrationsverket',
+    'about-the-test route Swedish copy must say sign-up depends on a Migrationsverket letter',
+  ],
+  [
+    'letter from Migrationsverket',
+    'about-the-test route English copy must say sign-up depends on a Migrationsverket letter',
+  ],
+  [
+    'kostnadsfritt och ges som ett utprövningsprov med generös tid',
+    'about-the-test route Swedish copy must keep the free trial-sitting wording',
+  ],
+  [
+    'free of charge and is a trial sitting with generous time',
+    'about-the-test route English copy must keep the free trial-sitting wording',
+  ],
+  [
+    'Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate}',
+    'about-the-test route Swedish source status must be tied to source metadata',
+  ],
+  [
+    'This status was checked on ${officialTestSourceNotes[0].retrievedDate}',
+    'about-the-test route English source status must be tied to source metadata',
+  ],
+];
+const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+];
+const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-19';
+const UNSUPPORTED_ABOUT_THE_TEST_LOGISTICS_PATTERNS = [
+  /Ett\s+kort\s+prov/i,
+  /short\s+test/i,
+  /digitalt\s+prov/i,
+  /digital\s+exam/i,
+  /Flervalsfr[aå]gor/i,
+  /Multiple-choice\s+questions/i,
+  /dator\s+i\s+en\s+provlokal/i,
+  /computer\s+at\s+a\s+test\s+centre/i,
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -4501,7 +4662,6 @@ function validateCitizenshipTimeline() {
   let countdownCopyParity = true;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
-  const testFirstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -4519,11 +4679,6 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
-  if (testFirstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
-    rejectDate(
-      `civic knowledge test first sitting must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
-    );
-  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -4531,14 +4686,11 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
-    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <
-      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
+    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
   ) {
-    rejectDate('civic knowledge test dates must stay after the citizenship rules date');
+    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
   }
   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
@@ -4565,15 +4717,11 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
+    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
     'Nya medborgarskapsregler gäller från',
-    'UHR har bekräftat att den första provomgången i samhällskunskap är',
-    'tills nya reglerna',
-    'i Stockholm',
+    'Samhällskunskapsprovet väntas starta i augusti 2026',
     'New citizenship rules apply from',
-    'UHR has confirmed that the first civic-knowledge test sitting is',
-    'until new rules',
-    'in Stockholm',
+    'The civic-knowledge test is expected in August 2026',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -4583,15 +4731,8 @@ function validateCitizenshipTimeline() {
   [
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
-    /Samhällskunskapsprovet väntas starta i augusti 2026/,
-    /The civic-knowledge test is expected in August 2026/,
-    /Regeringens tidsgräns för första steget/,
-    /The government deadline for the first step/,
     /until new exam/,
     /tills nya provet/,
-    /The civic-knowledge test is expected in August 2026/,
-    /Samhällskunskapsprovet väntas starta i augusti 2026/,
-    /Regeringen/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
       rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
@@ -4603,7 +4744,6 @@ function validateCitizenshipTimeline() {
     dateParity,
     rulesDate,
     sourceUrlsValidated,
-    testFirstSittingDate,
     testDeadlineDate,
   };
 }
@@ -7271,6 +7411,10 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let aboutTheTestRouteCopyLabelsValidated = 0;
+let aboutTheTestRouteCopyParityValidated = false;
+let aboutTheTestOfficialSourceUrlsValidated = 0;
+let aboutTheTestOfficialSourceRetrievedDateValidated = null;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -7362,6 +7506,8 @@ let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
+let mobileAdsConsentRuntimeCasesValidated = 0;
+let mobileAdsConsentRuntimeParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -7378,7 +7524,6 @@ let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
-let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
@@ -7546,6 +7691,18 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-about-the-test-route-copy')) {
+  validateAboutTheTestRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    aboutTheTestRouteCopyLabelsValidated,
+    aboutTheTestRouteCopyParityValidated,
+    aboutTheTestOfficialSourceUrlsValidated,
+    aboutTheTestOfficialSourceRetrievedDateValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-head-metadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
@@ -7562,20 +7719,25 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-countdown-banner')) {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+if (
+  process.argv.includes('--focus-mobile-ads-consent-parity') ||
+  process.argv.includes('--focus-mobile-ads-consent')
+) {
+  validateAdConsentTypeSchemaParity();
+  validateMobileAdsConsentTypeSchemaParity();
+  validateMobileAdsConsentHookParity();
+  validateMobileAdsConsentRuntimeParity();
   exitWithValidationFailures();
   printValidationSummary({
-    citizenshipRulesEffectiveDateValidated,
-    civicKnowledgeTestDeadlineDateValidated,
-    citizenshipTimelineSourceUrlsValidated,
-    citizenshipTimelineDateParityValidated,
-    countdownBannerTimelineCopyParityValidated,
+    adConsentTypeUnionsValidated,
+    adConsentTypeInterfacesValidated,
+    adConsentTypeSchemaParityValidated,
+    mobileAdsConsentTypeInterfacesValidated,
+    mobileAdsConsentTypeSchemaParityValidated,
+    mobileAdsConsentHookCasesValidated,
+    mobileAdsConsentHookParityValidated,
+    mobileAdsConsentRuntimeCasesValidated,
+    mobileAdsConsentRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -7601,7 +7763,6 @@ if (
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.testFirstSittingDate;
   civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
@@ -10310,6 +10471,98 @@ function validateOnboardingRouteCopyParity() {
   }
 }
 
+function validateAboutTheTestRouteCopyParity() {
+  let valid = true;
+  let aboutTheTestRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    aboutTheTestRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  } catch (error) {
+    reject(`about-the-test route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!aboutTheTestRoute.includes(snippet)) reject(message);
+  });
+
+  EXPECTED_ABOUT_THE_TEST_REQUIRED_COPY.forEach(([snippet, message]) => {
+    if (!aboutTheTestRoute.includes(snippet)) reject(message);
+  });
+
+  for (const pattern of UNSUPPORTED_ABOUT_THE_TEST_LOGISTICS_PATTERNS) {
+    if (pattern.test(aboutTheTestRoute)) {
+      reject('about-the-test route must not make unsupported logistics claim');
+      break;
+    }
+  }
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`about-the-test route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!aboutTheTestRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`about-the-test route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`about-the-test route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) aboutTheTestRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.forEach((url) => {
+    if (aboutTheTestRoute.includes(url)) {
+      aboutTheTestOfficialSourceUrlsValidated += 1;
+    } else {
+      reject(`about-the-test route official source metadata missing ${url}`);
+    }
+  });
+
+  const retrievedDatePattern = new RegExp(
+    `retrievedDate: '${escapeRegExp(EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE)}'`,
+    'g',
+  );
+  const retrievedDateOccurrences = (aboutTheTestRoute.match(retrievedDatePattern) || []).length;
+  if (retrievedDateOccurrences === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length) {
+    aboutTheTestOfficialSourceRetrievedDateValidated =
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE;
+  } else {
+    reject(
+      `about-the-test route official source metadata must use retrievedDate ${EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE} for every source`,
+    );
+  }
+
+  const expectedLabelCount = Object.values(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (
+    valid &&
+    aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
+    aboutTheTestOfficialSourceUrlsValidated ===
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
+    aboutTheTestOfficialSourceRetrievedDateValidated ===
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
+  ) {
+    aboutTheTestRouteCopyParityValidated = true;
+  }
+}
+
 function validateScreenShellLayoutParity() {
   let valid = true;
   let screenShell = '';
@@ -12778,6 +13031,99 @@ function validateMobileAdsConsentHookParity() {
 
   if (valid && mobileAdsConsentHookCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES) {
     mobileAdsConsentHookParityValidated = true;
+  }
+}
+
+function validateMobileAdsConsentRuntimeParity() {
+  let valid = true;
+  let mobileConsentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mobileConsentSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const currentAttIndex = mobileConsentSource.indexOf(
+    'const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(',
+  );
+  const umpIndex = mobileConsentSource.indexOf(
+    'const umpConsentStatus = await resolveUmpConsentStatus(',
+  );
+  const requestAttIndex = mobileConsentSource.indexOf(
+    'const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(',
+  );
+  const decisionIndex = mobileConsentSource.indexOf(
+    'const decision = getAdSdkInitializationDecision(state);',
+  );
+  const initializeIndex = mobileConsentSource.indexOf(
+    'await options.runtime.initializeGoogleMobileAds?.();',
+  );
+
+  const runtimeCases = [
+    [
+      currentAttIndex >= 0 &&
+        umpIndex >= 0 &&
+        requestAttIndex >= 0 &&
+        currentAttIndex < umpIndex &&
+        umpIndex < requestAttIndex,
+      'Mobile Ads consent runtime must resolve UMP consent before requesting ATT',
+    ],
+    [
+      !/Promise\.all\s*\(/.test(mobileConsentSource),
+      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
+    ],
+    [
+      decisionIndex >= 0 && initializeIndex >= 0 && decisionIndex < initializeIndex,
+      'Mobile Ads consent runtime must decide consent before initializing Google Mobile Ads',
+    ],
+    [
+      /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';/.test(
+        mobileConsentSource,
+      ) &&
+        /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';[\s\S]*?if\s*\(\s*currentStatus\s*!==\s*'not_determined'\s*\)\s*return\s+currentStatus;/.test(
+          mobileConsentSource,
+        ),
+      'Mobile Ads consent runtime must request ATT only on iOS when status is not determined',
+    ],
+    [
+      mobileConsentSource.includes('normalizeAdConsentRegion') &&
+        mobileConsentSource.includes('regionRequiresUmpConsent'),
+      'Mobile Ads consent runtime must import normalized region helpers',
+    ],
+    [
+      mobileConsentSource.includes(
+        "if (!shouldCollectConsent || !regionRequiresUmpConsent(region)) return 'not_required';",
+      ),
+      'Mobile Ads consent runtime must skip UMP gathering for non-UMP regions',
+    ],
+    [
+      /resolveUmpConsentStatus\(\s*runtime\s*,\s*shouldCollectConsent\s*,\s*normalizedRegion\s*,?\s*\)/.test(
+        mobileConsentSource,
+      ),
+      'Mobile Ads consent runtime must pass the normalized region into UMP collection',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    mobileAdsConsentRuntimeCasesValidated += 1;
+  });
+
+  if (valid && mobileAdsConsentRuntimeCasesValidated === runtimeCases.length) {
+    mobileAdsConsentRuntimeParityValidated = true;
   }
 }
 
@@ -15929,6 +16275,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateAboutTheTestRouteCopyParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -15957,6 +16304,7 @@ validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
+validateMobileAdsConsentRuntimeParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -16096,6 +16444,10 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      aboutTheTestRouteCopyLabelsValidated,
+      aboutTheTestRouteCopyParityValidated,
+      aboutTheTestOfficialSourceUrlsValidated,
+      aboutTheTestOfficialSourceRetrievedDateValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
@@ -16157,6 +16509,8 @@ console.log(
       mobileAdsConsentTypeSchemaParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
+      mobileAdsConsentRuntimeCasesValidated,
+      mobileAdsConsentRuntimeParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
@@ -16199,7 +16553,6 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
-      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
