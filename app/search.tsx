@@ -1,8 +1,7 @@
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
+import { Link, useLocalSearchParams } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { ProvenanceBadge } from '../components/quiz/ProvenanceBadge';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
@@ -10,21 +9,14 @@ import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';
 import { questions } from '../data/questions';
 import {
-  getProvenanceDescription,
-  getProvenanceLabel,
-  getQuestionProvenance,
-} from '../lib/content/provenance';
-import { searchGlossary } from '../lib/learning/glossarySearch';
-import {
   getQuestionSearchChapterName,
   getQuestionSearchExcerpt,
   getQuestionSearchTitle,
   searchQuestions,
 } from '../lib/search/questionSearch';
-import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
-import type { ThemeColors } from '../lib/theme';
+import { colors, radius, space, typography } from '../lib/theme';
+import type { GlossaryTerm } from '../types/content';
 
 type SearchRouteParams = {
   q?: string | string[];
@@ -32,52 +24,28 @@ type SearchRouteParams = {
 };
 
 export default function SearchScreen() {
-  const router = useRouter();
   const searchParams = useLocalSearchParams<SearchRouteParams>();
   const routeQuery = getRouteSearchQuery(searchParams);
   const [query, setQuery] = useState(() => routeQuery);
-  const previousRouteQueryRef = useRef(routeQuery);
-  const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
-  const themeMode = useAccessibilityStore((state) => state.themeMode);
-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = searchRouteCopy[language];
-  useEffect(() => {
-    if (previousRouteQueryRef.current === routeQuery) return;
-
-    previousRouteQueryRef.current = routeQuery;
-    setQuery(routeQuery);
-  }, [routeQuery]);
-  const handleClearSearch = () => {
-    setQuery('');
-    previousRouteQueryRef.current = '';
-
-    if (routeQuery.length > 0) {
-      router.replace('/search');
-    }
-  };
-  const handleSubmitSearch = () => {
-    const submittedQuery = query.trim();
-
-    if (submittedQuery.length === 0) {
-      handleClearSearch();
-      return;
-    }
-
-    setQuery(submittedQuery);
-    previousRouteQueryRef.current = submittedQuery;
-    router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);
-  };
-  const trimmedQuery = query.trim();
-  const filteredTerms = useMemo(
+  const termsWithChapters = useMemo(
     () =>
-      searchGlossary(trimmedQuery, language, glossaryTerms.length).map((term) => ({
+      glossaryTerms.map((term) => ({
         term,
-        chapterName: language === 'en' ? term.chapterNameEn : term.chapterNameSv,
+        chapter: chapters.find((chapter) => chapter.id === term.chapterId),
       })),
-    [language, trimmedQuery],
+    [],
   );
+  const trimmedQuery = query.trim();
+  const filteredTerms = useMemo(() => {
+    const normalizedQuery = normalizeSearchText(trimmedQuery);
+    if (!normalizedQuery) return termsWithChapters;
+
+    return termsWithChapters.filter(({ chapter, term }) =>
+      glossaryTermMatchesQuery(term, chapter, normalizedQuery),
+    );
+  }, [termsWithChapters, trimmedQuery]);
   const questionResults = useMemo(() => {
     if (!trimmedQuery) return [];
 
@@ -90,24 +58,15 @@ export default function SearchScreen() {
   }, [trimmedQuery]);
   const resultSummary =
     trimmedQuery.length > 0
-      ? copy.filteredSummary(filteredTerms.length, glossaryTerms.length, questionResults.length)
-      : copy.allTermsSummary(glossaryTerms.length);
+      ? copy.filteredSummary(filteredTerms.length, termsWithChapters.length, questionResults.length)
+      : copy.allTermsSummary(termsWithChapters.length);
   const searchDescriptionId = 'search-route-glossary-description';
 
   return (
-    <ScreenShell
-      eyebrow={copy.eyebrow}
-      title={copy.title}
-      subtitle={copy.subtitle}
-      themeColors={themeColors}
-    >
-      <SectionHeader
-        title={copy.sectionTitle}
-        subtitle={copy.sectionSubtitle}
-        themeColors={themeColors}
-      />
+    <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
+      <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
 
-      <Card themeColors={themeColors}>
+      <Card>
         <Text nativeID={searchDescriptionId} style={styles.accessibilitySummaryText}>
           {copy.searchCardAccessibilityLabel}
         </Text>
@@ -122,9 +81,8 @@ export default function SearchScreen() {
           autoCorrect={false}
           clearButtonMode="while-editing"
           onChangeText={setQuery}
-          onSubmitEditing={handleSubmitSearch}
           placeholder={copy.searchPlaceholder}
-          placeholderTextColor={themeColors.textPlaceholder}
+          placeholderTextColor={colors.textPlaceholder}
           returnKeyType="search"
           style={styles.searchInput}
           value={query}
@@ -138,8 +96,7 @@ export default function SearchScreen() {
             accessibilityRole="button"
             accessibilityState={{ disabled: query.length === 0 }}
             disabled={query.length === 0}
-            onPress={handleClearSearch}
-            themeColors={themeColors}
+            onPress={() => setQuery('')}
             variant="secondary"
           >
             {copy.clearSearch}
@@ -149,10 +106,15 @@ export default function SearchScreen() {
 
       <View style={styles.termList}>
         {filteredTerms.length > 0 ? (
-          filteredTerms.map(({ chapterName, term }) => {
+          filteredTerms.map(({ chapter, term }) => {
             const primaryTerm = language === 'en' ? term.termEn : term.termSv;
             const secondaryTerm = language === 'en' ? term.termSv : term.termEn;
             const explanation = language === 'en' ? term.explanationEn : term.explanationSv;
+            const chapterName = chapter
+              ? language === 'en'
+                ? chapter.nameEn
+                : chapter.nameSv
+              : undefined;
             const termSummary = copy.termAccessibilityLabel({
               chapterName,
               explanation,
@@ -161,7 +123,7 @@ export default function SearchScreen() {
             const termSummaryId = `search-term-summary-${term.id}`;
 
             return (
-              <Card key={term.id} style={styles.termCard} themeColors={themeColors}>
+              <Card key={term.id} style={styles.termCard}>
                 <Text nativeID={termSummaryId} style={styles.accessibilitySummaryText}>
                   {termSummary}
                 </Text>
@@ -189,11 +151,7 @@ export default function SearchScreen() {
             );
           })
         ) : (
-          <Card
-            accessible
-            accessibilityLabel={`${copy.emptyTitle}. ${copy.emptyBody}`}
-            themeColors={themeColors}
-          >
+          <Card accessible accessibilityLabel={`${copy.emptyTitle}. ${copy.emptyBody}`}>
             <Text accessibilityRole="header" style={styles.emptyTitle}>
               {copy.emptyTitle}
             </Text>
@@ -219,9 +177,6 @@ export default function SearchScreen() {
                 const title = getQuestionSearchTitle(result.question, language);
                 const excerpt = getQuestionSearchExcerpt(result.question, language);
                 const chapterName = getQuestionSearchChapterName(result.chapter, language);
-                const provenance = getQuestionProvenance(result.question);
-                const provenanceLabel = getProvenanceLabel(provenance, language);
-                const provenanceDescription = getProvenanceDescription(provenance, language);
                 const sourceReference = [
                   result.question.uhrReference.chapter,
                   result.question.uhrReference.section,
@@ -231,19 +186,13 @@ export default function SearchScreen() {
                 const questionSummary = copy.questionAccessibilityLabel({
                   chapterName,
                   excerpt,
-                  provenanceDescription,
-                  provenanceLabel,
                   sourceReference,
                   title,
                 });
                 const questionSummaryId = `search-question-summary-${result.question.id}`;
 
                 return (
-                  <Card
-                    key={result.question.id}
-                    style={styles.questionCard}
-                    themeColors={themeColors}
-                  >
+                  <Card key={result.question.id} style={styles.questionCard}>
                     <Text nativeID={questionSummaryId} style={styles.accessibilitySummaryText}>
                       {questionSummary}
                     </Text>
@@ -267,11 +216,6 @@ export default function SearchScreen() {
                       </Link>
                     </View>
                     <Text style={styles.explanation}>{excerpt}</Text>
-                    <ProvenanceBadge
-                      language={language}
-                      question={result.question}
-                      themeColors={themeColors}
-                    />
                     {sourceReference ? (
                       <Text style={styles.questionSource}>
                         {copy.sourceLabel}: {sourceReference}
@@ -284,7 +228,6 @@ export default function SearchScreen() {
               <Card
                 accessible
                 accessibilityLabel={`${copy.emptyQuestionTitle}. ${copy.emptyQuestionBody}`}
-                themeColors={themeColors}
               >
                 <Text accessibilityRole="header" style={styles.emptyTitle}>
                   {copy.emptyQuestionTitle}
@@ -330,15 +273,11 @@ type SearchRouteCopy = {
   questionAccessibilityLabel: ({
     chapterName,
     excerpt,
-    provenanceDescription,
-    provenanceLabel,
     sourceReference,
     title,
   }: {
     chapterName: string;
     excerpt: string;
-    provenanceDescription: string;
-    provenanceLabel: string;
     sourceReference: string;
     title: string;
   }) => string;
@@ -381,20 +320,11 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Öppna kapitlet ${chapterName}`,
     openQuestion: 'Öppna fråga',
     openQuestionAccessibilityLabel: (title) => `Öppna övningsfrågan: ${title}`,
-    questionAccessibilityLabel: ({
-      chapterName,
-      excerpt,
-      provenanceDescription,
-      provenanceLabel,
-      sourceReference,
-      title,
-    }) =>
+    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
       [
         title,
         excerpt,
         chapterName ? `Kapitel: ${chapterName}` : '',
-        `Källtyp: ${provenanceLabel}`,
-        provenanceDescription,
         sourceReference ? `Källa: ${sourceReference}` : '',
       ]
         .filter(Boolean)
@@ -436,20 +366,11 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Open the chapter ${chapterName}`,
     openQuestion: 'Open question',
     openQuestionAccessibilityLabel: (title) => `Open practice question: ${title}`,
-    questionAccessibilityLabel: ({
-      chapterName,
-      excerpt,
-      provenanceDescription,
-      provenanceLabel,
-      sourceReference,
-      title,
-    }) =>
+    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
       [
         title,
         excerpt,
         chapterName ? `Chapter: ${chapterName}` : '',
-        `Provenance: ${provenanceLabel}`,
-        provenanceDescription,
         sourceReference ? `Source: ${sourceReference}` : '',
       ]
         .filter(Boolean)
@@ -476,6 +397,14 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
   },
 };
 
+function normalizeSearchText(value: string) {
+  return value
+    .toLocaleLowerCase('sv')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
 function getFirstSearchParamValue(value: string | string[] | undefined) {
   const firstValue = Array.isArray(value) ? value[0] : value;
 
@@ -486,179 +415,190 @@ function getRouteSearchQuery(params: SearchRouteParams) {
   return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);
 }
 
-function createStyles(themeColors: ThemeColors) {
-  return StyleSheet.create({
-    searchLabel: {
-      color: themeColors.text,
-      fontSize: typography.body.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-    },
-    searchInput: {
-      backgroundColor: themeColors.surfaceMuted,
-      borderColor: themeColors.border,
-      borderRadius: radius.input,
-      borderWidth: space.hairline,
-      color: themeColors.text,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
-      marginTop: space[1],
-      minHeight: space[6],
-      paddingHorizontal: space[1.5],
-      paddingVertical: space[1],
-    },
-    searchActions: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[1],
-      justifyContent: 'space-between',
-      marginTop: space[1.5],
-    },
-    resultSummary: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
-    },
-    accessibilitySummaryText: {
-      height: space.hairline,
-      left: -10000,
-      overflow: 'hidden',
-      position: 'absolute',
-      width: space.hairline,
-    },
-    termList: {
-      gap: space[1.5],
-    },
-    termCard: {
-      gap: space[1.25],
-    },
-    termHeader: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[1],
-      justifyContent: 'space-between',
-    },
-    termTitleGroup: {
-      flex: 1,
-      gap: space[0.5],
-      minWidth: space[15],
-    },
-    termTitle: {
-      color: themeColors.text,
-      fontSize: typography.subHeading.fontSize,
-      fontWeight: typography.subHeading.fontWeight,
-      lineHeight: typography.subHeading.lineHeight,
-    },
-    termSubtitle: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
-    },
-    explanation: {
-      color: themeColors.textSecondary,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
-    },
-    chapterLink: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.focus,
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
-      color: themeColors.text,
-      fontFamily: typography.navButton.fontFamily,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      minHeight: space[6],
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
-    },
-    questionSection: {
-      gap: space[1.5],
-    },
-    inlineSectionHeader: {
-      gap: space[0.5],
-    },
-    questionSectionTitle: {
-      color: themeColors.text,
-      fontSize: typography.subHeading.fontSize,
-      fontWeight: typography.subHeading.fontWeight,
-      lineHeight: typography.subHeading.lineHeight,
-    },
-    questionSectionSubtitle: {
-      color: themeColors.textSecondary,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
-    },
-    questionList: {
-      gap: space[1.5],
-    },
-    questionCard: {
-      gap: space[1.25],
-    },
-    questionHeader: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[1],
-      justifyContent: 'space-between',
-    },
-    questionTitleGroup: {
-      flex: 1,
-      gap: space[0.5],
-      minWidth: space[15],
-    },
-    questionTitle: {
-      color: themeColors.text,
-      fontSize: typography.body.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      lineHeight: typography.body.lineHeight,
-    },
-    questionMeta: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
-    },
-    questionSource: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
-    },
-    questionLink: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.accent,
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
-      color: themeColors.text,
-      fontFamily: typography.navButton.fontFamily,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      minHeight: space[6],
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
-    },
-    emptyTitle: {
-      color: themeColors.text,
-      fontSize: typography.body.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      marginBottom: space[1],
-    },
-    backLink: {
-      alignSelf: 'flex-start',
-      backgroundColor: themeColors.surfaceMuted,
-      borderColor: themeColors.border,
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
-      color: themeColors.accent,
-      fontFamily: typography.navButton.fontFamily,
-      fontSize: typography.navButton.fontSize,
-      fontWeight: typography.navButton.fontWeight,
-      minHeight: space[6],
-      paddingHorizontal: space[1.5],
-      paddingVertical: space[1],
-      textDecorationLine: 'none',
-    },
-  });
+function glossaryTermMatchesQuery(
+  term: GlossaryTerm,
+  chapter: (typeof chapters)[number] | undefined,
+  normalizedQuery: string,
+) {
+  const searchableText = [
+    term.termSv,
+    term.termEn,
+    term.explanationSv,
+    term.explanationEn,
+    chapter?.nameSv,
+    chapter?.nameEn,
+  ]
+    .filter(Boolean)
+    .map((value) => normalizeSearchText(String(value)))
+    .join(' ');
+
+  return searchableText.includes(normalizedQuery);
 }
+
+const styles = StyleSheet.create({
+  searchLabel: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  searchInput: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.input,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+    marginTop: space[1],
+    minHeight: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  searchActions: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+    marginTop: space[1.5],
+  },
+  resultSummary: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  accessibilitySummaryText: {
+    height: space.hairline,
+    left: -10000,
+    overflow: 'hidden',
+    position: 'absolute',
+    width: space.hairline,
+  },
+  termList: {
+    gap: space[1.5],
+  },
+  termCard: {
+    gap: space[1.25],
+  },
+  termHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
+  termTitleGroup: {
+    flex: 1,
+    gap: space[0.5],
+    minWidth: space[15],
+  },
+  termTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  termSubtitle: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  explanation: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  chapterLink: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[5],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
+    textDecorationLine: 'none',
+  },
+  questionSection: {
+    gap: space[1.5],
+  },
+  inlineSectionHeader: {
+    gap: space[0.5],
+  },
+  questionSectionTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  questionSectionSubtitle: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  questionList: {
+    gap: space[1.5],
+  },
+  questionCard: {
+    gap: space[1.25],
+  },
+  questionHeader: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+    justifyContent: 'space-between',
+  },
+  questionTitleGroup: {
+    flex: 1,
+    gap: space[0.5],
+    minWidth: space[15],
+  },
+  questionTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
+  },
+  questionMeta: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  questionSource: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  questionLink: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.accent,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    color: colors.text,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    minHeight: space[5],
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.75],
+    textDecorationLine: 'none',
+  },
+  emptyTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    marginBottom: space[1],
+  },
+  backLink: {
+    alignSelf: 'flex-start',
+    color: colors.accent,
+    fontFamily: typography.navButton.fontFamily,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    textDecorationLine: 'none',
+  },
+});
