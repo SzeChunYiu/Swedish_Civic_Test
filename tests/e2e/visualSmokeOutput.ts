@@ -1,50 +1,41 @@
-import * as path from 'node:path';
+import path from 'node:path';
 
-export const VISUAL_SMOKE_UPDATE_BASELINE_ENV = 'VISUAL_SMOKE_UPDATE_BASELINE';
-export const VISUAL_SMOKE_BASELINE_RELATIVE_DIR = 'reports/2026-05-15-uiux-screenshots';
-export const VISUAL_SMOKE_RUNTIME_RELATIVE_DIR = 'tmp/visual-smoke-uiux-screenshots';
+export const visualSmokeBaselineScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+export const visualSmokeRuntimeScreenshotDir = path.resolve('tmp/visual-smoke-uiux-screenshots');
+export const visualSmokeOutputPolicy =
+  'Default visual-smoke runs write screenshots under ignored tmp/visual-smoke-uiux-screenshots. Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed reports/2026-05-15-uiux-screenshots baseline.';
 
 export type VisualSmokeOutputMode = 'runtime-temp' | 'committed-baseline-refresh';
 
-export interface ResolveVisualSmokeOutputOptions {
-  cwd?: string;
-  env?: Record<string, string | undefined>;
-}
-
-export interface VisualSmokeOutputResolution {
-  dir: string;
-  relativeDir: string;
-  mode: VisualSmokeOutputMode;
-  writesCommittedBaseline: boolean;
+export type VisualSmokeOutputResolution = {
+  outputDir: string;
+  outputMode: VisualSmokeOutputMode;
   outputPolicy: string;
-}
+  refreshCommittedBaseline: boolean;
+  writesCommittedBaseline: boolean;
+};
 
-function outputPolicyForMode(mode: VisualSmokeOutputMode): string {
-  if (mode === 'committed-baseline-refresh') {
-    return `VISUAL_SMOKE_UPDATE_BASELINE=1 is set, so this run intentionally refreshes the committed ${VISUAL_SMOKE_BASELINE_RELATIVE_DIR} baseline. Default checks should leave this unset.`;
-  }
-
-  return `Default visual-smoke runs write screenshots under ignored ${VISUAL_SMOKE_RUNTIME_RELATIVE_DIR}. Set VISUAL_SMOKE_UPDATE_BASELINE=1 only when intentionally refreshing the committed ${VISUAL_SMOKE_BASELINE_RELATIVE_DIR} baseline.`;
+export function isVisualSmokeCommittedBaselineOutput(
+  outputDir: string,
+  baselineDir = visualSmokeBaselineScreenshotDir,
+): boolean {
+  const relativePath = path.relative(baselineDir, outputDir);
+  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
 }
 
 export function resolveVisualSmokeOutput(
-  options: ResolveVisualSmokeOutputOptions = {},
+  env: Record<string, string | undefined> = process.env,
 ): VisualSmokeOutputResolution {
-  const env = options.env ?? process.env;
-  const cwd = options.cwd ?? process.cwd();
-  const writesCommittedBaseline = env[VISUAL_SMOKE_UPDATE_BASELINE_ENV] === '1';
-  const relativeDir = writesCommittedBaseline
-    ? VISUAL_SMOKE_BASELINE_RELATIVE_DIR
-    : VISUAL_SMOKE_RUNTIME_RELATIVE_DIR;
-  const mode: VisualSmokeOutputMode = writesCommittedBaseline
-    ? 'committed-baseline-refresh'
-    : 'runtime-temp';
+  const refreshCommittedBaseline = env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
+  const outputDir = refreshCommittedBaseline
+    ? visualSmokeBaselineScreenshotDir
+    : visualSmokeRuntimeScreenshotDir;
 
   return {
-    dir: path.resolve(cwd, relativeDir),
-    relativeDir,
-    mode,
-    writesCommittedBaseline,
-    outputPolicy: outputPolicyForMode(mode),
+    outputDir,
+    outputMode: refreshCommittedBaseline ? 'committed-baseline-refresh' : 'runtime-temp',
+    outputPolicy: visualSmokeOutputPolicy,
+    refreshCommittedBaseline,
+    writesCommittedBaseline: isVisualSmokeCommittedBaselineOutput(outputDir),
   };
 }
