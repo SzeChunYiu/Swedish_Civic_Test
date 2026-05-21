@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
-import { LegalExternalLink } from '../components/compliance/LegalPage';
+import { LegalExternalLink, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { questions } from '../data/questions';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -12,6 +12,8 @@ type LegalRouteSectionCopy = {
   body: string;
   title: string;
 };
+
+type QuestionReportScreen = 'chapter' | 'exam' | 'practice' | 'quiz';
 
 type SupportRouteCopy = {
   openSupportPageAccessibilityLabel: string;
@@ -23,7 +25,7 @@ type SupportRouteCopy = {
     noPersonalData: string;
     questionId: string;
     screen: string;
-    screenLabels: Record<string, string>;
+    screenLabels: Record<QuestionReportScreen, string>;
     selectedAnswer: string;
     source: string;
     title: string;
@@ -51,6 +53,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       screen: 'Skärm',
       screenLabels: {
         chapter: 'Kapitel',
+        exam: 'Övningsprov',
         practice: 'Övning',
         quiz: 'Frågepass',
       },
@@ -91,6 +94,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       screen: 'Screen',
       screenLabels: {
         chapter: 'Chapter',
+        exam: 'Mock exam',
         practice: 'Practice',
         quiz: 'Quiz session',
       },
@@ -124,7 +128,7 @@ export default function Screen() {
   const params = useLocalSearchParams<QuestionReportSearchParams>();
   const language = useSettingsStore((state) => state.language);
   const copy = supportCopy[language];
-  const questionReportContext = getQuestionReportContext(params);
+  const questionReportContext = getQuestionReportContext(params, language);
 
   return (
     <LegalPage title={copy.title}>
@@ -195,15 +199,16 @@ export default function Screen() {
 type QuestionReportSearchParams = {
   language?: string | string[];
   questionId?: string | string[];
+  reportScreen?: string | string[];
   screen?: string | string[];
   selectedAnswer?: string | string[];
   source?: string | string[];
 };
 
 type QuestionReportContext = {
-  language: string;
+  language: AppLanguage;
   questionId: string;
-  screen: string;
+  screen: QuestionReportScreen;
   selectedAnswer?: string;
   source?: string;
 };
@@ -221,22 +226,51 @@ function QuestionReportContextRow({ label, value }: { label: string; value: stri
 
 function getQuestionReportContext(
   params: QuestionReportSearchParams,
+  fallbackLanguage: AppLanguage,
 ): QuestionReportContext | null {
-  const questionId = getSearchParam(params.questionId);
-  if (!questionId) return null;
+  const questionId = getBoundedSearchParam(params.questionId, 16);
+  if (!questionId || !validQuestionIds.has(questionId)) return null;
 
   return {
-    language: getSearchParam(params.language) ?? 'sv',
+    language: getReportLanguage(params.language, fallbackLanguage),
     questionId,
-    screen: getSearchParam(params.screen) ?? 'practice',
-    selectedAnswer: getSearchParam(params.selectedAnswer),
-    source: getSearchParam(params.source),
+    screen: getReportScreen(params.reportScreen ?? params.screen),
+    selectedAnswer: getBoundedSearchParam(params.selectedAnswer, 240),
+    source: getBoundedSearchParam(params.source, 240),
   };
 }
+
+const validQuestionIds = new Set(questions.map((question) => question.id));
+const validReportScreens = new Set<QuestionReportScreen>(['chapter', 'exam', 'practice', 'quiz']);
 
 function getSearchParam(value: string | string[] | undefined) {
   if (Array.isArray(value)) return value[0];
   return value;
+}
+
+function getBoundedSearchParam(value: string | string[] | undefined, maxLength: number) {
+  const rawValue = getSearchParam(value);
+  if (typeof rawValue !== 'string') return undefined;
+
+  const trimmedValue = rawValue.trim();
+  if (!trimmedValue || trimmedValue.length > maxLength) return undefined;
+
+  return trimmedValue;
+}
+
+function getReportLanguage(
+  value: string | string[] | undefined,
+  fallbackLanguage: AppLanguage,
+): AppLanguage {
+  const language = getBoundedSearchParam(value, 8);
+  return language === 'sv' || language === 'en' ? language : fallbackLanguage;
+}
+
+function getReportScreen(value: string | string[] | undefined): QuestionReportScreen {
+  const screen = getBoundedSearchParam(value, 16);
+  return screen && validReportScreens.has(screen as QuestionReportScreen)
+    ? (screen as QuestionReportScreen)
+    : 'practice';
 }
 
 const styles = StyleSheet.create({

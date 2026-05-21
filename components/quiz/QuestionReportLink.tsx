@@ -85,6 +85,7 @@ export function buildQuestionReportSupportHref({
     ['questionId', question.id],
     ['source', getQuestionSourceCitation(question, language)],
     ['language', language],
+    ['reportScreen', screen],
     ['screen', screen],
     selectedAnswer ? ['selectedAnswer', selectedAnswer] : null,
   ].filter((entry): entry is [string, string] => Array.isArray(entry));
