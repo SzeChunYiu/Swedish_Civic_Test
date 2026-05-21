@@ -8879,6 +8879,16 @@ if (process.argv.includes('--focus-xp-rules')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-streak-rules')) {
+  validateStreakRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    streakRulesValidated,
+    streakRulesParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-readiness-adapter-rules')) {
   validateReadinessAdapterRules();
   exitWithValidationFailures();

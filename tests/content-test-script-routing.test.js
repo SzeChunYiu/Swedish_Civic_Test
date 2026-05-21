@@ -281,6 +281,51 @@ test('XP rules focused content validation runs only its parity summary', () => {
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
 });
 
+test('streak rules parity uses the focused content validator path', () => {
+  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+  const parityTest = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
+    'utf8',
+  );
+  const focusBlockStart = validator.indexOf("process.argv.includes('--focus-streak-rules')");
+  const focusBlockEnd =
+    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
+  const focusBlock =
+    focusBlockStart === -1 || focusBlockEnd === -1
+      ? ''
+      : validator.slice(focusBlockStart, focusBlockEnd);
+  const focusFlagMatches = parityTest.match(/--focus-streak-rules/g) || [];
+
+  assert.notEqual(focusBlockStart, -1, 'validate-content needs the streak-rules focus flag');
+  assert.match(focusBlock, /validateStreakRules\(\);/);
+  assert.match(focusBlock, /streakRulesValidated/);
+  assert.match(focusBlock, /streakRulesParityValidated/);
+  assert.ok(
+    focusFlagMatches.length >= 2,
+    'positive and mutation streak checks should use the focused validator',
+  );
+});
+
+test('streak rules focused content validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-streak-rules'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused streak validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.streakRulesValidated, 10);
+  assert.equal(summary.streakRulesParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
+});
+
 test('readiness adapter focused content validation runs only its runtime summary', () => {
   const result = spawnSync(
     process.execPath,
