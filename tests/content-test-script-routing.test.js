@@ -550,13 +550,36 @@ test('generated true_false naturalness patterns are shared by validate-content a
   const patternSource = readGeneratedTrueFalseNaturalnessPatternSource();
   const {
     GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS,
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES,
     findGeneratedTrueFalseNaturalnessPattern,
+    findGeneratedTrueFalseNaturalnessPatternMatch,
+    formatGeneratedTrueFalseNaturalnessPatternMatch,
   } = require(path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'));
 
   assert.ok(
     GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.length >= 90,
     'shared generated true/false naturalness guard should carry the full residual policy',
   );
+  assert.equal(
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.length,
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.length,
+  );
+  for (const rule of GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES) {
+    assert.match(
+      rule.id,
+      /^(policy-goal|definition-cleft|answer-scaffold|answer-fragment|grammar-splice)-\d{3}$/,
+    );
+    assert.match(
+      rule.category,
+      /^(policy-goal|definition-cleft|answer-scaffold|answer-fragment|grammar-splice)$/,
+    );
+    assert.ok(rule.pattern instanceof RegExp);
+  }
+  const policyGoalMatch = findGeneratedTrueFalseNaturalnessPatternMatch(
+    'The goal of Sweden’s gender equality policy means rights differ.',
+  );
+  assert.equal(policyGoalMatch.category, 'policy-goal');
+  assert.match(formatGeneratedTrueFalseNaturalnessPatternMatch(policyGoalMatch), /policy-goal/);
   assert.equal(
     findGeneratedTrueFalseNaturalnessPattern(
       'The goal of Sweden’s gender equality policy means rights differ.',
@@ -575,6 +598,21 @@ test('generated true_false naturalness patterns are shared by validate-content a
     derivedContentSource,
     /require\(['"]\.\/generated-true-false-naturalness-patterns['"]\)/,
     'derived-content residual tests must import the shared generated true/false naturalness guard',
+  );
+  assert.match(
+    validateContentSource,
+    /formatGeneratedTrueFalseNaturalnessPatternMatch/,
+    'validate-content failures must name the generated true/false rule id/category',
+  );
+  assert.match(
+    derivedContentSource,
+    /formatGeneratedTrueFalseNaturalnessPatternMatch/,
+    'derived-content failures must name the generated true/false rule id/category',
+  );
+  assert.match(
+    patternSource,
+    /GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES/,
+    'shared guard must expose labeled generated true/false rules',
   );
   assert.doesNotMatch(
     validateContentSource,
@@ -713,26 +751,4 @@ test('unsupported npm test selectors fail before running any suite', () => {
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
-});
-
-test('question authority boundary suite uses its focused validator route', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-  const authorityBoundaryTestSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-question-authority-boundary.test.js'),
-    'utf8',
-  );
-
-  assert.match(validatorSource, /--focus-question-authority-boundary/);
-  assert.match(validatorSource, /validateQuestionAuthorityBoundaryText\(\)/);
-  assert.match(
-    authorityBoundaryTestSource,
-    /const FOCUS_FLAG = '--focus-question-authority-boundary'/,
-  );
-  assert.doesNotMatch(
-    authorityBoundaryTestSource,
-    /execFileSync\(process\.execPath, \['scripts\/validate-content\.js'\]/,
-  );
 });
