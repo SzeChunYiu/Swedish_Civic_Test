@@ -10,8 +10,31 @@ const {
   generateStaticSiteQuestionBankJs,
   generateUnformattedStaticSiteQuestionBankJs,
 } = require('../scripts/export-site-question-bank');
+const {
+  findGeneratedSingleChoiceDuplicateStemOptions,
+} = require('./helpers/generatedSingleChoiceDuplicateGuard.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function readStaticSiteQuestions() {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  return context.window.SMT_QUESTIONS;
+}
+
+function guardQuestionFromStaticQuestion(question) {
+  return {
+    id: question.id,
+    type: question.type,
+    questionSv: question.q?.sv,
+    questionEn: question.q?.en,
+    options: (question.opts || []).map((option) => ({
+      sv: option.sv,
+      en: option.en,
+    })),
+    tags: question.tags || [],
+  };
+}
 
 test('static site question bank is generated from canonical content', () => {
   const expected = generateStaticSiteQuestionBankJs();
@@ -67,15 +90,14 @@ test('static site chapter metadata exposes canonical sv/en localized text', () =
 
 test('static site question bank preserves canonical question provenance', () => {
   const bank = buildSiteQuestionBank();
-  const context = { window: {} };
-  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questions = readStaticSiteQuestions();
 
   const expectedProvenanceById = new Map(
     bank.questions.map((question) => [question.id, question.questionProvenance]),
   );
   const supported = new Set(['uhr', 'derived', 'editorial']);
 
-  for (const question of context.window.SMT_QUESTIONS) {
+  for (const question of questions) {
     assert.equal(
       question.questionProvenance,
       expectedProvenanceById.get(question.id),
@@ -88,25 +110,29 @@ test('static site question bank preserves canonical question provenance', () => 
   }
 });
 
-test('static site q831 names the non-citizen voting subject', () => {
-  const context = { window: {} };
-  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+test('static site question bank has no generated single-choice duplicate stems', () => {
+  const questions = readStaticSiteQuestions().map(guardQuestionFromStaticQuestion);
+  const findings = findGeneratedSingleChoiceDuplicateStemOptions(questions, {
+    artifactLabel: 'site/questions.js',
+  });
 
-  const q831 = context.window.SMT_QUESTIONS.find((question) => question.id === 'q831');
-  const q832 = context.window.SMT_QUESTIONS.find((question) => question.id === 'q832');
+  assert.deepEqual(findings, []);
+});
 
-  assert.ok(q831, 'q831 should be present in the static question bank');
-  assert.equal(q831.type, 'true_false');
-  assert.equal(q831.answer, 0);
-  assert.match(q831.q.sv, /personer som inte är svenska medborgare/);
-  assert.match(q831.q.sv, /kommun- och regionval/);
-  assert.match(q831.q.en, /people who are not Swedish citizens/);
-  assert.match(q831.q.en, /municipal and regional elections/);
-  assert.doesNotMatch(q831.q.sv, /^Vissa kan rösta om/);
-  assert.doesNotMatch(q831.q.en, /^Some may vote if/);
+test('static generated single-choice duplicate guard rejects q001 variant collapse', () => {
+  const questions = readStaticSiteQuestions().map(guardQuestionFromStaticQuestion);
+  const sectionPractice = questions.find((question) => question.id === 'q170');
+  const judgement = questions.find((question) => question.id === 'q173');
+  assert.ok(sectionPractice && judgement, 'expected q001 generated single-choice variants');
 
-  assert.ok(q832, 'q832 should remain paired with q831');
-  assert.equal(q832.type, 'true_false');
-  assert.equal(q832.answer, 1);
-  assert.match(q832.q.en, /^No one without Swedish citizenship/);
+  judgement.questionSv = sectionPractice.questionSv;
+  judgement.questionEn = sectionPractice.questionEn;
+  judgement.options = sectionPractice.options.map((option) => ({ ...option }));
+
+  const findings = findGeneratedSingleChoiceDuplicateStemOptions(questions, {
+    artifactLabel: 'site/questions.js',
+  });
+
+  assert.equal(findings.length, 1);
+  assert.match(findings[0], /site\/questions\.js: q173 duplicates q170/);
 });
