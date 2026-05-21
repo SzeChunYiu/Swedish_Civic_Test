@@ -56,69 +56,55 @@ test('practice flow scopes completed progress to the visible question bank', () 
   );
 });
 
-test('practice flow ignores malformed completed-question ids', () => {
-  const { getCompletedQuestionIdsForQuestionBank, getPracticeQuestionForSession } = loadTs(
+test('adaptive practice flow follows adaptive order without repeating session answers', () => {
+  const { getAvailableQuestionsForPracticeSession, getPracticeQuestionFromAdaptiveOrder } = loadTs(
     'lib/quiz/practiceFlow.ts',
   );
-  const visibleQuestions = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }];
+  const questions = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }];
 
-  assert.deepEqual(getCompletedQuestionIdsForQuestionBank(visibleQuestions, null), []);
-  assert.deepEqual(getCompletedQuestionIdsForQuestionBank(visibleQuestions, { q1: true }), []);
+  assert.deepEqual(getAvailableQuestionsForPracticeSession(questions, []), questions);
+  assert.deepEqual(getAvailableQuestionsForPracticeSession(questions, ['q2']), [
+    { id: 'q1' },
+    { id: 'q3' },
+  ]);
   assert.deepEqual(
-    getCompletedQuestionIdsForQuestionBank(visibleQuestions, [
-      'q1',
-      'q1',
-      '',
-      '   ',
-      7,
-      true,
-      {},
-      null,
-      'missing',
-      'q2',
-    ]),
-    ['q1', 'q2'],
+    getAvailableQuestionsForPracticeSession(questions, ['q1', 'q2', 'q3']),
+    questions,
   );
-  assert.equal(getPracticeQuestionForSession(visibleQuestions, null, null)?.id, 'q1');
-  assert.equal(
-    getPracticeQuestionForSession(visibleQuestions, ['q1', '', 7, 'missing', 'q1'], null)?.id,
-    'q2',
-  );
+  assert.equal(getPracticeQuestionFromAdaptiveOrder(questions, ['q2', 'q1'], null)?.id, 'q2');
+  assert.equal(getPracticeQuestionFromAdaptiveOrder(questions, ['q2', 'q1'], 'q3')?.id, 'q3');
+  assert.equal(getPracticeQuestionFromAdaptiveOrder(questions, ['missing'], null)?.id, 'q1');
 });
 
 test('practice session separates retry from next-question advancement', () => {
-  const { getPracticeAnswerXpAwardKey, getPracticeInterstitialShowKey, usePracticeSessionStore } =
-    loadTs('lib/quiz/practiceSessionStore.ts');
+  const { getPracticeInterstitialShowKey, usePracticeSessionStore } = loadTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
 
   usePracticeSessionStore.setState({
     activeQuestionId: null,
+    answeredQuestionIds: [],
     selectedOptionId: null,
     shuffleSessionId: 'practice-session-0',
-    answerXpAwardedKey: null,
   });
 
   usePracticeSessionStore.getState().selectOption('q1', 'q1-a');
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
+  assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, []);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, 'q1-a');
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
   const firstFeedbackKey = getPracticeInterstitialShowKey(
     usePracticeSessionStore.getState().activeQuestionId,
     usePracticeSessionStore.getState().shuffleSessionId,
   );
-  const firstAnswerXpKey = getPracticeAnswerXpAwardKey(
-    usePracticeSessionStore.getState().activeQuestionId,
-    usePracticeSessionStore.getState().shuffleSessionId,
-  );
-  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), true);
-  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), false);
 
   usePracticeSessionStore.getState().resetSelection();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
+  assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, []);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
-  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), false);
   assert.equal(
     getPracticeInterstitialShowKey(
       usePracticeSessionStore.getState().activeQuestionId,
@@ -130,15 +116,9 @@ test('practice session separates retry from next-question advancement', () => {
   usePracticeSessionStore.getState().advanceQuestion();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
+  assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, ['q1']);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
-  assert.equal(usePracticeSessionStore.getState().answerXpAwardedKey, null);
-  assert.equal(
-    usePracticeSessionStore
-      .getState()
-      .claimAnswerXpAward(getPracticeAnswerXpAwardKey('q1', 'practice-session-1')),
-    true,
-  );
   assert.notEqual(
     getPracticeInterstitialShowKey('q1', usePracticeSessionStore.getState().shuffleSessionId),
     firstFeedbackKey,

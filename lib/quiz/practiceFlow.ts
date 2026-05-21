@@ -25,6 +25,39 @@ export function getPracticeQuestionForSession<TQuestion extends Pick<PracticeQue
   );
 }
 
+export function getAvailableQuestionsForPracticeSession<
+  TQuestion extends Pick<PracticeQuestion, 'id'>,
+>(questions: TQuestion[], sessionAnsweredQuestionIds: string[]): TQuestion[] {
+  if (questions.length === 0) return questions;
+
+  const answeredQuestionIds = new Set(sessionAnsweredQuestionIds);
+  const unansweredQuestions = questions.filter((question) => !answeredQuestionIds.has(question.id));
+  return unansweredQuestions.length > 0 ? unansweredQuestions : questions;
+}
+
+export function getPracticeQuestionFromAdaptiveOrder<
+  TQuestion extends Pick<PracticeQuestion, 'id'>,
+>(
+  questions: TQuestion[],
+  adaptiveQuestionIds: string[],
+  activeQuestionId: string | null,
+): TQuestion | undefined {
+  const activeQuestion = activeQuestionId
+    ? questions.find((question) => question.id === activeQuestionId)
+    : undefined;
+
+  if (activeQuestion) return activeQuestion;
+  if (questions.length === 0) return undefined;
+
+  const questionsById = new Map(questions.map((question) => [question.id, question]));
+  for (const questionId of adaptiveQuestionIds) {
+    const question = questionsById.get(questionId);
+    if (question) return question;
+  }
+
+  return questions[0];
+}
+
 export function getCompletedQuestionIdsForQuestionBank<
   TQuestion extends Pick<PracticeQuestion, 'id'>,
 >(questions: readonly TQuestion[], completedQuestionIds: readonly unknown[]): string[] {

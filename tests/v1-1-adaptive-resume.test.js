@@ -400,6 +400,29 @@ test('explainAdaptivePick: invalid and future answer dates do not count as recen
   assert.equal(counts.unseen, 2);
 });
 
+test('Practice route wires adaptive session order and localized summary', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const storeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/quiz/practiceSessionStore.ts'),
+    'utf8',
+  );
+  const flowSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/practiceFlow.ts'), 'utf8');
+
+  assert.match(practiceSource, /pickAdaptiveSession/);
+  assert.match(practiceSource, /explainAdaptivePick/);
+  assert.match(practiceSource, /buildDashboardProgressSnapshot/);
+  assert.match(practiceSource, /answeredQuestionIds/);
+  assert.match(practiceSource, /getAvailableQuestionsForPracticeSession/);
+  assert.match(practiceSource, /getPracticeQuestionFromAdaptiveOrder/);
+  assert.match(practiceSource, /copy\.adaptiveSummary\(/);
+  assert.match(practiceSource, /Adaptive mix:/);
+  assert.match(practiceSource, /Anpassat urval:/);
+  assert.match(storeSource, /answeredQuestionIds: string\[\];/);
+  assert.match(storeSource, /answeredQuestionIds: \[\],/);
+  assert.match(flowSource, /getAvailableQuestionsForPracticeSession/);
+  assert.match(flowSource, /getPracticeQuestionFromAdaptiveOrder/);
+});
+
 // ----- resume
 
 test('resumeWhereLeftOff: returns null candidate when no answers', () => {

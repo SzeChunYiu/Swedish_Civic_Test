@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 type PracticeSessionState = {
   activeQuestionId: string | null;
+  answeredQuestionIds: string[];
   selectedOptionId: string | null;
   shuffleSessionId: string;
   answerXpAwardedKey: string | null;
@@ -32,6 +33,7 @@ function nextPracticeShuffleSessionId(currentSessionId: string): string {
 
 export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
   activeQuestionId: null,
+  answeredQuestionIds: [],
   selectedOptionId: null,
   shuffleSessionId: `${PRACTICE_SHUFFLE_SESSION_PREFIX}-0`,
   answerXpAwardedKey: null,
@@ -51,6 +53,10 @@ export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
   advanceQuestion: () =>
     set((state) => ({
       activeQuestionId: null,
+      answeredQuestionIds:
+        state.activeQuestionId && !state.answeredQuestionIds.includes(state.activeQuestionId)
+          ? [...state.answeredQuestionIds, state.activeQuestionId]
+          : state.answeredQuestionIds,
       selectedOptionId: null,
       shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
       answerXpAwardedKey: null,

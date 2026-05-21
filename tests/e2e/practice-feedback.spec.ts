@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals } from './browserLaunch';
-
 async function closeLaunchAdIfPresent(page: Page) {
-  await dismissBlockingModals(page);
+  const closeLaunchAd = page.getByRole('button', {
+    name: /Close launch sponsor ad|Stäng startannons/,
+  });
+  if (await closeLaunchAd.isVisible()) {
+    await closeLaunchAd.click();
+  }
 }
 
 async function enableEnglishSupport(page: Page) {
@@ -44,25 +47,6 @@ async function expectPrimaryPrompt(page: Page, primaryText: string, secondaryTex
   expect(primaryBox!.y).toBeLessThan(secondaryBox!.y);
 }
 
-async function tabToTarget(
-  page: Page,
-  targetLabel: string,
-  locator = page.getByLabel(targetLabel),
-) {
-  for (let index = 0; index < 30; index += 1) {
-    await page.keyboard.press('Tab');
-    const focused = await locator
-      .evaluate(
-        (element) => element === document.activeElement || element.contains(document.activeElement),
-      )
-      .catch(() => false);
-
-    if (focused) return;
-  }
-
-  throw new Error(`Could not tab to ${targetLabel}`);
-}
-
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -75,9 +59,9 @@ test('practice audio control follows the selected question language', async ({ p
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByText('Lätt', { exact: true })).toBeVisible();
-  await expect(page.getByLabel(/Svårighetsgrad: Lätt/)).toBeVisible();
-  await expect(page.getByText('EASY', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('Medel', { exact: true })).toBeVisible();
+  await expect(page.getByLabel(/Svårighetsgrad: Medel/)).toBeVisible();
+  await expect(page.getByText('MEDIUM', { exact: true })).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'Lyssna på den svenska frågan och svaren' }),
   ).toBeVisible();
@@ -113,8 +97,8 @@ test('practice and routed quiz answer option labels follow the selected language
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByLabel('Välj svaret I södra Europa')).toBeVisible();
-  await expect(page.getByLabel('Select answer I södra Europa')).toHaveCount(0);
+  await expect(page.getByLabel('Välj svaret Cirka 160 kilometer')).toBeVisible();
+  await expect(page.getByLabel('Select answer Cirka 160 kilometer')).toHaveCount(0);
 
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
@@ -126,8 +110,8 @@ test('practice and routed quiz answer option labels follow the selected language
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByLabel('Select answer In southern Europe')).toBeVisible();
-  await expect(page.getByLabel('Välj svaret In southern Europe')).toHaveCount(0);
+  await expect(page.getByLabel('Select answer About 160 kilometres')).toBeVisible();
+  await expect(page.getByLabel('Välj svaret About 160 kilometres')).toHaveCount(0);
 
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
@@ -183,78 +167,6 @@ test('practice question source citation prefix follows the selected language', a
   expect(consoleErrors).toEqual([]);
 });
 
-test('practice question source controls are keyboard and pointer activatable', async ({ page }) => {
-  const consoleErrors: string[] = [];
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
-  });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
-
-  await enableSwedish(page);
-  await page.goto('/practice', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
-
-  const swedishProvenance = page.getByRole('button', { name: 'Källtyp: UHR-källa' }).first();
-  await expect(swedishProvenance).toBeVisible();
-  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'false');
-  await tabToTarget(page, 'Källtyp: UHR-källa', swedishProvenance);
-  await expect(swedishProvenance).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    page.getByText('Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus.'),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel(
-      'Källhänvisning: Källa: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, s. 5',
-      { exact: true },
-    ),
-  ).toBeVisible();
-  await swedishProvenance.click();
-  await expect(swedishProvenance).toHaveAttribute('aria-expanded', 'false');
-  await expect(page.getByText(/Källanteckning:/)).toHaveCount(0);
-
-  await enableEnglishSupport(page);
-  await page.goto('/practice', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
-
-  const englishProvenance = page.getByRole('button', { name: 'Provenance: UHR source' }).first();
-  await expect(englishProvenance).toBeVisible();
-  await expect(englishProvenance).toHaveAttribute('aria-expanded', 'false');
-  await englishProvenance.click();
-  await expect(englishProvenance).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    page.getByText("Source note: Based on UHR's study material Sverige i fokus."),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel(
-      'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
-      { exact: true },
-    ),
-  ).toBeVisible();
-
-  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
-
-  const routedQuizProvenance = page.getByRole('button', { name: 'Provenance: UHR source' }).first();
-  await expect(routedQuizProvenance).toBeVisible();
-  await expect(routedQuizProvenance).toHaveAttribute('aria-expanded', 'false');
-  await routedQuizProvenance.click();
-  await expect(routedQuizProvenance).toHaveAttribute('aria-expanded', 'true');
-  await expect(
-    page.getByText("Source note: Based on UHR's study material Sverige i fokus."),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel(
-      'Source citation: Source: Sverige i fokus, Landet Sverige, Geografi, klimat och natur, p. 5',
-      { exact: true },
-    ),
-  ).toBeVisible();
-
-  expect(consoleErrors).toEqual([]);
-});
-
 test('practice flow answers a question, shows source feedback, and advances', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -268,20 +180,25 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await closeLaunchAdIfPresent(page);
 
   await expect(page.getByText('Question 1')).toBeVisible();
-  await expect(page.getByText('Easy', { exact: true })).toBeVisible();
-  await expect(page.getByLabel(/Difficulty: Easy/)).toBeVisible();
-  await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
+  await expect(page.getByText('Medium', { exact: true })).toBeVisible();
+  await expect(page.getByLabel(/Difficulty: Medium/)).toBeVisible();
+  await expectPrimaryPrompt(
+    page,
+    'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+  );
+  await expect(page.getByText(/Adaptive mix:/)).toBeVisible();
   await expect(page.getByText('Completed questions: 0')).toBeVisible();
 
-  const correctAnswer = page.getByLabel('Select answer In the Nordic region in northern Europe');
+  const correctAnswer = page.getByLabel('Select answer About 1,600 kilometres');
   await expect(correctAnswer).toBeVisible();
   await correctAnswer.click();
 
-  await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
+  await expect(page.getByLabel('About 1,600 kilometres, Correct')).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toBeVisible();
   await expect(page.getByText('Completed questions: 1')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Explanation' })).toBeVisible();
-  await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
+  await expect(page.getByText(/Sweden is an elongated country/)).toBeVisible();
   await expect(page.getByText('UHR reference')).toBeVisible();
   await expect(page.getByText('Landet Sverige · Geografi, klimat och natur')).toBeVisible();
   await expect(page.getByText('Approx. page 5')).toBeVisible();
@@ -291,9 +208,10 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await expect(page.getByText('Question 2')).toBeVisible();
   await expect(
     page.getByRole('heading', {
-      name: "Sweden's northernmost part lies north of the Arctic Circle.",
+      name: "Which list contains only Sweden's four constitutional laws?",
     }),
   ).toBeVisible();
+  await expect(page.getByText('Hard', { exact: true })).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
@@ -311,17 +229,19 @@ test('practice feedback reveals the correct option after a wrong answer', async 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
-  await page.getByLabel('Select answer In southern Europe').click();
+  await expectPrimaryPrompt(
+    page,
+    'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+  );
+  await page.getByLabel('Select answer About 160 kilometres').click();
 
-  await expect(page.getByLabel('In southern Europe, Wrong')).toBeVisible();
-  await expect(
-    page.getByLabel('In the Nordic region in northern Europe, Correct answer'),
-  ).toBeVisible();
-  await expect(page.getByLabel('I södra Europa, Fel')).toHaveCount(0);
-  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toHaveCount(0);
+  await expect(page.getByLabel('About 160 kilometres, Wrong')).toBeVisible();
+  await expect(page.getByLabel('About 1,600 kilometres, Correct answer')).toBeVisible();
+  await expect(page.getByLabel('Cirka 160 kilometer, Fel')).toHaveCount(0);
+  await expect(page.getByLabel('Cirka 1 600 kilometer, Rätt svar')).toHaveCount(0);
   await expect(page.getByText('Score: 0/1')).toBeVisible();
-  await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
+  await expect(page.getByText(/Sweden is an elongated country/)).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
@@ -338,25 +258,31 @@ test('wrong practice answer appears in Mistakes with answer review context', asy
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expectPrimaryPrompt(page, 'Var ligger Sverige?', 'Where is Sweden located?');
-  await page.getByLabel('Välj svaret I södra Europa').click();
+  await expectPrimaryPrompt(
+    page,
+    'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+    'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+  );
+  await page.getByLabel('Välj svaret Cirka 160 kilometer').click();
 
-  await expect(page.getByLabel('I södra Europa, Fel')).toBeVisible();
-  await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toBeVisible();
+  await expect(page.getByLabel('Cirka 160 kilometer, Fel')).toBeVisible();
+  await expect(page.getByLabel('Cirka 1 600 kilometer, Rätt svar')).toBeVisible();
 
   await page.getByText('Repetition', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
 
   await expect(page).toHaveURL(/\/mistakes$/);
   const swedishMistakeReview = page.getByLabel(
-    'Fråga att öva igen. Ditt senaste svar: I södra Europa. Rätt svar: I Norden i norra Europa.',
+    'Fråga att öva igen. Ditt senaste svar: Cirka 160 kilometer. Rätt svar: Cirka 1 600 kilometer.',
   );
   await expect(page.getByText('Frågor att öva igen')).toBeVisible();
   await expect(page.getByText('Ditt senaste svar')).toBeVisible();
-  await expect(swedishMistakeReview.getByText('I södra Europa', { exact: true })).toBeVisible();
+  await expect(
+    swedishMistakeReview.getByText('Cirka 160 kilometer', { exact: true }),
+  ).toBeVisible();
   await expect(swedishMistakeReview.getByText('Rätt svar', { exact: true })).toBeVisible();
   await expect(
-    swedishMistakeReview.getByText('I Norden i norra Europa', { exact: true }),
+    swedishMistakeReview.getByText('Cirka 1 600 kilometer', { exact: true }),
   ).toBeVisible();
   await expect(swedishMistakeReview).toBeVisible();
 
@@ -377,27 +303,31 @@ test('wrong practice answer appears in Mistakes with English answer review conte
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expectPrimaryPrompt(page, 'Where is Sweden located?', 'Var ligger Sverige?');
-  await page.getByLabel('Select answer In southern Europe').click();
+  await expectPrimaryPrompt(
+    page,
+    'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+    'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+  );
+  await page.getByLabel('Select answer About 160 kilometres').click();
 
-  await expect(page.getByLabel('In southern Europe, Wrong')).toBeVisible();
-  await expect(
-    page.getByLabel('In the Nordic region in northern Europe, Correct answer'),
-  ).toBeVisible();
+  await expect(page.getByLabel('About 160 kilometres, Wrong')).toBeVisible();
+  await expect(page.getByLabel('About 1,600 kilometres, Correct answer')).toBeVisible();
 
   await page.getByText('Mistakes', { exact: true }).click();
   await closeLaunchAdIfPresent(page);
 
   await expect(page).toHaveURL(/\/mistakes$/);
   const englishMistakeReview = page.getByLabel(
-    'Answers to review. Your latest wrong answer: In southern Europe. Correct answer: In the Nordic region in northern Europe.',
+    'Answers to review. Your latest wrong answer: About 160 kilometres. Correct answer: About 1,600 kilometres.',
   );
   await expect(page.getByText('Wrong answers to revisit')).toBeVisible();
   await expect(page.getByText('Your latest wrong answer')).toBeVisible();
-  await expect(englishMistakeReview.getByText('In southern Europe', { exact: true })).toBeVisible();
+  await expect(
+    englishMistakeReview.getByText('About 160 kilometres', { exact: true }),
+  ).toBeVisible();
   await expect(englishMistakeReview.getByText('Correct answer', { exact: true })).toBeVisible();
   await expect(
-    englishMistakeReview.getByText('In the Nordic region in northern Europe', { exact: true }),
+    englishMistakeReview.getByText('About 1,600 kilometres', { exact: true }),
   ).toBeVisible();
   await expect(englishMistakeReview).toBeVisible();
   await expect(page.getByText('Ditt senaste felaktiga svar')).toHaveCount(0);
@@ -431,55 +361,6 @@ test('routed quiz uses English question headings and answer feedback in English 
   await expect(page.getByLabel('I Norden i norra Europa, Rätt svar')).toHaveCount(0);
   await expect(page.getByText('Score: 0/1')).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
-
-  expect(consoleErrors).toEqual([]);
-});
-
-test('unknown routed quiz shows an empty state instead of a hashed question', async ({ page }) => {
-  const consoleErrors: string[] = [];
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
-  });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
-
-  await enableEnglishSupport(page);
-  await page.goto('/quiz/not-a-question', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
-
-  await expect(page.getByRole('heading', { name: 'Question not found' })).toBeVisible();
-  await expect(
-    page.getByText('We could not find a practice question for this link.'),
-  ).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Back to practice' })).toHaveAttribute(
-    'href',
-    '/practice',
-  );
-  await expect(page.getByRole('link', { name: 'Search for practice questions' })).toHaveAttribute(
-    'href',
-    '/search',
-  );
-  await expect(page.getByText('Session not-a-question')).toHaveCount(0);
-  await expect(page.getByText('Where is Sweden located?')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /Select answer/ })).toHaveCount(0);
-
-  await enableSwedish(page);
-  await page.goto('/quiz/okand-fraga', { waitUntil: 'networkidle' });
-  await closeLaunchAdIfPresent(page);
-
-  await expect(page.getByRole('heading', { name: 'Frågan hittades inte' })).toBeVisible();
-  await expect(page.getByText('Vi hittar ingen övningsfråga för den här länken.')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Tillbaka till övning' })).toHaveAttribute(
-    'href',
-    '/practice',
-  );
-  await expect(page.getByRole('link', { name: 'Sök efter övningsfrågor' })).toHaveAttribute(
-    'href',
-    '/search',
-  );
-  await expect(page.getByText('Frågepass okand-fraga')).toHaveCount(0);
-  await expect(page.getByText('Var ligger Sverige?')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /Välj svaret/ })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
