@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
+const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -104,6 +104,49 @@ function parseValidationSummary(output) {
   assert.notEqual(jsonStart, -1, 'validate-content output must include a JSON summary');
 
   return JSON.parse(output.slice(jsonStart));
+}
+
+function runFocusedSearchRouteQueryHydrationValidation() {
+  return spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-search-route-query-hydration'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
+function withMutatedSearchRouteSource(mutateSource, callback) {
+  const originalSource = readSearchRouteSource();
+  const mutatedSource = mutateSource(originalSource);
+
+  assert.notEqual(
+    mutatedSource,
+    originalSource,
+    'Search route mutation fixture must change source',
+  );
+  fs.writeFileSync(searchRoutePath, mutatedSource);
+
+  try {
+    return callback();
+  } finally {
+    fs.writeFileSync(searchRoutePath, originalSource);
+  }
+}
+
+function assertFocusedSearchRouteQueryHydrationRejects({ expectedFailure, label, mutateSource }) {
+  withMutatedSearchRouteSource(mutateSource, () => {
+    const result = runFocusedSearchRouteQueryHydrationValidation();
+    const output = `${result.stdout}\n${result.stderr}`;
+
+    assert.notEqual(
+      result.status,
+      0,
+      `focused Search route query hydration validation must reject ${label}`,
+    );
+    assert.match(output, expectedFailure, `focused validation failure should name ${label}`);
+  });
 }
 
 function assertSearchRouteQuestionResults(source) {
@@ -498,6 +541,45 @@ test('validate-content reports Search route query hydration parity', () => {
   assert.equal(summary.searchQuestionPunctuationParityValidated, true);
 });
 
+test('focused Search route query hydration validator rejects mutation fixtures', () => {
+  const mutationFixtures = [
+    {
+      label: 'removing mounted route-query sync',
+      expectedFailure: /search route must resync mounted state only when the route query changes/,
+      mutateSource: (source) =>
+        source.replace(/  useEffect\(\(\) => \{[\s\S]*?  \}, \[routeQuery\]\);\n/, ''),
+    },
+    {
+      label: 'dropping the unchanged-route guard',
+      expectedFailure: /search route must guard unchanged route params before resyncing/,
+      mutateSource: (source) =>
+        source.replace('    if (previousRouteQueryRef.current === routeQuery) return;\n\n', ''),
+    },
+    {
+      label: 'preferring query before q route params',
+      expectedFailure: /search route must prefer q then query fallback order/,
+      mutateSource: (source) =>
+        source.replace(
+          'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
+          'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
+        ),
+    },
+    {
+      label: 'leaving the old q URL after clearing search',
+      expectedFailure: /search route clear action must reset state and URL/,
+      mutateSource: (source) =>
+        source.replace(
+          "router.replace('/search');",
+          'router.replace(`/search?q=${encodeURIComponent(routeQuery)}`);',
+        ),
+    },
+  ];
+
+  for (const fixture of mutationFixtures) {
+    assertFocusedSearchRouteQueryHydrationRejects(fixture);
+  }
+});
+
 test('Search route hydration rejects blank initial query drift', () => {
   const mutatedSource = readSearchRouteSource().replace(
     'const [query, setQuery] = useState(() => routeQuery);',
@@ -566,6 +648,15 @@ test('Search route hydration rejects dropping the query fallback param', () => {
   const mutatedSource = readSearchRouteSource().replace(
     'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
     'return getFirstSearchParamValue(params.q);',
+  );
+
+  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
+});
+
+test('Search route hydration rejects query-before-q fallback drift', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    'return getFirstSearchParamValue(params.q) || getFirstSearchParamValue(params.query);',
+    'return getFirstSearchParamValue(params.query) || getFirstSearchParamValue(params.q);',
   );
 
   assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /q then query fallback/);
