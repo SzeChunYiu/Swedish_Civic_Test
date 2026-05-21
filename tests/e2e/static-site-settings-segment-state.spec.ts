@@ -195,3 +195,31 @@ test('static Settings normalizes corrupt text size preferences', async ({ page }
 
   expect(pageErrors).toEqual([]);
 });
+
+test('static Settings normalizes corrupt theme and palette preferences', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await page.addInitScript(() => {
+    localStorage.setItem('smt_theme', 'sepia');
+    localStorage.setItem('smt_palette', 'unknown');
+  });
+  await openSettings(page, staticSite.baseUrl);
+
+  await expect(page.locator('html')).toHaveAttribute('data-theme-pref', 'auto');
+  await expectPressed(page, '[data-set="theme"] button[data-val="auto"]', true);
+  await expectPressed(page, '.set-palette[data-val="flag"]', true);
+  expect(await page.evaluate(() => localStorage.getItem('smt_theme'))).toBe('auto');
+  expect(await page.evaluate(() => localStorage.getItem('smt_palette'))).toBe('flag');
+  await expectVisualStateMirrorsAriaPressed(page);
+
+  await page.evaluate(() => {
+    (window as any).smtApplyTheme('sepia');
+    (window as any).smtApplyPalette('unknown');
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-theme-pref', 'auto');
+  expect(await page.evaluate(() => localStorage.getItem('smt_theme'))).toBe('auto');
+  expect(await page.evaluate(() => localStorage.getItem('smt_palette'))).toBe('flag');
+
+  expect(pageErrors).toEqual([]);
+});

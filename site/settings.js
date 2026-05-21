@@ -69,6 +69,16 @@
     },
   };
   const SUPPORTED_TEXT_SIZES = new Set(['90', '100', '115']);
+  const THEME_VALUES = new Set(['light', 'dark', 'auto']);
+  const DEFAULT_THEME = 'auto';
+  const DEFAULT_PALETTE = 'flag';
+
+  function normalizeTheme(value) {
+    return THEME_VALUES.has(value) ? value : DEFAULT_THEME;
+  }
+  function normalizePalette(value) {
+    return Object.prototype.hasOwnProperty.call(PALETTES, value) ? value : DEFAULT_PALETTE;
+  }
 
   function ls(key, fallback) {
     try {
@@ -94,18 +104,20 @@
   // -------- APPLY HELPERS --------
 
   function applyTheme(t) {
-    let resolved = t;
-    if (t === 'auto') {
+    const theme = normalizeTheme(t);
+    let resolved = theme;
+    if (theme === 'auto') {
       resolved = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     document.documentElement.setAttribute('data-theme', resolved);
-    document.documentElement.setAttribute('data-theme-pref', t);
-    lsSet('smt_theme', t);
+    document.documentElement.setAttribute('data-theme-pref', theme);
+    lsSet('smt_theme', theme);
   }
   function applyPalette(p) {
-    const pal = PALETTES[p] || PALETTES.flag;
+    const palette = normalizePalette(p);
+    const pal = PALETTES[palette];
     Object.entries(pal.vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
-    lsSet('smt_palette', p);
+    lsSet('smt_palette', palette);
   }
   function normalizeTextSize(s) {
     const value = String(s ?? '').trim();
@@ -249,8 +261,8 @@
     if (el) el.checked = !!on;
   }
   function syncControls() {
-    setSegment('theme', ls('smt_theme', 'auto'));
-    setPalette(ls('smt_palette', 'flag'));
+    setSegment('theme', normalizeTheme(ls('smt_theme', DEFAULT_THEME)));
+    setPalette(normalizePalette(ls('smt_palette', DEFAULT_PALETTE)));
     const lang = window.smtNormalizeLanguage
       ? window.smtNormalizeLanguage(ls('smt_lang', 'en'))
       : ls('smt_lang', 'en');
@@ -320,8 +332,9 @@
 
     const pal = e.target.closest('.set-palette');
     if (pal) {
-      applyPalette(pal.dataset.val);
-      setPalette(pal.dataset.val);
+      const palette = normalizePalette(pal.dataset.val);
+      applyPalette(palette);
+      setPalette(palette);
       return;
     }
 
@@ -376,8 +389,8 @@
   // -------- BOOT (restore saved settings) --------
 
   window.addEventListener('DOMContentLoaded', () => {
-    applyTheme(ls('smt_theme', 'auto'));
-    applyPalette(ls('smt_palette', 'flag'));
+    applyTheme(ls('smt_theme', DEFAULT_THEME));
+    applyPalette(ls('smt_palette', DEFAULT_PALETTE));
     applyTextSize(ls('smt_textsize', '100'));
     if (lsHas('smt_motion')) {
       applyMotion(ls('smt_motion', '') === 'reduce', { silent: true });
@@ -390,7 +403,7 @@
 
     // listen for system theme change when on auto
     matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
-      if (ls('smt_theme', 'auto') === 'auto') applyTheme('auto');
+      if (normalizeTheme(ls('smt_theme', DEFAULT_THEME)) === 'auto') applyTheme(DEFAULT_THEME);
     });
   });
 

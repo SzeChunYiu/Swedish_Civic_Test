@@ -66,6 +66,33 @@ test('static Swedish flag surfaces keep official colors across palettes and them
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     await page.goto(server.url, { waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => typeof window.smtApplyPalette === 'function');
+    await page.waitForFunction(() =>
+      Array.from(document.querySelectorAll('.brand__mark, .ebook__brand-mark')).every(
+        (node) => !(node instanceof HTMLImageElement) || (node.complete && node.naturalWidth > 0),
+      ),
+    );
+
+    const logoSnapshot = await page.evaluate(() => {
+      const logoFor = (selector) => {
+        const node = document.querySelector(selector);
+        if (!(node instanceof HTMLImageElement)) throw new Error(`Missing image ${selector}`);
+        return {
+          height: node.naturalHeight,
+          src: node.getAttribute('src') || '',
+          width: node.naturalWidth,
+        };
+      };
+
+      return {
+        brand: logoFor('.brand__mark'),
+        ebook: logoFor('.ebook__brand-mark'),
+      };
+    });
+
+    for (const [name, logo] of Object.entries(logoSnapshot)) {
+      assert.match(logo.src, /assets\/logo-mark\.png$/, `${name} logo uses the fixed logo asset`);
+      assert.ok(logo.width > 0 && logo.height > 0, `${name} logo image loads`);
+    }
 
     for (const theme of themes) {
       for (const palette of palettes) {
@@ -80,12 +107,6 @@ test('static Swedish flag surfaces keep official colors across palettes and them
             };
 
             return {
-              brandBlue: styleFor('.brand__mark'),
-              brandCrossHorizontal: styleFor('.brand__mark', '::after'),
-              brandCrossVertical: styleFor('.brand__mark', '::before'),
-              ebookBlue: styleFor('.ebook__brand-mark'),
-              ebookCrossHorizontal: styleFor('.ebook__brand-mark', '::after'),
-              ebookCrossVertical: styleFor('.ebook__brand-mark', '::before'),
               heroCrossHorizontal: styleFor('.hero__cross', '::after'),
               heroCrossVertical: styleFor('.hero__cross', '::before'),
               mutableBlue: getComputedStyle(document.documentElement)
@@ -107,28 +128,6 @@ test('static Swedish flag surfaces keep official colors across palettes and them
 
         assert.equal(snapshot.fixedBlue, '#006aa7', `${theme}/${palette} fixed blue token`);
         assert.equal(snapshot.fixedGold, '#fecc00', `${theme}/${palette} fixed gold token`);
-        assert.equal(snapshot.brandBlue, officialBlue, `${theme}/${palette} brand flag blue`);
-        assert.equal(
-          snapshot.brandCrossHorizontal,
-          officialGold,
-          `${theme}/${palette} brand flag horizontal cross`,
-        );
-        assert.equal(
-          snapshot.brandCrossVertical,
-          officialGold,
-          `${theme}/${palette} brand flag vertical cross`,
-        );
-        assert.equal(snapshot.ebookBlue, officialBlue, `${theme}/${palette} ebook flag blue`);
-        assert.equal(
-          snapshot.ebookCrossHorizontal,
-          officialGold,
-          `${theme}/${palette} ebook flag horizontal cross`,
-        );
-        assert.equal(
-          snapshot.ebookCrossVertical,
-          officialGold,
-          `${theme}/${palette} ebook flag vertical cross`,
-        );
         assert.equal(
           snapshot.heroCrossHorizontal,
           officialBlue,
