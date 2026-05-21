@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 import { dismissBlockingModals, seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
+import { startAllVisiblePractice } from './practiceHub';
 
 function supportUrl(params: Record<string, string>) {
   return `/support?${new URLSearchParams(params).toString()}`;
@@ -139,8 +140,7 @@ test('practice report link carries selected answer and source context to Support
   await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-
-  await expect(page.getByText('Question 1')).toBeVisible();
+  await startAllVisiblePractice(page, 'en');
   await page.getByLabel('Select answer In southern Europe').click();
   await expect(page.getByRole('link', { name: /Report question q\d+/ })).toBeVisible();
 

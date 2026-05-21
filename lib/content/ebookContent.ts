@@ -7,6 +7,7 @@ export type EbookArticlePracticePath = '/practice' | '/exam' | `/chapter/${strin
 export type EbookArticleSection = {
   body: LocalizedText;
   heading: LocalizedText;
+  sourceNoteKeys: readonly EbookSourceKey[];
 };
 
 export const EBOOK_SOURCE_NOTES = {
@@ -37,6 +38,15 @@ export const EBOOK_SOURCE_NOTES = {
     retrievedDate: '2026-05-19',
     url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   },
+  migrationsverketCitizenshipRules: {
+    key: 'migrationsverketCitizenshipRules',
+    label: {
+      sv: 'Migrationsverket: Nya regler för svenskt medborgarskap från 6 juni 2026',
+      en: 'Migrationsverket: New rules for Swedish citizenship from 6 June 2026',
+    },
+    retrievedDate: '2026-05-19',
+    url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+  },
 } as const;
 
 export type EbookSourceKey = keyof typeof EBOOK_SOURCE_NOTES;
@@ -65,11 +75,36 @@ type EbookArticleSeed = {
 };
 
 const studyMaterialSourceKeys = ['uhrStudyMaterial'] as const satisfies readonly EbookSourceKey[];
-const officialTestSourceKeys = [
-  'officialTestOverview',
-  'officialTestSignup',
-  'uhrStudyMaterial',
-] as const satisfies readonly EbookSourceKey[];
+function uniqueSourceNoteKeys(sections: readonly EbookArticleSection[]): readonly EbookSourceKey[] {
+  return Array.from(
+    new Set(sections.flatMap((section) => [...section.sourceNoteKeys])),
+  ) as EbookSourceKey[];
+}
+
+const introSections: readonly EbookArticleSection[] = [
+  {
+    heading: {
+      sv: 'Vad den här boken är',
+      en: 'What this book is',
+    },
+    body: {
+      sv: 'En lugn genomgång av svensk samhällskunskap inför medborgarskapsprovet, skriven för vuxna som vill förstå sammanhang och begrepp innan de övar på frågorna.',
+      en: "A plain-language reader for Sweden's citizenship test, turning public study material into calm, unofficial practice reading for adults building civic vocabulary and context.",
+    },
+    sourceNoteKeys: studyMaterialSourceKeys,
+  },
+  {
+    heading: {
+      sv: 'Vad den inte är',
+      en: 'What it is not',
+    },
+    body: {
+      sv: 'Inte officiellt material, inte juridisk rådgivning och inte ett substitut för UHR:s material. Kontrollera alltid fakta via källsidan och UHR när en uppgift påverkar dig.',
+      en: "Not official material, not a legal document, and not a substitute for UHR's study material. Use the Sources page and UHR material when a fact matters.",
+    },
+    sourceNoteKeys: studyMaterialSourceKeys,
+  },
+];
 
 const introArticle: EbookArticle = {
   chapterId: null,
@@ -86,29 +121,8 @@ const introArticle: EbookArticle = {
     en: 'Open practice',
   },
   practicePath: '/practice',
-  sections: [
-    {
-      heading: {
-        sv: 'Vad den här boken är',
-        en: 'What this book is',
-      },
-      body: {
-        sv: 'En lugn genomgång av svensk samhällskunskap inför medborgarskapsprovet, skriven för vuxna som vill förstå sammanhang och begrepp innan de övar på frågorna.',
-        en: "A plain-language reader for Sweden's citizenship test, turning public study material into calm, unofficial practice reading for adults building civic vocabulary and context.",
-      },
-    },
-    {
-      heading: {
-        sv: 'Vad den inte är',
-        en: 'What it is not',
-      },
-      body: {
-        sv: 'Inte officiellt material, inte juridisk rådgivning och inte ett substitut för UHR:s material. Kontrollera alltid fakta via källsidan och UHR när en uppgift påverkar dig.',
-        en: "Not official material, not a legal document, and not a substitute for UHR's study material. Use the Sources page and UHR material when a fact matters.",
-      },
-    },
-  ],
-  sourceNoteKeys: studyMaterialSourceKeys,
+  sections: introSections,
+  sourceNoteKeys: uniqueSourceNoteKeys(introSections),
   staticChapterId: 'intro',
   title: {
     sv: 'Sakta in. Vi har kaffe.',
@@ -293,6 +307,11 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
           sv: 'Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket, och antalet platser är begränsat.',
           en: 'UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required, and seats are limited.',
         },
+        sourceNoteKeys: [
+          'officialTestOverview',
+          'officialTestSignup',
+          'migrationsverketCitizenshipRules',
+        ],
       },
       {
         heading: {
@@ -303,6 +322,11 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
           sv: 'UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.',
           en: 'UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.',
         },
+        sourceNoteKeys: [
+          'officialTestOverview',
+          'officialTestSignup',
+          'migrationsverketCitizenshipRules',
+        ],
       },
     ];
   }
@@ -321,6 +345,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
         sv: `${seed.lede.sv} Koppla läsningen till ${chapterNameSv} och stanna vid begrepp som dyker upp i övningsfrågorna.`,
         en: `${seed.lede.en} Connect the reading to ${chapterNameEn} and pause on concepts that appear in the practice questions.`,
       },
+      sourceNoteKeys: studyMaterialSourceKeys,
     },
     {
       heading: { sv: 'Repetera nära källan', en: 'Review close to the source' },
@@ -328,6 +353,7 @@ function buildChapterSections(seed: EbookArticleSeed): readonly EbookArticleSect
         sv: `${chapterDescriptionSv} Övningsfrågorna i appen visar UHR-hänvisning så att du kan kontrollera materialet utan konto eller nätverk.`,
         en: `${chapterDescriptionEn} The app's practice questions show UHR references so you can check the material without an account or network connection.`,
       },
+      sourceNoteKeys: studyMaterialSourceKeys,
     },
   ];
 }
@@ -336,6 +362,7 @@ function buildArticle(seed: EbookArticleSeed): EbookArticle {
   const practicePath =
     seed.practicePath ??
     (seed.practiceChapterId ? (`/chapter/${seed.practiceChapterId}` as const) : '/practice');
+  const sections = buildChapterSections(seed);
 
   return {
     chapterId: seed.practiceChapterId ?? null,
@@ -343,9 +370,8 @@ function buildArticle(seed: EbookArticleSeed): EbookArticle {
     lede: seed.lede,
     practiceLabel: seed.practiceLabel,
     practicePath,
-    sections: buildChapterSections(seed),
-    sourceNoteKeys:
-      seed.staticChapterId === '12' ? officialTestSourceKeys : studyMaterialSourceKeys,
+    sections,
+    sourceNoteKeys: uniqueSourceNoteKeys(sections),
     staticChapterId: seed.staticChapterId,
     title: seed.title,
   };
@@ -390,4 +416,10 @@ export function getAdjacentEbookArticle(
 
 export function getEbookSourceNotes(article: EbookArticle): readonly EbookSourceNote[] {
   return article.sourceNoteKeys.map((key) => EBOOK_SOURCE_NOTES[key]);
+}
+
+export function getEbookSectionSourceNotes(
+  section: EbookArticleSection,
+): readonly EbookSourceNote[] {
+  return section.sourceNoteKeys.map((key) => EBOOK_SOURCE_NOTES[key]);
 }

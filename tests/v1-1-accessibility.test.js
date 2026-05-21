@@ -407,6 +407,40 @@ test('main native surfaces consume app-wide theme colors instead of static token
   }
 });
 
+test('nested native surfaces consume app-wide theme colors instead of static tokens', () => {
+  const nestedThemeFiles = [
+    'components/ui/Badge.tsx',
+    'components/ui/ProgressBar.tsx',
+    'components/ui/RouteLink.tsx',
+    'components/ui/MetricCard.tsx',
+    'components/ui/StatCallout.tsx',
+    'components/ui/CountdownBanner.tsx',
+    'components/quiz/QuestionCard.tsx',
+    'components/quiz/ExplanationPanel.tsx',
+    'components/quiz/UHRReferenceCard.tsx',
+    'components/dashboard/ActivityHeatmap.tsx',
+    'components/dashboard/MockExamHistoryCard.tsx',
+    'components/dashboard/PerChapterProgressBars.tsx',
+    'components/dashboard/StreakXpSparkline.tsx',
+  ];
+
+  for (const file of nestedThemeFiles) {
+    const source = loadSource(file);
+    assert.match(
+      source,
+      /useThemeColors\(\)|useResolvedThemeColors\(/,
+      `${file} should read shared theme colors`,
+    );
+    assert.match(
+      source,
+      /createStyles\((themeColors|resolvedThemeColors)\)/,
+      `${file} should bind styles to theme colors`,
+    );
+    assert.doesNotMatch(source, /import \{[^}]*\bcolors\b[^}]*\} from .*lib\/theme/, file);
+    assert.doesNotMatch(source, /\bcolors\./, file);
+  }
+});
+
 test('speak.ts: speakSwedish accepts a rate option', () => {
   const source = loadSource('lib/audio/speak.ts');
   assert.match(source, /SpeakSwedishOptions/);

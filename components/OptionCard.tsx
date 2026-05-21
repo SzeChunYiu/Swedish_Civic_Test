@@ -41,6 +41,7 @@ export interface OptionCardProps extends Omit<PressableProps, 'children' | 'styl
   state?: OptionCardState;
   stateLabel?: string;
   style?: StyleProp<ViewStyle>;
+  struck?: boolean;
 }
 
 function getAccessibilityLabel({
@@ -72,6 +73,7 @@ export function OptionCard({
   state = 'idle',
   stateLabel,
   style,
+  struck = false,
   ...pressableProps
 }: OptionCardProps) {
   const themeColors = useThemeColors();
@@ -106,21 +108,40 @@ export function OptionCard({
       style={({ pressed }) => [
         styles.base,
         getCardStateStyle(styles, state),
+        struck ? styles.struck : null,
         pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
         style,
       ]}
       {...pressableProps}
     >
-      <View pointerEvents="none" style={[styles.marker, getMarkerStateStyle(styles, state)]}>
+      <View
+        pointerEvents="none"
+        style={[
+          styles.marker,
+          getMarkerStateStyle(styles, state),
+          struck ? styles.struckMarker : null,
+        ]}
+      >
         {isChecked ? <View style={[styles.markerDot, getMarkerDotStyle(styles, state)]} /> : null}
       </View>
       <View style={styles.copy}>
-        <NativeText style={[styles.label, getLabelStateStyle(styles, state), labelStyle]}>
+        <NativeText
+          style={[
+            styles.label,
+            getLabelStateStyle(styles, state),
+            struck ? styles.struckLabel : null,
+            labelStyle,
+          ]}
+        >
           {label}
         </NativeText>
         {description ? (
-          <NativeText style={[styles.description, descriptionStyle]}>{description}</NativeText>
+          <NativeText
+            style={[styles.description, struck ? styles.struckDescription : null, descriptionStyle]}
+          >
+            {description}
+          </NativeText>
         ) : null}
       </View>
       {resultLabel ? (
@@ -218,6 +239,10 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.incorrectBg,
       borderColor: themeColors.warning,
     },
+    struck: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+    },
     pressed: {
       transform: [{ scale: motion.pressedScale }],
     },
@@ -243,6 +268,9 @@ function createStyles(themeColors: ThemeColors) {
     },
     incorrectMarker: {
       borderColor: themeColors.warning,
+    },
+    struckMarker: {
+      borderColor: themeColors.textMuted,
     },
     markerDot: {
       borderRadius: radius.circle,
@@ -271,9 +299,16 @@ function createStyles(themeColors: ThemeColors) {
     warningLabel: {
       color: themeColors.warmDark,
     },
+    struckLabel: {
+      color: themeColors.textMuted,
+      textDecorationLine: 'line-through',
+    },
     description: {
       ...typography.captionLight,
       color: themeColors.textSecondary,
+    },
+    struckDescription: {
+      color: themeColors.textMuted,
     },
     resultLabel: {
       ...typography.badge,

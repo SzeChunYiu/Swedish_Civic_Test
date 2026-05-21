@@ -110,6 +110,7 @@ const routerShellRuntimeFiles = [
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
   'app/dashboard.tsx',
+  'app/citizenship-requirements.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',
@@ -534,7 +535,7 @@ test('Expo Router tab scaffold titles follow the persisted settings language', (
   assert.match(tabLayout, /home: 'Hem'/);
   assert.match(tabLayout, /learn: 'Lär dig'/);
   assert.match(tabLayout, /practice: 'Öva'/);
-  assert.match(tabLayout, /exam: 'Prov'/);
+  assert.match(tabLayout, /exam: 'Övningsprov'/);
   assert.match(tabLayout, /mistakes: 'Repetition'/);
   assert.doesNotMatch(tabLayout, /mistakes:\s*'Misstag'/);
   assert.match(tabLayout, /profile: 'Profil'/);
@@ -565,6 +566,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   assert.deepEqual(extractStackScreenNames(rootLayout).sort(), [
     '(tabs)',
     '+not-found',
+    'citizenship-requirements',
     'dashboard',
     'index',
     'search',
@@ -583,6 +585,7 @@ test('Expo Router root scaffold redirects into the tab shell', () => {
   );
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']search["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']dashboard["']\s*\/>/);
+  assert.match(rootLayout, /<Stack\.Screen\s+name=["']citizenship-requirements["']\s*\/>/);
   assert.match(rootLayout, /<Stack\.Screen\s+name=["']\+not-found["']\s*\/>/);
   assert.match(indexRoute, /import\s+\{\s*Redirect\s*\}\s+from ['"]expo-router['"]/);
   assert.match(indexRoute, /<Redirect\s+href=["']\/home["']\s*\/>/);

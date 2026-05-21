@@ -21,8 +21,31 @@ class Element {
     this.children = [];
     this.attributes = {};
     this.className = '';
+    this.classList = {
+      add: (...names) => {
+        const classes = new Set(this.className.split(/\s+/).filter(Boolean));
+        names.forEach((name) => classes.add(name));
+        this.className = [...classes].join(' ');
+      },
+      remove: (...names) => {
+        const remove = new Set(names);
+        this.className = this.className
+          .split(/\s+/)
+          .filter((name) => name && !remove.has(name))
+          .join(' ');
+      },
+      toggle: (name, force) => {
+        const classes = new Set(this.className.split(/\s+/).filter(Boolean));
+        const shouldAdd = force === undefined ? !classes.has(name) : Boolean(force);
+        if (shouldAdd) classes.add(name);
+        else classes.delete(name);
+        this.className = [...classes].join(' ');
+        return shouldAdd;
+      },
+    };
     this.style = {};
     this.textContent = '';
+    this.listeners = {};
   }
 
   appendChild(child) {
@@ -33,6 +56,10 @@ class Element {
   setAttribute(name, value) {
     this.attributes[name] = String(value);
   }
+
+  addEventListener(type, handler) {
+    this.listeners[type] = handler;
+  }
 }
 
 function visibleText(node) {
@@ -41,6 +68,7 @@ function visibleText(node) {
 
 function renderDashboard(language) {
   const dashboard = new Element('div');
+  const dashboardEyebrow = new Element('span');
   const storage = new Map([
     ['smt_lang', language],
     [
@@ -80,6 +108,9 @@ function renderDashboard(language) {
       },
       getElementById(id) {
         return id === 'v11-dashboard' ? dashboard : null;
+      },
+      querySelector(selector) {
+        return selector === '#v11-dashboard-wrap .eyebrow' ? dashboardEyebrow : null;
       },
       readyState: 'complete',
     },
@@ -138,6 +169,7 @@ function mondayKey(date) {
 
 function loadDashboardStorageSnapshot(storageEntries) {
   const dashboard = new Element('div');
+  const dashboardEyebrow = new Element('span');
   const storage = new Map([['smt_lang', 'en'], ...storageEntries]);
   const listeners = {};
   const sandbox = {
@@ -157,6 +189,9 @@ function loadDashboardStorageSnapshot(storageEntries) {
       },
       getElementById(id) {
         return id === 'v11-dashboard' ? dashboard : null;
+      },
+      querySelector(selector) {
+        return selector === '#v11-dashboard-wrap .eyebrow' ? dashboardEyebrow : null;
       },
       readyState: 'complete',
     },
