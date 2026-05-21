@@ -35,9 +35,9 @@ function loadTs(relativePath) {
 }
 
 function expectedVisualSmokeRoutes() {
-  const { visualSmokeRoutes } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+  const { visualSmokeRouteManifestEntries } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
-  return visualSmokeRoutes.map(({ file, name, route }) => ({ file, name, route }));
+  return visualSmokeRouteManifestEntries();
 }
 
 function visualSmokeDuplicateContract() {
@@ -64,15 +64,18 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(
     visualSmokeSource,
-    /import \{[\s\S]*visualSmokeRoutes[\s\S]*\} from '\.\/visualSmokeRoutes';/,
+    /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
   );
+  assert.match(visualSmokeSource, /visualSmokeRouteManifestEntries\(\)/);
   assert.match(visualSmokeSource, /visualSmokeDuplicateExplanations/);
   assert.match(visualSmokeSource, /isExplainedVisualSmokeDuplicate/);
   assert.doesNotMatch(visualSmokeSource, /const routes = \[/);
+  assert.doesNotMatch(visualSmokeSource, /\bvisualSmokeRoutes\b,/);
   assert.doesNotMatch(visualSmokeSource, /explainedDuplicateScreenshotGroups/);
   assert.doesNotMatch(visualSmokeSource, /\$\{name\}\.png/);
   assert.match(visualSmokeRoutesSource, /file: 'index\.png'/);
   assert.match(visualSmokeRoutesSource, /file: 'chapter-ch01\.png'/);
+  assert.match(visualSmokeRoutesSource, /export function visualSmokeRouteManifestEntries/);
   assert.match(visualSmokeRoutesSource, /export const visualSmokeDuplicateExplanations/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
   assert.match(
