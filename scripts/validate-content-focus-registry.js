@@ -58,6 +58,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'swedishPrivacyStreakCopyNaturalnessValidated',
       'legalSwedishEnglishTokenGuardValidated',
       'legalSwedishEnglishTokenGuardParityValidated',
+      'legalInternalMonetizationKeyGuardValidated',
+      'legalInternalMonetizationKeyGuardParityValidated',
     ],
   },
   {
