@@ -85,7 +85,7 @@ function rollingAccuracy(progress: UserProgress, now: Date, daysBack = 14): numb
       const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
       if (answeredAtMs === null || answeredAtMs < cutoff) continue;
       total += 1;
-      if (answer.isCorrect) correct += 1;
+      if (answer.isCorrect === true) correct += 1;
     }
   }
   if (total === 0) return 0;
