@@ -253,6 +253,25 @@ test('answer shuffle parity uses the focused content validator path', () => {
   );
 });
 
+test('religious freedom parallelism focused content validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused religious freedom validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.questionReligiousFreedomParallelismValidated, summary.publishedQuestions);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('answer feedback focused content validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,

@@ -8808,6 +8808,19 @@ function validateAuthoredSourceParity() {
   });
 }
 
+function validateQuestionReligiousFreedomParallelism() {
+  if (!Array.isArray(questions)) return;
+
+  questions.forEach((question, index) => {
+    const label = question?.id || `question[${index}]`;
+    if (findQuestionReligiousFreedomParallelismIssue(question)) {
+      fail(`${label} uses nonparallel religious-freedom option wording`);
+    } else {
+      questionReligiousFreedomParallelismValidated += 1;
+    }
+  });
+}
+
 if (focusedValidationRequested('authoredSourceParity')) {
   validateAuthoredSourceParity();
   exitWithValidationFailures();
@@ -9066,6 +9079,18 @@ if (focusedValidationRequested('questionReportLinkParity')) {
   printValidationSummary({
     questionReportLinkRulesValidated,
     questionReportLinkParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('religiousFreedomParallelism')) {
+  validateQuestionReligiousFreedomParallelism();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+    questionReligiousFreedomParallelismValidated,
   });
   process.exit(0);
 }
