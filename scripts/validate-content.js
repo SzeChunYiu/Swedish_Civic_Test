@@ -33,6 +33,7 @@ const {
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
 const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
+const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -1395,7 +1396,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -13625,6 +13626,8 @@ function validatePurchaseTypeSchemaParity() {
 
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
+  let paywallSource = '';
+  let placementCtaSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -13634,12 +13637,44 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   try {
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
+    placementCtaSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+      'utf8',
+    );
+    paywallSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
   } catch (error) {
-    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
+    reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
     return;
   }
 
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
+  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  function assertInFlightCase(source, options) {
+    try {
+      assertPurchaseActionInFlightGuard(source, options);
+      return [true, `${options.surfaceName} purchase actions use the ref-backed in-flight guard`];
+    } catch (error) {
+      return [
+        false,
+        error instanceof Error
+          ? error.message
+          : `${options.surfaceName} purchase actions must use the ref-backed in-flight guard`,
+      ];
+    }
+  }
+
+  const placementCtaInFlightCase = assertInFlightCase(placementCtaSource, {
+    awaitedCalls: ['await purchaseAction('],
+    surfaceName: 'RemoveAdsPlacementCta',
+  });
+  const paywallInFlightCase = assertInFlightCase(paywallSource, {
+    awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
+    surfaceName: 'PremiumBanner',
+  });
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -13733,6 +13768,34 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       ),
       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
     ],
+    [
+      normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&
+        normalizedPlacementCtaSource.includes(
+          "runPurchaseAction('restore', restoreRemoveAdsPurchase)",
+        ),
+      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
+    ],
+    [
+      normalizedPlacementCtaSource.includes(
+        'accessibilityLabel={copy.restoreAccessibilityLabel}',
+      ) &&
+        normalizedPlacementCtaSource.includes('accessibilityHint={copy.restoreAccessibilityHint}'),
+      'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint copy',
+    ],
+    placementCtaInFlightCase,
+    [
+      normalizedPaywallSource.includes('await buyRemoveAds(purchaseRuntime)') &&
+        normalizedPaywallSource.includes('await restoreRemoveAdsPurchase(purchaseRuntime)'),
+      'PremiumBanner must route buy and restore through the shared purchase runtime',
+    ],
+    [
+      normalizedPaywallSource.includes('accessibilityState={{') &&
+        normalizedPaywallSource.includes("busy: activeAction === 'buy'") &&
+        normalizedPaywallSource.includes("busy: activeAction === 'restore'") &&
+        normalizedPaywallSource.includes('disabled={activeAction !== null'),
+      'PremiumBanner must expose busy and disabled accessibility state during purchase actions',
+    ],
+    paywallInFlightCase,
   ];
 
   runtimeCases.forEach(([caseIsValid, message]) => {
