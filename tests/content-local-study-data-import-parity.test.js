@@ -125,6 +125,7 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   );
   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
+  assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
 });
 
 test('local study data import previews and applies all learner snapshot sections', () => {
