@@ -157,6 +157,85 @@ test('generateStudyPlan: serious intensity raises floor above casual', () => {
   assert.ok(serious.dailyQuestionTarget > casual.dailyQuestionTarget);
 });
 
+test('daysUntil and formatExamDate: invalid dates use safe fallback values', () => {
+  const { daysUntil, formatExamDate } = loadTs('lib/learning/examDate.ts');
+  const validNow = new Date('2026-05-19T00:00:00.000Z');
+  const invalidDate = new Date('not-a-date');
+
+  assert.equal(daysUntil(invalidDate, validNow), 0);
+  assert.equal(daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate), 0);
+  assert.equal(formatExamDate(invalidDate, 'en'), 'date unavailable');
+  assert.equal(formatExamDate(invalidDate, 'sv'), 'datum saknas');
+  assert.doesNotMatch(formatExamDate(invalidDate, 'en'), /Invalid Date/);
+});
+
+test('generateStudyPlan: normalizes NaN, Invalid Date, and unknown intensity inputs', () => {
+  const { generateStudyPlan } = loadTs('lib/learning/examDate.ts');
+  let plan;
+
+  assert.doesNotThrow(() => {
+    plan = generateStudyPlan({
+      testDate: new Date('not-a-date'),
+      now: new Date('not-a-date'),
+      totalQuestions: Number.NaN,
+      masteredQuestions: Number.POSITIVE_INFINITY,
+      mocksTaken: '2',
+      intensity: 'turbo',
+    });
+  });
+
+  assert.equal(plan.hasTestDate, true);
+  assert.equal(plan.daysRemaining, 0);
+  assert.equal(plan.intensity, 'regular');
+  assert.equal(plan.mocksRemaining, 6);
+  assert.ok(Number.isFinite(Date.parse(plan.testDateIso)));
+  assert.ok(Number.isFinite(Date.parse(plan.generatedAt)));
+  assert.ok(Number.isFinite(plan.dailyQuestionTarget));
+  assert.ok(plan.dailyQuestionTarget >= 5 && plan.dailyQuestionTarget <= 80);
+  assert.ok(Number.isInteger(plan.weeklyMockTarget));
+  assert.ok(plan.weeklyMockTarget >= 1 && plan.weeklyMockTarget <= 2);
+});
+
+test('generateStudyPlan: rejects string/fractional counts and clamps mastered/mocks', () => {
+  const { generateStudyPlan } = loadTs('lib/learning/examDate.ts');
+  const base = {
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: new Date('2026-05-19T00:00:00.000Z'),
+    intensity: 'regular',
+  };
+
+  const stringCounts = generateStudyPlan({
+    ...base,
+    totalQuestions: '200',
+    masteredQuestions: '10',
+    mocksTaken: '2',
+  });
+  assert.equal(stringCounts.mocksRemaining, 6);
+  assert.ok(Number.isFinite(stringCounts.dailyQuestionTarget));
+  assert.ok(stringCounts.dailyQuestionTarget >= 5 && stringCounts.dailyQuestionTarget <= 80);
+
+  const fractionalCounts = generateStudyPlan({
+    ...base,
+    totalQuestions: 200.5,
+    masteredQuestions: 10.5,
+    mocksTaken: 1.5,
+  });
+  assert.equal(fractionalCounts.mocksRemaining, 6);
+  assert.ok(Number.isFinite(fractionalCounts.dailyQuestionTarget));
+  assert.ok(
+    fractionalCounts.dailyQuestionTarget >= 5 && fractionalCounts.dailyQuestionTarget <= 80,
+  );
+
+  const clampedCounts = generateStudyPlan({
+    ...base,
+    totalQuestions: 10,
+    masteredQuestions: 99,
+    mocksTaken: 99,
+  });
+  assert.equal(clampedCounts.mocksRemaining, 0);
+  assert.ok(clampedCounts.dailyQuestionTarget >= 5 && clampedCounts.dailyQuestionTarget <= 80);
+});
+
 // -------------------------------------------------------- Weekly recap
 
 function makeProgress(sessions = []) {
