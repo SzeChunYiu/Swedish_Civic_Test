@@ -654,6 +654,22 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
   /^That Sweden's first mosques were built\b/i,
+  /^Försöka övertyga andra om sina politiska idéer\.?$/i,
+  /^Hindra andra från att rösta\.?$/i,
+  /^Try to persuade others of their political ideas\.?$/i,
+  /^Stop others from voting\.?$/i,
+  /^Vårdcentraler, barnavårdscentraler och mödravårdscentraler\.?$/i,
+  /^Domstolar, åklagare och kriminalvård\.?$/i,
+  /^Health centres, child health centres, and maternity clinics\.?$/i,
+  /^Courts, prosecutors, and prison and probation services\.?$/i,
+  /^Ordna förskolor, fritidshem, grundskolor och gymnasieskolor\.?$/i,
+  /^Betala sjukförsäkring och statliga pensioner\.?$/i,
+  /^Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools\.?$/i,
+  /^Pay sickness insurance and state pensions\.?$/i,
+  /^Vård och service hemma eller boende som är anpassat för äldre personer\.?$/i,
+  /^Automatiskt studiestöd och plats på universitet\.?$/i,
+  /^Care and services at home or housing adapted for older people\.?$/i,
+  /^Automatic study support and a university place\.?$/i,
   /\bskyddar rätten [^.?!]* och skydd mot\b/i,
   /\bprotects the right [^.?!]* and protection from\b/i,
   /\bskyddar att staten väljer\b/i,
@@ -6422,6 +6438,20 @@ function referendumAdvisoryStatementSv(subject, answer) {
   return null;
 }
 
+function democracyRightStatementSv(subject, answer, isCorrect) {
+  const action = lowerFirst(stripLeadingPurposeSv(answer));
+  return isCorrect
+    ? `I en demokrati har ${subject} rätt att ${action}`
+    : `I en demokrati har ${subject} inte rätt att ${action}`;
+}
+
+function democracyRightStatementEn(subject, answer, isCorrect) {
+  const action = lowerFirst(stripLeadingPurposeEn(answer));
+  return isCorrect
+    ? `In a democracy, ${subject} may ${action}`
+    : `In a democracy, ${subject} may not ${action}`;
+}
+
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -6452,6 +6482,10 @@ function civicStatementSv(source, option) {
   if (match) return `Ett inslag i ${match[1]} är att ${lowerFirst(answer)}`;
   match = q.match(/^Vilket är ett sätt att (.+)$/i);
   if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  match = q.match(/^Vilken rätt har (.+?) i en demokrati$/i);
+  if (match) {
+    return democracyRightStatementSv(match[1], answer, option.id === source.correctOptionId);
+  }
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
@@ -6784,6 +6818,10 @@ function civicStatementEn(source, option) {
   if (match) return `A feature of ${match[1]} is that ${lowerFirst(answer)}`;
   match = q.match(/^Which is a way to (.+)$/i);
   if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  match = q.match(/^What right do (.+?) have in a democracy$/i);
+  if (match) {
+    return democracyRightStatementEn(match[1], answer, option.id === source.correctOptionId);
+  }
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
