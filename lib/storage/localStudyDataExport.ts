@@ -1,7 +1,7 @@
 import {
   type PersistedCitizenshipRequirementsChecklist,
   normalizeImportedCitizenshipRequirementsChecklist,
-  useCitizenshipRequirementsStore,
+  useCitizenshipRequirementsChecklistStore,
 } from './citizenshipRequirementsStore';
 import {
   type PersistedMistakeReview,
@@ -73,7 +73,7 @@ function settingsSnapshot(): ImportableSettings {
 
 function citizenshipRequirementsSnapshot(): PersistedCitizenshipRequirementsChecklist {
   return normalizeImportedCitizenshipRequirementsChecklist({
-    checkedAreaIds: useCitizenshipRequirementsStore.getState().checkedAreaIds,
+    checkedAreaIds: useCitizenshipRequirementsChecklistStore.getState().checkedAreaIds,
   });
 }
 
