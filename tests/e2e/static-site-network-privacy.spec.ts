@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { startStaticSiteServer, type StaticSite } from './staticSiteServer';
+import { setStaticSiteLanguage, startStaticSiteServer, type StaticSite } from './staticSiteServer';
 
 const googleFontHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
 
@@ -102,4 +102,23 @@ test('static system font fallback keeps primary routes inside mobile and desktop
       await expect(page.locator('main.is-active')).toBeVisible();
     }
   }
+});
+
+test('privacy route renders localized plain-language callout labels', async ({ page }) => {
+  await seedStaticPrivacyRun(page);
+  await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
+
+  await page.goto(`${staticSite.baseUrl}/#/privacy`, { waitUntil: 'domcontentloaded' });
+  await page.locator('#consent').evaluate((node) => {
+    (node as HTMLElement).hidden = true;
+  });
+
+  await expect(page.getByText('In plain English:', { exact: true })).toBeVisible();
+  await expect(page.getByText('In plain Swedish:', { exact: true })).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
+
+  await setStaticSiteLanguage(page, 'sv');
+  await expect(page.getByText('På klarspråk:', { exact: true })).toBeVisible();
+  await expect(page.getByText('In plain English:', { exact: true })).toHaveCount(0);
+  await expectNoHorizontalOverflow(page);
 });

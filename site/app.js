@@ -300,7 +300,7 @@ const i18n = (window.i18n = {
     'privacy.s3.p':
       'Study progress, settings, mistakes, XP, streaks, badges, bookmarks, and audio preferences are stored locally on your device. They never leave it. If you uninstall the app, that data is gone — fair warning.',
     'privacy.s4.t': 'Current data-collection posture',
-    'privacy.s4.callout.b': 'In plain Swedish:',
+    'privacy.s4.callout.b': 'In plain English:',
     'privacy.s4.callout.p':
       'study progress and answers stay local; ad systems do not receive them.',
     'privacy.s4.p':
