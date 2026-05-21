@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Linking, Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
@@ -17,7 +17,10 @@ import {
   type CitizenshipRequirementSourceId,
 } from '../data/citizenshipRequirements';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
-import { useCitizenshipRequirementsStore } from '../lib/storage/citizenshipRequirementsStore';
+import {
+  hydrateCitizenshipRequirementsChecklistFromStorage,
+  useCitizenshipRequirementsStore,
+} from '../lib/storage/citizenshipRequirementsStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, radius, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
@@ -185,6 +188,11 @@ export default function CitizenshipRequirementsScreen() {
     (state) => state.clearPersistenceWarning,
   );
   const toggleArea = useCitizenshipRequirementsStore((state) => state.toggleArea);
+
+  useEffect(() => {
+    hydrateCitizenshipRequirementsChecklistFromStorage();
+  }, []);
+
   const checkedIds = useMemo<ReadonlySet<CitizenshipRequirementAreaId>>(
     () => new Set(checkedAreaIds),
     [checkedAreaIds],

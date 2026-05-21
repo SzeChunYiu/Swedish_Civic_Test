@@ -142,6 +142,11 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
   assert.match(routeSource, /useCitizenshipRequirementsStore/);
+  assert.match(routeSource, /hydrateCitizenshipRequirementsChecklistFromStorage/);
+  assert.match(
+    routeSource,
+    /useEffect\(\(\) => \{\s*hydrateCitizenshipRequirementsChecklistFromStorage\(\);/,
+  );
   assert.match(routeSource, /PersistenceWarningNotice/);
   assert.match(routeSource, /QuestionDisclaimer/);
   assert.match(routeSource, /accessibilityRole="checkbox"/);
