@@ -20,6 +20,26 @@ type LegalExternalLinkFixture = {
   visibleLabel?: string;
 };
 
+type LegalSourceMaterialLinkLayoutFixture = {
+  actionLabel: string;
+  language: AppLanguage;
+  path: '/disclaimer' | '/terms';
+  publisherLabel: string;
+  retrievedLabel: string;
+  sectionTitle: string;
+  title: string;
+  urlLabel: string;
+  visibleLabel: string;
+};
+
+type LegalSourceMaterialViewport = {
+  label: 'desktop' | 'mobile';
+  size: {
+    height: number;
+    width: number;
+  };
+};
+
 type AboutTheTestOfficialSourceFixture = {
   language: AppLanguage;
   openPrefix: string;
@@ -42,6 +62,7 @@ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
 ];
 const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
 const UHR_AUTHORITY_BOUNDARY_URL = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[0];
+const SOURCE_MATERIAL_LINK_RETRIEVED_DATE = '2026-05-20';
 
 const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   {
@@ -124,6 +145,58 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     url: PUBLIC_SUPPORT_URL,
     visibleLabel: 'Public support page',
   },
+];
+
+const legalSourceMaterialLinkLayoutFixtures: LegalSourceMaterialLinkLayoutFixture[] = [
+  {
+    actionLabel: 'Öppna UHR:s utbildningsmaterial',
+    language: 'sv',
+    path: '/disclaimer',
+    publisherLabel: 'Utgivare',
+    retrievedLabel: 'Hämtad',
+    sectionTitle: 'Använd med källmaterialet',
+    title: 'Ansvarsfriskrivning',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
+  },
+  {
+    actionLabel: 'Open UHR education material',
+    language: 'en',
+    path: '/disclaimer',
+    publisherLabel: 'Publisher',
+    retrievedLabel: 'Retrieved',
+    sectionTitle: 'Use with source material',
+    title: 'Disclaimer',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Study material about Swedish society',
+  },
+  {
+    actionLabel: 'Öppna UHR:s utbildningsmaterial',
+    language: 'sv',
+    path: '/terms',
+    publisherLabel: 'Utgivare',
+    retrievedLabel: 'Hämtad',
+    sectionTitle: 'Respektera källmaterialet',
+    title: 'Användarvillkor',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
+  },
+  {
+    actionLabel: 'Open UHR education material',
+    language: 'en',
+    path: '/terms',
+    publisherLabel: 'Publisher',
+    retrievedLabel: 'Retrieved',
+    sectionTitle: 'Respect source material',
+    title: 'Terms of use',
+    urlLabel: 'URL',
+    visibleLabel: 'UHR: Study material about Swedish society',
+  },
+];
+
+const legalSourceMaterialViewports: LegalSourceMaterialViewport[] = [
+  { label: 'mobile', size: { width: 390, height: 844 } },
+  { label: 'desktop', size: { width: 1024, height: 768 } },
 ];
 
 const aboutTheTestOfficialSourceFixtures: AboutTheTestOfficialSourceFixture[] = [
@@ -214,6 +287,64 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
 }
 
+async function expectLinkTextSegmentsStayInsideBox(link: Locator, segments: string[]) {
+  const result = await link.evaluate((element, expectedSegments) => {
+    const linkRect = element.getBoundingClientRect();
+    const missingSegments: string[] = [];
+    const overflowingSegments: string[] = [];
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+
+    for (const segment of expectedSegments) {
+      let matched = false;
+      walker.currentNode = element;
+
+      while (walker.nextNode()) {
+        const textNode = walker.currentNode;
+        const text = textNode.textContent ?? '';
+        const startIndex = text.indexOf(segment);
+        if (startIndex < 0) continue;
+
+        matched = true;
+        const range = document.createRange();
+        range.setStart(textNode, startIndex);
+        range.setEnd(textNode, startIndex + segment.length);
+
+        for (const rect of Array.from(range.getClientRects())) {
+          if (rect.width === 0 || rect.height === 0) continue;
+          if (
+            rect.left < linkRect.left - 1 ||
+            rect.right > linkRect.right + 1 ||
+            rect.top < linkRect.top - 1 ||
+            rect.bottom > linkRect.bottom + 1
+          ) {
+            overflowingSegments.push(segment);
+            break;
+          }
+        }
+
+        range.detach();
+        break;
+      }
+
+      if (!matched) missingSegments.push(segment);
+    }
+
+    return {
+      missingSegments,
+      overflowingSegments,
+      scrollHeight: element.scrollHeight,
+      scrollWidth: element.scrollWidth,
+      visibleHeight: element.clientHeight,
+      visibleWidth: element.clientWidth,
+    };
+  }, segments);
+
+  expect(result.missingSegments).toEqual([]);
+  expect(result.overflowingSegments).toEqual([]);
+  expect(result.scrollWidth).toBeLessThanOrEqual(result.visibleWidth + 1);
+  expect(result.scrollHeight).toBeLessThanOrEqual(result.visibleHeight + 1);
+}
+
 async function expectExternalLinksAreTouchSafe(page: Page) {
   const boxes = await page.locator('a[href^="https://"]').evaluateAll((links) =>
     links
@@ -244,6 +375,44 @@ async function expectExternalLinksAreTouchSafe(page: Page) {
   }
 }
 
+async function focusLinkWithKeyboard(page: Page, link: Locator, label: string) {
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+
+  for (let index = 0; index < 12; index += 1) {
+    await page.keyboard.press('Tab');
+    if (await link.evaluate((element) => document.activeElement === element)) return;
+  }
+
+  throw new Error(`${label} was not reachable with Tab`);
+}
+
+async function expectKeyboardFocusVisible(link: Locator, label: string) {
+  await expect(link, `${label} should receive keyboard focus`).toBeFocused();
+  const focusStyle = await link.evaluate((element) => {
+    const style = window.getComputedStyle(element);
+    return {
+      boxShadow: style.boxShadow,
+      outlineColor: style.outlineColor,
+      outlineStyle: style.outlineStyle,
+      outlineWidth: style.outlineWidth,
+    };
+  });
+
+  const hasOutline =
+    focusStyle.outlineStyle !== 'none' && Number.parseFloat(focusStyle.outlineWidth) > 0;
+  const hasBoxShadow = focusStyle.boxShadow !== 'none';
+  const hasVisibleFocusColor = focusStyle.outlineColor !== 'rgba(0, 0, 0, 0)';
+
+  expect(
+    (hasOutline && hasVisibleFocusColor) || hasBoxShadow,
+    `${label} focus style ${JSON.stringify(focusStyle)}`,
+  ).toBe(true);
+}
+
 async function stubExternalDestinations(page: Page) {
   await page.context().route('https://www.uhr.se/**', (route) =>
     route.fulfill({
@@ -266,6 +435,54 @@ async function stubExternalDestinations(page: Page) {
       status: 200,
     }),
   );
+}
+
+for (const viewport of legalSourceMaterialViewports) {
+  test.describe(`${viewport.label} source-material legal link layout`, () => {
+    test.use({ viewport: viewport.size });
+
+    for (const fixture of legalSourceMaterialLinkLayoutFixtures) {
+      test(`${fixture.path} keeps ${fixture.language} source-material link text wrapped and focus-visible`, async ({
+        page,
+      }) => {
+        const pageErrors = collectPageErrors(page);
+        await stubExternalDestinations(page);
+        await seedCleanLanguage(page, fixture.language);
+
+        await page.goto(fixture.path, { waitUntil: 'networkidle' });
+        await dismissBlockingModals(page);
+
+        await expect(page.getByRole('heading', { name: fixture.title }).last()).toBeVisible();
+        await expect(
+          page.getByRole('heading', { name: fixture.sectionTitle }).last(),
+        ).toBeVisible();
+
+        const link = page.getByRole('link', { name: fixture.actionLabel }).first();
+        await expect(link).toBeVisible();
+
+        await expectLinkTextSegmentsStayInsideBox(link, [
+          fixture.visibleLabel,
+          `${fixture.publisherLabel}: Universitets- och högskolerådet (UHR)`,
+          `${fixture.retrievedLabel}: ${SOURCE_MATERIAL_LINK_RETRIEVED_DATE}`,
+          `${fixture.urlLabel}: ${UHR_EDUCATION_MATERIAL_URL}`,
+        ]);
+
+        const linkBox = await expectRenderedBox(
+          link,
+          `${fixture.path} ${fixture.language} source-material link`,
+        );
+        expect(linkBox.width, `${fixture.actionLabel} width`).toBeGreaterThanOrEqual(44);
+        expect(linkBox.height, `${fixture.actionLabel} height`).toBeGreaterThanOrEqual(44);
+
+        await focusLinkWithKeyboard(page, link, fixture.actionLabel);
+        await expectKeyboardFocusVisible(link, fixture.actionLabel);
+        await expectExternalLinksAreTouchSafe(page);
+        await expectNoHorizontalOverflow(page);
+
+        expect(pageErrors).toEqual([]);
+      });
+    }
+  });
 }
 
 for (const fixture of legalExternalLinkFixtures) {
