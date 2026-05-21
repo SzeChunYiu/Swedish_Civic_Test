@@ -651,7 +651,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 10;
-const EXPECTED_XP_RULE_COUNT = 11;
+const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -8392,6 +8391,16 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
     spacedRepetitionRuntimeParityValidated,
     spacedRepetitionRuntimeInputCasesValidated,
     spacedRepetitionRuntimeInputParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-xp-rules')) {
+  validateXpRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    xpRulesValidated,
+    xpRulesParityValidated,
   });
   process.exit(0);
 }
@@ -15912,6 +15921,16 @@ function validateXpRules() {
       expected: 2,
     },
     {
+      label: 'non-boolean correctness awards no answer XP',
+      actual: () => calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }),
+      expected: 0,
+    },
+    {
+      label: 'non-boolean explanation flag awards no reading bonus',
+      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }),
+      expected: 10,
+    },
+    {
       label: 'empty quiz completion',
       actual: () => calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }),
       expected: 0,
@@ -15926,10 +15945,62 @@ function validateXpRules() {
       actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }),
       expected: 70,
     },
+    {
+      label: 'string quiz counts award no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }),
+      expected: 0,
+    },
+    {
+      label: 'NaN quiz count awards no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: Number.NaN, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'infinite quiz counts award no completion XP',
+      actual: () =>
+        calculateQuizCompletionXp({ answeredCount: Number.POSITIVE_INFINITY, correctCount: 10 }),
+      expected: 0,
+    },
+    {
+      label: 'fractional quiz count awards no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }),
+      expected: 0,
+    },
+    {
+      label: 'negative quiz count awards no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'over-correct quiz count awards no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }),
+      expected: 0,
+    },
     { label: 'level at 0 XP', actual: () => calculateLevel(0), expected: 1 },
     { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
     { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
     { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
+    { label: 'level at 10000 XP', actual: () => calculateLevel(10000), expected: 11 },
+    {
+      label: 'string total XP falls back to level 1',
+      actual: () => calculateLevel('10000'),
+      expected: 1,
+    },
+    {
+      label: 'NaN total XP falls back to level 1',
+      actual: () => calculateLevel(Number.NaN),
+      expected: 1,
+    },
+    {
+      label: 'infinite total XP falls back to level 1',
+      actual: () => calculateLevel(Number.POSITIVE_INFINITY),
+      expected: 1,
+    },
+    {
+      label: 'negative total XP clamps to level 1',
+      actual: () => calculateLevel(-100),
+      expected: 1,
+    },
   ];
 
   let rulesAreValid = true;

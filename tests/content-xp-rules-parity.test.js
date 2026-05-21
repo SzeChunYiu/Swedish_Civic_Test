@@ -20,7 +20,7 @@ function loadTs(relativePath) {
 function runFocusedXpRulesValidation() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-badge-xp-runtime'],
+    ['scripts/validate-content.js', '--focus-xp-rules'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -55,6 +55,7 @@ test('XP progression parity validates answer, completion, and level rules', () =
   assert.equal(calculateLevel(99), 1);
   assert.equal(calculateLevel(100), 2);
   assert.equal(calculateLevel(400), 3);
+  assert.equal(calculateLevel(10000), 11);
   assert.equal(calculateLevel('10000'), 1);
   assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(-100), 1);
@@ -76,7 +77,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-badge-xp-runtime');
+process.argv.push('--focus-xp-rules');
 require('./scripts/validate-content.js');
 `,
     ],
