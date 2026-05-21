@@ -8,6 +8,12 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function parseValidationSummary(output) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 function runValidationWithProgressStorePatch(search, replacement) {
   return spawnSync(
     process.execPath,
@@ -188,10 +194,8 @@ test('progress question schema stays in parity with persisted progress records',
       encoding: 'utf8',
     },
   );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
 
-  const summary = JSON.parse(match[0]);
+  const summary = parseValidationSummary(output);
   const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
@@ -262,6 +266,35 @@ test('progress question schema stays in parity with persisted progress records',
     /return \{ \.\.\.normalizeProgress\(JSON\.parse\(serializedProgress\)\), persistenceWarning \};/,
   );
   assert.match(progressStore, /clearPersistenceWarning: \(\) => void;/);
+});
+
+test('exam submission finality parity has focused readiness persistence coverage', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const summary = parseValidationSummary(output);
+  const examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.deepEqual(Object.keys(summary), ['examSubmissionFinalityParityValidated']);
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal((examRoute.match(/\brecordMockExamSession\s*\(\s*\{/g) ?? []).length, 1);
+  assert.match(examRoute, /sessionId: examSessionId/);
+  assert.match(
+    examRoute,
+    /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/,
+  );
+  assert.match(
+    examRoute,
+    /completedAt: submittedExamSession\?\.completedAt \?\? new Date\(\)\.toISOString\(\)/,
+  );
+  assert.match(examRoute, /correctCount: resultCorrectCount/);
+  assert.match(examRoute, /totalCount: resultTotalCount/);
+  assert.match(examRoute, /questionTimings:/);
 });
 
 test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
@@ -619,7 +652,20 @@ test('exam submission finality parity rejects losing the submitted completion ti
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam result submission must persist a completed mock-exam score for readiness/,
+    /exam result submission must persist readiness field: completedAt/,
+  );
+});
+
+test('exam submission finality parity rejects duplicate mock-exam persistence calls', () => {
+  const result = runFocusedExamSubmissionValidationWithRoutePatch(
+    'recordMockExamSession({',
+    'recordMockExamSession({});\n    recordMockExamSession({',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result submission must persist exactly one completed mock-exam session/,
   );
 });
 
