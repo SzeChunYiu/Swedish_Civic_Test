@@ -3,7 +3,11 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
+import {
+  blockingModalOverlayLocator,
+  dismissBlockingModals,
+  seedFreshFirstRunSettingsLanguage,
+} from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
   findUnexplainedVisualSmokeDuplicateReports,
@@ -140,5 +144,48 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     ) + '\n',
   );
 
+  expect(consoleErrors).toEqual([]);
+});
+
+test('shared modal dismissal helper closes forced first-run guide and language picker', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshFirstRunSettingsLanguage(page, 'sv');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('dialog', { name: 'Vad är medborgarskapsprovet?' })).toBeVisible();
+
+  const firstRunDismissal = await dismissBlockingModals(page);
+  expect(firstRunDismissal.firstRunAboutDismissed).toBe(true);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+
+  await page
+    .getByRole('button', {
+      name: /Nuvarande språk SV\. Öppna språkväljaren\.|Current language SV\. Open language picker\./,
+    })
+    .click();
+  await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toBeVisible();
+
+  const languagePickerDismissal = await dismissBlockingModals(page);
+  const forcedDismissal = {
+    firstRunAboutDismissed:
+      firstRunDismissal.firstRunAboutDismissed || languagePickerDismissal.firstRunAboutDismissed,
+    languagePickerDismissed:
+      firstRunDismissal.languagePickerDismissed || languagePickerDismissal.languagePickerDismissed,
+  };
+
+  expect(forcedDismissal).toEqual({
+    firstRunAboutDismissed: true,
+    languagePickerDismissed: true,
+  });
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('menu', { name: /Språkväljare|Language picker/ })).toHaveCount(0);
   expect(consoleErrors).toEqual([]);
 });
