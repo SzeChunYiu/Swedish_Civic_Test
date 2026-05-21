@@ -19,6 +19,7 @@ export type PerChapterProgressBarsCopy = {
   emptyState: string;
   linkLabel: (chapterName: string) => string;
   sortAccessibilityLabel: (mode: string) => string;
+  sortGroupAccessibilityLabel: string;
   subtitle: string;
   title: string;
   weakestFirst: string;
@@ -78,7 +79,12 @@ export function PerChapterProgressBars({
           </Text>
           <Text style={styles.subtitle}>{copy.subtitle}</Text>
         </View>
-        <View style={styles.sortRow}>
+        <View
+          aria-label={copy.sortGroupAccessibilityLabel}
+          accessibilityLabel={copy.sortGroupAccessibilityLabel}
+          accessibilityRole="radiogroup"
+          style={styles.sortRow}
+        >
           {(
             [
               ['chapter', copy.chapterOrder],
@@ -89,9 +95,10 @@ export function PerChapterProgressBars({
             return (
               <Pressable
                 key={mode}
+                aria-checked={selected}
                 accessibilityLabel={copy.sortAccessibilityLabel(label)}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: selected }}
                 hitSlop={space[0.5]}
                 onPress={() => setSortMode(mode)}
                 style={({ pressed }) => [

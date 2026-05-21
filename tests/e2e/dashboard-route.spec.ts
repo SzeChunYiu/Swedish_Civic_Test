@@ -39,10 +39,15 @@ type DashboardLocaleFixture = {
   mockHistoryTrendPoint: string;
   mockHistoryTrendSummary: string;
   profilePath: string;
+  chapterOrderSortLabel: string;
   summaryLine: string;
+  chapterProgressSortGroup: string;
   title: string;
   chapterProgressTitle: string;
+  strongerChapterLink: string;
   streakXpTitle: string;
+  weakestChapterLink: string;
+  weakestFirstSortLabel: string;
 };
 
 type DashboardProgressSeed = {
@@ -83,9 +88,14 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryTrendSummary:
       'Resultattrend för 2 senaste bedömda prov: senast 84%, 12 procentenheter högre än äldsta som visas.',
     profilePath: '/profile',
+    chapterOrderSortLabel: 'Sortera kapitel: Kapitelordning',
+    chapterProgressSortGroup: 'Sortera kapitelframsteg',
+    strongerChapterLink: 'Öppna Landet Sverige',
     streakXpTitle: 'Svit och XP',
     summaryLine: '0 svar den här veckan · 0 kapitel provade · 0 olösta misstag',
     title: 'Framstegsöversikt',
+    weakestChapterLink: 'Öppna Sveriges demokratiska system',
+    weakestFirstSortLabel: 'Sortera kapitel: Svagast först',
   },
   {
     activityTitle: 'Active days',
@@ -117,9 +127,14 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryTrendSummary:
       'Score trend across 2 recent scored exams: latest 84%, 12 points higher than the oldest shown.',
     profilePath: '/profile',
+    chapterOrderSortLabel: 'Sort chapters: Chapter order',
+    chapterProgressSortGroup: 'Sort chapter progress',
+    strongerChapterLink: 'Open The country of Sweden',
     streakXpTitle: 'Streak and XP',
     summaryLine: '0 answers this week · 0 chapters tried · 0 unresolved mistakes',
     title: 'Progress dashboard',
+    weakestChapterLink: "Open Sweden's democratic system",
+    weakestFirstSortLabel: 'Sort chapters: Weakest first',
   },
 ];
 
@@ -330,6 +345,46 @@ async function seedMockExamHistory(page: Page, language: AppLanguage) {
   await markAboutTheTestSeen(page);
 }
 
+async function seedChapterProgress(page: Page, language: AppLanguage) {
+  await page.addInitScript((seededLanguage) => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\language', seededLanguage);
+    window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+    window.localStorage.setItem(
+      'progress\\progressState',
+      JSON.stringify({
+        completedQuestionIds: ['q001', 'q011'],
+        questionProgress: {},
+        totalXp: 0,
+        answerDates: ['2026-05-20'],
+        answerHistory: [
+          {
+            questionId: 'q001',
+            isCorrect: true,
+            answeredAt: '2026-05-20T12:00:00.000Z',
+          },
+          {
+            questionId: 'q011',
+            isCorrect: false,
+            answeredAt: '2026-05-20T12:01:00.000Z',
+          },
+        ],
+        dailyChallengeCompletions: {},
+        mockExamSessions: [],
+        streakFreezeState: {
+          available: 0,
+          lastEarnedAt: '2026-05-20',
+          lifetimeEarned: 0,
+          lifetimeSpent: 0,
+          rescuedDayKeys: [],
+        },
+      }),
+    );
+  }, language);
+  await markAboutTheTestSeen(page);
+}
+
 function collectConsoleErrors(page: Page) {
   const consoleErrors: string[] = [];
 
@@ -440,6 +495,19 @@ async function expectNonEmptyProgressVisible(
   await expectNoHorizontalOverflow(page);
 }
 
+async function expectLinkBefore(page: Page, firstName: string, secondName: string) {
+  const first = page.getByRole('link', { name: firstName }).last();
+  const second = page.getByRole('link', { name: secondName }).last();
+
+  await expect(first).toBeVisible();
+  await expect(second).toBeVisible();
+
+  const [firstBox, secondBox] = await Promise.all([first.boundingBox(), second.boundingBox()]);
+  expect(firstBox).not.toBeNull();
+  expect(secondBox).not.toBeNull();
+  expect(firstBox!.y).toBeLessThan(secondBox!.y);
+}
+
 for (const fixture of dashboardLocales) {
   test(`dashboard route renders and stays linked in ${fixture.language}`, async ({ page }) => {
     const consoleErrors = collectConsoleErrors(page);
@@ -462,6 +530,38 @@ for (const fixture of dashboardLocales) {
     await dismissBlockingModals(page);
     await page.getByLabel(fixture.dashboardLinkLabel).first().click();
     await expectDashboardVisible(page, fixture);
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`dashboard chapter sort uses radio semantics in ${fixture.language}`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    await seedChapterProgress(page, fixture.language);
+
+    await page.goto('/dashboard', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect(
+      page.getByRole('heading', { name: fixture.chapterProgressTitle }).last(),
+    ).toBeVisible();
+
+    const sortGroup = page.getByRole('radiogroup', { name: fixture.chapterProgressSortGroup });
+    const chapterOrder = sortGroup.getByRole('radio', { name: fixture.chapterOrderSortLabel });
+    const weakestFirst = sortGroup.getByRole('radio', { name: fixture.weakestFirstSortLabel });
+
+    await expect(sortGroup).toBeVisible();
+    await expect(chapterOrder).toHaveAttribute('aria-checked', 'true');
+    await expect(weakestFirst).toHaveAttribute('aria-checked', 'false');
+    await expect(chapterOrder).not.toHaveAttribute('aria-selected', /.+/);
+    await expect(weakestFirst).not.toHaveAttribute('aria-selected', /.+/);
+    await expectLinkBefore(page, fixture.strongerChapterLink, fixture.weakestChapterLink);
+
+    await weakestFirst.click();
+
+    await expect(weakestFirst).toHaveAttribute('aria-checked', 'true');
+    await expect(chapterOrder).toHaveAttribute('aria-checked', 'false');
+    await expectLinkBefore(page, fixture.weakestChapterLink, fixture.strongerChapterLink);
+    await expectNoHorizontalOverflow(page);
 
     expect(consoleErrors).toEqual([]);
   });
