@@ -23,6 +23,17 @@ function runQuestionBankCsvValidation() {
   );
 }
 
+function runQuestionProvenanceRuntimeValidation() {
+  return execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-provenance-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+}
+
 test('question-bank CSV keeps its public row contract', () => {
   const output = runQuestionBankCsvValidation();
   const match = output.match(/\{[\s\S]*\}/);
@@ -34,6 +45,54 @@ test('question-bank CSV keeps its public row contract', () => {
   assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
   assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
   assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
+});
+
+test('question provenance runtime guard validates invalid tags and provenance fallbacks', () => {
+  const output = runQuestionProvenanceRuntimeValidation();
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.questionProvenanceRuntimeCasesValidated, 13);
+  assert.equal(summary.questionProvenanceRuntimeParityValidated, true);
+});
+
+test('question provenance runtime guard rejects arbitrary includes-based tags', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/provenance.ts')) {
+    const source = String(contents);
+    const mutated = source.replace(
+      'return isReadonlyStringArray(tags) ? tags : [];',
+      'return (tags ?? []) as readonly string[];',
+    );
+    if (mutated === source) {
+      throw new Error('question tag guard mutation target not found');
+    }
+    return mutated;
+  }
+  return contents;
+};
+process.argv.push('--focus-question-provenance-runtime');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /question provenance runtime guard .* tags .* expected "uhr"/i,
+  );
 });
 
 test('question-bank CSV has unique public header names', () => {

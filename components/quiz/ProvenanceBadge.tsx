@@ -70,9 +70,10 @@ export function ProvenanceBadge({ question, language = 'sv', themeColors }: Prov
 
   if (!question) return null;
 
-  const copy = provenanceBadgeCopy[language];
+  const badgeLanguage = language === 'en' ? 'en' : 'sv';
+  const copy = provenanceBadgeCopy[badgeLanguage];
   const provenance = getQuestionProvenance(question);
-  const sourceNoteText = getProvenanceDescription(provenance, language);
+  const sourceNoteText = getProvenanceDescription(provenance, badgeLanguage);
   const label =
     provenance === 'uhr'
       ? copy.uhrLabel
