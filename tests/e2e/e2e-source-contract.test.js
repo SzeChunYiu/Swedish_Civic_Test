@@ -101,6 +101,97 @@ function collectMatches({ pattern, source, filePath }) {
   }));
 }
 
+function escapeRegExp(literal) {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function topLevelArgumentCount(args) {
+  const trimmedArgs = args.trim();
+  if (!trimmedArgs) {
+    return 0;
+  }
+
+  let count = 1;
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+
+  for (const char of trimmedArgs) {
+    if (quote) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === quote) {
+        quote = null;
+      }
+      continue;
+    }
+
+    if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+    } else if (char === '(' || char === '[' || char === '{') {
+      depth += 1;
+    } else if (char === ')' || char === ']' || char === '}') {
+      depth -= 1;
+    } else if (char === ',' && depth === 0) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
+function callArgumentCounts(source, functionName) {
+  const counts = [];
+  const callPattern = new RegExp(`${escapeRegExp(functionName)}\\(`, 'g');
+  let match;
+
+  while ((match = callPattern.exec(source)) !== null) {
+    let depth = 1;
+    let args = '';
+    let quote = null;
+    let escaped = false;
+
+    for (let index = callPattern.lastIndex; index < source.length; index += 1) {
+      const char = source[index];
+
+      if (quote) {
+        args += char;
+        if (escaped) {
+          escaped = false;
+        } else if (char === '\\') {
+          escaped = true;
+        } else if (char === quote) {
+          quote = null;
+        }
+        continue;
+      }
+
+      if (char === '"' || char === "'" || char === '`') {
+        quote = char;
+        args += char;
+        continue;
+      }
+
+      if (char === '(') {
+        depth += 1;
+      } else if (char === ')') {
+        depth -= 1;
+        if (depth === 0) {
+          counts.push(topLevelArgumentCount(args));
+          callPattern.lastIndex = index + 1;
+          break;
+        }
+      }
+
+      args += char;
+    }
+  }
+
+  return counts;
+}
+
 test('browser specs do not hardcode stale chapter count copy', () => {
   const staleCountPatterns = [
     /0\/50 besvarade/g,
@@ -376,6 +467,55 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
     networkSource,
     /static system font fallback keeps primary routes inside mobile and desktop viewports/,
     'primary route overflow coverage should stay covered in the neutral network spec',
+  );
+});
+
+test('static site network specs share one external request trap helper', () => {
+  const helperSource = readRelative('staticSiteNetworkGuards.ts');
+  const privacySource = readRelative('static-site-network-privacy.spec.ts');
+  const networkSource = readRelative('static-site-network-fonts.spec.ts');
+
+  assert.match(
+    helperSource,
+    /export async function trapExternalRequests\(\s*page: Page,\s*allowedOrigin: string,\s*capturedGoogleFontRequests\?: string\[\],\s*\): Promise<void>/,
+    'static-site network request trapping should be owned by the shared helper with an optional capture array',
+  );
+  assert.match(
+    helperSource,
+    /capturedGoogleFontRequests\?\.push\(url\)/,
+    'the shared request trap should collect blocked Google Font requests when a caller asks for them',
+  );
+
+  for (const [fileName, source] of [
+    ['static-site-network-privacy.spec.ts', privacySource],
+    ['static-site-network-fonts.spec.ts', networkSource],
+  ]) {
+    assert.match(
+      source,
+      /import\s+\{\s*trapExternalRequests\s*\}\s+from\s+['"]\.\/staticSiteNetworkGuards['"]/,
+      `${fileName} should import the shared request trap helper`,
+    );
+    assert.doesNotMatch(
+      source,
+      /(?:async\s+)?function\s+trapExternalRequests\b|(?:const|let|var)\s+trapExternalRequests\b/,
+      `${fileName} must not define a route-local request trap copy`,
+    );
+  }
+
+  assert.deepEqual(
+    callArgumentCounts(privacySource, 'trapExternalRequests'),
+    [2, 2],
+    'privacy network coverage should use the shared helper without a capture array',
+  );
+  assert.deepEqual(
+    callArgumentCounts(networkSource, 'trapExternalRequests'),
+    [3, 3],
+    'font/network coverage should use the shared helper with an explicit capture array',
+  );
+  assert.match(
+    networkSource,
+    /const googleFontRequests: string\[\] = \[\];[\s\S]*trapExternalRequests\(page, new URL\(staticSite\.baseUrl\)\.origin, googleFontRequests\)/,
+    'Google Fonts coverage should pass a named captured-request array to the shared helper',
   );
 });
 
