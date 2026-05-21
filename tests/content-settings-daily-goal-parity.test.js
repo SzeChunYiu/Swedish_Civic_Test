@@ -59,15 +59,21 @@ require('./scripts/validate-content.js');
 }
 
 function createDailyGoalStorage(storedValue) {
+  let value = storedValue;
+  const writes = [];
   return {
+    writes,
     getBoolean: () => undefined,
-    getNumber: (key) => (key === 'dailyGoalAnswers' ? storedValue : undefined),
+    getNumber: (key) => (key === 'dailyGoalAnswers' ? value : undefined),
     getString: () => undefined,
-    set: () => {},
+    set: (key, nextValue) => {
+      writes.push({ key, value: nextValue });
+      if (key === 'dailyGoalAnswers') value = nextValue;
+    },
   };
 }
 
-function loadSettingsFromStorage(storage) {
+function loadSettingsModuleFromStorage(storage) {
   const settingsStorePath = path.join(repoRoot, 'lib/storage/settingsStore.ts');
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
@@ -98,6 +104,7 @@ function loadSettingsFromStorage(storage) {
           state = factory(setState, () => state);
           const useStore = (selector) => (selector ? selector(state) : state);
           useStore.getState = () => state;
+          useStore.setState = setState;
           return useStore;
         },
       };
@@ -122,8 +129,7 @@ function loadSettingsFromStorage(storage) {
 
   try {
     delete require.cache[settingsStorePath];
-    const { useSettingsStore } = require(settingsStorePath);
-    return useSettingsStore.getState();
+    return require(settingsStorePath);
   } finally {
     delete require.cache[settingsStorePath];
     Module._resolveFilename = originalResolve;
@@ -134,6 +140,14 @@ function loadSettingsFromStorage(storage) {
       delete require.extensions['.ts'];
     }
   }
+}
+
+function loadSettingsStoreFromStorage(storage) {
+  return loadSettingsModuleFromStorage(storage).useSettingsStore;
+}
+
+function loadSettingsFromStorage(storage) {
+  return loadSettingsStoreFromStorage(storage).getState();
 }
 
 function loadDailyGoalFromStorage(storedValue) {
@@ -174,7 +188,12 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
   assert.match(settingsStore, /answerCount < minDailyGoalAnswers/);
-  assert.match(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
+  assert.match(settingsStore, /const safeGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/);
+  assert.match(
+    settingsStore,
+    /settings\.dailyGoalAnswers = normalizeDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
+  );
+  assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
   assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
   assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
@@ -201,6 +220,44 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
   });
 });
 
+test('daily goal setter falls back for malformed runtime inputs before persisting', () => {
+  const storage = createDailyGoalStorage(20);
+  const store = loadSettingsStoreFromStorage(storage);
+
+  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
+    store.getState().setDailyGoalAnswers(goal);
+    const latestWrite = storage.writes.at(-1);
+    assert.equal(store.getState().dailyGoalAnswers, 10);
+    assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
+    assert.equal(Number.isFinite(latestWrite.value), true);
+  });
+
+  [5, 10, 20, 40].forEach((goal) => {
+    store.getState().setDailyGoalAnswers(goal);
+    assert.equal(store.getState().dailyGoalAnswers, goal);
+    assert.deepEqual(storage.writes.at(-1), { key: 'dailyGoalAnswers', value: goal });
+  });
+});
+
+test('imported daily goal settings fall back for malformed snapshot values before persisting', () => {
+  const storage = createDailyGoalStorage(20);
+  const { importSettingsSnapshot, useSettingsStore } = loadSettingsModuleFromStorage(storage);
+
+  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
+    importSettingsSnapshot({ dailyGoalAnswers: goal });
+    const latestWrite = storage.writes.at(-1);
+    assert.equal(useSettingsStore.getState().dailyGoalAnswers, 10);
+    assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
+    assert.equal(Number.isFinite(latestWrite.value), true);
+  });
+
+  [5, 10, 20, 40].forEach((goal) => {
+    importSettingsSnapshot({ dailyGoalAnswers: goal });
+    assert.equal(useSettingsStore.getState().dailyGoalAnswers, goal);
+    assert.deepEqual(storage.writes.at(-1), { key: 'dailyGoalAnswers', value: goal });
+  });
+});
+
 test('settings hydration falls back when MMKV reads throw', () => {
   const state = loadSettingsFromStorage(createThrowingReadMMKV('settings read failed'));
 
@@ -224,6 +281,18 @@ test('daily goal settings parity rejects option-set drift', () => {
     /app\/settings\.tsx daily goal options are \[\[5,20,40\]\], expected \[5,10,20,40\]/,
   );
   assert.match(output, /daily goal options must include the default 10/);
+});
+
+test('daily goal settings parity rejects raw runtime clamp in the setter', () => {
+  const result = runValidationWithSettingsStorePatch(
+    'const safeGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
+    'const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));',
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /setDailyGoalAnswers must normalize runtime daily-goal input/);
+  assert.match(output, /setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp/);
 });
 
 test('daily goal settings parity rejects raw positive-number hydration', () => {
