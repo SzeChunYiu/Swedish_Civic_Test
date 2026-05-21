@@ -351,6 +351,77 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
   assert.equal(recap.chapterNowMastered, null);
 });
 
+test('generateWeeklyRecap: rejects rollover and noncanonical answer dates', () => {
+  const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: 1,
+      dailyGoalAnswers: 10,
+      questionProgress: {
+        rolloverResolved: {
+          questionId: 'rolloverResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-02-30T10:03:00.000Z',
+        },
+        validResolved: {
+          questionId: 'validResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-03-03T10:03:00.000Z',
+        },
+      },
+      sessions: [
+        {
+          id: 'weekly-valid',
+          mode: 'study',
+          questionIds: ['valid', 'rollover', 'noncanonical'],
+          answers: [
+            {
+              questionId: 'valid',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-03-03T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'rollover',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-02-30T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'noncanonical',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-03-03 10:01:00',
+              timeSpentSeconds: 5,
+            },
+          ],
+        },
+        {
+          id: 'weekly-rollover-exam',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          completedAt: '2026-02-30T10:30:00.000Z',
+          score: 0.99,
+        },
+      ],
+    },
+    now: new Date('2026-03-04T12:00:00.000Z'),
+  });
+
+  assert.equal(recap.questionsAnswered, 1);
+  assert.equal(recap.accuracy, 1);
+  assert.equal(recap.mistakesResolved, 1);
+  assert.equal(recap.mockExamsTaken, 0);
+  assert.equal(recap.bestMockScore, null);
+});
+
 // -------------------------------------------------------- Tier comparison
 
 test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_ENTITLEMENTS as true', () => {

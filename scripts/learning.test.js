@@ -109,12 +109,18 @@ test('answer date learning consumers use the shared parser instead of direct Dat
     'lib/learning/dashboardStats.ts',
     'lib/learning/readiness.ts',
     'lib/learning/resumeWhereLeftOff.ts',
+    'lib/learning/weeklyRecap.ts',
   ];
 
   for (const relativePath of consumerPaths) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
     assert.match(source, /validAnswer(?:TimestampMs|Date)/, `${relativePath} must use answerDates`);
     assert.doesNotMatch(source, /Date\.parse\(/, `${relativePath} must not parse answers directly`);
+    assert.doesNotMatch(
+      source,
+      /new Date\(\s*(?:answer\.answeredAt|session\.completedAt|iso|answeredAt|completedAt)\s*\)\.getTime\(\)/,
+      `${relativePath} must not parse answer/completion windows directly`,
+    );
   }
 });
 
@@ -613,6 +619,77 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
   assert.equal(recap.mockExamsTaken, 2);
   assert.equal(recap.bestMockScore, 1);
   assert.equal(recap.chapterNowMastered, null);
+});
+
+test('weekly recap answer date parser rejects rollover and noncanonical recap inputs', () => {
+  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: 1,
+      dailyGoalAnswers: 10,
+      questionProgress: {
+        rolloverResolved: {
+          questionId: 'rolloverResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-02-30T10:03:00.000Z',
+        },
+        validResolved: {
+          questionId: 'validResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-03-03T10:03:00.000Z',
+        },
+      },
+      sessions: [
+        {
+          id: 'weekly-valid',
+          mode: 'study',
+          questionIds: ['valid'],
+          answers: [
+            {
+              questionId: 'valid',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-03-03T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'rollover',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-02-30T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'noncanonical',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-03-03 10:01:00',
+              timeSpentSeconds: 5,
+            },
+          ],
+        },
+        {
+          id: 'weekly-rollover-exam',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          completedAt: '2026-02-30T10:30:00.000Z',
+          score: 0.99,
+        },
+      ],
+    },
+    now: new Date('2026-03-04T12:00:00.000Z'),
+  });
+
+  assert.equal(recap.questionsAnswered, 1);
+  assert.equal(recap.accuracy, 1);
+  assert.equal(recap.mistakesResolved, 1);
+  assert.equal(recap.mockExamsTaken, 0);
+  assert.equal(recap.bestMockScore, null);
 });
 
 test('mock exam completion XP is awarded once per stored session', () => {
