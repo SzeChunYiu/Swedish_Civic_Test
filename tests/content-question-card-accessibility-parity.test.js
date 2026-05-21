@@ -27,6 +27,10 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
     path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
     'utf8',
   );
+  const webAriaFalseStateSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
+    'utf8',
+  );
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
   assert.equal(summary.questionCardAccessibilityRulesValidated, 22);
@@ -78,8 +82,10 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
     provenanceSource,
     /sourceNote:\s*\{[\s\S]*backgroundColor: themeColors\.surfaceWarm,[\s\S]*borderColor: themeColors\.border,[\s\S]*borderRadius: radius\.small,[\s\S]*color: themeColors\.textSecondary,[\s\S]*\}/,
   );
-  assert.match(provenanceSource, /accessibilityLiveRegion="polite"/);
-  assert.match(provenanceSource, /aria-live="polite"/);
+  assert.match(
+    webAriaFalseStateSource,
+    /await provenance\.focus\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);\s*await expect\(sourceNote\)\.toBeVisible\(\);\s*await provenance\.evaluate\(\(element: HTMLElement\) => element\.blur\(\)\);\s*await expect\(provenance\)\.not\.toBeFocused\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'false'\);\s*await expect\(sourceNote\)\.toHaveCount\(0\);\s*await provenance\.click\(\);\s*await expect\(provenance\)\.toHaveAttribute\('aria-expanded', 'true'\);/,
+  );
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
