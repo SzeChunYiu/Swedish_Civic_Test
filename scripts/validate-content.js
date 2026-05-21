@@ -8,8 +8,10 @@ const {
   buildSiteQuestionBank,
   formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
+  parseStaticSiteQuestionBank,
   summarizeStaticQuestionBankDrift,
 } = require('./export-site-question-bank');
+const { generatedQuestionId } = require('./generated-question-fixture-ids');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
 const {
   UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
@@ -7004,6 +7006,87 @@ function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
   );
 }
 
+function religiousFreedom1951QuestionIds() {
+  if (!Array.isArray(sourceQuestions)) return ['q093'];
+
+  return [
+    'q093',
+    generatedQuestionId(sourceQuestions, 'q093', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q093', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'judgement'),
+  ];
+}
+
+function siteQuestionEnglishText(question) {
+  return [
+    question.q?.en,
+    question.why?.en,
+    ...(Array.isArray(question.opts) ? question.opts.map((option) => option.en) : []),
+  ]
+    .filter((value) => typeof value === 'string')
+    .join(' ');
+}
+
+function textHasReligiousFreedom1951EnglishNaturalnessIssue(text) {
+  return QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS.some((pattern) =>
+    pattern.test(text),
+  );
+}
+
+function validateQuestionReligiousFreedom1951Naturalness() {
+  const q093Ids = religiousFreedom1951QuestionIds();
+  const q093IdSet = new Set(q093Ids);
+  const sourceRows = Array.isArray(questions)
+    ? questions.filter((question) => q093IdSet.has(question.id))
+    : [];
+
+  sourceRows.forEach((question) => {
+    if (findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question)) {
+      fail(`${question.id} uses stilted 1951 religious-freedom English wording`);
+    } else {
+      questionReligiousFreedom1951NaturalnessValidated += 1;
+    }
+  });
+
+  const csvRows = parseCsvRows(
+    fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8'),
+  );
+  csvRows.slice(1).forEach((row) => {
+    const id = row[0];
+    if (!q093IdSet.has(id)) return;
+    if (textHasReligiousFreedom1951EnglishNaturalnessIssue(row.join(' '))) {
+      fail(
+        `${id} uses stilted 1951 religious-freedom English wording in content/question-bank.csv`,
+      );
+    } else {
+      questionReligiousFreedom1951NaturalnessValidated += 1;
+    }
+  });
+
+  const staticBank = parseStaticSiteQuestionBank(
+    fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8'),
+  );
+  staticBank.questions
+    .filter((question) => q093IdSet.has(question.id))
+    .forEach((question) => {
+      if (textHasReligiousFreedom1951EnglishNaturalnessIssue(siteQuestionEnglishText(question))) {
+        fail(
+          `site/questions.js ${question.id} uses stilted 1951 religious-freedom English wording`,
+        );
+      } else {
+        questionReligiousFreedom1951NaturalnessValidated += 1;
+      }
+    });
+
+  const expectedRows = q093Ids.length * 3;
+  if (questionReligiousFreedom1951NaturalnessValidated !== expectedRows) {
+    fail(
+      `q093 religious-freedom 1951 naturalness coverage validated ${questionReligiousFreedom1951NaturalnessValidated} rows, expected ${expectedRows}`,
+    );
+  }
+}
+
 function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
   if (!question.tags?.includes('source-criticism')) return null;
   return QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
@@ -9301,6 +9384,7 @@ let somaliGeographyNaturalnessStaticRowsValidated = 0;
 let somaliGeographyNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReligiousFreedom1951NaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
@@ -10070,6 +10154,15 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   printValidationSummary({
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-religious-freedom-1951-naturalness')) {
+  validateQuestionReligiousFreedom1951Naturalness();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionReligiousFreedom1951NaturalnessValidated,
   });
   process.exit(0);
 }
@@ -23456,6 +23549,7 @@ if (Array.isArray(questions)) {
 }
 
 validateQuestionReligiousFreedomParallelismArtifactText();
+validateQuestionReligiousFreedom1951Naturalness();
 
 validateMockExamConfig(
   defaultMockExamConfig,
@@ -23953,6 +24047,7 @@ console.log(
       somaliGeographyNaturalnessParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionReligiousFreedom1951NaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionPublicSectorEnglishNaturalnessValidated,
