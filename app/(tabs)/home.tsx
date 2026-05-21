@@ -1,16 +1,13 @@
-import { useCallback, useState } from 'react';
 import { Link } from 'expo-router';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
-import { RouteLink } from '../../components/ui/RouteLink';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { SocialProofRow } from '../../components/ui/SocialProofRow';
 import { StatCallout } from '../../components/ui/StatCallout';
@@ -30,12 +27,7 @@ import {
 } from '../../lib/learning/readiness';
 import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
-import { WEB_AD_FALLBACK_CONSENT_DECISION } from '../../lib/monetization/ads';
-import {
-  showRewardedExtraExamAd,
-  type RewardedExtraExamAdStatus,
-} from '../../lib/monetization/rewardedAd';
-import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
+import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -64,11 +56,11 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
+  dailyChallengeAccessibilityLabel: (title: string, subtitle: string) => string;
+  dailyChallengeCta: string;
+  dailyChallengeDoneCta: string;
+  dailyChallengeMeta: (questionCount: number) => string;
   dailyGoalTitle: string;
-  dashboardAccessibilityLabel: string;
-  dashboardLink: string;
-  dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
-  dailyChallengeCta: (completed: boolean) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -105,13 +97,6 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
-  rewardedExamBody: string;
-  rewardedExamPreviewButton: string;
-  rewardedExamStatus: Record<RewardedExtraExamAdStatus, string>;
-  rewardedExamTitle: string;
-  rewardedExamUnlockButton: string;
-  rewardedExamUnlockedCta: string;
-  rewardedExamUnlockedText: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -130,18 +115,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
+    dailyChallengeAccessibilityLabel: (title, subtitle) =>
+      `${title}. ${subtitle}. Öppna dagens utmaning.`,
+    dailyChallengeCta: 'Starta utmaning',
+    dailyChallengeDoneCta: 'Visa dagens utmaning',
+    dailyChallengeMeta: (questionCount) => `${questionCount} frågor · 60 sekunder`,
     dailyGoalTitle: 'Dagens mål',
-    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
-      `${title}. ${subtitle}. ${
-        completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
-      }`,
-    dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
-    dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
-    dashboardLink: 'Visa framsteg',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
-    feedbackBadge: 'Fokuserad repetition',
+    feedbackBadge: '10 000 elevers återkoppling',
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
@@ -164,10 +147,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprov när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
@@ -179,10 +162,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprov när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
@@ -194,10 +177,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprov när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
@@ -233,22 +216,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Stadig övning',
       strong_preparation: 'Stark övningsgrund',
     },
-    rewardedExamBody:
-      'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
-    rewardedExamPreviewButton: 'Slutför förhandsvisning',
-    rewardedExamStatus: {
-      closed_without_reward: 'Det extra övningsprovet kräver en slutförd belöningsannons.',
-      earned_reward: 'Extra övningsprov upplåst.',
-      failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
-      show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan krediten sparades.',
-      unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
-    },
-    rewardedExamTitle: 'Lås upp ett extra övningsprov',
-    rewardedExamUnlockButton: 'Lås upp extra övningsprov',
-    rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
-    rewardedExamUnlockedText:
-      'Extra övningsprov är upplåst och redo på provsidan. Krediten används först när du startar provet.',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -277,7 +244,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',
@@ -286,18 +253,16 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
+    dailyChallengeAccessibilityLabel: (title, subtitle) =>
+      `${title}. ${subtitle}. Open today's challenge.`,
+    dailyChallengeCta: 'Start challenge',
+    dailyChallengeDoneCta: "View today's challenge",
+    dailyChallengeMeta: (questionCount) => `${questionCount} questions · 60 seconds`,
     dailyGoalTitle: "Today's goal",
-    dailyChallengeAccessibilityLabel: (title, subtitle, completed) =>
-      `${title}. ${subtitle}. ${
-        completed ? "Today's challenge is already complete." : "Start today's challenge."
-      }`,
-    dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
-    dashboardAccessibilityLabel: 'Open progress dashboard',
-    dashboardLink: 'View dashboard',
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
-    feedbackBadge: 'Focused review',
+    feedbackBadge: '10,000-learner feedback pass',
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
@@ -391,22 +356,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Steady practice',
       strong_preparation: 'Strong practice base',
     },
-    rewardedExamBody:
-      'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
-    rewardedExamPreviewButton: 'Complete sponsor preview',
-    rewardedExamStatus: {
-      closed_without_reward: 'The extra mock exam needs a completed rewarded ad.',
-      earned_reward: 'Extra mock exam unlocked.',
-      failed_to_load: 'Rewarded ad could not load right now.',
-      show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the credit was stored.',
-      unavailable: 'Rewarded ad is unavailable on this device right now.',
-    },
-    rewardedExamTitle: 'Unlock an extra mock exam',
-    rewardedExamUnlockButton: 'Unlock extra mock exam',
-    rewardedExamUnlockedCta: 'Start unlocked mock exam',
-    rewardedExamUnlockedText:
-      'Extra mock exam unlocked and ready on the exam page. The credit is used only when you start the exam.',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -445,21 +394,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 
 export default function Screen() {
   const {
-    accessDecision,
-    accessReady,
     entitlements: monetizationEntitlements,
     entitlementsReady,
-    grantRewardedExamCredit,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
-  } = useMockExamAccess({
-    consentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
-  });
-  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
-  const [rewardUnlocking, setRewardUnlocking] = useState(false);
-  const [rewardUnlockStatus, setRewardUnlockStatus] = useState<RewardedExtraExamAdStatus | null>(
-    null,
-  );
+  } = useRemoveAdsEntitlements();
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
@@ -493,53 +432,7 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
-  const hasRewardedExamCredit =
-    accessDecision.reason === 'rewarded_exam_credit' || accessDecision.rewardedExtraExamCredits > 0;
-  const canOfferRewardedExam =
-    accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
-  const usesWebRewardPreview = Platform.OS === 'web' && canOfferRewardedExam;
-  const showRewardedExamCard =
-    accessReady && entitlementsReady && (hasRewardedExamCredit || canOfferRewardedExam);
-  const canUnlockRewardedExam =
-    canOfferRewardedExam && (!usesWebRewardPreview || rewardPreviewCompleted);
-  const rewardStatusText = hasRewardedExamCredit
-    ? copy.rewardedExamUnlockedText
-    : rewardUnlockStatus
-      ? copy.rewardedExamStatus[rewardUnlockStatus]
-      : copy.rewardedExamBody;
   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
-
-  const handleRewardedExamUnlock = useCallback(async () => {
-    if (!canUnlockRewardedExam || rewardUnlocking) return;
-
-    setRewardUnlocking(true);
-    setRewardUnlockStatus(null);
-
-    try {
-      const rewardedAdResult = await showRewardedExtraExamAd({
-        confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
-        entitlements: monetizationEntitlements,
-        webConsentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
-      });
-
-      setRewardUnlockStatus(rewardedAdResult.status);
-
-      if (rewardedAdResult.status !== 'earned_reward') return;
-
-      await grantRewardedExamCredit();
-      setRewardPreviewCompleted(false);
-    } catch {
-      setRewardUnlockStatus('unavailable');
-    } finally {
-      setRewardUnlocking(false);
-    }
-  }, [
-    canUnlockRewardedExam,
-    grantRewardedExamCredit,
-    monetizationEntitlements,
-    rewardPreviewCompleted,
-    rewardUnlocking,
-  ]);
 
   return (
     <ScreenShell
@@ -602,79 +495,6 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
-      <Card style={styles.dailyChallengeCard}>
-        <Badge tone={dailyChallengeCompleted ? 'blue' : 'warm'}>{dailyChallengeCopy.title}</Badge>
-        <Text style={styles.dailyChallengeText}>{dailyChallengeCopy.subtitle}</Text>
-        <Text style={styles.dailyChallengeMeta}>
-          {dailyChallenge.questionIds.length}{' '}
-          {language === 'sv' ? 'frågor valda för idag' : 'questions selected for today'}
-        </Text>
-        <Link
-          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
-            dailyChallengeCopy.title,
-            dailyChallengeCopy.subtitle,
-            dailyChallengeCompleted,
-          )}
-          accessibilityRole="link"
-          href="/practice?mode=challenge"
-          style={styles.dailyChallengeLink}
-        >
-          {copy.dailyChallengeCta(dailyChallengeCompleted)}
-        </Link>
-      </Card>
-      {showRewardedExamCard ? (
-        <Card style={styles.rewardedExamCard}>
-          <Badge tone={hasRewardedExamCredit ? 'green' : 'warm'}>
-            {hasRewardedExamCredit ? copy.rewardedExamStatus.earned_reward : copy.freeBankBadge}
-          </Badge>
-          <Text accessibilityRole="header" style={styles.rewardedExamTitle}>
-            {copy.rewardedExamTitle}
-          </Text>
-          <Text style={styles.rewardedExamText}>{rewardStatusText}</Text>
-          {hasRewardedExamCredit ? (
-            <Link
-              accessibilityLabel={copy.rewardedExamUnlockedCta}
-              accessibilityRole="link"
-              href="/exam"
-              style={styles.rewardedExamLink}
-            >
-              {copy.rewardedExamUnlockedCta}
-            </Link>
-          ) : (
-            <View style={styles.rewardedExamActions}>
-              {usesWebRewardPreview ? (
-                <Button
-                  accessibilityLabel={copy.rewardedExamPreviewButton}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: rewardPreviewCompleted }}
-                  disabled={rewardPreviewCompleted}
-                  onPress={() => {
-                    setRewardPreviewCompleted(true);
-                    setRewardUnlockStatus(null);
-                  }}
-                  style={styles.rewardedExamButton}
-                  variant="secondary"
-                >
-                  {copy.rewardedExamPreviewButton}
-                </Button>
-              ) : null}
-              <Button
-                accessibilityLabel={copy.rewardedExamUnlockButton}
-                accessibilityRole="button"
-                accessibilityState={{
-                  busy: rewardUnlocking,
-                  disabled: !canUnlockRewardedExam || rewardUnlocking,
-                }}
-                disabled={!canUnlockRewardedExam || rewardUnlocking}
-                onPress={handleRewardedExamUnlock}
-                style={styles.rewardedExamButton}
-              >
-                {copy.rewardedExamUnlockButton}
-              </Button>
-            </View>
-          )}
-        </Card>
-      ) : null}
       {showRemoveAdsOffer ? (
         <PricingWedge
           questionCount={questions.length}
@@ -682,47 +502,52 @@ export default function Screen() {
           language={language}
         />
       ) : null}
-      <View style={styles.quickActions}>
-        <RouteLink
+      <Card style={styles.dailyChallengeCard}>
+        <View
+          accessible
+          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
+            dailyChallengeCopy.title,
+            dailyChallengeCopy.subtitle,
+          )}
+          aria-label={copy.dailyChallengeAccessibilityLabel(
+            dailyChallengeCopy.title,
+            dailyChallengeCopy.subtitle,
+          )}
+          style={styles.dailyChallengeText}
+        >
+          <Badge tone={dailyChallengeCompleted ? 'green' : 'orange'}>
+            {copy.dailyChallengeMeta(dailyChallenge.questionIds.length)}
+          </Badge>
+          <Text accessibilityRole="header" style={styles.dailyChallengeTitle}>
+            {dailyChallengeCopy.title}
+          </Text>
+          <Text style={styles.dailyChallengeSubtitle}>{dailyChallengeCopy.subtitle}</Text>
+        </View>
+        <Link
+          accessibilityRole="link"
+          href="/practice?mode=challenge"
+          style={dailyChallengeCompleted ? styles.secondaryLink : styles.primaryLink}
+        >
+          {dailyChallengeCompleted ? copy.dailyChallengeDoneCta : copy.dailyChallengeCta}
+        </Link>
+      </Card>
+      <View style={styles.actions}>
+        <Link
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
+          accessibilityRole="link"
           href="/practice"
-          style={styles.quickActionLink}
-          variant="primary"
+          style={styles.primaryLink}
         >
           {copy.startPractice}
-        </RouteLink>
-        <RouteLink
+        </Link>
+        <Link
           accessibilityLabel={copy.browseChaptersAccessibilityLabel}
+          accessibilityRole="link"
           href="/learn"
-          style={styles.quickActionLink}
-          variant="secondary"
+          style={styles.secondaryLink}
         >
           {copy.browseChapters}
-        </RouteLink>
-        <RouteLink
-          accessibilityLabel={copy.readinessCtaAccessibilityLabel}
-          href="/exam"
-          style={styles.quickActionLink}
-          variant="secondary"
-        >
-          {copy.readinessCta}
-        </RouteLink>
-        <RouteLink
-          accessibilityLabel={copy.feedbackLinkAccessibilityLabel}
-          href="/mistakes"
-          style={styles.quickActionLink}
-          variant="secondary"
-        >
-          {copy.feedbackLink}
-        </RouteLink>
-        <RouteLink
-          accessibilityLabel={copy.dashboardAccessibilityLabel}
-          href="/dashboard"
-          style={styles.quickActionLink}
-          variant="secondary"
-        >
-          {copy.dashboardLink}
-        </RouteLink>
+        </Link>
       </View>
 
       <View style={styles.statsRow}>
@@ -865,16 +690,13 @@ const styles = StyleSheet.create({
     lineHeight: typography.micro.lineHeight,
   },
   readinessLink: {
-    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.micro,
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    justifyContent: 'center',
     marginTop: space[0.5],
-    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
@@ -903,76 +725,47 @@ const styles = StyleSheet.create({
     fontSize: typography.caption.fontSize,
     lineHeight: typography.caption.lineHeight,
   },
-  dailyChallengeCard: {
-    gap: space[1],
-  },
-  dailyChallengeText: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  dailyChallengeMeta: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  dailyChallengeLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    marginTop: space[0.5],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  rewardedExamActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  rewardedExamButton: {
-    flexGrow: 1,
-  },
-  rewardedExamCard: {
-    gap: space[1],
-  },
-  rewardedExamLink: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  rewardedExamText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  rewardedExamTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  quickActions: {
+  actions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
   },
-  quickActionLink: {
-    flexBasis: 180,
-    flexGrow: 1,
+  dailyChallengeCard: {
+    gap: space[1.5],
+  },
+  dailyChallengeText: {
+    gap: space[0.75],
+  },
+  dailyChallengeTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
+  dailyChallengeSubtitle: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  primaryLink: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  secondaryLink: {
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radius.micro,
+    color: colors.text,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
   },
   statsRow: {
     flexDirection: 'row',
@@ -994,16 +787,13 @@ const styles = StyleSheet.create({
     lineHeight: typography.caption.lineHeight,
   },
   feedbackLink: {
-    alignItems: 'center',
     alignSelf: 'flex-start',
     backgroundColor: colors.surfaceMuted,
     borderRadius: radius.micro,
     color: colors.text,
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
-    justifyContent: 'center',
     marginTop: space[0.5],
-    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
     textDecorationLine: 'none',
