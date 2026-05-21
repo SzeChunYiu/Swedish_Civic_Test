@@ -312,6 +312,30 @@ function renderedExternalSourceAnchors(html) {
   return Array.from(html.matchAll(/<a\b(?=[^>]*\bhref="https?:\/\/)[^>]*>/g), (match) => match[0]);
 }
 
+function assertSafeOfficialTestSourceLinks(block, label) {
+  officialPracticalTestSourceUrls.forEach((url) => {
+    assert.match(
+      block,
+      new RegExp(
+        `<a\\b(?=[^>]*\\bhref="${escapeRegExp(
+          url,
+        )}")(?=[^>]*\\btarget="_blank")(?=[^>]*\\brel="noreferrer")[^>]*>`,
+      ),
+      `${label} official-test source link should be safe for ${url}`,
+    );
+  });
+  assert.doesNotMatch(
+    block,
+    /<a\b(?=[^>]*\bhref="#\/ebook\?c=)(?=[^>]*\btarget="_blank")/,
+    `${label} internal ebook hash links must stay same-page`,
+  );
+  assert.doesNotMatch(
+    block,
+    /<a\b(?=[^>]*\bhref="#\/sources")(?=[^>]*\btarget="_blank")/,
+    `${label} editorial commentary links must stay same-page`,
+  );
+}
+
 function dataSourceKeys(block) {
   const match = block.match(/\bdata-source-keys="([^"]+)"/);
   assert.ok(match, `source block missing data-source-keys: ${block}`);
@@ -493,7 +517,10 @@ test('static ebook raw factbox prose renders with non-default provenance', () =>
   assert.match(englishChapter12Html, /UHR current medborgarskapsprovet source pages/);
   officialPracticalTestSourceUrls.forEach((url) => {
     assert.match(englishCurrentSourceBlock, new RegExp(url));
+    assert.match(swedishCurrentSourceBlock, new RegExp(url));
   });
+  assertSafeOfficialTestSourceLinks(englishCurrentSourceBlock, 'English current source note');
+  assertSafeOfficialTestSourceLinks(swedishCurrentSourceBlock, 'Swedish current source note');
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
