@@ -42,19 +42,77 @@ export const visualSmokeDuplicateExplanations = [
   },
 ] as const satisfies readonly VisualSmokeDuplicateExplanation[];
 
+const minDuplicateExplanationReasonLength = 24;
+
 export function visualSmokeDuplicateExplanationKey(names: readonly string[]): string {
   return [...names].sort().join(',');
 }
 
+function visualSmokeRouteNameSet(
+  routes: readonly VisualSmokeRoute[] = visualSmokeRoutes,
+): Set<string> {
+  return new Set(routes.map((route) => route.name));
+}
+
 export function hasValidVisualSmokeDuplicateExplanation(
   explanation: VisualSmokeDuplicateExplanation,
+  routes: readonly VisualSmokeRoute[] = visualSmokeRoutes,
 ): boolean {
+  const routeNames = visualSmokeRouteNameSet(routes);
+  const trimmedNames = explanation.names.map((name) => name.trim());
+
   return (
-    explanation.names.length > 1 &&
-    explanation.names.every((name) => typeof name === 'string' && name.trim().length > 0) &&
+    trimmedNames.length > 1 &&
+    trimmedNames.every((name) => name.length > 0 && routeNames.has(name)) &&
+    new Set(trimmedNames).size === trimmedNames.length &&
     typeof explanation.reason === 'string' &&
-    explanation.reason.trim().length > 0
+    explanation.reason.trim().length >= minDuplicateExplanationReasonLength
   );
+}
+
+export function validateVisualSmokeDuplicateExplanations(
+  explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
+  routes: readonly VisualSmokeRoute[] = visualSmokeRoutes,
+): string[] {
+  const errors: string[] = [];
+  const routeNames = visualSmokeRouteNameSet(routes);
+  const groupKeys = new Set<string>();
+
+  explanations.forEach((explanation, index) => {
+    const label = `duplicate explanation ${index + 1}`;
+    const trimmedNames = explanation.names.map((name) => name.trim());
+    const groupKey = visualSmokeDuplicateExplanationKey(trimmedNames);
+
+    if (trimmedNames.length <= 1) {
+      errors.push(`${label} must describe at least two routes`);
+    }
+
+    for (const name of trimmedNames) {
+      if (!name) {
+        errors.push(`${label} contains a blank route name`);
+      } else if (!routeNames.has(name)) {
+        errors.push(`${label} references unknown route ${name}`);
+      }
+    }
+
+    if (new Set(trimmedNames).size !== trimmedNames.length) {
+      errors.push(`${label} contains duplicate route names`);
+    }
+
+    if (groupKeys.has(groupKey)) {
+      errors.push(`${label} duplicates allowed group ${groupKey}`);
+    }
+    groupKeys.add(groupKey);
+
+    if (
+      typeof explanation.reason !== 'string' ||
+      explanation.reason.trim().length < minDuplicateExplanationReasonLength
+    ) {
+      errors.push(`${label} reason is blank or too short`);
+    }
+  });
+
+  return errors;
 }
 
 export function isExplainedVisualSmokeDuplicate(
