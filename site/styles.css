@@ -7361,3 +7361,182 @@ html[dir='rtl'] .lang-menu {
     grid-template-columns: 1fr;
   }
 }
+
+/* ------------------------------------------------------------------
+   BUDDY BOX OPTIMIZATION ROUND
+   Makes the floating Dala helper and buddy picker feel like intentional
+   tactile UI cards instead of loose mascot elements.
+------------------------------------------------------------------ */
+
+:root {
+  --buddy-tail-surface: #fffaf0;
+}
+
+.dala-buddy {
+  align-items: flex-end;
+  max-width: min(520px, calc(100vw - 32px));
+}
+
+.dala-bubble {
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.95) 0 6px, transparent 6px),
+    radial-gradient(circle at 20px 18px, rgba(0, 106, 167, 0.12), transparent 34px),
+    var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow-hover);
+  isolation: isolate;
+  padding: 16px 18px 15px 22px;
+}
+
+.dala-bubble::after {
+  border-left-color: var(--card-border);
+  filter: drop-shadow(2px 2px 0 rgba(11, 31, 51, 0.08));
+}
+
+.dala-bubble::before {
+  border-left-color: var(--buddy-tail-surface);
+}
+
+.dala-bubble__name {
+  align-items: center;
+  background: rgba(254, 204, 0, 0.18);
+  border: 1px solid rgba(254, 204, 0, 0.34);
+  border-radius: 999px;
+  color: var(--blue);
+  display: inline-flex;
+  margin-bottom: 7px;
+  padding: 4px 9px;
+  width: fit-content;
+}
+
+.dala-bubble__msg {
+  color: var(--ink-soft);
+  padding-right: 20px;
+}
+
+.dala-bubble__msg em {
+  color: var(--ink);
+}
+
+.dala-bubble__close {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(11, 31, 51, 0.12);
+  box-shadow: 0 8px 18px -14px rgba(11, 31, 51, 0.5);
+  color: var(--ink-soft);
+}
+
+.dala-bubble__close:hover,
+.dala-bubble__close:focus-visible {
+  background: var(--ink);
+  color: var(--gold);
+  outline: none;
+}
+
+#dala-figure {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(254, 204, 0, 0.24), transparent 48%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 250, 240, 0.72));
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  box-shadow: var(--card-shadow);
+  display: grid;
+  padding: 7px;
+  place-items: center;
+}
+
+.set-buddies {
+  gap: 10px;
+}
+
+.buddy-card {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  min-height: 78px;
+  overflow: hidden;
+  padding: 11px 8px 9px;
+  position: relative;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.buddy-card::before {
+  background: var(--card-rail);
+  content: '';
+  inset: 0 0 auto;
+  height: 4px;
+  opacity: 0.86;
+  position: absolute;
+}
+
+.buddy-card:hover,
+.buddy-card:focus-visible {
+  border-color: rgba(0, 106, 167, 0.45);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.buddy-card.is-on {
+  background:
+    radial-gradient(circle at 50% -20px, rgba(254, 204, 0, 0.2), transparent 62px),
+    var(--card-surface);
+  border-color: rgba(0, 106, 167, 0.5);
+  box-shadow:
+    inset 0 0 0 2px rgba(254, 204, 0, 0.34),
+    var(--card-shadow-hover);
+}
+
+.buddy-card__name {
+  color: var(--ink);
+}
+
+:root[data-theme='dark'] {
+  --buddy-tail-surface: #16212e;
+}
+
+:root[data-theme='dark'] .dala-bubble {
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.86) 0 6px, transparent 6px),
+    radial-gradient(circle at 20px 18px, rgba(0, 106, 167, 0.2), transparent 34px),
+    var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .dala-bubble__close {
+  background: rgba(14, 22, 32, 0.82);
+  border-color: #25313e;
+}
+
+:root[data-theme='dark'] #dala-figure,
+:root[data-theme='dark'] .buddy-card {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .buddy-card {
+    transition: none;
+  }
+  .buddy-card:hover,
+  .buddy-card:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .dala-buddy {
+    gap: 9px;
+    max-width: calc(100vw - 24px);
+  }
+  .dala-bubble {
+    border-radius: 18px;
+    padding: 14px 15px 13px 19px;
+  }
+  #dala-figure {
+    padding: 5px;
+  }
+}
