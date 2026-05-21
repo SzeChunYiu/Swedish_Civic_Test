@@ -416,12 +416,32 @@ test('router shell manifest stays aligned with special Expo Router files', () =>
     `<html data-app-shell="${manifest.webAppShellMarkers[0]}" lang={webDocumentMetadata.language}>`,
   );
   assertContains(htmlShell, `content={${manifest.themeColorTokens[0]}} name="theme-color"`);
+  assertContains(nativeIntent, `const APP_SCHEME = '${manifest.appSchemes[0]}:';`);
   assertContains(nativeIntent, `const APP_LINK_BASE = '${manifest.appSchemes[0]}://app';`);
   assertMatches(
     nativeIntent,
     new RegExp(`return ["']${escapeRegExp(manifest.nativeFallbackHrefs[0])}["']`, 'g'),
     'native intent should keep the safe fallback route from the manifest',
   );
+});
+
+test('native intent runtime samples stay aligned with the router shell manifest', () => {
+  const manifest = readRouterShellManifest();
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(
+    manifest.nativeIntentRuntimeSampleInputs.length,
+    manifest.nativeIntentRuntimeSampleExpectedPaths.length,
+    'native intent runtime sample inputs and expected paths should stay paired',
+  );
+
+  manifest.nativeIntentRuntimeSampleInputs.forEach((input, index) => {
+    assert.equal(
+      redirectSystemPath({ initial: true, path: input }),
+      manifest.nativeIntentRuntimeSampleExpectedPaths[index],
+      `${input} should resolve to ${manifest.nativeIntentRuntimeSampleExpectedPaths[index]}`,
+    );
+  });
 });
 
 test('native intent resolves about-the-test deep links before the Home fallback', () => {
@@ -485,6 +505,26 @@ test('native intent resolves search deep links before the Home fallback', () => 
     '/search?q=riksdag',
   );
   assert.equal(redirectSystemPath({ initial: true, path: '/searching' }), '/home');
+});
+
+test('native intent rejects foreign absolute URL schemes before route allowlisting', () => {
+  const { redirectSystemPath } = loadNativeIntentRuntime();
+
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'https://app/search?q=riksdag' }),
+    '/home',
+  );
+  assert.equal(redirectSystemPath({ initial: true, path: 'ftp://app/settings' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: 'https://quiz/q001' }), '/home');
+  assert.equal(redirectSystemPath({ initial: true, path: '//app/search?q=riksdag' }), '/home');
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://app/search?q=riksdag' }),
+    '/search?q=riksdag',
+  );
+  assert.equal(
+    redirectSystemPath({ initial: true, path: 'almost-swedish://search?q=riksdag' }),
+    '/search?q=riksdag',
+  );
 });
 
 test('router shell tooling guard is wired into package scripts', () => {
