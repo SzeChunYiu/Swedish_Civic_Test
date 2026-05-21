@@ -251,6 +251,7 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
 ];
 const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
   'https://www.scb.se/mi0803-en',
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
@@ -271,6 +272,8 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   "retrievedDate: '2026-05-19'",
   'Facts to review',
   'Fakta att repetera',
+  'uhrOfficialTestSources',
+  'editorialCommentary',
   'Sources accessed',
   'Källor hämtade',
 ];
@@ -4673,6 +4676,8 @@ function validateStaticEbookFactboxProvenance() {
   let unsupportedFactboxClaimsValidated = 0;
   let sourceUrlsValidated = 0;
   let requiredCopyValidated = 0;
+  let rawFactboxParagraphsValidated = 0;
+  let rawFactboxParagraphsTotal = 0;
 
   STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.forEach((pattern) => {
     if (pattern.test(source)) {
@@ -4698,7 +4703,21 @@ function validateStaticEbookFactboxProvenance() {
     requiredCopyValidated += 1;
   });
 
+  Array.from(source.matchAll(/<div class="ebook__factbox">[\s\S]*?<p(?<attrs>[^>]*)>/g)).forEach(
+    (match) => {
+      rawFactboxParagraphsTotal += 1;
+      const attrs = match.groups.attrs;
+      if (!/ebookSourceKeyDataAttr\(|data-ebook-source-keys=/.test(attrs)) {
+        fail(`static ebook raw factbox paragraph missing source metadata: ${match[0]}`);
+        return;
+      }
+      rawFactboxParagraphsValidated += 1;
+    },
+  );
+
   return {
+    rawFactboxParagraphsTotal,
+    rawFactboxParagraphsValidated,
     requiredCopyValidated,
     sourceUrlsValidated,
     unsupportedFactboxClaimsValidated,
@@ -8118,6 +8137,8 @@ let staticEbookPracticalTestRequiredCopyValidated = 0;
 let staticEbookPracticalTestSourceUrlsValidated = 0;
 let staticEbookPracticalTestCurrentnessValidated = false;
 let staticEbookFactboxClaimPatternsValidated = 0;
+let staticEbookFactboxRawParagraphsValidated = 0;
+let staticEbookFactboxRawParagraphsTotal = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
@@ -8575,10 +8596,14 @@ staticEbookOutcomeClaimParityValidated =
 {
   const factboxValidation = validateStaticEbookFactboxProvenance();
   staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxRawParagraphsValidated = factboxValidation.rawFactboxParagraphsValidated;
+  staticEbookFactboxRawParagraphsTotal = factboxValidation.rawFactboxParagraphsTotal;
   staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
   staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
   staticEbookFactboxProvenanceValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxRawParagraphsValidated === staticEbookFactboxRawParagraphsTotal &&
+    staticEbookFactboxRawParagraphsTotal > 0 &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
@@ -18178,6 +18203,8 @@ console.log(
       staticEbookPracticalTestSourceUrlsValidated,
       staticEbookPracticalTestCurrentnessValidated,
       staticEbookFactboxClaimPatternsValidated,
+      staticEbookFactboxRawParagraphsValidated,
+      staticEbookFactboxRawParagraphsTotal,
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,

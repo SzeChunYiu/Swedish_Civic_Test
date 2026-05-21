@@ -61,6 +61,7 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const officialPracticalTestSourceKeys = ['uhrOfficialTestSources'];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -238,6 +239,13 @@ function renderedSourceCounts(html) {
   return JSON.parse(match[1]);
 }
 
+function rawEbookFactboxParagraphs(source) {
+  return Array.from(
+    source.matchAll(/<div class="ebook__factbox">[\s\S]*?<p(?<attrs>[^>]*)>/g),
+    (match) => ({ attrs: match.groups.attrs, snippet: match[0] }),
+  );
+}
+
 function sourceBlockContaining(blocks, pattern, label) {
   const block = blocks.find((candidate) => pattern.test(candidate));
   assert.ok(block, `missing source block for ${label}`);
@@ -309,6 +317,7 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
 test('static ebook fact boxes must pass explicit source keys', () => {
   const source = readSiteFile('site/ebook.js');
   const calls = findFunctionCallArguments(source, 'ebookFactBox');
+  const rawFactboxParagraphs = rawEbookFactboxParagraphs(source);
 
   assert.match(source, /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\)/);
   assert.doesNotMatch(source, /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\s*=/);
@@ -318,6 +327,54 @@ test('static ebook fact boxes must pass explicit source keys', () => {
       call.argumentCount >= 4,
       `ebookFactBox call must include explicit sourceKeys: ${call.text}`,
     );
+  });
+  assert.ok(rawFactboxParagraphs.length > 0, 'static ebook should still guard raw factbox markup');
+  rawFactboxParagraphs.forEach(({ attrs, snippet }) => {
+    assert.match(
+      attrs,
+      /ebookSourceKeyDataAttr\(|data-ebook-source-keys=/,
+      `raw ebook factbox paragraph must carry explicit source metadata: ${snippet}`,
+    );
+  });
+});
+
+test('static ebook raw factbox prose renders with non-default provenance', () => {
+  const harness = createEbookHarness();
+  const englishIntroHtml = renderChapter(harness, 'en', 'intro');
+  const swedishIntroHtml = renderChapter(harness, 'sv', 'intro');
+  const englishChapter12Html = renderChapter(harness, 'en', '12');
+  const swedishChapter12Html = renderChapter(harness, 'sv', '12');
+
+  const englishTipBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(englishIntroHtml),
+    /Short, repeated sessions make it easier/,
+    'English editorial tip',
+  );
+  const swedishTipBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(swedishIntroHtml),
+    /Växla mellan svenska och engelska/,
+    'Swedish editorial tip',
+  );
+  const englishCurrentSourceBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(englishChapter12Html),
+    /Sources accessed 2026-05-19/,
+    'English current source note',
+  );
+  const swedishCurrentSourceBlock = sourceBlockContaining(
+    annotatedSourceClaimBlocks(swedishChapter12Html),
+    /Källor hämtade 2026-05-19/,
+    'Swedish current source note',
+  );
+
+  assert.deepEqual(dataSourceKeys(englishTipBlock), ['editorialCommentary']);
+  assert.deepEqual(dataSourceKeys(swedishTipBlock), ['editorialCommentary']);
+  assert.deepEqual(dataSourceKeys(englishCurrentSourceBlock), officialPracticalTestSourceKeys);
+  assert.deepEqual(dataSourceKeys(swedishCurrentSourceBlock), officialPracticalTestSourceKeys);
+  assert.doesNotMatch(englishTipBlock, /\buhrStudyMaterial\b/);
+  assert.doesNotMatch(swedishTipBlock, /\buhrStudyMaterial\b/);
+  assert.match(englishChapter12Html, /UHR current medborgarskapsprovet source pages/);
+  officialPracticalTestSourceUrls.forEach((url) => {
+    assert.match(englishCurrentSourceBlock, new RegExp(url));
   });
 });
 
