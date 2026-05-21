@@ -82,6 +82,56 @@ test('static site asset extractor covers inline and stylesheet CSS urls', () => 
   ]);
 });
 
+test('static site asset extractor follows local stylesheet imports recursively', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-imports-'));
+  fs.mkdirSync(path.join(tmpDir, 'css', 'nested'), { recursive: true });
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'site.css'),
+    [
+      '@import "./theme.css";',
+      '@import url("./nested/buttons.css");',
+      '@import url("https://cdn.example.com/remote.css");',
+      '@import url("data:text/css,body{}");',
+      '@import url(var(--runtime-sheet));',
+      '.hero { background-image: url("../img/site-bg.webp?v=1#site"); }',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'theme.css'),
+    [
+      '@import url("./nested/tokens.css");',
+      '.theme { background-image: url("../img/theme-bg.svg"); }',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'nested', 'buttons.css'),
+    [
+      '@import "../theme.css";',
+      '.button { cursor: url("../../cursors/button.cur"), pointer; }',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'nested', 'tokens.css'),
+    [
+      '@import "../site.css";',
+      '@font-face { src: url("../../fonts/site.woff2") format("woff2"); }',
+    ].join('\n'),
+  );
+
+  const indexHtml = '<link rel="stylesheet" href="./css/site.css?version=1" />';
+
+  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
+    'css/site.css',
+    'css/nested/buttons.css',
+    'img/site-bg.webp',
+    'css/theme.css',
+    'css/nested/tokens.css',
+    'img/theme-bg.svg',
+    'fonts/site.woff2',
+    'cursors/button.cur',
+  ]);
+});
+
 test('static site asset extractor fails responsive and poster references when files are not shipped', () => {
   const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-assets-'));
   const indexHtml = `
