@@ -8942,6 +8942,28 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  const adBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const adBannerWebFallbackPattern =
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/;
+  const adBannerNativePlatformPattern =
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
+
+  if (!adBannerWebFallbackPattern.test(adBannerSource)) {
+    reject('AdBanner web fallback must use the shared web fallback consent decision');
+  }
+  if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+    reject('AdBanner native placement must resolve banner units by Platform.OS');
+  }
+  if (!adBannerNativePlatformPattern.test(nativeAdBannerSource)) {
+    reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
+  }
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -9514,8 +9536,20 @@ function validatePremiumEntitlementParity() {
     reject('shouldShowAd must not render home_banner when adsDisabled is true');
   }
 
-  if (!/if\s*\(\s*entitlements\.adsDisabled\s*\)\s*return false;/.test(adsSource)) {
-    reject('shouldShowAd must keep an explicit adsDisabled fail-closed branch');
+  if (
+    typeof shouldShowAd === 'function' &&
+    shouldShowAd('home_banner', { adsDisabled: 'yes' }) !== true
+  ) {
+    reject('shouldShowAd must not treat malformed adsDisabled values as active Remove Ads');
+  }
+
+  if (
+    !/import\s+\{\s*isStrictEntitlementFlag\s*\}\s+from\s+'\.\/premium';/.test(adsSource) ||
+    !/if\s*\(\s*isStrictEntitlementFlag\(entitlements\.adsDisabled\)\s*\)\s*return false;/.test(
+      adsSource,
+    )
+  ) {
+    reject('shouldShowAd must keep an explicit strict-boolean adsDisabled fail-closed branch');
   }
 
   if (
