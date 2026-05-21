@@ -1570,6 +1570,21 @@ test('religious-freedom option parallelism stays natural in exports', () => {
   );
 });
 
+test('religious-freedom option parallelism reports focused validator coverage', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{\s*"publishedQuestions"[\s\S]*\}/);
+  assert.ok(match, 'focused religious-freedom validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.publishedQuestions, buildSiteQuestionBank().questions.length);
+  assert.equal(summary.questionReligiousFreedomParallelismValidated, summary.publishedQuestions);
+});
+
 test('religious-freedom option parallelism guard rejects the old wording', () => {
   const result = spawnSync(
     process.execPath,
@@ -1594,6 +1609,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
 require('./scripts/validate-content.js');
 `,
     ],
