@@ -115,18 +115,37 @@ test('citizenship requirements data covers seven sourced bilingual planning area
   assert.match(areas.find((area) => area.id === 'civicKnowledge').summary.sv, /15 augusti 2026/);
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.sv,
-    /anmälan öppnar i början av juni 2026/,
+    /Anmälan öppnar i början av juni 2026/,
   );
+  assert.doesNotMatch(areas.find((area) => area.id === 'civicKnowledge').detail.sv, /UHR säger/);
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.sv,
     /Antalet platser är begränsat/,
   );
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.en,
-    /registration opens in early June 2026/,
+    /Registration opens in early June 2026/,
   );
+  assert.doesNotMatch(areas.find((area) => area.id === 'civicKnowledge').detail.en, /UHR says/);
   assert.match(areas.find((area) => area.id === 'civicKnowledge').detail.en, /Seats are limited/);
   assert.match(areas.find((area) => area.id === 'swedishLanguage').detail.en, /1 October 2027/);
+});
+
+test('citizenship requirements area copy avoids redundant source-authority phrasing', () => {
+  const { citizenshipRequirementAreas } = loadTs('data/citizenshipRequirements.ts');
+  const sourceAuthorityPattern = /\bUHR (?:säger|says)\b/;
+
+  for (const area of citizenshipRequirementAreas) {
+    for (const field of ['summary', 'detail']) {
+      for (const language of ['sv', 'en']) {
+        assert.doesNotMatch(
+          area[field][language],
+          sourceAuthorityPattern,
+          `${area.id}.${field}.${language} should state facts neutrally; source rows carry provenance`,
+        );
+      }
+    }
+  }
 });
 
 test('citizenship requirement sources are official, dated, and currentness-labelled', () => {

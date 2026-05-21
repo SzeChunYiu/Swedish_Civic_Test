@@ -8311,6 +8311,8 @@ const expectedGeneratedPublishedQuestions =
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+const citizenshipRequirementsModule = loadTs('data/citizenshipRequirements.ts');
+const citizenshipRequirementAreas = citizenshipRequirementsModule.citizenshipRequirementAreas || [];
 const supportedLanguages = loadTs('lib/localization/language.ts', 'supportedLanguages');
 const localizationStrings = loadTs('lib/localization/strings.ts', 'strings');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
@@ -8488,6 +8490,8 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = null;
+let citizenshipRequirementsSourceAuthorityCopyAreasValidated = 0;
+let citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -9214,6 +9218,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+    citizenshipRequirementsSourceAuthorityCopyAreasValidated,
+    citizenshipRequirementsSourceAuthorityCopyParityValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
   });
@@ -12798,6 +12804,37 @@ function validateAboutTheTestRouteCopyParity() {
   function reject(message) {
     valid = false;
     fail(message);
+  }
+
+  citizenshipRequirementsSourceAuthorityCopyAreasValidated = 0;
+  citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
+  const sourceAuthorityPattern = /\bUHR (?:säger|says)\b/;
+  if (!Array.isArray(citizenshipRequirementAreas) || citizenshipRequirementAreas.length === 0) {
+    reject('citizenship requirements areas must be available for source-authority copy checks');
+  } else {
+    for (const area of citizenshipRequirementAreas) {
+      let areaValid = true;
+      for (const field of ['summary', 'detail']) {
+        const value = area[field];
+        if (!value || typeof value !== 'object') {
+          areaValid = false;
+          reject(`citizenship requirements ${area.id}.${field} must be localized text`);
+          continue;
+        }
+        for (const language of ['sv', 'en']) {
+          if (sourceAuthorityPattern.test(value[language] || '')) {
+            areaValid = false;
+            reject(
+              `citizenship requirements ${area.id}.${field}.${language} must state facts neutrally; source rows carry UHR provenance`,
+            );
+          }
+        }
+      }
+      if (areaValid) citizenshipRequirementsSourceAuthorityCopyAreasValidated += 1;
+    }
+    citizenshipRequirementsSourceAuthorityCopyParityValidated =
+      citizenshipRequirementsSourceAuthorityCopyAreasValidated ===
+      citizenshipRequirementAreas.length;
   }
 
   try {
@@ -22342,6 +22379,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      citizenshipRequirementsSourceAuthorityCopyAreasValidated,
+      citizenshipRequirementsSourceAuthorityCopyParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
