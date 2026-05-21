@@ -148,14 +148,41 @@ export default function QuizSessionScreen() {
   if (!question) {
     const unknownSessionId = questions.length > 0;
 
+    if (!unknownSessionId) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text accessibilityRole="header" style={styles.title}>
+            {copy.emptyTitle}
+          </Text>
+          <Text style={styles.emptyBody}>{copy.emptyBody}</Text>
+          <View style={styles.actions}>
+            <Link
+              accessibilityLabel={copy.backToPracticeAccessibilityLabel}
+              accessibilityRole="link"
+              href="/practice"
+              style={styles.linkButton}
+            >
+              {copy.backToPractice}
+            </Link>
+            <Link
+              accessibilityLabel={copy.backToSearchAccessibilityLabel}
+              accessibilityRole="link"
+              href="/search"
+              style={styles.linkButton}
+            >
+              {copy.backToSearch}
+            </Link>
+          </View>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.emptyContainer}>
         <Text accessibilityRole="header" style={styles.title}>
-          {unknownSessionId ? copy.notFoundTitle : copy.emptyTitle}
+          {copy.notFoundTitle}
         </Text>
-        <Text style={styles.emptyBody}>
-          {unknownSessionId ? copy.notFoundBody : copy.emptyBody}
-        </Text>
+        <Text style={styles.emptyBody}>{copy.notFoundBody}</Text>
         <View style={styles.actions}>
           <Link
             accessibilityLabel={copy.backToPracticeAccessibilityLabel}

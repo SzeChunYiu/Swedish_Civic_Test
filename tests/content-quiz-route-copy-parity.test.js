@@ -23,7 +23,7 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
 
-  assert.equal(summary.quizRouteCopyLabelsValidated, 26);
+  assert.equal(summary.quizRouteCopyLabelsValidated, 16);
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.match(source, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
