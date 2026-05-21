@@ -75,6 +75,29 @@ test('QuestionCard accessibility parity uses focused content validation routing'
   );
 });
 
+test('app config schema parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const appConfigTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-app-config-schema.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-app-config-schema/);
+  assert.match(
+    validatorSource,
+    /validateAppConfigSchema\(\);[\s\S]*validateStaticHeadMetadataParity\(\);[\s\S]*appConfigSchemaValidated[\s\S]*staticHeadMetadataParityValidated/,
+  );
+  assert.match(appConfigTestSource, /--focus-app-config-schema/);
+  assert.doesNotMatch(
+    appConfigTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'app config schema tests must not route through full content validation',
+  );
+});
+
 test('ChapterCard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
