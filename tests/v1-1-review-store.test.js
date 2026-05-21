@@ -115,6 +115,25 @@ test('dueCount: counts due cards', () => {
   assert.equal(dueCount(makeState(cards), now), 1);
 });
 
+test('dueCards: ignores malformed due timestamps even when imported state bypasses normalization', () => {
+  const { dueCards, dueCount } = loadTs('lib/storage/reviewStore.ts');
+  const now = '2026-03-02T12:00:00.000Z';
+  const state = makeState([
+    fakeCard('q-valid-past', '2026-03-01T00:00:00.000Z'),
+    fakeCard('q-valid-future', '2026-03-03T00:00:00.000Z'),
+    fakeCard('q-rollover', '2026-02-30T00:00:00.000Z'),
+    fakeCard('q-date-only', '2026-03-02'),
+    fakeCard('q-timezone-offset', '2026-03-02T12:00:00+00:00'),
+  ]);
+
+  assert.deepEqual(
+    dueCards(state, { now }).map((card) => card.questionId),
+    ['q-valid-past'],
+  );
+  assert.equal(dueCount(state, now), 1);
+  assert.deepEqual(dueCards(state, { now: '2026-02-30T12:00:00.000Z' }), []);
+});
+
 test('remainingDailyReviews: Pro = unlimited', () => {
   const { remainingDailyReviews } = loadTs('lib/storage/reviewStore.ts');
   const state = makeState([], {});
