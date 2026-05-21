@@ -928,6 +928,35 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   assert.deepEqual(trueExplanationOffenders, []);
 });
 
+test('derivePublishedQuestions renders q877/q878 human-rights true/false as direct propositions', () => {
+  const { questions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+
+  assert.equal(
+    byId.get('q877')?.questionSv,
+    'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
+  );
+  assert.equal(
+    byId.get('q877')?.questionEn,
+    'Human rights apply to every person regardless of background or life situation.',
+  );
+  assert.equal(byId.get('q877')?.correctOptionId, 'true');
+  assert.equal(
+    byId.get('q878')?.questionSv,
+    'Mänskliga rättigheter gäller bara svenska medborgare.',
+  );
+  assert.equal(byId.get('q878')?.questionEn, 'Human rights apply only to Swedish citizens.');
+  assert.equal(byId.get('q878')?.correctOptionId, 'false');
+
+  const text = [byId.get('q877'), byId.get('q878')]
+    .map((question) => `${question?.questionSv} ${question?.questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(
+    text,
+    /Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means/i,
+  );
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

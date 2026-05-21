@@ -207,84 +207,47 @@ function stripLeadingPurposeEn(value: string): string {
     .replace(/^so\s+/i, '');
 }
 
-function directDefinitionStatementSv(subject: string, answer: string): string | null {
-  const normalizedSubject = subject.trim().replace(/\s+/g, ' ');
-  const clause = stripLeadingPurposeSv(answer).trim();
-
-  if (/^Sverige är en konstitutionell monarki$/i.test(normalizedSubject)) {
-    if (/^statschefen är kung eller drottning men saknar politisk makt$/i.test(clause)) {
-      return 'I Sveriges konstitutionella monarki är statschefen kung eller drottning utan politisk makt';
-    }
-    if (/^monarken har all politisk makt$/i.test(clause)) {
-      return 'I Sveriges konstitutionella monarki har monarken all politisk makt';
-    }
-  }
-
-  if (/^Sverige är en sekulär stat$/i.test(normalizedSubject)) {
-    if (
-      /^staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion$/i.test(
-        clause,
-      )
-    ) {
-      return 'Sverige är en sekulär stat, så staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion';
-    }
-    if (/^alla måste tillhöra samma religion$/i.test(clause)) {
-      return 'Sverige är en sekulär stat, så alla måste tillhöra samma religion';
-    }
-  }
-
-  if (/^val i en demokrati är hemliga$/i.test(normalizedSubject)) {
-    if (/^väljare inte behöver avslöja hur de röstar$/i.test(clause)) {
-      return 'Hemliga val betyder att väljare inte behöver avslöja hur de röstar';
-    }
-    if (/^bara myndigheter får veta hur varje person röstar$/i.test(clause)) {
-      return 'Hemliga val betyder att bara myndigheter får veta hur varje person röstar';
-    }
-  }
-
-  return null;
-}
-
-function directDefinitionStatementEn(subject: string, answer: string): string | null {
-  const normalizedSubject = subject.trim().replace(/\s+/g, ' ');
-  const clause = stripLeadingThatEn(stripLeadingPurposeEn(answer)).trim();
-
-  if (/^Sweden is a constitutional monarchy$/i.test(normalizedSubject)) {
-    if (/^the head of state is a king or queen but lacks political power$/i.test(clause)) {
-      return "In Sweden's constitutional monarchy, the head of state is a king or queen without political power";
-    }
-    if (/^the monarch has all political power$/i.test(clause)) {
-      return "In Sweden's constitutional monarchy, the monarch has all political power";
-    }
-  }
-
-  if (/^Sweden is a secular state$/i.test(normalizedSubject)) {
-    if (
-      /^the state is religiously neutral and neither takes sides for nor discriminates against any religion$/i.test(
-        clause,
-      )
-    ) {
-      return 'Sweden is a secular state, so the state is religiously neutral and neither takes sides for nor discriminates against any religion';
-    }
-    if (/^everyone must belong to the same religion$/i.test(clause)) {
-      return 'Sweden is a secular state, so everyone must belong to the same religion';
-    }
-  }
-
-  if (/^elections in a democracy are secret$/i.test(normalizedSubject)) {
-    if (/^(?:no one|voters) has to reveal how they vote$/i.test(clause)) {
-      return 'Secret elections mean voters do not have to reveal how they vote';
-    }
-    if (/^only authorities may know how each person votes$/i.test(clause)) {
-      return 'Secret elections mean only authorities may know how each person votes';
-    }
-  }
-
-  return null;
-}
-
 function stripLeadingByEn(value: string): string {
   return stripLeadingPurposeEn(value).replace(/^by\s+/i, '');
+}
+
+function swedishIncomeMethod(answer: string): string {
+  const phrase = lowerFirst(answer.trim());
+  if (/^de säljer reklamplats eller tar betalt för en särskild kanal$/i.test(phrase)) {
+    return 'genom att sälja reklamplats eller ta betalt för en särskild kanal';
+  }
+  if (/^genom\b/i.test(phrase)) return phrase;
+  return `genom ${phrase}`;
+}
+
+function englishIncomeMethod(answer: string): string {
+  const phrase = answer.trim();
+  if (/^they sell advertising space or charge for a specific channel$/i.test(phrase)) {
+    return 'by selling advertising space or charging for a specific channel';
+  }
+  if (/^(?:through|by)\b/i.test(phrase)) return lowerFirst(phrase);
+  return `through ${lowerFirst(phrase)}`;
+}
+
+function swedishPartyPoliticsStatement(answer: string): string {
+  const phrase = lowerFirst(answer.trim());
+  if (/^bara rösta om personen redan sitter i riksdagen$/i.test(phrase)) {
+    return 'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen';
+  }
+  return `En person kan påverka partipolitik genom att ${stripLeadingPurposeSv(phrase)}`;
+}
+
+function englishPartyPoliticsStatement(answer: string): string {
+  const phrase = answer.trim();
+  if (
+    /^become a member of a political party or start a new party together with others$/i.test(phrase)
+  ) {
+    return 'A person can influence party politics by becoming a member of a political party or starting a new party together with others';
+  }
+  if (/^only vote if the person already sits in the Riksdag$/i.test(phrase)) {
+    return 'A person can influence party politics only by voting if they already sit in the Riksdag';
+  }
+  return `A person can influence party politics by ${englishGerundPhrase(phrase)}`;
 }
 
 function englishGerundPhrase(value: string): string {
@@ -686,7 +649,11 @@ function embeddedSwedishClause(value: string): string {
   return lowerFirst(stripLeadingPurposeSv(value))
     .replace(/^sverige\b/i, 'Sverige')
     .replace(/^det är alltid\s+/i, 'det alltid är ')
-    .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ');
+    .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ')
+    .replace(
+      /^(.+?)\s+(måste|behöver|ska|kan|får)\s+(inte|alltid)\s+/i,
+      (_match, subject, modal, adverb) => `${subject} ${adverb.toLowerCase()} ${modal} `,
+    );
 }
 
 function embeddedEnglishClause(value: string): string {
@@ -1234,7 +1201,7 @@ function judgementPromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return `Välj rätt alternativ: ${source.questionSv}`;
+  return source.questionSv;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
@@ -1243,7 +1210,7 @@ function judgementPromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return `Choose the correct option: ${source.questionEn}`;
+  return source.questionEn;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
@@ -1252,7 +1219,7 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return source.questionSv;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
@@ -1261,7 +1228,7 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return `Which answer best matches? ${source.questionEn}`;
+  return source.questionEn;
 }
 
 function generatedSingleChoicePromptFromSourceSv(
@@ -1292,6 +1259,38 @@ function generatedSingleChoicePromptFromSourceEn(
   return variant === 'judgement'
     ? `Which fact is correct about ${match[1]}?`
     : `What is correct about ${match[1]}?`;
+}
+
+function universalHumanRightsStatementSv(answer: string): string | null {
+  if (/^varje människa har rättigheter oavsett bakgrund eller livssituation$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation';
+  }
+  if (/^bara svenska medborgare har mänskliga rättigheter$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller bara svenska medborgare';
+  }
+  if (/^rättigheterna gäller bara personer som arbetar$/i.test(answer)) {
+    return 'Mänskliga rättigheter gäller bara personer som arbetar';
+  }
+  if (/^varje kommun väljer själv vilka människor som har rättigheter$/i.test(answer)) {
+    return 'Varje kommun väljer själv vilka människor som har mänskliga rättigheter';
+  }
+  return null;
+}
+
+function universalHumanRightsStatementEn(answer: string): string | null {
+  if (/^every person has rights regardless of background or life situation$/i.test(answer)) {
+    return 'Human rights apply to every person regardless of background or life situation';
+  }
+  if (/^only Swedish citizens have human rights$/i.test(answer)) {
+    return 'Human rights apply only to Swedish citizens';
+  }
+  if (/^the rights apply only to people who work$/i.test(answer)) {
+    return 'Human rights apply only to people who work';
+  }
+  if (/^each municipality chooses which people have rights$/i.test(answer)) {
+    return 'Each municipality chooses which people have human rights';
+  }
+  return null;
 }
 
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
@@ -1387,10 +1386,11 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) {
-    const directStatement = directDefinitionStatementSv(match[1], answer);
-    return (
-      directStatement ?? `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`
-    );
+    if (/^mänskliga rättigheter gäller alla$/i.test(match[1])) {
+      const statement = universalHumanRightsStatementSv(answer);
+      if (statement) return statement;
+    }
+    return `Att ${match[1]} betyder att ${embeddedSwedishClause(answer)}`;
   }
 
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
@@ -1485,6 +1485,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad gäller för (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) return `${upperFirst(match[1])} kan få inkomster ${swedishIncomeMethod(answer)}`;
 
   match = q.match(/^Hur stor del av (.+?) (jobbar .+)$/i);
   if (match) return `${upperFirst(answer)} av ${match[1]} ${match[2]}`;
@@ -1777,6 +1780,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   );
   if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
 
+  match = q.match(/^Vad står på röstkortet som skickas hem före valet$/i);
+  if (match) return `Röstkortet visar ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vad kan den som vill påverka innehållet i partipolitiken göra$/i);
+  if (match) return swedishPartyPoliticsStatement(answer);
+
   return upperFirst(stripLeadingPurposeSv(answer));
 }
 
@@ -1886,8 +1895,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does it mean that (.+)$/i);
   if (match) {
-    const directStatement = directDefinitionStatementEn(match[1], answer);
-    return directStatement ?? `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+    if (/^human rights apply to everyone$/i.test(match[1])) {
+      const statement = universalHumanRightsStatementEn(answer);
+      if (statement) return statement;
+    }
+    return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }
 
   match = q.match(/^What does it mean to (.+)$/i);
@@ -1930,6 +1942,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
+
+  match = q.match(/^How often are (.+) held$/i);
+  if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)}`;
 
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
@@ -1991,6 +2006,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What applies to (.+)$/i);
   if (match) return appliesStatementEn(match[1], answer);
+
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) return `${upperFirst(match[1])} can earn income ${englishIncomeMethod(answer)}`;
 
   match = q.match(/^What share of (.+?) works (.+)$/i);
   if (match) return `${upperFirst(answer)} of ${match[1]} works ${match[2]}`;
@@ -2321,6 +2339,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
   if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
+
+  match = q.match(/^What is stated on the voting card sent home before an election$/i);
+  if (match) return `The voting card shows ${lowerFirst(answer)}`;
+
+  match = q.match(/^What can someone do to influence the content of party politics$/i);
+  if (match) return englishPartyPoliticsStatement(answer);
 
   return upperFirst(stripLeadingPurposeEn(answer));
 }
