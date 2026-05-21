@@ -464,6 +464,28 @@ test('streak freeze normalizer parity uses focused content validation routing', 
   assert.match(progressSchemaTestSource, /--focus-streak-freeze-normalizer-parity/);
 });
 
+test('static ebook footnote hash parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const staticEbookTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-static-site-ebook-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-static-ebook-footnote-hash-parity/);
+  assert.match(
+    validatorSource,
+    /validateStaticEbookFootnoteHashParity\(\);[\s\S]*staticEbookFootnoteHashChaptersValidated[\s\S]*staticEbookFootnoteHashLanguagesValidated[\s\S]*staticEbookFootnoteHashParityValidated/,
+  );
+  assert.match(staticEbookTestSource, /--focus-static-ebook-footnote-hash-parity/);
+  assert.match(
+    staticEbookTestSource,
+    /staticEbookFootnoteHashChaptersValidated[\s\S]*staticEbookFootnoteHashLanguagesValidated[\s\S]*staticEbookFootnoteHashParityValidated/,
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

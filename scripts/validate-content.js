@@ -5081,6 +5081,272 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function readStaticEbookChapterIds() {
+  const context = { console, window: {} };
+  context.globalThis = context;
+  vm.runInNewContext(loadText('site/questions.js'), context, {
+    filename: 'site/questions.js',
+  });
+
+  const meta = context.window.SMT_CHAPTERS_META || context.SMT_CHAPTERS_META;
+  if (!Array.isArray(meta)) {
+    fail('site/questions.js should expose SMT_CHAPTERS_META for static ebook validation');
+    return ['intro'];
+  }
+
+  return ['intro', ...meta.map((chapter) => String(chapter.id))];
+}
+
+function createStaticEbookValidationHarness(chapterIds) {
+  const reader = { innerHTML: '', scrollTop: 0 };
+  const navAnchors = chapterIds.map((id) => ({
+    dataset: { eb: id },
+    classList: { toggle() {} },
+  }));
+  const localStorageValues = new Map();
+  const localStorage = {
+    getItem(key) {
+      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
+    },
+    setItem(key, value) {
+      localStorageValues.set(key, String(value));
+    },
+  };
+  const location = { hash: '#/ebook' };
+  const scrollEvents = [];
+  const document = {
+    addEventListener() {},
+    getElementById(id) {
+      if (id === 'ebook-reader') return reader;
+      if (reader.innerHTML.includes(`id="${id}"`)) {
+        return {
+          scrollIntoView(options) {
+            scrollEvents.push({ id, options });
+          },
+        };
+      }
+      return null;
+    },
+    querySelectorAll(selector) {
+      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
+    },
+  };
+  const window = {
+    addEventListener() {},
+    localStorage,
+    location,
+    smtApplyEbookHighlights() {},
+  };
+  const context = {
+    console,
+    document,
+    localStorage,
+    location,
+    setTimeout(callback) {
+      callback();
+      return 0;
+    },
+    window,
+  };
+  context.globalThis = context;
+
+  vm.runInNewContext(loadText('site/ebook.js'), context, { filename: 'site/ebook.js' });
+
+  return { localStorage, location, reader, scrollEvents, window };
+}
+
+function staticEbookRouteHash(chapterId, targetParam, targetId) {
+  return `#/ebook?c=${encodeURIComponent(chapterId)}&${targetParam}=${encodeURIComponent(
+    targetId,
+  )}`;
+}
+
+function renderStaticEbookHash(harness, lang, hash) {
+  harness.localStorage.setItem('smt_lang', lang);
+  harness.location.hash = hash;
+  harness.reader.innerHTML = '';
+  const scrollStart = harness.scrollEvents.length;
+  harness.window.smtEbookRender();
+  return {
+    html: harness.reader.innerHTML,
+    scrollEvents: harness.scrollEvents.slice(scrollStart),
+  };
+}
+
+function renderStaticEbookChapter(harness, lang, chapterId) {
+  return renderStaticEbookHash(harness, lang, `#/ebook?c=${encodeURIComponent(chapterId)}`).html;
+}
+
+function staticEbookAnnotatedSourceClaimBlocks(html) {
+  return Array.from(
+    html.matchAll(
+      /<(?:p|li)\b(?=[^>]*\bdata-source-claims="ebook")(?=[^>]*\bdata-source-scope="ebook")(?=[^>]*\bdata-source-keys="[^"]+")[^>]*>[\s\S]*?<\/(?:p|li)>/g,
+    ),
+    (match) => match[0],
+  );
+}
+
+function staticEbookDataSourceKeys(block) {
+  const match = block.match(/\bdata-source-keys="([^"]+)"/);
+  return match ? match[1].split(/\s+/).filter(Boolean) : [];
+}
+
+function staticEbookSourceCountsFromBlocks(blocks) {
+  const counts = {};
+  blocks.forEach((block) => {
+    Array.from(new Set(staticEbookDataSourceKeys(block))).forEach((key) => {
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function staticEbookRenderedSourceCounts(html) {
+  const match = html.match(/\bdata-source-counts='([^']+)'/);
+  if (!match) return null;
+  try {
+    return JSON.parse(match[1]);
+  } catch {
+    return null;
+  }
+}
+
+function normalizeStaticEbookSourceCounts(counts) {
+  return Object.fromEntries(
+    Object.keys(counts || {})
+      .sort()
+      .map((key) => [key, counts[key]]),
+  );
+}
+
+function staticEbookSourceReferenceLinks(html) {
+  return Array.from(
+    html.matchAll(
+      /<sup\b[^>]*\bid="(eb-[^"]+-fn-\d+)-ref"[^>]*>\s*<a\b[^>]*\bhref="([^"]+)"[^>]*>\[(\d+)\]<\/a>\s*<\/sup>/g,
+    ),
+    (match) => ({ id: match[1], href: match[2], index: Number(match[3]) }),
+  );
+}
+
+function staticEbookRenderedFootnoteItems(html) {
+  return Array.from(
+    html.matchAll(
+      /<li\b[^>]*\bid="(eb-[^"]+-fn-\d+)"[^>]*>\s*<a\b[^>]*\bhref="([^"]+)"[^>]*>\s*<span>(\d+)<\/span>\s*<\/a>/g,
+    ),
+    (match) => ({ id: match[1], href: match[2], index: Number(match[3]) }),
+  );
+}
+
+function validateStaticEbookFootnoteHashParity() {
+  const chapterIds = readStaticEbookChapterIds();
+  const languages = ['en', 'sv'];
+  const languageValid = new Map(languages.map((language) => [language, true]));
+  const harness = createStaticEbookValidationHarness(chapterIds);
+  let chaptersValidated = 0;
+  let valid = true;
+
+  function reject(language, chapterId, message) {
+    valid = false;
+    languageValid.set(language, false);
+    fail(`static ebook ${language} chapter ${chapterId}: ${message}`);
+  }
+
+  chapterIds.forEach((chapterId) => {
+    let chapterValid = true;
+
+    languages.forEach((language) => {
+      const html = renderStaticEbookChapter(harness, language, chapterId);
+      const blocks = staticEbookAnnotatedSourceClaimBlocks(html);
+      const referenceLinks = staticEbookSourceReferenceLinks(html);
+      const footnoteItems = staticEbookRenderedFootnoteItems(html);
+      const renderedCounts = staticEbookRenderedSourceCounts(html);
+      const expectedCounts = staticEbookSourceCountsFromBlocks(blocks);
+      const expectedCountJson = JSON.stringify(normalizeStaticEbookSourceCounts(expectedCounts));
+      const renderedCountJson = JSON.stringify(normalizeStaticEbookSourceCounts(renderedCounts));
+
+      function rejectCase(message) {
+        chapterValid = false;
+        reject(language, chapterId, message);
+      }
+
+      if (blocks.length === 0) {
+        rejectCase('rendered no source-annotated prose blocks');
+      }
+      if (referenceLinks.length !== blocks.length) {
+        rejectCase(
+          `rendered ${referenceLinks.length} source reference links for ${blocks.length} annotated blocks`,
+        );
+      }
+      if (footnoteItems.length !== blocks.length) {
+        rejectCase(
+          `rendered ${footnoteItems.length} footnotes for ${blocks.length} annotated blocks`,
+        );
+      }
+      if (!renderedCounts) {
+        rejectCase('missing parseable data-source-counts on provenance badge');
+      } else if (renderedCountJson !== expectedCountJson) {
+        rejectCase(
+          `data-source-counts ${renderedCountJson} does not match annotated prose ${expectedCountJson}`,
+        );
+      }
+
+      referenceLinks.forEach((reference, index) => {
+        const footnote = footnoteItems[index];
+        if (!footnote) return;
+        const expectedId = `eb-${chapterId}-${language}-fn-${index + 1}`;
+        if (reference.id !== expectedId || footnote.id !== expectedId) {
+          rejectCase(
+            `footnote id drifted at index ${index + 1}; expected ${expectedId}, saw ${reference.id}/${footnote.id}`,
+          );
+        }
+        if (reference.index !== index + 1 || footnote.index !== index + 1) {
+          rejectCase(`footnote index drifted at ${expectedId}`);
+        }
+        const expectedReferenceHref = staticEbookRouteHash(chapterId, 'fn', expectedId);
+        const expectedBackHref = staticEbookRouteHash(chapterId, 'fnref', expectedId);
+        if (reference.href !== expectedReferenceHref) {
+          rejectCase(`source reference href ${reference.href} should be ${expectedReferenceHref}`);
+        }
+        if (footnote.href !== expectedBackHref) {
+          rejectCase(`footnote backlink href ${footnote.href} should be ${expectedBackHref}`);
+        }
+      });
+
+      const firstFootnote = footnoteItems[0];
+      if (firstFootnote) {
+        const footnoteTarget = renderStaticEbookHash(
+          harness,
+          language,
+          staticEbookRouteHash(chapterId, 'fn', firstFootnote.id),
+        );
+        if (!footnoteTarget.scrollEvents.some((event) => event.id === firstFootnote.id)) {
+          rejectCase(`fn route did not scroll to ${firstFootnote.id}`);
+        }
+
+        const referenceTarget = renderStaticEbookHash(
+          harness,
+          language,
+          staticEbookRouteHash(chapterId, 'fnref', firstFootnote.id),
+        );
+        if (!referenceTarget.scrollEvents.some((event) => event.id === `${firstFootnote.id}-ref`)) {
+          rejectCase(`fnref route did not scroll to ${firstFootnote.id}-ref`);
+        }
+      }
+    });
+
+    if (chapterValid) chaptersValidated += 1;
+  });
+
+  return {
+    chaptersValidated,
+    languagesValidated: Array.from(languageValid.values()).filter(Boolean).length,
+    parityValidated:
+      valid &&
+      chaptersValidated === chapterIds.length &&
+      Array.from(languageValid.values()).every(Boolean),
+  };
+}
+
 function validateStaticEbookProseSourceMetadata() {
   const source = loadText('site/ebook.js');
   let rulesValidated = 0;
@@ -9163,6 +9429,9 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticEbookFootnoteHashChaptersValidated = 0;
+let staticEbookFootnoteHashLanguagesValidated = 0;
+let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
@@ -9374,6 +9643,20 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
+  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
+  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
+  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticEbookFootnoteHashChaptersValidated,
+    staticEbookFootnoteHashLanguagesValidated,
+    staticEbookFootnoteHashParityValidated,
   });
   process.exit(0);
 }
@@ -10048,6 +10331,12 @@ staticEbookOutcomeClaimParityValidated =
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+}
+{
+  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
+  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
+  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
+  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
 }
 {
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
@@ -21201,6 +21490,9 @@ console.log(
       staticEbookFactboxProvenanceValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
+      staticEbookFootnoteHashChaptersValidated,
+      staticEbookFootnoteHashLanguagesValidated,
+      staticEbookFootnoteHashParityValidated,
       staticI18nArabicRequiredCopyValidated,
       staticI18nArabicHighFrequencyLabelsValidated,
       staticI18nArabicForbiddenFragmentsValidated,
