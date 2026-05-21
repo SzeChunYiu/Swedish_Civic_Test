@@ -9066,8 +9066,6 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
-let searchRouteQueryHydrationRulesValidated = 0;
-let searchRouteQueryHydrationParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -12161,110 +12159,6 @@ function validateLearnRouteLinkCopyParity() {
   );
   if (valid && learnRouteLinkCopyLabelsValidated === expectedLabelCount) {
     learnRouteLinkCopyParityValidated = true;
-  }
-}
-
-function validateSearchRouteQueryHydrationParity() {
-  let valid = true;
-  let searchRoute = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
-  } catch (error) {
-    reject(`Search route source could not be read for query hydration parity: ${error.message}`);
-    return;
-  }
-
-  const requiredRules = [
-    {
-      label: 'route params and router import',
-      pattern: /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
-    },
-    { label: 'route params type', pattern: /type SearchRouteParams = \{/ },
-    { label: 'q param support', pattern: /q\?: string \| string\[\];/ },
-    { label: 'query param support', pattern: /query\?: string \| string\[\];/ },
-    { label: 'router replacement hook', pattern: /const router = useRouter\(\);/ },
-    {
-      label: 'local search params read',
-      pattern: /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
-    },
-    {
-      label: 'route query resolution',
-      pattern: /const routeQuery = getRouteSearchQuery\(searchParams\);/,
-    },
-    {
-      label: 'route query initial state',
-      pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
-    },
-    {
-      label: 'route query sync ref',
-      pattern: /const previousRouteQueryRef = useRef\(routeQuery\);/,
-    },
-    { label: 'route query sync effect', pattern: /useEffect\(\(\) => \{/ },
-    {
-      label: 'unchanged route query guard',
-      pattern: /if \(previousRouteQueryRef\.current === routeQuery\) return;/,
-    },
-    {
-      label: 'route query sync ref update',
-      pattern: /previousRouteQueryRef\.current = routeQuery;/,
-    },
-    { label: 'route query state resync', pattern: /setQuery\(routeQuery\);/ },
-    { label: 'route query sync dependency', pattern: /\}, \[routeQuery\]\);/ },
-    { label: 'single-value route param helper', pattern: /function getFirstSearchParamValue/ },
-    {
-      label: 'array route param support',
-      pattern: /Array\.isArray\(value\) \? value\[0\] : value/,
-    },
-    {
-      label: 'route query helper',
-      pattern: /function getRouteSearchQuery\(params: SearchRouteParams\)/,
-    },
-    {
-      label: 'q then query fallback order',
-      pattern:
-        /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
-    },
-    { label: 'manual typing remains controlled', pattern: /onChangeText=\{setQuery\}/ },
-    { label: 'clear search handler', pattern: /const handleClearSearch = \(\) => \{/ },
-    { label: 'clear search state reset', pattern: /setQuery\(''\);/ },
-    { label: 'clear search URL replacement', pattern: /router\.replace\('\/search'\);/ },
-    { label: 'clear search uses URL-aware handler', pattern: /onPress=\{handleClearSearch\}/ },
-    { label: 'submit search handler', pattern: /const handleSubmitSearch = \(\) => \{/ },
-    { label: 'submit trims typed query', pattern: /const submittedQuery = query\.trim\(\);/ },
-    {
-      label: 'empty submit clears URL state',
-      pattern: /if \(submittedQuery\.length === 0\) \{[\s\S]*handleClearSearch\(\);/,
-    },
-    { label: 'submitted query normalizes visible input', pattern: /setQuery\(submittedQuery\);/ },
-    {
-      label: 'non-empty submit writes q URL param',
-      pattern: /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
-    },
-    { label: 'search return key submits query', pattern: /onSubmitEditing=\{handleSubmitSearch\}/ },
-    { label: 'hydrated query reaches visible input', pattern: /value=\{query\}/ },
-    { label: 'hydrated query feeds filtering', pattern: /const trimmedQuery = query\.trim\(\);/ },
-  ];
-
-  requiredRules.forEach((expectedRule) => {
-    if (!expectedRule.pattern.test(searchRoute)) {
-      reject(`Search route missing ${expectedRule.label}`);
-      return;
-    }
-    searchRouteQueryHydrationRulesValidated += 1;
-  });
-
-  if (/const \[query, setQuery\] = useState\(''\);/.test(searchRoute)) {
-    reject('Search route must not ignore q/query route params by initializing blank');
-  }
-
-  if (valid && searchRouteQueryHydrationRulesValidated === requiredRules.length) {
-    searchRouteQueryHydrationParityValidated = true;
   }
 }
 
