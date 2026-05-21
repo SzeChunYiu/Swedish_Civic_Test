@@ -18,8 +18,34 @@ function staticQuestionCount() {
   return context.window.SMT_QUESTIONS.length;
 }
 
+function normalizeStaticText(value) {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function decodeStaticStringLiteral(literal) {
+  return vm.runInNewContext(literal, {}, { timeout: 1000 });
+}
+
+function footerAboutMarkerCount(source) {
+  return Array.from(
+    source.matchAll(/(?:['"]footer\.about\.p['"]\s*:|data-i18n=["']footer\.about\.p["'])/g),
+  ).length;
+}
+
 function footerAboutValues(source) {
-  return Array.from(source.matchAll(/"footer\.about\.p": "([^"]+)"/g), (match) => match[1]);
+  const translationPattern =
+    /['"]footer\.about\.p['"]\s*:\s*('(?:\\[\s\S]|[^'\\])*'|"(?:\\[\s\S]|[^"\\])*")/g;
+  const htmlFallbackPattern = /<p\b[^>]*\bdata-i18n=["']footer\.about\.p["'][^>]*>([\s\S]*?)<\/p>/g;
+
+  return [
+    ...Array.from(source.matchAll(translationPattern), (match) =>
+      decodeStaticStringLiteral(match[1]),
+    ),
+    ...Array.from(source.matchAll(htmlFallbackPattern), (match) => normalizeStaticText(match[1])),
+  ];
 }
 
 function unsupportedMockParityPatterns() {
@@ -119,7 +145,12 @@ test('static site product-count copy rejects stale hardcoded 500 claims', () => 
   const footerValues = footerAboutValues(surface);
 
   assert.ok(questionCount > 500, 'test expects the current bank to exceed 500 questions');
-  assert.ok(footerValues.length >= 6, 'all static footer translations should be inspected');
+  assert.equal(
+    footerValues.length,
+    footerAboutMarkerCount(surface),
+    'all static footer translations should be inspected',
+  );
+  assert.ok(footerValues.length >= 6, 'static footer translations should cover shipped locales');
   assert.ok(footerValues.every((value) => !/\b500\b|500\+/.test(value)));
 
   [
@@ -136,10 +167,14 @@ test('static site count-sensitive copy uses non-numeric current-bank wording', (
   );
 
   [
-    /Source-backed questions/,
-    /K.llst.dda fr.gor/,
-    /Free to start, study, and practice with mock exams/,
+    /source-backed/i,
+    /visible source lines/i,
+    /k.llst.tt/i,
+    /tydliga k.llrader/i,
+    /Free to start, free to study, and free to take mock exams/,
+    /Free to start, study, and take mock exams/,
     /Gratis att b.rja, plugga och .va med .vningsprov/,
+    /Gratis att b.rja, plugga och g.ra .vningsprov/,
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
