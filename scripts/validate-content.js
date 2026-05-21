@@ -4329,6 +4329,10 @@ const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = [
   'Starta övningsprov',
   'gör ett övningsprov',
 ];
+const STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN = [/\bFirst of May\b/i];
+const STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED = [
+  /<b>May Day<\/b>,\s*1 May,\s*is International Workers['’] Day/i,
+];
 const STATIC_I18N_CHINESE_LOCALES = ['zh-Hans', 'zh-Hant'];
 const STATIC_I18N_CHINESE_TEXT_PATTERN = /[\u3400-\u9fff]/;
 const STATIC_I18N_ASCII_SENTENCE_PUNCTUATION_NEAR_CHINESE =
@@ -4430,6 +4434,33 @@ function validateStaticEbookSwedishStudyTerms() {
   return {
     forbiddenTermsValidated,
     requiredTermsValidated,
+  };
+}
+
+function validateStaticEbookMayDayEnglishNaturalness() {
+  const source = loadText('site/ebook.js');
+  let forbiddenPatternsValidated = 0;
+  let requiredCopyValidated = 0;
+
+  STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN.forEach((pattern) => {
+    if (pattern.test(source)) {
+      fail(`static ebook English copy contains literal May Day calque: ${pattern}`);
+      return;
+    }
+    forbiddenPatternsValidated += 1;
+  });
+
+  STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED.forEach((pattern) => {
+    if (!pattern.test(source)) {
+      fail(`static ebook English copy missing natural May Day wording: ${pattern}`);
+      return;
+    }
+    requiredCopyValidated += 1;
+  });
+
+  return {
+    forbiddenPatternsValidated,
+    requiredCopyValidated,
   };
 }
 
@@ -7265,6 +7296,9 @@ let staticSiteSwedishGrammarToneValidated = 0;
 let staticSiteSwedishGrammarToneNaturalnessValidated = false;
 let staticEbookSwedishStudyTermsValidated = 0;
 let staticEbookSwedishStudyTermNaturalnessValidated = false;
+let staticEbookMayDayEnglishForbiddenPatternsValidated = 0;
+let staticEbookMayDayEnglishRequiredCopyValidated = 0;
+let staticEbookMayDayEnglishNaturalnessValidated = false;
 let staticI18nChinesePunctuationLocalesValidated = 0;
 let staticI18nChinesePunctuationValuesValidated = 0;
 let staticI18nChinesePunctuationParityValidated = false;
@@ -7639,6 +7673,16 @@ staticEbookOutcomeClaimParityValidated =
       STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
     ebookStudyTermValidation.requiredTermsValidated ===
       STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.length;
+}
+{
+  const ebookMayDayValidation = validateStaticEbookMayDayEnglishNaturalness();
+  staticEbookMayDayEnglishForbiddenPatternsValidated =
+    ebookMayDayValidation.forbiddenPatternsValidated;
+  staticEbookMayDayEnglishRequiredCopyValidated = ebookMayDayValidation.requiredCopyValidated;
+  staticEbookMayDayEnglishNaturalnessValidated =
+    staticEbookMayDayEnglishForbiddenPatternsValidated ===
+      STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN.length &&
+    staticEbookMayDayEnglishRequiredCopyValidated === STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED.length;
 }
 {
   const i18nPunctuationValidation = validateStaticI18nChinesePunctuation();
@@ -16085,6 +16129,9 @@ console.log(
       staticSiteSwedishGrammarToneNaturalnessValidated,
       staticEbookSwedishStudyTermsValidated,
       staticEbookSwedishStudyTermNaturalnessValidated,
+      staticEbookMayDayEnglishForbiddenPatternsValidated,
+      staticEbookMayDayEnglishRequiredCopyValidated,
+      staticEbookMayDayEnglishNaturalnessValidated,
       staticI18nChinesePunctuationLocalesValidated,
       staticI18nChinesePunctuationValuesValidated,
       staticI18nChinesePunctuationParityValidated,
