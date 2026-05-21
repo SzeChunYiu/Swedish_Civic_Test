@@ -540,6 +540,32 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
   assert.equal(recap.chapterNowMastered, null);
 });
 
+test('Weekly recap route surfaces local selector output without Pro gating', () => {
+  const recapSource = fs.readFileSync(path.join(repoRoot, 'app/recap.tsx'), 'utf8');
+  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+
+  assert.match(recapSource, /generateWeeklyRecap/);
+  assert.match(recapSource, /buildDashboardProgressSnapshot/);
+  assert.match(recapSource, /perChapterProgress/);
+  assert.match(recapSource, /getChapterQuizRouteParams/);
+  assert.match(recapSource, /weakAccuracyThreshold = 0\.8/);
+  assert.match(
+    recapSource,
+    /href=\{\{[\s\S]*pathname: '\/quiz\/\[sessionId\]'[\s\S]*params: weakChapter\.routeParams[\s\S]*\}\}/,
+  );
+  assert.match(recapSource, /href="\/practice"/);
+  assert.match(recapSource, /A quiet week is fine/);
+  assert.match(recapSource, /En lugn vecka är okej/);
+  assert.match(recapSource, /accessibilityRole="summary"/);
+  assert.match(profileSource, /href="\/recap"/);
+  assert.match(profileSource, /weeklyRecapCta: 'View this week'/);
+  assert.match(profileSource, /weeklyRecapCta: 'Visa veckan'/);
+  assert.doesNotMatch(
+    recapSource,
+    /useProLifetimeEntitlements|useRemoveAdsEntitlements|PremiumBanner|ProPaywall/,
+  );
+});
+
 // -------------------------------------------------------- Tier comparison
 
 test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_ENTITLEMENTS as true', () => {
