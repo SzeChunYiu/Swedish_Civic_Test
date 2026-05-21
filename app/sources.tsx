@@ -1,5 +1,4 @@
-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
-import { LegalLinkList } from '../components/compliance/LegalPage';
+import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
 import {
   UHR_AUTHORITY_BOUNDARY_SOURCE,
   UhrAuthorityBoundaryLink,

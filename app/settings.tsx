@@ -33,6 +33,9 @@ import type { ThemeColors } from '../lib/theme';
 type SettingsCopy = {
   audioDisabledLabel: string;
   audioEnabledLabel: string;
+  audioListenFirstDisabledLabel: string;
+  audioListenFirstEnabledLabel: string;
+  audioListenFirstTitle: string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
@@ -42,7 +45,9 @@ type SettingsCopy = {
   dailyGoalSummary: (answerCount: number) => string;
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
+  disableListenFirstAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
+  enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
@@ -93,6 +98,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
     audioEnabledLabel: 'Ljud på',
+    audioListenFirstDisabledLabel: 'Spela inte upp frågan automatiskt',
+    audioListenFirstEnabledLabel: 'Spela upp frågan automatiskt',
+    audioListenFirstTitle: 'Lyssna först',
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
@@ -109,7 +117,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
+    disableListenFirstAudioAccessibilityLabel: 'Stäng av automatisk frågeuppläsning',
     enableAudioAccessibilityLabel: 'Slå på ljud',
+    enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk frågeuppläsning',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
@@ -170,6 +180,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   en: {
     audioDisabledLabel: 'Audio disabled',
     audioEnabledLabel: 'Audio enabled',
+    audioListenFirstDisabledLabel: 'Do not play the question automatically',
+    audioListenFirstEnabledLabel: 'Play the question automatically',
+    audioListenFirstTitle: 'Listen first',
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
@@ -186,7 +199,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
+    disableListenFirstAudioAccessibilityLabel: 'Disable automatic question audio',
     enableAudioAccessibilityLabel: 'Enable audio',
+    enableListenFirstAudioAccessibilityLabel: 'Enable automatic question audio',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
@@ -283,6 +298,10 @@ export default function Screen() {
   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
+  const setListenFirstAudioEnabled = useAccessibilityStore(
+    (state) => state.setListenFirstAudioEnabled,
+  );
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
@@ -464,6 +483,36 @@ export default function Screen() {
         >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+          </Text>
+        </Pressable>
+        <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
+        <Pressable
+          aria-checked={listenFirstAudioEnabled}
+          accessibilityLabel={
+            listenFirstAudioEnabled
+              ? copy.disableListenFirstAudioAccessibilityLabel
+              : copy.enableListenFirstAudioAccessibilityLabel
+          }
+          accessibilityRole="switch"
+          accessibilityState={{ checked: listenFirstAudioEnabled }}
+          hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('listen-first-audio')}
+          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
+            pressed
+              ? reduceMotion
+                ? styles.secondaryButtonPressedReducedMotion
+                : styles.secondaryButtonPressed
+              : null,
+          ]}
+        >
+          <Text style={styles.secondaryButtonText}>
+            {listenFirstAudioEnabled
+              ? copy.audioListenFirstEnabledLabel
+              : copy.audioListenFirstDisabledLabel}
           </Text>
         </Pressable>
       </View>

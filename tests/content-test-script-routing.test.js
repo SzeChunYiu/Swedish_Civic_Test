@@ -98,6 +98,52 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('AudioButton accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const audioButtonTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-audio-button-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-audio-button-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateAudioButtonAccessibilityParity\(\);[\s\S]*audioButtonAccessibilityRulesValidated[\s\S]*audioButtonAccessibilityParityValidated/,
+  );
+  assert.match(audioButtonTestSource, /--focus-audio-button-accessibility/);
+  assert.doesNotMatch(
+    audioButtonTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'AudioButton accessibility tests must not route through full content validation',
+  );
+});
+
+test('speech runtime parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const speechRuntimeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-speech-runtime-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-speech-runtime-parity/);
+  assert.match(
+    validatorSource,
+    /validateSpeechRuntimeParity\(\);[\s\S]*speechRuntimeCasesValidated[\s\S]*speechRuntimeParityValidated/,
+  );
+  assert.match(speechRuntimeTestSource, /--focus-speech-runtime-parity/);
+  assert.doesNotMatch(
+    speechRuntimeTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'speech runtime tests must not route through full content validation',
+  );
+});
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

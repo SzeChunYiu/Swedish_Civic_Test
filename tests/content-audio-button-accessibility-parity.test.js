@@ -29,6 +29,10 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
 
   assert.equal(summary.audioButtonAccessibilityRulesValidated, 17);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
+    false,
+  );
   assert.match(source, /import \{ useEffect, useState \} from 'react';/);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
@@ -36,7 +40,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /rate,/);
   assert.match(source, /rate\?: number;/);
   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
-  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
+  assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);
@@ -175,7 +179,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /AudioButton missing trimmed speech playback with lifecycle cleanup for accessibility parity/,
+    /AudioButton missing trimmed speech playback for accessibility parity/,
   );
 });
 

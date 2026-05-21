@@ -1227,7 +1227,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -2992,6 +2991,25 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     label: 'trimmed speech playback',
     pattern:
       /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+  },
+  {
+    label: 'rate prop and speech rate wiring',
+    pattern: /rate,[\s\S]*rate\?: number;[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,/,
+  },
+  {
+    label: 'localized stop-state labels and hints',
+    pattern:
+      /stopHint: 'Stoppar uppläsningen av frågan och svarsalternativen\.'[\s\S]*stopLabel: 'Stoppa frågeljud'[\s\S]*stopHint: 'Stops the question audio playback\.'[\s\S]*stopLabel: 'Stop question audio'/,
+  },
+  {
+    label: 'second press stops active question audio',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -8207,6 +8225,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-audio-button-accessibility')) {
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-question-report-link-parity')) {
   validateQuestionReportLinkParity();
   exitWithValidationFailures();
@@ -8380,6 +8408,16 @@ if (process.argv.includes('--focus-practice-scoring-parity')) {
   printValidationSummary({
     practiceScoringRulesValidated,
     practiceScoringRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-speech-runtime-parity')) {
+  validateSpeechRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    speechRuntimeCasesValidated,
+    speechRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -12835,6 +12873,12 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
+  if (
+    !normalizedSettingsStore.includes("import { stopSpeech } from '../audio/speak';") ||
+    !normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')
+  ) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
+  }
 
   if (
     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
@@ -15489,6 +15533,9 @@ function validateSpeechRuntimeParity() {
   }
 
   let runtimeParityIsValid = true;
+  const originalSpeak = speechMock.speak;
+  const originalStop = speechMock.stop;
+  const originalWarn = console.warn;
 
   function reject(message) {
     runtimeParityIsValid = false;
@@ -15512,7 +15559,7 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
-  speakSwedish('Hej Sverige');
+  speakSwedish('  Hej Sverige  ');
   const speakEvent = speechEvents[0];
   if (
     speechEvents.length === 1 &&
@@ -15530,6 +15577,80 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 1.25 });
+  if (speechEvents[0]?.options?.rate === 1.25) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must forward supported playback rates to Expo Speech');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 0.05 });
+  if (speechEvents[0]?.options?.rate === 0.1) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must clamp playback rates below 0.1');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 5 });
+  if (speechEvents[0]?.options?.rate === 2.0) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must clamp playback rates above 2.0');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: Number.NaN });
+  if (!Object.prototype.hasOwnProperty.call(speechEvents[0]?.options ?? {}, 'rate')) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must omit invalid playback rates');
+  }
+
+  resetSpeechEvents();
+  const callbacks = {
+    onDone: () => {},
+    onError: () => {},
+    onStopped: () => {},
+  };
+  speakSwedish('Hej Sverige', callbacks);
+  if (
+    speechEvents[0]?.options?.onDone === callbacks.onDone &&
+    speechEvents[0]?.options?.onError === callbacks.onError &&
+    speechEvents[0]?.options?.onStopped === callbacks.onStopped
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must forward lifecycle callbacks to Expo Speech');
+  }
+
+  resetSpeechEvents();
+  let errorCallbackCount = 0;
+  let callbackError = null;
+  speechMock.speak = () => {
+    throw new Error('speech boom');
+  };
+  console.warn = () => {};
+  speakSwedish('Hej Sverige', {
+    onError: (error) => {
+      errorCallbackCount += 1;
+      callbackError = error;
+    },
+  });
+  console.warn = originalWarn;
+  speechMock.speak = originalSpeak;
+  if (
+    errorCallbackCount === 1 &&
+    callbackError instanceof Error &&
+    callbackError.message === 'speech boom'
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must call onError once when Speech.speak throws synchronously');
+  }
+
+  resetSpeechEvents();
   stopSpeech();
   const stopEvent = speechEvents[0];
   if (speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop') {
@@ -15538,6 +15659,9 @@ function validateSpeechRuntimeParity() {
     reject('stopSpeech must call the Expo Speech stop handler');
   }
 
+  speechMock.speak = originalSpeak;
+  speechMock.stop = originalStop;
+  console.warn = originalWarn;
   resetSpeechEvents();
 
   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
