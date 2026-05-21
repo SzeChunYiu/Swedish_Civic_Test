@@ -41,8 +41,7 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
         const isIntentionallyHidden =
           tag.includes('accessible={false}') &&
-          (tag.includes('importantForAccessibility="no"') ||
-            tag.includes('importantForAccessibility="no-hide-descendants"'));
+          tag.includes('importantForAccessibility="no-hide-descendants"');
 
         if (isIntentionallyHidden) return;
 
@@ -98,11 +97,10 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /minWidth:\s*space\[6\]/);
 });
 
-test('LanguagePicker trigger and menu rows expose popup state semantics', () => {
+test('LanguagePicker menu rows expose menu-item state semantics', () => {
   const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
 
   assert.match(source, /aria-haspopup="menu"/);
-  assert.match(source, /aria-expanded=\{open\}/);
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
@@ -112,6 +110,40 @@ test('LanguagePicker trigger and menu rows expose popup state semantics', () => 
     source,
     /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
   );
+});
+
+test('LanguagePicker menu exposes modal containment and title description semantics', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
+
+  assert.match(source, /useId/);
+  assert.match(source, /const menuTitleId =/);
+  assert.match(source, /const menuDescriptionId =/);
+  assert.match(source, /'aria-modal': true/);
+  assert.match(source, /'aria-labelledby': menuTitleId/);
+  assert.match(source, /'aria-describedby': menuDescriptionId/);
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(source, /accessibilityHint=\{copy\.subtitle\}/);
+  assert.match(source, /nativeID=\{menuTitleId\}/);
+  assert.match(source, /nativeID=\{menuDescriptionId\}/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
+});
+
+test('LanguagePicker close control uses a compact icon instead of visible x text', () => {
+  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
+  const iconSource = fs.readFileSync(
+    path.join(ROOT, 'components', 'ui', 'icons', 'CloseIcon.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /import \{ CloseIcon \} from '\.\/icons\/CloseIcon';/);
+  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
+  assert.match(source, /accessibilityRole="button"/);
+  assert.match(source, /<CloseIcon color=\{colors\.textSecondary\} size=\{closeIconSize\} \/>/);
+  assert.match(source, /minHeight:\s*44/);
+  assert.match(source, /minWidth:\s*44/);
+  assert.doesNotMatch(source, /<Text[^>]*>\s*x\s*<\/Text>/i);
+  assert.match(iconSource, /testID="language-picker-close-icon"/);
+  assert.match(iconSource, /importantForAccessibility="no-hide-descendants"/);
 });
 
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
