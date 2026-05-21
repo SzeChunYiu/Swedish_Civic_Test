@@ -1944,7 +1944,7 @@
       opts: [
         {
           en: 'Politicians do not have to follow the result',
-          sv: 'Politikerna måste inte följa resultatet',
+          sv: 'Politikerna behöver inte följa resultatet',
           'zh-Hant': '政治人物不一定必須遵循結果',
           'zh-Hans': '政治人物不一定必须遵循结果',
           ar: 'لا يجب على السياسيين بالضرورة اتباع النتيجة',
@@ -2002,7 +2002,7 @@
       answer: 0,
       why: {
         en: 'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
-        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
         'zh-Hant':
           '公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。',
         'zh-Hans':
@@ -10018,8 +10018,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Where is Sweden located?',
-        sv: 'Var ligger Sverige?',
+        en: 'Which answer best matches? Where is Sweden located?',
+        sv: 'Vilket svar stämmer bäst? Var ligger Sverige?',
       },
       opts: [
         {
@@ -10168,8 +10168,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Where is Sweden located?',
-        sv: 'Var ligger Sverige?',
+        en: 'Choose the correct option: Where is Sweden located?',
+        sv: 'Välj rätt alternativ: Var ligger Sverige?',
       },
       opts: [
         {
@@ -10402,8 +10402,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
-        sv: 'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+        en: 'Which answer best matches? Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+        sv: 'Vilket svar stämmer bäst? Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
       },
       opts: [
         {
@@ -10573,8 +10573,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
-        sv: 'Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
+        en: 'Choose the correct option: Approximately how far does Sweden stretch from Treriksröset to Smygehuk?',
+        sv: 'Välj rätt alternativ: Ungefär hur långt sträcker sig Sverige från Treriksröset till Smygehuk?',
       },
       opts: [
         {
@@ -10655,8 +10655,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "What is the sea along Sweden's eastern coast called?",
-        sv: 'Vad heter havet vid Sveriges östra kust?',
+        en: "Which answer best matches? What is the sea along Sweden's eastern coast called?",
+        sv: 'Vilket svar stämmer bäst? Vad heter havet vid Sveriges östra kust?',
       },
       opts: [
         {
@@ -10805,8 +10805,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "What is the sea along Sweden's eastern coast called?",
-        sv: 'Vad heter havet vid Sveriges östra kust?',
+        en: "Choose the correct option: What is the sea along Sweden's eastern coast called?",
+        sv: 'Välj rätt alternativ: Vad heter havet vid Sveriges östra kust?',
       },
       opts: [
         {
@@ -10887,8 +10887,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "Which islands are Sweden's two largest?",
-        sv: 'Vilka öar är Sveriges två största?',
+        en: "Which answer best matches? Which islands are Sweden's two largest?",
+        sv: 'Vilket svar stämmer bäst? Vilka öar är Sveriges två största?',
       },
       opts: [
         {
@@ -11037,8 +11037,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "Which islands are Sweden's two largest?",
-        sv: 'Vilka öar är Sveriges två största?',
+        en: "Choose the correct option: Which islands are Sweden's two largest?",
+        sv: 'Välj rätt alternativ: Vilka öar är Sveriges två största?',
       },
       opts: [
         {
@@ -11271,8 +11271,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "What is the name of Sweden's highest mountain?",
-        sv: 'Vad heter Sveriges högsta berg?',
+        en: "Which answer best matches? What is the name of Sweden's highest mountain?",
+        sv: 'Vilket svar stämmer bäst? Vad heter Sveriges högsta berg?',
       },
       opts: [
         {
@@ -11421,8 +11421,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "What is the name of Sweden's highest mountain?",
-        sv: 'Vad heter Sveriges högsta berg?',
+        en: "Choose the correct option: What is the name of Sweden's highest mountain?",
+        sv: 'Välj rätt alternativ: Vad heter Sveriges högsta berg?',
       },
       opts: [
         {
@@ -11503,8 +11503,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "Which are Sweden's three largest lakes?",
-        sv: 'Vilka är Sveriges tre största sjöar?',
+        en: "Which answer best matches? Which are Sweden's three largest lakes?",
+        sv: 'Vilket svar stämmer bäst? Vilka är Sveriges tre största sjöar?',
       },
       opts: [
         {
@@ -11677,8 +11677,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: "Which are Sweden's three largest lakes?",
-        sv: 'Vilka är Sveriges tre största sjöar?',
+        en: "Choose the correct option: Which are Sweden's three largest lakes?",
+        sv: 'Välj rätt alternativ: Vilka är Sveriges tre största sjöar?',
       },
       opts: [
         {
@@ -11767,8 +11767,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Approximately how many people live in Sweden?',
-        sv: 'Ungefär hur många människor bor i Sverige?',
+        en: 'Which answer best matches? Approximately how many people live in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Ungefär hur många människor bor i Sverige?',
       },
       opts: [
         {
@@ -11917,8 +11917,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Approximately how many people live in Sweden?',
-        sv: 'Ungefär hur många människor bor i Sverige?',
+        en: 'Choose the correct option: Approximately how many people live in Sweden?',
+        sv: 'Välj rätt alternativ: Ungefär hur många människor bor i Sverige?',
       },
       opts: [
         {
@@ -11999,8 +11999,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Which natural resources are important in Sweden?',
-        sv: 'Vilka naturresurser är viktiga i Sverige?',
+        en: 'Which answer best matches? Which natural resources are important in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilka naturresurser är viktiga i Sverige?',
       },
       opts: [
         {
@@ -12163,8 +12163,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'Which natural resources are important in Sweden?',
-        sv: 'Vilka naturresurser är viktiga i Sverige?',
+        en: 'Choose the correct option: Which natural resources are important in Sweden?',
+        sv: 'Välj rätt alternativ: Vilka naturresurser är viktiga i Sverige?',
       },
       opts: [
         {
@@ -12245,8 +12245,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What does democracy mean?',
-        sv: 'Vad betyder demokrati?',
+        en: 'Which answer best matches? What does democracy mean?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder demokrati?',
       },
       opts: [
         {
@@ -12395,8 +12395,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What does democracy mean?',
-        sv: 'Vad betyder demokrati?',
+        en: 'Choose the correct option: What does democracy mean?',
+        sv: 'Välj rätt alternativ: Vad betyder demokrati?',
       },
       opts: [
         {
@@ -12477,8 +12477,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which of the following is part of free elections in a democracy?',
-        sv: 'Vilket av följande ingår i fria val i en demokrati?',
+        en: 'Which answer best matches? Which of the following is part of free elections in a democracy?',
+        sv: 'Vilket svar stämmer bäst? Vilket av följande ingår i fria val i en demokrati?',
       },
       opts: [
         {
@@ -12627,8 +12627,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which of the following is part of free elections in a democracy?',
-        sv: 'Vilket av följande ingår i fria val i en demokrati?',
+        en: 'Choose the correct option: Which of the following is part of free elections in a democracy?',
+        sv: 'Välj rätt alternativ: Vilket av följande ingår i fria val i en demokrati?',
       },
       opts: [
         {
@@ -12709,8 +12709,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which is a way to influence and participate in society?',
-        sv: 'Vilket är ett sätt att påverka och delta i samhället?',
+        en: 'Which answer best matches? Which is a way to influence and participate in society?',
+        sv: 'Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?',
       },
       opts: [
         {
@@ -12859,8 +12859,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which is a way to influence and participate in society?',
-        sv: 'Vilket är ett sätt att påverka och delta i samhället?',
+        en: 'Choose the correct option: Which is a way to influence and participate in society?',
+        sv: 'Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?',
       },
       opts: [
         {
@@ -12941,8 +12941,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
-        sv: 'Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
+        en: 'Which answer best matches? What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
+        sv: 'Vilket svar stämmer bäst? Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
       },
       opts: [
         {
@@ -13091,8 +13091,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
-        sv: 'Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
+        en: 'Choose the correct option: What is it called when laws apply equally to everyone and no one can be convicted without a fair trial?',
+        sv: 'Välj rätt alternativ: Vad kallas det när lagarna gäller lika för alla och ingen får dömas utan en rättvis rättegång?',
       },
       opts: [
         {
@@ -13173,8 +13173,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'How can a low voter turnout affect democracy?',
-        sv: 'Hur kan ett lågt valdeltagande påverka demokratin?',
+        en: 'Which answer best matches? How can a low voter turnout affect democracy?',
+        sv: 'Vilket svar stämmer bäst? Hur kan ett lågt valdeltagande påverka demokratin?',
       },
       opts: [
         {
@@ -13341,8 +13341,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'How can a low voter turnout affect democracy?',
-        sv: 'Hur kan ett lågt valdeltagande påverka demokratin?',
+        en: 'Choose the correct option: How can a low voter turnout affect democracy?',
+        sv: 'Välj rätt alternativ: Hur kan ett lågt valdeltagande påverka demokratin?',
       },
       opts: [
         {
@@ -13429,8 +13429,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: "How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
-        sv: 'Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?',
+        en: "Which answer best matches? How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
+        sv: 'Vilket svar stämmer bäst? Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?',
       },
       opts: [
         {
@@ -13597,8 +13597,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: "How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
-        sv: 'Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?',
+        en: "Choose the correct option: How do citizens choose members of the Riksdag in Sweden's parliamentary representative democracy?",
+        sv: 'Välj rätt alternativ: Hur väljer medborgarna ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati?',
       },
       opts: [
         {
@@ -13679,8 +13679,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'How many members does the Riksdag have?',
-        sv: 'Hur många ledamöter har riksdagen?',
+        en: 'Which answer best matches? How many members does the Riksdag have?',
+        sv: 'Vilket svar stämmer bäst? Hur många ledamöter har riksdagen?',
       },
       opts: [
         {
@@ -13829,8 +13829,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'How many members does the Riksdag have?',
-        sv: 'Hur många ledamöter har riksdagen?',
+        en: 'Choose the correct option: How many members does the Riksdag have?',
+        sv: 'Välj rätt alternativ: Hur många ledamöter har riksdagen?',
       },
       opts: [
         {
@@ -13911,8 +13911,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Who chooses the prime minister?',
-        sv: 'Vem väljer statsministern?',
+        en: 'Which answer best matches? Who chooses the prime minister?',
+        sv: 'Vilket svar stämmer bäst? Vem väljer statsministern?',
       },
       opts: [
         {
@@ -14061,8 +14061,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Who chooses the prime minister?',
-        sv: 'Vem väljer statsministern?',
+        en: 'Choose the correct option: Who chooses the prime minister?',
+        sv: 'Välj rätt alternativ: Vem väljer statsministern?',
       },
       opts: [
         {
@@ -14143,8 +14143,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How old must a person be to have the right to vote?',
-        sv: 'Hur gammal måste man ha fyllt för att ha rösträtt?',
+        en: 'Which answer best matches? How old must a person be to have the right to vote?',
+        sv: 'Vilket svar stämmer bäst? Hur gammal måste man ha fyllt för att ha rösträtt?',
       },
       opts: [
         {
@@ -14293,8 +14293,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How old must a person be to have the right to vote?',
-        sv: 'Hur gammal måste man ha fyllt för att ha rösträtt?',
+        en: 'Choose the correct option: How old must a person be to have the right to vote?',
+        sv: 'Välj rätt alternativ: Hur gammal måste man ha fyllt för att ha rösträtt?',
       },
       opts: [
         {
@@ -14375,13 +14375,13 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that referendums in Sweden are advisory?',
-        sv: 'Vad betyder det att folkomröstningar i Sverige är rådgivande?',
+        en: 'Which answer best matches? What does it mean that referendums in Sweden are advisory?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder det att folkomröstningar i Sverige är rådgivande?',
       },
       opts: [
         {
           en: 'Politicians do not have to follow the result',
-          sv: 'Politikerna måste inte följa resultatet',
+          sv: 'Politikerna behöver inte följa resultatet',
           'zh-Hant': '政治人物不一定必須遵循結果',
           'zh-Hans': '政治人物不一定必须遵循结果',
           ar: 'لا يجب على السياسيين بالضرورة اتباع النتيجة',
@@ -14439,7 +14439,7 @@
       answer: 0,
       why: {
         en: 'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
-        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
       },
       source: {
         title: 'Sverige i fokus',
@@ -14458,7 +14458,7 @@
       type: 'true_false',
       q: {
         en: 'That referendums in Sweden are advisory means politicians do not have to follow the result.',
-        sv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+        sv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
       },
       opts: [
         {
@@ -14473,7 +14473,7 @@
       answer: 0,
       why: {
         en: 'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
-        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
       },
       source: {
         title: 'Sverige i fokus',
@@ -14492,7 +14492,7 @@
       type: 'true_false',
       q: {
         en: 'That referendums in Sweden are advisory means politicians must always follow the result.',
-        sv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste alltid följa resultatet.',
+        sv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
       },
       opts: [
         {
@@ -14507,7 +14507,7 @@
       answer: 1,
       why: {
         en: 'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
-        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
       },
       source: {
         title: 'Sverige i fokus',
@@ -14525,13 +14525,13 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that referendums in Sweden are advisory?',
-        sv: 'Vad betyder det att folkomröstningar i Sverige är rådgivande?',
+        en: 'Choose the correct option: What does it mean that referendums in Sweden are advisory?',
+        sv: 'Välj rätt alternativ: Vad betyder det att folkomröstningar i Sverige är rådgivande?',
       },
       opts: [
         {
           en: 'Politicians do not have to follow the result',
-          sv: 'Politikerna måste inte följa resultatet',
+          sv: 'Politikerna behöver inte följa resultatet',
           'zh-Hant': '政治人物不一定必須遵循結果',
           'zh-Hans': '政治人物不一定必须遵循结果',
           ar: 'لا يجب على السياسيين بالضرورة اتباع النتيجة',
@@ -14589,7 +14589,7 @@
       answer: 0,
       why: {
         en: 'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
-        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna måste inte följa resultatet.',
+        sv: 'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
       },
       source: {
         title: 'Sverige i fokus',
@@ -14607,8 +14607,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which three levels share political responsibility in Sweden?',
-        sv: 'Vilka tre nivåer delar det politiska ansvaret i Sverige?',
+        en: 'Which answer best matches? Which three levels share political responsibility in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilka tre nivåer delar det politiska ansvaret i Sverige?',
       },
       opts: [
         {
@@ -14775,8 +14775,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which three levels share political responsibility in Sweden?',
-        sv: 'Vilka tre nivåer delar det politiska ansvaret i Sverige?',
+        en: 'Choose the correct option: Which three levels share political responsibility in Sweden?',
+        sv: 'Välj rätt alternativ: Vilka tre nivåer delar det politiska ansvaret i Sverige?',
       },
       opts: [
         {
@@ -14857,8 +14857,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which of the following tasks belongs to the Riksdag?',
-        sv: 'Vilken av följande uppgifter har riksdagen?',
+        en: 'Which answer best matches? Which of the following tasks belongs to the Riksdag?',
+        sv: 'Vilket svar stämmer bäst? Vilken av följande uppgifter har riksdagen?',
       },
       opts: [
         {
@@ -15007,8 +15007,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which of the following tasks belongs to the Riksdag?',
-        sv: 'Vilken av följande uppgifter har riksdagen?',
+        en: 'Choose the correct option: Which of the following tasks belongs to the Riksdag?',
+        sv: 'Välj rätt alternativ: Vilken av följande uppgifter har riksdagen?',
       },
       opts: [
         {
@@ -15241,8 +15241,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes government agencies?',
-        sv: 'Vilket påstående beskriver statliga myndigheter?',
+        en: 'Which answer best matches? Which statement describes government agencies?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver statliga myndigheter?',
       },
       opts: [
         {
@@ -15391,8 +15391,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes government agencies?',
-        sv: 'Vilket påstående beskriver statliga myndigheter?',
+        en: 'Choose the correct option: Which statement describes government agencies?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver statliga myndigheter?',
       },
       opts: [
         {
@@ -15473,8 +15473,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: "What is the foremost task of Sweden's regions?",
-        sv: 'Vilken är regionernas främsta uppgift i Sverige?',
+        en: "Which answer best matches? What is the foremost task of Sweden's regions?",
+        sv: 'Vilket svar stämmer bäst? Vilken är regionernas främsta uppgift i Sverige?',
       },
       opts: [
         {
@@ -15623,8 +15623,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: "What is the foremost task of Sweden's regions?",
-        sv: 'Vilken är regionernas främsta uppgift i Sverige?',
+        en: "Choose the correct option: What is the foremost task of Sweden's regions?",
+        sv: 'Välj rätt alternativ: Vilken är regionernas främsta uppgift i Sverige?',
       },
       opts: [
         {
@@ -15705,8 +15705,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which everyday services are municipalities responsible for?',
-        sv: 'Vilka vardagstjänster ansvarar kommuner för?',
+        en: 'Which answer best matches? Which everyday services are municipalities responsible for?',
+        sv: 'Vilket svar stämmer bäst? Vilka vardagstjänster ansvarar kommuner för?',
       },
       opts: [
         {
@@ -15873,8 +15873,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'Which everyday services are municipalities responsible for?',
-        sv: 'Vilka vardagstjänster ansvarar kommuner för?',
+        en: 'Choose the correct option: Which everyday services are municipalities responsible for?',
+        sv: 'Välj rätt alternativ: Vilka vardagstjänster ansvarar kommuner för?',
       },
       opts: [
         {
@@ -15955,8 +15955,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that Sweden is a constitutional monarchy?',
-        sv: 'Vad betyder det att Sverige är en konstitutionell monarki?',
+        en: 'Which answer best matches? What does it mean that Sweden is a constitutional monarchy?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder det att Sverige är en konstitutionell monarki?',
       },
       opts: [
         {
@@ -16123,8 +16123,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that Sweden is a constitutional monarchy?',
-        sv: 'Vad betyder det att Sverige är en konstitutionell monarki?',
+        en: 'Choose the correct option: What does it mean that Sweden is a constitutional monarchy?',
+        sv: 'Välj rätt alternativ: Vad betyder det att Sverige är en konstitutionell monarki?',
       },
       opts: [
         {
@@ -16363,8 +16363,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
-        sv: 'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
+        en: 'Which answer best matches? How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
       },
       opts: [
         {
@@ -16531,8 +16531,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
-        sv: 'Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
+        en: 'Choose the correct option: How often are elections to the Riksdag, regional councils, and municipal councils held in Sweden?',
+        sv: 'Välj rätt alternativ: Hur ofta hålls val till riksdag, regionfullmäktige och kommunfullmäktige i Sverige?',
       },
       opts: [
         {
@@ -16619,8 +16619,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Which requirements apply to voting in Sweden’s Riksdag election?',
-        sv: 'Vilka krav gäller för att rösta i Sveriges riksdagsval?',
+        en: 'Which answer best matches? Which requirements apply to voting in Sweden’s Riksdag election?',
+        sv: 'Vilket svar stämmer bäst? Vilka krav gäller för att rösta i Sveriges riksdagsval?',
       },
       opts: [
         {
@@ -16781,8 +16781,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Which requirements apply to voting in Sweden’s Riksdag election?',
-        sv: 'Vilka krav gäller för att rösta i Sveriges riksdagsval?',
+        en: 'Choose the correct option: Which requirements apply to voting in Sweden’s Riksdag election?',
+        sv: 'Välj rätt alternativ: Vilka krav gäller för att rösta i Sveriges riksdagsval?',
       },
       opts: [
         {
@@ -17015,8 +17015,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Why do voters vote behind a screen at the polling station?',
-        sv: 'Varför röstar väljare bakom en skärm i vallokalen?',
+        en: 'Which answer best matches? Why do voters vote behind a screen at the polling station?',
+        sv: 'Vilket svar stämmer bäst? Varför röstar väljare bakom en skärm i vallokalen?',
       },
       opts: [
         {
@@ -17165,8 +17165,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Why do voters vote behind a screen at the polling station?',
-        sv: 'Varför röstar väljare bakom en skärm i vallokalen?',
+        en: 'Choose the correct option: Why do voters vote behind a screen at the polling station?',
+        sv: 'Välj rätt alternativ: Varför röstar väljare bakom en skärm i vallokalen?',
       },
       opts: [
         {
@@ -17247,8 +17247,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What do people in a political party have in common?',
-        sv: 'Vad har människor i ett politiskt parti gemensamt?',
+        en: 'Which answer best matches? What do people in a political party have in common?',
+        sv: 'Vilket svar stämmer bäst? Vad har människor i ett politiskt parti gemensamt?',
       },
       opts: [
         {
@@ -17415,8 +17415,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What do people in a political party have in common?',
-        sv: 'Vad har människor i ett politiskt parti gemensamt?',
+        en: 'Choose the correct option: What do people in a political party have in common?',
+        sv: 'Välj rätt alternativ: Vad har människor i ett politiskt parti gemensamt?',
       },
       opts: [
         {
@@ -17503,8 +17503,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What happens in a proportional election if a party receives 20 percent of the votes?',
-        sv: 'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+        en: 'Which answer best matches? What happens in a proportional election if a party receives 20 percent of the votes?',
+        sv: 'Vilket svar stämmer bäst? Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
       },
       opts: [
         {
@@ -17665,8 +17665,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What happens in a proportional election if a party receives 20 percent of the votes?',
-        sv: 'Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
+        en: 'Choose the correct option: What happens in a proportional election if a party receives 20 percent of the votes?',
+        sv: 'Välj rätt alternativ: Vad händer i ett proportionellt val om ett parti får 20 procent av rösterna?',
       },
       opts: [
         {
@@ -17747,8 +17747,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What minimum share of votes must a party receive to enter the Riksdag?',
-        sv: 'Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
+        en: 'Which answer best matches? What minimum share of votes must a party receive to enter the Riksdag?',
+        sv: 'Vilket svar stämmer bäst? Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
       },
       opts: [
         {
@@ -17897,8 +17897,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What minimum share of votes must a party receive to enter the Riksdag?',
-        sv: 'Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
+        en: 'Choose the correct option: What minimum share of votes must a party receive to enter the Riksdag?',
+        sv: 'Välj rätt alternativ: Hur stor andel av rösterna måste ett parti minst få för att komma in i riksdagen?',
       },
       opts: [
         {
@@ -17979,8 +17979,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: "Which list contains only Sweden's four constitutional laws?",
-        sv: 'Vilken lista innehåller bara Sveriges fyra grundlagar?',
+        en: "Which answer best matches? Which list contains only Sweden's four constitutional laws?",
+        sv: 'Vilket svar stämmer bäst? Vilken lista innehåller bara Sveriges fyra grundlagar?',
       },
       opts: [
         {
@@ -18141,8 +18141,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: "Which list contains only Sweden's four constitutional laws?",
-        sv: 'Vilken lista innehåller bara Sveriges fyra grundlagar?',
+        en: "Choose the correct option: Which list contains only Sweden's four constitutional laws?",
+        sv: 'Välj rätt alternativ: Vilken lista innehåller bara Sveriges fyra grundlagar?',
       },
       opts: [
         {
@@ -18223,8 +18223,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the Instrument of Government say about public power in Sweden?',
-        sv: 'Vad säger regeringsformen om offentlig makt i Sverige?',
+        en: 'Which answer best matches? What does the Instrument of Government say about public power in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad säger regeringsformen om offentlig makt i Sverige?',
       },
       opts: [
         {
@@ -18391,8 +18391,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the Instrument of Government say about public power in Sweden?',
-        sv: 'Vad säger regeringsformen om offentlig makt i Sverige?',
+        en: 'Choose the correct option: What does the Instrument of Government say about public power in Sweden?',
+        sv: 'Välj rätt alternativ: Vad säger regeringsformen om offentlig makt i Sverige?',
       },
       opts: [
         {
@@ -18479,8 +18479,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the Act of Succession regulate?',
-        sv: 'Vad reglerar successionsordningen?',
+        en: 'Which answer best matches? What does the Act of Succession regulate?',
+        sv: 'Vilket svar stämmer bäst? Vad reglerar successionsordningen?',
       },
       opts: [
         {
@@ -18629,8 +18629,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the Act of Succession regulate?',
-        sv: 'Vad reglerar successionsordningen?',
+        en: 'Choose the correct option: What does the Act of Succession regulate?',
+        sv: 'Välj rätt alternativ: Vad reglerar successionsordningen?',
       },
       opts: [
         {
@@ -18711,8 +18711,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the right of public access mean?',
-        sv: 'Vad innebär allemansrätten?',
+        en: 'Which answer best matches? What does the right of public access mean?',
+        sv: 'Vilket svar stämmer bäst? Vad innebär allemansrätten?',
       },
       opts: [
         {
@@ -18879,8 +18879,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What does the right of public access mean?',
-        sv: 'Vad innebär allemansrätten?',
+        en: 'Choose the correct option: What does the right of public access mean?',
+        sv: 'Välj rätt alternativ: Vad innebär allemansrätten?',
       },
       opts: [
         {
@@ -18967,8 +18967,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which authorities are part of the Swedish justice system?',
-        sv: 'Vilka myndigheter ingår i det svenska rättsväsendet?',
+        en: 'Which answer best matches? Which authorities are part of the Swedish justice system?',
+        sv: 'Vilket svar stämmer bäst? Vilka myndigheter ingår i det svenska rättsväsendet?',
       },
       opts: [
         {
@@ -19117,8 +19117,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which authorities are part of the Swedish justice system?',
-        sv: 'Vilka myndigheter ingår i det svenska rättsväsendet?',
+        en: 'Choose the correct option: Which authorities are part of the Swedish justice system?',
+        sv: 'Välj rätt alternativ: Vilka myndigheter ingår i det svenska rättsväsendet?',
       },
       opts: [
         {
@@ -19199,8 +19199,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes legal certainty in Sweden?',
-        sv: 'Vilket påstående beskriver rättssäkerhet i Sverige?',
+        en: 'Which answer best matches? Which statement describes legal certainty in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver rättssäkerhet i Sverige?',
       },
       opts: [
         {
@@ -19321,8 +19321,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes legal certainty in Sweden?',
-        sv: 'Vilket påstående beskriver rättssäkerhet i Sverige?',
+        en: 'Choose the correct option: Which statement describes legal certainty in Sweden?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver rättssäkerhet i Sverige?',
       },
       opts: [
         {
@@ -19363,8 +19363,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What applies to a person suspected of a crime in Sweden?',
-        sv: 'Vad gäller för en person som är misstänkt för brott i Sverige?',
+        en: 'Which answer best matches? What applies to a person suspected of a crime in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gäller för en person som är misstänkt för brott i Sverige?',
       },
       opts: [
         {
@@ -19485,8 +19485,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'What applies to a person suspected of a crime in Sweden?',
-        sv: 'Vad gäller för en person som är misstänkt för brott i Sverige?',
+        en: 'Choose the correct option: What applies to a person suspected of a crime in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gäller för en person som är misstänkt för brott i Sverige?',
       },
       opts: [
         {
@@ -19527,8 +19527,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes the role of the police in Sweden?',
-        sv: 'Vilket påstående beskriver polisens uppgift i Sverige?',
+        en: 'Which answer best matches? Which statement describes the role of the police in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver polisens uppgift i Sverige?',
       },
       opts: [
         {
@@ -19643,8 +19643,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes the role of the police in Sweden?',
-        sv: 'Vilket påstående beskriver polisens uppgift i Sverige?',
+        en: 'Choose the correct option: Which statement describes the role of the police in Sweden?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver polisens uppgift i Sverige?',
       },
       opts: [
         {
@@ -19685,8 +19685,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?',
-        sv: 'Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?',
+        en: 'Which answer best matches? From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?',
+        sv: 'Vilket svar stämmer bäst? Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?',
       },
       opts: [
         {
@@ -19813,8 +19813,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'single_choice',
       q: {
-        en: 'From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?',
-        sv: 'Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?',
+        en: 'Choose the correct option: From what age is a person in Sweden criminally responsible and able to be prosecuted for a crime under the main rule?',
+        sv: 'Välj rätt alternativ: Från vilken ålder är en person i Sverige enligt huvudregeln straffmyndig och kan bli åtalad för brott?',
       },
       opts: [
         {
@@ -19861,8 +19861,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What important roles do free media play in a democracy?',
-        sv: 'Vilka viktiga uppgifter har fria medier i en demokrati?',
+        en: 'Which answer best matches? What important roles do free media play in a democracy?',
+        sv: 'Vilket svar stämmer bäst? Vilka viktiga uppgifter har fria medier i en demokrati?',
       },
       opts: [
         {
@@ -19971,8 +19971,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What important roles do free media play in a democracy?',
-        sv: 'Vilka viktiga uppgifter har fria medier i en demokrati?',
+        en: 'Choose the correct option: What important roles do free media play in a democracy?',
+        sv: 'Välj rätt alternativ: Vilka viktiga uppgifter har fria medier i en demokrati?',
       },
       opts: [
         {
@@ -20013,8 +20013,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How does the principle of public access make it easier to scrutinize authorities?',
-        sv: 'Hur underlättar offentlighetsprincipen granskning av myndigheter?',
+        en: 'Which answer best matches? How does the principle of public access make it easier to scrutinize authorities?',
+        sv: 'Vilket svar stämmer bäst? Hur underlättar offentlighetsprincipen granskning av myndigheter?',
       },
       opts: [
         {
@@ -20141,8 +20141,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How does the principle of public access make it easier to scrutinize authorities?',
-        sv: 'Hur underlättar offentlighetsprincipen granskning av myndigheter?',
+        en: 'Choose the correct option: How does the principle of public access make it easier to scrutinize authorities?',
+        sv: 'Välj rätt alternativ: Hur underlättar offentlighetsprincipen granskning av myndigheter?',
       },
       opts: [
         {
@@ -20353,8 +20353,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Which three companies are called public service in Sweden?',
-        sv: 'Vilka tre företag kallas public service i Sverige?',
+        en: 'Which answer best matches? Which three companies are called public service in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilka tre företag kallas public service i Sverige?',
       },
       opts: [
         {
@@ -20463,8 +20463,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Which three companies are called public service in Sweden?',
-        sv: 'Vilka tre företag kallas public service i Sverige?',
+        en: 'Choose the correct option: Which three companies are called public service in Sweden?',
+        sv: 'Välj rätt alternativ: Vilka tre företag kallas public service i Sverige?',
       },
       opts: [
         {
@@ -20681,8 +20681,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What does it mean to be source-critical?',
-        sv: 'Vad betyder det att vara källkritisk?',
+        en: 'Which answer best matches? What does it mean to be source-critical?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?',
       },
       opts: [
         {
@@ -20809,8 +20809,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What does it mean to be source-critical?',
-        sv: 'Vad betyder det att vara källkritisk?',
+        en: 'Choose the correct option: What does it mean to be source-critical?',
+        sv: 'Välj rätt alternativ: Vad betyder det att vara källkritisk?',
       },
       opts: [
         {
@@ -20851,8 +20851,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'Why was the United Nations created after the Second World War?',
-        sv: 'Varför bildades Förenta nationerna efter andra världskriget?',
+        en: 'Which answer best matches? Why was the United Nations created after the Second World War?',
+        sv: 'Vilket svar stämmer bäst? Varför bildades Förenta nationerna efter andra världskriget?',
       },
       opts: [
         {
@@ -20961,8 +20961,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'Why was the United Nations created after the Second World War?',
-        sv: 'Varför bildades Förenta nationerna efter andra världskriget?',
+        en: 'Choose the correct option: Why was the United Nations created after the Second World War?',
+        sv: 'Välj rätt alternativ: Varför bildades Förenta nationerna efter andra världskriget?',
       },
       opts: [
         {
@@ -21155,8 +21155,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What does the goal of Sweden’s gender equality policy mean?',
-        sv: 'Vad innebär målet med Sveriges jämställdhetspolitik?',
+        en: 'Which answer best matches? What does the goal of Sweden’s gender equality policy mean?',
+        sv: 'Vilket svar stämmer bäst? Vad innebär målet med Sveriges jämställdhetspolitik?',
       },
       opts: [
         {
@@ -21265,8 +21265,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What does the goal of Sweden’s gender equality policy mean?',
-        sv: 'Vad innebär målet med Sveriges jämställdhetspolitik?',
+        en: 'Choose the correct option: What does the goal of Sweden’s gender equality policy mean?',
+        sv: 'Välj rätt alternativ: Vad innebär målet med Sveriges jämställdhetspolitik?',
       },
       opts: [
         {
@@ -21307,8 +21307,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to violence in close relationships and honour-related violence and oppression in Sweden?',
-        sv: 'Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?',
+        en: 'Which answer best matches? What applies to violence in close relationships and honour-related violence and oppression in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?',
       },
       opts: [
         {
@@ -21438,8 +21438,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to violence in close relationships and honour-related violence and oppression in Sweden?',
-        sv: 'Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?',
+        en: 'Choose the correct option: What applies to violence in close relationships and honour-related violence and oppression in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gäller för våld i nära relationer och hedersrelaterat våld och förtryck i Sverige?',
       },
       opts: [
         {
@@ -21487,8 +21487,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to buying sex in Sweden?',
-        sv: 'Vad gäller för att köpa sex i Sverige?',
+        en: 'Which answer best matches? What applies to buying sex in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gäller för att köpa sex i Sverige?',
       },
       opts: [
         {
@@ -21597,8 +21597,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to buying sex in Sweden?',
-        sv: 'Vad gäller för att köpa sex i Sverige?',
+        en: 'Choose the correct option: What applies to buying sex in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gäller för att köpa sex i Sverige?',
       },
       opts: [
         {
@@ -21639,8 +21639,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'Since what year has the Convention on the Rights of the Child been law in Sweden?',
-        sv: 'Sedan vilket år är barnkonventionen lag i Sverige?',
+        en: 'Which answer best matches? Since what year has the Convention on the Rights of the Child been law in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Sedan vilket år är barnkonventionen lag i Sverige?',
       },
       opts: [
         {
@@ -21749,8 +21749,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'Since what year has the Convention on the Rights of the Child been law in Sweden?',
-        sv: 'Sedan vilket år är barnkonventionen lag i Sverige?',
+        en: 'Choose the correct option: Since what year has the Convention on the Rights of the Child been law in Sweden?',
+        sv: 'Välj rätt alternativ: Sedan vilket år är barnkonventionen lag i Sverige?',
       },
       opts: [
         {
@@ -21791,8 +21791,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What did Sweden decide as the first country in the world in 1979?',
-        sv: 'Vad beslutade Sverige som första land i världen 1979?',
+        en: 'Which answer best matches? What did Sweden decide as the first country in the world in 1979?',
+        sv: 'Vilket svar stämmer bäst? Vad beslutade Sverige som första land i världen 1979?',
       },
       opts: [
         {
@@ -21919,8 +21919,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What did Sweden decide as the first country in the world in 1979?',
-        sv: 'Vad beslutade Sverige som första land i världen 1979?',
+        en: 'Choose the correct option: What did Sweden decide as the first country in the world in 1979?',
+        sv: 'Välj rätt alternativ: Vad beslutade Sverige som första land i världen 1979?',
       },
       opts: [
         {
@@ -21967,8 +21967,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: "Which groups are Sweden's five national minorities?",
-        sv: 'Vilka är Sveriges fem nationella minoriteter?',
+        en: "Which answer best matches? Which groups are Sweden's five national minorities?",
+        sv: 'Vilket svar stämmer bäst? Vilka är Sveriges fem nationella minoriteter?',
       },
       opts: [
         {
@@ -22089,8 +22089,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: "Which groups are Sweden's five national minorities?",
-        sv: 'Vilka är Sveriges fem nationella minoriteter?',
+        en: "Choose the correct option: Which groups are Sweden's five national minorities?",
+        sv: 'Välj rätt alternativ: Vilka är Sveriges fem nationella minoriteter?',
       },
       opts: [
         {
@@ -22131,8 +22131,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What is one task of the Sami Parliament?',
-        sv: 'Vilken uppgift har Sametinget?',
+        en: 'Which answer best matches? What is one task of the Sami Parliament?',
+        sv: 'Vilket svar stämmer bäst? Vilken uppgift har Sametinget?',
       },
       opts: [
         {
@@ -22253,8 +22253,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What is one task of the Sami Parliament?',
-        sv: 'Vilken uppgift har Sametinget?',
+        en: 'Choose the correct option: What is one task of the Sami Parliament?',
+        sv: 'Välj rätt alternativ: Vilken uppgift har Sametinget?',
       },
       opts: [
         {
@@ -22295,8 +22295,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to marriage between people of the same sex in Sweden?',
-        sv: 'Vad gäller för äktenskap mellan personer av samma kön i Sverige?',
+        en: 'Which answer best matches? What applies to marriage between people of the same sex in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gäller för äktenskap mellan personer av samma kön i Sverige?',
       },
       opts: [
         {
@@ -22417,8 +22417,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What applies to marriage between people of the same sex in Sweden?',
-        sv: 'Vad gäller för äktenskap mellan personer av samma kön i Sverige?',
+        en: 'Choose the correct option: What applies to marriage between people of the same sex in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gäller för äktenskap mellan personer av samma kön i Sverige?',
       },
       opts: [
         {
@@ -22459,8 +22459,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What is one role of the Equality Ombudsman (DO)?',
-        sv: 'Vad är en uppgift för Diskrimineringsombudsmannen (DO)?',
+        en: 'Which answer best matches? What is one role of the Equality Ombudsman (DO)?',
+        sv: 'Vilket svar stämmer bäst? Vad är en uppgift för Diskrimineringsombudsmannen (DO)?',
       },
       opts: [
         {
@@ -22587,8 +22587,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'single_choice',
       q: {
-        en: 'What is one role of the Equality Ombudsman (DO)?',
-        sv: 'Vad är en uppgift för Diskrimineringsombudsmannen (DO)?',
+        en: 'Choose the correct option: What is one role of the Equality Ombudsman (DO)?',
+        sv: 'Välj rätt alternativ: Vad är en uppgift för Diskrimineringsombudsmannen (DO)?',
       },
       opts: [
         {
@@ -22635,8 +22635,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What is meant by the public sector in Sweden?',
-        sv: 'Vad menas med offentlig sektor i Sverige?',
+        en: 'Which answer best matches? What is meant by the public sector in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad menas med offentlig sektor i Sverige?',
       },
       opts: [
         {
@@ -22745,8 +22745,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What is meant by the public sector in Sweden?',
-        sv: 'Vad menas med offentlig sektor i Sverige?',
+        en: 'Choose the correct option: What is meant by the public sector in Sweden?',
+        sv: 'Välj rätt alternativ: Vad menas med offentlig sektor i Sverige?',
       },
       opts: [
         {
@@ -22787,8 +22787,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: "What share of the workforce works in Sweden's private sector?",
-        sv: 'Hur stor del av arbetskraften jobbar i privat sektor i Sverige?',
+        en: "Which answer best matches? What share of the workforce works in Sweden's private sector?",
+        sv: 'Vilket svar stämmer bäst? Hur stor del av arbetskraften jobbar i privat sektor i Sverige?',
       },
       opts: [
         {
@@ -22909,8 +22909,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: "What share of the workforce works in Sweden's private sector?",
-        sv: 'Hur stor del av arbetskraften jobbar i privat sektor i Sverige?',
+        en: "Choose the correct option: What share of the workforce works in Sweden's private sector?",
+        sv: 'Välj rätt alternativ: Hur stor del av arbetskraften jobbar i privat sektor i Sverige?',
       },
       opts: [
         {
@@ -22951,8 +22951,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What do trade unions do in the labour market?',
-        sv: 'Vad gör fackförbund på arbetsmarknaden?',
+        en: 'Which answer best matches? What do trade unions do in the labour market?',
+        sv: 'Vilket svar stämmer bäst? Vad gör fackförbund på arbetsmarknaden?',
       },
       opts: [
         {
@@ -23073,8 +23073,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What do trade unions do in the labour market?',
-        sv: 'Vad gör fackförbund på arbetsmarknaden?',
+        en: 'Choose the correct option: What do trade unions do in the labour market?',
+        sv: 'Välj rätt alternativ: Vad gör fackförbund på arbetsmarknaden?',
       },
       opts: [
         {
@@ -23115,8 +23115,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'How are wages set in Sweden?',
-        sv: 'Hur bestäms löner i Sverige?',
+        en: 'Which answer best matches? How are wages set in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Hur bestäms löner i Sverige?',
       },
       opts: [
         {
@@ -23237,8 +23237,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'How are wages set in Sweden?',
-        sv: 'Hur bestäms löner i Sverige?',
+        en: 'Choose the correct option: How are wages set in Sweden?',
+        sv: 'Välj rätt alternativ: Hur bestäms löner i Sverige?',
       },
       opts: [
         {
@@ -23279,8 +23279,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'Why does Sweden have labour-market laws?',
-        sv: 'Varför finns lagar på arbetsmarknaden i Sverige?',
+        en: 'Which answer best matches? Why does Sweden have labour-market laws?',
+        sv: 'Vilket svar stämmer bäst? Varför finns lagar på arbetsmarknaden i Sverige?',
       },
       opts: [
         {
@@ -23407,8 +23407,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'Why does Sweden have labour-market laws?',
-        sv: 'Varför finns lagar på arbetsmarknaden i Sverige?',
+        en: 'Choose the correct option: Why does Sweden have labour-market laws?',
+        sv: 'Välj rätt alternativ: Varför finns lagar på arbetsmarknaden i Sverige?',
       },
       opts: [
         {
@@ -23449,8 +23449,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What support can A-kassan provide to unemployed members?',
-        sv: 'Vilket stöd kan A-kassan ge arbetslösa medlemmar?',
+        en: 'Which answer best matches? What support can A-kassan provide to unemployed members?',
+        sv: 'Vilket svar stämmer bäst? Vilket stöd kan A-kassan ge arbetslösa medlemmar?',
       },
       opts: [
         {
@@ -23565,8 +23565,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'What support can A-kassan provide to unemployed members?',
-        sv: 'Vilket stöd kan A-kassan ge arbetslösa medlemmar?',
+        en: 'Choose the correct option: What support can A-kassan provide to unemployed members?',
+        sv: 'Välj rätt alternativ: Vilket stöd kan A-kassan ge arbetslösa medlemmar?',
       },
       opts: [
         {
@@ -23607,8 +23607,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'How does the Swedish Enforcement Authority help with debts?',
-        sv: 'Hur hjälper Kronofogdemyndigheten till med skulder?',
+        en: 'Which answer best matches? How does the Swedish Enforcement Authority help with debts?',
+        sv: 'Vilket svar stämmer bäst? Hur hjälper Kronofogdemyndigheten till med skulder?',
       },
       opts: [
         {
@@ -23738,8 +23738,8 @@
       chapter: 'Ch. 08 · Labour market and personal finance',
       type: 'single_choice',
       q: {
-        en: 'How does the Swedish Enforcement Authority help with debts?',
-        sv: 'Hur hjälper Kronofogdemyndigheten till med skulder?',
+        en: 'Choose the correct option: How does the Swedish Enforcement Authority help with debts?',
+        sv: 'Välj rätt alternativ: Hur hjälper Kronofogdemyndigheten till med skulder?',
       },
       opts: [
         {
@@ -23787,8 +23787,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: "What role do taxes have in Sweden's welfare system?",
-        sv: 'Vilken roll har skatter i Sveriges välfärd?',
+        en: "Which answer best matches? What role do taxes have in Sweden's welfare system?",
+        sv: 'Vilket svar stämmer bäst? Vilken roll har skatter i Sveriges välfärd?',
       },
       opts: [
         {
@@ -23897,8 +23897,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: "What role do taxes have in Sweden's welfare system?",
-        sv: 'Vilken roll har skatter i Sveriges välfärd?',
+        en: "Choose the correct option: What role do taxes have in Sweden's welfare system?",
+        sv: 'Välj rätt alternativ: Vilken roll har skatter i Sveriges välfärd?',
       },
       opts: [
         {
@@ -23939,8 +23939,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Who pays tax in Sweden?',
-        sv: 'Vilka betalar skatt i Sverige?',
+        en: 'Which answer best matches? Who pays tax in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?',
       },
       opts: [
         {
@@ -24049,8 +24049,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Who pays tax in Sweden?',
-        sv: 'Vilka betalar skatt i Sverige?',
+        en: 'Choose the correct option: Who pays tax in Sweden?',
+        sv: 'Välj rätt alternativ: Vilka betalar skatt i Sverige?',
       },
       opts: [
         {
@@ -24091,8 +24091,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What does the state finance within higher education and research?',
-        sv: 'Vad finansierar staten inom högre utbildning och forskning?',
+        en: 'Which answer best matches? What does the state finance within higher education and research?',
+        sv: 'Vilket svar stämmer bäst? Vad finansierar staten inom högre utbildning och forskning?',
       },
       opts: [
         {
@@ -24222,8 +24222,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What does the state finance within higher education and research?',
-        sv: 'Vad finansierar staten inom högre utbildning och forskning?',
+        en: 'Choose the correct option: What does the state finance within higher education and research?',
+        sv: 'Välj rätt alternativ: Vad finansierar staten inom högre utbildning och forskning?',
       },
       opts: [
         {
@@ -24271,8 +24271,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: "What responsibility do Sweden's regions have within welfare?",
-        sv: 'Vilket ansvar har Sveriges regioner inom välfärden?',
+        en: "Which answer best matches? What responsibility do Sweden's regions have within welfare?",
+        sv: 'Vilket svar stämmer bäst? Vilket ansvar har Sveriges regioner inom välfärden?',
       },
       opts: [
         {
@@ -24381,8 +24381,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: "What responsibility do Sweden's regions have within welfare?",
-        sv: 'Vilket ansvar har Sveriges regioner inom välfärden?',
+        en: "Choose the correct option: What responsibility do Sweden's regions have within welfare?",
+        sv: 'Välj rätt alternativ: Vilket ansvar har Sveriges regioner inom välfärden?',
       },
       opts: [
         {
@@ -24423,8 +24423,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Which answer gives examples of municipal welfare?',
-        sv: 'Vilket svar ger exempel på kommunal välfärd?',
+        en: 'Which answer best matches? Which answer gives examples of municipal welfare?',
+        sv: 'Vilket svar stämmer bäst? Vilket svar ger exempel på kommunal välfärd?',
       },
       opts: [
         {
@@ -24545,8 +24545,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Which answer gives examples of municipal welfare?',
-        sv: 'Vilket svar ger exempel på kommunal välfärd?',
+        en: 'Choose the correct option: Which answer gives examples of municipal welfare?',
+        sv: 'Välj rätt alternativ: Vilket svar ger exempel på kommunal välfärd?',
       },
       opts: [
         {
@@ -24739,8 +24739,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Which statement describes Sweden two hundred years ago?',
-        sv: 'Vilket påstående beskriver Sverige för tvåhundra år sedan?',
+        en: 'Which answer best matches? Which statement describes Sweden two hundred years ago?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver Sverige för tvåhundra år sedan?',
       },
       opts: [
         {
@@ -24867,8 +24867,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Which statement describes Sweden two hundred years ago?',
-        sv: 'Vilket påstående beskriver Sverige för tvåhundra år sedan?',
+        en: 'Choose the correct option: Which statement describes Sweden two hundred years ago?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver Sverige för tvåhundra år sedan?',
       },
       opts: [
         {
@@ -24915,8 +24915,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Why did Sweden’s population grow during the 19th century?',
-        sv: 'Varför ökade Sveriges befolkning under 1800-talet?',
+        en: 'Which answer best matches? Why did Sweden’s population grow during the 19th century?',
+        sv: 'Vilket svar stämmer bäst? Varför ökade Sveriges befolkning under 1800-talet?',
       },
       opts: [
         {
@@ -25046,8 +25046,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Why did Sweden’s population grow during the 19th century?',
-        sv: 'Varför ökade Sveriges befolkning under 1800-talet?',
+        en: 'Choose the correct option: Why did Sweden’s population grow during the 19th century?',
+        sv: 'Välj rätt alternativ: Varför ökade Sveriges befolkning under 1800-talet?',
       },
       opts: [
         {
@@ -25095,8 +25095,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
-        sv: 'Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
+        en: 'Which answer best matches? Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
+        sv: 'Vilket svar stämmer bäst? Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
       },
       opts: [
         {
@@ -25205,8 +25205,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
-        sv: 'Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
+        en: 'Choose the correct option: Approximately how many Swedes emigrated to the United States between 1850 and 1920?',
+        sv: 'Välj rätt alternativ: Ungefär hur många svenskar utvandrade till USA mellan 1850 och 1920?',
       },
       opts: [
         {
@@ -25247,8 +25247,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What changed through the new constitution in 1809?',
-        sv: 'Vad förändrades genom den nya grundlagen år 1809?',
+        en: 'Which answer best matches? What changed through the new constitution in 1809?',
+        sv: 'Vilket svar stämmer bäst? Vad förändrades genom den nya grundlagen år 1809?',
       },
       opts: [
         {
@@ -25357,8 +25357,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What changed through the new constitution in 1809?',
-        sv: 'Vad förändrades genom den nya grundlagen år 1809?',
+        en: 'Choose the correct option: What changed through the new constitution in 1809?',
+        sv: 'Välj rätt alternativ: Vad förändrades genom den nya grundlagen år 1809?',
       },
       opts: [
         {
@@ -25399,8 +25399,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Which four popular movements were among the largest in Sweden during the 19th century?',
-        sv: 'Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
+        en: 'Which answer best matches? Which four popular movements were among the largest in Sweden during the 19th century?',
+        sv: 'Vilket svar stämmer bäst? Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
       },
       opts: [
         {
@@ -25509,8 +25509,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Which four popular movements were among the largest in Sweden during the 19th century?',
-        sv: 'Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
+        en: 'Choose the correct option: Which four popular movements were among the largest in Sweden during the 19th century?',
+        sv: 'Välj rätt alternativ: Vilka fyra folkrörelser var bland de största i Sverige under 1800-talet?',
       },
       opts: [
         {
@@ -25551,8 +25551,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
-        sv: 'Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+        en: 'Which answer best matches? In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
+        sv: 'Vilket svar stämmer bäst? Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
       },
       opts: [
         {
@@ -25661,8 +25661,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
-        sv: 'Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
+        en: 'Choose the correct option: In which year was the first Riksdag election held in which both women and men could vote and women could become members of the Riksdag?',
+        sv: 'Välj rätt alternativ: Vilket år hölls det första riksdagsvalet där både kvinnor och män fick rösta och kvinnor kunde bli riksdagsledamöter?',
       },
       opts: [
         {
@@ -25703,8 +25703,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What was the 1938 Saltsjöbaden Agreement important for?',
-        sv: 'Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
+        en: 'Which answer best matches? What was the 1938 Saltsjöbaden Agreement important for?',
+        sv: 'Vilket svar stämmer bäst? Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
       },
       opts: [
         {
@@ -25825,8 +25825,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What was the 1938 Saltsjöbaden Agreement important for?',
-        sv: 'Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
+        en: 'Choose the correct option: What was the 1938 Saltsjöbaden Agreement important for?',
+        sv: 'Välj rätt alternativ: Vad blev Saltsjöbadsavtalet från 1938 viktigt för?',
       },
       opts: [
         {
@@ -25867,8 +25867,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Why is the period after the Second World War often called the Swedish record years?',
-        sv: 'Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
+        en: 'Which answer best matches? Why is the period after the Second World War often called the Swedish record years?',
+        sv: 'Vilket svar stämmer bäst? Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
       },
       opts: [
         {
@@ -25977,8 +25977,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'Why is the period after the Second World War often called the Swedish record years?',
-        sv: 'Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
+        en: 'Choose the correct option: Why is the period after the Second World War often called the Swedish record years?',
+        sv: 'Välj rätt alternativ: Varför kallas tiden efter andra världskriget ofta de svenska rekordåren?',
       },
       opts: [
         {
@@ -26019,8 +26019,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What was the goal of the Million Programme during the 1960s?',
-        sv: 'Vad var miljonprogrammets mål under 1960-talet?',
+        en: 'Which answer best matches? What was the goal of the Million Programme during the 1960s?',
+        sv: 'Vilket svar stämmer bäst? Vad var miljonprogrammets mål under 1960-talet?',
       },
       opts: [
         {
@@ -26129,8 +26129,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What was the goal of the Million Programme during the 1960s?',
-        sv: 'Vad var miljonprogrammets mål under 1960-talet?',
+        en: 'Choose the correct option: What was the goal of the Million Programme during the 1960s?',
+        sv: 'Välj rätt alternativ: Vad var miljonprogrammets mål under 1960-talet?',
       },
       opts: [
         {
@@ -26171,8 +26171,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What has the digital revolution changed?',
-        sv: 'Vad har den digitala revolutionen förändrat?',
+        en: 'Which answer best matches? What has the digital revolution changed?',
+        sv: 'Vilket svar stämmer bäst? Vad har den digitala revolutionen förändrat?',
       },
       opts: [
         {
@@ -26299,8 +26299,8 @@
       chapter: "Ch. 10 · Sweden's modern history",
       type: 'single_choice',
       q: {
-        en: 'What has the digital revolution changed?',
-        sv: 'Vad har den digitala revolutionen förändrat?',
+        en: 'Choose the correct option: What has the digital revolution changed?',
+        sv: 'Välj rätt alternativ: Vad har den digitala revolutionen förändrat?',
       },
       opts: [
         {
@@ -26347,8 +26347,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "Through which two bodies does Sweden's Nordic cooperation mainly take place?",
-        sv: 'Genom vilka två organ sker Sveriges nordiska samarbete främst?',
+        en: "Which answer best matches? Through which two bodies does Sweden's Nordic cooperation mainly take place?",
+        sv: 'Vilket svar stämmer bäst? Genom vilka två organ sker Sveriges nordiska samarbete främst?',
       },
       opts: [
         {
@@ -26475,8 +26475,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "Through which two bodies does Sweden's Nordic cooperation mainly take place?",
-        sv: 'Genom vilka två organ sker Sveriges nordiska samarbete främst?',
+        en: "Choose the correct option: Through which two bodies does Sweden's Nordic cooperation mainly take place?",
+        sv: 'Välj rätt alternativ: Genom vilka två organ sker Sveriges nordiska samarbete främst?',
       },
       opts: [
         {
@@ -26523,8 +26523,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'In what year did Sweden become a member of the EU?',
-        sv: 'Vilket år blev Sverige medlem i EU?',
+        en: 'Which answer best matches? In what year did Sweden become a member of the EU?',
+        sv: 'Vilket svar stämmer bäst? Vilket år blev Sverige medlem i EU?',
       },
       opts: [
         {
@@ -26633,8 +26633,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'In what year did Sweden become a member of the EU?',
-        sv: 'Vilket år blev Sverige medlem i EU?',
+        en: 'Choose the correct option: In what year did Sweden become a member of the EU?',
+        sv: 'Välj rätt alternativ: Vilket år blev Sverige medlem i EU?',
       },
       opts: [
         {
@@ -26675,8 +26675,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "What do the EU's four freedoms mean?",
-        sv: 'Vad innebär EU:s fyra friheter?',
+        en: "Which answer best matches? What do the EU's four freedoms mean?",
+        sv: 'Vilket svar stämmer bäst? Vad innebär EU:s fyra friheter?',
       },
       opts: [
         {
@@ -26785,8 +26785,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "What do the EU's four freedoms mean?",
-        sv: 'Vad innebär EU:s fyra friheter?',
+        en: "Choose the correct option: What do the EU's four freedoms mean?",
+        sv: 'Välj rätt alternativ: Vad innebär EU:s fyra friheter?',
       },
       opts: [
         {
@@ -26827,8 +26827,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'What does the Council of Europe promote?',
-        sv: 'Vad arbetar Europarådet för?',
+        en: 'Which answer best matches? What does the Council of Europe promote?',
+        sv: 'Vilket svar stämmer bäst? Vad arbetar Europarådet för?',
       },
       opts: [
         {
@@ -26949,8 +26949,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'What does the Council of Europe promote?',
-        sv: 'Vad arbetar Europarådet för?',
+        en: 'Choose the correct option: What does the Council of Europe promote?',
+        sv: 'Välj rätt alternativ: Vad arbetar Europarådet för?',
       },
       opts: [
         {
@@ -26991,8 +26991,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'What does Sida work to do?',
-        sv: 'Vad arbetar Sida för?',
+        en: 'Which answer best matches? What does Sida work to do?',
+        sv: 'Vilket svar stämmer bäst? Vad arbetar Sida för?',
       },
       opts: [
         {
@@ -27101,8 +27101,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'What does Sida work to do?',
-        sv: 'Vad arbetar Sida för?',
+        en: 'Choose the correct option: What does Sida work to do?',
+        sv: 'Välj rätt alternativ: Vad arbetar Sida för?',
       },
       opts: [
         {
@@ -27143,8 +27143,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
-        sv: 'Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?',
+        en: "Which answer best matches? What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
+        sv: 'Vilket svar stämmer bäst? Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?',
       },
       opts: [
         {
@@ -27253,8 +27253,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: "What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
-        sv: 'Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?',
+        en: "Choose the correct option: What did Sweden and Finland choose to do after Russia's attack on Ukraine in 2022?",
+        sv: 'Välj rätt alternativ: Vad valde Sverige och Finland att göra efter Rysslands attack mot Ukraina 2022?',
       },
       opts: [
         {
@@ -27447,8 +27447,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that Sweden is a secular state?',
-        sv: 'Vad betyder det att Sverige är en sekulär stat?',
+        en: 'Which answer best matches? What does it mean that Sweden is a secular state?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder det att Sverige är en sekulär stat?',
       },
       opts: [
         {
@@ -27569,8 +27569,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What does it mean that Sweden is a secular state?',
-        sv: 'Vad betyder det att Sverige är en sekulär stat?',
+        en: 'Choose the correct option: What does it mean that Sweden is a secular state?',
+        sv: 'Välj rätt alternativ: Vad betyder det att Sverige är en sekulär stat?',
       },
       opts: [
         {
@@ -27611,8 +27611,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which law marked the final breakthrough for religious freedom in 1951?',
-        sv: 'Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
+        en: 'Which answer best matches? Which law marked the final breakthrough for religious freedom in 1951?',
+        sv: 'Vilket svar stämmer bäst? Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
       },
       opts: [
         {
@@ -27721,8 +27721,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which law marked the final breakthrough for religious freedom in 1951?',
-        sv: 'Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
+        en: 'Choose the correct option: Which law marked the final breakthrough for religious freedom in 1951?',
+        sv: 'Välj rätt alternativ: Vilken lag markerade religionsfrihetens slutliga genombrott 1951?',
       },
       opts: [
         {
@@ -27927,8 +27927,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which tradition does the Church of Sweden have historical roots in?',
-        sv: 'Vilken tradition har Svenska kyrkan historiska rötter i?',
+        en: 'Which answer best matches? Which tradition does the Church of Sweden have historical roots in?',
+        sv: 'Vilket svar stämmer bäst? Vilken tradition har Svenska kyrkan historiska rötter i?',
       },
       opts: [
         {
@@ -28049,8 +28049,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which tradition does the Church of Sweden have historical roots in?',
-        sv: 'Vilken tradition har Svenska kyrkan historiska rötter i?',
+        en: 'Choose the correct option: Which tradition does the Church of Sweden have historical roots in?',
+        sv: 'Välj rätt alternativ: Vilken tradition har Svenska kyrkan historiska rötter i?',
       },
       opts: [
         {
@@ -28091,8 +28091,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which religion is described as the second largest in Sweden?',
-        sv: 'Vilken religion beskrivs som den näst största i Sverige?',
+        en: 'Which answer best matches? Which religion is described as the second largest in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilken religion beskrivs som den näst största i Sverige?',
       },
       opts: [
         {
@@ -28201,8 +28201,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which religion is described as the second largest in Sweden?',
-        sv: 'Vilken religion beskrivs som den näst största i Sverige?',
+        en: 'Choose the correct option: Which religion is described as the second largest in Sweden?',
+        sv: 'Välj rätt alternativ: Vilken religion beskrivs som den näst största i Sverige?',
       },
       opts: [
         {
@@ -28243,8 +28243,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
-        sv: 'Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
+        en: 'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
       },
       opts: [
         {
@@ -28353,8 +28353,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
-        sv: 'Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
+        en: 'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är vanligt att göra på nyårsafton den 31 december i Sverige?',
       },
       opts: [
         {
@@ -28395,8 +28395,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What usually happens on Sweden’s National Day, 6 June?',
-        sv: 'Vad brukar hända på Sveriges nationaldag den 6 juni?',
+        en: 'Which answer best matches? What usually happens on Sweden’s National Day, 6 June?',
+        sv: 'Vilket svar stämmer bäst? Vad brukar hända på Sveriges nationaldag den 6 juni?',
       },
       opts: [
         {
@@ -28526,8 +28526,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What usually happens on Sweden’s National Day, 6 June?',
-        sv: 'Vad brukar hända på Sveriges nationaldag den 6 juni?',
+        en: 'Choose the correct option: What usually happens on Sweden’s National Day, 6 June?',
+        sv: 'Välj rätt alternativ: Vad brukar hända på Sveriges nationaldag den 6 juni?',
       },
       opts: [
         {
@@ -28575,8 +28575,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When is Midsummer Eve celebrated in Sweden?',
-        sv: 'När firas midsommarafton i Sverige?',
+        en: 'Which answer best matches? When is Midsummer Eve celebrated in Sweden?',
+        sv: 'Vilket svar stämmer bäst? När firas midsommarafton i Sverige?',
       },
       opts: [
         {
@@ -28699,8 +28699,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When is Midsummer Eve celebrated in Sweden?',
-        sv: 'När firas midsommarafton i Sverige?',
+        en: 'Choose the correct option: When is Midsummer Eve celebrated in Sweden?',
+        sv: 'Välj rätt alternativ: När firas midsommarafton i Sverige?',
       },
       opts: [
         {
@@ -28741,8 +28741,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is the Lucia celebration largely about in Sweden?',
-        sv: 'Vad handlar luciafirandet mycket om i Sverige?',
+        en: 'Which answer best matches? What is the Lucia celebration largely about in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad handlar luciafirandet mycket om i Sverige?',
       },
       opts: [
         {
@@ -28851,8 +28851,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is the Lucia celebration largely about in Sweden?',
-        sv: 'Vad handlar luciafirandet mycket om i Sverige?',
+        en: 'Choose the correct option: What is the Lucia celebration largely about in Sweden?',
+        sv: 'Välj rätt alternativ: Vad handlar luciafirandet mycket om i Sverige?',
       },
       opts: [
         {
@@ -28893,8 +28893,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?',
-        sv: 'Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?',
+        en: 'Which answer best matches? Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?',
+        sv: 'Vilket svar stämmer bäst? Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?',
       },
       opts: [
         {
@@ -29015,8 +29015,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?',
-        sv: 'Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?',
+        en: 'Choose the correct option: Which holiday is celebrated sometime in March or April and is connected with Good Friday and Easter Sunday?',
+        sv: 'Välj rätt alternativ: Vilken högtid firas någon gång i mars eller april och hör ihop med långfredagen och påskdagen?',
       },
       opts: [
         {
@@ -29057,8 +29057,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is typical of Walpurgis Night, 30 April, in Sweden?',
-        sv: 'Vad är typiskt för valborgsmässoafton den 30 april i Sverige?',
+        en: 'Which answer best matches? What is typical of Walpurgis Night, 30 April, in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är typiskt för valborgsmässoafton den 30 april i Sverige?',
       },
       opts: [
         {
@@ -29188,8 +29188,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is typical of Walpurgis Night, 30 April, in Sweden?',
-        sv: 'Vad är typiskt för valborgsmässoafton den 30 april i Sverige?',
+        en: 'Choose the correct option: What is typical of Walpurgis Night, 30 April, in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är typiskt för valborgsmässoafton den 30 april i Sverige?',
       },
       opts: [
         {
@@ -29237,8 +29237,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is marked on May Day in Sweden?',
-        sv: 'Vad uppmärksammas på första maj i Sverige?',
+        en: 'Which answer best matches? What is marked on May Day in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad uppmärksammas på första maj i Sverige?',
       },
       opts: [
         {
@@ -29368,8 +29368,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is marked on May Day in Sweden?',
-        sv: 'Vad uppmärksammas på första maj i Sverige?',
+        en: 'Choose the correct option: What is marked on May Day in Sweden?',
+        sv: 'Välj rätt alternativ: Vad uppmärksammas på första maj i Sverige?',
       },
       opts: [
         {
@@ -29417,8 +29417,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How is All Saints’ Day commonly observed in Sweden?',
-        sv: 'Vad är vanligt att göra på Alla helgons dag i Sverige?',
+        en: 'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt att göra på Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -29548,8 +29548,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How is All Saints’ Day commonly observed in Sweden?',
-        sv: 'Vad är vanligt att göra på Alla helgons dag i Sverige?',
+        en: 'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är vanligt att göra på Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -29597,8 +29597,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When does Advent occur in Sweden?',
-        sv: 'När infaller advent i Sverige?',
+        en: 'Which answer best matches? When does Advent occur in Sweden?',
+        sv: 'Vilket svar stämmer bäst? När infaller advent i Sverige?',
       },
       opts: [
         {
@@ -29721,8 +29721,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When does Advent occur in Sweden?',
-        sv: 'När infaller advent i Sverige?',
+        en: 'Choose the correct option: When does Advent occur in Sweden?',
+        sv: 'Välj rätt alternativ: När infaller advent i Sverige?',
       },
       opts: [
         {
@@ -29763,8 +29763,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do families commonly do on Christmas Eve, 24 December, in Sweden?',
-        sv: 'Vad är vanligt att familjer gör på julafton den 24 december i Sverige?',
+        en: 'Which answer best matches? What do families commonly do on Christmas Eve, 24 December, in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt att familjer gör på julafton den 24 december i Sverige?',
       },
       opts: [
         {
@@ -29894,8 +29894,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do families commonly do on Christmas Eve, 24 December, in Sweden?',
-        sv: 'Vad är vanligt att familjer gör på julafton den 24 december i Sverige?',
+        en: 'Choose the correct option: What do families commonly do on Christmas Eve, 24 December, in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är vanligt att familjer gör på julafton den 24 december i Sverige?',
       },
       opts: [
         {
@@ -29943,8 +29943,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holidays are examples of traditions that have come to Sweden with immigrants?',
-        sv: 'Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?',
+        en: 'Which answer best matches? Which holidays are examples of traditions that have come to Sweden with immigrants?',
+        sv: 'Vilket svar stämmer bäst? Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?',
       },
       opts: [
         {
@@ -30074,8 +30074,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holidays are examples of traditions that have come to Sweden with immigrants?',
-        sv: 'Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?',
+        en: 'Choose the correct option: Which holidays are examples of traditions that have come to Sweden with immigrants?',
+        sv: 'Välj rätt alternativ: Vilka högtider är exempel på traditioner som har kommit till Sverige med invandrare?',
       },
       opts: [
         {
@@ -30123,8 +30123,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What exists in different places in Sweden for Buddhists and Hindus?',
-        sv: 'Vad finns på olika platser i Sverige för buddhister och hinduer?',
+        en: 'Which answer best matches? What exists in different places in Sweden for Buddhists and Hindus?',
+        sv: 'Vilket svar stämmer bäst? Vad finns på olika platser i Sverige för buddhister och hinduer?',
       },
       opts: [
         {
@@ -30240,8 +30240,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What exists in different places in Sweden for Buddhists and Hindus?',
-        sv: 'Vad finns på olika platser i Sverige för buddhister och hinduer?',
+        en: 'Choose the correct option: What exists in different places in Sweden for Buddhists and Hindus?',
+        sv: 'Välj rätt alternativ: Vad finns på olika platser i Sverige för buddhister och hinduer?',
       },
       opts: [
         {
@@ -30635,8 +30635,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What is one goal of religion studies in Swedish schools?',
-        sv: 'Vad är ett mål med religionskunskapen i svensk skola?',
+        en: 'Which answer best matches? What is one goal of religion studies in Swedish schools?',
+        sv: 'Vilket svar stämmer bäst? Vad är ett mål med religionskunskapen i svensk skola?',
       },
       opts: [
         {
@@ -30766,8 +30766,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What is one goal of religion studies in Swedish schools?',
-        sv: 'Vad är ett mål med religionskunskapen i svensk skola?',
+        en: 'Choose the correct option: What is one goal of religion studies in Swedish schools?',
+        sv: 'Välj rätt alternativ: Vad är ett mål med religionskunskapen i svensk skola?',
       },
       opts: [
         {
@@ -30815,8 +30815,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: "When were Sweden's first mosques built?",
-        sv: 'När byggdes Sveriges första moskéer?',
+        en: "Which answer best matches? When were Sweden's first mosques built?",
+        sv: 'Vilket svar stämmer bäst? När byggdes Sveriges första moskéer?',
       },
       opts: [
         {
@@ -30925,8 +30925,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: "When were Sweden's first mosques built?",
-        sv: 'När byggdes Sveriges första moskéer?',
+        en: "Choose the correct option: When were Sweden's first mosques built?",
+        sv: 'Välj rätt alternativ: När byggdes Sveriges första moskéer?',
       },
       opts: [
         {
@@ -30967,8 +30967,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which Christian churches or communities exist in Sweden today?',
-        sv: 'Vilka kristna kyrkor eller samfund finns i dagens Sverige?',
+        en: 'Which answer best matches? Which Christian churches or communities exist in Sweden today?',
+        sv: 'Vilket svar stämmer bäst? Vilka kristna kyrkor eller samfund finns i dagens Sverige?',
       },
       opts: [
         {
@@ -31098,8 +31098,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which Christian churches or communities exist in Sweden today?',
-        sv: 'Vilka kristna kyrkor eller samfund finns i dagens Sverige?',
+        en: 'Choose the correct option: Which Christian churches or communities exist in Sweden today?',
+        sv: 'Välj rätt alternativ: Vilka kristna kyrkor eller samfund finns i dagens Sverige?',
       },
       opts: [
         {
@@ -31147,8 +31147,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?',
-        sv: 'Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?',
+        en: 'Which answer best matches? What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?',
+        sv: 'Vilket svar stämmer bäst? Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?',
       },
       opts: [
         {
@@ -31281,8 +31281,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?',
-        sv: 'Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?',
+        en: 'Choose the correct option: What contributed to contacts with Hindus and Buddhists in Sweden during the 20th century?',
+        sv: 'Välj rätt alternativ: Vad bidrog till kontakter med hinduer och buddhister i Sverige under 1900-talet?',
       },
       opts: [
         {
@@ -31331,8 +31331,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What became permitted for Swedes in 1860?',
-        sv: 'Vad blev tillåtet för svenskar år 1860?',
+        en: 'Which answer best matches? What became permitted for Swedes in 1860?',
+        sv: 'Vilket svar stämmer bäst? Vad blev tillåtet för svenskar år 1860?',
       },
       opts: [
         {
@@ -31462,8 +31462,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What became permitted for Swedes in 1860?',
-        sv: 'Vad blev tillåtet för svenskar år 1860?',
+        en: 'Choose the correct option: What became permitted for Swedes in 1860?',
+        sv: 'Välj rätt alternativ: Vad blev tillåtet för svenskar år 1860?',
       },
       opts: [
         {
@@ -31511,8 +31511,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What does the Instrument of Government protect regarding religion?',
-        sv: 'Vad skyddar regeringsformen när det gäller religion?',
+        en: 'Which answer best matches? What does the Instrument of Government protect regarding religion?',
+        sv: 'Vilket svar stämmer bäst? Vad skyddar regeringsformen när det gäller religion?',
       },
       opts: [
         {
@@ -31642,8 +31642,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What does the Instrument of Government protect regarding religion?',
-        sv: 'Vad skyddar regeringsformen när det gäller religion?',
+        en: 'Choose the correct option: What does the Instrument of Government protect regarding religion?',
+        sv: 'Välj rätt alternativ: Vad skyddar regeringsformen när det gäller religion?',
       },
       opts: [
         {
@@ -31691,8 +31691,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?',
-        sv: 'Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?',
+        en: 'Which answer best matches? Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?',
+        sv: 'Vilket svar stämmer bäst? Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?',
       },
       opts: [
         {
@@ -31825,8 +31825,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?',
-        sv: 'Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?',
+        en: 'Choose the correct option: Which Christian holidays do many Swedes celebrate even if they do not see themselves as religious?',
+        sv: 'Välj rätt alternativ: Vilka kristna högtider firar många svenskar även om de inte ser sig som religiösa?',
       },
       opts: [
         {
@@ -31875,8 +31875,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which religious rituals are still common in Sweden?',
-        sv: 'Vilka religiösa ritualer är fortfarande vanliga i Sverige?',
+        en: 'Which answer best matches? Which religious rituals are still common in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilka religiösa ritualer är fortfarande vanliga i Sverige?',
       },
       opts: [
         {
@@ -32012,8 +32012,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which religious rituals are still common in Sweden?',
-        sv: 'Vilka religiösa ritualer är fortfarande vanliga i Sverige?',
+        en: 'Choose the correct option: Which religious rituals are still common in Sweden?',
+        sv: 'Välj rätt alternativ: Vilka religiösa ritualer är fortfarande vanliga i Sverige?',
       },
       opts: [
         {
@@ -32063,8 +32063,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?',
-        sv: 'Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?',
+        en: 'Which answer best matches? What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?',
+        sv: 'Vilket svar stämmer bäst? Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?',
       },
       opts: [
         {
@@ -32194,8 +32194,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?',
-        sv: 'Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?',
+        en: 'Choose the correct option: What was Sweden during the Middle Ages before the Church of Sweden’s Lutheran tradition developed?',
+        sv: 'Välj rätt alternativ: Vad var Sverige under medeltiden innan Svenska kyrkans lutherska tradition växte fram?',
       },
       opts: [
         {
@@ -32243,8 +32243,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What did Jews gain the right to do in Sweden in the 18th century?',
-        sv: 'Vad fick judar rätt att göra i Sverige på 1700-talet?',
+        en: 'Which answer best matches? What did Jews gain the right to do in Sweden in the 18th century?',
+        sv: 'Vilket svar stämmer bäst? Vad fick judar rätt att göra i Sverige på 1700-talet?',
       },
       opts: [
         {
@@ -32374,8 +32374,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What did Jews gain the right to do in Sweden in the 18th century?',
-        sv: 'Vad fick judar rätt att göra i Sverige på 1700-talet?',
+        en: 'Choose the correct option: What did Jews gain the right to do in Sweden in the 18th century?',
+        sv: 'Välj rätt alternativ: Vad fick judar rätt att göra i Sverige på 1700-talet?',
       },
       opts: [
         {
@@ -32423,8 +32423,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which branches of Islam are found in Swedish Muslim congregations?',
-        sv: 'Vilka riktningar inom islam finns i svenska muslimska församlingar?',
+        en: 'Which answer best matches? Which branches of Islam are found in Swedish Muslim congregations?',
+        sv: 'Vilket svar stämmer bäst? Vilka riktningar inom islam finns i svenska muslimska församlingar?',
       },
       opts: [
         {
@@ -32554,8 +32554,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'Which branches of Islam are found in Swedish Muslim congregations?',
-        sv: 'Vilka riktningar inom islam finns i svenska muslimska församlingar?',
+        en: 'Choose the correct option: Which branches of Islam are found in Swedish Muslim congregations?',
+        sv: 'Välj rätt alternativ: Vilka riktningar inom islam finns i svenska muslimska församlingar?',
       },
       opts: [
         {
@@ -32603,8 +32603,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What do Muslim congregations in Sweden offer?',
-        sv: 'Vad erbjuder muslimska församlingar i Sverige?',
+        en: 'Which answer best matches? What do Muslim congregations in Sweden offer?',
+        sv: 'Vilket svar stämmer bäst? Vad erbjuder muslimska församlingar i Sverige?',
       },
       opts: [
         {
@@ -32737,8 +32737,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'single_choice',
       q: {
-        en: 'What do Muslim congregations in Sweden offer?',
-        sv: 'Vad erbjuder muslimska församlingar i Sverige?',
+        en: 'Choose the correct option: What do Muslim congregations in Sweden offer?',
+        sv: 'Välj rätt alternativ: Vad erbjuder muslimska församlingar i Sverige?',
       },
       opts: [
         {
@@ -32953,8 +32953,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: "What happened on 6 June 1523, a date connected with Sweden's National Day?",
-        sv: 'Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
+        en: "Which answer best matches? What happened on 6 June 1523, a date connected with Sweden's National Day?",
+        sv: 'Vilket svar stämmer bäst? Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
       },
       opts: [
         {
@@ -33084,8 +33084,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: "What happened on 6 June 1523, a date connected with Sweden's National Day?",
-        sv: 'Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
+        en: "Choose the correct option: What happened on 6 June 1523, a date connected with Sweden's National Day?",
+        sv: 'Välj rätt alternativ: Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
       },
       opts: [
         {
@@ -33126,8 +33126,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common during Midsummer celebrations in Sweden?',
-        sv: 'Vad är vanligt vid midsommarfirande i Sverige?',
+        en: 'Which answer best matches? What is common during Midsummer celebrations in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt vid midsommarfirande i Sverige?',
       },
       opts: [
         {
@@ -33260,8 +33260,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common during Midsummer celebrations in Sweden?',
-        sv: 'Vad är vanligt vid midsommarfirande i Sverige?',
+        en: 'Choose the correct option: What is common during Midsummer celebrations in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är vanligt vid midsommarfirande i Sverige?',
       },
       opts: [
         {
@@ -33490,8 +33490,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holiday ends the fasting month of Ramadan?',
-        sv: 'Vilken högtid avslutar fastemånaden ramadan?',
+        en: 'Which answer best matches? Which holiday ends the fasting month of Ramadan?',
+        sv: 'Vilket svar stämmer bäst? Vilken högtid avslutar fastemånaden ramadan?',
       },
       opts: [
         {
@@ -33621,8 +33621,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'Which holiday ends the fasting month of Ramadan?',
-        sv: 'Vilken högtid avslutar fastemånaden ramadan?',
+        en: 'Choose the correct option: Which holiday ends the fasting month of Ramadan?',
+        sv: 'Välj rätt alternativ: Vilken högtid avslutar fastemånaden ramadan?',
       },
       opts: [
         {
@@ -33670,8 +33670,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When are Nouruz and Newroz celebrated?',
-        sv: 'När firas Nouruz och Newroz?',
+        en: 'Which answer best matches? When are Nouruz and Newroz celebrated?',
+        sv: 'Vilket svar stämmer bäst? När firas Nouruz och Newroz?',
       },
       opts: [
         {
@@ -33801,8 +33801,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When are Nouruz and Newroz celebrated?',
-        sv: 'När firas Nouruz och Newroz?',
+        en: 'Choose the correct option: When are Nouruz and Newroz celebrated?',
+        sv: 'Välj rätt alternativ: När firas Nouruz och Newroz?',
       },
       opts: [
         {
@@ -33850,8 +33850,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What does Lucia usually wear in a Lucia procession?',
-        sv: 'Vad brukar Lucia bära i ett luciatåg?',
+        en: 'Which answer best matches? What does Lucia usually wear in a Lucia procession?',
+        sv: 'Vilket svar stämmer bäst? Vad brukar Lucia bära i ett luciatåg?',
       },
       opts: [
         {
@@ -33981,8 +33981,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What does Lucia usually wear in a Lucia procession?',
-        sv: 'Vad brukar Lucia bära i ett luciatåg?',
+        en: 'Choose the correct option: What does Lucia usually wear in a Lucia procession?',
+        sv: 'Välj rätt alternativ: Vad brukar Lucia bära i ett luciatåg?',
       },
       opts: [
         {
@@ -34030,8 +34030,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is the church service early on the morning of 25 December called?',
-        sv: 'Vad kallas gudstjänsten tidigt på morgonen den 25 december?',
+        en: 'Which answer best matches? What is the church service early on the morning of 25 December called?',
+        sv: 'Vilket svar stämmer bäst? Vad kallas gudstjänsten tidigt på morgonen den 25 december?',
       },
       opts: [
         {
@@ -34161,8 +34161,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is the church service early on the morning of 25 December called?',
-        sv: 'Vad kallas gudstjänsten tidigt på morgonen den 25 december?',
+        en: 'Choose the correct option: What is the church service early on the morning of 25 December called?',
+        sv: 'Välj rätt alternativ: Vad kallas gudstjänsten tidigt på morgonen den 25 december?',
       },
       opts: [
         {
@@ -34210,8 +34210,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common on Easter Saturday in Sweden?',
-        sv: 'Vad är vanligt på påskafton i Sverige?',
+        en: 'Which answer best matches? What is common on Easter Saturday in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt på påskafton i Sverige?',
       },
       opts: [
         {
@@ -34344,8 +34344,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common on Easter Saturday in Sweden?',
-        sv: 'Vad är vanligt på påskafton i Sverige?',
+        en: 'Choose the correct option: What is common on Easter Saturday in Sweden?',
+        sv: 'Välj rätt alternativ: Vad är vanligt på påskafton i Sverige?',
       },
       opts: [
         {
@@ -34394,8 +34394,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do children often do with an Advent calendar at home?',
-        sv: 'Vad gör barn ofta med en adventskalender hemma?',
+        en: 'Which answer best matches? What do children often do with an Advent calendar at home?',
+        sv: 'Vilket svar stämmer bäst? Vad gör barn ofta med en adventskalender hemma?',
       },
       opts: [
         {
@@ -34525,8 +34525,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do children often do with an Advent calendar at home?',
-        sv: 'Vad gör barn ofta med en adventskalender hemma?',
+        en: 'Choose the correct option: What do children often do with an Advent calendar at home?',
+        sv: 'Välj rätt alternativ: Vad gör barn ofta med en adventskalender hemma?',
       },
       opts: [
         {
@@ -34574,8 +34574,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'In which year did Sweden’s National Day become a public holiday through a Riksdag decision?',
-        sv: 'Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?',
+        en: 'Which answer best matches? In which year did Sweden’s National Day become a public holiday through a Riksdag decision?',
+        sv: 'Vilket svar stämmer bäst? Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?',
       },
       opts: [
         {
@@ -34708,8 +34708,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'In which year did Sweden’s National Day become a public holiday through a Riksdag decision?',
-        sv: 'Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?',
+        en: 'Choose the correct option: In which year did Sweden’s National Day become a public holiday through a Riksdag decision?',
+        sv: 'Välj rätt alternativ: Vilket år blev Sveriges nationaldag en helgdag genom riksdagsbeslut?',
       },
       opts: [
         {
@@ -34758,8 +34758,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When is All Saints’ Day observed in Sweden?',
-        sv: 'När firas Alla helgons dag i Sverige?',
+        en: 'Which answer best matches? When is All Saints’ Day observed in Sweden?',
+        sv: 'Vilket svar stämmer bäst? När firas Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -34889,8 +34889,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'When is All Saints’ Day observed in Sweden?',
-        sv: 'När firas Alla helgons dag i Sverige?',
+        en: 'Choose the correct option: When is All Saints’ Day observed in Sweden?',
+        sv: 'Välj rätt alternativ: När firas Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -34938,8 +34938,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common in many homes during Advent?',
-        sv: 'Vad är vanligt i många hem under advent?',
+        en: 'Which answer best matches? What is common in many homes during Advent?',
+        sv: 'Vilket svar stämmer bäst? Vad är vanligt i många hem under advent?',
       },
       opts: [
         {
@@ -35069,8 +35069,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is common in many homes during Advent?',
-        sv: 'Vad är vanligt i många hem under advent?',
+        en: 'Choose the correct option: What is common in many homes during Advent?',
+        sv: 'Välj rätt alternativ: Vad är vanligt i många hem under advent?',
       },
       opts: [
         {
@@ -35118,8 +35118,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do many people do on All Saints’ Day in Sweden?',
-        sv: 'Vad gör många på Alla helgons dag i Sverige?',
+        en: 'Which answer best matches? What do many people do on All Saints’ Day in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gör många på Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -35252,8 +35252,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do many people do on All Saints’ Day in Sweden?',
-        sv: 'Vad gör många på Alla helgons dag i Sverige?',
+        en: 'Choose the correct option: What do many people do on All Saints’ Day in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gör många på Alla helgons dag i Sverige?',
       },
       opts: [
         {
@@ -35302,8 +35302,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What can happen to traditions when people move to other countries?',
-        sv: 'Vad kan hända med traditioner när människor flyttar till andra länder?',
+        en: 'Which answer best matches? What can happen to traditions when people move to other countries?',
+        sv: 'Vilket svar stämmer bäst? Vad kan hända med traditioner när människor flyttar till andra länder?',
       },
       opts: [
         {
@@ -35433,8 +35433,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What can happen to traditions when people move to other countries?',
-        sv: 'Vad kan hända med traditioner när människor flyttar till andra länder?',
+        en: 'Choose the correct option: What can happen to traditions when people move to other countries?',
+        sv: 'Välj rätt alternativ: Vad kan hända med traditioner när människor flyttar till andra länder?',
       },
       opts: [
         {
@@ -35482,8 +35482,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do many people do with a tree at Christmas in Sweden?',
-        sv: 'Vad gör många med en gran vid jul i Sverige?',
+        en: 'Which answer best matches? What do many people do with a tree at Christmas in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vad gör många med en gran vid jul i Sverige?',
       },
       opts: [
         {
@@ -35613,8 +35613,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What do many people do with a tree at Christmas in Sweden?',
-        sv: 'Vad gör många med en gran vid jul i Sverige?',
+        en: 'Choose the correct option: What do many people do with a tree at Christmas in Sweden?',
+        sv: 'Välj rätt alternativ: Vad gör många med en gran vid jul i Sverige?',
       },
       opts: [
         {
@@ -35662,8 +35662,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What does Christmas traditionally celebrate in Christianity?',
-        sv: 'Vad firar julen traditionellt inom kristendomen?',
+        en: 'Which answer best matches? What does Christmas traditionally celebrate in Christianity?',
+        sv: 'Vilket svar stämmer bäst? Vad firar julen traditionellt inom kristendomen?',
       },
       opts: [
         {
@@ -35793,8 +35793,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What does Christmas traditionally celebrate in Christianity?',
-        sv: 'Vad firar julen traditionellt inom kristendomen?',
+        en: 'Choose the correct option: What does Christmas traditionally celebrate in Christianity?',
+        sv: 'Välj rätt alternativ: Vad firar julen traditionellt inom kristendomen?',
       },
       opts: [
         {
@@ -35842,8 +35842,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
-        sv: 'Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
+        en: 'Which answer best matches? How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
+        sv: 'Vilket svar stämmer bäst? Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
       },
       opts: [
         {
@@ -35973,8 +35973,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
-        sv: 'Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
+        en: 'Choose the correct option: How do many people in Sweden celebrate Christmas even when it has no religious meaning for them?',
+        sv: 'Välj rätt alternativ: Hur firar många jul i Sverige även när julen inte har religiös betydelse för dem?',
       },
       opts: [
         {
@@ -36022,8 +36022,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is commonly served on 13 December in connection with Lucia?',
-        sv: 'Vad brukar man bjuda på den 13 december i samband med lucia?',
+        en: 'Which answer best matches? What is commonly served on 13 December in connection with Lucia?',
+        sv: 'Vilket svar stämmer bäst? Vad brukar man bjuda på den 13 december i samband med lucia?',
       },
       opts: [
         {
@@ -36153,8 +36153,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'single_choice',
       q: {
-        en: 'What is commonly served on 13 December in connection with Lucia?',
-        sv: 'Vad brukar man bjuda på den 13 december i samband med lucia?',
+        en: 'Choose the correct option: What is commonly served on 13 December in connection with Lucia?',
+        sv: 'Välj rätt alternativ: Vad brukar man bjuda på den 13 december i samband med lucia?',
       },
       opts: [
         {
@@ -36202,8 +36202,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'How many islands does Sweden have?',
-        sv: 'Hur många öar har Sverige?',
+        en: 'Which answer best matches? How many islands does Sweden have?',
+        sv: 'Vilket svar stämmer bäst? Hur många öar har Sverige?',
       },
       opts: [
         {
@@ -36326,8 +36326,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'How many islands does Sweden have?',
-        sv: 'Hur många öar har Sverige?',
+        en: 'Choose the correct option: How many islands does Sweden have?',
+        sv: 'Välj rätt alternativ: Hur många öar har Sverige?',
       },
       opts: [
         {
@@ -36552,8 +36552,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'How many historical provinces is Sweden divided into?',
-        sv: 'Hur många landskap är Sverige indelat i?',
+        en: 'Which answer best matches? How many historical provinces is Sweden divided into?',
+        sv: 'Vilket svar stämmer bäst? Hur många landskap är Sverige indelat i?',
       },
       opts: [
         {
@@ -36683,8 +36683,8 @@
       chapter: 'Ch. 01 · The country of Sweden',
       type: 'single_choice',
       q: {
-        en: 'How many historical provinces is Sweden divided into?',
-        sv: 'Hur många landskap är Sverige indelat i?',
+        en: 'Choose the correct option: How many historical provinces is Sweden divided into?',
+        sv: 'Välj rätt alternativ: Hur många landskap är Sverige indelat i?',
       },
       opts: [
         {
@@ -36732,8 +36732,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What does it mean that elections in a democracy are secret?',
-        sv: 'Vad betyder det att val i en demokrati är hemliga?',
+        en: 'Which answer best matches? What does it mean that elections in a democracy are secret?',
+        sv: 'Vilket svar stämmer bäst? Vad betyder det att val i en demokrati är hemliga?',
       },
       opts: [
         {
@@ -36854,8 +36854,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What does it mean that elections in a democracy are secret?',
-        sv: 'Vad betyder det att val i en demokrati är hemliga?',
+        en: 'Choose the correct option: What does it mean that elections in a democracy are secret?',
+        sv: 'Välj rätt alternativ: Vad betyder det att val i en demokrati är hemliga?',
       },
       opts: [
         {
@@ -36896,8 +36896,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What right do people, groups, and parties have in a democracy?',
-        sv: 'Vilken rätt har människor, grupper och partier i en demokrati?',
+        en: 'Which answer best matches? What right do people, groups, and parties have in a democracy?',
+        sv: 'Vilket svar stämmer bäst? Vilken rätt har människor, grupper och partier i en demokrati?',
       },
       opts: [
         {
@@ -37024,8 +37024,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What right do people, groups, and parties have in a democracy?',
-        sv: 'Vilken rätt har människor, grupper och partier i en demokrati?',
+        en: 'Choose the correct option: What right do people, groups, and parties have in a democracy?',
+        sv: 'Välj rätt alternativ: Vilken rätt har människor, grupper och partier i en demokrati?',
       },
       opts: [
         {
@@ -37072,8 +37072,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What can make democracy stronger?',
-        sv: 'Vad kan göra demokratin starkare?',
+        en: 'Which answer best matches? What can make democracy stronger?',
+        sv: 'Vilket svar stämmer bäst? Vad kan göra demokratin starkare?',
       },
       opts: [
         {
@@ -37194,8 +37194,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'What can make democracy stronger?',
-        sv: 'Vad kan göra demokratin starkare?',
+        en: 'Choose the correct option: What can make democracy stronger?',
+        sv: 'Välj rätt alternativ: Vad kan göra demokratin starkare?',
       },
       opts: [
         {
@@ -37236,8 +37236,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Why can false information and hate be a threat to democracy?',
-        sv: 'Varför kan falsk information och hat vara ett hot mot demokratin?',
+        en: 'Which answer best matches? Why can false information and hate be a threat to democracy?',
+        sv: 'Vilket svar stämmer bäst? Varför kan falsk information och hat vara ett hot mot demokratin?',
       },
       opts: [
         {
@@ -37367,8 +37367,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Why can false information and hate be a threat to democracy?',
-        sv: 'Varför kan falsk information och hat vara ett hot mot demokratin?',
+        en: 'Choose the correct option: Why can false information and hate be a threat to democracy?',
+        sv: 'Välj rätt alternativ: Varför kan falsk information och hat vara ett hot mot demokratin?',
       },
       opts: [
         {
@@ -37416,8 +37416,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which statement describes integration in a democratic society?',
-        sv: 'Vilket påstående beskriver integration i ett demokratiskt samhälle?',
+        en: 'Which answer best matches? Which statement describes integration in a democratic society?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver integration i ett demokratiskt samhälle?',
       },
       opts: [
         {
@@ -37547,8 +37547,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'single_choice',
       q: {
-        en: 'Which statement describes integration in a democratic society?',
-        sv: 'Vilket påstående beskriver integration i ett demokratiskt samhälle?',
+        en: 'Choose the correct option: Which statement describes integration in a democratic society?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver integration i ett demokratiskt samhälle?',
       },
       opts: [
         {
@@ -37596,8 +37596,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How can commercial radio and TV channels earn income?',
-        sv: 'Hur kan kommersiella radio- och tv-kanaler få inkomster?',
+        en: 'Which answer best matches? How can commercial radio and TV channels earn income?',
+        sv: 'Vilket svar stämmer bäst? Hur kan kommersiella radio- och tv-kanaler få inkomster?',
       },
       opts: [
         {
@@ -37712,8 +37712,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How can commercial radio and TV channels earn income?',
-        sv: 'Hur kan kommersiella radio- och tv-kanaler få inkomster?',
+        en: 'Choose the correct option: How can commercial radio and TV channels earn income?',
+        sv: 'Välj rätt alternativ: Hur kan kommersiella radio- och tv-kanaler få inkomster?',
       },
       opts: [
         {
@@ -37754,8 +37754,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What characterizes media financed by advertising?',
-        sv: 'Vad kännetecknar medier som finansieras med reklam?',
+        en: 'Which answer best matches? What characterizes media financed by advertising?',
+        sv: 'Vilket svar stämmer bäst? Vad kännetecknar medier som finansieras med reklam?',
       },
       opts: [
         {
@@ -37882,8 +37882,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What characterizes media financed by advertising?',
-        sv: 'Vad kännetecknar medier som finansieras med reklam?',
+        en: 'Choose the correct option: What characterizes media financed by advertising?',
+        sv: 'Välj rätt alternativ: Vad kännetecknar medier som finansieras med reklam?',
       },
       opts: [
         {
@@ -37924,8 +37924,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How are many newspapers published today?',
-        sv: 'Hur publiceras många tidningar i dag?',
+        en: 'Which answer best matches? How are many newspapers published today?',
+        sv: 'Vilket svar stämmer bäst? Hur publiceras många tidningar i dag?',
       },
       opts: [
         {
@@ -38052,8 +38052,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'How are many newspapers published today?',
-        sv: 'Hur publiceras många tidningar i dag?',
+        en: 'Choose the correct option: How are many newspapers published today?',
+        sv: 'Välj rätt alternativ: Hur publiceras många tidningar i dag?',
       },
       opts: [
         {
@@ -38094,8 +38094,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What is important to remember about the web and social media?',
-        sv: 'Vad är viktigt att komma ihåg om webben och sociala medier?',
+        en: 'Which answer best matches? What is important to remember about the web and social media?',
+        sv: 'Vilket svar stämmer bäst? Vad är viktigt att komma ihåg om webben och sociala medier?',
       },
       opts: [
         {
@@ -38204,8 +38204,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What is important to remember about the web and social media?',
-        sv: 'Vad är viktigt att komma ihåg om webben och sociala medier?',
+        en: 'Choose the correct option: What is important to remember about the web and social media?',
+        sv: 'Välj rätt alternativ: Vad är viktigt att komma ihåg om webben och sociala medier?',
       },
       opts: [
         {
@@ -38246,8 +38246,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Why is source criticism needed when using media?',
-        sv: 'Varför behövs källkritik när man använder medier?',
+        en: 'Which answer best matches? Why is source criticism needed when using media?',
+        sv: 'Vilket svar stämmer bäst? Varför behövs källkritik när man använder medier?',
       },
       opts: [
         {
@@ -38374,8 +38374,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Why is source criticism needed when using media?',
-        sv: 'Varför behövs källkritik när man använder medier?',
+        en: 'Choose the correct option: Why is source criticism needed when using media?',
+        sv: 'Välj rätt alternativ: Varför behövs källkritik när man använder medier?',
       },
       opts: [
         {
@@ -38422,8 +38422,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'How can a welfare service be provided by a private company but still be funded by tax revenue?',
-        sv: 'Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
+        en: 'Which answer best matches? How can a welfare service be provided by a private company but still be funded by tax revenue?',
+        sv: 'Vilket svar stämmer bäst? Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
       },
       opts: [
         {
@@ -38553,8 +38553,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'How can a welfare service be provided by a private company but still be funded by tax revenue?',
-        sv: 'Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
+        en: 'Choose the correct option: How can a welfare service be provided by a private company but still be funded by tax revenue?',
+        sv: 'Välj rätt alternativ: Hur kan en välfärdstjänst vara privat och ändå skattefinansierad?',
       },
       opts: [
         {
@@ -38602,8 +38602,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
-        sv: 'Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
+        en: 'Which answer best matches? Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
+        sv: 'Vilket svar stämmer bäst? Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
       },
       opts: [
         {
@@ -38733,8 +38733,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
-        sv: 'Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
+        en: 'Choose the correct option: Which state-funded social insurance systems can provide financial support during illness, parenthood, or unemployment?',
+        sv: 'Välj rätt alternativ: Vilka statliga trygghetssystem kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet?',
       },
       opts: [
         {
@@ -38782,8 +38782,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What is included in primary care?',
-        sv: 'Vad ingår i primärvården?',
+        en: 'Which answer best matches? What is included in primary care?',
+        sv: 'Vilket svar stämmer bäst? Vad ingår i primärvården?',
       },
       opts: [
         {
@@ -38913,8 +38913,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What is included in primary care?',
-        sv: 'Vad ingår i primärvården?',
+        en: 'Choose the correct option: What is included in primary care?',
+        sv: 'Välj rätt alternativ: Vad ingår i primärvården?',
       },
       opts: [
         {
@@ -38962,8 +38962,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What responsibility does the municipality have for children’s everyday life and education?',
-        sv: 'Vilket ansvar har kommunen för barns vardag och utbildning?',
+        en: 'Which answer best matches? What responsibility does the municipality have for children’s everyday life and education?',
+        sv: 'Vilket svar stämmer bäst? Vilket ansvar har kommunen för barns vardag och utbildning?',
       },
       opts: [
         {
@@ -39093,8 +39093,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What responsibility does the municipality have for children’s everyday life and education?',
-        sv: 'Vilket ansvar har kommunen för barns vardag och utbildning?',
+        en: 'Choose the correct option: What responsibility does the municipality have for children’s everyday life and education?',
+        sv: 'Välj rätt alternativ: Vilket ansvar har kommunen för barns vardag och utbildning?',
       },
       opts: [
         {
@@ -39142,8 +39142,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What help can older people receive from the municipality to manage everyday life?',
-        sv: 'Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?',
+        en: 'Which answer best matches? What help can older people receive from the municipality to manage everyday life?',
+        sv: 'Vilket svar stämmer bäst? Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?',
       },
       opts: [
         {
@@ -39273,8 +39273,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'single_choice',
       q: {
-        en: 'What help can older people receive from the municipality to manage everyday life?',
-        sv: 'Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?',
+        en: 'Choose the correct option: What help can older people receive from the municipality to manage everyday life?',
+        sv: 'Välj rätt alternativ: Vilken hjälp kan äldre personer få av kommunen för att klara vardagen?',
       },
       opts: [
         {
@@ -39322,8 +39322,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes one purpose of the United Nations (UN)?',
-        sv: 'Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?',
+        en: 'Which answer best matches? Which statement describes one purpose of the United Nations (UN)?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?',
       },
       opts: [
         {
@@ -39493,8 +39493,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes one purpose of the United Nations (UN)?',
-        sv: 'Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?',
+        en: 'Choose the correct option: Which statement describes one purpose of the United Nations (UN)?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver ett syfte med Förenta nationerna (FN)?',
       },
       opts: [
         {
@@ -39582,8 +39582,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes EU cooperation?',
-        sv: 'Vilket påstående beskriver EU-samarbetet?',
+        en: 'Which answer best matches? Which statement describes EU cooperation?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver EU-samarbetet?',
       },
       opts: [
         {
@@ -39753,8 +39753,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes EU cooperation?',
-        sv: 'Vilket påstående beskriver EU-samarbetet?',
+        en: 'Choose the correct option: Which statement describes EU cooperation?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver EU-samarbetet?',
       },
       opts: [
         {
@@ -39842,8 +39842,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'How did Sweden act toward NATO during the Cold War?',
-        sv: 'Hur agerade Sverige under kalla kriget i förhållande till Nato?',
+        en: 'Which answer best matches? How did Sweden act toward NATO during the Cold War?',
+        sv: 'Vilket svar stämmer bäst? Hur agerade Sverige under kalla kriget i förhållande till Nato?',
       },
       opts: [
         {
@@ -40013,8 +40013,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'How did Sweden act toward NATO during the Cold War?',
-        sv: 'Hur agerade Sverige under kalla kriget i förhållande till Nato?',
+        en: 'Choose the correct option: How did Sweden act toward NATO during the Cold War?',
+        sv: 'Välj rätt alternativ: Hur agerade Sverige under kalla kriget i förhållande till Nato?',
       },
       opts: [
         {
@@ -40095,8 +40095,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes total-defence duty in Sweden?',
-        sv: 'Vilket påstående beskriver totalförsvarsplikt i Sverige?',
+        en: 'Which answer best matches? Which statement describes total-defence duty in Sweden?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver totalförsvarsplikt i Sverige?',
       },
       opts: [
         {
@@ -40266,8 +40266,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes total-defence duty in Sweden?',
-        sv: 'Vilket påstående beskriver totalförsvarsplikt i Sverige?',
+        en: 'Choose the correct option: Which statement describes total-defence duty in Sweden?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver totalförsvarsplikt i Sverige?',
       },
       opts: [
         {
@@ -40355,8 +40355,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes civil defence during war or crisis?',
-        sv: 'Vilket påstående beskriver det civila försvaret vid krig eller kris?',
+        en: 'Which answer best matches? Which statement describes civil defence during war or crisis?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående beskriver det civila försvaret vid krig eller kris?',
       },
       opts: [
         {
@@ -40526,8 +40526,8 @@
       chapter: 'Ch. 11 · Sweden and the outside world',
       type: 'single_choice',
       q: {
-        en: 'Which statement describes civil defence during war or crisis?',
-        sv: 'Vilket påstående beskriver det civila försvaret vid krig eller kris?',
+        en: 'Choose the correct option: Which statement describes civil defence during war or crisis?',
+        sv: 'Välj rätt alternativ: Vilket påstående beskriver det civila försvaret vid krig eller kris?',
       },
       opts: [
         {
@@ -40615,8 +40615,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How often are elections to the European Parliament held?',
-        sv: 'Hur ofta hålls val till EU-parlamentet?',
+        en: 'Which answer best matches? How often are elections to the European Parliament held?',
+        sv: 'Vilket svar stämmer bäst? Hur ofta hålls val till EU-parlamentet?',
       },
       opts: [
         {
@@ -40703,7 +40703,7 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Elections to the European Parliament are held every five years.',
+        en: 'Every five years.',
         sv: 'Val till EU-parlamentet hålls vart femte år.',
       },
       opts: [
@@ -40743,7 +40743,7 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Elections to the European Parliament are held every four years.',
+        en: 'Every four years.',
         sv: 'Val till EU-parlamentet hålls vart fjärde år.',
       },
       opts: [
@@ -40783,8 +40783,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'How often are elections to the European Parliament held?',
-        sv: 'Hur ofta hålls val till EU-parlamentet?',
+        en: 'Choose the correct option: How often are elections to the European Parliament held?',
+        sv: 'Välj rätt alternativ: Hur ofta hålls val till EU-parlamentet?',
       },
       opts: [
         {
@@ -40865,8 +40865,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
-        sv: 'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+        en: 'Which answer best matches? Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+        sv: 'Vilket svar stämmer bäst? Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
       },
       opts: [
         {
@@ -41036,8 +41036,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
-        sv: 'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+        en: 'Choose the correct option: Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+        sv: 'Välj rätt alternativ: Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
       },
       opts: [
         {
@@ -41125,8 +41125,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What is stated on the voting card sent home before an election?',
-        sv: 'Vad står på röstkortet som skickas hem före valet?',
+        en: 'Which answer best matches? What is stated on the voting card sent home before an election?',
+        sv: 'Vilket svar stämmer bäst? Vad står på röstkortet som skickas hem före valet?',
       },
       opts: [
         {
@@ -41213,8 +41213,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'The voting card shows which polling station the voter should go to.',
-        sv: 'Röstkortet visar vilken vallokal väljaren ska gå till.',
+        en: 'Which polling station the voter should go to.',
+        sv: 'Vilken vallokal väljaren ska gå till.',
       },
       opts: [
         {
@@ -41247,8 +41247,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'The voting card shows which party the voter must vote for.',
-        sv: 'Röstkortet visar vilket parti väljaren måste rösta på.',
+        en: 'Which party the voter must vote for.',
+        sv: 'Vilket parti väljaren måste rösta på.',
       },
       opts: [
         {
@@ -41287,8 +41287,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What is stated on the voting card sent home before an election?',
-        sv: 'Vad står på röstkortet som skickas hem före valet?',
+        en: 'Choose the correct option: What is stated on the voting card sent home before an election?',
+        sv: 'Välj rätt alternativ: Vad står på röstkortet som skickas hem före valet?',
       },
       opts: [
         {
@@ -41369,8 +41369,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What can someone do to influence the content of party politics?',
-        sv: 'Vad kan den som vill påverka innehållet i partipolitiken göra?',
+        en: 'Which answer best matches? What can someone do to influence the content of party politics?',
+        sv: 'Vilket svar stämmer bäst? Vad kan den som vill påverka innehållet i partipolitiken göra?',
       },
       opts: [
         {
@@ -41458,8 +41458,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
-        sv: 'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
+        en: 'Become a member of a political party or start a new party together with others.',
+        sv: 'Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
       },
       opts: [
         {
@@ -41499,8 +41499,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'A person can influence party politics only by voting if they already sit in the Riksdag.',
-        sv: 'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
+        en: 'Only vote if the person already sits in the Riksdag.',
+        sv: 'Bara rösta om personen redan sitter i riksdagen.',
       },
       opts: [
         {
@@ -41540,8 +41540,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'single_choice',
       q: {
-        en: 'What can someone do to influence the content of party politics?',
-        sv: 'Vad kan den som vill påverka innehållet i partipolitiken göra?',
+        en: 'Choose the correct option: What can someone do to influence the content of party politics?',
+        sv: 'Välj rätt alternativ: Vad kan den som vill påverka innehållet i partipolitiken göra?',
       },
       opts: [
         {
@@ -41630,7 +41630,7 @@
       type: 'single_choice',
       q: {
         en: 'What is correct about special parties in municipal and regional elections?',
-        sv: 'Vilket påstående om särskilda partier i kommun- och regionval är korrekt?',
+        sv: 'Vilket svar stämmer bäst? Vilket påstående om särskilda partier i kommun- och regionval är korrekt?',
       },
       opts: [
         {
@@ -41801,7 +41801,7 @@
       type: 'single_choice',
       q: {
         en: 'Which fact is correct about special parties in municipal and regional elections?',
-        sv: 'Vilket påstående om särskilda partier i kommun- och regionval är korrekt?',
+        sv: 'Välj rätt alternativ: Vilket påstående om särskilda partier i kommun- och regionval är korrekt?',
       },
       opts: [
         {
