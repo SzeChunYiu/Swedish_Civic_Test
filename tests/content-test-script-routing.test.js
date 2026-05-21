@@ -719,6 +719,24 @@ test('package npm test selector enters the dispatcher before running suites', ()
   }
 });
 
+test('religious-freedom option parallelism uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const publishedQuestionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-religious-freedom-parallelism/);
+  assert.match(
+    validatorSource,
+    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated/,
+  );
+  assert.match(publishedQuestionTestSource, /--focus-religious-freedom-parallelism/);
+});
+
 test('content-focused npm script forwards test-name pattern before file list', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
   const nodeLog = path.join(tmpDir, 'node.log');

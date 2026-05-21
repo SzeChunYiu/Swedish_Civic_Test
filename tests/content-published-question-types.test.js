@@ -1791,6 +1791,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -1801,6 +1802,98 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q116 uses nonparallel religious-freedom option wording/,
+  );
+});
+
+test('religious-freedom option parallelism guard rejects stale CSV wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents)
+      .replace(
+        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
+      )
+      .replace(
+        'The right to practice one’s religion and to be protected from discrimination because of belief',
+        'The right to practice one’s religion and protection from discrimination because of belief',
+      );
+  }
+  return contents;
+};
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q116 uses nonparallel religious-freedom option wording in content\/question-bank\.csv/,
+  );
+});
+
+test('religious-freedom option parallelism guard rejects stale static wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/site/questions.js')) {
+    return String(contents)
+      .replace(
+        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
+        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
+      )
+      .replace(
+        'The right to practice one’s religion and to be protected from discrimination because of belief',
+        'The right to practice one’s religion and protection from discrimination because of belief',
+      );
+  }
+  return contents;
+};
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /site\/questions\.js contains nonparallel religious-freedom option wording/,
+  );
+});
+
+test('religious-freedom option parallelism reports focused validator coverage', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const summary = JSON.parse(result.stdout.match(/\{[\s\S]*\}/)?.[0] || '{}');
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  assert.equal(summary.publishedQuestions, buildSiteQuestionBank().questions.length);
+  assert.equal(
+    summary.questionReligiousFreedomParallelismValidated,
+    buildSiteQuestionBank().questions.length,
   );
 });
 
