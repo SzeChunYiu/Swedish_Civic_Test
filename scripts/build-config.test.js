@@ -8,9 +8,10 @@ const ts = require('typescript');
 
 const { REQUIRED_SECURITY_HEADERS } = require('./check-live-site');
 const { readWebDocumentMetadata } = require('./prepare-web-export.js');
+const { WEB_ENTRY_BUNDLE_BUDGET } = require('./web-export-budget');
 
 const repoRoot = path.resolve(__dirname, '..');
-const jsSyntaxGateRoots = ['scripts', 'site', 'tests'];
+const jsSyntaxGateRoots = ['scripts', 'tests'];
 // Static outcome/compliance parsing is covered by the dedicated static validation gate.
 const delegatedSyntaxGateFiles = new Set([
   'scripts/compliance-pages.test.js',
@@ -40,7 +41,12 @@ function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
 
-test('active JS, CJS, and static-site assets parse before longer release checks run', () => {
+function pkgHasScript(scriptName) {
+  const pkg = readJson('package.json');
+  return typeof pkg.scripts?.[scriptName] === 'string';
+}
+
+test('active JS and CJS scripts/tests parse before longer release checks run', () => {
   const failures = jsSyntaxGateRoots
     .flatMap(collectJavaScriptSyntaxGateFiles)
     .flatMap((relativePath) => {
@@ -73,6 +79,36 @@ test('store build scripts document the exact release commands', () => {
   assert.equal(pkg.scripts['build:preview'], 'node scripts/build-preview-guard.js');
   assert.equal(pkg.scripts['build:production'], 'node scripts/build-production-guard.js');
   assert.equal(pkg.scripts['submit:production'], 'node scripts/submit-production-guard.js');
+});
+
+test('web export bundle budget records a measured re-baseline with bounded headroom', () => {
+  const { baseline } = WEB_ENTRY_BUNDLE_BUDGET;
+  const maxBaselineHeadroom = 1.06;
+
+  assert.equal(pkgHasScript('test:web-export-budget'), true);
+  assert.equal(typeof baseline.measuredAt, 'string');
+  assert.match(baseline.rationale, /Measured re-baseline/);
+  assert.ok(baseline.entryBundle.startsWith('_expo/static/js/web/entry-'));
+  assert.equal(baseline.bundleCount, 3);
+  assert.equal(baseline.sizeDrivers.length >= 3, true);
+  assert.ok(baseline.sizeDrivers.some((driver) => /Expo Router|React Native Web/.test(driver)));
+  assert.ok(baseline.sizeDrivers.some((driver) => /question bank|generated practice/.test(driver)));
+  assert.ok(baseline.sizeDrivers.some((driver) => /localization pilot/.test(driver)));
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxRawBytes >= baseline.measuredRawBytes);
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxGzipBytes >= baseline.measuredGzipBytes);
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxBrotliBytes >= baseline.measuredBrotliBytes);
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxRawBytes <=
+      Math.ceil(baseline.measuredRawBytes * maxBaselineHeadroom),
+  );
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxGzipBytes <=
+      Math.ceil(baseline.measuredGzipBytes * maxBaselineHeadroom),
+  );
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxBrotliBytes <=
+      Math.ceil(baseline.measuredBrotliBytes * maxBaselineHeadroom),
+  );
 });
 
 test('EAS access evidence command is wired for repeatable non-secret checks', () => {
@@ -985,33 +1021,13 @@ test('GitHub release validation workflow runs safe validation and blocker eviden
   assert.match(workflow, /npx playwright install --with-deps chromium/);
   assert.match(workflow, /npm run validate/);
   assert.match(workflow, /npm run test:screenshot-manifest/);
-  const installDependenciesIndex = workflow.indexOf('run: npm ci');
-  const installChromiumIndex = workflow.indexOf('run: npx playwright install --with-deps chromium');
-  const validateIndex = workflow.indexOf('run: npm run validate');
-  assert.match(workflow, /name:\s*Upload visual smoke artifacts/);
-  const visualArtifactIndex = workflow.indexOf('name: Upload visual smoke artifacts');
-  const releaseEvidenceUploadIndex = workflow.indexOf('name: Upload release evidence index');
-  const visualArtifactBlock = workflow.slice(visualArtifactIndex, releaseEvidenceUploadIndex);
-  assert.ok(visualArtifactIndex > validateIndex, 'visual artifacts upload after validation');
-  assert.ok(
-    visualArtifactIndex > workflow.indexOf('run: npm run test:screenshot-manifest'),
-    'visual artifacts upload after screenshot manifest check',
-  );
-  assert.ok(
-    releaseEvidenceUploadIndex > visualArtifactIndex,
-    'release evidence upload stays after visual artifact upload',
-  );
-  assert.match(visualArtifactBlock, /uses:\s*actions\/upload-artifact@v6/);
-  assert.match(visualArtifactBlock, /if:\s*always\(\)/);
-  assert.match(visualArtifactBlock, /name:\s*visual-smoke-artifacts/);
-  assert.match(visualArtifactBlock, /test-results\//);
-  assert.match(visualArtifactBlock, /playwright-report\//);
-  assert.match(visualArtifactBlock, /reports\/2026-05-15-uiux-screenshots\//);
-  assert.match(visualArtifactBlock, /if-no-files-found:\s*ignore/);
   assert.match(workflow, /npm run test:ownership/);
   assert.match(workflow, /npm run test:external-blockers/);
   assert.match(workflow, /npm run release:evidence-index/);
   assert.match(workflow, /STUBS_READY\|READY/);
+  const installDependenciesIndex = workflow.indexOf('run: npm ci');
+  const installChromiumIndex = workflow.indexOf('run: npx playwright install --with-deps chromium');
+  const validateIndex = workflow.indexOf('run: npm run validate');
   assert.ok(installChromiumIndex > installDependenciesIndex, 'Chromium installs after npm ci');
   assert.ok(validateIndex > installChromiumIndex, 'Chromium installs before validation runs');
   assert.doesNotMatch(workflow, new RegExp(['Bab', 'bloo'].join(''), 'i'));

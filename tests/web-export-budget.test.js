@@ -6,17 +6,10 @@ const path = require('node:path');
 const test = require('node:test');
 const zlib = require('node:zlib');
 
+const { WEB_ENTRY_BUNDLE_BUDGET } = require('../scripts/web-export-budget');
+
 const repoRoot = path.resolve(__dirname, '..');
 const DEFAULT_OUTPUT_DIR = path.join(repoRoot, 'dist-web');
-const WEB_ENTRY_BUNDLE_BUDGET = {
-  // 2026-05-20 release export measured 4,127,441 raw / 896,965 gzip /
-  // 653,345 brotli bytes after shipping the current native/web parity
-  // surfaces. Keep a narrow ceiling above the measured candidate so future
-  // route or dependency growth still has to be reviewed intentionally.
-  maxRawBytes: 4_250_000,
-  maxGzipBytes: 925_000,
-  maxBrotliBytes: 675_000,
-};
 
 function listJsBundles(bundleDir) {
   if (!fs.existsSync(bundleDir)) return [];
@@ -66,7 +59,7 @@ function assertWithinBudget(report, budget) {
   ].join(', ');
   throw new Error(
     `Web export entry bundle exceeds budget for ${report.relativePath}: ${measured}. ` +
-      'If the increase is intentional, update WEB_ENTRY_BUNDLE_BUDGET in tests/web-export-budget.test.js with the new measured ceiling.',
+      'If the increase is intentional, update scripts/web-export-budget.js with the new measured ceiling and baseline rationale.',
   );
 }
 
@@ -126,6 +119,35 @@ test('web export entry bundle stays within documented mobile budget', () => {
   assert.equal(report.rawBytes > 0, true);
   assert.equal(report.gzipBytes > 0, true);
   assert.equal(report.brotliBytes > 0, true);
+});
+
+test('web export bundle budget records the measured baseline and size drivers', () => {
+  const { baseline } = WEB_ENTRY_BUNDLE_BUDGET;
+  const maxBaselineHeadroom = 1.06;
+
+  assert.equal(baseline.measuredAt, '2026-05-20');
+  assert.equal(baseline.measuredRawBytes, 2_431_194);
+  assert.equal(baseline.measuredGzipBytes, 597_930);
+  assert.equal(baseline.measuredBrotliBytes, 466_218);
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxRawBytes >= baseline.measuredRawBytes);
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxGzipBytes >= baseline.measuredGzipBytes);
+  assert.ok(WEB_ENTRY_BUNDLE_BUDGET.maxBrotliBytes >= baseline.measuredBrotliBytes);
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxRawBytes <=
+      Math.ceil(baseline.measuredRawBytes * maxBaselineHeadroom),
+  );
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxGzipBytes <=
+      Math.ceil(baseline.measuredGzipBytes * maxBaselineHeadroom),
+  );
+  assert.ok(
+    WEB_ENTRY_BUNDLE_BUDGET.maxBrotliBytes <=
+      Math.ceil(baseline.measuredBrotliBytes * maxBaselineHeadroom),
+  );
+  assert.match(baseline.rationale, /Measured re-baseline/);
+  assert.ok(baseline.sizeDrivers.some((driver) => /Expo Router|React Native Web/.test(driver)));
+  assert.ok(baseline.sizeDrivers.some((driver) => /question bank|generated practice/.test(driver)));
+  assert.ok(baseline.sizeDrivers.some((driver) => /localization pilot/.test(driver)));
 });
 
 test('web export budget reports raw, gzip, and brotli sizes when exceeded', () => {
