@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceMuted,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     minWidth: space[9],
     paddingHorizontal: space[1.5],
     paddingVertical: space[1],

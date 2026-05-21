@@ -75,7 +75,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.large,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[2],
       padding: space[3],
       ...shadows.card,

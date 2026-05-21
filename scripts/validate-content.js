@@ -3763,6 +3763,9 @@ const EXPECTED_THEME_SPACE_VALUES = {
   12: 96,
   15: 120,
 };
+const THEME_BORDER_WIDTH_SOURCE_DIRS = ['app', 'components', 'lib'];
+const RAW_BORDER_WIDTH_TOKEN_PATTERN =
+  /\bborder(?:Top|Right|Bottom|Left)?Width:\s*(?:StyleSheet\.hairlineWidth|\d)/;
 const EXPECTED_THEME_RADIUS_VALUES = {
   input: 4,
   micro: 4,
@@ -8484,6 +8487,8 @@ let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
+let themeBorderWidthTokenFilesValidated = 0;
+let themeBorderWidthTokenParityValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let badgeRuntimeInputCasesValidated = 0;
@@ -15697,6 +15702,42 @@ function validateThemeTokenSchema() {
     fail(message);
   }
 
+  function collectThemeStyleFiles(dir) {
+    const absoluteDir = path.join(repoRoot, dir);
+    if (!fs.existsSync(absoluteDir)) return [];
+    return fs.readdirSync(absoluteDir, { withFileTypes: true }).flatMap((entry) => {
+      const absolutePath = path.join(absoluteDir, entry.name);
+      const relativePath = path.relative(repoRoot, absolutePath);
+      if (entry.isDirectory()) {
+        if (relativePath === 'lib/theme') return [];
+        return collectThemeStyleFiles(relativePath);
+      }
+      if (/\.tsx?$/.test(entry.name)) return [relativePath];
+      return [];
+    });
+  }
+
+  function validateBorderWidthTokens() {
+    const offenders = [];
+    const files = THEME_BORDER_WIDTH_SOURCE_DIRS.flatMap(collectThemeStyleFiles);
+
+    for (const relativePath of files) {
+      const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      source.split('\n').forEach((line, index) => {
+        if (RAW_BORDER_WIDTH_TOKEN_PATTERN.test(line)) {
+          offenders.push(`${relativePath}:${index + 1}: ${line.trim()}`);
+        }
+      });
+    }
+
+    themeBorderWidthTokenFilesValidated = files.length;
+    if (offenders.length > 0) {
+      reject(`theme border width tokens required: ${offenders.join('; ')}`);
+      return;
+    }
+    themeBorderWidthTokenParityValidated = true;
+  }
+
   function validateNoExtraKeys(actual, expectedKeys, label) {
     if (!isObjectRecord(actual)) {
       reject(`${label} must be an object`);
@@ -15779,6 +15820,7 @@ function validateThemeTokenSchema() {
       themeSpaceTokensValidated += 1;
     }
   }
+  validateBorderWidthTokens();
 
   validateNoExtraKeys(radius, Object.keys(EXPECTED_THEME_RADIUS_VALUES), 'theme radius');
   if (isObjectRecord(radius)) {
@@ -15934,6 +15976,7 @@ function validateThemeTokenSchema() {
     themeContrastPairsAAValidated &&
     themeDarkContrastPairsAAValidated &&
     themeSpaceTokensValidated === Object.keys(EXPECTED_THEME_SPACE_VALUES).length &&
+    themeBorderWidthTokenParityValidated &&
     themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
@@ -19995,6 +20038,8 @@ console.log(
       themeShadowTokensValidated,
       themeMotionTokensValidated,
       themeTokenSchemaValidated,
+      themeBorderWidthTokenFilesValidated,
+      themeBorderWidthTokenParityValidated,
       contentTestValidateContentExecCallsValidated,
       contentTestValidateContentExecCwdPinnedValidated,
       contentTestValidateContentExecCwdParityValidated,

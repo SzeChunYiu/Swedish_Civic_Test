@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.25],
     padding: space[3],
   },
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
   questionCard: {
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.5],
     padding: space[2],
   },
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
   option: {
     borderColor: colors.border,
     borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     padding: space[1.5],
   },
   optionSelected: {
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderColor: colors.border,
     borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: space[1.5],
@@ -828,13 +828,13 @@ const styles = StyleSheet.create({
   reviewCard: {
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.5],
     padding: space[2],
   },
   reviewCardFocused: {
     borderColor: colors.focus,
-    borderWidth: 2,
+    borderWidth: space.hairline,
   },
   reviewHeader: {
     alignItems: 'center',

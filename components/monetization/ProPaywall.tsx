@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     backgroundColor: colors.surfaceMuted,
-    borderTopWidth: 0,
+    borderTopWidth: space[0],
   },
   featureCell: {
     color: colors.text,

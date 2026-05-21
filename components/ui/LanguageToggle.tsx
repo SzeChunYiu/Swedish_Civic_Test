@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flexDirection: 'row',
     overflow: 'hidden',
     padding: space.hairline,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   buttonActive: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
   },
   buttonPressed: {
     backgroundColor: colors.focusSoft,
