@@ -191,6 +191,40 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('about-the-test route copy rejects Swedish Mock-provet wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'Våra övningsfrågor är inte UHR:s provfrågor',
+        'Mock-provet visar bara UHR-frågor',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
+  );
+});
+
 test('about-the-test seen-effect parity rejects removing the mount effect', () => {
   const result = spawnSync(
     process.execPath,

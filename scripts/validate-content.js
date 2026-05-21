@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -7891,6 +7890,10 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = null;
+let aboutTheTestSeenEffectRulesValidated = 0;
+let aboutTheTestSeenEffectParityValidated = false;
+let firstRunAboutModalSuppressedRoutesValidated = 0;
+let firstRunAboutModalSuppressionParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -8270,6 +8273,10 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+    aboutTheTestSeenEffectRulesValidated,
+    aboutTheTestSeenEffectParityValidated,
+    firstRunAboutModalSuppressedRoutesValidated,
+    firstRunAboutModalSuppressionParityValidated,
   });
   process.exit(0);
 }
@@ -10806,6 +10813,8 @@ function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
   let legalPage = '';
+  let firstRunAboutModal = '';
+  let adsSource = '';
 
   function reject(message) {
     valid = false;
@@ -10828,8 +10837,116 @@ function validateAboutTheTestRouteCopyParity() {
     return;
   }
 
+  try {
+    firstRunAboutModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`first-run about modal source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  } catch (error) {
+    reject(`ads route suppression source could not be read: ${error.message}`);
+    return;
+  }
+
   for (const [snippet, message] of EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS) {
     if (!aboutRoute.includes(snippet)) reject(message);
+  }
+
+  const seenEffectPattern =
+    /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
+  const seenEffectRules = [
+    {
+      ok: aboutRoute.includes("import { useEffect } from 'react';"),
+      message: 'about-the-test route must import useEffect for first-run seen effect',
+    },
+    {
+      ok: aboutRoute.includes(
+        'const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);',
+      ),
+      message:
+        'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    },
+    {
+      ok: aboutRoute.includes(
+        'const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);',
+      ),
+      message: 'about-the-test route must subscribe to markAboutTheTestSeen',
+    },
+    {
+      ok: seenEffectPattern.test(aboutRoute),
+      message: 'about-the-test route missing effect-scoped seen marker for first-run seen effect',
+    },
+    {
+      ok: !/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(aboutRoute),
+      message:
+        'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    },
+    {
+      ok: !aboutRoute.replace(seenEffectPattern, '').includes('markAboutTheTestSeen();'),
+      message: 'about-the-test route must call markAboutTheTestSeen() only inside useEffect',
+    },
+  ];
+
+  for (const { message, ok } of seenEffectRules) {
+    if (!ok) {
+      reject(message);
+      continue;
+    }
+    aboutTheTestSeenEffectRulesValidated += 1;
+  }
+
+  if (
+    aboutTheTestSeenEffectRulesValidated === seenEffectRules.length &&
+    seenEffectPattern.test(aboutRoute)
+  ) {
+    aboutTheTestSeenEffectParityValidated = true;
+  }
+
+  const forbiddenSwedishMockProvPattern = /\b[Mm]ock\s*-?\s*prov(?:et)?\b/;
+  if (forbiddenSwedishMockProvPattern.test(aboutRoute)) {
+    reject(
+      'about-the-test route Swedish copy must use övningsprov wording, not mockprov/mock-provet',
+    );
+  }
+  if (forbiddenSwedishMockProvPattern.test(firstRunAboutModal)) {
+    reject(
+      'first-run about guide Swedish copy must use övningsprov wording, not mockprov/mock-provet',
+    );
+  }
+
+  const expectedSuppressedFirstRunRoutes = [
+    '/exam',
+    '/quiz',
+    '/(auth)',
+    '/about-the-test',
+    '/onboarding',
+  ];
+  for (const route of expectedSuppressedFirstRunRoutes) {
+    if (firstRunAboutModal.includes(`'${route}'`)) {
+      firstRunAboutModalSuppressedRoutesValidated += 1;
+    } else {
+      reject(`first-run about modal must suppress ${route}`);
+    }
+  }
+  if (!adsSource.includes("'/onboarding'")) {
+    reject('first-run about modal ad suppression must include /onboarding');
+  }
+  for (const route of ['/home', '/learn', '/practice', '/mistakes', '/profile']) {
+    if (firstRunAboutModal.includes(`'${route}'`)) {
+      reject(`first-run about modal must not suppress ${route}`);
+    }
+  }
+  if (
+    firstRunAboutModalSuppressedRoutesValidated === expectedSuppressedFirstRunRoutes.length &&
+    adsSource.includes("'/onboarding'")
+  ) {
+    firstRunAboutModalSuppressionParityValidated = true;
   }
 
   if (!legalPage.includes('target="_blank"')) {
@@ -17926,6 +18043,10 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      aboutTheTestSeenEffectRulesValidated,
+      aboutTheTestSeenEffectParityValidated,
+      firstRunAboutModalSuppressedRoutesValidated,
+      firstRunAboutModalSuppressionParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
