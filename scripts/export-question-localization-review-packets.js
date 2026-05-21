@@ -134,13 +134,15 @@ function buildReadme(questions) {
 function buildPackets() {
   assertQuestionReadinessFailClosed();
 
-  const questions = loadSiteQuestions()
-    .filter((question) => question.questionProvenance === 'uhr')
-    .sort((a, b) => a.id.localeCompare(b.id));
   const expectedIds = Array.from(
     { length: 169 },
     (_, index) => `q${String(index + 1).padStart(3, '0')}`,
   );
+  const questions = loadSiteQuestions()
+    .filter(
+      (question) => question.questionProvenance === 'uhr' && expectedIds.includes(question.id),
+    )
+    .sort((a, b) => a.id.localeCompare(b.id));
   const ids = questions.map((question) => question.id);
   if (ids.join('\n') !== expectedIds.join('\n')) {
     throw new Error(`Expected q001-q169 UHR questions, found ${ids.length}: ${ids.join(', ')}`);
