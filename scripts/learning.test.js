@@ -363,6 +363,68 @@ test('mastery ignores malformed runtime counters and unsafe thresholds', () => {
   assert.deepEqual(findWeakChapterIds(questions, progress, -1), []);
 });
 
+test('weak chapter selector ignores malformed runtime progress and chapter metadata', () => {
+  const { chapterWeaknesses, topWeakChapters } = loadAllTs('lib/learning/weakChapters.ts');
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'session-1',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          { questionId: 'nan-1', isCorrect: 'yes', answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'negative-1', isCorrect: 1, answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'valid-1', isCorrect: true, answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'valid-2', isCorrect: 'true', answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'bad-date', isCorrect: true, answeredAt: 'not-a-date' },
+        ],
+      },
+    ],
+  };
+  const input = {
+    progress,
+    chapters: [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -2 },
+      { id: 'valid', questionCount: 4 },
+    ],
+    questionChapterIndex: {
+      'nan-1': 'nan-count',
+      'negative-1': 'negative-count',
+      'valid-1': 'valid',
+      'valid-2': 'valid',
+      'bad-date': 'valid',
+    },
+    now: new Date('not-a-date'),
+    minAnswers: Number.NaN,
+    recencyDays: Infinity,
+  };
+
+  const result = chapterWeaknesses(input);
+  result.forEach((chapter) => {
+    assert.ok(Number.isFinite(chapter.coverage));
+    assert.ok(chapter.coverage >= 0 && chapter.coverage <= 1);
+    assert.ok(Number.isFinite(chapter.weaknessScore));
+    assert.ok(chapter.weaknessScore >= 0 && chapter.weaknessScore <= 1);
+  });
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').accuracy, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'valid').accuracy, 0.5);
+  assert.deepEqual(
+    chapterWeaknesses({ progress: null, chapters: null, questionChapterIndex: null }),
+    [],
+  );
+  assert.deepEqual(
+    topWeakChapters(input, 2).map((chapter) => chapter.chapterId),
+    ['nan-count', 'negative-count'],
+  );
+});
+
 test('readiness score can be derived from the persisted question progress snapshot', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
 

@@ -653,6 +653,7 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
+const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -7709,6 +7710,9 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
+const weakChaptersModule = loadTs('lib/learning/weakChapters.ts');
+const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
+const topWeakChapters = weakChaptersModule.topWeakChapters;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7981,6 +7985,8 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
+let weakChapterRulesValidated = 0;
+let weakChapterRulesParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -8258,6 +8264,16 @@ if (process.argv.includes('--focus-mastery-rules')) {
   printValidationSummary({
     masteryRulesValidated,
     masteryRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-weak-chapter-rules')) {
+  validateWeakChapterRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    weakChapterRulesValidated,
+    weakChapterRulesParityValidated,
   });
   process.exit(0);
 }
@@ -15828,6 +15844,126 @@ function validateMasteryRules() {
   }
 }
 
+function validateWeakChapterRules() {
+  if (typeof chapterWeaknesses !== 'function' || typeof topWeakChapters !== 'function') {
+    return;
+  }
+
+  const progress = {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'session-1',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          { questionId: 'nan-1', isCorrect: 'yes', answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'negative-1', isCorrect: 1, answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'fractional-1', isCorrect: true, answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'strict-1', isCorrect: true, answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'strict-2', isCorrect: 'true', answeredAt: '2026-05-18T10:00:00.000Z' },
+          { questionId: 'bad-date', isCorrect: true, answeredAt: 'not-a-date' },
+        ],
+      },
+    ],
+  };
+  const input = {
+    progress,
+    chapters: [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -2 },
+      { id: 'fractional-count', questionCount: 2.5 },
+      { id: 'strict-boolean', questionCount: 10 },
+    ],
+    questionChapterIndex: {
+      'nan-1': 'nan-count',
+      'negative-1': 'negative-count',
+      'fractional-1': 'fractional-count',
+      'strict-1': 'strict-boolean',
+      'strict-2': 'strict-boolean',
+      'bad-date': 'strict-boolean',
+    },
+    now: new Date('not-a-date'),
+    minAnswers: Number.NaN,
+    recencyDays: Infinity,
+  };
+
+  const cases = [
+    {
+      label: 'malformed chapter metadata keeps finite scores',
+      actual: () =>
+        chapterWeaknesses(input).every(
+          (chapter) =>
+            Number.isFinite(chapter.coverage) &&
+            chapter.coverage >= 0 &&
+            chapter.coverage <= 1 &&
+            Number.isFinite(chapter.weaknessScore) &&
+            chapter.weaknessScore >= 0 &&
+            chapter.weaknessScore <= 1,
+        ),
+      expected: true,
+    },
+    {
+      label: 'truthy correctness is ignored',
+      actual: () =>
+        chapterWeaknesses(input).find((chapter) => chapter.chapterId === 'strict-boolean')
+          ?.accuracy,
+      expected: 0.5,
+    },
+    {
+      label: 'invalid totals clamp coverage',
+      actual: () =>
+        chapterWeaknesses(input)
+          .filter((chapter) => chapter.chapterId !== 'strict-boolean')
+          .map((chapter) => chapter.coverage),
+      expected: [0, 0, 0],
+    },
+    {
+      label: 'malformed containers are empty',
+      actual: () =>
+        chapterWeaknesses({ progress: null, chapters: null, questionChapterIndex: null }),
+      expected: [],
+    },
+    {
+      label: 'invalid-input sorting is deterministic',
+      actual: () => topWeakChapters(input, 3).map((chapter) => chapter.chapterId),
+      expected: ['fractional-count', 'nan-count', 'negative-count'],
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`weak chapter rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `weak chapter rule ${label} returned ${JSON.stringify(actualValue)}, expected ${JSON.stringify(
+          expected,
+        )}`,
+      );
+    } else {
+      weakChapterRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && weakChapterRulesValidated === EXPECTED_WEAK_CHAPTER_RULE_COUNT) {
+    weakChapterRulesParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -17369,6 +17505,7 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
+validateWeakChapterRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -17639,6 +17776,8 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
+      weakChapterRulesValidated,
+      weakChapterRulesParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
