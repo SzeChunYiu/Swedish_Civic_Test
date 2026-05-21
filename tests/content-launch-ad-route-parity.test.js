@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -106,14 +107,71 @@ test('native launch popup load failures clear only the in-flight attempt', () =>
   assert.match(nativeSource, /launchPopupLoadInFlight = true;[\s\S]*appOpenAd\.load\(\);/);
   assert.match(
     nativeSource,
-    /addAdEventListener\(AdEventType\.ERROR,[\s\S]*launchPopupLoadInFlight = false;/,
+    /addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);/,
   );
   assert.match(
     nativeSource,
-    /catch \{[\s\S]*unsubscribe\?\.\(\);[\s\S]*unsubscribeError\?\.\(\);[\s\S]*launchPopupLoadInFlight = false;[\s\S]*return undefined;/,
+    /catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*return undefined;/,
   );
   assert.match(
     nativeSource,
-    /return \(\) => \{[\s\S]*if \(!didReachShowPath\) \{[\s\S]*launchPopupLoadInFlight = false;[\s\S]*\}/,
+    /return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*if \(!didReachShowPath && !attemptSettled\) \{[\s\S]*finishLoadAttempt\(\);[\s\S]*\}/,
+  );
+});
+
+test('native launch popup load timeout clears in-flight without consuming runtime cap', () => {
+  const nativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+    'utf8',
+  );
+
+  const timeoutIndex = nativeSource.indexOf('loadTimeout = setTimeout(() => {');
+  const loadIndex = nativeSource.indexOf('appOpenAd.load();');
+  const loadedListenerIndex = nativeSource.indexOf('AdEventType.LOADED');
+  const capIndex = nativeSource.indexOf('launchPopupShownThisRuntime = true;', loadedListenerIndex);
+
+  assert.match(nativeSource, /const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;/);
+  assert.match(nativeSource, /clearTimeout\(loadTimeout\);/);
+  assert.match(
+    nativeSource,
+    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
+  );
+  assert.ok(timeoutIndex > loadedListenerIndex, 'timeout should be armed after listeners register');
+  assert.ok(loadIndex > timeoutIndex, 'timeout should be armed before requesting the load');
+  assert.ok(capIndex > loadedListenerIndex, 'runtime cap should remain in the loaded handler');
+  assert.doesNotMatch(
+    nativeSource.slice(timeoutIndex, loadIndex),
+    /launchPopupShownThisRuntime = true;/,
+    'timeout must not consume the one-per-runtime shown cap',
+  );
+});
+
+test('launch popup parity rejects missing native load timeout cleanup', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/LaunchPopupAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('loadTimeout = setTimeout(() => {', 'loadTimeout = undefined; (() => {');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /native LaunchPopupAd must clear the in-flight flag when load callbacks stall/,
   );
 });

@@ -9429,6 +9429,7 @@ function validateAppConfigSchema() {
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
   let rootLayout = '';
+  let nativeLaunchPopupSource = '';
 
   function reject(message) {
     valid = false;
@@ -9479,6 +9480,16 @@ function validateLaunchAdRouteSuppressionParity() {
     return;
   }
 
+  try {
+    nativeLaunchPopupSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`components/monetization/LaunchPopupAd.native.tsx could not be read: ${error.message}`);
+    return;
+  }
+
   if (!rootLayout.includes('usePathname()')) {
     reject('root layout must read the current pathname before rendering the launch ad');
   }
@@ -9487,6 +9498,19 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
+  }
+  if (!nativeLaunchPopupSource.includes('const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;')) {
+    reject('native LaunchPopupAd must define a bounded load timeout');
+  }
+  if (!nativeLaunchPopupSource.includes('clearTimeout(loadTimeout);')) {
+    reject('native LaunchPopupAd must clear its load timeout on load/error/unmount cleanup');
+  }
+  if (
+    !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/.test(
+      nativeLaunchPopupSource,
+    )
+  ) {
+    reject('native LaunchPopupAd must clear the in-flight flag when load callbacks stall');
   }
 
   if (
@@ -9834,6 +9858,24 @@ function validateAdPlacementRouteParity() {
       if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
         reject(
           'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (!nativeInterstitialSource.includes('const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;')) {
+        reject('PracticeInterstitialAd native placement must define a bounded load timeout');
+        routeIsValid = false;
+      }
+      if (!nativeInterstitialSource.includes('clearTimeout(loadTimeout);')) {
+        reject('PracticeInterstitialAd native placement must clear its load timeout');
+        routeIsValid = false;
+      }
+      if (
+        !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/.test(
+          nativeInterstitialSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must clear in-flight state when load callbacks stall',
         );
         routeIsValid = false;
       }
