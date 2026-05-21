@@ -49,6 +49,7 @@ type ExamRouteCopy = {
   correctCount: (correctCount: number, totalCount: number) => string;
   examResultTitle: string;
   extraExamUnavailable: string;
+  flaggedReviewCount: (count: number) => string;
   flaggedQuestionLabel: string;
   flagQuestionAccessibilityLabel: (questionNumber: number) => string;
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
@@ -61,6 +62,9 @@ type ExamRouteCopy = {
   resultBadge: string;
   resultNote: string;
   resultSubtitle: string;
+  reviewFilterAll: string;
+  reviewFilterFlagged: (count: number) => string;
+  reviewFilterSummary: (visibleCount: number, totalCount: number) => string;
   reviewBadge: string;
   savedBadge: string;
   savingBadge: string;
@@ -77,6 +81,8 @@ type ExamRouteCopy = {
   unflagQuestionAccessibilityLabel: (questionNumber: number) => string;
   unlockFailure: string;
 };
+
+type ReviewFilter = 'all' | 'flagged';
 
 const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
   sv: {
@@ -110,6 +116,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
     examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
+    flaggedReviewCount: (count) => `Flaggade frågor: ${count}`,
     flaggedQuestionLabel: 'Flaggad',
     flagQuestionAccessibilityLabel: (questionNumber) =>
       `Flagga fråga ${questionNumber} för granskning`,
@@ -130,6 +137,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
+    reviewFilterAll: 'Visa alla frågor',
+    reviewFilterFlagged: (count) => `Visa flaggade frågor (${count})`,
+    reviewFilterSummary: (visibleCount, totalCount) =>
+      `Visar ${visibleCount} av ${totalCount} frågor`,
     reviewBadge: 'Granska',
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
@@ -176,6 +187,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
     examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
+    flaggedReviewCount: (count) => `Flagged questions: ${count}`,
     flaggedQuestionLabel: 'Flagged',
     flagQuestionAccessibilityLabel: (questionNumber) =>
       `Flag question ${questionNumber} for review`,
@@ -195,6 +207,10 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
+    reviewFilterAll: 'Show all questions',
+    reviewFilterFlagged: (count) => `Show flagged questions (${count})`,
+    reviewFilterSummary: (visibleCount, totalCount) =>
+      `Showing ${visibleCount} of ${totalCount} questions`,
     reviewBadge: 'Review',
     savedBadge: 'Saved',
     savingBadge: 'Saving',
@@ -244,6 +260,7 @@ export default function Screen() {
   const [answerTimings, setAnswerTimings] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
   const [examUnlocked, setExamUnlocked] = useState(false);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
@@ -310,6 +327,13 @@ export default function Screen() {
     ? buildExamChapterBreakdownItems(result.chapterBreakdown, chapters)
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
+  const flaggedReviewCount = reviewItems.filter(
+    (item) => flaggedQuestionIds[item.questionId],
+  ).length;
+  const filteredReviewItems =
+    reviewFilter === 'flagged'
+      ? reviewItems.filter((item) => flaggedQuestionIds[item.questionId])
+      : reviewItems;
   const answeredCount = Object.keys(answers).length;
   const answeredIndexes = useMemo(
     () => examQuestions.flatMap((question, index) => (answers[question.id] ? [index] : [])),
@@ -345,6 +369,10 @@ export default function Screen() {
   );
   const examQuestionById = useMemo(
     () => new Map(examQuestions.map((question) => [question.id, question] as const)),
+    [examQuestions],
+  );
+  const examQuestionNumberById = useMemo(
+    () => new Map(examQuestions.map((question, index) => [question.id, index + 1] as const)),
     [examQuestions],
   );
   const examDiagnostic = useMemo(
@@ -383,6 +411,7 @@ export default function Screen() {
     setAnswerTimings({});
     setSubmitted(false);
     setSubmittedAt(null);
+    setReviewFilter('all');
     setCompletionRecorded(false);
     setFocusedReviewQuestionId(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
@@ -402,6 +431,7 @@ export default function Screen() {
 
   const submitExam = useCallback(() => {
     setSubmittedAt((current) => current ?? new Date().toISOString());
+    setReviewFilter('all');
     setSubmitted(true);
   }, []);
 
@@ -630,6 +660,56 @@ export default function Screen() {
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.questionReviewTitle}
         </Text>
+        <View style={styles.reviewFilterPanel}>
+          <View style={styles.reviewFilterHeader}>
+            <Text style={styles.reviewFilterSummary}>
+              {copy.reviewFilterSummary(filteredReviewItems.length, reviewItems.length)}
+            </Text>
+            <Badge tone={flaggedReviewCount > 0 ? 'warm' : 'blue'}>
+              {copy.flaggedReviewCount(flaggedReviewCount)}
+            </Badge>
+          </View>
+          {flaggedReviewCount > 0 ? (
+            <View style={styles.reviewFilterActions}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected: reviewFilter === 'flagged' }}
+                onPress={() => setReviewFilter('flagged')}
+                style={[
+                  styles.reviewFilterButton,
+                  reviewFilter === 'flagged' ? styles.reviewFilterButtonSelected : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.reviewFilterButtonText,
+                    reviewFilter === 'flagged' ? styles.reviewFilterButtonTextSelected : null,
+                  ]}
+                >
+                  {copy.reviewFilterFlagged(flaggedReviewCount)}
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected: reviewFilter === 'all' }}
+                onPress={() => setReviewFilter('all')}
+                style={[
+                  styles.reviewFilterButton,
+                  reviewFilter === 'all' ? styles.reviewFilterButtonSelected : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.reviewFilterButtonText,
+                    reviewFilter === 'all' ? styles.reviewFilterButtonTextSelected : null,
+                  ]}
+                >
+                  {copy.reviewFilterAll}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </View>
         {submittedExamSession && examDiagnostic ? (
           <MockExamTimeHeatmap
             answers={submittedExamSession.answers}
@@ -638,8 +718,9 @@ export default function Screen() {
             onSelectQuestion={jumpToReviewQuestion}
           />
         ) : null}
-        {reviewItems.map((item, index) => {
+        {filteredReviewItems.map((item) => {
           const reviewQuestion = examQuestionById.get(item.questionId);
+          const questionNumber = examQuestionNumberById.get(item.questionId) ?? 0;
 
           return (
             <View
@@ -654,7 +735,7 @@ export default function Screen() {
               ]}
             >
               <View style={styles.reviewHeader}>
-                <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+                <Text style={styles.questionMeta}>{copy.questionNumber(questionNumber)}</Text>
                 <Badge tone={item.isCorrect ? 'green' : 'orange'}>
                   {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
                 </Badge>
@@ -974,7 +1055,56 @@ function createStyles(themeColors: ThemeColors) {
     reviewHeader: {
       alignItems: 'center',
       flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
       justifyContent: 'space-between',
+    },
+    reviewFilterPanel: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    reviewFilterHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'space-between',
+    },
+    reviewFilterSummary: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    reviewFilterActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    reviewFilterButton: {
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+      justifyContent: 'center',
+    },
+    reviewFilterButtonSelected: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    reviewFilterButtonText: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    reviewFilterButtonTextSelected: {
+      color: themeColors.badgeBlueText,
     },
     answerGrid: {
       gap: space[1],

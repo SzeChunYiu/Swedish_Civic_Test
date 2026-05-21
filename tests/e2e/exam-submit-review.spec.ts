@@ -126,6 +126,8 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(activeReportLink).toBeVisible();
   await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
   await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
+  await page.getByLabel('Flagga fråga 1 för granskning').click();
+  await page.getByLabel('Flagga fråga 2 för granskning').click();
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -151,6 +153,16 @@ test('mock exam requires all answers before showing Swedish score and source pro
   });
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
   await expect(page.getByText('Frågegenomgång')).toBeVisible();
+  await expect(page.getByText('Flaggade frågor: 2', { exact: true })).toBeVisible();
+  await expect(page.getByText(`Visar ${totalQuestions} av ${totalQuestions} frågor`)).toBeVisible();
+  await page.getByRole('button', { name: 'Visa flaggade frågor (2)' }).click();
+  await expect(page.getByText(`Visar 2 av ${totalQuestions} frågor`)).toBeVisible();
+  await expect(page.getByText('Fråga 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('Fråga 2', { exact: true })).toBeVisible();
+  await expect(page.getByText('Fråga 3', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Visa alla frågor' }).click();
+  await expect(page.getByText(`Visar ${totalQuestions} av ${totalQuestions} frågor`)).toBeVisible();
+  await expect(page.getByText('Fråga 3', { exact: true })).toBeVisible();
   await expect(page.getByText('Valt svar').first()).toBeVisible();
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
@@ -208,6 +220,7 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(activeReportLink).toBeVisible();
   await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
   await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
+  await page.getByLabel('Flag question 1 for review').click();
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -239,6 +252,19 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();
   await expect(page.getByText('Question review')).toBeVisible();
+  await expect(page.getByText('Flagged questions: 1', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(`Showing ${totalQuestions} of ${totalQuestions} questions`),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Show flagged questions (1)' }).click();
+  await expect(page.getByText(`Showing 1 of ${totalQuestions} questions`)).toBeVisible();
+  await expect(page.getByText('Question 1', { exact: true })).toBeVisible();
+  await expect(page.getByText('Question 2', { exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Show all questions' }).click();
+  await expect(
+    page.getByText(`Showing ${totalQuestions} of ${totalQuestions} questions`),
+  ).toBeVisible();
+  await expect(page.getByText('Question 2', { exact: true })).toBeVisible();
   await expect(page.getByText('Selected answer').first()).toBeVisible();
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();

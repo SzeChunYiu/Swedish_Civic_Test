@@ -38,7 +38,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 60);
+  assert.equal(summary.examRouteCopyLabelsValidated, 68);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -62,6 +62,40 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
+  assert.match(source, /flaggedReviewCount: \(count\) => `Flaggade frågor: \$\{count\}`/);
+  assert.match(source, /flaggedReviewCount: \(count\) => `Flagged questions: \$\{count\}`/);
+  assert.match(source, /reviewFilterAll: 'Visa alla frågor'/);
+  assert.match(source, /reviewFilterAll: 'Show all questions'/);
+  assert.match(source, /reviewFilterFlagged: \(count\) => `Visa flaggade frågor \(\$\{count\}\)`/);
+  assert.match(
+    source,
+    /reviewFilterFlagged: \(count\) => `Show flagged questions \(\$\{count\}\)`/,
+  );
+  assert.match(
+    source,
+    /reviewFilterSummary: \(visibleCount, totalCount\) =>\s*`Visar \$\{visibleCount\} av \$\{totalCount\} frågor`/,
+  );
+  assert.match(
+    source,
+    /reviewFilterSummary: \(visibleCount, totalCount\) =>\s*`Showing \$\{visibleCount\} of \$\{totalCount\} questions`/,
+  );
+  assert.match(
+    source,
+    /const \[reviewFilter, setReviewFilter\] = useState<ReviewFilter>\('all'\);/,
+  );
+  assert.match(source, /const flaggedReviewCount = reviewItems\.filter/);
+  assert.match(source, /const filteredReviewItems =/);
+  assert.match(source, /reviewFilter === 'flagged'/);
+  assert.match(source, /copy\.flaggedReviewCount\(flaggedReviewCount\)/);
+  assert.match(
+    source,
+    /copy\.reviewFilterSummary\(filteredReviewItems\.length, reviewItems\.length\)/,
+  );
+  assert.match(source, /copy\.reviewFilterFlagged\(flaggedReviewCount\)/);
+  assert.match(source, /\{copy\.reviewFilterAll\}/);
+  assert.match(source, /filteredReviewItems\.map/);
+  assert.match(source, /const examQuestionNumberById = useMemo\(/);
+  assert.match(source, /copy\.questionNumber\(questionNumber\)/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
