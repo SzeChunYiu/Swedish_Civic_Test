@@ -18,9 +18,9 @@ const expectedLegalRoutes = [
       'Independent study tool',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Disclaimer',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -40,11 +40,11 @@ const expectedLegalRoutes = [
       'turns off ads on this device',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}[\s\S]*?>/,
     ],
     title: 'Privacy policy',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -68,9 +68,9 @@ const expectedLegalRoutes = [
       'Study purpose',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Terms of use',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -80,10 +80,7 @@ const expectedLegalRoutes = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
-      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
-      "retrievedDate: '2026-05-20'",
-      "title: 'UHR: Om medborgarskapsprovet'",
-      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+      'UHR_AUTHORITY_BOUNDARY_SOURCE',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
       'Källor',
@@ -120,10 +117,10 @@ const expectedLegalRoutes = [
       'Open public support page',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*?>/,
     ],
     title: 'Support and feedback',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -156,12 +153,25 @@ function escapeRegExp(value) {
 
 test('sources route authority boundary cites the current UHR page', () => {
   const routeSource = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
+  const linksSource = fs.readFileSync(
+    path.join(repoRoot, 'components/compliance/SourceMaterialLinks.tsx'),
+    'utf8',
+  );
+
+  assert.match(routeSource, /UHR_AUTHORITY_BOUNDARY_SOURCE/);
+  assert.match(routeSource, /<UhrAuthorityBoundaryLink language=\{language\}/);
 
   for (const snippet of [
     'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
     "retrievedDate: '2026-05-20'",
-    "title: 'UHR: Om medborgarskapsprovet'",
+    "titleSv: 'UHR: Om medborgarskapsprovet'",
+    "titleEn: 'UHR: About the citizenship test'",
     "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+  ]) {
+    assert.match(linksSource, new RegExp(escapeRegExp(snippet)));
+  }
+
+  for (const snippet of [
     'UHR inte står bakom dessa',
     'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
     'quality is not controlled by UHR or any other authority',
@@ -170,7 +180,8 @@ test('sources route authority boundary cites the current UHR page', () => {
     assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
   }
 
-  assert.match(routeSource, /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/);
+  assert.match(linksSource, /source=\{UHR_AUTHORITY_BOUNDARY_SOURCE\}/);
+  assert.match(linksSource, /href=\{href \?\? source\.url\}/);
   assert.doesNotMatch(routeSource, /UHR\s+varnar|UHR\s+warns/i);
   assert.doesNotMatch(
     routeSource,
@@ -187,19 +198,24 @@ test('legal, source, and support routes stay on shared accessible header path', 
 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
-  assert.equal(summary.legalSectionMixedChildrenRulesValidated, 4);
-  assert.equal(summary.legalSectionMixedChildrenLayoutValidated, true);
+  assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
+  assert.equal(summary.legalSectionRenderingCasesValidated, 3);
+  assert.equal(summary.legalSectionWhitespaceTextValidated, true);
+  assert.equal(summary.legalSectionFragmentChildrenValidated, true);
+  assert.equal(summary.legalSectionRawTextUnderViewValidated, true);
+  assert.equal(summary.legalSectionRenderingParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 59);
+  assert.ok(summary.legalSwedishEnglishTokenGuardValidated >= 5);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
-  assert.match(legalPage, /Children\.toArray\(children\)/);
-  assert.match(legalPage, /flushTextFragments\(\);\s*renderedChildren\.push\(child\);/);
+  assert.match(legalPage, /function flattenSectionChildren\(children: ReactNode\)/);
+  assert.match(legalPage, /isFragmentChild\(child\)/);
+  assert.match(legalPage, /flushParagraph\(renderedChildren, paragraphChildren, index\);/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
-    assert.match(routeSource, /LegalPage, LegalSection/);
+    assert.match(routeSource, /LegalPage[\s\S]*LegalSection|LegalSection[\s\S]*LegalPage/);
     if (expectedRoute.requiredSnippets) {
       for (const snippet of expectedRoute.requiredSnippets) {
         assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
@@ -222,7 +238,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
     if (expectedRoute.file === 'app/support.tsx') {
       assert.match(
         routeSource,
-        /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>\s*\{copy\.sections\.publicSupportPage\.body\}\s*<LegalExternalLink/,
+        /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*body=\{copy\.sections\.publicSupportPage\.body\}[\s\S]*<LegalExternalLink/,
       );
     }
   }
@@ -331,7 +347,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('legal route header parity rejects mixed LegalSection child layout drift', () => {
+test('legal route header parity rejects unflattened LegalSection fragment drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -344,15 +360,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/compliance/LegalPage.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Children.toArray(children)', 'Array.isArray(children) ? children : [children]')
-      .replace(
-        'flushTextFragments();\\n    renderedChildren.push(child);',
-        'renderedChildren.push(child);',
-      );
+      .replace('if (isFragmentChild(child)) {', 'if (false && isFragmentChild(child)) {');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-legal-route-parity');
+process.argv.push('--focus-legal-section-rendering');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -362,7 +374,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /LegalSection must split mixed text and interactive children into separate layout boxes/,
+    /LegalSection rendering parity: fragment-wrapped mixed children/,
   );
 });
 

@@ -32,6 +32,7 @@ const {
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
+const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -1876,9 +1877,9 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Independent study tool',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Disclaimer',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -1896,11 +1897,11 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'No account required',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.localProgressStorage\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.adsAndPurchases\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.adConsent\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.providerProcessing\.title\}[\s\S]*?>/,
     ],
     title: 'Privacy policy',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -1924,9 +1925,9 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Study purpose',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Terms of use',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -1944,9 +1945,9 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Primary study material',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -1966,10 +1967,10 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Open public support page',
     ],
     sectionPatterns: [
-      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.whatToReport\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.noPersonalData\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}[\s\S]*?>/,
     ],
     title: 'Support and feedback',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -7665,7 +7666,15 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let legalSectionRenderingTestsRoutedValidated = false;
+let legalSectionRenderingCasesValidated = 0;
+let legalSectionWhitespaceTextValidated = false;
+let legalSectionFragmentChildrenValidated = false;
+let legalSectionRawTextUnderViewValidated = false;
+let legalSectionRenderingParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let legalSwedishEnglishTokenGuardValidated = 0;
+let legalSwedishEnglishTokenGuardParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
 let staticSiteSwedishStudyTermNaturalnessValidated = false;
 let staticSiteSwedishGrammarToneValidated = 0;
@@ -10786,11 +10795,29 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (
-      !routeSource.includes(
-        "import { LegalPage, LegalSection } from '../components/compliance/LegalPage';",
+      !/import \{[^}]*LegalPage[^}]*LegalSection[^}]*\} from '..\/components\/compliance\/LegalPage';/.test(
+        routeSource,
       )
     ) {
       reject(`${expectedRoute.file} must use shared LegalPage and LegalSection headers`);
+    }
+
+    if (/\badsDisabled\b/.test(routeSource)) {
+      reject(`${expectedRoute.file} learner-facing privacy copy must not expose adsDisabled`);
+    }
+
+    const routeSwedishCopyBlock = routeSource.match(/\bsv:\s*\{[\s\S]*?\n\s*\},\s*\n\s*en:/)?.[0];
+    if (!routeSwedishCopyBlock) {
+      reject(`${expectedRoute.file} Swedish legal copy block must stay parseable`);
+    } else {
+      let routeSwedishCopyIsValid = true;
+      for (const token of ['streaks', 'settings']) {
+        if (new RegExp(`\\b${token}\\b`, 'i').test(routeSwedishCopyBlock)) {
+          routeSwedishCopyIsValid = false;
+          reject(`Swedish legal copy contains English token "${token}"`);
+        }
+      }
+      if (routeSwedishCopyIsValid) legalSwedishEnglishTokenGuardValidated += 1;
     }
 
     if (expectedRoute.requiredSnippets) {
@@ -10850,6 +10877,38 @@ function validateLegalRouteHeaderParity() {
   if (valid && legalRouteHeadersValidated === expectedHeaderCount) {
     legalRouteHeaderParityValidated = true;
   }
+  if (legalSwedishEnglishTokenGuardValidated === EXPECTED_LEGAL_ROUTE_HEADERS.length) {
+    legalSwedishEnglishTokenGuardParityValidated = true;
+  }
+}
+
+function validateLegalSectionRenderingParity() {
+  const legalSectionTestPath = 'tests/content-legal-section-rendering.test.js';
+  const contentScript = packageMetadata.scripts?.['test:content'];
+  const routedTestOccurrences =
+    typeof contentScript === 'string'
+      ? (contentScript.match(new RegExp(escapeRegExp(legalSectionTestPath), 'g')) ?? []).length
+      : 0;
+
+  if (routedTestOccurrences === 1) {
+    legalSectionRenderingTestsRoutedValidated = true;
+  } else {
+    fail(`test:content must include ${legalSectionTestPath} exactly once`);
+  }
+
+  const result = runLegalSectionRenderingGuard({ repoRoot });
+
+  result.failures.forEach((message) => {
+    fail(`LegalSection rendering parity: ${message}`);
+  });
+
+  legalSectionRenderingCasesValidated = result.summary.legalSectionRenderingCasesValidated;
+  legalSectionWhitespaceTextValidated = result.summary.legalSectionWhitespaceTextValidated;
+  legalSectionFragmentChildrenValidated = result.summary.legalSectionFragmentChildrenValidated;
+  legalSectionRawTextUnderViewValidated = result.summary.legalSectionRawTextUnderViewValidated;
+  legalSectionRenderingParityValidated =
+    legalSectionRenderingTestsRoutedValidated &&
+    result.summary.legalSectionRenderingParityValidated;
 }
 
 function validateSettingsRouteHeaderParity() {
@@ -16656,6 +16715,52 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-legal-route-parity')) {
+  validateLegalRouteHeaderParity();
+  validateLegalSectionRenderingParity();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        legalRouteHeadersValidated,
+        legalRouteHeaderParityValidated,
+        legalSectionRenderingTestsRoutedValidated,
+        legalSectionRenderingCasesValidated,
+        legalSectionWhitespaceTextValidated,
+        legalSectionFragmentChildrenValidated,
+        legalSectionRawTextUnderViewValidated,
+        legalSectionRenderingParityValidated,
+        swedishPrivacyStreakCopyNaturalnessValidated,
+        legalSwedishEnglishTokenGuardValidated,
+        legalSwedishEnglishTokenGuardParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
+if (process.argv.includes('--focus-legal-section-rendering')) {
+  validateLegalSectionRenderingParity();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        legalSectionRenderingTestsRoutedValidated,
+        legalSectionRenderingCasesValidated,
+        legalSectionWhitespaceTextValidated,
+        legalSectionFragmentChildrenValidated,
+        legalSectionRawTextUnderViewValidated,
+        legalSectionRenderingParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-source-material-link-parity')) {
   validateUhrSectionMapExactSchemaKeys();
   validateUhrSourceMaterialLinkParity();
@@ -16969,6 +17074,7 @@ validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
 validateLegalRouteHeaderParity();
+validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
@@ -17124,7 +17230,15 @@ console.log(
       mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      legalSectionRenderingTestsRoutedValidated,
+      legalSectionRenderingCasesValidated,
+      legalSectionWhitespaceTextValidated,
+      legalSectionFragmentChildrenValidated,
+      legalSectionRawTextUnderViewValidated,
+      legalSectionRenderingParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      legalSwedishEnglishTokenGuardValidated,
+      legalSwedishEnglishTokenGuardParityValidated,
       staticSiteSwedishStudyTermsValidated,
       staticSiteSwedishStudyTermNaturalnessValidated,
       staticSiteSwedishGrammarToneValidated,
