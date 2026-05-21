@@ -2151,6 +2151,28 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
 });
 
+test('Mobile Ads consent hook retries after initialized false blocked results', () => {
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    hookSource,
+    /function\s+resetInitializationPromise\(\)\s*\{\s*initializationPromise\s*=\s*undefined;\s*initializationPromisePlatform\s*=\s*undefined;\s*\}/,
+  );
+  assert.match(
+    hookSource,
+    /if\s*\(\s*!result\.initialized\s*\)\s*\{\s*resetInitializationPromise\(\);\s*return\s+result;\s*\}/,
+  );
+  assert.match(
+    hookSource,
+    /initializationPromise\s*\?\?=\s*initializeGoogleMobileAdsAfterConsent\([\s\S]*\.then\(\(result\)\s*=>\s*resolveInitializationResult\(result,\s*platform\)\)/,
+  );
+  assert.match(hookSource, /cachedInitialization\s*=\s*result;/);
+  assert.match(hookSource, /cachedInitializationPlatform\s*=\s*platform;/);
+});
+
 test('exam screen does not import ad components', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const accessHookSource = fs.readFileSync(

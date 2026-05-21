@@ -26,7 +26,7 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
     'utf8',
   );
 
-  assert.equal(summary.mobileAdsConsentHookCasesValidated, 5);
+  assert.equal(summary.mobileAdsConsentHookCasesValidated, 6);
   assert.equal(summary.mobileAdsConsentHookParityValidated, true);
   assert.match(hookSource, /!entitlements\.adsDisabled && adsConfig\.realAdsEnabled/);
   assert.match(hookSource, /trackingTransparencyStatus:/);
@@ -34,6 +34,10 @@ test('mobile ads consent hook fails closed around Remove Ads and cached initiali
   assert.match(hookSource, /getAdSdkInitializationDecision\(state\)/);
   assert.match(hookSource, /!entitlements\.adsDisabled[\s\S]*cachedInitialization/);
   assert.match(hookSource, /cachedInitializationPlatform\s*===\s*platform/);
+  assert.match(
+    hookSource,
+    /if\s*\(\s*!result\.initialized\s*\)\s*\{\s*resetInitializationPromise\(\);\s*return\s+result;\s*\}/,
+  );
   assert.match(hookSource, /setResult\(createInitialResult\(entitlements,\s*platform\)\)/);
 });
 
@@ -102,5 +106,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Mobile Ads consent hook must fail closed to initial consent state after async initialization errors/,
+  );
+});
+
+test('mobile ads consent hook parity rejects blocked-result retry drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-mobile-ads-consent-hook');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useMobileAdsConsent.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '    resetInitializationPromise();\\n    return result;',
+        '    return result;'
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them/,
   );
 });

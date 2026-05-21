@@ -1373,7 +1373,7 @@ const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
-const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -7870,6 +7870,16 @@ if (process.argv.includes('--focus-mastery-rules')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+  validateMobileAdsConsentHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentHookCasesValidated,
+    mobileAdsConsentHookParityValidated,
+  });
+  process.exit(0);
+}
+
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -13290,6 +13300,12 @@ function validateMobileAdsConsentHookParity() {
         normalizedHookSource.includes('initializationPromise = undefined;') &&
         normalizedHookSource.includes('throw error;'),
       'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
+    ],
+    [
+      /function\s+resolveInitializationResult\([\s\S]*result:\s*MobileAdsConsentInitializationResult,[\s\S]*platform:\s*string,[\s\S]*\):\s*MobileAdsConsentInitializationResult\s*\{\s*if\s*\(\s*!result\.initialized\s*\)\s*\{\s*resetInitializationPromise\(\);\s*return\s+result;\s*\}\s*cachedInitialization\s*=\s*result;\s*cachedInitializationPlatform\s*=\s*platform;\s*return\s+result;\s*\}/.test(
+        hookSource,
+      ),
+      'Mobile Ads consent hook must reset shared initialization after blocked consent results without caching them',
     ],
     [
       /if\s*\([\s\S]*!entitlements\.adsDisabled[\s\S]*cachedInitialization[\s\S]*cachedInitializationPlatform\s*===\s*platform[\s\S]*\)\s*\{\s*return\s+cachedInitialization;\s*\}/.test(
