@@ -672,8 +672,10 @@ export default function Screen() {
           {flaggedReviewCount > 0 ? (
             <View style={styles.reviewFilterActions}>
               <Pressable
+                accessibilityLabel={copy.reviewFilterFlagged(flaggedReviewCount)}
                 accessibilityRole="button"
                 accessibilityState={{ selected: reviewFilter === 'flagged' }}
+                aria-selected={reviewFilter === 'flagged'}
                 onPress={() => setReviewFilter('flagged')}
                 style={[
                   styles.reviewFilterButton,
@@ -690,8 +692,10 @@ export default function Screen() {
                 </Text>
               </Pressable>
               <Pressable
+                accessibilityLabel={copy.reviewFilterAll}
                 accessibilityRole="button"
                 accessibilityState={{ selected: reviewFilter === 'all' }}
+                aria-selected={reviewFilter === 'all'}
                 onPress={() => setReviewFilter('all')}
                 style={[
                   styles.reviewFilterButton,
