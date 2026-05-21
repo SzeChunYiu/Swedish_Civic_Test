@@ -3,7 +3,12 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
+import {
+  blockingModalOverlayLocator,
+  dismissBlockingModals,
+  seedFreshFirstRunSettingsLanguage,
+  seedFreshSettingsLanguageAndAboutSeen,
+} from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
   findUnexplainedVisualSmokeDuplicateReports,
@@ -141,4 +146,32 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   );
 
   expect(consoleErrors).toEqual([]);
+});
+
+test('dismissBlockingModals clears forced first-run and language picker overlays', async ({
+  page,
+}) => {
+  await seedFreshFirstRunSettingsLanguage(page, 'en');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('dialog', { name: 'What is the Swedish civic test?' })).toBeVisible();
+
+  const firstRunDismissal = await dismissBlockingModals(page);
+
+  expect(firstRunDismissal.firstRunAboutDismissed).toBe(true);
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+
+  const languagePage = await page.context().newPage();
+  await seedFreshSettingsLanguageAndAboutSeen(languagePage, 'en');
+  await languagePage.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(languagePage);
+  await languagePage
+    .getByRole('button', { name: /Current language EN\. Open language picker\./ })
+    .click();
+  await expect(languagePage.getByRole('menu', { name: 'Language picker' })).toBeVisible();
+
+  const languageDismissal = await dismissBlockingModals(languagePage);
+
+  expect(languageDismissal.languagePickerDismissed).toBe(true);
+  await expect(languagePage.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await languagePage.close();
 });
