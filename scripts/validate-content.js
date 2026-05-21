@@ -14337,6 +14337,33 @@ function validateRemoveAdsPurchaseRuntimeParity() {
 
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const placementCtaPurchaseActionSource =
+    placementCtaSource.match(
+      /async function runPurchaseAction\([\s\S]*?\n  }\n\n  const actionActive =/,
+    )?.[0] ?? '';
+  const placementCtaGuardReturnIndex = placementCtaPurchaseActionSource.indexOf(
+    'if (purchaseActionInFlightRef.current) return;',
+  );
+  const placementCtaGuardSetIndex = placementCtaPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = true;',
+  );
+  const placementCtaStoreAwaitIndex = placementCtaPurchaseActionSource.indexOf(
+    'const result = await purchaseAction(purchaseRuntime);',
+  );
+  const placementCtaFinallyIndex = placementCtaPurchaseActionSource.indexOf('finally {');
+  const placementCtaGuardResetIndex = placementCtaPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = false;',
+  );
+  const placementCtaUsesSynchronousInFlightGuard =
+    normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
+    placementCtaGuardReturnIndex >= 0 &&
+    placementCtaGuardSetIndex > placementCtaGuardReturnIndex &&
+    placementCtaStoreAwaitIndex > placementCtaGuardSetIndex &&
+    placementCtaFinallyIndex > placementCtaStoreAwaitIndex &&
+    placementCtaGuardResetIndex > placementCtaFinallyIndex &&
+    /finally\s*\{[\s\S]*purchaseActionInFlightRef\.current = false;[\s\S]*setActiveAction\(null\);[\s\S]*\}/.test(
+      placementCtaPurchaseActionSource,
+    );
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -14463,10 +14490,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint',
     ],
     [
-      normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
-        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
+      placementCtaUsesSynchronousInFlightGuard,
       'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];

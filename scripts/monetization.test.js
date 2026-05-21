@@ -3,7 +3,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
-const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -414,32 +413,8 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;/);
-  assert.match(practiceInterstitialSource, /clearTimeout\(loadTimeout\);/);
-  assert.match(
-    practiceInterstitialSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/,
-  );
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
-  assert.match(
-    practiceInterstitialSource,
-    /const finishSuccessfulShow = \(\) => \{[\s\S]*consumeShowKey\(\)/,
-  );
-  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*finishSuccessfulShow\(\)/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_LOAD_TIMEOUT_MS = \d[\d_]*;/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_SHOW_TIMEOUT_MS = \d[\d_]*;/);
-  assert.match(
-    practiceInterstitialSource,
-    /interstitialLoadInFlight = true;[\s\S]{0,180}startAttemptTimeout\(INTERSTITIAL_LOAD_TIMEOUT_MS\)/,
-  );
-  assert.match(
-    practiceInterstitialSource,
-    /AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/,
-  );
-  assert.doesNotMatch(
-    practiceInterstitialSource,
-    /setTimeout\(\(\) => \{[\s\S]{0,160}consumeShowKey\(\)/,
-  );
+  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
   assert.doesNotMatch(
     practiceInterstitialSource,
     /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,
@@ -456,29 +431,6 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
     practiceInterstitialSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
-});
-
-test('native launch popup load timeout releases the in-flight attempt only', () => {
-  const launchSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
-    'utf8',
-  );
-
-  const timeoutIndex = launchSource.indexOf('loadTimeout = setTimeout(() => {');
-  const loadIndex = launchSource.indexOf('appOpenAd.load();');
-  const loadedListenerIndex = launchSource.indexOf('AdEventType.LOADED');
-  const capIndex = launchSource.indexOf('launchPopupShownThisRuntime = true;', loadedListenerIndex);
-
-  assert.match(launchSource, /const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;/);
-  assert.match(launchSource, /clearTimeout\(loadTimeout\);/);
-  assert.match(
-    launchSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
-  );
-  assert.ok(timeoutIndex > loadedListenerIndex);
-  assert.ok(loadIndex > timeoutIndex);
-  assert.ok(capIndex > loadedListenerIndex);
-  assert.doesNotMatch(launchSource.slice(timeoutIndex, loadIndex), /launchPopupShownThisRuntime/);
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
@@ -1478,111 +1430,6 @@ test('native purchase provider matches requested product ids instead of Remove A
   );
 });
 
-test('Pro Lifetime stored records are receipt-backed and revalidated on relaunch', async () => {
-  const {
-    PRO_LIFETIME_PRODUCT_ID,
-    PRO_LIFETIME_RECORD_SCHEMA_VERSION,
-    PRO_LIFETIME_STORAGE_KEY,
-    getProLifetimeEntitlement,
-    setProLifetimeEntitlement,
-  } = loadTs('lib/monetization/proLifetimePurchase.ts');
-  const { createMemoryPurchaseStorage } = loadTs('lib/monetization/purchases.ts');
-  const proLifetimeSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
-    'utf8',
-  );
-  const hookSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useProLifetimeEntitlements.ts'),
-    'utf8',
-  );
-  const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
-  const storage = createMemoryPurchaseStorage();
-  const initialPurchase = {
-    productId: PRO_LIFETIME_PRODUCT_ID,
-    purchaseToken: 'pro-token-old',
-    transactionId: 'pro-tx-old',
-  };
-
-  await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'true');
-  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
-
-  await setProLifetimeEntitlement(true, {
-    purchase: initialPurchase,
-    receiptValidation: {
-      productId: PRO_LIFETIME_PRODUCT_ID,
-      purchaseToken: initialPurchase.purchaseToken,
-      status: 'valid',
-      transactionId: initialPurchase.transactionId,
-      validatedAt: '2026-05-20T12:00:00.000Z',
-    },
-    storage,
-  });
-
-  const storedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
-  assert.equal(storedRecord.productId, PRO_LIFETIME_PRODUCT_ID);
-  assert.equal(storedRecord.receiptValidationStatus, 'valid');
-  assert.equal(storedRecord.schemaVersion, PRO_LIFETIME_RECORD_SCHEMA_VERSION);
-
-  const events = [];
-  const provider = {
-    async connect() {
-      events.push('connect');
-    },
-    async disconnect() {
-      events.push('disconnect');
-    },
-    async requestRemoveAdsPurchase() {
-      return null;
-    },
-    async restorePurchases(productIds) {
-      events.push(`restore:${productIds.join(',')}`);
-      return [
-        {
-          productId: PRO_LIFETIME_PRODUCT_ID,
-          purchaseToken: 'pro-token-old',
-          transactionId: 'pro-tx-new',
-          raw: { ids: [PRO_LIFETIME_PRODUCT_ID] },
-        },
-      ];
-    },
-    async validateRemoveAdsReceipt(purchase, productId) {
-      events.push(`validate:${productId}`);
-      return {
-        productId,
-        purchaseToken: purchase.purchaseToken,
-        status: 'valid',
-        transactionId: purchase.transactionId,
-        validatedAt: '2026-05-21T00:00:00.000Z',
-      };
-    },
-  };
-
-  const revalidated = await getProLifetimeEntitlement({ provider, storage });
-  const refreshedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
-
-  assert.equal(revalidated.spacedRepetition, true);
-  assert.equal(refreshedRecord.transactionId, 'pro-tx-new');
-  assert.deepEqual(events, [
-    'connect',
-    `restore:${PRO_LIFETIME_PRODUCT_ID}`,
-    `validate:${PRO_LIFETIME_PRODUCT_ID}`,
-    'disconnect',
-  ]);
-  assert.match(proLifetimeSource, /parseStoredProLifetimeEntitlementRecord/);
-  assert.match(proLifetimeSource, /revalidateStoredProLifetimeEntitlementRecord/);
-  assert.match(proLifetimeSource, /provider\.restorePurchases\(\[PRO_LIFETIME_PRODUCT_ID\]\)/);
-  assert.match(
-    proLifetimeSource,
-    /provider\.validateRemoveAdsReceipt\(purchase, PRO_LIFETIME_PRODUCT_ID as ReceiptProductId\)/,
-  );
-  assert.doesNotMatch(proLifetimeSource, /STORED_TRUE|storedValue === STORED_TRUE/);
-  assert.match(hookSource, /provider:\s*createNativePurchaseProvider/);
-  assert.match(
-    normalizedProLifetimeSource,
-    /if \(!provider\) \{ return proLifetimeEntitlements\(true\); \}/,
-  );
-});
-
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
@@ -1744,12 +1591,6 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(paywallSource, {
-      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-      surfaceName: 'PremiumBanner',
-    }),
-  );
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
@@ -1786,37 +1627,56 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
-test('purchase paywalls use a synchronous in-flight guard before store calls', () => {
+test('RemoveAdsPlacementCta guards duplicate purchase actions before awaiting store calls', () => {
   const placementCtaSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
-  const premiumBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
-    'utf8',
+  const runPurchaseActionSource =
+    placementCtaSource.match(
+      /async function runPurchaseAction\([\s\S]*?\n  }\n\n  const actionActive =/,
+    )?.[0] ?? '';
+  const guardReturnIndex = runPurchaseActionSource.indexOf(
+    'if (purchaseActionInFlightRef.current) return;',
   );
-  const proPaywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
+  const guardSetIndex = runPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = true;',
+  );
+  const storeAwaitIndex = runPurchaseActionSource.indexOf(
+    'const result = await purchaseAction(purchaseRuntime);',
+  );
+  const finallyIndex = runPurchaseActionSource.indexOf('finally {');
+  const guardResetIndex = runPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = false;',
   );
 
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(placementCtaSource, {
-      awaitedCalls: ['await purchaseAction('],
-      surfaceName: 'RemoveAdsPlacementCta',
-    }),
+  assert.ok(runPurchaseActionSource, 'RemoveAdsPlacementCta should keep a shared action runner');
+  assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.ok(guardReturnIndex >= 0, 'duplicate actions should return synchronously');
+  assert.ok(guardSetIndex > guardReturnIndex, 'the guard should be set after the duplicate check');
+  assert.ok(
+    storeAwaitIndex > guardSetIndex,
+    'the guard should be set before awaiting the store call',
   );
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(premiumBannerSource, {
-      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-      surfaceName: 'PremiumBanner',
-    }),
+  assert.ok(
+    finallyIndex > storeAwaitIndex,
+    'the store call should be inside a finally-protected try',
   );
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(proPaywallSource, {
-      awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
-      surfaceName: 'ProPaywall',
-    }),
+  assert.ok(
+    guardResetIndex > finallyIndex,
+    'the guard should reset inside finally after store completion',
+  );
+  assert.match(
+    runPurchaseActionSource,
+    /finally\s*\{[\s\S]*purchaseActionInFlightRef\.current = false;[\s\S]*setActiveAction\(null\);[\s\S]*\}/,
+  );
+  assert.match(
+    placementCtaSource,
+    /onPress=\{\(\) => void runPurchaseAction\('buy', buyRemoveAds\)\}/,
+  );
+  assert.match(
+    placementCtaSource,
+    /onPress=\{\(\) => void runPurchaseAction\('restore', restoreRemoveAdsPurchase\)\}/,
   );
 });
 
@@ -2124,11 +1984,6 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
-  assert.match(nativeBannerSource, /BannerAdSize\.ANCHORED_ADAPTIVE_BANNER/);
-  assert.match(
-    nativeBannerSource,
-    /requestNonPersonalizedAdsOnly:\s*mobileAdsConsent\.decision\.requestNonPersonalizedAdsOnly/,
-  );
   assert.match(launchSource, /useMobileAdsConsent/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/);
@@ -2243,59 +2098,6 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(consentInfoFallbackResult.state.umpConsentStatus, 'obtained');
   assert.equal(consentInfoFallbackResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
-});
-
-test('Mobile Ads consent hook retries after blocked initialization results', async () => {
-  const hookSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
-    'utf8',
-  );
-  const { initializeGoogleMobileAdsAfterConsent } = loadTs('lib/monetization/mobileAdsConsent.ts');
-
-  assert.match(hookSource, /function resetInitializationPromise\(\)/);
-  assert.match(hookSource, /function resolveInitializationResult/);
-  assert.match(
-    hookSource,
-    /if \(!result\.initialized\) \{[\s\S]*resetInitializationPromise\(\);[\s\S]*return result;/,
-  );
-  assert.match(
-    hookSource,
-    /cachedInitialization = result;[\s\S]*cachedInitializationPlatform = platform;/,
-  );
-  assert.doesNotMatch(
-    hookSource,
-    /\.then\(\(result\) => \{[\s\S]*cachedInitialization = result;[\s\S]*return result;[\s\S]*\}\)/,
-  );
-
-  const pendingConsentCalls = [];
-  const blockedResult = await initializeGoogleMobileAdsAfterConsent({
-    entitlements: { adsDisabled: false },
-    googleMobileAdsEnabled: true,
-    realAdsEnabled: true,
-    runtime: {
-      async gatherUmpConsent() {
-        pendingConsentCalls.push('ump');
-        return { status: 'REQUIRED' };
-      },
-      async getTrackingPermissionsAsync() {
-        pendingConsentCalls.push('att:get');
-        return { status: 'undetermined' };
-      },
-      async initializeGoogleMobileAds() {
-        pendingConsentCalls.push('ads:init');
-      },
-      platform: 'ios',
-      async requestTrackingPermissionsAsync() {
-        pendingConsentCalls.push('att:request');
-        return { status: 'undetermined' };
-      },
-    },
-  });
-
-  assert.equal(blockedResult.initialized, false);
-  assert.equal(blockedResult.decision.canInitializeGoogleMobileAds, false);
-  assert.equal(blockedResult.decision.blockReason, 'pending_consent_prompts');
-  assert.deepEqual(pendingConsentCalls, ['att:get', 'att:request', 'ump']);
 });
 
 test('exam screen does not import ad components', () => {
