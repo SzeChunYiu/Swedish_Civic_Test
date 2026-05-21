@@ -23,7 +23,6 @@ import { getLocalDateKey } from './streaks';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-const MAX_FREEZE_LIFETIME_COUNT = 10000;
 
 export interface StreakFreezeState {
   /** Number of freezes available right now. 0..MAX_STOCKPILE. */
@@ -79,58 +78,32 @@ function normalizeDayKey(value: unknown): string | null {
   return normalized === dateKey ? dateKey : null;
 }
 
-function normalizeFreezeDayKey(value: unknown, now: Date): string | null {
-  const dayKey = normalizeDayKey(value);
-  if (!dayKey) return null;
-  return dayKey <= getLocalDateKey(now) ? dayKey : null;
-}
-
 function normalizeDayKeyList(values: unknown): string[] {
   if (!Array.isArray(values)) return [];
   return Array.from(new Set(values.map(normalizeDayKey).filter((key): key is string => !!key)));
 }
 
-function normalizeFreezeDayKeyList(values: unknown, now: Date): string[] {
-  if (!Array.isArray(values)) return [];
-  return Array.from(
-    new Set(
-      values
-        .map((value) => normalizeFreezeDayKey(value, now))
-        .filter((key): key is string => !!key),
-    ),
-  );
+function normalizeNonNegativeInteger(value: unknown, fallback = 0): number {
+  return typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0
+    ? value
+    : fallback;
 }
 
-function normalizeNonNegativeInteger(value: unknown, fallback = 0, max = Number.MAX_SAFE_INTEGER) {
-  if (typeof value !== 'number' || !Number.isFinite(value) || !Number.isInteger(value)) {
-    return fallback;
-  }
-  return Math.max(0, Math.min(max, value));
+function normalizeAvailableFreezes(value: unknown): number {
+  return Math.min(MAX_STOCKPILE, normalizeNonNegativeInteger(value));
 }
 
-export function normalizeStreakFreezeState(
-  value: unknown,
-  now: Date = new Date(),
-): StreakFreezeState {
-  const safeNow = safeDate(now);
-  const fallback = createInitialFreezeState(safeNow);
-  if (!value || typeof value !== 'object') return fallback;
-
-  const candidate = value as Partial<StreakFreezeState>;
+function normalizeFreezeState(state: StreakFreezeState): StreakFreezeState {
+  const candidate = state && typeof state === 'object' ? (state as Partial<StreakFreezeState>) : {};
   return {
-    available: normalizeNonNegativeInteger(candidate.available, fallback.available, MAX_STOCKPILE),
-    lastEarnedAt: normalizeFreezeDayKey(candidate.lastEarnedAt, safeNow) ?? fallback.lastEarnedAt,
-    lifetimeEarned: normalizeNonNegativeInteger(
-      candidate.lifetimeEarned,
-      fallback.lifetimeEarned,
-      MAX_FREEZE_LIFETIME_COUNT,
-    ),
-    lifetimeSpent: normalizeNonNegativeInteger(
-      candidate.lifetimeSpent,
-      fallback.lifetimeSpent,
-      MAX_FREEZE_LIFETIME_COUNT,
-    ),
-    rescuedDayKeys: normalizeFreezeDayKeyList(candidate.rescuedDayKeys, safeNow),
+    available: normalizeAvailableFreezes(candidate.available),
+    lastEarnedAt: normalizeDayKey(candidate.lastEarnedAt) ?? '',
+    lifetimeEarned: normalizeNonNegativeInteger(candidate.lifetimeEarned),
+    lifetimeSpent: normalizeNonNegativeInteger(candidate.lifetimeSpent),
+    rescuedDayKeys: normalizeDayKeyList(candidate.rescuedDayKeys),
   };
 }
 
@@ -144,13 +117,16 @@ function previousDayKey(dayKey: string): string {
  * earn. Pure — returns a new state, does not mutate.
  */
 export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const safeNow = safeDate(now);
-  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeNow));
-  const normalizedState = normalizeStreakFreezeState(state, safeNow);
+  const normalizedState = normalizeFreezeState(state);
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeDate(now)));
   const lastEarnedAt = normalizedState.lastEarnedAt;
 
+  if (!lastEarnedAt) {
+    return { ...normalizedState, lastEarnedAt: currentWeekStartKey };
+  }
+
   if (currentWeekStartKey <= lastEarnedAt) {
-    return normalizedState;
+    return { ...normalizedState, lastEarnedAt };
   }
 
   // Use noon UTC anchors so DST shifts don't change the rounded week count.
@@ -185,8 +161,6 @@ export interface StreakWithFreezeResult {
   streakDays: number;
   /** Freeze state AFTER applying any auto-saves. */
   freezeState: StreakFreezeState;
-  /** Rescued day keys that are part of the currently visible streak. */
-  rescuedInCurrentStreak: string[];
   /** Day keys rescued during THIS computation. Empty when no save happened. */
   rescuedThisRun: string[];
 }
@@ -205,7 +179,6 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     normalizeDayKey(input.today) ?? normalizeDayKey(input.now) ?? getLocalDateKey(new Date());
   const activeSet = new Set(normalizeDayKeyList(input.activeDayKeys));
   const previousRescuedDayKeys = normalizeDayKeyList(refilled.rescuedDayKeys);
-  const previousRescuedSet = new Set(previousRescuedDayKeys);
   // Also include previously-rescued days so streaks stay intact across calls.
   for (const rescued of previousRescuedDayKeys) activeSet.add(rescued);
 
@@ -213,12 +186,10 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
   let streak = 0;
   let availableFreezes = refilled.available;
   let lifetimeSpent = refilled.lifetimeSpent;
-  const rescuedInCurrentStreak: string[] = [];
   const rescuedThisRun: string[] = [];
 
   while (true) {
     if (activeSet.has(cursor)) {
-      if (previousRescuedSet.has(cursor)) rescuedInCurrentStreak.push(cursor);
       streak += 1;
       cursor = previousDayKey(cursor);
       continue;
@@ -230,7 +201,6 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     if (!activeSet.has(previous)) break;
     availableFreezes -= 1;
     lifetimeSpent += 1;
-    rescuedInCurrentStreak.push(cursor);
     rescuedThisRun.push(cursor);
     streak += 1;
     cursor = previous;
@@ -246,7 +216,6 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
       lifetimeSpent,
       rescuedDayKeys: newRescuedKeys,
     },
-    rescuedInCurrentStreak,
     rescuedThisRun,
   };
 }
@@ -257,13 +226,8 @@ export function freezeBannerCopy(
   result: StreakWithFreezeResult,
   language: 'sv' | 'en',
 ): string | null {
-  const rescuedInCurrentStreak = Array.isArray(result.rescuedInCurrentStreak)
-    ? result.rescuedInCurrentStreak
-    : [];
-  if (result.rescuedThisRun.length === 0 && rescuedInCurrentStreak.length === 0) return null;
-  const freezeLabel = result.freezeState.available === 1 ? 'freeze' : 'freezes';
-
+  if (result.rescuedThisRun.length === 0) return null;
   return language === 'sv'
-    ? `Sviten är räddad — du har ${result.freezeState.available} svitskydd kvar.`
-    : `Streak protected — ${result.freezeState.available} ${freezeLabel} left.`;
+    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
+    : `Streak protected — ${result.freezeState.available} freezes left.`;
 }

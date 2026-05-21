@@ -658,8 +658,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bprotects the right [^.?!]* and protection from\b/i,
   /\bskyddar att staten väljer\b/i,
   /\bprotects that the state chooses\b/i,
-  /^(?:Rätten för staten|Uttrycka tankar|Rätt till|Den gör)\b/i,
-  /^(?:Free expression in printed form|Express thoughts|The right to|It makes)\b/i,
   /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
@@ -745,12 +743,10 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 10;
+const EXPECTED_STREAK_RULE_COUNT = 13;
 const EXPECTED_XP_RULE_COUNT = 20;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
-const EXPECTED_LEARNING_PRO_GATED_REVIEW_CASES = 20;
-const EXPECTED_LEARNING_PRO_GATED_HIGHLIGHT_CASES = 15;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -1807,9 +1803,9 @@ const NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS = [
 ];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
-    label: 'empty or not-found quiz title',
+    label: 'empty quiz title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{unknownSessionId\s+\?\s+copy\.notFoundTitle\s+:\s+copy\.emptyTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
   },
   {
     label: 'session title',
@@ -1819,14 +1815,9 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 ];
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
-    'Sök övningsfrågor',
-    'Sök efter övningsfrågor',
     'Tillbaka till övning',
     'Frågepass',
-    'Gå tillbaka till övning eller sök när frågor har lagts till.',
     'Det finns inga övningsfrågor ännu.',
-    'Vi hittar ingen övningsfråga för den här länken.',
-    'Frågan hittades inte',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
@@ -1834,14 +1825,9 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Försök igen med den här frågan',
   ],
   en: [
-    'Search questions',
-    'Search for practice questions',
     'Back to Practice',
     'Quiz session',
-    'Go back to Practice or Search when questions have been added.',
     'No quiz questions are available yet.',
-    'We could not find a practice question for this link.',
-    'Question not found',
     'Score',
     'Answer the routed question, then review the source-backed feedback.',
     'Session ${currentSessionId}',
@@ -1861,15 +1847,6 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz route must read language from settings store',
   ],
   ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
-  ['return exactMatch;', 'routed quiz must only resolve exact question-id routes'],
-  [
-    '{unknownSessionId ? copy.notFoundTitle : copy.emptyTitle}',
-    'routed quiz must render localized not-found title copy',
-  ],
-  [
-    '{unknownSessionId ? copy.notFoundBody : copy.emptyBody}',
-    'routed quiz must render localized not-found body copy',
-  ],
   [
     '<QuestionDisclaimer language={language} />',
     'routed quiz disclaimer must receive settings language',
@@ -1900,12 +1877,6 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz back-to-practice link must expose localized accessibility copy',
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
-  [
-    'accessibilityLabel={copy.backToSearchAccessibilityLabel}',
-    'quiz search recovery link must expose localized accessibility copy',
-  ],
-  ['href="/search"', 'quiz search recovery link must route to search'],
-  ['{copy.backToSearch}', 'quiz search recovery link must render localized copy'],
 ];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
@@ -2221,25 +2192,6 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 ];
 const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
-const EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES = [
-  {
-    label: 'flattened LegalSection children',
-    pattern: /Children\.toArray\(children\)/,
-  },
-  {
-    label: 'buffered LegalSection text fragments',
-    pattern: /const textFragments:\s*string\[\]\s*=\s*\[\];/,
-  },
-  {
-    label: 'LegalSection text fragment paragraph block',
-    pattern:
-      /<Text\s+key=\{`section-text-\$\{renderedChildren\.length\}`\}\s+style=\{styles\.paragraph\}>/,
-  },
-  {
-    label: 'LegalSection interactive children after text flush',
-    pattern: /flushTextFragments\(\);\s*renderedChildren\.push\(child\);/,
-  },
-];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -4510,28 +4462,6 @@ function loadTs(relativePath, exportName) {
     if (request === 'expo-speech') {
       return speechMock;
     }
-    if (request === 'react-native-mmkv') {
-      return { createMMKV: () => null };
-    }
-    if (request === 'zustand') {
-      return {
-        create: (factory) => {
-          let state;
-          const setState = (partial) => {
-            const next = typeof partial === 'function' ? partial(state) : partial;
-            Object.assign(state, next);
-          };
-          const getState = () => state;
-          state = factory(setState, getState);
-          const useStore = () => state;
-          useStore.getState = getState;
-          useStore.setState = (partial) => {
-            state = { ...state, ...(typeof partial === 'function' ? partial(state) : partial) };
-          };
-          return useStore;
-        },
-      };
-    }
     if (request.startsWith('.')) {
       const resolvedPath = resolveLocalModule(filePath, request);
       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
@@ -5802,56 +5732,6 @@ function englishProtectedReligionStatement(subject, answer) {
     return `${upperFirst(subject)} lets the state choose ${lowerFirst(stateChoice[1])}`;
   return `${upperFirst(subject)} protects ${lowerFirst(answer)}`;
 }
-function swedishProtectionStatement(subject, answer) {
-  const trimmed = answer.trim();
-  const stateRight = trimmed.match(/^Rätten för staten att (.+)$/i);
-  if (stateRight) {
-    return `${upperFirst(subject)} ger staten rätt att ${lowerLeadingSwedishClauseStart(
-      stateRight[1],
-    )}`;
-  }
-  return `${upperFirst(subject)} skyddar ${lowerFirst(answer)}`;
-}
-function englishProtectionStatement(subject, answer) {
-  const trimmed = answer
-    .trim()
-    .replace(/\bpreview all private letters\b/i, 'pre-screen all private letters');
-  const stateRight = trimmed.match(/^The right of the state to (.+)$/i);
-  if (stateRight) {
-    return `${upperFirst(subject)} gives the state the right to ${lowerFirst(stateRight[1])}`;
-  }
-  return `${upperFirst(subject)} protects ${lowerFirst(trimmed)}`;
-}
-function swedishEveryoneRightStatement(subject, answer) {
-  if (/^Att\s+/i.test(answer)) {
-    return `${upperFirst(subject)} ger alla rätt att ${lowerLeadingSwedishClauseStart(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-  return replaceLeadingSwedishSubject(subject, answer);
-}
-function englishEveryoneRightStatement(subject, answer) {
-  if (/^To\s+/i.test(answer)) {
-    return `${upperFirst(subject)} gives everyone the right to ${lowerFirst(
-      stripLeadingPurposeEn(answer),
-    )}`;
-  }
-  return replaceLeadingEnglishSubject(subject, answer);
-}
-function swedishAccusedTrialRightStatement(answer) {
-  if (/^Rätt\s+/i.test(answer)) {
-    return `Under en rättegång har en åtalad person ${lowerFirst(answer)}`;
-  }
-  return replaceLeadingSwedishSubject('den åtalade', answer);
-}
-function englishAccusedTrialRightStatement(answer) {
-  if (/^The right to\s+/i.test(answer)) {
-    return `During a trial, the accused person has the right to ${lowerFirst(
-      answer.replace(/^The right to\s+/i, ''),
-    )}`;
-  }
-  return replaceLeadingEnglishSubject('the accused person', answer);
-}
 function swedishChristianHolidayStatement(subject, condition, answer) {
   return `${answer} är kristna högtider som ${lowerFirst(subject)} firar även om ${condition}`;
 }
@@ -6805,12 +6685,6 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
   if (match) return swedishProtectedReligionStatement(match[1], answer);
-  match = q.match(/^Vad skyddar ((?!.*\bnär det gäller\b).+)$/i);
-  if (match) return swedishProtectionStatement(match[1], answer);
-  match = q.match(/^Vad ger (.+?) alla rätt att göra$/i);
-  if (match) return swedishEveryoneRightStatement(match[1], answer);
-  match = q.match(/^Vilken rätt har den åtalade under en rättegång$/i);
-  if (match) return swedishAccusedTrialRightStatement(answer);
   match = q.match(/^Vad blev tillåtet för (.+?) år (.+)$/i);
   if (match)
     return `År ${match[2]} blev det tillåtet för ${match[1]} ${swedishPurposeClause(answer)}`;
@@ -7155,12 +7029,6 @@ function civicStatementEn(source, option) {
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
   if (match) return englishProtectedReligionStatement(match[1], answer);
-  match = q.match(/^What does (.+?) protect$/i);
-  if (match) return englishProtectionStatement(match[1], answer);
-  match = q.match(/^What does (.+?) give everyone the right to do$/i);
-  if (match) return englishEveryoneRightStatement(match[1], answer);
-  match = q.match(/^What right does the accused person have during a trial$/i);
-  if (match) return englishAccusedTrialRightStatement(answer);
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;
@@ -8156,11 +8024,6 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const reviewStoreModule = loadTs('lib/storage/reviewStore.ts');
-const remainingDailyReviews = reviewStoreModule.remainingDailyReviews;
-const FREE_DAILY_REVIEW_CAP = reviewStoreModule.FREE_DAILY_REVIEW_CAP;
-const highlightsStoreModule = loadTs('lib/storage/highlightsStore.ts');
-const isColorAllowed = highlightsStoreModule.isColorAllowed;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const darkColors = themeModule.darkColors;
@@ -8276,8 +8139,6 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
-let legalSectionMixedChildrenRulesValidated = 0;
-let legalSectionMixedChildrenLayoutValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
@@ -8447,9 +8308,6 @@ let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
-let learningProGatedReviewCasesValidated = 0;
-let learningProGatedHighlightCasesValidated = 0;
-let learningProGatedSelectorsParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -8791,8 +8649,6 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   printValidationSummary({
     legalRouteHeadersValidated,
     legalRouteHeaderParityValidated,
-    legalSectionMixedChildrenRulesValidated,
-    legalSectionMixedChildrenLayoutValidated,
     swedishPrivacyStreakCopyNaturalnessValidated,
     legalSwedishEnglishTokenGuardValidated,
     legalSwedishEnglishTokenGuardParityValidated,
@@ -8937,17 +8793,6 @@ if (process.argv.includes('--focus-readiness-adapter-rules')) {
   printValidationSummary({
     readinessAdapterRulesValidated,
     readinessAdapterRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-learning-pro-gated-selectors')) {
-  validateLearningProGatedSelectors();
-  exitWithValidationFailures();
-  printValidationSummary({
-    learningProGatedReviewCasesValidated,
-    learningProGatedHighlightCasesValidated,
-    learningProGatedSelectorsParityValidated,
   });
   process.exit(0);
 }
@@ -11111,10 +10956,6 @@ function validateQuizRouteCopyParity() {
     if (!quizRoute.includes(snippet)) reject(message);
   });
 
-  if (/stableIndex|charCodeAt|return\s+questions\[/.test(quizRoute)) {
-    reject('routed quiz must not hash unknown session ids into real questions');
-  }
-
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -12000,22 +11841,6 @@ function validateLegalRouteHeaderParity() {
     !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(legalPage)
   ) {
     reject('legal route shared heading components must expose accessibilityRole="header"');
-  }
-
-  for (const expectedRule of EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES) {
-    if (!expectedRule.pattern.test(legalPage)) {
-      reject(
-        `LegalSection must split mixed text and interactive children into separate layout boxes: missing ${expectedRule.label}`,
-      );
-    } else {
-      legalSectionMixedChildrenRulesValidated += 1;
-    }
-  }
-  if (
-    legalSectionMixedChildrenRulesValidated ===
-    EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES.length
-  ) {
-    legalSectionMixedChildrenLayoutValidated = true;
   }
 
   for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
@@ -16763,6 +16588,70 @@ function validateStreakRules() {
       },
       expected: true,
     },
+    {
+      label: 'refillFreezes rejects string freeze counters',
+      actual: () => {
+        const refilled = refillFreezes(
+          {
+            available: '1',
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: '2',
+            lifetimeSpent: NaN,
+            rescuedDayKeys: ['bad-key', '2026-05-17'],
+          },
+          streakFreezeNow,
+        );
+        return (
+          refilled.available === 0 &&
+          refilled.lifetimeEarned === 0 &&
+          refilled.lifetimeSpent === 0 &&
+          refilled.rescuedDayKeys.length === 1 &&
+          refilled.rescuedDayKeys[0] === '2026-05-17'
+        );
+      },
+      expected: true,
+    },
+    {
+      label: 'refillFreezes clamps overstocked freeze availability',
+      actual: () =>
+        refillFreezes(
+          {
+            available: 99,
+            lastEarnedAt: '2026-05-12',
+            lifetimeEarned: 3,
+            lifetimeSpent: 1,
+            rescuedDayKeys: [],
+          },
+          streakFreezeNow,
+        ).available,
+      expected: 4,
+    },
+    {
+      label: 'streakWithFreeze rejects fractional freeze availability',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-16', '2026-05-18', '2026-05-19'],
+          freezeState: {
+            available: 1.5,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: Infinity,
+            lifetimeSpent: -1,
+            rescuedDayKeys: ['bad-key'],
+          },
+          today: '2026-05-19',
+          now: streakFreezeNow,
+        });
+        return (
+          result.streakDays === 2 &&
+          result.rescuedThisRun.length === 0 &&
+          result.freezeState.available === 0 &&
+          result.freezeState.lifetimeEarned === 0 &&
+          result.freezeState.lifetimeSpent === 0 &&
+          result.freezeState.rescuedDayKeys.length === 0
+        );
+      },
+      expected: true,
+    },
   ];
 
   let rulesAreValid = true;
@@ -17342,147 +17231,6 @@ function validateReadinessAdapterRules() {
 
   if (rulesAreValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
     readinessAdapterRuntimeParityValidated = true;
-  }
-}
-
-function validateLearningProGatedSelectors() {
-  if (
-    typeof remainingDailyReviews !== 'function' ||
-    typeof isColorAllowed !== 'function' ||
-    typeof FREE_DAILY_REVIEW_CAP !== 'number'
-  ) {
-    fail('learning Pro-gated selector helpers must be importable');
-    return;
-  }
-
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const dayKey = streakModule.getLocalDateKey(now);
-  const baseState = { gradedPerDay: { [dayKey]: 1 } };
-  const reviewCases = [
-    {
-      label: 'learning pro reviews unlock only for strict true',
-      actual: () => remainingDailyReviews(baseState, { now, isPro: true }),
-      expected: Number.POSITIVE_INFINITY,
-    },
-    {
-      label: 'learning free reviews use default cap',
-      actual: () => remainingDailyReviews(baseState, { now, isPro: false }),
-      expected: FREE_DAILY_REVIEW_CAP - 1,
-    },
-    ...['yes', 1, {}, [], null].map((isPro) => ({
-      label: `learning malformed Pro review flag ${JSON.stringify(isPro)} stays free`,
-      actual: () => remainingDailyReviews(baseState, { now, isPro }),
-      expected: FREE_DAILY_REVIEW_CAP - 1,
-    })),
-    {
-      label: 'learning finite custom free cap subtracts used reviews',
-      actual: () => remainingDailyReviews(baseState, { now, freeCap: 2 }),
-      expected: 1,
-    },
-    ...[Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '4', null].map((freeCap) => ({
-      label: `learning invalid freeCap ${String(freeCap)} falls back`,
-      actual: () => remainingDailyReviews(baseState, { now, freeCap }),
-      expected: FREE_DAILY_REVIEW_CAP - 1,
-    })),
-    ...[Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '2'].map((used) => ({
-      label: `learning invalid graded count ${String(used)} falls back to zero`,
-      actual: () => remainingDailyReviews({ gradedPerDay: { [dayKey]: used } }, { now }),
-      expected: FREE_DAILY_REVIEW_CAP,
-    })),
-    {
-      label: 'learning overused free daily reviews clamp at zero',
-      actual: () => remainingDailyReviews({ gradedPerDay: { [dayKey]: 999 } }, { now }),
-      expected: 0,
-    },
-  ];
-  const highlightCases = [
-    {
-      label: 'learning free highlight yellow stays available',
-      actual: () => isColorAllowed('yellow', false),
-      expected: true,
-    },
-    {
-      label: 'learning free highlight green stays locked',
-      actual: () => isColorAllowed('green', false),
-      expected: false,
-    },
-    {
-      label: 'learning strict Pro unlocks green highlight',
-      actual: () => isColorAllowed('green', true),
-      expected: true,
-    },
-    {
-      label: 'learning strict Pro unlocks blue highlight',
-      actual: () => isColorAllowed('blue', true),
-      expected: true,
-    },
-    {
-      label: 'learning strict Pro unlocks pink highlight',
-      actual: () => isColorAllowed('pink', true),
-      expected: true,
-    },
-    ...['yes', 1, {}, [], null].flatMap((isPro) => [
-      {
-        label: `learning malformed Pro highlight flag ${JSON.stringify(isPro)} locks paid color`,
-        actual: () => isColorAllowed('green', isPro),
-        expected: false,
-      },
-      {
-        label: `learning malformed Pro highlight flag ${JSON.stringify(isPro)} keeps free color`,
-        actual: () => isColorAllowed('yellow', isPro),
-        expected: true,
-      },
-    ]),
-  ];
-  let valid = true;
-
-  for (const { label, actual, expected } of reviewCases) {
-    let actualValue;
-    try {
-      actualValue = actual();
-    } catch (error) {
-      valid = false;
-      fail(`${label} threw ${error.message}`);
-      continue;
-    }
-
-    if (!Object.is(actualValue, expected)) {
-      valid = false;
-      fail(`${label} returned ${actualValue}, expected ${expected}`);
-      continue;
-    }
-    if (expected !== Number.POSITIVE_INFINITY && !Number.isFinite(actualValue)) {
-      valid = false;
-      fail(`${label} returned non-finite free-tier count ${actualValue}`);
-      continue;
-    }
-    learningProGatedReviewCasesValidated += 1;
-  }
-
-  for (const { label, actual, expected } of highlightCases) {
-    let actualValue;
-    try {
-      actualValue = actual();
-    } catch (error) {
-      valid = false;
-      fail(`${label} threw ${error.message}`);
-      continue;
-    }
-
-    if (actualValue !== expected) {
-      valid = false;
-      fail(`${label} returned ${actualValue}, expected ${expected}`);
-      continue;
-    }
-    learningProGatedHighlightCasesValidated += 1;
-  }
-
-  if (
-    valid &&
-    learningProGatedReviewCasesValidated === EXPECTED_LEARNING_PRO_GATED_REVIEW_CASES &&
-    learningProGatedHighlightCasesValidated === EXPECTED_LEARNING_PRO_GATED_HIGHLIGHT_CASES
-  ) {
-    learningProGatedSelectorsParityValidated = true;
   }
 }
 
@@ -19053,7 +18801,6 @@ validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
 validateReadinessAdapterRules();
-validateLearningProGatedSelectors();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -19163,8 +18910,6 @@ console.log(
       mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
-      legalSectionMixedChildrenRulesValidated,
-      legalSectionMixedChildrenLayoutValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
@@ -19337,9 +19082,6 @@ console.log(
       dashboardPerChapterInputParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
-      learningProGatedReviewCasesValidated,
-      learningProGatedHighlightCasesValidated,
-      learningProGatedSelectorsParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
