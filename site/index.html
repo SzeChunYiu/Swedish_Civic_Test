@@ -982,8 +982,6 @@
               Swedish government. We just really like helping people study.
             </p>
           </div>
-
-          <img class="footer__banner" src="assets/banner.png" alt="Almost Swedish" />
         </div>
 
         <nav class="footer__cols" aria-label="Footer">
@@ -1229,19 +1227,25 @@
           <button class="modal__close" data-close="signin" aria-label="Close" data-a11y-label="a11y.close">✕</button>
         </header>
         <div class="modal__body">
-          <p class="signin__lede" data-sk="signin.lede">Save your highlights, notes, and progress across devices. Totally optional — everything works without an account.</p>
-          <button class="signin__btn" type="button" data-prov="google">
-            <span class="signin__btn-icon" aria-hidden="true">G</span>
-            <span data-sk="signin.google">Continue with Google</span>
-          </button>
-          <button class="signin__btn" type="button" data-prov="apple">
-            <span class="signin__btn-icon" aria-hidden="true"></span>
-            <span data-sk="signin.apple">Continue with Apple</span>
-          </button>
-          <div class="signin__divider"><span data-sk="signin.or">or</span></div>
-          <input class="signin__input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" />
-          <button class="btn btn--gold signin__magic" type="button" data-sk="signin.magic">Email me a magic link</button>
-          <p class="signin__fineprint" data-sk="signin.fineprint">No password needed. We never post anything or share your study data.</p>
+          <div class="signin__login">
+            <p class="signin__lede" data-sk="signin.lede">Save your highlights, notes, and progress across devices. Totally optional — everything works without an account.</p>
+            <button class="signin__btn" type="button" data-prov="google">
+              <span class="signin__btn-icon" aria-hidden="true">G</span>
+              <span data-sk="signin.google">Continue with Google</span>
+            </button>
+            <button class="signin__btn" type="button" data-prov="apple">
+              <span class="signin__btn-icon" aria-hidden="true"></span>
+              <span data-sk="signin.apple">Continue with Apple</span>
+            </button>
+            <div class="signin__divider"><span data-sk="signin.or">or</span></div>
+            <input class="signin__input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" />
+            <button class="btn btn--gold signin__magic" type="button" data-sk="signin.magic">Email me a magic link</button>
+            <p class="signin__fineprint" data-sk="signin.fineprint">No password needed. We never post anything or share your study data.</p>
+          </div>
+          <div class="signin__account" hidden>
+            <p class="signin__signedin" data-sk="signin.signedin">You're signed in. Your highlights, notes, and dashboard sync across your devices.</p>
+            <button class="btn btn--ghost signin__signout" id="signout" type="button" data-sk="signin.signout">Sign out</button>
+          </div>
         </div>
       </div>
     </div>

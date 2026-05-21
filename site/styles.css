@@ -4004,17 +4004,14 @@ button.quiz__dot:focus-visible {
   background: #04080e !important;
 }
 .footer__inner {
-  max-width: 1240px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 0 clamp(20px, 4vw, 56px);
 }
 
 .footer__hero {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 56px;
-  align-items: end;
-  padding: 80px 0 0;
+  display: block;
+  padding: 72px 0 0;
 }
 .footer__brag {
   padding-bottom: 64px;
@@ -4534,6 +4531,15 @@ html[dir="rtl"] .lang-menu { right: auto; left: 0; }
   font-size: 12px;
   line-height: 1.45;
   text-align: center;
+}
+.signin__signedin {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.signin__signout {
+  width: 100%;
 }
 
 /* ============================ V11 DASHBOARD (login-gated progress panel) */

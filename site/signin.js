@@ -5,6 +5,7 @@
     "signin.cta": { en: "Sign in", sv: "Logga in", "zh-Hans": "登录", "zh-Hant": "登入", ar: "تسجيل الدخول", ckb: "چوونەژوورەوە", fa: "ورود", pl: "Zaloguj się", so: "Soo gal", ti: "እቶ", tr: "Giriş yap", uk: "Увійти" },
     "signin.account": { en: "Account", sv: "Konto", "zh-Hans": "账户", "zh-Hant": "帳號", ar: "الحساب", ckb: "هەژمار", fa: "حساب", pl: "Konto", so: "Akoon", ti: "ሕሳብ", tr: "Hesap", uk: "Обліковий запис" },
     "signin.signout": { en: "Sign out", sv: "Logga ut", "zh-Hans": "退出登录", "zh-Hant": "登出", ar: "تسجيل الخروج", ckb: "چوونەدەرەوە", fa: "خروج", pl: "Wyloguj się", so: "Ka bax", ti: "ውጻእ", tr: "Çıkış yap", uk: "Вийти" },
+    "signin.signedin": { en: "You're signed in. Your highlights, notes, and dashboard sync across your devices.", sv: "Du är inloggad. Dina markeringar, anteckningar och panel synkas mellan dina enheter.", "zh-Hans": "你已登录。你的标注、笔记和学习面板会在设备间同步。", "zh-Hant": "你已登入。你的標註、筆記和學習面板會在裝置間同步。", ar: "لقد سجّلت الدخول. تتزامن تظليلاتك وملاحظاتك ولوحتك عبر أجهزتك.", ckb: "چوویتە ژوورەوە. هایلایت، تێبینی و داشبۆردەکەت لەنێوان ئامێرەکانت هاوکات دەبن.", fa: "وارد شده‌ای. هایلایت‌ها، یادداشت‌ها و داشبوردت بین دستگاه‌هایت همگام می‌شوند.", pl: "Jesteś zalogowany. Twoje zaznaczenia, notatki i panel synchronizują się między urządzeniami.", so: "Waad gashay. Calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa isugu dhban qalabkaaga.", ti: "ኣቲኻ ኣለኻ። ምልክታትካ፣ መዘኻኸርን ዳሽቦርድካን ኣብ መሳርሕታትካ ይሳነዩ።", tr: "Giriş yaptın. Vurguların, notların ve panon cihazlarında senkronize olur.", uk: "Ви увійшли. Виділення, нотатки та панель синхронізуються між пристроями." },
     "signin.lede": {
       en: "Save your highlights, notes, and progress across devices. Totally optional — everything works without an account.",
       sv: "Spara dina markeringar, anteckningar och framsteg på alla enheter. Helt valfritt — allt fungerar utan konto.",
@@ -136,7 +137,15 @@
 
   function open() {
     const m = document.getElementById("signin-modal");
-    if (m) m.hidden = false;
+    if (!m) return;
+    // Show the account/sign-out view when already signed in, the login form otherwise.
+    const signed = signedIn();
+    const loginSec = m.querySelector(".signin__login");
+    const acctSec = m.querySelector(".signin__account");
+    if (loginSec) loginSec.hidden = signed;
+    if (acctSec) acctSec.hidden = !signed;
+    localize();
+    m.hidden = false;
     document.body.style.overflow = "hidden";
   }
   function close() {

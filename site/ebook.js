@@ -2296,6 +2296,11 @@
   window.addEventListener('hashchange', () => {
     if (isOnEbook()) render();
   });
+  // Re-render the ebook when the language changes (the redesigned language menu
+  // dispatches smt:languagechange; the old .lang button click selector no longer matches).
+  window.addEventListener('smt:languagechange', () => {
+    if (isOnEbook()) render();
+  });
   window.addEventListener('DOMContentLoaded', () => {
     if (isOnEbook()) render();
   });
