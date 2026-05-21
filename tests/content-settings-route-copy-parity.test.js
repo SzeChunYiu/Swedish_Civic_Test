@@ -58,6 +58,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /högst \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /JSON-exporten är större än \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /fält för köp i appen eller kvitton/);
+  assert.match(source, /Fält: \$\{detail\}/);
   assert.match(source, /data om köp i appen importeras inte/);
   assert.match(source, /one: 'FSRS review day'/);
   assert.match(source, /other: 'FSRS review days'/);
@@ -71,6 +72,8 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'saved settings'/);
   assert.match(source, /under \$\{localStudyDataImportMaxLabel\}/);
   assert.match(source, /The JSON export is larger than \$\{localStudyDataImportMaxLabel\}/);
+  assert.match(source, /Field: \$\{detail\}/);
+  assert.match(source, /copy\.importErrorMessage\(result\.code, result\.detail\)/);
   assert.doesNotMatch(
     source,
     /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus|IAP-fält|IAP-data/,

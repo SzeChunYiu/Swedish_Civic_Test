@@ -40,7 +40,7 @@ type SettingsCopy = {
   enableAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
-  importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
+  importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
   importPreview: string;
@@ -100,7 +100,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableAudioAccessibilityLabel: 'Slå på ljud',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
       if (code === 'input_too_large') {
         return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Välj en mindre export och försök igen.`;
@@ -109,7 +109,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
       if (code === 'purchase_fields_rejected') {
-        return 'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.';
+        const detailText = detail ? ` Fält: ${detail}.` : '';
+        return `Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.${detailText}`;
       }
       return 'Importen innehåller inga stödda studiedata.';
     },
@@ -173,7 +174,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableAudioAccessibilityLabel: 'Enable audio',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
       if (code === 'input_too_large') {
         return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Choose a smaller export and try again.`;
@@ -183,7 +184,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
         return 'The import has the wrong format or unknown top-level fields.';
       if (code === 'unsupported_version') return 'This import version is not supported.';
       if (code === 'purchase_fields_rejected') {
-        return 'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.';
+        const detailText = detail ? ` Field: ${detail}.` : '';
+        return `The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.${detailText}`;
       }
       return 'The import does not contain supported study data.';
     },
@@ -362,7 +364,10 @@ export default function Screen() {
     const result = previewLocalStudyDataImport(importText);
     if (!result.ok) {
       setImportPreview(null);
-      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
+      setImportFeedback({
+        tone: 'error',
+        text: copy.importErrorMessage(result.code, result.detail),
+      });
       return;
     }
 
