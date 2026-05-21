@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
@@ -55,10 +55,45 @@ export function ProvenanceBadge({
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const focusRevealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearFocusRevealTimeout = () => {
+    if (focusRevealTimeoutRef.current == null) return;
+    clearTimeout(focusRevealTimeoutRef.current);
+    focusRevealTimeoutRef.current = null;
+  };
+
+  const showSourceNote = () => {
+    setFocused(true);
+    clearFocusRevealTimeout();
+    focusRevealTimeoutRef.current = setTimeout(() => {
+      focusRevealTimeoutRef.current = null;
+      setSourceNoteVisible(true);
+    }, 0);
+  };
+
+  const hideSourceNote = () => {
+    clearFocusRevealTimeout();
+    setFocused(false);
+    setSourceNoteVisible(false);
+  };
+
+  const toggleSourceNote = () => {
+    clearFocusRevealTimeout();
+    setSourceNoteVisible((visible) => !visible);
+  };
 
   useEffect(() => {
+    clearFocusRevealTimeout();
     setSourceNoteVisible(false);
   }, [question?.id, language]);
+
+  useEffect(
+    () => () => {
+      clearFocusRevealTimeout();
+    },
+    [],
+  );
 
   if (!question) return null;
   const copy = provenanceBadgeCopy[language];
@@ -92,11 +127,11 @@ export function ProvenanceBadge({
         accessibilityState={{ expanded: sourceNoteVisible }}
         aria-expanded={sourceNoteVisible}
         hitSlop={space[1]}
-        onBlur={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
+        onBlur={hideSourceNote}
+        onFocus={showSourceNote}
         onHoverIn={() => setHovered(true)}
         onHoverOut={() => setHovered(false)}
-        onPress={() => setSourceNoteVisible((visible) => !visible)}
+        onPress={toggleSourceNote}
         style={({ pressed }) => [
           styles.badge,
           tone,
