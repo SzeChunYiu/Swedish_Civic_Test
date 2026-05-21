@@ -442,6 +442,22 @@ test('static site asset extractor covers responsive images and media posters', (
   ]);
 });
 
+test('static site asset extractor covers local URLs inside inline style blocks', () => {
+  const indexHtml = `
+    <style>
+      .hero { background-image: url("./images/hero.webp#top"); }
+      .mask { mask-image: url('/icons/mask.svg?version=1'); }
+      /* .old { background-image: url("./old-hero.webp"); } */
+      .fragment { clip-path: url(#clip); }
+      .external { background-image: url("https://example.com/hero.webp"); }
+      .data { cursor: url(data:image/png;base64,AAAA), pointer; }
+      .variable { background-image: url(var(--runtime-image)); }
+    </style>
+  `;
+
+  assert.deepEqual(localAssetReferences(indexHtml), ['images/hero.webp', 'icons/mask.svg']);
+});
+
 test('static site asset extractor follows linked CSS imports and url assets', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-asset-reference-'));
 
@@ -497,7 +513,11 @@ test('asset manifest check rejects CSS import and url assets omitted by manifest
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-manifest-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');
   const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
-  const omittedCssAssets = new Set(['images/logo.svg', 'styles/fonts/app.woff2']);
+  const omittedCssAssets = new Set([
+    'images/inline-style-bg.svg',
+    'images/logo.svg',
+    'styles/fonts/app.woff2',
+  ]);
   const omitCssReferencedAssets = (assetPath) => !omittedCssAssets.has(assetPath);
 
   try {
@@ -505,9 +525,15 @@ test('asset manifest check rejects CSS import and url assets omitted by manifest
     fs.mkdirSync(path.join(tempSiteDir, 'styles', 'fonts'), { recursive: true });
     fs.writeFileSync(
       path.join(tempSiteDir, 'index.html'),
-      '<!doctype html><link rel="stylesheet" href="styles/main.css"><script src="app.js"></script>',
+      [
+        '<!doctype html>',
+        '<link rel="stylesheet" href="styles/main.css">',
+        '<style>.inline { background-image: url("./images/inline-style-bg.svg"); }</style>',
+        '<script src="app.js"></script>',
+      ].join(''),
     );
     fs.writeFileSync(path.join(tempSiteDir, 'app.js'), 'console.log("ready");\n');
+    fs.writeFileSync(path.join(tempSiteDir, 'images', 'inline-style-bg.svg'), '<svg></svg>\n');
     fs.writeFileSync(path.join(tempSiteDir, 'images', 'logo.svg'), '<svg></svg>\n');
     fs.writeFileSync(path.join(tempSiteDir, 'styles', 'fonts', 'app.woff2'), 'font\n');
     fs.writeFileSync(
@@ -535,6 +561,10 @@ test('asset manifest check rejects CSS import and url assets omitted by manifest
     assert.match(
       result.mismatches.join('\n'),
       /images\/logo\.svg: referenced by index\.html or linked stylesheets but missing from committed manifest/,
+    );
+    assert.match(
+      result.mismatches.join('\n'),
+      /images\/inline-style-bg\.svg: referenced by index\.html or linked stylesheets but missing from committed manifest/,
     );
     assert.match(
       result.mismatches.join('\n'),

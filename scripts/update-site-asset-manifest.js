@@ -127,6 +127,12 @@ function listInlineStyleAssetReferences(indexHtml) {
   );
 }
 
+function listStyleBlockAssetReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)).flatMap((match) =>
+    extractCssUrlReferences(match[1]),
+  );
+}
+
 function listSrcSetReferences(value) {
   return value
     .replace(/\bdata:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
@@ -224,6 +230,7 @@ function extractLocalAssetReferences(indexHtml, options = {}) {
   const siteDir = path.resolve(options.siteDir || defaultSiteDir);
   const references = [
     ...listHtmlDirectAssetReferences(indexHtml),
+    ...listStyleBlockAssetReferences(indexHtml),
     ...listStylesheetAssetReferences(siteDir, indexHtml),
   ];
 
