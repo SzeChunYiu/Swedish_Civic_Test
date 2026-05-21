@@ -7,6 +7,7 @@ import {
   createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
 } from './purchases';
+import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 import { getProLifetimeEntitlement, type ProLifetimeRuntimeOptions } from './proLifetimePurchase';
 
 const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
@@ -22,6 +23,11 @@ const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
+type ProLifetimeE2ERuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_PRO_LIFETIME_MOCK_OWNED__?: boolean;
+};
+
 function getNativePurchasePlatform() {
   return Platform.OS === 'android' ? 'android' : 'ios';
 }
@@ -33,6 +39,14 @@ export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOpti
       storage: createSecureStorePurchaseStorage(),
     };
   }
+
+  const runtime = globalThis as ProLifetimeE2ERuntime;
+  const instrumentedRuntimeOptions = createInstrumentedE2EPurchaseRuntimeOptions({
+    owned: runtime.__SMT_PRO_LIFETIME_MOCK_OWNED__,
+    scope: 'proLifetime',
+    storage: createWebPurchaseStorage(),
+  });
+  if (instrumentedRuntimeOptions) return instrumentedRuntimeOptions;
 
   return {
     storage: createWebPurchaseStorage(),

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -18,14 +19,20 @@ import { PersistenceWarningNotice } from '../../components/storage/PersistenceWa
 import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import {
+  buildAnswerFeedbackSpeechText,
+  buildQuestionSpeechText,
+  stopSpeech,
+} from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
   getCompletedQuestionIdsForQuestionBank,
+  getFirstQuestionForChapter,
   getPracticeQuestionForSession,
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
@@ -42,20 +49,42 @@ import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../../lib/storage/companionStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
+import type { Chapter, PracticeQuestion } from '../../types/content';
 import type { ConfidenceRating } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
+
+type PracticeScope =
+  | { type: 'all' }
+  | { type: 'quick'; limit: number }
+  | { type: 'chapter'; chapterId: string };
 
 type PracticeCopy = {
   badge: string;
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
+  chapterAccuracy: (accuracy: number) => string;
+  chapterCardAccessibilityLabel: (
+    chapterName: string,
+    answered: number,
+    total: number,
+    accuracy: number,
+  ) => string;
+  chapterPracticeLabel: string;
+  chapterProgress: (answered: number, total: number) => string;
   completedQuestions: (count: number) => string;
   emptyTitle: string;
+  allPractice: string;
+  hubBadge: string;
+  hubProgress: (answered: number, total: number) => string;
+  hubSubtitle: string;
+  hubTitle: string;
+  mockExam: string;
   nextQuestion: string;
   nextQuestionAccessibilityLabel: string;
   questionTitle: (questionNumber: number) => string;
+  quickRound: string;
   scoreLabel: string;
   subtitle: string;
   tryAgain: string;
@@ -82,11 +111,23 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
+    chapterAccuracy: (accuracy) => `${accuracy}% rätt`,
+    chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
+      `${chapterName}: ${answered} av ${total} frågor besvarade, ${accuracy}% rätt. Öva det här kapitlet.`,
+    chapterPracticeLabel: 'Öva det här kapitlet',
+    chapterProgress: (answered, total) => `${answered} av ${total} frågor besvarade`,
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    allPractice: 'Starta övning med alla synliga frågor',
+    hubBadge: 'Övningshub',
+    hubProgress: (answered, total) => `Du har svarat på ${answered} av ${total} synliga frågor.`,
+    hubSubtitle: 'Starta med hela frågebanken, ta en snabb runda eller öva ett kapitel i taget.',
+    hubTitle: 'Välj hur du vill öva',
+    mockExam: 'Gå till övningsprovet',
     nextQuestion: 'Nästa fråga',
     nextQuestionAccessibilityLabel: 'Gå till nästa övningsfråga',
     questionTitle: (questionNumber) => `Fråga ${questionNumber}`,
+    quickRound: 'Starta en snabb runda med 10 frågor',
     scoreLabel: 'Poäng',
     subtitle: 'Besvara frågan, få direkt återkoppling och granska UHR-källan innan du går vidare.',
     tryAgain: 'Försök igen',
@@ -106,7 +147,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   },
   en: {
     badge: '5-minute practice',
@@ -114,11 +155,24 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
+    chapterAccuracy: (accuracy) => `${accuracy}% accuracy`,
+    chapterCardAccessibilityLabel: (chapterName, answered, total, accuracy) =>
+      `${chapterName}: ${answered} of ${total} questions answered, ${accuracy}% accuracy. Practise this chapter.`,
+    chapterPracticeLabel: 'Practise this chapter',
+    chapterProgress: (answered, total) => `${answered} of ${total} questions answered`,
     completedQuestions: (count) => `Completed questions: ${count}`,
     emptyTitle: 'No practice questions are available yet.',
+    allPractice: 'Start practice with all visible questions',
+    hubBadge: 'Practice hub',
+    hubProgress: (answered, total) =>
+      `You have answered ${answered} of ${total} visible questions.`,
+    hubSubtitle: 'Start with the full bank, take a quick round, or focus on one chapter at a time.',
+    hubTitle: 'Choose how to practise',
+    mockExam: 'Go to the mock exam',
     nextQuestion: 'Next question',
     nextQuestionAccessibilityLabel: 'Move to the next practice question',
     questionTitle: (questionNumber) => `Question ${questionNumber}`,
+    quickRound: 'Start a quick round with 10 questions',
     scoreLabel: 'Score',
     subtitle: 'Answer, get instant feedback, then review the UHR source before moving on.',
     tryAgain: 'Try again',
@@ -142,12 +196,50 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
   },
 };
 
+function getQuestionsForPracticeScope(
+  questionBank: PracticeQuestion[],
+  practiceScope: PracticeScope | null,
+): PracticeQuestion[] {
+  if (!practiceScope || practiceScope.type === 'all') return questionBank;
+  if (practiceScope.type === 'quick') return questionBank.slice(0, practiceScope.limit);
+
+  return questionBank.filter((question) => question.chapterId === practiceScope.chapterId);
+}
+
+function getLocalizedChapterName(chapter: Chapter, language: AppLanguage): string {
+  return chapter.nameText?.[language] ?? (language === 'sv' ? chapter.nameSv : chapter.nameEn);
+}
+
+function getChapterAccuracy(questionBank: PracticeQuestion[], questionProgress: unknown): number {
+  if (!questionProgress || typeof questionProgress !== 'object') return 0;
+  const progressByQuestionId = questionProgress as Record<
+    string,
+    { correctCount?: number; wrongCount?: number }
+  >;
+  let correctCount = 0;
+  let totalCount = 0;
+
+  for (const question of questionBank) {
+    const progress = progressByQuestionId[question.id];
+    if (!progress) continue;
+    const questionCorrectCount =
+      typeof progress.correctCount === 'number' ? Math.max(0, progress.correctCount) : 0;
+    const questionWrongCount =
+      typeof progress.wrongCount === 'number' ? Math.max(0, progress.wrongCount) : 0;
+    correctCount += questionCorrectCount;
+    totalCount += questionCorrectCount + questionWrongCount;
+  }
+
+  return totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+}
+
 export default function Screen() {
   const answerXpAwardedKey = usePracticeSessionStore((state) => state.answerXpAwardedKey);
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const markAnswerXpAwarded = usePracticeSessionStore((state) => state.markAnswerXpAwarded);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
+  const startSession = usePracticeSessionStore((state) => state.startSession);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
@@ -176,6 +268,7 @@ export default function Screen() {
     (state) => state.setIncludeSupplementaryQuestions,
   );
   const reduceMotion = useReducedMotion();
+  const [practiceScope, setPracticeScope] = useState<PracticeScope | null>(null);
   const [aboutSourcesOpen, setAboutSourcesOpen] = useState(false);
   const [focusedHeaderControl, setFocusedHeaderControl] = useState<PracticeHeaderControl | null>(
     null,
@@ -190,14 +283,47 @@ export default function Screen() {
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
+  const practiceQuestionBank = useMemo(
+    () => getQuestionsForPracticeScope(filteredQuestions, practiceScope),
+    [filteredQuestions, practiceScope],
+  );
   const visibleCompletedQuestionIds = useMemo(
     () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
     [completedQuestionIds, filteredQuestions],
   );
-  const rawQuestion = getPracticeQuestionForSession(
-    filteredQuestions,
-    visibleCompletedQuestionIds,
-    activeQuestionId,
+  const sessionCompletedQuestionIds = useMemo(
+    () => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
+    [completedQuestionIds, practiceQuestionBank],
+  );
+  const rawQuestion = practiceScope
+    ? getPracticeQuestionForSession(
+        practiceQuestionBank,
+        sessionCompletedQuestionIds,
+        activeQuestionId,
+      )
+    : undefined;
+  const chapterSummaries = useMemo(
+    () =>
+      chapters
+        .map((chapter) => {
+          const chapterQuestions = filteredQuestions.filter(
+            (candidate) => candidate.chapterId === chapter.id,
+          );
+          const chapterCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
+            chapterQuestions,
+            completedQuestionIds,
+          );
+
+          return {
+            accuracy: getChapterAccuracy(chapterQuestions, questionProgress),
+            chapter,
+            completedCount: chapterCompletedQuestionIds.length,
+            name: getLocalizedChapterName(chapter, language),
+            totalCount: chapterQuestions.length,
+          };
+        })
+        .filter((summary) => summary.totalCount > 0),
+    [completedQuestionIds, filteredQuestions, language, questionProgress],
   );
   const question = useMemo(
     () =>
@@ -205,11 +331,6 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
-
-  useEffect(() => {
-    setSelectedConfidenceRating(null);
-  }, [question?.id]);
-
   const hasSelectedAnswer = Boolean(
     question && selectedOptionId && activeQuestionId === question.id,
   );
@@ -221,11 +342,107 @@ export default function Screen() {
   useQuestionAudioAutoplay({
     audioEnabled,
     listenFirstAudioEnabled,
-    questionKey: question ? question.id : null,
+    questionKey: question ? `practice:${question.id}:${shuffleSessionId}` : null,
     rate: audioPlaybackRate,
     speechText: questionSpeechText,
     stopSignal: hasSelectedAnswer,
   });
+
+  useEffect(() => {
+    setSelectedConfidenceRating(null);
+  }, [question?.id]);
+
+  const startPracticeScope = (nextScope: PracticeScope) => {
+    const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
+    startSession(nextQuestionBank[0]?.id ?? null);
+    setAboutSourcesOpen(false);
+    setSelectedConfidenceRating(null);
+    setPracticeScope(nextScope);
+  };
+  const handleStartChapter = (chapterId: string) => {
+    const firstChapterQuestion = getFirstQuestionForChapter(filteredQuestions, chapterId);
+    startSession(firstChapterQuestion?.id ?? null);
+    setAboutSourcesOpen(false);
+    setSelectedConfidenceRating(null);
+    setPracticeScope({ type: 'chapter', chapterId });
+  };
+
+  if (!practiceScope) {
+    return (
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <View style={styles.hero}>
+          <Badge>{copy.hubBadge}</Badge>
+          <Text accessibilityRole="header" style={styles.title}>
+            {copy.hubTitle}
+          </Text>
+          <Text style={styles.subtitle}>{copy.hubSubtitle}</Text>
+          <Text style={styles.meta}>
+            {copy.hubProgress(visibleCompletedQuestionIds.length, filteredQuestions.length)}
+          </Text>
+          <View style={styles.hubActions}>
+            <Button
+              accessibilityLabel={copy.allPractice}
+              accessibilityRole="button"
+              onPress={() => startPracticeScope({ type: 'all' })}
+              style={styles.hubActionButton}
+            >
+              {copy.allPractice}
+            </Button>
+            <Button
+              accessibilityLabel={copy.quickRound}
+              accessibilityRole="button"
+              onPress={() => startPracticeScope({ type: 'quick', limit: 10 })}
+              style={styles.hubActionButton}
+              variant="secondary"
+            >
+              {copy.quickRound}
+            </Button>
+            <Link accessibilityLabel={copy.mockExam} accessibilityRole="link" asChild href="/exam">
+              <Button
+                accessibilityLabel={copy.mockExam}
+                accessibilityRole="link"
+                style={styles.hubActionButton}
+                variant="secondary"
+              >
+                {copy.mockExam}
+              </Button>
+            </Link>
+          </View>
+        </View>
+        <View style={styles.chapterGrid}>
+          {chapterSummaries.map((summary) => (
+            <Pressable
+              key={summary.chapter.id}
+              android_ripple={{ color: colors.focusSoft }}
+              accessibilityLabel={copy.chapterCardAccessibilityLabel(
+                summary.name,
+                summary.completedCount,
+                summary.totalCount,
+                summary.accuracy,
+              )}
+              accessibilityRole="button"
+              onPress={() => handleStartChapter(summary.chapter.id)}
+              style={({ pressed }) => [
+                styles.chapterCard,
+                pressed
+                  ? reduceMotion
+                    ? styles.chapterCardPressedReducedMotion
+                    : styles.chapterCardPressed
+                  : null,
+              ]}
+            >
+              <Text style={styles.chapterTitle}>{summary.name}</Text>
+              <Text style={styles.chapterMeta}>
+                {copy.chapterProgress(summary.completedCount, summary.totalCount)}
+              </Text>
+              <Text style={styles.chapterMeta}>{copy.chapterAccuracy(summary.accuracy)}</Text>
+              <Text style={styles.chapterAction}>{copy.chapterPracticeLabel}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  }
 
   if (!question) {
     return (
@@ -247,9 +464,10 @@ export default function Screen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
+  const bankProgress =
+    practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
   const handleSelectOption = (optionId: string) => {
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -257,6 +475,7 @@ export default function Screen() {
       ? (selectedConfidenceRating ?? undefined)
       : undefined;
 
+    stopSpeech();
     selectOption(question.id, optionId);
     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
@@ -461,6 +680,7 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
@@ -520,6 +740,51 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     gap: space[1.25],
     padding: space[3],
+  },
+  hubActions: {
+    alignItems: 'stretch',
+    gap: space[1],
+  },
+  hubActionButton: {
+    width: '100%',
+  },
+  chapterGrid: {
+    gap: space[1],
+  },
+  chapterCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.75],
+    minHeight: space[8],
+    padding: space[2],
+  },
+  chapterCardPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  chapterCardPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+  },
+  chapterTitle: {
+    color: colors.text,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.body.lineHeight,
+  },
+  chapterMeta: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  chapterAction: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
   },
   title: {
     color: colors.text,

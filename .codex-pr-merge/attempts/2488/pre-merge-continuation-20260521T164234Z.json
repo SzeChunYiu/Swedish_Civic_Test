@@ -1,0 +1,22 @@
+{
+  "headRefOid": "6ad11fbe2d49902871118c47b9815761986c24e3",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2488,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239799764/job/77222802894",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:42:45Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Add question report href unit coverage",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2488"
+}

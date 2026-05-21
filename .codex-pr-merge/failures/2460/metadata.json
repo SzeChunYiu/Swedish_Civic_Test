@@ -1,0 +1,34 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n\n- Add `maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}` to the Settings local study-data import `TextInput`, keeping the UI cap aligned with the parser's existing 1 MB pre-parse guard.\n- Extend the local study-data import copy/source guard so the input cap cannot be removed while the max-size copy remains.\n- Carry the generated-answer option-shape normalization needed for current `main` full content validation with generated localization overlays.\n\n## Validation\n\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'local study data import summary keeps Swedish copy learner-facing' tests/content-local-study-data-import-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern 'settings route' tests/content-settings-route-copy-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `git diff --check`\n- `npm run build:web:export -- --max-workers 2`\n- `E2E_PORT=4576 NODE_OPTIONS='--v8-pool-size=1' npx playwright test tests/e2e/settings-import-purchase-fields.spec.ts --workers=1 --grep 'import'`\n- `npm run test:a11y-labels`\n\n## Notes\n\n- The broader task-suggested import parity command remains base-red when run across the whole file because unrelated storage-harness tests currently fail on `tests/v1-1-review-store.test.js`'s legacy TypeScript hook and storage module resolution before this task's focused assertion. The focused source/copy guard added here passes, and full `validate:content` passes.",
+  "files": [
+    { "path": "app/settings.tsx", "additions": 1, "deletions": 0, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-local-study-data-import-parity.test.js",
+      "additions": 1,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/local-study-import-payload-size-1779374951-2493390",
+  "headRefOid": "fdf9674d24e9cef40fd1e841de4377a1f3325263",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2460,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26240103484/job/77223829431",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:48:31Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Cap local study import input",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2460"
+}

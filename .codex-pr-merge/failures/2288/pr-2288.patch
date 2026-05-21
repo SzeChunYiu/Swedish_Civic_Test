@@ -1,0 +1,265 @@
+From 8953b1434ce4a7486b058f10d5413a9d2ad85041 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 10:57:06 +0200
+Subject: [PATCH] profile: complete study setup shortcut
+
+---
+ app/(tabs)/profile.tsx                        | 18 ++++-
+ scripts/validate-content.js                   | 77 +++++++++++++++++--
+ .../content-profile-route-copy-parity.test.js |  6 +-
+ 3 files changed, 87 insertions(+), 14 deletions(-)
+
+diff --git a/app/(tabs)/profile.tsx b/app/(tabs)/profile.tsx
+index 5a382af2c..dcd594c3a 100644
+--- a/app/(tabs)/profile.tsx
++++ b/app/(tabs)/profile.tsx
+@@ -31,6 +31,8 @@ import { colors, radius, space, typography } from '../../lib/theme';
+ 
+ type ProfileCopy = {
+   answersPerDay: string;
++  audioDisabledBadge: string;
++  audioEnabledBadge: string;
+   badgeLocked: string;
+   badgeUnlocked: string;
+   badgesSubtitle: string;
+@@ -45,12 +47,12 @@ type ProfileCopy = {
+   eyebrow: string;
+   languageBadge: string;
+   levelMetric: string;
+-  openSettings: string;
+   openSettingsAccessibilityLabel: string;
+   noBadges: string;
+   questionsHelper: string;
+   removeAdsFocusCue: string;
+   streakFreezeBadge: string;
++  studySetupCta: string;
+   studySetupSubtitle: string;
+   studySetupTitle: string;
+   subtitle: string;
+@@ -61,6 +63,8 @@ type ProfileCopy = {
+ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+   sv: {
+     answersPerDay: 'svar/dag',
++    audioDisabledBadge: 'Ljud av',
++    audioEnabledBadge: 'Ljud på',
+     badgeLocked: 'Låst',
+     badgeUnlocked: 'Upplåst',
+     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
+@@ -76,11 +80,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+     languageBadge: 'Svenska',
+     levelMetric: 'nivå',
+     noBadges: 'Inga märken ännu',
+-    openSettings: 'Öppna inställningar',
+     openSettingsAccessibilityLabel: 'Öppna inställningar',
+     questionsHelper: 'frågor',
+     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+     streakFreezeBadge: 'Svitskydd',
++    studySetupCta: 'Ändra mål, språk och ljud',
+     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
+     studySetupTitle: 'Studieinställningar',
+     subtitle:
+@@ -90,6 +94,8 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+   },
+   en: {
+     answersPerDay: 'answers/day',
++    audioDisabledBadge: 'Audio off',
++    audioEnabledBadge: 'Audio on',
+     badgeLocked: 'Locked',
+     badgeUnlocked: 'Unlocked',
+     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
+@@ -105,11 +111,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+     languageBadge: 'English support',
+     levelMetric: 'level',
+     noBadges: 'No badges yet',
+-    openSettings: 'Open settings',
+     openSettingsAccessibilityLabel: 'Open settings',
+     questionsHelper: 'questions',
+     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
+     streakFreezeBadge: 'Streak freeze',
++    studySetupCta: 'Adjust goal, language, and audio',
+     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
+     studySetupTitle: 'Study setup',
+     subtitle:
+@@ -133,6 +139,7 @@ export default function Screen() {
+   const answerDates = useProgressStore((state) => state.answerDates);
+   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
++  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+   const language = useSettingsStore((state) => state.language);
+   const copy = profileCopy[language];
+@@ -217,6 +224,9 @@ export default function Screen() {
+             {dailyGoalAnswers} {copy.answersPerDay}
+           </Badge>
+           <Badge tone="warm">{copy.languageBadge}</Badge>
++          <Badge tone={audioEnabled ? 'green' : 'warm'}>
++            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
++          </Badge>
+         </View>
+         <Link
+           accessibilityLabel={copy.openSettingsAccessibilityLabel}
+@@ -229,7 +239,7 @@ export default function Screen() {
+             accessibilityRole="link"
+             style={styles.settingsLink}
+           >
+-            {copy.openSettings}
++            {copy.studySetupCta}
+           </Button>
+         </Link>
+       </Card>
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..14be202ee 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -838,10 +838,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+     'Små dagliga mål är lättare att hålla än långa maratonpass.',
+     'svar/dag',
+     'Svenska',
++    'Ljud av',
++    'Ljud på',
+     'Märken',
+     'Milstolpar gör framsteg synliga utan att störa lärandet.',
+-    'Inga märken ännu',
+-    'Öppna inställningar',
++    'Låst',
++    'Upplåst',
++    'Framstegsöversikt',
++    'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
++    'Visa översikt',
++    'Öppna framstegsöversikten',
++    'Ändra mål, språk och ljud',
++    'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+   ],
+   en: [
+     'Local profile',
+@@ -858,10 +866,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+     'Small daily goals are easier to keep than long cram sessions.',
+     'answers/day',
+     'English support',
++    'Audio off',
++    'Audio on',
+     'Badges',
+     'Achievement cues make progress visible without distracting from learning.',
+-    'No badges yet',
+-    'Open settings',
++    'Locked',
++    'Unlocked',
++    'Progress dashboard',
++    'Activity, chapter progress, and XP live on a dedicated page.',
++    'View dashboard',
++    'Open progress dashboard',
++    'Adjust goal, language, and audio',
++    'Remove Ads is highlighted. Buy and Restore controls are here.',
+   ],
+ };
+ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+@@ -896,6 +912,14 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
+   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
+   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
++  [
++    'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
++    'profile study setup must read audio state from settings',
++  ],
++  [
++    'audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge',
++    'profile study setup audio badge must localize',
++  ],
+   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
+   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+   ['<BadgeRow', 'profile badge summary must render localized badge rows'],
+@@ -915,8 +939,25 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
+     'profile settings link must expose localized accessibility copy',
+   ],
+-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
++  ['{copy.studySetupCta}', 'profile settings link must render localized copy'],
++  [
++    'accessibilityLabel={copy.dashboardAccessibilityLabel}',
++    'profile dashboard link must expose localized accessibility copy',
++  ],
++  ['href="/dashboard"', 'profile dashboard link must route to the dashboard surface'],
++  ['label={copy.dashboardCta}', 'profile dashboard link must render localized copy'],
++  [
++    'const removeAdsPaywall = entitlementsReady ? (',
++    'profile premium banner must fail closed while entitlements load',
++  ],
++  ['nativeID="remove-ads-paywall"', 'profile Remove Ads paywall must keep a stable anchor'],
++  ['entitlements={monetizationEntitlements}', 'profile premium banner must receive entitlements'],
+   ['language={language}', 'profile premium banner must receive the settings language'],
++  ['runtimeOptions={purchaseRuntime}', 'profile premium banner must use the shared runtime'],
++  [
++    '{entitlementsReady && proRuntimeScopeEnabled ? (',
++    'profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled',
++  ],
+ ];
+ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
+   sv: [
+@@ -2383,8 +2424,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -14609,6 +14649,29 @@ function validateBadgeCatalog() {
+         }
+       }
+ 
++      for (const field of [
++        'titleSv',
++        'titleEn',
++        'descriptionSv',
++        'descriptionEn',
++        'lockedHintSv',
++        'lockedHintEn',
++      ]) {
++        if (!hasText(badge[field])) {
++          reject(`${label} missing ${field}`);
++        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
++          reject(`${label} ${field} must be trimmed and single-spaced`);
++        }
++      }
++
++      if (
++        hasText(badge.titleSv) &&
++        hasText(badge.titleEn) &&
++        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
++      ) {
++        reject(`${label} titleSv must be localized separately from titleEn`);
++      }
++
+       const normalizedTitle = normalizeComparableText(badge.title);
+       if (normalizedTitle && seenTitles.has(normalizedTitle)) {
+         reject(`${label} duplicates badge title`);
+diff --git a/tests/content-profile-route-copy-parity.test.js b/tests/content-profile-route-copy-parity.test.js
+index c74545141..96c1c1092 100644
+--- a/tests/content-profile-route-copy-parity.test.js
++++ b/tests/content-profile-route-copy-parity.test.js
+@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
+   const summary = parseValidationSummary();
+   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+ 
+-  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
++  assert.equal(summary.profileRouteCopyLabelsValidated, 52);
+   assert.equal(summary.profileRouteCopyParityValidated, true);
+   assert.equal(summary.badgesValidated, 4);
+   assert.equal(summary.badgeMilestoneParityValidated, true);
+@@ -145,12 +145,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
+   );
+   assert.match(
+     bannerSource,
+-    /accessibilityState=\{\{ disabled: activeAction !== null \|\| adsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
++    /accessibilityState=\{\{[\s\S]*disabled: activeAction !== null \|\| adsDisabled,[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+   );
+   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+   assert.match(
+     bannerSource,
+-    /accessibilityState=\{\{ disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
++    /accessibilityState=\{\{[\s\S]*disabled: activeAction !== null[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+   );
+   assert.match(
+     bannerSource,

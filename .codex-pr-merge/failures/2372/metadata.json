@@ -1,0 +1,52 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- fixes literal English calques in q176/q178 rights-work wording\n- regenerates canonical CSV and static question bank so derived variants carry the natural wording\n- adds validate:content coverage plus bilingual parity regression tests for the rights-work naturalness guard\n\n## Validation\n- npm run validate:content\n- node --test tests/content-bilingual-text-parity.test.js\n- node scripts/export-question-bank.js --check && node scripts/export-site-question-bank.js --check\n- npm run typecheck -- --pretty false\n- git diff --check\n\nNote: node --test tests/content-published-question-types.test.js remains red on existing current-main fixture drift unrelated to this atom; the new focused bilingual parity test passes.",
+  "files": [
+    {
+      "path": "content/question-bank.csv",
+      "additions": 8,
+      "deletions": 8,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "data/additionalQuestions.ts",
+      "additions": 3,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 24,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/questions.js", "additions": 11, "deletions": 11, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-bilingual-text-parity.test.js",
+      "additions": 60,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/p0-translate-complete-1779364016-2987261",
+  "headRefOid": "6e11e676c9cbb6d8cb87b1509ef2378a2526abc6",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2372,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T12:04:57Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224361465/job/77167342405",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:55:32Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "content: guard rights-work English naturalness",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2372"
+}

@@ -74,6 +74,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
   if (reducedMotionEnabled) {
     return (
       <View
+        aria-hidden={true}
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
         pointerEvents="none"
@@ -97,6 +98,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
 
   return (
     <Animated.View
+      aria-hidden={true}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"

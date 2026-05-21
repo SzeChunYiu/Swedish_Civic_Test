@@ -1,0 +1,51 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Reuses the shared punctuation-stripping glossary normalizer for ranked question search.\n- Adds focused validate-content coverage for search URL hydration and question-search punctuation parity.\n- Extends search route tests so punctuated queries must keep question results visible.\n\n## Validation\n- `node --test tests/content-search-route-copy-parity.test.js --test-name-pattern 'search|normaliz|punctuation|hydration'`\n- `npm run validate:content -- --focus-search-route-query-hydration`\n- `npm run typecheck -- --pretty false`\n- `npm run build:web:export -- --max-workers 2`\n- `npm run validate:content`\n- `git diff --check`\n\nBrowser e2e was attempted, but this host has no Chromium binary and `npx playwright install chromium` reports that this Playwright package does not support ubuntu26.04-x64.",
+  "files": [
+    {
+      "path": "lib/search/questionSearch.ts",
+      "additions": 4,
+      "deletions": 11,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 177,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-search-route-copy-parity.test.js",
+      "additions": 64,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/search-accessibility.spec.ts",
+      "additions": 1,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/search-question-punctuation-normalization-1",
+  "headRefOid": "8575e6d12f69c2631d49fb7a1b12c2af193d268c",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2354,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:18:55Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222667082/job/77161413640",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:17:46Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "search: normalize punctuated question queries",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2354"
+}

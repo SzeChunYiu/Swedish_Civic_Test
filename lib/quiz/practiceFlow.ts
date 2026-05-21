@@ -1,4 +1,9 @@
-import type { PracticeQuestion } from '../../types/content';
+import type { Chapter, PracticeQuestion } from '../../types/content';
+
+export type ChapterQuizRouteParams = {
+  chapterId: string;
+  sessionId: string;
+};
 
 export function getPracticeQuestionForSession<TQuestion extends Pick<PracticeQuestion, 'id'>>(
   questions: readonly TQuestion[],
@@ -93,4 +98,32 @@ export function getChapterQuizSessionId<
   TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
 >(questions: readonly TQuestion[], chapterId: string | null | undefined): string | null {
   return getFirstQuestionForChapter(questions, chapterId)?.id ?? null;
+}
+
+export function getChapterQuizRouteParams<
+  TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
+>(
+  questions: readonly TQuestion[],
+  chapterId: string | null | undefined,
+): ChapterQuizRouteParams | null {
+  const sessionId = getChapterQuizSessionId(questions, chapterId);
+  if (!sessionId || !chapterId) return null;
+
+  return { chapterId, sessionId };
+}
+
+export function getChapterContextForQuizSession<
+  TChapter extends Pick<Chapter, 'id'>,
+  TQuestion extends Pick<PracticeQuestion, 'chapterId'>,
+>(
+  chapters: readonly TChapter[],
+  question: TQuestion | null | undefined,
+  chapterId: string | null | undefined,
+): TChapter | null {
+  if (!question || !chapterId) return null;
+
+  return (
+    chapters.find((chapter) => chapter.id === chapterId && chapter.id === question.chapterId) ??
+    null
+  );
 }

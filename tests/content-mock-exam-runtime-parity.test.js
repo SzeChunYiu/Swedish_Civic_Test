@@ -44,11 +44,29 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function parseFocusedMockExamCopySummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-copy-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused mock-exam copy validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('default mock exam config generates a full UHR-based exam from bundled questions', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -95,6 +113,31 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
         question.uhrReference?.section,
     ),
   );
+});
+
+test('mock exam copy parity keeps Swedish övningsprov labels and English Mock Exam labels', () => {
+  const summary = parseFocusedMockExamCopySummary();
+  const librarySource = fs.readFileSync(
+    path.join(repoRoot, 'lib/learning/mockExamLibrary.ts'),
+    'utf8',
+  );
+  const tierSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/tierComparison.ts'),
+    'utf8',
+  );
+
+  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamScoreSourceCopyValidated, true);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
+  assert.match(librarySource, /Övningsprov 1 – Mjuk start/);
+  assert.match(librarySource, /Slumpmässigt övningsprov/);
+  assert.match(librarySource, /Mock Exam 1 – Gentle start/);
+  assert.match(tierSource, /labelSv: 'Övningsprov'/);
+  assert.match(tierSource, /labelEn: 'Mock exams'/);
+  assert.doesNotMatch(`${librarySource}\n${tierSource}`, /\bprovexamen\b|\bprovexamina\b/i);
 });
 
 test('web rewarded unlocks require explicit completion before credit grant path', async () => {

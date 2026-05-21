@@ -1,0 +1,87 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n\nAdds an optional eliminate/restore control to Practice answer choices before submission. Eliminated answers are muted and struck through, cannot be selected until restored, and reset on retry, next question, or question change while submitted feedback remains unchanged.\n\nAlso updates AnswerOption/OptionCard accessibility contracts, practice-session store parity, and a generated-answer validator comparison so multilingual option overlays do not break legacy generated answer-template checks.\n\n## Validation\n\n- `npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-answer-option-accessibility-parity.test.js tests/content-practice-flow-parity.test.js --test-name-pattern 'AnswerOption|practice flow|strikeout|struck-option'`\n- `npm run test:ui-effects -- --test-name-pattern 'practice locks answer options|practice and routed quiz answer options|answer option feedback'`\n- `npm run test:a11y-labels`\n- `npm run test:theme-discipline`\n- `npm run build:web:export -- --max-workers 2`\n- `npx playwright test tests/e2e/practice-feedback.spec.ts -g 'answer choices can be eliminated'`",
+  "files": [
+    {
+      "path": "app/(tabs)/practice.tsx",
+      "additions": 13,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "components/OptionCard.tsx",
+      "additions": 38,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "components/quiz/AnswerOption.tsx",
+      "additions": 110,
+      "deletions": 11,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/quiz/practiceSessionStore.ts",
+      "additions": 58,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/practice-flow.test.js",
+      "additions": 14,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/ui-effects.test.js",
+      "additions": 10,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 87,
+      "deletions": 6,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-answer-option-accessibility-parity.test.js",
+      "additions": 61,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-practice-flow-parity.test.js",
+      "additions": 9,
+      "deletions": 6,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/practice-feedback.spec.ts",
+      "additions": 46,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/practice-answer-strikeout-1779373073-2257921",
+  "headRefOid": "cf29449fd1b2d80324e9fbd29545a2acece5ffda",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2453,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T14:46:12Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26232804798/job/77197598791",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T14:36:21Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "practice: add answer choice strikeout control",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2453"
+}

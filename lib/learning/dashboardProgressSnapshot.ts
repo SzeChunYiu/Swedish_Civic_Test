@@ -89,7 +89,8 @@ export function buildDashboardProgressSnapshot({
       : null;
 
   const examSessions: QuizSession[] = mockExamSessions.map((session) => {
-    const totalTimingSeconds = session.questionTimings.reduce(
+    const questionTimings = Array.isArray(session.questionTimings) ? session.questionTimings : [];
+    const totalTimingSeconds = questionTimings.reduce(
       (sum, timing) => sum + timing.timeSpentSeconds,
       0,
     );
@@ -104,7 +105,7 @@ export function buildDashboardProgressSnapshot({
       completedAt: session.completedAt,
       id: session.sessionId,
       mode: 'exam',
-      questionIds: session.questionTimings.map((timing) => timing.questionId),
+      questionIds: questionTimings.map((timing) => timing.questionId),
       score: session.score,
       startedAt,
     };
