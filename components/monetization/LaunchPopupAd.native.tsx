@@ -26,7 +26,7 @@ export function LaunchPopupAd({
   const launchPopupAdUnitId =
     mobileAdsConsent.initialized &&
     shouldShowLaunchPopupAd({
-      alreadyShownThisLaunch: launchPopupShownThisRuntime,
+      alreadyShownThisLaunch: launchPopupShownThisRuntime || launchPopupLoadInFlight,
       consentDecision: mobileAdsConsent.decision.consentDecision,
       entitlements,
       platform: Platform.OS,
