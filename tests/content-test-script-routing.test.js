@@ -332,6 +332,32 @@ test('Search route query hydration parity uses focused content validation routin
   );
 });
 
+test('Somali geography naturalness uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const questionI18nTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-i18n-v8-pilot.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('somaliGeographyNaturalness');
+
+  assert.ok(registryEntry, 'Somali geography focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-somali-geography-naturalness']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'somaliGeographyNaturalnessCasesValidated',
+    'somaliGeographyNaturalnessStaticRowsValidated',
+    'somaliGeographyNaturalnessParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-somali-geography-naturalness/);
+  assert.match(
+    validatorSource,
+    /validateSomaliGeographyNaturalnessParity\(\);[\s\S]*somaliGeographyNaturalnessCasesValidated[\s\S]*somaliGeographyNaturalnessStaticRowsValidated[\s\S]*somaliGeographyNaturalnessParityValidated/,
+  );
+  assert.match(questionI18nTestSource, /summarizeSomaliGeographyNaturalness/);
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,

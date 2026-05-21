@@ -8,6 +8,8 @@ const {
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
+  SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  summarizeSomaliGeographyNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
 function completeMap(value = 'x') {
@@ -175,6 +177,47 @@ test('question localization v8 rejects English geography terms in Somali sea and
     'q006.explanationText.so contains English geography term',
     'q008.options.b.text.so contains English geography term',
   ]);
+});
+
+test('question localization v8 summarizes Somali geography naturalness cases', () => {
+  const questions = [
+    {
+      id: 'q004',
+      questionText: { so: 'Badda ku teedsan xeebta bari ee Iswiidhan maxaa la yiraahdaa?' },
+      explanationText: {
+        so: 'Badda ku teedsan xeebta bari ee Iswiidhan waa Badda Baltiga.',
+      },
+      options: [
+        { id: 'a', text: { so: 'Badda Waqooyi' } },
+        { id: 'b', text: { so: 'Badda Dhexe' } },
+        { id: 'c', text: { so: 'Badda Baltiga' } },
+        { id: 'd', text: { so: 'Badweynta Atlaantiga' } },
+      ],
+    },
+    {
+      id: 'q006',
+      questionText: {
+        so: 'Qulqulka Gacanka iyo qulqulka Waqooyiga Atlaantiga waxay dejiyaan cimilada.',
+      },
+      explanationText: {
+        so: 'Labada qulqul badeed waxay biyo diirran u qaadaan Yurub.',
+      },
+      options: [],
+    },
+    {
+      id: 'q008',
+      questionText: { so: 'Saddexda haro ee ugu waaweyn Iswiidhan waa kuwee?' },
+      explanationText: { so: 'Harooyinka ugu waaweyn waa Vänern, Vättern iyo Mälaren.' },
+      options: [{ id: 'b', text: { so: 'Badda Baltiga, Kattegat iyo Skagerrak' } }],
+    },
+  ];
+
+  const summary = summarizeSomaliGeographyNaturalness(questions, SOMALI_GEOGRAPHY_NATURALNESS_IDS);
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 3);
+  assert.equal(summary.expectedCases, 3);
+  assert.equal(summary.parityValidated, true);
 });
 
 test('question localization v8 rejects missing protected Swedish civic terms in target text', () => {
