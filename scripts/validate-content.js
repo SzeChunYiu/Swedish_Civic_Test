@@ -4816,6 +4816,64 @@ function findDuplicateOptionTextLabels(question) {
   return duplicates;
 }
 
+function normalizedGeneratedSingleChoiceText(value) {
+  return normalizeOptionText(value).toLocaleLowerCase('sv-SE');
+}
+
+function generatedSingleChoiceStemOptionsSignature(question) {
+  const stem = [
+    normalizedGeneratedSingleChoiceText(question?.questionSv),
+    normalizedGeneratedSingleChoiceText(question?.questionEn),
+  ].join('\u0001');
+  const options = Array.isArray(question?.options)
+    ? question.options
+        .map((option) =>
+          [
+            normalizedGeneratedSingleChoiceText(option?.textSv),
+            normalizedGeneratedSingleChoiceText(option?.textEn),
+          ].join('\u0002'),
+        )
+        .join('\u0003')
+    : '';
+
+  return `${stem}\u0004${options}`;
+}
+
+function validateGeneratedSingleChoiceDuplicateStemOptions() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+    const seenSignatures = new Map();
+    let sourceIsValid = true;
+    let singleChoiceVariants = 0;
+
+    variants.forEach((variant, variantIndex) => {
+      if (variant?.type !== 'single_choice') return;
+      singleChoiceVariants += 1;
+      const signature = generatedSingleChoiceStemOptionsSignature(variant);
+      const previousVariantIndex = seenSignatures.get(signature);
+      if (previousVariantIndex !== undefined) {
+        sourceIsValid = false;
+        fail(
+          `${sourceQuestion.id} generated variant[${variantIndex}] duplicates generated variant[${previousVariantIndex}] stem/options`,
+        );
+      } else {
+        seenSignatures.set(signature, variantIndex);
+      }
+    });
+
+    if (sourceIsValid && singleChoiceVariants > 1) {
+      generatedSingleChoiceDuplicateStemOptionsValidated += 1;
+    }
+  });
+}
+
 function optionCountMatchesQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   if (question.type === 'single_choice') return question.options.length === 4;
@@ -7528,8 +7586,26 @@ let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
+let generatedSingleChoiceDuplicateStemOptionsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-generated-single-choice-duplicate-stems')) {
+  validateStaticValidationSyntaxGate();
+  validateGeneratedSingleChoiceDuplicateStemOptions();
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+    generatedPublishedQuestions: Array.isArray(generatedPublishedQuestions)
+      ? generatedPublishedQuestions.length
+      : 0,
+    generatedSingleChoiceDuplicateStemOptionsValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
@@ -15415,6 +15491,7 @@ function validateGeneratedAnswerTemplateParity() {
 }
 
 validateGeneratedAnswerTemplateParity();
+validateGeneratedSingleChoiceDuplicateStemOptions();
 
 function buildUhrReferenceChapters() {
   validateUhrSourceMetadata();
@@ -16312,6 +16389,7 @@ console.log(
       generatedSingleChoiceFillerOptionsValidated,
       generatedSingleChoiceMetaStemsValidated,
       generatedSingleChoiceExplanationLabelsValidated,
+      generatedSingleChoiceDuplicateStemOptionsValidated,
       generatedTrueFalseExplanationMetaValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,
