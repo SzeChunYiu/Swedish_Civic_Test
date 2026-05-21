@@ -17676,7 +17676,6 @@ function validateBadgeCatalog() {
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
 
-
       if (
         label === 'first_practice' &&
         normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)

@@ -8,10 +8,9 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-
 function parseValidationSummary(output) {
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused validation should print JSON summary');
+  assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
 }
 
@@ -219,10 +218,8 @@ test('progress question schema stays in parity with persisted progress records',
       encoding: 'utf8',
     },
   );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
 
-  const summary = JSON.parse(match[0]);
+  const summary = parseValidationSummary(output);
   const progressTypes = fs.readFileSync(path.join(repoRoot, 'types/progress.ts'), 'utf8');
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
@@ -304,9 +301,7 @@ test('streak freeze normalizer focused validator mirrors shared storage policy',
       encoding: 'utf8',
     },
   );
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
+  const summary = parseValidationSummary(output);
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
     'utf8',
@@ -849,7 +844,21 @@ test('exam submission finality parity rejects losing the submitted completion ti
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam result submission must persist/,
+    /exam result submission must persist readiness field: completedAt/,
+  );
+});
+
+test('exam submission finality parity rejects duplicate mock-exam persistence calls', () => {
+  const result = runFocusedExamSubmissionValidationWithRoutePatch(
+    'recordMockExamSession({',
+    'recordMockExamSession({});\n    recordMockExamSession({',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /exam result submission must persist exactly one completed mock-exam session/,
+
   );
 });
 
