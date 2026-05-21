@@ -20937,8 +20937,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: "Low voter turnout can reduce people's ability to influence political decisions.",
-        sv: 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut.',
+        en: 'People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.',
+        sv: 'Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin.',
       },
       opts: [
         {
@@ -20977,8 +20977,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'Low voter turnout means all voters get two votes each in the next election.',
-        sv: 'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val.',
+        en: 'All voters get two votes each in the next election when a low voter turnout affects democracy.',
+        sv: 'Alla väljare får två röster var i nästa val när ett lågt valdeltagande påverkar demokratin.',
       },
       opts: [
         {
@@ -29713,7 +29713,7 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
+        en: 'The goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.',
         sv: 'Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
       },
       opts: [
@@ -29747,7 +29747,7 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'Sweden’s gender equality policy is only about how many women are in politics.',
+        en: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.',
         sv: 'Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken.',
       },
       opts: [
@@ -52580,8 +52580,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
-        sv: 'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
+        en: 'Try to persuade others of their political ideas.',
+        sv: 'Försöka övertyga andra om sina politiska idéer.',
       },
       opts: [
         {
@@ -52620,8 +52620,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'In a democracy, people, groups, and parties may not stop others from voting.',
-        sv: 'I en demokrati har människor, grupper och partier inte rätt att hindra andra från att rösta.',
+        en: 'Stop others from voting.',
+        sv: 'Hindra andra från att rösta.',
       },
       opts: [
         {
@@ -58653,8 +58653,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'Free expression in printed form and the right to publish books, newspapers, and magazines.',
-        sv: 'Det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter.',
+        en: 'The Freedom of the Press Act protects free expression in printed form and the right to publish books, newspapers, and magazines.',
+        sv: 'Tryckfrihetsförordningen skyddar det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter.',
       },
       opts: [
         {
@@ -58693,8 +58693,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'The right of the state to preview all private letters.',
-        sv: 'Rätten för staten att förhandsgranska alla privata brev.',
+        en: 'The Freedom of the Press Act gives the state the right to pre-screen all private letters.',
+        sv: 'Tryckfrihetsförordningen ger staten rätt att förhandsgranska alla privata brev.',
       },
       opts: [
         {
@@ -58829,8 +58829,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'Express thoughts and opinions freely, for example on radio, TV, and in newspapers.',
-        sv: 'Uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar.',
+        en: 'The Fundamental Law on Freedom of Expression gives everyone the right to express thoughts and opinions freely, for example on radio, TV, and in newspapers.',
+        sv: 'Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar.',
       },
       opts: [
         {
@@ -58869,8 +58869,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'It makes every expression legal regardless of content.',
-        sv: 'Den gör alla yttranden lagliga oavsett innehåll.',
+        en: 'The Fundamental Law on Freedom of Expression makes every expression legal regardless of content.',
+        sv: 'Yttrandefrihetsgrundlagen gör alla yttranden lagliga oavsett innehåll.',
       },
       opts: [
         {
@@ -59186,8 +59186,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.',
-        sv: 'Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.',
+        en: 'During a trial, the accused person has the right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.',
+        sv: 'Under en rättegång har en åtalad person rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.',
       },
       opts: [
         {
@@ -59227,8 +59227,8 @@
       chapter: 'Ch. 05 · Law and justice',
       type: 'true_false',
       q: {
-        en: 'The right to choose the judge and lay judges alone.',
-        sv: 'Rätt att ensam välja domare och nämndemän.',
+        en: 'During a trial, the accused person has the right to choose the judge and lay judges alone.',
+        sv: 'Under en rättegång har en åtalad person rätt att ensam välja domare och nämndemän.',
       },
       opts: [
         {
@@ -59524,8 +59524,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'Human rights apply to every person regardless of background or life situation.',
-        sv: 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
+        en: 'That human rights apply to everyone means every person has rights regardless of background or life situation.',
+        sv: 'Att mänskliga rättigheter gäller alla betyder att varje människa har rättigheter oavsett bakgrund eller livssituation.',
       },
       opts: [
         {
@@ -59564,8 +59564,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'Human rights apply only to Swedish citizens.',
-        sv: 'Mänskliga rättigheter gäller bara svenska medborgare.',
+        en: 'That human rights apply to everyone means only Swedish citizens have human rights.',
+        sv: 'Att mänskliga rättigheter gäller alla betyder att bara svenska medborgare har mänskliga rättigheter.',
       },
       opts: [
         {

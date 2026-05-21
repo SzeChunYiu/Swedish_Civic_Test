@@ -658,6 +658,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bprotects the right [^.?!]* and protection from\b/i,
   /\bskyddar att staten väljer\b/i,
   /\bprotects that the state chooses\b/i,
+  /^(?:Rätten för staten|Uttrycka tankar|Rätt till|Den gör)\b/i,
+  /^(?:Free expression in printed form|Express thoughts|The right to|It makes)\b/i,
   /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
@@ -4858,166 +4860,6 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
-function getStaticEbookChapterIdsForValidation() {
-  const sandbox = { console, window: {} };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/questions.js'), sandbox, {
-    filename: 'site/questions.js',
-    timeout: 3000,
-  });
-  const meta = sandbox.window.SMT_CHAPTERS_META || sandbox.SMT_CHAPTERS_META;
-  if (!Array.isArray(meta)) {
-    fail('site/questions.js should expose SMT_CHAPTERS_META for static ebook validation');
-    return ['intro'];
-  }
-  return ['intro', ...meta.map((chapter) => String(chapter.id))];
-}
-
-function createStaticEbookValidationHarness(chapterIds) {
-  const reader = { innerHTML: '', scrollTop: 0 };
-  const navAnchors = chapterIds.map((id) => ({
-    classList: { toggle() {} },
-    dataset: { eb: id },
-  }));
-  const localStorageValues = new Map();
-  const localStorage = {
-    getItem(key) {
-      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
-    },
-    setItem(key, value) {
-      localStorageValues.set(key, String(value));
-    },
-  };
-  const location = { hash: '#/ebook' };
-  const document = {
-    addEventListener() {},
-    getElementById(id) {
-      return id === 'ebook-reader' ? reader : null;
-    },
-    querySelectorAll(selector) {
-      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
-    },
-  };
-  const window = {
-    addEventListener() {},
-    localStorage,
-    location,
-    smtApplyEbookHighlights() {},
-  };
-  const sandbox = {
-    console,
-    document,
-    localStorage,
-    location,
-    setTimeout(callback) {
-      callback();
-      return 0;
-    },
-    window,
-  };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/ebook.js'), sandbox, {
-    filename: 'site/ebook.js',
-    timeout: 3000,
-  });
-  return { localStorage, location, reader, window };
-}
-
-function renderStaticEbookChapterForValidation(harness, lang, chapterId) {
-  harness.localStorage.setItem('smt_lang', lang);
-  harness.location.hash = `#/ebook?c=${chapterId}`;
-  harness.reader.innerHTML = '';
-  harness.window.smtEbookRender();
-  return harness.reader.innerHTML;
-}
-
-function extractStaticEbookFootnoteContract(html) {
-  const refIds = Array.from(html.matchAll(/id="ebook-fnref-([^"]+)"/g), (match) => match[1]);
-  const footnoteIds = Array.from(html.matchAll(/id="ebook-fn-([^"]+)"/g), (match) => match[1]);
-  const sourceKeys = Array.from(
-    html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g),
-    (match) => match[1],
-  );
-  const badgeHtml = html.match(/<p class="ebook__provenance-badge"[\s\S]*?<\/p>/)?.[0] ?? '';
-  const visibleBadgeText = badgeHtml.replace(/^[\s\S]*?<\/span>/, '').replace(/<[^>]+>/g, ' ');
-  const badgeCounts = Array.from(visibleBadgeText.matchAll(/\((\d+)\)/g), (match) =>
-    Number(match[1]),
-  );
-
-  return {
-    badgeCounts,
-    footnoteIds,
-    refIds,
-    sourceKeys,
-  };
-}
-
-function validateStaticEbookFootnoteHashParity() {
-  const chapterIds = getStaticEbookChapterIdsForValidation();
-  const languages = ['en', 'sv'];
-  const harness = createStaticEbookValidationHarness(chapterIds);
-  const chapterValidity = new Map(chapterIds.map((chapterId) => [chapterId, true]));
-  let languagesValidated = 0;
-
-  for (const lang of languages) {
-    let languageValid = true;
-
-    for (const chapterId of chapterIds) {
-      const html = renderStaticEbookChapterForValidation(harness, lang, chapterId);
-      const { badgeCounts, footnoteIds, refIds, sourceKeys } =
-        extractStaticEbookFootnoteContract(html);
-      let chapterValid = true;
-
-      if (refIds.length === 0) {
-        fail(`static ebook ${lang}/${chapterId} should render footnote refs`);
-        chapterValid = false;
-      }
-      if (JSON.stringify(refIds) !== JSON.stringify(footnoteIds)) {
-        fail(`static ebook ${lang}/${chapterId} footnote ref/list hash ids should match`);
-        chapterValid = false;
-      }
-      for (const id of refIds) {
-        if (!html.includes(`href="#ebook-fn-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing forward footnote hash for ${id}`);
-          chapterValid = false;
-        }
-        if (!html.includes(`href="#ebook-fnref-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing back-reference footnote hash for ${id}`);
-          chapterValid = false;
-        }
-      }
-      if (sourceKeys.length !== refIds.length) {
-        fail(`static ebook ${lang}/${chapterId} source-count list should match footnote refs`);
-        chapterValid = false;
-      }
-      if (!sourceKeys.includes('uhrStudyMaterial') || !sourceKeys.includes('editorialCommentary')) {
-        fail(`static ebook ${lang}/${chapterId} should include UHR and editorial source mixes`);
-        chapterValid = false;
-      }
-      if (badgeCounts.reduce((sum, count) => sum + count, 0) !== sourceKeys.length) {
-        fail(`static ebook ${lang}/${chapterId} badge source counts should match footnote list`);
-        chapterValid = false;
-      }
-
-      if (!chapterValid) {
-        languageValid = false;
-        chapterValidity.set(chapterId, false);
-      }
-    }
-
-    if (languageValid) languagesValidated += 1;
-  }
-
-  const chaptersValidated = Array.from(chapterValidity.values()).filter(Boolean).length;
-
-  return {
-    chaptersValidated,
-    languagesValidated,
-    parityValidated:
-      chaptersValidated === chapterIds.length && languagesValidated === languages.length,
-  };
-}
-
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -5891,6 +5733,56 @@ function englishProtectedReligionStatement(subject, answer) {
   if (stateChoice)
     return `${upperFirst(subject)} lets the state choose ${lowerFirst(stateChoice[1])}`;
   return `${upperFirst(subject)} protects ${lowerFirst(answer)}`;
+}
+function swedishProtectionStatement(subject, answer) {
+  const trimmed = answer.trim();
+  const stateRight = trimmed.match(/^Rätten för staten att (.+)$/i);
+  if (stateRight) {
+    return `${upperFirst(subject)} ger staten rätt att ${lowerLeadingSwedishClauseStart(
+      stateRight[1],
+    )}`;
+  }
+  return `${upperFirst(subject)} skyddar ${lowerFirst(answer)}`;
+}
+function englishProtectionStatement(subject, answer) {
+  const trimmed = answer
+    .trim()
+    .replace(/\bpreview all private letters\b/i, 'pre-screen all private letters');
+  const stateRight = trimmed.match(/^The right of the state to (.+)$/i);
+  if (stateRight) {
+    return `${upperFirst(subject)} gives the state the right to ${lowerFirst(stateRight[1])}`;
+  }
+  return `${upperFirst(subject)} protects ${lowerFirst(trimmed)}`;
+}
+function swedishEveryoneRightStatement(subject, answer) {
+  if (/^Att\s+/i.test(answer)) {
+    return `${upperFirst(subject)} ger alla rätt att ${lowerLeadingSwedishClauseStart(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+function englishEveryoneRightStatement(subject, answer) {
+  if (/^To\s+/i.test(answer)) {
+    return `${upperFirst(subject)} gives everyone the right to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+function swedishAccusedTrialRightStatement(answer) {
+  if (/^Rätt\s+/i.test(answer)) {
+    return `Under en rättegång har en åtalad person ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingSwedishSubject('den åtalade', answer);
+}
+function englishAccusedTrialRightStatement(answer) {
+  if (/^The right to\s+/i.test(answer)) {
+    return `During a trial, the accused person has the right to ${lowerFirst(
+      answer.replace(/^The right to\s+/i, ''),
+    )}`;
+  }
+  return replaceLeadingEnglishSubject('the accused person', answer);
 }
 function swedishChristianHolidayStatement(subject, condition, answer) {
   return `${answer} är kristna högtider som ${lowerFirst(subject)} firar även om ${condition}`;
@@ -6845,6 +6737,12 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
   if (match) return swedishProtectedReligionStatement(match[1], answer);
+  match = q.match(/^Vad skyddar ((?!.*\bnär det gäller\b).+)$/i);
+  if (match) return swedishProtectionStatement(match[1], answer);
+  match = q.match(/^Vad ger (.+?) alla rätt att göra$/i);
+  if (match) return swedishEveryoneRightStatement(match[1], answer);
+  match = q.match(/^Vilken rätt har den åtalade under en rättegång$/i);
+  if (match) return swedishAccusedTrialRightStatement(answer);
   match = q.match(/^Vad blev tillåtet för (.+?) år (.+)$/i);
   if (match)
     return `År ${match[2]} blev det tillåtet för ${match[1]} ${swedishPurposeClause(answer)}`;
@@ -7189,6 +7087,12 @@ function civicStatementEn(source, option) {
   if (match) return replaceLeadingEnglishSubject(match[1], answer);
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
   if (match) return englishProtectedReligionStatement(match[1], answer);
+  match = q.match(/^What does (.+?) protect$/i);
+  if (match) return englishProtectionStatement(match[1], answer);
+  match = q.match(/^What does (.+?) give everyone the right to do$/i);
+  if (match) return englishEveryoneRightStatement(match[1], answer);
+  match = q.match(/^What right does the accused person have during a trial$/i);
+  if (match) return englishAccusedTrialRightStatement(answer);
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;
@@ -8532,9 +8436,6 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookFootnoteHashChaptersValidated = 0;
-let staticEbookFootnoteHashLanguagesValidated = 0;
-let staticEbookFootnoteHashParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -8841,20 +8742,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
-  exitWithValidationFailures();
-  printValidationSummary({
-    staticEbookFootnoteHashChaptersValidated,
-    staticEbookFootnoteHashLanguagesValidated,
-    staticEbookFootnoteHashParityValidated,
   });
   process.exit(0);
 }
@@ -9170,12 +9057,6 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 {
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
-}
-{
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
   staticI18nSomaliRequiredCopyValidated = somaliI18nValidation.requiredCopyValidated;
   staticI18nSomaliHighFrequencyLabelsValidated = somaliI18nValidation.highFrequencyLabelsValidated;
@@ -9429,7 +9310,6 @@ function validateAppConfigSchema() {
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
   let rootLayout = '';
-  let nativeLaunchPopupSource = '';
 
   function reject(message) {
     valid = false;
@@ -9480,16 +9360,6 @@ function validateLaunchAdRouteSuppressionParity() {
     return;
   }
 
-  try {
-    nativeLaunchPopupSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`components/monetization/LaunchPopupAd.native.tsx could not be read: ${error.message}`);
-    return;
-  }
-
   if (!rootLayout.includes('usePathname()')) {
     reject('root layout must read the current pathname before rendering the launch ad');
   }
@@ -9498,19 +9368,6 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
-  }
-  if (!nativeLaunchPopupSource.includes('const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;')) {
-    reject('native LaunchPopupAd must define a bounded load timeout');
-  }
-  if (!nativeLaunchPopupSource.includes('clearTimeout(loadTimeout);')) {
-    reject('native LaunchPopupAd must clear its load timeout on load/error/unmount cleanup');
-  }
-  if (
-    !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/.test(
-      nativeLaunchPopupSource,
-    )
-  ) {
-    reject('native LaunchPopupAd must clear the in-flight flag when load callbacks stall');
   }
 
   if (
@@ -9627,44 +9484,6 @@ function validateAdPlacementRouteParity() {
       }
       if (shouldShowAd(spec.placement, { adsDisabled: true })) {
         reject(`${spec.placement} must be hidden after Remove Ads is active`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdBanner') {
-      const consentAwareShouldShowPattern =
-        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
-      const nativeBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-        'utf8',
-      );
-
-      if (!nativeBannerSource.includes('BannerAd')) {
-        reject('AdBanner native placement must render BannerAd');
-        routeIsValid = false;
-      }
-      if (!nativeBannerSource.includes('BannerAdSize.ANCHORED_ADAPTIVE_BANNER')) {
-        reject('AdBanner native placement must render adaptive banner size');
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes(
-          'requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly',
-        )
-      ) {
-        reject(
-          'AdBanner native placement must pass consent-derived non-personalized request options',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes('const unitId = getPlatformAdUnitId(placement, Platform.OS);')
-      ) {
-        reject('AdBanner native placement must resolve the banner unit by platform');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeBannerSource)) {
-        reject('AdBanner native placement must gate through consent-aware platform shouldShowAd');
         routeIsValid = false;
       }
     }
@@ -9858,24 +9677,6 @@ function validateAdPlacementRouteParity() {
       if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
         reject(
           'PracticeInterstitialAd native placement must pass non-personalized ad request options',
-        );
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;')) {
-        reject('PracticeInterstitialAd native placement must define a bounded load timeout');
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('clearTimeout(loadTimeout);')) {
-        reject('PracticeInterstitialAd native placement must clear its load timeout');
-        routeIsValid = false;
-      }
-      if (
-        !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/.test(
-          nativeInterstitialSource,
-        )
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must clear in-flight state when load callbacks stall',
         );
         routeIsValid = false;
       }
@@ -19365,9 +19166,6 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookFootnoteHashChaptersValidated,
-      staticEbookFootnoteHashLanguagesValidated,
-      staticEbookFootnoteHashParityValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,

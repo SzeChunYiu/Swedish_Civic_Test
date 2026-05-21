@@ -3360,6 +3360,55 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
+test('published question schema rejects generated legal-rights answer fragments', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const legalRightsResiduals = {",
+        "  [generatedFixtureId('q170', 1)]: { questionSv: 'Det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter.', questionEn: 'Free expression in printed form and the right to publish books, newspapers, and magazines.' },",
+        "  [generatedFixtureId('q170', 2)]: { questionSv: 'Rätten för staten att förhandsgranska alla privata brev.', questionEn: 'The right of the state to preview all private letters.' },",
+        "  [generatedFixtureId('q171', 1)]: { questionSv: 'Uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar.', questionEn: 'Express thoughts and opinions freely, for example on radio, TV, and in newspapers.' },",
+        "  [generatedFixtureId('q171', 2)]: { questionSv: 'Den gör alla yttranden lagliga oavsett innehåll.', questionEn: 'It makes every expression legal regardless of content.' },",
+        "  [generatedFixtureId('q173', 1)]: { questionSv: 'Rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.', questionEn: 'The right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.' },",
+        "  [generatedFixtureId('q173', 2)]: { questionSv: 'Rätt att ensam välja domare och nämndemän.', questionEn: 'The right to choose the judge and lay judges alone.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  legalRightsResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...legalRightsResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 6);
+});
+
 test('published question schema rejects generated true/false statement-about-statement stems', () => {
   const result = spawnSync(
     process.execPath,
