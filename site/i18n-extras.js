@@ -11,6 +11,8 @@
   const extra = {
     'zh-Hans': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 学习与练习。',
+      'meta.description': '非官方瑞典公民知识练习，包含有来源的问题、短章节和从容复习工具。',
       'nav.home': '首页',
       'nav.practice': '练习',
       'nav.ebook': '电子书',
@@ -398,6 +400,8 @@
     },
     'zh-Hant': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 學習與練習。',
+      'meta.description': '非官方瑞典公民知識練習，包含有來源的題目、短章節和從容複習工具。',
       'nav.home': '首頁',
       'nav.practice': '練習',
       'nav.ebook': '電子書',
@@ -788,6 +792,8 @@
     },
     ar: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — دراسة وتدريب.',
+      'meta.description': 'تدريب غير رسمي على المعرفة المدنية السويدية مع أسئلة موثقة المصادر وفصول قصيرة وأدوات مراجعة هادئة.',
       'nav.home': 'الرئيسية',
       'nav.practice': 'تدريب',
       'nav.ebook': 'دليل الدراسة',
@@ -1192,6 +1198,8 @@
     },
     ckb: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — خوێندن و مەشق.',
+      'meta.description': 'مەشقی ناڕەسمی بۆ زانیاریی مەدەنیی سوید، بە پرسیاری پشتبەستوو بە سەرچاوە، بەشی کورت و ئامرازی دووبارەکردنەوەی ئارام.',
       'nav.home': 'سەرەتا',
       'nav.practice': 'مەشق',
       'nav.ebook': 'کتێبی ئەلیکترۆنی',
@@ -1605,6 +1613,8 @@
     },
     fa: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — مطالعه و تمرین.',
+      'meta.description': 'تمرین غیررسمی دانش مدنی سوئد با پرسش‌های دارای منبع، فصل‌های کوتاه و ابزارهای مرور آرام.',
       'nav.home': 'خانه',
       'nav.practice': 'تمرین',
       'nav.ebook': 'کتاب الکترونیکی',
@@ -2016,6 +2026,8 @@
     },
     pl: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — nauka i ćwiczenia.',
+      'meta.description': 'Nieoficjalne ćwiczenia z wiedzy obywatelskiej o Szwecji: pytania ze źródłami, krótkie rozdziały i spokojne narzędzia powtórkowe.',
       'nav.home': 'Strona główna',
       'nav.practice': 'Ćwiczenia',
       'nav.ebook': 'E-book',
@@ -2441,6 +2453,8 @@
     },
     so: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — barasho iyo tababar.',
+      'meta.description': 'Tababar aan rasmi ahayn oo aqoonta bulshada Iswiidhan ah, leh su’aalo ilo leh, cutubyo gaagaaban iyo qalab dib-u-eegis deggan.',
       'nav.home': 'Bogga Hore',
       'nav.practice': 'Tababar',
       'nav.ebook': 'Buug',
@@ -2859,6 +2873,8 @@
     },
     ti: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — መጽናዕቲን ልምምድን.',
+      'meta.description': 'ዘይወግዓዊ ልምምድ ንሽወደናዊ ሲቪክ ፍልጠት፣ ብምንጪ ዝተደገፉ ሕቶታት፣ ሓጸርቲ ምዕራፋትን ህዱእ መከለሲ መሳርሕታትን።',
       'nav.home': 'መበገሲ ገጽ',
       'nav.practice': 'ልምምድ',
       'nav.ebook': 'ኢ-መጽሓፍ',
@@ -3250,6 +3266,8 @@
     },
     tr: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — çalış ve pratik yap.',
+      'meta.description': 'Kaynaklı sorular, kısa bölümler ve sakin tekrar araçlarıyla İsveç yurttaşlık bilgisi için resmi olmayan pratik.',
       'nav.home': 'Ana sayfa',
       'nav.practice': 'Alıştırma',
       'nav.ebook': 'E-kitap',
@@ -3663,6 +3681,8 @@
     },
     uk: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — навчання і практика.',
+      'meta.description': 'Неофіційна практика зі шведських громадянських знань із питаннями з джерелами, короткими розділами та спокійними інструментами повторення.',
       'nav.home': 'Головна',
       'nav.practice': 'Тренування',
       'nav.ebook': 'Електронна книга',

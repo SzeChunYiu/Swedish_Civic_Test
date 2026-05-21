@@ -121,6 +121,9 @@ window.addEventListener('smt:languagechange', () => {
 const i18n = (window.i18n = {
   en: {
     brand: 'Almost Swedish',
+    'meta.title': 'Almost Swedish — Study and practice.',
+    'meta.description':
+      'Unofficial Swedish civic knowledge practice with source-backed questions, short chapters, and calm revision tools.',
     'nav.home': 'Home',
     'nav.practice': 'Practice',
     'nav.mock': 'Mock exam',
@@ -534,6 +537,9 @@ const i18n = (window.i18n = {
   },
   sv: {
     brand: 'Almost Swedish',
+    'meta.title': 'Nästan svensk — plugga och öva.',
+    'meta.description':
+      'Inofficiell övning för svenska samhällskunskaper med källstödda frågor, korta kapitel och lugna repetitionsverktyg.',
     'nav.home': 'Hem',
     'nav.practice': 'Öva',
     'nav.mock': 'Övningsprov',
@@ -1009,6 +1015,16 @@ function smtApplyA11yLabels(lang) {
 }
 window.smtApplyA11yLabels = smtApplyA11yLabels;
 
+function smtApplyDocumentMetadata(lang) {
+  const dict = i18n[lang] || i18n.en || {};
+  const title = dict['meta.title'];
+  const description = dict['meta.description'];
+  if (title) document.title = title;
+  const descriptionMeta = document.querySelector('meta[name="description"]');
+  if (descriptionMeta && description) descriptionMeta.setAttribute('content', description);
+}
+window.smtApplyDocumentMetadata = smtApplyDocumentMetadata;
+
 function applyLang(lang) {
   lang = smtApplyLanguageDirection(lang);
   document.querySelectorAll('[data-i18n]').forEach((el) => {
@@ -1020,6 +1036,7 @@ function applyLang(lang) {
   });
   smtApplyChapterQuestionCounts(lang);
   smtApplyA11yLabels(lang);
+  smtApplyDocumentMetadata(lang);
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
     b.classList.toggle('is-on', b.dataset.lang === lang);
   });
