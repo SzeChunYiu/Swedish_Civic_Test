@@ -175,6 +175,54 @@ test('explainAdaptivePick: reports the same difficulty-adjusted bucket that was 
   });
 });
 
+test('pickAdaptiveSession: unsupported runtime difficulty values are neutral', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const answers = [
+    {
+      questionId: 'a-stale-invalid-string',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-04-14T12:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'b-stale-invalid-null',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-04-14T12:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+    {
+      questionId: 'c-stale-invalid-object',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-04-14T12:00:00.000Z',
+      timeSpentSeconds: 5,
+    },
+  ];
+  const input = {
+    progress: progressFromAnswers(answers),
+    bank: [
+      { id: 'a-stale-invalid-string', difficulty: 'expert', chapterId: 'c1' },
+      { id: 'b-stale-invalid-null', difficulty: null, chapterId: 'c1' },
+      { id: 'c-stale-invalid-object', difficulty: { level: 'expert' }, chapterId: 'c1' },
+      { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'c1' },
+    ],
+    size: 1,
+    recentAccuracyOverride: 0.95,
+    now,
+  };
+
+  assert.deepEqual(pickAdaptiveSession(input), ['z-unseen-medium']);
+  assert.deepEqual(explainAdaptivePick(input), {
+    'recently-wrong': 0,
+    unseen: 1,
+    mastered: 0,
+    stale: 0,
+  });
+});
+
 test('explainAdaptivePick: bucket counts roll up correctly', () => {
   const { explainAdaptivePick } = loadTs('lib/learning/adaptivePractice.ts');
   const answers = [
