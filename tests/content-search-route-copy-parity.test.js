@@ -6,6 +6,7 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
+const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-hydration.spec.ts');
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 
 function readSearchRouteSource() {
@@ -14,6 +15,10 @@ function readSearchRouteSource() {
 
 function readGlossarySearchSource() {
   return fs.readFileSync(glossarySearchPath, 'utf8');
+}
+
+function readSearchQueryHydrationE2eSource() {
+  return fs.readFileSync(searchQueryHydrationE2ePath, 'utf8');
 }
 
 function assertSearchRouteQuestionResults(source) {
@@ -197,6 +202,18 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
   assertSearchRouteQuestionResults(source);
   assertSearchRouteGlossarySearchParity(source);
   assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
+});
+
+test('Search route e2e covers mounted query-param navigation without reload', () => {
+  const source = readSearchQueryHydrationE2eSource();
+
+  assert.match(source, /search route resyncs when URL query params change after mount/);
+  assert.match(source, /window\.history\.pushState\(\{\}, '', '\/search\?query=kommun'\)/);
+  assert.match(source, /window\.dispatchEvent\(new PopStateEvent\('popstate'\)\)/);
+  assert.match(source, /await input\.fill\('egen text'\)/);
+  assert.match(source, /await expectSearchState\(page, 'kommun'\)/);
+  assert.match(source, /await expect\(page\)\.toHaveURL\(\/\\\/search\$\/\)/);
+  assert.match(source, /await input\.fill\('lokal text'\)/);
 });
 
 test('validate-content reports Search route query hydration parity', () => {

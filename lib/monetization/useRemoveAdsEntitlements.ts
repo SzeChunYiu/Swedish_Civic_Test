@@ -12,6 +12,7 @@ import {
   type PurchaseRuntimeOptions,
   type RemoveAdsStorePlatform,
 } from './purchases';
+import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 
 const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
   ...FREE_ENTITLEMENTS,
@@ -76,6 +77,13 @@ function createE2EWebPurchaseRuntimeOptions(
     if (!runtime.__SMT_E2E__ || typeof runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean') {
       return undefined;
     }
+
+    const instrumentedRuntimeOptions = createInstrumentedE2EPurchaseRuntimeOptions({
+      owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__,
+      scope: 'removeAds',
+      storage: createWebPurchaseStorage(initialAdsDisabled),
+    });
+    if (instrumentedRuntimeOptions) return instrumentedRuntimeOptions;
 
     return {
       provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),

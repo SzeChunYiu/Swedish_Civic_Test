@@ -7,10 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 test('app config schema stays aligned with release app metadata and ad/IAP plugins', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-app-config-schema'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -21,8 +25,10 @@ test('app config schema stays aligned with release app metadata and ad/IAP plugi
 
   assert.equal(summary.appConfigPluginsValidated, 5);
   assert.equal(summary.appConfigSchemaValidated, true);
-  assert.equal(summary.webHtmlBrandMetadataFieldsValidated, 7);
-  assert.equal(summary.webHtmlBrandMetadataParityValidated, true);
+  assert.equal(summary.staticHeadMetadataTitleValidated, 1);
+  assert.equal(summary.staticHeadMetadataDescriptionValidated, 1);
+  assert.equal(summary.staticHeadMetadataOutcomeClaimPatternsValidated, 22);
+  assert.equal(summary.staticHeadMetadataParityValidated, true);
   assert.equal(appConfig.expo.version, packageMetadata.version);
   assert.equal(appConfig.expo.scheme, appConfig.expo.slug);
   assert.equal(appConfig.expo.ios.bundleIdentifier, appConfig.expo.android.package);
@@ -67,35 +73,52 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('web shell brand metadata rejects stale browser titles', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
+test('web shell brand metadata rejects stale browser metadata', () => {
+  const metadataMutations = [
+    {
+      source: "const WEB_DOCUMENT_TITLE = 'Almost Swedish';",
+      replacement:
+        "const WEB_DOCUMENT_TITLE = ['Sweden', 'Citizenship', 'Test', 'Prep'].join(' ');",
+      message: /webDocumentTitle must match app\.json expo\.name/,
+    },
+    {
+      source:
+        "'Practice Swedish civic knowledge with offline quizzes, local progress, and source references.'",
+      replacement: "'Pass the test.'",
+      message: /webDocumentDescription English pass-the-test slogan/,
+    },
+    {
+      source: 'openGraphTitle: WEB_DOCUMENT_TITLE,',
+      replacement: "openGraphTitle: 'Sweden Citizenship Test Prep',",
+      message: /webDocumentOpenGraphTitle must match app\.json expo\.name/,
+    },
+  ];
+
+  for (const { source, replacement, message } of metadataMutations) {
+    const result = spawnSync(
+      process.execPath,
+      [
+        '-e',
+        `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/+html.tsx')) {
+  if (normalizedPath.endsWith('/lib/scaffold/webDocumentMetadata.js')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace(
-        "const webDocumentTitle = 'Almost Swedish';",
-        "const webDocumentTitle = ['Sweden', 'Citizenship', 'Test', 'Prep'].join(' ');",
-      );
+      .replace(${JSON.stringify(source)}, ${JSON.stringify(replacement)});
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-app-config-schema');
 require('./scripts/validate-content.js');
 `,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
+      ],
+      { cwd: repoRoot, encoding: 'utf8' },
+    );
 
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /webDocumentTitle must match app\.json expo\.name/,
-  );
+    assert.notEqual(result.status, 0);
+    assert.match(`${result.stdout}\n${result.stderr}`, message);
+  }
 });

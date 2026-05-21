@@ -71,7 +71,7 @@ async function expectNoOverlap(first: Locator, second: Locator, label: string) {
 }
 
 async function expectCelebrationCueVisibleAndDecorative(page: Page, label: string, score: Locator) {
-  const cue = page.getByText(label, { exact: true }).first();
+  const cue = page.locator('[aria-hidden="true"]').getByText(label, { exact: true }).first();
 
   await expect(cue).toBeVisible();
   await expect
@@ -91,7 +91,6 @@ async function expectCelebrationCueVisibleAndDecorative(page: Page, label: strin
       { message: `${label} should render with visible opacity before the burst fades` },
     )
     .toBe(true);
-  await expect(cue.locator('xpath=ancestor-or-self::*[@aria-hidden="true"]')).not.toHaveCount(0);
   await expect(page.getByLabel(label, { exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
   await expectNoOverlap(cue, score, `${label} cue should not overlap the score`);
