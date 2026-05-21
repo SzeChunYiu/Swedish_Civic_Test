@@ -5,9 +5,10 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '../../site');
 const port = Number(process.env.PORT || 4173);
 
-if (!fs.existsSync(path.join(root, 'index.html'))) {
-  console.error('site/index.html is missing.');
-  process.exit(1);
+function assertStaticSiteReady(siteRoot = root) {
+  if (!fs.existsSync(path.join(siteRoot, 'index.html'))) {
+    throw new Error('site/index.html is missing.');
+  }
 }
 
 const contentTypeByExt = {
@@ -36,13 +37,13 @@ function sendFile(res, filePath) {
   fs.createReadStream(filePath).pipe(res);
 }
 
-http
-  .createServer((req, res) => {
-    const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
+function createRequestHandler({ siteRoot = root, listenPort = port } = {}) {
+  return (req, res) => {
+    const url = new URL(req.url || '/', `http://127.0.0.1:${listenPort}`);
     const relativePath = url.pathname === '/' ? 'index.html' : url.pathname.replace(/^\/+/, '');
-    const requested = path.resolve(root, relativePath);
+    const requested = path.resolve(siteRoot, relativePath);
 
-    if (!requested.startsWith(`${root}${path.sep}`) && requested !== root) {
+    if (!requested.startsWith(`${siteRoot}${path.sep}`) && requested !== siteRoot) {
       res.writeHead(403);
       res.end('Forbidden');
       return;
@@ -53,8 +54,76 @@ http
       return;
     }
 
-    sendFile(res, path.join(root, 'index.html'));
-  })
-  .listen(port, '127.0.0.1', () => {
-    console.log(`Serving static site on http://127.0.0.1:${port}`);
+    sendFile(res, path.join(siteRoot, 'index.html'));
+  };
+}
+
+function startServer({ siteRoot = root, listenPort = port } = {}) {
+  assertStaticSiteReady(siteRoot);
+  return http
+    .createServer(createRequestHandler({ siteRoot, listenPort }))
+    .listen(listenPort, '127.0.0.1', () => {
+      console.log(`Serving static site on http://127.0.0.1:${listenPort}`);
+    });
+}
+
+function closeServer(server, callback = () => {}) {
+  if (typeof server.closeIdleConnections === 'function') {
+    server.closeIdleConnections();
+  }
+  server.close((error) => {
+    if (typeof server.closeAllConnections === 'function') {
+      server.closeAllConnections();
+    }
+    callback(error);
   });
+}
+
+function installSignalHandlers(server) {
+  let shuttingDown = false;
+  const shutdown = (signal) => {
+    if (shuttingDown) {
+      return;
+    }
+    shuttingDown = true;
+    const forcedExit = setTimeout(() => {
+      console.error(`Timed out closing static site server after ${signal}`);
+      process.exit(1);
+    }, 5000);
+    forcedExit.unref();
+
+    closeServer(server, (error) => {
+      clearTimeout(forcedExit);
+      if (error) {
+        console.error(error instanceof Error ? error.message : error);
+        process.exit(1);
+      }
+      process.exit(0);
+    });
+  };
+
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
+}
+
+if (require.main === module) {
+  try {
+    const server = startServer();
+    installSignalHandlers(server);
+    server.once('error', (error) => {
+      console.error(error instanceof Error ? error.message : error);
+      process.exit(1);
+    });
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  }
+}
+
+module.exports = {
+  assertStaticSiteReady,
+  closeServer,
+  createRequestHandler,
+  installSignalHandlers,
+  startServer,
+};
