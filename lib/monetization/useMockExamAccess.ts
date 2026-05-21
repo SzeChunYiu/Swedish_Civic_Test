@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 
 import type { PremiumEntitlements } from '../../types/monetization';
 import type { AdConsentDecision } from './consent';
-import { FREE_ENTITLEMENTS } from './premium';
+import { FREE_ENTITLEMENTS, isStrictEntitlementFlag } from './premium';
 import type { PurchaseRuntimeOptions } from './purchases';
 import {
   consumeStoredRewardedExtraExamCredit,
@@ -122,7 +122,7 @@ export function useMockExamAccess({
 
   const accessDecision = useMemo(
     () =>
-      accessReadFailed && !entitlements.unlimitedMockExams
+      accessReadFailed && !isStrictEntitlementFlag(entitlements.unlimitedMockExams)
         ? getMockExamAccessReadFailedDecision()
         : buildAccessDecision({
             consentDecision,

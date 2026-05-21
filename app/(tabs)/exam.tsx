@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
+import { QuestionNavigator } from '../../components/QuestionNavigator';
 import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';
@@ -37,6 +38,7 @@ type ExamRouteCopy = {
   accessTitle: string;
   activeHeroSubtitle: (remainingTime: string, questionCount: number) => string;
   answerAccessibilityLabel: (optionText: string, questionNumber: number) => string;
+  answerGroupAccessibilityLabel: (questionNumber: number) => string;
   answeredCount: (answeredCount: number, questionCount: number) => string;
   chapterBreakdownTitle: string;
   checkingAccess: string;
@@ -46,10 +48,13 @@ type ExamRouteCopy = {
   correctCount: (correctCount: number, totalCount: number) => string;
   examResultTitle: string;
   extraExamUnavailable: string;
+  flaggedQuestionLabel: string;
+  flagQuestionAccessibilityLabel: (questionNumber: number) => string;
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
   mockExamTitle: string;
   nextExamTitle: string;
   progressTitle: string;
+  navigatorStateLabels: { answered: string; current: string; flagged: string; unanswered: string };
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
   resultBadge: string;
@@ -68,6 +73,7 @@ type ExamRouteCopy = {
   timedSimulationBadge: string;
   timeExpiredBadge: string;
   timeExpiredResultNote: string;
+  unflagQuestionAccessibilityLabel: (questionNumber: number) => string;
   unlockFailure: string;
 };
 
@@ -92,6 +98,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Svarsalternativ för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
     checkingAccess: 'Kontrollerar provåtkomst.',
@@ -101,11 +109,20 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
     examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
+    flaggedQuestionLabel: 'Flaggad',
+    flagQuestionAccessibilityLabel: (questionNumber) =>
+      `Flagga fråga ${questionNumber} för granskning`,
     heroSubtitle: (durationMinutes, questionCount) =>
       `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
     nextExamTitle: 'Nästa prov',
     progressTitle: 'Framsteg',
+    navigatorStateLabels: {
+      answered: 'Besvarad',
+      current: 'Aktuell fråga',
+      flagged: 'Flaggad',
+      unanswered: 'Obesvarad',
+    },
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
     resultBadge: 'Övningsresultat',
@@ -125,6 +142,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
     timeExpiredResultNote: ' Obesvarade frågor räknas som fel och markeras som inte besvarade.',
+    unflagQuestionAccessibilityLabel: (questionNumber) =>
+      `Ta bort flagga från fråga ${questionNumber}`,
     unlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
   },
   en: {
@@ -145,6 +164,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Answer options for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
     chapterBreakdownTitle: 'Chapter breakdown',
     checkingAccess: 'Checking mock exam access.',
@@ -154,11 +175,20 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
     examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
+    flaggedQuestionLabel: 'Flagged',
+    flagQuestionAccessibilityLabel: (questionNumber) =>
+      `Flag question ${questionNumber} for review`,
     heroSubtitle: (durationMinutes, questionCount) =>
       `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
     nextExamTitle: 'Next exam',
     progressTitle: 'Progress',
+    navigatorStateLabels: {
+      answered: 'Answered',
+      current: 'Current question',
+      flagged: 'Flagged',
+      unanswered: 'Unanswered',
+    },
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
     resultBadge: 'Mock exam result',
@@ -177,6 +207,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
     timeExpiredResultNote: ' Unanswered questions count as incorrect and are marked Not answered.',
+    unflagQuestionAccessibilityLabel: (questionNumber) =>
+      `Remove flag from question ${questionNumber}`,
     unlockFailure: 'Extra mock exam could not be unlocked right now.',
   },
 };
@@ -185,22 +217,29 @@ function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage
   return examRouteCopy[language].accessStatus[reason];
 }
 
+function createMockExamAttemptId(now = Date.now(), random = Math.random()): string {
+  const randomPart = Math.floor(random * Number.MAX_SAFE_INTEGER).toString(36) || '0';
+  return `mock-exam-${now.toString(36)}-${randomPart}`;
+}
+
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
-  const [examAttemptIndex, setExamAttemptIndex] = useState(0);
-  const examSessionId = `mock-exam-${examAttemptIndex}`;
+  const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);
+  const [examShuffleSeedIndex, setExamShuffleSeedIndex] = useState(0);
+  const examShuffleSeed = `mock-exam-shuffle-${examShuffleSeedIndex}`;
   const examQuestions = useMemo(
     () =>
       generateExam(questions, {
         questionCount: defaultMockExamConfig.questionCount,
-        sessionId: examSessionId,
+        sessionId: examShuffleSeed,
       }),
-    [examSessionId],
+    [examShuffleSeed],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Record<string, true>>({});
   const [answerTimings, setAnswerTimings] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
@@ -269,6 +308,15 @@ export default function Screen() {
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
+  const answeredIndexes = useMemo(
+    () => examQuestions.flatMap((question, index) => (answers[question.id] ? [index] : [])),
+    [answers, examQuestions],
+  );
+  const flaggedIndexes = useMemo(
+    () =>
+      examQuestions.flatMap((question, index) => (flaggedQuestionIds[question.id] ? [index] : [])),
+    [examQuestions, flaggedQuestionIds],
+  );
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const submittedExamSession = useMemo(
@@ -279,11 +327,11 @@ export default function Screen() {
             completedAt: submittedAt,
             questionTimings: answerTimings,
             questions: examQuestions,
-            sessionId: examSessionId,
+            sessionId: examAttemptId,
             startedAt: examStartedAtIsoRef.current,
           })
         : null,
-    [answerTimings, answers, examQuestions, examSessionId, submitted, submittedAt],
+    [answerTimings, answers, examAttemptId, examQuestions, submitted, submittedAt],
   );
   const questionChapterIndex = useMemo(
     () =>
@@ -325,8 +373,10 @@ export default function Screen() {
     const now = Date.now();
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
-    setExamAttemptIndex((current) => current + 1);
+    setExamAttemptId(createMockExamAttemptId());
+    setExamShuffleSeedIndex((current) => current + 1);
     setAnswers({});
+    setFlaggedQuestionIds({});
     setAnswerTimings({});
     setSubmitted(false);
     setSubmittedAt(null);
@@ -334,6 +384,17 @@ export default function Screen() {
     setFocusedReviewQuestionId(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
+  }, []);
+
+  const toggleFlaggedQuestion = useCallback((questionId: string) => {
+    setFlaggedQuestionIds((current) => {
+      if (current[questionId]) {
+        const { [questionId]: _removed, ...rest } = current;
+        return rest;
+      }
+
+      return { ...current, [questionId]: true };
+    });
   }, []);
 
   const submitExam = useCallback(() => {
@@ -413,7 +474,7 @@ export default function Screen() {
 
     let isMounted = true;
     recordMockExamSession({
-      sessionId: examSessionId,
+      sessionId: examAttemptId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
       completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
@@ -427,7 +488,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion(examAttemptId)
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -443,7 +504,7 @@ export default function Screen() {
   }, [
     completionRecorded,
     copy.completionStoreFailure,
-    examSessionId,
+    examAttemptId,
     recordExamCompletion,
     recordMockExamSession,
     resultCorrectCount,
@@ -591,6 +652,9 @@ export default function Screen() {
               <Badge tone={item.isCorrect ? 'green' : 'orange'}>
                 {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
               </Badge>
+              {flaggedQuestionIds[item.questionId] ? (
+                <Badge tone="warm">{copy.flaggedQuestionLabel}</Badge>
+              ) : null}
             </View>
             <ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />
             <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
@@ -643,6 +707,15 @@ export default function Screen() {
       </View>
       <QuestionDisclaimer />
 
+      <QuestionNavigator
+        answeredIndexes={answeredIndexes}
+        currentIndex={null}
+        flaggedIndexes={flaggedIndexes}
+        languageOverride={language}
+        stateLabels={copy.navigatorStateLabels}
+        totalCount={examQuestions.length}
+      />
+
       <View style={styles.progressCard}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.progressTitle}
@@ -654,7 +727,24 @@ export default function Screen() {
 
       {examQuestions.map((question, index) => (
         <View key={question.id} style={styles.questionCard}>
-          <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+          <View style={styles.questionHeader}>
+            <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+            <Pressable
+              accessibilityLabel={
+                flaggedQuestionIds[question.id]
+                  ? copy.unflagQuestionAccessibilityLabel(index + 1)
+                  : copy.flagQuestionAccessibilityLabel(index + 1)
+              }
+              accessibilityRole="button"
+              accessibilityState={{ selected: Boolean(flaggedQuestionIds[question.id]) }}
+              onPress={() => toggleFlaggedQuestion(question.id)}
+              style={styles.flagButton}
+            >
+              <Text style={styles.flagButtonText}>
+                {flaggedQuestionIds[question.id] ? copy.flaggedQuestionLabel : copy.reviewBadge}
+              </Text>
+            </Pressable>
+          </View>
           <ProvenanceBadge language={language} question={question} />
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <QuestionSourceCitation
@@ -663,17 +753,22 @@ export default function Screen() {
             language={language}
             question={question}
           />
-          <View style={styles.options}>
+          <View
+            aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityRole="radiogroup"
+            style={styles.options}
+          >
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
                 <Pressable
                   key={option.id}
-                  aria-selected={isSelected}
+                  aria-checked={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected }}
                   onPress={() => recordQuestionAnswer(question.id, option.id)}
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
@@ -761,11 +856,29 @@ function createStyles(themeColors: ThemeColors) {
       gap: space[1.5],
       padding: space[2],
     },
+    questionHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: space[1],
+    },
     questionMeta: {
       color: themeColors.badgeBlueText,
       fontSize: typography.badge.fontSize,
       fontWeight: typography.bodyBold.fontWeight,
       textTransform: 'uppercase',
+    },
+    flagButton: {
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: StyleSheet.hairlineWidth,
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    flagButtonText: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
     },
     questionText: {
       color: themeColors.text,
@@ -785,6 +898,8 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.border,
       borderRadius: radius.small,
       borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[6],
       padding: space[1.5],
     },
     optionSelected: {

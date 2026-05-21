@@ -23,6 +23,8 @@ import { getLocalDateKey } from './streaks';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const MAX_HYDRATED_FREEZE_LIFETIME_COUNT = 10000;
+const MAX_HYDRATED_FUTURE_DATE_MS = 10 * 366 * DAY_MS;
 
 export interface StreakFreezeState {
   /** Number of freezes available right now. 0..MAX_STOCKPILE. */
@@ -74,7 +76,12 @@ function normalizeDayKey(value: unknown): string | null {
   if (!DATE_KEY_PATTERN.test(dateKey)) return null;
 
   const [year, month, day] = dateKey.split('-').map(Number);
-  const normalized = new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10);
+  const timeMs = Date.UTC(year, month - 1, day);
+  if (!Number.isFinite(timeMs) || timeMs > Date.now() + MAX_HYDRATED_FUTURE_DATE_MS) {
+    return null;
+  }
+
+  const normalized = new Date(timeMs).toISOString().slice(0, 10);
   return normalized === dateKey ? dateKey : null;
 }
 
@@ -83,32 +90,47 @@ function normalizeDayKeyList(values: unknown): string[] {
   return Array.from(new Set(values.map(normalizeDayKey).filter((key): key is string => !!key)));
 }
 
-function normalizeNonNegativeInteger(value: unknown, fallback = 0): number {
+function normalizeNonNegativeInteger(
+  value: unknown,
+  fallback = 0,
+  max = Number.MAX_SAFE_INTEGER,
+): number {
   return typeof value === 'number' &&
     Number.isFinite(value) &&
     Number.isInteger(value) &&
     value >= 0
-    ? value
+    ? Math.min(value, max)
     : fallback;
 }
 
-function normalizeAvailableFreezes(value: unknown): number {
-  return Math.min(MAX_STOCKPILE, normalizeNonNegativeInteger(value));
+function normalizeAvailableFreezes(value: unknown, fallback: number): number {
+  return normalizeNonNegativeInteger(value, fallback, MAX_STOCKPILE);
 }
 
-function normalizeFreezeState(state: StreakFreezeState): StreakFreezeState {
-  const candidate = state && typeof state === 'object' ? (state as Partial<StreakFreezeState>) : {};
+function normalizeFreezeState(state: unknown): StreakFreezeState {
+  const fallback = createInitialFreezeState();
+  if (!state || typeof state !== 'object') return fallback;
+
+  const candidate = state as Partial<StreakFreezeState>;
   return {
-    available: normalizeAvailableFreezes(candidate.available),
-    lastEarnedAt: normalizeDayKey(candidate.lastEarnedAt) ?? '',
-    lifetimeEarned: normalizeNonNegativeInteger(candidate.lifetimeEarned),
-    lifetimeSpent: normalizeNonNegativeInteger(candidate.lifetimeSpent),
+    available: normalizeAvailableFreezes(candidate.available, 0),
+    lastEarnedAt: normalizeDayKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
+    lifetimeEarned: normalizeNonNegativeInteger(
+      candidate.lifetimeEarned,
+      0,
+      MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
+    ),
+    lifetimeSpent: normalizeNonNegativeInteger(
+      candidate.lifetimeSpent,
+      0,
+      MAX_HYDRATED_FREEZE_LIFETIME_COUNT,
+    ),
     rescuedDayKeys: normalizeDayKeyList(candidate.rescuedDayKeys),
   };
 }
 
 export function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
-  return normalizeFreezeState(value as StreakFreezeState);
+  return normalizeFreezeState(value);
 }
 
 function previousDayKey(dayKey: string): string {

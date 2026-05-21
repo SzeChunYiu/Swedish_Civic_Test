@@ -32,8 +32,30 @@
         })[c],
     );
   }
+  function chapterLabel(question) {
+    const chapterId = Number(question && question.chapterId);
+    const meta = Array.isArray(window.SMT_CHAPTERS_META)
+      ? window.SMT_CHAPTERS_META.find((chapter) => chapter.id === chapterId)
+      : null;
+    const title = meta && meta.title && (meta.title[lang()] || meta.title.en);
+    if (title) return `${meta.emoji || ''} ${title}`.trim();
+    return question && question.chapter ? question.chapter : `Ch ${chapterId || ''}`.trim();
+  }
+  const sourceCitationCopy = {
+    en: { source: 'Source', page: 'p.' },
+    sv: { source: 'Källa', page: 's.' },
+    'zh-Hans': { source: '来源', page: '页' },
+    'zh-Hant': { source: '來源', page: '頁' },
+    ar: { source: 'المصدر', page: 'ص.' },
+    ckb: { source: 'سەرچاوە', page: 'ل.' },
+    fa: { source: 'منبع', page: 'ص.' },
+    pl: { source: 'Źródło', page: 's.' },
+    so: { source: 'Ilaha', page: 'b.' },
+    ti: { source: 'ምንጪ', page: 'ገጽ' },
+    tr: { source: 'Kaynak', page: 's.' },
+    uk: { source: 'Джерело', page: 'с.' },
+  };
   function sourceCitation(question) {
-    const sv = lang() === 'sv';
     const source = question && question.source;
     if (!source)
       return tr({
@@ -67,9 +89,8 @@
         uk: 'Джерело недоступне',
       });
     }
-    return sv
-      ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
-      : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
+    const copy = sourceCitationCopy[lang()] || sourceCitationCopy.en;
+    return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
   }
   function questionReviewDisclaimer() {
     return tr({
@@ -87,10 +108,64 @@
       uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.',
     });
   }
+
+  const mockBuddyCopy = {
+    strong: {
+      en: '{pct}%. Strong practice round.',
+      sv: '{pct}%. Stark övningsrunda.',
+      'zh-Hans': '{pct}%。本轮练习很扎实。',
+      'zh-Hant': '{pct}%。本輪練習很扎實。',
+      ar: '{pct}%. جولة تدريب قوية.',
+      ckb: '{pct}%. خولێکی مەشقی بەهێز.',
+      fa: '{pct}٪. دور تمرین قوی بود.',
+      pl: '{pct}%. Mocna runda ćwiczeń.',
+      so: '{pct}%. Wareeg tababar oo xooggan.',
+      ti: '{pct}%. ጠንካራ ዙር ልምምድ።',
+      tr: '{pct}%. Güçlü bir alıştırma turu.',
+      uk: '{pct}%. Сильний тренувальний раунд.',
+    },
+    review: {
+      en: 'Review the weak chapters, then try another practice round.',
+      sv: 'Öva svaga kapitel och testa en ny övningsrunda.',
+      'zh-Hans': '复习薄弱章节，然后再做一轮练习。',
+      'zh-Hant': '複習薄弱章節，然後再做一輪練習。',
+      ar: 'راجع الفصول الضعيفة، ثم جرّب جولة تدريب أخرى.',
+      ckb: 'بەشە لاوازەکان دووبارە بخوێنەوە، پاشان خولێکی تری مەشق تاقی بکەرەوە.',
+      fa: 'فصل‌های ضعیف‌تر را مرور کن، بعد یک دور تمرین دیگر انجام بده.',
+      pl: 'Powtórz słabsze rozdziały, potem zrób kolejną rundę ćwiczeń.',
+      so: 'Dib u eeg cutubyada daciifka ah, kadib samee wareeg tababar kale.',
+      ti: 'ድኹማት ምዕራፋት ደጊምካ ተመልከት፣ ድሕሪኡ ካልእ ዙር ልምምድ ፈትን።',
+      tr: 'Zayıf bölümleri gözden geçir, sonra bir alıştırma turu daha dene.',
+      uk: 'Повтори слабші розділи, потім спробуй ще один тренувальний раунд.',
+    },
+  };
+
+  function mockBuddyMessage(key, values = {}) {
+    const copy = mockBuddyCopy[key] || mockBuddyCopy.review;
+    const template = copy[lang()] || copy.en;
+    return template.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
+  }
+
   const provenanceCopy = {
     uhr: {
       en: { label: 'UHR', description: "Based on UHR's study material Sverige i fokus." },
       sv: { label: 'UHR', description: 'Baserad på UHR:s studiematerial Sverige i fokus.' },
+      'zh-Hans': { label: 'UHR', description: '基于 UHR 的学习材料《Sverige i fokus》。' },
+      'zh-Hant': { label: 'UHR', description: '基於 UHR 的學習材料《Sverige i fokus》。' },
+      ar: { label: 'UHR', description: 'مبني على مادة UHR الدراسية Sverige i fokus.' },
+      ckb: {
+        label: 'UHR',
+        description: 'پشت بە ماددەی خوێندنی UHR بە ناوی Sverige i fokus دەبەستێت.',
+      },
+      fa: { label: 'UHR', description: 'بر پایه ماده آموزشی UHR با نام Sverige i fokus.' },
+      pl: { label: 'UHR', description: 'Na podstawie materiału UHR Sverige i fokus.' },
+      so: {
+        label: 'UHR',
+        description: 'Waxay ku salaysan tahay agabka waxbarasho ee UHR, Sverige i fokus.',
+      },
+      ti: { label: 'UHR', description: 'ኣብ ናይ UHR መጽናዕቲ ንብረት Sverige i fokus ዝተመርኮሰ።' },
+      tr: { label: 'UHR', description: 'UHR’nin Sverige i fokus çalışma materyaline dayanır.' },
+      uk: { label: 'UHR', description: 'На основі навчального матеріалу UHR Sverige i fokus.' },
     },
     derived: {
       en: {
@@ -101,10 +176,51 @@
         label: 'Tillägg',
         description: 'Variant av en appskriven, UHR-hänvisad övningsfråga.',
       },
+      'zh-Hans': { label: '补充', description: '由应用编写、带 UHR 引用的练习题变体。' },
+      'zh-Hant': { label: '補充', description: '由應用程式撰寫、附 UHR 引用的練習題變體。' },
+      ar: { label: 'تكميلي', description: 'صيغة من سؤال تدريبي كتبه التطبيق مع إحالة إلى UHR.' },
+      ckb: {
+        label: 'تەواوکەر',
+        description: 'جۆرێک لە پرسیاری مەشقە کە ئەپەکە نووسیویەتی و ئاماژەی UHRی هەیە.',
+      },
+      fa: {
+        label: 'تکمیلی',
+        description: 'گونه‌ای از سؤال تمرینی نوشته‌شده در برنامه با ارجاع به UHR.',
+      },
+      pl: {
+        label: 'Dodatkowe',
+        description: 'Wariant pytania ćwiczeniowego napisanego w aplikacji z odwołaniem do UHR.',
+      },
+      so: {
+        label: 'Dheeraad',
+        description: "Nooc ka mid ah su'aal tababar oo app-ku qoray, oo leh tixraac UHR.",
+      },
+      ti: { label: 'ተወሳኺ', description: 'ብመተግበሪ ዝተጻሕፈ፣ ናብ UHR ዝምልከት ናይ ልምምድ ሕቶ ቅያር።' },
+      tr: {
+        label: 'Ek',
+        description: 'UHR atıflı, uygulama tarafından yazılmış alıştırma sorusunun varyantı.',
+      },
+      uk: {
+        label: 'Додаткове',
+        description: 'Варіант тренувального питання, написаного в застосунку, з посиланням на UHR.',
+      },
     },
     editorial: {
       en: { label: 'Editorial', description: 'Hand-written editorial context.' },
       sv: { label: 'Redaktionell', description: 'Redaktionellt skrivet sammanhang.' },
+      'zh-Hans': { label: '编辑', description: '手写的编辑背景说明。' },
+      'zh-Hant': { label: '編輯', description: '手寫的編輯背景說明。' },
+      ar: { label: 'تحريري', description: 'سياق تحريري مكتوب يدويًا.' },
+      ckb: {
+        label: 'دەستنووسی دەستکاریکراو',
+        description: 'دەقێکی ڕوونکردنەوەی دەستکاری بە دەست نووسراو.',
+      },
+      fa: { label: 'تحریریه', description: 'زمینه تحریریه‌ای که دستی نوشته شده است.' },
+      pl: { label: 'Redakcyjne', description: 'Ręcznie napisany kontekst redakcyjny.' },
+      so: { label: 'Tifaftir', description: 'Sharaxaad tifaftir oo gacanta lagu qoray.' },
+      ti: { label: 'ኤዲቶርያል', description: 'ብኢድ ዝተጻሕፈ ኤዲቶርያላዊ ኩነታት።' },
+      tr: { label: 'Editoryal', description: 'Elle yazılmış editoryal bağlam.' },
+      uk: { label: 'Редакційне', description: 'Вручну написаний редакційний контекст.' },
     },
   };
   function questionProvenance(question) {
@@ -132,6 +248,16 @@
   function questionMatchesSourcePref(question) {
     return questionSourcesPref() === 'all' || questionProvenance(question) === 'uhr';
   }
+  function questionHasLocale(question, locale = lang()) {
+    if (locale === 'en' || locale === 'sv') return true;
+    const hasText = (value) => typeof value === 'string' && value.trim() !== '';
+    if (!hasText(question?.q?.[locale]) || !hasText(question?.why?.[locale])) return false;
+    const opts = Array.isArray(question?.opts) ? question.opts : [];
+    return opts.length > 0 && opts.every((option) => hasText(option?.[locale]));
+  }
+  function questionMatchesDisplayLocale(question) {
+    return questionHasLocale(question, lang());
+  }
   window.smtQuestionSourcesPref = questionSourcesPref;
   window.smtQuestionMatchesSourcePref = questionMatchesSourcePref;
   window.smtSetQuestionSources = function (mode) {
@@ -147,9 +273,8 @@
     }
   };
   function provenanceBadge(question) {
-    const sv = lang() === 'sv';
     const provenance = questionProvenance(question);
-    const copy = provenanceCopy[provenance][sv ? 'sv' : 'en'] || provenanceCopy[provenance].en;
+    const copy = provenanceCopy[provenance][lang()] || provenanceCopy[provenance].en;
     const ariaPrefix = tr({
       sv: 'Källtyp',
       en: 'Provenance',
@@ -451,7 +576,9 @@
           uk: 'Підказка: прогрес зберігається на цьому пристрої. Обліковий запис не потрібен.',
         })}</p>
       </div>
+      ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
     `;
+    if (window.smtMountAds) window.smtMountAds();
   }
   window.smtRenderPracticeHub = renderPracticeHub;
 
@@ -475,7 +602,7 @@
   }
   function mockQuestionPool() {
     const all = window.SMT_QUESTIONS || [];
-    return all.filter(isStaticMockUhrQuestion);
+    return all.filter(isStaticMockUhrQuestion).filter(questionMatchesDisplayLocale);
   }
 
   function pickMockQuestions() {
@@ -501,6 +628,70 @@
     timerId: null,
     submitted: false,
   };
+
+  const mockDotStateCopy = {
+    current: {
+      sv: 'aktuell',
+      en: 'current',
+      'zh-Hans': '当前题',
+      'zh-Hant': '目前題',
+      ar: 'السؤال الحالي',
+      ckb: 'ئێستا',
+      fa: 'فعلی',
+      pl: 'bieżące',
+      so: 'hadda',
+      ti: 'ሕጂ ዘሎ',
+      tr: 'geçerli',
+      uk: 'поточне',
+    },
+    answered: {
+      sv: 'besvarad',
+      en: 'answered',
+      'zh-Hans': '已回答',
+      'zh-Hant': '已回答',
+      ar: 'تمت الإجابة',
+      ckb: 'وەڵامدراوە',
+      fa: 'پاسخ داده شده',
+      pl: 'z odpowiedzią',
+      so: 'waa laga jawaabay',
+      ti: 'ተመሊሱ',
+      tr: 'yanıtlandı',
+      uk: 'відповідь надано',
+    },
+    unanswered: {
+      sv: 'obesvarad',
+      en: 'unanswered',
+      'zh-Hans': '未回答',
+      'zh-Hant': '未回答',
+      ar: 'لم تتم الإجابة',
+      ckb: 'وەڵام نەدراوەتەوە',
+      fa: 'بی‌پاسخ',
+      pl: 'bez odpowiedzi',
+      so: 'lama jawaabin',
+      ti: 'ዘይተመለሰ',
+      tr: 'yanıtlanmadı',
+      uk: 'без відповіді',
+    },
+  };
+
+  function mockDotAccessibilityLabel(index, total, state) {
+    const questionNumber = index + 1;
+    const position = tr({
+      sv: `Fråga ${questionNumber} av ${total}`,
+      en: `Question ${questionNumber} of ${total}`,
+      'zh-Hans': `第 ${questionNumber} 题，共 ${total} 题`,
+      'zh-Hant': `第 ${questionNumber} 題，共 ${total} 題`,
+      ar: `السؤال ${questionNumber} من ${total}`,
+      ckb: `پرسیاری ${questionNumber} لە ${total}`,
+      fa: `سؤال ${questionNumber} از ${total}`,
+      pl: `Pytanie ${questionNumber} z ${total}`,
+      so: `Su'aasha ${questionNumber} ee ${total}`,
+      ti: `ሕቶ ${questionNumber} ካብ ${total}`,
+      tr: `Soru ${questionNumber} / ${total}`,
+      uk: `Питання ${questionNumber} з ${total}`,
+    });
+    return `${position}, ${tr(mockDotStateCopy[state] || mockDotStateCopy.unanswered)}`;
+  }
 
   function isOnMock() {
     const hash = (location.hash || '#/').replace(/^#/, '');
@@ -787,8 +978,11 @@
 
     const dots = MOCK.questions
       .map((_, k) => {
-        const cls = k === i ? 'is-on' : MOCK.answers[k] !== null ? 'is-done' : '';
-        return `<button class="mock-dot ${cls}" data-go="${k}" aria-label="Question ${k + 1}">${k + 1}</button>`;
+        const state = k === i ? 'current' : MOCK.answers[k] !== null ? 'answered' : 'unanswered';
+        const cls = state === 'current' ? 'is-on' : state === 'answered' ? 'is-done' : '';
+        const label = escapeHtml(mockDotAccessibilityLabel(k, n, state));
+        const current = state === 'current' ? ' aria-current="step"' : '';
+        return `<button class="mock-dot ${cls}" data-go="${k}" aria-label="${label}"${current}>${k + 1}</button>`;
       })
       .join('');
 
@@ -824,7 +1018,7 @@
 
         <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
         <div class="mock-card">
-          <div class="quiz__crumb">Ch ${q.chapterId}</div>
+          <div class="quiz__crumb">${escapeHtml(chapterLabel(q))}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
           ${questionSourceRow(q)}
           <div class="quiz__opts">${opts}</div>
@@ -858,6 +1052,39 @@
       }
     });
     renderMockResult();
+  }
+
+  function mockSubmitConfirmMessage(unanswered) {
+    if (unanswered) {
+      return tr({
+        sv: `Du har ${unanswered} obesvarade frågor. Lämna in ändå?`,
+        en: `${unanswered} questions are still unanswered. Submit anyway?`,
+        'zh-Hans': `还有 ${unanswered} 道题未作答。仍要交卷吗？`,
+        'zh-Hant': `還有 ${unanswered} 題未作答。仍要交卷嗎？`,
+        ar: `لا تزال هناك ${unanswered} أسئلة بلا إجابة. هل تريد الإرسال رغم ذلك؟`,
+        ckb: `${unanswered} پرسیار هێشتا وەڵام نەدراونەتەوە. هەر بنێردرێت؟`,
+        fa: `${unanswered} سؤال هنوز بی‌پاسخ مانده است. با این حال ثبت شود؟`,
+        pl: `${unanswered} pytań nadal jest bez odpowiedzi. Oddać mimo to?`,
+        so: `${unanswered} su'aalood wali lama jawaabin. Ma gudbinaysaa haddana?`,
+        ti: `${unanswered} ሕቶታት ገና ኣይተመለሱን። ከምኡ እናሃለወ ይቐርብ?`,
+        tr: `${unanswered} soru hâlâ yanıtlanmadı. Yine de gönderilsin mi?`,
+        uk: `${unanswered} питань ще без відповіді. Усе одно здати?`,
+      });
+    }
+    return tr({
+      sv: 'Lämna in?',
+      en: 'Submit?',
+      'zh-Hans': '确认交卷？',
+      'zh-Hant': '確認交卷？',
+      ar: 'إرسال؟',
+      ckb: 'بنێردرێت؟',
+      fa: 'ثبت شود؟',
+      pl: 'Oddać?',
+      so: 'Ma gudbinaysaa?',
+      ti: 'ይቐርብ?',
+      tr: 'Gönderilsin mi?',
+      uk: 'Здати?',
+    });
   }
 
   function renderMockResult() {
@@ -953,6 +1180,7 @@
         <p class="mock-result__pct">${pct}% — ${correct}/${total} ${tr({ sv: 'rätt', en: 'correct', 'zh-Hans': '答对', 'zh-Hant': '答對', ar: 'صحيحة', ckb: 'ڕاست', fa: 'درست', pl: 'poprawnie', so: 'sax', ti: 'ቅኑዕ', tr: 'doğru', uk: 'правильно' })}</p>
 
         <ul class="result-chapters">${chapterRows}</ul>
+        ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
         <section class="mock-review" aria-label="${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}">
           <h3>${tr({ sv: 'Frågegenomgång', en: 'Question review', 'zh-Hans': '题目回顾', 'zh-Hant': '題目回顧', ar: 'مراجعة الأسئلة', ckb: 'پێداچوونەوەی پرسیارەکان', fa: 'مرور سؤال‌ها', pl: 'Przegląd pytań', so: "Dib u eegista su'aalaha", ti: 'ምርመራ ሕቶታት', tr: 'Soru incelemesi', uk: 'Огляд питань' })}</h3>
           <p class="mock-review__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
@@ -966,20 +1194,15 @@
       </div>
     `;
 
+    if (window.smtMountAds) window.smtMountAds();
+
     if (window.smtFx) {
       window.smtFx.countUp(document.getElementById('mock-score-num'), 0, correct, 1100);
       if (strongPracticeScore) {
         setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
-        if (window.smtBuddyCelebrate)
-          window.smtBuddyCelebrate(
-            `${pct}%. Strong practice round.`,
-            `${pct}%. Stark övningsrunda.`,
-          );
+        if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(mockBuddyMessage('strong', { pct }));
       } else if (window.smtBuddyConsole) {
-        window.smtBuddyConsole(
-          'Review the weak chapters, then try another practice round.',
-          'Öva svaga kapitel och testa en ny övningsrunda.',
-        );
+        window.smtBuddyConsole(mockBuddyMessage('review'));
       }
     }
   }
@@ -1001,7 +1224,9 @@
     if (!c) return null;
     if (c === 'mix') {
       // random 10 from any chapter, respecting source preference
-      const all = (window.SMT_QUESTIONS || []).filter(questionMatchesSourcePref);
+      const all = (window.SMT_QUESTIONS || [])
+        .filter(questionMatchesSourcePref)
+        .filter(questionMatchesDisplayLocale);
       for (let i = all.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [all[i], all[j]] = [all[j], all[i]];
@@ -1012,7 +1237,8 @@
     if (isNaN(chId)) return null;
     return (window.SMT_QUESTIONS || [])
       .filter((q) => q.chapterId === chId)
-      .filter(questionMatchesSourcePref);
+      .filter(questionMatchesSourcePref)
+      .filter(questionMatchesDisplayLocale);
   };
 
   // re-render hub when we return to /practice without ?c=
@@ -1070,25 +1296,7 @@
     }
     if (e.target.closest('#mock-submit')) {
       const unanswered = MOCK.answers.filter((a) => a === null).length;
-      const sv = lang() === 'sv';
-      const msg = unanswered
-        ? sv
-          ? `Du har ${unanswered} obesvarade frågor. Lämna in ändå?`
-          : `You have ${unanswered} unanswered questions. Submit anyway?`
-        : tr({
-            sv: 'Lämna in?',
-            en: 'Submit?',
-            'zh-Hans': '确认交卷？',
-            'zh-Hant': '確認交卷？',
-            ar: 'إرسال؟',
-            ckb: 'بنێردرێت؟',
-            fa: 'ثبت شود؟',
-            pl: 'Oddać?',
-            so: 'Ma gudbinaysaa?',
-            ti: 'ይቐርብ?',
-            tr: 'Gönderilsin mi?',
-            uk: 'Здати?',
-          });
+      const msg = mockSubmitConfirmMessage(unanswered);
       if (confirm(msg)) submitMock();
       return;
     }
