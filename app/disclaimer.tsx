@@ -65,10 +65,8 @@ export default function Screen() {
       <LegalSection title={copy.sections.practiceContent.title}>
         {copy.sections.practiceContent.body}
       </LegalSection>
-      <LegalSection
-        title={copy.sections.sourceMaterial.title}
-        body={copy.sections.sourceMaterial.body}
-      >
+      <LegalSection title={copy.sections.sourceMaterial.title}>
+        {copy.sections.sourceMaterial.body}
         <SourceMaterialLinkList language={language} />
       </LegalSection>
     </LegalPage>
