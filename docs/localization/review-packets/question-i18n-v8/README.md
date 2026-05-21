@@ -1,13 +1,13 @@
 # Question i18n v8 native-review packets
 
-These are machine-assisted q001-q173 question localization review packets for the UHR-published question bank.
+These are machine-assisted q001-q174 question localization review packets for the UHR-published question bank.
 
 Do not use these packets to enable a locale. They exist so native reviewers can check semantic accuracy, answer/distractor logic, civic terminology, tone, script/layout issues, and any culture-specific ambiguity before release gates move.
 
 ## Scope
 
 - Source: generated `site/questions.js` from `data/questions.ts`, `data/additionalQuestions.ts`, and `data/questionLocalizations.ts`.
-- Questions: 173 UHR-published rows, q001-q173.
+- Questions: 174 UHR-published rows, q001-q174.
 - Review locales: `ar`, `ckb`, `fa`, `pl`, `so`, `ti`, `tr`, `uk`, `zh-Hans`, `zh-Hant`.
 - Source/bridge columns: Swedish and English.
 
