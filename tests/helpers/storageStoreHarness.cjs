@@ -155,6 +155,7 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
 module.exports = {
   createMemoryMMKV,
+  createThrowingGetMMKV: createThrowingReadMMKV,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,

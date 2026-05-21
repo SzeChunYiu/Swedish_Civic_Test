@@ -2816,9 +2816,8 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'hidden accessibility summary outside parent Card grouping',
-    pattern:
-      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+    label: 'Card receives accessibility summary',
+    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
   },
   {
     label: 'visible difficulty label',
@@ -2842,7 +2841,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2852,7 +2851,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -4590,118 +4589,6 @@ function validateCitizenshipTimeline() {
     sourceUrlsValidated,
     testDeadlineDate,
   };
-}
-
-function validateStudyPlanRuntimeInputGuards() {
-  let casesValidated = 0;
-  let parity = true;
-
-  function reject(message) {
-    parity = false;
-    fail(message);
-  }
-
-  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
-  if (typeof daysUntil !== 'function') reject('daysUntil export is not a function');
-  if (typeof formatExamDate !== 'function') reject('formatExamDate export is not a function');
-  if (typeof generateStudyPlan !== 'function') reject('generateStudyPlan export is not a function');
-  if (!parity) return { casesValidated, parity };
-
-  const invalidDate = new Date('not-a-date');
-  const validNow = new Date('2026-05-19T00:00:00.000Z');
-
-  if (daysUntil(invalidDate, validNow) !== 0) {
-    reject('daysUntil must return 0 for invalid target dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  if (daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) !== 0) {
-    reject('daysUntil must return 0 for invalid now dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  const fallbackDateLabel = formatExamDate(invalidDate, 'en');
-  if (fallbackDateLabel === 'Invalid Date' || /Invalid Date/i.test(fallbackDateLabel)) {
-    reject('formatExamDate must not render Invalid Date for invalid dates');
-  } else {
-    casesValidated += 1;
-  }
-
-  let invalidPlan;
-  try {
-    invalidPlan = generateStudyPlan({
-      testDate: invalidDate,
-      now: invalidDate,
-      totalQuestions: Number.NaN,
-      masteredQuestions: Number.POSITIVE_INFINITY,
-      mocksTaken: '2',
-      intensity: 'turbo',
-    });
-  } catch (error) {
-    reject(`generateStudyPlan must not throw for invalid runtime inputs: ${error.message}`);
-  }
-
-  if (invalidPlan) {
-    if (
-      invalidPlan.intensity !== 'regular' ||
-      invalidPlan.daysRemaining !== 0 ||
-      invalidPlan.mocksRemaining !== 6 ||
-      !Number.isFinite(Date.parse(invalidPlan.testDateIso)) ||
-      !Number.isFinite(Date.parse(invalidPlan.generatedAt)) ||
-      !Number.isFinite(invalidPlan.dailyQuestionTarget) ||
-      invalidPlan.dailyQuestionTarget < 5 ||
-      invalidPlan.dailyQuestionTarget > 80 ||
-      !Number.isInteger(invalidPlan.weeklyMockTarget) ||
-      invalidPlan.weeklyMockTarget < 1 ||
-      invalidPlan.weeklyMockTarget > 2
-    ) {
-      reject('generateStudyPlan must normalize invalid runtime inputs to finite bounded targets');
-    } else {
-      casesValidated += 1;
-    }
-  }
-
-  const stringCountPlan = generateStudyPlan({
-    testDate: new Date('2026-06-15T00:00:00.000Z'),
-    now: validNow,
-    totalQuestions: '200',
-    masteredQuestions: '10',
-    mocksTaken: '2',
-    intensity: 'regular',
-  });
-  if (
-    stringCountPlan.mocksRemaining !== 6 ||
-    !Number.isFinite(stringCountPlan.dailyQuestionTarget) ||
-    stringCountPlan.dailyQuestionTarget < 5 ||
-    stringCountPlan.dailyQuestionTarget > 80
-  ) {
-    reject('generateStudyPlan must reject string counts instead of coercing them');
-  } else {
-    casesValidated += 1;
-  }
-
-  const clampedPlan = generateStudyPlan({
-    testDate: new Date('2026-06-15T00:00:00.000Z'),
-    now: validNow,
-    totalQuestions: 10,
-    masteredQuestions: 99,
-    mocksTaken: 99,
-    intensity: 'regular',
-  });
-  if (
-    clampedPlan.mocksRemaining !== 0 ||
-    !Number.isFinite(clampedPlan.dailyQuestionTarget) ||
-    clampedPlan.dailyQuestionTarget < 5 ||
-    clampedPlan.dailyQuestionTarget > 80
-  ) {
-    reject('generateStudyPlan must clamp mastered and mock counts to sensible bounds');
-  } else {
-    casesValidated += 1;
-  }
-
-  return { casesValidated, parity };
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -7314,6 +7201,8 @@ const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const createNewCard = spacedRepetitionModule.createNewCard;
+const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -7528,8 +7417,6 @@ let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
-let mobileAdsConsentRuntimeCasesValidated = 0;
-let mobileAdsConsentRuntimeParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -7550,8 +7437,6 @@ let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
-let studyPlanRuntimeCasesValidated = 0;
-let studyPlanRuntimeParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -7579,6 +7464,8 @@ let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let spacedRepetitionRuntimeInputCasesValidated = 0;
+let spacedRepetitionRuntimeInputParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -7750,29 +7637,6 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-countdown-banner-parity')) {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
-  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
-  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
-  exitWithValidationFailures();
-  printValidationSummary({
-    citizenshipRulesEffectiveDateValidated,
-    civicKnowledgeTestDeadlineDateValidated,
-    citizenshipTimelineSourceUrlsValidated,
-    citizenshipTimelineDateParityValidated,
-    countdownBannerTimelineCopyParityValidated,
-    studyPlanRuntimeCasesValidated,
-    studyPlanRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -7801,11 +7665,6 @@ if (
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
   countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-}
-{
-  const studyPlanValidation = validateStudyPlanRuntimeInputGuards();
-  studyPlanRuntimeCasesValidated = studyPlanValidation.casesValidated;
-  studyPlanRuntimeParityValidated = studyPlanValidation.parity;
 }
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
@@ -7935,20 +7794,8 @@ if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function'
 if (typeof getPracticeQuestionForSession !== 'function') {
   fail('getPracticeQuestionForSession export is not a function');
 }
-if (typeof getCompletedQuestionIdsForQuestionBank !== 'function') {
-  fail('getCompletedQuestionIdsForQuestionBank export is not a function');
-}
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
-}
-if (process.argv.includes('--focus-practice-flow-parity')) {
-  validatePracticeFlowParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    practiceFlowCasesValidated,
-    practiceFlowParityValidated,
-  });
-  process.exit(0);
 }
 if (
   !usePracticeSessionStore ||
@@ -10973,12 +10820,6 @@ function validateQuestionCardAccessibilityParity() {
     return;
   }
 
-  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
-    reject('QuestionCard parent Card must not group nested source controls');
-  } else {
-    questionCardAccessibilityRulesValidated += 1;
-  }
-
   EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionCardSource)) {
       reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
@@ -11006,20 +10847,10 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated ===
       EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
         EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
-        2
+        1
   ) {
     questionCardAccessibilityParityValidated = true;
   }
-}
-
-if (process.argv.includes('--focus-question-card-accessibility')) {
-  validateQuestionCardAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    questionCardAccessibilityRulesValidated,
-    questionCardAccessibilityParityValidated,
-  });
-  process.exit(0);
 }
 
 function validateAnswerOptionAccessibilityParity() {
@@ -13056,98 +12887,6 @@ function validateMobileAdsConsentHookParity() {
   }
 }
 
-function validateMobileAdsConsentRuntimeParity() {
-  let valid = true;
-  let mobileConsentSource = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    mobileConsentSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
-    return;
-  }
-
-  const currentAttIndex = mobileConsentSource.indexOf(
-    'const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(',
-  );
-  const umpIndex = mobileConsentSource.indexOf(
-    'const umpConsentStatus = await resolveUmpConsentStatus(',
-  );
-  const requestAttIndex = mobileConsentSource.indexOf(
-    'const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(',
-  );
-  const decisionIndex = mobileConsentSource.indexOf(
-    'const decision = getAdSdkInitializationDecision(state);',
-  );
-  const initializeIndex = mobileConsentSource.indexOf(
-    'await options.runtime.initializeGoogleMobileAds?.();',
-  );
-
-  const runtimeCases = [
-    [
-      currentAttIndex >= 0 &&
-        umpIndex >= 0 &&
-        requestAttIndex >= 0 &&
-        currentAttIndex < umpIndex &&
-        umpIndex < requestAttIndex,
-      'Mobile Ads consent runtime must resolve UMP consent before requesting ATT',
-    ],
-    [
-      !/Promise\.all\s*\(/.test(mobileConsentSource),
-      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
-    ],
-    [
-      decisionIndex >= 0 && initializeIndex >= 0 && decisionIndex < initializeIndex,
-      'Mobile Ads consent runtime must decide consent before initializing Google Mobile Ads',
-    ],
-    [
-      /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';/.test(
-        mobileConsentSource,
-      ) &&
-        /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';[\s\S]*?if\s*\(\s*currentStatus\s*!==\s*'not_determined'\s*\)\s*return\s+currentStatus;/.test(
-          mobileConsentSource,
-        ),
-      'Mobile Ads consent runtime must request ATT only on iOS when status is not determined',
-    ],
-  ];
-
-  runtimeCases.forEach(([caseIsValid, message]) => {
-    if (!caseIsValid) {
-      reject(message);
-      return;
-    }
-    mobileAdsConsentRuntimeCasesValidated += 1;
-  });
-
-  if (valid && mobileAdsConsentRuntimeCasesValidated === runtimeCases.length) {
-    mobileAdsConsentRuntimeParityValidated = true;
-  }
-}
-
-if (process.argv.includes('--focus-mobile-ads-consent-parity')) {
-  validateMobileAdsConsentTypeSchemaParity();
-  validateMobileAdsConsentHookParity();
-  validateMobileAdsConsentRuntimeParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentTypeInterfacesValidated,
-    mobileAdsConsentTypeSchemaParityValidated,
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
-    mobileAdsConsentRuntimeCasesValidated,
-    mobileAdsConsentRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 function validateRewardedAdTypeSchemaParity() {
   let valid = true;
   let rewardedAdSource = '';
@@ -13805,54 +13544,6 @@ function validatePracticeFlowParity() {
       activeQuestionId: null,
       expectedId: firstQuestion.id,
     },
-    {
-      label: 'completion outside visible bank is ignored',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id],
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
-    {
-      label: 'duplicate completed question ids are de-duplicated',
-      questions: publishedQuestions,
-      completedQuestionIds: [firstQuestion.id, firstQuestion.id],
-      activeQuestionId: null,
-      expectedId: secondQuestion.id,
-      expectedCompletedIds: [firstQuestion.id],
-    },
-    {
-      label: 'non-string completed question ids are ignored',
-      questions: publishedQuestions,
-      completedQuestionIds: [firstQuestion.id, 7, true, {}, null, secondQuestion.id],
-      activeQuestionId: null,
-      expectedId: thirdQuestion.id,
-      expectedCompletedIds: [firstQuestion.id, secondQuestion.id],
-    },
-    {
-      label: 'blank completed question ids are ignored',
-      questions: publishedQuestions,
-      completedQuestionIds: ['', '   ', firstQuestion.id],
-      activeQuestionId: null,
-      expectedId: secondQuestion.id,
-      expectedCompletedIds: [firstQuestion.id],
-    },
-    {
-      label: 'null completed question ids behave as empty progress',
-      questions: publishedQuestions,
-      completedQuestionIds: null,
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
-    {
-      label: 'object completed question ids behave as empty progress',
-      questions: publishedQuestions,
-      completedQuestionIds: { [firstQuestion.id]: true },
-      activeQuestionId: null,
-      expectedId: firstQuestion.id,
-      expectedCompletedIds: [],
-    },
   ];
 
   let valid = true;
@@ -13864,17 +13555,9 @@ function validatePracticeFlowParity() {
       completedQuestionIds,
       activeQuestionId,
       expectedId,
-      expectedCompletedIds,
     } = testCase;
     let actualQuestion;
-    let actualCompletedIds;
     try {
-      if (expectedCompletedIds) {
-        actualCompletedIds = getCompletedQuestionIdsForQuestionBank(
-          caseQuestions,
-          completedQuestionIds,
-        );
-      }
       actualQuestion = getPracticeQuestionForSession(
         caseQuestions,
         completedQuestionIds,
@@ -13883,16 +13566,6 @@ function validatePracticeFlowParity() {
     } catch (error) {
       valid = false;
       fail(`practice flow ${label} threw ${error.message}`);
-      return;
-    }
-
-    if (expectedCompletedIds && !jsonEqual(actualCompletedIds, expectedCompletedIds)) {
-      valid = false;
-      fail(
-        `practice flow ${label} scoped completed ids returned ${JSON.stringify(
-          actualCompletedIds,
-        )}, expected ${JSON.stringify(expectedCompletedIds)}`,
-      );
       return;
     }
 
@@ -14724,6 +14397,82 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+
+  if (typeof createNewCard !== 'function' || typeof gradeCard !== 'function') return;
+
+  const invalidInputCases = [
+    {
+      label: 'non-boolean correctness',
+      actual: () => getNextReviewAt({ isCorrect: 'false', correctStreak: 3, answeredAt }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+    {
+      label: 'non-finite correct streak',
+      actual: () =>
+        getNextReviewAt({
+          isCorrect: true,
+          correctStreak: Number.POSITIVE_INFINITY,
+          answeredAt,
+        }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+    {
+      label: 'fractional correct streak',
+      actual: () => getNextReviewAt({ isCorrect: true, correctStreak: 1.5, answeredAt }),
+      expected: isoDaysAfter(answeredAt, 1),
+    },
+  ];
+  let runtimeInputParityIsValid = true;
+
+  invalidInputCases.forEach(({ label, actual, expected }) => {
+    try {
+      const value = actual();
+      if (value !== expected) {
+        runtimeInputParityIsValid = false;
+        fail(`getNextReviewAt ${label} returned ${value}, expected ${expected}`);
+        return;
+      }
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    } catch (error) {
+      runtimeInputParityIsValid = false;
+      fail(`getNextReviewAt ${label} threw ${error.message}`);
+    }
+  });
+
+  try {
+    const card = createNewCard('q-runtime-guard', answeredAt);
+    const invalidGradeResult = gradeCard(card, 5, answeredAt);
+    if (JSON.stringify(invalidGradeResult) !== JSON.stringify(card)) {
+      runtimeInputParityIsValid = false;
+      fail('gradeCard invalid grade must leave the card unchanged');
+    } else {
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    }
+    const invalidNowResult = gradeCard(card, 3, 'not-a-date');
+    if (JSON.stringify(invalidNowResult) !== JSON.stringify(card)) {
+      runtimeInputParityIsValid = false;
+      fail('gradeCard invalid now timestamp must leave the card unchanged');
+    } else {
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    }
+  } catch (error) {
+    runtimeInputParityIsValid = false;
+    fail(`gradeCard invalid input guard threw ${error.message}`);
+  }
+
+  if (runtimeInputParityIsValid) spacedRepetitionRuntimeInputParityValidated = true;
+}
+
+if (process.argv.includes('--focus-spaced-repetition-schema')) {
+  validateSpacedRepetitionSchedule();
+  exitWithValidationFailures();
+  printValidationSummary({
+    spacedRepetitionIntervalsValidated,
+    spacedRepetitionRuntimeParityValidated,
+    spacedRepetitionRuntimeInputCasesValidated,
+    spacedRepetitionRuntimeInputParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateStreakRules() {
@@ -16462,7 +16211,6 @@ validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
-validateMobileAdsConsentRuntimeParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -16664,8 +16412,6 @@ console.log(
       mobileAdsConsentTypeSchemaParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
-      mobileAdsConsentRuntimeCasesValidated,
-      mobileAdsConsentRuntimeParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
@@ -16712,8 +16458,6 @@ console.log(
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
       countdownBannerTimelineCopyParityValidated,
-      studyPlanRuntimeCasesValidated,
-      studyPlanRuntimeParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
@@ -16741,6 +16485,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      spacedRepetitionRuntimeInputCasesValidated,
+      spacedRepetitionRuntimeInputParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

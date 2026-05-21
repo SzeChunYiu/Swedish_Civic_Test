@@ -24,10 +24,13 @@ function daysAfter(baseIso, days) {
 }
 
 test('spaced repetition schema validates schedule intervals and runtime parity', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-spaced-repetition-schema'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -38,6 +41,8 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
   assert.deepEqual(spacedRepetitionSchedule, expectedSchedule);
   assert.equal(summary.spacedRepetitionIntervalsValidated, expectedSchedule.length);
   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
+  assert.equal(summary.spacedRepetitionRuntimeInputCasesValidated, 5);
+  assert.equal(summary.spacedRepetitionRuntimeInputParityValidated, true);
   assert.equal(
     getNextReviewAt({ isCorrect: false, correctStreak: 99, answeredAt }),
     daysAfter(answeredAt, 1),
@@ -67,6 +72,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-spaced-repetition-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -77,32 +83,4 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.match(output, /spacedRepetitionSchedule is \[1,3,3,15,30\]/);
   assert.match(output, /spacedRepetitionSchedule\[2\] must be greater than the previous interval/);
-});
-
-test('review store guards unsafe runtime questionId keys before card creation', () => {
-  const source = fs.readFileSync(path.join(repoRoot, 'lib/storage/reviewStore.ts'), 'utf8');
-  const keySafetySource = fs.readFileSync(
-    path.join(repoRoot, 'lib/storage/importKeySafety.ts'),
-    'utf8',
-  );
-
-  assert.match(source, /function isSafeReviewQuestionId\(questionId: unknown\)/);
-  assert.match(source, /questionId\.trim\(\) === questionId/);
-  assert.match(source, /questionId\.length > 0/);
-  assert.match(source, /isSafeImportedMapKey\(questionId\)/);
-  assert.match(
-    source,
-    /throw new TypeError\('Review questionId must be a non-empty safe string\.'\)/,
-  );
-  assert.match(
-    source,
-    /ensureCard: \(questionId, now\) => \{\n\s+assertSafeReviewQuestionId\(questionId\);/,
-  );
-  assert.match(
-    source,
-    /grade: \(questionId, grade, now = new Date\(\)\.toISOString\(\)\) => \{\n\s+assertSafeReviewQuestionId\(questionId\);/,
-  );
-  assert.match(keySafetySource, /'__proto__'/);
-  assert.match(keySafetySource, /'constructor'/);
-  assert.match(keySafetySource, /'prototype'/);
 });

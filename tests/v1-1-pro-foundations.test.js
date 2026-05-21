@@ -32,6 +32,11 @@ function loadTs(relativePath) {
   return require(path.join(repoRoot, relativePath));
 }
 
+function daysAfter(baseIso, days) {
+  const dayInMs = 24 * 60 * 60 * 1000;
+  return new Date(new Date(baseIso).getTime() + days * dayInMs).toISOString();
+}
+
 // ---------------------------------------------------------------- FSRS engine
 
 test('FSRS-lite: new card created with default difficulty + immediate due date', () => {
@@ -93,6 +98,26 @@ test('FSRS-lite: isDue compares dueAt against now', () => {
   const now = '2026-05-19T12:00:00.000Z';
   assert.equal(isDue({ dueAt: '2026-05-18T00:00:00.000Z' }, now), true);
   assert.equal(isDue({ dueAt: '2026-05-25T00:00:00.000Z' }, now), false);
+});
+
+test('FSRS-lite: invalid runtime inputs do not throw or advance reviews', () => {
+  const { createNewCard, getNextReviewAt, gradeCard } = loadTs('lib/learning/spacedRepetition.ts');
+  const answeredAt = '2026-05-19T10:00:00.000Z';
+  const card = createNewCard('q1', answeredAt);
+
+  assert.equal(gradeCard(card, 5, answeredAt), card);
+  assert.equal(gradeCard(card, 3, 'not-a-date'), card);
+  assert.equal(
+    getNextReviewAt({ isCorrect: 'false', correctStreak: 4, answeredAt }),
+    daysAfter(answeredAt, 1),
+  );
+  assert.equal(
+    getNextReviewAt({ isCorrect: true, correctStreak: Number.NaN, answeredAt }),
+    daysAfter(answeredAt, 1),
+  );
+  assert.doesNotThrow(() =>
+    getNextReviewAt({ isCorrect: true, correctStreak: 1, answeredAt: 'not-a-date' }),
+  );
 });
 
 // ----------------------------------------------------------- Study plan algo
