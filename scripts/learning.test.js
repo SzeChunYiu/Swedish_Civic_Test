@@ -2,22 +2,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 const { createMemoryMMKV, loadTsWithStorage } = require('../tests/helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-    },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
 
 function createLearningStorage() {
   return {
@@ -644,6 +631,24 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
           wrongCount: '2',
           lastAnsweredAt: '2026-05-20T10:04:00.000Z',
         },
+        rolloverDate: {
+          questionId: 'rolloverDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-02-30T10:05:00.000Z',
+        },
+        localTimeDate: {
+          questionId: 'localTimeDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T10:06:00',
+        },
+        futureDate: {
+          questionId: 'futureDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T12:10:01.000Z',
+        },
       },
       sessions: [
         {
@@ -675,6 +680,27 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
               answeredAt: '2026-05-20T10:02:00.000Z',
               timeSpentSeconds: 5,
             },
+            {
+              questionId: 'q-rollover',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-02-30T10:03:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q-local-time',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-05-20T10:04:00',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q-future',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-05-20T12:10:01.000Z',
+              timeSpentSeconds: 5,
+            },
           ],
         },
         {
@@ -685,6 +711,33 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
           startedAt: '2026-05-20T11:00:00.000Z',
           completedAt: '2026-05-20T11:20:00.000Z',
           score: 1.2,
+        },
+        {
+          id: 'weekly-rollover-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-02-30T11:00:00.000Z',
+          completedAt: '2026-02-30T11:20:00.000Z',
+          score: 1,
+        },
+        {
+          id: 'weekly-local-time-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T11:30:00',
+          completedAt: '2026-05-20T11:40:00',
+          score: 1,
+        },
+        {
+          id: 'weekly-future-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T12:06:00.000Z',
+          completedAt: '2026-05-20T12:10:01.000Z',
+          score: 1,
         },
       ],
     },

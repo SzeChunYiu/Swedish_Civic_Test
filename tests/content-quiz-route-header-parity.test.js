@@ -20,14 +20,14 @@ test('routed quiz titles stay exposed as accessibility headers', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
 
-  assert.equal(summary.quizRouteHeadersValidated, 2);
+  assert.equal(summary.quizRouteHeadersValidated, 3);
   assert.equal(summary.quizRouteHeaderParityValidated, true);
   assert.doesNotMatch(source, /<Text style=\{styles\.title\}>/);
   assert.match(source, /\{copy\.emptyTitle\}/);
-  assert.match(source, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
+  assert.match(source, /\{sessionTitle\}/);
   assert.equal(
     source.match(/<Text accessibilityRole="header" style=\{styles\.title\}>/g)?.length,
-    2,
+    3,
   );
 });
 
@@ -45,8 +45,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        '<Text accessibilityRole="header" style={styles.title}>\\n          {copy.sessionTitle(normalizedSessionId)}\\n        </Text>',
-        '<Text style={styles.title}>{copy.sessionTitle(normalizedSessionId)}</Text>'
+        '<Text accessibilityRole="header" style={styles.title}>\\n          {sessionTitle}\\n        </Text>',
+        '<Text style={styles.title}>{sessionTitle}</Text>'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

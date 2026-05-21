@@ -32203,8 +32203,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
+      "en": "In Sweden, buying sex is illegal, but the person who sells sex is not punished.",
+      "sv": "Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte."
     },
     "opts": [
       {
@@ -32243,8 +32243,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is always legal to buy sex.",
-      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
+      "en": "In Sweden, buying sex is always legal.",
+      "sv": "Att köpa sex är alltid lagligt i Sverige."
     },
     "opts": [
       {
@@ -33483,7 +33483,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is permitted to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is permitted.",
       "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
@@ -33523,7 +33523,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is prohibited to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is prohibited.",
       "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
