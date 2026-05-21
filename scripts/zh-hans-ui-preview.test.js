@@ -169,6 +169,6 @@ test('Simplified Chinese preview does not enable zh-Hans runtime release', () =>
   assert.match(locales, /code: 'zh-Hans',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales['zh-Hans'].appAvailable, false);
   assert.equal(readiness.locales['zh-Hans'].uiStrings, 'not_started');
-  assert.equal(readiness.locales['zh-Hans'].questionContent, 'pilot_q001_q177_machine_assisted');
+  assert.equal(readiness.locales['zh-Hans'].questionContent, 'pilot_q001_q181_machine_assisted');
   assert.equal(readiness.locales['zh-Hans'].releaseGate, 'blocked');
 });

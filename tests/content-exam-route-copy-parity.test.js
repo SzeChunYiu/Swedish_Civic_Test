@@ -38,14 +38,26 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 58);
+  assert.equal(summary.examRouteCopyLabelsValidated, 60);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = examRouteCopy\[language\];/);
+  assert.match(source, /answerGroupAccessibilityLabel: \(questionNumber\) =>/);
+  assert.match(source, /Svarsalternativ för fråga \$\{questionNumber\}/);
+  assert.match(source, /Answer options for question \$\{questionNumber\}/);
+  assert.match(
+    source,
+    /aria-label=\{copy\.answerGroupAccessibilityLabel\(index \+ 1\)\}[\s\S]*accessibilityLabel=\{copy\.answerGroupAccessibilityLabel\(index \+ 1\)\}[\s\S]*accessibilityRole="radiogroup"[\s\S]*\{question\.options\.map/,
+  );
   assert.match(source, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
   assert.match(source, /Välj svaret \$\{optionText\} för fråga \$\{questionNumber\}/);
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
+  assert.match(source, /aria-checked=\{isSelected\}/);
+  assert.match(source, /accessibilityRole="radio"/);
+  assert.match(source, /accessibilityState=\{\{ checked: isSelected \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isSelected\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
   assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
@@ -112,6 +124,39 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /exam route must select copy from settings language/,
+  );
+});
+
+test('exam route copy parity rejects selected-button answer options', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-checked={isSelected}', 'aria-selected={isSelected}')
+      .replace('accessibilityRole="radio"', 'accessibilityRole="button"')
+      .replace('accessibilityState={{ checked: isSelected }}', 'accessibilityState={{ selected: isSelected }}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-mock-exam-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /active exam answer options must use checked radio semantics, not selected buttons|exam answer radios must expose checked state on web/,
   );
 });
 
