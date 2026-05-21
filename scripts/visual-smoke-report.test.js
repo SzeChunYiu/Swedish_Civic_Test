@@ -9,7 +9,6 @@ const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
-const explainedDuplicateScreenshotGroups = new Set(['home,index']);
 
 function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
@@ -41,6 +40,20 @@ function expectedVisualSmokeRoutes() {
   return visualSmokeRoutes.map(({ file, name, route }) => ({ file, name, route }));
 }
 
+function visualSmokeDuplicateContract() {
+  const {
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationKey,
+    visualSmokeDuplicateExplanations,
+  } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+
+  return {
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationKey,
+    visualSmokeDuplicateExplanations,
+  };
+}
+
 test('visual smoke uses the shared route filename contract and blocking modal overlay locator', () => {
   const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
   const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
@@ -51,12 +64,17 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(
     visualSmokeSource,
-    /import \{ visualSmokeRoutes(?:, type VisualSmokeRoute)? \} from '\.\/visualSmokeRoutes';/,
+    /import \{[\s\S]*visualSmokeRoutes[\s\S]*\} from '\.\/visualSmokeRoutes';/,
   );
+  assert.match(visualSmokeSource, /visualSmokeDuplicateExplanations/);
+  assert.match(visualSmokeSource, /isExplainedVisualSmokeDuplicate/);
   assert.doesNotMatch(visualSmokeSource, /const routes = \[/);
+  assert.doesNotMatch(visualSmokeSource, /explainedDuplicateScreenshotGroups/);
   assert.doesNotMatch(visualSmokeSource, /\$\{name\}\.png/);
   assert.match(visualSmokeRoutesSource, /file: 'index\.png'/);
   assert.match(visualSmokeRoutesSource, /file: 'chapter-ch01\.png'/);
+  assert.match(visualSmokeRoutesSource, /export const visualSmokeDuplicateExplanations/);
+  assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
   assert.match(
     visualSmokeSource,
     /import \{ blockingModalOverlayLocator, dismissBlockingModals \} from '\.\/browserLaunch';/,
@@ -71,6 +89,11 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
 test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
   const manifest = readManifest();
   const expectedRoutes = expectedVisualSmokeRoutes();
+  const {
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationKey,
+    visualSmokeDuplicateExplanations,
+  } = visualSmokeDuplicateContract();
   const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const committedBaselineOutput = resolveVisualSmokeOutput({
     cwd: repoRoot,
@@ -85,6 +108,12 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
   assert.match(manifest.launchOverlayPolicy, /dismisses the launch sponsor overlay/i);
   assert.match(manifest.launchOverlayPolicy, /modal menu overlays/i);
   assert.match(manifest.duplicatePolicy, /duplicate screenshot hashes fail/i);
+  assert.deepEqual(manifest.duplicateExplanations, visualSmokeDuplicateExplanations);
+  for (const explanation of manifest.duplicateExplanations) {
+    assert.ok(Array.isArray(explanation.names));
+    assert.equal(typeof explanation.reason, 'string');
+    assert.ok(explanation.reason.length > 20);
+  }
 
   const routes = manifest.routes || [];
   assert.deepEqual(
@@ -127,8 +156,8 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
 
   const unexplainedDuplicates = [...namesByHash.values()]
     .filter((names) => names.length > 1)
-    .map((names) => names.sort().join(','))
-    .filter((names) => !explainedDuplicateScreenshotGroups.has(names));
+    .filter((names) => !isExplainedVisualSmokeDuplicate(names))
+    .map((names) => visualSmokeDuplicateExplanationKey(names));
 
   assert.deepEqual(unexplainedDuplicates, []);
 });
