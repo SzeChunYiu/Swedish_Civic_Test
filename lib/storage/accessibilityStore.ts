@@ -116,11 +116,12 @@ function readInitialAccessibilityState(): InitialAccessibilityState {
     easyReadFont: easyReadFont.value,
     fontSizeStep: fontSizeStep.value,
     audioPlaybackRate: audioPlaybackRate.value,
-    themeMode,
+    themeMode: themeMode.value,
     persistenceWarning:
       easyReadFont.persistenceWarning ??
       fontSizeStep.persistenceWarning ??
-      audioPlaybackRate.persistenceWarning,
+      audioPlaybackRate.persistenceWarning ??
+      themeMode.persistenceWarning,
   };
 }
 
@@ -128,15 +129,17 @@ function isThemeMode(value: unknown): value is ThemeMode {
   return value === 'system' || value === 'light' || value === 'dark';
 }
 
-function readThemeMode(): ThemeMode {
-  try {
-    const v = accessibilityStorage?.getString(themeModeKey);
-    if (isThemeMode(v)) return v;
-  } catch {
-    return 'system';
-  }
-
-  return 'system';
+function readThemeMode(): {
+  value: ThemeMode;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(accessibilityStorage, accessibilityStorageId, themeModeKey, () =>
+    accessibilityStorage?.getString(themeModeKey),
+  );
+  return {
+    value: isThemeMode(result.value) ? result.value : 'system',
+    persistenceWarning: result.warning,
+  };
 }
 
 type AccessibilityState = {

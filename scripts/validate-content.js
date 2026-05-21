@@ -2429,6 +2429,30 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'accessibilityState={{ checked: dailyGoalAnswers === goal }}',
     'settings daily-goal options must mirror checked state to accessibilityState',
   ],
+  [
+    'const accessibilityPersistenceWarning = useAccessibilityStore(',
+    'settings route must read accessibility persistence warnings',
+  ],
+  [
+    '(state) => state.persistenceWarning,',
+    'settings route must subscribe to the accessibility warning state',
+  ],
+  [
+    'const clearAccessibilityPersistenceWarning = useAccessibilityStore(',
+    'settings route must read the accessibility warning dismiss action',
+  ],
+  [
+    '(state) => state.clearPersistenceWarning,',
+    'settings route must subscribe to the accessibility warning dismiss action',
+  ],
+  [
+    'warning={accessibilityPersistenceWarning}',
+    'settings route must render accessibility persistence warnings',
+  ],
+  [
+    'onDismiss={clearAccessibilityPersistenceWarning}',
+    'settings route must dismiss accessibility persistence warnings through the accessibility store',
+  ],
 ];
 const EXPECTED_ONBOARDING_ROUTE_HEADERS = [
   {

@@ -65,7 +65,7 @@ test('accessibilityStore: invariant — no Pro-gate references in source', () =>
   );
 });
 
-test('accessibilityStore: throwing MMKV writes keep in-memory state and record warning', () => {
+test('accessibilityStore: throwing MMKV writes keep in-memory state and record warnings', () => {
   const storage = createThrowingSetMMKV('accessibility disk full');
   const { useAccessibilityStore } = loadTsWithStorage(
     repoRoot,
@@ -85,6 +85,24 @@ test('accessibilityStore: throwing MMKV writes keep in-memory state and record w
   assert.equal(state.persistenceWarning.operation, 'write');
   assert.match(state.persistenceWarning.message, /in-memory state/);
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
+
+  state.clearPersistenceWarning();
+  useAccessibilityStore.getState().setFontSizeStep(2);
+  assert.equal(useAccessibilityStore.getState().fontSizeStep, 2);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.fontSizeStep.v1');
+
+  state.clearPersistenceWarning();
+  useAccessibilityStore.getState().setAudioPlaybackRate(0.75);
+  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 0.75);
+  assert.equal(
+    useAccessibilityStore.getState().persistenceWarning.key,
+    'a11y.audioPlaybackRate.v1',
+  );
+
+  state.clearPersistenceWarning();
+  useAccessibilityStore.getState().setThemeMode('dark');
+  assert.equal(useAccessibilityStore.getState().themeMode, 'dark');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.themeMode.v1');
 });
 
 test('accessibilityStore: successful writes persist values and clear warning', () => {
@@ -190,6 +208,116 @@ test('accessibilityStore: theme mode read failures fall back to system', () => {
   );
 
   assert.equal(useAccessibilityStore.getState().themeMode, 'system');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.recoverable, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.storageId, 'accessibility');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.themeMode.v1');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.operation, 'read');
+  assert.match(
+    useAccessibilityStore.getState().persistenceWarning.errorMessage,
+    /theme read failed/,
+  );
+});
+
+test('accessibilityStore: first accessibility preference read failure is surfaced', () => {
+  const storage = {
+    getBoolean() {
+      throw new Error('easy read failed');
+    },
+    getNumber() {
+      return undefined;
+    },
+    getString() {
+      return undefined;
+    },
+    set() {},
+  };
+  const { useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  assert.equal(useAccessibilityStore.getState().easyReadFont, false);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.recoverable, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.storageId, 'accessibility');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.easyReadFont.v1');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.operation, 'read');
+  assert.match(
+    useAccessibilityStore.getState().persistenceWarning.errorMessage,
+    /easy read failed/,
+  );
+});
+
+test('accessibilityStore: text-size read failures are surfaced', () => {
+  const storage = {
+    getBoolean() {
+      return undefined;
+    },
+    getNumber() {
+      throw new Error('font size failed');
+    },
+    getString() {
+      return undefined;
+    },
+    set() {},
+  };
+  const { useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  assert.equal(useAccessibilityStore.getState().fontSizeStep, 1);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.recoverable, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.storageId, 'accessibility');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.fontSizeStep.v1');
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.operation, 'read');
+  assert.match(
+    useAccessibilityStore.getState().persistenceWarning.errorMessage,
+    /font size failed/,
+  );
+});
+
+test('accessibilityStore: audio-rate read failures are surfaced', () => {
+  let numberReads = 0;
+  const storage = {
+    getBoolean() {
+      return undefined;
+    },
+    getNumber() {
+      numberReads += 1;
+      if (numberReads === 2) throw new Error('audio rate failed');
+      return undefined;
+    },
+    getString() {
+      return undefined;
+    },
+    set() {},
+  };
+  const { useAccessibilityStore } = loadTsWithStorage(
+    repoRoot,
+    'lib/storage/accessibilityStore.ts',
+    {
+      accessibility: storage,
+    },
+  );
+
+  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.recoverable, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.storageId, 'accessibility');
+  assert.equal(
+    useAccessibilityStore.getState().persistenceWarning.key,
+    'a11y.audioPlaybackRate.v1',
+  );
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.operation, 'read');
+  assert.match(
+    useAccessibilityStore.getState().persistenceWarning.errorMessage,
+    /audio rate failed/,
+  );
 });
 
 test('RootLayout applies persisted theme mode to system chrome before screens render', () => {
