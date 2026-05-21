@@ -56,6 +56,8 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoring: 'Återställer...',
     statusMessages: {
       error: 'Köp är inte tillgängligt. Försök igen senare.',
+      finish_failed:
+        'Annonser är avstängda. Butiken kunde inte markera köpet som slutfört, så återställ köpet om det visas igen.',
       not_found: 'Inget tidigare köp av Ta bort annonser hittades.',
       pending: 'Väntar på butikens bekräftelse innan annonser tas bort.',
       purchased: 'Köpet är bekräftat. Studieannonser tas bort.',
@@ -83,6 +85,8 @@ const removeAdsPlacementCtaCopy: Record<AppLanguage, RemoveAdsPlacementCtaCopy> 
     restoring: 'Restoring...',
     statusMessages: {
       error: 'Purchase is unavailable. Try again later.',
+      finish_failed:
+        'Ads are disabled. The store could not mark the purchase as finished, so restore the purchase if it appears again.',
       not_found: 'No previous Remove Ads purchase was found.',
       pending: 'Waiting for store confirmation before removing ads.',
       purchased: 'Purchase confirmed. Study ads are being removed.',

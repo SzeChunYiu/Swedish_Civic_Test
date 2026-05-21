@@ -79,6 +79,7 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
         async disconnect() {},
         async finishPurchase() {
           finishCalls += 1;
+          if (overrides.finishPurchase) return overrides.finishPurchase();
         },
         async requestRemoveAdsPurchase() {
           if (overrides.requestRemoveAdsPurchase) return overrides.requestRemoveAdsPurchase();
@@ -215,6 +216,25 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
   );
   assert.equal(storedPurchaseRecord.receiptValidationStatus, 'valid');
   assert.equal(storedPurchaseRecord.receiptValidatedAt, '2026-05-19T00:00:00.000Z');
+
+  const finishFailureProvider = createProvider(verifiedNativeProvider.validateRemoveAdsReceipt, {
+    async finishPurchase() {
+      throw new Error('finish failed');
+    },
+  });
+  const finishFailureStorage = createMemoryPurchaseStorage();
+  const finishFailurePurchase = await buyRemoveAds({
+    provider: finishFailureProvider.provider,
+    storage: finishFailureStorage,
+  });
+
+  assert.equal(finishFailurePurchase.status, 'finish_failed');
+  assert.equal(finishFailurePurchase.entitlements.adsDisabled, true);
+  assert.equal(finishFailureProvider.finishCalls, 1);
+  assert.equal(
+    JSON.parse(await finishFailureStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    fakePurchase.transactionId,
+  );
 
   const verifiedRestore = await restoreRemoveAdsPurchase({
     provider: createProvider(verifiedNativeProvider.validateRemoveAdsReceipt).provider,

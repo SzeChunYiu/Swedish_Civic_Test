@@ -1853,7 +1853,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 26;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 27;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -4850,7 +4850,14 @@ const EXPECTED_PURCHASE_TYPE_UNIONS = [
   },
   {
     typeName: 'RemoveAdsPurchaseStatus',
-    values: ['purchased', 'pending', 'restored', 'not_found', 'persistence_failed'],
+    values: [
+      'purchased',
+      'pending',
+      'restored',
+      'not_found',
+      'persistence_failed',
+      'finish_failed',
+    ],
   },
 ];
 const EXPECTED_PURCHASE_INTERFACES = [
@@ -17505,10 +17512,18 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'mock/provider flows must cover invalid receipt validation without direct entitlement writes',
     ],
     [
-      /const persistenceResult = await persistValidatedRemoveAdsEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
+      /const persistenceResult = await persistValidatedRemoveAdsEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*try \{[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*\} catch \{[\s\S]*return createResult\('finish_failed', persistenceResult\.entitlements, purchase\);[\s\S]*\}[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
         purchaseSource,
       ),
-      'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+      'Remove Ads buy flow must persist the entitlement before finishing the native transaction and recover from post-persistence finish failures',
+    ],
+    [
+      normalizedPaywallSource.includes("status === 'finish_failed'") &&
+        normalizedPaywallSource.includes("finish_failed: 'Ads are disabled.") &&
+        normalizedPaywallSource.includes("finish_failed: 'Annonser är avstängda.") &&
+        normalizedPlacementCtaSource.includes("finish_failed: 'Ads are disabled.") &&
+        normalizedPlacementCtaSource.includes("finish_failed: 'Annonser är avstängda."),
+      'Remove Ads UI surfaces localized finish-failure copy while preserving the persisted adsDisabled entitlement',
     ],
     [
       normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&

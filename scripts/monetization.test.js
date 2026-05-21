@@ -1541,7 +1541,7 @@ test('remove-ads buy persists before native finish and leaves failed persistence
     transactionId: 'ordering-remove-ads',
   };
 
-  function createProvider(events) {
+  function createProvider(events, options = {}) {
     return {
       async connect() {
         events.push('connect');
@@ -1551,6 +1551,9 @@ test('remove-ads buy persists before native finish and leaves failed persistence
       },
       async finishPurchase() {
         events.push('finish');
+        if (options.finishFails) {
+          throw new Error('finish failed');
+        }
       },
       async requestRemoveAdsPurchase() {
         events.push('request');
@@ -1601,6 +1604,36 @@ test('remove-ads buy persists before native finish and leaves failed persistence
     JSON.parse(successfulValues.get(REMOVE_ADS_STORAGE_KEY)).transactionId,
     'ordering-remove-ads',
   );
+
+  const finishFailureEvents = [];
+  const finishFailureValues = new Map();
+  const finishFailureResult = await buyRemoveAds({
+    provider: createProvider(finishFailureEvents, { finishFails: true }),
+    storage: {
+      async getItemAsync(key) {
+        return finishFailureValues.get(key) ?? null;
+      },
+      async setItemAsync(key, value) {
+        finishFailureEvents.push('persist');
+        finishFailureValues.set(key, value);
+      },
+    },
+  });
+
+  assert.equal(finishFailureResult.status, 'finish_failed');
+  assert.equal(finishFailureResult.entitlements.adsDisabled, true);
+  assert.equal(
+    JSON.parse(finishFailureValues.get(REMOVE_ADS_STORAGE_KEY)).transactionId,
+    'ordering-remove-ads',
+  );
+  assert.deepEqual(finishFailureEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist',
+    'finish',
+    'disconnect',
+  ]);
 
   const failingEvents = [];
   const failingResult = await buyRemoveAds({
