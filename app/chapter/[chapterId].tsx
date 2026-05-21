@@ -72,6 +72,7 @@ export default function ChapterScreen() {
           accessibilityLabel={copy.backToListAccessibilityLabel}
           accessibilityRole="link"
           href="/learn"
+          replace
           style={styles.link}
         >
           {copy.backToLearn}
@@ -90,6 +91,7 @@ export default function ChapterScreen() {
         accessibilityLabel={copy.backToListAccessibilityLabel}
         accessibilityRole="link"
         href="/learn"
+        replace
         style={styles.link}
       >
         ← {copy.backToLearn}
