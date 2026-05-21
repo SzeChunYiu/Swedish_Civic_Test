@@ -258,40 +258,113 @@
     return localDisplayOptions(question, sessionId);
   }
 
+  const STORAGE_COUNTER_MAX = 100000;
+  function isPlainObject(value) {
+    return Object.prototype.toString.call(value) === '[object Object]';
+  }
+  function isFiniteNumber(value) {
+    return typeof value === 'number' && isFinite(value);
+  }
+  function clampInteger(value, min, max, fallback) {
+    if (!isFiniteNumber(value)) return fallback;
+    return Math.max(min, Math.min(max, Math.floor(value)));
+  }
+  function clampStorageCounter(value) {
+    return clampInteger(value, 0, STORAGE_COUNTER_MAX, 0);
+  }
+  function normalizeProgressEntry(entry) {
+    if (!isPlainObject(entry)) return null;
+    const answered = clampStorageCounter(entry.answered);
+    const correct = Math.min(answered, clampStorageCounter(entry.correct));
+    return { answered, correct };
+  }
+  function normalizeProgress(value) {
+    if (!isPlainObject(value)) return {};
+    return Object.keys(value).reduce((out, key) => {
+      if (!/^ch\d+$/.test(key)) return out;
+      const entry = normalizeProgressEntry(value[key]);
+      if (entry) out[key] = entry;
+      return out;
+    }, {});
+  }
+  function normalizeMockHistoryEntry(entry) {
+    if (!isPlainObject(entry) || !isFiniteNumber(entry.t) || !isFiniteNumber(entry.total)) {
+      return null;
+    }
+    const t = clampInteger(entry.t, 0, Number.MAX_SAFE_INTEGER, 0);
+    const total = clampStorageCounter(entry.total);
+    const correct = Math.min(total, clampStorageCounter(entry.correct));
+    const fallbackPct = total ? Math.round((correct / total) * 100) : 0;
+    const pct = clampInteger(entry.pct, 0, 100, fallbackPct);
+    const duration = clampInteger(entry.duration, 0, Number.MAX_SAFE_INTEGER, 0);
+    return { t, total, correct, pct, duration };
+  }
+  function normalizeMockHistory(value) {
+    if (!Array.isArray(value)) return [];
+    return value.map(normalizeMockHistoryEntry).filter(Boolean).slice(0, 8);
+  }
+  function normalizeChapterSelection(value) {
+    if (value === 'all') return 'all';
+    if (!Array.isArray(value)) return MOCK_DEFAULTS.chapters;
+    const seen = new Set();
+    return value.reduce((chapters, chapter) => {
+      if (!isFiniteNumber(chapter)) return chapters;
+      if (Math.floor(chapter) !== chapter) return chapters;
+      const id = Math.floor(chapter);
+      if (id < 1 || id > 99 || seen.has(id)) return chapters;
+      seen.add(id);
+      chapters.push(id);
+      return chapters;
+    }, []);
+  }
+  function normalizeMockCfg(value) {
+    if (!isPlainObject(value)) return Object.assign({}, MOCK_DEFAULTS);
+    return {
+      count: clampInteger(value.count, 5, STORAGE_COUNTER_MAX, MOCK_DEFAULTS.count),
+      minutes: clampInteger(value.minutes, 2, 90, MOCK_DEFAULTS.minutes),
+      chapters: normalizeChapterSelection(value.chapters),
+    };
+  }
+
   function getProgress() {
     try {
-      return JSON.parse(localStorage.getItem('smt_progress') || '{}');
+      return normalizeProgress(JSON.parse(localStorage.getItem('smt_progress') || '{}'));
     } catch {
       return {};
     }
   }
   function saveProgress(p) {
     try {
-      localStorage.setItem('smt_progress', JSON.stringify(p));
+      localStorage.setItem('smt_progress', JSON.stringify(normalizeProgress(p)));
     } catch {}
   }
 
   // For external code (the quiz) to call after each answer
   window.smtRecordAnswer = function (chapterId, correct) {
+    const numericChapterId = parseInt(chapterId, 10);
+    if (!isFinite(numericChapterId) || numericChapterId < 1) return;
     const p = getProgress();
-    const k = 'ch' + chapterId;
-    p[k] = p[k] || { answered: 0, correct: 0 };
-    p[k].answered++;
-    if (correct) p[k].correct++;
+    const k = 'ch' + numericChapterId;
+    p[k] = normalizeProgressEntry(p[k]) || { answered: 0, correct: 0 };
+    p[k].answered = clampStorageCounter(p[k].answered + 1);
+    if (correct === true)
+      p[k].correct = Math.min(p[k].answered, clampStorageCounter(p[k].correct + 1));
     saveProgress(p);
   };
 
   // Mock exam history
   function getMockHistory() {
     try {
-      return JSON.parse(localStorage.getItem('smt_mocks') || '[]');
+      return normalizeMockHistory(JSON.parse(localStorage.getItem('smt_mocks') || '[]'));
     } catch {
       return [];
     }
   }
   function pushMock(entry) {
     const h = getMockHistory();
-    h.unshift(entry);
+    const normalized = normalizeMockHistoryEntry(entry);
+    if (!normalized) return;
+    h.unshift(normalized);
     try {
       localStorage.setItem('smt_mocks', JSON.stringify(h.slice(0, 8)));
     } catch {}
@@ -387,18 +460,14 @@
   const MOCK_DEFAULTS = { count: 25, minutes: 30, chapters: 'all' };
   function loadMockCfg() {
     try {
-      return Object.assign(
-        {},
-        MOCK_DEFAULTS,
-        JSON.parse(localStorage.getItem('smt_mock_cfg') || '{}'),
-      );
+      return normalizeMockCfg(JSON.parse(localStorage.getItem('smt_mock_cfg') || '{}'));
     } catch {
       return Object.assign({}, MOCK_DEFAULTS);
     }
   }
   function saveMockCfg(cfg) {
     try {
-      localStorage.setItem('smt_mock_cfg', JSON.stringify(cfg));
+      localStorage.setItem('smt_mock_cfg', JSON.stringify(normalizeMockCfg(cfg)));
     } catch {}
   }
   function isStaticMockUhrQuestion(question) {
