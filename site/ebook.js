@@ -34,6 +34,15 @@
     },
   });
 
+  const EBOOK_SOURCE_NOTES = Object.freeze({
+    ...EBOOK_FACTBOX_SOURCE_NOTES,
+    editorialCommentary: {
+      label: 'editorial commentary',
+      url: '#/sources',
+      retrievedDate: 'editorial',
+    },
+  });
+
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
       label: 'UHR: Om medborgarskapsprovet',
@@ -71,6 +80,12 @@
     return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
   }
 
+  function ebookSourceNotes(sourceKeys) {
+    return Array.from(new Set(sourceKeys))
+      .map((key) => EBOOK_SOURCE_NOTES[key])
+      .filter(Boolean);
+  }
+
   function officialTestSourceLinks() {
     return OFFICIAL_TEST_SOURCE_NOTES.map(
       (source) => `<a href="${source.url}">${source.label}</a>`,
@@ -96,7 +111,18 @@
     return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
   }
 
-  function ebookFactBox(lang, heading, facts, sourceKeys = ['uhrStudyMaterial']) {
+  function assertEbookSourceKeys(sourceKeys, label) {
+    if (!Array.isArray(sourceKeys) || sourceKeys.length === 0) {
+      throw new Error(`${label} must pass explicit ebook sourceKeys`);
+    }
+    const unsupported = sourceKeys.filter((key) => !EBOOK_SOURCE_NOTES[key]);
+    if (unsupported.length > 0) {
+      throw new Error(`${label} has unsupported ebook sourceKeys: ${unsupported.join(', ')}`);
+    }
+  }
+
+  function ebookFactBox(lang, heading, facts, sourceKeys) {
+    assertEbookSourceKeys(sourceKeys, 'ebookFactBox');
     const resolvedHeading =
       heading ||
       tr({
@@ -122,14 +148,82 @@
     `;
   }
 
-  function renderEbookProvenanceBadge(lang) {
-    if (lang === 'sv') {
-      return '<p class="ebook__provenance-badge" aria-label="Källtyp: Redaktionell. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Redaktionell</span> · Egen studieguide; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>';
-    }
-    return '<p class="ebook__provenance-badge" aria-label="Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material."><span>Editorial</span> · Original study guide; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>';
+  function ebookChapterSourceKeys(chapterId) {
+    const chapterSpecificKeys = {
+      1: ['governmentNato'],
+      7: ['scbLandUse'],
+      9: ['riksbankHistory'],
+      10: ['governmentNato'],
+      12: ['migrationsverketCitizenshipRules'],
+    };
+    return ['uhrStudyMaterial', ...(chapterSpecificKeys[chapterId] || []), 'editorialCommentary'];
   }
 
-  function svStudyBrief(points, facts, practiceHint, afterPracticeHtml = '') {
+  function ebookRouteHash(chapterId, targetParam, targetId) {
+    return `#/ebook?c=${encodeURIComponent(chapterId)}&${targetParam}=${encodeURIComponent(targetId)}`;
+  }
+
+  function ebookSourceCounts(footnotes) {
+    const counts = {};
+    footnotes.forEach((footnote) => {
+      Array.from(new Set(footnote.sourceKeys)).forEach((key) => {
+        counts[key] = (counts[key] || 0) + 1;
+      });
+    });
+    return counts;
+  }
+
+  function createEbookFootnoteCollector(chapterId, lang) {
+    const footnotes = [];
+    return {
+      footnotes,
+      annotate(html, sourceKeys) {
+        assertEbookSourceKeys(sourceKeys, `ebook prose chapter ${chapterId}`);
+        return html.replace(
+          /<p(?![^>]*class="ebook__source-note")([^>]*)>([\s\S]*?)<\/p>/g,
+          (match, attrs, content) => {
+            const footnoteIndex = footnotes.length + 1;
+            const id = `eb-${chapterId}-${lang}-fn-${footnoteIndex}`;
+            footnotes.push({ id, index: footnoteIndex, sourceKeys });
+            const keys = Array.from(new Set(sourceKeys)).join(' ');
+            return `<p${attrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></p>`;
+          },
+        );
+      },
+    };
+  }
+
+  function renderEbookFootnotes(lang, chapterId, footnotes) {
+    if (footnotes.length === 0) return '';
+    const heading = lang === 'sv' ? 'Källor i kapitlet' : 'Chapter sources';
+    const items = footnotes
+      .map((footnote) => {
+        const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');
+        return `<li id="${footnote.id}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
+      })
+      .join('');
+    return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
+  }
+
+  function renderEbookProvenanceBadge(lang, footnotes) {
+    const uniqueSourceLabels = Array.from(
+      new Set(
+        footnotes.flatMap((footnote) =>
+          ebookSourceNotes(footnote.sourceKeys).map((note) => note.label),
+        ),
+      ),
+    );
+    const count = uniqueSourceLabels.length || 0;
+    const sourceSummary = uniqueSourceLabels.join(', ') || 'source metadata';
+    const serializedCounts = JSON.stringify(ebookSourceCounts(footnotes));
+    if (lang === 'sv') {
+      return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
+    }
+    return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Sources: ${count}. ${sourceSummary}. Original study guide; verify facts through the Sources page and UHR material."><span>Sources: ${count}</span> · Original study guide with chapter sources; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>`;
+  }
+
+  function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
+    assertEbookSourceKeys(sourceKeys, 'svStudyBrief fact box');
     const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
@@ -137,7 +231,7 @@
       <h2>Plugga smart</h2>
       <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
-      ${ebookFactBox('sv', 'Fakta att repetera', facts)}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
     `;
   }
 
@@ -455,6 +549,7 @@
             'I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.',
           ],
           'Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.',
+          ['uhrStudyMaterial', 'governmentNato'],
         ),
         'zh-Hans': `<h2>维京时代（793 – 约 1066）</h2>
           <p>戴角头盔的形象其实是 19 世纪歌剧的杜撰。真实情况更有意思：那是一群说古诺尔斯语的商人、农民、劫掠者和探险者。瑞典人大多向东而行——沿河流深入今天的俄罗斯和乌克兰——用白银、奴隶和琥珀去换取来自拜占庭的货物。</p>
@@ -751,7 +846,7 @@
           </ul>
           <h2>Voting</h2>
           <p>You vote in three separate elections on the same day: Riksdag, region, and kommun. You also vote in EU elections every five years. Swedish citizens vote in all four; permanent residents vote in regional and municipal elections after three years.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.')}
+          ${ebookFactBox('en', 'Facts to review', 'Riksdag size: 349 · Threshold: 4% · Election interval: 4 years · Number of regions: 21 · Number of municipalities: 290.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -761,6 +856,7 @@
             'Allmänna val hålls vart fjärde år. Svenska medborgare röstar till riksdagen, regionen och kommunen.',
           ],
           'Riksdag: 349 ledamöter · Val: vart fjärde år · Regioner: 21 · Kommuner: 290.',
+          ['uhrStudyMaterial'],
         ),
         'zh-Hans': `<h2>三级政府</h2>
           <p>瑞典是一个 <em>君主立宪制国家</em>，也是一个 <em>议会民主制国家</em>。权力在三个层级上运作：</p>
@@ -1075,7 +1171,7 @@
           <p>Almost any document held by a public authority is, by default, public. Anyone can ask to see it, including journalists, foreign citizens, and your nosy neighbour. Exceptions exist (national security, personal data), but the default is openness — globally rare.</p>
           <h2>What it means in daily life</h2>
           <p>Your employer can't ask about your religion. Your landlord can't refuse you for your ethnicity. You can criticise the government on television, in writing, online — even meanly — without legal consequence. (Defamation, threats, and incitement remain crimes.)</p>
-          ${ebookFactBox('en', 'Facts to review', 'Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).')}
+          ${ebookFactBox('en', 'Facts to review', 'Number of basic laws: 4 · Oldest: Tryckfrihetsförordningen (1766) · Inheritance rule: oldest child regardless of gender (since 1980).', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1085,6 +1181,7 @@
             'Rättigheter hör ihop med ansvar: hot, hets mot folkgrupp, förtal och diskriminering kan fortfarande vara förbjudet.',
           ],
           'Grundlagar: 4 · Tryckfrihetsförordningen: 1766 · Offentlighetsprincipen: insyn i myndigheter.',
+          ['uhrStudyMaterial'],
         ),
         'zh-Hans': `<h2>四部基本法（grundlagarna）</h2>
           <ol>
@@ -1369,7 +1466,7 @@
           <p>Skatteverket — the Swedish Tax Agency — is also the population registry. Your <em>personnummer</em> (personal number) ties you to taxes, healthcare, schools, and your address. Move? Tell them within a week.</p>
           <h2>The welfare state</h2>
           <p>For your taxes you get: tax-funded healthcare (with small fees), schools and university (free for citizens and permanent residents), parental leave (480 days per child, split between parents), unemployment benefit (via your a-kassa), sickness benefit, and a basic state pension.</p>
-          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.')}
+          ${ebookFactBox('en', 'Facts to review', 'VAT default: 25% · VAT food: 12% · Parental leave: 480 days · No legal minimum wage · Collective agreements set sector minimums.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1379,6 +1476,7 @@
             'Privatekonomi i Sverige handlar ofta om lön efter skatt, räkningar, försäkringar, sparande och att betala i tid.',
           ],
           'Kollektivavtal · Kommunalskatt · Skatteverket · Välfärd finansieras gemensamt.',
+          ['uhrStudyMaterial'],
         ),
         'zh-Hans': `<h2>劳动力市场</h2>
           <p>在瑞典，薪资和工作条件大多由 <em>集体协议</em>（kollektivavtal）确定——这是工会与雇主组织之间谈判的结果。法律上没有最低工资，但在任何特定行业里，约定的最低工资通常都远高于生活成本。</p>
@@ -1513,7 +1611,7 @@
           <p>Cooking, cleaning, childcare, and household admin are not gendered tasks in Sweden — at least not officially. Surveys show this is the country with the most equal time spent on housework. (Statistics, like teenagers, lie a little.)</p>
           <h2>Women and work</h2>
           <p>Women's labour-force participation is among the world's highest (~80%). The gender pay gap is real (~10–12%) but shrinking. Maternal mortality is among the world's lowest.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.')}
+          ${ebookFactBox('en', 'Facts to review', 'Same-sex marriage: 2009 · Discrimination grounds: 7 · Parental leave: 480 days · Reserved per parent: 90 days each.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1523,6 +1621,7 @@
             'Föräldraförsäkringen är byggd för att båda föräldrarna ska kunna ta ansvar för barn och arbete.',
           ],
           'Diskrimineringslagen · Samkönade äktenskap: 2009 · Föräldraledighet: 480 dagar per barn.',
+          ['uhrStudyMaterial'],
         ),
       },
     },
@@ -1547,7 +1646,7 @@
           <p>The municipality runs eldercare — home help (<em>hemtjänst</em>), special accommodation, and emergency alarms. The principle is the right to live independently for as long as possible; the practice is uneven by municipality.</p>
           <h2>Social services</h2>
           <p>Socialtjänsten supports anyone unable to support themselves — financial assistance (försörjningsstöd), child welfare, addiction support, family help. They also have legal obligations to intervene where a child is at risk.</p>
-          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.')}
+          ${ebookFactBox('en', 'Facts to review', 'Compulsory school: 10 years (förskoleklass + grades 1–9) · Health hotline: 1177 · Number of regions: 21 · University tuition: free for residents.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1557,6 +1656,7 @@
             'Socialtjänsten kan ge stöd när någon behöver skydd, råd, ekonomisk hjälp eller omsorg.',
           ],
           'Grundskola: 10 år · 1177 · Regioner ansvarar för vård · Kommuner ansvarar för omsorg och socialtjänst.',
+          ['uhrStudyMaterial'],
         ),
       },
     },
@@ -1590,6 +1690,7 @@
             'Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.',
           ],
           'Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.',
+          ['uhrStudyMaterial', 'scbLandUse'],
         ),
       },
     },
@@ -1617,7 +1718,7 @@
           <p>June 6 — Sveriges nationaldag — marks Gustav Vasa's election in 1523 and the constitutional revision of 1809. A public holiday only since 2005, and still settling into the role.</p>
           <h2>New traditions</h2>
           <p>Sweden has long absorbed new traditions through migration: Eid al-Fitr (Muslim), Nouruz (Persian New Year), Newroz (Kurdish New Year, also 21 March), Diwali, and others. These are increasingly part of public life — celebrated in schools, workplaces, and city squares.</p>
-          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.')}
+          ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Midsommar: third Friday in June · Lucia: December 13 · Christmas Eve (not Day) is the main celebration.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1627,6 +1728,7 @@
             'Nya traditioner från människor som flyttat till Sverige är också en del av dagens samhälle.',
           ],
           'Nationaldag: 6 juni · Midsommar: tredje fredagen i juni · Lucia: 13 december · Jul firas främst 24 december.',
+          ['uhrStudyMaterial'],
         ),
       },
     },
@@ -1661,6 +1763,7 @@
             'Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.',
           ],
           'Valuta: svensk krona · Euroomröstning: 2003 · Riksbanken · Swish · BankID.',
+          ['uhrStudyMaterial', 'riksbankHistory'],
         ),
       },
     },
@@ -1695,6 +1798,7 @@
             'Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.',
           ],
           'EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.',
+          ['uhrStudyMaterial', 'governmentNato'],
         ),
       },
     },
@@ -1739,6 +1843,7 @@
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
           'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
+          ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'],
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
           ebookSourceNote('sv', ['migrationsverketCitizenshipRules']),
         ),
@@ -1819,7 +1924,7 @@
           </ul>
           <h2>New traditions</h2>
           <p>Migration has added more visible traditions to Swedish public life. Eid al-Fitr, Nouruz, Newroz, Diwali, and other celebrations may appear in schools, workplaces, neighbourhoods, and city events. The important pattern is simple: traditions can travel and adapt.</p>
-          ${ebookFactBox('en', 'Facts to review', 'National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.')}
+          ${ebookFactBox('en', 'Facts to review', 'National Day: June 6 · Walpurgis Night: April 30 · Midsummer Eve: Friday between June 19 and 25 · Lucia: December 13 · Christmas Eve: December 24.', ['uhrStudyMaterial'])}
         `,
         sv: svStudyBrief(
           [
@@ -1830,6 +1935,7 @@
             'Nya traditioner, till exempel id al-fitr, Nouruz och Newroz, visar att traditioner kan tas med, delas och förändras.',
           ],
           'Nationaldag: 6 juni · Valborg: 30 april · Midsommarafton: fredag 19-25 juni · Lucia: 13 december · Julafton: 24 december.',
+          ['uhrStudyMaterial'],
           'Läs kapitlet tillsammans med övningen för traditioner och högtider. Datum, handlingar och vad högtiderna betyder är vanligare än detaljfrågor om exakt hur varje familj firar.',
         ),
       },
@@ -1873,6 +1979,23 @@
     return PRACTICE_LINKS[id] || { href: '#/practice', en: 'Open practice', sv: 'Öppna övning' };
   }
 
+  function scrollEbookRouteTarget() {
+    const hash = (location.hash || '').replace(/^#/, '');
+    const query = hash.split('?')[1] || '';
+    const params = {};
+    query.split('&').forEach((part) => {
+      const [key, value] = part.split('=');
+      if (key) params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+    });
+    const footnoteTarget = params.fn;
+    const footnoteRefTarget = params.fnref;
+    const targetId = footnoteTarget || (footnoteRefTarget ? `${footnoteRefTarget}-ref` : '');
+    const target = targetId ? document.getElementById(targetId) : null;
+    if (target && typeof target.scrollIntoView === 'function') {
+      target.scrollIntoView({ block: 'center' });
+    }
+  }
+
   function render() {
     const reader = document.getElementById('ebook-reader');
     if (!reader) return;
@@ -1886,9 +2009,16 @@
       ? `<h1 class="ebook__h1"><span>${ch.title[lang] || ch.title.en}</span> <em>${ch.title_em[lang] || ch.title_em.en}</em></h1>`
       : `<h1 class="ebook__h1"><em>${(ch.kicker[lang] || ch.kicker.en).split('·')[1]?.trim() || ch.kicker[lang] || ch.kicker.en}</em></h1>`;
 
-    const ledeHtml = ch.lede ? `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>` : '';
+    const sourceKeys = ebookChapterSourceKeys(id);
+    const footnoteCollector = createEbookFootnoteCollector(id, lang);
+    const ledeHtml = ch.lede
+      ? footnoteCollector.annotate(
+          `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>`,
+          sourceKeys,
+        )
+      : '';
 
-    const bodyHtml = ch.body
+    const rawBodyHtml = ch.body
       ? ch.body[lang] || ch.body.en
       : `<div class="ebook__stub">
           <h3>${tr({ sv: 'Kapitlet kunde inte öppnas', en: 'Chapter could not be opened', 'zh-Hans': '无法打开该章节', 'zh-Hant': '無法開啟該章節', ar: 'تعذّر فتح الفصل', ckb: 'بەشەکە نەکرایەوە', fa: 'فصل باز نشد', pl: 'Nie udało się otworzyć rozdziału', so: 'Cutubka lama furi karin', ti: 'እቲ ምዕራፍ ክኽፈት ኣይከኣለን', tr: 'Bölüm açılamadı', uk: 'Не вдалося відкрити розділ' })}</h3>
@@ -1907,6 +2037,8 @@
             uk: 'Виберіть розділ зі списку або поверніться до вступу.',
           })}</p>
         </div>`;
+    const bodyHtml = footnoteCollector.annotate(rawBodyHtml, sourceKeys);
+    const footnotesHtml = renderEbookFootnotes(lang, id, footnoteCollector.footnotes);
 
     const idx = ORDER.indexOf(id);
     const prev = idx > 0 ? ORDER[idx - 1] : null;
@@ -1957,8 +2089,9 @@
       <div class="ebook__crumb">${ch.kicker[lang] || ch.kicker.en}</div>
       ${titleHtml}
       ${ledeHtml}
-      ${renderEbookProvenanceBadge(lang)}
+      ${renderEbookProvenanceBadge(lang, footnoteCollector.footnotes)}
       ${bodyHtml}
+      ${footnotesHtml}
       ${actions}
       ${notes}
       ${pager}
@@ -1972,6 +2105,7 @@
     // scroll reader to top
     reader.scrollTop = 0;
     if (window.smtApplyEbookHighlights) window.smtApplyEbookHighlights();
+    scrollEbookRouteTarget();
   }
 
   function isOnEbook() {
