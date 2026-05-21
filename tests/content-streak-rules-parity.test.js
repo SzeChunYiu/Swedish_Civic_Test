@@ -17,6 +17,36 @@ function loadTs(relativePath) {
   return mod.exports;
 }
 
+function runFocusedStreakRulesWithStreaksPatch(search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const search = ${JSON.stringify(search)};
+const replacement = ${JSON.stringify(replacement)};
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/streaks.ts')) {
+    const source = String(contents);
+    if (!source.includes(search)) {
+      throw new Error('streak mutation fixture did not find target source');
+    }
+    return source.replace(search, replacement);
+  }
+  return contents;
+};
+process.argv.push('--focus-streak-rules');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 test('streak runtime parity validates daily habit rules', () => {
   const output = execFileSync(
     process.execPath,
@@ -52,34 +82,40 @@ test('streak runtime parity validates daily habit rules', () => {
 });
 
 test('streak runtime parity rejects timestamp date-key normalization drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/lib/learning/streaks.ts')) {
-    return String(contents).replace(
-      'const dateKey = value.slice(0, 10);',
-      'const dateKey = value;',
-    );
-  }
-  return contents;
-};
-process.argv.push('--focus-streak-rules');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
+  const result = runFocusedStreakRulesWithStreaksPatch(
+    'const dateKey = value.slice(0, 10);',
+    'const dateKey = value;',
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /streak rule consecutive answer days through today returned 2, expected 3/,
+  );
+});
+
+test('streak runtime parity rejects invalid local date fallback drift', () => {
+  const result = runFocusedStreakRulesWithStreaksPatch(
+    'const safeDate = date instanceof Date && Number.isFinite(date.getTime()) ? date : new Date();',
+    'const safeDate = date;',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /streak rule invalid local date fallback returned 0, expected 1/,
+  );
+});
+
+test('streak runtime parity rejects malformed imported day slice crashes', () => {
+  const result = runFocusedStreakRulesWithStreaksPatch(
+    "if (typeof value !== 'string') return undefined;",
+    "if (false && typeof value !== 'string') return undefined;",
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /streak rule malformed imported answer dates threw .*slice/,
   );
 });
