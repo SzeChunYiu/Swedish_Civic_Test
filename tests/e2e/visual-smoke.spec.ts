@@ -8,7 +8,7 @@ import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
   isExplainedVisualSmokeDuplicate,
   visualSmokeDuplicateExplanations,
-  visualSmokeRoutes,
+  visualSmokeRouteManifestEntries,
   type VisualSmokeRoute,
 } from './visualSmokeRoutes';
 
@@ -96,7 +96,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const { file, name, route } of visualSmokeRoutes) {
+  for (const { file, name, route } of visualSmokeRouteManifestEntries()) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();

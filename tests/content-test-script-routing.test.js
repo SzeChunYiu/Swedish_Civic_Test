@@ -21,8 +21,26 @@ function createFakeNpm(tmpDir) {
   return fakeNpm;
 }
 
+function createFakeNode(tmpDir) {
+  const fakeNode = path.join(tmpDir, 'node');
+  fs.writeFileSync(
+    fakeNode,
+    ['#!/bin/sh', 'printf "%s\\n" "$@" >> "$TEST_DISPATCH_LOG"', 'exit 0', ''].join('\n'),
+    { mode: 0o755 },
+  );
+  return fakeNode;
+}
+
 function runDispatcher(args, env) {
   return spawnSync(process.execPath, ['scripts/test-dispatch.js', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env,
+  });
+}
+
+function runPackageScript(script, args, env) {
+  return spawnSync('npm', ['run', script, '--', ...args], {
     cwd: repoRoot,
     encoding: 'utf8',
     env,
@@ -49,6 +67,10 @@ test('npm test keeps selector routing in the project dispatcher', () => {
       .length,
     1,
     'test:content must include the study reminder runtime parity guard exactly once',
+  );
+  assert.equal(
+    pkg.scripts['test:content-focused'],
+    'node scripts/test-dispatch.js content-focused',
   );
 });
 
@@ -121,6 +143,34 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('Onboarding route scroll parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const onboardingScrollTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-onboarding-route-scroll-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-onboarding-route-scroll/);
+  assert.match(
+    validatorSource,
+    /validateOnboardingRouteScrollParity\(\);[\s\S]*onboardingRouteScrollRulesValidated[\s\S]*onboardingRouteScrollParityValidated/,
+  );
+  assert.match(onboardingScrollTestSource, /--focus-onboarding-route-scroll/);
+  assert.doesNotMatch(
+    onboardingScrollTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Onboarding route scroll tests must not route through full content validation',
+  );
+  assert.doesNotMatch(
+    onboardingScrollTestSource,
+    /import \\{ Pressable, ScrollView, StyleSheet, Text, View \\}/,
+    'Onboarding route scroll tests must not require one exact react-native import list',
+  );
+});
+
 test('Badge accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -143,7 +193,6 @@ test('Badge accessibility parity uses focused content validation routing', () =>
     'Badge accessibility tests must not route through full content validation',
   );
 });
-
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -171,7 +220,6 @@ test('Flashcard accessibility parity uses focused content validation routing', (
     'Flashcard accessibility tests must not route through full content validation',
   );
 });
-
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -367,6 +415,42 @@ test('package npm test selector enters the dispatcher before running suites', ()
     const selectedResult = runPackageTest(['monetization'], env);
     assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
     assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:monetization\n');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('content-focused npm script forwards test-name pattern before file list', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
+  const nodeLog = path.join(tmpDir, 'node.log');
+  const env = {
+    ...process.env,
+    npm_config_loglevel: 'silent',
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: nodeLog,
+    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
+  };
+
+  try {
+    const result = runPackageScript(
+      'test:content-focused',
+      [
+        '--test-name-pattern',
+        'religious-freedom option parallelism|focus-religious-freedom',
+        'tests/content-test-script-routing.test.js',
+        'tests/content-published-question-types.test.js',
+      ],
+      env,
+    );
+
+    assert.equal(result.status, 0, result.stderr || result.stdout);
+    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split('\n'), [
+      '--test',
+      '--test-name-pattern',
+      'religious-freedom option parallelism|focus-religious-freedom',
+      'tests/content-test-script-routing.test.js',
+      'tests/content-published-question-types.test.js',
+    ]);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
