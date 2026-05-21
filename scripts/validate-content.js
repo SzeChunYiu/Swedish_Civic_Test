@@ -854,7 +854,18 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'completed-question metadata must scope persisted progress to the visible question bank',
   ],
-  ['visibleCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
+  [
+    'const sessionCompletedQuestionIds = useMemo(',
+    'practice selection must derive active-scope completed-question ids',
+  ],
+  [
+    '() => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds)',
+    'practice selection must scope completed-question ids to the active question bank',
+  ],
+  [
+    'sessionCompletedQuestionIds,\n        activeQuestionId,',
+    'practice selection must use active-scope completed-question ids',
+  ],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
@@ -4111,6 +4122,11 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'shuffleSessionId', type: 'string', optional: false },
   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  {
+    name: 'startSession',
+    type: '(questionId?: string | null) => void',
+    optional: false,
+  },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
 ];
@@ -14672,12 +14688,44 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'const readResult = readRecoverably(progressStorage, progressStorageId, progressStateKey, () => progressStorage?.getString(progressStateKey),',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
-      'return normalizeProgress(JSON.parse(rawProgress));',
+      'parseJsonRecoverably( readResult.value, progressStorageId, progressStateKey,',
       'readProgress must normalize parsed persisted JSON',
+    ],
+    [
+      '(rawValue) => normalizeProgress(JSON.parse(rawValue)),',
+      'readProgress must normalize parsed persisted JSON',
+    ],
+    [
+      'return { ...parseResult.value, persistenceWarning: parseResult.warning };',
+      'readProgress must return the recoverable parse result and warning',
+    ],
+    [
+      'const seenCount = normalizeNonNegativeInteger(',
+      'question progress hydration must normalize seenCount',
+    ],
+    [
+      'const lastAnsweredAt = normalizeIsoTimestamp(item.lastAnsweredAt);',
+      'question progress hydration must parse lastAnsweredAt through normalizeIsoTimestamp',
+    ],
+    [
+      'if (lastAnsweredAt) normalizedQuestionProgress.lastAnsweredAt = lastAnsweredAt;',
+      'question progress hydration must normalize and omit absent lastAnsweredAt timestamps',
+    ],
+    [
+      'const confidenceRating = normalizeConfidenceRating(item.confidenceRating);',
+      'question progress hydration must parse confidenceRating through normalizeConfidenceRating',
+    ],
+    [
+      'if (confidenceRating) normalizedQuestionProgress.confidenceRating = confidenceRating;',
+      'question progress hydration must preserve only valid 1..5 confidence ratings',
+    ],
+    [
+      "if (typeof item.bookmarked === 'boolean') { normalizedQuestionProgress.bookmarked = item.bookmarked; }",
+      'question progress hydration must preserve only boolean bookmark values',
     ],
     [
       'progressStorageId, progressStateKey, serializedProgress,',
@@ -16554,6 +16602,32 @@ function validatePracticeSessionStoreParity() {
     typeof getPracticeInterstitialShowKey === 'function'
   ) {
     usePracticeSessionStore.setState({
+      answerXpAwardedKey: 'old-award',
+      activeQuestionId: 'q-old',
+      answeredQuestionIds: ['q-old'],
+      selectedOptionId: 'old-option',
+      shuffleSessionId: 'practice-session-4',
+    });
+
+    usePracticeSessionStore.getState().startSession('q-session');
+    let state = usePracticeSessionStore.getState();
+    if (state.activeQuestionId !== 'q-session' || state.selectedOptionId !== null) {
+      rejectRuntime(
+        'practice session startSession must set the starting question and clear answer',
+      );
+    }
+    if (state.answerXpAwardedKey !== null) {
+      rejectRuntime('practice session startSession must clear awarded answer XP state');
+    }
+    if (!Array.isArray(state.answeredQuestionIds) || state.answeredQuestionIds.length !== 0) {
+      rejectRuntime('practice session startSession must reset answered question ids');
+    }
+    if (state.shuffleSessionId !== 'practice-session-5') {
+      rejectRuntime('practice session startSession must advance the shuffle session seed');
+    }
+
+    usePracticeSessionStore.setState({
+      answerXpAwardedKey: null,
       activeQuestionId: null,
       answeredQuestionIds: [],
       selectedOptionId: null,
@@ -16561,7 +16635,7 @@ function validatePracticeSessionStoreParity() {
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
-    let state = usePracticeSessionStore.getState();
+    state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
     }
@@ -16619,7 +16693,9 @@ function validatePracticeSessionStoreParity() {
     }
 
     usePracticeSessionStore.setState({
+      answerXpAwardedKey: null,
       activeQuestionId: null,
+      answeredQuestionIds: [],
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });

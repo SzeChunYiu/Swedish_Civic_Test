@@ -43,10 +43,11 @@ test('native Swedish övningsprov copy guard preserves English mock exam copy', 
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.nativeSwedishMockExamCopyLabelsValidated, 8);
-  assert.equal(summary.nativeSwedishMockExamCopyParityValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
   assert.match(homeSource, /Gå till övningsprov/);
-  assert.match(homeSource, /\$\{title\}: gå till övningsprov när steget är klart\./);
+  assert.match(homeSource, /\$\{title\}: gå till övningsprovet när steget är klart\./);
   assert.match(practiceSource, /Aldrig en del av övningsprovet\./);
   assert.match(homeSource, /Go to mock exam/);
   assert.match(practiceSource, /Never part of the mock exam\./);
@@ -71,7 +72,12 @@ test('practice route shell copy follows the persisted settings language', () => 
     source,
     /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
   );
-  assert.match(source, /<Badge>\{isChallengeMode \? copy\.challengeBadge : copy\.badge\}<\/Badge>/);
+  assert.match(source, /const sessionCompletedQuestionIds = useMemo\(/);
+  assert.match(
+    source,
+    /getPracticeQuestionForSession\(\s*practiceQuestionBank,\s*sessionCompletedQuestionIds,\s*activeQuestionId,/,
+  );
+  assert.match(source, /<Badge>\{copy\.badge\}<\/Badge>/);
   assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
   assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
@@ -232,6 +238,40 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('practice route copy parity rejects active selection using unscoped completed ids', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'sessionCompletedQuestionIds,\\n        activeQuestionId,',
+        'completedQuestionIds,\\n        activeQuestionId,',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-practice-route-copy-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /practice selection must use active-scope completed-question ids/,
+  );
+});
+
 test('practice route copy parity rejects stale English source drawer close copy', () => {
   const result = spawnSync(
     process.execPath,
@@ -259,7 +299,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /source drawer copy must not contain hyphenated about-the-sources/,
+    /practice route is missing en copy "Close source details"/,
   );
 });
 
@@ -290,7 +330,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /practice route Swedish native copy must use övningsprov/,
+    /practice route is missing sv copy "Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet\. Aldrig en del av övningsprovet\."/,
   );
 });
 

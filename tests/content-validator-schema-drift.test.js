@@ -6,7 +6,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function runValidateContent() {
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js'], {
+  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--json'], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
@@ -19,8 +19,15 @@ function runValidateContent() {
 test('content validator schema expectations track current persisted release contracts', () => {
   const { status, output } = runValidateContent();
 
-  assert.notEqual(status, 0, 'current release/copy gates should still keep validate:content red');
-  assert.match(output, /launch popup suppressed routes are/);
+  assert.equal(status, 0, output);
+  const summaryMatch = output.match(/\{[\s\S]*\}/);
+  assert.ok(summaryMatch, 'validate:content --json should print a summary object');
+  const summary = JSON.parse(summaryMatch[0]);
+  assert.equal(summary.practiceRouteCopyParityValidated, true);
+  assert.equal(summary.progressStoreSchemaParityValidated, true);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 10);
+  assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
+  assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
 
   const staleSchemaDriftMessages = [
     /types\/content\.ts Chapter\.nameText type is LocalizedContentTextOverrides, expected LocalizedContentText/,
@@ -34,6 +41,7 @@ test('content validator schema expectations track current persisted release cont
     /ProgressState\.recordAnswer type is \(questionId: string, isCorrect: boolean, confidenceRating\?: ConfidenceRating, options\?: \{ awardXp\?: boolean \}\) => void, expected \(questionId: string, isCorrect: boolean\) => void/,
     /progress storage must use the stable progress MMKV id/,
     /readProgress must read persisted JSON through progressStateKey/,
+    /readProgress must normalize parsed persisted JSON/,
     /writeProgress must persist JSON through progressStateKey/,
     /PracticeSessionState fields are \["answerXpAwardedKey","activeQuestionId","selectedOptionId","shuffleSessionId","markAnswerXpAwarded"/,
   ];

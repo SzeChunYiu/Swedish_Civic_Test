@@ -258,7 +258,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(
     progressStore,
-    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: RecordAnswerOptions,\s*\): void;/,
+    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: \{ awardXp\?: boolean \},\s*\): void;/,
   );
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(progressStore, /function normalizeConfidenceRating\(value: unknown\)/);
@@ -280,12 +280,50 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /writeRecoverably\(/);
   assert.match(progressStore, /progressStorageId/);
   assert.match(progressStore, /progressStateKey/);
+  assert.match(
+    progressStore,
+    /readRecoverably\(\s*progressStorage,\s*progressStorageId,\s*progressStateKey,\s*\(\) =>\s*progressStorage\?\.getString\(progressStateKey\)/,
+  );
+  assert.match(
+    progressStore,
+    /parseJsonRecoverably\(\s*readResult\.value,\s*progressStorageId,\s*progressStateKey,\s*\(rawValue\) => normalizeProgress\(JSON\.parse\(rawValue\)\),\s*emptyProgress,/,
+  );
+  assert.match(
+    progressStore,
+    /return \{ \.\.\.parseResult\.value, persistenceWarning: parseResult\.warning \};/,
+  );
   assert.match(progressStore, /serializedProgress/);
   assert.match(
     progressStore,
     /return \{ \.\.\.normalizeProgress\(JSON\.parse\(serializedProgress\)\), persistenceWarning \};/,
   );
   assert.match(progressStore, /clearPersistenceWarning: \(\) => void;/);
+});
+
+test('progress schema parity rejects bypassing the recoverable progress storage key', () => {
+  const result = runValidationWithProgressStorePatch(
+    'progressStorage?.getString(progressStateKey)',
+    'progressStorage?.getString("progressState")',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /readProgress must read persisted JSON through progressStateKey/,
+  );
+});
+
+test('progress schema parity rejects bypassing normalization after recoverable parsing', () => {
+  const result = runValidationWithProgressStorePatch(
+    '(rawValue) => normalizeProgress(JSON.parse(rawValue))',
+    '(rawValue) => JSON.parse(rawValue)',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /readProgress must normalize parsed persisted JSON/,
+  );
 });
 
 test('streak freeze normalizer focused validator mirrors shared storage policy', () => {
@@ -814,14 +852,14 @@ require('./scripts/validate-content.js');
 
 test('progress store schema parity rejects raw numeric hydration', () => {
   const result = runValidationWithProgressStorePatch(
-    'seenCount,',
-    'seenCount: Math.max(0, item.seenCount ?? 0),',
+    'const seenCount = normalizeNonNegativeInteger(',
+    'const seenCount = Number(',
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /progress hydration must not use raw numeric expression Math\.max\(0, item\.seenCount \?\? 0\)/,
+    /question progress hydration must normalize seenCount/,
   );
 });
 
