@@ -396,10 +396,62 @@
   /* ----------------------------------------------- UI rendering */
 
   const VERDICT_COPY = {
-    not_ready_yet: { en: 'Keep practicing', sv: 'Fortsätt öva', 'zh-Hans': '继续练习', 'zh-Hant': '繼續練習', ar: 'واصل التدرّب', ckb: 'بەردەوام بە لە مەشق', fa: 'به تمرین ادامه بده', pl: 'Ćwicz dalej', so: 'Sii wad tababarka', ti: 'ቀጽል ምልምማድ', tr: 'Pratiğe devam et', uk: 'Продовжуйте практику' },
-    getting_there: { en: 'Progress is building', sv: 'Framstegen växer', 'zh-Hans': '进步正在积累', 'zh-Hant': '進步正在累積', ar: 'التقدّم يتراكم', ckb: 'پێشکەوتن دروست دەبێت', fa: 'پیشرفت در حال شکل‌گیری است', pl: 'Postępy rosną', so: 'Horumarku waa kobcayaa', ti: 'ምዕባለ እናተወሰኸ', tr: 'İlerleme artıyor', uk: 'Прогрес зростає' },
-    almost_ready: { en: 'Practice looks steady', sv: 'Övningen ser stabil ut', 'zh-Hans': '练习状态稳定', 'zh-Hant': '練習狀態穩定', ar: 'التدرّب يبدو ثابتًا', ckb: 'مەشق جێگیر دیارە', fa: 'تمرین پایدار به نظر می‌رسد', pl: 'Ćwiczenia wyglądają stabilnie', so: 'Tababarku wuxuu u muuqdaa mid degan', ti: 'ምልምማድ ቅሱን ይመስል', tr: 'Pratik istikrarlı görünüyor', uk: 'Практика виглядає стабільною' },
-    strong_preparation: { en: 'Strong practice base', sv: 'Stark övningsgrund', 'zh-Hans': '练习基础扎实', 'zh-Hant': '練習基礎扎實', ar: 'أساس تدرّب قوي', ckb: 'بناغەیەکی بەهێزی مەشق', fa: 'پایه‌ی تمرینی قوی', pl: 'Mocna baza ćwiczeń', so: 'Saldhig tababar oo xoog leh', ti: 'ድልዱል መሰረት ምልምማድ', tr: 'Güçlü pratik temeli', uk: 'Міцна база практики' },
+    not_ready_yet: {
+      en: 'Keep practicing',
+      sv: 'Fortsätt öva',
+      'zh-Hans': '继续练习',
+      'zh-Hant': '繼續練習',
+      ar: 'واصل التدرّب',
+      ckb: 'بەردەوام بە لە مەشق',
+      fa: 'به تمرین ادامه بده',
+      pl: 'Ćwicz dalej',
+      so: 'Sii wad tababarka',
+      ti: 'ቀጽል ምልምማድ',
+      tr: 'Pratiğe devam et',
+      uk: 'Продовжуйте практику',
+    },
+    getting_there: {
+      en: 'Progress is building',
+      sv: 'Framstegen växer',
+      'zh-Hans': '进步正在积累',
+      'zh-Hant': '進步正在累積',
+      ar: 'التقدّم يتراكم',
+      ckb: 'پێشکەوتن دروست دەبێت',
+      fa: 'پیشرفت در حال شکل‌گیری است',
+      pl: 'Postępy rosną',
+      so: 'Horumarku waa kobcayaa',
+      ti: 'ምዕባለ እናተወሰኸ',
+      tr: 'İlerleme artıyor',
+      uk: 'Прогрес зростає',
+    },
+    almost_ready: {
+      en: 'Practice looks steady',
+      sv: 'Övningen ser stabil ut',
+      'zh-Hans': '练习状态稳定',
+      'zh-Hant': '練習狀態穩定',
+      ar: 'التدرّب يبدو ثابتًا',
+      ckb: 'مەشق جێگیر دیارە',
+      fa: 'تمرین پایدار به نظر می‌رسد',
+      pl: 'Ćwiczenia wyglądają stabilnie',
+      so: 'Tababarku wuxuu u muuqdaa mid degan',
+      ti: 'ምልምማድ ቅሱን ይመስል',
+      tr: 'Pratik istikrarlı görünüyor',
+      uk: 'Практика виглядає стабільною',
+    },
+    strong_preparation: {
+      en: 'Strong practice base',
+      sv: 'Stark övningsgrund',
+      'zh-Hans': '练习基础扎实',
+      'zh-Hant': '練習基礎扎實',
+      ar: 'أساس تدرّب قوي',
+      ckb: 'بناغەیەکی بەهێزی مەشق',
+      fa: 'پایه‌ی تمرینی قوی',
+      pl: 'Mocna baza ćwiczeń',
+      so: 'Saldhig tababar oo xoog leh',
+      ti: 'ድልዱል መሰረት ምልምማድ',
+      tr: 'Güçlü pratik temeli',
+      uk: 'Міцна база практики',
+    },
   };
   const VERDICT_COLOR = {
     not_ready_yet: '#e05b2e',
@@ -425,9 +477,48 @@
   }
 
   const GATE_COPY = {
-    title: { en: 'Sign in to unlock your dashboard', sv: 'Logga in för att låsa upp din panel', 'zh-Hans': '登录以解锁你的学习面板', 'zh-Hant': '登入以解鎖你的學習面板', ar: 'سجّل الدخول لفتح لوحة المعلومات', ckb: 'بچۆ ژوورەوە بۆ کردنەوەی داشبۆردەکەت', fa: 'برای باز کردن داشبورد وارد شو', pl: 'Zaloguj się, aby odblokować panel', so: 'Soo gal si aad u furto dashboard-kaaga', ti: 'ዳሽቦርድካ ንምኽፋት እቶ', tr: 'Panonu açmak için giriş yap', uk: 'Увійдіть, щоб відкрити панель' },
-    body: { en: 'Track your readiness, streaks, weak chapters, and progress — synced across all your devices.', sv: 'Följ din beredskap, sviter, svaga kapitel och framsteg — synkat på alla dina enheter.', 'zh-Hans': '跟踪你的备考状态、连续天数、薄弱章节和学习进度——在所有设备间同步。', 'zh-Hant': '追蹤你的備考狀態、連續天數、薄弱章節和學習進度——在所有裝置間同步。', ar: 'تابع جاهزيتك وسلاسلك والفصول الضعيفة وتقدّمك — متزامنة عبر كل أجهزتك.', ckb: 'ئامادەیی، زنجیرە ڕۆژەکان، بەشە لاوازەکان و پێشکەوتنت بەدوادابچە — لەنێوان هەموو ئامێرەکانت هاوکات.', fa: 'آمادگی، روزهای پیاپی، فصل‌های ضعیف و پیشرفتت را دنبال کن — همگام در همه دستگاه‌هایت.', pl: 'Śledź swoją gotowość, passy, słabe rozdziały i postępy — zsynchronizowane na wszystkich urządzeniach.', so: 'La soco diyaargarowgaaga, taxanaha, cutubyada daciifka ah iyo horumarkaaga — laga sinkiriyo dhammaan qalabkaaga.', ti: 'ድሉውነትካ፣ ተኸታታሊ መዓልትታት፣ ድኹማት ምዕራፋትን ምዕባለኻን ተኸታተል — ኣብ ኩሎም መሳርሕታትካ ይሳነ።', tr: 'Hazırlığını, serilerini, zayıf bölümlerini ve ilerlemeni takip et — tüm cihazlarında senkronize.', uk: 'Відстежуйте свою готовність, серії, слабкі розділи та прогрес — синхронізовано на всіх пристроях.' },
-    cta: { en: 'Sign in', sv: 'Logga in', 'zh-Hans': '登录', 'zh-Hant': '登入', ar: 'تسجيل الدخول', ckb: 'چوونەژوورەوە', fa: 'ورود', pl: 'Zaloguj się', so: 'Soo gal', ti: 'እቶ', tr: 'Giriş yap', uk: 'Увійти' },
+    title: {
+      en: 'Sign in to unlock your dashboard',
+      sv: 'Logga in för att låsa upp din panel',
+      'zh-Hans': '登录以解锁你的学习面板',
+      'zh-Hant': '登入以解鎖你的學習面板',
+      ar: 'سجّل الدخول لفتح لوحة المعلومات',
+      ckb: 'بچۆ ژوورەوە بۆ کردنەوەی داشبۆردەکەت',
+      fa: 'برای باز کردن داشبورد وارد شو',
+      pl: 'Zaloguj się, aby odblokować panel',
+      so: 'Soo gal si aad u furto dashboard-kaaga',
+      ti: 'ዳሽቦርድካ ንምኽፋት እቶ',
+      tr: 'Panonu açmak için giriş yap',
+      uk: 'Увійдіть, щоб відкрити панель',
+    },
+    body: {
+      en: 'Track your readiness, streaks, weak chapters, and progress — synced across all your devices.',
+      sv: 'Följ din beredskap, sviter, svaga kapitel och framsteg — synkat på alla dina enheter.',
+      'zh-Hans': '跟踪你的备考状态、连续天数、薄弱章节和学习进度——在所有设备间同步。',
+      'zh-Hant': '追蹤你的備考狀態、連續天數、薄弱章節和學習進度——在所有裝置間同步。',
+      ar: 'تابع جاهزيتك وسلاسلك والفصول الضعيفة وتقدّمك — متزامنة عبر كل أجهزتك.',
+      ckb: 'ئامادەیی، زنجیرە ڕۆژەکان، بەشە لاوازەکان و پێشکەوتنت بەدوادابچە — لەنێوان هەموو ئامێرەکانت هاوکات.',
+      fa: 'آمادگی، روزهای پیاپی، فصل‌های ضعیف و پیشرفتت را دنبال کن — همگام در همه دستگاه‌هایت.',
+      pl: 'Śledź swoją gotowość, passy, słabe rozdziały i postępy — zsynchronizowane na wszystkich urządzeniach.',
+      so: 'La soco diyaargarowgaaga, taxanaha, cutubyada daciifka ah iyo horumarkaaga — laga sinkiriyo dhammaan qalabkaaga.',
+      ti: 'ድሉውነትካ፣ ተኸታታሊ መዓልትታት፣ ድኹማት ምዕራፋትን ምዕባለኻን ተኸታተል — ኣብ ኩሎም መሳርሕታትካ ይሳነ።',
+      tr: 'Hazırlığını, serilerini, zayıf bölümlerini ve ilerlemeni takip et — tüm cihazlarında senkronize.',
+      uk: 'Відстежуйте свою готовність, серії, слабкі розділи та прогрес — синхронізовано на всіх пристроях.',
+    },
+    cta: {
+      en: 'Sign in',
+      sv: 'Logga in',
+      'zh-Hans': '登录',
+      'zh-Hant': '登入',
+      ar: 'تسجيل الدخول',
+      ckb: 'چوونەژوورەوە',
+      fa: 'ورود',
+      pl: 'Zaloguj się',
+      so: 'Soo gal',
+      ti: 'እቶ',
+      tr: 'Giriş yap',
+      uk: 'Увійти',
+    },
   };
 
   function buildLockOverlay() {
@@ -497,7 +588,11 @@
       return;
     }
     const signedIn = (function () {
-      try { return localStorage.getItem('smt_signed_in') === '1'; } catch { return false; }
+      try {
+        return localStorage.getItem('smt_signed_in') === '1';
+      } catch {
+        return false;
+      }
     })();
 
     const progress = getProgress();
@@ -937,7 +1032,7 @@
       title.className = 'v11-weak-title';
       title.textContent =
         ch.title && typeof ch.title === 'object'
-          ? ch.title[l] || ch.title.en || 'Chapter ' + ch.id
+          ? ch.title[lang()] || ch.title.en || 'Chapter ' + ch.id
           : ch.title;
       const acc = document.createElement('span');
       acc.className = 'v11-weak-acc';

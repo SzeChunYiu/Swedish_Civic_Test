@@ -69,6 +69,18 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /entitlementStatus,\s*\n\s*\};/);
 });
 
+test('Remove Ads entitlement hook parity has focused validator routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-remove-ads-hook-parity/);
+  assert.match(validatorSource, /validateRemoveAdsEntitlementHookParity\(\);/);
+  assert.match(validatorSource, /removeAdsEntitlementHookCasesValidated/);
+  assert.match(validatorSource, /removeAdsEntitlementHookParityValidated/);
+});
+
 test('Home Remove Ads surfaces wait for entitlement readiness before rendering', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
@@ -80,6 +92,37 @@ test('Home Remove Ads surfaces wait for entitlement readiness before rendering',
   assert.match(
     homeSource,
     /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects ungated Home ad entitlements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (', '{true ? (');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
   );
 });
 

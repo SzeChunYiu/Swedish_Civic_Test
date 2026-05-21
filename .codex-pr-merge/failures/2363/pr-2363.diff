@@ -1,0 +1,269 @@
+diff --git a/app/citizenship-requirements.tsx b/app/citizenship-requirements.tsx
+index 7db97f3a7..f9c6a5c47 100644
+--- a/app/citizenship-requirements.tsx
++++ b/app/citizenship-requirements.tsx
+@@ -1,6 +1,6 @@
+ import { Link } from 'expo-router';
+ import { useMemo } from 'react';
+-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
++import { Pressable, StyleSheet, Text, View } from 'react-native';
+ 
+ import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+ import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
+@@ -274,15 +274,15 @@ export default function CitizenshipRequirementsScreen() {
+         <Text style={styles.sourcesSubtitle}>{copy.sourceListSubtitle}</Text>
+         <View style={styles.sourceList}>
+           {citizenshipRequirementSources.map((source) => (
+-            <Pressable
++            <Link
+               key={source.id}
+               accessibilityHint={copy.openSourceHint}
+-              accessibilityLabel={`${source.publisher}: ${source.title[language]}`}
++              accessibilityLabel={`${copy.openSourceHint}: ${source.title[language]}`}
+               accessibilityRole="link"
+-              onPress={() => {
+-                void Linking.openURL(source.url);
+-              }}
+-              style={({ pressed }) => [styles.sourceRow, pressed ? styles.sourceRowPressed : null]}
++              href={source.url}
++              rel="noreferrer"
++              style={styles.sourceRow}
++              target="_blank"
+             >
+               <Text style={styles.sourceTitle}>{source.title[language]}</Text>
+               <Text style={styles.sourceMeta}>
+@@ -292,7 +292,7 @@ export default function CitizenshipRequirementsScreen() {
+                 {copy.retrievedLabel} {source.retrievedDate}
+               </Text>
+               <Text style={styles.sourceUrl}>{source.url}</Text>
+-            </Pressable>
++            </Link>
+           ))}
+         </View>
+       </Card>
+@@ -453,9 +453,6 @@ const styles = StyleSheet.create({
+     minHeight: space[6],
+     padding: space[1.25],
+   },
+-  sourceRowPressed: {
+-    backgroundColor: colors.surfaceMuted,
+-  },
+   sourceTitle: {
+     color: colors.text,
+     fontSize: typography.bodySemibold.fontSize,
+diff --git a/tests/content-citizenship-requirements-parity.test.js b/tests/content-citizenship-requirements-parity.test.js
+index 2f65160e0..09132e149 100644
+--- a/tests/content-citizenship-requirements-parity.test.js
++++ b/tests/content-citizenship-requirements-parity.test.js
+@@ -142,6 +142,15 @@ test('citizenship requirements screen renders interactive sourced checklist with
+   assert.match(routeSource, /aria-checked=\{checked\}/);
+   assert.match(routeSource, /buildSummary\(/);
+   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
++  assert.match(
++    routeSource,
++    /accessibilityLabel=\{`\$\{copy\.openSourceHint\}: \$\{source\.title\[language\]\}`\}/,
++  );
++  assert.match(routeSource, /href=\{source\.url\}/);
++  assert.match(routeSource, /target="_blank"/);
++  assert.match(routeSource, /rel="noreferrer"/);
++  assert.match(routeSource, /<Text style=\{styles\.sourceUrl\}>\{source\.url\}<\/Text>/);
++  assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
+   assert.match(routeSource, /Migrationsverket always decides the application/);
+   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
+   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
+diff --git a/tests/e2e/legal-external-links.spec.ts b/tests/e2e/legal-external-links.spec.ts
+index 815e6ba8f..1718c3b9d 100644
+--- a/tests/e2e/legal-external-links.spec.ts
++++ b/tests/e2e/legal-external-links.spec.ts
+@@ -31,6 +31,18 @@ type AboutTheTestOfficialSourceFixture = {
+   urlLabel: string;
+ };
+ 
++type CitizenshipRequirementsOfficialSourceFixture = {
++  language: AppLanguage;
++  openPrefix: string;
++  pageTitle: string;
++  publishers: string[];
++  retrievedLabel: string;
++  sourceDates: Array<string | null>;
++  sourceDateLabel: string;
++  sourceHeading: string;
++  sourceTitles: string[];
++};
++
+ const UHR_EDUCATION_MATERIAL_URL = 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
+ const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+@@ -42,6 +54,16 @@ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+ ];
+ const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
+ const UHR_AUTHORITY_BOUNDARY_URL = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[0];
++const CITIZENSHIP_REQUIREMENTS_OFFICIAL_SOURCE_URLS = [
++  'https://www.migrationsverket.se/du-vill-ansoka/svenskt-medborgarskap/medborgarskap-for-vuxna/medborgarskap-for-vuxna.html',
++  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
++  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
++  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
++  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
++  'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
++  'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
++];
++const CITIZENSHIP_REQUIREMENTS_SOURCE_RETRIEVED_DATE = '2026-05-19';
+ 
+ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
+   {
+@@ -159,6 +181,80 @@ const aboutTheTestOfficialSourceFixtures: AboutTheTestOfficialSourceFixture[] =
+   },
+ ];
+ 
++const citizenshipRequirementsOfficialSourceFixtures: CitizenshipRequirementsOfficialSourceFixture[] =
++  [
++    {
++      language: 'sv',
++      openPrefix: 'Öppna källan i webbläsaren',
++      pageTitle: 'Krav och behörighet',
++      publishers: [
++        'Migrationsverket',
++        'Migrationsverket',
++        'Universitets- och högskolerådet',
++        'Universitets- och högskolerådet',
++        'Universitets- och högskolerådet',
++        'Regeringen',
++        'Regeringen',
++      ],
++      retrievedLabel: 'Kontrollerad',
++      sourceDates: [
++        null,
++        '2026-05-06',
++        '2026-05-06',
++        '2026-05-06',
++        '2026-05-19',
++        '2026-02-06',
++        '2025-11-06',
++      ],
++      sourceDateLabel: 'Källdatum',
++      sourceHeading: 'Officiella källor',
++      sourceTitles: [
++        'Ansök om svenskt medborgarskap',
++        'Nya regler för svenskt medborgarskap från 6 juni 2026',
++        'Om medborgarskapsprovet',
++        'Anmälan till medborgarskapsprovet',
++        'Utbildningsmaterial om det svenska samhället',
++        'Ändrat uppdrag för medborgarskapsprovet',
++        'Inkomstbasbelopp och inkomstindex för år 2026 fastställt',
++      ],
++    },
++    {
++      language: 'en',
++      openPrefix: 'Open the source in the browser',
++      pageTitle: 'Requirements and eligibility',
++      publishers: [
++        'Migrationsverket',
++        'Migrationsverket',
++        'Universitets- och högskolerådet',
++        'Universitets- och högskolerådet',
++        'Universitets- och högskolerådet',
++        'Regeringen',
++        'Regeringen',
++      ],
++      retrievedLabel: 'Checked',
++      sourceDates: [
++        null,
++        '2026-05-06',
++        '2026-05-06',
++        '2026-05-06',
++        '2026-05-19',
++        '2026-02-06',
++        '2025-11-06',
++      ],
++      sourceDateLabel: 'Source date',
++      sourceHeading: 'Official sources',
++      sourceTitles: [
++        'Apply for Swedish citizenship',
++        'New rules for Swedish citizenship from 6 June 2026',
++        'About the citizenship test',
++        'Registration for the citizenship test',
++        'Study material about Swedish society',
++        'Updated assignment for the citizenship test',
++        'Income base amount and income index for 2026 set',
++      ],
++    },
++  ];
++
+ test.use({ viewport: { width: 390, height: 844 } });
+ 
+ async function seedCleanLanguage(page: Page, language: AppLanguage) {
+@@ -257,6 +353,13 @@ async function stubExternalDestinations(page: Page) {
+       status: 200,
+     }),
+   );
++  await page.context().route('https://www.regeringen.se/**', (route) =>
++    route.fulfill({
++      body: '<!doctype html><title>Regeringen destination</title>',
++      contentType: 'text/html; charset=utf-8',
++      status: 200,
++    }),
++  );
+   await page.context().route('https://szechunyiu.github.io/**', (route) =>
+     route.fulfill({
+       body: '<!doctype html><title>Public support destination</title>',
+@@ -312,6 +415,60 @@ for (const fixture of legalExternalLinkFixtures) {
+   });
+ }
+ 
++for (const fixture of citizenshipRequirementsOfficialSourceFixtures) {
++  test(`/citizenship-requirements exposes ${fixture.language} official source links safely`, async ({
++    page,
++  }) => {
++    const pageErrors = collectPageErrors(page);
++    await stubExternalDestinations(page);
++    await seedCleanLanguage(page, fixture.language);
++
++    await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
++    await dismissBlockingModals(page);
++
++    await expect(page.getByRole('heading', { name: fixture.pageTitle }).last()).toBeVisible();
++    await expect(page.getByRole('heading', { name: fixture.sourceHeading }).last()).toBeVisible();
++
++    for (const [index, sourceTitle] of fixture.sourceTitles.entries()) {
++      const url = CITIZENSHIP_REQUIREMENTS_OFFICIAL_SOURCE_URLS[index];
++      const sourceDate = fixture.sourceDates[index];
++      const link = page
++        .getByRole('link', { name: `${fixture.openPrefix}: ${sourceTitle}` })
++        .first();
++
++      await expect(link).toBeVisible();
++      await expect(link).toContainText(sourceTitle);
++      await expect(link).toContainText(fixture.publishers[index]);
++      await expect(link).toContainText(url);
++      await expect(link).toContainText(
++        `${fixture.retrievedLabel} ${CITIZENSHIP_REQUIREMENTS_SOURCE_RETRIEVED_DATE}`,
++      );
++      if (sourceDate) {
++        await expect(link).toContainText(`${fixture.sourceDateLabel} ${sourceDate}`);
++      }
++      await expect(link).toHaveAttribute('href', url);
++      await expect(link).toHaveAttribute('target', '_blank');
++      await expect(link).toHaveAttribute('rel', 'noreferrer');
++    }
++
++    await expectExternalLinksAreTouchSafe(page);
++    await expectNoHorizontalOverflow(page);
++
++    const firstOfficialLink = page
++      .getByRole('link', {
++        name: `${fixture.openPrefix}: ${fixture.sourceTitles[0]}`,
++      })
++      .first();
++    const popupPromise = page.waitForEvent('popup');
++    await firstOfficialLink.click();
++    const popup = await popupPromise;
++    await expect.poll(() => popup.url()).toBe(CITIZENSHIP_REQUIREMENTS_OFFICIAL_SOURCE_URLS[0]);
++    await popup.close();
++
++    expect(pageErrors).toEqual([]);
++  });
++}
++
+ for (const fixture of aboutTheTestOfficialSourceFixtures) {
+   test(`/about-the-test exposes ${fixture.language} official source links safely`, async ({
+     page,

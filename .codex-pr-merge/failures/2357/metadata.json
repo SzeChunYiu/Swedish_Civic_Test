@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## What changed\n- Refreshes `site/asset-manifest.json` from the current static `site/` tree, including referenced image assets and `signin.js`.\n- Restores `npm run test:static-site-asset-references` so it runs the manifest `--check` before the static reference tests.\n- Removes the stale `signin.js` ban from the static asset reference test; missing local index references are now covered by the general shipped-asset and manifest-reference assertions.\n\n## Validation\n- `npm run test:static-site-asset-references`\n- `node --test scripts/check-live-site.test.js --test-name-pattern \"asset manifest\"`\n- `npm run typecheck -- --pretty false`\n- `npm run lint`\n- `npm run test:ownership`\n- `node --check scripts/static-site-asset-references.test.js`\n- `git diff --check`",
+  "files": [
+    { "path": "package.json", "additions": 1, "deletions": 1, "changeType": "MODIFIED" },
+    {
+      "path": "scripts/static-site-asset-references.test.js",
+      "additions": 0,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "site/asset-manifest.json",
+      "additions": 86,
+      "deletions": 26,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/static-asset-manifest-reference-1779362156-649673",
+  "headRefOid": "45ba0d46cf0f35ac22547f0437a9f9194f555c28",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2357,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:22:31Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222824099/job/77161964777",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:21:17Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "static-site: bind manifest to index references",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2357"
+}

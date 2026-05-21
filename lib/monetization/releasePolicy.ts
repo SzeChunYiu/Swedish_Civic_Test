@@ -29,7 +29,17 @@ function readBooleanFlag(value: string | undefined, fallback: boolean): boolean 
   return ['1', 'true', 'yes', 'on'].includes(normalized);
 }
 
+type ReleasePolicyE2ERuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_ENABLE_PRO_RUNTIME_SCOPE__?: boolean;
+};
+
 export function isProRuntimeScopeEnabled(): boolean {
+  const runtime = globalThis as ReleasePolicyE2ERuntime;
+  if (runtime.__SMT_E2E__ && runtime.__SMT_ENABLE_PRO_RUNTIME_SCOPE__ === true) {
+    return true;
+  }
+
   return readBooleanFlag(
     process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE,
     releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled,

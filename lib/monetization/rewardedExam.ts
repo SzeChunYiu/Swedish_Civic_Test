@@ -3,6 +3,7 @@ import { getLocalDateKey } from '../learning/streaks';
 import { REAL_ADS_ENABLED, shouldShowAd } from './ads';
 import type { AdRuntimePlatform } from './ads';
 import type { AdConsentDecision } from './consent';
+import { isStrictEntitlementFlag } from './premium';
 
 export const REWARDED_EXTRA_EXAM_PLACEMENT = 'rewarded_extra_exam' as const;
 export const MOCK_EXAM_ACCESS_STORAGE_KEY = 'monetization.mockExamAccess.v1';
@@ -443,7 +444,7 @@ export function getMockExamAccessDecision({
     rewardedExtraExamCredits: credits,
   };
 
-  if (entitlements.unlimitedMockExams) {
+  if (isStrictEntitlementFlag(entitlements.unlimitedMockExams)) {
     return {
       ...baseDecision,
       canOfferRewardedAd: false,
@@ -470,7 +471,7 @@ export function getMockExamAccessDecision({
     };
   }
 
-  if (entitlements.adsDisabled) {
+  if (isStrictEntitlementFlag(entitlements.adsDisabled)) {
     return {
       ...baseDecision,
       canOfferRewardedAd: false,

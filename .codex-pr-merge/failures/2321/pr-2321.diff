@@ -1,0 +1,191 @@
+diff --git a/package.json b/package.json
+index 052b11aae..002188b6e 100644
+--- a/package.json
++++ b/package.json
+@@ -46,7 +46,7 @@
+     "test:a11y-labels": "node --test scripts/accessibility-labels.test.js",
+     "test:public-urls": "node --test scripts/check-public-urls.test.js",
+     "test:static-site-account-scope": "node --test scripts/static-site-account-scope.test.js",
+-    "test:static-site-asset-references": "node --test scripts/static-site-asset-references.test.js",
++    "test:static-site-asset-references": "node scripts/update-site-asset-manifest.js --check && node --test scripts/static-site-asset-references.test.js",
+     "update:site-asset-manifest": "node scripts/update-site-asset-manifest.js",
+     "test:native-account-scope": "node --test scripts/native-account-scope.test.js",
+     "test:static-site-privacy-copy": "node --test scripts/static-site-privacy-copy.test.js",
+diff --git a/scripts/static-site-asset-references.test.js b/scripts/static-site-asset-references.test.js
+index 8e5353a2c..f403cf94d 100644
+--- a/scripts/static-site-asset-references.test.js
++++ b/scripts/static-site-asset-references.test.js
+@@ -17,13 +17,11 @@ function readSiteIndex() {
+ }
+ 
+ test('static site index references only shipped local assets', () => {
+-  const indexHtml = readSiteIndex();
+   const missingAssets = listIndexAssetReferences(siteRoot).filter(
+     (assetPath) => !fs.existsSync(path.join(siteRoot, assetPath)),
+   );
+ 
+   assert.deepEqual(missingAssets, []);
+-  assert.doesNotMatch(indexHtml, /signin\.js/);
+ });
+ 
+ test('committed static site asset manifest matches shipped assets', () => {
+diff --git a/site/asset-manifest.json b/site/asset-manifest.json
+index ebe6a05ac..cdac1e86f 100644
+--- a/site/asset-manifest.json
++++ b/site/asset-manifest.json
+@@ -8,60 +8,120 @@
+       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
+     },
+     "app.js": {
+-      "bytes": 87404,
+-      "sha256": "84509e9dbde1e839723e3f108a0ecbe4ab4887985c7d982ad6339d706a537731"
++      "bytes": 94222,
++      "sha256": "2de7aad305a21a7483f2202d29b935740d67121cbb21a30b1950c56b117bea28"
++    },
++    "assets/banner.png": {
++      "bytes": 254757,
++      "sha256": "b0e4da2788b1e7e1011576a78e0b40ab815f458b3daa40b692c66e21b155bf85"
++    },
++    "assets/buddies/algis.png": {
++      "bytes": 142771,
++      "sha256": "7a4189309825124cfb43b3a5aa0709f16df654fba8951963c060322be1eaba13"
++    },
++    "assets/buddies/dala.png": {
++      "bytes": 143331,
++      "sha256": "f094a6359330f8bc1f5a287b62e20cb19b9a5398561363fc06990e96ce9aa8b6"
++    },
++    "assets/buddies/kaffe.png": {
++      "bytes": 94756,
++      "sha256": "5202ccc5ade74c4a92a878a586e0b749afbc990d4105fef080c6370560846703"
++    },
++    "assets/buddies/kanel.png": {
++      "bytes": 123596,
++      "sha256": "a907bc5ca5a095d64b9b6475caf2d7eb6faeb4e736a9b0837d036c817aeff799"
++    },
++    "assets/buddies/lucia.png": {
++      "bytes": 123169,
++      "sha256": "3f6b7a4edefa6136d7745bc3fc2cb4d018e07d842cc4def746c3b7f9737fe4aa"
++    },
++    "assets/buddies/sillis.png": {
++      "bytes": 78038,
++      "sha256": "dbb82f662602c24ad344a2b0028c746719ac92d0ed29011cf0c65d8ed6fcd1c0"
++    },
++    "assets/buddies/snogubbe.png": {
++      "bytes": 125490,
++      "sha256": "0ff7b23f11e1402a123bbf31737f1d44ee78d2c12267fd658de8a0554ab8177a"
++    },
++    "assets/buddies/stang.png": {
++      "bytes": 123855,
++      "sha256": "de593581886b36062849520bc4f6d40b980bd0e4315e6aa62f11834afe774c59"
++    },
++    "assets/buddies/tomte.png": {
++      "bytes": 101316,
++      "sha256": "2a2b0c4ab0c95190786d7cf5973c94ec2002339b7fb0dcba61ef0ef9bccc8850"
++    },
++    "assets/buddies/vasa.png": {
++      "bytes": 144619,
++      "sha256": "027c15a39187163041cd102919fec0465bdd0ab9a6dd163b5ecab8f7fda4f725"
++    },
++    "assets/logo-mark.png": {
++      "bytes": 61498,
++      "sha256": "4d30d10aabeecd005c802fd912be5b3ebb8d292687a59b41859aebe3deea04e7"
++    },
++    "assets/logo-wordmark-text.png": {
++      "bytes": 1206666,
++      "sha256": "4b400b4d5cdaa92b6bf3751b07537b968f54146f57d902277820fe3b47c80b3b"
++    },
++    "assets/logo-wordmark.png": {
++      "bytes": 254162,
++      "sha256": "668e12cef108a8614ab7952977d268bfc50cf75889d15b29bb59f6c731b88fca"
+     },
+     "buddies.js": {
+-      "bytes": 34479,
+-      "sha256": "512043b5290b4f3ddc251679d023e05ceef46517e3e991f2870f6c29123bcb8a"
++      "bytes": 25676,
++      "sha256": "cee7bf0699dcf66eb5730780c4453063bd3f293bcf176aad83fa0014cab9a368"
+     },
+     "ebook-tools.js": {
+-      "bytes": 15253,
+-      "sha256": "96e3353615e2bb0ed2d49a6c8d5daf61b58938081ccdc7f6860bebe3339be1c8"
++      "bytes": 17330,
++      "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
+     },
+     "ebook.js": {
+-      "bytes": 476116,
+-      "sha256": "1bd43bd204f8eaa6b4a2099bfbc855fa658794e08aa4e7cb91517e1115e2583d"
++      "bytes": 225838,
++      "sha256": "8ea3737b71919bb2d0dcf291526dcf7c957ce6e070238f9700abdea6b1da046c"
+     },
+     "extras.js": {
+-      "bytes": 14766,
+-      "sha256": "eda9aeb03acc3fb9fc5f8dfa7c7db7e919cfa53c9ac8a36a30fdc814ab05ccc0"
++      "bytes": 15921,
++      "sha256": "d254454c6e0cd274a66a6c750953c5538c633db18c80636a24c2b40bbe13a5ae"
+     },
+     "fx.js": {
+-      "bytes": 6492,
+-      "sha256": "5321407815aaaf2da99810721a156b3df655aa2722c956e0c3481b10e744cd98"
++      "bytes": 7050,
++      "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
+     },
+     "i18n-extras.js": {
+-      "bytes": 315953,
+-      "sha256": "2ad04d4317e2f5fb761082147535fff5935b7cd35a925e5f7f199e03a96f1da3"
++      "bytes": 313365,
++      "sha256": "40b9f8fdd3259b35e65ea5180bf2cebddbc1b4b9a04f8a6acd11bf6b91c39749"
+     },
+     "icon.png": {
+       "bytes": 362794,
+       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
+     },
+     "index.html": {
+-      "bytes": 64303,
+-      "sha256": "7d74c265f75c7cd548dbcbeadde5cea95015956a17a58f2128528ca2d5d01927"
++      "bytes": 67039,
++      "sha256": "efdf3a844e58c4a390313c6bcdb83f97acfa1dc2298cfb282e30d9773604ff2e"
+     },
+     "practice.js": {
+-      "bytes": 53929,
+-      "sha256": "bc7cae723d532d947babf8aeaf08984513f9c8bcdd9c3056cea27ac3376aaf0b"
++      "bytes": 57054,
++      "sha256": "a2dd4a7dfbddbb8a16b3a7fb932b3670728f1039e7b370d71e7195bfedb13f42"
+     },
+     "questions.js": {
+-      "bytes": 3624980,
+-      "sha256": "fc4073c87197c4bd02dc459719ea6afec74bd8f08be45b9b2bc7b81de02098d8"
++      "bytes": 3626221,
++      "sha256": "2241fe29ab8fd3acfbdf7c601ebb0b990c41871627764964db50e3c05c7d1210"
+     },
+     "settings.js": {
+-      "bytes": 12779,
+-      "sha256": "0b52dc512e7e5ddfc0197d813d498f3737391b7e0e3f82b4e0a69d9bda191129"
++      "bytes": 11923,
++      "sha256": "cce5e9e868d9904402cc2d9c9639aad3b0411f6008e91262fac4363417852bd3"
++    },
++    "signin.js": {
++      "bytes": 17016,
++      "sha256": "35d3c3a8149ae7ac0c680683542aa8a42a7b7734b07e10b688f8ee6c7405dbe0"
+     },
+     "site.js": {
+       "bytes": 5221,
+       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
+     },
+     "styles.css": {
+-      "bytes": 79467,
+-      "sha256": "762ebfd106da385412976159d8d5556d242a7e3467dd104b850e75c07ca5e807"
++      "bytes": 103585,
++      "sha256": "eaeee826c91f47ca269ece641092a2d02af01ea375faf58d7847e2e9be8149cb"
+     },
+     "tweaks-panel.jsx": {
+       "bytes": 25802,
+@@ -72,8 +132,8 @@
+       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
+     },
+     "v11.js": {
+-      "bytes": 20051,
+-      "sha256": "8226fb9298e20c16953cfff6d60714174e1b49fa6530afc41ed4be7435daef1e"
++      "bytes": 40614,
++      "sha256": "06325f3a2dd347b3c85863b28fbd55fbcdd853254a108444696b86917cc465e4"
+     }
+   }
+ }

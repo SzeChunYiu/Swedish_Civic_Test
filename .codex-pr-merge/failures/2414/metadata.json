@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- add `--focus-pro-lifetime-relaunch-parity` to `scripts/validate-content.js`\n- emit dedicated Pro Lifetime relaunch counters for bare `true` rejection, structured receipt-backed records, provider-backed restore/receipt revalidation, fail-closed clearing, and native provider wiring\n- add routing and runtime tests that execute the focused validator and assert its JSON summary\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-pro-lifetime-relaunch-parity`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/content-test-script-routing.test.js tests/v1-1-pro-iap.test.js scripts/monetization.test.js --test-name-pattern \"Pro Lifetime|proLifetime|relaunch|receipt|stored record|focus-pro-lifetime\"`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `git diff --check HEAD^`",
+  "files": [
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 201,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-test-script-routing.test.js",
+      "additions": 18,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-pro-iap.test.js",
+      "additions": 25,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/pro-lifetime-validator-relaunch-parity-1779369000",
+  "headRefOid": "28aecf2bb7a5dd1e04b2868907e70603bf1bebbf",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2414,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:25:01Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26228289966/job/77181347975",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T13:16:07Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: focus Pro Lifetime relaunch validation",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2414"
+}

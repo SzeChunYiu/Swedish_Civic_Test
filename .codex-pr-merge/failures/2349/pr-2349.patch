@@ -1,0 +1,241 @@
+From 0137569180037aad63cbd8e95d83ffe8a4d92eb3 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 13:05:04 +0200
+Subject: [PATCH] uiux: prove reduced-motion celebration cue behavior
+
+---
+ components/quiz/CelebrationBurst.tsx         |   2 +
+ scripts/validate-content.js                  |  18 ++++
+ tests/e2e/celebration-burst-feedback.spec.ts | 102 +++++++++++++++++--
+ 3 files changed, 113 insertions(+), 9 deletions(-)
+
+diff --git a/components/quiz/CelebrationBurst.tsx b/components/quiz/CelebrationBurst.tsx
+index 22e295706..644385e28 100644
+--- a/components/quiz/CelebrationBurst.tsx
++++ b/components/quiz/CelebrationBurst.tsx
+@@ -74,6 +74,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
+   if (reducedMotionEnabled) {
+     return (
+       <View
++        aria-hidden={true}
+         accessibilityElementsHidden
+         importantForAccessibility="no-hide-descendants"
+         pointerEvents="none"
+@@ -97,6 +98,7 @@ export function CelebrationBurst({ active, languageOverride, streak = 0 }: Celeb
+ 
+   return (
+     <Animated.View
++      aria-hidden={true}
+       accessibilityElementsHidden
+       importantForAccessibility="no-hide-descendants"
+       pointerEvents="none"
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 3f1a13a8d..b8a56c3af 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -3283,6 +3283,15 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
+     label: 'inactive render returns null',
+     pattern: /if \(!active\) return null;/,
+   },
++  {
++    label: 'shared reduced-motion hook',
++    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
++  },
++  {
++    label: 'reduced-motion branch hidden from accessibility tree',
++    pattern:
++      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
++  },
+   {
+     label: 'decorative animation hidden from accessibility tree',
+     pattern: /accessibilityElementsHidden/,
+@@ -3717,6 +3726,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
+ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
+   { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
+   { name: 'activeQuestionId', type: 'string | null', optional: false },
++  { name: 'answeredQuestionIds', type: 'string[]', optional: false },
+   { name: 'selectedOptionId', type: 'string | null', optional: false },
+   { name: 'shuffleSessionId', type: 'string', optional: false },
+   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
+@@ -14880,6 +14890,7 @@ function validatePracticeSessionStoreParity() {
+   ) {
+     usePracticeSessionStore.setState({
+       activeQuestionId: null,
++      answeredQuestionIds: [],
+       selectedOptionId: null,
+       shuffleSessionId: 'practice-session-0',
+     });
+@@ -14892,6 +14903,9 @@ function validatePracticeSessionStoreParity() {
+     if (state.shuffleSessionId !== 'practice-session-0') {
+       rejectRuntime('practice session selectOption must keep the current shuffle session seed');
+     }
++    if (!Array.isArray(state.answeredQuestionIds) || state.answeredQuestionIds.length !== 0) {
++      rejectRuntime('practice session selectOption must not mark a question answered');
++    }
+     const firstFeedbackKey = getPracticeInterstitialShowKey(
+       state.activeQuestionId,
+       state.shuffleSessionId,
+@@ -14924,6 +14938,9 @@ function validatePracticeSessionStoreParity() {
+     if (state.shuffleSessionId !== 'practice-session-1') {
+       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
+     }
++    if (!arrayEquals(state.answeredQuestionIds, ['q-validator'])) {
++      rejectRuntime('practice session advanceQuestion must record the answered question id once');
++    }
+     if (
+       firstFeedbackKey === getPracticeInterstitialShowKey('q-validator', state.shuffleSessionId)
+     ) {
+@@ -14932,6 +14949,7 @@ function validatePracticeSessionStoreParity() {
+ 
+     usePracticeSessionStore.setState({
+       activeQuestionId: null,
++      answeredQuestionIds: [],
+       selectedOptionId: null,
+       shuffleSessionId: 'practice-session-0',
+     });
+diff --git a/tests/e2e/celebration-burst-feedback.spec.ts b/tests/e2e/celebration-burst-feedback.spec.ts
+index d74513830..ffa3ae26c 100644
+--- a/tests/e2e/celebration-burst-feedback.spec.ts
++++ b/tests/e2e/celebration-burst-feedback.spec.ts
+@@ -3,6 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
+ import {
+   dismissBlockingModals,
+   markAboutTheTestSeen,
++  seedFreshSettingsLanguageAndAboutSeen,
+   seedSettingsLanguage,
+   type AppLanguage,
+ } from './browserLaunch';
+@@ -18,6 +19,12 @@ async function openRouteWithLanguage(page: Page, route: string, language: AppLan
+   await dismissBlockingModals(page);
+ }
+ 
++async function openFreshRouteWithLanguage(page: Page, route: string, language: AppLanguage) {
++  await seedFreshSettingsLanguageAndAboutSeen(page, language);
++  await page.goto(route, { waitUntil: 'networkidle' });
++  await dismissBlockingModals(page);
++}
++
+ function collectConsoleErrors(page: Page) {
+   const consoleErrors: string[] = [];
+ 
+@@ -70,30 +77,65 @@ async function expectNoOverlap(first: Locator, second: Locator, label: string) {
+   expect(boxesOverlap(firstBox!, secondBox!), label).toBe(false);
+ }
+ 
+-async function expectCelebrationCueVisibleAndDecorative(page: Page, label: string, score: Locator) {
+-  const cue = page.getByText(label, { exact: true }).first();
++async function expectCelebrationCueVisibleAndDecorative(
++  page: Page,
++  label: string,
++  score: Locator,
++  options: { checkAnimatedOpacity?: boolean } = {},
++) {
++  const cueContainer = page.locator('[aria-hidden="true"]').filter({ hasText: label }).first();
++  const cue = cueContainer.getByText(label, { exact: true }).first();
+ 
++  await expect(cueContainer).toBeVisible();
+   await expect(cue).toBeVisible();
++  if (options.checkAnimatedOpacity !== false) {
++    await expect
++      .poll(
++        () =>
++          cue.evaluate((node) => {
++            let element: Element | null = node;
++
++            while (element) {
++              const opacity = Number.parseFloat(window.getComputedStyle(element).opacity);
++              if (opacity <= 0) return false;
++              element = element.parentElement;
++            }
++
++            return true;
++          }),
++        { message: `${label} should render with visible opacity before the burst fades` },
++      )
++      .toBe(true);
++  }
++  await expect(page.getByLabel(label, { exact: true })).toHaveCount(0);
++  await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
+   await expect
+     .poll(
+       () =>
+         cue.evaluate((node) => {
+-          let element: Element | null = node;
++          const focusableSelector = [
++            'a[href]',
++            'button',
++            'input',
++            'select',
++            'textarea',
++            '[tabindex]:not([tabindex="-1"])',
++            '[role="button"]',
++            '[role="link"]',
++            '[role="tab"]',
++          ].join(',');
+ 
++          let element: Element | null = node;
+           while (element) {
+-            const opacity = Number.parseFloat(window.getComputedStyle(element).opacity);
+-            if (opacity <= 0) return false;
++            if (element.matches(focusableSelector)) return false;
+             element = element.parentElement;
+           }
+ 
+           return true;
+         }),
+-      { message: `${label} should render with visible opacity before the burst fades` },
++      { message: `${label} decorative cue should not be keyboard focusable` },
+     )
+     .toBe(true);
+-  await expect(cue.locator('xpath=ancestor-or-self::*[@aria-hidden="true"]')).not.toHaveCount(0);
+-  await expect(page.getByLabel(label, { exact: true })).toHaveCount(0);
+-  await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
+   await expectNoOverlap(cue, score, `${label} cue should not overlap the score`);
+   await expectNoHorizontalPageOverflow(page, `${label} feedback`);
+ }
+@@ -150,3 +192,45 @@ test('routed quiz shows the English celebration cue only for correct feedback an
+   await expectNoHorizontalPageOverflow(page, 'Routed quiz after session change');
+   expect(consoleErrors).toEqual([]);
+ });
++
++test('reduced motion keeps celebration cues static, decorative, and cleared after navigation', async ({
++  page,
++}) => {
++  const consoleErrors = collectConsoleErrors(page);
++
++  await page.emulateMedia({ reducedMotion: 'reduce' });
++  await openFreshRouteWithLanguage(page, '/practice', 'sv');
++
++  await expect(page.getByText('Var ligger Sverige?', { exact: true })).toBeVisible();
++  await page.getByLabel('Välj svaret I Norden i norra Europa').click();
++
++  const practiceScore = page.getByText('Poäng: 1/1', { exact: true });
++  await expect(practiceScore).toBeVisible();
++  await expectCelebrationCueVisibleAndDecorative(page, 'Rätt svar', practiceScore, {
++    checkAnimatedOpacity: false,
++  });
++
++  await page.getByLabel('Gå till nästa övningsfråga').click();
++
++  await expect(page.getByText('Fråga 2', { exact: true })).toBeVisible();
++  await expect(page.getByText('Rätt svar', { exact: true })).toHaveCount(0);
++
++  await openFreshRouteWithLanguage(page, '/quiz/q001', 'en');
++  await expect(page.getByText('Where is Sweden located?', { exact: true })).toBeVisible();
++  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
++
++  const routedScore = page.getByText('Score: 1/1', { exact: true });
++  await expect(routedScore).toBeVisible();
++  await expectCelebrationCueVisibleAndDecorative(page, 'Correct answer', routedScore, {
++    checkAnimatedOpacity: false,
++  });
++
++  await page.getByLabel('Try this quiz question again').click();
++
++  await expect(
++    page.getByLabel('Select answer In the Nordic region in northern Europe'),
++  ).toBeVisible();
++  await expect(page.getByText('Correct answer', { exact: true })).toHaveCount(0);
++  await expectNoHorizontalPageOverflow(page, 'Reduced-motion celebration after reset');
++  expect(consoleErrors).toEqual([]);
++});

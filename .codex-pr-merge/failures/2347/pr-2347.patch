@@ -1,0 +1,387 @@
+From 0b27103e9b5e1eb6394ae434745e29aed2c4174f Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 12:56:36 +0200
+Subject: [PATCH] data-integrity: naturalize q050 source criticism English
+
+---
+ content/question-bank.csv                     | 10 +-
+ data/additionalQuestions.ts                   |  4 +-
+ scripts/derived-content.test.js               | 29 ++++++
+ scripts/validate-content.js                   | 24 +++++
+ site/questions.js                             | 20 ++--
+ .../content-published-question-types.test.js  | 97 +++++++++++++++++++
+ 6 files changed, 167 insertions(+), 17 deletions(-)
+
+diff --git a/content/question-bank.csv b/content/question-bank.csv
+index 72bf8a7a8..659851aeb 100644
+--- a/content/question-bank.csv
++++ b/content/question-bank.csv
+@@ -48,7 +48,7 @@
+ "q047","ch06","true_false","Den som lämnar uppgifter till tidningar, radio och tv har rätt att vara anonym.","A person who gives information to newspapers, radio, and TV has the right to be anonymous.","En person får lämna uppgifter till tidningar, radio och tv utan att straffas. Den som meddelar sådana uppgifter till medier har också rätt att vara anonym, vilket skyddar källan.","A person may provide information to newspapers, radio, and TV without being punished. Someone who provides this kind of information to media also has the right to remain anonymous, which protects the source.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Fria medier","20","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-protection|media-freedom|anonymity","uhr"
+ "q048","ch06","single_choice","Vilka tre företag kallas public service i Sverige?","Which three companies are called public service in Sweden?","Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR) är de tre medieföretag som kallas public service. De har ett särskilt uppdrag, ska erbjuda många olika typer av program och finansieras genom en avgift som tas ut via skatten; myndigheter, politiska organ och fackliga centralorganisationer är därför fel.","Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR) are the three media companies called public service. They have a special mission, should offer many types of programs, and are financed through a fee collected via tax; agencies, political bodies, and union confederations are therefore incorrect.","a","[{""id"":""a"",""text"":""Sveriges Radio (SR), Sveriges Television (SVT) och Utbildningsradion (UR)""},{""id"":""b"",""text"":""Polisen, Skatteverket och Migrationsverket""},{""id"":""c"",""text"":""Riksdagen, regeringen och domstolarna""},{""id"":""d"",""text"":""LO, TCO och Saco""}]","[{""id"":""a"",""text"":""Swedish Radio (SR), Swedish Television (SVT), and Swedish Educational Broadcasting Company (UR)""},{""id"":""b"",""text"":""The Police, Tax Agency, and Migration Agency""},{""id"":""c"",""text"":""The Riksdag, government, and courts""},{""id"":""d"",""text"":""LO, TCO, and Saco""}]","Mediernas roll","Public service","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","medium","published","public-service|sr|svt|ur","uhr"
+ "q049","ch06","true_false","Public service-företag ska vara oberoende av politiska och andra intressen.","Public service companies should be independent of political and other interests.","Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten.","Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Public service","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","public-service|media-independence|impartiality","uhr"
+-"q050","ch06","single_choice","Vad betyder det att vara källkritisk?","What does it mean to be source-critical?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information","uhr"
++"q050","ch06","single_choice","Vad betyder det att vara källkritisk?","What does source criticism mean?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information","uhr"
+ "q051","ch07","single_choice","Varför bildades Förenta nationerna efter andra världskriget?","Why was the United Nations created after the Second World War?","Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har.","After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.","a","[{""id"":""a"",""text"":""För att förhindra krig och skydda människors rättigheter""},{""id"":""b"",""text"":""För att bestämma svenska kommunalskatter""},{""id"":""c"",""text"":""För att ersätta EU""},{""id"":""d"",""text"":""För att kontrollera alla tidningar""}]","[{""id"":""a"",""text"":""To prevent war and protect human rights""},{""id"":""b"",""text"":""To decide Swedish municipal taxes""},{""id"":""c"",""text"":""To replace the EU""},{""id"":""d"",""text"":""To control all newspapers""}]","Mänskliga rättigheter","Mänskliga rättigheter gäller alla","22","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","un|human-rights|history","uhr"
+ "q052","ch07","single_choice","Vilket påstående stämmer om FN:s förklaring om de mänskliga rättigheterna?","Which statement is correct about the UN Universal Declaration of Human Rights?","FN presenterade förklaringen om de mänskliga rättigheterna 1948, och den innehåller 30 artiklar. Förklaringen utgår från att alla människor är födda fria och lika i värde och rättigheter samt har rätt till ett liv fritt från våld.","The UN presented the Universal Declaration of Human Rights in 1948, and it contains 30 articles. The declaration is based on all people being born free and equal in value and rights and having the right to a life free from violence.","a","[{""id"":""a"",""text"":""Den presenterades 1948 och innehåller 30 artiklar""},{""id"":""b"",""text"":""Den presenterades 1918 och gäller bara Europa""},{""id"":""c"",""text"":""Den säger att bara medborgare har rättigheter""},{""id"":""d"",""text"":""Den handlar bara om semester från arbetet""}]","[{""id"":""a"",""text"":""It was presented in 1948 and contains 30 articles""},{""id"":""b"",""text"":""It was presented in 1918 and applies only to Europe""},{""id"":""c"",""text"":""It says that only citizens have rights""},{""id"":""d"",""text"":""It is only about vacation from work""}]","Mänskliga rättigheter","FN:s förklaring om de mänskliga rättigheterna","22","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","human-rights|un|1948","uhr"
+ "q053","ch07","single_choice","Vad innebär målet med Sveriges jämställdhetspolitik?","What does the goal of Sweden’s gender equality policy mean?","Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv. Exempel som lika lön, utbildning och delad föräldraledighet visar att de smalare eller motsatta alternativen är fel.","Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives. Examples such as equal pay, education, and shared parental leave show that the narrower or opposite alternatives are incorrect.","a","[{""id"":""a"",""text"":""Att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv""},{""id"":""b"",""text"":""Att jämställdhet bara handlar om hur många kvinnor som finns i politiken""},{""id"":""c"",""text"":""Att kvinnor och män ska ha olika rättigheter i arbetslivet""},{""id"":""d"",""text"":""Att föräldraledighet bara ska tas av kvinnor""}]","[{""id"":""a"",""text"":""That women and men should have the same rights and duties and equal power to influence society and their own lives""},{""id"":""b"",""text"":""That gender equality is only about how many women are in politics""},{""id"":""c"",""text"":""That women and men should have different rights in working life""},{""id"":""d"",""text"":""That parental leave should only be taken by women""}]","Mänskliga rättigheter","Jämställdhet mellan könen","23","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","medium","published","gender-equality|rights|policy","uhr"
+@@ -374,10 +374,10 @@
+ "q373","ch06","true_false","Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida.","Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides.","Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten.","Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Public service","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","public-service|media-independence|impartiality|published-variant|true-false","derived"
+ "q374","ch06","true_false","Public service-företag ska inte vara oberoende av politiska och andra intressen.","Public service companies should not be independent of political and other interests.","Public service-företag ska vara oberoende av politiska och andra intressen.","Public service companies should be independent of political and other interests.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Public service","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","public-service|media-independence|impartiality|published-variant|false-statement","derived"
+ "q375","ch06","single_choice","Vilken uppgift stämmer om public service-företag?","Which fact is correct about public service companies?","Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida. Företagen får inte tjäna pengar på reklam, utan finansieras genom en avgift via skatten.","Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides. The companies may not earn money from advertising; instead, they are financed through a fee collected via tax.","a","[{""id"":""a"",""text"":""Public service ska vara oberoende av politiska och andra intressen, rapportera om samhället och låta olika åsikter komma till tals utan att välja sida.""},{""id"":""b"",""text"":""Public service-företag ska inte vara oberoende av politiska och andra intressen.""},{""id"":""c"",""text"":""Båda påståendena är korrekta""},{""id"":""d"",""text"":""Inget av påståendena är korrekt""}]","[{""id"":""a"",""text"":""Public service should be independent of political and other interests, report on society, and let different views be heard without taking sides.""},{""id"":""b"",""text"":""Public service companies should not be independent of political and other interests.""},{""id"":""c"",""text"":""Both statements are correct""},{""id"":""d"",""text"":""Neither statement is correct""}]","Mediernas roll","Public service","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","public-service|media-independence|impartiality|published-variant|judgement","derived"
+-"q376","ch06","single_choice","Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?","Which answer best matches? What does it mean to be source-critical?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|section-practice","derived"
+-"q377","ch06","true_false","Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.","To be source-critical means questioning and checking whether information is correct.","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|true-false","derived"
+-"q378","ch06","true_false","Att vara källkritisk betyder att aldrig läsa nyheter.","To be source-critical means never reading news.","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|false-statement","derived"
+-"q379","ch06","single_choice","Välj rätt alternativ: Vad betyder det att vara källkritisk?","Choose the correct option: What does it mean to be source-critical?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|judgement","derived"
++"q376","ch06","single_choice","Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?","Which answer best matches? What does source criticism mean?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|section-practice","derived"
++"q377","ch06","true_false","Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.","Source criticism means questioning and checking whether information is correct.","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|true-false","derived"
++"q378","ch06","true_false","Att vara källkritisk betyder att aldrig läsa nyheter.","Source criticism means never reading news.","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|false-statement","derived"
++"q379","ch06","single_choice","Välj rätt alternativ: Vad betyder det att vara källkritisk?","Choose the correct option: What does source criticism mean?","Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.","Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.","a","[{""id"":""a"",""text"":""Att ifrågasätta och kontrollera om information är korrekt""},{""id"":""b"",""text"":""Att aldrig läsa nyheter""},{""id"":""c"",""text"":""Att bara lita på sociala medier""},{""id"":""d"",""text"":""Att sprida uppgifter innan man kontrollerar dem""}]","[{""id"":""a"",""text"":""Questioning and checking whether information is correct""},{""id"":""b"",""text"":""Never reading news""},{""id"":""c"",""text"":""Only trusting social media""},{""id"":""d"",""text"":""Spreading information before checking it""}]","Mediernas roll","Källkritik","21","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","source-criticism|media-literacy|information|published-variant|judgement","derived"
+ "q380","ch07","single_choice","Vilket svar stämmer bäst? Varför bildades Förenta nationerna efter andra världskriget?","Which answer best matches? Why was the United Nations created after the Second World War?","Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har.","After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.","a","[{""id"":""a"",""text"":""För att förhindra krig och skydda människors rättigheter""},{""id"":""b"",""text"":""För att bestämma svenska kommunalskatter""},{""id"":""c"",""text"":""För att ersätta EU""},{""id"":""d"",""text"":""För att kontrollera alla tidningar""}]","[{""id"":""a"",""text"":""To prevent war and protect human rights""},{""id"":""b"",""text"":""To decide Swedish municipal taxes""},{""id"":""c"",""text"":""To replace the EU""},{""id"":""d"",""text"":""To control all newspapers""}]","Mänskliga rättigheter","Mänskliga rättigheter gäller alla","22","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","un|human-rights|history|published-variant|section-practice","derived"
+ "q381","ch07","true_false","Förenta nationerna bildades efter andra världskriget för att förhindra krig och skydda människors rättigheter.","The United Nations was created after the Second World War to prevent war and protect human rights.","Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har.","After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mänskliga rättigheter","Mänskliga rättigheter gäller alla","22","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","un|human-rights|history|published-variant|true-false","derived"
+ "q382","ch07","true_false","Förenta nationerna bildades efter andra världskriget för att bestämma svenska kommunalskatter.","The United Nations was created after the Second World War to decide Swedish municipal taxes.","Efter andra världskriget 1945 skapade 51 länder Förenta nationerna för att förhindra framtida krig och skydda varje människas rättigheter. Ett av FN:s första uppdrag var att komma överens om rättigheter som alla människor har.","After the Second World War in 1945, 51 countries created the United Nations to prevent future wars and protect every person’s rights. One of the UN’s first tasks was to agree on rights that all people have.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Mänskliga rättigheter","Mänskliga rättigheter gäller alla","22","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","un|human-rights|history|published-variant|false-statement","derived"
+diff --git a/data/additionalQuestions.ts b/data/additionalQuestions.ts
+index 7359a8369..c59e8a553 100644
+--- a/data/additionalQuestions.ts
++++ b/data/additionalQuestions.ts
+@@ -669,7 +669,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
+     'ch06',
+     { chapter: 'Mediernas roll', section: 'Källkritik', pageApprox: 21 },
+     'Vad betyder det att vara källkritisk?',
+-    'What does it mean to be source-critical?',
++    'What does source criticism mean?',
+     [
+       [
+         'Att ifrågasätta och kontrollera om information är korrekt',
+@@ -684,7 +684,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
+     ],
+     0,
+     'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+-    'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+     ['source-criticism', 'media-literacy', 'information'],
+     'easy',
+   ),
+diff --git a/scripts/derived-content.test.js b/scripts/derived-content.test.js
+index 03e75d3d2..88bdabfbe 100644
+--- a/scripts/derived-content.test.js
++++ b/scripts/derived-content.test.js
+@@ -1551,3 +1551,32 @@ test('derivePublishedQuestions rewrites definition-style true/false variants as
+     /^(?:Att (?:Sverige är (?:en konstitutionell monarki|en sekulär stat)|val i en demokrati är hemliga) betyder att|That (?:Sweden is (?:a constitutional monarchy|a secular state)|elections in a democracy are secret) means\b)/im,
+   );
+ });
++
++test('derivePublishedQuestions keeps q050 source criticism single-choice English natural', () => {
++  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
++  const { sourceQuestions } = loadTs('data/questions.ts');
++  const source = sourceQuestions.find((question) => question.id === 'q050');
++  assert.ok(source, 'q050 source question should exist');
++
++  const generatedQuestions = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
++  const sourceIndex = sourceQuestions.findIndex((question) => question.id === 'q050');
++  const singleChoice = generatedQuestions[sourceIndex * 4];
++  const judgement = generatedQuestions[sourceIndex * 4 + 3];
++
++  assert.equal(source.questionEn, 'What does source criticism mean?');
++  assert.equal(
++    source.explanationEn,
++    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++  );
++  assert.equal(
++    singleChoice.questionEn,
++    'Which answer best matches? What does source criticism mean?',
++  );
++  assert.equal(judgement.questionEn, 'Choose the correct option: What does source criticism mean?');
++  assert.doesNotMatch(
++    [source.questionEn, source.explanationEn, singleChoice.questionEn, judgement.questionEn].join(
++      ' ',
++    ),
++    /\bsource-critical\b/i,
++  );
++});
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..a9ee8254f 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -591,6 +591,7 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
+ const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
+   /\bThe EU is political and economic cooperation between European countries\b/i,
+ ];
++const SOURCE_CRITICISM_STILTED_ENGLISH_PATTERN = /\bsource-critical\b/i;
+ const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
+   /^\s*Sant eller falskt\s*:/i,
+   /^\s*True or false\s*:/i,
+@@ -5088,6 +5089,20 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
+   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+ }
+ 
++function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
++  if (
++    question.type !== 'single_choice' ||
++    !(Array.isArray(question.tags) && question.tags.includes('source-criticism'))
++  ) {
++    return null;
++  }
++
++  const text = [question.questionEn, question.explanationEn].join(' ');
++  return SOURCE_CRITICISM_STILTED_ENGLISH_PATTERN.test(text)
++    ? SOURCE_CRITICISM_STILTED_ENGLISH_PATTERN
++    : null;
++}
++
+ function findQuestionTrueFalseStemPrefix(question) {
+   if (question.type !== 'true_false') return null;
+ 
+@@ -8088,6 +8103,7 @@ let questionJudgementMetaStemsValidated = 0;
+ let questionGeneratedTrueFalseNaturalnessValidated = 0;
+ let questionLuciaRoleEnglishNaturalnessValidated = 0;
+ let questionEuCooperationEnglishNaturalnessValidated = 0;
++let questionSourceCriticismEnglishNaturalnessValidated = 0;
+ let questionFalseAnswerExplanationsValidated = 0;
+ let questionPromptTextUniquenessValidated = 0;
+ let questionOptionTextLabelsValidated = 0;
+@@ -17635,6 +17651,8 @@ if (Array.isArray(questions)) {
+         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
+       const euCooperationEnglishNaturalnessIssue =
+         findQuestionEuCooperationEnglishNaturalnessIssue(question);
++      const sourceCriticismEnglishNaturalnessIssue =
++        findQuestionSourceCriticismEnglishNaturalnessIssue(question);
+       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
+       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
+       const generatedTrueFalseExplanationMetaIssue =
+@@ -17671,6 +17689,11 @@ if (Array.isArray(questions)) {
+       } else {
+         questionEuCooperationEnglishNaturalnessValidated += 1;
+       }
++      if (sourceCriticismEnglishNaturalnessIssue) {
++        fail(`${label} uses stilted source-criticism English wording`);
++      } else {
++        questionSourceCriticismEnglishNaturalnessValidated += 1;
++      }
+       if (trueFalseStemPrefix) {
+         fail(`${label} contains a redundant true/false prefix in the stem`);
+       }
+@@ -18161,6 +18184,7 @@ console.log(
+       questionGeneratedTrueFalseNaturalnessValidated,
+       questionLuciaRoleEnglishNaturalnessValidated,
+       questionEuCooperationEnglishNaturalnessValidated,
++      questionSourceCriticismEnglishNaturalnessValidated,
+       questionFalseAnswerExplanationsValidated,
+       questionPromptTextUniquenessValidated,
+       questionOptionTextLabelsValidated,
+diff --git a/site/questions.js b/site/questions.js
+index 54d5358d1..90a9ab0e4 100644
+--- a/site/questions.js
++++ b/site/questions.js
+@@ -4906,7 +4906,7 @@
+       chapter: 'Ch. 06 · The role of the media',
+       type: 'single_choice',
+       q: {
+-        en: 'What does it mean to be source-critical?',
++        en: 'What does source criticism mean?',
+         sv: 'Vad betyder det att vara källkritisk?',
+         'zh-Hant': '具有來源批判意識是什麼意思？',
+         'zh-Hans': '具有来源批判意识是什么意思？',
+@@ -4979,7 +4979,7 @@
+       ],
+       answer: 0,
+       why: {
+-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+         'zh-Hant':
+           '具有來源批判意識表示透過質疑自己讀到、看到或聽到的內容是否正確，來檢查和審查資訊。這很重要，因為資訊可能來自許多不同來源，錯誤資訊可能快速傳播；從不閱讀新聞、只相信社交媒體或散布未經檢查的說法，都是相反做法。',
+@@ -28917,7 +28917,7 @@
+       chapter: 'Ch. 06 · The role of the media',
+       type: 'single_choice',
+       q: {
+-        en: 'Which answer best matches? What does it mean to be source-critical?',
++        en: 'Which answer best matches? What does source criticism mean?',
+         sv: 'Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?',
+       },
+       opts: [
+@@ -28980,7 +28980,7 @@
+       ],
+       answer: 0,
+       why: {
+-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+       },
+       source: {
+@@ -29005,7 +29005,7 @@
+       chapter: 'Ch. 06 · The role of the media',
+       type: 'true_false',
+       q: {
+-        en: 'To be source-critical means questioning and checking whether information is correct.',
++        en: 'Source criticism means questioning and checking whether information is correct.',
+         sv: 'Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.',
+       },
+       opts: [
+@@ -29020,7 +29020,7 @@
+       ],
+       answer: 0,
+       why: {
+-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+       },
+       source: {
+@@ -29045,7 +29045,7 @@
+       chapter: 'Ch. 06 · The role of the media',
+       type: 'true_false',
+       q: {
+-        en: 'To be source-critical means never reading news.',
++        en: 'Source criticism means never reading news.',
+         sv: 'Att vara källkritisk betyder att aldrig läsa nyheter.',
+       },
+       opts: [
+@@ -29060,7 +29060,7 @@
+       ],
+       answer: 1,
+       why: {
+-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+       },
+       source: {
+@@ -29085,7 +29085,7 @@
+       chapter: 'Ch. 06 · The role of the media',
+       type: 'single_choice',
+       q: {
+-        en: 'Choose the correct option: What does it mean to be source-critical?',
++        en: 'Choose the correct option: What does source criticism mean?',
+         sv: 'Välj rätt alternativ: Vad betyder det att vara källkritisk?',
+       },
+       opts: [
+@@ -29148,7 +29148,7 @@
+       ],
+       answer: 0,
+       why: {
+-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
+       },
+       source: {
+diff --git a/tests/content-published-question-types.test.js b/tests/content-published-question-types.test.js
+index 010ec1ece..a21076d04 100644
+--- a/tests/content-published-question-types.test.js
++++ b/tests/content-published-question-types.test.js
+@@ -59,6 +59,7 @@ const q140OldChristmasPromptPattern =
+   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
+ const sourceRecallPromptPattern =
+   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
++const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
+ const generatedIdLiteralPatterns = [
+   {
+     label: 'question.id equality',
+@@ -155,6 +156,10 @@ test('published question types stay answerable by quiz runtime', () => {
+     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
+     summary.publishedQuestions,
+   );
++  assert.equal(
++    summary.questionSourceCriticismEnglishNaturalnessValidated,
++    summary.publishedQuestions,
++  );
+   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+ });
+ 
+@@ -1528,6 +1533,98 @@ require('./scripts/validate-content.js');
+   );
+ });
+ 
++test('source-criticism source and single-choice exports use natural English', () => {
++  const generatedSiteBank = buildSiteQuestionBank().questions;
++  const actualSiteBank = Array.from(actualStaticQuestions());
++  const sourceQuestions = generatedSiteBank.filter(
++    (question) => question.questionProvenance === 'uhr',
++  );
++  const q050Ids = [
++    'q050',
++    generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
++    generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
++  ];
++  const textForQuestion = (question) =>
++    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
++      ' ',
++    );
++  const generatedOffenders = generatedSiteBank
++    .filter((question) => q050Ids.includes(question.id))
++    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
++    .map((question) => question.id);
++  const actualOffenders = actualSiteBank
++    .filter((question) => q050Ids.includes(question.id))
++    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
++    .map((question) => question.id);
++  const csvOffenders = fs
++    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
++    .split(/\r?\n/)
++    .filter((line) => q050Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
++    .filter((line) => sourceCriticismStiltedEnglishPattern.test(line))
++    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
++  const q050 = generatedSiteBank.find((question) => question.id === 'q050');
++  const q050SingleChoice = generatedSiteBank.find(
++    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
++  );
++  const q050Judgement = generatedSiteBank.find(
++    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
++  );
++
++  assert.deepEqual(generatedOffenders, []);
++  assert.deepEqual(actualOffenders, []);
++  assert.deepEqual(csvOffenders, []);
++  assert.ok(q050, 'q050 should be published in the site bank');
++  assert.equal(q050.q.en, 'What does source criticism mean?');
++  assert.equal(
++    q050.why.en,
++    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
++  );
++  assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
++  assert.equal(
++    q050SingleChoice.q.en,
++    'Which answer best matches? What does source criticism mean?',
++  );
++  assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
++  assert.equal(q050Judgement.q.en, 'Choose the correct option: What does source criticism mean?');
++});
++
++test('source-criticism English naturalness guard rejects source-critical wording', () => {
++  const result = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++const fs = require('node:fs');
++const originalReadFileSync = fs.readFileSync;
++fs.readFileSync = function readFileSync(filePath, ...args) {
++  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
++  const contents = originalReadFileSync.call(this, filePath, ...args);
++  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
++    return String(contents)
++      .replace(
++        'What does source criticism mean?',
++        'What does it mean to be source-critical?',
++      )
++      .replace(
++        'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
++        'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
++      );
++  }
++  return contents;
++};
++require('./scripts/validate-content.js');
++`,
++    ],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  assert.match(
++    `${result.stdout}\n${result.stderr}`,
++    /q050 uses stilted source-criticism English wording/,
++  );
++});
++
+ test('religious-freedom option parallelism stays natural in exports', () => {
+   const generatedSiteBank = buildSiteQuestionBank().questions;
+   const actualSiteBank = actualStaticQuestions();

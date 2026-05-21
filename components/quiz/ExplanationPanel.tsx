@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { Card } from '../ui/Card';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import type { LocalizedContentText } from '../../types/content';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type ExplanationPanelCopy = {
   accessibilityLabelPrefix: string;
@@ -34,6 +36,8 @@ export function ExplanationPanel({
   explanationText?: Partial<LocalizedContentText>;
   language?: AppLanguage;
 }) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = explanationPanelCopy[language];
   const localizedExplanation = explanationText?.[language] ?? explanationText?.sv;
   const explanation =
@@ -51,16 +55,18 @@ export function ExplanationPanel({
   );
 }
 
-const styles = StyleSheet.create({
-  title: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  body: {
-    color: colors.textSecondary,
-    fontSize: typography.navButton.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-    marginTop: space[1],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    title: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    body: {
+      color: themeColors.textSecondary,
+      fontSize: typography.navButton.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+      marginTop: space[1],
+    },
+  });
+}

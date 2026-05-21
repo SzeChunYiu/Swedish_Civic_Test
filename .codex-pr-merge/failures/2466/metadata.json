@@ -1,0 +1,81 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n\n- Move the storage-backed Node test TypeScript loader into `tests/helpers/storageStoreHarness.cjs`.\n- Add a generic `loadTsModule` helper for non-storage TS modules while preserving the storage/MMKV harness behavior.\n- Migrate the review, highlights, and learning tests away from per-file TS loader and local MMKV/Zustand stubs.\n- Update the Zustand stub so selector calls and in-place state updates match the store tests' expectations.\n\n## Validation\n\n- `git diff --check origin/main...HEAD`\n- `npm run typecheck -- --pretty false`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test scripts/learning.test.js --test-name-pattern \"XP rules|dashboard selectors|progress answer dates\"`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/v1-1-highlights-store.test.js --test-name-pattern \"addHighlight|clearChapter|runtime highlight|updateHighlight\"`\n\n## Notes\n\nThe broader storage verifier now gets past the harness/source-guard concerns. Remaining failures are existing product issues already represented in the task queue, including q001 generated answer parity, local study import unsafe-key handling, companion read-fail soft fallback, and review store robustness/hydration guards.",
+  "files": [
+    {
+      "path": "docs/parallel-sessions/journals/setup.md",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/storage/companionStore.ts",
+      "additions": 16,
+      "deletions": 9,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/storage/progressStore.ts",
+      "additions": 5,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/storage/reviewStore.ts",
+      "additions": 28,
+      "deletions": 9,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/learning.test.js",
+      "additions": 3,
+      "deletions": 50,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/helpers/storageStoreHarness.cjs",
+      "additions": 82,
+      "deletions": 9,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-companion-store.test.js",
+      "additions": 6,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-highlights-store.test.js",
+      "additions": 0,
+      "deletions": 11,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-review-store.test.js",
+      "additions": 0,
+      "deletions": 11,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/storage-harness-ts-loader-1779376164-2636797",
+  "headRefOid": "871ac708b725414e64b09d16bd7678c1f507b10e",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2466,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T15:30:31Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235402302/job/77207215287",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T15:22:54Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Centralize storage test TypeScript loader",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2466"
+}
