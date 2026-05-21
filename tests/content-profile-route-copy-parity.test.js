@@ -24,7 +24,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 54);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -54,6 +54,12 @@ test('profile route shell copy stays keyed by the settings language', () => {
     /<MetricCard label=\{copy\.dayStreakMetric\} value=\{currentStreak\} helper=\{dayStreakHelper\}/,
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(
+    source,
+    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+  );
+  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(source, /copy\.studySetupCta/);
   assert.match(source, /const badgeInput: BadgeInput = \{/);
   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
   assert.match(source, /<BadgeRow/);
@@ -164,10 +170,15 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.ok(studySetupStart < badgesStart, 'study setup card should render before badges card');
   assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
   assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
+  assert.match(source, /const audioEnabled = useSettingsStore/);
+  assert.match(
+    studySetupCard,
+    /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
+  );
   assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
   assert.match(
     studySetupCard,
-    /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.openSettings\}[\s\S]*<\/Button>/,
+    /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
   assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
