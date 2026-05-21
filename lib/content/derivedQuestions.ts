@@ -2160,10 +2160,16 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
         answer,
       )
     ) {
-      return 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes';
+      return 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for';
     }
     if (/^All privately owned companies$/i.test(answer)) {
       return 'The public sector in Sweden consists only of privately owned companies';
+    }
+    if (/^Only banks and insurance companies$/i.test(answer)) {
+      return 'The public sector in Sweden consists only of banks and insurance companies';
+    }
+    if (/^Only non-profit associations$/i.test(answer)) {
+      return 'The public sector in Sweden consists only of non-profit associations';
     }
   }
 

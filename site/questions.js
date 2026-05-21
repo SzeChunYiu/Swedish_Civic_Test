@@ -6290,7 +6290,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What does Sweden's public sector consist of?",
+      "en": "What is the public sector in Sweden?",
       "sv": "Vad menas med offentlig sektor i Sverige?",
       "zh-Hant": "在瑞典，「公共部門」是什麼意思？",
       "zh-Hans": "在瑞典，“公共部门”是什么意思？",
@@ -33907,7 +33907,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does Sweden's public sector consist of?",
+      "en": "Which answer best matches? What is the public sector in Sweden?",
       "sv": "Vilket svar stämmer bäst? Vad menas med offentlig sektor i Sverige?"
     },
     "opts": [
@@ -33995,7 +33995,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.",
+      "en": "The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for.",
       "sv": "Offentlig sektor i Sverige är verksamheter som staten, regionerna och kommunerna ansvarar för."
     },
     "opts": [
@@ -34075,7 +34075,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does Sweden's public sector consist of?",
+      "en": "Choose the correct option: What is the public sector in Sweden?",
       "sv": "Välj rätt alternativ: Vad menas med offentlig sektor i Sverige?"
     },
     "opts": [

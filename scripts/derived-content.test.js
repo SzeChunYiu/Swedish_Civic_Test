@@ -1209,6 +1209,32 @@ test('derivePublishedQuestions turns policy-goal meanings into direct English pr
   );
 });
 
+test('derivePublishedQuestions renders q062 public-sector true/false as direct propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { additionalQuestions } = loadTs('data/additionalQuestions.ts');
+  const source = additionalQuestions.find((question) => question.id === 'q062');
+  assert.ok(source, 'q062 should exist in additional questions');
+
+  const derived = derivePublishedQuestions([source], 424);
+  const trueVariant = derived[1];
+  const falseVariant = derived[2];
+
+  assert.equal(trueVariant.id, 'q425');
+  assert.equal(falseVariant.id, 'q426');
+  assert.equal(
+    trueVariant.questionEn,
+    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for.',
+  );
+  assert.equal(
+    falseVariant.questionEn,
+    'The public sector in Sweden consists only of privately owned companies.',
+  );
+  assert.doesNotMatch(
+    `${trueVariant.questionEn}\n${falseVariant.questionEn}`,
+    /\bpublic sector in Sweden means\b/i,
+  );
+});
+
 test('derivePublishedQuestions writes direct source true/false propositions', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

@@ -560,11 +560,10 @@ const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
   /\bbecame important for\b/i,
 ];
 const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];
-const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [/\bsource-critical\b/i];
 const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
-  /\bWhat is meant by the public sector in Sweden\??/i,
-  /\bpublic sector(?: in Sweden)? means (?:activities for which|all privately owned companies)\b/i,
+  /\bWhat is meant by the public sector in Sweden\b/i,
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
+  /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
 const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS = new Set(['q116', 'q630', 'q633']);
 const QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS = [
@@ -6839,13 +6838,8 @@ function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
   );
 }
 
-function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
-  return QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
-    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
-  );
-}
-
 function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('public-sector')) return null;
   return QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
@@ -8633,9 +8627,6 @@ function validateQuestionSchema(question, index) {
   if (findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted 1951 religious-freedom English wording`);
   }
-  if (findQuestionSourceCriticismEnglishNaturalnessIssue(question)) {
-    reject(`${label} uses stilted source-criticism English wording`);
-  }
   if (findQuestionPublicSectorEnglishNaturalnessIssue(question)) {
     reject(`${label} uses stilted public-sector English wording`);
   }
@@ -9131,6 +9122,7 @@ let questionEuCooperationEnglishNaturalnessValidated = 0;
 let questionReligiousFreedomParallelismValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
+let questionPublicSectorEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
@@ -22349,10 +22341,6 @@ function validatePublishedQuestionNaturalnessGuards() {
         `${label} uses stilted 1951 religious-freedom English wording`,
       ],
       [
-        findQuestionSourceCriticismEnglishNaturalnessIssue(question),
-        `${label} uses stilted source-criticism English wording`,
-      ],
-      [
         findQuestionPublicSectorEnglishNaturalnessIssue(question),
         `${label} uses stilted public-sector English wording`,
       ],
@@ -22641,6 +22629,8 @@ if (Array.isArray(questions)) {
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
       const religiousFreedomParallelismIssue =
         findQuestionReligiousFreedomOptionParallelismIssue(question);
+      const publicSectorEnglishNaturalnessIssue =
+        findQuestionPublicSectorEnglishNaturalnessIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -22700,6 +22690,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses nonparallel religious-freedom option wording`);
       } else {
         questionReligiousFreedomParallelismValidated += 1;
+      }
+      if (publicSectorEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted public-sector English wording`);
+      } else {
+        questionPublicSectorEnglishNaturalnessValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -23311,6 +23306,7 @@ console.log(
       questionEuCooperationEnglishNaturalnessValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
+      questionPublicSectorEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,

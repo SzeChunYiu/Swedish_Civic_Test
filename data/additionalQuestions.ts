@@ -962,7 +962,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       pageApprox: 27,
     },
     'Vad menas med offentlig sektor i Sverige?',
-    "What does Sweden's public sector consist of?",
+    'What is the public sector in Sweden?',
     [
       [
         'Verksamheter som staten, regionerna och kommunerna ansvarar för',

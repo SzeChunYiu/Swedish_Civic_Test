@@ -64,6 +64,8 @@ const christmasTreeStiltedEnglishPattern = /\bwith a tree at Christmas\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
+const publicSectorStiltedEnglishPattern =
+  /\b(?:What is meant by the public sector in Sweden|Activities for which the state, regions, and municipalities are responsible|The public sector(?: in Sweden)? means (?:activities|all privately owned companies))\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -2148,6 +2150,120 @@ test('political-rights generated true/false exports use direct propositions', ()
   assert.deepEqual(
     csvRows.filter((line) => barePhrasePattern.test(line)),
     [],
+  );
+});
+
+test('public-sector source and generated exports use direct English propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedExplanation =
+    'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.';
+  const expectedRows = [
+    {
+      id: 'q062',
+      q: 'What is the public sector in Sweden?',
+      why: expectedExplanation,
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+      q: 'Which answer best matches? What is the public sector in Sweden?',
+      why: expectedExplanation,
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'),
+      q: 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for.',
+      why: expectedExplanation,
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'),
+      q: 'The public sector in Sweden consists only of privately owned companies.',
+      why: expectedExplanation,
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+      q: 'Choose the correct option: What is the public sector in Sweden?',
+      why: expectedExplanation,
+    },
+  ];
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    for (const expected of expectedRows) {
+      const question = bank.find((candidate) => candidate.id === expected.id);
+      assert.ok(question, `${expected.id} should be present in published bank`);
+      assert.equal(question.q.en, expected.q);
+      assert.equal(question.why.en, expected.why);
+      assert.doesNotMatch(
+        `${question.q.en}\n${question.why.en}`,
+        publicSectorStiltedEnglishPattern,
+      );
+    }
+  }
+
+  const sourceQuestion = generatedSiteBank.find((question) => question.id === 'q062');
+  assert.ok(sourceQuestion, 'q062 should be published in the generated bank');
+  assert.ok(
+    sourceQuestion.opts.some(
+      (option) =>
+        option.en ===
+        'Services and activities that the state, regions, and municipalities are responsible for',
+    ),
+  );
+
+  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
+  const csvOffenders = [];
+  for (const expected of expectedRows) {
+    const columns = csvRowsById.get(expected.id);
+    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
+    assert.equal(columns[4], expected.q);
+    assert.equal(columns[6], expected.why);
+    if (publicSectorStiltedEnglishPattern.test(`${columns[4]}\n${columns[6]}`)) {
+      csvOffenders.push(expected.id);
+    }
+  }
+  assert.deepEqual(csvOffenders, []);
+});
+
+test('public-sector English naturalness guard rejects old means-activities wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What is the public sector in Sweden?',
+        'What is meant by the public sector in Sweden?',
+      )
+      .replace(
+        'Services and activities that the state, regions, and municipalities are responsible for',
+        'Activities for which the state, regions, and municipalities are responsible',
+      )
+      .replace(
+        'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+        'The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q062 uses stilted public-sector English wording/,
   );
 });
 
