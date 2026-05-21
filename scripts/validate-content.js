@@ -3,12 +3,44 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const {
-  focusedValidationRequested,
-  rejectUnsupportedFocusedValidationFlags,
-} = require('./validate-content-focus-registry');
+function focusedValidationFlagsFromRegistrySource() {
+  const source = fs.readFileSync(__filename, 'utf8');
+  const declaration = '\nconst FOCUSED_VALIDATION_REGISTRY = Object.freeze(';
+  const registryStart = source.indexOf(declaration);
+  const registryEnd = source.indexOf(
+    '\n]);\n\nconst FOCUSED_VALIDATION_REGISTRY_BY_ID',
+    registryStart,
+  );
+  if (registryStart === -1 || registryEnd === -1) return new Set();
 
-rejectUnsupportedFocusedValidationFlags();
+  const registrySource = source.slice(registryStart, registryEnd);
+  const flags = new Set();
+  for (const match of registrySource.matchAll(/flags:\s*\[([^\]]+)\]/g)) {
+    for (const flagMatch of match[1].matchAll(/'(--focus-[^']+)'/g)) {
+      flags.add(flagMatch[1]);
+    }
+  }
+  return flags;
+}
+
+function rejectUnsupportedFocusedValidationFlagsFromRegistrySource() {
+  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
+  if (requestedFlags.length === 0) return;
+
+  const supportedFlags = focusedValidationFlagsFromRegistrySource();
+  const unsupportedFlags = requestedFlags.filter((flag) => !supportedFlags.has(flag));
+  if (unsupportedFlags.length === 0) return;
+
+  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
+  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
+  console.error('Supported focus modes:');
+  Array.from(supportedFlags)
+    .sort()
+    .forEach((flag) => console.error(`- ${flag}`));
+  process.exit(1);
+}
+
+rejectUnsupportedFocusedValidationFlagsFromRegistrySource();
 
 const ts = require('typescript');
 const vm = require('node:vm');
@@ -42,6 +74,438 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
+const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+  {
+    id: 'authoredSourceParity',
+    flags: ['--focus-authored-source-parity'],
+    summaryKeys: [
+      'authoredSourceQuestionsValidated',
+      'authoredSourcePartitionQuestionsValidated',
+      'sourcePublicationParityValidated',
+      'sourceQuestions',
+    ],
+  },
+  {
+    id: 'staticV11ReadinessCopy',
+    flags: ['--focus-static-v11-readiness-copy'],
+    summaryKeys: [
+      'staticV11ReadinessUnsupportedPatternsValidated',
+      'staticV11ReadinessRequiredCopyValidated',
+      'staticV11ReadinessCopyParityValidated',
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'rewardedExamSchema',
+    flags: ['--focus-rewarded-exam-schema'],
+    summaryKeys: [
+      'rewardedAdTypeUnionsValidated',
+      'rewardedAdTypeInterfacesValidated',
+      'rewardedAdTypeSchemaParityValidated',
+      'mockExamAccessTypeUnionsValidated',
+      'mockExamAccessTypeInterfacesValidated',
+      'mockExamAccessTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'nativeQuizCopy',
+    flags: ['--focus-native-quiz-copy'],
+    summaryKeys: [
+      'quizRouteHeadersValidated',
+      'quizRouteHeaderParityValidated',
+      'quizRouteCopyLabelsValidated',
+      'quizRouteCopyParityValidated',
+      'chapterRouteHeadersValidated',
+      'chapterRouteHeaderParityValidated',
+      'chapterRouteCopyLabelsValidated',
+      'chapterRouteCopyParityValidated',
+    ],
+  },
+  {
+    id: 'legalRouteParity',
+    flags: ['--focus-legal-route-parity'],
+    summaryKeys: [
+      'legalRouteHeadersValidated',
+      'legalRouteHeaderParityValidated',
+      'swedishPrivacyStreakCopyNaturalnessValidated',
+      'legalSwedishEnglishTokenGuardValidated',
+      'legalSwedishEnglishTokenGuardParityValidated',
+    ],
+  },
+  {
+    id: 'settingsRouteCopy',
+    flags: ['--focus-settings-route-copy'],
+    summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
+  },
+  {
+    id: 'staticHeadMetadata',
+    flags: ['--focus-static-head-metadata'],
+    summaryKeys: [
+      'staticHeadMetadataTitleValidated',
+      'staticHeadMetadataDescriptionValidated',
+      'staticHeadMetadataOutcomeClaimPatternsValidated',
+      'staticHeadMetadataParityValidated',
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'settingsStore',
+    flags: ['--focus-settings-store', '--focus-settings-parity'],
+    summaryKeys: [
+      'settingsRouteHeadersValidated',
+      'settingsRouteHeaderParityValidated',
+      'settingsRouteCopyLabelsValidated',
+      'settingsRouteCopyParityValidated',
+      'settingsRouteScrollRulesValidated',
+      'settingsRouteScrollParityValidated',
+      'settingsStoreFieldsValidated',
+      'settingsStoreSchemaParityValidated',
+      'settingsDailyGoalOptionsValidated',
+      'settingsDailyGoalParityValidated',
+      'settingsAudioLabelsValidated',
+      'settingsAudioParityValidated',
+    ],
+  },
+  {
+    id: 'homeRouteCopy',
+    flags: ['--focus-home-route-copy'],
+    summaryKeys: [
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+      'homeRouteHeadersValidated',
+      'homeRouteHeaderParityValidated',
+      'homeRouteCopyLabelsValidated',
+      'homeRouteCopyParityValidated',
+      'homeRouteInternalBenchmarkCopyValidated',
+      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
+      'countdownBannerHomeMountRulesValidated',
+      'countdownBannerHomeMountParityValidated',
+    ],
+  },
+  {
+    id: 'answerOptionAccessibility',
+    flags: ['--focus-answer-option-accessibility'],
+    summaryKeys: [
+      'answerOptionAccessibilityRulesValidated',
+      'answerOptionAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'homeSvMistakeReviewCopy',
+    flags: ['--focus-home-sv-mistake-review-copy'],
+    summaryKeys: [
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
+    ],
+  },
+  {
+    id: 'progressSchemaParity',
+    flags: ['--focus-progress-schema-parity'],
+    summaryKeys: [
+      'progressQuestionFieldsValidated',
+      'progressQuestionSchemaParityValidated',
+      'progressTypeUnionsValidated',
+      'progressTypeInterfacesValidated',
+      'progressTypeSchemaParityValidated',
+      'progressStoreFieldsValidated',
+      'progressStoreSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'xpRules',
+    flags: ['--focus-xp-rules'],
+    summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],
+  },
+  {
+    id: 'badgeXpRuntime',
+    flags: ['--focus-badge-xp-runtime'],
+    summaryKeys: [
+      'badgesValidated',
+      'badgeMilestoneParityValidated',
+      'badgeRuntimeInputCasesValidated',
+      'badgeRuntimeInputParityValidated',
+      'xpRulesValidated',
+      'xpRulesParityValidated',
+    ],
+  },
+  {
+    id: 'streakRules',
+    flags: ['--focus-streak-rules'],
+    summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
+  },
+  {
+    id: 'weeklyRecapRuntime',
+    flags: ['--focus-weekly-recap-runtime'],
+    summaryKeys: ['weeklyRecapRuntimeCasesValidated', 'weeklyRecapRuntimeParityValidated'],
+  },
+  {
+    id: 'readinessAdapterRules',
+    flags: ['--focus-readiness-adapter-rules'],
+    summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
+  },
+  {
+    id: 'questionReportLinkParity',
+    flags: ['--focus-question-report-link-parity'],
+    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
+  },
+  {
+    id: 'answerFeedbackParity',
+    flags: ['--focus-answer-feedback-parity'],
+    summaryKeys: [
+      'publishedQuestions',
+      'answerValidationTypeUnionsValidated',
+      'answerValidationTypeInterfacesValidated',
+      'answerValidationTypeSchemaParityValidated',
+      'answerFeedbackQuestionsValidated',
+      'answerFeedbackOptionsValidated',
+      'answerFeedbackRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'aboutTheTestRouteCopy',
+    flags: ['--focus-about-the-test-route-copy'],
+    summaryKeys: [
+      'aboutTheTestRouteCopyLabelsValidated',
+      'aboutTheTestRouteCopyParityValidated',
+      'aboutTheTestOfficialSourceUrlsValidated',
+      'aboutTheTestOfficialSourceRetrievedDateValidated',
+      'aboutTheTestSeenEffectRulesValidated',
+      'aboutTheTestSeenEffectParityValidated',
+      'citizenshipRequirementsLimitedSeatCopyValidated',
+    ],
+  },
+  {
+    id: 'mockExamRuntimeParity',
+    flags: ['--focus-mock-exam-runtime-parity'],
+    summaryKeys: [
+      'mockExamConfigTypeFieldsValidated',
+      'mockExamConfigTypeSchemaParityValidated',
+      'mockExamConfigExactSchemaKeysValidated',
+      'mockExamConfigValidated',
+      'mockExamRuntimeParityValidated',
+      'mockExamChapterBalanceParityValidated',
+      'mockExamTimerParityValidated',
+      'examRouteHeadersValidated',
+      'examRouteHeaderParityValidated',
+      'examRouteCopyLabelsValidated',
+      'examRouteCopyParityValidated',
+    ],
+  },
+  {
+    id: 'searchRouteQueryHydration',
+    flags: ['--focus-search-route-query-hydration'],
+    summaryKeys: [
+      'searchRouteQueryHydrationRulesValidated',
+      'searchRouteQueryHydrationParityValidated',
+    ],
+  },
+  {
+    id: 'answerShuffleParity',
+    flags: ['--focus-answer-shuffle-parity'],
+    summaryKeys: [
+      'answerShuffleSingleChoiceQuestionsValidated',
+      'answerShuffleTrueFalseQuestionsValidated',
+      'answerShuffleSeedDistributionsValidated',
+      'answerShuffleSessionMovementQuestionsValidated',
+      'answerShuffleDistributionParityValidated',
+      'publishedQuestions',
+    ],
+  },
+  {
+    id: 'adPlacementRouteParity',
+    flags: ['--focus-ad-placement-route-parity'],
+    summaryKeys: [
+      'adPlacementRoutesValidated',
+      'noAdRoutesValidated',
+      'adPlacementRouteParityValidated',
+    ],
+  },
+  {
+    id: 'examSubmissionFinalityParity',
+    flags: ['--focus-exam-submission-finality-parity'],
+    summaryKeys: ['examSubmissionFinalityParityValidated'],
+  },
+  {
+    id: 'mockExamCopyParity',
+    flags: ['--focus-mock-exam-copy-parity'],
+    summaryKeys: [
+      'nativeMockExamComponentCopyLabelsValidated',
+      'nativeMockExamComponentLegalCopyValidated',
+      'nativeMockExamLibraryLabelsValidated',
+      'nativeMockExamScoreSourceCopyValidated',
+      'nativeMockExamSwedishCopyNaturalnessValidated',
+      'nativeMockExamTierCopyValidated',
+    ],
+  },
+  {
+    id: 'profileRouteCopy',
+    flags: ['--focus-profile-route-copy'],
+    summaryKeys: [
+      'profileRouteHeadersValidated',
+      'profileRouteHeaderParityValidated',
+      'profileRouteCopyLabelsValidated',
+      'profileRouteCopyParityValidated',
+      'badgesValidated',
+      'badgeMilestoneParityValidated',
+    ],
+  },
+  {
+    id: 'uhrReferenceCardAccessibility',
+    flags: ['--focus-uhr-reference-card-accessibility'],
+    summaryKeys: [
+      'uhrReferenceCardAccessibilityRulesValidated',
+      'uhrReferenceCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'celebrationBurstAccessibility',
+    flags: ['--focus-celebration-burst-accessibility'],
+    summaryKeys: [
+      'celebrationBurstAccessibilityRulesValidated',
+      'celebrationBurstAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'questionSpeechTextParity',
+    flags: ['--focus-question-speech-text-parity'],
+    summaryKeys: [
+      'publishedQuestions',
+      'questionSpeechTextQuestionsValidated',
+      'questionSpeechTextOptionsValidated',
+      'questionSpeechTextParityValidated',
+    ],
+  },
+  {
+    id: 'uhrSourceMetadata',
+    flags: ['--focus-uhr-source-metadata'],
+    summaryKeys: [
+      'uhrSourceMetadataValidated',
+      'uhrSourceRetrievedDateValidated',
+      'uhrMapSourceExactSchemaKeysValidated',
+      'uhrMapTextFieldsNormalizedValidated',
+    ],
+  },
+  {
+    id: 'questionBankCsv',
+    flags: ['--focus-question-bank-csv'],
+    summaryKeys: [
+      'questions',
+      'publishedQuestions',
+      'questionBankCsvHeaderColumnsValidated',
+      'questionBankCsvUniqueHeaderNamesValidated',
+      'questionBankCsvRowsValidated',
+      'questionBankCsvProvenanceCounts',
+      'questionBankCsvUhrSourcePublisherRowsValidated',
+      'questionBankCsvUhrSourcePublisherParityValidated',
+    ],
+  },
+  {
+    id: 'examGeneratorSchema',
+    flags: ['--focus-exam-generator-schema'],
+    summaryKeys: [
+      'examGeneratorTypeAliasesValidated',
+      'examGeneratorTypeInterfacesValidated',
+      'examGeneratorTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'removeAdsHookParity',
+    flags: ['--focus-remove-ads-hook-parity'],
+    summaryKeys: [
+      'removeAdsEntitlementHookCasesValidated',
+      'removeAdsEntitlementHookParityValidated',
+    ],
+  },
+  {
+    id: 'removeAdsPurchaseRuntimeParity',
+    flags: ['--focus-remove-ads-purchase-runtime-parity'],
+    summaryKeys: [
+      'purchaseTypeUnionsValidated',
+      'purchaseTypeInterfacesValidated',
+      'purchaseTypeSchemaParityValidated',
+      'removeAdsPurchaseRuntimeCasesValidated',
+      'removeAdsPurchaseRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'umeaDemonym',
+    flags: ['--focus-umea-demonym'],
+    summaryKeys: ['questionUmeaDemonymSwedishNaturalnessValidated'],
+  },
+  {
+    id: 'chapterLocalizedText',
+    flags: ['--focus-chapter-localized-text'],
+    summaryKeys: [
+      'chapters',
+      'chapterSchemasValidated',
+      'chapterTextFieldsNormalizedValidated',
+      'chapterExactSchemaKeysValidated',
+      'chapterLocalizedTextMapsValidated',
+    ],
+  },
+  {
+    id: 'practiceRouteCopyParity',
+    flags: ['--focus-practice-route-copy-parity'],
+    summaryKeys: [
+      'practiceRouteCopyLabelsValidated',
+      'practiceRouteCopyParityValidated',
+      'provenanceAuthorityCopyFilesValidated',
+      'provenanceAuthorityCopyParityValidated',
+    ],
+  },
+  {
+    id: 'practiceFlowParity',
+    flags: ['--focus-practice-flow-parity'],
+    summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
+  },
+  {
+    id: 'contentExecCwd',
+    flags: ['--focus-content-exec-cwd'],
+    summaryKeys: [
+      'contentTestValidateContentExecCallsValidated',
+      'contentTestValidateContentExecCwdPinnedValidated',
+      'contentTestValidateContentExecCwdParityValidated',
+    ],
+  },
+]);
+
+const FOCUSED_VALIDATION_REGISTRY_BY_ID = new Map(
+  FOCUSED_VALIDATION_REGISTRY.map((entry) => [entry.id, entry]),
+);
+const SUPPORTED_FOCUSED_VALIDATION_FLAGS = new Set(
+  FOCUSED_VALIDATION_REGISTRY.flatMap((entry) => entry.flags),
+);
+
+function rejectUnsupportedFocusedValidationFlags() {
+  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
+  const unsupportedFlags = requestedFlags.filter(
+    (flag) => !SUPPORTED_FOCUSED_VALIDATION_FLAGS.has(flag),
+  );
+  if (unsupportedFlags.length === 0) return;
+
+  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
+  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
+  console.error('Supported focus modes:');
+  Array.from(SUPPORTED_FOCUSED_VALIDATION_FLAGS)
+    .sort()
+    .forEach((flag) => console.error(`- ${flag}`));
+  process.exit(1);
+}
+
+function focusedValidationRequested(id) {
+  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
+  if (!entry) throw new Error(`Unknown focused validation registry id: ${id}`);
+  return entry.flags.some((flag) => process.argv.includes(flag));
+}
+
+rejectUnsupportedFocusedValidationFlags();
 const moduleCache = new Map();
 const speechEvents = [];
 const speechMock = {
@@ -477,14 +941,12 @@ const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
 ];
 const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'EBOOK_FACTBOX_SOURCE_NOTES',
-  'EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS',
   "retrievedDate: '2026-05-19'",
   'Facts to review',
   'Fakta att repetera',
   'Sources accessed',
   'Källor hämtade',
 ];
-const STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS = new Set(['uhrStudyMaterial', 'editorialCommentary']);
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   sourceId: 'q044',
@@ -621,8 +1083,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\binnebär att den ger\b/i,
-  /^Att mänskliga rättigheter gäller alla betyder att\b/i,
-  /^That human rights apply to everyone means\b/i,
   /\bfrom (?:13|15) years\b/i,
   /^En anledning är\b/i,
   /^One reason is\b/i,
@@ -705,8 +1165,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bgained the right to live in the country and practice\b/i,
   /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
   /\bwhen a low voter turnout affects democracy\b/i,
-  /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+/i,
-  /\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
   /^(?:De|They)\s+(?:säljer|drivs|får|finns|kan|måste|sell|are often|may|can|must)\b/i,
   /^(?:Genom|Through)\b/i,
   /\b(?:innehåll där|content there|inlägg där|posts there)\b/i,
@@ -986,8 +1444,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
-    'Ljud på',
-    'Ljud av',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Låst',
@@ -996,8 +1452,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     'Visa översikt',
     'Öppna framstegsöversikten',
-    'Ändra mål, språk och ljud',
-    'Öppna inställningar för dagligt mål, språk och ljud',
+    'Öppna inställningar',
     'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
   ],
   en: [
@@ -1015,8 +1470,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
-    'Audio on',
-    'Audio off',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'Locked',
@@ -1025,8 +1478,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Activity, chapter progress, and XP live on a dedicated page.',
     'View dashboard',
     'Open progress dashboard',
-    'Adjust goal, language, and audio',
-    'Open settings for daily goal, language, and audio',
+    'Open settings',
     'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };
@@ -1086,21 +1538,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
-  [
-    'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
-    'profile route must read audio state from settings store',
-  ],
-  [
-    'audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge',
-    'profile audio badge must reflect the selected audio setting',
-  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.studySetupCta}', 'profile settings link must render localized setup CTA copy'],
+  ['{copy.openSettings}', 'profile settings link must render localized copy'],
   [
     'accessibilityLabel={copy.dashboardAccessibilityLabel}',
     'profile dashboard link must expose localized accessibility copy',
@@ -2831,202 +3275,73 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
 const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     label: 'settings language type import',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
   },
   {
     label: 'typed localized copy contract',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
     label: 'localized progress copy',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
     label: 'clamped progress source',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
     label: 'percent value derived from clamped progress',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
     label: 'language copy selection',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
     label: 'readable localized progress label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
     label: 'web aria label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-label=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'web aria max value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
     label: 'web aria min value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
     label: 'web aria current value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
     label: 'web aria localized value text',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'native accessibility label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'native progressbar role',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /accessibilityRole="progressbar"/,
   },
   {
     label: 'native clamped accessibility value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
   },
   {
     label: 'animated fill uses clamped source',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
     label: 'visual fill uses percent interpolation bounds',
-    file: 'components/ui/ProgressBar.tsx',
-    pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
-  },
-  {
-    label: 'foundation settings language type import',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/,
-  },
-  {
-    label: 'foundation typed localized copy contract',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
-  },
-  {
-    label: 'foundation localized progress copy',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
-  },
-  {
-    label: 'foundation clamped progress helper',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /function clampProgress\(progress: number\) \{\s*return Math\.max\(0, Math\.min\(1, progress\)\);\s*\}/,
-  },
-  {
-    label: 'foundation clamped progress source',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const clampedProgress = clampProgress\(progress\);/,
-  },
-  {
-    label: 'foundation percent value derived from clamped progress',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
-  },
-  {
-    label: 'foundation readable localized progress label',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /const defaultAccessibilityText = progressBarCopy\[language\]\.progressLabel\(progressPercent\);/,
-  },
-  {
-    label: 'foundation custom accessibility label support',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const resolvedAccessibilityLabel = accessibilityLabel \?\? defaultAccessibilityText;/,
-  },
-  {
-    label: 'components/ProgressBar.tsx must use the shared reduced-motion hook',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
-  },
-  {
-    label: 'foundation animation opt-out combines prop and reduced motion',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const shouldAnimate = animated && !reducedMotionEnabled;/,
-  },
-  {
-    label: 'foundation reduced-motion sets progress synchronously',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /if \(!shouldAnimate\) \{\s*animatedProgress\.setValue\(clampedProgress\);\s*return undefined;\s*\}/,
-  },
-  {
-    label: 'foundation web aria label',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-label=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation web aria max value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuemax=\{100\}/,
-  },
-  {
-    label: 'foundation web aria min value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuemin=\{0\}/,
-  },
-  {
-    label: 'foundation web aria current value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuenow=\{progressPercent\}/,
-  },
-  {
-    label: 'foundation web aria localized value text',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation native accessibility label',
-    file: 'components/ProgressBar.tsx',
-    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation native progressbar default role',
-    file: 'components/ProgressBar.tsx',
-    pattern: /accessibilityRole = 'progressbar'/,
-  },
-  {
-    label: 'foundation native clamped accessibility value',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
-  },
-  {
-    label: 'foundation animated fill uses clamped source',
-    file: 'components/ProgressBar.tsx',
-    pattern: /new Animated\.Value\(clampedProgress\)/,
-  },
-  {
-    label: 'foundation visual fill uses percent interpolation bounds',
-    file: 'components/ProgressBar.tsx',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
 ];
@@ -5125,193 +5440,6 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
-function extractStaticEbookExternalSourceMetadata(source) {
-  const match = source.match(
-    /const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object\.freeze\((\{[\s\S]*?\n  \})\);/,
-  );
-
-  if (!match) {
-    fail('static ebook must declare EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS');
-    return new Map();
-  }
-
-  let metadata;
-  try {
-    metadata = vm.runInNewContext(`(${match[1]})`);
-  } catch (error) {
-    fail(`static ebook external source metadata could not be parsed: ${error.message}`);
-    return new Map();
-  }
-
-  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
-    fail('static ebook external source metadata must be an object keyed by chapter id');
-    return new Map();
-  }
-
-  const metadataByChapter = new Map();
-  Object.entries(metadata).forEach(([chapterId, sourceKeys]) => {
-    if (!Array.isArray(sourceKeys)) {
-      fail(`static ebook chapter ${chapterId} external source metadata must be an array`);
-      return;
-    }
-
-    const normalizedKeys = sourceKeys.map(String);
-    normalizedKeys.forEach((sourceKey) => {
-      if (STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS.has(sourceKey)) {
-        fail(`static ebook chapter ${chapterId} must not declare foundational key ${sourceKey}`);
-      }
-      if (!new RegExp(`\\b${escapeRegExp(sourceKey)}\\s*:`).test(source)) {
-        fail(`static ebook external source metadata references unknown key ${sourceKey}`);
-      }
-    });
-
-    metadataByChapter.set(String(chapterId), normalizedKeys);
-  });
-
-  return metadataByChapter;
-}
-
-function getStaticEbookChapterIds() {
-  const context = { console, window: {} };
-  context.globalThis = context;
-  vm.runInNewContext(loadText('site/questions.js'), context, {
-    filename: 'site/questions.js',
-  });
-
-  const meta = context.window.SMT_CHAPTERS_META || context.SMT_CHAPTERS_META;
-  if (!Array.isArray(meta)) {
-    fail('static ebook source metadata guard could not read SMT_CHAPTERS_META');
-    return ['intro'];
-  }
-
-  return ['intro', ...meta.map((chapter) => String(chapter.id))];
-}
-
-function createStaticEbookValidationHarness() {
-  const chapterIds = getStaticEbookChapterIds();
-  const reader = { innerHTML: '', scrollTop: 0 };
-  const navAnchors = chapterIds.map((id) => ({
-    dataset: { eb: id },
-    classList: { toggle() {} },
-  }));
-  const localStorageValues = new Map();
-  const localStorage = {
-    getItem(key) {
-      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
-    },
-    setItem(key, value) {
-      localStorageValues.set(key, String(value));
-    },
-  };
-  const location = { hash: '#/ebook' };
-  const document = {
-    addEventListener() {},
-    getElementById(id) {
-      return id === 'ebook-reader' ? reader : null;
-    },
-    querySelectorAll(selector) {
-      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
-    },
-  };
-  const window = {
-    addEventListener() {},
-    localStorage,
-    location,
-    smtApplyEbookHighlights() {},
-  };
-  const context = {
-    console,
-    document,
-    localStorage,
-    location,
-    setTimeout(callback) {
-      callback();
-      return 0;
-    },
-    window,
-  };
-  context.globalThis = context;
-
-  vm.runInNewContext(loadText('site/ebook.js'), context, { filename: 'site/ebook.js' });
-
-  return { chapterIds, localStorage, location, reader, window };
-}
-
-function renderStaticEbookChapterForValidation(harness, lang, chapterId) {
-  harness.localStorage.setItem('smt_lang', lang);
-  harness.location.hash = `#/ebook?c=${chapterId}`;
-  harness.reader.innerHTML = '';
-  harness.window.smtEbookRender();
-  return harness.reader.innerHTML;
-}
-
-function renderedStaticEbookSourceKeys(html) {
-  return new Set(Array.from(html.matchAll(/data-source-key="([^"]+)"/g), (match) => match[1]));
-}
-
-function validateStaticEbookSourceMetadataCoverage() {
-  const source = loadText('site/ebook.js');
-  const externalSourceKeysByChapter = extractStaticEbookExternalSourceMetadata(source);
-  const harness = createStaticEbookValidationHarness();
-  const chapterIdSet = new Set(harness.chapterIds);
-  let valid = true;
-  let chaptersValidated = 0;
-  let externalSourceKeysValidated = 0;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  externalSourceKeysByChapter.forEach((sourceKeys, chapterId) => {
-    if (!chapterIdSet.has(chapterId)) {
-      reject(`static ebook external source metadata references unknown chapter ${chapterId}`);
-    }
-    externalSourceKeysValidated += sourceKeys.length;
-  });
-
-  harness.chapterIds.forEach((chapterId) => {
-    const expectedExternalKeys = new Set(externalSourceKeysByChapter.get(chapterId) || []);
-
-    for (const lang of ['en', 'sv']) {
-      const renderedKeys = renderedStaticEbookSourceKeys(
-        renderStaticEbookChapterForValidation(harness, lang, chapterId),
-      );
-      const actualExternalKeys = new Set(
-        Array.from(renderedKeys).filter((key) => !STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS.has(key)),
-      );
-
-      for (const foundationalKey of STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS) {
-        if (!renderedKeys.has(foundationalKey)) {
-          reject(
-            `static ebook chapter ${chapterId} ${lang} missing ${foundationalKey} source note`,
-          );
-        }
-      }
-
-      expectedExternalKeys.forEach((sourceKey) => {
-        if (!actualExternalKeys.has(sourceKey)) {
-          reject(
-            `static ebook chapter ${chapterId} ${lang} declares ${sourceKey} but does not render a matching source note`,
-          );
-        }
-      });
-
-      actualExternalKeys.forEach((sourceKey) => {
-        if (!expectedExternalKeys.has(sourceKey)) {
-          reject(
-            `static ebook chapter ${chapterId} ${lang} renders undeclared external source key ${sourceKey}`,
-          );
-        }
-      });
-    }
-
-    chaptersValidated += 1;
-  });
-
-  return { chaptersValidated, externalSourceKeysValidated, valid };
-}
-
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -6892,46 +7020,6 @@ function referendumAdvisoryStatementSv(subject, answer) {
   return null;
 }
 
-function humanRightsApplicabilityStatementSv(subject, answer) {
-  if (!/^mänskliga rättigheter gäller alla$/i.test(subject)) return null;
-  const normalizedAnswer = stripLeadingPurposeSv(answer);
-  if (
-    /^varje människa har rättigheter oavsett bakgrund eller livssituation$/i.test(normalizedAnswer)
-  ) {
-    return 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation';
-  }
-  if (/^bara svenska medborgare har mänskliga rättigheter$/i.test(normalizedAnswer)) {
-    return 'Mänskliga rättigheter gäller bara svenska medborgare';
-  }
-  if (/^rättigheterna gäller bara personer som arbetar$/i.test(normalizedAnswer)) {
-    return 'Mänskliga rättigheter gäller bara personer som arbetar';
-  }
-  if (/^varje kommun väljer själv vilka människor som har rättigheter$/i.test(normalizedAnswer)) {
-    return 'Varje kommun väljer själv vilka människor som har mänskliga rättigheter';
-  }
-  return null;
-}
-
-function humanRightsApplicabilityStatementEn(subject, answer) {
-  if (!/^human rights apply to everyone$/i.test(subject)) return null;
-  const normalizedAnswer = stripLeadingPurposeEn(answer);
-  if (
-    /^every person has rights regardless of background or life situation$/i.test(normalizedAnswer)
-  ) {
-    return 'Human rights apply to every person regardless of background or life situation';
-  }
-  if (/^only Swedish citizens have human rights$/i.test(normalizedAnswer)) {
-    return 'Human rights apply only to Swedish citizens';
-  }
-  if (/^the rights apply only to people who work$/i.test(normalizedAnswer)) {
-    return 'Human rights apply only to people who work';
-  }
-  if (/^each municipality chooses which people have rights$/i.test(normalizedAnswer)) {
-    return 'Each municipality chooses which people have human rights';
-  }
-  return null;
-}
-
 function democracyRightStatementSv(subject, answer, isCorrect) {
   const action = lowerFirst(stripLeadingPurposeSv(answer));
   return isCorrect
@@ -6944,66 +7032,6 @@ function democracyRightStatementEn(subject, answer, isCorrect) {
   return isCorrect
     ? `In a democracy, ${subject} may ${action}`
     : `In a democracy, ${subject} may not ${action}`;
-}
-
-function voterTurnoutImpactStatementSv(answer) {
-  if (/^Människor kan få mindre möjlighet att påverka politiska beslut$/i.test(answer)) {
-    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
-  }
-  if (/^Alla väljare får två röster var i nästa val$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val';
-  }
-  if (/^Domstolarna tar över riksdagens uppgifter$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att domstolarna tar över riksdagens uppgifter';
-  }
-  if (/^Samhället blir automatiskt mer integrerat$/i.test(answer)) {
-    return 'Ett lågt valdeltagande gör automatiskt samhället mer integrerat';
-  }
-  return null;
-}
-
-function voterTurnoutImpactStatementEn(answer) {
-  if (/^People may have fewer opportunities to influence political decisions$/i.test(answer)) {
-    return "Low voter turnout can reduce people's ability to influence political decisions";
-  }
-  if (/^All voters get two votes each in the next election$/i.test(answer)) {
-    return 'Low voter turnout means all voters get two votes each in the next election';
-  }
-  if (/^The courts take over the Riksdag's tasks$/i.test(answer)) {
-    return "Low voter turnout means the courts take over the Riksdag's tasks";
-  }
-  if (/^Society automatically becomes more integrated$/i.test(answer)) {
-    return 'Low voter turnout automatically makes society more integrated';
-  }
-  return null;
-}
-
-function affectStatementSv(subject, target, answer) {
-  if (/^Genom att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är genom att ${lowerFirst(
-      answer.replace(/^Genom att\s+/i, ''),
-    )}`;
-  }
-  if (/^Att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är att ${lowerFirst(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-  return `En möjlig följd för ${target} är att ${lowerFirst(answer)}`;
-}
-
-function affectStatementEn(subject, target, answer) {
-  if (/^By\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is by ${lowerFirst(
-      answer.replace(/^By\s+/i, ''),
-    )}`;
-  }
-  if (/^To\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is to ${lowerFirst(
-      stripLeadingPurposeEn(answer),
-    )}`;
-  }
-  return `One possible effect on ${target} is that ${lowerFirst(answer)}`;
 }
 
 function civicStatementSv(source, option) {
@@ -7043,11 +7071,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementSv(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementSv(match[1], match[2], answer);
-  }
+  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
   match = q.match(/^Hur kan (.+?) få inkomster$/i);
   if (match) return commercialMediaIncomeStatementSv(match[1], answer);
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -7072,8 +7096,6 @@ function civicStatementSv(source, option) {
   if (match) {
     const referendumStatement = referendumAdvisoryStatementSv(match[1], answer);
     if (referendumStatement) return referendumStatement;
-    const humanRightsStatement = humanRightsApplicabilityStatementSv(match[1], answer);
-    if (humanRightsStatement) return humanRightsStatement;
     return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   }
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
@@ -7385,11 +7407,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementEn(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementEn(match[1], match[2], answer);
-  }
+  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
   match = q.match(/^How can (.+?) earn income$/i);
   if (match) return commercialMediaIncomeStatementEn(match[1], answer);
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
@@ -7418,11 +7436,7 @@ function civicStatementEn(source, option) {
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
   }
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) {
-    const humanRightsStatement = humanRightsApplicabilityStatementEn(match[1], answer);
-    if (humanRightsStatement) return humanRightsStatement;
-    return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-  }
+  if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   match = q.match(/^What can make (.+?) (stronger)$/i);
@@ -8986,9 +9000,6 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookSourceMetadataChaptersValidated = 0;
-let staticEbookSourceMetadataExternalKeysValidated = 0;
-let staticEbookSourceMetadataCoverageValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9617,14 +9628,6 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-}
-{
-  const sourceMetadataValidation = validateStaticEbookSourceMetadataCoverage();
-  staticEbookSourceMetadataChaptersValidated = sourceMetadataValidation.chaptersValidated;
-  staticEbookSourceMetadataExternalKeysValidated =
-    sourceMetadataValidation.externalSourceKeysValidated;
-  staticEbookSourceMetadataCoverageValidated =
-    sourceMetadataValidation.valid && staticEbookSourceMetadataChaptersValidated > 0;
 }
 {
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
@@ -13112,25 +13115,26 @@ function validateCardAccessibilityParity() {
 
 function validateProgressBarAccessibilityParity() {
   let valid = true;
-  const progressBarSources = new Map();
+  let progressBarSource = '';
 
   function reject(message) {
     valid = false;
     fail(message);
   }
 
-  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
-    let progressBarSource = progressBarSources.get(expectedRule.file);
-    if (progressBarSource === undefined) {
-      try {
-        progressBarSource = fs.readFileSync(path.join(repoRoot, expectedRule.file), 'utf8');
-        progressBarSources.set(expectedRule.file, progressBarSource);
-      } catch (error) {
-        reject(`${expectedRule.file} could not be read for accessibility parity: ${error.message}`);
-        return;
-      }
-    }
+  try {
+    progressBarSource = fs.readFileSync(
+      path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
 
+  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(progressBarSource)) {
       reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
       return;
@@ -19836,7 +19840,6 @@ console.log(
       cardAccessibilityRulesValidated,
       cardAccessibilityParityValidated,
       progressBarAccessibilityRulesValidated,
-      progressBarAccessibilityRulesExpected: EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length,
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
       metricCardAccessibilityParityValidated,
@@ -20061,9 +20064,6 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookSourceMetadataChaptersValidated,
-      staticEbookSourceMetadataExternalKeysValidated,
-      staticEbookSourceMetadataCoverageValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,
