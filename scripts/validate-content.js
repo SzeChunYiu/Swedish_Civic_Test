@@ -2,8 +2,16 @@
 const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
-const ts = require('typescript');
 const vm = require('node:vm');
+const {
+  FOCUSED_VALIDATION_REGISTRY_BY_ID,
+  focusedValidationRequested,
+  rejectUnsupportedFocusedValidationFlags,
+} = require('./validate-content-focus-registry');
+
+rejectUnsupportedFocusedValidationFlags();
+
+const ts = require('typescript');
 const {
   buildSiteQuestionBank,
   formatStaticQuestionBankDrift,
@@ -4525,6 +4533,31 @@ function printValidationSummary(summary) {
   console.log(JSON.stringify(summary, null, 2));
 }
 
+function validateFocusedSummaryKeys(id, summary) {
+  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
+  if (!entry) {
+    fail(`focused validation summary uses unknown registry id ${id}`);
+    return;
+  }
+  const actualKeys = Object.keys(summary);
+  if (
+    actualKeys.length !== entry.summaryKeys.length ||
+    actualKeys.some((key, index) => key !== entry.summaryKeys[index])
+  ) {
+    fail(
+      `focused validation ${id} summary keys must match registry: expected ${entry.summaryKeys.join(
+        ', ',
+      )}; found ${actualKeys.join(', ')}`,
+    );
+  }
+}
+
+function printFocusedValidationSummary(id, summary) {
+  validateFocusedSummaryKeys(id, summary);
+  exitWithValidationFailures();
+  printValidationSummary(summary);
+}
+
 function hasText(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -8166,7 +8199,7 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-static-v11-readiness-copy')) {
+if (focusedValidationRequested('staticV11ReadinessCopy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
   staticV11ReadinessUnsupportedPatternsValidated = readinessValidation.unsupportedPatternsValidated;
@@ -8175,8 +8208,7 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
     staticV11ReadinessUnsupportedPatternsValidated ===
       STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
     staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_READINESS_COPY.length;
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('staticV11ReadinessCopy', {
     staticV11ReadinessUnsupportedPatternsValidated,
     staticV11ReadinessRequiredCopyValidated,
     staticV11ReadinessCopyParityValidated,
@@ -8187,43 +8219,39 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-question-card-accessibility')) {
+if (focusedValidationRequested('questionCardAccessibility')) {
   validateQuestionCardAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('questionCardAccessibility', {
     questionCardAccessibilityRulesValidated,
     questionCardAccessibilityParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-chapter-card-accessibility')) {
+if (focusedValidationRequested('chapterCardAccessibility')) {
   validateChapterCardAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('chapterCardAccessibility', {
     chapterCardAccessibilityRulesValidated,
     chapterCardAccessibilityParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-question-report-link-parity')) {
+if (focusedValidationRequested('questionReportLinkParity')) {
   validateQuestionReportLinkParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('questionReportLinkParity', {
     questionReportLinkRulesValidated,
     questionReportLinkParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-native-quiz-copy')) {
+if (focusedValidationRequested('nativeQuizCopy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
   validateChapterRouteHeaderParity();
   validateChapterRouteCopyParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('nativeQuizCopy', {
     quizRouteHeadersValidated,
     quizRouteHeaderParityValidated,
     quizRouteCopyLabelsValidated,
@@ -8236,11 +8264,10 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-static-head-metadata')) {
+if (focusedValidationRequested('staticHeadMetadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('staticHeadMetadata', {
     staticHeadMetadataTitleValidated,
     staticHeadMetadataDescriptionValidated,
     staticHeadMetadataOutcomeClaimPatternsValidated,
@@ -8252,20 +8279,18 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
+if (focusedValidationRequested('dashboardProgressSnapshot')) {
   validateDashboardProgressSnapshotParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('dashboardProgressSnapshot', {
     dashboardProgressSnapshotCasesValidated,
     dashboardProgressSnapshotParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-about-the-test-route-copy')) {
+if (focusedValidationRequested('aboutTheTestRouteCopy')) {
   validateAboutTheTestRouteCopyParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('aboutTheTestRouteCopy', {
     aboutTheTestRouteCopyLabelsValidated,
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
@@ -8274,22 +8299,20 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-route-copy')) {
+if (focusedValidationRequested('settingsRouteCopy')) {
   validateSettingsRouteCopyParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('settingsRouteCopy', {
     settingsRouteCopyLabelsValidated,
     settingsRouteCopyParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-route')) {
+if (focusedValidationRequested('settingsRoute')) {
   validateSettingsRouteHeaderParity();
   validateSettingsRouteCopyParity();
   validateSettingsRouteScrollParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('settingsRoute', {
     settingsRouteHeadersValidated,
     settingsRouteHeaderParityValidated,
     settingsRouteCopyLabelsValidated,
@@ -8300,10 +8323,9 @@ if (process.argv.includes('--focus-settings-route')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-content-exec-cwd')) {
+if (focusedValidationRequested('contentExecCwd')) {
   validateContentTestValidateContentExecCwdGuard();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('contentExecCwd', {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
@@ -8330,7 +8352,7 @@ if (
   fail('strings export is not an object');
 }
 
-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+if (focusedValidationRequested('generatedTrueFalseNaturalness')) {
   if (Array.isArray(questions)) {
     questions
       .filter(
@@ -8346,48 +8368,43 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
         }
       });
   }
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('generatedTrueFalseNaturalness', {
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mastery-rules')) {
+if (focusedValidationRequested('masteryRules')) {
   validateMasteryRules();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('masteryRules', {
     masteryRulesValidated,
     masteryRulesParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-weak-chapter-rules')) {
+if (focusedValidationRequested('weakChapterRules')) {
   validateWeakChapterRules();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('weakChapterRules', {
     weakChapterRulesValidated,
     weakChapterRulesParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-practice-scoring-parity')) {
+if (focusedValidationRequested('practiceScoringParity')) {
   validatePracticeScoringRules();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('practiceScoringParity', {
     practiceScoringRulesValidated,
     practiceScoringRulesParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-spaced-repetition-schema')) {
+if (focusedValidationRequested('spacedRepetitionSchema')) {
   validateSpacedRepetitionSchedule();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('spacedRepetitionSchema', {
     spacedRepetitionIntervalsValidated,
     spacedRepetitionRuntimeParityValidated,
     spacedRepetitionRuntimeInputCasesValidated,
@@ -8396,22 +8413,20 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+if (focusedValidationRequested('mobileAdsConsentHook')) {
   validateMobileAdsConsentHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('mobileAdsConsentHook', {
     mobileAdsConsentHookCasesValidated,
     mobileAdsConsentHookParityValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-store')) {
+if (focusedValidationRequested('settingsStore')) {
   validateSettingsStoreSchemaParity();
   validateSettingsDailyGoalParity();
   validateSettingsAudioParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('settingsStore', {
     settingsStoreFieldsValidated,
     settingsStoreSchemaParityValidated,
     settingsDailyGoalOptionsValidated,
@@ -8422,12 +8437,11 @@ if (process.argv.includes('--focus-settings-store')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-progress-schema-parity')) {
+if (focusedValidationRequested('progressSchemaParity')) {
   validateProgressQuestionSchemaParity();
   validateProgressTypeSchemaParity();
   validateProgressStoreSchemaParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('progressSchemaParity', {
     progressQuestionFieldsValidated,
     progressQuestionSchemaParityValidated,
     progressTypeUnionsValidated,
@@ -8439,10 +8453,9 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-content-type-schema-parity')) {
+if (focusedValidationRequested('contentTypeSchemaParity')) {
   validateContentTypeSchemaParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('contentTypeSchemaParity', {
     contentTypeUnionsValidated,
     contentTypeInterfacesValidated,
     contentTypeSchemaParityValidated,
@@ -8450,11 +8463,10 @@ if (process.argv.includes('--focus-content-type-schema-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-answer-feedback-parity')) {
+if (focusedValidationRequested('answerFeedbackParity')) {
   validateAnswerValidationTypeSchemaParity();
   validateAnswerFeedbackParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('answerFeedbackParity', {
     answerValidationTypeUnionsValidated,
     answerValidationTypeInterfacesValidated,
     answerValidationTypeSchemaParityValidated,
@@ -8469,10 +8481,9 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-purchase-schema')) {
+if (focusedValidationRequested('purchaseSchema')) {
   validatePurchaseTypeSchemaParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('purchaseSchema', {
     purchaseTypeUnionsValidated,
     purchaseTypeInterfacesValidated,
     purchaseTypeSchemaParityValidated,
@@ -8480,11 +8491,10 @@ if (process.argv.includes('--focus-purchase-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-rewarded-exam-schema')) {
+if (focusedValidationRequested('rewardedExamSchema')) {
   validateRewardedAdTypeSchemaParity();
   validateMockExamAccessTypeSchemaParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('rewardedExamSchema', {
     rewardedAdTypeUnionsValidated,
     rewardedAdTypeInterfacesValidated,
     rewardedAdTypeSchemaParityValidated,
@@ -16567,11 +16577,10 @@ function validateCriminalResponsibilityCurrentness() {
     criminalResponsibilityCurrentnessQuestionsValidated === currentnessIds.length;
 }
 
-if (process.argv.includes('--focus-exam-generator-schema')) {
+if (focusedValidationRequested('examGeneratorSchema')) {
   validateStaticValidationSyntaxGate();
   validateExamGeneratorTypeSchemaParity();
-  exitWithValidationFailures();
-  printValidationSummary({
+  printFocusedValidationSummary('examGeneratorSchema', {
     examGeneratorTypeAliasesValidated,
     examGeneratorTypeInterfacesValidated,
     examGeneratorTypeSchemaParityValidated,
@@ -17415,98 +17424,58 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
-if (process.argv.includes('--focus-legal-route-parity')) {
+if (focusedValidationRequested('legalRouteParity')) {
   validateLegalRouteHeaderParity();
   validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalRouteHeadersValidated,
-        legalRouteHeaderParityValidated,
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
-        swedishPrivacyStreakCopyNaturalnessValidated,
-        legalSwedishEnglishTokenGuardValidated,
-        legalSwedishEnglishTokenGuardParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+  printFocusedValidationSummary('legalRouteParity', {
+    legalRouteHeadersValidated,
+    legalRouteHeaderParityValidated,
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
+    swedishPrivacyStreakCopyNaturalnessValidated,
+    legalSwedishEnglishTokenGuardValidated,
+    legalSwedishEnglishTokenGuardParityValidated,
+  });
   process.exit(0);
 }
-if (process.argv.includes('--focus-legal-section-rendering')) {
+if (focusedValidationRequested('legalSectionRendering')) {
   validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+  printFocusedValidationSummary('legalSectionRendering', {
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
+  });
   process.exit(0);
 }
-if (process.argv.includes('--focus-mistakes-route-copy')) {
+if (focusedValidationRequested('mistakesRouteCopy')) {
   validateMistakesRouteCopyParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        mistakesRouteCopyLabelsValidated,
-        mistakesRouteCopyParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+  printFocusedValidationSummary('mistakesRouteCopy', {
+    mistakesRouteCopyLabelsValidated,
+    mistakesRouteCopyParityValidated,
+  });
   process.exit(0);
 }
-if (process.argv.includes('--focus-source-material-link-parity')) {
+if (focusedValidationRequested('sourceMaterialLinkParity')) {
   validateUhrSectionMapExactSchemaKeys();
   validateUhrSourceMaterialLinkParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        uhrMapExactSchemaKeysValidated,
-        uhrSourceMaterialLinkParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+  printFocusedValidationSummary('sourceMaterialLinkParity', {
+    uhrMapExactSchemaKeysValidated,
+    uhrSourceMaterialLinkParityValidated,
+  });
   process.exit(0);
 }
-if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
+if (focusedValidationRequested('homeSvMistakeReviewCopy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
-      },
-      null,
-      2,
-    ),
-  );
+  printFocusedValidationSummary('homeSvMistakeReviewCopy', {
+    homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+  });
   process.exit(0);
 }
 validateStaticHeadMetadataParity();

@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const { FOCUSED_VALIDATION_REGISTRY } = require('../scripts/validate-content-focus-registry');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -37,6 +38,33 @@ function runPackageTest(args, env) {
   });
 }
 
+function runValidateContent(args) {
+  return spawnSync(process.execPath, ['scripts/validate-content.js', ...args], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+    env: process.env,
+  });
+}
+
+function parseValidationSummary(stdout) {
+  const match = stdout.match(/\{[\s\S]*\}\s*$/);
+  assert.ok(match, `validation output did not end with JSON summary:\n${stdout}`);
+  return JSON.parse(match[0]);
+}
+
+function focusRegistryEntry(id) {
+  const entry = FOCUSED_VALIDATION_REGISTRY.find((candidate) => candidate.id === id);
+  assert.ok(entry, `${id} must be registered as a validate-content focus mode`);
+  return entry;
+}
+
+function assertValidatorFocusRoute(validatorSource, id, flag, summaryPattern) {
+  assert.ok(focusRegistryEntry(id).flags.includes(flag), `${id} must register ${flag}`);
+  assert.match(validatorSource, new RegExp(`focusedValidationRequested\\('${id}'\\)`));
+  assert.match(validatorSource, new RegExp(`printFocusedValidationSummary\\('${id}'`));
+  assert.match(validatorSource, summaryPattern);
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
@@ -52,6 +80,60 @@ test('npm test keeps selector routing in the project dispatcher', () => {
   );
 });
 
+test('validate-content focus registry covers every focused route and summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryIds = FOCUSED_VALIDATION_REGISTRY.map((entry) => entry.id).sort();
+  const routedIds = Array.from(
+    validatorSource.matchAll(/focusedValidationRequested\('([^']+)'\)/g),
+    (match) => match[1],
+  ).sort();
+  const summaryIds = Array.from(
+    validatorSource.matchAll(/printFocusedValidationSummary\('([^']+)'/g),
+    (match) => match[1],
+  ).sort();
+  const seenFlags = new Set();
+
+  assert.deepEqual(routedIds, registryIds);
+  assert.deepEqual(summaryIds, registryIds);
+  assert.doesNotMatch(validatorSource, /process\.argv\.includes\('--focus-/);
+
+  for (const entry of FOCUSED_VALIDATION_REGISTRY) {
+    assert.ok(entry.flags.length > 0, `${entry.id} must define at least one focus flag`);
+    assert.ok(entry.summaryKeys.length > 0, `${entry.id} must define summary keys`);
+    for (const flag of entry.flags) {
+      assert.match(flag, /^--focus-[a-z0-9-]+$/);
+      assert.equal(seenFlags.has(flag), false, `${flag} must be registered once`);
+      seenFlags.add(flag);
+    }
+  }
+});
+
+test('registered validate-content focus summaries stay isolated', () => {
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY.find((entry) => entry.id === 'contentExecCwd');
+  assert.ok(registryEntry);
+
+  const result = runValidateContent(['--focus-content-exec-cwd']);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const summary = parseValidationSummary(result.stdout);
+
+  assert.deepEqual(Object.keys(summary), registryEntry.summaryKeys);
+  assert.equal(summary.contentTestValidateContentExecCwdParityValidated, true);
+});
+
+test('unknown validate-content focus flags fail before full validation', () => {
+  const result = runValidateContent(['--focus-not-real']);
+
+  assert.notEqual(result.status, 0);
+  assert.equal(result.stdout, '');
+  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
+  assert.match(result.stderr, /Supported focus modes:/);
+  assert.match(result.stderr, /--focus-content-exec-cwd/);
+  assert.doesNotMatch(result.stderr, /Cannot find module 'typescript'/);
+});
+
 test('QuestionCard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -62,9 +144,10 @@ test('QuestionCard accessibility parity uses focused content validation routing'
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-question-card-accessibility/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'questionCardAccessibility',
+    '--focus-question-card-accessibility',
     /validateQuestionCardAccessibilityParity\(\);[\s\S]*questionCardAccessibilityRulesValidated[\s\S]*questionCardAccessibilityParityValidated/,
   );
   assert.match(questionCardTestSource, /--focus-question-card-accessibility/);
@@ -85,9 +168,10 @@ test('ChapterCard accessibility parity uses focused content validation routing',
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-chapter-card-accessibility/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'chapterCardAccessibility',
+    '--focus-chapter-card-accessibility',
     /validateChapterCardAccessibilityParity\(\);[\s\S]*chapterCardAccessibilityRulesValidated[\s\S]*chapterCardAccessibilityParityValidated/,
   );
   assert.match(chapterCardTestSource, /--focus-chapter-card-accessibility/);
@@ -108,9 +192,10 @@ test('answer feedback parity uses focused content validation routing', () => {
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-answer-feedback-parity/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'answerFeedbackParity',
+    '--focus-answer-feedback-parity',
     /validateAnswerValidationTypeSchemaParity\(\);[\s\S]*validateAnswerFeedbackParity\(\);[\s\S]*answerFeedbackRuntimeParityValidated/,
   );
   assert.match(answerFeedbackTestSource, /--focus-answer-feedback-parity/);
@@ -131,9 +216,10 @@ test('question report link parity uses focused content validation routing', () =
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-question-report-link-parity/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'questionReportLinkParity',
+    '--focus-question-report-link-parity',
     /validateQuestionReportLinkParity\(\);[\s\S]*questionReportLinkRulesValidated[\s\S]*questionReportLinkParityValidated/,
   );
   assert.match(reportLinkTestSource, /--focus-question-report-link-parity/);
@@ -154,9 +240,10 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-mistakes-route-copy/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'mistakesRouteCopy',
+    '--focus-mistakes-route-copy',
     /validateMistakesRouteCopyParity\(\);[\s\S]*mistakesRouteCopyLabelsValidated[\s\S]*mistakesRouteCopyParityValidated/,
   );
   assert.match(mistakesRouteTestSource, /--focus-mistakes-route-copy/);
@@ -177,9 +264,10 @@ test('spaced repetition schema parity uses focused content validation routing', 
     'utf8',
   );
 
-  assert.match(validatorSource, /--focus-spaced-repetition-schema/);
-  assert.match(
+  assertValidatorFocusRoute(
     validatorSource,
+    'spacedRepetitionSchema',
+    '--focus-spaced-repetition-schema',
     /validateSpacedRepetitionSchedule\(\);[\s\S]*spacedRepetitionIntervalsValidated[\s\S]*spacedRepetitionRuntimeInputParityValidated/,
   );
   assert.match(spacedRepetitionTestSource, /--focus-spaced-repetition-schema/);
