@@ -18,6 +18,7 @@ import {
   perChapterProgress,
   xpSparkline,
 } from '../lib/learning/dashboardStats';
+import { formatDashboardCompletedDate } from '../lib/learning/dashboardDateFormat';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
 import { useProgressStore } from '../lib/storage/progressStore';
@@ -65,6 +66,7 @@ type DashboardCopy = {
     emptyState: string;
     examLink: string;
     examLinkAccessibilityLabel: string;
+    formatCompletedDate: (completedAt: string) => string;
     latestLabel: string;
     lowestLabel: string;
     recentLabel: string;
@@ -142,6 +144,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         'Genomför ett övningsprov så visas tidigare resultat, tempo och bästa försök här.',
       examLink: 'Gå till övningsprov',
       examLinkAccessibilityLabel: 'Öppna övningsprovet',
+      formatCompletedDate: (completedAt) => formatDashboardCompletedDate(completedAt, 'sv'),
       latestLabel: 'Senast',
       lowestLabel: 'Lägst',
       recentLabel: 'Senaste övningsprov',
@@ -224,6 +227,7 @@ const dashboardCopy: Record<AppLanguage, DashboardCopy> = {
         'Finish a mock exam and your past scores, pacing, and best attempt will appear here.',
       examLink: 'Go to mock exam',
       examLinkAccessibilityLabel: 'Open the mock exam',
+      formatCompletedDate: (completedAt) => formatDashboardCompletedDate(completedAt, 'en'),
       latestLabel: 'Latest',
       lowestLabel: 'Lowest',
       recentLabel: 'Recent mock exams',
