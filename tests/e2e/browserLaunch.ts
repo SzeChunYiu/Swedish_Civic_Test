@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 
-import { expect, type Locator, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 
@@ -12,19 +12,23 @@ export type BlockingModalDismissal = {
   launchOverlayDismissed: boolean;
 };
 
-// Storage keys matching the web MMKV keys plus the legacy localStorage keys
-// that older tests used before settings moved behind the "settings" store id.
-const legacySettingsLanguageKey = 'language';
-const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
-const settingsLanguageKey = 'settings\\language';
-const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+// Storage keys matching settingsStore on web. react-native-mmkv prefixes keys
+// with the storage id, while older fixtures used unprefixed localStorage keys.
+const legacySettingsLanguageStorageKey = 'language';
+const legacySettingsSeenAboutStorageKey = 'hasSeenAboutTheTest';
+export const currentSettingsLanguageStorageKey = 'settings\\language';
+export const currentSettingsSeenAboutStorageKey = 'settings\\hasSeenAboutTheTest';
+export const settingsLanguageStorageKeys = [
+  legacySettingsLanguageStorageKey,
+  currentSettingsLanguageStorageKey,
+] as const;
+export const settingsSeenAboutStorageKeys = [
+  legacySettingsSeenAboutStorageKey,
+  currentSettingsSeenAboutStorageKey,
+] as const;
 
-// Selector for modal overlays that block route screenshots in the rendered app.
-export const blockingModalOverlayLocator =
-  '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
-
-const languagePickerMenuName = /Language picker|Språkväljare/;
-const languagePickerTriggerName = /Open language picker|Öppna språkväljaren/;
+// Selector for dialog/modal overlays in the rendered app.
+const dialogLocator = '[role="dialog"]';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -53,62 +57,27 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKey,
-      legacyLanguageKey,
+      languageKeys,
     }: {
       language: AppLanguage;
-      languageKey: string;
-      legacyLanguageKey: string;
+      languageKeys: string[];
     }) => {
-      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
-      window.localStorage.setItem(languageKey, seededLanguage);
+      for (const languageKey of languageKeys) {
+        window.localStorage.setItem(languageKey, seededLanguage);
+      }
     },
-    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
+    { language, languageKeys: [...settingsLanguageStorageKeys] },
   );
 }
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ legacySeenKey, seenKey }: { legacySeenKey: string; seenKey: string }) => {
-      window.localStorage.setItem(legacySeenKey, 'true');
-      window.localStorage.setItem(seenKey, 'true');
+    ({ seenKeys }: { seenKeys: string[] }) => {
+      for (const seenKey of seenKeys) {
+        window.localStorage.setItem(seenKey, 'true');
+      }
     },
-    { legacySeenKey: legacySettingsSeenAboutKey, seenKey: settingsSeenAboutKey },
-  );
-}
-
-export async function seedFreshSettingsLanguageAndAboutSeen(
-  page: Page,
-  language: AppLanguage,
-): Promise<void> {
-  await page.addInitScript(
-    ({
-      language: seededLanguage,
-      languageKey,
-      legacyLanguageKey,
-      legacySeenKey,
-      seenKey,
-    }: {
-      language: AppLanguage;
-      languageKey: string;
-      legacyLanguageKey: string;
-      legacySeenKey: string;
-      seenKey: string;
-    }) => {
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
-      window.localStorage.setItem(languageKey, seededLanguage);
-      window.localStorage.setItem(legacySeenKey, 'true');
-      window.localStorage.setItem(seenKey, 'true');
-    },
-    {
-      language,
-      languageKey: settingsLanguageKey,
-      legacyLanguageKey: legacySettingsLanguageKey,
-      legacySeenKey: legacySettingsSeenAboutKey,
-      seenKey: settingsSeenAboutKey,
-    },
+    { seenKeys: [...settingsSeenAboutStorageKeys] },
   );
 }
 
@@ -119,99 +88,28 @@ export async function seedFreshFirstRunSettingsLanguage(
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKey,
-      legacyLanguageKey,
-      legacySeenKey,
-      seenKey,
+      languageKeys,
+      seenKeys,
     }: {
       language: AppLanguage;
-      languageKey: string;
-      legacyLanguageKey: string;
-      legacySeenKey: string;
-      seenKey: string;
+      languageKeys: string[];
+      seenKeys: string[];
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
-      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
-      window.localStorage.setItem(languageKey, seededLanguage);
-      window.localStorage.removeItem(legacySeenKey);
-      window.localStorage.removeItem(seenKey);
+      for (const languageKey of languageKeys) {
+        window.localStorage.setItem(languageKey, seededLanguage);
+      }
+      for (const seenKey of seenKeys) {
+        window.localStorage.removeItem(seenKey);
+      }
     },
     {
       language,
-      languageKey: settingsLanguageKey,
-      legacyLanguageKey: legacySettingsLanguageKey,
-      legacySeenKey: legacySettingsSeenAboutKey,
-      seenKey: settingsSeenAboutKey,
+      languageKeys: [...settingsLanguageStorageKeys],
+      seenKeys: [...settingsSeenAboutStorageKeys],
     },
   );
-}
-
-export async function mockBrowserDate(page: Page, fixedDate: string | Date): Promise<void> {
-  const fixedTime = typeof fixedDate === 'string' ? Date.parse(fixedDate) : fixedDate.getTime();
-
-  if (!Number.isFinite(fixedTime)) {
-    throw new Error(`Invalid browser date mock: ${String(fixedDate)}`);
-  }
-
-  await page.addInitScript((mockedNow: number) => {
-    const RealDate = Date;
-
-    const MockDate = function (
-      this: Date,
-      valueOrYear?: string | number,
-      monthIndex?: number,
-      date?: number,
-      hours?: number,
-      minutes?: number,
-      seconds?: number,
-      ms?: number,
-    ) {
-      if (!new.target) {
-        return new RealDate(mockedNow).toString();
-      }
-
-      if (arguments.length === 0) {
-        return new RealDate(mockedNow);
-      }
-
-      if (arguments.length === 1) {
-        return new RealDate(valueOrYear as string | number);
-      }
-
-      return new RealDate(
-        valueOrYear as number,
-        monthIndex as number,
-        date,
-        hours,
-        minutes,
-        seconds,
-        ms,
-      );
-    } as unknown as DateConstructor;
-
-    Object.setPrototypeOf(MockDate, RealDate);
-    Object.defineProperty(MockDate, 'prototype', { value: RealDate.prototype });
-    MockDate.now = () => mockedNow;
-    MockDate.parse = RealDate.parse;
-    MockDate.UTC = RealDate.UTC;
-    window.Date = MockDate;
-  }, fixedTime);
-}
-
-async function clickFirstVisible(locator: Locator): Promise<boolean> {
-  const target = locator.first();
-
-  if (!(await target.isVisible().catch(() => false))) return false;
-
-  try {
-    await target.click({ timeout: 5_000 });
-  } catch {
-    // The modal controls can detach while an overlay is closing; the final
-    // overlay assertion in dismissBlockingModals catches any real failure.
-  }
-
-  return true;
 }
 
 export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
@@ -221,7 +119,13 @@ export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
     })
     .first();
 
-  return clickFirstVisible(closeLaunchAd);
+  if (await closeLaunchAd.isVisible().catch(() => false)) {
+    await closeLaunchAd.click();
+    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    return true;
+  }
+
+  return false;
 }
 
 export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolean> {
@@ -231,11 +135,13 @@ export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolea
     })
     .first();
 
-  const clicked = await clickFirstVisible(closeLanguagePicker);
-  if (clicked)
-    await expect(page.getByRole('menu', { name: languagePickerMenuName })).toHaveCount(0);
+  if (await closeLanguagePicker.isVisible().catch(() => false)) {
+    await closeLanguagePicker.click();
+    await expect(page.getByRole('menu', { name: /Language picker|Språkväljare/ })).toHaveCount(0);
+    return true;
+  }
 
-  return clicked;
+  return false;
 }
 
 export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<boolean> {
@@ -245,54 +151,27 @@ export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<bo
     })
     .first();
 
-  return clickFirstVisible(skipGuide);
+  if (await skipGuide.isVisible().catch(() => false)) {
+    await skipGuide.click();
+    await expect(page.locator(dialogLocator)).toHaveCount(0);
+    return true;
+  }
+
+  return false;
 }
 
 export async function dismissBlockingModals(page: Page): Promise<BlockingModalDismissal> {
-  const dismissal: BlockingModalDismissal = {
-    firstRunAboutDismissed: false,
-    languagePickerDismissed: false,
-    launchOverlayDismissed: false,
+  const languagePickerDismissed = await dismissLanguagePickerIfPresent(page);
+  const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
+  const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
+
+  await expect(page.locator(dialogLocator)).toHaveCount(0);
+
+  return {
+    firstRunAboutDismissed,
+    languagePickerDismissed,
+    launchOverlayDismissed,
   };
-
-  for (let attempt = 0; attempt < 4; attempt += 1) {
-    const languagePickerDismissed = await dismissLanguagePickerIfPresent(page);
-    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
-    const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
-    const dismissed = languagePickerDismissed || launchOverlayDismissed || firstRunAboutDismissed;
-
-    dismissal.languagePickerDismissed ||= languagePickerDismissed;
-    dismissal.launchOverlayDismissed ||= launchOverlayDismissed;
-    dismissal.firstRunAboutDismissed ||= firstRunAboutDismissed;
-
-    if (!dismissed) break;
-    await page.waitForTimeout(150);
-  }
-
-  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
-
-  return dismissal;
-}
-
-export async function setupHomeCopyRoute(page: Page, language: AppLanguage): Promise<void> {
-  await seedFreshSettingsLanguageAndAboutSeen(page, language);
-  await page.goto('/home', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-}
-
-export async function switchLanguageThroughTopBarPicker(
-  page: Page,
-  language: AppLanguage,
-): Promise<void> {
-  const targetLabel = language === 'sv' ? 'Swedish' : 'English';
-
-  await page.getByRole('button', { name: languagePickerTriggerName }).first().click();
-
-  const menu = page.getByRole('menu', { name: languagePickerMenuName });
-  await expect(menu).toBeVisible();
-  await menu.getByRole('menuitem', { exact: true, name: targetLabel }).click();
-  await expect(menu).toHaveCount(0);
-  await expect(page.getByRole('button', { name: languagePickerTriggerName }).first()).toBeVisible();
 }
 
 /**
@@ -326,16 +205,15 @@ export async function selectQuestionLanguageInSettings(
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKey,
-      legacyLanguageKey,
+      languageKeys,
     }: {
       language: AppLanguage;
-      languageKey: string;
-      legacyLanguageKey: string;
+      languageKeys: string[];
     }) => {
-      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
-      window.localStorage.setItem(languageKey, seededLanguage);
+      for (const languageKey of languageKeys) {
+        window.localStorage.setItem(languageKey, seededLanguage);
+      }
     },
-    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
+    { language, languageKeys: [...settingsLanguageStorageKeys] },
   );
 }

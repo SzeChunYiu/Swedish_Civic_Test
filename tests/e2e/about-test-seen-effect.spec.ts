@@ -1,9 +1,12 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { dismissBlockingModals, seedSettingsLanguage, type AppLanguage } from './browserLaunch';
-
-const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+import {
+  currentSettingsSeenAboutStorageKey,
+  dismissBlockingModals,
+  seedSettingsLanguage,
+  type AppLanguage,
+} from './browserLaunch';
 
 function collectConsoleErrors(page: Page) {
   const consoleErrors: string[] = [];
@@ -38,7 +41,7 @@ test('about-the-test route marks the first-run guide as seen after render', asyn
   ).toBeVisible();
   await page.waitForFunction(
     (storageKey) => window.localStorage.getItem(storageKey) === 'true',
-    settingsSeenAboutKey,
+    currentSettingsSeenAboutStorageKey,
   );
 
   await page.goto('/home', { waitUntil: 'networkidle' });

@@ -3,34 +3,20 @@ import type { Page } from '@playwright/test';
 
 import {
   collectConsoleAndPageErrors,
+  currentSettingsLanguageStorageKey,
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedSettingsLanguage,
 } from './browserLaunch';
-
-const legacyLanguageKey = 'language';
-const settingsLanguageKey = 'settings\\language';
-
-async function seedLanguage(page: Page, language: 'sv' | 'en') {
-  await page.addInitScript(
-    ({
-      currentLanguage,
-      legacyKey,
-      settingsKey,
-    }: {
-      currentLanguage: 'sv' | 'en';
-      legacyKey: string;
-      settingsKey: string;
-    }) => {
-      window.localStorage.setItem(legacyKey, currentLanguage);
-      window.localStorage.setItem(settingsKey, currentLanguage);
-    },
-    { currentLanguage: language, legacyKey: legacyLanguageKey, settingsKey: settingsLanguageKey },
-  );
-}
 
 async function expectStoredLanguage(page: Page, language: 'sv' | 'en') {
   await expect
-    .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsLanguageKey))
+    .poll(() =>
+      page.evaluate(
+        (storageKey) => window.localStorage.getItem(storageKey),
+        currentSettingsLanguageStorageKey,
+      ),
+    )
     .toBe(language);
 }
 
@@ -38,7 +24,7 @@ test('disabled language rows stay inert while available rows update the picker',
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await seedLanguage(page, 'sv');
+  await seedSettingsLanguage(page, 'sv');
   await markAboutTheTestSeen(page);
   const errors = collectConsoleAndPageErrors(page);
 
