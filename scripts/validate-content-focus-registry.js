@@ -713,7 +713,12 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
   {
     id: 'launchAdDeferral',
     flags: ['--focus-launch-ad-deferral'],
-    summaryKeys: ['launchAdSuppressedRoutesValidated', 'launchAdRouteSuppressionParityValidated'],
+    summaryKeys: [
+      'launchAdSuppressedRoutesValidated',
+      'launchAdRouteSuppressionParityValidated',
+      'launchAdFirstRunDeferralRulesValidated',
+      'launchAdFirstRunDeferralParityValidated',
+    ],
   },
   {
     id: 'learnFlashcardSource',
