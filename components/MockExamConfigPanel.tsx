@@ -8,6 +8,12 @@ import { PillBadge } from './PillBadge';
 import { Surface } from './Surface';
 import type { SurfaceProps } from './Surface';
 import { Text } from './Text';
+import {
+  clampMockExamStepperValue,
+  defaultMockExamConfigPanelBounds,
+  normalizeMockExamPositiveStep,
+  normalizeMockExamStepperRange,
+} from './mockExamConfigPanelBounds';
 
 type ChapterId = string | number;
 
@@ -152,14 +158,9 @@ interface StepperProps {
   valueLabel: string;
 }
 
-function clamp(value: number, min: number, max: number) {
-  if (!Number.isFinite(value)) return min;
-  return Math.max(min, Math.min(Math.round(value), max));
-}
-
 function getNextValue(value: number, step: number, direction: -1 | 1, min: number, max: number) {
-  const safeStep = Number.isFinite(step) && step > 0 ? Math.round(step) : 1;
-  return clamp(value + safeStep * direction, min, max);
+  const safeStep = normalizeMockExamPositiveStep(step);
+  return clampMockExamStepperValue(value + safeStep * direction, min, max);
 }
 
 function idsMatch(left: ChapterId, right: ChapterId) {
@@ -297,7 +298,7 @@ export function MockExamConfigPanel({
   durationHint,
   durationLabel,
   durationMinutes,
-  durationStep = 1,
+  durationStep = defaultMockExamConfigPanelBounds.step,
   durationValueLabel,
   elevation = 'card',
   feedbackLabel,
@@ -305,10 +306,10 @@ export function MockExamConfigPanel({
   incrementQuestionAccessibilityLabel,
   languageOverride,
   localSaveLabel,
-  maxDurationMinutes = 90,
+  maxDurationMinutes = defaultMockExamConfigPanelBounds.maxDurationMinutes,
   maxQuestionCount,
-  minDurationMinutes = 2,
-  minQuestionCount = 5,
+  minDurationMinutes = defaultMockExamConfigPanelBounds.minDurationMinutes,
+  minQuestionCount = defaultMockExamConfigPanelBounds.minQuestionCount,
   onClearChapters,
   onDurationMinutesChange,
   onPractice,
@@ -321,7 +322,7 @@ export function MockExamConfigPanel({
   questionCount,
   questionCountHint,
   questionCountLabel,
-  questionStep = 1,
+  questionStep = defaultMockExamConfigPanelBounds.step,
   resetLabel,
   scoreModeLabel,
   selectedChapterIds = chapters.map((chapter) => chapter.id),
@@ -362,15 +363,40 @@ export function MockExamConfigPanel({
     selectedChaptersValueLabel ?? copy.selectedChaptersValueLabel;
   const resolvedSourceScopeLabel = sourceScopeLabel ?? copy.sourceScopeLabel;
   const resolvedStartLabel = startLabel ?? copy.startLabel;
-  const safeMinQuestionCount = Math.max(0, Math.round(minQuestionCount));
-  const safeMaxQuestionCount = Math.max(safeMinQuestionCount, Math.round(maxQuestionCount));
-  const safeQuestionCount = clamp(questionCount, safeMinQuestionCount, safeMaxQuestionCount);
-  const safeMinDuration = Math.max(0, Math.round(minDurationMinutes));
-  const safeMaxDuration = Math.max(safeMinDuration, Math.round(maxDurationMinutes));
-  const safeDuration = clamp(durationMinutes, safeMinDuration, safeMaxDuration);
+  const questionRange = normalizeMockExamStepperRange({
+    fallbackMax: defaultMockExamConfigPanelBounds.minQuestionCount,
+    fallbackMin: defaultMockExamConfigPanelBounds.minQuestionCount,
+    max: maxQuestionCount,
+    min: minQuestionCount,
+    step: questionStep,
+    value: questionCount,
+  });
+  const durationRange = normalizeMockExamStepperRange({
+    fallbackMax: defaultMockExamConfigPanelBounds.maxDurationMinutes,
+    fallbackMin: defaultMockExamConfigPanelBounds.minDurationMinutes,
+    max: maxDurationMinutes,
+    min: minDurationMinutes,
+    step: durationStep,
+    value: durationMinutes,
+  });
+  const safeMinQuestionCount = questionRange.min;
+  const safeMaxQuestionCount = questionRange.max;
+  const safeQuestionCount = questionRange.value;
+  const safeQuestionStep = questionRange.step;
+  const questionBoundsValid = questionRange.boundsValid;
+  const safeMinDuration = durationRange.min;
+  const safeMaxDuration = durationRange.max;
+  const safeDuration = durationRange.value;
+  const safeDurationStep = durationRange.step;
+  const durationBoundsValid = durationRange.boundsValid;
   const selectedChapterCount = getSelectedCount(chapters, selectedChapterIds);
   const hasSelectableChapters = chapters.some((chapter) => !chapter.disabled);
-  const startIsDisabled = startDisabled || !onStart || selectedChapterCount === 0;
+  const startIsDisabled =
+    startDisabled ||
+    !questionBoundsValid ||
+    !durationBoundsValid ||
+    !onStart ||
+    selectedChapterCount === 0;
   const resolvedDurationValueLabel = resolvedDurationValueLabelGetter(safeDuration);
   const resolvedSelectedChaptersValueLabel =
     resolvedSelectedChaptersValueLabelGetter(selectedChapterCount);
@@ -421,7 +447,7 @@ export function MockExamConfigPanel({
             max={safeMaxQuestionCount}
             min={safeMinQuestionCount}
             onChange={onQuestionCountChange}
-            step={questionStep}
+            step={safeQuestionStep}
             value={safeQuestionCount}
             valueLabel={String(safeQuestionCount)}
           />
@@ -440,7 +466,7 @@ export function MockExamConfigPanel({
             max={safeMaxDuration}
             min={safeMinDuration}
             onChange={onDurationMinutesChange}
-            step={durationStep}
+            step={safeDurationStep}
             value={safeDuration}
             valueLabel={resolvedDurationValueLabel}
           />

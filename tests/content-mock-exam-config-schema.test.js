@@ -73,6 +73,79 @@ test('mock exam config panel uses unofficial practice-result copy', () => {
   assert.doesNotMatch(source, /Resultat är övning/);
 });
 
+test('mock exam config panel normalizes malformed numeric bounds before rendering', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'components/MockExamConfigPanel.tsx'), 'utf8');
+  const { normalizeMockExamStepperRange } = loadTs('components/mockExamConfigPanelBounds.ts');
+
+  assert.deepEqual(
+    normalizeMockExamStepperRange({
+      fallbackMax: 50,
+      fallbackMin: 5,
+      max: 50,
+      min: 5,
+      step: 2.6,
+      value: 12.4,
+    }),
+    { boundsValid: true, max: 50, min: 5, step: 3, value: 12 },
+  );
+  assert.deepEqual(
+    normalizeMockExamStepperRange({
+      fallbackMax: 50,
+      fallbackMin: 5,
+      max: Number.NaN,
+      min: 5,
+      step: 0.4,
+      value: Number.NaN,
+    }),
+    { boundsValid: false, max: 50, min: 5, step: 1, value: 5 },
+  );
+  assert.deepEqual(
+    normalizeMockExamStepperRange({
+      fallbackMax: 90,
+      fallbackMin: 2,
+      max: 20,
+      min: Number.POSITIVE_INFINITY,
+      step: -3,
+      value: 10,
+    }),
+    { boundsValid: false, max: 20, min: 2, step: 1, value: 10 },
+  );
+  assert.deepEqual(
+    normalizeMockExamStepperRange({
+      fallbackMax: 50,
+      fallbackMin: 5,
+      max: 4,
+      min: 10,
+      step: Number.POSITIVE_INFINITY,
+      value: 9,
+    }),
+    { boundsValid: false, max: 10, min: 10, step: 1, value: 10 },
+  );
+  assert.match(source, /normalizeMockExamStepperRange/);
+  assert.match(source, /const questionRange = normalizeMockExamStepperRange\(\{/);
+  assert.match(source, /const durationRange = normalizeMockExamStepperRange\(\{/);
+  assert.match(source, /const safeQuestionStep = questionRange\.step;/);
+  assert.match(source, /const safeDurationStep = durationRange\.step;/);
+  assert.match(source, /const questionBoundsValid = questionRange\.boundsValid;/);
+  assert.match(source, /const durationBoundsValid = durationRange\.boundsValid;/);
+  assert.match(
+    source,
+    /startDisabled \|\|\s*!questionBoundsValid \|\|\s*!durationBoundsValid \|\|/,
+  );
+  assert.match(source, /step=\{safeQuestionStep\}/);
+  assert.match(source, /step=\{safeDurationStep\}/);
+  assert.doesNotMatch(
+    source,
+    /safeMaxQuestionCount = Math\.max\(safeMinQuestionCount, Math\.round\(maxQuestionCount\)\)/,
+  );
+  assert.doesNotMatch(
+    source,
+    /safeMaxDuration = Math\.max\(safeMinDuration, Math\.round\(maxDurationMinutes\)\)/,
+  );
+  assert.doesNotMatch(source, /step=\{questionStep\}/);
+  assert.doesNotMatch(source, /step=\{durationStep\}/);
+});
+
 test('mock exam config TypeScript schema parity rejects optional field drift', () => {
   const result = spawnSync(
     process.execPath,
