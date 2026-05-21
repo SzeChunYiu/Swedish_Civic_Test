@@ -61,9 +61,20 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const expectedSafeEbookExternalSourceUrls = [
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.scb.se/mi0803-en',
+  'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+  ...officialPracticalTestSourceUrls,
+];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function readStaticChapterMeta() {
@@ -224,6 +235,10 @@ function renderedFootnoteItems(html) {
     html.matchAll(/<li\b[^>]*\bid="eb-[^"]+-fn-\d+"[^>]*>[\s\S]*?<\/li>/g),
     (match) => match[0],
   );
+}
+
+function renderedExternalSourceAnchors(html) {
+  return Array.from(html.matchAll(/<a\b(?=[^>]*\bhref="https?:\/\/)[^>]*>/g), (match) => match[0]);
 }
 
 function dataSourceKeys(block) {
@@ -517,7 +532,7 @@ test('static ebook chapters render source footnotes for every prose paragraph an
     assert.match(englishHtml, /UHR public study material/);
     assert.match(swedishHtml, /UHR public study material/);
     assert.match(englishHtml, /Editorial \(\d+ cites?\)/);
-    assert.match(swedishHtml, /Editorial \(\d+ cites?\)/);
+    assert.match(swedishHtml, /Editorial \(\d+ (?:källa|källor)\)/);
 
     [...englishBlocks, ...swedishBlocks].forEach((block) => {
       assert.match(dataSourceMetadata(block), /^(inline|typed)$/);
@@ -673,6 +688,37 @@ test('static ebook footnote links preserve route hashes and rendered source coun
       assert.doesNotMatch(html, /href="#ebook-fn(?:ref)?-/);
     }
   }
+});
+
+test('static ebook external source links use safe attributes while internal hashes stay in-page', () => {
+  const harness = createEbookHarness();
+  const html = ['en', 'sv']
+    .flatMap((lang) =>
+      ['1', '7', '9', '10', '12'].map((chapterId) => renderChapter(harness, lang, chapterId)),
+    )
+    .join('\n');
+  const externalAnchors = renderedExternalSourceAnchors(html);
+
+  assert.ok(externalAnchors.length > 0, 'ebook should render external source anchors');
+  externalAnchors.forEach((anchor) => {
+    assert.match(anchor, /\btarget="_blank"/, `external source link needs _blank: ${anchor}`);
+    assert.match(anchor, /\brel="noreferrer"/, `external source link needs noreferrer: ${anchor}`);
+  });
+
+  expectedSafeEbookExternalSourceUrls.forEach((url) => {
+    assert.match(
+      html,
+      new RegExp(
+        `<a\\b(?=[^>]*\\bhref="${escapeRegExp(
+          url,
+        )}")(?=[^>]*\\btarget="_blank")(?=[^>]*\\brel="noreferrer")[^>]*>`,
+      ),
+      `ebook source link should be safe for ${url}`,
+    );
+  });
+
+  assert.doesNotMatch(html, /<a\b(?=[^>]*\bhref="#\/sources")(?=[^>]*\btarget="_blank")/);
+  assert.doesNotMatch(html, /<a\b(?=[^>]*\bhref="#\/ebook\?c=)(?=[^>]*\btarget="_blank")/);
 });
 
 test('static ebook chapter 12 keeps practical test claims current and sourced', () => {

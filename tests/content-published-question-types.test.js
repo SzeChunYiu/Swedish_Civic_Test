@@ -4403,6 +4403,56 @@ test('published question schema reports focused generated why-reason guard cover
   assert.equal(summary.generatedWhyReasonTargetStemParityValidated, true);
 });
 
+test('published question schema reports focused generated localization overlay parity', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-localization-template-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{\s*"generatedLocalizationTemplateParityValidated"[\s\S]*\}/);
+  assert.ok(match, 'focused generated localization validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.ok(summary.generatedLocalizationTemplateParityValidated > 0);
+  assert.ok(summary.generatedPromptTemplateParityValidated > 0);
+  assert.ok(summary.generatedAnswerTemplateParityValidated > 0);
+  assert.ok(summary.generatedPublishedQuestions > 0);
+});
+
+test('published question schema rejects unlocalized expected generated option text maps in focused mode', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const Module = require('node:module');
+const path = require('node:path');
+const scriptPath = path.join(process.cwd(), 'scripts/validate-content.js');
+const source = fs
+  .readFileSync(scriptPath, 'utf8')
+  .replace(
+    ".map((question) =>\\n        typeof applyQuestionLocalizationPilot === 'function'\\n          ? applyQuestionLocalizationPilot(question)\\n          : question,\\n      )",
+    '',
+  );
+const mod = new Module(scriptPath, module);
+mod.filename = scriptPath;
+mod.paths = Module._nodeModulePaths(path.dirname(scriptPath));
+process.argv.push('scripts/validate-content.js', '--focus-generated-localization-template-parity');
+mod._compile(source, scriptPath);
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /text map does not match localization overlay/,
+  );
+});
+
 test('published question schema rejects targetless generated why-reason stems in focused mode', () => {
   const result = spawnSync(
     process.execPath,
