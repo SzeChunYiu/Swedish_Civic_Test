@@ -37802,8 +37802,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'They are often run by private companies and earn income from advertising.',
-        sv: 'De drivs ofta av privata företag och får inkomster genom reklam.',
+        en: 'Advertising-funded media are often run by private companies and earn income from advertising.',
+        sv: 'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam.',
       },
       opts: [
         {
@@ -37842,8 +37842,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'They may never sell advertising space.',
-        sv: 'De får aldrig sälja reklamplats.',
+        en: 'Advertising-funded media may never sell advertising space.',
+        sv: 'Reklamfinansierade medier får aldrig sälja reklamplats.',
       },
       opts: [
         {
@@ -37972,8 +37972,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'They are also available online and updated with news several times per day.',
-        sv: 'De finns också på internet och uppdateras med nyheter flera gånger per dag.',
+        en: 'Many newspapers are also available online and updated with news several times per day.',
+        sv: 'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag.',
       },
       opts: [
         {
@@ -38012,8 +38012,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'They may be sold only as one copy per year.',
-        sv: 'De får bara säljas som ett exemplar per år.',
+        en: 'Many newspapers may be sold only as one copy per year.',
+        sv: 'Många tidningar får bara säljas som ett exemplar per år.',
       },
       opts: [
         {
@@ -38136,8 +38136,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'Anyone can create content there, and it is not always checked the same way as in other media.',
-        sv: 'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.',
+        en: 'On the web and in social media, anyone can create content, and the content is not always checked the same way as in other media.',
+        sv: 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
       },
       opts: [
         {
@@ -38170,8 +38170,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'Only responsible publishers may write posts there.',
-        sv: 'Bara ansvariga utgivare får skriva inlägg där.',
+        en: 'On the web and in social media, only responsible publishers may write posts.',
+        sv: 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
       },
       opts: [
         {
@@ -40954,8 +40954,8 @@
       chapter: 'Ch. 04 · Political elections and parties',
       type: 'true_false',
       q: {
-        en: 'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group.',
-        sv: 'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
+        en: 'Some may vote if they are registered as living in Sweden and meet the rules for their group.',
+        sv: 'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
       },
       opts: [
         {
