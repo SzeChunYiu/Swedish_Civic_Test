@@ -1,0 +1,48 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Adds a Home-only rewarded extra mock exam card after the daily free exam is used.\n- Requires completing the sponsor preview before calling the rewarded ad flow and granting a stored exam credit.\n- Keeps `/exam` as a stored-credit consumer with no ad-triggering UI, and aligns the unlocked exam CTA copy with the Home flow.\n- Consolidates the duplicate LegalPage import that was keeping lint red on current main.\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run lint`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mock-exam-runtime-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`\n- `npx --no-install prettier --check 'app/(tabs)/home.tsx' 'app/(tabs)/exam.tsx' app/sources.tsx scripts/validate-content.js scripts/monetization.test.js`\n- `git diff --check origin/main...HEAD`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2`\n- `CI=1 E2E_PORT=4194 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/rewarded-web-preview.spec.ts --workers=1`",
+  "files": [
+    { "path": "app/(tabs)/exam.tsx", "additions": 2, "deletions": 2, "changeType": "MODIFIED" },
+    { "path": "app/(tabs)/home.tsx", "additions": 176, "deletions": 3, "changeType": "MODIFIED" },
+    { "path": "app/sources.tsx", "additions": 1, "deletions": 2, "changeType": "MODIFIED" },
+    {
+      "path": "docs/parallel-sessions/journals/setup.md",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/monetization.test.js",
+      "additions": 3,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 3,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/rewarded-extra-exam-home-credit-177935",
+  "headRefOid": "6edb474eab11e078fa51961613231e34fe488dc9",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2323,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:04:59Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219321607/job/77149864965",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:03:53Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "feat: surface rewarded mock exam unlock on Home",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2323"
+}

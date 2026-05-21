@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Adds exported-web coverage that clicks Search practice-question results from `/search?q=riksdag` and `/search?query=kommun`.\n- Verifies the routed quiz URL, localized question heading, and source citation context match the clicked result.\n- Consolidates a duplicate `app/sources.tsx` import so the branch stays lint-clean.\n\n## Validation\n- `npm run typecheck -- --pretty false`\n- `npm run lint`\n- `npm run test:ownership`\n- `npx --no-install prettier --check app/sources.tsx tests/e2e/search-query-hydration.spec.ts`\n- `git diff --check HEAD^..HEAD`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2`\n- `CI=1 E2E_PORT=4191 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/search-query-hydration.spec.ts tests/e2e/search-accessibility.spec.ts --workers=1`",
+  "files": [
+    { "path": "app/sources.tsx", "additions": 1, "deletions": 2, "changeType": "MODIFIED" },
+    {
+      "path": "docs/parallel-sessions/journals/setup.md",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/search-query-hydration.spec.ts",
+      "additions": 112,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/search-question-result-navigation-177935",
+  "headRefOid": "dad6232c4a31fb1ca72ef60acc85647ed36b0b0a",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2314,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:51:49Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218684112/job/77147661737",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:50:36Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: cover search result quiz navigation",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2314"
+}

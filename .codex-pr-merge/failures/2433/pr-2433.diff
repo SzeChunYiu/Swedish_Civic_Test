@@ -1,0 +1,634 @@
+diff --git a/app/citizenship-requirements.tsx b/app/citizenship-requirements.tsx
+index 7db97f3a7..29baafe5a 100644
+--- a/app/citizenship-requirements.tsx
++++ b/app/citizenship-requirements.tsx
+@@ -17,7 +17,8 @@ import {
+ } from '../data/citizenshipRequirements';
+ import { useCitizenshipRequirementsChecklistStore } from '../lib/storage/citizenshipRequirementsStore';
+ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
+-import { colors, radius, space, typography } from '../lib/theme';
++import { radius, space, typography, type ThemeColors } from '../lib/theme';
++import { useTheme } from '../lib/theme/ThemeProvider';
+ 
+ type CitizenshipRequirementsCopy = {
+   eyebrow: string;
+@@ -169,6 +170,7 @@ function buildSummary(
+ 
+ export default function CitizenshipRequirementsScreen() {
+   const language = useSettingsStore((state) => state.language);
++  const { colors: themeColors } = useTheme();
+   const checkedAreaIds = useCitizenshipRequirementsChecklistStore((state) => state.checkedAreaIds);
+   const toggleChecklistArea = useCitizenshipRequirementsChecklistStore((state) => state.toggleArea);
+   const persistenceWarning = useCitizenshipRequirementsChecklistStore(
+@@ -178,6 +180,7 @@ export default function CitizenshipRequirementsScreen() {
+     (state) => state.clearPersistenceWarning,
+   );
+   const copy = copyByLanguage[language];
++  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
+ 
+   const missingAreas = useMemo(
+@@ -196,14 +199,19 @@ export default function CitizenshipRequirementsScreen() {
+       eyebrow={copy.eyebrow}
+       title={copy.title}
+       subtitle={copy.subtitle}
++      themeColors={themeColors}
+       rightSlot={
+         <View style={styles.heroBadges}>
+-          <Badge tone="warm">{copy.effectiveBadge}</Badge>
+-          <Badge tone="green">{copy.yearlyIncomeBadge}</Badge>
++          <Badge themeColors={themeColors} tone="warm">
++            {copy.effectiveBadge}
++          </Badge>
++          <Badge themeColors={themeColors} tone="green">
++            {copy.yearlyIncomeBadge}
++          </Badge>
+         </View>
+       }
+     >
+-      <Card style={styles.summaryCard}>
++      <Card style={styles.summaryCard} themeColors={themeColors}>
+         <Text accessibilityRole="header" style={styles.summaryTitle}>
+           {copy.summaryTitle}
+         </Text>
+@@ -216,7 +224,11 @@ export default function CitizenshipRequirementsScreen() {
+         warning={persistenceWarning}
+       />
+ 
+-      <SectionHeader title={copy.checklistTitle} subtitle={copy.checklistSubtitle} />
++      <SectionHeader
++        title={copy.checklistTitle}
++        subtitle={copy.checklistSubtitle}
++        themeColors={themeColors}
++      />
+ 
+       <View style={styles.requirementsList}>
+         {citizenshipRequirementAreas.map((area) => {
+@@ -227,9 +239,11 @@ export default function CitizenshipRequirementsScreen() {
+           }`;
+ 
+           return (
+-            <Card key={area.id} style={styles.requirementCard}>
++            <Card key={area.id} style={styles.requirementCard} themeColors={themeColors}>
+               <View style={styles.requirementHeader}>
+-                <Badge tone={checked ? 'green' : 'blue'}>{area.badge[language]}</Badge>
++                <Badge themeColors={themeColors} tone={checked ? 'green' : 'blue'}>
++                  {area.badge[language]}
++                </Badge>
+                 <Text accessibilityRole="header" style={styles.requirementTitle}>
+                   {area.order}. {area.title[language]}
+                 </Text>
+@@ -265,9 +279,9 @@ export default function CitizenshipRequirementsScreen() {
+         })}
+       </View>
+ 
+-      <QuestionDisclaimer />
++      <QuestionDisclaimer themeColors={themeColors} />
+ 
+-      <Card style={styles.sourcesCard}>
++      <Card style={styles.sourcesCard} themeColors={themeColors}>
+         <Text accessibilityRole="header" style={styles.sourcesTitle}>
+           {copy.sourceListTitle}
+         </Text>
+@@ -319,182 +333,184 @@ export default function CitizenshipRequirementsScreen() {
+   );
+ }
+ 
+-const styles = StyleSheet.create({
+-  heroBadges: {
+-    alignItems: 'flex-start',
+-    gap: space[1],
+-  },
+-  summaryCard: {
+-    backgroundColor: colors.surfaceWarm,
+-    gap: space[0.75],
+-  },
+-  summaryTitle: {
+-    color: colors.text,
+-    fontSize: typography.cardTitle.fontSize,
+-    fontWeight: typography.cardTitle.fontWeight,
+-    lineHeight: typography.cardTitle.lineHeight,
+-  },
+-  summaryBody: {
+-    color: colors.textSecondary,
+-    fontSize: typography.body.fontSize,
+-    lineHeight: typography.body.lineHeight,
+-  },
+-  requirementsList: {
+-    gap: space[2],
+-  },
+-  requirementCard: {
+-    gap: space[1.25],
+-  },
+-  requirementHeader: {
+-    gap: space[0.75],
+-  },
+-  requirementTitle: {
+-    color: colors.text,
+-    fontSize: typography.cardTitle.fontSize,
+-    fontWeight: typography.cardTitle.fontWeight,
+-    lineHeight: typography.cardTitle.lineHeight,
+-  },
+-  requirementSummary: {
+-    color: colors.text,
+-    fontSize: typography.bodySemibold.fontSize,
+-    fontWeight: typography.bodySemibold.fontWeight,
+-    lineHeight: typography.bodySemibold.lineHeight,
+-  },
+-  requirementDetail: {
+-    color: colors.textSecondary,
+-    fontSize: typography.body.fontSize,
+-    lineHeight: typography.body.lineHeight,
+-  },
+-  sourceRefs: {
+-    borderColor: colors.border,
+-    borderTopWidth: StyleSheet.hairlineWidth,
+-    gap: space[0.5],
+-    paddingTop: space[1],
+-  },
+-  sourceRefsLabel: {
+-    color: colors.textMuted,
+-    fontSize: typography.caption.fontSize,
+-    fontWeight: typography.caption.fontWeight,
+-    lineHeight: typography.caption.lineHeight,
+-  },
+-  sourceRefsText: {
+-    color: colors.textSecondary,
+-    fontSize: typography.finePrint.fontSize,
+-    lineHeight: typography.finePrint.lineHeight,
+-  },
+-  checkboxRow: {
+-    alignItems: 'center',
+-    backgroundColor: colors.surfaceMuted,
+-    borderColor: colors.border,
+-    borderRadius: radius.card,
+-    borderWidth: space.hairline,
+-    flexDirection: 'row',
+-    gap: space[1.25],
+-    minHeight: space[6],
+-    paddingHorizontal: space[1.5],
+-    paddingVertical: space[1],
+-  },
+-  checkboxRowChecked: {
+-    backgroundColor: colors.successSoft,
+-    borderColor: colors.success,
+-  },
+-  checkboxRowPressed: {
+-    opacity: 0.78,
+-  },
+-  checkboxBox: {
+-    alignItems: 'center',
+-    backgroundColor: colors.surface,
+-    borderColor: colors.textMuted,
+-    borderRadius: radius.micro,
+-    borderWidth: space.hairline,
+-    height: space[3],
+-    justifyContent: 'center',
+-    width: space[3],
+-  },
+-  checkboxBoxChecked: {
+-    backgroundColor: colors.success,
+-    borderColor: colors.success,
+-  },
+-  checkboxDot: {
+-    backgroundColor: colors.surface,
+-    borderRadius: radius.pill,
+-    height: space[1],
+-    width: space[1],
+-  },
+-  checkboxText: {
+-    color: colors.text,
+-    flex: 1,
+-    fontSize: typography.bodyMedium.fontSize,
+-    fontWeight: typography.bodyMedium.fontWeight,
+-    lineHeight: typography.bodyMedium.lineHeight,
+-  },
+-  sourcesCard: {
+-    gap: space[1.25],
+-  },
+-  sourcesTitle: {
+-    color: colors.text,
+-    fontSize: typography.cardTitle.fontSize,
+-    fontWeight: typography.cardTitle.fontWeight,
+-    lineHeight: typography.cardTitle.lineHeight,
+-  },
+-  sourcesSubtitle: {
+-    color: colors.textMuted,
+-    fontSize: typography.body.fontSize,
+-    lineHeight: typography.body.lineHeight,
+-  },
+-  sourceList: {
+-    gap: space[1],
+-  },
+-  sourceRow: {
+-    borderColor: colors.border,
+-    borderRadius: radius.small,
+-    borderWidth: StyleSheet.hairlineWidth,
+-    gap: space[0.5],
+-    minHeight: space[6],
+-    padding: space[1.25],
+-  },
+-  sourceRowPressed: {
+-    backgroundColor: colors.surfaceMuted,
+-  },
+-  sourceTitle: {
+-    color: colors.text,
+-    fontSize: typography.bodySemibold.fontSize,
+-    fontWeight: typography.bodySemibold.fontWeight,
+-    lineHeight: typography.bodySemibold.lineHeight,
+-  },
+-  sourceMeta: {
+-    color: colors.textMuted,
+-    fontSize: typography.caption.fontSize,
+-    lineHeight: typography.caption.lineHeight,
+-  },
+-  sourceUrl: {
+-    color: colors.accent,
+-    fontSize: typography.finePrint.fontSize,
+-    lineHeight: typography.finePrint.lineHeight,
+-  },
+-  actions: {
+-    flexDirection: 'row',
+-    flexWrap: 'wrap',
+-    gap: space[1.5],
+-  },
+-  primaryLink: {
+-    backgroundColor: colors.accent,
+-    borderRadius: radius.micro,
+-    color: colors.surface,
+-    fontSize: typography.navButton.fontSize,
+-    fontWeight: typography.navButton.fontWeight,
+-    paddingHorizontal: space[2],
+-    paddingVertical: space[1],
+-    textDecorationLine: 'none',
+-  },
+-  secondaryLink: {
+-    backgroundColor: colors.surfaceMuted,
+-    borderRadius: radius.micro,
+-    color: colors.text,
+-    fontSize: typography.navButton.fontSize,
+-    fontWeight: typography.navButton.fontWeight,
+-    paddingHorizontal: space[2],
+-    paddingVertical: space[1],
+-    textDecorationLine: 'none',
+-  },
+-});
++function createStyles(themeColors: ThemeColors) {
++  return StyleSheet.create({
++    heroBadges: {
++      alignItems: 'flex-start',
++      gap: space[1],
++    },
++    summaryCard: {
++      backgroundColor: themeColors.surfaceWarm,
++      gap: space[0.75],
++    },
++    summaryTitle: {
++      color: themeColors.text,
++      fontSize: typography.cardTitle.fontSize,
++      fontWeight: typography.cardTitle.fontWeight,
++      lineHeight: typography.cardTitle.lineHeight,
++    },
++    summaryBody: {
++      color: themeColors.textSecondary,
++      fontSize: typography.body.fontSize,
++      lineHeight: typography.body.lineHeight,
++    },
++    requirementsList: {
++      gap: space[2],
++    },
++    requirementCard: {
++      gap: space[1.25],
++    },
++    requirementHeader: {
++      gap: space[0.75],
++    },
++    requirementTitle: {
++      color: themeColors.text,
++      fontSize: typography.cardTitle.fontSize,
++      fontWeight: typography.cardTitle.fontWeight,
++      lineHeight: typography.cardTitle.lineHeight,
++    },
++    requirementSummary: {
++      color: themeColors.text,
++      fontSize: typography.bodySemibold.fontSize,
++      fontWeight: typography.bodySemibold.fontWeight,
++      lineHeight: typography.bodySemibold.lineHeight,
++    },
++    requirementDetail: {
++      color: themeColors.textSecondary,
++      fontSize: typography.body.fontSize,
++      lineHeight: typography.body.lineHeight,
++    },
++    sourceRefs: {
++      borderColor: themeColors.border,
++      borderTopWidth: StyleSheet.hairlineWidth,
++      gap: space[0.5],
++      paddingTop: space[1],
++    },
++    sourceRefsLabel: {
++      color: themeColors.textMuted,
++      fontSize: typography.caption.fontSize,
++      fontWeight: typography.caption.fontWeight,
++      lineHeight: typography.caption.lineHeight,
++    },
++    sourceRefsText: {
++      color: themeColors.textSecondary,
++      fontSize: typography.finePrint.fontSize,
++      lineHeight: typography.finePrint.lineHeight,
++    },
++    checkboxRow: {
++      alignItems: 'center',
++      backgroundColor: themeColors.surfaceMuted,
++      borderColor: themeColors.border,
++      borderRadius: radius.card,
++      borderWidth: space.hairline,
++      flexDirection: 'row',
++      gap: space[1.25],
++      minHeight: space[6],
++      paddingHorizontal: space[1.5],
++      paddingVertical: space[1],
++    },
++    checkboxRowChecked: {
++      backgroundColor: themeColors.successSoft,
++      borderColor: themeColors.success,
++    },
++    checkboxRowPressed: {
++      opacity: 0.78,
++    },
++    checkboxBox: {
++      alignItems: 'center',
++      backgroundColor: themeColors.surface,
++      borderColor: themeColors.textMuted,
++      borderRadius: radius.micro,
++      borderWidth: space.hairline,
++      height: space[3],
++      justifyContent: 'center',
++      width: space[3],
++    },
++    checkboxBoxChecked: {
++      backgroundColor: themeColors.success,
++      borderColor: themeColors.success,
++    },
++    checkboxDot: {
++      backgroundColor: themeColors.surface,
++      borderRadius: radius.pill,
++      height: space[1],
++      width: space[1],
++    },
++    checkboxText: {
++      color: themeColors.text,
++      flex: 1,
++      fontSize: typography.bodyMedium.fontSize,
++      fontWeight: typography.bodyMedium.fontWeight,
++      lineHeight: typography.bodyMedium.lineHeight,
++    },
++    sourcesCard: {
++      gap: space[1.25],
++    },
++    sourcesTitle: {
++      color: themeColors.text,
++      fontSize: typography.cardTitle.fontSize,
++      fontWeight: typography.cardTitle.fontWeight,
++      lineHeight: typography.cardTitle.lineHeight,
++    },
++    sourcesSubtitle: {
++      color: themeColors.textMuted,
++      fontSize: typography.body.fontSize,
++      lineHeight: typography.body.lineHeight,
++    },
++    sourceList: {
++      gap: space[1],
++    },
++    sourceRow: {
++      borderColor: themeColors.border,
++      borderRadius: radius.small,
++      borderWidth: StyleSheet.hairlineWidth,
++      gap: space[0.5],
++      minHeight: space[6],
++      padding: space[1.25],
++    },
++    sourceRowPressed: {
++      backgroundColor: themeColors.surfaceMuted,
++    },
++    sourceTitle: {
++      color: themeColors.text,
++      fontSize: typography.bodySemibold.fontSize,
++      fontWeight: typography.bodySemibold.fontWeight,
++      lineHeight: typography.bodySemibold.lineHeight,
++    },
++    sourceMeta: {
++      color: themeColors.textMuted,
++      fontSize: typography.caption.fontSize,
++      lineHeight: typography.caption.lineHeight,
++    },
++    sourceUrl: {
++      color: themeColors.accent,
++      fontSize: typography.finePrint.fontSize,
++      lineHeight: typography.finePrint.lineHeight,
++    },
++    actions: {
++      flexDirection: 'row',
++      flexWrap: 'wrap',
++      gap: space[1.5],
++    },
++    primaryLink: {
++      backgroundColor: themeColors.accent,
++      borderRadius: radius.micro,
++      color: themeColors.surface,
++      fontSize: typography.navButton.fontSize,
++      fontWeight: typography.navButton.fontWeight,
++      paddingHorizontal: space[2],
++      paddingVertical: space[1],
++      textDecorationLine: 'none',
++    },
++    secondaryLink: {
++      backgroundColor: themeColors.surfaceMuted,
++      borderRadius: radius.micro,
++      color: themeColors.text,
++      fontSize: typography.navButton.fontSize,
++      fontWeight: typography.navButton.fontWeight,
++      paddingHorizontal: space[2],
++      paddingVertical: space[1],
++      textDecorationLine: 'none',
++    },
++  });
++}
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 9a78bd0bd..4c52bd891 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -1,13 +1,5 @@
+ import { useMemo, useState } from 'react';
+-import {
+-  Pressable,
+-  ScrollView,
+-  StyleSheet,
+-  Text,
+-  TextInput,
+-  useColorScheme,
+-  View,
+-} from 'react-native';
++import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+ 
+ import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
+ import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
+@@ -27,8 +19,9 @@ import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+ import { useCompanionStore } from '../lib/storage/companionStore';
+ import type { AppLanguage } from '../lib/storage/settingsStore';
+ import { useSettingsStore } from '../lib/storage/settingsStore';
+-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
++import { motion, radius, shadows, space, typography } from '../lib/theme';
+ import type { ThemeColors } from '../lib/theme';
++import { useTheme } from '../lib/theme/ThemeProvider';
+ 
+ type SettingsCopy = {
+   audioDisabledLabel: string;
+@@ -274,7 +267,6 @@ function buildImportSummaryLines(
+ }
+ 
+ export default function Screen() {
+-  const systemColorScheme = useColorScheme();
+   const language = useSettingsStore((state) => state.language);
+   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+@@ -285,6 +277,12 @@ export default function Screen() {
+   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+   const themeMode = useAccessibilityStore((state) => state.themeMode);
+   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
++  const accessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.persistenceWarning,
++  );
++  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.clearPersistenceWarning,
++  );
+   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
+   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
+   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
+@@ -293,7 +291,7 @@ export default function Screen() {
+   );
+   const copy = settingsCopy[language];
+   const reduceMotion = useReducedMotion();
+-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
++  const { colors: themeColors } = useTheme();
+   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+   const [importText, setImportText] = useState('');
+   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
+@@ -473,6 +471,12 @@ export default function Screen() {
+           {copy.themeModeTitle}
+         </Text>
+         <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
++        <PersistenceWarningNotice
++          language={language}
++          onDismiss={clearAccessibilityPersistenceWarning}
++          warning={accessibilityPersistenceWarning}
++          warningScope="accessibilityPreferences"
++        />
+         <View style={styles.row}>
+           {themeOptions.map((option) => renderThemeButton(option.value, option.label))}
+         </View>
+diff --git a/components/quiz/ProvenanceBadge.tsx b/components/quiz/ProvenanceBadge.tsx
+index d5ac61290..a3270c746 100644
+--- a/components/quiz/ProvenanceBadge.tsx
++++ b/components/quiz/ProvenanceBadge.tsx
+@@ -154,9 +154,15 @@ function createStyles(themeColors: ThemeColors) {
+       backgroundColor: themeColors.surfaceMuted,
+     },
+     sourceNote: {
++      backgroundColor: themeColors.surfaceWarm,
++      borderColor: themeColors.border,
++      borderRadius: radius.small,
++      borderWidth: space.hairline,
+       color: themeColors.textSecondary,
+       fontSize: typography.caption.fontSize,
+       lineHeight: typography.caption.lineHeight,
++      paddingHorizontal: space[1],
++      paddingVertical: space[0.75],
+     },
+     uhrText: {
+       color: themeColors.badgeBlueText,
+diff --git a/scripts/theme-discipline.test.js b/scripts/theme-discipline.test.js
+index 370035cf1..757c5b237 100644
+--- a/scripts/theme-discipline.test.js
++++ b/scripts/theme-discipline.test.js
+@@ -187,6 +187,33 @@ test('form fields and primary button controls consume dedicated radius tokens',
+   assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
+ });
+ 
++test('utility routes resolve semantic colors from the active theme', () => {
++  for (const routePath of ['app/search.tsx', 'app/citizenship-requirements.tsx']) {
++    const source = read(routePath);
++
++    assert.match(source, /themeColors/, `${routePath} should derive local styles from themeColors`);
++    assert.doesNotMatch(
++      source,
++      /import \{ colors[,}]/,
++      `${routePath} must not import static light color tokens`,
++    );
++    assert.doesNotMatch(
++      source,
++      /\bcolors\./,
++      `${routePath} must not read route-local colors.* values`,
++    );
++  }
++
++  const searchSource = read('app/search.tsx');
++  const citizenshipSource = read('app/citizenship-requirements.tsx');
++
++  assert.match(searchSource, /colorsForThemeMode\(themeMode, systemColorScheme\)/);
++  assert.match(citizenshipSource, /const \{ colors: themeColors \} = useTheme\(\);/);
++  assert.match(citizenshipSource, /function createStyles\(themeColors: ThemeColors\)/);
++  assert.match(citizenshipSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
++  assert.match(citizenshipSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
++});
++
+ test('theme content validation parser keeps one token schema validator', () => {
+   const source = fs.readFileSync(path.join(ROOT, 'scripts/validate-content.js'), 'utf8');
+   const declarationCount = [...source.matchAll(/function validateThemeTokenSchema\(\)/g)].length;
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..2322e0626 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -2334,7 +2334,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
+   {
+     label: 'ScrollView import',
+     pattern:
+-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
++      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
+   },
+   {
+     label: 'scroll root container',
+diff --git a/tests/content-citizenship-requirements-parity.test.js b/tests/content-citizenship-requirements-parity.test.js
+index 2f65160e0..4690be22a 100644
+--- a/tests/content-citizenship-requirements-parity.test.js
++++ b/tests/content-citizenship-requirements-parity.test.js
+@@ -144,6 +144,16 @@ test('citizenship requirements screen renders interactive sourced checklist with
+   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
+   assert.match(routeSource, /Migrationsverket always decides the application/);
+   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
++  assert.match(routeSource, /const \{ colors: themeColors \} = useTheme\(\);/);
++  assert.match(
++    routeSource,
++    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
++  );
++  assert.match(routeSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
++  assert.match(routeSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
++  assert.match(routeSource, /function createStyles\(themeColors: ThemeColors\)/);
++  assert.doesNotMatch(routeSource, /import \{ colors[,}]/);
++  assert.doesNotMatch(routeSource, /\bcolors\./);
+   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
+ });
+ 
+diff --git a/tests/content-settings-route-scroll-parity.test.js b/tests/content-settings-route-scroll-parity.test.js
+index e0cbe45eb..565680c4f 100644
+--- a/tests/content-settings-route-scroll-parity.test.js
++++ b/tests/content-settings-route-scroll-parity.test.js
+@@ -28,7 +28,7 @@ test('settings route keeps mobile content inside a scrollable root', () => {
+   assert.equal(summary.settingsRouteScrollParityValidated, true);
+   assert.match(
+     source,
+-    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*useColorScheme,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
++    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
+   );
+   assert.match(
+     source,

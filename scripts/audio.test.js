@@ -141,6 +141,42 @@ test('buildAnswerFeedbackSpeechText keeps authority wording and source citations
   assert.doesNotMatch(text, /UHR|Källa|Source|Sverige i fokus|s\. 5/i);
 });
 
+test('speech text builders ignore malformed runtime data', () => {
+  const { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
+
+  assert.doesNotThrow(() => buildQuestionSpeechText(null));
+  assert.doesNotThrow(() =>
+    buildQuestionSpeechText({
+      questionSv: null,
+      options: [
+        null,
+        { id: 'a', textSv: null, textEn: null },
+        { id: 'b', textSv: 'Sverige', textEn: 'Sweden' },
+      ],
+    }),
+  );
+
+  const questionSpeech = buildQuestionSpeechText({
+    questionSv: null,
+    options: [
+      null,
+      { id: 'a', textSv: null, textEn: null },
+      { id: 'b', textSv: 'Sverige', textEn: 'Sweden' },
+    ],
+  });
+  const feedbackSpeech = buildAnswerFeedbackSpeechText(
+    {
+      correctOptionId: 'a',
+      explanationSv: null,
+    },
+    'b',
+  );
+
+  assert.match(questionSpeech, /Sverige/);
+  assert.doesNotMatch(`${questionSpeech} ${feedbackSpeech}`, /\b(?:null|undefined)\b/i);
+  assert.match(feedbackSpeech, /Du valde: det valda svaret\./);
+});
+
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
   moduleCache.clear();
   const warnings = [];
@@ -186,6 +222,42 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.equal(onErrorCalls[0].message, 'speech unavailable');
 });
 
+test('speakSwedish ignores malformed text, rates, callbacks, and options', () => {
+  moduleCache.clear();
+  const speakCalls = [];
+  const { speakSwedish } = loadTs('lib/audio/speak.ts', {
+    speechMock: {
+      speak(text, options) {
+        speakCalls.push({ text, options });
+      },
+      stop() {},
+    },
+  });
+
+  assert.doesNotThrow(() => speakSwedish(null));
+  assert.doesNotThrow(() => speakSwedish(undefined));
+  assert.doesNotThrow(() => speakSwedish(123));
+  assert.doesNotThrow(() => speakSwedish('Hej Sverige', null));
+  speakSwedish('Hej snabbt', { rate: 99 });
+  speakSwedish('Hej igen', {
+    rate: Infinity,
+    onDone: 'not-a-function',
+    onError: 'not-a-function',
+    onStopped: 'not-a-function',
+  });
+
+  assert.equal(speakCalls.length, 3);
+  assert.equal(speakCalls[0].text, 'Hej Sverige');
+  assert.equal(speakCalls[0].options.language, 'sv-SE');
+  assert.equal(speakCalls[1].text, 'Hej snabbt');
+  assert.equal(speakCalls[1].options.rate, 2);
+  assert.equal(speakCalls[2].text, 'Hej igen');
+  assert.equal(Object.hasOwn(speakCalls[2].options, 'rate'), false);
+  assert.equal(speakCalls[2].options.onDone, undefined);
+  assert.equal(speakCalls[2].options.onError, undefined);
+  assert.equal(speakCalls[2].options.onStopped, undefined);
+});
+
 test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
   moduleCache.clear();
   const speakCalls = [];
@@ -229,6 +301,7 @@ test('question audio autoplay gate is opt-in and stop-aware', () => {
   assert.equal(shouldAutoplayQuestionAudio({ ...base, listenFirstAudioEnabled: false }), false);
   assert.equal(shouldAutoplayQuestionAudio({ ...base, questionKey: null }), false);
   assert.equal(shouldAutoplayQuestionAudio({ ...base, speechText: '   ' }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, speechText: null }), false);
   assert.equal(shouldAutoplayQuestionAudio({ ...base, stopSignal: true }), false);
   assert.equal(shouldAutoplayQuestionAudio({ ...base, suppressAutoplay: true }), false);
 });

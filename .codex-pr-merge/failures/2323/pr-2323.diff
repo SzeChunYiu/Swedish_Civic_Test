@@ -1,0 +1,360 @@
+diff --git a/app/(tabs)/exam.tsx b/app/(tabs)/exam.tsx
+index f5f1e83cd..215c4b1fe 100644
+--- a/app/(tabs)/exam.tsx
++++ b/app/(tabs)/exam.tsx
+@@ -119,7 +119,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
+     selectedAnswerLabel: 'Valt svar',
+     retryAccess: 'Försök läsa övningsprovsstatus igen',
+     startMockExam: 'Starta övningsprov',
+-    startUnlockedExtraExam: 'Starta upplåst extra prov',
++    startUnlockedExtraExam: 'Starta upplåst övningsprov',
+     submitAccessibilityLabel: 'Skicka övningsprov',
+     submitLabel: 'Skicka prov',
+     timedSimulationBadge: 'Tidsatt simulering',
+@@ -171,7 +171,7 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
+     selectedAnswerLabel: 'Selected answer',
+     retryAccess: 'Retry mock exam access check',
+     startMockExam: 'Start mock exam',
+-    startUnlockedExtraExam: 'Start unlocked extra exam',
++    startUnlockedExtraExam: 'Start unlocked mock exam',
+     submitAccessibilityLabel: 'Submit mock exam',
+     submitLabel: 'Submit exam',
+     timedSimulationBadge: 'Timed simulation',
+diff --git a/app/(tabs)/home.tsx b/app/(tabs)/home.tsx
+index 41a9b06fb..3ce464540 100644
+--- a/app/(tabs)/home.tsx
++++ b/app/(tabs)/home.tsx
+@@ -1,11 +1,12 @@
+ import { Link } from 'expo-router';
+-import { useEffect, useMemo } from 'react';
++import { useCallback, useEffect, useMemo, useState } from 'react';
+ import { StyleSheet, Text, View } from 'react-native';
+ 
+ import { AdBanner } from '../../components/monetization/AdBanner';
+ import { PremiumBanner } from '../../components/monetization/PremiumBanner';
+ import { PricingWedge } from '../../components/monetization/PricingWedge';
+ import { Badge } from '../../components/ui/Badge';
++import { Button } from '../../components/ui/Button';
+ import { Card } from '../../components/ui/Card';
+ import { CountdownBanner } from '../../components/ui/CountdownBanner';
+ import { MetricCard } from '../../components/ui/MetricCard';
+@@ -31,7 +32,8 @@ import {
+ import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
+ import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+ import { calculateLevel } from '../../lib/learning/xp';
+-import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
++import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
++import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
+ import { useProgressStore } from '../../lib/storage/progressStore';
+ import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
+ import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+@@ -103,6 +105,13 @@ type HomeCopy = {
+   readinessSparseNote: string;
+   readinessTitle: string;
+   readinessVerdicts: Record<ReadinessVerdict, string>;
++  rewardedExamBody: string;
++  rewardedExamHeading: string;
++  rewardedExamPreviewButton: string;
++  rewardedExamUnlockButton: string;
++  rewardedExamUnlockFailure: string;
++  rewardedExamUnlockedCta: string;
++  rewardedExamUnlockedStatus: string;
+   reviewWeakChapters: string;
+   startPractice: string;
+   startPracticeAccessibilityLabel: string;
+@@ -226,6 +235,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
+       almost_ready: 'Stadig övning',
+       strong_preparation: 'Stark övningsgrund',
+     },
++    rewardedExamBody:
++      'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
++    rewardedExamHeading: 'Lås upp ett extra övningsprov',
++    rewardedExamPreviewButton: 'Slutför förhandsvisning',
++    rewardedExamUnlockButton: 'Lås upp extra övningsprov',
++    rewardedExamUnlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
++    rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
++    rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
+     reviewWeakChapters: 'Repetera svaga kapitel',
+     startPractice: 'Starta övning',
+     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
+@@ -370,6 +387,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
+       almost_ready: 'Steady practice',
+       strong_preparation: 'Strong practice base',
+     },
++    rewardedExamBody:
++      'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
++    rewardedExamHeading: 'Unlock an extra mock exam',
++    rewardedExamPreviewButton: 'Complete sponsor preview',
++    rewardedExamUnlockButton: 'Unlock extra mock exam',
++    rewardedExamUnlockFailure: 'Extra mock exam could not be unlocked right now.',
++    rewardedExamUnlockedCta: 'Start unlocked mock exam',
++    rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
+     reviewWeakChapters: 'Review weak chapters',
+     startPractice: 'Start practice',
+     startPracticeAccessibilityLabel: 'Start the recommended practice session',
+@@ -408,12 +433,18 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
+ };
+ 
+ export default function Screen() {
++  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
++  const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
++  const [rewardUnlockMessage, setRewardUnlockMessage] = useState<string | null>(null);
+   const {
++    accessDecision,
++    accessReady,
+     entitlements: monetizationEntitlements,
+     entitlementsReady,
++    grantRewardedExamCredit,
+     purchaseRuntime,
+     setEntitlements: setMonetizationEntitlements,
+-  } = useRemoveAdsEntitlements();
++  } = useMockExamAccess();
+   const questionProgress = useProgressStore((state) => state.questionProgress);
+   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
+   const totalXp = useProgressStore((state) => state.totalXp);
+@@ -465,6 +496,56 @@ export default function Screen() {
+     readinessDetails,
+   );
+   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
++  const rewardedExamUnlocked = accessDecision.reason === 'rewarded_exam_credit';
++  const showRewardedExamOffer =
++    accessReady && entitlementsReady && (accessDecision.canOfferRewardedAd || rewardedExamUnlocked);
++
++  const handleCompleteRewardPreview = useCallback(() => {
++    setRewardPreviewCompleted(true);
++    setRewardUnlockMessage(null);
++  }, []);
++
++  const handleUnlockRewardedExam = useCallback(async () => {
++    if (
++      !rewardPreviewCompleted ||
++      rewardUnlockInFlight ||
++      rewardedExamUnlocked ||
++      !accessDecision.canOfferRewardedAd
++    ) {
++      return;
++    }
++
++    setRewardUnlockInFlight(true);
++    setRewardUnlockMessage(null);
++
++    try {
++      const result = await showRewardedExtraExamAd({
++        confirmReward: () => rewardPreviewCompleted,
++        entitlements: monetizationEntitlements,
++      });
++
++      if (result.status !== 'earned_reward') {
++        setRewardUnlockMessage(copy.rewardedExamUnlockFailure);
++        return;
++      }
++
++      await grantRewardedExamCredit();
++      setRewardUnlockMessage(copy.rewardedExamUnlockedStatus);
++    } catch {
++      setRewardUnlockMessage(copy.rewardedExamUnlockFailure);
++    } finally {
++      setRewardUnlockInFlight(false);
++    }
++  }, [
++    accessDecision.canOfferRewardedAd,
++    copy.rewardedExamUnlockFailure,
++    copy.rewardedExamUnlockedStatus,
++    grantRewardedExamCredit,
++    monetizationEntitlements,
++    rewardPreviewCompleted,
++    rewardUnlockInFlight,
++    rewardedExamUnlocked,
++  ]);
+ 
+   useEffect(() => {
+     setStreakFreezeState(streakWithFreeze.freezeState);
+@@ -532,6 +613,53 @@ export default function Screen() {
+         </Link>
+       </Card>
+       <SocialProofRow language={language} />
++      {showRewardedExamOffer ? (
++        <Card style={styles.rewardedExamCard}>
++          <Badge tone={rewardedExamUnlocked ? 'blue' : 'warm'}>
++            {language === 'sv' ? 'Extra prov' : 'Extra exam'}
++          </Badge>
++          <Text accessibilityRole="header" style={styles.rewardedExamTitle}>
++            {copy.rewardedExamHeading}
++          </Text>
++          <Text style={styles.rewardedExamText}>{copy.rewardedExamBody}</Text>
++          {rewardUnlockMessage ? (
++            <Text
++              accessibilityLiveRegion="polite"
++              aria-live="polite"
++              style={styles.rewardedExamStatus}
++            >
++              {rewardUnlockMessage}
++            </Text>
++          ) : null}
++          {rewardedExamUnlocked ? (
++            <Link accessibilityRole="link" href="/exam" style={styles.rewardedExamLink}>
++              {copy.rewardedExamUnlockedCta}
++            </Link>
++          ) : (
++            <View style={styles.rewardedExamActions}>
++              <Button
++                disabled={rewardPreviewCompleted}
++                onPress={handleCompleteRewardPreview}
++                style={styles.rewardedExamButton}
++                variant="secondary"
++              >
++                {copy.rewardedExamPreviewButton}
++              </Button>
++              <Button
++                accessibilityState={{
++                  busy: rewardUnlockInFlight,
++                  disabled: !rewardPreviewCompleted || rewardUnlockInFlight,
++                }}
++                disabled={!rewardPreviewCompleted || rewardUnlockInFlight}
++                onPress={handleUnlockRewardedExam}
++                style={styles.rewardedExamButton}
++              >
++                {copy.rewardedExamUnlockButton}
++              </Button>
++            </View>
++          )}
++        </Card>
++      ) : null}
+       <Card style={styles.dailyChallengeCard}>
+         <Badge tone={dailyChallengeCompleted ? 'blue' : 'warm'}>{dailyChallengeCopy.title}</Badge>
+         <Text style={styles.dailyChallengeText}>{dailyChallengeCopy.subtitle}</Text>
+@@ -783,6 +911,51 @@ function createStyles(themeColors: ThemeColors) {
+       fontSize: typography.caption.fontSize,
+       lineHeight: typography.caption.lineHeight,
+     },
++    rewardedExamCard: {
++      gap: space[1],
++    },
++    rewardedExamTitle: {
++      color: themeColors.text,
++      fontSize: typography.cardTitle.fontSize,
++      fontWeight: typography.cardTitle.fontWeight,
++      lineHeight: typography.cardTitle.lineHeight,
++    },
++    rewardedExamText: {
++      color: themeColors.textSecondary,
++      fontSize: typography.body.fontSize,
++      lineHeight: typography.body.lineHeight,
++    },
++    rewardedExamStatus: {
++      color: themeColors.textSecondary,
++      fontSize: typography.caption.fontSize,
++      fontWeight: typography.caption.fontWeight,
++      lineHeight: typography.caption.lineHeight,
++    },
++    rewardedExamActions: {
++      flexDirection: 'row',
++      flexWrap: 'wrap',
++      gap: space[1],
++    },
++    rewardedExamButton: {
++      flexBasis: 210,
++      flexGrow: 1,
++      maxWidth: '100%',
++    },
++    rewardedExamLink: {
++      alignItems: 'center',
++      alignSelf: 'flex-start',
++      backgroundColor: themeColors.accent,
++      borderRadius: radius.micro,
++      color: themeColors.surface,
++      fontSize: typography.navButton.fontSize,
++      fontWeight: typography.navButton.fontWeight,
++      justifyContent: 'center',
++      marginTop: space[0.5],
++      minHeight: space[6],
++      paddingHorizontal: space[2],
++      paddingVertical: space[1],
++      textDecorationLine: 'none',
++    },
+     dailyChallengeCard: {
+       gap: space[1],
+     },
+diff --git a/app/sources.tsx b/app/sources.tsx
+index aab369db8..9b98d1b14 100644
+--- a/app/sources.tsx
++++ b/app/sources.tsx
+@@ -1,5 +1,4 @@
+-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+-import { LegalLinkList } from '../components/compliance/LegalPage';
++import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+ import {
+   UHR_AUTHORITY_BOUNDARY_SOURCE,
+   UhrAuthorityBoundaryLink,
+diff --git a/docs/parallel-sessions/journals/setup.md b/docs/parallel-sessions/journals/setup.md
+index dbc2bf978..586605ef0 100644
+--- a/docs/parallel-sessions/journals/setup.md
++++ b/docs/parallel-sessions/journals/setup.md
+@@ -1390,3 +1390,11 @@ Artifacts changed: `components/ui/TopBarActions.tsx`, `tests/e2e/topbar-language
+ Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0 with 7/7 passing; `npm run test:theme-discipline` exit 0 with 5/5 passing; `npm run test:router-shell` exit 0 with 11/11 passing; `node --test tests/content-topbar-actions-accessibility-parity.test.js` exit 0 with 1/1 passing; `npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npx --no-install playwright test tests/e2e/topbar-language-picker-target.spec.ts --workers=1` exit 0 with 1/1 passing.
+ Blocked? no for this top-bar link target and interaction-feedback atom; no Vercel CLI was run.
+ Next suggested validator action: inspect `TopBarActionLink` web styling and rerun the focused top-bar browser smoke plus typecheck, lint, a11y labels, theme discipline, router shell, ownership, and web export before accepting `TOPBAR-LINK-PRESSED-FEEDBACK-1`.
++
++## Iteration 278 - 2026-05-21
++
++Task completed: REWARDED-EXTRA-EXAM-NON-EXAM-CREDIT-SURFACE-1 - surfaced the rewarded extra mock-exam value exchange on Home after the daily free exam is used, grants the stored credit only after the completed sponsor preview, and keeps Exam as a stored-credit consumer with no ad-triggering UI.
++Artifacts changed: `app/(tabs)/home.tsx`, `app/(tabs)/exam.tsx`, `app/sources.tsx`, `scripts/validate-content.js`, `scripts/monetization.test.js`, `docs/parallel-sessions/journals/setup.md`.
++Verification: clean SETUP worktree rebased onto current `origin/main` `fff6ef7f`; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run test:monetization` exit 0 with 34/34 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0 with `homeRouteCopyParityValidated:true`, `examRouteCopyParityValidated:true`, and 895 questions; `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-mock-exam-runtime-parity.test.js` exit 0 with 2/2 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 E2E_PORT=4193 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/rewarded-web-preview.spec.ts --workers=1` exit 0 with 2/2 passing.
++Blocked? no for this Home rewarded-credit surface; no Vercel CLI was run.
++Next suggested validator action: inspect the Home sponsor-preview state flow, stored credit grant, and Exam unlocked-credit CTA copy, then rerun the monetization/content guards, web export, and focused rewarded Playwright flow before accepting `REWARDED-EXTRA-EXAM-NON-EXAM-CREDIT-SURFACE-1`.
+diff --git a/scripts/monetization.test.js b/scripts/monetization.test.js
+index ffba75c82..7874049a3 100644
+--- a/scripts/monetization.test.js
++++ b/scripts/monetization.test.js
+@@ -956,8 +956,8 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
+   assert.doesNotMatch(examSource, /showRewardedExtraExamAd|RewardedAd|rewardPreview/);
+   assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION|grantRewardedExamCredit/);
+   assert.doesNotMatch(examSource, /Unlock extra exam|Lås upp extra prov/);
+-  assert.match(examSource, /Start unlocked extra exam/);
+-  assert.match(examSource, /Starta upplåst extra prov/);
++  assert.match(examSource, /Start unlocked mock exam/);
++  assert.match(examSource, /Starta upplåst övningsprov/);
+ });
+ 
+ test('ad rendering flag disables all placements even for free users', () => {
+@@ -2188,7 +2188,7 @@ test('exam screen does not import ad components', () => {
+   assert.match(examSource, /useMockExamAccess/);
+   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
+   assert.match(examSource, /handleStartAccessibleExam/);
+-  assert.match(examSource, /Start unlocked extra exam/);
++  assert.match(examSource, /Start unlocked mock exam/);
+   assert.match(accessHookSource, /getMockExamAccessDecision/);
+   assert.match(accessHookSource, /platform: Platform\.OS/);
+   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..74ec236fa 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -1453,7 +1453,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
+     'Dagens kostnadsfria övningsprov är tillgängligt.',
+     'Starta övningsprov',
+     'Försök läsa övningsprovsstatus igen',
+-    'Starta upplåst extra prov',
++    'Starta upplåst övningsprov',
+     'Framsteg',
+     '${answeredCount}/${questionCount} besvarade',
+     'Välj svaret ${optionText} för fråga ${questionNumber}',
+@@ -1484,7 +1484,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
+     'Daily free mock exam available.',
+     'Start mock exam',
+     'Retry mock exam access check',
+-    'Start unlocked extra exam',
++    'Start unlocked mock exam',
+     'Progress',
+     '${answeredCount}/${questionCount} answered',
+     'Select answer ${optionText} for question ${questionNumber}',
+@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',

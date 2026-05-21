@@ -1,0 +1,922 @@
+[
+  {
+    "number": 2504,
+    "title": "Fix provenance badge pointer focus disclosure",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2504",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2504 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2504 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2491,
+    "title": "Add focused ProgressBar accessibility gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2491",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2491 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2491 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2489,
+    "title": "[codex] Repair practice progress validator drift",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2489",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2489 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2489 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2474,
+    "title": "data-integrity: align generated answer template localization",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2474",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2474 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2474 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2473,
+    "title": "test: restore progress validator schema mirrors",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2473",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2473 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2473 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2472,
+    "title": "[codex] Queue Android Remove Ads product-id parity finding",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2472",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2472 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2472 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2467,
+    "title": "static-site: follow CSS imports in asset guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2467",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2467 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2467 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2466,
+    "title": "[codex] Centralize storage test TypeScript loader",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2466",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2461,
+    "title": "static ebook: current conduct requirement copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2461",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2461 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2461 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2460,
+    "title": "[codex] Cap local study import input",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2460",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2460 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2460 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2457,
+    "title": "[codex] suppress first-run guide on onboarding",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2457",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2457 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2457 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2454,
+    "title": "[codex] fix political-rights generated true/false prompts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2454",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2454 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2454 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2453,
+    "title": "practice: add answer choice strikeout control",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2453",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2451,
+    "title": "Guard generated localization template parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2451",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2451 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2451 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2447,
+    "title": "[codex] fix generated bare phrase naturalness guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2447",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2443,
+    "title": "Wire Remove Ads E2E mock runtime tests",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2443",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2443 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2443 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2440,
+    "title": "[codex] test exam provenance source-note toggles",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2440",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2440 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2440 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2433,
+    "title": "Theme utility routes use active color tokens",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2433",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2433 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2433 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2432,
+    "title": "test: centralize validate-content focus registry",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2432",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2432 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2432 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2431,
+    "title": "[codex] settings: scope accessibility persistence warnings",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2431",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2431 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2431 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2428,
+    "title": "test: guard Remove Ads E2E mock ownership",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2428",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2426,
+    "title": "[codex] setup: require canonical spaced repetition due timestamps",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2426",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2426 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2426 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2424,
+    "title": "fix: release stalled practice interstitial shows",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2424",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2424 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2424 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2422,
+    "title": "content: guard generated Sweden scope parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2422",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2422 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2422 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2416,
+    "title": "test: cover purchase in-flight runtime guards",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2416",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2416 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2416 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2414,
+    "title": "test: focus Pro Lifetime relaunch validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2414",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2414 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2414 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2410,
+    "title": "test: centralize Home e2e setup",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2410",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2408,
+    "title": "ebook: expose footnote source count metadata",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2408",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2406,
+    "title": "setup: render countdown civic-test phase",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2406",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2404,
+    "title": "Share streak freeze state normalization",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2404",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2404 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2404 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2401,
+    "title": "setup: validate search route query hydration",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2401",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2401 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2401 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2399,
+    "title": "uiux: add question audio stop e2e",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2399",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2399 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2399 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2395,
+    "title": "Share launch suppression policy in visual smoke report",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2395",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2391,
+    "title": "Surface accessibility persistence warnings in Settings",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2391",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2391 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2391 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2389,
+    "title": "Add focused static ebook footnote hash validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2389",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2382,
+    "title": "fix generated bare phrase naturalness guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2382",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2382 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2382 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2381,
+    "title": "[codex] Centralize validate-content focus routes",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2381",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2378,
+    "title": "[codex] Cover static media asset references",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2378",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2378 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2378 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2376,
+    "title": "[codex] Rewrite political-rights generated true/false prompts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2376",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2375,
+    "title": "[codex] Validate Pro-gated learning selectors",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2375",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2375 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2375 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2374,
+    "title": "test search provenance source note disclosure",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2374",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2373,
+    "title": "test: guard native AdBanner platform gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2373",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2372,
+    "title": "content: guard rights-work English naturalness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2372",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2372 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2372 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2371,
+    "title": "test: enforce shared purchase in-flight guards",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2371",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2371 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2371 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2369,
+    "title": "[codex] Keep countdown banner through civic test phase",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2369",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2368,
+    "title": "test: guard streak freeze counter normalization",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2368",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2368 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2368 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2367,
+    "title": "uiux: focus profile settings shortcut",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2367",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2367 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2367 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2366,
+    "title": "test: focus question provenance validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2366",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2366 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2366 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2365,
+    "title": "storage: preserve recoverable read warnings",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2365",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2365 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2365 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2364,
+    "title": "test: guard search clear URL state",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2364",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2364 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2364 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2363,
+    "title": "[codex] render citizenship requirement sources as anchors",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2363",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2363 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2363 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2362,
+    "title": "monetization: require strict entitlement booleans",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2362",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2362 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2362 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2361,
+    "title": "monetization: require strict boolean entitlement gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2361",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2359,
+    "title": "[codex] focus streak rules validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2359",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2359 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2359 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2357,
+    "title": "static-site: bind manifest to index references",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2357",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2357 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2357 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2356,
+    "title": "onboarding: mark about guide seen after mount",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2356",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2356 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2356 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2355,
+    "title": "[codex] make ad banner test copy platform-neutral",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2355",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2354,
+    "title": "search: normalize punctuated question queries",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2354",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2354 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2354 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2353,
+    "title": "Harden pro-gated learning review limits",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2353",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2353 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2353 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2350,
+    "title": "test: guard countdown banner home mount",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2350",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2350 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2350 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2349,
+    "title": "uiux: prove reduced-motion celebration cue behavior",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2349",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2349 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2349 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2348,
+    "title": "fix: naturalize q115 religious freedom English",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2348",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2348 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2348 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2347,
+    "title": "[codex] Naturalize q050 source criticism English",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2347",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2347 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2347 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2339,
+    "title": "test: harden question provenance validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2339",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2339 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2339 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2338,
+    "title": "visual-smoke: refresh route dismissal metadata",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2338",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2338 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2338 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2337,
+    "title": "copy: guard Swedish about-test mock wording",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2337",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2337 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2337 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2336,
+    "title": "data-integrity: guard question provenance runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2336",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2336 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2336 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2335,
+    "title": "storage: warn on corrupt local study JSON",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2335",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2334,
+    "title": "data-integrity: rewrite q020 referendum true-false variants",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2334",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2334 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2334 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2330,
+    "title": "uiux: require ebook factbox provenance keys",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2330",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2330 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2330 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2329,
+    "title": "test: focus audio speech parity gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2329",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2329 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2329 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2328,
+    "title": "tests: add focused XP rules validation gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2328",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2323,
+    "title": "feat: surface rewarded mock exam unlock on Home",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2323",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2323 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2323 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2322,
+    "title": "uiux: restore ui effects accessibility gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2322",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2322 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2322 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2321,
+    "title": "release: gate static site asset manifest freshness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2321",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2320,
+    "title": "[codex] Guard exam timer runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2320",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2320 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2320 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2317,
+    "title": "Fix generated source-criticism true/false stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2317",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2317 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2317 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2315,
+    "title": "[codex] Focus CelebrationBurst accessibility validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2315",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2315 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2315 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2314,
+    "title": "test: cover search result quiz navigation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2314",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2314 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2314 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2312,
+    "title": "[codex] Focus UHR reference card accessibility validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2312",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2312 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2312 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2307,
+    "title": "[codex] setup: fail closed web Remove Ads purchases",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2307",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2307 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2307 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2306,
+    "title": "test(content): add focused q116 religious-freedom guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2306",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2306 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2306 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2305,
+    "title": "test: add q116 religious freedom focused validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2305",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2305 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2305 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2303,
+    "title": "Countdown: add focused study-plan validator routing",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2303",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2303 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2303 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2302,
+    "title": "Rewrite political-rights generated true/false prompts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2302",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "GraphQL: Pull Request has merge conflicts (mergePullRequest) "
+  },
+  {
+    "number": 2299,
+    "title": "[codex] Add readiness adapter focused validator gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2299",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2299 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2299 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2297,
+    "title": "setup: focus exam readiness persistence guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2297",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2297 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2297 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2295,
+    "title": "Review store: guard runtime question ids",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2295",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2295 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2295 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2291,
+    "title": "fix: guard badge and XP runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2291",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2291 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2291 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2290,
+    "title": "[codex] add weekly recap focused validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2290",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2290 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2290 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2288,
+    "title": "[codex] profile: complete study setup shortcut",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2288",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2288 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2288 && git fetch origin main && git merge origin/main "
+  },
+  {
+    "number": 2286,
+    "title": "test(exam): cover provenance badges in mock exam flow",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2286",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "result": "saved_failed_admin_merge",
+    "failure_reason": "Admin merge command failed; usually merge conflict, already-closed race, or head changed.",
+    "merge_stderr": "X Pull request SzeChunYiu/Swedish_Civic_Test#2286 is not mergeable: the merge commit cannot be cleanly created. To have the pull request merged after all the requirements have been met, add the `--auto` flag. Run the following to resolve the merge conflicts locally:   gh pr checkout 2286 && git fetch origin main && git merge origin/main "
+  }
+]

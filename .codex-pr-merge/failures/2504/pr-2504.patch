@@ -1,0 +1,119 @@
+From 7c890ca63cab5c5de49c6c8b833a6d5e68c181c1 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 18:46:18 +0200
+Subject: [PATCH] fix provenance badge pointer focus disclosure
+
+---
+ components/quiz/ProvenanceBadge.tsx    | 28 ++++++++++++++++++++++----
+ scripts/ui-effects.test.js             | 17 ++++++++++++++--
+ tests/e2e/web-aria-false-state.spec.ts |  5 +++++
+ 3 files changed, 44 insertions(+), 6 deletions(-)
+
+diff --git a/components/quiz/ProvenanceBadge.tsx b/components/quiz/ProvenanceBadge.tsx
+index 006d8e84e..1f1c60632 100644
+--- a/components/quiz/ProvenanceBadge.tsx
++++ b/components/quiz/ProvenanceBadge.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useMemo, useState } from 'react';
++import { useEffect, useMemo, useRef, useState } from 'react';
+ import { Pressable, StyleSheet, Text, View } from 'react-native';
+ 
+ import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
+@@ -53,6 +53,7 @@ export function ProvenanceBadge({
+   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+   const reduceMotion = useReducedMotion();
+   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
++  const pointerActivationRef = useRef(false);
+   const [focused, setFocused] = useState(false);
+   const [hovered, setHovered] = useState(false);
+ 
+@@ -82,6 +83,24 @@ export function ProvenanceBadge({
+       : provenance === 'derived'
+         ? styles.supplementaryText
+         : styles.editorialText;
++  const showSourceNote = () => {
++    setFocused(true);
++
++    if (!pointerActivationRef.current) {
++      setSourceNoteVisible(true);
++    }
++  };
++  const hideFocusRing = () => {
++    pointerActivationRef.current = false;
++    setFocused(false);
++  };
++  const rememberPointerActivation = () => {
++    pointerActivationRef.current = true;
++  };
++  const toggleSourceNote = () => {
++    pointerActivationRef.current = false;
++    setSourceNoteVisible((visible) => !visible);
++  };
+ 
+   return (
+     <View style={styles.container}>
+@@ -92,11 +111,12 @@ export function ProvenanceBadge({
+         accessibilityState={{ expanded: sourceNoteVisible }}
+         aria-expanded={sourceNoteVisible}
+         hitSlop={space[1]}
+-        onBlur={() => setFocused(false)}
+-        onFocus={() => setFocused(true)}
++        onBlur={hideFocusRing}
++        onFocus={showSourceNote}
+         onHoverIn={() => setHovered(true)}
+         onHoverOut={() => setHovered(false)}
+-        onPress={() => setSourceNoteVisible((visible) => !visible)}
++        onPress={toggleSourceNote}
++        onPointerDown={rememberPointerActivation}
+         style={({ pressed }) => [
+           styles.badge,
+           tone,
+diff --git a/scripts/ui-effects.test.js b/scripts/ui-effects.test.js
+index 165b73d86..19cb390ea 100644
+--- a/scripts/ui-effects.test.js
++++ b/scripts/ui-effects.test.js
+@@ -70,13 +70,26 @@ test('badge preserves a readable accessibility label when visual text is upperca
+ test('provenance badge source note uses tokenized toggle feedback', () => {
+   const source = read('components/quiz/ProvenanceBadge.tsx');
+ 
+-  assert.match(source, /const showSourceNote = \(\) => setSourceNoteVisible\(true\);/);
++  assert.match(source, /const pointerActivationRef = useRef\(false\);/);
+   assert.match(
+     source,
+-    /const toggleSourceNote = \(\) => setSourceNoteVisible\(\(visible\) => !visible\);/,
++    /const showSourceNote = \(\) => \{\s*setFocused\(true\);\s*if \(!pointerActivationRef\.current\) \{\s*setSourceNoteVisible\(true\);\s*\}\s*\};/,
++  );
++  assert.match(
++    source,
++    /const hideFocusRing = \(\) => \{\s*pointerActivationRef\.current = false;\s*setFocused\(false\);\s*\};/,
++  );
++  assert.match(
++    source,
++    /const rememberPointerActivation = \(\) => \{\s*pointerActivationRef\.current = true;\s*\};/,
++  );
++  assert.match(
++    source,
++    /const toggleSourceNote = \(\) => \{\s*pointerActivationRef\.current = false;\s*setSourceNoteVisible\(\(visible\) => !visible\);\s*\};/,
+   );
+   assert.match(source, /onFocus=\{showSourceNote\}/);
+   assert.match(source, /onPress=\{toggleSourceNote\}/);
++  assert.match(source, /onPointerDown=\{rememberPointerActivation\}/);
+   assert.match(source, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+   assert.match(source, /hitSlop=\{space\[1\]\}/);
+   assert.match(source, /minHeight: space\[6\]/);
+diff --git a/tests/e2e/web-aria-false-state.spec.ts b/tests/e2e/web-aria-false-state.spec.ts
+index 08c3ad4db..aa7cefcb8 100644
+--- a/tests/e2e/web-aria-false-state.spec.ts
++++ b/tests/e2e/web-aria-false-state.spec.ts
+@@ -127,6 +127,11 @@ for (const labels of localeCases) {
+     await expect(sourceNote).toHaveCount(0);
+     await provenance.evaluate((element: HTMLElement) => element.blur());
+     await provenance.focus();
++    await expect(provenance).toHaveAttribute('aria-expanded', 'true');
++    await expect(sourceNote).toBeVisible();
++    await page.keyboard.press('Enter');
++    await expect(provenance).toHaveAttribute('aria-expanded', 'false');
++    await expect(sourceNote).toHaveCount(0);
+     await page.keyboard.press('Enter');
+     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+     await expect(sourceNote).toBeVisible();

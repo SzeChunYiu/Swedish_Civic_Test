@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { collectConsoleAndPageErrors, dismissBlockingModals } from './browserLaunch';
+import { startAllVisiblePractice } from './practiceHub';
 
 const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 
@@ -38,6 +39,7 @@ test('real-enabled web export renders fallback ad cards and keeps exam ad-free',
 
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+  await startAllVisiblePractice(page, 'sv');
   await page
     .getByLabel(
       /Välj svaret I Norden i norra Europa|Select answer In the Nordic region in northern Europe/,

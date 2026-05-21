@@ -187,6 +187,33 @@ test('form fields and primary button controls consume dedicated radius tokens', 
   assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
 });
 
+test('utility routes resolve semantic colors from the active theme', () => {
+  for (const routePath of ['app/search.tsx', 'app/citizenship-requirements.tsx']) {
+    const source = read(routePath);
+
+    assert.match(source, /themeColors/, `${routePath} should derive local styles from themeColors`);
+    assert.doesNotMatch(
+      source,
+      /import \{ colors[,}]/,
+      `${routePath} must not import static light color tokens`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${routePath} must not read route-local colors.* values`,
+    );
+  }
+
+  const searchSource = read('app/search.tsx');
+  const citizenshipSource = read('app/citizenship-requirements.tsx');
+
+  assert.match(searchSource, /colorsForThemeMode\(themeMode, systemColorScheme\)/);
+  assert.match(citizenshipSource, /const \{ colors: themeColors \} = useTheme\(\);/);
+  assert.match(citizenshipSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(citizenshipSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
+  assert.match(citizenshipSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+});
+
 test('theme content validation parser keeps one token schema validator', () => {
   const source = fs.readFileSync(path.join(ROOT, 'scripts/validate-content.js'), 'utf8');
   const declarationCount = [...source.matchAll(/function validateThemeTokenSchema\(\)/g)].length;

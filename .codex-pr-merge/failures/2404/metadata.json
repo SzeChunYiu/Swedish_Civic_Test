@@ -1,0 +1,39 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Move persisted streak-freeze state normalization into the shared `streakWithFreeze` module.\n- Reuse that normalizer from `progressStore` instead of keeping a storage-local copy.\n- Preserve stockpile caps, lifetime caps, far-future date rejection, deduped rescued days, and initial-freeze fallback for missing/corrupt state.\n\n## Verification\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-progress-schema-parity`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern \"streakWithFreeze\" tests/v1-1-retention-selectors.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern \"progress hydration normalizes unsafe persisted numeric fields|progress mutations return the same shape as persisted JSON readback\" tests/content-progress-schema-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `git diff --check HEAD~1..HEAD`",
+  "files": [
+    {
+      "path": "lib/learning/streakWithFreeze.ts",
+      "additions": 55,
+      "deletions": 22,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/storage/progressStore.ts",
+      "additions": 6,
+      "deletions": 33,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/streak-freeze-normalizer-1779367736-1453831",
+  "headRefOid": "4c953cb2ed3b5e0427b3a410c574dc6d67f53bb6",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2404,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:07:12Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227356329/job/77177975612",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T12:58:12Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Share streak freeze state normalization",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2404"
+}

@@ -10,6 +10,7 @@ type PracticeSessionState = {
   markAnswerXpAwarded: (awardKey: string) => void;
   selectOption: (questionId: string, optionId: string) => void;
   toggleStruckOption: (questionId: string, optionId: string) => void;
+  startSession: (questionId?: string | null) => void;
   resetSelection: () => void;
   advanceQuestion: () => void;
 };
@@ -85,6 +86,15 @@ export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
         struckOptionIdsByQuestionId,
       };
     }),
+  startSession: (questionId = null) =>
+    set((state) => ({
+      answerXpAwardedKey: null,
+      activeQuestionId: questionId,
+      answeredQuestionIds: [],
+      selectedOptionId: null,
+      shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
+      struckOptionIdsByQuestionId: {},
+    })),
   resetSelection: () =>
     set((state) => ({
       selectedOptionId: null,

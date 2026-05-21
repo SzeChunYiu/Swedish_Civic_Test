@@ -1,0 +1,125 @@
+From 2e32e90722be112e64f62f454cd6105138ca3905 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 15:54:47 +0200
+Subject: [PATCH] test: cover exam provenance source-note toggles
+
+---
+ tests/e2e/exam-submit-review.spec.ts | 59 ++++++++++++++++++++++++++--
+ 1 file changed, 55 insertions(+), 4 deletions(-)
+
+diff --git a/tests/e2e/exam-submit-review.spec.ts b/tests/e2e/exam-submit-review.spec.ts
+index 3c37dcd52..172050f19 100644
+--- a/tests/e2e/exam-submit-review.spec.ts
++++ b/tests/e2e/exam-submit-review.spec.ts
+@@ -26,6 +26,11 @@ type TimeHeatmapContract = {
+   title: string;
+ };
+ 
++type ProvenanceSourceNoteContract = {
++  badgeLabel: string;
++  sourceNotePattern: RegExp;
++};
++
+ async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryContract) {
+   const summary = page
+     .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
+@@ -50,6 +55,36 @@ async function expectNoPassVerdictCopy(page: Page) {
+   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
+ }
+ 
++async function expectProvenanceSourceNoteToggle(
++  page: Page,
++  contract: ProvenanceSourceNoteContract,
++) {
++  const badge = page.getByRole('button', { name: contract.badgeLabel }).first();
++  const sourceNotes = page.getByText(contract.sourceNotePattern);
++
++  await expect(badge).toBeVisible();
++  await badge.scrollIntoViewIfNeeded();
++  await expect(badge).toHaveAttribute('aria-expanded', 'false');
++  await expect(sourceNotes).toHaveCount(0);
++
++  await badge.click();
++  await expect(badge).toHaveAttribute('aria-expanded', 'true');
++  await expect(sourceNotes.first()).toBeVisible();
++
++  await badge.click();
++  await expect(badge).toHaveAttribute('aria-expanded', 'false');
++  await expect(sourceNotes).toHaveCount(0);
++
++  await badge.focus();
++  await page.keyboard.press('Enter');
++  await expect(badge).toHaveAttribute('aria-expanded', 'true');
++  await expect(sourceNotes.first()).toBeVisible();
++
++  await page.keyboard.press('Space');
++  await expect(badge).toHaveAttribute('aria-expanded', 'false');
++  await expect(sourceNotes).toHaveCount(0);
++}
++
+ async function openExamWithLanguage(page: Page, language: AppLanguage) {
+   await seedSettingsLanguage(page, language);
+   await markAboutTheTestSeen(page);
+@@ -81,12 +116,16 @@ test('mock exam requires all answers before showing Swedish score and source-bac
+   await expect(activeCount).toBeVisible();
+   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
+   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
++  await expectProvenanceSourceNoteToggle(page, {
++    badgeLabel: 'Källtyp: UHR-källa',
++    sourceNotePattern: /^Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus\./,
++  });
+ 
+   const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
+   await expect(submit).toBeDisabled();
+   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
+   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
+-  await expect(page.getByText('UHR-källa', { exact: true })).toHaveCount(0);
++  await expect(page.getByRole('heading', { name: 'UHR-källa' })).toHaveCount(0);
+ 
+   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+     await page
+@@ -115,7 +154,11 @@ test('mock exam requires all answers before showing Swedish score and source-bac
+   await expect(page.getByText('Valt svar').first()).toBeVisible();
+   await expect(page.getByText('Rätt svar').first()).toBeVisible();
+   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
+-  await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
++  await expect(page.getByRole('heading', { name: 'UHR-källa' }).first()).toBeVisible();
++  await expectProvenanceSourceNoteToggle(page, {
++    badgeLabel: 'Källtyp: UHR-källa',
++    sourceNotePattern: /^Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus\./,
++  });
+   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
+   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
+   await expectNoPassVerdictCopy(page);
+@@ -145,13 +188,17 @@ test('mock exam review follows English support mode', async ({ page }) => {
+   await expect(activeCount).toBeVisible();
+   await expect(page.getByText(/^Time left/)).toBeVisible();
+   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
++  await expectProvenanceSourceNoteToggle(page, {
++    badgeLabel: 'Provenance: UHR source',
++    sourceNotePattern: /^Source note: Based on UHR's study material Sverige i fokus\./,
++  });
+   await expect(page.getByText('Övningsprov')).toHaveCount(0);
+ 
+   const submit = page.getByRole('button', { name: 'Submit mock exam' });
+   await expect(submit).toBeDisabled();
+   await expect(page.getByText('Question review')).toHaveCount(0);
+   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
+-  await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
++  await expect(page.getByRole('heading', { name: 'UHR reference' })).toHaveCount(0);
+ 
+   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
+     await page
+@@ -186,7 +233,11 @@ test('mock exam review follows English support mode', async ({ page }) => {
+   await expect(page.getByText('Selected answer').first()).toBeVisible();
+   await expect(page.getByText('Correct answer').first()).toBeVisible();
+   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
+-  await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
++  await expect(page.getByRole('heading', { name: 'UHR reference' }).first()).toBeVisible();
++  await expectProvenanceSourceNoteToggle(page, {
++    badgeLabel: 'Provenance: UHR source',
++    sourceNotePattern: /^Source note: Based on UHR's study material Sverige i fokus\./,
++  });
+   await expect(page.getByText('Submitted results are final')).toBeVisible();
+   await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
+   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);

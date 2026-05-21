@@ -1,0 +1,95 @@
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 4f7f323b5..cdce2c1f9 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -9048,6 +9048,17 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-progress-bar-accessibility')) {
++  validateProgressBarAccessibilityParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    progressBarAccessibilityRulesExpected,
++    progressBarAccessibilityRulesValidated,
++    progressBarAccessibilityParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-flashcard-accessibility')) {
+   validateFlashcardAccessibilityParity();
+   exitWithValidationFailures();
+diff --git a/tests/content-progress-bar-accessibility-parity.test.js b/tests/content-progress-bar-accessibility-parity.test.js
+index afe19f6a8..0e4d6830c 100644
+--- a/tests/content-progress-bar-accessibility-parity.test.js
++++ b/tests/content-progress-bar-accessibility-parity.test.js
+@@ -7,10 +7,14 @@ const test = require('node:test');
+ const repoRoot = path.resolve(__dirname, '..');
+ 
+ function parseValidationSummary() {
+-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+-    cwd: repoRoot,
+-    encoding: 'utf8',
+-  });
++  const output = execFileSync(
++    process.execPath,
++    ['scripts/validate-content.js', '--focus-progress-bar-accessibility'],
++    {
++      cwd: repoRoot,
++      encoding: 'utf8',
++    },
++  );
+   const match = output.match(/\{[\s\S]*\}/);
+   assert.ok(match, 'validation should print JSON summary');
+   return JSON.parse(match[0]);
+@@ -100,6 +104,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   }
+   return originalReadFileSync.call(this, filePath, ...args);
+ };
++process.argv.push('--focus-progress-bar-accessibility');
+ require('./scripts/validate-content.js');
+ `,
+     ],
+@@ -130,6 +135,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   }
+   return originalReadFileSync.call(this, filePath, ...args);
+ };
++process.argv.push('--focus-progress-bar-accessibility');
+ require('./scripts/validate-content.js');
+ `,
+     ],
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 5b91bf7b3..84e556246 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -121,6 +121,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
+   );
+ });
+ 
++test('ProgressBar accessibility parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const progressBarTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-progress-bar-accessibility-parity.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-progress-bar-accessibility/);
++  assert.match(
++    validatorSource,
++    /validateProgressBarAccessibilityParity\(\);[\s\S]*progressBarAccessibilityRulesExpected[\s\S]*progressBarAccessibilityRulesValidated[\s\S]*progressBarAccessibilityParityValidated/,
++  );
++  assert.match(progressBarTestSource, /--focus-progress-bar-accessibility/);
++  assert.doesNotMatch(
++    progressBarTestSource,
++    /\['scripts\/validate-content\.js'\]/,
++    'ProgressBar accessibility tests must not route through full content validation',
++  );
++});
++
+ test('Flashcard accessibility parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),

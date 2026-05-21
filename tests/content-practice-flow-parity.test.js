@@ -18,9 +18,9 @@ test('practice flow runtime selection stays in parity with the published questio
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.practiceFlowCasesValidated, 6);
+  assert.equal(summary.practiceFlowCasesValidated, 7);
   assert.equal(summary.practiceFlowParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 11);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 12);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
   assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
 });

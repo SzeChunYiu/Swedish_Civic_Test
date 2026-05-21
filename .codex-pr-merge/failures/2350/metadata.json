@@ -1,0 +1,33 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- add focused countdown validation for the first civic-test sitting date and source URL\n- make validate-content fail if Home stops importing or mounting CountdownBanner with the selected language\n- expose countdown Home mount fields in focused and full validation summaries\n\n## Verification\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-countdown-banner-parity.test.js --test-name-pattern \"countdown banner|Home|CountdownBanner\"`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 80,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/countdown-banner-home-mount-1779361245-528626",
+  "headRefOid": "2ee71689583e6fee25f2212ee5a8678645e220c7",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2350,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:07:34Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222161967/job/77159652195",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:06:32Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: guard countdown banner home mount",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2350"
+}

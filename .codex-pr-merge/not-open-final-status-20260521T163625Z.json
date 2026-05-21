@@ -1,0 +1,314 @@
+{
+  "2289": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:12Z",
+    "number": 2289,
+    "state": "MERGED",
+    "title": "[codex] Restore question bank CSV contract gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2289"
+  },
+  "2292": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:42:23Z",
+    "number": 2292,
+    "state": "MERGED",
+    "title": "[codex] about: surface limited-seat registration warning",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2292"
+  },
+  "2293": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:44:00Z",
+    "number": 2293,
+    "state": "MERGED",
+    "title": "test: cover release preflight v1.1 text evidence",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2293"
+  },
+  "2309": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:46:33Z",
+    "number": 2309,
+    "state": "MERGED",
+    "title": "[codex] Harden Swedish speech runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2309"
+  },
+  "2331": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:22Z",
+    "number": 2331,
+    "state": "MERGED",
+    "title": "test: add focused onboarding scroll validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2331"
+  },
+  "2332": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:17Z",
+    "number": 2332,
+    "state": "MERGED",
+    "title": "test: add content-focused npm route",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2332"
+  },
+  "2383": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:11Z",
+    "number": 2383,
+    "state": "MERGED",
+    "title": "[codex] test badge style override parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2383"
+  },
+  "2384": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:55Z",
+    "number": 2384,
+    "state": "MERGED",
+    "title": "[codex] test button style override parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2384"
+  },
+  "2405": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:50Z",
+    "number": 2405,
+    "state": "MERGED",
+    "title": "content: preserve Sweden scope in generated legal true-false",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2405"
+  },
+  "2411": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:53Z",
+    "number": 2411,
+    "state": "MERGED",
+    "title": "[codex] Localize Swedish ebook source-count units",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2411"
+  },
+  "2419": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:33Z",
+    "number": 2419,
+    "state": "MERGED",
+    "title": "setup: preserve chapter quiz route context",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2419"
+  },
+  "2437": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:07Z",
+    "number": 2437,
+    "state": "MERGED",
+    "title": "test: share visual smoke manifest route entries",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2437"
+  },
+  "2445": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:43Z",
+    "number": 2445,
+    "state": "MERGED",
+    "title": "[codex] Add mobile ads consent runtime harness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2445"
+  },
+  "2448": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:46:03Z",
+    "number": 2448,
+    "state": "MERGED",
+    "title": "[codex] cover exam provenance source-note toggles",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2448"
+  },
+  "2455": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:41:09Z",
+    "number": 2455,
+    "state": "MERGED",
+    "title": "Route legal-section focused validation before broad content checks",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2455"
+  },
+  "2456": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:39:53Z",
+    "number": 2456,
+    "state": "MERGED",
+    "title": "[codex] Guard CelebrationBurst web aria-hidden",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2456"
+  },
+  "2463": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:45:49Z",
+    "number": 2463,
+    "state": "MERGED",
+    "title": "[codex] content: share generated true-false naturalness guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2463"
+  },
+  "2464": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:45:10Z",
+    "number": 2464,
+    "state": "MERGED",
+    "title": "[codex] audio: harden speech runtime parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2464"
+  },
+  "2465": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:14Z",
+    "number": 2465,
+    "state": "MERGED",
+    "title": "[codex] Route nested surfaces through theme colors",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2465"
+  },
+  "2468": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:40:15Z",
+    "number": 2468,
+    "state": "MERGED",
+    "title": "fix q001 generated answer template parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2468"
+  },
+  "2470": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:39:35Z",
+    "number": 2470,
+    "state": "MERGED",
+    "title": "Share ProgressBar source of truth",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2470"
+  },
+  "2471": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:37:40Z",
+    "number": 2471,
+    "state": "MERGED",
+    "title": "fix q160 source option parity guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2471"
+  },
+  "2477": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:46:11Z",
+    "number": 2477,
+    "state": "MERGED",
+    "title": "fix: reject off-menu imported daily goals",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2477"
+  },
+  "2478": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:43:34Z",
+    "number": 2478,
+    "state": "MERGED",
+    "title": "static: align extra locale source provenance copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2478"
+  },
+  "2480": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:44:44Z",
+    "number": 2480,
+    "state": "MERGED",
+    "title": "[codex] Fix UI effects release gate drift",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2480"
+  },
+  "2481": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:40:46Z",
+    "number": 2481,
+    "state": "MERGED",
+    "title": "test: align native banner status copy guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2481"
+  },
+  "2483": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:38:50Z",
+    "number": 2483,
+    "state": "MERGED",
+    "title": "data-integrity: guard mobile ads consent regions",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2483"
+  },
+  "2485": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:37:55Z",
+    "number": 2485,
+    "state": "MERGED",
+    "title": "Fix profile paywall parity focus gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2485"
+  },
+  "2487": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:37:07Z",
+    "number": 2487,
+    "state": "MERGED",
+    "title": "Add focused Badge accessibility gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2487"
+  },
+  "2488": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:42:36Z",
+    "number": 2488,
+    "state": "MERGED",
+    "title": "Add question report href unit coverage",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2488"
+  },
+  "2490": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:41:50Z",
+    "number": 2490,
+    "state": "MERGED",
+    "title": "[codex] Align Remove Ads focused validation gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2490"
+  },
+  "2493": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:39:40Z",
+    "number": 2493,
+    "state": "MERGED",
+    "title": "static ebook: require explicit prose source metadata",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2493"
+  },
+  "2494": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:39:00Z",
+    "number": 2494,
+    "state": "MERGED",
+    "title": "Share storage harness TS loader",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2494"
+  },
+  "2495": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:38:36Z",
+    "number": 2495,
+    "state": "MERGED",
+    "title": "ads: share banner live-test status copy guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2495"
+  },
+  "2497": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:37:51Z",
+    "number": 2497,
+    "state": "MERGED",
+    "title": "test: keep e2e source contract green",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2497"
+  },
+  "2498": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:37:48Z",
+    "number": 2498,
+    "state": "MERGED",
+    "title": "Guard imported daily goals against unsupported values",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2498"
+  },
+  "2499": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:36:53Z",
+    "number": 2499,
+    "state": "MERGED",
+    "title": "source: show requirement source titles inline",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2499"
+  },
+  "2500": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:42:44Z",
+    "number": 2500,
+    "state": "MERGED",
+    "title": "Improve native ebook article nav semantics",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2500"
+  },
+  "2503": {
+    "closed": true,
+    "mergedAt": "2026-05-21T16:47:25Z",
+    "number": 2503,
+    "state": "MERGED",
+    "title": "Expose dashboard sort as radio group",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2503"
+  }
+}

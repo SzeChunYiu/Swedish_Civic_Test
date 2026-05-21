@@ -82,8 +82,15 @@
     },
   ]);
 
+  function sourceAnchor(note) {
+    const safeExternalAttrs = /^https?:\/\//.test(note.url)
+      ? ' target="_blank" rel="noreferrer"'
+      : '';
+    return `<a href="${note.url}"${safeExternalAttrs}>${note.label}</a>`;
+  }
+
   function sourceLink(note) {
-    return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
+    return `${sourceAnchor(note)} (${note.retrievedDate})`;
   }
 
   function ebookSourceNotes(sourceKeys) {
@@ -93,9 +100,7 @@
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map(
-      (source) => `<a href="${source.url}">${source.label}</a>`,
-    ).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map(sourceAnchor).join(' · ');
   }
 
   function ebookLocalizedLabel(map, lang) {
@@ -144,11 +149,27 @@
     return ` data-ebook-source-keys="${normalizedEbookSourceKeys(sourceKeys, 'ebook source metadata').join(' ')}"`;
   }
 
-  const EBOOK_DEFAULT_PROSE_SOURCE_KEYS = Object.freeze(['uhrStudyMaterial']);
+  const EBOOK_EDITORIAL_ONLY_SOURCE_KEYS = Object.freeze(['editorialCommentary']);
   const EBOOK_EDITORIAL_PROSE_SOURCE_KEYS = Object.freeze([
     'uhrStudyMaterial',
     'editorialCommentary',
   ]);
+  const EBOOK_BODY_SOURCE_KEYS = Object.freeze({
+    intro: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    1: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    2: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    3: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    4: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    5: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    6: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    7: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    8: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    9: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    10: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    11: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    12: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    13: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+  });
   const EBOOK_LEDE_SOURCE_KEYS = Object.freeze({
     intro: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
     1: Object.freeze(['uhrStudyMaterial', 'governmentNato', 'editorialCommentary']),
@@ -159,6 +180,12 @@
 
   function ebookLedeSourceKeys(chapterId) {
     return EBOOK_LEDE_SOURCE_KEYS[chapterId] || EBOOK_EDITORIAL_PROSE_SOURCE_KEYS;
+  }
+
+  function ebookBodySourceKeys(chapterId) {
+    const sourceKeys = EBOOK_BODY_SOURCE_KEYS[chapterId];
+    assertEbookSourceKeys(sourceKeys, `ebook body chapter ${chapterId}`);
+    return sourceKeys;
   }
 
   function parseEbookSourceKeyMetadata(attrs) {
@@ -215,14 +242,19 @@
     return counts;
   }
 
-  function ebookSourceMixLabel(footnotes) {
+  function ebookSourceCountUnit(lang, count) {
+    if (lang === 'sv') return count === 1 ? 'källa' : 'källor';
+    return count === 1 ? 'cite' : 'cites';
+  }
+
+  function ebookSourceMixLabel(lang, footnotes) {
     const counts = ebookSourceCounts(footnotes);
     return Object.keys(EBOOK_SOURCE_NOTES)
       .filter((key) => counts[key])
       .map((key) => {
         const note = EBOOK_SOURCE_NOTES[key];
         const count = counts[key];
-        return `${note.mixLabel || note.label} (${count} ${count === 1 ? 'cite' : 'cites'})`;
+        return `${note.mixLabel || note.label} (${count} ${ebookSourceCountUnit(lang, count)})`;
       })
       .join(' · ');
   }
@@ -231,22 +263,30 @@
     const footnotes = [];
     return {
       footnotes,
-      annotate(html, fallbackSourceKeys = EBOOK_DEFAULT_PROSE_SOURCE_KEYS) {
-        normalizedEbookSourceKeys(fallbackSourceKeys, `ebook prose chapter ${chapterId}`);
+      annotate(html, typedSourceKeys) {
+        const normalizedTypedSourceKeys = typedSourceKeys
+          ? normalizedEbookSourceKeys(typedSourceKeys, `ebook prose chapter ${chapterId}`)
+          : null;
         return html.replace(
           /<(p|li)(?![^>]*class="ebook__source-note")([^>]*)>([\s\S]*?)<\/\1>/g,
           (match, tagName, attrs, content) => {
             const explicitSourceKeys = parseEbookSourceKeyMetadata(attrs);
             const cleanAttrs = stripEbookSourceKeyMetadata(attrs);
+            if (!explicitSourceKeys && !normalizedTypedSourceKeys) {
+              throw new Error(
+                `ebook ${tagName} chapter ${chapterId} must pass inline or typed source metadata`,
+              );
+            }
             const sourceKeys = normalizedEbookSourceKeys(
-              explicitSourceKeys || fallbackSourceKeys,
+              explicitSourceKeys || normalizedTypedSourceKeys,
               `ebook ${tagName} chapter ${chapterId}`,
             );
+            const metadataKind = explicitSourceKeys ? 'inline' : 'typed';
             const footnoteIndex = footnotes.length + 1;
             const id = `eb-${chapterId}-${lang}-fn-${footnoteIndex}`;
             footnotes.push({ id, index: footnoteIndex, sourceKeys });
             const keys = Array.from(new Set(sourceKeys)).join(' ');
-            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
+            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}" data-source-metadata="${metadataKind}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
           },
         );
       },
@@ -259,7 +299,8 @@
     const items = footnotes
       .map((footnote) => {
         const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');
-        return `<li id="${footnote.id}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
+        const sourceKeys = Array.from(new Set(footnote.sourceKeys)).join(' ');
+        return `<li id="${footnote.id}" data-source-key="${sourceKeys}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
       })
       .join('');
     return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
@@ -267,7 +308,7 @@
 
   function renderEbookProvenanceBadge(lang, footnotes) {
     const count = footnotes.length || 0;
-    const sourceSummary = ebookSourceMixLabel(footnotes) || 'source metadata';
+    const sourceSummary = ebookSourceMixLabel(lang, footnotes) || 'source metadata';
     const serializedCounts = JSON.stringify(ebookSourceCounts(footnotes));
     if (lang === 'sv') {
       return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · ${sourceSummary} · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
@@ -276,11 +317,15 @@
   }
 
   function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
-    assertEbookSourceKeys(sourceKeys, 'svStudyBrief fact box');
+    const normalizedBriefSourceKeys = normalizedEbookSourceKeys(
+      sourceKeys,
+      'svStudyBrief body source metadata',
+    );
     const items = points
       .map((point) => {
         const text = typeof point === 'string' ? point : point.text;
-        const pointSourceKeys = typeof point === 'string' ? null : point.sourceKeys;
+        const pointSourceKeys =
+          typeof point === 'string' ? normalizedBriefSourceKeys : point.sourceKeys;
         return `<li${ebookSourceKeyDataAttr(pointSourceKeys)}>${text}</li>`;
       })
       .join('');
@@ -288,9 +333,9 @@
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
-      <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
+      <p${ebookSourceKeyDataAttr(EBOOK_EDITORIAL_ONLY_SOURCE_KEYS)}>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
-      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts, normalizedBriefSourceKeys)}
     `;
   }
 
@@ -1668,15 +1713,39 @@
         tr: 'Bölüm 05 · Eşitlik',
         uk: 'Розділ 05 · Рівність',
       },
-      title: { en: 'Equality', sv: 'Jämställdhet', 'zh-Hans': '平等', 'zh-Hant': '平等', ar: 'المساواة', ckb: 'یەکسانی', fa: 'برابری', pl: 'Równość', so: 'Sinnaan', ti: 'ማዕርነት', tr: 'Eşitlik', uk: 'Рівність' },
-      title_em: { en: 'and the modern household.', sv: 'och det moderna hemmet.', 'zh-Hans': '与现代家庭。', 'zh-Hant': '與現代家庭。', ar: 'والأسرة الحديثة.', ckb: 'و ماڵی هاوچەرخ.', fa: 'و خانوار مدرن.', pl: 'i nowoczesny dom.', so: 'iyo qoyska casriga ah.', ti: 'ከምኡውን እቲ ዘመናዊ ስድራቤት።', tr: 've modern hane.', uk: 'та сучасне домогосподарство.' },
+      title: {
+        en: 'Equality',
+        sv: 'Jämställdhet',
+        'zh-Hans': '平等',
+        'zh-Hant': '平等',
+        ar: 'المساواة',
+        ckb: 'یەکسانی',
+        fa: 'برابری',
+        pl: 'Równość',
+        so: 'Sinnaan',
+        ti: 'ማዕርነት',
+        tr: 'Eşitlik',
+        uk: 'Рівність',
+      },
+      title_em: {
+        en: 'and the modern household.',
+        sv: 'och det moderna hemmet.',
+        'zh-Hans': '与现代家庭。',
+        'zh-Hant': '與現代家庭。',
+        ar: 'والأسرة الحديثة.',
+        ckb: 'و ماڵی هاوچەرخ.',
+        fa: 'و خانوار مدرن.',
+        pl: 'i nowoczesny dom.',
+        so: 'iyo qoyska casriga ah.',
+        ti: 'ከምኡውን እቲ ዘመናዊ ስድራቤት።',
+        tr: 've modern hane.',
+        uk: 'та сучасне домогосподарство.',
+      },
       lede: {
         en: 'Sweden is a quiet feminist project. The laws are clearer than the dinner-table conversations, but both are worth knowing.',
         sv: 'Sverige är ett tyst feministiskt projekt. Lagarna är tydligare än middagsbordssamtalen — men båda är värda att kunna.',
-        'zh-Hans':
-          '瑞典是一项安静的女性主义工程。法律比餐桌上的谈话更清晰，但两者都值得了解。',
-        'zh-Hant':
-          '瑞典是一項安靜的女性主義工程。法律比餐桌上的談話更清晰，但兩者都值得了解。',
+        'zh-Hans': '瑞典是一项安静的女性主义工程。法律比餐桌上的谈话更清晰，但两者都值得了解。',
+        'zh-Hant': '瑞典是一項安靜的女性主義工程。法律比餐桌上的談話更清晰，但兩者都值得了解。',
         ar: 'السويد مشروع نسوي هادئ. القوانين أوضح من أحاديث مائدة العشاء، لكن كليهما يستحق المعرفة.',
         ckb: 'سوید پڕۆژەیەکی فێمێنیستیی بێدەنگە. یاساکان لە گفتوگۆکانی سەر خوانی نانخواردن ڕوونترن، بەڵام هەردووکیان شایانی زانینن.',
         fa: 'سوئد یک پروژهٔ فمینیستی آرام است. قانون‌ها روشن‌تر از گفت‌وگوهای سر میز شام‌اند، اما هر دو ارزش دانستن دارند.',
@@ -1816,7 +1885,7 @@
           <p>Yemek, temizlik, çocuk bakımı ve ev işleri İsveç'te cinsiyete dayalı görevler değildir — en azından resmi olarak. Anketler, bunun ev işlerine ayrılan zaman bakımından en eşit ülke olduğunu gösteriyor. (İstatistikler, tıpkı ergenler gibi, biraz yalan söyler.)</p>
           <h2>Kadınlar ve çalışma</h2>
           <p>Kadınların iş gücüne katılımı dünyada en yüksekler arasındadır (~%80). Cinsiyetler arası ücret farkı gerçektir (~%10–12) ama azalmaktadır. Anne ölümleri dünyada en düşükler arasındadır.</p>
-          ${ebookFactBox('tr', null, 'Eşcinsel evlilik: 2009 · Ayrımcılık temelleri: 7 · Ebeveyn izni: 480 gün · Her ebeveyne ayrılan: 90\'ar gün.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('tr', null, "Eşcinsel evlilik: 2009 · Ayrımcılık temelleri: 7 · Ebeveyn izni: 480 gün · Her ebeveyne ayrılan: 90'ar gün.", ['uhrStudyMaterial'])}
         `,
         uk: `<h2>Рівні перед законом</h2>
           <p>Закон про недискримінацію (<em>diskrimineringslagen</em>, 2008) захищає від дискримінації за сімома ознаками: стать, гендерна ідентичність або вираження, етнічна належність, релігія чи переконання, інвалідність, сексуальна орієнтація та вік. Він діє у сфері праці, освіти, охорони здоров'я, житла та публічних послуг.</p>
@@ -1847,13 +1916,41 @@
         tr: 'Bölüm 06 · Toplum',
         uk: 'Розділ 06 · Суспільство',
       },
-      title: { en: 'Society, school,', sv: 'Samhälle, skola', 'zh-Hans': '社会、学校', 'zh-Hant': '社會、學校', ar: 'المجتمع والمدرسة', ckb: 'کۆمەڵگا، خوێندنگە', fa: 'جامعه، مدرسه', pl: 'Społeczeństwo, szkoła', so: 'Bulshada, dugsiga', ti: 'ሕብረተሰብ፣ ቤት ትምህርቲ', tr: 'Toplum, okul', uk: 'Суспільство, школа' },
-      title_em: { en: 'and healthcare.', sv: 'och vård.', 'zh-Hans': '与医疗。', 'zh-Hant': '與醫療。', ar: 'والرعاية الصحية.', ckb: 'و چاودێری تەندروستی.', fa: 'و مراقبت بهداشتی.', pl: 'i opieka zdrowotna.', so: 'iyo daryeelka caafimaadka.', ti: 'ከምኡ’ውን ክንክን ጥዕና።', tr: 've sağlık hizmeti.', uk: 'та охорона здоров’я.' },
+      title: {
+        en: 'Society, school,',
+        sv: 'Samhälle, skola',
+        'zh-Hans': '社会、学校',
+        'zh-Hant': '社會、學校',
+        ar: 'المجتمع والمدرسة',
+        ckb: 'کۆمەڵگا، خوێندنگە',
+        fa: 'جامعه، مدرسه',
+        pl: 'Społeczeństwo, szkoła',
+        so: 'Bulshada, dugsiga',
+        ti: 'ሕብረተሰብ፣ ቤት ትምህርቲ',
+        tr: 'Toplum, okul',
+        uk: 'Суспільство, школа',
+      },
+      title_em: {
+        en: 'and healthcare.',
+        sv: 'och vård.',
+        'zh-Hans': '与医疗。',
+        'zh-Hant': '與醫療。',
+        ar: 'والرعاية الصحية.',
+        ckb: 'و چاودێری تەندروستی.',
+        fa: 'و مراقبت بهداشتی.',
+        pl: 'i opieka zdrowotna.',
+        so: 'iyo daryeelka caafimaadka.',
+        ti: 'ከምኡ’ውን ክንክን ጥዕና።',
+        tr: 've sağlık hizmeti.',
+        uk: 'та охорона здоров’я.',
+      },
       lede: {
         en: 'Sweden runs the boring parts of life — school, healthcare, eldercare — through the public sector, and is largely on first-name terms with its bureaucrats.',
         sv: 'Sverige sköter livets tråkiga delar — skola, vård, äldreomsorg — i offentlig regi, och är på förnamn med byråkraterna.',
-        'zh-Hans': '瑞典把生活中那些枯燥的部分——学校、医疗、养老照护——交给公共部门来打理，而且基本上跟自己的官员都是直呼其名的关系。',
-        'zh-Hant': '瑞典把生活中那些枯燥的部分——學校、醫療、養老照護——交給公共部門來打理，而且基本上跟自己的官員都是直呼其名的關係。',
+        'zh-Hans':
+          '瑞典把生活中那些枯燥的部分——学校、医疗、养老照护——交给公共部门来打理，而且基本上跟自己的官员都是直呼其名的关系。',
+        'zh-Hant':
+          '瑞典把生活中那些枯燥的部分——學校、醫療、養老照護——交給公共部門來打理，而且基本上跟自己的官員都是直呼其名的關係。',
         ar: 'تتولّى السويد الأجزاء المملّة من الحياة — المدرسة والرعاية الصحية ورعاية المسنّين — عبر القطاع العام، وهي إلى حدٍّ كبير على علاقة تنادي فيها موظفيها بأسمائهم الأولى.',
         ckb: 'سوید بەشە بێزارکەرەکانی ژیان — خوێندنگە، چاودێری تەندروستی، چاودێری بەساڵاچووان — لە ڕێگەی کەرتی گشتییەوە بەڕێوە دەبات، و زۆرتر لەگەڵ کارمەندە دەوڵەتییەکانی بە ناوی یەکەم بانگ دەکات.',
         fa: 'سوئد بخش‌های کسل‌کنندهٔ زندگی — مدرسه، مراقبت بهداشتی، مراقبت از سالمندان — را از طریق بخش عمومی اداره می‌کند و تا حد زیادی کارمندان اداری‌اش را با نام کوچک صدا می‌زند.',
@@ -2055,10 +2152,8 @@
       lede: {
         en: "Sweden is mostly forest, and the forest is mostly open to you. The rule is simple: don't disturb, don't destroy.",
         sv: 'Sverige är mest skog, och skogen är mest öppen för dig. Regeln är enkel: stör inte, förstör inte.',
-        'zh-Hans':
-          '瑞典大部分是森林，而森林大体上向你敞开。规则很简单：不打扰，不破坏。',
-        'zh-Hant':
-          '瑞典大部分是森林，而森林大體上向你敞開。規則很簡單：不打擾，不破壞。',
+        'zh-Hans': '瑞典大部分是森林，而森林大体上向你敞开。规则很简单：不打扰，不破坏。',
+        'zh-Hant': '瑞典大部分是森林，而森林大體上向你敞開。規則很簡單：不打擾，不破壞。',
         ar: 'السويد في معظمها غابات، والغابة في معظمها مفتوحة لك. والقاعدة بسيطة: لا تُزعج، لا تُتلف.',
         ckb: 'سوید زۆربەی دارستانە، و دارستانەکەش زۆربەی بۆ تۆ کراوەیە. یاساکە سادەیە: مەستێنە، تێکمەدە.',
         fa: 'سوئد بیشتر جنگل است، و جنگل بیشتر به روی شما باز است. قاعده ساده است: مزاحم نشو، نابود نکن.',
@@ -2260,7 +2355,7 @@
         ckb: 'ئەگەر نەزانیت کەی ناوەڕاستی هاوینە، ڕوونکردنەوەیەکی بەڕێزانەت پێ دەدرێت. ئەگەر نەزانیت fika چییە، یەکێکت پێ دەدرێت، چ بتەوێت چ نەتەوێت.',
         fa: 'اگر ندانید نیمهٔ تابستان کِی است، توضیحی مؤدبانه دریافت خواهید کرد. اگر ندانید fika چیست، خواه بخواهید خواه نخواهید یکی نصیبتان می‌شود.',
         pl: 'Jeśli nie wiesz, kiedy jest midsommar, dostaniesz uprzejme wyjaśnienie. Jeśli nie wiesz, czym jest fika, dostaniesz ją — czy chcesz, czy nie.',
-        so: "Haddii aadan garanaynin goorta midsummer-ka, waxaad heli doontaa sharraxaad edeb leh. Haddii aadan garanaynin waxa fika ay tahay, mid baad heli doontaa hadii aad rabto iyo haddii kale.",
+        so: 'Haddii aadan garanaynin goorta midsummer-ka, waxaad heli doontaa sharraxaad edeb leh. Haddii aadan garanaynin waxa fika ay tahay, mid baad heli doontaa hadii aad rabto iyo haddii kale.',
         ti: 'መዓስ ምዃኑ ማእከል ሓጋይ እንተ ዘይፈሊጥካ፣ ኣኽብሮታዊ መብርሂ ክወሃበካ እዩ። fika እንታይ ምዃኑ እንተ ዘይፈሊጥካ፣ ትደልዮ ይኹን ኣይትደልዮ ሓደ ክወሃበካ እዩ።',
         tr: "Yaz ortasının ne zaman olduğunu bilmiyorsanız, kibar bir açıklama alırsınız. Fika'nın ne olduğunu bilmiyorsanız, isteseniz de istemeseniz de bir tane alırsınız.",
         uk: 'Якщо ви не знаєте, коли середина літа, вам ввічливо пояснять. Якщо ви не знаєте, що таке fika, ви її отримаєте — хочете ви того чи ні.',
@@ -2459,13 +2554,41 @@
         tr: 'Bölüm 09 · Para',
         uk: 'Розділ 09 · Гроші',
       },
-      title: { en: 'Money,', sv: 'Pengar,', 'zh-Hans': '金钱、', 'zh-Hant': '金錢、', ar: 'المال،', ckb: 'پارە،', fa: 'پول،', pl: 'Pieniądze,', so: 'Lacagta,', ti: 'ገንዘብ፣', tr: 'Para,', uk: 'Гроші,' },
-      title_em: { en: 'banks, and BankID.', sv: 'banker och BankID.', 'zh-Hans': '银行与 BankID。', 'zh-Hant': '銀行與 BankID。', ar: 'والبنوك، وBankID.', ckb: 'بانک، و BankID.', fa: 'بانک‌ها و BankID.', pl: 'banki i BankID.', so: 'bangiyada, iyo BankID.', ti: 'ባንክታትን BankIDን።', tr: 'bankalar ve BankID.', uk: 'банки та BankID.' },
+      title: {
+        en: 'Money,',
+        sv: 'Pengar,',
+        'zh-Hans': '金钱、',
+        'zh-Hant': '金錢、',
+        ar: 'المال،',
+        ckb: 'پارە،',
+        fa: 'پول،',
+        pl: 'Pieniądze,',
+        so: 'Lacagta,',
+        ti: 'ገንዘብ፣',
+        tr: 'Para,',
+        uk: 'Гроші,',
+      },
+      title_em: {
+        en: 'banks, and BankID.',
+        sv: 'banker och BankID.',
+        'zh-Hans': '银行与 BankID。',
+        'zh-Hant': '銀行與 BankID。',
+        ar: 'والبنوك، وBankID.',
+        ckb: 'بانک، و BankID.',
+        fa: 'بانک‌ها و BankID.',
+        pl: 'banki i BankID.',
+        so: 'bangiyada, iyo BankID.',
+        ti: 'ባንክታትን BankIDን።',
+        tr: 'bankalar ve BankID.',
+        uk: 'банки та BankID.',
+      },
       lede: {
         en: 'Sweden is one of the least cash-dependent countries on earth. Almost every transaction now passes through one little app.',
         sv: 'Sverige är ett av världens minst kontantberoende länder. Nästan varje transaktion går genom en liten app.',
-        'zh-Hans': '瑞典是地球上最不依赖现金的国家之一。如今几乎每一笔交易都通过一个小小的应用完成。',
-        'zh-Hant': '瑞典是地球上最不依賴現金的國家之一。如今幾乎每一筆交易都透過一個小小的應用程式完成。',
+        'zh-Hans':
+          '瑞典是地球上最不依赖现金的国家之一。如今几乎每一笔交易都通过一个小小的应用完成。',
+        'zh-Hant':
+          '瑞典是地球上最不依賴現金的國家之一。如今幾乎每一筆交易都透過一個小小的應用程式完成。',
         ar: 'السويد من أقل دول العالم اعتمادًا على النقد. واليوم تمرّ كل معاملة تقريبًا عبر تطبيق صغير واحد.',
         ckb: 'سوید یەکێکە لە کەمترین وڵاتانی جیهان کە پشت بە پارەی کاش دەبەستێت. ئێستا نزیکەی هەموو مامەڵەیەک بە ڕێگەی ئەپێکی بچووکەوە دەڕوات.',
         fa: 'سوئد یکی از کم‌وابسته‌ترین کشورها به پول نقد در جهان است. امروز تقریباً هر تراکنشی از طریق یک برنامهٔ کوچک انجام می‌شود.',
@@ -2680,7 +2803,7 @@
         pl: 'Szwecja spędziła dwa stulecia na unikaniu wojny i jedną dekadę na szybkim przystępowaniu do sojuszy. Wzorzec jest ten sam — bądź użyteczny, trzymaj się z dala od kłopotów.',
         so: 'Iswiidhan waxay laba qarni ku qaadatay ka fogaanshaha dagaalka iyo toban sano oo ay si degdeg ah ugu biirtay isbahaysiyo. Qaabku waa isku mid — wax tar, kana fogow dhibaatada.',
         ti: 'ሽወደን ክልተ ክፍለ ዘመን ኲናት ብምውጋድ፣ ሓደ ዓሰርተ ዓመት ድማ ብቕልጡፍ ናብ ኪዳናት ብምእታው ኣሕለፈት። እቲ ኣገባብ ሓደ እዩ — ጠቓሚ ኩን፣ ካብ ጸገም ራሕቕ።',
-        tr: "İsveç iki yüzyılını savaştan kaçınarak, on yılını ise hızla ittifaklara katılarak geçirdi. Örüntü aynı — yararlı ol, beladan uzak dur.",
+        tr: 'İsveç iki yüzyılını savaştan kaçınarak, on yılını ise hızla ittifaklara katılarak geçirdi. Örüntü aynı — yararlı ol, beladan uzak dur.',
         uk: 'Швеція провела два століття, уникаючи війни, і одне десятиліття, стрімко вступаючи до союзів. Схема та сама — будь корисним, тримайся подалі від халепи.',
       },
       body: {
@@ -2828,7 +2951,7 @@
           <p>Швеція вступила до UN у 1946. Вона має тривалу історію міжнародної допомоги та мирної дипломатії. Dag Hammarskjöld, Генеральний секретар UN у 1953–1961, був шведом.</p>
           <h2>Оборона</h2>
           <p>Військовий призов (<em>värnplikt</em>) було відновлено у 2017 і він стосується чоловіків і жінок, народжених від 1999 року. Призивають не всіх — відбір ґрунтується на тестах і мотивації. Служба зазвичай триває 9–12 місяців.</p>
-          ${ebookFactBox('uk', null, "Вступ до EU: 1995 · Голосування проти євро: 2003 · Вступ до NATO: 2024 · Член UN від: 1946 · Відновлення призову: 2017.", ['uhrStudyMaterial', 'governmentNato'])}
+          ${ebookFactBox('uk', null, 'Вступ до EU: 1995 · Голосування проти євро: 2003 · Вступ до NATO: 2024 · Член UN від: 1946 · Відновлення призову: 2017.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
       },
     },
@@ -3136,7 +3259,7 @@
           </ul>
           <h2>Подвійне громадянство</h2>
           <p>Швеція приймає подвійне громадянство з 2001 року. Ставши шведом, ви не втрачаєте свого початкового громадянства (за умови дотримання правил вашої країни походження).</p>
-          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', "Нові правила громадянства діють від 6 червня 2026 року. UHR повідомляє, що перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Стандартна вимога щодо проживання: 5 років · Подвійне громадянство: дозволено (з 2001 року) · Орган, що ухвалює рішення: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', 'Нові правила громадянства діють від 6 червня 2026 року. UHR повідомляє, що перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Стандартна вимога щодо проживання: 5 років · Подвійне громадянство: дозволено (з 2001 року) · Орган, що ухвалює рішення: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
       },
     },
@@ -3717,7 +3840,7 @@
           </ul>
           <h2>Нові традиції</h2>
           <p>Міграція додала більше помітних традицій до публічного життя Швеції. Eid al-Fitr, Nouruz, Newroz, Diwali та інші святкування можуть з'являтися у школах, на робочих місцях, у районах і на міських подіях. Важлива закономірність проста: традиції можуть подорожувати й пристосовуватися.</p>
-          ${ebookFactBox('uk', null, 'Національне свято: 6 червня · Вальпургієва ніч: 30 квітня · Переддень Середини літа: п\'ятниця між 19 та 25 червня · Луція: 13 грудня · Святвечір: 24 грудня.', ['uhrStudyMaterial'])}
+          ${ebookFactBox('uk', null, "Національне свято: 6 червня · Вальпургієва ніч: 30 квітня · Переддень Середини літа: п'ятниця між 19 та 25 червня · Луція: 13 грудня · Святвечір: 24 грудня.", ['uhrStudyMaterial'])}
         `,
       },
     },
@@ -4237,6 +4360,7 @@
     const ledeHtml = ch.lede
       ? footnoteCollector.annotate(
           `<p class="ebook__lede"${ebookSourceKeyDataAttr(ebookLedeSourceKeys(id))}>${ebookLocalizedField(id, ch, 'lede', lang)}</p>`,
+          ebookLedeSourceKeys(id),
         )
       : '';
 
@@ -4259,7 +4383,9 @@
             uk: 'Виберіть розділ зі списку або поверніться до вступу.',
           })}</p>
         </div>`;
-    const bodyHtml = footnoteCollector.annotate(rawBodyHtml);
+    const bodyHtml = ch.body
+      ? footnoteCollector.annotate(rawBodyHtml, ebookBodySourceKeys(id))
+      : rawBodyHtml;
     const footnotesHtml = renderEbookFootnotes(lang, id, footnoteCollector.footnotes);
 
     const idx = ORDER.indexOf(id);

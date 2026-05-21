@@ -200,6 +200,10 @@ function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
 
+function stripLeadingMethodSv(value: string): string {
+  return stripLeadingPurposeSv(value).replace(/^genom att\s+/i, '');
+}
+
 function stripLeadingPurposeEn(value: string): string {
   return value
     .replace(/^to\s+/i, '')
@@ -297,6 +301,65 @@ function englishLowVoterTurnoutStatement(answer: string): string {
     return 'Low voter turnout gives all voters two votes each in the next election';
   }
   return `Low voter turnout can mean that ${phrase}`;
+}
+
+function englishCoordinatedGerundPhrase(value: string): string {
+  return englishGerundPhrase(value)
+    .replace(/\band scare\b/i, 'and scaring')
+    .replace(/\band stop\b/i, 'and stopping')
+    .replace(/\band ban\b/i, 'and banning')
+    .replace(/\band make\b/i, 'and making')
+    .replace(/\band create\b/i, 'and creating');
+}
+
+function swedishAffectStatement(subject: string, target: string, answer: string): string {
+  const phrase = stripFinalPunctuation(answer);
+  const pronounMatch = phrase.match(/^det kan\s+(.+)$/i);
+  if (pronounMatch) {
+    return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+      stripLeadingMethodSv(pronounMatch[1]),
+    )}`;
+  }
+
+  if (/^(?:genom att|att)\s+/i.test(phrase)) {
+    return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+      stripLeadingMethodSv(phrase),
+    )}`;
+  }
+
+  if (/(^|[\s,])(?:kan|ska|måste|gör|får|blir|har)(?=$|[\s,.?!])/i.test(phrase)) {
+    return upperFirst(phrase);
+  }
+
+  return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+    stripLeadingMethodSv(phrase),
+  )}`;
+}
+
+function englishAffectStatement(subject: string, target: string, answer: string): string {
+  const phrase = stripFinalPunctuation(answer);
+  const pronounMatch = phrase.match(/^it can\s+(.+)$/i);
+  if (pronounMatch) {
+    return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(
+      pronounMatch[1],
+    )}`;
+  }
+
+  if (/^(?:by|to)\s+/i.test(phrase)) {
+    return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(
+      phrase,
+    )}`;
+  }
+
+  if (
+    /(^|[\s,])(?:can|could|should|must|will|would|may|might|is|are|has|have)(?=$|[\s,.?!])/i.test(
+      phrase,
+    )
+  ) {
+    return upperFirst(phrase);
+  }
+
+  return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(phrase)}`;
 }
 
 function swedishCommonToDoStatement(timePhrase: string, answer: string): string {
@@ -683,6 +746,16 @@ function embeddedEnglishClause(value: string): string {
 }
 
 function replaceLeadingSwedishSubject(subject: string, value: string): string {
+  if (/^att köpa sex i Sverige$/i.test(subject.trim())) {
+    if (
+      /^Det är olagligt att köpa sex, men personen som säljer straffas inte$/i.test(value.trim())
+    ) {
+      return 'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte';
+    }
+    if (/^Det är alltid lagligt att köpa sex$/i.test(value.trim())) {
+      return 'Att köpa sex är alltid lagligt i Sverige';
+    }
+  }
   if (/^äktenskap mellan personer av samma kön i Sverige$/i.test(subject.trim())) {
     if (/^Det är tillåtet att gifta sig med en person av samma kön$/i.test(value.trim())) {
       return 'Äktenskap mellan personer av samma kön är tillåtet i Sverige';
@@ -699,6 +772,24 @@ function replaceLeadingSwedishSubject(subject: string, value: string): string {
 }
 
 function replaceLeadingEnglishSubject(subject: string, value: string): string {
+  if (/^buying sex in Sweden$/i.test(subject.trim())) {
+    if (
+      /^It is illegal to buy sex, but the person who sells it is not punished$/i.test(value.trim())
+    ) {
+      return 'In Sweden, buying sex is illegal, but the person who sells sex is not punished';
+    }
+    if (/^It is always legal to buy sex$/i.test(value.trim())) {
+      return 'In Sweden, buying sex is always legal';
+    }
+  }
+  if (/^marriage between people of the same sex in Sweden$/i.test(subject.trim())) {
+    if (/^It is permitted to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is permitted';
+    }
+    if (/^It is prohibited to marry a person of the same sex$/i.test(value.trim())) {
+      return 'In Sweden, marriage between people of the same sex is prohibited';
+    }
+  }
   const normalizedSubject = upperFirst(subject.trim());
   return value
     .replace(/^They are\s+/i, `${normalizedSubject} are `)
@@ -891,7 +982,8 @@ function appliesStatementEn(subject: string, answer: string): string {
   if (/^They are\s+/i.test(answer)) {
     return replaceLeadingEnglishSubject(subject, answer);
   }
-  return answer;
+  const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
+  return subjectStatement === answer ? answer : subjectStatement;
 }
 
 function decisionStatementSv(subject: string, context: string, answer: string): string {
@@ -1402,6 +1494,26 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   return null;
 }
 
+function politicalDemocracyRightStatementSv(answer: string): string | null {
+  if (/^(?:Att\s+)?försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+  }
+  if (/^(?:Att\s+)?hindra andra från att rösta$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+  }
+  return null;
+}
+
+function politicalDemocracyRightStatementEn(answer: string): string | null {
+  if (/^(?:To\s+)?try to persuade others of their political ideas$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+  }
+  if (/^(?:To\s+)?stop others from voting$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1409,6 +1521,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+
+  if (source.id === 'q146') {
+    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+    }
+    if (/^Att hindra andra från att rösta$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+    }
+  }
 
   if (source.id === 'q151') {
     if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
@@ -1510,7 +1631,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+  if (match) return swedishAffectStatement(match[1], match[2], answer);
 
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
@@ -1537,6 +1658,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
+
+  match = q.match(/^Vilken rätt har människor, grupper och partier i en demokrati$/i);
+  if (match) {
+    const statement = politicalDemocracyRightStatementSv(answer);
+    if (statement) return statement;
+  }
 
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) {
@@ -2000,6 +2127,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
 
+  if (source.id === 'q146') {
+    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+    }
+    if (/^To stop others from voting$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may not stop others from voting';
+    }
+  }
+
   if (source.id === 'q151') {
     if (
       /^They are often run by private companies and earn income from advertising$/i.test(answer)
@@ -2119,7 +2255,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+  if (match) return englishAffectStatement(match[1], match[2], answer);
 
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
@@ -2150,6 +2286,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const predicate = match[1].replace(/^(.+?)\s+(criminally responsible\b.*)$/i, '$1 is $2');
     return `${upperFirst(predicate)} from ${englishAgePhrase(lowerFirst(answer))}`;
+  }
+
+  match = q.match(/^What right do people, groups, and parties have in a democracy$/i);
+  if (match) {
+    const statement = politicalDemocracyRightStatementEn(answer);
+    if (statement) return statement;
   }
 
   match = q.match(/^What does it mean that (.+)$/i);
