@@ -490,6 +490,10 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
+  /^\s*Vilket svar stämmer bäst\?/i,
+  /^\s*Välj rätt alternativ:/i,
+  /^\s*Which answer best matches\?/i,
+  /^\s*Choose the correct option:/i,
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
   /^\s*Vilket påstående är korrekt/i,
@@ -5620,7 +5624,7 @@ function judgementPromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return `Välj rätt alternativ: ${source.questionSv}`;
+  return source.questionSv;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5628,7 +5632,7 @@ function judgementPromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return `Choose the correct option: ${source.questionEn}`;
+  return source.questionEn;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
@@ -5636,7 +5640,7 @@ function singleChoicePromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return `Vilket svar stämmer bäst? ${source.questionSv}`;
+  return source.questionSv;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5644,7 +5648,7 @@ function singleChoicePromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return `Which answer best matches? ${source.questionEn}`;
+  return source.questionEn;
 }
 function generatedSingleChoicePromptFromSourceSv(source, variant) {
   const q = stripFinalPunctuation(source.questionSv);
