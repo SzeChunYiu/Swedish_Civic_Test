@@ -88,12 +88,11 @@ function isFiniteNonNegativeInteger(value: unknown): value is number {
   );
 }
 
-function isValidIsoTimestamp(value: unknown): value is string {
+function isCanonicalUtcIsoTimestamp(value: unknown): value is string {
   if (typeof value !== 'string' || value.trim() !== value) return false;
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
-    return false;
-  }
-  return Number.isFinite(Date.parse(value));
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) return false;
+  const date = new Date(value);
+  return Number.isFinite(date.getTime()) && date.toISOString() === value;
 }
 
 function normalizeNote(value: unknown, mode: 'hydrate' | 'write'): string | undefined {
@@ -129,8 +128,8 @@ function normalizeHighlight(
     h.startOffset >= h.endOffset ||
     h.endOffset - h.startOffset > MAX_HIGHLIGHT_SPAN ||
     !isHighlightColor(h.color) ||
-    !isValidIsoTimestamp(h.createdAt) ||
-    !isValidIsoTimestamp(h.updatedAt ?? h.createdAt)
+    !isCanonicalUtcIsoTimestamp(h.createdAt) ||
+    !isCanonicalUtcIsoTimestamp(h.updatedAt ?? h.createdAt)
   ) {
     return null;
   }
