@@ -1773,6 +1773,80 @@ test('civil-defence generated true/false exports keep war-or-crisis context', ()
   );
 });
 
+test('media and web generated true/false exports keep direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const rowIds = [
+    generatedQuestionId(sourceQuestions, 'q151', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q151', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q152', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q152', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q153', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q153', 'falseStatement'),
+  ];
+  const expectedSv = [
+    'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam.',
+    'Reklamfinansierade medier får aldrig sälja reklamplats.',
+    'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag.',
+    'Många tidningar får bara säljas som ett exemplar per år.',
+    'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
+    'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
+  ];
+  const expectedEn = [
+    'Advertising-funded media are often run by private companies and earn income from advertising.',
+    'Advertising-funded media may never sell advertising space.',
+    'Many newspapers are also available online and updated with news several times per day.',
+    'Many newspapers may be sold only as one copy per year.',
+    'On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.',
+    'On the web and in social media, only responsible publishers may write posts.',
+  ];
+  const residualFragmentPattern =
+    /^(?:De|They)\s+(?:drivs|får|finns|are often|are also|may)\b|\b(?:innehåll där|content there|inlägg där|posts there)\b/i;
+  const generatedRows = rowIds.map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = rowIds.map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => rowIds.includes(line.match(/^"([^"]+)"/)?.[1]));
+
+  assert.ok(generatedRows.every(Boolean), 'generated media/web true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static media/web true/false rows should exist');
+  assert.equal(csvRows.length, rowIds.length);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) => residualFragmentPattern.test(`${question.q.sv} ${question.q.en}`))
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => residualFragmentPattern.test(line)),
+    [],
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -4500,7 +4574,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
-test('published question schema rejects generated media and local-party answer fragments', () => {
+test('published question schema rejects generated media pronoun answer fragments', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -4517,21 +4591,17 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       marker,
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const mediaAndLocalPartyResiduals = {",
-        "  [generatedFixtureId('q150', 1)]: { questionSv: 'De säljer reklamplats eller tar betalt för en särskild kanal.', questionEn: 'They sell advertising space or charge for a specific channel.' },",
-        "  [generatedFixtureId('q150', 2)]: { questionSv: 'Genom domstolsavgifter från rättegångar.', questionEn: 'Through court fees from trials.' },",
+        "const mediaPronounResiduals = {",
         "  [generatedFixtureId('q151', 1)]: { questionSv: 'De drivs ofta av privata företag och får inkomster genom reklam.', questionEn: 'They are often run by private companies and earn income from advertising.' },",
         "  [generatedFixtureId('q151', 2)]: { questionSv: 'De får aldrig sälja reklamplats.', questionEn: 'They may never sell advertising space.' },",
         "  [generatedFixtureId('q152', 1)]: { questionSv: 'De finns också på internet och uppdateras med nyheter flera gånger per dag.', questionEn: 'They are also available online and updated with news several times per day.' },",
         "  [generatedFixtureId('q152', 2)]: { questionSv: 'De får bara säljas som ett exemplar per år.', questionEn: 'They may be sold only as one copy per year.' },",
-        "  [generatedFixtureId('q169', 1)]: { questionSv: 'De kan ha politik bara för den egna kommunen eller regionen.', questionEn: 'They can have policies only for their own municipality or region.' },",
-        "  [generatedFixtureId('q169', 2)]: { questionSv: 'De måste alltid vara partier i riksdagen.', questionEn: 'They must always be parties in the Riksdag.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  mediaAndLocalPartyResiduals[question.id]",
+        "  mediaPronounResiduals[question.id]",
         "    ? {",
         "        ...question,",
-        "        ...mediaAndLocalPartyResiduals[question.id],",
+        "        ...mediaPronounResiduals[question.id],",
         "      }",
         "    : question,",
         ");",
@@ -4548,7 +4618,7 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
 test('published question schema rejects generated proportional-party referent splices', () => {

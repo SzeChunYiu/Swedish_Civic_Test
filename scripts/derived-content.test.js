@@ -4,6 +4,10 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const {
+  findGeneratedTrueFalseNaturalnessPatternMatch,
+} = require('./generated-true-false-naturalness-patterns');
+
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
 
@@ -861,6 +865,42 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text.includes(
       'A suspected person should be considered innocent until the person has been convicted.',
     ),
+  );
+});
+
+test('generated true/false naturalness patterns allow direct media and web propositions', () => {
+  const allowedMediaPropositions = [
+    'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam.',
+    'Advertising-funded media are often run by private companies and earn income from advertising.',
+    'Reklamfinansierade medier får aldrig sälja reklamplats.',
+    'Advertising-funded media may never sell advertising space.',
+    'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag.',
+    'Many newspapers are also available online and updated with news several times per day.',
+    'Många tidningar får bara säljas som ett exemplar per år.',
+    'Many newspapers may be sold only as one copy per year.',
+    'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
+    'On the web and in social media, anyone can create content, and it is not always checked the same way as in other media.',
+    'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
+    'On the web and in social media, only responsible publishers may write posts.',
+  ];
+  const residualFragments = [
+    'De drivs ofta av privata företag och får inkomster genom reklam.',
+    'They are often run by private companies and earn income from advertising.',
+    'De finns också på internet och uppdateras med nyheter flera gånger per dag.',
+    'They are also available online and updated with news several times per day.',
+    'Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier.',
+    'Anyone can create content there, and it is not always checked the same way as in other media.',
+  ];
+
+  assert.deepEqual(
+    allowedMediaPropositions
+      .map((text) => [text, findGeneratedTrueFalseNaturalnessPatternMatch(text)])
+      .filter(([, match]) => match),
+    [],
+  );
+  assert.equal(
+    residualFragments.filter((text) => findGeneratedTrueFalseNaturalnessPatternMatch(text)).length,
+    residualFragments.length,
   );
 });
 
