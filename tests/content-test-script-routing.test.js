@@ -237,6 +237,26 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
+test('weekly recap focused content validation runs only its runtime summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-weekly-recap-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused weekly recap validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.weeklyRecapRuntimeCasesValidated, 7);
+  assert.equal(summary.weeklyRecapRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('question speech text focused content validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
@@ -276,7 +296,7 @@ test('XP rules focused content validation runs only its parity summary', () => {
   assert.ok(match, 'focused XP validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.xpRulesValidated, 20);
+  assert.equal(summary.xpRulesValidated, 24);
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
 });

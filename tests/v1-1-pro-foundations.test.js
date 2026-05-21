@@ -271,6 +271,86 @@ test('generateWeeklyRecap: counts mock exams completed this week with best score
   assert.equal(recap.bestMockScore, 0.85);
 });
 
+test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
+  const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: '7',
+      dailyGoalAnswers: 10,
+      questionProgress: {
+        validResolved: {
+          questionId: 'validResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
+        },
+        stringCounters: {
+          questionId: 'stringCounters',
+          correctStreak: '1',
+          wrongCount: '2',
+          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
+        },
+      },
+      sessions: [
+        {
+          id: 'weekly-bad',
+          mode: 'exam',
+          questionIds: ['q1', 'q2', 'q3'],
+          startedAt: '2026-05-20T10:00:00.000Z',
+          completedAt: '2026-05-20T10:30:00.000Z',
+          score: Infinity,
+          answers: [
+            {
+              questionId: 'q1',
+              selectedOptionIds: ['a'],
+              isCorrect: 'true',
+              answeredAt: '2026-05-20T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q2',
+              selectedOptionIds: ['a'],
+              isCorrect: 1,
+              answeredAt: '2026-05-20T10:01:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q3',
+              selectedOptionIds: ['a'],
+              isCorrect: false,
+              answeredAt: '2026-05-20T10:02:00.000Z',
+              timeSpentSeconds: 5,
+            },
+          ],
+        },
+        {
+          id: 'weekly-high',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T11:00:00.000Z',
+          completedAt: '2026-05-20T11:20:00.000Z',
+          score: 1.2,
+        },
+      ],
+    },
+    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
+    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
+    masteryThreshold: '0.8',
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  assert.equal(recap.questionsAnswered, 3);
+  assert.equal(recap.accuracy, 0);
+  assert.equal(recap.mistakesResolved, 1);
+  assert.equal(recap.streakDays, 0);
+  assert.equal(recap.mockExamsTaken, 2);
+  assert.equal(recap.bestMockScore, 1);
+  assert.equal(recap.chapterNowMastered, null);
+});
+
 // -------------------------------------------------------- Tier comparison
 
 test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_ENTITLEMENTS as true', () => {
