@@ -153,15 +153,15 @@ export function ProPaywall({
   const ctaLabels = paywallCtaLabels({ alreadyAdFree });
   const [activeAction, setActiveAction] = useState<ProAction | null>(null);
   const [status, setStatus] = useState<ProPaywallStatus>('idle');
-  const proActionInFlightRef = useRef(false);
+  const purchaseActionInFlightRef = useRef(false);
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
   const statusMessage = copy.statusMessages[status];
   const runProAction = useCallback(
     async (action: ProAction) => {
-      if (proActionInFlightRef.current) return;
+      if (purchaseActionInFlightRef.current) return;
 
-      proActionInFlightRef.current = true;
+      purchaseActionInFlightRef.current = true;
       setActiveAction(action);
 
       try {
@@ -175,7 +175,7 @@ export function ProPaywall({
       } catch {
         setStatus('error');
       } finally {
-        proActionInFlightRef.current = false;
+        purchaseActionInFlightRef.current = false;
         setActiveAction(null);
       }
     },
