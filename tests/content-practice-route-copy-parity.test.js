@@ -90,6 +90,33 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 
+test('practice route source wires selected companion copy to answer feedback state', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const companionCard = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/StudyCompanionCard.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /import \{ StudyCompanionCard \}/);
+  assert.match(source, /import \{ useCompanionStore \}/);
+  assert.match(
+    source,
+    /const selectedCompanionId = useCompanionStore\(\(state\) => state\.selectedId\);/,
+  );
+  assert.match(
+    source,
+    /const companionFeedbackState = hasSelectedAnswer[\s\S]*\? selectedIsCorrect[\s\S]*\? 'correct'[\s\S]*: 'incorrect'[\s\S]*: 'neutral';/,
+  );
+  assert.match(
+    source,
+    /<StudyCompanionCard[\s\S]*language=\{language\}[\s\S]*mascotId=\{selectedCompanionId\}/,
+  );
+  assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
+  assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
+  assert.match(companionCard, /href="\/settings"/);
+  assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
+});
+
 test('web aria false-state e2e covers localized Practice control labels', () => {
   const source = fs.readFileSync(
     path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),

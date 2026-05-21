@@ -15,6 +15,7 @@ async function closeLaunchAdIfPresent(page: Page) {
 async function enableEnglishSupport(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await page
     .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
@@ -27,6 +28,7 @@ async function enableEnglishSupport(page: Page) {
 async function enableSwedish(page: Page) {
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
   await page.getByLabel(/Byt studiespråk till Svenska|Set study language to Swedish/).click();
   await expect(page.getByLabel('Byt studiespråk till Svenska')).toHaveAttribute(
     'aria-checked',
@@ -81,6 +83,44 @@ test('practice audio control follows the selected question language', async ({ p
   await expect(
     page.getByRole('button', { name: 'Lyssna på den svenska frågan och svaren' }),
   ).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice shows the selected study companion and answer-state guidance', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await page
+    .getByRole('button', {
+      name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
+    })
+    .click();
+
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  await expect(page.getByText('Your study companion')).toBeVisible();
+  await expect(page.getByText('Dala horse', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Dala horse is with you in practice. Folk symbol from Dalarna.'),
+  ).toBeVisible();
+  await expect(page.getByText('Ready', { exact: true })).toBeVisible();
+
+  await page.getByLabel('Select answer In southern Europe').click();
+
+  await expect(page.getByText('Review', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Dala horse suggests: read the source, compare the options, and try again.'),
+  ).toBeVisible();
+
+  await page.getByRole('link', { name: 'Change study companion in Settings' }).click();
+  await expect(page).toHaveURL(/\/settings/);
 
   expect(consoleErrors).toEqual([]);
 });

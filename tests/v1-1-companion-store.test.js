@@ -42,6 +42,10 @@ test('companion store source: never Pro-gated (invariant)', () => {
     path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
     'utf8',
   );
+  const cardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/StudyCompanionCard.tsx'),
+    'utf8',
+  );
   assert.ok(
     !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(source),
     'companion picker must never be Pro-gated',
@@ -49,6 +53,10 @@ test('companion store source: never Pro-gated (invariant)', () => {
   assert.ok(
     !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(pickerSource),
     'companion picker UI must never be Pro-gated',
+  );
+  assert.ok(
+    !/hasProEntitlement|isPremiumUser|adsDisabled|ProTierEntitlements/.test(cardSource),
+    'practice companion card must never be Pro-gated',
   );
 });
 
@@ -89,6 +97,48 @@ test('settings route renders the free companion picker with persistence warning 
   assert.match(source, /onSelect=\{setSelectedCompanion\}/);
   assert.match(source, /companionTitle: 'Studiekompis'/);
   assert.match(source, /companionTitle: 'Study companion'/);
+  assert.doesNotMatch(source, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
+});
+
+test('practice route renders the selected companion from the free companion store', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.match(
+    source,
+    /import \{ StudyCompanionCard \} from '\.\.\/\.\.\/components\/mascot\/StudyCompanionCard';/,
+  );
+  assert.match(
+    source,
+    /import \{ useCompanionStore \} from '\.\.\/\.\.\/lib\/storage\/companionStore';/,
+  );
+  assert.match(
+    source,
+    /const selectedCompanionId = useCompanionStore\(\(state\) => state\.selectedId\);/,
+  );
+  assert.match(source, /const companionFeedbackState = hasSelectedAnswer/);
+  assert.match(source, /<StudyCompanionCard[\s\S]*feedbackState=\{companionFeedbackState\}/);
+  assert.match(source, /language=\{language\}[\s\S]*mascotId=\{selectedCompanionId\}/);
+  assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
+  assert.doesNotMatch(source, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
+});
+
+test('study companion card localizes answer states and links back to Settings', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/StudyCompanionCard.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /export interface StudyCompanionCardProps/);
+  assert.match(source, /feedbackState\?: StudyCompanionFeedbackState/);
+  assert.match(source, /Din studiekompis/);
+  assert.match(source, /Your study companion/);
+  assert.match(source, /correctBody: \(label\) =>/);
+  assert.match(source, /incorrectBody: \(label\) =>/);
+  assert.match(source, /neutralBody: \(label, anchor\) =>/);
+  assert.match(source, /href="\/settings"/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /accessibilityLabel=\{copy\.accessibilityLabel\(label, body\)\}/);
+  assert.match(source, /getMascot\(mascotId\) \?\? getMascot\(DEFAULT_COMPANION_ID\)!/);
   assert.doesNotMatch(source, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
 });
 
