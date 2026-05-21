@@ -564,6 +564,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
   /^That Sweden's first mosques were built\b/i,
+  /^Försöka övertyga andra om sina politiska idéer\.?$/i,
+  /^Hindra andra från att rösta\.?$/i,
+  /^Try to persuade others of their political ideas\.?$/i,
+  /^Stop others from voting\.?$/i,
   /\bskyddar rätten [^.?!]* och skydd mot\b/i,
   /\bprotects the right [^.?!]* and protection from\b/i,
   /\bskyddar att staten väljer\b/i,
@@ -6282,12 +6286,34 @@ function universalHumanRightsStatementEn(answer) {
   }
   return null;
 }
+function politicalExpressionRightStatementSv(answer) {
+  if (/^att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+  }
+  if (/^att hindra andra från att rösta$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+  }
+  return null;
+}
+function politicalExpressionRightStatementEn(answer) {
+  if (/^to try to persuade others of their political ideas$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+  }
+  if (/^to stop others from voting$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
   }
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementSv(answer);
+    if (statement) return statement;
+  }
   let match = q.match(/^Var ligger (.+)$/i);
   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
   match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
@@ -6615,6 +6641,10 @@ function civicStatementEn(source, option) {
   }
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementEn(answer);
+    if (statement) return statement;
+  }
   let match = q.match(/^Where is (.+) located$/i);
   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);

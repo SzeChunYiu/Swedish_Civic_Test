@@ -1667,6 +1667,53 @@ test('human-rights definition true/false exports use direct propositions', () =>
   );
 });
 
+test('political-rights generated true/false exports use complete propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q146TrueId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const q146FalseId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+  const expectedRows = [
+    {
+      id: q146TrueId,
+      sv: 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+      en: 'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+    },
+    {
+      id: q146FalseId,
+      sv: 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+      en: 'In a democracy, people, groups, and parties may not stop others from voting.',
+    },
+  ];
+  const residualPattern = /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/i;
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    for (const expected of expectedRows) {
+      const question = bank.find((candidate) => candidate.id === expected.id);
+      assert.ok(question, `${expected.id} should be present in published bank`);
+      assert.equal(question.q.sv, expected.sv);
+      assert.equal(question.q.en, expected.en);
+      assert.doesNotMatch(`${question.q.sv}\n${question.q.en}`, residualPattern);
+    }
+  }
+
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => expectedRows.some((expected) => line.startsWith(`"${expected.id}",`)));
+
+  assert.equal(csvRows.length, 2);
+  for (const expected of expectedRows) {
+    const row = csvRows.find((line) => line.startsWith(`"${expected.id}",`));
+    assert.ok(row, `${expected.id} should be exported to CSV`);
+    assert.match(row, new RegExp(expected.sv.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(row, new RegExp(expected.en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.doesNotMatch(row, residualPattern);
+  }
+});
+
 test('gender-equality policy goal true/false exports use direct English propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();

@@ -1402,6 +1402,26 @@ function universalHumanRightsStatementEn(answer: string): string | null {
   return null;
 }
 
+function politicalExpressionRightStatementSv(answer: string): string | null {
+  if (/^att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+  }
+  if (/^att hindra andra från att rösta$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+  }
+  return null;
+}
+
+function politicalExpressionRightStatementEn(answer: string): string | null {
+  if (/^to try to persuade others of their political ideas$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+  }
+  if (/^to stop others from voting$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1409,6 +1429,11 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementSv(answer);
+    if (statement) return statement;
+  }
 
   if (source.id === 'q151') {
     if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
@@ -1995,6 +2020,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementEn(answer);
+    if (statement) return statement;
+  }
 
   if (source.id === 'q151') {
     if (
