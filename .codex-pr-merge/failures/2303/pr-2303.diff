@@ -1,0 +1,463 @@
+diff --git a/scripts/validate-content-focus-registry.js b/scripts/validate-content-focus-registry.js
+index 836be3503..4921e7330 100644
+--- a/scripts/validate-content-focus-registry.js
++++ b/scripts/validate-content-focus-registry.js
+@@ -168,7 +168,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+   },
+   {
+     id: 'countdownBanner',
+-    flags: ['--focus-countdown-banner'],
++    flags: ['--focus-countdown-banner-parity', '--focus-countdown-banner'],
+     summaryKeys: [
+       'citizenshipRulesEffectiveDateValidated',
+       'civicKnowledgeTestFirstSittingDateValidated',
+@@ -178,6 +178,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+       'countdownBannerTimelineCopyParityValidated',
+       'countdownBannerHomeMountRulesValidated',
+       'countdownBannerHomeMountParityValidated',
++      'studyPlanRuntimeCasesValidated',
++      'studyPlanRuntimeParityValidated',
+     ],
+   },
+   {
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..ef4954e8b 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -172,11 +172,13 @@ const EXPECTED_UHR_SOURCE = {
+ const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
+   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
+ const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
++const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
+ const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
+ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
+   rulesEffectiveDate:
+     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
+   civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
++  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+   civicKnowledgeTestDeadline:
+     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
+ };
+@@ -2383,8 +2385,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -4945,6 +4946,7 @@ function validateCitizenshipTimeline() {
+   let countdownCopyParity = true;
+   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
+   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
++  const firstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
+   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
+ 
+   function rejectDate(message) {
+@@ -4962,6 +4964,11 @@ function validateCitizenshipTimeline() {
+       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
+     );
+   }
++  if (firstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
++    rejectDate(
++      `first civic knowledge test sitting must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
++    );
++  }
+   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
+     rejectDate(
+       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
+@@ -4969,11 +4976,16 @@ function validateCitizenshipTimeline() {
+   }
+   if (
+     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
++    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
+     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
++    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
++      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
+     examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
+-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
++      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
+   ) {
+-    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
++    rejectDate(
++      'first civic knowledge test sitting and deadline must stay after the citizenship rules date',
++    );
+   }
+   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
+     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
+@@ -5024,12 +5036,202 @@ function validateCitizenshipTimeline() {
+   return {
+     countdownCopyParity,
+     dateParity,
++    firstSittingDate,
+     rulesDate,
+     sourceUrlsValidated,
+     testDeadlineDate,
+   };
+ }
+ 
++function validateCountdownBannerHomeMount() {
++  let valid = true;
++  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
++  const rules = [
++    {
++      label: 'Home route must import CountdownBanner',
++      pattern: /import \{ CountdownBanner \} from '..\/..\/components\/ui\/CountdownBanner';/,
++    },
++    {
++      label: 'Home route must mount CountdownBanner with the selected language',
++      pattern: /<CountdownBanner language=\{language\} \/>/,
++    },
++  ];
++
++  rules.forEach(({ label, pattern }) => {
++    if (!pattern.test(homeRouteSource)) {
++      valid = false;
++      fail(label);
++      return;
++    }
++    countdownBannerHomeMountRulesValidated += 1;
++  });
++
++  countdownBannerHomeMountParityValidated = valid && countdownBannerHomeMountRulesValidated === 2;
++}
++
++function validateStudyPlanRuntime() {
++  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
++  let valid = true;
++
++  if (
++    typeof daysUntil !== 'function' ||
++    typeof formatExamDate !== 'function' ||
++    typeof generateStudyPlan !== 'function'
++  ) {
++    fail('study plan runtime helpers must be exported');
++    return;
++  }
++
++  const validNow = new Date('2026-05-19T00:00:00.000Z');
++  const invalidDate = new Date('not-a-date');
++  const baseStudyPlanInput = {
++    testDate: new Date('2026-06-15T00:00:00.000Z'),
++    now: validNow,
++    intensity: 'regular',
++  };
++  const cases = [
++    {
++      label: 'invalid dates use safe fallbacks',
++      actual: () =>
++        daysUntil(invalidDate, validNow) === 0 &&
++        daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) === 0 &&
++        formatExamDate(invalidDate, 'en') === 'date unavailable' &&
++        formatExamDate(invalidDate, 'sv') === 'datum saknas',
++    },
++    {
++      label: 'NaN dates and unknown intensity normalize',
++      actual: () => {
++        const plan = generateStudyPlan({
++          testDate: invalidDate,
++          now: invalidDate,
++          totalQuestions: Number.NaN,
++          masteredQuestions: Number.POSITIVE_INFINITY,
++          mocksTaken: '2',
++          intensity: 'turbo',
++        });
++        return (
++          plan.hasTestDate === true &&
++          plan.daysRemaining === 0 &&
++          plan.intensity === 'regular' &&
++          plan.mocksRemaining === 6 &&
++          Number.isFinite(Date.parse(plan.testDateIso)) &&
++          Number.isFinite(Date.parse(plan.generatedAt)) &&
++          Number.isFinite(plan.dailyQuestionTarget) &&
++          plan.dailyQuestionTarget >= 5 &&
++          plan.dailyQuestionTarget <= 80 &&
++          Number.isInteger(plan.weeklyMockTarget) &&
++          plan.weeklyMockTarget >= 1 &&
++          plan.weeklyMockTarget <= 2
++        );
++      },
++    },
++    {
++      label: 'string counts do not coerce into progress',
++      actual: () => {
++        const plan = generateStudyPlan({
++          ...baseStudyPlanInput,
++          totalQuestions: '200',
++          masteredQuestions: '10',
++          mocksTaken: '2',
++        });
++        return (
++          plan.mocksRemaining === 6 &&
++          Number.isFinite(plan.dailyQuestionTarget) &&
++          plan.dailyQuestionTarget >= 5 &&
++          plan.dailyQuestionTarget <= 80
++        );
++      },
++    },
++    {
++      label: 'fractional counts do not coerce into progress',
++      actual: () => {
++        const plan = generateStudyPlan({
++          ...baseStudyPlanInput,
++          totalQuestions: 200.5,
++          masteredQuestions: 10.5,
++          mocksTaken: 1.5,
++        });
++        return (
++          plan.mocksRemaining === 6 &&
++          Number.isFinite(plan.dailyQuestionTarget) &&
++          plan.dailyQuestionTarget >= 5 &&
++          plan.dailyQuestionTarget <= 80
++        );
++      },
++    },
++    {
++      label: 'mastered questions and mocks are clamped',
++      actual: () => {
++        const plan = generateStudyPlan({
++          ...baseStudyPlanInput,
++          totalQuestions: 10,
++          masteredQuestions: 99,
++          mocksTaken: 99,
++        });
++        return (
++          plan.mocksRemaining === 0 &&
++          Number.isFinite(plan.dailyQuestionTarget) &&
++          plan.dailyQuestionTarget >= 5 &&
++          plan.dailyQuestionTarget <= 80
++        );
++      },
++    },
++    {
++      label: 'valid regular plan remains bounded',
++      actual: () => {
++        const plan = generateStudyPlan({
++          ...baseStudyPlanInput,
++          totalQuestions: 200,
++          masteredQuestions: 0,
++          mocksTaken: 0,
++        });
++        return (
++          plan.hasTestDate === true &&
++          plan.daysRemaining === 27 &&
++          plan.mocksRemaining === 6 &&
++          plan.isCrunch === false &&
++          plan.dailyQuestionTarget >= 5 &&
++          plan.dailyQuestionTarget <= 80 &&
++          plan.weeklyMockTarget >= 1 &&
++          plan.weeklyMockTarget <= 2
++        );
++      },
++    },
++  ];
++
++  cases.forEach(({ label, actual }) => {
++    let passed = false;
++    try {
++      passed = actual() === true;
++    } catch (error) {
++      fail(`study plan runtime ${label} threw: ${error.message}`);
++      valid = false;
++      return;
++    }
++
++    if (!passed) {
++      fail(`study plan runtime failed: ${label}`);
++      valid = false;
++      return;
++    }
++    studyPlanRuntimeCasesValidated += 1;
++  });
++
++  studyPlanRuntimeParityValidated = valid && studyPlanRuntimeCasesValidated === 6;
++}
++
++function validateCountdownBannerFocusedParity() {
++  const timelineValidation = validateCitizenshipTimeline();
++  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
++  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
++  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
++  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
++  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
++  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
++  validateCountdownBannerHomeMount();
++  validateStudyPlanRuntime();
++}
++
+ function findQuestionAuthorityOverclaim(question) {
+   const text = [
+     question.questionSv,
+@@ -8032,10 +8234,15 @@ let themeTokenSchemaValidated = false;
+ let badgesValidated = 0;
+ let badgeMilestoneParityValidated = false;
+ let citizenshipRulesEffectiveDateValidated = '';
++let civicKnowledgeTestFirstSittingDateValidated = '';
+ let civicKnowledgeTestDeadlineDateValidated = '';
+ let citizenshipTimelineSourceUrlsValidated = 0;
+ let citizenshipTimelineDateParityValidated = false;
+ let countdownBannerTimelineCopyParityValidated = false;
++let countdownBannerHomeMountRulesValidated = 0;
++let countdownBannerHomeMountParityValidated = false;
++let studyPlanRuntimeCasesValidated = 0;
++let studyPlanRuntimeParityValidated = false;
+ let practiceScoringRulesValidated = 0;
+ let practiceScoringRulesParityValidated = false;
+ let practiceFlowCasesValidated = 0;
+@@ -8495,14 +8702,28 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
+   process.exit(0);
+ }
+ 
+-{
+-  const timelineValidation = validateCitizenshipTimeline();
+-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
++if (
++  process.argv.includes('--focus-countdown-banner-parity') ||
++  process.argv.includes('--focus-countdown-banner')
++) {
++  validateCountdownBannerFocusedParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    citizenshipRulesEffectiveDateValidated,
++    civicKnowledgeTestFirstSittingDateValidated,
++    civicKnowledgeTestDeadlineDateValidated,
++    citizenshipTimelineSourceUrlsValidated,
++    citizenshipTimelineDateParityValidated,
++    countdownBannerTimelineCopyParityValidated,
++    countdownBannerHomeMountRulesValidated,
++    countdownBannerHomeMountParityValidated,
++    studyPlanRuntimeCasesValidated,
++    studyPlanRuntimeParityValidated,
++  });
++  process.exit(0);
+ }
++
++validateCountdownBannerFocusedParity();
+ if (typeof generateExam !== 'function') fail('generateExam export is not a function');
+ if (typeof buildExamReviewItems !== 'function') {
+   fail('buildExamReviewItems export is not a function');
+@@ -18072,10 +18293,15 @@ console.log(
+       badgesValidated,
+       badgeMilestoneParityValidated,
+       citizenshipRulesEffectiveDateValidated,
++      civicKnowledgeTestFirstSittingDateValidated,
+       civicKnowledgeTestDeadlineDateValidated,
+       citizenshipTimelineSourceUrlsValidated,
+       citizenshipTimelineDateParityValidated,
+       countdownBannerTimelineCopyParityValidated,
++      countdownBannerHomeMountRulesValidated,
++      countdownBannerHomeMountParityValidated,
++      studyPlanRuntimeCasesValidated,
++      studyPlanRuntimeParityValidated,
+       practiceScoringRulesValidated,
+       practiceScoringRulesParityValidated,
+       practiceFlowCasesValidated,
+diff --git a/tests/content-countdown-banner-parity.test.js b/tests/content-countdown-banner-parity.test.js
+index 21fd78ccc..16ff63541 100644
+--- a/tests/content-countdown-banner-parity.test.js
++++ b/tests/content-countdown-banner-parity.test.js
+@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
+ function validateContentSummary() {
+   const output = execFileSync(
+     process.execPath,
+-    ['scripts/validate-content.js', '--focus-countdown-banner'],
++    ['scripts/validate-content.js', '--focus-countdown-banner-parity'],
+     {
+       cwd: repoRoot,
+       encoding: 'utf8',
+@@ -31,7 +31,10 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
+   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+   assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
+   assert.equal(summary.countdownBannerHomeMountParityValidated, true);
++  assert.equal(summary.studyPlanRuntimeCasesValidated, 6);
++  assert.equal(summary.studyPlanRuntimeParityValidated, true);
+   assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
++  assert.equal(Object.hasOwn(summary, 'chapters'), false);
+ 
+   const countdownBanner = fs.readFileSync(
+     path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
+@@ -80,7 +83,7 @@ test('validate:content rejects removing the Home countdown banner mount', () =>
+       '-e',
+       `
+ const fs = require('node:fs');
+-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
++process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+ const originalReadFileSync = fs.readFileSync;
+ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+@@ -110,7 +113,7 @@ test('countdown banner parity rejects collapsing the civic test deadline into th
+       '-e',
+       `
+ const fs = require('node:fs');
+-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
++process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+ const originalReadFileSync = fs.readFileSync;
+ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+@@ -143,7 +146,7 @@ test('countdown banner parity rejects tentative August-only test copy', () => {
+       '-e',
+       `
+ const fs = require('node:fs');
+-process.argv.push('scripts/validate-content.js', '--focus-countdown-banner');
++process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+ const originalReadFileSync = fs.readFileSync;
+ fs.readFileSync = function readFileSync(filePath, ...args) {
+   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..65b514ae3 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -167,6 +167,47 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
+   );
+ });
+ 
++test('countdown banner parity uses focused countdown and study-plan validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const countdownTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-countdown-banner-parity.test.js'),
++    'utf8',
++  );
++  const registrySource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content-focus-registry.js'),
++    'utf8',
++  );
++
++  assert.match(registrySource, /--focus-countdown-banner-parity/);
++  assert.match(validatorSource, /--focus-countdown-banner-parity/);
++  assert.match(validatorSource, /validateCountdownBannerFocusedParity\(\);/);
++  assert.match(validatorSource, /studyPlanRuntimeCasesValidated/);
++  assert.match(countdownTestSource, /--focus-countdown-banner-parity/);
++  assert.doesNotMatch(
++    countdownTestSource,
++    /--focus-countdown-banner['"]/,
++    'countdown banner parity tests must use the explicit parity focus flag',
++  );
++
++  const result = spawnSync(
++    process.execPath,
++    ['scripts/validate-content.js', '--focus-countdown-banner-parity'],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++  assert.equal(result.status, 0, result.stderr || result.stdout);
++  const match = result.stdout.match(/\{[\s\S]*\}/);
++  assert.ok(match, 'focused countdown validation should print a JSON summary');
++  const summary = JSON.parse(match[0]);
++  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
++  assert.equal(summary.studyPlanRuntimeCasesValidated, 6);
++  assert.equal(summary.studyPlanRuntimeParityValidated, true);
++  assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
++  assert.equal(Object.hasOwn(summary, 'chapters'), false);
++});
++
+ test('spaced repetition schema parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),

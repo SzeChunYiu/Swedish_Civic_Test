@@ -20,7 +20,7 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/Button.tsx'), 'utf8');
 
-  assert.equal(summary.buttonAccessibilityRulesValidated, 22);
+  assert.equal(summary.buttonAccessibilityRulesValidated, 23);
   assert.equal(summary.buttonAccessibilityParityValidated, true);
   assert.match(source, /accessibilityRole = 'button'/);
   assert.match(source, /const mergedAccessibilityState =/);
@@ -36,6 +36,7 @@ test('shared Button mirrors native accessibility state to web aria attributes', 
   assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
   assert.match(source, /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/);
   assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(source, /disabled \? styles\.disabled : null,[\s\S]*style,/);
 });
 
 test('Button accessibility parity rejects web aria state drift', () => {
@@ -66,4 +67,31 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /Button missing disabled state mirrored to web aria for accessibility parity/,
   );
+});
+
+test('Button accessibility parity rejects dropped caller style overrides', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/Button.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('        style,\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /Button missing caller style override/);
 });

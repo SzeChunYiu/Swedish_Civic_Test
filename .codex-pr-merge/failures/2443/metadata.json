@@ -1,0 +1,26 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Wire `tests/remove-ads-web-e2e-mock-runtime.test.js` into `npm run test:monetization` so the E2E mock-owned Remove Ads runtime behavior runs with the monetization suite.\n- Reuse the shared monetization runtime harness from `scripts/monetization.test.js` instead of keeping a duplicate TypeScript loader there.\n- Strengthen `validate-content` for Remove Ads runtime defaults and E2E mock-owned gates, and align generated-answer parity with the localized product export.\n\n## Validation\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run test:monetization`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/content-remove-ads-hook-parity.test.js`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run validate:content`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test --test-name-pattern \"dedicated focused harness|generated answer template|q001|localization\" tests/content-remove-ads-hook-parity.test.js tests/content-question-i18n-v8-pilot.test.js tests/content-published-question-types.test.js`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run typecheck -- --pretty false`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run lint`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run format:check`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run test:ownership`\n- `git diff --check HEAD^..HEAD`",
+  "files": [],
+  "headRefName": "task/remove-ads-e2e-mock-runtime-1779372130",
+  "headRefOid": "1801233dcbd4b79979175a28577f1f44f966f785",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2443,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26240115290/job/77223871524",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:48:45Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Wire Remove Ads E2E mock runtime tests",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2443"
+}

@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
@@ -13,6 +13,7 @@ import {
   citizenshipRequirementAreas,
   citizenshipRequirementSources,
   type CitizenshipRequirementLanguage,
+  type CitizenshipRequirementSource,
   type CitizenshipRequirementSourceId,
 } from '../data/citizenshipRequirements';
 import { useCitizenshipRequirementsChecklistStore } from '../lib/storage/citizenshipRequirementsStore';
@@ -38,6 +39,7 @@ type CitizenshipRequirementsCopy = {
   checkedLabel: string;
   uncheckedLabel: string;
   sourceRefsLabel: string;
+  areaSourceAccessibilityPrefix: string;
   sourceListTitle: string;
   sourceListSubtitle: string;
   sourceDateLabel: string;
@@ -76,6 +78,7 @@ const copyByLanguage: Record<AppLanguage, CitizenshipRequirementsCopy> = {
     checkedLabel: 'Markerad',
     uncheckedLabel: 'Ej markerad',
     sourceRefsLabel: 'Källor',
+    areaSourceAccessibilityPrefix: 'Källa för',
     sourceListTitle: 'Officiella källor',
     sourceListSubtitle:
       'Källorna öppnas utanför appen. Kontrollera alltid myndighetssidorna om ditt ärende är nära ett beslut.',
@@ -113,6 +116,7 @@ const copyByLanguage: Record<AppLanguage, CitizenshipRequirementsCopy> = {
     checkedLabel: 'Marked',
     uncheckedLabel: 'Not marked',
     sourceRefsLabel: 'Sources',
+    areaSourceAccessibilityPrefix: 'Source for',
     sourceListTitle: 'Official sources',
     sourceListSubtitle:
       'Sources open outside the app. Always check the authority pages when your case is close to a decision.',
@@ -144,6 +148,23 @@ function sourceForId(sourceId: CitizenshipRequirementSourceId) {
   }
 
   return source;
+}
+
+function formatSourceMeta(source: CitizenshipRequirementSource, copy: CitizenshipRequirementsCopy) {
+  const sourceDate = source.sourceDate ? ` · ${copy.sourceDateLabel} ${source.sourceDate}` : '';
+
+  return `${source.publisher}${sourceDate} · ${copy.retrievedLabel} ${source.retrievedDate}`;
+}
+
+function buildAreaSourceAccessibilityLabel(
+  copy: CitizenshipRequirementsCopy,
+  areaTitle: string,
+  source: CitizenshipRequirementSource,
+  language: CitizenshipRequirementLanguage,
+) {
+  return `${copy.areaSourceAccessibilityPrefix} ${areaTitle}: ${source.publisher}: ${
+    source.title[language]
+  }. ${formatSourceMeta(source, copy)}. ${source.url}`;
 }
 
 function buildSummary(
@@ -179,6 +200,7 @@ export default function CitizenshipRequirementsScreen() {
   );
   const copy = copyByLanguage[language];
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
+  const [focusedSourceRefKey, setFocusedSourceRefKey] = useState<string | null>(null);
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -238,9 +260,40 @@ export default function CitizenshipRequirementsScreen() {
               <Text style={styles.requirementDetail}>{area.detail[language]}</Text>
               <View style={styles.sourceRefs}>
                 <Text style={styles.sourceRefsLabel}>{copy.sourceRefsLabel}</Text>
-                <Text style={styles.sourceRefsText}>
-                  {areaSources.map((source) => source.publisher).join(' · ')}
-                </Text>
+                <View style={styles.sourceRefList}>
+                  {areaSources.map((source) => {
+                    const sourceFocusKey = `${area.id}-${source.id}`;
+                    return (
+                      <Pressable
+                        key={sourceFocusKey}
+                        accessibilityHint={copy.openSourceHint}
+                        accessibilityLabel={buildAreaSourceAccessibilityLabel(
+                          copy,
+                          area.title[language],
+                          source,
+                          language,
+                        )}
+                        accessibilityRole="link"
+                        onBlur={() => setFocusedSourceRefKey(null)}
+                        onFocus={() => setFocusedSourceRefKey(sourceFocusKey)}
+                        onPress={() => {
+                          void Linking.openURL(source.url);
+                        }}
+                        style={({ pressed }) => [
+                          styles.sourceRefRow,
+                          focusedSourceRefKey === sourceFocusKey
+                            ? styles.sourceRefRowFocused
+                            : null,
+                          pressed ? styles.sourceRefRowPressed : null,
+                        ]}
+                      >
+                        <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
+                        <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
+                        <Text style={styles.sourceRefUrl}>{source.url}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
               </View>
               <Pressable
                 accessibilityLabel={checkboxLabel}
@@ -285,12 +338,7 @@ export default function CitizenshipRequirementsScreen() {
               style={({ pressed }) => [styles.sourceRow, pressed ? styles.sourceRowPressed : null]}
             >
               <Text style={styles.sourceTitle}>{source.title[language]}</Text>
-              <Text style={styles.sourceMeta}>
-                {source.publisher}
-                {'sourceDate' in source ? ` · ${copy.sourceDateLabel} ${source.sourceDate}` : ''}
-                {' · '}
-                {copy.retrievedLabel} {source.retrievedDate}
-              </Text>
+              <Text style={styles.sourceMeta}>{formatSourceMeta(source, copy)}</Text>
               <Text style={styles.sourceUrl}>{source.url}</Text>
             </Pressable>
           ))}
@@ -377,8 +425,39 @@ const styles = StyleSheet.create({
     fontWeight: typography.caption.fontWeight,
     lineHeight: typography.caption.lineHeight,
   },
-  sourceRefsText: {
+  sourceRefList: {
+    gap: space[0.75],
+  },
+  sourceRefRow: {
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.5],
+    minHeight: space[6],
+    paddingHorizontal: space[1],
+    paddingVertical: space[0.75],
+  },
+  sourceRefRowFocused: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+  },
+  sourceRefRowPressed: {
+    backgroundColor: colors.surfaceMuted,
+  },
+  sourceRefTitle: {
+    color: colors.text,
+    fontSize: typography.finePrint.fontSize,
+    fontWeight: typography.bodySemibold.fontWeight,
+    lineHeight: typography.finePrint.lineHeight,
+  },
+  sourceRefMeta: {
     color: colors.textSecondary,
+    fontSize: typography.finePrint.fontSize,
+    lineHeight: typography.finePrint.lineHeight,
+  },
+  sourceRefUrl: {
+    color: colors.accent,
+    flexShrink: 1,
     fontSize: typography.finePrint.fontSize,
     lineHeight: typography.finePrint.lineHeight,
   },

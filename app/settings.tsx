@@ -26,13 +26,16 @@ import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
-import { useSettingsStore } from '../lib/storage/settingsStore';
+import { supportedDailyGoalAnswerOptions, useSettingsStore } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
   audioEnabledLabel: string;
+  audioListenFirstDisabledLabel: string;
+  audioListenFirstEnabledLabel: string;
+  audioListenFirstTitle: string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
@@ -42,7 +45,9 @@ type SettingsCopy = {
   dailyGoalSummary: (answerCount: number) => string;
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
+  disableListenFirstAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
+  enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
@@ -93,6 +98,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
     audioEnabledLabel: 'Ljud på',
+    audioListenFirstDisabledLabel: 'Lyssna först av',
+    audioListenFirstEnabledLabel: 'Lyssna först på',
+    audioListenFirstTitle: 'Lyssna först',
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
@@ -109,7 +117,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
+    disableListenFirstAudioAccessibilityLabel: 'Stäng av automatisk uppläsning av nya frågor',
     enableAudioAccessibilityLabel: 'Slå på ljud',
+    enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk uppläsning av nya frågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
@@ -170,6 +180,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   en: {
     audioDisabledLabel: 'Audio disabled',
     audioEnabledLabel: 'Audio enabled',
+    audioListenFirstDisabledLabel: 'Listen first disabled',
+    audioListenFirstEnabledLabel: 'Listen first enabled',
+    audioListenFirstTitle: 'Listen first',
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
@@ -186,7 +199,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
+    disableListenFirstAudioAccessibilityLabel: 'Disable automatic playback for new questions',
     enableAudioAccessibilityLabel: 'Enable audio',
+    enableListenFirstAudioAccessibilityLabel: 'Enable automatic playback for new questions',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
@@ -285,6 +300,10 @@ export default function Screen() {
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
+  const setListenFirstAudioEnabled = useAccessibilityStore(
+    (state) => state.setListenFirstAudioEnabled,
+  );
   const accessibilityPersistenceWarning = useAccessibilityStore(
     (state) => state.persistenceWarning,
   );
@@ -353,10 +372,10 @@ export default function Screen() {
     return (
       <Pressable
         key={value}
-        aria-selected={selected}
+        aria-checked={selected}
         accessibilityLabel={copy.setThemeModeAccessibilityLabel(label)}
-        accessibilityRole="button"
-        accessibilityState={{ selected }}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
         hitSlop={space[1]}
         onBlur={() => setFocusedControl(null)}
         onFocus={() => setFocusedControl(focusKey)}
@@ -478,6 +497,36 @@ export default function Screen() {
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
           </Text>
         </Pressable>
+        <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
+        <Pressable
+          aria-checked={listenFirstAudioEnabled}
+          accessibilityLabel={
+            listenFirstAudioEnabled
+              ? copy.disableListenFirstAudioAccessibilityLabel
+              : copy.enableListenFirstAudioAccessibilityLabel
+          }
+          accessibilityRole="switch"
+          accessibilityState={{ checked: listenFirstAudioEnabled }}
+          hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('listen-first-audio')}
+          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
+            pressed
+              ? reduceMotion
+                ? styles.secondaryButtonPressedReducedMotion
+                : styles.secondaryButtonPressed
+              : null,
+          ]}
+        >
+          <Text style={styles.secondaryButtonText}>
+            {listenFirstAudioEnabled
+              ? copy.audioListenFirstEnabledLabel
+              : copy.audioListenFirstDisabledLabel}
+          </Text>
+        </Pressable>
       </View>
 
       <View style={styles.section}>
@@ -485,7 +534,12 @@ export default function Screen() {
           {copy.themeModeTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
-        <View style={styles.row}>
+        <View
+          aria-label={copy.themeModeTitle}
+          accessibilityLabel={copy.themeModeTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
           {themeOptions.map((option) => renderThemeButton(option.value, option.label))}
         </View>
       </View>
@@ -518,7 +572,7 @@ export default function Screen() {
           accessibilityRole="radiogroup"
           style={styles.row}
         >
-          {[5, 10, 20, 40].map((goal) => {
+          {supportedDailyGoalAnswerOptions.map((goal) => {
             const selected = dailyGoalAnswers === goal;
             const focusKey = `daily-goal-${goal}`;
 
@@ -565,6 +619,7 @@ export default function Screen() {
         <Text style={styles.disclaimerText}>{copy.importPurchasesNote}</Text>
         <TextInput
           accessibilityLabel={copy.importPasteLabel}
+          maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}
           multiline
           onChangeText={handleImportTextChange}
           placeholder={copy.importPastePlaceholder}

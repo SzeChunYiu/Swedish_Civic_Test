@@ -248,6 +248,7 @@
       ? window.smtNormalizeLanguage(ls('smt_lang', 'en'))
       : ls('smt_lang', 'en');
     setSegment('language', lang);
+    setSegment('sources', ls('smt_question_sources', 'all'));
     setSegment('textsize', ls('smt_textsize', '100'));
     setCheckbox('motion', ls('smt_motion', '') === 'reduce');
     setCheckbox('aurora', ls('smt_aurora', 'on') !== 'off');

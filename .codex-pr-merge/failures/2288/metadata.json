@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Adds the current audio setting to the Profile study setup card so the card summarizes daily goal, language, and audio state.\n- Replaces the generic settings button copy with a localized CTA for adjusting goal, language, and audio.\n- Tightens the profile copy/content guard for the new card contract, localized badge fields, paywall fail-closed checks, and current PremiumBanner accessibility-state formatting.\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-profile-route-copy-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:a11y-labels`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:theme-discipline`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `rm -rf dist-web && NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2`\n- Profile web smoke against `dist-web` with system Chrome: `/profile` renders `Studieinställningar`, `Ändra mål, språk och ljud`, and the audio badge.\n\n## Note\n- The broader `scripts/ui-effects.test.js` suite is red on the current base with unrelated stale source-expectation failures; the profile-specific parity test in the same combined run passed.",
+  "files": [
+    { "path": "app/(tabs)/profile.tsx", "additions": 14, "deletions": 4, "changeType": "MODIFIED" },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 70,
+      "deletions": 7,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-profile-route-copy-parity.test.js",
+      "additions": 3,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/profile-study-setup-cta-1779353475-3708404",
+  "headRefOid": "8953b1434ce4a7486b058f10d5413a9d2ad85041",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2288,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:01:24Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216247972/job/77139232085",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:00:25Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] profile: complete study setup shortcut",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2288"
+}

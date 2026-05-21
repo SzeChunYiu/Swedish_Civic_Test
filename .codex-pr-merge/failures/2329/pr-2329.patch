@@ -1,0 +1,542 @@
+From 6e3106db5ad0e885a36c5b1ffbe15dc53f8ff816 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 12:20:20 +0200
+Subject: [PATCH] test: focus audio speech parity gates
+
+---
+ app/(tabs)/practice.tsx                       |  32 ++++-
+ app/settings.tsx                              |  49 +++++++
+ app/sources.tsx                               |   3 +-
+ docs/parallel-sessions/journals/setup.md      |   8 ++
+ scripts/validate-content.js                   | 132 +++++++++++++++++-
+ ...-audio-button-accessibility-parity.test.js |   8 +-
+ tests/content-test-script-routing.test.js     |  46 ++++++
+ 7 files changed, 267 insertions(+), 11 deletions(-)
+
+diff --git a/app/(tabs)/practice.tsx b/app/(tabs)/practice.tsx
+index 36befc5e4..907021078 100644
+--- a/app/(tabs)/practice.tsx
++++ b/app/(tabs)/practice.tsx
+@@ -19,7 +19,12 @@ import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
+ import { Button } from '../../components/ui/Button';
+ import { ProgressBar } from '../../components/ui/ProgressBar';
+ import { questions } from '../../data/questions';
+-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
++import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
++import {
++  buildAnswerFeedbackSpeechText,
++  buildQuestionSpeechText,
++  stopSpeech,
++} from '../../lib/audio/speak';
+ import { filterQuestionsByProvenance } from '../../lib/content/provenance';
+ import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
+ import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
+@@ -38,6 +43,7 @@ import { scoreAnswers } from '../../lib/quiz/scoring';
+ import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
+ import { useProgressStore } from '../../lib/storage/progressStore';
+ import { useCompanionStore } from '../../lib/storage/companionStore';
++import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
+ import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
+ import { colors, motion, radius, space, typography } from '../../lib/theme';
+ import type { ConfidenceRating } from '../../types/progress';
+@@ -167,6 +173,8 @@ export default function Screen() {
+   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
+   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+   const language = useSettingsStore((state) => state.language);
++  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
++  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
+   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
+   const setIncludeSupplementary = useSettingsStore(
+     (state) => state.setIncludeSupplementaryQuestions,
+@@ -201,6 +209,22 @@ export default function Screen() {
+     [rawQuestion, shuffleSessionId],
+   );
+   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
++  const questionSpeechText = useMemo(
++    () => (question ? buildQuestionSpeechText(question) : ''),
++    [question],
++  );
++  const hasSelectedAnswer = Boolean(
++    question && selectedOptionId && activeQuestionId === question.id,
++  );
++
++  useQuestionAudioAutoplay({
++    audioEnabled,
++    listenFirstAudioEnabled,
++    questionKey: question ? `practice:${shuffleSessionId}:${question.id}` : null,
++    rate: audioPlaybackRate,
++    speechText: questionSpeechText,
++    stopSignal: hasSelectedAnswer,
++  });
+ 
+   useEffect(() => {
+     setSelectedConfidenceRating(null);
+@@ -214,7 +238,6 @@ export default function Screen() {
+     );
+   }
+ 
+-  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
+   const selectedIsCorrect =
+     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
+   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
+@@ -237,6 +260,7 @@ export default function Screen() {
+       ? (selectedConfidenceRating ?? undefined)
+       : undefined;
+ 
++    stopSpeech();
+     selectOption(question.id, optionId);
+     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
+     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
+@@ -385,7 +409,8 @@ export default function Screen() {
+       <AudioButton
+         enabled={audioEnabled}
+         language={language}
+-        text={buildQuestionSpeechText(question)}
++        rate={audioPlaybackRate}
++        text={questionSpeechText}
+       />
+       {confidenceRatingEnabled ? (
+         <ConfidenceRatingPicker
+@@ -440,6 +465,7 @@ export default function Screen() {
+           <FeedbackAudioButton
+             enabled={audioEnabled}
+             language={language}
++            rate={audioPlaybackRate}
+             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
+           />
+           <UHRReferenceCard language={language} reference={question.uhrReference} />
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 9a78bd0bd..b43e563d7 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -33,6 +33,9 @@ import type { ThemeColors } from '../lib/theme';
+ type SettingsCopy = {
+   audioDisabledLabel: string;
+   audioEnabledLabel: string;
++  audioListenFirstDisabledLabel: string;
++  audioListenFirstEnabledLabel: string;
++  audioListenFirstTitle: string;
+   audioTitle: string;
+   backToProfile: string;
+   backToProfileAccessibilityLabel: string;
+@@ -42,7 +45,9 @@ type SettingsCopy = {
+   dailyGoalSummary: (answerCount: number) => string;
+   dailyGoalTitle: string;
+   disableAudioAccessibilityLabel: string;
++  disableListenFirstAudioAccessibilityLabel: string;
+   enableAudioAccessibilityLabel: string;
++  enableListenFirstAudioAccessibilityLabel: string;
+   confirmImport: string;
+   confirmImportAccessibilityLabel: string;
+   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
+@@ -93,6 +98,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+   sv: {
+     audioDisabledLabel: 'Ljud avstängt',
+     audioEnabledLabel: 'Ljud på',
++    audioListenFirstDisabledLabel: 'Spela inte upp frågan automatiskt',
++    audioListenFirstEnabledLabel: 'Spela upp frågan automatiskt',
++    audioListenFirstTitle: 'Lyssna först',
+     audioTitle: 'Ljud',
+     backToProfile: '← Tillbaka till profil',
+     backToProfileAccessibilityLabel: 'Tillbaka till profil',
+@@ -109,7 +117,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
+     dailyGoalTitle: 'Dagligt mål',
+     disableAudioAccessibilityLabel: 'Stäng av ljud',
++    disableListenFirstAudioAccessibilityLabel: 'Stäng av automatisk frågeuppläsning',
+     enableAudioAccessibilityLabel: 'Slå på ljud',
++    enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk frågeuppläsning',
+     confirmImport: 'Bekräfta import',
+     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
+     importErrorMessage: (code) => {
+@@ -170,6 +180,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+   en: {
+     audioDisabledLabel: 'Audio disabled',
+     audioEnabledLabel: 'Audio enabled',
++    audioListenFirstDisabledLabel: 'Do not play the question automatically',
++    audioListenFirstEnabledLabel: 'Play the question automatically',
++    audioListenFirstTitle: 'Listen first',
+     audioTitle: 'Audio',
+     backToProfile: '← Back to Profile',
+     backToProfileAccessibilityLabel: 'Back to profile',
+@@ -186,7 +199,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
+     dailyGoalTitle: 'Daily goal',
+     disableAudioAccessibilityLabel: 'Disable audio',
++    disableListenFirstAudioAccessibilityLabel: 'Disable automatic question audio',
+     enableAudioAccessibilityLabel: 'Enable audio',
++    enableListenFirstAudioAccessibilityLabel: 'Enable automatic question audio',
+     confirmImport: 'Confirm import',
+     confirmImportAccessibilityLabel: 'Confirm local study data import',
+     importErrorMessage: (code) => {
+@@ -283,6 +298,10 @@ export default function Screen() {
+   const setAudioEnabled = useSettingsStore((state) => state.setAudioEnabled);
+   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
+   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
++  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
++  const setListenFirstAudioEnabled = useAccessibilityStore(
++    (state) => state.setListenFirstAudioEnabled,
++  );
+   const themeMode = useAccessibilityStore((state) => state.themeMode);
+   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
+@@ -466,6 +485,36 @@ export default function Screen() {
+             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+           </Text>
+         </Pressable>
++        <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
++        <Pressable
++          aria-checked={listenFirstAudioEnabled}
++          accessibilityLabel={
++            listenFirstAudioEnabled
++              ? copy.disableListenFirstAudioAccessibilityLabel
++              : copy.enableListenFirstAudioAccessibilityLabel
++          }
++          accessibilityRole="switch"
++          accessibilityState={{ checked: listenFirstAudioEnabled }}
++          hitSlop={space[1]}
++          onBlur={() => setFocusedControl(null)}
++          onFocus={() => setFocusedControl('listen-first-audio')}
++          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
++          style={({ pressed }) => [
++            styles.secondaryButton,
++            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
++            pressed
++              ? reduceMotion
++                ? styles.secondaryButtonPressedReducedMotion
++                : styles.secondaryButtonPressed
++              : null,
++          ]}
++        >
++          <Text style={styles.secondaryButtonText}>
++            {listenFirstAudioEnabled
++              ? copy.audioListenFirstEnabledLabel
++              : copy.audioListenFirstDisabledLabel}
++          </Text>
++        </Pressable>
+       </View>
+ 
+       <View style={styles.section}>
+diff --git a/app/sources.tsx b/app/sources.tsx
+index aab369db8..9b98d1b14 100644
+--- a/app/sources.tsx
++++ b/app/sources.tsx
+@@ -1,5 +1,4 @@
+-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+-import { LegalLinkList } from '../components/compliance/LegalPage';
++import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+ import {
+   UHR_AUTHORITY_BOUNDARY_SOURCE,
+   UhrAuthorityBoundaryLink,
+diff --git a/docs/parallel-sessions/journals/setup.md b/docs/parallel-sessions/journals/setup.md
+index dbc2bf978..722b4b7b3 100644
+--- a/docs/parallel-sessions/journals/setup.md
++++ b/docs/parallel-sessions/journals/setup.md
+@@ -1390,3 +1390,11 @@ Artifacts changed: `components/ui/TopBarActions.tsx`, `tests/e2e/topbar-language
+ Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0 with 7/7 passing; `npm run test:theme-discipline` exit 0 with 5/5 passing; `npm run test:router-shell` exit 0 with 11/11 passing; `node --test tests/content-topbar-actions-accessibility-parity.test.js` exit 0 with 1/1 passing; `npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npx --no-install playwright test tests/e2e/topbar-language-picker-target.spec.ts --workers=1` exit 0 with 1/1 passing.
+ Blocked? no for this top-bar link target and interaction-feedback atom; no Vercel CLI was run.
+ Next suggested validator action: inspect `TopBarActionLink` web styling and rerun the focused top-bar browser smoke plus typecheck, lint, a11y labels, theme discipline, router shell, ownership, and web export before accepting `TOPBAR-LINK-PRESSED-FEEDBACK-1`.
++
++## Iteration 279 - 2026-05-21
++
++Task completed: AUDIO-SPEECH-FOCUSED-PARITY-GATE-1 - added focused validator exits for AudioButton accessibility and Swedish speech runtime parity, expanded the audio/speech runtime guards to cover play/stop lifecycle, rates, callback forwarding, and synchronous speech errors, and wired Practice plus Settings to the existing listen-first audio controls.
++Artifacts changed: `app/(tabs)/practice.tsx`, `app/settings.tsx`, `app/sources.tsx`, `scripts/validate-content.js`, `tests/content-audio-button-accessibility-parity.test.js`, `tests/content-test-script-routing.test.js`, `docs/parallel-sessions/journals/setup.md`.
++Verification: stable SETUP worktree at `/home/billy/sct-worktrees/pane2-audio-speech-focus-177936`; linked shared ignored `node_modules`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-audio-button-accessibility` exit 0 with `audioButtonAccessibilityRulesValidated:17`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-speech-runtime-parity` exit 0 with `speechRuntimeCasesValidated:10`; `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-settings-store` exit 0; focused Node tests for audio button, speech runtime, script routing, and settings audio exit 0 with 29/29 passing; `NODE_OPTIONS='--v8-pool-size=1' npm run test:audio` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false` exit 0; `NODE_OPTIONS='--v8-pool-size=1' npm run lint` exit 0 after consolidating the duplicate `LegalPage` import in `app/sources.tsx`; `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0. Broader `NODE_OPTIONS='--v8-pool-size=1' npm run test:content` still exits 1 on widespread existing current-main contract drift unrelated to this atom, including production-summary count mismatches, ad placement/app-config/content naturalness guards, dashboard/theme/UHRReferenceCard expected-count drift, and `content-validator-schema-drift` expecting `validate:content` to remain red even though it is now green.
++Blocked? no for the audio/speech focused parity gate; no Vercel CLI was run.
++Next suggested validator action: inspect the focused validator routing and Practice/Settings listen-first wiring, then rerun the two focus flags, focused audio/speech/settings tests, `test:audio`, `validate:content`, typecheck, lint, ownership, and diff checks before accepting `AUDIO-SPEECH-FOCUSED-PARITY-GATE-1`.
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..01c747128 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -1227,7 +1227,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
+ const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
+ const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
+ const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
+-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
++const EXPECTED_SPEECH_RUNTIME_CASES = 10;
+ const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
+ const EXPECTED_SETTINGS_STORE_FIELDS = [
+   { name: 'language', type: 'AppLanguage', optional: false },
+@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -2993,6 +2992,25 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
+     pattern:
+       /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+   },
++  {
++    label: 'rate prop and speech rate wiring',
++    pattern: /rate,[\s\S]*rate\?: number;[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,/,
++  },
++  {
++    label: 'localized stop-state labels and hints',
++    pattern:
++      /stopHint: 'Stoppar uppläsningen av frågan och svarsalternativen\.'[\s\S]*stopLabel: 'Stoppa frågeljud'[\s\S]*stopHint: 'Stops the question audio playback\.'[\s\S]*stopLabel: 'Stop question audio'/,
++  },
++  {
++    label: 'second press stops active question audio',
++    pattern:
++      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
++  },
++  {
++    label: 'speech cleanup on text change and unmount',
++    pattern:
++      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
++  },
+ ];
+ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
+   {
+@@ -8207,6 +8225,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-audio-button-accessibility')) {
++  validateAudioButtonAccessibilityParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    audioButtonAccessibilityRulesValidated,
++    audioButtonAccessibilityParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-question-report-link-parity')) {
+   validateQuestionReportLinkParity();
+   exitWithValidationFailures();
+@@ -8384,6 +8412,16 @@ if (process.argv.includes('--focus-practice-scoring-parity')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-speech-runtime-parity')) {
++  validateSpeechRuntimeParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    speechRuntimeCasesValidated,
++    speechRuntimeParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-spaced-repetition-schema')) {
+   validateSpacedRepetitionSchedule();
+   exitWithValidationFailures();
+@@ -12835,6 +12873,12 @@ function validateSettingsAudioParity() {
+   if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
+     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
+   }
++  if (
++    !normalizedSettingsStore.includes("import { stopSpeech } from '../audio/speak';") ||
++    !normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')
++  ) {
++    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
++  }
+ 
+   if (
+     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
+@@ -15489,6 +15533,9 @@ function validateSpeechRuntimeParity() {
+   }
+ 
+   let runtimeParityIsValid = true;
++  const originalSpeak = speechMock.speak;
++  const originalStop = speechMock.stop;
++  const originalWarn = console.warn;
+ 
+   function reject(message) {
+     runtimeParityIsValid = false;
+@@ -15512,7 +15559,7 @@ function validateSpeechRuntimeParity() {
+   }
+ 
+   resetSpeechEvents();
+-  speakSwedish('Hej Sverige');
++  speakSwedish('  Hej Sverige  ');
+   const speakEvent = speechEvents[0];
+   if (
+     speechEvents.length === 1 &&
+@@ -15529,6 +15576,80 @@ function validateSpeechRuntimeParity() {
+     );
+   }
+ 
++  resetSpeechEvents();
++  speakSwedish('Hej Sverige', { rate: 1.25 });
++  if (speechEvents[0]?.options?.rate === 1.25) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must forward supported playback rates to Expo Speech');
++  }
++
++  resetSpeechEvents();
++  speakSwedish('Hej Sverige', { rate: 0.05 });
++  if (speechEvents[0]?.options?.rate === 0.1) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must clamp playback rates below 0.1');
++  }
++
++  resetSpeechEvents();
++  speakSwedish('Hej Sverige', { rate: 5 });
++  if (speechEvents[0]?.options?.rate === 2.0) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must clamp playback rates above 2.0');
++  }
++
++  resetSpeechEvents();
++  speakSwedish('Hej Sverige', { rate: Number.NaN });
++  if (!Object.prototype.hasOwnProperty.call(speechEvents[0]?.options ?? {}, 'rate')) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must omit invalid playback rates');
++  }
++
++  resetSpeechEvents();
++  const callbacks = {
++    onDone: () => {},
++    onError: () => {},
++    onStopped: () => {},
++  };
++  speakSwedish('Hej Sverige', callbacks);
++  if (
++    speechEvents[0]?.options?.onDone === callbacks.onDone &&
++    speechEvents[0]?.options?.onError === callbacks.onError &&
++    speechEvents[0]?.options?.onStopped === callbacks.onStopped
++  ) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must forward lifecycle callbacks to Expo Speech');
++  }
++
++  resetSpeechEvents();
++  let errorCallbackCount = 0;
++  let callbackError = null;
++  speechMock.speak = () => {
++    throw new Error('speech boom');
++  };
++  console.warn = () => {};
++  speakSwedish('Hej Sverige', {
++    onError: (error) => {
++      errorCallbackCount += 1;
++      callbackError = error;
++    },
++  });
++  console.warn = originalWarn;
++  speechMock.speak = originalSpeak;
++  if (
++    errorCallbackCount === 1 &&
++    callbackError instanceof Error &&
++    callbackError.message === 'speech boom'
++  ) {
++    speechRuntimeCasesValidated += 1;
++  } else {
++    reject('speakSwedish must call onError once when Speech.speak throws synchronously');
++  }
++
+   resetSpeechEvents();
+   stopSpeech();
+   const stopEvent = speechEvents[0];
+@@ -15538,6 +15659,9 @@ function validateSpeechRuntimeParity() {
+     reject('stopSpeech must call the Expo Speech stop handler');
+   }
+ 
++  speechMock.speak = originalSpeak;
++  speechMock.stop = originalStop;
++  console.warn = originalWarn;
+   resetSpeechEvents();
+ 
+   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
+diff --git a/tests/content-audio-button-accessibility-parity.test.js b/tests/content-audio-button-accessibility-parity.test.js
+index 233443361..70c1939f1 100644
+--- a/tests/content-audio-button-accessibility-parity.test.js
++++ b/tests/content-audio-button-accessibility-parity.test.js
+@@ -29,6 +29,10 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
+ 
+   assert.equal(summary.audioButtonAccessibilityRulesValidated, 17);
+   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
++  assert.equal(
++    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
++    false,
++  );
+   assert.match(source, /import \{ useEffect, useState \} from 'react';/);
+   assert.match(source, /import type \{ AppLanguage \}/);
+   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
+@@ -36,7 +40,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
+   assert.match(source, /rate,/);
+   assert.match(source, /rate\?: number;/);
+   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
+-  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
++  assert.match(source, /const speechText = text\.trim\(\);/);
+   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
+   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
+   assert.match(source, /Lyssna på den svenska frågan och svaren/);
+@@ -175,7 +179,7 @@ require('./scripts/validate-content.js');
+   assert.notEqual(result.status, 0);
+   assert.match(
+     `${result.stdout}\n${result.stderr}`,
+-    /AudioButton missing trimmed speech playback with lifecycle cleanup for accessibility parity/,
++    /AudioButton missing trimmed speech playback for accessibility parity/,
+   );
+ });
+ 
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..6fb0e7e6d 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -98,6 +98,52 @@ test('ChapterCard accessibility parity uses focused content validation routing',
+   );
+ });
+ 
++test('AudioButton accessibility parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const audioButtonTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-audio-button-accessibility-parity.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-audio-button-accessibility/);
++  assert.match(
++    validatorSource,
++    /validateAudioButtonAccessibilityParity\(\);[\s\S]*audioButtonAccessibilityRulesValidated[\s\S]*audioButtonAccessibilityParityValidated/,
++  );
++  assert.match(audioButtonTestSource, /--focus-audio-button-accessibility/);
++  assert.doesNotMatch(
++    audioButtonTestSource,
++    /\['scripts\/validate-content\.js'\]/,
++    'AudioButton accessibility tests must not route through full content validation',
++  );
++});
++
++test('speech runtime parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const speechRuntimeTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-speech-runtime-parity.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-speech-runtime-parity/);
++  assert.match(
++    validatorSource,
++    /validateSpeechRuntimeParity\(\);[\s\S]*speechRuntimeCasesValidated[\s\S]*speechRuntimeParityValidated/,
++  );
++  assert.match(speechRuntimeTestSource, /--focus-speech-runtime-parity/);
++  assert.doesNotMatch(
++    speechRuntimeTestSource,
++    /\['scripts\/validate-content\.js'\]/,
++    'speech runtime tests must not route through full content validation',
++  );
++});
++
+ test('answer feedback parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),

@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Replace the citizenship requirements official source rows with real Expo `Link` anchors using `href`, `_blank`, and `noreferrer` while keeping the visible publisher/date/URL metadata.\n- Add focused parity assertions that reject a regression back to `Linking.openURL(source.url)` source rows.\n- Extend the legal external-link browser spec with Swedish and English `/citizenship-requirements` source-link coverage.\n\n## Validation\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-citizenship-requirements-parity.test.js --test-name-pattern \"citizenship requirement sources|source link|href|target|noreferrer|Linking.openURL\"`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run typecheck -- --pretty false`\n- `PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH prettier --check app/citizenship-requirements.tsx tests/content-citizenship-requirements-parity.test.js tests/e2e/legal-external-links.spec.ts && git diff --check -- app/citizenship-requirements.tsx tests/content-citizenship-requirements-parity.test.js tests/e2e/legal-external-links.spec.ts`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/legal-external-links.spec.ts --workers=1 -g \"/citizenship-requirements\"`",
+  "files": [
+    {
+      "path": "app/citizenship-requirements.tsx",
+      "additions": 8,
+      "deletions": 11,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-citizenship-requirements-parity.test.js",
+      "additions": 9,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/legal-external-links.spec.ts",
+      "additions": 157,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/citizenship-requirements-source-anchor-1779363700",
+  "headRefOid": "b5888e1f6c89c76f52b788f1b4e0d8227fcc290b",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2363,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:36:41Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223461867/job/77164201829",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:35:33Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] render citizenship requirement sources as anchors",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2363"
+}

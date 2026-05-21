@@ -76,20 +76,20 @@ const fixtures: RouteTypographyFixture[] = [
     route: '/practice',
     samples: [
       {
-        label: 'practice badge',
-        locator: (page) => page.getByText('5-minutersövning', { exact: true }),
+        label: 'practice hub badge',
+        locator: (page) => page.getByText('Övningshub', { exact: true }),
       },
       {
-        label: 'practice question heading',
-        locator: (page) => page.getByRole('heading', { name: 'Fråga 1' }),
+        label: 'practice hub heading',
+        locator: (page) => page.getByRole('heading', { name: 'Välj hur du vill öva' }),
       },
       {
-        label: 'practice answered count',
-        locator: (page) => page.getByText('Besvarade frågor: 0', { exact: true }),
+        label: 'practice hub answered count',
+        locator: (page) => page.getByText(/Du har svarat på 0 av \d+ synliga frågor\./),
       },
       {
-        label: 'practice question card title',
-        locator: (page) => page.getByText('Var ligger Sverige?', { exact: true }),
+        label: 'practice first chapter card title',
+        locator: (page) => page.getByText('Landet Sverige', { exact: true }),
       },
     ],
   },

@@ -1,0 +1,95 @@
+diff --git a/scripts/content-production.test.js b/scripts/content-production.test.js
+index fe4b93774..adec5bb56 100644
+--- a/scripts/content-production.test.js
++++ b/scripts/content-production.test.js
+@@ -205,7 +205,7 @@ test('full content production validates published UHR-referenced questions', ()
+   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
+   assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 10);
+   assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
+-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 11);
++  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
+   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
+   assert.equal(summary.examReviewItemsValidated, 20);
+   assert.equal(summary.examReviewSourceParityValidated, true);
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..95efe9978 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -3288,6 +3287,16 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
+     label: 'decorative animation hidden from accessibility tree',
+     pattern: /accessibilityElementsHidden/,
+   },
++  {
++    label: 'reduced-motion branch hidden from accessibility tree',
++    pattern:
++      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
++  },
++  {
++    label: 'animated branch hidden from accessibility tree',
++    pattern:
++      /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
++  },
+   {
+     label: 'descendant accessibility hidden',
+     pattern: /importantForAccessibility="no-hide-descendants"/,
+@@ -8207,6 +8216,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-celebration-burst-accessibility')) {
++  validateCelebrationBurstAccessibilityParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    celebrationBurstAccessibilityRulesValidated,
++    celebrationBurstAccessibilityParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-question-report-link-parity')) {
+   validateQuestionReportLinkParity();
+   exitWithValidationFailures();
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..0d76ea8ef 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -98,6 +98,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
+   );
+ });
+ 
++test('CelebrationBurst accessibility parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const celebrationBurstTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-celebration-burst-accessibility-parity.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-celebration-burst-accessibility/);
++  assert.match(
++    validatorSource,
++    /validateCelebrationBurstAccessibilityParity\(\);[\s\S]*celebrationBurstAccessibilityRulesValidated[\s\S]*celebrationBurstAccessibilityParityValidated/,
++  );
++  assert.match(celebrationBurstTestSource, /--focus-celebration-burst-accessibility/);
++  assert.doesNotMatch(
++    celebrationBurstTestSource,
++    /\['scripts\/validate-content\.js'\]/,
++    'CelebrationBurst accessibility tests must not route through full content validation',
++  );
++});
++
+ test('answer feedback parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),

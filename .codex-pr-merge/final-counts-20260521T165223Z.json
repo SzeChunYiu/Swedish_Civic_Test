@@ -1,0 +1,59 @@
+{
+  "blockers": {
+    "ci_failed": 82,
+    "ci_pending": 3,
+    "draft": 1,
+    "merge_conflicts": 84,
+    "no_checks": 1,
+    "unstable_required_checks": 2
+  },
+  "checks": {
+    "FAIL": 82,
+    "NO_CHECKS": 1,
+    "PENDING": 3
+  },
+  "draft": {
+    "False": 85,
+    "True": 1
+  },
+  "eligible_left": [],
+  "mergeState": {
+    "DIRTY": 84,
+    "UNSTABLE": 2
+  },
+  "nonfail_open": [
+    {
+      "blockers": ["draft", "ci_pending", "unstable_required_checks"],
+      "checkStatus": "PENDING",
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 2505,
+      "title": "static ebook: add safe source link attributes"
+    },
+    {
+      "blockers": ["no_checks", "merge_conflicts"],
+      "checkStatus": "NO_CHECKS",
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 2422,
+      "title": "content: guard generated Sweden scope parity"
+    },
+    {
+      "blockers": ["ci_pending", "unstable_required_checks"],
+      "checkStatus": "PENDING",
+      "mergeStateStatus": "UNSTABLE",
+      "mergeable": "MERGEABLE",
+      "number": 2410,
+      "title": "test: centralize Home e2e setup"
+    },
+    {
+      "blockers": ["ci_pending", "merge_conflicts"],
+      "checkStatus": "PENDING",
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 2339,
+      "title": "test: harden question provenance validation"
+    }
+  ],
+  "open": 86
+}

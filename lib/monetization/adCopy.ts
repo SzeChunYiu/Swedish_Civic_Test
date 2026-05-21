@@ -22,6 +22,11 @@ type NativeAdCardStatusCopy = {
 
 type NativeAdCardCopy = NativeAdCardStatusCopy;
 type NativeAdCardCopyStatus = 'live' | 'test';
+type NativeAdSummaryAssets = {
+  advertiser?: string | null | undefined;
+  body?: string | null | undefined;
+  headline?: string | null | undefined;
+};
 
 export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
   sv: {
@@ -120,4 +125,15 @@ export function getNativeAdCardCopy(
   { testOnly = false }: { testOnly?: boolean | undefined } = {},
 ): NativeAdCardCopy {
   return nativeAdCardCopy[language][testOnly ? 'test' : 'live'];
+}
+
+export function getNativeAdSummaryAccessibilityLabel(
+  copy: Pick<NativeAdCardCopy, 'accessibilityLabel'>,
+  assets: NativeAdSummaryAssets,
+): string {
+  const assetParts = [assets.headline, assets.advertiser, assets.body]
+    .map((part) => (typeof part === 'string' ? part.trim() : ''))
+    .filter((part, index, parts) => part.length > 0 && parts.indexOf(part) === index);
+
+  return [copy.accessibilityLabel, ...assetParts].join(' ');
 }

@@ -1,0 +1,423 @@
+From 760d8d998f9a25424c8b4168643a5f910d64ceea Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 14:05:43 +0200
+Subject: [PATCH] setup: validate Pro-gated learning selectors
+
+---
+ lib/storage/reviewStore.ts                |  45 ++++--
+ scripts/validate-content.js               | 170 ++++++++++++++++++++++
+ tests/content-test-script-routing.test.js |  53 +++++++
+ tests/helpers/storageStoreHarness.cjs     |   2 +-
+ 4 files changed, 259 insertions(+), 11 deletions(-)
+
+diff --git a/lib/storage/reviewStore.ts b/lib/storage/reviewStore.ts
+index 10b9edbd2..2d538e313 100644
+--- a/lib/storage/reviewStore.ts
++++ b/lib/storage/reviewStore.ts
+@@ -24,7 +24,7 @@ import {
+ import { getLocalDateKey } from '../learning/streaks';
+ import { isSafeImportedMapKey } from './importKeySafety';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+-import { readRecoverably, writeRecoverably } from './persistenceWarning';
++import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
+ 
+ export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
+ export const FREE_DAILY_REVIEW_CAP = 3;
+@@ -61,6 +61,21 @@ function isValidDayKey(value: string): boolean {
+   return Number.isFinite(parsed.getTime()) && parsed.toISOString().startsWith(value);
+ }
+ 
++function isSafeRuntimeQuestionId(value: unknown): value is string {
++  return (
++    typeof value === 'string' &&
++    value.trim() === value &&
++    value.length > 0 &&
++    isSafeImportedMapKey(value)
++  );
++}
++
++function assertSafeRuntimeQuestionId(questionId: unknown): asserts questionId is string {
++  if (!isSafeRuntimeQuestionId(questionId)) {
++    throw new Error('Review questionId must be a non-empty safe string.');
++  }
++}
++
+ function isReviewCard(value: unknown, id?: string): value is ReviewCard {
+   if (!value || typeof value !== 'object') return false;
+   const v = value as Partial<ReviewCard>;
+@@ -121,11 +136,14 @@ function read(): {
+     () => reviewStorage?.getString(REVIEW_STORE_KEY),
+   );
+   if (!raw) return { reviews: EMPTY, persistenceWarning: warning };
+-  try {
+-    return { reviews: normalize(JSON.parse(raw)), persistenceWarning: warning };
+-  } catch {
+-    return { reviews: EMPTY, persistenceWarning: warning };
+-  }
++  const parsed = parseJsonRecoverably(
++    raw,
++    reviewStorageId,
++    REVIEW_STORE_KEY,
++    (value) => normalize(JSON.parse(value)),
++    EMPTY,
++  );
++  return { reviews: parsed.value, persistenceWarning: parsed.warning ?? warning };
+ }
+ 
+ function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
+@@ -161,6 +179,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
+   ...initial.reviews,
+   persistenceWarning: initial.persistenceWarning,
+   ensureCard: (questionId, now) => {
++    assertSafeRuntimeQuestionId(questionId);
+     const existing = get().byId[questionId];
+     if (existing) return existing;
+     const card = createNewCard(questionId, now);
+@@ -175,6 +194,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
+     return card;
+   },
+   grade: (questionId, grade, now = new Date().toISOString()) => {
++    assertSafeRuntimeQuestionId(questionId);
+     const state = get();
+     if (!isReviewGrade(grade) || !isCanonicalReviewTimestamp(now)) {
+       return state.byId[questionId] ?? null;
+@@ -229,16 +249,21 @@ export function dueCount(state: Pick<PersistedReviews, 'byId'>, now?: string): n
+ 
+ /**
+  * Remaining reviews the Free tier can grade today. Returns
+- * Number.POSITIVE_INFINITY for Pro callers (or any unlimited config).
++ * Number.POSITIVE_INFINITY only for explicit Pro callers.
+  */
+ export function remainingDailyReviews(
+   state: Pick<PersistedReviews, 'gradedPerDay'>,
+   options: { now?: Date; isPro?: boolean; freeCap?: number } = {},
+ ): number {
+-  if (options.isPro) return Number.POSITIVE_INFINITY;
+-  const cap = options.freeCap ?? FREE_DAILY_REVIEW_CAP;
++  if (options.isPro === true) return Number.POSITIVE_INFINITY;
++  const requestedCap = options.freeCap;
++  const cap =
++    requestedCap !== undefined && Number.isInteger(requestedCap) && requestedCap >= 0
++      ? requestedCap
++      : FREE_DAILY_REVIEW_CAP;
+   const dayKey = getLocalDateKey(options.now ?? new Date());
+-  const used = state.gradedPerDay[dayKey] ?? 0;
++  const usedToday = state.gradedPerDay[dayKey] ?? 0;
++  const used = Number.isInteger(usedToday) && usedToday >= 0 ? usedToday : 0;
+   return Math.max(0, cap - used);
+ }
+ 
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..a46bb0b2d 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -4325,6 +4325,9 @@ function loadTs(relativePath, exportName) {
+     if (request === 'expo-speech') {
+       return speechMock;
+     }
++    if (request === 'react-native-mmkv') {
++      return { createMMKV: () => null };
++    }
+     if (request.startsWith('.')) {
+       const resolvedPath = resolveLocalModule(filePath, request);
+       const relativeResolvedPath = path.relative(repoRoot, resolvedPath);
+@@ -7781,6 +7784,7 @@ const createNewCard = spacedRepetitionModule.createNewCard;
+ const gradeCard = spacedRepetitionModule.gradeCard;
+ const streakModule = loadTs('lib/learning/streaks.ts');
+ const calculateStreak = streakModule.calculateStreak;
++const getLocalDateKey = streakModule.getLocalDateKey;
+ const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+ const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
+ const xpModule = loadTs('lib/learning/xp.ts');
+@@ -7797,6 +7801,11 @@ const findWeakChapterIds = masteryModule.findWeakChapterIds;
+ const weakChaptersModule = loadTs('lib/learning/weakChapters.ts');
+ const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
+ const topWeakChapters = weakChaptersModule.topWeakChapters;
++const reviewStoreModule = loadTs('lib/storage/reviewStore.ts');
++const FREE_DAILY_REVIEW_CAP = reviewStoreModule.FREE_DAILY_REVIEW_CAP;
++const remainingDailyReviews = reviewStoreModule.remainingDailyReviews;
++const highlightsStoreModule = loadTs('lib/storage/highlightsStore.ts');
++const isColorAllowed = highlightsStoreModule.isColorAllowed;
+ const themeModule = loadTs('lib/theme/index.ts');
+ const colors = themeModule.colors;
+ const motion = themeModule.motion;
+@@ -8073,6 +8082,9 @@ let masteryRulesValidated = 0;
+ let masteryRulesParityValidated = false;
+ let weakChapterRulesValidated = 0;
+ let weakChapterRulesParityValidated = false;
++let learningProGatedReviewCasesValidated = 0;
++let learningProGatedHighlightCasesValidated = 0;
++let learningProGatedSelectorsParityValidated = false;
+ let uhrReferencesValidated = 0;
+ let questionSchemasValidated = 0;
+ let publishedQuestionTypesValidated = 0;
+@@ -8374,6 +8386,17 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-learning-pro-gated-selectors')) {
++  validateLearningProGatedSelectorsParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    learningProGatedReviewCasesValidated,
++    learningProGatedHighlightCasesValidated,
++    learningProGatedSelectorsParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-practice-scoring-parity')) {
+   validatePracticeScoringRules();
+   exitWithValidationFailures();
+@@ -16294,6 +16317,149 @@ function validateWeakChapterRules() {
+   }
+ }
+ 
++function validateLearningProGatedSelectorsParity() {
++  let reviewCasesAreValid = true;
++  let highlightCasesAreValid = true;
++
++  function rejectReview(message) {
++    reviewCasesAreValid = false;
++    fail(message);
++  }
++
++  function rejectHighlight(message) {
++    highlightCasesAreValid = false;
++    fail(message);
++  }
++
++  if (typeof remainingDailyReviews !== 'function') {
++    rejectReview('remainingDailyReviews export is not a function');
++    return;
++  }
++  if (!Number.isInteger(FREE_DAILY_REVIEW_CAP) || FREE_DAILY_REVIEW_CAP <= 0) {
++    rejectReview(`FREE_DAILY_REVIEW_CAP is ${JSON.stringify(FREE_DAILY_REVIEW_CAP)}`);
++    return;
++  }
++  if (typeof getLocalDateKey !== 'function') {
++    rejectReview('getLocalDateKey export is not a function');
++    return;
++  }
++  if (typeof isColorAllowed !== 'function') {
++    rejectHighlight('isColorAllowed export is not a function');
++    return;
++  }
++
++  const now = new Date('2026-05-19T12:00:00.000Z');
++  const dayKey = getLocalDateKey(now);
++  const usedOneReviewState = { gradedPerDay: { [dayKey]: 1 } };
++  const malformedProFlags = ['yes', 1, {}, [], null];
++  const invalidFreeCaps = [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '4', null];
++  const invalidUsedCounts = [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '2'];
++  const freeAfterOneReview = FREE_DAILY_REVIEW_CAP - 1;
++
++  function expectRemaining(label, state, options, expected) {
++    let actual;
++    try {
++      actual = remainingDailyReviews(state, options);
++    } catch (error) {
++      rejectReview(`learning Pro review selector ${label} threw ${error.message}`);
++      return;
++    }
++
++    if (!Object.is(actual, expected)) {
++      rejectReview(
++        `learning Pro review selector ${label} returned ${JSON.stringify(
++          actual,
++        )}, expected ${JSON.stringify(expected)}`,
++      );
++      return;
++    }
++    if (expected !== Number.POSITIVE_INFINITY && !Number.isFinite(actual)) {
++      rejectReview(`learning Pro review selector ${label} returned a non-finite free result`);
++      return;
++    }
++    learningProGatedReviewCasesValidated += 1;
++  }
++
++  expectRemaining(
++    'explicit Pro unlocks unlimited review',
++    usedOneReviewState,
++    { now, isPro: true },
++    Number.POSITIVE_INFINITY,
++  );
++  expectRemaining(
++    'explicit Free keeps daily review cap',
++    usedOneReviewState,
++    { now, isPro: false },
++    freeAfterOneReview,
++  );
++  malformedProFlags.forEach((isPro) => {
++    expectRemaining(
++      `malformed Pro flag ${JSON.stringify(isPro)} stays Free`,
++      usedOneReviewState,
++      { now, isPro },
++      freeAfterOneReview,
++    );
++  });
++  expectRemaining(
++    'valid finite custom free cap is honored',
++    usedOneReviewState,
++    { now, freeCap: 2 },
++    1,
++  );
++  invalidFreeCaps.forEach((freeCap) => {
++    expectRemaining(
++      `invalid freeCap ${JSON.stringify(freeCap)} falls back`,
++      usedOneReviewState,
++      { now, freeCap },
++      freeAfterOneReview,
++    );
++  });
++  invalidUsedCounts.forEach((usedToday) => {
++    expectRemaining(
++      `invalid used count ${JSON.stringify(usedToday)} falls back`,
++      { gradedPerDay: { [dayKey]: usedToday } },
++      { now },
++      FREE_DAILY_REVIEW_CAP,
++    );
++  });
++
++  function expectColorAllowed(label, color, isPro, expected) {
++    let actual;
++    try {
++      actual = isColorAllowed(color, isPro);
++    } catch (error) {
++      rejectHighlight(`learning Pro highlight selector ${label} threw ${error.message}`);
++      return;
++    }
++
++    if (actual !== expected) {
++      rejectHighlight(
++        `learning Pro highlight selector ${label} returned ${JSON.stringify(
++          actual,
++        )}, expected ${JSON.stringify(expected)}`,
++      );
++      return;
++    }
++    learningProGatedHighlightCasesValidated += 1;
++  }
++
++  expectColorAllowed('yellow is free', 'yellow', false, true);
++  expectColorAllowed('green is locked for Free', 'green', false, false);
++  expectColorAllowed('green is unlocked for explicit Pro', 'green', true, true);
++  expectColorAllowed('blue is unlocked for explicit Pro', 'blue', true, true);
++  expectColorAllowed('pink is unlocked for explicit Pro', 'pink', true, true);
++  malformedProFlags.forEach((isPro) => {
++    expectColorAllowed(`green stays locked for ${JSON.stringify(isPro)}`, 'green', isPro, false);
++    expectColorAllowed(`yellow stays free for ${JSON.stringify(isPro)}`, 'yellow', isPro, true);
++  });
++
++  learningProGatedSelectorsParityValidated =
++    reviewCasesAreValid &&
++    highlightCasesAreValid &&
++    learningProGatedReviewCasesValidated === 19 &&
++    learningProGatedHighlightCasesValidated === 15;
++}
++
+ function validateQuestionBankCsvContract() {
+   if (!Array.isArray(questions)) return;
+ 
+@@ -17852,6 +18018,7 @@ validateStreakRules();
+ validateXpRules();
+ validateMasteryRules();
+ validateWeakChapterRules();
++validateLearningProGatedSelectorsParity();
+ validateQuestionBankCsvContract();
+ validateStaticSiteQuestionBankParity();
+ validateUhrSourceMaterialLinkParity();
+@@ -18126,6 +18293,9 @@ console.log(
+       masteryRulesParityValidated,
+       weakChapterRulesValidated,
+       weakChapterRulesParityValidated,
++      learningProGatedReviewCasesValidated,
++      learningProGatedHighlightCasesValidated,
++      learningProGatedSelectorsParityValidated,
+       questions: questions.length,
+       publishedQuestions,
+       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..a59cb0a3a 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -37,6 +37,20 @@ function runPackageTest(args, env) {
+   });
+ }
+ 
++function runValidateContent(args) {
++  return spawnSync(process.execPath, ['scripts/validate-content.js', ...args], {
++    cwd: repoRoot,
++    encoding: 'utf8',
++    env: process.env,
++  });
++}
++
++function parseValidationSummary(stdout) {
++  const match = stdout.match(/\{[\s\S]*\}\s*$/);
++  assert.ok(match, `validation output did not end with JSON summary:\n${stdout}`);
++  return JSON.parse(match[0]);
++}
++
+ test('npm test keeps selector routing in the project dispatcher', () => {
+   const pkg = readPackageJson();
+   const testContentScript = pkg.scripts['test:content'];
+@@ -190,6 +204,45 @@ test('spaced repetition schema parity uses focused content validation routing',
+   );
+ });
+ 
++test('learning Pro-gated selectors use focused content validation routing', () => {
++  const result = runValidateContent(['--focus-learning-pro-gated-selectors']);
++  assert.equal(result.status, 0, result.stderr || result.stdout);
++  const summary = parseValidationSummary(result.stdout);
++
++  assert.equal(summary.learningProGatedReviewCasesValidated, 19);
++  assert.equal(summary.learningProGatedHighlightCasesValidated, 15);
++  assert.equal(summary.learningProGatedSelectorsParityValidated, true);
++  assert.deepEqual(Object.keys(summary).sort(), [
++    'learningProGatedHighlightCasesValidated',
++    'learningProGatedReviewCasesValidated',
++    'learningProGatedSelectorsParityValidated',
++  ]);
++
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const reviewStoreTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/v1-1-review-store.test.js'),
++    'utf8',
++  );
++  const highlightsStoreTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/v1-1-highlights-store.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-learning-pro-gated-selectors/);
++  assert.match(
++    validatorSource,
++    /validateLearningProGatedSelectorsParity\(\);[\s\S]*learningProGatedSelectorsParityValidated/,
++  );
++  assert.match(
++    reviewStoreTestSource,
++    /remainingDailyReviews: strict Pro boolean and finite free caps/,
++  );
++  assert.match(highlightsStoreTestSource, /isColorAllowed: requires strict Pro boolean/);
++});
++
+ test('monetization selector runs only the focused monetization suite', () => {
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
+   const npmLog = path.join(tmpDir, 'npm.log');
+diff --git a/tests/helpers/storageStoreHarness.cjs b/tests/helpers/storageStoreHarness.cjs
+index d79c31afa..85c72afb7 100644
+--- a/tests/helpers/storageStoreHarness.cjs
++++ b/tests/helpers/storageStoreHarness.cjs
+@@ -62,7 +62,7 @@ function createZustandStub() {
+       const setFn = (partial) => {
+         const next = typeof partial === 'function' ? partial(state) : partial;
+         if (next && next !== state) {
+-          state = { ...state, ...next };
++          Object.assign(state, next);
+         }
+       };
+       const getFn = () => state;

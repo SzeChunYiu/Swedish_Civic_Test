@@ -5,9 +5,14 @@ import { create } from 'zustand';
 import type { ConfidenceRating, DailyChallengeCompletion } from '../../types/progress';
 import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';
 import { getNextReviewAt } from '../learning/spacedRepetition';
-import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
+import {
+  createInitialFreezeState,
+  normalizeStreakFreezeState as normalizeStoredStreakFreezeState,
+  type StreakFreezeState,
+} from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
@@ -64,7 +69,6 @@ const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedMockQuestionTimeSeconds = 4 * 60 * 60;
 const maxHydratedDailyChallengeQuestionCount = 720;
-const maxHydratedFreezeLifetimeCount = 10000;
 const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -157,36 +161,6 @@ function normalizeLocalDateKey(value: unknown): string | undefined {
 
   const normalized = new Date(timeMs).toISOString().slice(0, 10);
   return normalized === trimmed ? trimmed : undefined;
-}
-
-function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
-  const fallback = createInitialFreezeState();
-  if (!value || typeof value !== 'object') return fallback;
-
-  const candidate = value as Partial<StreakFreezeState>;
-  const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
-    ? [
-        ...new Set(
-          candidate.rescuedDayKeys.map(normalizeLocalDateKey).filter((day): day is string => !!day),
-        ),
-      ]
-    : [];
-
-  return {
-    available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4),
-    lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
-    lifetimeEarned: normalizeNonNegativeInteger(
-      candidate.lifetimeEarned,
-      fallback.lifetimeEarned,
-      maxHydratedFreezeLifetimeCount,
-    ),
-    lifetimeSpent: normalizeNonNegativeInteger(
-      candidate.lifetimeSpent,
-      fallback.lifetimeSpent,
-      maxHydratedFreezeLifetimeCount,
-    ),
-    rescuedDayKeys,
-  };
 }
 
 function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTiming[] {
@@ -328,6 +302,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
 
   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
     for (const [questionId, progress] of Object.entries(candidate.questionProgress)) {
+      if (!isSafeImportedMapKey(questionId)) continue;
       if (!progress || typeof progress !== 'object') continue;
       const item = progress as Partial<QuestionProgress>;
       const rawCorrectCount = normalizeNonNegativeInteger(
@@ -421,16 +396,12 @@ function normalizeProgress(value: unknown): PersistedProgress {
     answerHistory,
     dailyChallengeCompletions,
     mockExamSessions,
-    streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
+    streakFreezeState: normalizeStoredStreakFreezeState(candidate.streakFreezeState),
   };
 }
 
 export function normalizeImportedProgress(value: unknown): PersistedProgress {
   return normalizeProgress(value);
-}
-
-function parseProgress(rawProgress: string): PersistedProgress {
-  return normalizeProgress(JSON.parse(rawProgress));
 }
 
 function readProgress(): PersistedProgress & {
@@ -439,16 +410,17 @@ function readProgress(): PersistedProgress & {
   const readResult = readRecoverably(progressStorage, progressStorageId, progressStateKey, () =>
     progressStorage?.getString(progressStateKey),
   );
-  if (!readResult.value) return { ...emptyProgress, persistenceWarning: readResult.warning };
+  if (readResult.warning) return { ...emptyProgress, persistenceWarning: readResult.warning };
+  if (!readResult.value) return { ...emptyProgress, persistenceWarning: null };
 
   const parseResult = parseJsonRecoverably(
     readResult.value,
     progressStorageId,
     progressStateKey,
-    parseProgress,
+    (rawValue) => normalizeProgress(JSON.parse(rawValue)),
     emptyProgress,
   );
-  return { ...parseResult.value, persistenceWarning: parseResult.warning ?? readResult.warning };
+  return { ...parseResult.value, persistenceWarning: parseResult.warning };
 }
 
 function writeProgress(
@@ -505,6 +477,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   recordAnswer: (questionId, isCorrect, confidenceRating, options) =>
     set((state) => {
+      if (typeof isCorrect !== 'boolean') return state;
+
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
       const normalizedConfidenceRating = normalizeConfidenceRating(confidenceRating);
