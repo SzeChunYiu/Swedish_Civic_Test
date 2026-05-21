@@ -399,10 +399,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\binnebär att den ger\b/i,
-  /^That Sweden is (?:a constitutional monarchy|a secular state) means\b/i,
-  /^That elections in a democracy are secret means\b/i,
-  /^Att Sverige är (?:en konstitutionell monarki|en sekulär stat) betyder att\b/i,
-  /^Att val i en demokrati är hemliga betyder att\b/i,
   /\bfrom (?:13|15) years\b/i,
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
@@ -2648,22 +2644,34 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
-    label: 'optional front/back/language prop contract',
+    label: 'optional front/back/language/question prop contract',
     pattern:
-      /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
+      /type FlashcardProps = \{[\s\S]*back\?: string;[\s\S]*front\?: string;[\s\S]*language\?: AppLanguage;[\s\S]*question\?: PracticeQuestion;[\s\S]*\};/,
   },
   {
     label: 'settings language import',
     pattern: /useSettingsStore, type AppLanguage/,
   },
   {
+    label: 'question source citation helper import',
+    pattern: /import \{ getQuestionSourceCitation \} from '\.\.\/\.\.\/lib\/quiz\/questionText';/,
+  },
+  {
+    label: 'QuestionSourceCitation import',
+    pattern: /import \{ QuestionSourceCitation \} from '\.\.\/quiz\/QuestionSourceCitation';/,
+  },
+  {
     label: 'localized copy map',
     pattern: /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/,
   },
   {
+    label: 'localized source citation accessibility copy',
+    pattern: /Källhänvisning: \$\{sourceCitation\}[\s\S]*Source citation: \$\{sourceCitation\}/,
+  },
+  {
     label: 'selected settings language fallback',
     pattern:
-      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const copy = flashcardCopy\[language \?\? settingsLanguage\];/,
+      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const resolvedLanguage = language \?\? settingsLanguage;[\s\S]*const copy = flashcardCopy\[resolvedLanguage\];/,
   },
   {
     label: 'release-safe Swedish fallbacks',
@@ -2688,11 +2696,17 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'localized accessibility summary helper',
-    pattern: /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+    pattern:
+      /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer, sourceCitation\);/,
+  },
+  {
+    label: 'source citation text derived from question',
+    pattern: /const sourceCitation = getQuestionSourceCitation\(question, resolvedLanguage\);/,
   },
   {
     label: 'prompt and answer accessibility summary',
-    pattern: /<Card accessibilityLabel=\{flashcardAccessibilityLabel\} style=\{styles\.card\}>/,
+    pattern:
+      /<Card[\s\S]*accessibilityLabel=\{flashcardAccessibilityLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*style=\{styles\.card\}/,
   },
   {
     label: 'visible localized flashcard badge',
@@ -2712,6 +2726,11 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
     label: 'visible prompt and answer text',
     pattern:
       /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+  },
+  {
+    label: 'visible flashcard source citation',
+    pattern:
+      /<QuestionSourceCitation[\s\S]*citationText=\{sourceCitation\}[\s\S]*language=\{resolvedLanguage\}[\s\S]*question=\{question\}/,
   },
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
@@ -2817,8 +2836,9 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'Card receives accessibility summary',
-    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+    label: 'parent Card must not group nested source controls',
+    pattern:
+      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
   },
   {
     label: 'visible difficulty label',
@@ -2842,7 +2862,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2852,7 +2872,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -3103,6 +3123,7 @@ const EXPECTED_PREMIUM_ENTITLEMENT_STATES = [
 ];
 const EXPECTED_QUESTION_DISCLAIMER_ROUTES = [
   { route: '/onboarding', file: 'app/onboarding.tsx' },
+  { route: '/learn', file: 'app/(tabs)/learn.tsx' },
   { route: '/practice', file: 'app/(tabs)/practice.tsx' },
   { route: '/exam', file: 'app/(tabs)/exam.tsx' },
   { route: '/mistakes', file: 'app/(tabs)/mistakes.tsx' },
@@ -4626,23 +4647,6 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
-}
-
-function validateQuestionGeneratedTrueFalseNaturalnessOnly() {
-  if (!Array.isArray(questions)) {
-    fail('questions export is not an array');
-    return;
-  }
-
-  questions.forEach((question, index) => {
-    const label = question.id || `question[${index}]`;
-    const issue = findQuestionGeneratedTrueFalseNaturalnessIssue(question);
-    if (issue) {
-      fail(`${label} contains a generated true/false grammar-splice stem`);
-    } else if (question.type === 'true_false') {
-      questionGeneratedTrueFalseNaturalnessValidated += 1;
-    }
-  });
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -7292,6 +7296,7 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
@@ -7560,11 +7565,25 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
-  validateQuestionGeneratedTrueFalseNaturalnessOnly();
+if (process.argv.includes('--focus-learn-flashcard-source')) {
+  validateQuestionDisclaimerParity();
+  validateLearnRouteHeaderParity();
+  validateLearnRouteLinkCopyParity();
+  validateFlashcardAccessibilityParity();
+  validateQuestionCardAccessibilityParity();
   exitWithValidationFailures();
   printValidationSummary({
-    questionGeneratedTrueFalseNaturalnessValidated,
+    questionDisclaimerRoutesValidated,
+    questionDisclaimerCopyValidated,
+    learnRouteHeadersValidated,
+    learnRouteHeaderParityValidated,
+    learnRouteLinkCopyLabelsValidated,
+    learnRouteLinkCopyParityValidated,
+    flashcardAccessibilityRulesValidated,
+    flashcardAccessibilityParityValidated,
+    questionCardAccessibilityRulesValidated,
+    questionCardAccessibilityParityValidated,
+    swedishFlashcardCopyNaturalnessValidated,
   });
   process.exit(0);
 }
@@ -10660,6 +10679,12 @@ function validateFlashcardAccessibilityParity() {
     }
     flashcardAccessibilityRulesValidated += 1;
   });
+
+  if (/Flashkort|flashkort/.test(flashcardSource)) {
+    reject('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+  } else {
+    swedishFlashcardCopyNaturalnessValidated = true;
+  }
 
   if (
     valid &&

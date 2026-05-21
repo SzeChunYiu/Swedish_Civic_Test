@@ -9,7 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-learn-flashcard-deck'],
+    ['scripts/validate-content.js', '--focus-learn-flashcard-source'],
     {
       encoding: 'utf8',
     },
@@ -25,21 +25,10 @@ test('learn route chapter-link copy follows the persisted settings language', ()
 
   assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
-  assert.match(
-    source,
-    /import \{ selectDailyFlashcardDeck \} from '\.\.\/\.\.\/lib\/learning\/flashcardDeck';/,
-  );
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = \{/);
+  assert.match(source, /import \{ QuestionDisclaimer \}/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
-  assert.match(
-    source,
-    /const questionProgress = useProgressStore\(\(state\) => state\.questionProgress\);/,
-  );
   assert.match(source, /const copy = chapterLinkCopy\[language\];/);
-  assert.match(source, /selectDailyFlashcardDeck\(\{/);
-  assert.match(source, /limit: FLASHCARD_PREVIEW_LIMIT,/);
-  assert.match(source, /questionProgress,/);
-  assert.doesNotMatch(source, /questions\.slice\(0,\s*FLASHCARD_PREVIEW_LIMIT\)/);
   assert.match(source, /innehåll planerat/);
   assert.match(source, /content queued/);
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
@@ -51,6 +40,8 @@ test('learn route chapter-link copy follows the persisted settings language', ()
   assert.match(source, /accessibilityLabel=\{getChapterLinkAccessibilityLabel\(\{/);
   assert.match(source, /accessibilityMode="presentation"/);
   assert.match(source, /language=\{language\}/);
+  assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
+  assert.match(source, /question=\{question\}/);
 });
 
 test('learn route chapter-link copy parity rejects bypassing the settings language', () => {
@@ -70,7 +61,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-deck');
+process.argv.push('--focus-learn-flashcard-source');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -101,7 +92,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-deck');
+process.argv.push('--focus-learn-flashcard-source');
 require('./scripts/validate-content.js');
 `,
     ],

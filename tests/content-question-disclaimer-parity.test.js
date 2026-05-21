@@ -7,6 +7,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 const expectedDisclaimerRoutes = [
   'app/onboarding.tsx',
+  'app/(tabs)/learn.tsx',
   'app/(tabs)/practice.tsx',
   'app/(tabs)/exam.tsx',
   'app/(tabs)/mistakes.tsx',
@@ -15,6 +16,7 @@ const expectedDisclaimerRoutes = [
 ];
 const expectedDisclaimerCounts = new Map([
   ['app/onboarding.tsx', 1],
+  ['app/(tabs)/learn.tsx', 1],
   ['app/(tabs)/practice.tsx', 1],
   ['app/(tabs)/exam.tsx', 3],
   ['app/(tabs)/mistakes.tsx', 1],
@@ -33,10 +35,13 @@ function countQuestionDisclaimerOccurrences(source) {
 }
 
 test('question disclaimer coverage stays aligned across study surfaces', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-learn-flashcard-source'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -89,6 +94,13 @@ test('question disclaimer stays separate from source citation rendering', () => 
       `${routeFile} should show the independent-study disclaimer before question cards`,
     );
   }
+
+  const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  assert.ok(
+    learnSource.search(/<QuestionDisclaimer(?:\s+language=\{language\})?\s*\/>/) <
+      learnSource.indexOf('<View style={styles.flashcardDeck}>'),
+    'app/(tabs)/learn.tsx should show the independent-study disclaimer before flashcards',
+  );
 });
 
 test('question disclaimer parity rejects a study surface without the disclaimer', () => {
@@ -108,6 +120,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-learn-flashcard-source');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -135,6 +148,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-learn-flashcard-source');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -6,6 +6,7 @@ import { ChapterCard } from '../../components/learning/ChapterCard';
 import { Flashcard } from '../../components/learning/Flashcard';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
+import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
@@ -175,6 +176,7 @@ export default function Screen() {
         title={routeCopy.flashcardSectionTitle}
         subtitle={routeCopy.flashcardSectionSubtitle}
       />
+      <QuestionDisclaimer language={language} />
       <View style={styles.flashcardDeck}>
         {flashcardQuestions.map((question) => (
           <Flashcard
@@ -182,6 +184,7 @@ export default function Screen() {
             front={getFlashcardPrompt(question, language)}
             back={getFlashcardAnswer(question, language)}
             language={language}
+            question={question}
           />
         ))}
       </View>
