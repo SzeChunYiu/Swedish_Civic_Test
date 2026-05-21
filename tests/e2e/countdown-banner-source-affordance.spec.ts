@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import type { Locator } from '@playwright/test';
-import { dismissBlockingModals, mockBrowserDate } from './browserLaunch';
+import type { Locator, Page } from '@playwright/test';
+import { dismissBlockingModals } from './browserLaunch';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
 
@@ -33,9 +33,7 @@ function boxesOverlap(a: BoundingBox, b: BoundingBox) {
   );
 }
 
-test('home countdown banner exposes official source links as mobile-safe targets', async ({
-  page,
-}) => {
+function collectConsoleErrors(page: Page) {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -43,9 +41,52 @@ test('home countdown banner exposes official source links as mobile-safe targets
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  await mockBrowserDate(page, '2026-05-21T12:00:00.000Z');
+  return consoleErrors;
+}
+
+async function mockBrowserDate(page: Page, isoDateTime: string) {
+  await page.addInitScript({
+    content: `
+(() => {
+  const RealDate = Date;
+  const fixedTime = new RealDate(${JSON.stringify(isoDateTime)}).getTime();
+
+  class MockDate extends RealDate {
+    constructor(...args) {
+      super(...(args.length > 0 ? args : [fixedTime]));
+    }
+
+    static now() {
+      return fixedTime;
+    }
+  }
+
+  window.Date = MockDate;
+})();
+`,
+  });
+}
+
+async function openHomeAndDismissModals(page: Page) {
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
+}
+
+async function expectSourceLinksVisible(page: Page) {
+  for (const source of expectedSources) {
+    const link = page.getByRole('link', { name: source.label });
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', source.url);
+    await expect(link).toHaveAttribute('target', '_blank');
+  }
+}
+
+test('home countdown banner exposes official source links as mobile-safe targets', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await openHomeAndDismissModals(page);
 
   const countdownBody = page.getByText(/Nya medborgarskapsregler gäller från/).first();
   const sourceLabel = page.getByText('Officiella datumkällor:', { exact: true });
@@ -73,6 +114,41 @@ test('home countdown banner exposes official source links as mobile-safe targets
     await expect.poll(() => popup.url()).toBe(source.url);
     await popup.close();
   }
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('home countdown banner shows the civic-test phase after the new rules date', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await mockBrowserDate(page, '2026-06-07T12:00:00.000Z');
+  await openHomeAndDismissModals(page);
+
+  await expect(
+    page
+      .getByText(
+        /De nya medborgarskapsreglerna gäller nu sedan 6 juni 2026\. Nästa viktiga fas är samhällskunskapsprovet:/,
+      )
+      .first(),
+  ).toBeVisible();
+  await expect(page.getByText('till första provet').first()).toBeVisible();
+  await expectSourceLinksVisible(page);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('home countdown banner disappears after the first civic-test sitting', async ({ page }) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await mockBrowserDate(page, '2026-08-16T12:00:00.000Z');
+  await openHomeAndDismissModals(page);
+
+  await expect(page.getByText('Studieöversikt').first()).toBeVisible();
+  await expect(page.getByText(/Nya medborgarskapsregler gäller från/)).toHaveCount(0);
+  await expect(page.getByText(/De nya medborgarskapsreglerna gäller nu sedan/)).toHaveCount(0);
+  await expect(page.getByText('Officiella datumkällor:', { exact: true })).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
