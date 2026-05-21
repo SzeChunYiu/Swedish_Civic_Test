@@ -414,7 +414,29 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
+  assert.match(practiceInterstitialSource, /INTERSTITIAL_AD_SHOW_TIMEOUT_MS\s*=\s*10_000/);
+  assert.match(practiceInterstitialSource, /let showTimeout: ReturnType<typeof setTimeout>/);
+  assert.match(
+    practiceInterstitialSource,
+    /const clearShowTimeout = \(\) => \{[\s\S]*clearTimeout\(showTimeout\);[\s\S]*showTimeout = undefined;/,
+  );
+  assert.match(
+    practiceInterstitialSource,
+    /const finishAttempt = \(\) => \{[\s\S]*if \(attemptSettled\) return;[\s\S]*attemptSettled = true;[\s\S]*clearLoadTimeout\(\);[\s\S]*clearShowTimeout\(\);[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*interstitialLoadInFlight = false;/,
+  );
+  assert.match(
+    practiceInterstitialSource,
+    /showTimeout = setTimeout\(\(\) => \{[\s\S]*if \(attemptSettled\) return;[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_SHOW_TIMEOUT_MS\);/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /showTimeout = setTimeout\(\(\) => \{[\s\S]{0,220}consumeShowKey\(\)/,
+  );
   assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
+  assert.match(
+    practiceInterstitialSource,
+    /\.then\(\(\) => \{[\s\S]*if \(attemptSettled\) return;[\s\S]*consumeShowKey\(\)/,
+  );
   assert.doesNotMatch(
     practiceInterstitialSource,
     /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,

@@ -8980,6 +8980,38 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      const webBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
+      const nativeBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
+
+      if (!nativeBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('AdBanner native placement must resolve banner units by Platform.OS');
+        routeIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+          nativeBannerSource,
+        )
+      ) {
+        reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
+        routeIsValid = false;
+      }
+      if (
+        !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/.test(
+          webBannerSource,
+        )
+      ) {
+        reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
@@ -9185,6 +9217,32 @@ function validateAdPlacementRouteParity() {
         /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/.test(nativeInterstitialSource)
       ) {
         reject('PracticeInterstitialAd must not consume the show key in the LOADED listener');
+        routeIsValid = false;
+      }
+      if (
+        !/const\s+INTERSTITIAL_AD_SHOW_TIMEOUT_MS\s*=/.test(nativeInterstitialSource) ||
+        !/let\s+showTimeout:\s*ReturnType<typeof setTimeout>\s*\|\s*undefined;/.test(
+          nativeInterstitialSource,
+        ) ||
+        !/const clearShowTimeout = \(\) => \{[\s\S]*clearTimeout\(showTimeout\);[\s\S]*showTimeout = undefined;[\s\S]*\};/.test(
+          nativeInterstitialSource,
+        ) ||
+        !/const finishAttempt = \(\) => \{[\s\S]*if \(attemptSettled\) return;[\s\S]*attemptSettled = true;[\s\S]*clearLoadTimeout\(\);[\s\S]*clearShowTimeout\(\);[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*interstitialLoadInFlight = false;[\s\S]*\};/.test(
+          nativeInterstitialSource,
+        ) ||
+        !/showTimeout = setTimeout\(\(\) => \{[\s\S]*if \(attemptSettled\) return;[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_SHOW_TIMEOUT_MS\);/.test(
+          nativeInterstitialSource,
+        )
+      ) {
+        reject('PracticeInterstitialAd native placement must release stalled show attempts');
+        routeIsValid = false;
+      }
+      if (
+        /showTimeout = setTimeout\(\(\) => \{[\s\S]{0,260}consumeShowKey\(\)/.test(
+          nativeInterstitialSource,
+        )
+      ) {
+        reject('PracticeInterstitialAd show timeout must not consume the interstitial cap key');
         routeIsValid = false;
       }
     }

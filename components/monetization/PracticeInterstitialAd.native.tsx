@@ -8,6 +8,7 @@ import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEn
 import type { PremiumEntitlements } from '../../types/monetization';
 
 const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;
+const INTERSTITIAL_AD_SHOW_TIMEOUT_MS = 10_000;
 
 let lastInterstitialShowKey: string | undefined;
 let interstitialLoadInFlight = false;
@@ -48,6 +49,7 @@ export function PracticeInterstitialAd({
     let unsubscribeOpened: (() => void) | undefined;
     let unsubscribeClosed: (() => void) | undefined;
     let loadTimeout: ReturnType<typeof setTimeout> | undefined;
+    let showTimeout: ReturnType<typeof setTimeout> | undefined;
     let attemptSettled = false;
     let showStarted = false;
 
@@ -55,6 +57,11 @@ export function PracticeInterstitialAd({
       if (loadTimeout == null) return;
       clearTimeout(loadTimeout);
       loadTimeout = undefined;
+    };
+    const clearShowTimeout = () => {
+      if (showTimeout == null) return;
+      clearTimeout(showTimeout);
+      showTimeout = undefined;
     };
     const unsubscribeLoadListeners = () => {
       unsubscribeLoaded?.();
@@ -67,9 +74,12 @@ export function PracticeInterstitialAd({
       unsubscribeClosed = undefined;
     };
     const finishAttempt = () => {
-      clearLoadTimeout();
-      interstitialLoadInFlight = false;
+      if (attemptSettled) return;
       attemptSettled = true;
+      clearLoadTimeout();
+      clearShowTimeout();
+      unsubscribeLoadListeners();
+      interstitialLoadInFlight = false;
     };
     const consumeShowKey = () => {
       lastInterstitialShowKey = showKey;
@@ -86,14 +96,20 @@ export function PracticeInterstitialAd({
         if (attemptSettled) return;
         clearLoadTimeout();
         showStarted = true;
+        showTimeout = setTimeout(() => {
+          if (attemptSettled) return;
+          finishAttempt();
+        }, INTERSTITIAL_AD_SHOW_TIMEOUT_MS);
 
         try {
           void Promise.resolve(interstitialAd.show())
             .then(() => {
+              if (attemptSettled) return;
               consumeShowKey();
               finishAttempt();
             })
             .catch(() => {
+              if (attemptSettled) return;
               finishAttempt();
             });
         } catch {

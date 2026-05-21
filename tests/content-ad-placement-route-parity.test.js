@@ -161,8 +161,8 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
 
-  assert.match(adCopySource, /testStatus: 'AdMob test unit active - preview'/);
-  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - förhandsvisning'/);
+  assert.match(adCopySource, /testStatus: 'AdMob test unit active - test placement'/);
+  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - testplacering'/);
   assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/);
   assert.match(
     webBannerSource,
@@ -175,8 +175,9 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   assert.match(
     nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
   );
+  assert.match(nativeBannerSource, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
@@ -313,6 +314,71 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /PracticeInterstitialAd native placement must gate quiz_completed_interstitial through consent-aware platform shouldShowAd/,
+  );
+});
+
+test('ad placement route parity rejects native practice interstitial stalled show timeout drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('const INTERSTITIAL_AD_SHOW_TIMEOUT_MS = 10_000;\\n', '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd native placement must release stalled show attempts/,
+  );
+});
+
+test('ad placement route parity rejects native practice interstitial show timeout cap consumption', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '          finishAttempt();\\n        }, INTERSTITIAL_AD_SHOW_TIMEOUT_MS);',
+        '          consumeShowKey();\\n          finishAttempt();\\n        }, INTERSTITIAL_AD_SHOW_TIMEOUT_MS);',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd show timeout must not consume the interstitial cap key/,
   );
 });
 
