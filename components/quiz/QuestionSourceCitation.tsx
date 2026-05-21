@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { StyleSheet, Text as NativeText } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 
 import { getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, typography } from '../../lib/theme';
+import { typography } from '../../lib/theme';
+import type { ThemeColors } from '../../lib/theme';
 import type { UHRReference } from '../../types/content';
+import { useResolvedThemeColors } from '../useResolvedThemeColors';
 import { SourceCitation } from './SourceCitation';
 import type { SourceCitationProps } from './SourceCitation';
 
@@ -41,6 +44,7 @@ export interface QuestionSourceCitationProps extends Omit<
   citationText?: string;
   language?: AppLanguage;
   question?: QuestionSourceCitationQuestion;
+  themeColors?: ThemeColors;
 }
 
 export function QuestionSourceCitation({
@@ -51,8 +55,11 @@ export function QuestionSourceCitation({
   label,
   language = 'sv',
   question,
+  themeColors,
   ...citationProps
 }: QuestionSourceCitationProps) {
+  const resolvedThemeColors = useResolvedThemeColors(themeColors);
+  const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const sourceCitation = citationText ?? getQuestionSourceCitation(question, language);
   const resolvedLabel = label ?? questionSourceCitationLabels[language].label;
   const resolvedAccessibilityLabel = accessibilityLabel ?? `${resolvedLabel}: ${sourceCitation}`;
@@ -64,6 +71,7 @@ export function QuestionSourceCitation({
       label={resolvedLabel}
       language={language}
       reference={question?.uhrReference}
+      themeColors={resolvedThemeColors}
       {...citationProps}
     >
       {hasCustomBody ? (
@@ -75,10 +83,12 @@ export function QuestionSourceCitation({
   );
 }
 
-const styles = StyleSheet.create({
-  body: {
-    color: colors.textDisclaimer,
-    fontSize: typography.disclaimer.fontSize,
-    lineHeight: typography.disclaimer.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    body: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.disclaimer.fontSize,
+      lineHeight: typography.disclaimer.lineHeight,
+    },
+  });
+}

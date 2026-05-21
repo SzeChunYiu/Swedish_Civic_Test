@@ -4,8 +4,9 @@ import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
+import { useResolvedThemeColors } from './useResolvedThemeColors';
 
 type DisclaimerBannerCopy = {
   message: string;
@@ -63,7 +64,8 @@ export function DisclaimerBanner({
   titleStyle,
   ...viewProps
 }: DisclaimerBannerProps) {
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+  const resolvedThemeColors = useResolvedThemeColors(themeColors);
+  const styles = useMemo(() => createStyles(resolvedThemeColors), [resolvedThemeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = disclaimerBannerCopy[language];
