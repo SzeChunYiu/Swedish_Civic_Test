@@ -79,6 +79,40 @@ test('XP rules follow the MVP gamification table', () => {
   assert.equal(calculateLevel(400), 3);
 });
 
+test('progress retries can record attempts without awarding repeat answer XP', () => {
+  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
+
+  useProgressStore.getState().resetProgress();
+  useProgressStore.getState().recordAnswer('q-xp', true);
+  useProgressStore.getState().recordAnswer('q-xp', true, undefined, { awardXp: false });
+
+  const state = useProgressStore.getState();
+  assert.equal(state.totalXp, 12);
+  assert.equal(state.questionProgress['q-xp'].seenCount, 2);
+  assert.equal(state.questionProgress['q-xp'].correctCount, 2);
+  assert.equal(state.answerHistory.filter((entry) => entry.questionId === 'q-xp').length, 2);
+});
+
+test('practice session keeps the answer XP award key through Try Again only', () => {
+  const { getPracticeAnswerXpAwardKey, usePracticeSessionStore } = loadAllTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
+  const firstSessionId = usePracticeSessionStore.getState().shuffleSessionId;
+  const firstAwardKey = getPracticeAnswerXpAwardKey('q-xp', firstSessionId);
+
+  usePracticeSessionStore.getState().markAnswerXpAwarded(firstAwardKey);
+  usePracticeSessionStore.getState().selectOption('q-xp', 'a');
+  usePracticeSessionStore.getState().resetSelection();
+
+  assert.equal(usePracticeSessionStore.getState().answerXpAwardedKey, firstAwardKey);
+
+  usePracticeSessionStore.getState().advanceQuestion();
+  const nextSessionId = usePracticeSessionStore.getState().shuffleSessionId;
+
+  assert.equal(usePracticeSessionStore.getState().answerXpAwardedKey, null);
+  assert.notEqual(getPracticeAnswerXpAwardKey('q-xp', nextSessionId), firstAwardKey);
+});
+
 test('streak logic counts consecutive unique answer dates through today', () => {
   const { calculateStreak, getLocalDateKey } = loadAllTs('lib/learning/streaks.ts');
 

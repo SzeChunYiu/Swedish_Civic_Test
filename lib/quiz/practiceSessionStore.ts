@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 
 type PracticeSessionState = {
+  answerXpAwardedKey: string | null;
   activeQuestionId: string | null;
-  answeredQuestionIds: string[];
   selectedOptionId: string | null;
   shuffleSessionId: string;
-  answerXpAwardedKey: string | null;
+  markAnswerXpAwarded: (awardKey: string) => void;
   selectOption: (questionId: string, optionId: string) => void;
-  claimAnswerXpAward: (awardKey: string) => boolean;
   resetSelection: () => void;
   advanceQuestion: () => void;
 };
@@ -32,33 +31,19 @@ function nextPracticeShuffleSessionId(currentSessionId: string): string {
 }
 
 export const usePracticeSessionStore = create<PracticeSessionState>((set) => ({
+  answerXpAwardedKey: null,
   activeQuestionId: null,
-  answeredQuestionIds: [],
   selectedOptionId: null,
   shuffleSessionId: `${PRACTICE_SHUFFLE_SESSION_PREFIX}-0`,
-  answerXpAwardedKey: null,
+  markAnswerXpAwarded: (awardKey) => set({ answerXpAwardedKey: awardKey }),
   selectOption: (questionId, optionId) =>
     set({ activeQuestionId: questionId, selectedOptionId: optionId }),
-  claimAnswerXpAward: (awardKey) => {
-    let shouldAwardXp = false;
-    set((state) => {
-      if (state.answerXpAwardedKey === awardKey) return state;
-
-      shouldAwardXp = true;
-      return { answerXpAwardedKey: awardKey };
-    });
-    return shouldAwardXp;
-  },
   resetSelection: () => set({ selectedOptionId: null }),
   advanceQuestion: () =>
     set((state) => ({
+      answerXpAwardedKey: null,
       activeQuestionId: null,
-      answeredQuestionIds:
-        state.activeQuestionId && !state.answeredQuestionIds.includes(state.activeQuestionId)
-          ? [...state.answeredQuestionIds, state.activeQuestionId]
-          : state.answeredQuestionIds,
       selectedOptionId: null,
       shuffleSessionId: nextPracticeShuffleSessionId(state.shuffleSessionId),
-      answerXpAwardedKey: null,
     })),
 }));

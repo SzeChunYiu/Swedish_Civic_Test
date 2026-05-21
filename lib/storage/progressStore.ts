@@ -3,11 +3,7 @@ import type { MMKV } from 'react-native-mmkv';
 import { create } from 'zustand';
 
 import type { ConfidenceRating } from '../../types/progress';
-import {
-  gradeFromConfidence,
-  lapsePenaltyForWrong,
-  normalizeConfidenceRating as normalizeCalibrationConfidenceRating,
-} from '../learning/calibration';
+import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';
 import { getNextReviewAt } from '../learning/spacedRepetition';
 import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
@@ -49,22 +45,10 @@ export type AnswerHistoryEntry = {
   confidenceRating?: ConfidenceRating;
 };
 
-export type DailyChallengeProgress = {
-  dayKey: string;
-  questionIds: string[];
-  correctCount: number;
-  totalCount: number;
-  score: number;
-  timeSpentSeconds: number;
-  completedAt: string;
-};
-
 const progressStateKey = 'progressState';
 const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
 const maxHydratedAnswerHistoryCount = 10000;
-const maxHydratedDailyChallengeCompletionCount = 3650;
-const maxHydratedDailyChallengeQuestionCount = 100;
 const maxHydratedAnswerTimeSeconds = 24 * 60 * 60;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
@@ -88,7 +72,6 @@ export type PersistedProgress = {
   totalXp: number;
   answerDates: string[];
   answerHistory: AnswerHistoryEntry[];
-  dailyChallengeCompletions: Record<string, DailyChallengeProgress>;
   mockExamSessions: MockExamProgress[];
   streakFreezeState: StreakFreezeState;
 };
@@ -99,7 +82,6 @@ const emptyProgress: PersistedProgress = {
   totalXp: 0,
   answerDates: [],
   answerHistory: [],
-  dailyChallengeCompletions: {},
   mockExamSessions: [],
   streakFreezeState: createInitialFreezeState(),
 };
@@ -122,7 +104,11 @@ function normalizeNonNegativeInteger(value: unknown, fallback = 0, max = Number.
 }
 
 function normalizeConfidenceRating(value: unknown): ConfidenceRating | undefined {
-  return normalizeCalibrationConfidenceRating(value) ?? undefined;
+  if (value === 1 || value === 2 || value === 3 || value === 4 || value === 5) {
+    return value;
+  }
+
+  return undefined;
 }
 
 function clampScore(value: unknown): number {
@@ -239,76 +225,6 @@ function normalizeAnswerHistoryEntry(value: unknown): AnswerHistoryEntry | null 
   return entry;
 }
 
-function normalizeDailyChallengeCompletion(
-  fallbackDayKey: unknown,
-  value: unknown,
-): DailyChallengeProgress | null {
-  if (!value || typeof value !== 'object') return null;
-
-  const candidate = value as Partial<DailyChallengeProgress>;
-  const dayKey = normalizeLocalDateKey(candidate.dayKey) ?? normalizeLocalDateKey(fallbackDayKey);
-  const completedAt = normalizeIsoTimestamp(candidate.completedAt);
-  if (!dayKey || !completedAt) return null;
-
-  const questionIds = Array.isArray(candidate.questionIds)
-    ? [
-        ...new Set(
-          candidate.questionIds
-            .filter((id): id is string => typeof id === 'string')
-            .map((id) => id.trim())
-            .filter(Boolean),
-        ),
-      ].slice(0, maxHydratedDailyChallengeQuestionCount)
-    : [];
-  const totalCount = normalizeNonNegativeInteger(
-    candidate.totalCount,
-    questionIds.length,
-    maxHydratedDailyChallengeQuestionCount,
-  );
-  const correctCount = Math.min(
-    normalizeNonNegativeInteger(candidate.correctCount, 0, maxHydratedDailyChallengeQuestionCount),
-    totalCount,
-  );
-  const score =
-    typeof candidate.score === 'number'
-      ? clampScore(candidate.score)
-      : totalCount > 0
-        ? correctCount / totalCount
-        : 0;
-
-  return {
-    dayKey,
-    questionIds,
-    correctCount,
-    totalCount,
-    score,
-    timeSpentSeconds: normalizeNonNegativeInteger(
-      candidate.timeSpentSeconds,
-      0,
-      maxHydratedAnswerTimeSeconds,
-    ),
-    completedAt,
-  };
-}
-
-function normalizeDailyChallengeCompletions(
-  value: unknown,
-): Record<string, DailyChallengeProgress> {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
-
-  const completions: Record<string, DailyChallengeProgress> = {};
-  const entries = Object.entries(value as Record<string, unknown>).slice(
-    -maxHydratedDailyChallengeCompletionCount,
-  );
-  for (const [dayKey, completion] of entries) {
-    const normalizedCompletion = normalizeDailyChallengeCompletion(dayKey, completion);
-    if (!normalizedCompletion) continue;
-    completions[normalizedCompletion.dayKey] = normalizedCompletion;
-  }
-
-  return completions;
-}
-
 function streakFreezeStatesEqual(a: StreakFreezeState, b: StreakFreezeState): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
@@ -413,9 +329,6 @@ function normalizeProgress(value: unknown): PersistedProgress {
     totalXp: normalizeNonNegativeInteger(candidate.totalXp, 0, maxHydratedTotalXp),
     answerDates,
     answerHistory,
-    dailyChallengeCompletions: normalizeDailyChallengeCompletions(
-      candidate.dailyChallengeCompletions,
-    ),
     mockExamSessions,
     streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
   };
@@ -458,8 +371,12 @@ function writeProgress(
 type ProgressState = PersistedProgress & {
   persistenceWarning: RecoverablePersistenceWarning | null;
   markQuestionCompleted: (questionId: string) => void;
-  recordAnswer(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating): void;
-  recordDailyChallengeCompletion: (completion: DailyChallengeProgress) => void;
+  recordAnswer(
+    questionId: string,
+    isCorrect: boolean,
+    confidenceRating?: ConfidenceRating,
+    options?: { awardXp?: boolean },
+  ): void;
   recordMockExamSession: (session: MockExamProgressInput) => void;
   setStreakFreezeState: (streakFreezeState: StreakFreezeState) => void;
   toggleBookmark: (questionId: string) => void;
@@ -482,14 +399,13 @@ export const useProgressStore = create<ProgressState>((set) => ({
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         answerHistory: state.answerHistory,
-        dailyChallengeCompletions: state.dailyChallengeCompletions,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
       const persistedProgress = writeProgress(nextProgress);
       return persistedProgress;
     }),
-  recordAnswer: (questionId, isCorrect, confidenceRating) =>
+  recordAnswer: (questionId, isCorrect, confidenceRating, options) =>
     set((state) => {
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
@@ -559,34 +475,15 @@ export const useProgressStore = create<ProgressState>((set) => ({
           ...state.questionProgress,
           [questionId]: nextQuestionProgress,
         },
-        totalXp: state.totalXp + calculateAnswerXp({ isCorrect, explanationRead: true }),
+        totalXp:
+          state.totalXp +
+          (options?.awardXp === false
+            ? 0
+            : calculateAnswerXp({ isCorrect, explanationRead: true })),
         answerDates,
         answerHistory: [...state.answerHistory, nextAnswerHistoryEntry].slice(
           -maxHydratedAnswerHistoryCount,
         ),
-        dailyChallengeCompletions: state.dailyChallengeCompletions,
-        mockExamSessions: state.mockExamSessions,
-        streakFreezeState: state.streakFreezeState,
-      };
-      const persistedProgress = writeProgress(nextProgress);
-      return persistedProgress;
-    }),
-  recordDailyChallengeCompletion: (completion) =>
-    set((state) => {
-      const nextCompletion = normalizeDailyChallengeCompletion(completion.dayKey, completion);
-      if (!nextCompletion) return state;
-      if (state.dailyChallengeCompletions[nextCompletion.dayKey]) return state;
-
-      const nextProgress = {
-        completedQuestionIds: state.completedQuestionIds,
-        questionProgress: state.questionProgress,
-        totalXp: state.totalXp,
-        answerDates: state.answerDates,
-        answerHistory: state.answerHistory,
-        dailyChallengeCompletions: {
-          ...state.dailyChallengeCompletions,
-          [nextCompletion.dayKey]: nextCompletion,
-        },
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
@@ -622,7 +519,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         totalXp: state.totalXp + completionXp,
         answerDates: state.answerDates,
         answerHistory: state.answerHistory,
-        dailyChallengeCompletions: state.dailyChallengeCompletions,
         mockExamSessions: [...otherSessions, nextSession],
         streakFreezeState: state.streakFreezeState,
       };
@@ -639,7 +535,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         answerHistory: state.answerHistory,
-        dailyChallengeCompletions: state.dailyChallengeCompletions,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState,
       };
@@ -664,7 +559,6 @@ export const useProgressStore = create<ProgressState>((set) => ({
         totalXp: state.totalXp,
         answerDates: state.answerDates,
         answerHistory: state.answerHistory,
-        dailyChallengeCompletions: state.dailyChallengeCompletions,
         mockExamSessions: state.mockExamSessions,
         streakFreezeState: state.streakFreezeState,
       };
