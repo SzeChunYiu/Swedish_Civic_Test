@@ -213,7 +213,10 @@ function annotatedSourceClaimBlocks(html) {
 }
 
 function renderedFootnoteItems(html) {
-  return Array.from(html.matchAll(/<li id="eb-[^"]+-fn-\d+">[\s\S]*?<\/li>/g), (match) => match[0]);
+  return Array.from(
+    html.matchAll(/<li\b[^>]*\bid="eb-[^"]+-fn-\d+"[^>]*>[\s\S]*?<\/li>/g),
+    (match) => match[0],
+  );
 }
 
 function dataSourceKeys(block) {
@@ -236,6 +239,23 @@ function renderedSourceCounts(html) {
   const match = html.match(/\bdata-source-counts='([^']+)'/);
   assert.ok(match, 'ebook provenance badge should expose data-source-counts');
   return JSON.parse(match[1]);
+}
+
+function renderedFootnoteSourceCounts(html) {
+  const counts = {};
+  const footnoteMatches = Array.from(
+    html.matchAll(
+      /<li\b(?=[^>]*\bid="eb-[^"]+-fn-\d+")(?=[^>]*\bdata-source-key="([^"]+)")[^>]*>/g,
+    ),
+    (match) => match[1],
+  );
+  assert.ok(footnoteMatches.length > 0, 'ebook footnotes should expose data-source-key rows');
+  footnoteMatches.forEach((sourceKeys) => {
+    Array.from(new Set(sourceKeys.split(/\s+/).filter(Boolean))).forEach((key) => {
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+  return counts;
 }
 
 function sourceBlockContaining(blocks, pattern, label) {
@@ -541,6 +561,40 @@ test('static ebook source metadata keeps Vikings prose off governmentNato and so
     ),
     /\bmigrationsverketCitizenshipRules\b/,
   );
+});
+
+test('static ebook footnote links preserve route hashes and rendered source counts', () => {
+  const harness = createEbookHarness();
+
+  for (const chapterId of ['1', '7', '9', '12']) {
+    for (const lang of ['en', 'sv']) {
+      const html = renderChapter(harness, lang, chapterId);
+      const blocks = annotatedSourceClaimBlocks(html);
+      const blockCounts = sourceCountsFromBlocks(blocks);
+      const badgeCounts = renderedSourceCounts(html);
+      const footnoteCounts = renderedFootnoteSourceCounts(html);
+      const sourceRefPattern = new RegExp(
+        `href="#/ebook\\?c=${chapterId}&fn=eb-${chapterId}-${lang}-fn-\\d+"`,
+      );
+      const backlinkPattern = new RegExp(
+        `href="#/ebook\\?c=${chapterId}&fnref=eb-${chapterId}-${lang}-fn-\\d+"`,
+      );
+
+      assert.deepEqual(
+        badgeCounts,
+        blockCounts,
+        `chapter ${chapterId} ${lang} source-counts badge should match annotated prose`,
+      );
+      assert.deepEqual(
+        footnoteCounts,
+        badgeCounts,
+        `chapter ${chapterId} ${lang} footnote rows should match source-counts badge`,
+      );
+      assert.match(html, sourceRefPattern);
+      assert.match(html, backlinkPattern);
+      assert.doesNotMatch(html, /href="#ebook-fn(?:ref)?-/);
+    }
+  }
 });
 
 test('static ebook chapter 12 keeps practical test claims current and sourced', () => {

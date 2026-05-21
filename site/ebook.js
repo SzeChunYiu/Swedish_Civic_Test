@@ -259,7 +259,8 @@
     const items = footnotes
       .map((footnote) => {
         const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');
-        return `<li id="${footnote.id}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
+        const sourceKeys = Array.from(new Set(footnote.sourceKeys)).join(' ');
+        return `<li id="${footnote.id}" data-source-key="${sourceKeys}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
       })
       .join('');
     return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
