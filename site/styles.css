@@ -5566,3 +5566,170 @@ html[dir='rtl'] .lang-menu {
     width: 5px;
   }
 }
+
+/* ------------------------------------------------------------------
+   FAQ + CHAPTER BOX OPTIMIZATION ROUND
+   Turns the long chapter list and FAQ accordions into intentional study
+   surfaces while keeping the same HTML, copy, and accessibility semantics.
+------------------------------------------------------------------ */
+
+.list-quiet {
+  border-top: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.list-quiet li {
+  align-items: stretch;
+  background:
+    linear-gradient(135deg, rgba(254, 204, 0, 0.11), rgba(254, 204, 0, 0) 42%),
+    var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  gap: 18px;
+  isolation: isolate;
+  opacity: 1;
+  overflow: hidden;
+  padding: 18px 20px;
+  position: relative;
+  transform: translateZ(0);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.list-quiet li::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--card-rail);
+  opacity: 0.86;
+  z-index: -1;
+}
+
+.list-quiet li:hover {
+  border-color: rgba(0, 106, 167, 0.42);
+  box-shadow: var(--card-shadow-hover);
+  padding-left: 20px;
+  transform: translateY(-2px);
+}
+
+.list-quiet__n {
+  align-items: center;
+  background: var(--gold-soft);
+  border: 1px solid rgba(0, 106, 167, 0.18);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 34px;
+  justify-content: center;
+  min-width: 44px;
+}
+
+.list-quiet__copy > span:first-child {
+  line-height: 1.16;
+  text-wrap: balance;
+}
+
+.faq__list {
+  border-block: 0;
+  gap: 12px;
+}
+
+.faq__item {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  isolation: isolate;
+  overflow: hidden;
+  padding: 20px;
+  position: relative;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.faq__item:first-child {
+  border-top: 1px solid var(--card-border);
+}
+
+.faq__item::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--card-rail);
+  opacity: 0.78;
+  z-index: -1;
+}
+
+.faq__item:hover,
+.faq__item[open] {
+  border-color: rgba(0, 106, 167, 0.42);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.faq__item:hover {
+  transform: translateY(-2px);
+}
+
+.faq__item summary::before {
+  box-shadow: 0 8px 18px -10px rgba(0, 58, 92, 0.72);
+}
+
+.faq__item p {
+  border-left: 3px solid rgba(254, 204, 0, 0.7);
+  margin-left: 54px;
+  padding-left: 16px;
+}
+
+:root[data-theme='dark'] .list-quiet li,
+:root[data-theme='dark'] .faq__item {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .list-quiet__n {
+  background: rgba(254, 204, 0, 0.12);
+  border-color: rgba(254, 204, 0, 0.25);
+  color: var(--gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-quiet li,
+  .faq__item {
+    transition: none;
+  }
+  .list-quiet li:hover,
+  .faq__item:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .list-quiet li,
+  .faq__item {
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .list-quiet li:hover {
+    padding-left: 16px;
+  }
+  .faq__item summary {
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 19px;
+  }
+  .faq__item summary::before {
+    height: 32px;
+    width: 32px;
+  }
+  .faq__item p {
+    margin-left: 0;
+    padding-left: 14px;
+  }
+}
