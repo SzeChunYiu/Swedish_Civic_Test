@@ -51,6 +51,18 @@ export default function SearchScreen() {
       router.replace('/search');
     }
   };
+  const handleSubmitSearch = () => {
+    const submittedQuery = query.trim();
+
+    if (submittedQuery.length === 0) {
+      handleClearSearch();
+      return;
+    }
+
+    setQuery(submittedQuery);
+    previousRouteQueryRef.current = submittedQuery;
+    router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);
+  };
   const trimmedQuery = query.trim();
   const filteredTerms = useMemo(
     () =>
@@ -95,6 +107,7 @@ export default function SearchScreen() {
           autoCorrect={false}
           clearButtonMode="while-editing"
           onChangeText={setQuery}
+          onSubmitEditing={handleSubmitSearch}
           placeholder={copy.searchPlaceholder}
           placeholderTextColor={colors.textPlaceholder}
           returnKeyType="search"

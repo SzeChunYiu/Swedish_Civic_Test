@@ -163,6 +163,18 @@ function assertSearchRouteQueryHydration(source) {
     [/setQuery\(''\);/, 'clear search state reset'],
     [/router\.replace\('\/search'\);/, 'clear search URL replacement'],
     [/onPress=\{handleClearSearch\}/, 'clear search uses URL-aware handler'],
+    [/const handleSubmitSearch = \(\) => \{/, 'submit search handler'],
+    [/const submittedQuery = query\.trim\(\);/, 'submit trims typed query'],
+    [
+      /if \(submittedQuery\.length === 0\) \{[\s\S]*handleClearSearch\(\);/,
+      'empty submit clears URL state',
+    ],
+    [/setQuery\(submittedQuery\);/, 'submitted query normalizes visible input'],
+    [
+      /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
+      'non-empty submit writes q URL param',
+    ],
+    [/onSubmitEditing=\{handleSubmitSearch\}/, 'search return key submits query'],
     [/value=\{query\}/, 'hydrated query reaches visible input'],
     [/const trimmedQuery = query\.trim\(\);/, 'hydrated query feeds filtering'],
   ];
@@ -197,7 +209,7 @@ test('validate-content reports Search route query hydration parity', () => {
     },
   );
 
-  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*19/);
+  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*25/);
   assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
 });
 
@@ -239,6 +251,29 @@ test('Search route hydration rejects leaving clear search local-only', () => {
   assert.throws(
     () => assertSearchRouteQueryHydration(mutatedSource),
     /clear search URL replacement/,
+  );
+});
+
+test('Search route hydration rejects missing explicit submit URL state', () => {
+  const mutatedSource = readSearchRouteSource()
+    .replace(
+      /  const handleSubmitSearch = \(\) => \{[\s\S]*?  \};\n  const trimmedQuery = query\.trim\(\);\n/,
+      '  const trimmedQuery = query.trim();\n',
+    )
+    .replace('          onSubmitEditing={handleSubmitSearch}\n', '');
+
+  assert.throws(() => assertSearchRouteQueryHydration(mutatedSource), /submit search handler/);
+});
+
+test('Search route hydration rejects local-only submitted query drift', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    'router.replace(`/search?q=${encodeURIComponent(submittedQuery)}`);',
+    '',
+  );
+
+  assert.throws(
+    () => assertSearchRouteQueryHydration(mutatedSource),
+    /non-empty submit writes q URL param/,
   );
 });
 
