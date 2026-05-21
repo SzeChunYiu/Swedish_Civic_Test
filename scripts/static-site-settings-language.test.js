@@ -67,16 +67,22 @@ function createRenderContext({
   reducedMotion = false,
   storedMotion,
   storedTextSize,
+  storedPalette,
+  storedTheme,
+  systemDark = false,
 }) {
   const elements = new Map();
   const listeners = { document: [], window: [] };
   const rootAttributes = new Map();
+  const rootStyleProperties = new Map();
   const storage = new Map([
     ['smt_lang', language],
     ['smt_mock_cfg', JSON.stringify({ count: 5, minutes: 30, chapters: [1] })],
   ]);
   if (storedMotion !== undefined) storage.set('smt_motion', storedMotion);
   if (storedTextSize !== undefined) storage.set('smt_textsize', storedTextSize);
+  if (storedPalette !== undefined) storage.set('smt_palette', storedPalette);
+  if (storedTheme !== undefined) storage.set('smt_theme', storedTheme);
   let reloadCount = 0;
 
   function createSegmentButton(value) {
@@ -195,7 +201,11 @@ function createRenderContext({
         getAttribute(name) {
           return rootAttributes.get(name) ?? null;
         },
-        style: { setProperty() {} },
+        style: {
+          setProperty(name, value) {
+            rootStyleProperties.set(name, String(value));
+          },
+        },
       },
       createElement() {
         return {
@@ -232,10 +242,18 @@ function createRenderContext({
     },
     window: {},
     clearInterval() {},
-    matchMedia: (query) => ({
-      matches: query === '(prefers-reduced-motion: reduce)' ? reducedMotion : false,
-      addEventListener() {},
-    }),
+    matchMedia: (query) => {
+      const matches =
+        query === '(prefers-reduced-motion: reduce)'
+          ? reducedMotion
+          : query === '(prefers-color-scheme: dark)'
+            ? systemDark
+            : false;
+      return {
+        matches,
+        addEventListener() {},
+      };
+    },
     requestAnimationFrame(handler) {
       if (typeof handler === 'function') handler();
       return 1;
@@ -323,6 +341,9 @@ function createRenderContext({
     },
     rootFontSize() {
       return sandbox.document.documentElement.style.fontSize;
+    },
+    rootStyleProperty(name) {
+      return rootStyleProperties.get(name) ?? null;
     },
     sandbox,
     settingLanguageValues() {
@@ -503,6 +524,45 @@ test('Settings applies prefers-reduced-motion on first load without claiming a u
 
   assert.equal(explicitOnContext.rootAttribute('data-motion'), 'reduce');
   assert.equal(explicitOnContext.storage.get('smt_motion'), 'reduce');
+});
+
+test('Settings normalizes unsupported theme and palette values before persisting them', () => {
+  const context = createRenderContext({
+    hash: '#/',
+    language: 'en',
+    storedPalette: 'unknown',
+    storedTheme: 'sepia',
+    systemDark: true,
+  });
+  loadScripts(context);
+
+  context.fireWindowEvent('DOMContentLoaded');
+
+  assert.equal(context.rootAttribute('data-theme'), 'dark');
+  assert.equal(context.rootAttribute('data-theme-pref'), 'auto');
+  assert.equal(context.storage.get('smt_theme'), 'auto');
+  assert.equal(context.storage.get('smt_palette'), 'flag');
+  assert.equal(context.rootStyleProperty('--blue'), '#006aa7');
+  assert.equal(context.rootStyleProperty('--gold'), '#fecc00');
+
+  vm.runInContext('smtApplyTheme("light"); smtApplyPalette("falu");', context.sandbox, {
+    timeout: 3000,
+  });
+  assert.equal(context.rootAttribute('data-theme'), 'light');
+  assert.equal(context.rootAttribute('data-theme-pref'), 'light');
+  assert.equal(context.storage.get('smt_theme'), 'light');
+  assert.equal(context.storage.get('smt_palette'), 'falu');
+  assert.equal(context.rootStyleProperty('--blue'), '#8c1a2b');
+
+  vm.runInContext('smtApplyTheme("sepia"); smtApplyPalette("unknown");', context.sandbox, {
+    timeout: 3000,
+  });
+  assert.equal(context.rootAttribute('data-theme'), 'dark');
+  assert.equal(context.rootAttribute('data-theme-pref'), 'auto');
+  assert.equal(context.storage.get('smt_theme'), 'auto');
+  assert.equal(context.storage.get('smt_palette'), 'flag');
+  assert.equal(context.rootStyleProperty('--blue'), '#006aa7');
+  assert.equal(context.rootStyleProperty('--gold'), '#fecc00');
 });
 
 const mockOfficialPassLineClaimPatterns = [
