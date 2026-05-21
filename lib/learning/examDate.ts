@@ -18,6 +18,38 @@ export function daysUntil(target: Date, now: Date = new Date()): number {
   return Math.max(0, Math.ceil(diff / msPerDay));
 }
 
+export type CitizenshipTimelineCountdownPhase = 'rules' | 'civicKnowledgeTest';
+
+export type CitizenshipTimelineCountdown = {
+  daysRemaining: number;
+  phase: CitizenshipTimelineCountdownPhase;
+  targetDate: Date;
+};
+
+export function getCitizenshipTimelineCountdown(
+  now: Date = new Date(),
+): CitizenshipTimelineCountdown | null {
+  const rulesDaysRemaining = daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE, now);
+  if (rulesDaysRemaining > 0) {
+    return {
+      daysRemaining: rulesDaysRemaining,
+      phase: 'rules',
+      targetDate: CITIZENSHIP_RULES_EFFECTIVE_DATE,
+    };
+  }
+
+  const civicTestDaysRemaining = daysUntil(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, now);
+  if (civicTestDaysRemaining > 0) {
+    return {
+      daysRemaining: civicTestDaysRemaining,
+      phase: 'civicKnowledgeTest',
+      targetDate: CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
+    };
+  }
+
+  return null;
+}
+
 export function formatExamDate(target: Date, language: 'sv' | 'en'): string {
   return target.toLocaleDateString(language === 'sv' ? 'sv-SE' : 'en-GB', {
     day: 'numeric',
