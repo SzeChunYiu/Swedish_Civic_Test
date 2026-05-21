@@ -1,5 +1,33 @@
 import type { PracticeQuestion, QuestionProvenance } from '../../types/content';
 
+const DEFAULT_PROVENANCE: QuestionProvenance = 'uhr';
+const SUPPORTED_PROVENANCE = new Set<QuestionProvenance>(['uhr', 'derived', 'editorial']);
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isReadonlyStringArray(value: unknown): value is readonly string[] {
+  return Array.isArray(value) && value.every((tag) => typeof tag === 'string');
+}
+
+function questionTags(question: unknown): readonly string[] {
+  if (!isRecord(question)) return [];
+  const tags = question.tags;
+  return isReadonlyStringArray(tags) ? tags : [];
+}
+
+function normalizeProvenance(provenance: unknown): QuestionProvenance {
+  return typeof provenance === 'string' &&
+    SUPPORTED_PROVENANCE.has(provenance as QuestionProvenance)
+    ? (provenance as QuestionProvenance)
+    : DEFAULT_PROVENANCE;
+}
+
+function normalizeProvenanceCopyLanguage(language: unknown): ProvenanceCopyLanguage {
+  return language === 'en' ? 'en' : 'sv';
+}
+
 /**
  * Derive a question's provenance from its tags — see types/content.ts.
  *
@@ -7,29 +35,30 @@ import type { PracticeQuestion, QuestionProvenance } from '../../types/content';
  * question record; deriving from tags keeps the data layer simple and
  * means new editorial/derived questions only need a tag.
  */
-export function getQuestionProvenance(question: { tags?: readonly string[] }): QuestionProvenance {
-  const tags = question.tags ?? [];
+export function getQuestionProvenance(question: unknown): QuestionProvenance {
+  const tags = questionTags(question);
   if (tags.includes('editorial')) return 'editorial';
   if (tags.includes('published-variant')) return 'derived';
-  return 'uhr';
+  return DEFAULT_PROVENANCE;
 }
 
 /** True when a question is based on UHR's *Sverige i fokus*. */
-export function isUhrQuestion(question: { tags?: readonly string[] }): boolean {
-  return getQuestionProvenance(question) === 'uhr';
+export function isUhrQuestion(question: unknown): boolean {
+  return getQuestionProvenance(question) === DEFAULT_PROVENANCE;
 }
 
 /** True for derived or editorial — anything supplementary to UHR. */
-export function isSupplementaryQuestion(question: { tags?: readonly string[] }): boolean {
-  return getQuestionProvenance(question) !== 'uhr';
+export function isSupplementaryQuestion(question: unknown): boolean {
+  return getQuestionProvenance(question) !== DEFAULT_PROVENANCE;
 }
 
 /** Filter a question pool by provenance preference. */
 export function filterQuestionsByProvenance<T extends { tags?: readonly string[] }>(
-  questions: readonly T[],
-  options: { includeSupplementary: boolean },
+  questions: readonly T[] | null | undefined,
+  options?: { includeSupplementary?: boolean } | null,
 ): T[] {
-  if (options.includeSupplementary) return [...questions];
+  if (!Array.isArray(questions)) return [];
+  if (options?.includeSupplementary === true) return [...questions];
   return questions.filter(isUhrQuestion);
 }
 
@@ -64,20 +93,16 @@ export const provenanceCopy: Record<
 
 export type ProvenanceCopyLanguage = 'sv' | 'en';
 
-export function getProvenanceLabel(
-  provenance: QuestionProvenance,
-  language: ProvenanceCopyLanguage,
-): string {
-  const entry = provenanceCopy[provenance];
-  return language === 'sv' ? entry.labelSv : entry.labelEn;
+export function getProvenanceLabel(provenance: unknown, language: unknown): string {
+  const entry = provenanceCopy[normalizeProvenance(provenance)];
+  return normalizeProvenanceCopyLanguage(language) === 'sv' ? entry.labelSv : entry.labelEn;
 }
 
-export function getProvenanceDescription(
-  provenance: QuestionProvenance,
-  language: ProvenanceCopyLanguage,
-): string {
-  const entry = provenanceCopy[provenance];
-  return language === 'sv' ? entry.descriptionSv : entry.descriptionEn;
+export function getProvenanceDescription(provenance: unknown, language: unknown): string {
+  const entry = provenanceCopy[normalizeProvenance(provenance)];
+  return normalizeProvenanceCopyLanguage(language) === 'sv'
+    ? entry.descriptionSv
+    : entry.descriptionEn;
 }
 
 /** Used by PracticeQuestion-typed inputs; thin convenience over the generic helper. */

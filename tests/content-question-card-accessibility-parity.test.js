@@ -16,6 +16,20 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseQuestionProvenanceRuntimeSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-provenance-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 test('quiz QuestionCard keeps question text and accessibility summary in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
@@ -68,30 +82,24 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
 });
 
-test('web aria false-state e2e covers localized ProvenanceBadge source-note states', () => {
-  const badgeSource = fs.readFileSync(
+test('ProvenanceBadge keeps guarded source-note copy and language fallback', () => {
+  const summary = parseQuestionProvenanceRuntimeSummary();
+  const source = fs.readFileSync(
     path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
     'utf8',
   );
-  const e2eSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
+  const provenanceSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/content/provenance.ts'),
     'utf8',
   );
 
-  assert.match(badgeSource, /accessibilityPrefix: 'Källtyp'/);
-  assert.match(badgeSource, /sourceNotePrefix: 'Källanteckning'/);
-  assert.match(badgeSource, /accessibilityPrefix: 'Provenance'/);
-  assert.match(badgeSource, /sourceNotePrefix: 'Source note'/);
-  assert.match(e2eSource, /page\.getByRole\('button', \{ name: labels\.provenanceButtonName \}\)/);
-  assert.match(e2eSource, /page\.getByText\(new RegExp\(`\^\$\{labels\.sourceNotePrefix\}:`\)\)/);
-  assert.match(
-    e2eSource,
-    /language: 'en'[\s\S]*provenanceButtonName: \/Provenance: UHR source\\\. Source note:\/[\s\S]*sourceNotePrefix: 'Source note'/,
-  );
-  assert.match(
-    e2eSource,
-    /language: 'sv'[\s\S]*provenanceButtonName: \/Källtyp: UHR-källa\\\. Källanteckning:\/[\s\S]*sourceNotePrefix: 'Källanteckning'/,
-  );
+  assert.equal(summary.questionProvenanceRuntimeCasesValidated, 13);
+  assert.equal(summary.questionProvenanceRuntimeParityValidated, true);
+  assert.match(source, /const badgeLanguage = language === 'en' \? 'en' : 'sv';/);
+  assert.match(source, /const copy = provenanceBadgeCopy\[badgeLanguage\];/);
+  assert.match(source, /getProvenanceDescription\(provenance, badgeLanguage\)/);
+  assert.match(provenanceSource, /function normalizeProvenance\(provenance: unknown\)/);
+  assert.match(provenanceSource, /function normalizeProvenanceCopyLanguage\(language: unknown\)/);
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {

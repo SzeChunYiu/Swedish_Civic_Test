@@ -1,7 +1,9 @@
 const assert = require('node:assert/strict');
+const Module = require('node:module');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 const vm = require('node:vm');
 const {
   assertNoUnsupportedStaticTeamCredentialClaims,
@@ -15,6 +17,23 @@ const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function loadTs(relativePath) {
+  const filename = path.join(repoRoot, relativePath);
+  const source = fs.readFileSync(filename, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      esModuleInterop: true,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  });
+  const mod = new Module(filename);
+  mod.filename = filename;
+  mod.paths = Module._nodeModulePaths(path.dirname(filename));
+  mod._compile(output.outputText, filename);
+  return mod.exports;
 }
 
 function uniqueSorted(values) {
@@ -409,6 +428,47 @@ test('static question bank exports visible question provenance', () => {
   assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
   assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
+});
+
+test('question provenance helpers fail closed for invalid tags and source-note copy', () => {
+  const {
+    filterQuestionsByProvenance,
+    getProvenanceDescription,
+    getProvenanceLabel,
+    getQuestionProvenance,
+  } = loadTs('lib/content/provenance.ts');
+  const pool = [
+    { id: 'uhr', tags: ['chapter-1'] },
+    { id: 'derived', tags: ['published-variant'] },
+    { id: 'editorial', tags: ['editorial'] },
+  ];
+
+  assert.equal(getQuestionProvenance(null), 'uhr');
+  assert.equal(getQuestionProvenance(undefined), 'uhr');
+  assert.equal(getQuestionProvenance({ tags: 'editorial' }), 'uhr');
+  assert.equal(getQuestionProvenance({ tags: { includes: () => true } }), 'uhr');
+  assert.equal(getQuestionProvenance({ tags: ['editorial', 1] }), 'uhr');
+  assert.equal(getQuestionProvenance({ tags: ['editorial'] }), 'editorial');
+  assert.equal(getQuestionProvenance({ tags: ['published-variant'] }), 'derived');
+  assert.deepEqual(filterQuestionsByProvenance(null, { includeSupplementary: false }), []);
+  assert.deepEqual(
+    filterQuestionsByProvenance(pool, { includeSupplementary: 'yes' }).map(
+      (question) => question.id,
+    ),
+    ['uhr'],
+  );
+  assert.deepEqual(
+    filterQuestionsByProvenance(pool, { includeSupplementary: true }).map(
+      (question) => question.id,
+    ),
+    ['uhr', 'derived', 'editorial'],
+  );
+  assert.equal(getProvenanceLabel('banana', 'sv'), 'UHR');
+  assert.equal(
+    getProvenanceDescription(null, 'en'),
+    "Based on UHR's study material Sverige i fokus.",
+  );
+  assert.equal(getProvenanceLabel('derived', 'banana'), 'Tillägg');
 });
 
 test('static study-buddy copy keeps complete Swedish and English line pools', () => {
