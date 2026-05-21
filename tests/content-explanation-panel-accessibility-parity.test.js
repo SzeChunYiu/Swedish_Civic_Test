@@ -7,10 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-explanation-panel-accessibility'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -25,8 +28,10 @@ test('quiz ExplanationPanel keeps selected explanation text in accessibility par
 
   assert.equal(summary.explanationPanelAccessibilityRulesValidated, 10);
   assert.equal(summary.explanationPanelAccessibilityParityValidated, true);
-  assert.match(source, /const localizedExplanation = explanationText\?\.\[language\]/);
-  assert.match(source, /language === 'en' && explanationEn \? explanationEn/);
+  assert.match(
+    source,
+    /const explanation = getQuestionExplanationText\([\s\S]*explanationText[\s\S]*copy\.fallback/,
+  );
   assert.match(source, /const explanationPanelCopy: Record<AppLanguage, ExplanationPanelCopy>/);
   assert.match(source, /Förklaring saknas för den här frågan\./);
   assert.match(source, /Explanation unavailable for this question\./);
@@ -57,6 +62,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-explanation-panel-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
