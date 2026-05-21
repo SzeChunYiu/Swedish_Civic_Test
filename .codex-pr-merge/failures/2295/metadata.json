@@ -1,0 +1,33 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Adds a runtime-safe review question id guard before creating or grading review cards.\n- Drops persisted cards keyed by unsafe ids during hydration.\n- Uses recoverable JSON parsing so corrupt persisted review JSON records the same persistence warning path as storage read/write failures.\n- Tightens daily review cap handling to require a strict Pro boolean and finite non-negative caps/usages.\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/v1-1-review-store.test.js tests/content-spaced-repetition-schema.test.js --test-name-pattern \"review store|questionId|unsafe key|__proto__|constructor|prototype|ensureCard|grade\"`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "lib/storage/reviewStore.ts",
+      "additions": 31,
+      "deletions": 12,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/review-store-question-id-1779354759-3855342",
+  "headRefOid": "9dec17bfa11cb3fb93b1e8c64a7607f30b0c6eae",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2295,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:16:58Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217006732/job/77141871788",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:15:58Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Review store: guard runtime question ids",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2295"
+}

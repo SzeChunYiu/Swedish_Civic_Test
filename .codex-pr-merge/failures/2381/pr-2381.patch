@@ -1,0 +1,1354 @@
+From a624a9f2a6d3e7018998986753479504a04380ec Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 14:19:37 +0200
+Subject: [PATCH] setup: centralize validate-content focus routes
+
+---
+ scripts/validate-content-focus-registry.js | 518 +++++----------------
+ scripts/validate-content.js                | 269 +++++------
+ tests/content-test-script-routing.test.js  | 112 ++++-
+ 3 files changed, 341 insertions(+), 558 deletions(-)
+
+diff --git a/scripts/validate-content-focus-registry.js b/scripts/validate-content-focus-registry.js
+index 836be3503..dbc6e8a06 100644
+--- a/scripts/validate-content-focus-registry.js
++++ b/scripts/validate-content-focus-registry.js
+@@ -1,24 +1,6 @@
+ const processArgs = () => process.argv.slice(2);
+ 
+ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+-  {
+-    id: 'authoredSourceParity',
+-    flags: ['--focus-authored-source-parity'],
+-    summaryKeys: [
+-      'authoredSourceQuestionsValidated',
+-      'authoredSourcePartitionQuestionsValidated',
+-      'sourcePublicationParityValidated',
+-      'sourceQuestions',
+-    ],
+-  },
+-  {
+-    id: 'generatedWhyReasonStems',
+-    flags: ['--focus-generated-why-reason-stems'],
+-    summaryKeys: [
+-      'generatedWhyReasonTargetStemsValidated',
+-      'generatedWhyReasonTargetStemParityValidated',
+-    ],
+-  },
+   {
+     id: 'staticV11ReadinessCopy',
+     flags: ['--focus-static-v11-readiness-copy'],
+@@ -32,32 +14,26 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+     ],
+   },
+   {
+-    id: 'rewardedExamSchema',
+-    flags: ['--focus-rewarded-exam-schema'],
++    id: 'questionCardAccessibility',
++    flags: ['--focus-question-card-accessibility'],
+     summaryKeys: [
+-      'rewardedAdTypeUnionsValidated',
+-      'rewardedAdTypeInterfacesValidated',
+-      'rewardedAdTypeSchemaParityValidated',
+-      'mockExamAccessTypeUnionsValidated',
+-      'mockExamAccessTypeInterfacesValidated',
+-      'mockExamAccessTypeSchemaParityValidated',
++      'questionCardAccessibilityRulesValidated',
++      'questionCardAccessibilityParityValidated',
+     ],
+   },
+   {
+-    id: 'mobileAdsConsent',
+-    flags: ['--focus-mobile-ads-consent'],
++    id: 'chapterCardAccessibility',
++    flags: ['--focus-chapter-card-accessibility'],
+     summaryKeys: [
+-      'adConsentTypeUnionsValidated',
+-      'adConsentTypeInterfacesValidated',
+-      'adConsentTypeSchemaParityValidated',
+-      'mobileAdsConsentTypeInterfacesValidated',
+-      'mobileAdsConsentTypeSchemaParityValidated',
+-      'mobileAdsConsentRuntimeCasesValidated',
+-      'mobileAdsConsentRuntimeParityValidated',
+-      'mobileAdsConsentHookCasesValidated',
+-      'mobileAdsConsentHookParityValidated',
++      'chapterCardAccessibilityRulesValidated',
++      'chapterCardAccessibilityParityValidated',
+     ],
+   },
++  {
++    id: 'questionReportLinkParity',
++    flags: ['--focus-question-report-link-parity'],
++    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
++  },
+   {
+     id: 'nativeQuizCopy',
+     flags: ['--focus-native-quiz-copy'],
+@@ -73,31 +49,34 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+     ],
+   },
+   {
+-    id: 'questionCardAccessibility',
+-    flags: ['--focus-question-card-accessibility'],
++    id: 'staticHeadMetadata',
++    flags: ['--focus-static-head-metadata'],
+     summaryKeys: [
+-      'questionCardAccessibilityRulesValidated',
+-      'questionCardAccessibilityParityValidated',
++      'staticHeadMetadataTitleValidated',
++      'staticHeadMetadataDescriptionValidated',
++      'staticHeadMetadataOutcomeClaimPatternsValidated',
++      'staticHeadMetadataParityValidated',
++      'staticValidationSyntaxFilesValidated',
++      'staticValidationImportChecksValidated',
++      'staticValidationSyntaxGateValidated',
+     ],
+   },
+   {
+-    id: 'legalRouteParity',
+-    flags: ['--focus-legal-route-parity'],
++    id: 'dashboardProgressSnapshot',
++    flags: ['--focus-dashboard-progress-snapshot'],
+     summaryKeys: [
+-      'legalRouteHeadersValidated',
+-      'legalRouteHeaderParityValidated',
+-      'swedishPrivacyStreakCopyNaturalnessValidated',
+-      'legalSwedishEnglishTokenGuardValidated',
+-      'legalSwedishEnglishTokenGuardParityValidated',
++      'dashboardProgressSnapshotCasesValidated',
++      'dashboardProgressSnapshotParityValidated',
+     ],
+   },
+   {
+-    id: 'legalSectionRendering',
+-    flags: ['--focus-legal-section-rendering'],
++    id: 'aboutTheTestRouteCopy',
++    flags: ['--focus-about-the-test-route-copy'],
+     summaryKeys: [
+-      'legalSectionRenderingTestsRoutedValidated',
+-      'legalSectionRenderingCasesValidated',
+-      'legalSectionRenderingParityValidated',
++      'aboutTheTestRouteCopyLabelsValidated',
++      'aboutTheTestRouteCopyParityValidated',
++      'aboutTheTestOfficialSourceUrlsValidated',
++      'aboutTheTestOfficialSourceRetrievedDateValidated',
+     ],
+   },
+   {
+@@ -106,26 +85,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
+   },
+   {
+-    id: 'mistakesRouteCopy',
+-    flags: ['--focus-mistakes-route-copy'],
+-    summaryKeys: ['mistakesRouteCopyLabelsValidated', 'mistakesRouteCopyParityValidated'],
+-  },
+-  {
+-    id: 'staticHeadMetadata',
+-    flags: ['--focus-static-head-metadata'],
+-    summaryKeys: [
+-      'staticHeadMetadataTitleValidated',
+-      'staticHeadMetadataDescriptionValidated',
+-      'staticHeadMetadataOutcomeClaimPatternsValidated',
+-      'staticHeadMetadataParityValidated',
+-      'staticValidationSyntaxFilesValidated',
+-      'staticValidationImportChecksValidated',
+-      'staticValidationSyntaxGateValidated',
+-    ],
+-  },
+-  {
+-    id: 'settingsStore',
+-    flags: ['--focus-settings-store', '--focus-settings-parity'],
++    id: 'settingsRoute',
++    flags: ['--focus-settings-route'],
+     summaryKeys: [
+       'settingsRouteHeadersValidated',
+       'settingsRouteHeaderParityValidated',
+@@ -133,69 +94,65 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+       'settingsRouteCopyParityValidated',
+       'settingsRouteScrollRulesValidated',
+       'settingsRouteScrollParityValidated',
+-      'settingsStoreFieldsValidated',
+-      'settingsStoreSchemaParityValidated',
+-      'settingsDailyGoalOptionsValidated',
+-      'settingsDailyGoalParityValidated',
+-      'settingsAudioLabelsValidated',
+-      'settingsAudioParityValidated',
+     ],
+   },
+   {
+-    id: 'persistenceWarningScope',
+-    flags: ['--focus-persistence-warning-scope'],
++    id: 'contentExecCwd',
++    flags: ['--focus-content-exec-cwd'],
+     summaryKeys: [
+-      'persistenceWarningScopeCasesValidated',
+-      'persistenceWarningScopeParityValidated',
++      'contentTestValidateContentExecCallsValidated',
++      'contentTestValidateContentExecCwdPinnedValidated',
++      'contentTestValidateContentExecCwdParityValidated',
+     ],
+   },
+   {
+-    id: 'homeRouteCopy',
+-    flags: ['--focus-home-route-copy'],
++    id: 'generatedTrueFalseNaturalness',
++    flags: ['--focus-generated-true-false-naturalness'],
+     summaryKeys: [
+-      'staticValidationSyntaxFilesValidated',
+-      'staticValidationImportChecksValidated',
+-      'staticValidationSyntaxGateValidated',
+-      'homeRouteHeadersValidated',
+-      'homeRouteHeaderParityValidated',
+-      'homeRouteCopyLabelsValidated',
+-      'homeRouteCopyParityValidated',
+-      'homeRouteInternalBenchmarkCopyValidated',
+-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
+-      'countdownBannerHomeMountRulesValidated',
+-      'countdownBannerHomeMountParityValidated',
++      'generatedTrueFalseNaturalnessFocusValidated',
++      'questionGeneratedTrueFalseNaturalnessValidated',
+     ],
+   },
+   {
+-    id: 'countdownBanner',
+-    flags: ['--focus-countdown-banner'],
+-    summaryKeys: [
+-      'citizenshipRulesEffectiveDateValidated',
+-      'civicKnowledgeTestFirstSittingDateValidated',
+-      'civicKnowledgeTestDeadlineDateValidated',
+-      'citizenshipTimelineSourceUrlsValidated',
+-      'citizenshipTimelineDateParityValidated',
+-      'countdownBannerTimelineCopyParityValidated',
+-      'countdownBannerHomeMountRulesValidated',
+-      'countdownBannerHomeMountParityValidated',
+-    ],
++    id: 'masteryRules',
++    flags: ['--focus-mastery-rules'],
++    summaryKeys: ['masteryRulesValidated', 'masteryRulesParityValidated'],
++  },
++  {
++    id: 'weakChapterRules',
++    flags: ['--focus-weak-chapter-rules'],
++    summaryKeys: ['weakChapterRulesValidated', 'weakChapterRulesParityValidated'],
++  },
++  {
++    id: 'practiceScoringParity',
++    flags: ['--focus-practice-scoring-parity'],
++    summaryKeys: ['practiceScoringRulesValidated', 'practiceScoringRulesParityValidated'],
+   },
+   {
+-    id: 'answerOptionAccessibility',
+-    flags: ['--focus-answer-option-accessibility'],
++    id: 'spacedRepetitionSchema',
++    flags: ['--focus-spaced-repetition-schema'],
+     summaryKeys: [
+-      'answerOptionAccessibilityRulesValidated',
+-      'answerOptionAccessibilityParityValidated',
++      'spacedRepetitionIntervalsValidated',
++      'spacedRepetitionRuntimeParityValidated',
++      'spacedRepetitionRuntimeInputCasesValidated',
++      'spacedRepetitionRuntimeInputParityValidated',
+     ],
+   },
+   {
+-    id: 'homeSvMistakeReviewCopy',
+-    flags: ['--focus-home-sv-mistake-review-copy'],
++    id: 'mobileAdsConsentHook',
++    flags: ['--focus-mobile-ads-consent-hook'],
++    summaryKeys: ['mobileAdsConsentHookCasesValidated', 'mobileAdsConsentHookParityValidated'],
++  },
++  {
++    id: 'settingsStore',
++    flags: ['--focus-settings-store'],
+     summaryKeys: [
+-      'staticValidationSyntaxFilesValidated',
+-      'staticValidationImportChecksValidated',
+-      'staticValidationSyntaxGateValidated',
+-      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
++      'settingsStoreFieldsValidated',
++      'settingsStoreSchemaParityValidated',
++      'settingsDailyGoalOptionsValidated',
++      'settingsDailyGoalParityValidated',
++      'settingsAudioLabelsValidated',
++      'settingsAudioParityValidated',
+     ],
+   },
+   {
+@@ -212,253 +169,47 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+     ],
+   },
+   {
+-    id: 'xpRules',
+-    flags: ['--focus-xp-rules'],
+-    summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],
+-  },
+-  {
+-    id: 'badgeXpRuntime',
+-    flags: ['--focus-badge-xp-runtime'],
+-    summaryKeys: [
+-      'badgesValidated',
+-      'badgeMilestoneParityValidated',
+-      'badgeRuntimeInputCasesValidated',
+-      'badgeRuntimeInputParityValidated',
+-      'xpRulesValidated',
+-      'xpRulesParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'streakRules',
+-    flags: ['--focus-streak-rules'],
+-    summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
+-  },
+-  {
+-    id: 'readinessAdapterRules',
+-    flags: ['--focus-readiness-adapter-rules'],
+-    summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
+-  },
+-  {
+-    id: 'adaptivePracticeSize',
+-    flags: ['--focus-adaptive-practice-size'],
+-    summaryKeys: [
+-      'adaptivePracticeSizeRuntimeCasesValidated',
+-      'adaptivePracticeSizeRuntimeParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'adaptivePracticeDifficulty',
+-    flags: ['--focus-adaptive-practice-difficulty'],
++    id: 'contentTypeSchemaParity',
++    flags: ['--focus-content-type-schema-parity'],
+     summaryKeys: [
+-      'adaptivePracticeDifficultyRuntimeCasesValidated',
+-      'adaptivePracticeDifficultyRuntimeParityValidated',
++      'contentTypeUnionsValidated',
++      'contentTypeInterfacesValidated',
++      'contentTypeSchemaParityValidated',
+     ],
+   },
+-  {
+-    id: 'readinessScoreRules',
+-    flags: ['--focus-readiness-score-rules'],
+-    summaryKeys: ['readinessScoreRulesValidated', 'readinessScoreRuntimeParityValidated'],
+-  },
+-  {
+-    id: 'questionReportLinkParity',
+-    flags: ['--focus-question-report-link-parity'],
+-    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
+-  },
+-  {
+-    id: 'religiousFreedomParallelism',
+-    flags: ['--focus-religious-freedom-parallelism'],
+-    summaryKeys: ['publishedQuestions', 'questionReligiousFreedomParallelismValidated'],
+-  },
+   {
+     id: 'answerFeedbackParity',
+     flags: ['--focus-answer-feedback-parity'],
+     summaryKeys: [
+-      'publishedQuestions',
+       'answerValidationTypeUnionsValidated',
+       'answerValidationTypeInterfacesValidated',
+       'answerValidationTypeSchemaParityValidated',
+       'answerFeedbackQuestionsValidated',
+       'answerFeedbackOptionsValidated',
+       'answerFeedbackRuntimeParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'aboutTheTestRouteCopy',
+-    flags: ['--focus-about-the-test-route-copy'],
+-    summaryKeys: [
+-      'aboutTheTestRouteCopyLabelsValidated',
+-      'aboutTheTestRouteCopyParityValidated',
+-      'aboutTheTestOfficialSourceUrlsValidated',
+-      'aboutTheTestOfficialSourceRetrievedDateValidated',
+-      'aboutTheTestSeenEffectRulesValidated',
+-      'aboutTheTestSeenEffectParityValidated',
+-      'citizenshipRequirementsLimitedSeatCopyValidated',
+-      'citizenshipRequirementsChecklistPersistenceRulesValidated',
+-      'citizenshipRequirementsChecklistPersistenceParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'onboardingRouteCopy',
+-    flags: ['--focus-onboarding-route-copy'],
+-    summaryKeys: [
+-      'onboardingRouteHeadersValidated',
+-      'onboardingRouteHeaderParityValidated',
+-      'onboardingRouteCopyLabelsValidated',
+-      'onboardingRouteCopyParityValidated',
+-      'firstRunAboutModalSuppressedRoutesValidated',
+-      'firstRunAboutModalSuppressionParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'mockExamRuntimeParity',
+-    flags: ['--focus-mock-exam-runtime-parity'],
+-    summaryKeys: [
+-      'mockExamConfigTypeFieldsValidated',
+-      'mockExamConfigTypeSchemaParityValidated',
+-      'mockExamConfigExactSchemaKeysValidated',
+-      'mockExamConfigValidated',
+-      'mockExamRuntimeParityValidated',
+-      'mockExamChapterBalanceParityValidated',
+-      'mockExamTimerParityValidated',
+-      'examRouteHeadersValidated',
+-      'examRouteHeaderParityValidated',
+-      'examRouteCopyLabelsValidated',
+-      'examRouteCopyParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'searchRouteQueryHydration',
+-    flags: ['--focus-search-route-query-hydration'],
+-    summaryKeys: [
+-      'searchRouteQueryHydrationRulesValidated',
+-      'searchRouteQueryHydrationParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'staticEbookProvenance',
+-    flags: ['--focus-static-ebook-provenance'],
+-    summaryKeys: [
+-      'staticEbookExternalSourceUrlsValidated',
+-      'staticEbookExternalSourceLinkRulesValidated',
+-      'staticEbookExternalSourceLinkSafetyValidated',
+-    ],
+-  },
+-  {
+-    id: 'answerShuffleParity',
+-    flags: ['--focus-answer-shuffle-parity'],
+-    summaryKeys: [
+-      'answerShuffleSingleChoiceQuestionsValidated',
+-      'answerShuffleTrueFalseQuestionsValidated',
+-      'answerShuffleSeedDistributionsValidated',
+-      'answerShuffleSessionMovementQuestionsValidated',
+-      'answerShuffleDistributionParityValidated',
+-      'publishedQuestions',
+-    ],
+-  },
+-  {
+-    id: 'adPlacementRouteParity',
+-    flags: ['--focus-ad-placement-route-parity'],
+-    summaryKeys: [
+-      'adPlacementRoutesValidated',
+-      'noAdRoutesValidated',
+-      'adPlacementRouteParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'examSubmissionFinalityParity',
+-    flags: ['--focus-exam-submission-finality-parity'],
+-    summaryKeys: ['examSubmissionFinalityParityValidated'],
+-  },
+-  {
+-    id: 'mockExamCopyParity',
+-    flags: ['--focus-mock-exam-copy-parity'],
+-    summaryKeys: [
+-      'nativeMockExamComponentCopyLabelsValidated',
+-      'nativeMockExamComponentLegalCopyValidated',
+-      'nativeMockExamLibraryLabelsValidated',
+-      'nativeMockExamScoreSourceCopyValidated',
+-      'nativeMockExamSwedishCopyNaturalnessValidated',
+-      'nativeMockExamTierCopyValidated',
+-    ],
+-  },
+-  {
+-    id: 'profileRouteCopy',
+-    flags: ['--focus-profile-route-copy'],
+-    summaryKeys: [
+-      'profileRouteHeadersValidated',
+-      'profileRouteHeaderParityValidated',
+-      'profileRouteCopyLabelsValidated',
+-      'profileRouteCopyParityValidated',
+-      'badgesValidated',
+-      'badgeMilestoneParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'uhrReferenceCardAccessibility',
+-    flags: ['--focus-uhr-reference-card-accessibility'],
+-    summaryKeys: [
+-      'uhrReferenceCardAccessibilityRulesValidated',
+-      'uhrReferenceCardAccessibilityParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'audioButtonAccessibility',
+-    flags: ['--focus-audio-button-accessibility'],
+-    summaryKeys: [
+-      'audioButtonAccessibilityRulesValidated',
+-      'audioButtonAccessibilityParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'celebrationBurstAccessibility',
+-    flags: ['--focus-celebration-burst-accessibility'],
+-    summaryKeys: [
+-      'celebrationBurstAccessibilityRulesValidated',
+-      'celebrationBurstAccessibilityParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'questionSpeechTextParity',
+-    flags: ['--focus-question-speech-text-parity'],
+-    summaryKeys: [
++      'questions',
+       'publishedQuestions',
+-      'questionSpeechTextQuestionsValidated',
+-      'questionSpeechTextOptionsValidated',
+-      'questionSpeechTextParityValidated',
+     ],
+   },
+   {
+-    id: 'speechRuntimeParity',
+-    flags: ['--focus-speech-runtime-parity'],
+-    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
+-  },
+-  {
+-    id: 'weeklyRecapRuntime',
+-    flags: ['--focus-weekly-recap-runtime'],
+-    summaryKeys: ['weeklyRecapRuntimeCasesValidated', 'weeklyRecapRuntimeParityValidated'],
+-  },
+-  {
+-    id: 'uhrSourceMetadata',
+-    flags: ['--focus-uhr-source-metadata'],
++    id: 'purchaseSchema',
++    flags: ['--focus-purchase-schema'],
+     summaryKeys: [
+-      'uhrSourceMetadataValidated',
+-      'uhrSourceRetrievedDateValidated',
+-      'uhrMapSourceExactSchemaKeysValidated',
+-      'uhrMapTextFieldsNormalizedValidated',
++      'purchaseTypeUnionsValidated',
++      'purchaseTypeInterfacesValidated',
++      'purchaseTypeSchemaParityValidated',
+     ],
+   },
+   {
+-    id: 'questionBankCsv',
+-    flags: ['--focus-question-bank-csv'],
++    id: 'rewardedExamSchema',
++    flags: ['--focus-rewarded-exam-schema'],
+     summaryKeys: [
+-      'questions',
+-      'publishedQuestions',
+-      'questionBankCsvHeaderColumnsValidated',
+-      'questionBankCsvUniqueHeaderNamesValidated',
+-      'questionBankCsvRowsValidated',
+-      'questionBankCsvProvenanceCounts',
+-      'questionBankCsvUhrSourcePublisherRowsValidated',
+-      'questionBankCsvUhrSourcePublisherParityValidated',
++      'rewardedAdTypeUnionsValidated',
++      'rewardedAdTypeInterfacesValidated',
++      'rewardedAdTypeSchemaParityValidated',
++      'mockExamAccessTypeUnionsValidated',
++      'mockExamAccessTypeInterfacesValidated',
++      'mockExamAccessTypeSchemaParityValidated',
+     ],
+   },
+   {
+@@ -471,73 +222,48 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+     ],
+   },
+   {
+-    id: 'removeAdsHookParity',
+-    flags: ['--focus-remove-ads-hook-parity'],
+-    summaryKeys: [
+-      'removeAdsEntitlementHookCasesValidated',
+-      'removeAdsEntitlementHookParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'removeAdsPurchaseRuntimeParity',
+-    flags: ['--focus-remove-ads-purchase-runtime-parity'],
+-    summaryKeys: [
+-      'purchaseTypeUnionsValidated',
+-      'purchaseTypeInterfacesValidated',
+-      'purchaseTypeSchemaParityValidated',
+-      'removeAdsPurchaseRuntimeCasesValidated',
+-      'removeAdsPurchaseRuntimeParityValidated',
+-    ],
+-  },
+-  {
+-    id: 'umeaDemonym',
+-    flags: ['--focus-umea-demonym'],
+-    summaryKeys: ['questionUmeaDemonymSwedishNaturalnessValidated'],
+-  },
+-  {
+-    id: 'chapterLocalizedText',
+-    flags: ['--focus-chapter-localized-text'],
++    id: 'legalRouteParity',
++    flags: ['--focus-legal-route-parity'],
+     summaryKeys: [
+-      'chapters',
+-      'chapterSchemasValidated',
+-      'chapterTextFieldsNormalizedValidated',
+-      'chapterExactSchemaKeysValidated',
+-      'chapterLocalizedTextMapsValidated',
++      'legalRouteHeadersValidated',
++      'legalRouteHeaderParityValidated',
++      'legalSectionRenderingTestsRoutedValidated',
++      'legalSectionRenderingCasesValidated',
++      'legalSectionWhitespaceTextValidated',
++      'legalSectionFragmentChildrenValidated',
++      'legalSectionRawTextUnderViewValidated',
++      'legalSectionRenderingParityValidated',
++      'swedishPrivacyStreakCopyNaturalnessValidated',
++      'legalSwedishEnglishTokenGuardValidated',
++      'legalSwedishEnglishTokenGuardParityValidated',
+     ],
+   },
+   {
+-    id: 'practiceRouteCopyParity',
+-    flags: ['--focus-practice-route-copy-parity'],
++    id: 'legalSectionRendering',
++    flags: ['--focus-legal-section-rendering'],
+     summaryKeys: [
+-      'practiceRouteCopyLabelsValidated',
+-      'practiceRouteCopyParityValidated',
+-      'provenanceAuthorityCopyFilesValidated',
+-      'provenanceAuthorityCopyParityValidated',
++      'legalSectionRenderingTestsRoutedValidated',
++      'legalSectionRenderingCasesValidated',
++      'legalSectionWhitespaceTextValidated',
++      'legalSectionFragmentChildrenValidated',
++      'legalSectionRawTextUnderViewValidated',
++      'legalSectionRenderingParityValidated',
+     ],
+   },
+   {
+-    id: 'practiceScoringParity',
+-    flags: ['--focus-practice-scoring-parity'],
+-    summaryKeys: ['practiceScoringRulesValidated', 'practiceScoringRulesParityValidated'],
+-  },
+-  {
+-    id: 'practiceFlowParity',
+-    flags: ['--focus-practice-flow-parity'],
+-    summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
++    id: 'mistakesRouteCopy',
++    flags: ['--focus-mistakes-route-copy'],
++    summaryKeys: ['mistakesRouteCopyLabelsValidated', 'mistakesRouteCopyParityValidated'],
+   },
+   {
+     id: 'sourceMaterialLinkParity',
+     flags: ['--focus-source-material-link-parity'],
+-    summaryKeys: ['uhrSourceMaterialLinkParityValidated'],
++    summaryKeys: ['uhrMapExactSchemaKeysValidated', 'uhrSourceMaterialLinkParityValidated'],
+   },
+   {
+-    id: 'contentExecCwd',
+-    flags: ['--focus-content-exec-cwd'],
+-    summaryKeys: [
+-      'contentTestValidateContentExecCallsValidated',
+-      'contentTestValidateContentExecCwdPinnedValidated',
+-      'contentTestValidateContentExecCwdParityValidated',
+-    ],
++    id: 'homeSvMistakeReviewCopy',
++    flags: ['--focus-home-sv-mistake-review-copy'],
++    summaryKeys: ['homeRouteSwedishMistakeReviewCopyNaturalnessValidated'],
+   },
+ ]);
+ 
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..cf7b2867e 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -2,8 +2,16 @@
+ const { spawnSync } = require('node:child_process');
+ const fs = require('node:fs');
+ const path = require('node:path');
+-const ts = require('typescript');
+ const vm = require('node:vm');
++const {
++  FOCUSED_VALIDATION_REGISTRY_BY_ID,
++  focusedValidationRequested,
++  rejectUnsupportedFocusedValidationFlags,
++} = require('./validate-content-focus-registry');
++
++rejectUnsupportedFocusedValidationFlags();
++
++const ts = require('typescript');
+ const {
+   buildSiteQuestionBank,
+   formatStaticQuestionBankDrift,
+@@ -4525,6 +4533,31 @@ function printValidationSummary(summary) {
+   console.log(JSON.stringify(summary, null, 2));
+ }
+ 
++function validateFocusedSummaryKeys(id, summary) {
++  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
++  if (!entry) {
++    fail(`focused validation summary uses unknown registry id ${id}`);
++    return;
++  }
++  const actualKeys = Object.keys(summary);
++  if (
++    actualKeys.length !== entry.summaryKeys.length ||
++    actualKeys.some((key, index) => key !== entry.summaryKeys[index])
++  ) {
++    fail(
++      `focused validation ${id} summary keys must match registry: expected ${entry.summaryKeys.join(
++        ', ',
++      )}; found ${actualKeys.join(', ')}`,
++    );
++  }
++}
++
++function printFocusedValidationSummary(id, summary) {
++  validateFocusedSummaryKeys(id, summary);
++  exitWithValidationFailures();
++  printValidationSummary(summary);
++}
++
+ function hasText(value) {
+   return typeof value === 'string' && value.trim().length > 0;
+ }
+@@ -8166,7 +8199,7 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
+ let generatedTrueFalseExplanationMetaValidated = 0;
+ let generatedTagTemplateParityValidated = 0;
+ 
+-if (process.argv.includes('--focus-static-v11-readiness-copy')) {
++if (focusedValidationRequested('staticV11ReadinessCopy')) {
+   validateStaticValidationSyntaxGate();
+   const readinessValidation = validateStaticV11ReadinessCopy();
+   staticV11ReadinessUnsupportedPatternsValidated = readinessValidation.unsupportedPatternsValidated;
+@@ -8175,8 +8208,7 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
+     staticV11ReadinessUnsupportedPatternsValidated ===
+       STATIC_V11_UNSUPPORTED_READINESS_COPY_PATTERNS.length &&
+     staticV11ReadinessRequiredCopyValidated === STATIC_V11_REQUIRED_READINESS_COPY.length;
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('staticV11ReadinessCopy', {
+     staticV11ReadinessUnsupportedPatternsValidated,
+     staticV11ReadinessRequiredCopyValidated,
+     staticV11ReadinessCopyParityValidated,
+@@ -8187,43 +8219,39 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-question-card-accessibility')) {
++if (focusedValidationRequested('questionCardAccessibility')) {
+   validateQuestionCardAccessibilityParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('questionCardAccessibility', {
+     questionCardAccessibilityRulesValidated,
+     questionCardAccessibilityParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-chapter-card-accessibility')) {
++if (focusedValidationRequested('chapterCardAccessibility')) {
+   validateChapterCardAccessibilityParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('chapterCardAccessibility', {
+     chapterCardAccessibilityRulesValidated,
+     chapterCardAccessibilityParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-question-report-link-parity')) {
++if (focusedValidationRequested('questionReportLinkParity')) {
+   validateQuestionReportLinkParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('questionReportLinkParity', {
+     questionReportLinkRulesValidated,
+     questionReportLinkParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-native-quiz-copy')) {
++if (focusedValidationRequested('nativeQuizCopy')) {
+   validateQuizRouteHeaderParity();
+   validateQuizRouteCopyParity();
+   validateChapterRouteHeaderParity();
+   validateChapterRouteCopyParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('nativeQuizCopy', {
+     quizRouteHeadersValidated,
+     quizRouteHeaderParityValidated,
+     quizRouteCopyLabelsValidated,
+@@ -8236,11 +8264,10 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-static-head-metadata')) {
++if (focusedValidationRequested('staticHeadMetadata')) {
+   validateStaticValidationSyntaxGate();
+   validateStaticHeadMetadataParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('staticHeadMetadata', {
+     staticHeadMetadataTitleValidated,
+     staticHeadMetadataDescriptionValidated,
+     staticHeadMetadataOutcomeClaimPatternsValidated,
+@@ -8252,20 +8279,18 @@ if (process.argv.includes('--focus-static-head-metadata')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
++if (focusedValidationRequested('dashboardProgressSnapshot')) {
+   validateDashboardProgressSnapshotParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('dashboardProgressSnapshot', {
+     dashboardProgressSnapshotCasesValidated,
+     dashboardProgressSnapshotParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-about-the-test-route-copy')) {
++if (focusedValidationRequested('aboutTheTestRouteCopy')) {
+   validateAboutTheTestRouteCopyParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('aboutTheTestRouteCopy', {
+     aboutTheTestRouteCopyLabelsValidated,
+     aboutTheTestRouteCopyParityValidated,
+     aboutTheTestOfficialSourceUrlsValidated,
+@@ -8274,22 +8299,20 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-settings-route-copy')) {
++if (focusedValidationRequested('settingsRouteCopy')) {
+   validateSettingsRouteCopyParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('settingsRouteCopy', {
+     settingsRouteCopyLabelsValidated,
+     settingsRouteCopyParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-settings-route')) {
++if (focusedValidationRequested('settingsRoute')) {
+   validateSettingsRouteHeaderParity();
+   validateSettingsRouteCopyParity();
+   validateSettingsRouteScrollParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('settingsRoute', {
+     settingsRouteHeadersValidated,
+     settingsRouteHeaderParityValidated,
+     settingsRouteCopyLabelsValidated,
+@@ -8300,10 +8323,9 @@ if (process.argv.includes('--focus-settings-route')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-content-exec-cwd')) {
++if (focusedValidationRequested('contentExecCwd')) {
+   validateContentTestValidateContentExecCwdGuard();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('contentExecCwd', {
+     contentTestValidateContentExecCallsValidated,
+     contentTestValidateContentExecCwdPinnedValidated,
+     contentTestValidateContentExecCwdParityValidated,
+@@ -8330,7 +8352,7 @@ if (
+   fail('strings export is not an object');
+ }
+ 
+-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
++if (focusedValidationRequested('generatedTrueFalseNaturalness')) {
+   if (Array.isArray(questions)) {
+     questions
+       .filter(
+@@ -8346,48 +8368,43 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+         }
+       });
+   }
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('generatedTrueFalseNaturalness', {
+     generatedTrueFalseNaturalnessFocusValidated: true,
+     questionGeneratedTrueFalseNaturalnessValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-mastery-rules')) {
++if (focusedValidationRequested('masteryRules')) {
+   validateMasteryRules();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('masteryRules', {
+     masteryRulesValidated,
+     masteryRulesParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-weak-chapter-rules')) {
++if (focusedValidationRequested('weakChapterRules')) {
+   validateWeakChapterRules();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('weakChapterRules', {
+     weakChapterRulesValidated,
+     weakChapterRulesParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-practice-scoring-parity')) {
++if (focusedValidationRequested('practiceScoringParity')) {
+   validatePracticeScoringRules();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('practiceScoringParity', {
+     practiceScoringRulesValidated,
+     practiceScoringRulesParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-spaced-repetition-schema')) {
++if (focusedValidationRequested('spacedRepetitionSchema')) {
+   validateSpacedRepetitionSchedule();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('spacedRepetitionSchema', {
+     spacedRepetitionIntervalsValidated,
+     spacedRepetitionRuntimeParityValidated,
+     spacedRepetitionRuntimeInputCasesValidated,
+@@ -8396,22 +8413,20 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
++if (focusedValidationRequested('mobileAdsConsentHook')) {
+   validateMobileAdsConsentHookParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('mobileAdsConsentHook', {
+     mobileAdsConsentHookCasesValidated,
+     mobileAdsConsentHookParityValidated,
+   });
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-settings-store')) {
++if (focusedValidationRequested('settingsStore')) {
+   validateSettingsStoreSchemaParity();
+   validateSettingsDailyGoalParity();
+   validateSettingsAudioParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('settingsStore', {
+     settingsStoreFieldsValidated,
+     settingsStoreSchemaParityValidated,
+     settingsDailyGoalOptionsValidated,
+@@ -8422,12 +8437,11 @@ if (process.argv.includes('--focus-settings-store')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-progress-schema-parity')) {
++if (focusedValidationRequested('progressSchemaParity')) {
+   validateProgressQuestionSchemaParity();
+   validateProgressTypeSchemaParity();
+   validateProgressStoreSchemaParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('progressSchemaParity', {
+     progressQuestionFieldsValidated,
+     progressQuestionSchemaParityValidated,
+     progressTypeUnionsValidated,
+@@ -8439,10 +8453,9 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-content-type-schema-parity')) {
++if (focusedValidationRequested('contentTypeSchemaParity')) {
+   validateContentTypeSchemaParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('contentTypeSchemaParity', {
+     contentTypeUnionsValidated,
+     contentTypeInterfacesValidated,
+     contentTypeSchemaParityValidated,
+@@ -8450,11 +8463,10 @@ if (process.argv.includes('--focus-content-type-schema-parity')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-answer-feedback-parity')) {
++if (focusedValidationRequested('answerFeedbackParity')) {
+   validateAnswerValidationTypeSchemaParity();
+   validateAnswerFeedbackParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('answerFeedbackParity', {
+     answerValidationTypeUnionsValidated,
+     answerValidationTypeInterfacesValidated,
+     answerValidationTypeSchemaParityValidated,
+@@ -8469,10 +8481,9 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-purchase-schema')) {
++if (focusedValidationRequested('purchaseSchema')) {
+   validatePurchaseTypeSchemaParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('purchaseSchema', {
+     purchaseTypeUnionsValidated,
+     purchaseTypeInterfacesValidated,
+     purchaseTypeSchemaParityValidated,
+@@ -8480,11 +8491,10 @@ if (process.argv.includes('--focus-purchase-schema')) {
+   process.exit(0);
+ }
+ 
+-if (process.argv.includes('--focus-rewarded-exam-schema')) {
++if (focusedValidationRequested('rewardedExamSchema')) {
+   validateRewardedAdTypeSchemaParity();
+   validateMockExamAccessTypeSchemaParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('rewardedExamSchema', {
+     rewardedAdTypeUnionsValidated,
+     rewardedAdTypeInterfacesValidated,
+     rewardedAdTypeSchemaParityValidated,
+@@ -16567,11 +16577,10 @@ function validateCriminalResponsibilityCurrentness() {
+     criminalResponsibilityCurrentnessQuestionsValidated === currentnessIds.length;
+ }
+ 
+-if (process.argv.includes('--focus-exam-generator-schema')) {
++if (focusedValidationRequested('examGeneratorSchema')) {
+   validateStaticValidationSyntaxGate();
+   validateExamGeneratorTypeSchemaParity();
+-  exitWithValidationFailures();
+-  printValidationSummary({
++  printFocusedValidationSummary('examGeneratorSchema', {
+     examGeneratorTypeAliasesValidated,
+     examGeneratorTypeInterfacesValidated,
+     examGeneratorTypeSchemaParityValidated,
+@@ -17415,98 +17424,58 @@ function validateUhrSourceMaterialLinkParity() {
+ 
+ validateStaticValidationSyntaxGate();
+ exitWithValidationFailures();
+-if (process.argv.includes('--focus-legal-route-parity')) {
++if (focusedValidationRequested('legalRouteParity')) {
+   validateLegalRouteHeaderParity();
+   validateLegalSectionRenderingParity();
+-  if (failures.length) exitWithValidationFailures();
+-  console.log('Content validation OK');
+-  console.log(
+-    JSON.stringify(
+-      {
+-        legalRouteHeadersValidated,
+-        legalRouteHeaderParityValidated,
+-        legalSectionRenderingTestsRoutedValidated,
+-        legalSectionRenderingCasesValidated,
+-        legalSectionWhitespaceTextValidated,
+-        legalSectionFragmentChildrenValidated,
+-        legalSectionRawTextUnderViewValidated,
+-        legalSectionRenderingParityValidated,
+-        swedishPrivacyStreakCopyNaturalnessValidated,
+-        legalSwedishEnglishTokenGuardValidated,
+-        legalSwedishEnglishTokenGuardParityValidated,
+-      },
+-      null,
+-      2,
+-    ),
+-  );
++  printFocusedValidationSummary('legalRouteParity', {
++    legalRouteHeadersValidated,
++    legalRouteHeaderParityValidated,
++    legalSectionRenderingTestsRoutedValidated,
++    legalSectionRenderingCasesValidated,
++    legalSectionWhitespaceTextValidated,
++    legalSectionFragmentChildrenValidated,
++    legalSectionRawTextUnderViewValidated,
++    legalSectionRenderingParityValidated,
++    swedishPrivacyStreakCopyNaturalnessValidated,
++    legalSwedishEnglishTokenGuardValidated,
++    legalSwedishEnglishTokenGuardParityValidated,
++  });
+   process.exit(0);
+ }
+-if (process.argv.includes('--focus-legal-section-rendering')) {
++if (focusedValidationRequested('legalSectionRendering')) {
+   validateLegalSectionRenderingParity();
+-  if (failures.length) exitWithValidationFailures();
+-  console.log('Content validation OK');
+-  console.log(
+-    JSON.stringify(
+-      {
+-        legalSectionRenderingTestsRoutedValidated,
+-        legalSectionRenderingCasesValidated,
+-        legalSectionWhitespaceTextValidated,
+-        legalSectionFragmentChildrenValidated,
+-        legalSectionRawTextUnderViewValidated,
+-        legalSectionRenderingParityValidated,
+-      },
+-      null,
+-      2,
+-    ),
+-  );
++  printFocusedValidationSummary('legalSectionRendering', {
++    legalSectionRenderingTestsRoutedValidated,
++    legalSectionRenderingCasesValidated,
++    legalSectionWhitespaceTextValidated,
++    legalSectionFragmentChildrenValidated,
++    legalSectionRawTextUnderViewValidated,
++    legalSectionRenderingParityValidated,
++  });
+   process.exit(0);
+ }
+-if (process.argv.includes('--focus-mistakes-route-copy')) {
++if (focusedValidationRequested('mistakesRouteCopy')) {
+   validateMistakesRouteCopyParity();
+-  if (failures.length) exitWithValidationFailures();
+-  console.log('Content validation OK');
+-  console.log(
+-    JSON.stringify(
+-      {
+-        mistakesRouteCopyLabelsValidated,
+-        mistakesRouteCopyParityValidated,
+-      },
+-      null,
+-      2,
+-    ),
+-  );
++  printFocusedValidationSummary('mistakesRouteCopy', {
++    mistakesRouteCopyLabelsValidated,
++    mistakesRouteCopyParityValidated,
++  });
+   process.exit(0);
+ }
+-if (process.argv.includes('--focus-source-material-link-parity')) {
++if (focusedValidationRequested('sourceMaterialLinkParity')) {
+   validateUhrSectionMapExactSchemaKeys();
+   validateUhrSourceMaterialLinkParity();
+-  if (failures.length) exitWithValidationFailures();
+-  console.log('Content validation OK');
+-  console.log(
+-    JSON.stringify(
+-      {
+-        uhrMapExactSchemaKeysValidated,
+-        uhrSourceMaterialLinkParityValidated,
+-      },
+-      null,
+-      2,
+-    ),
+-  );
++  printFocusedValidationSummary('sourceMaterialLinkParity', {
++    uhrMapExactSchemaKeysValidated,
++    uhrSourceMaterialLinkParityValidated,
++  });
+   process.exit(0);
+ }
+-if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
++if (focusedValidationRequested('homeSvMistakeReviewCopy')) {
+   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+-  if (failures.length) exitWithValidationFailures();
+-  console.log('Content validation OK');
+-  console.log(
+-    JSON.stringify(
+-      {
+-        homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
+-      },
+-      null,
+-      2,
+-    ),
+-  );
++  printFocusedValidationSummary('homeSvMistakeReviewCopy', {
++    homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
++  });
+   process.exit(0);
+ }
+ validateStaticHeadMetadataParity();
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..e6da92be1 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -4,6 +4,7 @@ const fs = require('node:fs');
+ const os = require('node:os');
+ const path = require('node:path');
+ const test = require('node:test');
++const { FOCUSED_VALIDATION_REGISTRY } = require('../scripts/validate-content-focus-registry');
+ 
+ const repoRoot = path.resolve(__dirname, '..');
+ 
+@@ -37,6 +38,33 @@ function runPackageTest(args, env) {
+   });
+ }
+ 
++function runValidateContent(args) {
++  return spawnSync(process.execPath, ['scripts/validate-content.js', ...args], {
++    cwd: repoRoot,
++    encoding: 'utf8',
++    env: process.env,
++  });
++}
++
++function parseValidationSummary(stdout) {
++  const match = stdout.match(/\{[\s\S]*\}\s*$/);
++  assert.ok(match, `validation output did not end with JSON summary:\n${stdout}`);
++  return JSON.parse(match[0]);
++}
++
++function focusRegistryEntry(id) {
++  const entry = FOCUSED_VALIDATION_REGISTRY.find((candidate) => candidate.id === id);
++  assert.ok(entry, `${id} must be registered as a validate-content focus mode`);
++  return entry;
++}
++
++function assertValidatorFocusRoute(validatorSource, id, flag, summaryPattern) {
++  assert.ok(focusRegistryEntry(id).flags.includes(flag), `${id} must register ${flag}`);
++  assert.match(validatorSource, new RegExp(`focusedValidationRequested\\('${id}'\\)`));
++  assert.match(validatorSource, new RegExp(`printFocusedValidationSummary\\('${id}'`));
++  assert.match(validatorSource, summaryPattern);
++}
++
+ test('npm test keeps selector routing in the project dispatcher', () => {
+   const pkg = readPackageJson();
+   const testContentScript = pkg.scripts['test:content'];
+@@ -52,6 +80,60 @@ test('npm test keeps selector routing in the project dispatcher', () => {
+   );
+ });
+ 
++test('validate-content focus registry covers every focused route and summary', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const registryIds = FOCUSED_VALIDATION_REGISTRY.map((entry) => entry.id).sort();
++  const routedIds = Array.from(
++    validatorSource.matchAll(/focusedValidationRequested\('([^']+)'\)/g),
++    (match) => match[1],
++  ).sort();
++  const summaryIds = Array.from(
++    validatorSource.matchAll(/printFocusedValidationSummary\('([^']+)'/g),
++    (match) => match[1],
++  ).sort();
++  const seenFlags = new Set();
++
++  assert.deepEqual(routedIds, registryIds);
++  assert.deepEqual(summaryIds, registryIds);
++  assert.doesNotMatch(validatorSource, /process\.argv\.includes\('--focus-/);
++
++  for (const entry of FOCUSED_VALIDATION_REGISTRY) {
++    assert.ok(entry.flags.length > 0, `${entry.id} must define at least one focus flag`);
++    assert.ok(entry.summaryKeys.length > 0, `${entry.id} must define summary keys`);
++    for (const flag of entry.flags) {
++      assert.match(flag, /^--focus-[a-z0-9-]+$/);
++      assert.equal(seenFlags.has(flag), false, `${flag} must be registered once`);
++      seenFlags.add(flag);
++    }
++  }
++});
++
++test('registered validate-content focus summaries stay isolated', () => {
++  const registryEntry = FOCUSED_VALIDATION_REGISTRY.find((entry) => entry.id === 'contentExecCwd');
++  assert.ok(registryEntry);
++
++  const result = runValidateContent(['--focus-content-exec-cwd']);
++  assert.equal(result.status, 0, result.stderr || result.stdout);
++  const summary = parseValidationSummary(result.stdout);
++
++  assert.deepEqual(Object.keys(summary), registryEntry.summaryKeys);
++  assert.equal(summary.contentTestValidateContentExecCwdParityValidated, true);
++});
++
++test('unknown validate-content focus flags fail before full validation', () => {
++  const result = runValidateContent(['--focus-not-real']);
++
++  assert.notEqual(result.status, 0);
++  assert.equal(result.stdout, '');
++  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
++  assert.match(result.stderr, /Supported focus modes:/);
++  assert.match(result.stderr, /--focus-content-exec-cwd/);
++  assert.doesNotMatch(result.stderr, /Cannot find module 'typescript'/);
++});
++
+ test('QuestionCard accessibility parity uses focused content validation routing', () => {
+   const validatorSource = fs.readFileSync(
+     path.join(repoRoot, 'scripts/validate-content.js'),
+@@ -62,9 +144,10 @@ test('QuestionCard accessibility parity uses focused content validation routing'
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-question-card-accessibility/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'questionCardAccessibility',
++    '--focus-question-card-accessibility',
+     /validateQuestionCardAccessibilityParity\(\);[\s\S]*questionCardAccessibilityRulesValidated[\s\S]*questionCardAccessibilityParityValidated/,
+   );
+   assert.match(questionCardTestSource, /--focus-question-card-accessibility/);
+@@ -85,9 +168,10 @@ test('ChapterCard accessibility parity uses focused content validation routing',
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-chapter-card-accessibility/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'chapterCardAccessibility',
++    '--focus-chapter-card-accessibility',
+     /validateChapterCardAccessibilityParity\(\);[\s\S]*chapterCardAccessibilityRulesValidated[\s\S]*chapterCardAccessibilityParityValidated/,
+   );
+   assert.match(chapterCardTestSource, /--focus-chapter-card-accessibility/);
+@@ -108,9 +192,10 @@ test('answer feedback parity uses focused content validation routing', () => {
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-answer-feedback-parity/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'answerFeedbackParity',
++    '--focus-answer-feedback-parity',
+     /validateAnswerValidationTypeSchemaParity\(\);[\s\S]*validateAnswerFeedbackParity\(\);[\s\S]*answerFeedbackRuntimeParityValidated/,
+   );
+   assert.match(answerFeedbackTestSource, /--focus-answer-feedback-parity/);
+@@ -131,9 +216,10 @@ test('question report link parity uses focused content validation routing', () =
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-question-report-link-parity/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'questionReportLinkParity',
++    '--focus-question-report-link-parity',
+     /validateQuestionReportLinkParity\(\);[\s\S]*questionReportLinkRulesValidated[\s\S]*questionReportLinkParityValidated/,
+   );
+   assert.match(reportLinkTestSource, /--focus-question-report-link-parity/);
+@@ -154,9 +240,10 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-mistakes-route-copy/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'mistakesRouteCopy',
++    '--focus-mistakes-route-copy',
+     /validateMistakesRouteCopyParity\(\);[\s\S]*mistakesRouteCopyLabelsValidated[\s\S]*mistakesRouteCopyParityValidated/,
+   );
+   assert.match(mistakesRouteTestSource, /--focus-mistakes-route-copy/);
+@@ -177,9 +264,10 @@ test('spaced repetition schema parity uses focused content validation routing',
+     'utf8',
+   );
+ 
+-  assert.match(validatorSource, /--focus-spaced-repetition-schema/);
+-  assert.match(
++  assertValidatorFocusRoute(
+     validatorSource,
++    'spacedRepetitionSchema',
++    '--focus-spaced-repetition-schema',
+     /validateSpacedRepetitionSchedule\(\);[\s\S]*spacedRepetitionIntervalsValidated[\s\S]*spacedRepetitionRuntimeInputParityValidated/,
+   );
+   assert.match(spacedRepetitionTestSource, /--focus-spaced-repetition-schema/);

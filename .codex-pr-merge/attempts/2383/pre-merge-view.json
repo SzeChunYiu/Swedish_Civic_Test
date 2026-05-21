@@ -1,0 +1,19 @@
+{
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "number": 2383,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239784041/job/77222715310",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:42:47Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] test badge style override parity"
+}

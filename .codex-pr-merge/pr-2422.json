@@ -1,0 +1,59 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- keep generated true/false statements for sex-purchase and same-sex marriage scoped to Sweden in both SV and EN\n- add a generated-variant Sweden-scope validator and focused mutation test covering single-choice and judgement variants\n- regenerate canonical CSV and static question bank mirrors\n\n## Verification\n- `NODE_OPTIONS='--v8-pool-size=1' PATH=/home/billy/sct-manager-content-work/node_modules/.bin:$PATH npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' PATH=/home/billy/sct-manager-content-work/node_modules/.bin:$PATH node --test --test-name-pattern 'generated variants that drop Sweden scope' tests/content-published-question-types.test.js`\n- `PATH=/home/billy/sct-manager-content-work/node_modules/.bin:$PATH node scripts/export-question-bank.js --check`\n- `PATH=/home/billy/sct-manager-content-work/node_modules/.bin:$PATH node scripts/export-site-question-bank.js --check`\n- `PATH=/home/billy/sct-manager-content-work/node_modules/.bin:$PATH npm run typecheck -- --pretty false`\n- `git diff --check`",
+  "commits": [
+    {
+      "authoredDate": "2026-05-21T13:26:09Z",
+      "authors": [
+        {
+          "email": "billy10384@gmail.com",
+          "id": "U_kgDODwkEQQ",
+          "login": "billy10384-sudo",
+          "name": "billy"
+        }
+      ],
+      "committedDate": "2026-05-21T13:30:50Z",
+      "messageBody": "",
+      "messageHeadline": "content: guard generated Sweden scope parity",
+      "oid": "8a0a77021c6c4cb50606441abbdd84df31fcbade"
+    }
+  ],
+  "files": [
+    { "path": "codex-tasks/claims.txt", "additions": 1, "deletions": 0, "changeType": "MODIFIED" },
+    {
+      "path": "content/question-bank.csv",
+      "additions": 4,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/content/derivedQuestions.ts",
+      "additions": 28,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 67,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/questions.js", "additions": 6, "deletions": 6, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-published-question-types.test.js",
+      "additions": 59,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/manager-content-1779369413-3222523",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2422,
+  "reviewDecision": "",
+  "state": "OPEN",
+  "statusCheckRollup": [],
+  "title": "content: guard generated Sweden scope parity",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2422"
+}

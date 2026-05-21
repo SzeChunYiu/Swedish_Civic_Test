@@ -14,6 +14,7 @@ import {
   EBOOK_ARTICLES,
   getAdjacentEbookArticle,
   getEbookArticleByParam,
+  getEbookSectionSourceNotes,
   getEbookSourceNotes,
   getLocalizedText,
   type EbookArticle,
@@ -24,6 +25,7 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, radius, space, typography } from '../lib/theme';
 
 type EbookRouteCopy = {
+  articleNavGroupAccessibilityLabel: string;
   articleNavAccessibilityLabel: (kicker: string, title: string) => string;
   backToLearn: string;
   backToLearnAccessibilityLabel: string;
@@ -33,6 +35,7 @@ type EbookRouteCopy = {
   provenanceBadge: string;
   provenanceText: string;
   sectionSubtitle: string;
+  sectionSourcesHeading: (count: number) => string;
   sectionTitle: string;
   sourceHeading: (date: string) => string;
   sourcesCta: string;
@@ -43,6 +46,7 @@ type EbookRouteCopy = {
 
 const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
   sv: {
+    articleNavGroupAccessibilityLabel: 'Välj studieartikel',
     articleNavAccessibilityLabel: (kicker, title) => `Öppna artikel ${kicker}: ${title}`,
     backToLearn: 'Tillbaka till studievägen',
     backToLearnAccessibilityLabel: 'Tillbaka till studievägen',
@@ -54,6 +58,8 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
       'Egen studieguide. Kontrollera fakta via UHR-materialet och källsidan när en uppgift påverkar dig.',
     sectionSubtitle:
       'Läs en kort artikel offline och gå sedan direkt till övningen som använder samma frågebank.',
+    sectionSourcesHeading: (count) =>
+      count === 1 ? 'Källa för avsnittet' : 'Källor för avsnittet',
     sectionTitle: 'Studieartiklar',
     sourceHeading: (date) => `Källor hämtade ${date}`,
     sourcesCta: 'Öppna källor',
@@ -63,6 +69,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
     title: 'Studieguide i appen',
   },
   en: {
+    articleNavGroupAccessibilityLabel: 'Choose study article',
     articleNavAccessibilityLabel: (kicker, title) => `Open article ${kicker}: ${title}`,
     backToLearn: 'Back to Learn',
     backToLearnAccessibilityLabel: 'Back to Learn',
@@ -74,6 +81,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
       'Original study guide. Verify facts through UHR material and the Sources page when a detail affects you.',
     sectionSubtitle:
       'Read a short article offline, then jump straight into practice from the same question bank.',
+    sectionSourcesHeading: (count) => (count === 1 ? 'Section source' : 'Section sources'),
     sectionTitle: 'Study articles',
     sourceHeading: (date) => `Sources accessed ${date}`,
     sourcesCta: 'Open sources',
@@ -126,6 +134,9 @@ export default function EbookScreen() {
 
       <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
       <ScrollView
+        aria-label={copy.articleNavGroupAccessibilityLabel}
+        accessibilityLabel={copy.articleNavGroupAccessibilityLabel}
+        accessibilityRole="tablist"
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.articleNavContent}
@@ -139,8 +150,9 @@ export default function EbookScreen() {
           return (
             <Pressable
               key={item.staticChapterId}
+              aria-selected={selected}
               accessibilityLabel={copy.articleNavAccessibilityLabel(kicker, title)}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={{ selected }}
               hitSlop={space[1]}
               onPress={() => navigateToArticle(router, item)}
@@ -189,22 +201,44 @@ export default function EbookScreen() {
           <Text style={styles.provenanceText}>{copy.provenanceText}</Text>
         </Card>
 
-        {article.sections.map((section) => (
-          <View key={getLocalizedText(section.heading, 'en')} style={styles.sectionBlock}>
-            <Text accessibilityRole="header" style={styles.sectionHeading}>
-              {getLocalizedText(section.heading, language)}
-            </Text>
-            <Text style={styles.sectionBody}>{getLocalizedText(section.body, language)}</Text>
-            <ArticleAudioButton
-              enabled={audioEnabled}
-              language={language}
-              rate={audioPlaybackRate}
-              scope="section"
-              style={styles.sectionAudioAction}
-              text={buildEbookSectionNarrationText(section)}
-            />
-          </View>
-        ))}
+        {article.sections.map((section) => {
+          const sectionSources = getEbookSectionSourceNotes(section);
+          const sectionHeading = getLocalizedText(section.heading, language);
+
+          return (
+            <View key={getLocalizedText(section.heading, 'en')} style={styles.sectionBlock}>
+              <Text accessibilityRole="header" style={styles.sectionHeading}>
+                {sectionHeading}
+              </Text>
+              <Text style={styles.sectionBody}>{getLocalizedText(section.body, language)}</Text>
+              <View
+                accessibilityLabel={`${copy.sectionSourcesHeading(sectionSources.length)}: ${sectionSources
+                  .map((source) => getLocalizedText(source.label, language))
+                  .join(', ')}`}
+                style={styles.sectionSources}
+              >
+                <Text style={styles.sectionSourcesHeading}>
+                  {copy.sectionSourcesHeading(sectionSources.length)}
+                </Text>
+                {sectionSources.map((source) => (
+                  <SourceNoteLine
+                    key={`${sectionHeading}-${source.key}`}
+                    language={language}
+                    source={source}
+                  />
+                ))}
+              </View>
+              <ArticleAudioButton
+                enabled={audioEnabled}
+                language={language}
+                rate={audioPlaybackRate}
+                scope="section"
+                style={styles.sectionAudioAction}
+                text={buildEbookSectionNarrationText(section)}
+              />
+            </View>
+          );
+        })}
 
         <Card style={styles.sourcesCard}>
           <Text accessibilityRole="header" style={styles.sourcesHeading}>
@@ -364,6 +398,21 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  sectionSources: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.75],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+  },
+  sectionSourcesHeading: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
   },
   sectionAudioAction: {
     alignSelf: 'flex-start',

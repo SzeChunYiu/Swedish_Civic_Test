@@ -7,10 +7,14 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-onboarding-route-scroll'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -22,7 +26,7 @@ test('onboarding route keeps mobile content inside a scrollable root', () => {
 
   assert.equal(summary.onboardingRouteScrollRulesValidated, 8);
   assert.equal(summary.onboardingRouteScrollParityValidated, true);
-  assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
+  assert.match(source, /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/);
   assert.match(
     source,
     /<ScrollView style=\{styles\.container\} contentContainerStyle=\{styles\.content\}>/,
@@ -56,6 +60,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-onboarding-route-scroll');
 require('./scripts/validate-content.js');
 `,
     ],

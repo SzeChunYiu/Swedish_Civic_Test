@@ -23,22 +23,29 @@ type StaticSite = {
 type Language = 'en' | 'sv';
 
 type MockCopyContract = {
+  answeredDotLabel: string;
   complete: string;
+  currentDotLabel: string;
   disclaimer: string;
   landingRequired: RegExp[];
   language: Language;
   negative: RegExp;
+  nextDotLabel: string;
   reviewHeading: string;
   scorePattern: RegExp;
   submit: string;
+  unansweredDotLabel: string;
 };
 
 const copyContracts: readonly MockCopyContract[] = [
   {
-    complete: 'Övningen är klar.',
+    answeredDotLabel: 'Fråga 1 av 5, besvarad',
+    complete: 'Övningspass klart.',
+    currentDotLabel: 'Fråga 1 av 5, aktuell',
     disclaimer: 'Oberoende övning, inte ett riktigt prov eller en officiell UHR-fråga.',
     landingRequired: [
-      /Övningsprov/,
+      /Tidsatt övning/,
+      /Bygg ditt övningsprov/,
       /Välj din övningstid/,
       /Övningspoäng/,
       /% rätt/,
@@ -48,27 +55,34 @@ const copyContracts: readonly MockCopyContract[] = [
     language: 'sv',
     negative:
       /(?:75\s*%|godkänd|underkänd|officiell(?:a)?\s+gräns|skarpt prov|tentamen|Klara provet|Få passet)/i,
+    nextDotLabel: 'Fråga 2 av 5, aktuell',
     reviewHeading: 'Frågegenomgång',
     scorePattern: /\d+%\s+—\s+\d+\/5 rätt/,
     submit: 'Lämna in',
+    unansweredDotLabel: 'Fråga 2 av 5, obesvarad',
   },
   {
+    answeredDotLabel: 'Question 1 of 5, answered',
     complete: 'Practice round complete.',
+    currentDotLabel: 'Question 1 of 5, current',
     disclaimer: 'Independent study practice, not a real exam or an official UHR question.',
     landingRequired: [
-      /Mock exam/,
+      /Timed practice/,
+      /Build your practice round/,
       /Choose your practice time/,
-      /Practice score/,
-      /% correct/,
-      /No feedback/,
-      /Start exam/,
+      /Result/,
+      /percent correct/,
+      /Practice timer only/,
+      /Start timed practice/,
     ],
     language: 'en',
     negative:
       /(?:75\s*%|official pass|pass threshold|pass line|pass\/fail|guaranteed pass|Earn the passport|Pass the test)/i,
+    nextDotLabel: 'Question 2 of 5, current',
     reviewHeading: 'Question review',
     scorePattern: /\d+%\s+—\s+\d+\/5 correct/,
     submit: 'Submit',
+    unansweredDotLabel: 'Question 2 of 5, unanswered',
   },
 ];
 
@@ -148,7 +162,7 @@ async function openStaticMock(page: Page, baseUrl: string, language: Language) {
     const requestUrl = new URL(route.request().url());
 
     if (requestUrl.origin !== allowedOrigin) {
-      await route.fulfill({ body: '', status: 204 });
+      await route.fulfill({ body: '', contentType: 'text/javascript; charset=utf-8', status: 200 });
       return;
     }
 
@@ -173,11 +187,21 @@ async function openStaticMock(page: Page, baseUrl: string, language: Language) {
   await expect(page.locator('#mock-stage')).toBeVisible();
 }
 
-async function submitShortMockAttempt(page: Page, submitLabel: string) {
+async function submitShortMockAttempt(page: Page, contract: MockCopyContract) {
+  const stage = page.locator('#mock-stage');
+
   await page.locator('#cfg-start').click();
   await expect(page).toHaveURL(/#\/mock\?run=1$/);
+  await expect(stage.getByRole('button', { name: contract.currentDotLabel })).toBeVisible();
+  await expect(stage.getByRole('button', { name: contract.unansweredDotLabel })).toBeVisible();
+  await expect(stage.getByRole('button', { name: /^Question 1$/ })).toHaveCount(0);
 
-  for (let index = 0; index < 5; index += 1) {
+  await page.locator('#mock-stage .mock-opt').first().click();
+  await page.locator('#mock-next').click();
+  await expect(stage.getByRole('button', { name: contract.answeredDotLabel })).toBeVisible();
+  await expect(stage.getByRole('button', { name: contract.nextDotLabel })).toBeVisible();
+
+  for (let index = 1; index < 5; index += 1) {
     await page.locator('#mock-stage .mock-opt').first().click();
     if (index < 4) {
       await page.locator('#mock-next').click();
@@ -185,7 +209,7 @@ async function submitShortMockAttempt(page: Page, submitLabel: string) {
   }
 
   page.once('dialog', (dialog) => dialog.accept());
-  await page.getByRole('button', { name: submitLabel }).click();
+  await page.getByRole('button', { name: contract.submit }).click();
   await expect(page.locator('#mock-stage .mock-result')).toBeVisible();
 }
 
@@ -214,7 +238,7 @@ for (const contract of copyContracts) {
     await expect(stage).not.toContainText(contract.negative);
     await expectNoHorizontalOverflow(page, `${contract.language} mock landing`);
 
-    await submitShortMockAttempt(page, contract.submit);
+    await submitShortMockAttempt(page, contract);
 
     await expect(stage).toContainText(contract.complete);
     await expect(stage.locator('.mock-result__pct')).toContainText(contract.scorePattern);

@@ -8,7 +8,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const packetRoot = path.join(repoRoot, 'docs/localization/review-packets/question-i18n-v8');
 const targetLocales = ['ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk', 'zh-Hans', 'zh-Hant'];
 const expectedIds = Array.from(
-  { length: 169 },
+  { length: 181 },
   (_, index) => `q${String(index + 1).padStart(3, '0')}`,
 );
 const expectedHeader = [
@@ -56,17 +56,17 @@ test('question i18n v8 native-review packets are reproducible', () => {
 
 test('question i18n v8 native-review packets cover every target locale and UHR question', () => {
   const readme = fs.readFileSync(path.join(packetRoot, 'README.md'), 'utf8');
-  assert.match(readme, /machine-assisted q001-q169 question localization review packets/);
+  assert.match(readme, /machine-assisted q001-q181 question localization review packets/);
   assert.match(readme, /Do not use these packets to enable a locale/);
 
   for (const locale of targetLocales) {
     const rows = parseTsv(fs.readFileSync(path.join(packetRoot, `${locale}.tsv`), 'utf8'));
     assert.deepEqual(rows[0], expectedHeader, `${locale} TSV header changed`);
-    assert.equal(rows.length - 1, expectedIds.length, `${locale} should have 169 review rows`);
+    assert.equal(rows.length - 1, expectedIds.length, `${locale} should have 170 review rows`);
     assert.deepEqual(
       rows.slice(1).map((row) => row[0]),
       expectedIds,
-      `${locale} should list q001-q169 in order`,
+      `${locale} should list q001-q181 in order`,
     );
 
     for (const row of rows.slice(1)) {
