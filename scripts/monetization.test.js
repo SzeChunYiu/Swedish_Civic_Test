@@ -1667,7 +1667,7 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   );
 });
 
-test('AdBanner testStatus copy stays platform-neutral while liveStatus stays live-only', () => {
+test('AdBanner status helper keeps testStatus copy platform-neutral while liveStatus stays live-only', () => {
   const webBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
     'utf8',
@@ -1676,16 +1676,19 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
     path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
-  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+  const { adBannerCopy, getAdBannerStatusLabel } = loadTs('lib/monetization/adCopy.ts');
 
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webBannerSource, /getAdBannerStatusLabel\(copy, unit\)/);
   assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(nativeBannerSource, /getAdBannerStatusLabel\(copy, unit\)/);
+  assert.doesNotMatch(webBannerSource, /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/);
   assert.match(
     nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+  );
+  assert.doesNotMatch(
+    nativeBannerSource,
+    /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/,
   );
   assert.doesNotMatch(
     nativeBannerSource,
@@ -1695,6 +1698,19 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
   assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - testplacering');
   assert.equal(adBannerCopy.en.liveStatus, 'AdMob placement active');
   assert.equal(adBannerCopy.sv.liveStatus, 'AdMob-placering aktiv');
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.en, { testOnly: true }),
+    adBannerCopy.en.testStatus,
+  );
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.en, { testOnly: false }),
+    adBannerCopy.en.liveStatus,
+  );
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.sv, { testOnly: true }),
+    adBannerCopy.sv.testStatus,
+  );
+  assert.equal(getAdBannerStatusLabel(adBannerCopy.sv, undefined), adBannerCopy.sv.liveStatus);
 
   for (const copy of Object.values(adBannerCopy)) {
     assert.doesNotMatch(copy.testStatus, /web preview|webbförhandsvisning/);
@@ -1751,6 +1767,41 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
+});
+
+test('AdBanner status helper keeps web and native live/test labels in sync', () => {
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const copySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
+  const { adBannerCopy, getAdBannerStatusLabel } = loadTs('lib/monetization/adCopy.ts');
+
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.en, { testOnly: true }),
+    'AdMob test unit active - test placement',
+  );
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.en, { testOnly: false }),
+    'AdMob placement active',
+  );
+  assert.equal(
+    getAdBannerStatusLabel(adBannerCopy.sv, { testOnly: true }),
+    'AdMob-testannons aktiv - testplacering',
+  );
+  assert.equal(getAdBannerStatusLabel(adBannerCopy.sv, undefined), 'AdMob-placering aktiv');
+  assert.match(webBannerSource, /getAdBannerStatusLabel\(copy, unit\)/);
+  assert.match(nativeBannerSource, /getAdBannerStatusLabel\(copy, unit\)/);
+  assert.doesNotMatch(webBannerSource, /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/);
+  assert.doesNotMatch(
+    nativeBannerSource,
+    /copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)/,
+  );
+  assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/i);
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {

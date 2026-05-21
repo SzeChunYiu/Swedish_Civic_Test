@@ -9951,23 +9951,24 @@ function validateAdPlacementRouteParity() {
         routeIsValid = false;
       }
       if (
-        !adBannerSource.includes(
-          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
-        ) ||
-        !nativeAdBannerSource.includes(
-          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
-        )
+        !adBannerSource.includes('getAdBannerStatusLabel(copy, unit)') ||
+        !nativeAdBannerSource.includes('getAdBannerStatusLabel(copy, unit)')
       ) {
-        reject('AdBanner web and native placements must choose live/test status from the ad unit');
+        reject('AdBanner web and native banners must share the status-label helper');
         routeIsValid = false;
       }
       if (
-        !nativeAdBannerSource.includes('const unit = getAdUnit(placement);') ||
-        nativeAdBannerSource.includes(
-          'accessibilityLabel={copy.accessibilityLabel(placementLabel, copy.liveStatus)}',
-        )
+        /unit\?\.testOnly\s*\?\s*copy\.testStatus\s*:\s*copy\.liveStatus/.test(adBannerSource) ||
+        /unit\?\.testOnly\s*\?\s*copy\.testStatus\s*:\s*copy\.liveStatus/.test(
+          nativeAdBannerSource,
+        ) ||
+        /copy\.accessibilityLabel\(placementLabel,\s*copy\.liveStatus\)/.test(nativeAdBannerSource)
       ) {
-        reject('AdBanner native test units must not be announced with live-status copy');
+        reject('AdBanner status labels must not duplicate or hardcode live/test decisions');
+        routeIsValid = false;
+      }
+      if (/web preview|webbförhandsvisning/i.test(nativeAdCopySource)) {
+        reject('AdBanner test status copy must be platform-neutral');
         routeIsValid = false;
       }
       if (!webFallbackShouldShowPattern.test(nativeAdCardSource)) {

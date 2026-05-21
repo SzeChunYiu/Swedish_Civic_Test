@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
-import { adBannerCopy } from '../../lib/monetization/adCopy';
+import { adBannerCopy, getAdBannerStatusLabel } from '../../lib/monetization/adCopy';
 import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -36,7 +36,7 @@ export function AdBanner({
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
-  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
+  const adStatusLabel = getAdBannerStatusLabel(copy, unit);
 
   return (
     <View
