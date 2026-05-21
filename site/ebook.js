@@ -215,14 +215,19 @@
     return counts;
   }
 
-  function ebookSourceMixLabel(footnotes) {
+  function ebookSourceCountUnit(lang, count) {
+    if (lang === 'sv') return count === 1 ? 'källa' : 'källor';
+    return count === 1 ? 'cite' : 'cites';
+  }
+
+  function ebookSourceMixLabel(lang, footnotes) {
     const counts = ebookSourceCounts(footnotes);
     return Object.keys(EBOOK_SOURCE_NOTES)
       .filter((key) => counts[key])
       .map((key) => {
         const note = EBOOK_SOURCE_NOTES[key];
         const count = counts[key];
-        return `${note.mixLabel || note.label} (${count} ${count === 1 ? 'cite' : 'cites'})`;
+        return `${note.mixLabel || note.label} (${count} ${ebookSourceCountUnit(lang, count)})`;
       })
       .join(' · ');
   }
@@ -267,7 +272,7 @@
 
   function renderEbookProvenanceBadge(lang, footnotes) {
     const count = footnotes.length || 0;
-    const sourceSummary = ebookSourceMixLabel(footnotes) || 'source metadata';
+    const sourceSummary = ebookSourceMixLabel(lang, footnotes) || 'source metadata';
     const serializedCounts = JSON.stringify(ebookSourceCounts(footnotes));
     if (lang === 'sv') {
       return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · ${sourceSummary} · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
