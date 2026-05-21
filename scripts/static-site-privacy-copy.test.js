@@ -179,8 +179,8 @@ test('static site public copy does not label the release as MVP', () => {
 
   assert.equal(assertNoUnsupportedStaticReleaseCopy(repoRoot), 3);
   assert.equal(findUnsupportedStaticReleaseCopyInSource(surface).length, 0);
-  assert.match(surface, /No\. You do not need to register\./);
-  assert.match(surface, /Nej\. Du behöver inte registrera dig\./);
+  assert.match(surface, /No — you can do everything without registering/);
+  assert.match(surface, /Nej — du kan göra allt utan att registrera dig/);
   assert.match(surface, /The app requires no account/);
   assert.match(surface, /Appen kräver inget konto/);
   assert.match(surface, /data-i18n="privacy\.meta2\.v">1\.0</);
