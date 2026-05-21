@@ -127,6 +127,11 @@ for (const labels of localeCases) {
     await expect(sourceNote).toHaveCount(0);
     await provenance.evaluate((element: HTMLElement) => element.blur());
     await provenance.focus();
+    await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+    await expect(sourceNote).toBeVisible();
+    await page.keyboard.press('Enter');
+    await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+    await expect(sourceNote).toHaveCount(0);
     await page.keyboard.press('Enter');
     await expect(provenance).toHaveAttribute('aria-expanded', 'true');
     await expect(sourceNote).toBeVisible();
