@@ -81,6 +81,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'staticEbookProvenance',
+    flags: ['--focus-static-ebook-provenance'],
+    summaryKeys: [
+      'staticEbookExternalSourceUrlsValidated',
+      'staticEbookExternalSourceLinkRulesValidated',
+      'staticEbookExternalSourceLinkSafetyValidated',
+    ],
+  },
+  {
     id: 'settingsStore',
     flags: ['--focus-settings-store', '--focus-settings-parity'],
     summaryKeys: [
@@ -180,6 +189,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     id: 'readinessAdapterRules',
     flags: ['--focus-readiness-adapter-rules'],
     summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
+  },
+  {
+    id: 'adaptivePracticeSize',
+    flags: ['--focus-adaptive-practice-size'],
+    summaryKeys: [
+      'adaptivePracticeSizeRuntimeCasesValidated',
+      'adaptivePracticeSizeRuntimeParityValidated',
+    ],
   },
   {
     id: 'adaptivePracticeDifficulty',
