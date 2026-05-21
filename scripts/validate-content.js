@@ -2177,7 +2177,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
-const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
+const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 60;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
 const EXPECTED_LEGAL_INTERNAL_MONETIZATION_KEY_SURFACES = 7;
 const FORBIDDEN_LEGAL_INTERNAL_MONETIZATION_COPY_PATTERNS = Object.freeze([
@@ -3610,6 +3610,11 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   },
   {
     file: 'components/quiz/QuestionReportLink.tsx',
+    label: 'exam report screen support',
+    pattern: /type QuestionReportScreen = 'chapter' \| 'exam' \| 'practice' \| 'quiz';/,
+  },
+  {
+    file: 'components/quiz/QuestionReportLink.tsx',
     label: 'source citation context',
     pattern: /getQuestionSourceCitation\(question, language\)/,
   },
@@ -3661,7 +3666,76 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   {
     file: 'app/support.tsx',
     label: 'selected answer context parsing',
-    pattern: /selectedAnswer: getSearchParam\(params\.selectedAnswer\)/,
+    pattern:
+      /selectedAnswer: getQuestionReportTextParam\(\s*params\.selectedAnswer,\s*questionReportParamLimits\.selectedAnswer,\s*\)/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'question report param limits',
+    pattern:
+      /const questionReportParamLimits = \{[\s\S]*questionId: 64,[\s\S]*selectedAnswer: 320,[\s\S]*source: 320,[\s\S]*\} as const;/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'question id allowlist',
+    pattern: /const questionReportQuestionIdPattern = \/\^q\\d\{3,5\}\$\//,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'source citation allowlist',
+    pattern:
+      /const questionReportSourcePattern =[\s\S]*Källa: Sverige i fokus,[\s\S]*Source: Sverige i fokus,/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'unsafe report param rejection',
+    pattern: /const unsafeQuestionReportParamPattern = \/\[\\u0000-\\u001f\\u007f<>\]\//,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'language allowlist',
+    pattern:
+      /const questionReportLanguages = \['sv', 'en'\] as const satisfies readonly AppLanguage\[\];/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'screen allowlist',
+    pattern: /const questionReportScreens = \['chapter', 'exam', 'practice', 'quiz'\] as const;/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'Swedish exam screen label',
+    pattern: /exam: 'Övningsprov'/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'English exam screen label',
+    pattern: /exam: 'Mock exam'/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'settings language fallback for support params',
+    pattern: /getQuestionReportContext\(params, language\)/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'sanitized question id context',
+    pattern: /const questionId = getQuestionReportQuestionId\(params\.questionId\);/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'sanitized language context',
+    pattern: /language: getQuestionReportLanguage\(params\.language, fallbackLanguage\)/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'sanitized screen context',
+    pattern: /screen: getQuestionReportScreen\(params\.screen\)/,
+  },
+  {
+    file: 'app/support.tsx',
+    label: 'sanitized source context',
+    pattern: /source: getQuestionReportSource\(params\.source\)/,
   },
   {
     file: 'app/support.tsx',

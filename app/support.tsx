@@ -6,6 +6,19 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, radius, space, typography } from '../lib/theme';
 
 const PUBLIC_SUPPORT_URL = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/';
+const questionReportParamLimits = {
+  questionId: 64,
+  selectedAnswer: 320,
+  source: 320,
+} as const;
+const questionReportQuestionIdPattern = /^q\d{3,5}$/;
+const questionReportSourcePattern =
+  /^(Källa: Sverige i fokus,|Source: Sverige i fokus,|Källhänvisning saknas$|Source citation unavailable$)/;
+const unsafeQuestionReportParamPattern = /[\u0000-\u001f\u007f<>]/;
+const questionReportLanguages = ['sv', 'en'] as const satisfies readonly AppLanguage[];
+const questionReportScreens = ['chapter', 'exam', 'practice', 'quiz'] as const;
+
+type QuestionReportScreen = (typeof questionReportScreens)[number];
 
 type LegalRouteSectionCopy = {
   body: string;
@@ -50,6 +63,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       screen: 'Skärm',
       screenLabels: {
         chapter: 'Kapitel',
+        exam: 'Övningsprov',
         practice: 'Övning',
         quiz: 'Frågepass',
       },
@@ -90,6 +104,7 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       screen: 'Screen',
       screenLabels: {
         chapter: 'Chapter',
+        exam: 'Mock exam',
         practice: 'Practice',
         quiz: 'Quiz session',
       },
@@ -123,7 +138,7 @@ export default function Screen() {
   const params = useLocalSearchParams<QuestionReportSearchParams>();
   const language = useSettingsStore((state) => state.language);
   const copy = supportCopy[language];
-  const questionReportContext = getQuestionReportContext(params);
+  const questionReportContext = getQuestionReportContext(params, language);
 
   return (
     <LegalPage title={copy.title}>
@@ -200,9 +215,9 @@ type QuestionReportSearchParams = {
 };
 
 type QuestionReportContext = {
-  language: string;
+  language: AppLanguage;
   questionId: string;
-  screen: string;
+  screen: QuestionReportScreen;
   selectedAnswer?: string;
   source?: string;
 };
@@ -220,22 +235,62 @@ function QuestionReportContextRow({ label, value }: { label: string; value: stri
 
 function getQuestionReportContext(
   params: QuestionReportSearchParams,
+  fallbackLanguage: AppLanguage,
 ): QuestionReportContext | null {
-  const questionId = getSearchParam(params.questionId);
+  const questionId = getQuestionReportQuestionId(params.questionId);
   if (!questionId) return null;
 
   return {
-    language: getSearchParam(params.language) ?? 'sv',
+    language: getQuestionReportLanguage(params.language, fallbackLanguage),
     questionId,
-    screen: getSearchParam(params.screen) ?? 'practice',
-    selectedAnswer: getSearchParam(params.selectedAnswer),
-    source: getSearchParam(params.source),
+    screen: getQuestionReportScreen(params.screen),
+    selectedAnswer: getQuestionReportTextParam(
+      params.selectedAnswer,
+      questionReportParamLimits.selectedAnswer,
+    ),
+    source: getQuestionReportSource(params.source),
   };
 }
 
 function getSearchParam(value: string | string[] | undefined) {
   if (Array.isArray(value)) return value[0];
   return value;
+}
+
+function getQuestionReportTextParam(value: string | string[] | undefined, maxLength: number) {
+  const normalized = getSearchParam(value)?.replace(/\s+/g, ' ').trim();
+  if (!normalized || normalized.length > maxLength) return undefined;
+  if (unsafeQuestionReportParamPattern.test(normalized)) return undefined;
+  return normalized;
+}
+
+function getQuestionReportQuestionId(value: string | string[] | undefined) {
+  const questionId = getQuestionReportTextParam(value, questionReportParamLimits.questionId);
+  if (!questionId || !questionReportQuestionIdPattern.test(questionId)) return undefined;
+  return questionId;
+}
+
+function getQuestionReportSource(value: string | string[] | undefined) {
+  const source = getQuestionReportTextParam(value, questionReportParamLimits.source);
+  if (!source || !questionReportSourcePattern.test(source)) return undefined;
+  return source;
+}
+
+function getQuestionReportLanguage(
+  value: string | string[] | undefined,
+  fallbackLanguage: AppLanguage,
+): AppLanguage {
+  const language = getQuestionReportTextParam(value, 8);
+  return questionReportLanguages.includes(language as AppLanguage)
+    ? (language as AppLanguage)
+    : fallbackLanguage;
+}
+
+function getQuestionReportScreen(value: string | string[] | undefined): QuestionReportScreen {
+  const screen = getQuestionReportTextParam(value, 16);
+  return questionReportScreens.includes(screen as QuestionReportScreen)
+    ? (screen as QuestionReportScreen)
+    : 'practice';
 }
 
 const styles = StyleSheet.create({
