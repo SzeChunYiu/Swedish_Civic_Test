@@ -109,7 +109,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   },
   {
     actionLabel: 'Öppna UHR:s utbildningsmaterial',
-    bodyText: 'Studera alltid UHR:s utbildningsmaterial direkt.',
+    bodyText: 'Studera alltid det primära utbildningsmaterialet direkt.',
     language: 'sv',
     path: '/disclaimer',
     sectionTitle: 'Använd med källmaterialet',
@@ -119,7 +119,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   },
   {
     actionLabel: 'Open UHR education material',
-    bodyText: 'Always study the UHR education material directly.',
+    bodyText: 'Always study the primary education material directly.',
     language: 'en',
     path: '/disclaimer',
     sectionTitle: 'Use with source material',

@@ -28,7 +28,7 @@ const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {
         title: 'Övningsinnehåll',
       },
       sourceMaterial: {
-        body: 'Studera alltid UHR:s utbildningsmaterial direkt. Appen är ett komplement för repetition, förklaringar och framsteg. UHR:s egen sida om provet beskriver också källgränsen mellan UHR:s material och övningsprov från andra aktörer.',
+        body: 'Studera alltid det primära utbildningsmaterialet direkt. Appen är ett komplement för repetition, förklaringar och framsteg. Använd källorna nedan för att se vilket studiematerial appen utgår från och hur övningsprov från andra aktörer ska skiljas från det.',
         title: 'Använd med källmaterialet',
       },
     },
@@ -45,7 +45,7 @@ const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {
         title: 'Practice content',
       },
       sourceMaterial: {
-        body: "Always study the UHR education material directly. This app is a companion for repetition, explanations, and progress tracking. UHR's own page about the test also provides source-boundary guidance for UHR material and practice tests from other actors.",
+        body: 'Always study the primary education material directly. This app is a companion for repetition, explanations, and progress tracking. Use the source links below to see which study material the app is based on and how practice tests from other actors should be kept separate from it.',
         title: 'Use with source material',
       },
     },

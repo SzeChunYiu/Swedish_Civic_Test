@@ -201,6 +201,12 @@ const SOURCES_ROUTE_SOURCE_AUTHORITY_COPY_PATTERNS = [
   /UHR:s\s+sida[^`'"\n]{0,120}\bsäger\b/i,
   /UHR's\s+[^`'"\n]{0,120}\bpage\s+says\b/i,
 ];
+const DISCLAIMER_SOURCE_MATERIAL_AUTHORITY_COPY_PATTERNS = [
+  /UHR:s\s+egen\s+sida/i,
+  /UHR's\s+own\s+page/i,
+  /beskriver\s+också\s+källgränsen/i,
+  /provides\s+source-boundary\s+guidance/i,
+];
 const QUESTION_BANK_CSV_HEADER = [
   'id',
   'chapterId',
@@ -22526,6 +22532,15 @@ function validateUhrSourceMaterialLinkParity() {
       !/<SourceMaterialLinkList\s+language=\{language\}\s*\/>/.test(routeSource)
     ) {
       reject(`${routePath} source-material section must render shared UHR source links`);
+    }
+    if (routePath === 'app/disclaimer.tsx') {
+      for (const pattern of DISCLAIMER_SOURCE_MATERIAL_AUTHORITY_COPY_PATTERNS) {
+        if (pattern.test(routeSource)) {
+          reject(
+            'app/disclaimer.tsx source-material body must state study advice neutrally; shared source links carry UHR provenance',
+          );
+        }
+      }
     }
   }
 

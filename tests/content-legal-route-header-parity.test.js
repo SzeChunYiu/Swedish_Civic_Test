@@ -85,7 +85,7 @@ const expectedLegalRoutes = [
       'const copy = sourcesCopy[language];',
       'Källor',
       'Primärt studiematerial',
-      'UHR inte står bakom dessa',
+      'UHR står inte bakom dessa',
       'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
       'Varje övningsfråga visar en källrad med UHR:s kapitel',
       'Sources',
@@ -100,7 +100,7 @@ const expectedLegalRoutes = [
       /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
-    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
+    titlePattern: /<LegalPage[\s\S]*title=\{copy\.title\}[\s\S]*>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -172,7 +172,7 @@ test('sources route authority boundary cites the current UHR page', () => {
   }
 
   for (const snippet of [
-    'UHR inte står bakom dessa',
+    'UHR står inte bakom dessa',
     'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
     'quality is not controlled by UHR or any other authority',
     'Source accessed ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
