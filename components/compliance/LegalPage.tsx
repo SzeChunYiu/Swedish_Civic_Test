@@ -1,6 +1,12 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
+import {
+  Fragment,
+  isValidElement,
+  type ComponentProps,
+  type PropsWithChildren,
+  type ReactNode,
+} from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { ComplianceActionLink } from './ComplianceActionLink';
@@ -122,14 +128,73 @@ function getBackAccessibilityLabel(label: string) {
 }
 
 function renderSectionChildren(children: ReactNode) {
-  if (children == null) return null;
-  if (isTextOnly(children)) return <Text style={styles.paragraph}>{children}</Text>;
-  return children;
+  const normalizedChildren = normalizeLegalSectionChildren(children);
+  if (normalizedChildren.length === 0) return null;
+
+  const renderedChildren: ReactNode[] = [];
+  let textChildren: (string | number)[] = [];
+
+  const flushTextChildren = () => {
+    if (textChildren.length === 0) return;
+
+    renderedChildren.push(
+      <Text key={`legal-section-text-${renderedChildren.length}`} style={styles.paragraph}>
+        {textChildren.length === 1 ? textChildren[0] : textChildren}
+      </Text>,
+    );
+    textChildren = [];
+  };
+
+  normalizedChildren.forEach((child, index) => {
+    if (isTextOnly(child)) {
+      textChildren.push(child);
+      return;
+    }
+
+    flushTextChildren();
+    renderedChildren.push(
+      <Fragment key={`legal-section-child-${renderedChildren.length}-${index}`}>{child}</Fragment>,
+    );
+  });
+  flushTextChildren();
+
+  return renderedChildren.length === 1 ? renderedChildren[0] : renderedChildren;
 }
 
-function isTextOnly(children: ReactNode): boolean {
+export function normalizeLegalSectionChildren(children: ReactNode): ReactNode[] {
+  const normalizedChildren: ReactNode[] = [];
+  appendLegalSectionChild(children, normalizedChildren);
+  return normalizedChildren;
+}
+
+function appendLegalSectionChild(child: ReactNode, normalizedChildren: ReactNode[]) {
+  if (child == null || typeof child === 'boolean') return;
+
+  if (Array.isArray(child)) {
+    child.forEach((nestedChild) => appendLegalSectionChild(nestedChild, normalizedChildren));
+    return;
+  }
+
+  if (typeof child === 'string') {
+    if (child.trim().length > 0) normalizedChildren.push(child);
+    return;
+  }
+
+  if (typeof child === 'number') {
+    normalizedChildren.push(child);
+    return;
+  }
+
+  if (isValidElement<PropsWithChildren>(child) && child.type === Fragment) {
+    appendLegalSectionChild(child.props.children, normalizedChildren);
+    return;
+  }
+
+  normalizedChildren.push(child);
+}
+
+function isTextOnly(children: ReactNode): children is string | number {
   if (typeof children === 'string' || typeof children === 'number') return true;
-  if (Array.isArray(children)) return children.every(isTextOnly);
   return false;
 }
 
