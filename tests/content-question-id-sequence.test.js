@@ -41,8 +41,8 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.match(output, /q001 expected sequential id q002/);
-  assert.match(output, /duplicate question id q001/);
+  assert.match(output, /baseQuestions\[1\] has id q001, expected q002/);
+  assert.match(output, /duplicate authored source question id q001/);
 });
 
 test('published question ID schema rejects non-q-number formats', () => {
@@ -70,5 +70,5 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.match(output, /question-001 id must use q### format/);
-  assert.match(output, /question-001 expected sequential id q001/);
+  assert.match(output, /baseQuestions\[0\] has id question-001, expected q001/);
 });
