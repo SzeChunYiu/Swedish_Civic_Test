@@ -14776,8 +14776,24 @@ function validateProgressStoreSchemaParity() {
       'streakFreezeState: createInitialFreezeState(),',
       'empty progress must initialize streak-freeze state',
     ],
+    [
+      'normalizeStreakFreezeState as normalizeStoredStreakFreezeState',
+      'ProgressState must reuse the shared streak-freeze normalizer',
+    ],
+    [
+      'streakFreezeState: normalizeStoredStreakFreezeState(candidate.streakFreezeState),',
+      'progress hydration must normalize freeze state through the shared helper',
+    ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
+    [
+      'const normalizedStreakFreezeState = normalizeStoredStreakFreezeState(streakFreezeState);',
+      'setStreakFreezeState must normalize freeze state before persistence',
+    ],
+    [
+      'streakFreezeState: normalizedStreakFreezeState,',
+      'setStreakFreezeState must persist the normalized freeze state',
+    ],
     ['writeProgress(nextProgress);', 'progress mutations must persist nextProgress'],
     ['writeProgress(emptyProgress);', 'resetProgress must persist the empty progress state'],
   ];
@@ -14800,6 +14816,10 @@ function validateProgressStoreSchemaParity() {
     [
       'normalizedQuestionProgress.confidenceRating = item.confidenceRating;',
       'question progress hydration must preserve only valid 1..5 confidence ratings',
+    ],
+    [
+      'function normalizeStreakFreezeState(value: unknown): StreakFreezeState',
+      'progress store must not duplicate the shared streak-freeze normalizer',
     ],
   ];
 

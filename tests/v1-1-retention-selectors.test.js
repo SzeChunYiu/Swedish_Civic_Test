@@ -135,6 +135,42 @@ test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid n
   assert.equal(invalidNow.available, 1);
 });
 
+test('streakWithFreeze: one normalizer repairs malformed counters and date keys', () => {
+  const { calculateStreakWithFreeze, normalizeStreakFreezeState, refillFreezes } = loadTs(
+    'lib/learning/streakWithFreeze.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const malformedFreezeState = {
+    available: 99,
+    lastEarnedAt: '2099-01-01',
+    lifetimeEarned: 99999,
+    lifetimeSpent: 3.5,
+    rescuedDayKeys: ['2026-05-17', 'not-a-date', '2099-01-01', '2026-05-17'],
+  };
+
+  const normalized = normalizeStreakFreezeState(malformedFreezeState, now);
+  assert.deepEqual(normalized, {
+    available: 4,
+    lastEarnedAt: '2026-05-18',
+    lifetimeEarned: 10000,
+    lifetimeSpent: 0,
+    rescuedDayKeys: ['2026-05-17'],
+  });
+  assert.deepEqual(refillFreezes(malformedFreezeState, now), normalized);
+
+  const result = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-18', '2026-05-19'],
+    freezeState: malformedFreezeState,
+    today: '2026-05-19',
+    now,
+  });
+  assert.equal(result.streakDays, 3);
+  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+  assert.equal(result.freezeState.available, 4);
+  assert.equal(result.freezeState.lifetimeEarned, 10000);
+  assert.equal(result.freezeState.lifetimeSpent, 0);
+});
+
 test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was used', () => {
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
   const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 1 } };

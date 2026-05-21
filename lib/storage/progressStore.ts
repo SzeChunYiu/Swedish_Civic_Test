@@ -5,7 +5,11 @@ import { create } from 'zustand';
 import type { ConfidenceRating } from '../../types/progress';
 import { gradeFromConfidence, lapsePenaltyForWrong } from '../learning/calibration';
 import { getNextReviewAt } from '../learning/spacedRepetition';
-import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
+import {
+  createInitialFreezeState,
+  normalizeStreakFreezeState as normalizeStoredStreakFreezeState,
+  type StreakFreezeState,
+} from '../learning/streakWithFreeze';
 import { getLocalDateKey } from '../learning/streaks';
 import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
 import { isSafeImportedMapKey } from './importKeySafety';
@@ -64,7 +68,6 @@ const maxHydratedAnswerTimeSeconds = 24 * 60 * 60;
 const maxHydratedTotalXp = 1000000;
 const maxHydratedMockQuestionCount = 720;
 const maxHydratedMockQuestionTimeSeconds = 4 * 60 * 60;
-const maxHydratedFreezeLifetimeCount = 10000;
 const maxHydratedFutureDateMs = 10 * 366 * 24 * 60 * 60 * 1000;
 const isoTimestampPattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const localDateKeyPattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -171,36 +174,6 @@ function normalizeLocalDateKey(value: unknown): string | undefined {
 
   const normalized = new Date(timeMs).toISOString().slice(0, 10);
   return normalized === trimmed ? trimmed : undefined;
-}
-
-function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
-  const fallback = createInitialFreezeState();
-  if (!value || typeof value !== 'object') return fallback;
-
-  const candidate = value as Partial<StreakFreezeState>;
-  const rescuedDayKeys = Array.isArray(candidate.rescuedDayKeys)
-    ? [
-        ...new Set(
-          candidate.rescuedDayKeys.map(normalizeLocalDateKey).filter((day): day is string => !!day),
-        ),
-      ]
-    : [];
-
-  return {
-    available: normalizeNonNegativeInteger(candidate.available, fallback.available, 4),
-    lastEarnedAt: normalizeLocalDateKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
-    lifetimeEarned: normalizeNonNegativeInteger(
-      candidate.lifetimeEarned,
-      fallback.lifetimeEarned,
-      maxHydratedFreezeLifetimeCount,
-    ),
-    lifetimeSpent: normalizeNonNegativeInteger(
-      candidate.lifetimeSpent,
-      fallback.lifetimeSpent,
-      maxHydratedFreezeLifetimeCount,
-    ),
-    rescuedDayKeys,
-  };
 }
 
 function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTiming[] {
@@ -428,7 +401,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
     answerHistory,
     dailyChallengeCompletions,
     mockExamSessions,
-    streakFreezeState: normalizeStreakFreezeState(candidate.streakFreezeState),
+    streakFreezeState: normalizeStoredStreakFreezeState(candidate.streakFreezeState),
   };
 }
 
@@ -653,7 +626,10 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   setStreakFreezeState: (streakFreezeState) =>
     set((state) => {
-      if (streakFreezeStatesEqual(state.streakFreezeState, streakFreezeState)) return state;
+      const normalizedStreakFreezeState = normalizeStoredStreakFreezeState(streakFreezeState);
+      if (streakFreezeStatesEqual(state.streakFreezeState, normalizedStreakFreezeState)) {
+        return state;
+      }
 
       const nextProgress = {
         completedQuestionIds: state.completedQuestionIds,
@@ -663,7 +639,7 @@ export const useProgressStore = create<ProgressState>((set) => ({
         answerHistory: state.answerHistory,
         dailyChallengeCompletions: state.dailyChallengeCompletions,
         mockExamSessions: state.mockExamSessions,
-        streakFreezeState,
+        streakFreezeState: normalizedStreakFreezeState,
       };
       const persistedProgress = writeProgress(nextProgress);
       return persistedProgress;

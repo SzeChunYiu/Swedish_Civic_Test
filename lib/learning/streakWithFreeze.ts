@@ -23,6 +23,7 @@ import { getLocalDateKey } from './streaks';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const MAX_FREEZE_LIFETIME_COUNT = 10000;
 
 export interface StreakFreezeState {
   /** Number of freezes available right now. 0..MAX_STOCKPILE. */
@@ -78,9 +79,59 @@ function normalizeDayKey(value: unknown): string | null {
   return normalized === dateKey ? dateKey : null;
 }
 
+function normalizeFreezeDayKey(value: unknown, now: Date): string | null {
+  const dayKey = normalizeDayKey(value);
+  if (!dayKey) return null;
+  return dayKey <= getLocalDateKey(now) ? dayKey : null;
+}
+
 function normalizeDayKeyList(values: unknown): string[] {
   if (!Array.isArray(values)) return [];
   return Array.from(new Set(values.map(normalizeDayKey).filter((key): key is string => !!key)));
+}
+
+function normalizeFreezeDayKeyList(values: unknown, now: Date): string[] {
+  if (!Array.isArray(values)) return [];
+  return Array.from(
+    new Set(
+      values
+        .map((value) => normalizeFreezeDayKey(value, now))
+        .filter((key): key is string => !!key),
+    ),
+  );
+}
+
+function normalizeNonNegativeInteger(value: unknown, fallback = 0, max = Number.MAX_SAFE_INTEGER) {
+  if (typeof value !== 'number' || !Number.isFinite(value) || !Number.isInteger(value)) {
+    return fallback;
+  }
+  return Math.max(0, Math.min(max, value));
+}
+
+export function normalizeStreakFreezeState(
+  value: unknown,
+  now: Date = new Date(),
+): StreakFreezeState {
+  const safeNow = safeDate(now);
+  const fallback = createInitialFreezeState(safeNow);
+  if (!value || typeof value !== 'object') return fallback;
+
+  const candidate = value as Partial<StreakFreezeState>;
+  return {
+    available: normalizeNonNegativeInteger(candidate.available, fallback.available, MAX_STOCKPILE),
+    lastEarnedAt: normalizeFreezeDayKey(candidate.lastEarnedAt, safeNow) ?? fallback.lastEarnedAt,
+    lifetimeEarned: normalizeNonNegativeInteger(
+      candidate.lifetimeEarned,
+      fallback.lifetimeEarned,
+      MAX_FREEZE_LIFETIME_COUNT,
+    ),
+    lifetimeSpent: normalizeNonNegativeInteger(
+      candidate.lifetimeSpent,
+      fallback.lifetimeSpent,
+      MAX_FREEZE_LIFETIME_COUNT,
+    ),
+    rescuedDayKeys: normalizeFreezeDayKeyList(candidate.rescuedDayKeys, safeNow),
+  };
 }
 
 function previousDayKey(dayKey: string): string {
@@ -93,15 +144,13 @@ function previousDayKey(dayKey: string): string {
  * earn. Pure — returns a new state, does not mutate.
  */
 export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeDate(now)));
-  const lastEarnedAt = normalizeDayKey(state.lastEarnedAt);
-
-  if (!lastEarnedAt) {
-    return { ...state, lastEarnedAt: currentWeekStartKey };
-  }
+  const safeNow = safeDate(now);
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeNow));
+  const normalizedState = normalizeStreakFreezeState(state, safeNow);
+  const lastEarnedAt = normalizedState.lastEarnedAt;
 
   if (currentWeekStartKey <= lastEarnedAt) {
-    return lastEarnedAt === state.lastEarnedAt ? state : { ...state, lastEarnedAt };
+    return normalizedState;
   }
 
   // Use noon UTC anchors so DST shifts don't change the rounded week count.
@@ -109,15 +158,15 @@ export function refillFreezes(state: StreakFreezeState, now: Date = new Date()):
   const currentNoon = new Date(`${currentWeekStartKey}T12:00:00.000Z`).getTime();
   const weeksSince = Math.max(1, Math.round((currentNoon - lastNoon) / (7 * DAY_MS)));
 
-  const earned = Math.min(weeksSince * FREEZES_PER_WEEK, MAX_STOCKPILE - state.available);
+  const earned = Math.min(weeksSince * FREEZES_PER_WEEK, MAX_STOCKPILE - normalizedState.available);
   if (earned <= 0) {
-    return { ...state, lastEarnedAt: currentWeekStartKey };
+    return { ...normalizedState, lastEarnedAt: currentWeekStartKey };
   }
   return {
-    ...state,
-    available: state.available + earned,
+    ...normalizedState,
+    available: normalizedState.available + earned,
     lastEarnedAt: currentWeekStartKey,
-    lifetimeEarned: state.lifetimeEarned + earned,
+    lifetimeEarned: normalizedState.lifetimeEarned + earned,
   };
 }
 
