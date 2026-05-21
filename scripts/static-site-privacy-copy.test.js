@@ -138,6 +138,26 @@ test('static site current-use AdSense copy is gated by reviewed slot IDs', () =>
   assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, configuredApp), []);
 });
 
+test('static privacy browser spec covers unconfigured AdSense slot-state copy', () => {
+  const browserSpec = read('tests/e2e/static-site-network-privacy.spec.ts');
+
+  assert.match(
+    browserSpec,
+    /privacy and consent copy describe unconfigured AdSense slots in both languages/,
+    'static privacy browser spec should cover rendered privacy and consent slot-state copy',
+  );
+  assert.match(
+    browserSpec,
+    /function expectAdSenseSlotsRemainUnconfigured\(page: Page\)[\s\S]*data-smt-ad-placement/,
+    'static privacy browser spec should inspect rendered ad slot attributes',
+  );
+  assert.match(
+    browserSpec,
+    /await expectPreparedAdSenseCopy\(page, 'en'\);[\s\S]*await setStaticSiteLanguage\(page, 'sv'\);[\s\S]*await expectPreparedAdSenseCopy\(page, 'sv'\);/,
+    'static privacy browser spec should prove prepared AdSense copy in English and Swedish',
+  );
+});
+
 test('static AdSense slot-state checks use the shared helper', () => {
   const ownSource = read('scripts/static-site-privacy-copy.test.js');
   const liveSiteSource = read('scripts/check-live-site.js');
