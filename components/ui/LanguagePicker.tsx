@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { locales, type LocaleOption } from '../../lib/i18n/locales';
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
+import { CloseIcon } from './icons/CloseIcon';
 import { GlobeIcon } from './icons/GlobeIcon';
 
 type LanguagePickerCopy = {
@@ -40,6 +42,7 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
   },
 };
 
+const closeIconSize = space[2];
 const triggerIconSize = space[2];
 type FocusableElement = { focus?: () => void };
 type KeyboardEventLike = {
@@ -60,16 +63,26 @@ type WebPressableKeyboardProps = {
  */
 export interface LanguagePickerProps {
   languageOverride?: AppLanguage;
+  themeColors?: ThemeColors;
 }
 
-export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
+export function LanguagePicker({
+  languageOverride,
+  themeColors: providedThemeColors,
+}: LanguagePickerProps = {}) {
   const settingsLanguage = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
+  const fallbackThemeColors = useThemeColors();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<FocusableElement | null>(null);
   const closeButtonRef = useRef<FocusableElement | null>(null);
   const rowRefs = useRef<Record<string, FocusableElement | null>>({});
   const reduceMotion = useReducedMotion();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const pickerId = useId().replace(/:/g, '');
+  const menuTitleId = `language-picker-title-${pickerId}`;
+  const menuDescriptionId = `language-picker-description-${pickerId}`;
 
   const language = languageOverride ?? settingsLanguage;
   const currentCode = language === 'sv' ? 'sv' : 'en';
@@ -238,11 +251,11 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             : null,
         ]}
       >
-        <GlobeIcon size={triggerIconSize} color={colors.textMuted} />
+        <GlobeIcon size={triggerIconSize} color={themeColors.textMuted} />
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
-      <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
+      <Modal animationType="fade" transparent visible={open} onRequestClose={closeMenu}>
         <View style={styles.backdropLayer}>
           <Pressable
             accessible={false}
@@ -252,6 +265,9 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
           />
           <Pressable
+            aria-describedby={menuDescriptionId}
+            aria-labelledby={menuTitleId}
+            aria-modal={true}
             accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
             hitSlop={space[0]}
@@ -261,10 +277,15 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
               pressed ? (reduceMotion ? null : styles.cardPressed) : null,
             ]}
           >
+            <Text nativeID={menuTitleId} style={styles.accessibilitySummaryText}>
+              {copy.menuLabel}
+            </Text>
             <View style={styles.header}>
               <View style={styles.headerText}>
                 <Text style={styles.title}>{copy.title}</Text>
-                <Text style={styles.subtitle}>{copy.subtitle}</Text>
+                <Text nativeID={menuDescriptionId} style={styles.subtitle}>
+                  {copy.subtitle}
+                </Text>
               </View>
               <Pressable
                 accessibilityLabel={copy.closeLabel}
@@ -284,7 +305,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 ]}
                 {...getCloseWebKeyboardProps()}
               >
-                <Text style={styles.closeText}>x</Text>
+                <CloseIcon size={closeIconSize} color={themeColors.textMuted} />
               </Pressable>
             </View>
             <ScrollView style={styles.list}>
@@ -344,160 +365,162 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   );
 }
 
-const styles = StyleSheet.create({
-  trigger: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: space.hairline,
-    flexShrink: 0,
-    flexDirection: 'row',
-    gap: space[0.5],
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
-  },
-  triggerPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  triggerPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  triggerLabel: {
-    color: colors.text,
-    fontFamily: typography.badge.fontFamily,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-  },
-  backdropLayer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    padding: space[3],
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.surfaceMuted,
-  },
-  backdropPressed: {
-    backgroundColor: colors.focusSoft,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1.5],
-    maxHeight: '80%',
-    maxWidth: 420,
-    padding: space[3],
-    width: '100%',
-  },
-  cardPressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  header: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: space[1],
-  },
-  headerText: {
-    flex: 1,
-    gap: space[1],
-  },
-  title: {
-    color: colors.text,
-    fontFamily: typography.subHeading.fontFamily,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.subHeading.fontWeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontFamily: typography.bodyTight.fontFamily,
-    fontSize: typography.bodyTight.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  closeButton: {
-    alignItems: 'center',
-    borderRadius: radius.pill,
-    justifyContent: 'center',
-    minHeight: space[6],
-    minWidth: space[6],
-  },
-  closePressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  closePressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  closeText: {
-    color: colors.textMuted,
-    fontFamily: typography.bodyBold.fontFamily,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.bodyBold.lineHeight,
-  },
-  list: {
-    marginTop: space[1],
-  },
-  row: {
-    alignItems: 'center',
-    borderRadius: radius.small,
-    flexDirection: 'row',
-    gap: space[1],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.5],
-  },
-  rowSelected: {
-    backgroundColor: colors.badgeBlueBg,
-  },
-  rowPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  rowPressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  rowText: {
-    flex: 1,
-  },
-  native: {
-    color: colors.text,
-    fontFamily: typography.bodySemibold.fontFamily,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-  },
-  english: {
-    color: colors.textMuted,
-    fontFamily: typography.captionLight.fontFamily,
-    fontSize: typography.captionLight.fontSize,
-  },
-  dimmed: {
-    opacity: 0.55,
-  },
-  checkmark: {
-    color: colors.accent,
-    fontFamily: typography.bodyBold.fontFamily,
-    fontSize: typography.bodyBold.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  comingSoonBadge: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.pill,
-    paddingHorizontal: space[1],
-    paddingVertical: space[0.5],
-  },
-  comingSoonText: {
-    color: colors.textMuted,
-    fontFamily: typography.micro.fontFamily,
-    fontSize: typography.micro.fontSize,
-    letterSpacing: typography.micro.letterSpacing,
-    textTransform: 'uppercase',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    trigger: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: space.hairline,
+      flexShrink: 0,
+      flexDirection: 'row',
+      gap: space[0.5],
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[6],
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.5],
+    },
+    triggerPressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    triggerPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    triggerLabel: {
+      color: themeColors.text,
+      fontFamily: typography.badge.fontFamily,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+    },
+    backdropLayer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      padding: space[3],
+    },
+    backdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    backdropPressed: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    card: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1.5],
+      maxHeight: '80%',
+      maxWidth: 420,
+      padding: space[3],
+      width: '100%',
+    },
+    cardPressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    accessibilitySummaryText: {
+      height: 1,
+      left: -10000,
+      overflow: 'hidden',
+      position: 'absolute',
+      width: 1,
+    },
+    header: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+      gap: space[1],
+    },
+    headerText: {
+      flex: 1,
+      gap: space[1],
+    },
+    title: {
+      color: themeColors.text,
+      fontFamily: typography.subHeading.fontFamily,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.subHeading.fontWeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontFamily: typography.bodyTight.fontFamily,
+      fontSize: typography.bodyTight.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    closeButton: {
+      alignItems: 'center',
+      borderRadius: radius.pill,
+      justifyContent: 'center',
+      minHeight: space[6],
+      minWidth: space[6],
+    },
+    closePressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    closePressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    list: {
+      marginTop: space[1],
+    },
+    row: {
+      alignItems: 'center',
+      borderRadius: radius.small,
+      flexDirection: 'row',
+      gap: space[1],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1.5],
+    },
+    rowSelected: {
+      backgroundColor: themeColors.badgeBlueBg,
+    },
+    rowPressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    rowPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    rowText: {
+      flex: 1,
+    },
+    native: {
+      color: themeColors.text,
+      fontFamily: typography.bodySemibold.fontFamily,
+      fontSize: typography.bodySemibold.fontSize,
+      fontWeight: typography.bodySemibold.fontWeight,
+    },
+    english: {
+      color: themeColors.textMuted,
+      fontFamily: typography.captionLight.fontFamily,
+      fontSize: typography.captionLight.fontSize,
+    },
+    dimmed: {
+      opacity: 0.55,
+    },
+    checkmark: {
+      color: themeColors.accent,
+      fontFamily: typography.bodyBold.fontFamily,
+      fontSize: typography.bodyBold.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    comingSoonBadge: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.pill,
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.5],
+    },
+    comingSoonText: {
+      color: themeColors.textMuted,
+      fontFamily: typography.micro.fontFamily,
+      fontSize: typography.micro.fontSize,
+      letterSpacing: typography.micro.letterSpacing,
+      textTransform: 'uppercase',
+    },
+  });
+}

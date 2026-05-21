@@ -10,12 +10,24 @@ function readSource() {
   return fs.readFileSync(sourcePath, 'utf8');
 }
 
-test('top bar route links keep web anchor touch targets and token feedback', () => {
+test('top bar route links keep web anchor touch targets and theme token feedback', () => {
   const source = readSource();
 
   assert.match(source, /function TopBarActionLink\(/);
   assert.match(source, /<Link\s/);
+  assert.match(source, /const themeColors = useThemeColors\(\);/);
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+  );
+  assert.match(source, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.match(source, /useTopBarActionLinkWebStyles\(themeColors\)/);
   assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
+  assert.doesNotMatch(
+    source,
+    /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+  );
+  assert.doesNotMatch(source, /\bcolors\./);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/);
   assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
@@ -45,10 +57,14 @@ test('top bar route links keep web anchor touch targets and token feedback', () 
   );
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /minWidth: space\[6\]/);
-  assert.match(source, /iconLinkHover: \{\s*backgroundColor: colors\.focusSoft,/);
+  assert.match(source, /background-color: \$\{themeColors\.focusSoft\}/);
+  assert.match(source, /iconLinkHover: \{\s*backgroundColor: themeColors\.focusSoft,/);
   assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
-  assert.match(source, /iconLinkHoverReducedMotion: \{\s*backgroundColor: colors\.focusSoft,\s*\}/);
-  assert.match(source, /iconLinkPressed: \{\s*backgroundColor: colors\.focusSoft,/);
+  assert.match(
+    source,
+    /iconLinkHoverReducedMotion: \{\s*backgroundColor: themeColors\.focusSoft,\s*\}/,
+  );
+  assert.match(source, /iconLinkPressed: \{\s*backgroundColor: themeColors\.focusSoft,/);
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.match(source, /@media \(prefers-reduced-motion: reduce\)[\s\S]*transform: none;/);
 });

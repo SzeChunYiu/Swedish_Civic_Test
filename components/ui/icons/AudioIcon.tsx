@@ -1,17 +1,15 @@
 import { Path, Svg } from 'react-native-svg';
 
-import { colors } from '../../../lib/theme';
-
 export function AudioIcon({
   size = 22,
   color,
   muted = false,
 }: {
   size?: number;
-  color?: string;
+  color: string;
   muted?: boolean;
 }) {
-  const stroke = color ?? colors.text;
+  const stroke = color;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path d="M4 9v6h4l5 4V5L8 9H4z" stroke={stroke} strokeWidth={1.75} strokeLinejoin="round" />
