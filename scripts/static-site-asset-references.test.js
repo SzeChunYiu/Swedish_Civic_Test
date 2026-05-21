@@ -132,36 +132,53 @@ test('static site asset extractor follows local stylesheet imports recursively',
   ]);
 });
 
-test('static site asset extractor ignores commented stylesheet imports and urls', () => {
-  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-comments-'));
-  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
+test('static site asset extractor reports but does not read stylesheet imports outside siteDir', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-import-root-'));
+  const siteDir = path.join(tmpDir, 'site');
+  fs.mkdirSync(path.join(siteDir, 'css'), { recursive: true });
   fs.writeFileSync(
-    path.join(tmpDir, 'css', 'site.css'),
+    path.join(siteDir, 'site.css'),
     [
-      '/* @import "./legacy.css"; */',
-      '/* .old-hero { background-image: url("../img/old-hero.webp"); } */',
-      '@import "./theme.css";',
-      '.hero { background-image: url("../img/current-hero.webp"); }',
-      '.quoted { content: "not a comment: /* keep quoted text */"; }',
+      '@import "./css/theme.css";',
+      '@import "../outside.css";',
+      '.site { background-image: url("./img/site-bg.webp"); }',
     ].join('\n'),
   );
   fs.writeFileSync(
-    path.join(tmpDir, 'css', 'theme.css'),
-    [
-      '/* @import "./old-theme.css"; */',
-      '/* .old-theme { cursor: url("../cursors/old.cur"), pointer; } */',
-      '.theme { cursor: url("../cursors/current.cur"), pointer; }',
-    ].join('\n'),
+    path.join(siteDir, 'css', 'theme.css'),
+    '.theme { background-image: url("../img/theme-bg.svg"); }',
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'outside.css'),
+    '.leaked { background-image: url("./leaked-secret.png"); }',
   );
 
-  const indexHtml = '<link rel="stylesheet" href="./css/site.css" />';
+  const indexHtml = '<link rel="stylesheet" href="./site.css" />';
 
-  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
-    'css/site.css',
-    'img/current-hero.webp',
+  assert.deepEqual(localAssetReferences(indexHtml, { siteDir }), [
+    'site.css',
+    'img/site-bg.webp',
     'css/theme.css',
-    'cursors/current.cur',
+    'img/theme-bg.svg',
+    '../outside.css',
   ]);
+  assert.deepEqual(
+    findAssetReferencesMissingFromManifest(
+      indexHtml,
+      {
+        version: 1,
+        algorithm: 'sha256',
+        assets: {
+          'site.css': { bytes: 0, sha256: 'stub' },
+          'css/theme.css': { bytes: 0, sha256: 'stub' },
+          'img/site-bg.webp': { bytes: 0, sha256: 'stub' },
+          'img/theme-bg.svg': { bytes: 0, sha256: 'stub' },
+        },
+      },
+      { siteDir },
+    ),
+    ['../outside.css'],
+  );
 });
 
 test('static site asset extractor fails responsive and poster references when files are not shipped', () => {

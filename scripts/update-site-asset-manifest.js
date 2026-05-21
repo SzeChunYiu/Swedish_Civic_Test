@@ -64,6 +64,11 @@ function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
 }
 
+function isInsideDirectory(candidatePath, directoryPath) {
+  const relativePath = path.relative(directoryPath, candidatePath);
+  return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
+}
+
 function listSiteAssetFiles(siteDir) {
   const files = [];
 
@@ -195,7 +200,12 @@ function extractStylesheetAssetReferences(stylesheetPath, siteDir, options = {})
 
   visitedStylesheets.add(normalizedStylesheetPath);
 
-  const absolutePath = path.join(siteDir, normalizedStylesheetPath);
+  const resolvedSiteDir = path.resolve(siteDir);
+  const absolutePath = path.resolve(resolvedSiteDir, normalizedStylesheetPath);
+  if (!isInsideDirectory(absolutePath, resolvedSiteDir)) {
+    return references;
+  }
+
   if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
     return references;
   }
