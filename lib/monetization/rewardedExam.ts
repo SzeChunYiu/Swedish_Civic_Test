@@ -88,8 +88,15 @@ function createEmptyPersistedMockExamAccess(): PersistedMockExamAccess {
 }
 
 function normalizeDateKey(value: string): string | null {
-  const dateKey = value.trim().slice(0, 10);
-  return DATE_KEY_PATTERN.test(dateKey) ? dateKey : null;
+  const dateKey = value;
+  if (!DATE_KEY_PATTERN.test(dateKey)) return null;
+
+  const [year, month, day] = dateKey.split('-').map(Number);
+  const normalizedDate = new Date(Date.UTC(year, month - 1, day));
+  normalizedDate.setUTCFullYear(year);
+  const normalizedDateKey = normalizedDate.toISOString().slice(0, 10);
+
+  return normalizedDateKey === dateKey ? dateKey : null;
 }
 
 function normalizeMockExamSessionId(value: unknown): string | null {
@@ -219,9 +226,14 @@ export function getMockExamAccessDateKey(date: Date | string = new Date()): stri
   if (typeof date === 'string') {
     const trimmedDate = date.trim();
     const directDateKey = normalizeDateKey(trimmedDate);
-    if (trimmedDate === directDateKey) return directDateKey;
+    if (directDateKey) return directDateKey;
 
-    const parsedDate = new Date(date);
+    const datePrefix = trimmedDate.slice(0, 10);
+    if (DATE_KEY_PATTERN.test(datePrefix) && !normalizeDateKey(datePrefix)) {
+      return getLocalDateKey(new Date());
+    }
+
+    const parsedDate = new Date(trimmedDate);
     if (!Number.isNaN(parsedDate.getTime())) return getLocalDateKey(parsedDate);
     return getLocalDateKey(new Date());
   }

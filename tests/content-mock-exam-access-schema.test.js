@@ -55,6 +55,28 @@ test('mock exam access schema includes idempotent completion identity', () => {
   assert.match(rewardedExamSource, /completedSessionIds\.includes\(normalizedSessionId\)/);
 });
 
+test('mock exam access date keys require canonical calendar dates', () => {
+  const rewardedExamSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/rewardedExam.ts'),
+    'utf8',
+  );
+
+  assert.doesNotMatch(rewardedExamSource, /value\.trim\(\)\.slice\(0, 10\)/);
+  assert.match(rewardedExamSource, /if \(!DATE_KEY_PATTERN\.test\(dateKey\)\) return null;/);
+  assert.match(
+    rewardedExamSource,
+    /const normalizedDate = new Date\(Date\.UTC\(year, month - 1, day\)\);/,
+  );
+  assert.match(rewardedExamSource, /normalizedDate\.setUTCFullYear\(year\);/);
+  assert.match(
+    rewardedExamSource,
+    /const normalizedDateKey = normalizedDate\.toISOString\(\)\.slice\(0, 10\);/,
+  );
+  assert.match(rewardedExamSource, /return normalizedDateKey === dateKey \? dateKey : null;/);
+  assert.match(rewardedExamSource, /const datePrefix = trimmedDate\.slice\(0, 10\);/);
+  assert.match(rewardedExamSource, /!normalizeDateKey\(datePrefix\)/);
+});
+
 test('mock exam access schema parity rejects credit optionality drift', () => {
   const result = spawnSync(
     process.execPath,
