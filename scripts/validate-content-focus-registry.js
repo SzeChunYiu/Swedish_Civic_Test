@@ -91,6 +91,22 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'chapterCardAccessibility',
+    flags: ['--focus-chapter-card-accessibility'],
+    summaryKeys: [
+      'chapterCardAccessibilityRulesValidated',
+      'chapterCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'explanationPanelAccessibility',
+    flags: ['--focus-explanation-panel-accessibility'],
+    summaryKeys: [
+      'explanationPanelAccessibilityRulesValidated',
+      'explanationPanelAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'legalRouteParity',
     flags: ['--focus-legal-route-parity'],
     summaryKeys: [
@@ -116,6 +132,18 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
   },
   {
+    id: 'settingsRoute',
+    flags: ['--focus-settings-route'],
+    summaryKeys: [
+      'settingsRouteHeadersValidated',
+      'settingsRouteHeaderParityValidated',
+      'settingsRouteCopyLabelsValidated',
+      'settingsRouteCopyParityValidated',
+      'settingsRouteScrollRulesValidated',
+      'settingsRouteScrollParityValidated',
+    ],
+  },
+  {
     id: 'mistakesRouteCopy',
     flags: ['--focus-mistakes-route-copy'],
     summaryKeys: ['mistakesRouteCopyLabelsValidated', 'mistakesRouteCopyParityValidated'],
@@ -131,6 +159,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'staticValidationSyntaxFilesValidated',
       'staticValidationImportChecksValidated',
       'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'dashboardProgressSnapshot',
+    flags: ['--focus-dashboard-progress-snapshot'],
+    summaryKeys: [
+      'dashboardProgressSnapshotCasesValidated',
+      'dashboardProgressSnapshotParityValidated',
     ],
   },
   {
@@ -220,6 +256,57 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'progressStoreFieldsValidated',
       'progressStoreSchemaParityValidated',
     ],
+  },
+  {
+    id: 'contentTypeSchemaParity',
+    flags: ['--focus-content-type-schema-parity'],
+    summaryKeys: [
+      'contentTypeUnionsValidated',
+      'contentTypeInterfacesValidated',
+      'contentTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'purchaseSchema',
+    flags: ['--focus-purchase-schema'],
+    summaryKeys: [
+      'purchaseTypeUnionsValidated',
+      'purchaseTypeInterfacesValidated',
+      'purchaseTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'generatedTrueFalseNaturalness',
+    flags: ['--focus-generated-true-false-naturalness'],
+    summaryKeys: [
+      'generatedTrueFalseNaturalnessFocusValidated',
+      'questionGeneratedTrueFalseNaturalnessValidated',
+    ],
+  },
+  {
+    id: 'masteryRules',
+    flags: ['--focus-mastery-rules'],
+    summaryKeys: ['masteryRulesValidated', 'masteryRulesParityValidated'],
+  },
+  {
+    id: 'weakChapterRules',
+    flags: ['--focus-weak-chapter-rules'],
+    summaryKeys: ['weakChapterRulesValidated', 'weakChapterRulesParityValidated'],
+  },
+  {
+    id: 'spacedRepetitionSchema',
+    flags: ['--focus-spaced-repetition-schema'],
+    summaryKeys: [
+      'spacedRepetitionIntervalsValidated',
+      'spacedRepetitionRuntimeParityValidated',
+      'spacedRepetitionRuntimeInputCasesValidated',
+      'spacedRepetitionRuntimeInputParityValidated',
+    ],
+  },
+  {
+    id: 'mobileAdsConsentHook',
+    flags: ['--focus-mobile-ads-consent-hook'],
+    summaryKeys: ['mobileAdsConsentHookCasesValidated', 'mobileAdsConsentHookParityValidated'],
   },
   {
     id: 'xpRules',
@@ -553,6 +640,71 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     id: 'sourceMaterialLinkParity',
     flags: ['--focus-source-material-link-parity'],
     summaryKeys: ['uhrSourceMaterialLinkParityValidated'],
+  },
+  {
+    id: 'authoredSourcePartition',
+    flags: ['--focus-authored-source-partition'],
+    summaryKeys: ['authoredSourceQuestionsValidated', 'authoredSourcePartitionQuestionsValidated'],
+  },
+  {
+    id: 'chapterMetadata',
+    flags: ['--focus-chapter-metadata'],
+    summaryKeys: [
+      'chapters',
+      'chapterSchemasValidated',
+      'chapterTextFieldsNormalizedValidated',
+      'chapterExactSchemaKeysValidated',
+    ],
+  },
+  {
+    id: 'launchAdDeferral',
+    flags: ['--focus-launch-ad-deferral'],
+    summaryKeys: ['launchAdSuppressedRoutesValidated', 'launchAdRouteSuppressionParityValidated'],
+  },
+  {
+    id: 'learnFlashcardSource',
+    flags: ['--focus-learn-flashcard-source'],
+    summaryKeys: [
+      'questionDisclaimerRoutesValidated',
+      'questionDisclaimerCopyValidated',
+      'learnRouteHeadersValidated',
+      'learnRouteHeaderParityValidated',
+      'learnRouteLinkCopyLabelsValidated',
+      'learnRouteLinkCopyParityValidated',
+    ],
+  },
+  {
+    id: 'questionAuthorityBoundary',
+    flags: ['--focus-question-authority-boundary'],
+    summaryKeys: ['publishedQuestions', 'questionAuthorityBoundaryTextValidated'],
+  },
+  {
+    id: 'questionExactSchemaKeys',
+    flags: ['--focus-question-exact-schema-keys'],
+    summaryKeys: ['questionExactSchemaKeysValidated'],
+  },
+  {
+    id: 'questionProvenanceRuntime',
+    flags: ['--focus-question-provenance-runtime'],
+    summaryKeys: [
+      'uhrSourceMetadataValidated',
+      'questionChapterReferenceParityValidated',
+      'uhrReferencesValidated',
+    ],
+  },
+  {
+    id: 'svNativeMockExamCopy',
+    flags: ['--focus-sv-native-mock-exam-copy'],
+    summaryKeys: [
+      'nativeMockExamComponentCopyLabelsValidated',
+      'nativeMockExamComponentLegalCopyValidated',
+      'nativeMockExamScoreSourceCopyValidated',
+    ],
+  },
+  {
+    id: 'uhrReferenceSectionPageParity',
+    flags: ['--focus-uhr-reference-section-page-parity'],
+    summaryKeys: ['uhrMapSectionsValidated', 'uhrMapPageRangesValidated', 'uhrReferencesValidated'],
   },
   {
     id: 'contentExecCwd',
