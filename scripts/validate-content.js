@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -7921,6 +7920,10 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let aboutTheTestSeenEffectRulesValidated = 0;
+let aboutTheTestSeenEffectParityValidated = false;
+let firstRunAboutModalSuppressedRoutesValidated = 0;
+let firstRunAboutModalSuppressionParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -8270,6 +8273,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
+    aboutTheTestSeenEffectRulesValidated,
+    aboutTheTestSeenEffectParityValidated,
   });
   process.exit(0);
 }
@@ -10806,6 +10811,7 @@ function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
   let legalPage = '';
+  let firstRunAboutModal = '';
 
   function reject(message) {
     valid = false;
@@ -10828,8 +10834,70 @@ function validateAboutTheTestRouteCopyParity() {
     return;
   }
 
+  try {
+    firstRunAboutModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`FirstRunAboutTheTestModal source could not be read: ${error.message}`);
+    return;
+  }
+
   for (const [snippet, message] of EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS) {
     if (!aboutRoute.includes(snippet)) reject(message);
+  }
+
+  const seenEffectSource =
+    'useEffect(() => {\n    if (!hasSeenAboutTheTest) {\n      markAboutTheTestSeen();\n    }\n  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
+  const seenEffectRules = [
+    [
+      aboutRoute.includes("import { useEffect } from 'react';"),
+      'about-the-test route must import useEffect for first-run seen effect',
+    ],
+    [
+      aboutRoute.includes(
+        'const hasSeenAboutTheTest = useSettingsStore((state) => state.hasSeenAboutTheTest);',
+      ),
+      'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    ],
+    [
+      aboutRoute.includes(
+        'const markAboutTheTestSeen = useSettingsStore((state) => state.markAboutTheTestSeen);',
+      ),
+      'about-the-test route must subscribe to markAboutTheTestSeen',
+    ],
+    [
+      aboutRoute.includes(seenEffectSource),
+      'about-the-test route missing effect-scoped seen marker for first-run seen effect',
+    ],
+    [
+      !aboutRoute.includes('useSettingsStore.getState().hasSeenAboutTheTest'),
+      'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
+    ],
+    [
+      !aboutRoute.replace(seenEffectSource, '').includes('markAboutTheTestSeen();'),
+      'about-the-test route must call markAboutTheTestSeen() only inside useEffect',
+    ],
+  ];
+
+  for (const [passes, message] of seenEffectRules) {
+    if (passes) {
+      aboutTheTestSeenEffectRulesValidated += 1;
+    } else {
+      reject(message);
+    }
+  }
+
+  if (/mockprov|mock-provet/i.test(aboutRoute)) {
+    reject(
+      'about-the-test route Swedish copy must use övningsprov wording, not mockprov/mock-provet',
+    );
+  }
+  if (/mockprov|mock-provet|\bmock\s*-?\s*prov(?:et)?\b/i.test(firstRunAboutModal)) {
+    reject(
+      'first-run about guide Swedish copy must use övningsprov wording, not mockprov/mock-provet',
+    );
   }
 
   if (!legalPage.includes('target="_blank"')) {
@@ -10918,12 +10986,14 @@ function validateAboutTheTestRouteCopyParity() {
   );
   if (
     valid &&
+    aboutTheTestSeenEffectRulesValidated === seenEffectRules.length &&
     aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
     aboutTheTestOfficialSourceUrlsValidated === ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
     aboutTheTestOfficialSourceRetrievedDateValidated ===
       ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
   ) {
     aboutTheTestRouteCopyParityValidated = true;
+    aboutTheTestSeenEffectParityValidated = true;
   }
 }
 
@@ -11345,6 +11415,8 @@ function validateOnboardingRouteHeaderParity() {
 function validateOnboardingRouteCopyParity() {
   let valid = true;
   let onboardingRoute = '';
+  let firstRunAboutModal = '';
+  let adsSource = '';
 
   function reject(message) {
     valid = false;
@@ -11355,6 +11427,23 @@ function validateOnboardingRouteCopyParity() {
     onboardingRoute = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
   } catch (error) {
     reject(`onboarding route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    firstRunAboutModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`FirstRunAboutTheTestModal source could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  } catch (error) {
+    reject(`ads route suppression source could not be read: ${error.message}`);
     return;
   }
 
@@ -11369,6 +11458,29 @@ function validateOnboardingRouteCopyParity() {
       );
     }
   });
+
+  const expectedFirstRunSuppressedRoutes = [
+    "'/exam'",
+    "'/quiz'",
+    "'/(auth)'",
+    "'/onboarding'",
+    "'/about-the-test'",
+  ];
+  for (const route of expectedFirstRunSuppressedRoutes) {
+    if (firstRunAboutModal.includes(route)) {
+      firstRunAboutModalSuppressedRoutesValidated += 1;
+    } else {
+      reject(`first-run about modal must suppress ${route.slice(1, -1)}`);
+    }
+  }
+  if (!adsSource.includes("'/onboarding'")) {
+    reject('launch popup route suppression must include /onboarding');
+  }
+  for (const route of ["'/home'", "'/learn'", "'/practice'", "'/mistakes'", "'/profile'"]) {
+    if (firstRunAboutModal.includes(route)) {
+      reject(`first-run about modal must not suppress study route ${route.slice(1, -1)}`);
+    }
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_ONBOARDING_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -11397,8 +11509,13 @@ function validateOnboardingRouteCopyParity() {
     (count, labels) => count + labels.length,
     0,
   );
-  if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
+  if (
+    valid &&
+    onboardingRouteCopyLabelsValidated === expectedLabelCount &&
+    firstRunAboutModalSuppressedRoutesValidated === expectedFirstRunSuppressedRoutes.length
+  ) {
     onboardingRouteCopyParityValidated = true;
+    firstRunAboutModalSuppressionParityValidated = true;
   }
 }
 
@@ -17965,6 +18082,10 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      aboutTheTestSeenEffectRulesValidated,
+      aboutTheTestSeenEffectParityValidated,
+      firstRunAboutModalSuppressedRoutesValidated,
+      firstRunAboutModalSuppressionParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
