@@ -1,16 +1,17 @@
 name: Deploy site to Loopia
 
-# Uploads the static site in `site/` to Loopia shared hosting over SFTP
-# whenever `main` changes (or run manually via the Actions tab).
+# Uploads the static site in `site/` to Loopia shared hosting (classic
+# Apache, FTP/FTPS) whenever `main` changes, or run manually via the Actions tab.
 #
-# Required repo secrets (Settings → Secrets and variables → Actions → New repository secret):
-#   LOOPIA_SFTP_HOST      e.g. sftp.loopia.se
-#   LOOPIA_SFTP_USER      your Loopia FTP/SFTP account username (Kundzon → domain → FTP/SFTP-konton)
-#   LOOPIA_SFTP_PASSWORD  that account's password
-#   LOOPIA_REMOTE_DIR     the web root for your domain, e.g. /yourdomain.se/public_html
+# Required repo secrets (Settings → Secrets and variables → Actions):
+#   LOOPIA_FTP_HOST       e.g. almostswedish.se   (the FTP server Loopia shows)
+#   LOOPIA_FTP_USER       the FTP account username you created
+#   LOOPIA_FTP_PASSWORD   that account's password
+#   LOOPIA_REMOTE_DIR     web root for the domain, e.g. /public_html
 #
-# Until those secrets are set, this workflow runs green and simply skips the upload.
-# Only repo secrets are used (never untrusted event input), so there is no injection risk.
+# Connection uses FTPS (explicit TLS over port 21). Until the secrets are set,
+# this workflow runs green and skips. Only repo secrets are used (never
+# untrusted event input), so there is no workflow-injection risk.
 
 on:
   push:
@@ -18,7 +19,13 @@ on:
     paths:
       - 'site/**'
       - '.github/workflows/loopia-deploy.yml'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'deploy = upload site/  |  list = just list the remote tree (to find the web root)'
+        type: choice
+        options: [deploy, list]
+        default: deploy
 
 concurrency:
   group: loopia-deploy
@@ -37,10 +44,10 @@ jobs:
       - name: Check Loopia secrets are configured
         id: check
         env:
-          HOST: ${{ secrets.LOOPIA_SFTP_HOST }}
+          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
         run: |
           if [ -z "$HOST" ]; then
-            echo "::notice::Loopia secrets not set yet - skipping deploy. Add LOOPIA_SFTP_HOST / LOOPIA_SFTP_USER / LOOPIA_SFTP_PASSWORD / LOOPIA_REMOTE_DIR under Settings -> Secrets and variables -> Actions."
+            echo "::notice::Loopia secrets not set yet - skipping. Add LOOPIA_FTP_HOST / LOOPIA_FTP_USER / LOOPIA_FTP_PASSWORD / LOOPIA_REMOTE_DIR under Settings -> Secrets and variables -> Actions."
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
@@ -50,28 +57,51 @@ jobs:
         if: steps.check.outputs.ready == 'true'
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      - name: Upload site/ to Loopia over SFTP
-        if: steps.check.outputs.ready == 'true'
+      - name: List remote tree (diagnostic / mode=list)
+        if: steps.check.outputs.ready == 'true' && github.event.inputs.mode == 'list'
         env:
-          HOST: ${{ secrets.LOOPIA_SFTP_HOST }}
-          USERNAME: ${{ secrets.LOOPIA_SFTP_USER }}
-          LFTP_PASSWORD: ${{ secrets.LOOPIA_SFTP_PASSWORD }}
+          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
+          USERNAME: ${{ secrets.LOOPIA_FTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.LOOPIA_FTP_PASSWORD }}
+        run: |
+          lftp -u "$USERNAME" --env-password -e "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode true;
+            set net:max-retries 2;
+            set net:timeout 25;
+            open ftp://$HOST;
+            echo '=== login dir ==='; pwd; ls;
+            echo '=== /public_html ==='; ls /public_html;
+            bye
+          " || true
+
+      - name: Upload site/ to Loopia over FTPS
+        if: steps.check.outputs.ready == 'true' && github.event.inputs.mode != 'list'
+        env:
+          HOST: ${{ secrets.LOOPIA_FTP_HOST }}
+          USERNAME: ${{ secrets.LOOPIA_FTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.LOOPIA_FTP_PASSWORD }}
           REMOTE_DIR: ${{ secrets.LOOPIA_REMOTE_DIR }}
         run: |
-          # --env-password reads LFTP_PASSWORD from the environment, so the
-          # password never appears on the command line / in logs and special
-          # characters are handled correctly.
+          # FTPS (explicit TLS over port 21). --env-password keeps the password
+          # out of the command line / logs. We log the remote root first for
+          # diagnostics, then mirror local site/ -> REMOTE_DIR.
           #
-          # `mirror --reverse` uploads local -> remote. We intentionally do NOT
-          # pass --delete by default: that would remove every remote file not
-          # present in site/, which is destructive if REMOTE_DIR is wrong.
-          # Once you've confirmed REMOTE_DIR points only at your site's
-          # public_html, you can add `--delete` to prune stale files.
-          lftp -u "$USERNAME" --env-password "sftp://$HOST" -e "
-            set sftp:auto-confirm yes;
+          # No --delete by default: that would remove every remote file not in
+          # site/, which is destructive if REMOTE_DIR is wrong. Add it once
+          # REMOTE_DIR is confirmed to point only at the site's web root.
+          lftp -u "$USERNAME" --env-password -e "
+            set ftp:ssl-force true;
+            set ftp:ssl-protect-data true;
+            set ssl:verify-certificate no;
+            set ftp:passive-mode true;
             set net:max-retries 2;
-            set net:timeout 20;
+            set net:timeout 25;
             set mirror:parallel-transfer-count 4;
+            open ftp://$HOST;
+            echo '=== remote login dir ==='; pwd; ls;
             mirror --reverse --verbose --no-perms \
               --exclude-glob .git* \
               ./site/ '$REMOTE_DIR';
