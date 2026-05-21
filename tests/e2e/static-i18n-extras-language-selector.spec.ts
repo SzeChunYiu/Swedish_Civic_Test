@@ -204,11 +204,28 @@ async function switchToPrivacyRoute(page: Page) {
   await expect(page.locator('[data-page="/privacy"]')).toHaveClass(/is-active/);
 }
 
+async function switchToTermsRoute(page: Page) {
+  await page.evaluate(() => {
+    window.location.hash = '#/terms';
+  });
+  await expect(page.locator('[data-page="/terms"]')).toHaveClass(/is-active/);
+}
+
 async function switchToHomeRoute(page: Page) {
   await page.evaluate(() => {
     window.location.hash = '#/';
   });
   await expect(page.locator('[data-page="/"]')).toHaveClass(/is-active/);
+}
+
+async function expectLegalReadingTime(page: Page, locale: ExtraLocale, key: string) {
+  const value = await dictionaryText(page, locale, key);
+
+  await expect(page.locator(i18nSelector(key))).toHaveText(value);
+  if (locale === 'ckb') {
+    expect(value).toMatch(/خولەک/);
+    expect(value).not.toMatch(/\bmin\b/i);
+  }
 }
 
 async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
@@ -217,6 +234,13 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await expect(page.locator(i18nSelector('privacy.lede'))).toContainText(
     await dictionaryText(page, locale, 'privacy.lede'),
   );
+  await expectLegalReadingTime(page, locale, 'privacy.meta3.v');
+  await switchToTermsRoute(page);
+  await expectDictionaryText(page, locale, 'terms.kicker');
+  await expect(page.locator(i18nSelector('terms.lede'))).toContainText(
+    await dictionaryText(page, locale, 'terms.lede'),
+  );
+  await expectLegalReadingTime(page, locale, 'terms.meta3.v');
   await switchToHomeRoute(page);
 }
 
@@ -230,7 +254,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static Settings selects extra languages with localized footer Roadmap without overflow or outcome slogans', async ({
+test('static Settings selects extra languages with localized legal metadata without overflow or outcome slogans', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
