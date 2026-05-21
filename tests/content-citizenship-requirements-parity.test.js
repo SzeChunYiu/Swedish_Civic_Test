@@ -53,7 +53,7 @@ function loadTs(relativePath) {
 }
 
 function extractNamedStyle(source, styleName) {
-  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
+  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n\\s*\\},`));
   assert.ok(match, `${styleName} style must exist`);
   return match[0];
 }
@@ -155,6 +155,16 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
+  assert.match(routeSource, /const \{ colors: themeColors \} = useTheme\(\);/);
+  assert.match(
+    routeSource,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+  );
+  assert.match(routeSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
+  assert.match(routeSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+  assert.match(routeSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.doesNotMatch(routeSource, /import \{ colors[,}]/);
+  assert.doesNotMatch(routeSource, /\bcolors\./);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
 });
 
@@ -178,8 +188,8 @@ test('citizenship requirements cards surface precise source titles and currentne
   assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRefKey\(null\)\}/);
   assert.match(routeSource, /accessibilityRole="link"/);
   assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
-  assert.match(sourceRefRowFocusedStyle, /backgroundColor: colors\.focusSoft/);
-  assert.match(sourceRefRowFocusedStyle, /borderColor: colors\.focus/);
+  assert.match(sourceRefRowFocusedStyle, /backgroundColor: themeColors\.focusSoft/);
+  assert.match(sourceRefRowFocusedStyle, /borderColor: themeColors\.focus/);
   assert.equal(
     sourceLinkCount >= 2,
     true,
