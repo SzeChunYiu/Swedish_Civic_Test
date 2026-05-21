@@ -76,7 +76,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.doesNotMatch(source, /svenska samhällskunskaper|samhällskunskaper/i);
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
-  assert.match(source, /Gå till övningsprov/);
+  assert.match(source, /Gå till övningsprovet/);
   assert.match(source, /gå till övningsprovet när steget är klart/);
   assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.doesNotMatch(source, /Redoindikator|Readiness indicator|Provredo|Exam readiness/);
@@ -130,7 +130,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       .call(this, filePath, ...args)
       .replace(
         'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
-        'Växla mellan tidsatta övningsprov, flashcards, bokmärken, missade frågor, ljud och förberedelsesignal.',
+        'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal. Flashcards kommer snart.',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -275,7 +275,10 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('En tydlig väg för svensk samhällskunskap', 'En tydlig väg för svenska samhällskunskaper');
+      .replace(
+        'const homeCopy: Record<AppLanguage, HomeCopy> = {',
+        'const homeCopy: Record<AppLanguage, HomeCopy> = { /* svenska samhällskunskaper */',
+      );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -338,9 +341,9 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Gå till övningsprov', 'Gå till mockprov')
+      .replace('Gå till övningsprovet', 'Gå till mockprov')
       .replaceAll(
-        'gå till övningsprov när steget är klart',
+        'gå till övningsprovet när steget är klart',
         'gå till mockprov när steget är klart',
       );
   }
@@ -466,7 +469,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('source-backed explanations', ['simulated', ' learners'].join(''));
+      .replace('Smart study habits', ['Smart study habits with simulated', ' learners'].join(''));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
