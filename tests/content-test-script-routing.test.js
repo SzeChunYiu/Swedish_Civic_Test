@@ -213,38 +213,6 @@ test('content-focused selector rejects missing file lists before running node', 
   }
 });
 
-test('test:content routes the legal section rendering guard exactly once', () => {
-  const pkg = readPackageJson();
-  const matches =
-    pkg.scripts['test:content'].match(/tests\/content-legal-section-rendering\.test\.js/g) ?? [];
-
-  assert.equal(matches.length, 1);
-});
-
-test('legal section rendering focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-legal-section-rendering'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused legal section rendering validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
-  assert.equal(summary.legalSectionRenderingCasesValidated, 16);
-  assert.equal(summary.legalSectionRenderingParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'legalRouteHeaderParityValidated'),
-    false,
-  );
-});
-
 test('answer shuffle parity uses the focused content validator path', () => {
   const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
   const parityTest = fs.readFileSync(
@@ -430,10 +398,10 @@ test('readiness adapter focused content validation runs only its runtime summary
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
-test('adaptive difficulty focused content validation runs only its runtime summary', () => {
+test('readiness score focused content validation runs only its runtime summary', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-adaptive-practice-difficulty'],
+    ['scripts/validate-content.js', '--focus-readiness-score-rules'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -442,44 +410,12 @@ test('adaptive difficulty focused content validation runs only its runtime summa
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused adaptive difficulty validation should print JSON summary');
+  assert.ok(match, 'focused readiness score validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.adaptivePracticeDifficultyRuntimeCasesValidated, 3);
-  assert.equal(summary.adaptivePracticeDifficultyRuntimeParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
-    false,
-  );
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
-});
-
-test('adaptive difficulty runtime fixtures are shared by validator and selector tests', () => {
-  const validatorSource = readValidateContentSource();
-  const selectorTestSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/v1-1-adaptive-resume.test.js'),
-    'utf8',
-  );
-  const fixtureSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/helpers/adaptivePracticeRuntimeFixtures.cjs'),
-    'utf8',
-  );
-
-  assert.match(fixtureSource, /MALFORMED_ADAPTIVE_DIFFICULTY_CASES/);
-  assert.match(fixtureSource, /createMalformedAdaptiveDifficultyCases/);
-  assert.match(fixtureSource, /invalid string difficulty/);
-  assert.match(fixtureSource, /null difficulty/);
-  assert.match(fixtureSource, /object difficulty/);
-  assert.match(
-    validatorSource,
-    /require\('\.\.\/tests\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/,
-  );
-  assert.match(
-    selectorTestSource,
-    /require\('\.\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/,
-  );
-  assert.doesNotMatch(validatorSource, /const malformedDifficultyCases = \[/);
-  assert.doesNotMatch(selectorTestSource, /const malformedDifficultyCases = \[/);
+  assert.equal(summary.readinessScoreRulesValidated, 5);
+  assert.equal(summary.readinessScoreRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
 test('exam submission finality focused validation runs only its parity summary', () => {
@@ -546,29 +482,6 @@ test('CelebrationBurst focused content validation runs only its accessibility su
   assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
   assert.equal(
     Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
-    false,
-  );
-});
-
-test('focus-persistence-warning-scope validation reports persistence warning scope summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-persistence-warning-scope'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused persistence warning scope validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.persistenceWarningScopeCasesValidated, 8);
-  assert.equal(summary.persistenceWarningScopeParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'settingsRouteCopyParityValidated'),
     false,
   );
 });

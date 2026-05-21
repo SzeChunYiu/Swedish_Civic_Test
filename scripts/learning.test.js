@@ -478,6 +478,60 @@ test('readiness adapter ignores malformed aggregate counters', () => {
   assert.equal(result.isSparse, true);
 });
 
+test('computeReadinessScore ignores truthy non-boolean correctness values', () => {
+  const { computeReadinessScore } = loadAllTs('lib/learning/readiness.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const chapters = [{ id: 'ch01', questionCount: 3 }];
+  const questionChapterIndex = { q1: 'ch01', q2: 'ch01', q3: 'ch01' };
+  const makeAnswer = (questionId, isCorrect, minute) => ({
+    questionId,
+    selectedOptionIds: ['a'],
+    isCorrect,
+    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
+    timeSpentSeconds: 5,
+  });
+  const makeProgress = (answers) => ({
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 0,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'raw-readiness-malformed',
+        mode: 'study',
+        questionIds: answers.map((answer) => answer.questionId),
+        startedAt: '2026-05-19T09:00:00.000Z',
+        answers,
+      },
+    ],
+  });
+  const malformed = computeReadinessScore({
+    progress: makeProgress([
+      makeAnswer('q1', 'yes', 0),
+      makeAnswer('q2', 1, 1),
+      makeAnswer('q3', false, 2),
+    ]),
+    chapters,
+    questionChapterIndex,
+    now,
+  });
+  const strictFalse = computeReadinessScore({
+    progress: makeProgress([
+      makeAnswer('q1', false, 0),
+      makeAnswer('q2', false, 1),
+      makeAnswer('q3', false, 2),
+    ]),
+    chapters,
+    questionChapterIndex,
+    now,
+  });
+
+  assert.equal(malformed.components.accuracy, 0);
+  assert.equal(malformed.score, strictFalse.score);
+  assert.equal(malformed.verdict, strictFalse.verdict);
+});
+
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
   const { bestMockScore, mockHistory } = loadAllTs('lib/learning/dashboardStats.ts');
   const progress = {
