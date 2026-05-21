@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+const { loadTsModule } = require('./helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary(...focusFlags) {
@@ -88,12 +90,42 @@ test('first-run about modal suppresses onboarding without blocking study routes'
     path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
     'utf8',
   );
+  const routeHelperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/onboarding/firstRunAboutModalRoutes.ts'),
+    'utf8',
+  );
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+  const {
+    FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
+    shouldSuppressFirstRunAboutModalForPath,
+  } = loadTsModule(repoRoot, 'lib/onboarding/firstRunAboutModalRoutes.ts');
 
   assert.equal(summary.firstRunAboutModalSuppressedRoutesValidated, 5);
   assert.equal(summary.firstRunAboutModalSuppressionParityValidated, true);
-  assert.match(source, /SUPPRESSED_PATH_PREFIXES/);
-  assert.match(source, /'\/onboarding'/);
+  assert.match(source, /shouldSuppressFirstRunAboutModalForPath\(pathname,/);
+  assert.match(source, /FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES/);
+  assert.doesNotMatch(source, /const SUPPRESSED_PATH_PREFIXES =/);
+  assert.match(routeHelperSource, /export function shouldSuppressFirstRunAboutModalForPath/);
+  assert.deepEqual(FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES, [
+    '/exam',
+    '/quiz',
+    '/(auth)',
+    '/about-the-test',
+    '/onboarding',
+  ]);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/onboarding'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/onboarding/welcome'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/exam'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/quiz/session-1'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/(auth)/sign-in'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/home'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/practice'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/learn'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/mistakes'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/profile'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/quizmaster'), false);
+  assert.equal(shouldSuppressFirstRunAboutModalForPath('/about-the-tested'), false);
   assert.match(adsSource, /'\/onboarding'/);
   assert.doesNotMatch(source, /'\/home'/);
   assert.doesNotMatch(source, /'\/learn'/);
@@ -112,7 +144,7 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
+  if (normalizedPath.endsWith('/lib/onboarding/firstRunAboutModalRoutes.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace("\\n  '/onboarding',", '');
