@@ -3041,7 +3041,7 @@
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Adult main residence rule: 8 years · Stricter conduct requirement with longer waiting periods after offences · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. The first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Adult main residence rule: 8 years · Stricter conduct requirement with longer waiting periods after offences · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         sv: svStudyBrief(
           [
@@ -3082,7 +3082,7 @@
           </ul>
           <h2>双重国籍</h2>
           <p>瑞典自 2001 年起接受双重国籍。成为瑞典人并不会让你失去原有国籍（须视你原籍国的规定而定）。</p>
-          ${ebookFactBox('zh-Hans', '当前公民身份须知', '新的公民身份规则自 2026 年 6 月 6 日起适用。UHR 表示首场公民知识考试于 2026 年 8 月 15 日在斯德哥尔摩举行。自 2026 年 6 月 6 日起子女需要单独的公民身份申请 · 成年人主要居留规则：8 年 · 更严格的行为要求，违法后等待期更长 · 裁定机关：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('zh-Hans', '当前公民身份须知', '新的公民身份规则自 2026 年 6 月 6 日起适用。首场公民知识考试定于 2026 年 8 月 15 日在斯德哥尔摩举行。自 2026 年 6 月 6 日起子女需要单独的公民身份申请 · 成年人主要居留规则：8 年 · 更严格的行为要求，违法后等待期更长 · 裁定机关：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         'zh-Hant': `<h2>誰是誰</h2>
           <ul>
@@ -3103,7 +3103,7 @@
           </ul>
           <h2>雙重國籍</h2>
           <p>瑞典自 2001 年起接受雙重國籍。成為瑞典人並不會讓你失去原有國籍（須視你原籍國的規定而定）。</p>
-          ${ebookFactBox('zh-Hant', '當前公民身分須知', '新的公民身分規則自 2026 年 6 月 6 日起適用。UHR 表示首場公民知識考試於 2026 年 8 月 15 日在斯德哥爾摩舉行。自 2026 年 6 月 6 日起子女需要單獨的公民身分申請 · 成年人主要居留規則：8 年 · 更嚴格的行為要求，違法後等待期更長 · 裁定機關：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('zh-Hant', '當前公民身分須知', '新的公民身分規則自 2026 年 6 月 6 日起適用。首場公民知識考試定於 2026 年 8 月 15 日在斯德哥爾摩舉行。自 2026 年 6 月 6 日起子女需要單獨的公民身分申請 · 成年人主要居留規則：8 年 · 更嚴格的行為要求，違法後等待期更長 · 裁定機關：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         ar: `<h2>مَن هو مَن</h2>
           <ul>
@@ -3124,7 +3124,7 @@
           </ul>
           <h2>ازدواج الجنسية</h2>
           <p>تقبل السويد ازدواج الجنسية منذ 2001. لا تفقد جنسيتك الأصلية بصيرورتك سويديًا (رهنًا بقواعد بلدك الأصلي).</p>
-          ${ebookFactBox('ar', 'ملاحظات الجنسية الحالية', 'تُطبَّق قواعد الجنسية الجديدة اعتبارًا من 6 يونيو 2026. تقول UHR إنّ أول جلسة للمعرفة المدنية ستُعقَد في 15 أغسطس 2026 في ستوكهولم. يحتاج الأطفال إلى طلب جنسية منفصل اعتبارًا من 6 يونيو 2026 · قاعدة الإقامة الرئيسية للبالغين: 8 سنوات · شرط سلوك أكثر صرامة وفترات انتظار أطول بعد المخالفات · الجهة صاحبة القرار: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('ar', 'ملاحظات الجنسية الحالية', 'تُطبَّق قواعد الجنسية الجديدة اعتبارًا من 6 يونيو 2026. ستُعقَد أول جلسة للمعرفة المدنية في 15 أغسطس 2026 في ستوكهولم. يحتاج الأطفال إلى طلب جنسية منفصل اعتبارًا من 6 يونيو 2026 · قاعدة الإقامة الرئيسية للبالغين: 8 سنوات · شرط سلوك أكثر صرامة وفترات انتظار أطول بعد المخالفات · الجهة صاحبة القرار: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         ckb: `<h2>کێ کێیە</h2>
           <ul>
@@ -3145,7 +3145,7 @@
           </ul>
           <h2>هاووڵاتیبوونی دووانە</h2>
           <p>سوید لە 2001ەوە هاووڵاتیبوونی دووانەی پەسەند کردووە. بە سویدیبوون هاووڵاتیبوونی ڕەسەنی خۆت لەدەست نادەیت (بەپێی یاساکانی وڵاتی ڕەسەنت).</p>
-          ${ebookFactBox('ckb', 'تێبینییەکانی هاووڵاتیبوونی ئێستا', 'یاسا نوێیەکانی هاووڵاتیبوون لە 6ی حوزەیرانی 2026ەوە جێبەجێ دەکرێن. UHR دەڵێت یەکەم دانیشتنی زانیاریی شارستانی لە 15ی ئابی 2026 لە ستۆکهۆڵم دەبێت. منداڵان لە 6ی حوزەیرانی 2026ەوە پێویستیان بە داواکارییەکی هاووڵاتیبوونی جیاوازە · یاسای سەرەکی نیشتەجێبوونی گەورەسالان: 8 ساڵ · مەرجی ڕەفتاری توندتر و چاوەڕوانیی درێژتر دوای تاوانەکان · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('ckb', 'تێبینییەکانی هاووڵاتیبوونی ئێستا', 'یاسا نوێیەکانی هاووڵاتیبوون لە 6ی حوزەیرانی 2026ەوە جێبەجێ دەکرێن. یەکەم دانیشتنی زانیاریی شارستانی لە 15ی ئابی 2026 لە ستۆکهۆڵم دەبێت. منداڵان لە 6ی حوزەیرانی 2026ەوە پێویستیان بە داواکارییەکی هاووڵاتیبوونی جیاوازە · یاسای سەرەکی نیشتەجێبوونی گەورەسالان: 8 ساڵ · مەرجی ڕەفتاری توندتر و چاوەڕوانیی درێژتر دوای تاوانەکان · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         fa: `<h2>چه کسی چه کسی است</h2>
           <ul>
@@ -3166,7 +3166,7 @@
           </ul>
           <h2>شهروندی دوگانه</h2>
           <p>سوئد از 2001 شهروندی دوگانه را پذیرفته است. با سوئدی شدن، شهروندی اصلی خود را از دست نمی‌دهید (مشروط به قواعد کشور مبدأ شما).</p>
-          ${ebookFactBox('fa', 'نکات شهروندی فعلی', 'قواعد جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. UHR می‌گوید نخستین جلسهٔ دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. فرزندان از 6 ژوئن 2026 به یک درخواست شهروندی جداگانه نیاز دارند · قاعدهٔ اصلی اقامت بزرگ‌سالان: 8 سال · شرط رفتار سخت‌گیرانه‌تر و دوره‌های انتظار طولانی‌تر پس از تخلف · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('fa', 'نکات شهروندی فعلی', 'قواعد جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. نخستین جلسهٔ دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. فرزندان از 6 ژوئن 2026 به یک درخواست شهروندی جداگانه نیاز دارند · قاعدهٔ اصلی اقامت بزرگ‌سالان: 8 سال · شرط رفتار سخت‌گیرانه‌تر و دوره‌های انتظار طولانی‌تر پس از تخلف · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         pl: `<h2>Kto jest kim</h2>
           <ul>
@@ -3187,7 +3187,7 @@
           </ul>
           <h2>Podwójne obywatelstwo</h2>
           <p>Szwecja akceptuje podwójne obywatelstwo od 2001 roku. Stając się Szwedem, nie tracisz swojego pierwotnego obywatelstwa (z zastrzeżeniem przepisów twojego kraju pochodzenia).</p>
-          ${ebookFactBox('pl', 'Bieżące informacje o obywatelstwie', 'Nowe przepisy o obywatelstwie obowiązują od 6 czerwca 2026. UHR podaje, że pierwsza sesja z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 w Sztokholmie. Od 6 czerwca 2026 dzieci potrzebują osobnego wniosku o obywatelstwo · Główna zasada pobytu dorosłych: 8 lat · Surowszy wymóg prowadzenia się i dłuższe okresy oczekiwania po przestępstwach · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('pl', 'Bieżące informacje o obywatelstwie', 'Nowe przepisy o obywatelstwie obowiązują od 6 czerwca 2026. Pierwsza sesja z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 w Sztokholmie. Od 6 czerwca 2026 dzieci potrzebują osobnego wniosku o obywatelstwo · Główna zasada pobytu dorosłych: 8 lat · Surowszy wymóg prowadzenia się i dłuższe okresy oczekiwania po przestępstwach · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         so: `<h2>Yaa yaa ah</h2>
           <ul>
@@ -3208,7 +3208,7 @@
           </ul>
           <h2>Labanlaab muwaadinimo</h2>
           <p>Iswiidhan waxay aqbashay labanlaab muwaadinimo tan iyo 2001. Ma lumiso muwaadinimadaada asalka ah markaad noqoto Iswiidhan (iyada oo ku xiran xeerarka dalkaaga asalka).</p>
-          ${ebookFactBox('so', 'Qoraallada muwaadinimada hadda', "Xeerarka cusub ee muwaadinimadu waxay khusayaan laga bilaabo 6 Juun 2026. UHR waxay sheegtay in fadhiga ugu horreeya ee aqoonta bulshada uu dhici doono 15 Ogosto 2026 ee Stockholm. Carruurtu waxay u baahan yihiin codsi muwaadinimo oo gooni ah laga bilaabo 6 Juun 2026 · Xeerka guud ee deganaanshaha dadka waaweyn: 8 sano · Shuruud dhaqan oo la adkeeyay iyo sugitaan dheer ka dib dembiyo · Maamulka go'aaminta: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('so', 'Qoraallada muwaadinimada hadda', "Xeerarka cusub ee muwaadinimadu waxay khusayaan laga bilaabo 6 Juun 2026. Fadhiga ugu horreeya ee aqoonta bulshada wuxuu dhici doonaa 15 Ogosto 2026 ee Stockholm. Carruurtu waxay u baahan yihiin codsi muwaadinimo oo gooni ah laga bilaabo 6 Juun 2026 · Xeerka guud ee deganaanshaha dadka waaweyn: 8 sano · Shuruud dhaqan oo la adkeeyay iyo sugitaan dheer ka dib dembiyo · Maamulka go'aaminta: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         ti: `<h2>መን መን ምዃኑ</h2>
           <ul>
@@ -3229,7 +3229,7 @@
           </ul>
           <h2>ድርብ ዜግነት</h2>
           <p>ሽወደን ካብ 2001 ጀሚራ ድርብ ዜግነት ተቐቢላ። ሽወደናዊ ብምዃንካ ናይ መበቆልካ ዜግነት ኣይተጥፍእን (ብመሰረት ሕግታት ሃገር መበቆልካ)።</p>
-          ${ebookFactBox('ti', 'ናይ ሕጂ ሓበሬታ ዜግነት', 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይሰርሑ። UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይብል። ቆልዑ ካብ 6 ሰነ 2026 ጀሚሮም ናይ በይኖም ሕቶ ዜግነት የድልዮም · ዋና ሕጊ መንበሪ ዓበይቲ፦ 8 ዓመት · ዝተጠናኸረ ናይ ጠባይ ረቛሒን ድሕሪ ገበናት ዝነውሐ ምጽባይን · ወሳኒ ኣካል፦ Migrationsverket።', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('ti', 'ናይ ሕጂ ሓበሬታ ዜግነት', 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይሰርሑ። እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ይካየድ። ቆልዑ ካብ 6 ሰነ 2026 ጀሚሮም ናይ በይኖም ሕቶ ዜግነት የድልዮም · ዋና ሕጊ መንበሪ ዓበይቲ፦ 8 ዓመት · ዝተጠናኸረ ናይ ጠባይ ረቛሒን ድሕሪ ገበናት ዝነውሐ ምጽባይን · ወሳኒ ኣካል፦ Migrationsverket።', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         tr: `<h2>Kim kimdir</h2>
           <ul>
@@ -3250,7 +3250,7 @@
           </ul>
           <h2>Çifte vatandaşlık</h2>
           <p>İsveç, 2001'den beri çifte vatandaşlığı kabul ediyor. İsveçli olmakla asıl vatandaşlığınızı kaybetmezsiniz (köken ülkenizin kurallarına tabi olarak).</p>
-          ${ebookFactBox('tr', 'Güncel vatandaşlık notları', "Yeni vatandaşlık kuralları 6 Haziran 2026'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Çocuklar 6 Haziran 2026'dan itibaren ayrı bir vatandaşlık başvurusuna ihtiyaç duyar · Yetişkinler için ana ikamet kuralı: 8 yıl · Daha sıkı davranış şartı ve suçlardan sonra daha uzun bekleme süreleri · Karar makamı: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('tr', 'Güncel vatandaşlık notları', "Yeni vatandaşlık kuralları 6 Haziran 2026'dan itibaren geçerlidir. İlk yurttaşlık bilgisi oturumu 15 Ağustos 2026'da Stockholm'de yapılacak. Çocuklar 6 Haziran 2026'dan itibaren ayrı bir vatandaşlık başvurusuna ihtiyaç duyar · Yetişkinler için ana ikamet kuralı: 8 yıl · Daha sıkı davranış şartı ve suçlardan sonra daha uzun bekleme süreleri · Karar makamı: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         uk: `<h2>Хто є хто</h2>
           <ul>
@@ -3271,7 +3271,7 @@
           </ul>
           <h2>Подвійне громадянство</h2>
           <p>Швеція приймає подвійне громадянство з 2001 року. Ставши шведом, ви не втрачаєте свого початкового громадянства (за умови дотримання правил вашої країни походження).</p>
-          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', 'Нові правила громадянства діють від 6 червня 2026 року. UHR повідомляє, що перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Головне правило проживання для дорослих: 8 років · Суворіша вимога щодо поведінки й довші строки очікування після правопорушень · Орган, що ухвалює рішення: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', 'Нові правила громадянства діють від 6 червня 2026 року. Перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Головне правило проживання для дорослих: 8 років · Суворіша вимога щодо поведінки й довші строки очікування після правопорушень · Орган, що ухвалює рішення: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
       },
     },
@@ -3337,8 +3337,8 @@
       body: {
         en: `
           <h2>Current official status</h2>
-          <p>UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
-          <p>Seats are limited. The August sitting is free of charge, and UHR says participants will have generous time.</p>
+          <p>The first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
+          <p>Seats are limited. The August sitting is free of charge, and participants will have generous time.</p>
           <h2>Practical details pending from UHR</h2>
           <p>UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.</p>
           <h2>How to study now</h2>
@@ -3353,7 +3353,7 @@
         sv: `
           <h2>Aktuell officiell status</h2>
           <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
-          <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och UHR beskriver att deltagarna får generöst med tid.</p>
+          <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och deltagarna får generöst med tid.</p>
           <h2>Praktiska detaljer väntar hos UHR</h2>
           <p>UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning, och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.</p>
           <h2>Plugga nu</h2>
@@ -3367,8 +3367,8 @@
         `,
         'zh-Hans': `
           <h2>当前的官方状态</h2>
-          <p>UHR 表示，第一次公民知识考试将于 2026 年 8 月 15 日在斯德哥尔摩举行。报名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能报名。</p>
-          <p>名额有限。8 月这场考试免费，UHR 表示参加者将有充裕的时间。</p>
+          <p>第一次公民知识考试定于 2026 年 8 月 15 日在斯德哥尔摩举行。报名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能报名。</p>
+          <p>名额有限。8 月这场考试免费，参加者将有充裕的时间。</p>
           <h2>实际细节仍待 UHR 公布</h2>
           <p>UHR 尚未公布确切的时间和地点。请把本应用用于非官方练习，而涉及你自身情况的具体指引，请以 UHR 和 Migrationsverket 为准。</p>
           <h2>现在如何学习</h2>
@@ -3382,8 +3382,8 @@
         `,
         'zh-Hant': `
           <h2>當前的官方狀態</h2>
-          <p>UHR 表示，第一次公民知識考試將於 2026 年 8 月 15 日在斯德哥爾摩舉行。報名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能報名。</p>
-          <p>名額有限。8 月這場考試免費，UHR 表示參加者將有充裕的時間。</p>
+          <p>第一次公民知識考試定於 2026 年 8 月 15 日在斯德哥爾摩舉行。報名需要 Migrationsverket（瑞典移民局）的信函：只有收到 Migrationsverket 信函的人才能報名。</p>
+          <p>名額有限。8 月這場考試免費，參加者將有充裕的時間。</p>
           <h2>實際細節仍待 UHR 公布</h2>
           <p>UHR 尚未公布確切的時間和地點。請把本應用用於非官方練習，而涉及你自身情況的具體指引，請以 UHR 和 Migrationsverket 為準。</p>
           <h2>現在如何學習</h2>
@@ -3397,8 +3397,8 @@
         `,
         ar: `
           <h2>الوضع الرسمي الراهن</h2>
-          <p>تقول UHR إن أول جلسة لاختبار المعرفة المدنية ستُعقد في 15 أغسطس 2026 في ستوكهولم. ويُشترط وجود خطاب من Migrationsverket: لا يمكن التسجيل إلا لمن يتلقّى خطابًا من Migrationsverket.</p>
-          <p>عدد المقاعد محدود. وجلسة أغسطس مجانية، وتقول UHR إن المشاركين سيتوفّر لهم وقت وافٍ.</p>
+          <p>ستُعقد أول جلسة لاختبار المعرفة المدنية في 15 أغسطس 2026 في ستوكهولم. ويُشترط وجود خطاب من Migrationsverket: لا يمكن التسجيل إلا لمن يتلقّى خطابًا من Migrationsverket.</p>
+          <p>عدد المقاعد محدود. وجلسة أغسطس مجانية، وسيتوفّر للمشاركين وقت وافٍ.</p>
           <h2>تفاصيل عملية لم تنشرها UHR بعد</h2>
           <p>لم تنشر UHR بعد الزمان والمكان بالضبط. استخدم هذا التطبيق للتدرّب غير الرسمي، واستخدم UHR وMigrationsverket للإرشادات التي تخصّ حالتك أنت.</p>
           <h2>كيف تدرس الآن</h2>
@@ -3412,8 +3412,8 @@
         `,
         ckb: `
           <h2>دۆخی فەرمیی ئێستا</h2>
-          <p>UHR دەڵێت یەکەم دانیشتنی تاقیکردنەوەی زانیاری شارستانی لە 15ی ئاگوستی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەکی Migrationsverket پێویستە: تەنها ئەو کەسانە دەتوانن خۆیان تۆمار بکەن کە نامەیەک لە Migrationsverket وەردەگرن.</p>
-          <p>ژمارەی شوێنەکان سنووردارە. دانیشتنی ئاگوست بێبەرامبەرە، و UHR دەڵێت بەشداربووان کاتێکی بەفراوانیان دەبێت.</p>
+          <p>یەکەم دانیشتنی تاقیکردنەوەی زانیاری شارستانی لە 15ی ئاگوستی 2026 لە ستۆکهۆڵم بەڕێوەدەچێت. نامەیەکی Migrationsverket پێویستە: تەنها ئەو کەسانە دەتوانن خۆیان تۆمار بکەن کە نامەیەک لە Migrationsverket وەردەگرن.</p>
+          <p>ژمارەی شوێنەکان سنووردارە. دانیشتنی ئاگوست بێبەرامبەرە، و بەشداربووان کاتێکی بەفراوانیان دەبێت.</p>
           <h2>وردەکارییە کردارییەکان چاوەڕێی UHRن</h2>
           <p>UHR هێشتا کات و شوێنی ورد بڵاو نەکردووەتەوە. ئەم ئەپە بۆ مەشقی نافەرمی بەکاربهێنە، و بۆ ئەو ڕێنماییانەی کە کاریگەری لەسەر کەیسی خۆت دەکەن UHR و Migrationsverket بەکاربهێنە.</p>
           <h2>چۆن ئێستا بخوێنیت</h2>
@@ -3427,8 +3427,8 @@
         `,
         fa: `
           <h2>وضعیت رسمی کنونی</h2>
-          <p>UHR می‌گوید نخستین جلسهٔ آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. داشتن نامه‌ای از Migrationsverket لازم است: فقط کسانی می‌توانند ثبت‌نام کنند که از Migrationsverket نامه دریافت کنند.</p>
-          <p>تعداد صندلی‌ها محدود است. جلسهٔ اوت رایگان است، و UHR می‌گوید شرکت‌کنندگان زمان کافی خواهند داشت.</p>
+          <p>نخستین جلسهٔ آزمون دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. داشتن نامه‌ای از Migrationsverket لازم است: فقط کسانی می‌توانند ثبت‌نام کنند که از Migrationsverket نامه دریافت کنند.</p>
+          <p>تعداد صندلی‌ها محدود است. جلسهٔ اوت رایگان است و شرکت‌کنندگان زمان کافی خواهند داشت.</p>
           <h2>جزئیات عملی که هنوز از سوی UHR منتشر نشده</h2>
           <p>UHR هنوز زمان و مکان دقیق را منتشر نکرده است. از این برنامه برای تمرین غیررسمی استفاده کنید، و برای دستورالعمل‌هایی که بر پروندهٔ خودتان اثر می‌گذارد به UHR و Migrationsverket مراجعه کنید.</p>
           <h2>اکنون چگونه مطالعه کنید</h2>
@@ -3442,8 +3442,8 @@
         `,
         pl: `
           <h2>Aktualny status oficjalny</h2>
-          <p>UHR podaje, że pierwsza sesja egzaminu z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo z Migrationsverket.</p>
-          <p>Liczba miejsc jest ograniczona. Sesja sierpniowa jest bezpłatna, a UHR podaje, że uczestnicy będą mieli dużo czasu.</p>
+          <p>Pierwsza sesja egzaminu z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 roku w Sztokholmie. Wymagane jest pismo z Migrationsverket: zapisać się mogą tylko osoby, które otrzymają pismo z Migrationsverket.</p>
+          <p>Liczba miejsc jest ograniczona. Sesja sierpniowa jest bezpłatna, a uczestnicy będą mieli dużo czasu.</p>
           <h2>Szczegóły praktyczne — wciąż oczekiwane od UHR</h2>
           <p>UHR nie opublikował jeszcze dokładnego czasu i miejsca. Korzystaj z tej aplikacji do nieoficjalnych ćwiczeń, a w sprawie wskazówek dotyczących Twojej własnej sytuacji zwracaj się do UHR i Migrationsverket.</p>
           <h2>Jak uczyć się teraz</h2>
@@ -3457,8 +3457,8 @@
         `,
         so: `
           <h2>Xaaladda rasmiga ah ee hadda</h2>
-          <p>UHR waxay sheegaysaa in fadhiga ugu horreeya ee imtixaanka aqoonta bulshada uu dhici doono 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka timid Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
-          <p>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa bilaash, oo UHR waxay sheegaysaa in ka-qaybgalayaashu heli doonaan waqti badan.</p>
+          <p>Fadhiga ugu horreeya ee imtixaanka aqoonta bulshada wuxuu dhici doonaa 15 Ogosto 2026 magaalada Stockholm. Waxaa loo baahan yahay warqad ka timid Migrationsverket: kaliya dadka hela warqad ka timid Migrationsverket ayaa is-diiwaangelin kara.</p>
+          <p>Kuraasta way xaddidan yihiin. Fadhiga Ogosto waa bilaash, oo ka-qaybgalayaashu waxay heli doonaan waqti badan.</p>
           <h2>Faahfaahin wax-ku-ool ah oo weli laga sugayo UHR</h2>
           <p>UHR weli ma soo saarin waqtiga iyo goobta saxda ah. U isticmaal barnaamijkan tababar aan rasmi ahayn, oo u isticmaal UHR iyo Migrationsverket tilmaamaha saameeya kiiskaaga gaarka ah.</p>
           <h2>Sida loo barto hadda</h2>
@@ -3472,8 +3472,8 @@
         `,
         ti: `
           <h2>ህሉው ወግዓዊ ኩነታት</h2>
-          <p>UHR ከም ዝብሎ፣ እታ ቐዳመይቲ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ክትካየድ እያ። ካብ Migrationsverket ዝመጸ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
-          <p>ብዝሒ መናብር ድሩት እዩ። እታ ናይ ነሓሰ ፈተና ብናጻ እያ፣ UHR ድማ ተሳተፍቲ እኹል ግዜ ከም ዝረኽቡ ይብል።</p>
+          <p>እታ ቐዳመይቲ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ክትካየድ እያ። ካብ Migrationsverket ዝመጸ ደብዳበ የድሊ፦ ካብ Migrationsverket ደብዳበ ዝተቐበሉ ሰባት ጥራይ እዮም ክምዝገቡ ዝኽእሉ።</p>
+          <p>ብዝሒ መናብር ድሩት እዩ። እታ ናይ ነሓሰ ፈተና ብናጻ እያ፣ ተሳተፍቲ ድማ እኹል ግዜ ይረኽቡ።</p>
           <h2>ግብራዊ ዝርዝራት ካብ UHR ይጽበ ኣሎ</h2>
           <p>UHR ክሳብ ሕጂ ነቲ ልክዕ ግዜን ቦታን ኣይዘርግሐን። ነዚ መተግበሪ ንዘይወግዓዊ ልምምድ ተጠቐመሉ፣ ንዓኻ ንዝምልከት ጉዳይ ዝትንክፍ መምርሒታት ድማ ንUHR ከምኡ’ውን Migrationsverket ተጠቐም።</p>
           <h2>ሕጂ ብኸመይ ከም እትመሃር</h2>
@@ -3487,8 +3487,8 @@
         `,
         tr: `
           <h2>Güncel resmî durum</h2>
-          <p>UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını belirtiyor. Migrationsverket'ten bir mektup gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kayıt yaptırabilir.</p>
-          <p>Kontenjan sınırlıdır. Ağustos oturumu ücretsizdir ve UHR, katılımcıların bol zamana sahip olacağını belirtiyor.</p>
+          <p>İlk yurttaşlık bilgisi oturumu 15 Ağustos 2026'da Stockholm'de yapılacak. Migrationsverket'ten bir mektup gereklidir: yalnızca Migrationsverket'ten mektup alan kişiler kayıt yaptırabilir.</p>
+          <p>Kontenjan sınırlıdır. Ağustos oturumu ücretsizdir ve katılımcıların bol zamanı olacaktır.</p>
           <h2>UHR'den beklenen pratik ayrıntılar</h2>
           <p>UHR henüz kesin zaman ve yeri yayımlamadı. Bu uygulamayı gayriresmî alıştırma için kullanın; kendi durumunuzu etkileyen yönergeler için UHR ve Migrationsverket'i kullanın.</p>
           <h2>Şimdi nasıl çalışılır</h2>
@@ -3502,8 +3502,8 @@
         `,
         uk: `
           <h2>Поточний офіційний статус</h2>
-          <p>UHR повідомляє, що перша сесія іспиту на знання громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише ті, хто отримує лист від Migrationsverket.</p>
-          <p>Кількість місць обмежена. Серпнева сесія безкоштовна, і UHR повідомляє, що учасники матимуть достатньо часу.</p>
+          <p>Перша сесія іспиту на знання громадянознавства відбудеться 15 серпня 2026 року в Стокгольмі. Потрібен лист від Migrationsverket: зареєструватися можуть лише ті, хто отримує лист від Migrationsverket.</p>
+          <p>Кількість місць обмежена. Серпнева сесія безкоштовна, і учасники матимуть достатньо часу.</p>
           <h2>Практичні деталі ще очікуються від UHR</h2>
           <p>UHR ще не оприлюднив точний час і місце. Використовуйте цей застосунок для неофіційного тренування, а для вказівок, що стосуються вашого власного випадку, звертайтеся до UHR та Migrationsverket.</p>
           <h2>Як вчитися зараз</h2>

@@ -83,6 +83,7 @@ test('audio setting stays in parity between storage and settings switch', () => 
     'utf8',
   );
   const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const normalizedSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
 
   assert.equal(summary.settingsAudioLabelsValidated, 2);
   assert.equal(summary.settingsAudioParityValidated, true);
@@ -97,10 +98,13 @@ test('audio setting stays in parity between storage and settings switch', () => 
   assert.match(settingsRoute, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(settingsRoute, /setAudioEnabled\(!audioEnabled\)/);
   assert.match(
-    settingsRoute,
+    normalizedSettingsRoute,
     /audioEnabled \? copy\.disableAudioAccessibilityLabel : copy\.enableAudioAccessibilityLabel/,
   );
-  assert.match(settingsRoute, /audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel/);
+  assert.match(
+    normalizedSettingsRoute,
+    /audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel/,
+  );
   assert.match(settingsRoute, /Ljud på/);
   assert.match(settingsRoute, /Ljud avstängt/);
   assert.match(settingsRoute, /Stäng av ljud/);
