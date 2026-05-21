@@ -9755,6 +9755,7 @@ let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let generatedSwedenScopeParityValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReligiousFreedomParallelismValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -10334,6 +10335,17 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   printValidationSummary({
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+
+if (process.argv.includes('--focus-religious-freedom-parallelism')) {
+  validateQuestionReligiousFreedomParallelism();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: countPublishedQuestions(),
+    questionReligiousFreedomParallelismValidated,
   });
   process.exit(0);
 }
@@ -20717,6 +20729,27 @@ function validateReadinessAdapterRules() {
   }
 }
 
+
+function countPublishedQuestions() {
+  return Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+}
+
+function validateQuestionReligiousFreedomParallelism() {
+  if (!Array.isArray(questions)) return;
+
+  questions
+    .filter((question) => question.reviewStatus === 'published')
+    .forEach((question) => {
+      if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
+        fail(`${question.id} uses nonparallel religious-freedom option wording`);
+      } else {
+        questionReligiousFreedomParallelismValidated += 1;
+      }
+    });
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -22584,6 +22617,7 @@ validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
 validateReadinessAdapterRules();
+validateQuestionReligiousFreedomParallelism();
 validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
@@ -22934,6 +22968,7 @@ console.log(
       generatedSwedenScopeParityValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionReligiousFreedomParallelismValidated,
       questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
       questionMayDayEnglishNaturalnessValidated,
       questionLuciaExplanationRoleScaffoldValidated,
