@@ -64,6 +64,20 @@ const forbiddenOutcomeSlogans = [
   /پاسپۆرت دەست دەکەوێت/,
   /هاووڵاتیبوون دەست دەکەوێت/,
 ];
+const forbiddenHomeChapterTwoCivicTerms =
+  /(^|[^\p{L}\p{N}_-])(kommun|region|regering)(?=$|[^\p{L}\p{N}_-])/iu;
+const localizedHomeChapterTwoCivicTermSnippets: Record<ExtraLocale, RegExp> = {
+  'zh-Hans': /市镇、大区/,
+  'zh-Hant': /市鎮、大區/,
+  ar: /البلديات، والمناطق/,
+  ckb: /شارەوانییەکان، هەرێمەکان/,
+  fa: /شهرداری‌ها، منطقه‌ها/,
+  pl: /gminy i regiony/,
+  so: /degmooyinka iyo gobollada/,
+  ti: /ናይ ከባቢ ምምሕዳራት፡ ክልላት/,
+  tr: /belediyeler ve bölgeler/,
+  uk: /муніципалітети й регіони/,
+};
 
 type StaticSite = {
   baseUrl: string;
@@ -244,6 +258,18 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await switchToHomeRoute(page);
 }
 
+async function assertHomeChapterTwoCivicTerms(page: Page, locale: ExtraLocale) {
+  const expectedDescription = await dictionaryText(page, locale, 'chap.2.d');
+  const chapterDescription = page.locator(i18nSelector('chap.2.d'));
+
+  await expect(chapterDescription).toBeVisible();
+  await expect(chapterDescription).toHaveText(expectedDescription);
+  expect(await chapterDescription.innerText()).toMatch(
+    localizedHomeChapterTwoCivicTermSnippets[locale],
+  );
+  expect(await chapterDescription.innerText()).not.toMatch(forbiddenHomeChapterTwoCivicTerms);
+}
+
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
@@ -294,6 +320,30 @@ test('static Settings selects extra languages with localized legal metadata with
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
     await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Home chapter 2 civic terms render localized card descriptions without kommun region regering', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await assertHomeChapterTwoCivicTerms(page, locale);
+    await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
 
   expect(pageErrors).toEqual([]);

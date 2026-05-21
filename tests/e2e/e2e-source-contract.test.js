@@ -535,7 +535,7 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
 
   assert.deepEqual(privacyTitles, [
     'privacy route renders localized plain-language callout labels',
-    'privacy and consent copy describe unconfigured AdSense slots in both languages',
+    'privacy and consent copy describe AdSense auto ads in both languages',
   ]);
   assert.ok(
     privacyTitles.every((title) => /privacy|consent/i.test(title)),
@@ -555,6 +555,31 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
     networkSource,
     /static system font fallback keeps primary routes inside mobile and desktop viewports/,
     'primary route overflow coverage should stay covered in the neutral network spec',
+  );
+});
+
+test('static Home chapter 2 civic-term e2e keeps a focused grep target', () => {
+  const source = readRelative('static-i18n-extras-language-selector.spec.ts');
+
+  assert.match(
+    source,
+    /static Home chapter 2 civic terms render localized card descriptions without kommun region regering/,
+    'static Home civic-term e2e should have a focused grep title',
+  );
+  assert.match(
+    source,
+    /localizedHomeChapterTwoCivicTermSnippets/,
+    'static Home civic-term e2e should assert the reviewed localized terms, not just absence',
+  );
+  assert.match(
+    source,
+    /forbiddenHomeChapterTwoCivicTerms/,
+    'static Home civic-term e2e should reject bare Swedish civic terms in rendered card copy',
+  );
+  assert.match(
+    source,
+    /i18nSelector\('chap\.2\.d'\)/,
+    'static Home civic-term e2e should inspect the rendered chapter 2 description element',
   );
 });
 
