@@ -8167,3 +8167,113 @@ html[dir='rtl'] .lang-menu {
     padding: 18px 14px 16px 19px;
   }
 }
+
+/* ------------------------------------------------------------------
+   MOBILE MENU BOX OPTIMIZATION ROUND
+   Refines the collapsed navigation into a deliberate tactile drawer
+   with clearer rows and active-route feedback on small screens.
+------------------------------------------------------------------ */
+
+@media (max-width: 720px) {
+  .topbar.is-nav-open .nav {
+    background:
+      radial-gradient(circle at 94% 0%, rgba(254, 204, 0, 0.16), transparent 140px),
+      var(--card-surface);
+    border: 1px solid var(--card-border);
+    border-radius: 22px;
+    box-shadow: var(--card-shadow-hover);
+    gap: 8px;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 16px;
+    position: relative;
+  }
+
+  .topbar.is-nav-open .nav::before {
+    background: var(--card-rail);
+    content: '';
+    height: 5px;
+    inset: 0 0 auto;
+    opacity: 0.86;
+    position: absolute;
+  }
+
+  .topbar.is-nav-open .nav a {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 106, 167, 0.1);
+    border-radius: 14px;
+    box-shadow: 0 10px 22px -20px rgba(0, 58, 92, 0.42);
+    gap: 10px;
+    min-height: 48px;
+    padding: 11px 14px;
+    transition:
+      background 0.14s ease,
+      border-color 0.14s ease,
+      box-shadow 0.14s ease,
+      color 0.14s ease,
+      transform 0.14s ease;
+  }
+
+  .topbar.is-nav-open .nav a::before {
+    background: rgba(0, 106, 167, 0.18);
+    border: 1px solid rgba(0, 106, 167, 0.14);
+    border-radius: 999px;
+    content: '';
+    height: 8px;
+    width: 8px;
+  }
+
+  .topbar.is-nav-open .nav a:hover,
+  .topbar.is-nav-open .nav a:focus-visible {
+    background: rgba(254, 204, 0, 0.13);
+    border-color: rgba(0, 106, 167, 0.3);
+    box-shadow: var(--card-shadow);
+    outline: none;
+    transform: translateX(2px);
+  }
+
+  .topbar.is-nav-open .nav a.is-active {
+    background:
+      linear-gradient(90deg, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0.06)),
+      var(--ink, #0b1f33);
+    border-color: rgba(254, 204, 0, 0.36);
+    color: var(--gold, #fecc00);
+  }
+
+  .topbar.is-nav-open .nav a.is-active::before {
+    background: var(--gold);
+    border-color: rgba(254, 204, 0, 0.6);
+  }
+
+  :root[data-theme='dark'] .topbar.is-nav-open .nav {
+    background: var(--card-surface);
+    border-color: var(--card-border);
+  }
+
+  :root[data-theme='dark'] .topbar.is-nav-open .nav a {
+    background: rgba(255, 255, 255, 0.035);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  :root[data-theme='dark'] .topbar.is-nav-open .nav a:hover,
+  :root[data-theme='dark'] .topbar.is-nav-open .nav a:focus-visible {
+    background: rgba(0, 106, 167, 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 720px) {
+  .topbar.is-nav-open .nav a {
+    transition: none;
+  }
+  .topbar.is-nav-open .nav a:hover,
+  .topbar.is-nav-open .nav a:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar.is-nav-open .nav {
+    border-radius: 18px;
+    padding: 14px;
+  }
+}
