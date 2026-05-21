@@ -30,6 +30,7 @@ export const STUDY_REMINDER_TIME_OPTIONS = [
   { hour: 18, minute: 0 },
   { hour: 20, minute: 30 },
 ] as const;
+export const DEFAULT_STUDY_REMINDER_TIME = STUDY_REMINDER_TIME_OPTIONS[1];
 
 export type StudyReminderRuntime = {
   getPermissionsAsync?: () => Promise<{ status: unknown }>;
@@ -58,20 +59,54 @@ type DisableStudyReminderInput = {
   runtime: Pick<StudyReminderRuntime, 'cancelScheduledNotificationAsync'>;
 };
 
+type StudyReminderTime = {
+  hour: number;
+  minute: number;
+};
+
 function normalizeStudyReminderPermissionStatus(status: unknown): StudyReminderPermissionStatus {
   if (status === 'granted') return 'granted';
   if (status === 'denied') return 'denied';
   return 'undetermined';
 }
 
-export function sanitizeStudyReminderTime(hour: number, minute: number) {
-  return {
-    hour: Math.max(0, Math.min(23, Math.round(hour))),
-    minute: Math.max(0, Math.min(59, Math.round(minute))),
-  };
+function isValidStudyReminderTimePart(value: unknown, min: number, max: number): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= min &&
+    value <= max
+  );
 }
 
-export function formatStudyReminderTime(hour: number, minute: number): string {
+function isValidStudyReminderTime(value: unknown): value is StudyReminderTime {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<StudyReminderTime>;
+  return (
+    isValidStudyReminderTimePart(candidate.hour, 0, 23) &&
+    isValidStudyReminderTimePart(candidate.minute, 0, 59)
+  );
+}
+
+function safeFallbackStudyReminderTime(fallback?: Partial<StudyReminderTime>): StudyReminderTime {
+  if (isValidStudyReminderTime(fallback)) return fallback;
+  return DEFAULT_STUDY_REMINDER_TIME;
+}
+
+export function sanitizeStudyReminderTime(
+  hour: unknown,
+  minute: unknown,
+  fallback?: Partial<StudyReminderTime>,
+): StudyReminderTime {
+  if (isValidStudyReminderTimePart(hour, 0, 23) && isValidStudyReminderTimePart(minute, 0, 59)) {
+    return { hour, minute };
+  }
+
+  return safeFallbackStudyReminderTime(fallback);
+}
+
+export function formatStudyReminderTime(hour: unknown, minute: unknown): string {
   const safeTime = sanitizeStudyReminderTime(hour, minute);
   return `${String(safeTime.hour).padStart(2, '0')}:${String(safeTime.minute).padStart(2, '0')}`;
 }
@@ -140,7 +175,10 @@ export async function enableStudyReminder({
   language,
   runtime,
 }: EnableStudyReminderInput): Promise<StudyReminderPersistedState> {
-  const safeTime = sanitizeStudyReminderTime(hour, minute);
+  const safeTime = sanitizeStudyReminderTime(hour, minute, {
+    hour: current.studyReminderHour,
+    minute: current.studyReminderMinute,
+  });
   const permissionStatus = await resolveStudyReminderPermission(
     runtime,
     current.studyReminderPermissionStatus,
