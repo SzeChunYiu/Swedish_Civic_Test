@@ -448,6 +448,11 @@ test('native AdBanner uses platform-aware unit lookup and shouldShowAd gate', ()
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(
+    nativeBannerSource,
+    /requestOptions=\{\{\s*requestNonPersonalizedAdsOnly:\s*mobileAdsConsent\.decision\.requestNonPersonalizedAdsOnly,\s*\}\}/,
+  );
+  assert.match(nativeBannerSource, /size=\{BannerAdSize\.ANCHORED_ADAPTIVE_BANNER\}/);
   assert.doesNotMatch(
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
