@@ -1402,7 +1402,7 @@ function generatedTrueFalseStatementSv(
   variantIsTrue: boolean,
 ): string {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementSv(source, variantIsTrue);
-  return truthStatementSv(civicStatementSv(source, option));
+  return truthStatementSv(deriveCivicStatementSv(source, option));
 }
 
 function generatedTrueFalseStatementEn(
@@ -1411,7 +1411,7 @@ function generatedTrueFalseStatementEn(
   variantIsTrue: boolean,
 ): string {
   if (isTrueFalseSource(source)) return trueFalseSourceStatementEn(source, variantIsTrue);
-  return truthStatementEn(civicStatementEn(source, option));
+  return truthStatementEn(deriveCivicStatementEn(source, option));
 }
 
 function judgementPromptSv(source: PracticeQuestion): string {
@@ -1532,7 +1532,7 @@ function politicalDemocracyRightStatementEn(answer: string): string | null {
   return null;
 }
 
-function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
+export function deriveCivicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
   }
@@ -2146,7 +2146,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   return upperFirst(stripLeadingPurposeSv(answer));
 }
 
-function civicStatementEn(source: PracticeQuestion, option: QuestionOption): string {
+export function deriveCivicStatementEn(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementEn(source, option.id === source.correctOptionId);
   }
