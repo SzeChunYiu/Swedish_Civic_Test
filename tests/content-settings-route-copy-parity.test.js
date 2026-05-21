@@ -87,6 +87,7 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /const clearAccessibilityPersistenceWarning = useAccessibilityStore\(/);
   assert.match(source, /\(state\) => state\.clearPersistenceWarning,/);
   assert.match(source, /warning=\{accessibilityPersistenceWarning\}/);
+  assert.match(source, /warningScope="accessibilityPreferences"/);
   assert.match(source, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
 });
 

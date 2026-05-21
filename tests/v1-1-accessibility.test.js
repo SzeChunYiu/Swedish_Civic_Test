@@ -365,6 +365,20 @@ test('speak.ts: rate is clamped to a safe range', () => {
   assert.match(source, /2\.0/);
 });
 
+test('settings route scopes persistence warning copy to accessibility preferences', () => {
+  const settingsSource = loadSource('app/settings.tsx');
+  const noticeSource = loadSource('components/storage/PersistenceWarningNotice.tsx');
+
+  assert.match(settingsSource, /warningScope="accessibilityPreferences"/);
+  assert.match(noticeSource, /type PersistenceWarningNoticeScope/);
+  assert.match(noticeSource, /accessibilityPreferences:\s*\{/);
+  assert.match(noticeSource, /studyData:\s*\{/);
+  assert.match(noticeSource, /Tillgänglighetsinställningar kunde inte sparas/);
+  assert.match(noticeSource, /Accessibility preferences could not be saved/);
+  assert.match(noticeSource, /Lokal studiedata kunde inte läsas/);
+  assert.match(noticeSource, /Local study data could not be loaded/);
+});
+
 test('settingsStore.ts: v1.0 pinned shape preserved (no a11y fields added there)', () => {
   const source = loadSource('lib/storage/settingsStore.ts');
   assert.ok(!source.includes('easyReadFont'), 'a11y fields must NOT be in settingsStore');
