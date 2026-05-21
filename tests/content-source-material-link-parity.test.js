@@ -68,20 +68,16 @@ test('sources route stays in parity with UHR source material metadata', () => {
   );
 
   assert.equal(summary.uhrSourceMaterialLinkParityValidated, true);
-  assert.match(sourcesRoute, /<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
+  assert.match(sourcesRoute, /<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/);
   assert.match(
     sourcesRoute,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
   );
-  assert.match(sourcesRoute, /displayUrl=\{UHR_EDUCATION_MATERIAL_DISPLAY_URL\}/);
-  assert.match(sourcesRoute, /label=\{copy\.openEducationMaterialLabel\}/);
   assert.match(sourcesRoute, /Öppna UHR:s utbildningsmaterial/);
-  assert.match(sourcesRoute, /Öppna utbildningsmaterialet/);
   assert.match(sourcesRoute, /Open UHR education material/);
-  assert.match(sourcesRoute, /Open education material/);
   assert.match(sourcesRoute, /Sverige i fokus/);
-  assert.match(sourcesRoute, /content\/uhr-section-map\.json/);
-  assert.match(sourcesRoute, /content\/question-bank\.csv/);
+  assert.doesNotMatch(sourcesRoute, /content\/uhr-section-map\.json/);
+  assert.doesNotMatch(sourcesRoute, /content\/question-bank\.csv/);
   assert.ok(uhrSectionMap.source.url.includes('/medborgarskapsprovet/utbildningsmaterial/'));
   assert.ok(sourcesRoute.includes(expectedUhrMaterialUrl));
 });
