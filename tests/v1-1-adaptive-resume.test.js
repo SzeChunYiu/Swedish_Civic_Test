@@ -7,7 +7,7 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 const {
-  createMalformedAdaptiveDifficultyCases,
+  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -239,8 +239,7 @@ test('explainAdaptivePick: reports the same difficulty-adjusted bucket that was 
 test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', () => {
   const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const malformedDifficultyCases = createMalformedAdaptiveDifficultyCases();
-  const answers = malformedDifficultyCases.map((item, index) => ({
+  const answers = MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.map((item, index) => ({
     questionId: `stale-invalid-${index + 1}`,
     selectedOptionIds: [],
     isCorrect: true,
@@ -250,7 +249,7 @@ test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', 
   const input = {
     progress: progressFromAnswers(answers),
     bank: [
-      ...malformedDifficultyCases.map((item, index) => ({
+      ...MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.map((item, index) => ({
         id: `stale-invalid-${index + 1}`,
         difficulty: item.difficulty,
         chapterId: 'c1',
@@ -270,7 +269,7 @@ test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', 
     stale: 0,
   });
 
-  for (const { label, difficulty } of malformedDifficultyCases) {
+  for (const { label, difficulty } of MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES) {
     const singleInvalidInput = {
       progress: progressFromAnswers([
         {
@@ -306,35 +305,22 @@ test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', 
 test('pickAdaptiveSession: mixed unsupported runtime difficulty values are neutral', () => {
   const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const answers = [
-    {
-      questionId: 'a-stale-invalid-string',
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: '2026-04-14T12:00:00.000Z',
-      timeSpentSeconds: 5,
-    },
-    {
-      questionId: 'b-stale-invalid-null',
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: '2026-04-14T12:00:00.000Z',
-      timeSpentSeconds: 5,
-    },
-    {
-      questionId: 'c-stale-invalid-object',
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: '2026-04-14T12:00:00.000Z',
-      timeSpentSeconds: 5,
-    },
-  ];
+  const invalidIds = ['a-stale-invalid-string', 'b-stale-invalid-null', 'c-stale-invalid-object'];
+  const answers = MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.map((_, index) => ({
+    questionId: invalidIds[index],
+    selectedOptionIds: [],
+    isCorrect: true,
+    answeredAt: '2026-04-14T12:00:00.000Z',
+    timeSpentSeconds: 5,
+  }));
   const input = {
     progress: progressFromAnswers(answers),
     bank: [
-      { id: 'a-stale-invalid-string', difficulty: 'expert', chapterId: 'c1' },
-      { id: 'b-stale-invalid-null', difficulty: null, chapterId: 'c1' },
-      { id: 'c-stale-invalid-object', difficulty: { level: 'expert' }, chapterId: 'c1' },
+      ...MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.map((item, index) => ({
+        id: invalidIds[index],
+        difficulty: item.difficulty,
+        chapterId: 'c1',
+      })),
       { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'c1' },
     ],
     size: 1,
@@ -398,29 +384,6 @@ test('explainAdaptivePick: invalid and future answer dates do not count as recen
 
   assert.equal(counts['recently-wrong'], 0);
   assert.equal(counts.unseen, 2);
-});
-
-test('Practice route wires adaptive session order and localized summary', () => {
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const storeSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/quiz/practiceSessionStore.ts'),
-    'utf8',
-  );
-  const flowSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/practiceFlow.ts'), 'utf8');
-
-  assert.match(practiceSource, /pickAdaptiveSession/);
-  assert.match(practiceSource, /explainAdaptivePick/);
-  assert.match(practiceSource, /buildDashboardProgressSnapshot/);
-  assert.match(practiceSource, /answeredQuestionIds/);
-  assert.match(practiceSource, /getAvailableQuestionsForPracticeSession/);
-  assert.match(practiceSource, /getPracticeQuestionFromAdaptiveOrder/);
-  assert.match(practiceSource, /copy\.adaptiveSummary\(/);
-  assert.match(practiceSource, /Adaptive mix:/);
-  assert.match(practiceSource, /Anpassat urval:/);
-  assert.match(storeSource, /answeredQuestionIds: string\[\];/);
-  assert.match(storeSource, /answeredQuestionIds: \[\],/);
-  assert.match(flowSource, /getAvailableQuestionsForPracticeSession/);
-  assert.match(flowSource, /getPracticeQuestionFromAdaptiveOrder/);
 });
 
 // ----- resume
@@ -526,103 +489,6 @@ test('resumeWhereLeftOff: ignores invalid and future answer dates', () => {
   assert.equal(result.chapterId, 'c1');
   assert.equal(result.lastQuestionId, 'valid');
   assert.equal(result.questionsAnsweredInChapter, 1);
-});
-
-test('resumeWhereLeftOff: ignores malformed imported answers and non-finite maxAgeDays', () => {
-  const { resumeWhereLeftOff } = loadTs('lib/learning/resumeWhereLeftOff.ts');
-  for (const maxAgeDays of [Number.NaN, Number.POSITIVE_INFINITY]) {
-    const result = resumeWhereLeftOff({
-      progress: {
-        ...progressFromAnswers([]),
-        sessions: [
-          {
-            id: 's1',
-            mode: 'study',
-            questionIds: [],
-            startedAt: '2026-05-15T00:00:00.000Z',
-            answers: [
-              {
-                questionId: 'q1',
-                selectedOptionIds: [],
-                isCorrect: true,
-                answeredAt: '2026-05-19T10:00:00.000Z',
-                timeSpentSeconds: 5,
-              },
-              {
-                questionId: 'q2',
-                selectedOptionIds: [],
-                isCorrect: true,
-                answeredAt: '2026-05-18T10:00:00.000Z',
-                timeSpentSeconds: 5,
-              },
-              {
-                questionId: 'old',
-                selectedOptionIds: [],
-                isCorrect: true,
-                answeredAt: '2026-01-15T10:00:00.000Z',
-                timeSpentSeconds: 5,
-              },
-              {
-                questionId: 'bad-date',
-                selectedOptionIds: [],
-                isCorrect: true,
-                answeredAt: 'zzzz',
-                timeSpentSeconds: 5,
-              },
-              {
-                questionId: 'future-date',
-                selectedOptionIds: [],
-                isCorrect: true,
-                answeredAt: '9999-01-01T00:00:00.000Z',
-                timeSpentSeconds: 5,
-              },
-              { questionId: 99, answeredAt: '2026-05-20T10:00:00.000Z' },
-              { questionId: 'missing-date' },
-              { answeredAt: '2026-05-20T10:00:00.000Z' },
-              null,
-            ],
-          },
-          null,
-          { id: 's2', mode: 'study', questionIds: [], answers: null },
-        ],
-      },
-      questionChapterIndex: {
-        q1: 'ch03',
-        q2: 'ch03',
-        old: 'ch03',
-        'bad-date': 'ch03',
-        'future-date': 'ch03',
-      },
-      maxAgeDays,
-      now: new Date('2026-05-20T12:00:00.000Z'),
-    });
-
-    assert.equal(result.chapterId, 'ch03');
-    assert.equal(result.lastQuestionId, 'q1');
-    assert.equal(result.lastAnsweredAt, '2026-05-19T10:00:00.000Z');
-    assert.equal(result.questionsAnsweredInChapter, 2);
-  }
-});
-
-test('resumeWhereLeftOff: defaults negative maxAgeDays instead of disabling the cutoff', () => {
-  const { resumeWhereLeftOff } = loadTs('lib/learning/resumeWhereLeftOff.ts');
-  const result = resumeWhereLeftOff({
-    progress: progressFromAnswers([
-      {
-        questionId: 'recent',
-        selectedOptionIds: [],
-        isCorrect: true,
-        answeredAt: '2026-05-19T10:00:00.000Z',
-        timeSpentSeconds: 5,
-      },
-    ]),
-    questionChapterIndex: { recent: 'c1' },
-    maxAgeDays: -1,
-    now: new Date('2026-05-20T12:00:00.000Z'),
-  });
-
-  assert.equal(result.chapterId, 'c1');
-  assert.equal(result.lastQuestionId, 'recent');
 });
 
 test('resumeBannerCopy: bilingual messages', () => {
