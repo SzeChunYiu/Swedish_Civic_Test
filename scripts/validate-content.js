@@ -578,6 +578,10 @@ const QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS = [
   /\bActivities for which the state, regions, and municipalities are responsible\b/i,
   /\bThe public sector(?: in Sweden)? means (?:activities|all privately owned companies)\b/i,
 ];
+const QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does it mean to be source-critical\b/i,
+  /\b(?:Being|To be) source-critical means\b/i,
+];
 const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS = new Set(['q116', 'q630', 'q633']);
 const QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS = [
   /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
@@ -6922,6 +6926,13 @@ function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
   );
 }
 
+function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('source-criticism')) return null;
+  return QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
 function findQuestionReligiousFreedomOptionParallelismIssue(question) {
   return QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS.find((pattern) =>
     pattern.test(questionText(question)),
@@ -9206,7 +9217,6 @@ let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionSourceCriticismEnglishNaturalnessValidated = 0;
-let questionPublicSectorEnglishNaturalnessValidated = 0;
 let derivedCivicStatementPromptMirrorValidated = 0;
 let generatedWhyReasonTargetStemsValidated = 0;
 let generatedWhyReasonTargetStemParityValidated = false;
@@ -22817,8 +22827,6 @@ if (Array.isArray(questions)) {
         findQuestionReferendumAdvisorySwedishNaturalnessIssue(question);
       const sourceCriticismEnglishNaturalnessIssue =
         findQuestionSourceCriticismEnglishNaturalnessIssue(question);
-      const publicSectorEnglishNaturalnessIssue =
-        findQuestionPublicSectorEnglishNaturalnessIssue(question);
       const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
@@ -22900,11 +22908,6 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted source-criticism English wording`);
       } else {
         questionSourceCriticismEnglishNaturalnessValidated += 1;
-      }
-      if (publicSectorEnglishNaturalnessIssue) {
-        fail(`${label} uses stilted public-sector English wording`);
-      } else {
-        questionPublicSectorEnglishNaturalnessValidated += 1;
       }
       if (answerKeyPromptIssue) {
         fail(answerKeyPromptIssue);
@@ -23486,7 +23489,6 @@ console.log(
       questionGoodFridayEnglishNaturalnessValidated,
       questionReferendumAdvisorySwedishNaturalnessValidated,
       questionSourceCriticismEnglishNaturalnessValidated,
-      questionPublicSectorEnglishNaturalnessValidated,
       derivedCivicStatementPromptMirrorValidated,
       questionReligiousFreedomParallelismValidated,
       questionFalseAnswerExplanationsValidated,

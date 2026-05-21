@@ -718,8 +718,11 @@ export default function Screen() {
             onSelectQuestion={jumpToReviewQuestion}
           />
         ) : null}
-        {reviewItems.map((item, index) => {
+        {filteredReviewItems.map((item) => {
           const reviewQuestion = examQuestionById.get(item.questionId);
+          const questionNumber =
+            examQuestionNumberById.get(item.questionId) ??
+            reviewItems.findIndex((reviewItem) => reviewItem.questionId === item.questionId) + 1;
 
           return (
             <View
@@ -734,7 +737,7 @@ export default function Screen() {
               ]}
             >
               <View style={styles.reviewHeader}>
-                <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+                <Text style={styles.questionMeta}>{copy.questionNumber(questionNumber)}</Text>
                 <Badge tone={item.isCorrect ? 'green' : 'orange'}>
                   {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
                 </Badge>

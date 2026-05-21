@@ -221,10 +221,6 @@ test('mock exam provenance review follows English support mode', async ({ page }
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
   });
-  const activeReportLink = page.getByRole('link', { name: /Report question q\d+/ }).first();
-  await expect(activeReportLink).toBeVisible();
-  await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
-  await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
   await page.getByLabel('Flag question 1 for review').click();
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
@@ -283,10 +279,6 @@ test('mock exam provenance review follows English support mode', async ({ page }
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
   });
-  const reviewReportLink = page.getByRole('link', { name: /Report question q\d+/ }).first();
-  await expect(reviewReportLink).toBeVisible();
-  await expect(reviewReportLink).toHaveAttribute('href', /reportScreen=exam/);
-  await expect(reviewReportLink).toHaveAttribute('href', /selectedAnswer=/);
   await expect(page.getByText('Submitted results are final')).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);

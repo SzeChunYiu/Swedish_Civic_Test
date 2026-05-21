@@ -739,6 +739,19 @@ test('static ebook chapter 13 extra languages avoid parenthetical English holida
   }
 });
 
+test('static ebook Somali chapter 13 localizes holiday food copy', () => {
+  const harness = createEbookHarness();
+  const html = renderChapter(harness, 'so', '13');
+
+  assert.match(html, /Habeenka Bartamaha Xagaaga/);
+  assert.match(html, /kalluun la dhanaaniyey/);
+  assert.match(html, /baradho cusub iyo farawle/);
+
+  for (const pattern of staticEbookSomaliHolidayFoodTokenPatterns) {
+    assert.doesNotMatch(html, pattern);
+  }
+});
+
 test('static ebook chapter 13 source keeps English food and beverage tokens out of extra locales', () => {
   const offenders = findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(
     readSiteFile('site/ebook.js'),
