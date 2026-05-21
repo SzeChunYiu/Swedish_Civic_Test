@@ -27,7 +27,6 @@ const swedishEbookQuizLoanwordPatterns = [
   phrasePattern('quiz', 'pass'),
   phrasePattern('quiz', 'et'),
 ];
-const staticEbookCivicTermGuardChapters = ['2', '4', '6'];
 const staticEbookBareCivicTermPattern =
   /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
 const swedishEbookMockExamUnnaturalPatterns = [/provexempel/i];
@@ -230,11 +229,19 @@ function assertNoSwedishEbookQuizLoanwords(value) {
 }
 
 function assertNoBareStaticEbookCivicTerms(value, label) {
-  const offenders = Array.from(
-    value.matchAll(staticEbookBareCivicTermPattern),
-    (match) => match[2],
-  );
+  const offenders = Array.from(value.matchAll(staticEbookBareCivicTermPattern), (match) => ({
+    context: staticEbookCivicTermContext(value, match.index ?? 0),
+    term: match[2],
+  }));
   assert.deepEqual(offenders, [], `${label} should localize kommun/region civic terms`);
+}
+
+function staticEbookCivicTermContext(value, index) {
+  return value
+    .slice(Math.max(0, index - 90), index + 150)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function assertNoSwedishEbookMockExamUnnaturalness(value) {
@@ -777,13 +784,18 @@ test('static ebook Swedish study briefs source factual bullets and editorial pra
   assert.equal(dataSourceMetadata(practiceHint), 'inline');
 });
 
-test('static ebook extra-locale kommun and region civic terms use localized glossary words', () => {
+test('static ebook extra-locale kommun and region civic terms use localized glossary words in every chapter', () => {
   const harness = createEbookHarness();
+  const chapterIds = getExpectedChapterIds();
   const extraLanguages = getStaticSiteLanguages().filter((lang) => !['en', 'sv'].includes(lang));
 
   assert.ok(extraLanguages.length > 0, 'static ebook should expose extra reader languages');
+  assert.ok(
+    chapterIds.includes('intro') && chapterIds.includes('13') && chapterIds.length >= 14,
+    'static ebook civic-term guard should derive every shipped chapter',
+  );
 
-  for (const chapterId of staticEbookCivicTermGuardChapters) {
+  for (const chapterId of chapterIds) {
     for (const lang of extraLanguages) {
       const html = renderChapter(harness, lang, chapterId);
       assertNoBareStaticEbookCivicTerms(html, `${lang} chapter ${chapterId}`);
