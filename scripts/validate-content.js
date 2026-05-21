@@ -4271,7 +4271,10 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
         source.includes('rejected values are not shown') &&
         source.includes('getQuestionReportContextResult') &&
         source.includes('hasQuestionReportSearchParams') &&
-        source.includes('questionReportResult.rejected')
+        source.includes('questionReportResult.rejected') &&
+        /if \(language\.value && language\.value !== 'sv' && language\.value !== 'en'\) \{\s*rejected = true;\s*\}\s*if \(!questionId\.value/.test(
+          source,
+        )
       );
     },
   },

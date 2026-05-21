@@ -20,7 +20,10 @@ function collectUnexpectedSubmissions(page: Page) {
   const requests: string[] = [];
   page.on('request', (request) => {
     if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') {
-      requests.push(request.url());
+      const url = new URL(request.url());
+      if (!url.pathname.startsWith('/assets/')) {
+        requests.push(request.url());
+      }
     }
   });
   return requests;
@@ -172,6 +175,24 @@ test('support question report context shows English rejected-context notice with
   await expect(page.getByText('missing-question')).toHaveCount(0);
   await expect(page.getByText('raw answer that should stay hidden')).toHaveCount(0);
   await expect(page.getByText('raw source that should stay hidden')).toHaveCount(0);
+});
+
+test('support question report context rejects unsupported language-only params', async ({
+  page,
+}) => {
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto(supportUrl({ language: 'de' }), { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'Support and feedback' })).toBeVisible();
+  await expect(page.getByText('Question context could not be used')).toBeVisible();
+  await expect(
+    page.getByText(
+      'The link included question details that could not be verified. For privacy, rejected values are not shown here.',
+    ),
+  ).toBeVisible();
+  await expect(page.getByText('Question report context')).toHaveCount(0);
+  await expect(page.getByText('de', { exact: true })).toHaveCount(0);
 });
 
 test('practice report link carries selected answer and source context to Support', async ({
