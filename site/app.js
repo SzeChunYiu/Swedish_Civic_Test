@@ -962,6 +962,16 @@ const i18n = (window.i18n = {
   },
 });
 
+function smtMergePreloadedExtraI18n() {
+  const extra = window.__i18n_extra;
+  if (!extra || typeof extra !== 'object') return false;
+  Object.assign(i18n, extra);
+  delete window.__i18n_extra;
+  return true;
+}
+const smtPreloadedExtraI18nMerged = smtMergePreloadedExtraI18n();
+window.smtMergePreloadedExtraI18n = smtMergePreloadedExtraI18n;
+
 const SMT_RTL_LANGUAGES = new Set(['ar', 'ckb', 'fa']);
 
 function smtNormalizeLanguage(lang) {
@@ -1088,6 +1098,13 @@ function smtApplySavedLanguage() {
   applyLang(saved);
 }
 window.smtApplySavedLanguage = smtApplySavedLanguage;
+
+if (
+  smtPreloadedExtraI18nMerged &&
+  (document.readyState === 'interactive' || document.readyState === 'complete')
+) {
+  smtApplySavedLanguage();
+}
 
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.lang button[data-lang]');
