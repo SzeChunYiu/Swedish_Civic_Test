@@ -959,7 +959,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar',
+    'Öppna inställningar för dagligt mål, språk och ljud',
+    'Ändra mål, språk och ljud',
   ],
   en: [
     'Local profile',
@@ -979,7 +980,8 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings',
+    'Open settings for daily goal, language, and audio',
+    'Adjust goal, language, and audio',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -1033,7 +1035,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ['{copy.studySetupCta}', 'profile settings link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
