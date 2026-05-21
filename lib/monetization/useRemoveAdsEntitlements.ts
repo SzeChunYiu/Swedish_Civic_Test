@@ -23,6 +23,7 @@ export type RemoveAdsEntitlementStatus = 'loading' | 'ready' | 'read_failed';
 type RemoveAdsE2ERuntime = typeof globalThis & {
   __SMT_E2E__?: boolean;
   __SMT_REMOVE_ADS_ENTITLEMENT_DELAY_MS?: number;
+  __SMT_REMOVE_ADS_MOCK_OWNED__?: boolean;
 };
 
 let defaultNativePurchaseRuntimeOptions: PurchaseRuntimeOptions | undefined;
@@ -67,10 +68,31 @@ function getNativePurchasePlatform(): RemoveAdsStorePlatform {
   return Platform.OS === 'android' ? 'android' : 'ios';
 }
 
+function createE2EWebPurchaseRuntimeOptions(
+  initialAdsDisabled: boolean,
+): PurchaseRuntimeOptions | undefined {
+  if (Platform.OS === 'web') {
+    const runtime = globalThis as RemoveAdsE2ERuntime;
+    if (!runtime.__SMT_E2E__ || typeof runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean') {
+      return undefined;
+    }
+
+    return {
+      provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),
+      storage: createWebPurchaseStorage(initialAdsDisabled),
+    };
+  }
+
+  return undefined;
+}
+
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
 ): PurchaseRuntimeOptions {
   if (Platform.OS === 'web') {
+    const e2eRuntimeOptions = createE2EWebPurchaseRuntimeOptions(initialAdsDisabled);
+    if (e2eRuntimeOptions) return e2eRuntimeOptions;
+
     defaultWebPurchaseRuntimeOptions ??= {
       provider: createMockPurchaseProvider(),
       storage: createWebPurchaseStorage(initialAdsDisabled),
