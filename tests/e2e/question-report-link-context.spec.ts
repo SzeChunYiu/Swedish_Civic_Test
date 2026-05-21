@@ -1,9 +1,66 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import { dismissBlockingModals, seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
 
 function supportUrl(params: Record<string, string>) {
   return `/support?${new URLSearchParams(params).toString()}`;
+}
+
+function collectPageErrors(page: Page) {
+  const errors: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  page.on('pageerror', (error) => errors.push(error.message));
+  return errors;
+}
+
+function collectUnexpectedSubmissions(page: Page) {
+  const requests: string[] = [];
+  page.on('request', (request) => {
+    if (request.resourceType() === 'fetch' || request.resourceType() === 'xhr') {
+      requests.push(request.url());
+    }
+  });
+  return requests;
+}
+
+async function expectEnglishReportContext(
+  page: Page,
+  {
+    questionId,
+    screen,
+    selectedAnswer,
+  }: {
+    questionId: string | RegExp;
+    screen: string;
+    selectedAnswer: string;
+  },
+) {
+  await expect(page).toHaveURL(/\/support\?/);
+  await expect(page).toHaveURL(/language=en/);
+  await expect(page).toHaveURL(/selectedAnswer=/);
+  await expect(page.getByRole('heading', { name: 'Support and feedback' })).toBeVisible();
+  const context = page.getByRole('region', { name: /Report context for question q\d+/ });
+  await expect(context).toBeVisible();
+  await expect(context.getByText('Question report context')).toBeVisible();
+  await expect(context.getByText('Question ID')).toBeVisible();
+  if (typeof questionId === 'string') {
+    await expect(context.getByText(questionId, { exact: true })).toBeVisible();
+  } else {
+    await expect(context.getByText(questionId)).toBeVisible();
+  }
+  await expect(context.getByText('Source', { exact: true })).toBeVisible();
+  await expect(context.getByText(/Source: Sverige i fokus/)).toBeVisible();
+  await expect(context.getByText('Active language')).toBeVisible();
+  await expect(context.getByText('en', { exact: true })).toBeVisible();
+  await expect(context.getByText('Screen')).toBeVisible();
+  await expect(context.getByText(screen, { exact: true })).toBeVisible();
+  await expect(context.getByText('Selected answer')).toBeVisible();
+  await expect(context.getByText(selectedAnswer, { exact: true })).toBeVisible();
+  await expect(
+    context.getByText(/Do not add names, personal identity numbers, case numbers/),
+  ).toBeVisible();
 }
 
 test.use({ viewport: { width: 390, height: 844 } });
@@ -71,4 +128,57 @@ test('support question report context drops hostile direct URL params', async ({
   await expect(page.getByText('Kontext för frågerapport')).toHaveCount(0);
   await expect(page.getByText('not-a-question')).toHaveCount(0);
   await expect(page.getByText('Source: arbitrary')).toHaveCount(0);
+});
+
+test('practice report link carries selected answer and source context to Support', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  const unexpectedSubmissions = collectUnexpectedSubmissions(page);
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByText('Question 1')).toBeVisible();
+  await page.getByLabel('Select answer In southern Europe').click();
+  await expect(page.getByRole('link', { name: /Report question q\d+/ })).toBeVisible();
+
+  await page.getByRole('link', { name: /Report question q\d+/ }).click();
+
+  await expect(page).toHaveURL(/reportScreen=practice/);
+  await expectEnglishReportContext(page, {
+    questionId: 'q001',
+    screen: 'Practice',
+    selectedAnswer: 'In southern Europe',
+  });
+  expect(unexpectedSubmissions).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});
+
+test('routed quiz report link carries selected answer and source context to Support', async ({
+  page,
+}) => {
+  const pageErrors = collectPageErrors(page);
+  const unexpectedSubmissions = collectUnexpectedSubmissions(page);
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'Where is Sweden located?' })).toBeVisible();
+  await page.getByLabel('Select answer In southern Europe').click();
+  await expect(page.getByRole('link', { name: 'Report question q001' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Report question q001' }).click();
+
+  await expect(page).toHaveURL(/questionId=q001/);
+  await expect(page).toHaveURL(/reportScreen=quiz/);
+  await expectEnglishReportContext(page, {
+    questionId: 'q001',
+    screen: 'Quiz session',
+    selectedAnswer: 'In southern Europe',
+  });
+  expect(unexpectedSubmissions).toEqual([]);
+  expect(pageErrors).toEqual([]);
 });
