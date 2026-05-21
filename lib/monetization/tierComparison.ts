@@ -74,9 +74,10 @@ export const TIER_ROWS: readonly TierRow[] = [
     id: 'ads',
     labelSv: 'Annonser',
     labelEn: 'Ads',
+    flag: 'adsDisabled',
     free: { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' },
     adFree: { kind: 'text', sv: 'inga', en: 'none' },
-    pro: { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' },
+    pro: { kind: 'text', sv: 'inga', en: 'none' },
   },
   {
     id: 'chapterPractice',

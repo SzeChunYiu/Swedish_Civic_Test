@@ -112,11 +112,20 @@ test('profile route keeps Pro comparison separate from the Remove Ads purchase f
   assert.match(proPaywallSource, /restoreProLifetime/);
   assert.doesNotMatch(proPaywallSource, /buyRemoveAds|restoreRemoveAdsPurchase/);
   assert.match(proPaywallSource, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(proPaywallSource, /Remove Ads for 29 SEK stays available as its own simpler path/);
-  assert.match(proPaywallSource, /Ta bort annonser för 29 kr finns kvar som en egen enklare väg/);
-  assert.match(proPaywallSource, /Remove Ads for 29 SEK remains separate/);
-  assert.match(proPaywallSource, /Ta bort annonser för 29 kronor finns kvar separat/);
-  assert.match(proPaywallSource, /Pro ändrar inte den vägen/);
+  assert.match(proPaywallSource, /Pro is a separate one-time purchase with ad-free study/);
+  assert.match(
+    proPaywallSource,
+    /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available as its own simpler ad-free path/,
+  );
+  assert.match(proPaywallSource, /Pro är ett separat engångsköp med annonsfri studie/);
+  assert.match(
+    proPaywallSource,
+    /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar som en egen enklare annonsfri väg/,
+  );
+  assert.match(proPaywallSource, /Buys Pro Lifetime with ad-free study/);
+  assert.match(proPaywallSource, /Köper Pro Lifetime med annonsfri studie/);
+  assert.match(proPaywallSource, /Pro also includes ad-free study/);
+  assert.match(proPaywallSource, /Pro innehåller också annonsfri studie/);
   assert.match(proPaywallSource, /<View style=\{styles\.table\}>/);
   assert.match(proPaywallSource, /<View style=\{styles\.actions\}>/);
   assert.match(proPaywallSource, /aria-live="polite"/);
@@ -186,14 +195,23 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
   assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
   assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
-  assert.match(studySetupCard, /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/);
+  assert.match(
+    studySetupCard,
+    /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/,
+  );
   assert.match(studySetupCard, /\{copy\.languageBadgeLabel\}: \{copy\.languageBadge\}/);
-  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/);
+  assert.match(
+    studySetupCard,
+    /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/,
+  );
   assert.match(
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
-  assert.match(studySetupCard, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(
+    studySetupCard,
+    /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
+  );
   assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
   assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
