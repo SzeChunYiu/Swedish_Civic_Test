@@ -1234,8 +1234,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which is a way to influence and participate in society?",
-      "sv": "Vilket är ett sätt att påverka och delta i samhället?",
+      "en": "How can people influence society and participate in democracy?",
+      "sv": "Hur kan människor påverka samhället och delta i demokratin?",
       "zh-Hant": "哪一種方式可以影響並參與社會？",
       "zh-Hans": "哪一种方式可以影响并参与社会？",
       "ar": "ما الطريقة التي يمكن بها التأثير والمشاركة في المجتمع؟",
@@ -2050,7 +2050,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.",
       "zh-Hant": "公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。",
       "zh-Hans": "公投可以就某个特定问题在全国、地区或市镇举行。它们是咨询性的，所以政治人物不一定必须遵循结果。",
       "ar": "يمكن إجراء الاستفتاءات حول مسألة معينة على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، لذلك لا يجب على السياسيين بالضرورة اتباع النتيجة.",
@@ -17273,8 +17273,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
+      "en": "What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
       "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在 kommun（市鎮）和 region（大區）選舉中的投票權？",
       "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在 kommun（市镇）和 region（大区）选举中的投票权？",
       "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
@@ -18660,30 +18660,90 @@
     "type": "single_choice",
     "q": {
       "en": "Which statement describes protection against discrimination in Sweden?",
-      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?"
+      "sv": "Vilket påstående beskriver diskrimineringsskyddet i Sverige?",
+      "zh-Hant": "哪項說法描述了瑞典的反歧視保護？",
+      "zh-Hans": "哪项说法描述了瑞典的反歧视保护？",
+      "ar": "أي عبارة تصف الحماية من التمييز في السويد؟",
+      "ckb": "کام لێدوان پاراستن لە دژی جیاکاری لە سویددا وەسف دەکات؟",
+      "fa": "کدام گزاره حمایت در برابر تبعیض در سوئد را توصیف می‌کند؟",
+      "pl": "Które stwierdzenie opisuje ochronę przed dyskryminacją w Szwecji?",
+      "so": "Hadalkee sharxaya ilaalinta ka dhanka ah takooridda ee Iswiidhan?",
+      "ti": "ኣየናይ ኣበሃህላ ንዕቝባ ካብ ኣድልዎ ኣብ ሽወደን ይገልጽ?",
+      "tr": "Hangi ifade İsveç’te ayrımcılığa karşı korumayı açıklar?",
+      "uk": "Яке твердження описує захист від дискримінації у Швеції?"
     },
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Discrimination Act prohibits discrimination connected to several protected grounds, such as sex, transgender identity or expression, ethnicity, religion, disability, sexual orientation, and age.",
-      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder."
+      "sv": "Diskrimineringslagen förbjuder diskriminering som har samband med flera diskrimineringsgrunder, till exempel kön, könsidentitet eller könsuttryck, etnisk tillhörighet, religion, funktionsnedsättning, sexuell läggning och ålder.",
+      "zh-Hant": "《歧視法》禁止與多種歧視理由有關的歧視，例如性別、性別認同或性別表達、族裔歸屬、宗教、身心障礙、性取向和年齡。",
+      "zh-Hans": "《歧视法》禁止与多种歧视理由有关的歧视，例如性别、性别认同或性别表达、族裔归属、宗教、残障、性取向和年龄。",
+      "ar": "يحظر قانون التمييز التمييز المرتبط بعدة أسس محمية، مثل الجنس، والهوية الجندرية أو التعبير الجندري، والانتماء الإثني، والدين، والإعاقة، والتوجه الجنسي، والعمر.",
+      "ckb": "یاسای جیاکاری جیاکارییەکانی پەیوەندیدار بە چەند بنەمای جیاکاری قەدەغە دەکات، وەک ڕەگەز، ناسنامەی ڕەگەزی یان دەربڕینی ڕەگەزی، پەیوەندی ئێتنیکی، ئایین، کەمئەندامی، ئاراستەی سێکسی و تەمەن.",
+      "fa": "قانون تبعیض، تبعیض مرتبط با چند مبنای حمایت‌شده را ممنوع می‌کند؛ مانند جنسیت، هویت یا بیان جنسیتی، وابستگی قومی، دین، معلولیت، گرایش جنسی و سن.",
+      "pl": "Ustawa o dyskryminacji zakazuje dyskryminacji związanej z kilkoma chronionymi przesłankami, takimi jak płeć, tożsamość lub ekspresja płciowa, pochodzenie etniczne, religia, niepełnosprawność, orientacja seksualna i wiek.",
+      "so": "Xeerka takooriddu wuxuu mamnuucaa takoor la xiriira dhowr sababood oo la ilaaliyo, sida jinsi, aqoonsi jinsi ama muujin jinsi, asal qoomiyadeed, diin, naafonimo, jihayn jinsi iyo da’.",
+      "ti": "ሕጊ ኣድልዎ ምስ ብዙሓት ዝተዓቀቡ መሰረታት ኣድልዎ ዝተኣሳሰረ ኣድልዎ ይኽልክል፣ ንኣብነት ጾታ፣ መንነት ጾታ ወይ መግለጺ ጾታ፣ ብሄራዊ መበቆል፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለን ዕድመን።",
+      "tr": "Ayrımcılık Yasası; cinsiyet, cinsiyet kimliği veya ifadesi, etnik köken, din, engellilik, cinsel yönelim ve yaş gibi birkaç korunan gerekçeyle bağlantılı ayrımcılığı yasaklar.",
+      "uk": "Закон про дискримінацію забороняє дискримінацію, пов’язану з кількома захищеними підставами, такими як стать, гендерна ідентичність або самовираження, етнічна належність, релігія, інвалідність, сексуальна орієнтація та вік."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18706,7 +18766,17 @@
     "type": "single_choice",
     "q": {
       "en": "Which answer best matches? Where is Sweden located?",
-      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?"
+      "sv": "Vilket svar stämmer bäst? Var ligger Sverige?",
+      "zh-Hant": "哪個答案最符合？瑞典位於哪裡？",
+      "zh-Hans": "哪个答案最符合？瑞典位于哪里？",
+      "ar": "أي إجابة هي الأنسب؟ أين تقع السويد؟",
+      "ckb": "کام وەڵام باشترین گونجاوە؟ سوید لە کوێیە؟",
+      "fa": "کدام پاسخ مناسب‌تر است؟ سوئد کجا قرار دارد؟",
+      "pl": "Która odpowiedź najlepiej pasuje? Gdzie leży Szwecja?",
+      "so": "Jawaabtee ayaa ugu habboon? Iswiidhan xaggee ku taallaa?",
+      "ti": "ኣየናይ መልሲ ዝበለጸ ይሰማማዕ? ሽወደን ኣበይ ትርከብ?",
+      "tr": "Hangi cevap en iyi uyar? İsveç nerede bulunur?",
+      "uk": "Яка відповідь найкраще підходить? Де розташована Швеція?"
     },
     "opts": [
       {
@@ -18769,7 +18839,17 @@
     "answer": 0,
     "why": {
       "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -18794,22 +18874,62 @@
     "type": "true_false",
     "q": {
       "en": "Sweden is located in the Nordic region in northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні."
     },
     "opts": [
       {
         "en": "True",
-        "sv": "Sant"
+        "sv": "Sant",
+        "zh-Hant": "正確",
+        "zh-Hans": "正确",
+        "ar": "صحيح",
+        "ckb": "ڕاستە",
+        "fa": "درست",
+        "pl": "Prawda",
+        "so": "Sax",
+        "ti": "ትኽክል",
+        "tr": "Doğru",
+        "uk": "Правда"
       },
       {
         "en": "False",
-        "sv": "Falskt"
+        "sv": "Falskt",
+        "zh-Hant": "錯誤",
+        "zh-Hans": "错误",
+        "ar": "خطأ",
+        "ckb": "هەڵەیە",
+        "fa": "نادرست",
+        "pl": "Fałsz",
+        "so": "Khalad",
+        "ti": "ጌጋ",
+        "tr": "Yanlış",
+        "uk": "Неправда"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Sweden is in the Nordic region in northern Europe. The Nordic region includes Denmark, Finland, Iceland, Norway, and Sweden and is part of northern Europe.",
-      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa."
+      "sv": "Sverige ligger i Norden i norra Europa. Norden består av Danmark, Finland, Island, Norge och Sverige och är en del av norra Europa.",
+      "zh-Hant": "瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。",
+      "zh-Hans": "瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。",
+      "ar": "تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.",
+      "ckb": "سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.",
+      "fa": "سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.",
+      "pl": "Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.",
+      "so": "Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.",
+      "ti": "ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።",
+      "tr": "İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.",
+      "uk": "Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -21635,8 +21755,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which is a way to influence and participate in society?",
-      "sv": "Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Which answer best matches? How can people influence society and participate in democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -21723,8 +21843,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.",
-      "sv": "Ett sätt att påverka och delta i samhället är att kontakta politiker, demonstrera eller skriva på en namninsamling."
+      "en": "People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
       {
@@ -21763,8 +21883,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to ban others from voting in political elections.",
-      "sv": "Ett sätt att påverka och delta i samhället är att förbjuda andra från att rösta i politiska val."
+      "en": "People can influence society and participate in democracy by banning others from voting in political elections.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val."
     },
     "opts": [
       {
@@ -21803,8 +21923,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which is a way to influence and participate in society?",
-      "sv": "Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Choose the correct option: How can people influence society and participate in democracy?",
+      "sv": "Välj rätt alternativ: Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -23491,7 +23611,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23531,7 +23651,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23571,7 +23691,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23659,7 +23779,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -32083,8 +32203,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is illegal to buy sex, but the person who sells it is not punished.",
-      "sv": "Att köpa sex i Sverige är olagligt att köpa sex, men personen som säljer straffas inte."
+      "en": "In Sweden, buying sex is illegal, but the person who sells sex is not punished.",
+      "sv": "Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte."
     },
     "opts": [
       {
@@ -32123,8 +32243,8 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is always legal to buy sex.",
-      "sv": "Att köpa sex i Sverige är alltid lagligt att köpa sex."
+      "en": "In Sweden, buying sex is always legal.",
+      "sv": "Att köpa sex är alltid lagligt i Sverige."
     },
     "opts": [
       {
@@ -33363,7 +33483,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is permitted to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is permitted.",
       "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
@@ -33403,7 +33523,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "It is prohibited to marry a person of the same sex.",
+      "en": "In Sweden, marriage between people of the same sex is prohibited.",
       "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
@@ -55295,8 +55415,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Try to persuade others of their political ideas.",
-      "sv": "Försöka övertyga andra om sina politiska idéer."
+      "en": "In a democracy, people, groups, and parties may try to persuade others of their political ideas.",
+      "sv": "I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer."
     },
     "opts": [
       {
@@ -55335,8 +55455,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "Stop others from voting.",
-      "sv": "Hindra andra från att rösta."
+      "en": "In a democracy, people, groups, and parties may not stop others from voting.",
+      "sv": "I en demokrati får människor, grupper och partier inte hindra andra från att rösta."
     },
     "opts": [
       {
@@ -60375,8 +60495,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Which answer best matches? What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilket svar stämmer bäst? Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {
@@ -60546,8 +60666,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Choose the correct option: What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Välj rätt alternativ: Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {
@@ -63741,19 +63861,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
@@ -63869,19 +64029,59 @@
     "opts": [
       {
         "en": "Discrimination connected to, for example, sex, religion, disability, sexual orientation, or age is prohibited",
-        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden"
+        "sv": "Diskriminering som har samband med till exempel kön, religion, funktionsnedsättning, sexuell läggning eller ålder är förbjuden",
+        "zh-Hant": "禁止與例如性別、宗教、身心障礙、性取向或年齡有關的歧視",
+        "zh-Hans": "禁止与例如性别、宗教、残障、性取向或年龄有关的歧视",
+        "ar": "التمييز المرتبط مثلًا بالجنس أو الدين أو الإعاقة أو التوجه الجنسي أو العمر محظور",
+        "ckb": "جیاکاری پەیوەندیدار بە بۆ نموونە ڕەگەز، ئایین، کەمئەندامی، ئاراستەی سێکسی یان تەمەن قەدەغەیە",
+        "fa": "تبعیض مرتبط با مواردی مانند جنسیت، دین، معلولیت، گرایش جنسی یا سن ممنوع است",
+        "pl": "Dyskryminacja związana na przykład z płcią, religią, niepełnosprawnością, orientacją seksualną lub wiekiem jest zakazana",
+        "so": "Takoor la xiriira tusaale ahaan jinsi, diin, naafonimo, jihayn jinsi ama da’ waa mamnuuc",
+        "ti": "ኣድልዎ ምስ ንኣብነት ጾታ፣ ሃይማኖት፣ ስንክልና፣ ፆታዊ ዝንባለ ወይ ዕድመ ዝተኣሳሰረ ክልኩል እዩ",
+        "tr": "Örneğin cinsiyet, din, engellilik, cinsel yönelim veya yaşla bağlantılı ayrımcılık yasaktır",
+        "uk": "Дискримінація, пов’язана, наприклад, зі статтю, релігією, інвалідністю, сексуальною орієнтацією або віком, заборонена"
       },
       {
         "en": "Employers may always treat people differently on these grounds",
-        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder"
+        "sv": "Arbetsgivare får alltid behandla personer olika på dessa grunder",
+        "zh-Hant": "雇主在這些理由上永遠可以不同地對待人",
+        "zh-Hans": "雇主在这些理由上永远可以不同地对待人",
+        "ar": "يجوز لأصحاب العمل دائمًا معاملة الناس بصورة مختلفة على هذه الأسس",
+        "ckb": "خاوەنکاران هەمیشە دەتوانن لەسەر ئەم بنەمایانە خەڵک بە جیاوازی مامەڵە بکەن",
+        "fa": "کارفرمایان همیشه می‌توانند بر این پایه‌ها با افراد متفاوت رفتار کنند",
+        "pl": "Pracodawcy zawsze mogą traktować ludzi różnie z tych powodów",
+        "so": "Loo-shaqeeyayaashu mar walba way ku kala duwi karaan dadka sababahan awgood",
+        "ti": "ኣስራሕቲ ኩሉ ግዜ ብእዞም መሰረታት ሰባት ብዝተፈላለየ ክሕዙ ይኽእሉ",
+        "tr": "İşverenler bu gerekçelerle insanlara her zaman farklı davranabilir",
+        "uk": "Роботодавці завжди можуть по-різному ставитися до людей на цих підставах"
       },
       {
         "en": "The Discrimination Act applies only to people over age 65",
-        "sv": "Diskrimineringslagen gäller bara personer över 65 år"
+        "sv": "Diskrimineringslagen gäller bara personer över 65 år",
+        "zh-Hant": "《歧視法》只適用於 65 歲以上的人",
+        "zh-Hans": "《歧视法》只适用于 65 岁以上的人",
+        "ar": "ينطبق قانون التمييز فقط على الأشخاص الذين تزيد أعمارهم على 65 عامًا",
+        "ckb": "یاسای جیاکاری تەنها بۆ کەسانی سەرووی ٦٥ ساڵ کار دەکات",
+        "fa": "قانون تبعیض فقط برای افراد بالای ۶۵ سال اعمال می‌شود",
+        "pl": "Ustawa o dyskryminacji dotyczy tylko osób powyżej 65 roku życia",
+        "so": "Xeerka takooriddu wuxuu khuseeyaa oo keliya dadka ka weyn 65 sano",
+        "ti": "ሕጊ ኣድልዎ ንሰባት ልዕሊ 65 ዓመት ጥራይ ይምልከት",
+        "tr": "Ayrımcılık Yasası yalnızca 65 yaş üstü kişiler için geçerlidir",
+        "uk": "Закон про дискримінацію стосується лише людей старших за 65 років"
       },
       {
         "en": "The protection applies only if someone is already a Swedish citizen",
-        "sv": "Skyddet gäller bara om någon redan är svensk medborgare"
+        "sv": "Skyddet gäller bara om någon redan är svensk medborgare",
+        "zh-Hant": "保護只在某人已經是瑞典公民時才適用",
+        "zh-Hans": "保护只在某人已经是瑞典公民时才适用",
+        "ar": "تنطبق الحماية فقط إذا كان الشخص مواطنًا سويديًا بالفعل",
+        "ckb": "پاراستنەکە تەنها کاتێک کار دەکات کە کەسێک پێشتر هاووڵاتی سوید بێت",
+        "fa": "این حمایت فقط وقتی اعمال می‌شود که فرد از قبل شهروند سوئد باشد",
+        "pl": "Ochrona obowiązuje tylko wtedy, gdy ktoś jest już obywatelem Szwecji",
+        "so": "Ilaalintu waxay khusaysaa oo keliya haddii qofku hore u yahay muwaadin Iswiidhish ah",
+        "ti": "እቲ ዕቝባ ሓደ ሰብ ቀድሞም ዜጋ ሽወደን እንተኾይኑ ጥራይ ይምልከት",
+        "tr": "Koruma yalnızca kişi zaten İsveç vatandaşıysa geçerlidir",
+        "uk": "Захист діє лише тоді, коли людина вже є громадянином Швеції"
       }
     ],
     "answer": 0,
@@ -64338,4 +64538,14 @@
     "questionCount": 145
   }
 ];
+
+  window.SMT_QUESTION_BANK_META = {
+  "questionCount": 895,
+  "chapterCount": 13,
+  "provenanceCounts": {
+    "uhr": 179,
+    "derived": 716,
+    "editorial": 0
+  }
+};
 })();

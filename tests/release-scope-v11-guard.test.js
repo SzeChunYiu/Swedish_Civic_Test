@@ -49,6 +49,10 @@ test('release preflight owns the v1.1 scope guard behind Remove Ads acceptance',
   assert.match(releasePreflightTests, /labels v1\.1 source-marker surfaces/);
   assert.match(
     releasePreflightTests,
+    /text output labels v1\.1 source-marker surfaces without temp-root noise/,
+  );
+  assert.match(
+    releasePreflightTests,
     /allows v1\.1 surfaces only with explicit operator override evidence/,
   );
 });
@@ -88,7 +92,11 @@ test('release preflight npm wrapper forwards test filters before files', () => {
     output,
     /release preflight labels v1\.1 source-marker surfaces without temp-root noise/,
   );
-  assert.match(output, /tests 2/);
+  assert.match(
+    output,
+    /release preflight text output labels v1\.1 source-marker surfaces without temp-root noise/,
+  );
+  assert.match(output, /tests 3/);
   assert.doesNotMatch(output, /release preflight fails closed on external launch blockers/);
   assert.doesNotMatch(output, /tests\/release-scope-v11-guard\.test\.js/);
 });
