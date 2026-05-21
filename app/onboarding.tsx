@@ -145,7 +145,12 @@ export default function Screen() {
           {copy.dailyGoalTitle}
         </Text>
         <Text style={styles.goalSubtitle}>{copy.dailyGoalSubtitle}</Text>
-        <View style={styles.goalPresetGrid}>
+        <View
+          aria-label={copy.dailyGoalTitle}
+          accessibilityLabel={copy.dailyGoalTitle}
+          accessibilityRole="radiogroup"
+          style={styles.goalPresetGrid}
+        >
           {onboardingDailyGoalPresetValues.map((goal) => {
             const preset = copy.dailyGoalPresets[goal];
             const selected = dailyGoalAnswers === goal;
@@ -153,10 +158,10 @@ export default function Screen() {
             return (
               <Pressable
                 key={goal}
-                aria-selected={selected}
+                aria-checked={selected}
                 accessibilityLabel={preset.accessibilityLabel}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: selected }}
                 hitSlop={space[1]}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [

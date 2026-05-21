@@ -2711,6 +2711,18 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
   ['{copy.title}', 'onboarding title must render localized copy'],
   ['{copy.subtitle}', 'onboarding subtitle must render localized copy'],
   ['{copy.steps.map((step, index) => (', 'onboarding steps must render localized copy'],
+  ['aria-label={copy.dailyGoalTitle}', 'onboarding daily goal group must expose web label'],
+  [
+    'accessibilityLabel={copy.dailyGoalTitle}',
+    'onboarding daily goal group must mirror its localized label natively',
+  ],
+  ['accessibilityRole="radiogroup"', 'onboarding daily goal group must expose radiogroup role'],
+  ['aria-checked={selected}', 'onboarding daily goal presets must expose checked state'],
+  ['accessibilityRole="radio"', 'onboarding daily goal presets must expose radio role'],
+  [
+    'accessibilityState={{ checked: selected }}',
+    'onboarding daily goal presets must mirror checked state natively',
+  ],
   [
     'accessibilityLabel={copy.startStudyingAccessibilityLabel}',
     'onboarding start link must expose localized accessibility copy',
@@ -13717,6 +13729,15 @@ function validateOnboardingRouteCopyParity() {
   EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!onboardingRoute.includes(snippet)) reject(message);
   });
+  if (
+    /aria-selected=\{selected\}/.test(onboardingRoute) ||
+    /accessibilityState=\{\{\s*selected\s*\}\}/.test(onboardingRoute) ||
+    /accessibilityRole="button"[\s\S]{0,260}onPress=\{\(\) => setDailyGoalAnswers\(goal\)\}/.test(
+      onboardingRoute,
+    )
+  ) {
+    reject('onboarding daily goal presets must use radiogroup/radio checked semantics');
+  }
 
   FORBIDDEN_ONBOARDING_SV_MISTAKE_REVIEW_COPY.forEach((pattern) => {
     if (pattern.test(onboardingRoute)) {

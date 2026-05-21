@@ -187,6 +187,7 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
   await expect(
     page.getByRole('heading', { name: 'Förbered dig lugnt för samhällskunskapsprovet' }),
   ).toBeVisible();
+  await expect(page.getByRole('radiogroup', { name: 'Välj ett mjukt dagligt mål' })).toBeVisible();
 
   for (const link of onboardingActionLinks) {
     const target = page.getByRole('link', { exact: true, name: link.label });
@@ -195,13 +196,15 @@ test('Onboarding actions keep mobile-safe targets and daily goal selection', asy
     await expectMinimumTargetSize(target, link.visibleText);
   }
 
-  const regularGoal = page.getByRole('button', {
+  const regularGoal = page.getByRole('radio', {
     exact: true,
     name: 'Välj regelbundet dagligt mål med 20 svar',
   });
   await expectMinimumTargetSize(regularGoal, 'Regular daily goal');
+  await expect(regularGoal).toHaveAttribute('aria-checked', 'false');
+  await expect(regularGoal).not.toHaveAttribute('aria-selected', /.+/);
   await regularGoal.click();
-  await expect(regularGoal).toHaveAttribute('aria-selected', 'true');
+  await expect(regularGoal).toHaveAttribute('aria-checked', 'true');
 
   await expectNoHorizontalOverflow(page);
   expect(consoleErrors).toEqual([]);
@@ -217,13 +220,21 @@ for (const fixture of dailyGoalPersistenceCases) {
     await page.goto('/onboarding', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
 
-    const onboardingGoal = page.getByRole('button', {
+    await expect(
+      page.getByRole('radiogroup', {
+        name:
+          fixture.language === 'sv' ? 'Välj ett mjukt dagligt mål' : 'Choose a gentle daily goal',
+      }),
+    ).toBeVisible();
+
+    const onboardingGoal = page.getByRole('radio', {
       exact: true,
       name: fixture.onboardingGoalLabel,
     });
     await expectMinimumTargetSize(onboardingGoal, `${fixture.goal}-answer onboarding goal`);
     await onboardingGoal.click();
-    await expect(onboardingGoal).toHaveAttribute('aria-selected', 'true');
+    await expect(onboardingGoal).toHaveAttribute('aria-checked', 'true');
+    await expect(onboardingGoal).not.toHaveAttribute('aria-selected', /.+/);
     await expect
       .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
       .toBe(String(fixture.goal));
@@ -231,11 +242,11 @@ for (const fixture of dailyGoalPersistenceCases) {
     await page.reload({ waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
     await expect(
-      page.getByRole('button', {
+      page.getByRole('radio', {
         exact: true,
         name: fixture.onboardingGoalLabel,
       }),
-    ).toHaveAttribute('aria-selected', 'true');
+    ).toHaveAttribute('aria-checked', 'true');
 
     await page.goto('/settings', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
