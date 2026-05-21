@@ -289,6 +289,34 @@ test('question report link parity uses focused content validation routing', () =
   );
 });
 
+test('generated true/false naturalness guards share one pattern source', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const derivedContentTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/derived-content.test.js'),
+    'utf8',
+  );
+  const patternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /generated-true-false-naturalness-patterns/);
+  assert.match(derivedContentTestSource, /generated-true-false-naturalness-patterns/);
+  assert.doesNotMatch(
+    validatorSource,
+    /const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = \[/,
+    'validate-content must use the shared generated true/false naturalness pattern module',
+  );
+  assert.match(patternSource, /GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES/);
+  assert.match(patternSource, /policy-goal/);
+  assert.match(patternSource, /definition-cleft/);
+  assert.match(patternSource, /answer-fragment/);
+  assert.match(patternSource, /answer-scaffold/);
+});
+
 test('Mistakes route copy parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
