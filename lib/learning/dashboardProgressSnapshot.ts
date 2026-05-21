@@ -7,8 +7,8 @@ import type { QuizAnswer, QuizSession, UserProgress } from '../../types/progress
 import { calculateLevel } from './xp';
 
 type DashboardProgressSnapshotInput = {
-  answerAttempts?: AnswerHistoryEntry[];
   answerDates: string[];
+  answerAttempts?: AnswerHistoryEntry[];
   answerHistory?: AnswerHistoryEntry[];
   dailyGoalAnswers: number;
   mockExamSessions: MockExamProgress[];
@@ -58,7 +58,7 @@ function answerAttemptForHistoryEntry(entry: AnswerHistoryEntry): QuizAnswer {
 }
 
 export function buildDashboardProgressSnapshot({
-  answerAttempts,
+  answerAttempts = [],
   answerDates,
   answerHistory,
   dailyGoalAnswers,
@@ -66,9 +66,9 @@ export function buildDashboardProgressSnapshot({
   questionProgress,
   totalXp,
 }: DashboardProgressSnapshotInput): UserProgress {
-  const datedAnswerHistory = answerHistory ?? answerAttempts ?? [];
-  const historicalQuestionIds = new Set(datedAnswerHistory.map((entry) => entry.questionId));
-  const historicalAnswers = datedAnswerHistory.map(answerAttemptForHistoryEntry);
+  const historicalProgressAnswers = answerHistory ?? answerAttempts;
+  const historicalQuestionIds = new Set(historicalProgressAnswers.map((entry) => entry.questionId));
+  const historicalAnswers = historicalProgressAnswers.map(answerAttemptForHistoryEntry);
   const fallbackAnswers = Object.values(questionProgress)
     .filter((progress) => !historicalQuestionIds.has(progress.questionId))
     .flatMap(answerAttemptsForProgress);
