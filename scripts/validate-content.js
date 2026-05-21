@@ -1269,7 +1269,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Stäng om källorna',
     'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
     'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
-    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
     'Dagens utmaning',
     '${remainingSeconds} sekunder kvar',
     'Tiden är ute. Försök igen för att starta om dagens utmaning.',
@@ -1570,6 +1570,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
     'Starta övning',
+    'Gå till övningsprovet',
+    '${title}: gå till övningsprovet när steget är klart.',
     'Bläddra bland alla samhällskapitel',
     'Bläddra bland kapitel',
     'nivå',
@@ -11753,6 +11755,10 @@ function validatePracticeRouteCopyParity() {
     reject('source drawer copy must not contain hyphenated about-the-sources');
   }
 
+  if (SWEDISH_MOCKPROV_COPY_PATTERN.test(practiceRoute)) {
+    reject('practice route Swedish copy must use övningsprov wording, not mockprov/mock-provet');
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -12330,6 +12336,10 @@ function validateHomeRouteCopyParity() {
     !homeRoute.includes("chapterRange: 'Chapters 10-13'")
   ) {
     reject('home route guided path must finish with chapters 10-13');
+  }
+
+  if (SWEDISH_MOCKPROV_COPY_PATTERN.test(homeRoute)) {
+    reject('home route Swedish copy must use övningsprov wording, not mockprov/mock-provet');
   }
 
   const seenLabels = new Set();

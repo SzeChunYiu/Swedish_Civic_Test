@@ -41,7 +41,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 96);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -73,6 +73,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Study dashboard/);
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
+  assert.match(source, /Gå till övningsprovet/);
+  assert.match(source, /gå till övningsprovet när steget är klart/);
+  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.doesNotMatch(source, /Redoindikator|Readiness indicator|Provredo|Exam readiness/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
@@ -284,6 +287,41 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route guided path must finish with chapters 10-13/,
+  );
+});
+
+test('home route copy parity rejects Swedish mockprov wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replaceAll('Gå till övningsprovet', 'Gå till mockprov')
+      .replaceAll(
+        'gå till övningsprovet när steget är klart',
+        'gå till mockprov när steget är klart',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
   );
 });
 
