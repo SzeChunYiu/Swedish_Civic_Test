@@ -82,6 +82,12 @@ confirm App Store and Google Play listing metadata were reviewed against
 `publishing/app-store-listing.md` and `publishing/google-play-listing.md` and
 match the store records.
 
+Expected public support URL:
+`https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/`
+
+Expected public privacy policy URL:
+`https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/`
+
 | Gate                           | Required evidence                                                                           | Status |
 | ------------------------------ | ------------------------------------------------------------------------------------------- | ------ |
 | Apple Developer account        | Team ID or App Store Connect access note                                                    | TBD    |

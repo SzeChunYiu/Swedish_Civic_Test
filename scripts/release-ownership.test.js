@@ -9,6 +9,11 @@ const supportUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/
 const privacyUrl = 'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/';
 const appRepo = 'SzeChunYiu/Swedish_Civic_Test';
 const publicSiteRepo = 'SzeChunYiu/Swedish_Civic_Test-public-site';
+const currentNativeIdentifier = 'com.billyyiu.almostswedish';
+const historicalReleaseIdentityAllowlist = new Set([
+  'reports/release-evidence-2026-05-15.md',
+  'reports/site-audit-2026-05-18.md',
+]);
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -22,6 +27,15 @@ function trackedFiles() {
     .split('\n')
     .filter(Boolean)
     .filter((file) => !file.startsWith('node_modules/') && !file.startsWith('dist-web/'));
+}
+
+function textReleaseArtifactFiles() {
+  return trackedFiles().filter((file) => {
+    if (!/^(publishing|reports|scripts)\//.test(file)) return false;
+    if (file.endsWith('.png')) return false;
+    if (/\.test\.js$/.test(file)) return false;
+    return true;
+  });
 }
 
 test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () => {
@@ -70,4 +84,54 @@ test('release ownership target is SzeChunYiu and blocks legacy-owner drift', () 
     if (legacyOwnerPattern.test(content)) staleReferences.push(file);
   }
   assert.deepEqual(staleReferences, []);
+});
+
+test('current release identity surfaces reject stale native ids and public host URLs', () => {
+  const appConfig = JSON.parse(read('app.json')).expo;
+  assert.equal(appConfig.ios.bundleIdentifier, currentNativeIdentifier);
+  assert.equal(appConfig.android.package, currentNativeIdentifier);
+
+  const currentIdentityFiles = [
+    'scripts/release-preflight.js',
+    'publishing/build-and-submit-runbook.md',
+    'publishing/release-readiness.md',
+    'publishing/post-eas-auth-runbook.md',
+    'reports/release-evidence-template.md',
+    'reports/store-records/store-records.json',
+  ];
+
+  for (const file of currentIdentityFiles) {
+    const source = read(file);
+    assert.match(
+      source,
+      new RegExp(currentNativeIdentifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+    );
+    assert.match(source, new RegExp(supportUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(source, new RegExp(privacyUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+
+  const evidenceStubSource = read('scripts/create-release-evidence-stub.js');
+  assert.match(evidenceStubSource, /appConfig\.ios\.bundleIdentifier/);
+  assert.match(evidenceStubSource, /appConfig\.android\.package/);
+  assert.match(evidenceStubSource, new RegExp(supportUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.match(evidenceStubSource, new RegExp(privacyUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+
+  const staleNativeIdPattern = new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i');
+  const legacyPublicHostPattern =
+    /https?:\/\/(?:dist-[^\s/]+|[^\s/]*billy10384[^\s/]*)\.vercel\.app[^\s),;]*/i;
+  const staleHits = [];
+
+  for (const file of textReleaseArtifactFiles()) {
+    const source = read(file);
+    const matches = [
+      staleNativeIdPattern.test(source) ? 'stale native id' : '',
+      legacyPublicHostPattern.test(source) ? 'legacy Vercel public host' : '',
+    ].filter(Boolean);
+
+    if (matches.length > 0 && !historicalReleaseIdentityAllowlist.has(file)) {
+      staleHits.push(`${file}: ${matches.join(', ')}`);
+    }
+  }
+
+  assert.deepEqual(staleHits, []);
 });
