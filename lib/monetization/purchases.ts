@@ -84,6 +84,7 @@ export interface RemoveAdsPurchaseResult {
 }
 
 export interface PurchaseRuntimeOptions {
+  purchaseUnavailableReason?: 'web_store_unavailable';
   provider?: RemoveAdsPurchaseProvider;
   storage?: PurchaseStorage;
 }

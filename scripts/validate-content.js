@@ -1687,7 +1687,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 14;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
@@ -2438,8 +2438,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'repetitionsdag',
     'repetitionsdagar',
     'repetitionskort',
-    'provhistorikpost',
-    'provhistorikposter',
+    'genomfört övningsprov',
+    'genomförda övningsprov',
     'sparad inställning',
     'sparade inställningar',
     'markerat kravområde',
@@ -2500,8 +2500,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'FSRS review days',
     'FSRS review card',
     'FSRS review cards',
-    'mock exam history entry',
-    'mock exam history entries',
+    'completed mock exam',
+    'completed mock exams',
     'saved setting',
     'saved settings',
     'marked requirement',
@@ -4577,6 +4577,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
   {
     name: 'PurchaseRuntimeOptions',
     fields: [
+      { name: 'purchaseUnavailableReason', type: "'web_store_unavailable'", optional: true },
       { name: 'provider', type: 'RemoveAdsPurchaseProvider', optional: true },
       { name: 'storage', type: 'PurchaseStorage', optional: true },
     ],
@@ -11988,6 +11989,7 @@ function validateRemoveAdsEntitlementHookParity() {
   let valid = true;
   let hookSource = '';
   let homeSource = '';
+  let premiumBannerSource = '';
 
   function reject(message) {
     valid = false;
@@ -12000,6 +12002,10 @@ function validateRemoveAdsEntitlementHookParity() {
       'utf8',
     );
     homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
   } catch (error) {
     reject(`Remove Ads entitlement sources could not be read: ${error.message}`);
     return;
@@ -12007,6 +12013,7 @@ function validateRemoveAdsEntitlementHookParity() {
 
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
   const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const hookCases = [
     [
       /const\s+AD_BLOCKED_PENDING_ENTITLEMENTS:\s*PremiumEntitlements\s*=\s*\{[\s\S]*\.\.\.FREE_ENTITLEMENTS,[\s\S]*adsDisabled:\s*true,[\s\S]*\};/.test(
@@ -12015,9 +12022,31 @@ function validateRemoveAdsEntitlementHookParity() {
       'Remove Ads entitlement hook must fail closed while purchase state loads',
     ],
     [
-      normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
-        normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
-      'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+      /if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean'\s*\)\s*\{[\s\S]*return undefined;[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\)/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
+    ],
+    [
+      /function\s+createUnavailableWebPurchaseProvider\(\):\s*RemoveAdsPurchaseProvider\s*\{/.test(
+        hookSource,
+      ) &&
+        /defaultWebPurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createUnavailableWebPurchaseProvider\(\),[\s\S]*purchaseUnavailableReason:\s*'web_store_unavailable',[\s\S]*storage:\s*createWebPurchaseStorage\(false\),[\s\S]*\};/.test(
+          hookSource,
+        ),
+      'default web purchase runtime must fail closed without a public mock provider',
+    ],
+    [
+      normalizedHookSource.includes(
+        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+      ) && normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
     ],
     [
       /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
@@ -12070,6 +12099,20 @@ function validateRemoveAdsEntitlementHookParity() {
           homeSource,
         ),
       'Home monetization surfaces must wait for Remove Ads entitlements before rendering',
+    ],
+    [
+      normalizedPremiumBannerSource.includes(
+        "purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'",
+      ) &&
+        normalizedPremiumBannerSource.includes('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)') &&
+        normalizedPremiumBannerSource.includes('copy.webUnavailableAccessibilityHint') &&
+        normalizedPremiumBannerSource.includes('copy.buyUnavailable') &&
+        normalizedPremiumBannerSource.includes('copy.restoreUnavailable') &&
+        /Buy in mobile app/.test(premiumBannerSource) &&
+        /Köp i mobilappen/.test(premiumBannerSource) &&
+        /web version shows status only/.test(premiumBannerSource) &&
+        /Webbversionen visar bara status/.test(premiumBannerSource),
+      'PremiumBanner must render localized mobile-app-only copy when web purchases are unavailable',
     ],
   ];
 
