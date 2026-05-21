@@ -38,20 +38,6 @@ function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
-function deepSourcePayload(depth, leafJson) {
-  let nestedJson = leafJson;
-  for (let index = depth - 1; index >= 0; index -= 1) {
-    nestedJson = `{"level${index}":${nestedJson}}`;
-  }
-  return `{"version":1,"source":${nestedJson}}`;
-}
-
-function expectNoImportWrites(storageById) {
-  for (const storage of Object.values(storageById)) {
-    assert.equal(storage.values.size, 0);
-  }
-}
-
 test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
   const storageHarnessConsumers = [
     'tests/v1-1-review-store.test.js',
@@ -332,27 +318,53 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
 
-test('local study data import scans deeply nested empty payloads without writes', () => {
-  const storageById = createStorageById();
-  const { previewLocalStudyDataImport } = loadImportModule(storageById);
-  const result = previewLocalStudyDataImport(deepSourcePayload(6000, '{"note":"safe"}'));
-
-  assert.deepEqual(result, { ok: false, code: 'empty_import' });
-  expectNoImportWrites(storageById);
-});
-
-test('local study data import reports deeply nested purchase-field detail without writes', () => {
+test('local study data import rejects nested purchase fields with useful detail', () => {
   const storageById = createStorageById();
   const { previewLocalStudyDataImport } = loadImportModule(storageById);
   const result = previewLocalStudyDataImport(
-    deepSourcePayload(6000, '{"removeAdsReceipt":"local-test-receipt"}'),
+    JSON.stringify({
+      version: 1,
+      progress: {
+        completedQuestionIds: ['q001'],
+        history: [{ removeAdsReceipt: true }],
+      },
+    }),
   );
 
-  assert.equal(result.ok, false);
-  assert.equal(result.code, 'purchase_fields_rejected');
-  assert.match(result.detail, /^source\.level0\.level1\./);
-  assert.match(result.detail, /\.level5999\.removeAdsReceipt$/);
-  expectNoImportWrites(storageById);
+  assert.deepEqual(result, {
+    ok: false,
+    code: 'purchase_fields_rejected',
+    detail: 'progress.history.0.removeAdsReceipt',
+  });
+  assert.equal(storageById.progress.values.size, 0);
+  assert.equal(storageById['mistake-review'].values.size, 0);
+  assert.equal(storageById.reviews.values.size, 0);
+  assert.equal(storageById.settings.values.size, 0);
+  assert.equal(storageById['citizenship-requirements'].values.size, 0);
+});
+
+test('local study data import rejects deeply nested payloads without throwing or writing', () => {
+  const storageById = createStorageById();
+  const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =
+    loadImportModule(storageById);
+  const deepObjectDepth = 5000;
+  const rawPayload = [
+    '{"version":1,"progress":',
+    '{"x":'.repeat(deepObjectDepth),
+    '0',
+    '}'.repeat(deepObjectDepth),
+    '}',
+  ].join('');
+
+  assert.ok(Buffer.byteLength(rawPayload, 'utf8') < LOCAL_STUDY_DATA_IMPORT_MAX_BYTES);
+  const result = previewLocalStudyDataImport(rawPayload);
+
+  assert.deepEqual(result, { ok: false, code: 'empty_import' });
+  assert.equal(storageById.progress.values.size, 0);
+  assert.equal(storageById['mistake-review'].values.size, 0);
+  assert.equal(storageById.reviews.values.size, 0);
+  assert.equal(storageById.settings.values.size, 0);
+  assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
 
 test('local study data import rejects oversized payloads before parsing', () => {

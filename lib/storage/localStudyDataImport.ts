@@ -113,12 +113,12 @@ function normalizeKey(value: string): string {
   return value.replace(/[\s_-]/g, '').toLowerCase();
 }
 
-function nestedPath(parentPath: string, key: string): string {
-  return parentPath ? `${parentPath}.${key}` : key;
+function appendImportPathSegment(path: string, segment: string): string {
+  return path ? `${path}.${segment}` : segment;
 }
 
 function findForbiddenPurchaseField(value: unknown): string | null {
-  const stack: { path: string; value: unknown }[] = [{ path: '', value }];
+  const stack: Array<{ value: unknown; path: string }> = [{ value, path: '' }];
 
   while (stack.length > 0) {
     const current = stack.pop();
@@ -127,8 +127,8 @@ function findForbiddenPurchaseField(value: unknown): string | null {
     if (Array.isArray(current.value)) {
       for (let index = current.value.length - 1; index >= 0; index -= 1) {
         stack.push({
-          path: nestedPath(current.path, String(index)),
           value: current.value[index],
+          path: appendImportPathSegment(current.path, String(index)),
         });
       }
       continue;
@@ -137,16 +137,15 @@ function findForbiddenPurchaseField(value: unknown): string | null {
     if (!isRecord(current.value)) continue;
 
     const entries = Object.entries(current.value);
-    for (const [key] of entries) {
-      const normalizedKey = normalizeKey(key);
-      if (forbiddenPurchaseKeyFragments.some((fragment) => normalizedKey.includes(fragment))) {
-        return nestedPath(current.path, key);
-      }
-    }
-
     for (let index = entries.length - 1; index >= 0; index -= 1) {
       const [key, nestedValue] = entries[index];
-      stack.push({ path: nestedPath(current.path, key), value: nestedValue });
+      const nestedPath = appendImportPathSegment(current.path, key);
+      const normalizedKey = normalizeKey(key);
+      if (forbiddenPurchaseKeyFragments.some((fragment) => normalizedKey.includes(fragment))) {
+        return nestedPath;
+      }
+
+      stack.push({ value: nestedValue, path: nestedPath });
     }
   }
 

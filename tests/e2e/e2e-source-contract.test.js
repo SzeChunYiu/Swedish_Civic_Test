@@ -238,6 +238,50 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
   );
 });
 
+test('static network specs share the external request trap helper', () => {
+  const helperSource = readRelative('staticSiteNetworkGuards.ts');
+  const privacySource = readRelative('static-site-network-privacy.spec.ts');
+  const networkSource = readRelative('static-site-network-fonts.spec.ts');
+
+  assert.match(
+    helperSource,
+    /export async function trapExternalRequests\(\s*page: Page,\s*allowedOrigin: string,\s*capturedGoogleFontRequests\?: string\[],\s*\): Promise<void>/,
+    'staticSiteNetworkGuards should export a typed trap with an optional captured-request array',
+  );
+  assert.match(
+    helperSource,
+    /capturedGoogleFontRequests\?\.push\(url\)/,
+    'the shared trap should keep collecting Google Font request URLs when requested',
+  );
+
+  for (const [label, source] of [
+    ['privacy spec', privacySource],
+    ['font/network spec', networkSource],
+  ]) {
+    assert.match(
+      source,
+      /import \{ trapExternalRequests \} from '\.\/staticSiteNetworkGuards';/,
+      `${label} should import the shared request trap`,
+    );
+    assert.doesNotMatch(
+      source,
+      /(?:async\s+)?function trapExternalRequests\(/,
+      `${label} must not define a route-local request trap`,
+    );
+  }
+
+  assert.match(
+    networkSource,
+    /trapExternalRequests\(page,\s*new URL\(staticSite\.baseUrl\)\.origin,\s*googleFontRequests\)/,
+    'font/network spec should pass the captured Google Font request array',
+  );
+  assert.match(
+    privacySource,
+    /trapExternalRequests\(page,\s*new URL\(staticSite\.baseUrl\)\.origin,\s*\[\]\)/,
+    'privacy spec should still compile when passing an explicit captured-request array',
+  );
+});
+
 test('browser specs do not define local Date browser clock stubs', () => {
   const forbiddenClockStubPatterns = [
     /\b(?:window|globalThis)\.Date\s*=/g,
