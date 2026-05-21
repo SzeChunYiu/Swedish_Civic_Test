@@ -35,6 +35,7 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.equal(summary.aboutTheTestRouteCopyParityValidated, true);
   assert.equal(summary.aboutTheTestOfficialSourceUrlsValidated, officialSourceUrls.length);
   assert.equal(summary.aboutTheTestOfficialSourceRetrievedDateValidated, '2026-05-20');
+  assert.equal(summary.aboutTheTestSwedishMockprovCopyGuardValidated, 2);
   assert.equal(summary.citizenshipRequirementsLimitedSeatCopyValidated, 4);
   assert.match(
     source,
@@ -66,6 +67,7 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.match(source, /Seats are limited/);
   assert.match(source, /when the seats are filled, registration closes/);
   assert.match(source, /kostnadsfritt och ges som ett utprövningsprov med generös tid/);
+  assert.match(source, /övningsprov från andra aktörer/);
   assert.match(source, /free of charge and is a trial sitting with generous time/);
   assert.match(
     source,
@@ -80,6 +82,7 @@ test('about-the-test route uses cautious current official-detail copy', () => {
   assert.doesNotMatch(source, /digitalt\s+prov|digital\s+exam/i);
   assert.doesNotMatch(source, /Flervalsfr[aå]gor|Multiple-choice\s+questions/i);
   assert.doesNotMatch(source, /dator i en\s+provlokal|computer at a\s+test centre/i);
+  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
 });
 
 test('about-the-test route copy parity rejects bypassing the settings language', () => {
@@ -147,6 +150,74 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /about-the-test route must not make unsupported logistics claim/,
+  );
+});
+
+test('about-the-test route copy parity rejects Swedish mockprov wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/about-the-test.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'Våra övningsfrågor är inte UHR:s provfrågor',
+        'Mock-provet visar bara UHR-frågor',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /about-the-test route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
+  );
+});
+
+test('about-the-test route copy parity rejects Swedish mockprov guide wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'vad provet är, vem som ska göra det',
+        'vad mockprov är, vem som ska göra det',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /first-run about guide Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
   );
 });
 

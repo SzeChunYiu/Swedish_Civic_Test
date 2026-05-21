@@ -362,6 +362,17 @@ const EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS = [
     'about-the-test route official source links must visibly include URL labels',
   ],
 ];
+const EXPECTED_ABOUT_THE_TEST_SWEDISH_MOCKPROV_COPY_SOURCES = [
+  {
+    path: 'app/about-the-test.tsx',
+    label: 'about-the-test route',
+  },
+  {
+    path: 'components/onboarding/FirstRunAboutTheTestModal.tsx',
+    label: 'first-run about guide',
+  },
+];
+const SWEDISH_MOCKPROV_COPY_PATTERN = /\bmock\s*-?\s*prov(?:et)?\b/i;
 const EXPECTED_CITIZENSHIP_REQUIREMENTS_LIMITED_SEAT_SNIPPETS = [
   'Antalet platser är begränsat',
   'när platserna är fyllda går det inte längre att anmäla sig',
@@ -8140,6 +8151,7 @@ let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = '';
 let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
+let aboutTheTestSwedishMockprovCopyGuardValidated = 0;
 let citizenshipRequirementsLimitedSeatCopyValidated = 0;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
@@ -8875,6 +8887,7 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestOfficialSourceRetrievedDateValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
+    aboutTheTestSwedishMockprovCopyGuardValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
   });
   process.exit(0);
@@ -10607,6 +10620,27 @@ function validateAboutTheTestRouteCopyParity() {
     }
   });
 
+  EXPECTED_ABOUT_THE_TEST_SWEDISH_MOCKPROV_COPY_SOURCES.forEach((sourceConfig) => {
+    let source = '';
+    try {
+      source = fs.readFileSync(path.join(repoRoot, sourceConfig.path), 'utf8');
+    } catch (error) {
+      reject(
+        `${sourceConfig.path} could not be read for Swedish mockprov copy guard: ${error.message}`,
+      );
+      return;
+    }
+
+    if (SWEDISH_MOCKPROV_COPY_PATTERN.test(source)) {
+      reject(
+        `${sourceConfig.label} Swedish copy must use övningsprov wording, not mockprov/mock-provet`,
+      );
+      return;
+    }
+
+    aboutTheTestSwedishMockprovCopyGuardValidated += 1;
+  });
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_ABOUT_THE_TEST_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -10637,7 +10671,10 @@ function validateAboutTheTestRouteCopyParity() {
   if (
     valid &&
     aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
-    aboutTheTestOfficialSourceUrlsValidated === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length
+    aboutTheTestOfficialSourceUrlsValidated ===
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
+    aboutTheTestSwedishMockprovCopyGuardValidated ===
+      EXPECTED_ABOUT_THE_TEST_SWEDISH_MOCKPROV_COPY_SOURCES.length
   ) {
     aboutTheTestRouteCopyParityValidated = true;
   }
@@ -18836,6 +18873,7 @@ console.log(
       aboutTheTestOfficialSourceRetrievedDateValidated,
       aboutTheTestSeenEffectRulesValidated,
       aboutTheTestSeenEffectParityValidated,
+      aboutTheTestSwedishMockprovCopyGuardValidated,
       citizenshipRequirementsLimitedSeatCopyValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,

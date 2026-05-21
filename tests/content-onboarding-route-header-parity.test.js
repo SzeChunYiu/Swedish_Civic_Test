@@ -93,8 +93,43 @@ test('first-run about modal guide link keeps natural Swedish accessibility copy'
   assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
   assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
   assert.match(source, /accessibilityLabel=\{copy\.openAccessibilityLabel\}/);
+  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.doesNotMatch(source, new RegExp(staleGuideLabel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.doesNotMatch(source, /Öppna\s+om-[\s\S]*provet-[\s\S]*guiden/);
+});
+
+test('about-the-test first-run guide copy rejects mockprov wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'vad provet är, vem som ska göra det',
+        'vad mock-prov är, vem som ska göra det',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-about-the-test-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /first-run about guide Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
+  );
 });
 
 test('about-the-test seen-effect parity rejects removing the mount effect', () => {
