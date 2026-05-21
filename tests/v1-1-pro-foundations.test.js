@@ -535,10 +535,17 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /rowSummary:/);
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
+  assert.match(source, /<View style=\{styles\.table\}>/);
+  assert.match(source, /<View style=\{styles\.actions\}>/);
+  assert.match(source, /aria-live="polite"/);
   assert.match(source, /Remove Ads for 29 SEK stays available/);
   assert.match(source, /Ta bort annonser för 29 kr finns kvar/);
   assert.match(source, /Ta bort annonser för 29 kronor finns kvar separat/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
+  assert.doesNotMatch(source, /comparisonVisible|setComparisonVisible/);
+  assert.doesNotMatch(source, /Compare Pro features|Jämför Pro-funktioner/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ expanded:/);
+  assert.doesNotMatch(source, /\{comparisonVisible \? \(/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
