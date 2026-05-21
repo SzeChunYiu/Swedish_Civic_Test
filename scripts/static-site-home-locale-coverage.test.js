@@ -6,8 +6,21 @@ const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
 const locales = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
 const allowedSharedValues = new Set(['brand']);
 const dynamicMetadataKeys = [/^chap\.\d+\.m1$/];
+const localizedChapterTwoCivicTerms = {
+  'zh-Hans': /市镇、大区/,
+  'zh-Hant': /市鎮、大區/,
+  ar: /البلديات، والمناطق/,
+  ckb: /شارەوانییەکان، هەرێمەکان/,
+  fa: /شهرداری‌ها، منطقه‌ها/,
+  pl: /gminy i regiony/,
+  so: /degmooyinka iyo gobollada/,
+  ti: /ናይ ከባቢ ምምሕዳራት፡ ክልላት/,
+  tr: /belediyeler ve bölgeler/,
+  uk: /муніципалітети й регіони/,
+};
 const allowedSharedFragments = [
   /Almost Swedish/,
   /UHR/,
@@ -89,7 +102,7 @@ function homeVisibleKeys() {
     block(
       html,
       '<!-- ============================================================ COOKIE CONS',
-      '<script src="app.js"',
+      '<script src="app.js',
     ),
   ];
   return [
@@ -129,5 +142,23 @@ test('extra locales translate every displayed home, nav, footer, settings, and c
         `${locale}.${key} falls back to English: ${value}`,
       );
     }
+  }
+});
+
+test('extra locale Home chapter 2 cards localize kommun and region labels', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const locale of extraLocales) {
+    const value = dictionaries[locale]['chap.2.d'];
+    assert.match(
+      value,
+      localizedChapterTwoCivicTerms[locale],
+      `${locale}.chap.2.d should use localized municipality/region nouns`,
+    );
+    assert.doesNotMatch(
+      value,
+      /\b(?:kommun|region|regering)\b/i,
+      `${locale}.chap.2.d must not render bare Swedish civic-term tokens`,
+    );
   }
 });
