@@ -320,6 +320,10 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
   assert.match(mistakesSource, /<NativeAdCard \/>/);
@@ -363,6 +367,15 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
   );
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
   assert.match(adCopySource, /getNativeAdCardCopy/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Annons:/);
@@ -397,6 +410,25 @@ test('native ad card copy switches between live attribution and test disclosure'
     /Test native ad|AdMob test placement preview|Sponsored study placement/,
   );
   assert.doesNotMatch(swedishLiveCopy, /Inbyggd testannons|AdMob-testplacering/);
+});
+
+test('PracticeInterstitialAd web fallback uses WEB_AD_FALLBACK_CONSENT_DECISION for quiz_completed_interstitial', () => {
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(practiceInterstitialSource, /!entitlementsReady \|\| !?shouldRenderFallback/);
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
 });
 
 test('native practice interstitial uses consent-aware ad gate and platform unit lookup', () => {

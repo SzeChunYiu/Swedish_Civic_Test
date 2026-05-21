@@ -8191,6 +8191,10 @@ function validateAdPlacementRouteParity() {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
       );
+      const webFallbackShouldShowPattern = new RegExp(
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)`,
+      );
+      const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
       const webInterstitialSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
         'utf8',
@@ -8215,6 +8219,22 @@ function validateAdPlacementRouteParity() {
       ) {
         reject(
           `PracticeInterstitialAd web fallback must gate ${spec.placement} through shouldShowAd`,
+        );
+        routeIsValid = false;
+      }
+      if (!adsSource.includes('export const WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject('ads.ts must export the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!webFallbackShouldShowPattern.test(webInterstitialSource)) {
+        reject(
+          'PracticeInterstitialAd web fallback must use the shared web fallback consent decision',
+        );
+        routeIsValid = false;
+      }
+      if (!webInterstitialSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
+        reject(
+          'PracticeInterstitialAd web fallback must use the shared web fallback consent decision',
         );
         routeIsValid = false;
       }

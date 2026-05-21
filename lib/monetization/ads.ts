@@ -4,6 +4,7 @@ import type { AdConsentDecision } from './consent';
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 export type AdRuntimePlatform = 'ios' | 'android';
 type AdUnitEnvKeys = Record<AdPlacement, Record<AdRuntimePlatform, string>>;
+type AdUnitEnvValues = Record<AdPlacement, Record<AdRuntimePlatform, string | undefined>>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 // Web placeholders do not initialize the native ad SDK; this keeps real-unit web exports previewable.
@@ -42,9 +43,9 @@ function readBooleanFlag(value: string | undefined, defaultValue: boolean): bool
   return defaultValue;
 }
 
-function readEnvString(key: string): string | undefined {
-  const value = process.env[key]?.trim();
-  return value ? value : undefined;
+function readEnvString(value: string | undefined): string | undefined {
+  const normalized = value?.trim();
+  return normalized ? normalized : undefined;
 }
 
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
@@ -75,6 +76,35 @@ const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   rewarded_extra_exam: {
     android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
     ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
+  },
+};
+
+const REAL_AD_UNIT_ENV_VALUES: AdUnitEnvValues = {
+  app_open_launch: {
+    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID),
+  },
+  chapter_list_banner: {
+    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID),
+  },
+  home_banner: {
+    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID),
+  },
+  quiz_completed_interstitial: {
+    android: readEnvString(
+      process.env.EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
+    ),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID),
+  },
+  results_native: {
+    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID),
+  },
+  rewarded_extra_exam: {
+    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID),
+    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID),
   },
 };
 
@@ -124,9 +154,9 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
 ];
 
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const envKeys = REAL_AD_UNIT_ENV_KEYS[unit.placement];
-  const androidUnitId = readEnvString(envKeys.android);
-  const iosUnitId = readEnvString(envKeys.ios);
+  const envValues = REAL_AD_UNIT_ENV_VALUES[unit.placement];
+  const androidUnitId = envValues.android;
+  const iosUnitId = envValues.ios;
 
   return {
     ...unit,

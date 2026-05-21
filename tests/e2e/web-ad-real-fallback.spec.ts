@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 
 import { collectConsoleAndPageErrors, dismissBlockingModals } from './browserLaunch';
 
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+
 const homeBannerLabel =
   /Google AdMob: (Home banner|Annons på startsidan)\. (AdMob placement active|AdMob-placering aktiv)\. (Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i;
 
@@ -12,7 +14,7 @@ const practiceCompletionBannerLabel =
   /Google AdMob: (Practice completion ad|Annons efter övning)\. (AdMob placement active|AdMob-placering aktiv)\. (Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i;
 
 const nativeFallbackLabel =
-  /(Test native ad: Sponsored study placement|Inbyggd testannons: Sponsrad studieplacering)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i;
+  /(Ad: Results ad|Annons: Annons i resultatvyn)\..*(Hidden after Remove Ads is active|Döljs när Ta bort annonser är aktivt)\./i;
 
 test.use({
   viewport: { width: 390, height: 844 },
@@ -22,6 +24,9 @@ test('real-enabled web export renders fallback ad cards and keeps exam ad-free',
   page,
 }) => {
   const consoleErrors = collectConsoleAndPageErrors(page);
+  await page.addInitScript((seenKey) => {
+    window.localStorage.setItem(seenKey, 'true');
+  }, settingsSeenAboutKey);
 
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -49,5 +54,5 @@ test('real-enabled web export renders fallback ad cards and keeps exam ad-free',
   await expect(page.getByLabel(/Google AdMob:/i)).toHaveCount(0);
   await expect(page.getByLabel(nativeFallbackLabel)).toHaveCount(0);
 
-  expect(consoleErrors).toEqual([]);
+  expect(consoleErrors.get()).toEqual([]);
 });
