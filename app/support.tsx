@@ -287,15 +287,15 @@ function getQuestionReportContextResult(
     selectedAnswer.rejected ||
     source.rejected;
 
+  if (language.value && language.value !== 'sv' && language.value !== 'en') {
+    rejected = true;
+  }
+
   if (!questionId.value || !validQuestionIds.has(questionId.value)) {
     return {
       context: null,
       rejected: hasReportParams || rejected,
     };
-  }
-
-  if (language.value && language.value !== 'sv' && language.value !== 'en') {
-    rejected = true;
   }
 
   if (reportScreen.value && !validReportScreens.has(reportScreen.value as QuestionReportScreen)) {

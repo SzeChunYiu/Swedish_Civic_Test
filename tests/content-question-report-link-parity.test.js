@@ -124,7 +124,7 @@ test('question report CTA is wired from question surfaces to support context', (
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 26);
+  assert.equal(summary.questionReportLinkRulesValidated, 27);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
@@ -155,6 +155,10 @@ test('question report CTA is wired from question surfaces to support context', (
   assert.match(supportSource, /rejected values are not shown/);
   assert.match(supportSource, /getQuestionReportContextResult/);
   assert.match(supportSource, /hasQuestionReportSearchParams/);
+  assert.match(
+    supportSource,
+    /if \(language\.value && language\.value !== 'sv' && language\.value !== 'en'\) \{\s*rejected = true;\s*\}\s*if \(!questionId\.value/,
+  );
   assert.match(supportSource, /exam: 'Övningsprov'/);
   assert.match(supportSource, /exam: 'Mock exam'/);
   assert.doesNotMatch(supportSource, /mailto:|Linking\.openURL|fetch\(/);
