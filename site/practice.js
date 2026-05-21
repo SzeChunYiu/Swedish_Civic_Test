@@ -32,6 +32,15 @@
         })[c],
     );
   }
+  function chapterLabel(question) {
+    const chapterId = Number(question && question.chapterId);
+    const meta = Array.isArray(window.SMT_CHAPTERS_META)
+      ? window.SMT_CHAPTERS_META.find((chapter) => chapter.id === chapterId)
+      : null;
+    const title = meta && meta.title && (meta.title[lang()] || meta.title.en);
+    if (title) return `${meta.emoji || ''} ${title}`.trim();
+    return question && question.chapter ? question.chapter : `Ch ${chapterId || ''}`.trim();
+  }
   const sourceCitationCopy = {
     en: { source: 'Source', page: 'p.' },
     sv: { source: 'Källa', page: 's.' },
@@ -238,6 +247,16 @@
   }
   function questionMatchesSourcePref(question) {
     return questionSourcesPref() === 'all' || questionProvenance(question) === 'uhr';
+  }
+  function questionHasLocale(question, locale = lang()) {
+    if (locale === 'en' || locale === 'sv') return true;
+    const hasText = (value) => typeof value === 'string' && value.trim() !== '';
+    if (!hasText(question?.q?.[locale]) || !hasText(question?.why?.[locale])) return false;
+    const opts = Array.isArray(question?.opts) ? question.opts : [];
+    return opts.length > 0 && opts.every((option) => hasText(option?.[locale]));
+  }
+  function questionMatchesDisplayLocale(question) {
+    return questionHasLocale(question, lang());
   }
   window.smtQuestionSourcesPref = questionSourcesPref;
   window.smtQuestionMatchesSourcePref = questionMatchesSourcePref;
@@ -581,7 +600,7 @@
   }
   function mockQuestionPool() {
     const all = window.SMT_QUESTIONS || [];
-    return all.filter(isStaticMockUhrQuestion);
+    return all.filter(isStaticMockUhrQuestion).filter(questionMatchesDisplayLocale);
   }
 
   function pickMockQuestions() {
@@ -930,7 +949,7 @@
 
         <p class="quiz__disclaimer">${escapeHtml(questionReviewDisclaimer())}</p>
         <div class="mock-card">
-          <div class="quiz__crumb">Ch ${q.chapterId}</div>
+          <div class="quiz__crumb">${escapeHtml(chapterLabel(q))}</div>
           <h2 class="quiz__q">${q.q[lang()] || q.q.en}</h2>
           ${questionSourceRow(q)}
           <div class="quiz__opts">${opts}</div>
@@ -1133,7 +1152,9 @@
     if (!c) return null;
     if (c === 'mix') {
       // random 10 from any chapter, respecting source preference
-      const all = (window.SMT_QUESTIONS || []).filter(questionMatchesSourcePref);
+      const all = (window.SMT_QUESTIONS || [])
+        .filter(questionMatchesSourcePref)
+        .filter(questionMatchesDisplayLocale);
       for (let i = all.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [all[i], all[j]] = [all[j], all[i]];
@@ -1144,7 +1165,8 @@
     if (isNaN(chId)) return null;
     return (window.SMT_QUESTIONS || [])
       .filter((q) => q.chapterId === chId)
-      .filter(questionMatchesSourcePref);
+      .filter(questionMatchesSourcePref)
+      .filter(questionMatchesDisplayLocale);
   };
 
   // re-render hub when we return to /practice without ?c=

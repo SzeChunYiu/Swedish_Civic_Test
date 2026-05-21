@@ -1588,6 +1588,16 @@ function smtQuizCurrentLang() {
   }
 }
 
+function smtQuizChapterLabel(question, lang) {
+  const chapterId = Number(question && question.chapterId);
+  const meta = Array.isArray(window.SMT_CHAPTERS_META)
+    ? window.SMT_CHAPTERS_META.find((chapter) => chapter.id === chapterId)
+    : null;
+  const title = meta && meta.title && (meta.title[lang] || meta.title.en);
+  if (title) return `${meta.emoji || ''} ${title}`.trim();
+  return question && question.chapter ? question.chapter : '';
+}
+
 function smtQuizEscapeHtml(value) {
   return String(value ?? '').replace(
     /[&<>"]/g,
@@ -1928,7 +1938,7 @@ function smtQuizShouldRender() {
 function smtQuizQuestionSet() {
   const filtered =
     typeof window.smtPracticeFilterFor === 'function' ? window.smtPracticeFilterFor() : null;
-  if (filtered && filtered.length) return filtered;
+  if (Array.isArray(filtered)) return filtered;
   if (window.SMT_QUESTIONS && window.SMT_QUESTIONS.length) return window.SMT_QUESTIONS;
   return SMT_FALLBACK_QUESTIONS;
 }
@@ -2110,7 +2120,7 @@ function smtQuizRender() {
     <p class="quiz__screen-disclaimer">${screenDisclaimer}</p>
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${q.chapter}</div>
+      <div class="quiz__crumb">${smtQuizEscapeHtml(smtQuizChapterLabel(q, lang))}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
