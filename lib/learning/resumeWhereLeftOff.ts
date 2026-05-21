@@ -30,28 +30,78 @@ export interface ResumeInput {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_MAX_AGE_DAYS = 60;
+
+interface ResumeAnswerCandidate {
+  questionId: string;
+  answeredAt: string;
+  answeredAtMs: number;
+}
+
+function finiteNow(value: Date | undefined): Date {
+  return value instanceof Date && Number.isFinite(value.getTime()) ? value : new Date();
+}
+
+function finiteMaxAgeDays(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0
+    ? value
+    : DEFAULT_MAX_AGE_DAYS;
+}
+
+function cutoffFor(now: Date, maxAgeDays: number): number {
+  const maxAgeMs = maxAgeDays * DAY_MS;
+  return now.getTime() - (Number.isFinite(maxAgeMs) ? maxAgeMs : DEFAULT_MAX_AGE_DAYS * DAY_MS);
+}
+
+function progressSessions(progress: UserProgress): readonly unknown[] {
+  const sessions = (progress as { sessions?: unknown } | null | undefined)?.sessions;
+  return Array.isArray(sessions) ? sessions : [];
+}
+
+function sessionAnswers(session: unknown): readonly unknown[] {
+  if (!session || typeof session !== 'object') return [];
+  const answers = (session as { answers?: unknown }).answers;
+  return Array.isArray(answers) ? answers : [];
+}
+
+function resumeAnswerCandidate(answer: unknown, now: Date): ResumeAnswerCandidate | null {
+  if (!answer || typeof answer !== 'object') return null;
+  const maybeAnswer = answer as { answeredAt?: unknown; questionId?: unknown };
+  if (typeof maybeAnswer.questionId !== 'string' || typeof maybeAnswer.answeredAt !== 'string') {
+    return null;
+  }
+
+  const answeredAtMs = validAnswerTimestampMs(maybeAnswer.answeredAt, now);
+  if (answeredAtMs === null) return null;
+
+  return {
+    questionId: maybeAnswer.questionId,
+    answeredAt: maybeAnswer.answeredAt,
+    answeredAtMs,
+  };
+}
 
 export function resumeWhereLeftOff(input: ResumeInput): ResumeCandidate {
-  const now = input.now ?? new Date();
-  const maxAge = input.maxAgeDays ?? 60;
-  const cutoffMs = now.getTime() - maxAge * DAY_MS;
+  const now = finiteNow(input.now);
+  const cutoffMs = cutoffFor(now, finiteMaxAgeDays(input.maxAgeDays));
+  const sessions = progressSessions(input.progress);
 
   let bestChapterId: string | null = null;
   let bestLastAt: string | null = null;
   let bestLastAtMs: number | null = null;
   let bestQuestionId: string | null = null;
 
-  for (const session of input.progress.sessions ?? []) {
-    for (const answer of session.answers) {
-      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
-      if (answeredAtMs === null || answeredAtMs < cutoffMs) continue;
-      const chapterId = input.questionChapterIndex[answer.questionId];
+  for (const session of sessions) {
+    for (const answer of sessionAnswers(session)) {
+      const candidate = resumeAnswerCandidate(answer, now);
+      if (!candidate || candidate.answeredAtMs < cutoffMs) continue;
+      const chapterId = input.questionChapterIndex[candidate.questionId];
       if (!chapterId) continue;
-      if (bestLastAtMs === null || answeredAtMs > bestLastAtMs) {
-        bestLastAtMs = answeredAtMs;
-        bestLastAt = answer.answeredAt;
+      if (bestLastAtMs === null || candidate.answeredAtMs > bestLastAtMs) {
+        bestLastAtMs = candidate.answeredAtMs;
+        bestLastAt = candidate.answeredAt;
         bestChapterId = chapterId;
-        bestQuestionId = answer.questionId;
+        bestQuestionId = candidate.questionId;
       }
     }
   }
@@ -59,11 +109,12 @@ export function resumeWhereLeftOff(input: ResumeInput): ResumeCandidate {
   let questionsInChapter = 0;
   if (bestChapterId) {
     const seen = new Set<string>();
-    for (const session of input.progress.sessions ?? []) {
-      for (const answer of session.answers) {
-        if (validAnswerTimestampMs(answer.answeredAt, now) === null) continue;
-        if (input.questionChapterIndex[answer.questionId] === bestChapterId) {
-          seen.add(answer.questionId);
+    for (const session of sessions) {
+      for (const answer of sessionAnswers(session)) {
+        const candidate = resumeAnswerCandidate(answer, now);
+        if (!candidate || candidate.answeredAtMs < cutoffMs) continue;
+        if (input.questionChapterIndex[candidate.questionId] === bestChapterId) {
+          seen.add(candidate.questionId);
         }
       }
     }
