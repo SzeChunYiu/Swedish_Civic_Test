@@ -341,7 +341,7 @@
         "ckb": "دەریای ناوەڕاست",
         "fa": "دریای مدیترانه",
         "pl": "Morze Śródziemne",
-        "so": "Badda Mediterranean",
+        "so": "Badda Dhexe",
         "ti": "ባሕሪ ሜዲተራንያን",
         "tr": "Akdeniz",
         "uk": "Середземне море"
@@ -355,7 +355,7 @@
         "ckb": "دەریای بەڵتیک",
         "fa": "دریای بالتیک",
         "pl": "Morze Bałtyckie",
-        "so": "Badda Baltic",
+        "so": "Badda Baltiga",
         "ti": "ባሕሪ ባልቲክ",
         "tr": "Baltık Denizi",
         "uk": "Балтійське море"
@@ -369,7 +369,7 @@
         "ckb": "زەریای ئەتڵەسی",
         "fa": "اقیانوس اطلس",
         "pl": "Ocean Atlantycki",
-        "so": "Badweynta Atlantic",
+        "so": "Badweynta Atlaantiga",
         "ti": "ውቅያኖስ ኣትላንቲክ",
         "tr": "Atlas Okyanusu",
         "uk": "Атлантичний океан"
@@ -385,7 +385,7 @@
       "ckb": "دەریای کەناری ڕۆژهەڵاتی سوید دەریای بەڵتیکە. دەریای باکوور، دەریای ناوەڕاست و زەریای ئەتڵەسی ناوی ئەو دەریایە نین.",
       "fa": "دریای کنار ساحل شرقی سوئد دریای بالتیک است. دریای شمال، دریای مدیترانه و اقیانوس اطلس نام دریای کنار ساحل شرقی سوئد نیستند.",
       "pl": "Morze przy wschodnim wybrzeżu Szwecji to Morze Bałtyckie. Morze Północne, Morze Śródziemne i Ocean Atlantycki nie są morzem przy wschodnim wybrzeżu Szwecji.",
-      "so": "Badda ku teedsan xeebta bari ee Iswiidhan waa Badda Baltic. Badda Waqooyi, Badda Mediterranean iyo Badweynta Atlantic ma aha magaca badda xeebta bari ee Iswiidhan.",
+      "so": "Badda ku teedsan xeebta bari ee Iswiidhan waa Badda Baltiga. Badda Waqooyi, Badda Dhexe iyo Badweynta Atlaantiga ma aha magaca badda xeebta bari ee Iswiidhan.",
       "ti": "ኣብ ምብራቓዊ ገምገም ባሕሪ ሽወደን ዘሎ ባሕሪ ባልቲክ ይበሃል። ሰሜናዊ ባሕሪ፣ ባሕሪ ሜዲተራንያንን ውቅያኖስ ኣትላንቲክን ናይዚ ባሕሪ ስም ኣይኮኑን።",
       "tr": "İsveç’in doğu kıyısındaki deniz Baltık Denizi’dir. Kuzey Denizi, Akdeniz ve Atlas Okyanusu İsveç’in doğu kıyısındaki denizin adı değildir.",
       "uk": "Море біля східного узбережжя Швеції називається Балтійським морем. Північне море, Середземне море й Атлантичний океан не є морем біля східного узбережжя Швеції."
@@ -525,7 +525,7 @@
       "ckb": "ڕەوتی گەلف و ڕەوتی باکووری ئەتڵەسی یارمەتی دەدەن کە ئاووهەوای سوید نەرمو مامناوەند بێت.",
       "fa": "جریان گلف استریم و جریان اقیانوس اطلس شمالی به ملایم بودن آب‌وهوای سوئد کمک می‌کنند.",
       "pl": "Golfsztrom i Prąd Północnoatlantycki przyczyniają się do łagodnego klimatu Szwecji.",
-      "so": "Gulf Stream iyo qulqulka Waqooyiga Atlantic waxay ka qayb qaataan cimilada deggan ee Iswiidhan.",
+      "so": "Qulqulka Gacanka iyo qulqulka Waqooyiga Atlaantiga waxay ka qayb qaataan cimilada deggan ee Iswiidhan.",
       "ti": "ጎልፍ ስትሪምን ሰሜናዊ ኣትላንቲክ ዋሕዝን ንለስላሳ ክሊማ ሽወደን ይሕግዙ።",
       "tr": "Golfstream ve Kuzey Atlantik Akıntısı, İsveç’in ikliminin ılıman olmasına katkı sağlar.",
       "uk": "Гольфстрім і Північно-Атлантична течія сприяють м’якому клімату Швеції."
@@ -570,7 +570,7 @@
       "ckb": "سوید بە بەراورد لەگەڵ زۆر ناوچەی تر لە هەمان پانی جوگرافی، ئاووهەوایەکی نەرمتری هەیە. ڕەوتی گەلف و ڕەوتی باکووری ئەتڵەسی ئاوی گەرم بەرەو ئەوروپا دەگوازنەوە و ئەو هەوایە گەرم دەکەن کە با بەرەو سوید دەیهێنێت.",
       "fa": "سوئد در مقایسه با بسیاری از مناطق دیگر در همان عرض جغرافیایی آب‌وهوای ملایمی دارد. گلف استریم و جریان اقیانوس اطلس شمالی آب گرم را به سوی اروپا می‌برند و هوایی را که بادها به سوئد می‌آورند گرم می‌کنند.",
       "pl": "Szwecja ma łagodny klimat w porównaniu z wieloma innymi obszarami na tej samej szerokości geograficznej. Golfsztrom i Prąd Północnoatlantycki niosą ciepłą wodę ku Europie, ogrzewając powietrze przynoszone przez wiatry nad Szwecję.",
-      "so": "Iswiidhan waxay leedahay cimilo deggan marka loo barbardhigo meelo badan oo kale oo isla loolkaas ku yaal. Gulf Stream iyo qulqulka Waqooyiga Atlantic waxay biyo diirran u qaadaan Yurub, taas oo diirisa hawada dabayluhu u keenaan Iswiidhan.",
+      "so": "Iswiidhan waxay leedahay cimilo deggan marka loo barbardhigo meelo badan oo kale oo isla loolkaas ku yaal. Qulqulka Gacanka iyo qulqulka Waqooyiga Atlaantiga waxay biyo diirran u qaadaan Yurub, taas oo diirisa hawada dabayluhu u keenaan Iswiidhan.",
       "ti": "ሽወደን ካብ ብዙሓት ኣብ ተመሳሳሊ ኬክሮስ ዘለዋ ከባቢታት ጋር ክትነጻጸር ከላ ለስላሳ ክሊማ ኣለዋ። ጎልፍ ስትሪምን ሰሜናዊ ኣትላንቲክ ዋሕዝን ሞቃት ማይ ናብ ኤውሮጳ ይወስዱ፣ እዚ ድማ ነቲ ንሽወደን ዝመጽእ ኣየር የሞቕ።",
       "tr": "İsveç, aynı enlemdeki birçok bölgeye göre ılıman bir iklime sahiptir. Golfstream ve Kuzey Atlantik Akıntısı Avrupa’ya sıcak su taşır; bu da rüzgârların İsveç’e getirdiği havayı ısıtır.",
       "uk": "Швеція має м’який клімат порівняно з багатьма іншими територіями на тій самій широті. Гольфстрім і Північно-Атлантична течія несуть теплу воду до Європи, зігріваючи повітря, яке вітри приносять до Швеції."
@@ -738,7 +738,7 @@
         "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
         "fa": "دریای بالتیک، Kattegat و Skagerrak",
         "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
-        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "so": "Badda Baltiga, Kattegat iyo Skagerrak",
         "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
         "tr": "Baltık Denizi, Kattegat ve Skagerrak",
         "uk": "Балтійське море, Kattegat і Skagerrak"
@@ -19543,7 +19543,7 @@
         "ckb": "دەریای ناوەڕاست",
         "fa": "دریای مدیترانه",
         "pl": "Morze Śródziemne",
-        "so": "Badda Mediterranean",
+        "so": "Badda Dhexe",
         "ti": "ባሕሪ ሜዲተራንያን",
         "tr": "Akdeniz",
         "uk": "Середземне море"
@@ -19557,7 +19557,7 @@
         "ckb": "دەریای بەڵتیک",
         "fa": "دریای بالتیک",
         "pl": "Morze Bałtyckie",
-        "so": "Badda Baltic",
+        "so": "Badda Baltiga",
         "ti": "ባሕሪ ባልቲክ",
         "tr": "Baltık Denizi",
         "uk": "Балтійське море"
@@ -19571,7 +19571,7 @@
         "ckb": "زەریای ئەتڵەسی",
         "fa": "اقیانوس اطلس",
         "pl": "Ocean Atlantycki",
-        "so": "Badweynta Atlantic",
+        "so": "Badweynta Atlaantiga",
         "ti": "ውቅያኖስ ኣትላንቲክ",
         "tr": "Atlas Okyanusu",
         "uk": "Атлантичний океан"
@@ -19711,7 +19711,7 @@
         "ckb": "دەریای ناوەڕاست",
         "fa": "دریای مدیترانه",
         "pl": "Morze Śródziemne",
-        "so": "Badda Mediterranean",
+        "so": "Badda Dhexe",
         "ti": "ባሕሪ ሜዲተራንያን",
         "tr": "Akdeniz",
         "uk": "Середземне море"
@@ -19725,7 +19725,7 @@
         "ckb": "دەریای بەڵتیک",
         "fa": "دریای بالتیک",
         "pl": "Morze Bałtyckie",
-        "so": "Badda Baltic",
+        "so": "Badda Baltiga",
         "ti": "ባሕሪ ባልቲክ",
         "tr": "Baltık Denizi",
         "uk": "Балтійське море"
@@ -19739,7 +19739,7 @@
         "ckb": "زەریای ئەتڵەسی",
         "fa": "اقیانوس اطلس",
         "pl": "Ocean Atlantycki",
-        "so": "Badweynta Atlantic",
+        "so": "Badweynta Atlaantiga",
         "ti": "ውቅያኖስ ኣትላንቲክ",
         "tr": "Atlas Okyanusu",
         "uk": "Атлантичний океан"
@@ -20490,7 +20490,7 @@
         "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
         "fa": "دریای بالتیک، Kattegat و Skagerrak",
         "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
-        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "so": "Badda Baltiga, Kattegat iyo Skagerrak",
         "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
         "tr": "Baltık Denizi, Kattegat ve Skagerrak",
         "uk": "Балтійське море, Kattegat і Skagerrak"
@@ -20664,7 +20664,7 @@
         "ckb": "دەریای بەڵتیک و Kattegat و Skagerrak",
         "fa": "دریای بالتیک، Kattegat و Skagerrak",
         "pl": "Morze Bałtyckie, Kattegat i Skagerrak",
-        "so": "Badda Baltic, Kattegat iyo Skagerrak",
+        "so": "Badda Baltiga, Kattegat iyo Skagerrak",
         "ti": "ባሕሪ ባልቲክ፣ Kattegatን Skagerrakን",
         "tr": "Baltık Denizi, Kattegat ve Skagerrak",
         "uk": "Балтійське море, Kattegat і Skagerrak"
