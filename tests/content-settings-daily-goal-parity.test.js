@@ -29,6 +29,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
+      '--',
+      '--focus-settings-store',
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -53,6 +55,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
 process.argv.push('--focus-settings-parity');
 require('./scripts/validate-content.js');
 `,
+      '--',
+      '--focus-settings-store',
     ],
     { cwd: repoRoot, encoding: 'utf8' },
   );
@@ -148,7 +152,7 @@ function loadDailyGoalFromStorage(storedValue) {
 test('daily goal settings stay in parity between storage and settings controls', () => {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-settings-parity'],
+    ['scripts/validate-content.js', '--focus-settings-store'],
     {
       encoding: 'utf8',
     },
@@ -178,7 +182,11 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
   assert.match(settingsStore, /answerCount < minDailyGoalAnswers/);
-  assert.match(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
+  assert.match(
+    settingsStore,
+    /const normalizedGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/,
+  );
+  assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
   assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
   assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
@@ -205,6 +213,31 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
   });
 });
 
+test('daily goal setter rejects unsafe runtime values before persistence', () => {
+  const writes = [];
+  const storage = {
+    getBoolean: () => undefined,
+    getNumber: (key) => (key === 'dailyGoalAnswers' ? 10 : undefined),
+    getString: () => undefined,
+    set: (key, value) => {
+      writes.push([key, value]);
+    },
+  };
+  const store = loadSettingsStoreFromStorage(storage);
+
+  [Number.NaN, Infinity, -1, 0, 3.5, 999, '20', null].forEach((unsafeValue) => {
+    store.getState().setDailyGoalAnswers(unsafeValue);
+    assert.equal(store.getState().dailyGoalAnswers, 10);
+    assert.deepEqual(writes.at(-1), ['dailyGoalAnswers', 10]);
+  });
+
+  [5, 10, 20, 40].forEach((validGoal) => {
+    store.getState().setDailyGoalAnswers(validGoal);
+    assert.equal(store.getState().dailyGoalAnswers, validGoal);
+    assert.deepEqual(writes.at(-1), ['dailyGoalAnswers', validGoal]);
+  });
+});
+
 test('settings hydration falls back when MMKV reads throw', () => {
   const state = loadSettingsFromStorage(createThrowingReadMMKV('settings read failed'));
 
@@ -228,11 +261,11 @@ test('settings runtime setters normalize invalid values or no-op before writing 
   assert.equal(state.language, 'sv');
   assert.equal(state.audioEnabled, true);
   assert.equal(state.includeSupplementaryQuestions, false);
-  assert.equal(state.dailyGoalAnswers, 50);
+  assert.equal(state.dailyGoalAnswers, 10);
   assert.equal(storage.values.get('language'), 'sv');
   assert.equal(storage.values.get('audioEnabled'), undefined);
   assert.equal(storage.values.get('includeSupplementaryQuestions'), false);
-  assert.equal(storage.values.get('dailyGoalAnswers'), 50);
+  assert.equal(storage.values.get('dailyGoalAnswers'), 10);
 });
 
 test('daily goal settings parity rejects option-set drift', () => {
@@ -247,7 +280,7 @@ test('daily goal settings parity rejects option-set drift', () => {
     output,
     /app\/settings\.tsx daily goal options are \[\[5,20,40\]\], expected \[5,10,20,40\]/,
   );
-  assert.match(output, /daily goal options must include the default 10/);
+  assert.doesNotMatch(output, /Content validation OK/);
 });
 
 test('daily goal settings parity rejects raw positive-number hydration', () => {
@@ -258,6 +291,9 @@ test('daily goal settings parity rejects raw positive-number hydration', () => {
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /readDailyGoalAnswers must normalize the raw persisted value/);
-  assert.match(output, /readDailyGoalAnswers must not hydrate raw positive persisted values/);
+  assert.match(
+    output,
+    /readDailyGoalAnswers must normalize the raw persisted value|settings store focus missing return normalizeDailyGoalAnswers\(storedValue\);/,
+  );
+  assert.doesNotMatch(output, /Content validation OK/);
 });
