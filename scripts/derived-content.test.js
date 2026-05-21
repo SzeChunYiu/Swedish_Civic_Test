@@ -354,6 +354,74 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   );
 });
 
+test('derivePublishedQuestions turns human-rights definition prompts into direct propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q176',
+    chapterId: 'ch07',
+    type: 'single_choice',
+    questionSv: 'Vad betyder det att mänskliga rättigheter gäller alla?',
+    questionEn: 'What does it mean that human rights apply to everyone?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Varje människa har rättigheter oavsett bakgrund eller livssituation',
+        textEn: 'Every person has rights regardless of background or life situation',
+      },
+      {
+        id: 'b',
+        textSv: 'Bara svenska medborgare har mänskliga rättigheter',
+        textEn: 'Only Swedish citizens have human rights',
+      },
+      {
+        id: 'c',
+        textSv: 'Rättigheterna gäller bara personer som arbetar',
+        textEn: 'The rights apply only to people who work',
+      },
+      {
+        id: 'd',
+        textSv: 'Varje kommun väljer själv vilka människor som har rättigheter',
+        textEn: 'Each municipality chooses which people have rights',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv:
+      'Mänskliga rättigheter gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning.',
+    explanationEn:
+      'Human rights apply regardless of factors such as sex, age, origin, religion, disability, or sexual orientation.',
+    uhrReference: {
+      chapter: 'Mänskliga rättigheter',
+      section: 'Mänskliga rättigheter gäller alla',
+      pageApprox: 22,
+    },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['human-rights'],
+  };
+
+  const generatedTrueFalse = derivePublishedQuestions([source], 877).filter(
+    (question) => question.type === 'true_false',
+  );
+  const text = generatedTrueFalse
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
+    .join('\n');
+
+  assert.doesNotMatch(
+    text,
+    /Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means/i,
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
+    'Human rights apply to every person regardless of background or life situation.',
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'Mänskliga rättigheter gäller bara svenska medborgare.',
+    'Human rights apply only to Swedish citizens.',
+  );
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [

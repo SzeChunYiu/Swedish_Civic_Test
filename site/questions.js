@@ -59524,8 +59524,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'That human rights apply to everyone means every person has rights regardless of background or life situation.',
-        sv: 'Att mänskliga rättigheter gäller alla betyder att varje människa har rättigheter oavsett bakgrund eller livssituation.',
+        en: 'Human rights apply to every person regardless of background or life situation.',
+        sv: 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
       },
       opts: [
         {
@@ -59564,8 +59564,8 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'That human rights apply to everyone means only Swedish citizens have human rights.',
-        sv: 'Att mänskliga rättigheter gäller alla betyder att bara svenska medborgare har mänskliga rättigheter.',
+        en: 'Human rights apply only to Swedish citizens.',
+        sv: 'Mänskliga rättigheter gäller bara svenska medborgare.',
       },
       opts: [
         {

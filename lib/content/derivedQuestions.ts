@@ -1186,6 +1186,46 @@ function referendumAdvisoryStatementSv(subject: string, answer: string): string 
   return null;
 }
 
+function humanRightsApplicabilityStatementSv(subject: string, answer: string): string | null {
+  if (!/^mänskliga rättigheter gäller alla$/i.test(subject)) return null;
+  const normalizedAnswer = stripLeadingPurposeSv(answer);
+  if (
+    /^varje människa har rättigheter oavsett bakgrund eller livssituation$/i.test(normalizedAnswer)
+  ) {
+    return 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation';
+  }
+  if (/^bara svenska medborgare har mänskliga rättigheter$/i.test(normalizedAnswer)) {
+    return 'Mänskliga rättigheter gäller bara svenska medborgare';
+  }
+  if (/^rättigheterna gäller bara personer som arbetar$/i.test(normalizedAnswer)) {
+    return 'Mänskliga rättigheter gäller bara personer som arbetar';
+  }
+  if (/^varje kommun väljer själv vilka människor som har rättigheter$/i.test(normalizedAnswer)) {
+    return 'Varje kommun väljer själv vilka människor som har mänskliga rättigheter';
+  }
+  return null;
+}
+
+function humanRightsApplicabilityStatementEn(subject: string, answer: string): string | null {
+  if (!/^human rights apply to everyone$/i.test(subject)) return null;
+  const normalizedAnswer = stripLeadingPurposeEn(answer);
+  if (
+    /^every person has rights regardless of background or life situation$/i.test(normalizedAnswer)
+  ) {
+    return 'Human rights apply to every person regardless of background or life situation';
+  }
+  if (/^only Swedish citizens have human rights$/i.test(normalizedAnswer)) {
+    return 'Human rights apply only to Swedish citizens';
+  }
+  if (/^the rights apply only to people who work$/i.test(normalizedAnswer)) {
+    return 'Human rights apply only to people who work';
+  }
+  if (/^each municipality chooses which people have rights$/i.test(normalizedAnswer)) {
+    return 'Each municipality chooses which people have human rights';
+  }
+  return null;
+}
+
 function democracyRightStatementSv(subject: string, answer: string, isCorrect: boolean): string {
   const action = lowerFirst(stripLeadingPurposeSv(answer));
   return isCorrect
@@ -1351,6 +1391,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) {
     const referendumStatement = referendumAdvisoryStatementSv(match[1], answer);
     if (referendumStatement) return referendumStatement;
+    const humanRightsStatement = humanRightsApplicabilityStatementSv(match[1], answer);
+    if (humanRightsStatement) return humanRightsStatement;
     return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   }
 
@@ -1837,7 +1879,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) {
+    const humanRightsStatement = humanRightsApplicabilityStatementEn(match[1], answer);
+    if (humanRightsStatement) return humanRightsStatement;
+    return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  }
 
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
