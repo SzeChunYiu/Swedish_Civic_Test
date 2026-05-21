@@ -21,7 +21,7 @@ test('profile route title and section headings stay on shared header components'
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteHeadersValidated, 3);
+  assert.equal(summary.profileRouteHeadersValidated, 4);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
   assert.match(source, /type ProfileCopy =/);
   assert.match(source, /const profileCopy: Record<AppLanguage, ProfileCopy>/);
@@ -30,6 +30,7 @@ test('profile route title and section headings stay on shared header components'
   assert.match(source, /Progress without an account/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.weeklyRecapTitle\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.badgesTitle\}/);
   assert.doesNotMatch(source, /<Text style=\{styles\.(?:title|sectionTitle)\}>/);
   assert.match(screenShell, /<Text accessibilityRole="header" style=\{styles\.title\}>/);

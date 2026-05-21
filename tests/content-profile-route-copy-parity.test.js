@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 38);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -79,6 +79,12 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.dashboardAccessibilityLabel\}/);
   assert.match(source, /href="\/dashboard"/);
   assert.match(source, /label=\{copy\.dashboardCta\}/);
+  assert.match(source, /<SectionHeader title=\{copy\.weeklyRecapTitle\}/);
+  assert.match(source, /accessibilityLabel=\{copy\.weeklyRecapAccessibilityLabel\}/);
+  assert.match(source, /href="\/recap"/);
+  assert.match(source, /label=\{copy\.weeklyRecapCta\}/);
+  assert.match(source, /weeklyRecapTitle: 'Veckans översikt'/);
+  assert.match(source, /weeklyRecapTitle: 'Weekly recap'/);
   assert.match(source, /copy\.removeAdsFocusCue/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
   assert.match(source, /Ta bort annonser är markerat/);
@@ -186,14 +192,23 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
   assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
   assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
-  assert.match(studySetupCard, /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/);
+  assert.match(
+    studySetupCard,
+    /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/,
+  );
   assert.match(studySetupCard, /\{copy\.languageBadgeLabel\}: \{copy\.languageBadge\}/);
-  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/);
+  assert.match(
+    studySetupCard,
+    /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/,
+  );
   assert.match(
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
-  assert.match(studySetupCard, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(
+    studySetupCard,
+    /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
+  );
   assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
   assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);

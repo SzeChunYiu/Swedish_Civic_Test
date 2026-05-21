@@ -1117,6 +1117,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
+    'Veckans översikt',
+    'Svar, övningsprov och nästa lugna repetition samlas i en lokal veckovy.',
+    'Öppna veckans studieöversikt',
+    'Visa veckan',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
@@ -1138,6 +1142,10 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
+    'Weekly recap',
+    'Answers, mock exams, and the next calm review live in a local weekly view.',
+    'Open this week’s study recap',
+    'View this week',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
@@ -1197,6 +1205,17 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'profile settings link must expose localized accessibility copy',
   ],
   ['{copy.studySetupCta}', 'profile settings link must render localized copy'],
+  ['title={copy.weeklyRecapTitle}', 'profile weekly recap title must render localized copy'],
+  [
+    'subtitle={copy.weeklyRecapSubtitle}',
+    'profile weekly recap subtitle must render localized copy',
+  ],
+  [
+    'accessibilityLabel={copy.weeklyRecapAccessibilityLabel}',
+    'profile weekly recap link must expose localized accessibility copy',
+  ],
+  ['href="/recap"', 'profile weekly recap link must route to the weekly recap screen'],
+  ['label={copy.weeklyRecapCta}', 'profile weekly recap link must render localized copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -2197,6 +2216,10 @@ const EXPECTED_PROFILE_ROUTE_HEADERS = [
   {
     label: 'badges section title',
     pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.badgesTitle\}/,
+  },
+  {
+    label: 'weekly recap section title',
+    pattern: /<SectionHeader[\s\S]*\btitle=\{copy\.weeklyRecapTitle\}/,
   },
 ];
 const EXPECTED_HOME_ROUTE_HEADERS = [
