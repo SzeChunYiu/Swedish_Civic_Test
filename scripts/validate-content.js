@@ -909,6 +909,155 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     message: 'search route results must derive from the controlled query',
   },
   {
+    file: 'app/search.tsx',
+    pattern: /import \{ ProvenanceBadge \} from '\.\.\/components\/quiz\/ProvenanceBadge';/,
+    message: 'search route must import the visible provenance badge',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /getProvenanceDescription,[\s\S]*?getProvenanceLabel,[\s\S]*?getQuestionProvenance,/,
+    message: 'search route must import provenance label and source-note helpers',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ questions \} from '\.\.\/data\/questions';/,
+    message: 'search route must search the published question bank',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /searchQuestions,/,
+    message: 'search route must import ranked question search',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /getQuestionSearchChapterName,[\s\S]*?getQuestionSearchExcerpt,[\s\S]*?getQuestionSearchTitle,/,
+    message: 'search route must import localized question search presenters',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const questionResults = useMemo\(\(\) => \{[\s\S]*?return searchQuestions\(\{/,
+    message: 'search route must derive question results through the shared ranked helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /query: trimmedQuery,[\s\S]*?questions,/,
+    message: 'search route must pass the hydrated query and question bank to searchQuestions',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, questionResults\.length\)/,
+    message: 'search route result summary must include matching question count',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const title = getQuestionSearchTitle\(result\.question, language\);/,
+    message: 'search route must render localized question result titles',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const excerpt = getQuestionSearchExcerpt\(result\.question, language\);/,
+    message: 'search route must render localized question result excerpts',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenance = getQuestionProvenance\(result\.question\);/,
+    message: 'search route must derive question provenance for each result',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenanceLabel = getProvenanceLabel\(provenance, language\);/,
+    message: 'search route must localize provenance labels',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenanceDescription = getProvenanceDescription\(provenance, language\);/,
+    message: 'search route must localize provenance source notes',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /<ProvenanceBadge\s+language=\{language\}\s+question=\{result\.question\}\s+themeColors=\{themeColors\}\s+\/>/,
+    message: 'search route must show theme-aware provenance badges for question results',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/,
+    message: 'search route question results must link to the quiz question route',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /questionSectionTitle: 'Övningsfrågor'/,
+    message: 'search route must include Swedish question section copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /questionSectionTitle: 'Practice questions'/,
+    message: 'search route must include English question section copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /openQuestionAccessibilityLabel: \(title\) => `Öppna övningsfrågan: \$\{title\}`/,
+    message: 'search route must include Swedish question link accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /openQuestionAccessibilityLabel: \(title\) => `Open practice question: \$\{title\}`/,
+    message: 'search route must include English question link accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ searchGlossary \} from '\.\.\/lib\/learning\/glossarySearch';/,
+    message: 'search route must use the shared glossary search helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /searchGlossary\(trimmedQuery, language, glossaryTerms\.length\)\.map\(\(term\) => \(\{/,
+    message: 'search route must search the full glossary through searchGlossary',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /chapterName: language === 'en' \? term\.chapterNameEn : term\.chapterNameSv,/,
+    message: 'search route must render localized glossary chapter labels',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /copy\.allTermsSummary\(glossaryTerms\.length\)/,
+    message: 'search route must preserve full glossary count summary',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /href=\{`\/chapter\/\$\{term\.chapterId\}`\}/,
+    message: 'search route glossary results must link to chapter routes',
+  },
+  {
+    file: 'app/search.tsx',
+    rejectPattern: /function normalizeSearchText/,
+    message: 'search route must not use a route-local glossary normalizer',
+  },
+  {
+    file: 'app/search.tsx',
+    rejectPattern: /glossaryTermMatchesQuery/,
+    message: 'search route must not fork glossary filtering away from searchGlossary',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /export function normalizeGlossarySearchText\(value: string\)/,
+    message: 'shared glossary normalizer must be exported for route parity',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /\.replace\(\/\[\^a-z0-9\\s-\]\/g, ' '\)/,
+    message: 'shared glossary normalizer must replace punctuation with spaces',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /\.replace\(\/\\s\+\/g, ' '\)/,
+    message: 'shared glossary normalizer must collapse punctuation-created whitespace',
+  },
+  {
     file: 'tests/e2e/search-query-hydration.spec.ts',
     pattern: /search route resyncs when URL query params change after mount/,
     message: 'search query e2e must cover mounted route-param changes',
@@ -13071,6 +13220,7 @@ function validateSourcePatternRules(source, rules, reject) {
 
 function validateSearchRouteQueryHydrationParity() {
   const sourceByFile = new Map();
+  let rulesValidated = 0;
   let valid = true;
 
   function reject(message) {
@@ -13078,7 +13228,12 @@ function validateSearchRouteQueryHydrationParity() {
     fail(message);
   }
 
-  for (const { file, message, pattern } of EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES) {
+  for (const {
+    file,
+    message,
+    pattern,
+    rejectPattern,
+  } of EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES) {
     let source = sourceByFile.get(file);
     if (source === undefined) {
       try {
@@ -13090,17 +13245,22 @@ function validateSearchRouteQueryHydrationParity() {
       }
     }
 
-    if (!pattern.test(source)) {
+    if (pattern && !pattern.test(source)) {
       reject(message);
       continue;
     }
 
-    searchRouteQueryHydrationRulesValidated += 1;
+    if (rejectPattern && rejectPattern.test(source)) {
+      reject(message);
+      continue;
+    }
+
+    rulesValidated += 1;
   }
 
+  searchRouteQueryHydrationRulesValidated = rulesValidated;
   searchRouteQueryHydrationParityValidated =
-    valid &&
-    searchRouteQueryHydrationRulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length;
+    valid && rulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length;
 }
 
 function validateAboutTheTestRouteCopyParity() {
