@@ -39,10 +39,17 @@ function runPackageTest(args, env) {
 
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
+  const testContentScript = pkg.scripts['test:content'];
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
-  assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
+  assert.match(testContentScript, /tests\/content-test-script-routing\.test\.js/);
+  assert.equal(
+    (testContentScript.match(/tests\/content-study-reminder-runtime-parity\.test\.js/g) ?? [])
+      .length,
+    1,
+    'test:content must include the study reminder runtime parity guard exactly once',
+  );
 });
 
 test('QuestionCard accessibility parity uses focused content validation routing', () => {
