@@ -136,6 +136,26 @@ test('effective entitlement schema guard rejects non-canonical temporary Pro exp
   assert.equal(stacked.nextExpiryIso, canonicalReferral);
 });
 
+test('temporary Pro expiry parsing stays on the shared canonical timestamp helper', () => {
+  const effectiveSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/effectiveEntitlements.ts'),
+    'utf8',
+  );
+  const helperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/time/canonicalTimestamp.ts'),
+    'utf8',
+  );
+
+  assert.match(helperSource, /export function parseCanonicalUtcIsoTimestamp/);
+  assert.match(helperSource, /parsed\.toISOString\(\) !== value/);
+  assert.match(effectiveSource, /from '\.\.\/time\/canonicalTimestamp'/);
+  assert.match(effectiveSource, /parseCanonicalUtcIsoTimestamp\(iso\)/);
+  assert.doesNotMatch(effectiveSource, /CANONICAL_UTC_ISO_TIMESTAMP_PATTERN/);
+  assert.doesNotMatch(effectiveSource, /function parseCanonicalUtcIsoTimestamp/);
+  assert.doesNotMatch(effectiveSource, /new Date\(iso\)/);
+  assert.doesNotMatch(effectiveSource, /Date\.parse\(/);
+});
+
 test('monetization schema parity rejects entitlement optionality drift', () => {
   const result = spawnSync(
     process.execPath,
