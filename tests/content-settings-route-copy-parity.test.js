@@ -72,6 +72,17 @@ test('settings route shell copy follows the persisted settings language', () => 
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
   );
+  assert.match(
+    source,
+    /const accessibilityPersistenceWarning = useAccessibilityStore\(\s*\(state\) => state\.persistenceWarning,\s*\);/,
+  );
+  assert.match(
+    source,
+    /const clearAccessibilityPersistenceWarning = useAccessibilityStore\(\s*\(state\) => state\.clearPersistenceWarning,\s*\);/,
+  );
+  assert.match(source, /warning=\{accessibilityPersistenceWarning\}/);
+  assert.match(source, /warningScope="accessibilityPreferences"/);
+  assert.match(source, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
 });
 
 test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {

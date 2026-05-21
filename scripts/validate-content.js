@@ -2334,7 +2334,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
     pattern:
-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
+      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -13169,12 +13169,16 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'progressStorage?.getString(progressStateKey)',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
-      'return normalizeProgress(JSON.parse(rawProgress));',
+      '(value) => normalizeProgress(JSON.parse(value))',
       'readProgress must normalize parsed persisted JSON',
+    ],
+    [
+      'parseJsonRecoverably(',
+      'readProgress must surface recoverable warnings for corrupt persisted JSON',
     ],
     [
       'progressStorageId, progressStateKey, serializedProgress,',

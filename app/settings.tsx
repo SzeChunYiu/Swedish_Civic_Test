@@ -1,13 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -27,7 +19,8 @@ import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
+import { motion, radius, shadows, space, typography } from '../lib/theme';
+import { useTheme } from '../lib/theme/ThemeProvider';
 import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
@@ -274,7 +267,7 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
-  const systemColorScheme = useColorScheme();
+  const { colors: themeColors } = useTheme();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -291,9 +284,14 @@ export default function Screen() {
   const clearCompanionPersistenceWarning = useCompanionStore(
     (state) => state.clearPersistenceWarning,
   );
+  const accessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const copy = settingsCopy[language];
   const reduceMotion = useReducedMotion();
-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
@@ -418,6 +416,12 @@ export default function Screen() {
         language={language}
         onDismiss={clearPersistenceWarning}
         warning={persistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
       />
 
       <View style={styles.section}>
