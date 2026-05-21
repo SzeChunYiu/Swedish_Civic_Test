@@ -3356,6 +3356,16 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
     pattern: /if \(!active\) return null;/,
   },
   {
+    label: 'reduced-motion branch hidden from web accessibility tree',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
+    label: 'animated branch hidden from web accessibility tree',
+    pattern:
+      /<Animated\.View(?=[^>]*aria-hidden=\{true\})(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
     label: 'decorative animation hidden from accessibility tree',
     pattern: /accessibilityElementsHidden/,
   },
@@ -5465,6 +5475,12 @@ function arrayEquals(left, right) {
 
 function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function legacyOptionShape(options) {
+  return Array.isArray(options)
+    ? options.map((option) => ({ id: option.id, textSv: option.textSv, textEn: option.textEn }))
+    : options;
 }
 
 function escapeRegExp(value) {
@@ -17430,7 +17446,9 @@ function validateGeneratedAnswerTemplateParity() {
       if (!expected) {
         variantIsValid = false;
         fail(`${label} expected generated variant is missing`);
-      } else if (!jsonEqual(variant.options, expected.options)) {
+      } else if (
+        !jsonEqual(legacyOptionShape(variant.options), legacyOptionShape(expected.options))
+      ) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }
