@@ -1,6 +1,8 @@
 import { adsConfig } from './ads';
 import {
   getAdSdkInitializationDecision,
+  normalizeAdConsentRegion,
+  regionRequiresUmpConsent,
   type AdConsentPlatform,
   type AdConsentRegion,
   type AdConsentState,
@@ -95,7 +97,7 @@ export function createInitialAdConsentState({
     googleMobileAdsEnabled,
     platform: normalizeAdConsentPlatform(platform),
     realAdsEnabled,
-    region,
+    region: normalizeAdConsentRegion(region),
     trackingTransparencyStatus,
     umpConsentStatus,
   };
@@ -125,9 +127,10 @@ async function requestTrackingTransparencyStatusIfNeeded(
 
 async function resolveUmpConsentStatus(
   runtime: MobileAdsConsentRuntime,
-  realAdsEnabled: boolean,
+  shouldCollectConsent: boolean,
+  region: AdConsentRegion,
 ): Promise<UmpConsentStatus> {
-  if (!realAdsEnabled) return 'not_required';
+  if (!shouldCollectConsent || !regionRequiresUmpConsent(region)) return 'not_required';
   try {
     return mapUmpConsentStatus(await runtime.gatherUmpConsent?.());
   } catch {
@@ -143,6 +146,7 @@ export async function collectMobileAdsConsentState({
   runtime,
 }: MobileAdsConsentOptions): Promise<AdConsentState> {
   const platform = normalizeAdConsentPlatform(runtime.platform);
+  const normalizedRegion = normalizeAdConsentRegion(region);
   const shouldCollectConsent =
     googleMobileAdsEnabled && !entitlements.adsDisabled && realAdsEnabled;
   const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(
@@ -150,20 +154,24 @@ export async function collectMobileAdsConsentState({
     platform,
     shouldCollectConsent,
   );
+  const umpConsentStatus = await resolveUmpConsentStatus(
+    runtime,
+    shouldCollectConsent,
+    normalizedRegion,
+  );
   const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(
     runtime,
     platform,
     shouldCollectConsent,
     currentTrackingTransparencyStatus,
   );
-  const umpConsentStatus = await resolveUmpConsentStatus(runtime, shouldCollectConsent);
 
   return {
     entitlements,
     googleMobileAdsEnabled,
     platform,
     realAdsEnabled,
-    region,
+    region: normalizedRegion,
     trackingTransparencyStatus,
     umpConsentStatus,
   };

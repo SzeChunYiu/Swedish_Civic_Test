@@ -44,6 +44,21 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'mobileAdsConsent',
+    flags: ['--focus-mobile-ads-consent'],
+    summaryKeys: [
+      'adConsentTypeUnionsValidated',
+      'adConsentTypeInterfacesValidated',
+      'adConsentTypeSchemaParityValidated',
+      'mobileAdsConsentTypeInterfacesValidated',
+      'mobileAdsConsentTypeSchemaParityValidated',
+      'mobileAdsConsentRuntimeCasesValidated',
+      'mobileAdsConsentRuntimeParityValidated',
+      'mobileAdsConsentHookCasesValidated',
+      'mobileAdsConsentHookParityValidated',
+    ],
+  },
+  {
     id: 'nativeQuizCopy',
     flags: ['--focus-native-quiz-copy'],
     summaryKeys: [

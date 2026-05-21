@@ -320,6 +320,10 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
   );
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
   assert.match(mistakesSource, /<NativeAdCard \/>/);
@@ -363,6 +367,15 @@ test('results native placement uses the native Google Mobile Ads surface on nati
     /<Card accessibilityHint=\{copy\.hint\} accessibilityLabel=\{copy\.accessibilityLabel\}>/,
   );
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
   assert.match(adCopySource, /getNativeAdCardCopy/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Annons:/);
@@ -397,6 +410,25 @@ test('native ad card copy switches between live attribution and test disclosure'
     /Test native ad|AdMob test placement preview|Sponsored study placement/,
   );
   assert.doesNotMatch(swedishLiveCopy, /Inbyggd testannons|AdMob-testplacering/);
+});
+
+test('PracticeInterstitialAd web fallback uses WEB_AD_FALLBACK_CONSENT_DECISION for quiz_completed_interstitial', () => {
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(practiceInterstitialSource, /!entitlementsReady \|\| !?shouldRenderFallback/);
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
 });
 
 test('native practice interstitial uses consent-aware ad gate and platform unit lookup', () => {
@@ -848,6 +880,16 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     },
     () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
   );
+  const { showRewardedExtraExamAd: showRealWebRewardedExtraExamAd } = withEnv(
+    {
+      EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID:
+        'ca-app-pub-3940256099942544/5224354917',
+      EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID: undefined,
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: 'true',
+    },
+    () => loadTs('lib/monetization/rewardedAd.ts', undefined, new Map()),
+  );
   const defaultResult = await showRewardedExtraExamAd();
   const removeAdsResult = await showRewardedExtraExamAd({
     entitlements: { adsDisabled: true },
@@ -864,16 +906,31 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     'utf8',
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   const confirmedResult = await showRewardedExtraExamAd({
     confirmReward: () => true,
   });
+  const realWebConfirmedResult = await showRealWebRewardedExtraExamAd({
+    confirmReward: () => true,
+  });
+  const realWebBlockedResult = await showRealWebRewardedExtraExamAd({
+    confirmReward: () => true,
+    webConsentDecision: { adServingAllowed: false },
+  });
 
   assert.deepEqual(defaultResult, { status: 'closed_without_reward' });
   assert.equal(confirmedResult.status, 'earned_reward');
+  assert.equal(realWebConfirmedResult.status, 'earned_reward');
+  assert.deepEqual(realWebBlockedResult, { status: 'unavailable' });
   assert.deepEqual(removeAdsResult, { status: 'unavailable' });
   assert.deepEqual(disabledAdsResult, { status: 'unavailable' });
-  assert.match(webRewardedAdSource, /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements\)/);
+  assert.match(webRewardedAdSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(webRewardedAdSource, /webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webRewardedAdSource,
+    /shouldShowAd\(REWARDED_EXTRA_EXAM_PLACEMENT, entitlements, webConsentDecision, 'web'\)/,
+  );
   assert.match(
     webRewardedAdSource,
     /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};/,
@@ -899,15 +956,22 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     /try \{[\s\S]*RewardedAd\.createForAdRequest[\s\S]*rewardedAd\.load\(\);[\s\S]*\} catch \{[\s\S]*status: hasShown \? 'show_failed' : 'failed_to_load'/,
   );
   assert.match(
-    examSource,
+    homeSource,
     /accessDecision\.canOfferRewardedAd \|\| accessDecision\.reason === 'consent_required'/,
   );
   assert.match(
-    examSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
+    homeSource,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements: monetizationEntitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
   );
-  assert.match(examSource, /rewardPreviewButton: 'Complete sponsor preview'/);
-  assert.match(examSource, /rewardPreviewButton: 'Slutför förhandsvisning'/);
+  assert.match(
+    homeSource,
+    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
+  );
+  assert.match(homeSource, /rewardedExamPreviewButton: 'Complete sponsor preview'/);
+  assert.match(homeSource, /rewardedExamPreviewButton: 'Slutför förhandsvisning'/);
+  assert.match(homeSource, /await grantRewardedExamCredit\(\);/);
+  assert.match(examSource, /consumeRewardedExamCredit/);
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {
@@ -1504,25 +1568,14 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
-test('ProPaywall buy and restore actions use a ref-backed in-flight guard', () => {
-  const proPaywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
-  );
-
-  assert.match(proPaywallSource, /import \{ useCallback, useRef, useState \} from 'react';/);
-  assert.match(proPaywallSource, /const proActionInFlightRef = useRef\(false\);/);
-  assert.match(proPaywallSource, /if \(proActionInFlightRef\.current\) return;/);
-  assert.match(proPaywallSource, /proActionInFlightRef\.current = true;/);
-  assert.match(proPaywallSource, /await buyProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /await restoreProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /finally \{[\s\S]*proActionInFlightRef\.current = false;/);
-});
-
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
   const { REMOVE_ADS_PRICE_LABEL } = loadTs('lib/monetization/purchases.ts');
   const pricingWedgeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PricingWedge.tsx'),
+    'utf8',
+  );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
   const paywallSource = fs.readFileSync(
@@ -1535,6 +1588,7 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.match(pricingWedgeSource, /import \{ REMOVE_ADS_PRICE_LABEL \}/);
   assert.match(pricingWedgeSource, /t\.pitch\(REMOVE_ADS_PRICE_LABEL\)/);
   assert.match(pricingWedgeSource, /tidsatta övningsprov är alltid annonsfria/);
+  assert.match(placementCtaSource, /Tidsatta övningsprov är redan annonsfria/);
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /tidsatta övningsprov i appen redan är annonsfria/);
   assert.match(homeSource, /<PricingWedge[\s\S]*language=\{language\}[\s\S]*\/>/);
@@ -1546,6 +1600,10 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   );
   assert.doesNotMatch(
     paywallSource,
+    /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
+  );
+  assert.doesNotMatch(
+    placementCtaSource,
     /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
   );
 });
@@ -1569,7 +1627,11 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   );
 
   assert.match(entitlementHookSource, /defaultWebPurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /defaultNativePurchaseRuntimeOptions/);
+  assert.match(entitlementHookSource, /createNativePurchaseProvider/);
+  assert.match(entitlementHookSource, /createSecureStorePurchaseStorage/);
   assert.match(entitlementHookSource, /createWebPurchaseStorage/);
+  assert.doesNotMatch(entitlementHookSource, /if \(Platform\.OS !== 'web'\) return undefined;/);
   assert.match(entitlementHookSource, /publishRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /subscribeToRemoveAdsEntitlements/);
   assert.match(entitlementHookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
@@ -1717,7 +1779,7 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   assert.equal(testUnitInit.blockReason, undefined);
 });
 
-test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
+test('native Mobile Ads consent runtime requests UMP before ATT and SDK init', async () => {
   const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
   const nativeBannerSource = fs.readFileSync(
@@ -1752,6 +1814,24 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.match(mobileConsentSource, /expo-tracking-transparency/);
   assert.match(mobileConsentSource, /AdsConsent\.gatherConsent/);
   assert.match(mobileConsentSource, /mobileAds\(\)\.initialize/);
+  assert.match(mobileConsentSource, /normalizeAdConsentRegion/);
+  assert.match(mobileConsentSource, /regionRequiresUmpConsent/);
+  assert.doesNotMatch(mobileConsentSource, /Promise\.all/);
+  assert.ok(
+    mobileConsentSource.indexOf('const currentTrackingTransparencyStatus = await') <
+      mobileConsentSource.indexOf('const umpConsentStatus = await'),
+    'current ATT status should be read before UMP gathers IDFA messaging context',
+  );
+  assert.ok(
+    mobileConsentSource.indexOf('const umpConsentStatus = await') <
+      mobileConsentSource.indexOf('const trackingTransparencyStatus = await'),
+    'UMP consent should resolve before requesting ATT',
+  );
+  assert.ok(
+    mobileConsentSource.indexOf('const decision = getAdSdkInitializationDecision(state)') <
+      mobileConsentSource.indexOf('await options.runtime.initializeGoogleMobileAds'),
+    'SDK initialization should wait for the serialized consent decision',
+  );
   assert.match(hookSource, /const platform = options\.platform \?\? Platform\.OS/);
   assert.match(hookSource, /createNativeMobileAdsConsentRuntime\(platform\)/);
   assert.match(nativeBannerSource, /useMobileAdsConsent/);
@@ -1874,6 +1954,77 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.equal(consentInfoFallbackResult.state.umpConsentStatus, 'obtained');
   assert.equal(consentInfoFallbackResult.decision.canInitializeGoogleMobileAds, true);
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
+
+  for (const region of ['us', 'other']) {
+    const nonUmpCalls = [];
+    const nonUmpResult = await initializeGoogleMobileAdsAfterConsent({
+      entitlements: { adsDisabled: false },
+      googleMobileAdsEnabled: true,
+      realAdsEnabled: true,
+      region,
+      runtime: {
+        async gatherUmpConsent() {
+          nonUmpCalls.push('ump');
+          return { status: 'REQUIRED' };
+        },
+        async getUmpConsentInfo() {
+          nonUmpCalls.push('ump:cached-info');
+          return { status: 'REQUIRED' };
+        },
+        async initializeGoogleMobileAds() {
+          nonUmpCalls.push('ads:init');
+        },
+        platform: 'android',
+      },
+    });
+
+    assert.equal(nonUmpResult.initialized, true);
+    assert.equal(nonUmpResult.state.region, region);
+    assert.equal(nonUmpResult.state.umpConsentStatus, 'not_required');
+    assert.equal(nonUmpResult.decision.canInitializeGoogleMobileAds, true);
+    assert.deepEqual(nonUmpCalls, ['ads:init']);
+  }
+
+  const ukCalls = [];
+  const ukResult = await initializeGoogleMobileAdsAfterConsent({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    region: 'uk',
+    runtime: {
+      async gatherUmpConsent() {
+        ukCalls.push('ump');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      async initializeGoogleMobileAds() {
+        ukCalls.push('ads:init');
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(ukResult.initialized, true);
+  assert.equal(ukResult.state.umpConsentStatus, 'obtained');
+  assert.deepEqual(ukCalls, ['ump', 'ads:init']);
+
+  const invalidRegionCalls = [];
+  const invalidRegionState = await collectMobileAdsConsentState({
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    realAdsEnabled: true,
+    region: 'not-a-region',
+    runtime: {
+      async gatherUmpConsent() {
+        invalidRegionCalls.push('ump');
+        return { canRequestAds: true, status: 'OBTAINED' };
+      },
+      platform: 'android',
+    },
+  });
+
+  assert.equal(invalidRegionState.region, 'unknown');
+  assert.equal(invalidRegionState.umpConsentStatus, 'obtained');
+  assert.deepEqual(invalidRegionCalls, ['ump']);
 });
 
 test('exam screen does not import ad components', () => {
@@ -1884,10 +2035,11 @@ test('exam screen does not import ad components', () => {
   );
 
   assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|rewardPreview|Complete sponsor preview/);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
-  assert.match(examSource, /Unlock extra exam/);
+  assert.match(examSource, /Start unlocked mock exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /platform: Platform\.OS/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);
@@ -1924,6 +2076,9 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
@@ -1943,5 +2098,6 @@ test('global launch popup ad is suppressed on active question and compliance rou
   ]);
   assert.match(entitlementHookSource, /getPurchaseEntitlements/);
   assert.match(entitlementHookSource, /createWebPurchaseStorage/);
-  assert.match(entitlementHookSource, /Platform\.OS !== 'web'/);
+  assert.match(entitlementHookSource, /Platform\.OS === 'web'/);
+  assert.match(entitlementHookSource, /createNativePurchaseProvider/);
 });
