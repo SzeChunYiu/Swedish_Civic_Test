@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
@@ -203,6 +203,7 @@ export default function CitizenshipRequirementsScreen() {
   const copy = copyByLanguage[language];
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
+  const [focusedSourceRefKey, setFocusedSourceRefKey] = useState<string | null>(null);
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -274,30 +275,38 @@ export default function CitizenshipRequirementsScreen() {
               <View style={styles.sourceRefs}>
                 <Text style={styles.sourceRefsLabel}>{copy.sourceRefsLabel}</Text>
                 <View style={styles.sourceRefList}>
-                  {areaSources.map((source) => (
-                    <Pressable
-                      key={`${area.id}-${source.id}`}
-                      accessibilityHint={copy.openSourceHint}
-                      accessibilityLabel={buildAreaSourceAccessibilityLabel(
-                        copy,
-                        area.title[language],
-                        source,
-                        language,
-                      )}
-                      accessibilityRole="link"
-                      onPress={() => {
-                        void Linking.openURL(source.url);
-                      }}
-                      style={({ pressed }) => [
-                        styles.sourceRefRow,
-                        pressed ? styles.sourceRefRowPressed : null,
-                      ]}
-                    >
-                      <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
-                      <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
-                      <Text style={styles.sourceRefUrl}>{source.url}</Text>
-                    </Pressable>
-                  ))}
+                  {areaSources.map((source) => {
+                    const sourceFocusKey = `${area.id}-${source.id}`;
+                    return (
+                      <Pressable
+                        key={sourceFocusKey}
+                        accessibilityHint={copy.openSourceHint}
+                        accessibilityLabel={buildAreaSourceAccessibilityLabel(
+                          copy,
+                          area.title[language],
+                          source,
+                          language,
+                        )}
+                        accessibilityRole="link"
+                        onBlur={() => setFocusedSourceRefKey(null)}
+                        onFocus={() => setFocusedSourceRefKey(sourceFocusKey)}
+                        onPress={() => {
+                          void Linking.openURL(source.url);
+                        }}
+                        style={({ pressed }) => [
+                          styles.sourceRefRow,
+                          focusedSourceRefKey === sourceFocusKey
+                            ? styles.sourceRefRowFocused
+                            : null,
+                          pressed ? styles.sourceRefRowPressed : null,
+                        ]}
+                      >
+                        <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
+                        <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
+                        <Text style={styles.sourceRefUrl}>{source.url}</Text>
+                      </Pressable>
+                    );
+                  })}
                 </View>
               </View>
               <Pressable
@@ -442,6 +451,10 @@ function createStyles(themeColors: ThemeColors) {
       minHeight: space[6],
       paddingHorizontal: space[1],
       paddingVertical: space[0.75],
+    },
+    sourceRefRowFocused: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
     },
     sourceRefRowPressed: {
       backgroundColor: themeColors.surfaceMuted,
