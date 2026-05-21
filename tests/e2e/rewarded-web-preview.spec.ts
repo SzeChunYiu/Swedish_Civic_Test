@@ -8,45 +8,39 @@ type Language = 'sv' | 'en';
 const mockExamAccessStorageKey = 'monetization.mockExamAccess.v1';
 const settingsLanguageKey = 'settings\\language';
 const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
-const totalQuestions = 20;
+const totalQuestions = 25;
 
 const copy: Record<
   Language,
   {
     activeCount: string;
-    examHeading: string;
-    homeHeading: string;
+    heading: string;
     previewBody: string;
     previewButton: string;
-    unlockedCta: string;
-    unlockedStatus: string;
+    previewTitle: string;
+    status: string;
     timeLeft: RegExp;
-    unlockButton: string;
   }
 > = {
   sv: {
     activeCount: `0/${totalQuestions} besvarade`,
-    examHeading: 'Övningsprov',
-    homeHeading: 'Lås upp ett extra övningsprov',
+    heading: 'Övningsprov',
     previewBody:
-      'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
+      'Slutför den korta annonsförhandsvisningen för att låsa upp ett extra övningsprov. Inga annonser visas under själva provet.',
     previewButton: 'Slutför förhandsvisning',
-    unlockedCta: 'Starta upplåst övningsprov',
-    unlockedStatus: 'Extra övningsprov upplåst.',
+    previewTitle: 'Sponsrad förhandsvisning',
+    status: 'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
     timeLeft: /^Tid kvar/,
-    unlockButton: 'Lås upp extra övningsprov',
   },
   en: {
     activeCount: `0/${totalQuestions} answered`,
-    examHeading: 'Mock exam',
-    homeHeading: 'Unlock an extra mock exam',
+    heading: 'Mock exam',
     previewBody:
-      'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
+      'Complete the short ad preview to unlock one extra mock exam. No ads appear during the exam itself.',
     previewButton: 'Complete sponsor preview',
-    unlockedCta: 'Start unlocked mock exam',
-    unlockedStatus: 'Extra mock exam unlocked.',
+    previewTitle: 'Sponsored preview',
+    status: 'Daily free mock exam used. Extra exam available.',
     timeLeft: /^Time left/,
-    unlockButton: 'Unlock extra mock exam',
   },
 };
 
@@ -83,18 +77,10 @@ async function seedDailyFreeMockUsed(page: Page, language: Language) {
       languageKey: string;
       seenKey: string;
     }) => {
+      window.localStorage.clear();
       window.sessionStorage.clear();
       window.localStorage.setItem(languageKey, seededLanguage);
       window.localStorage.setItem(seenKey, 'true');
-      const existingAccess = window.localStorage.getItem(accessStorageKey);
-      if (existingAccess) {
-        try {
-          const parsedAccess = JSON.parse(existingAccess);
-          if (Number(parsedAccess?.rewardedExtraExamCredits) > 0) return;
-        } catch {
-          // Replace malformed test state with the deterministic daily-free-used fixture below.
-        }
-      }
 
       const today = new Date();
       const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
@@ -135,7 +121,7 @@ async function readRewardedCredits(page: Page) {
 test.use({ viewport: { width: 390, height: 844 } });
 
 for (const language of ['sv', 'en'] as const) {
-  test(`Home rewarded preview stores an extra mock exam credit in ${language.toUpperCase()}`, async ({
+  test(`web rewarded preview unlocks an extra mock exam in ${language.toUpperCase()}`, async ({
     page,
   }) => {
     const consoleErrors = collectConsoleErrors(page);
@@ -143,10 +129,12 @@ for (const language of ['sv', 'en'] as const) {
 
     await seedDailyFreeMockUsed(page, language);
 
-    await page.goto('/home', { waitUntil: 'networkidle' });
+    await page.goto('/exam', { waitUntil: 'networkidle' });
     await dismissBlockingModals(page);
 
-    await expect(page.getByRole('heading', { name: t.homeHeading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: t.heading }).first()).toBeVisible();
+    await expect(page.getByText(t.status)).toBeVisible();
+    await expect(page.getByText(t.previewTitle)).toBeVisible();
     await expect(page.getByText(t.previewBody)).toBeVisible();
     await expect(page.getByText(t.activeCount)).toHaveCount(0);
     await expect(page.getByText(t.timeLeft)).toHaveCount(0);
@@ -155,28 +143,10 @@ for (const language of ['sv', 'en'] as const) {
     const completionButton = page.getByRole('button', { name: t.previewButton });
     await expectReachableTarget(completionButton);
     await completionButton.click();
-    await expect(completionButton).toBeDisabled();
-
-    const unlockButton = page.getByRole('button', { name: t.unlockButton });
-    await expectReachableTarget(unlockButton);
-    await unlockButton.click();
-
-    await expect(page.getByText(t.unlockedStatus)).toBeVisible();
-    await expect(page.getByRole('link', { name: t.unlockedCta })).toBeVisible();
-    await expect(await readRewardedCredits(page)).toBe(1);
-
-    await page.goto('/exam', { waitUntil: 'networkidle' });
-    await dismissBlockingModals(page);
-
-    await expect(page.getByRole('heading', { name: t.examHeading }).first()).toBeVisible();
-    await expect(page.getByText(t.previewBody)).toHaveCount(0);
-    await expect(page.getByText(t.previewButton)).toHaveCount(0);
-    const startUnlocked = page.getByRole('button', { name: t.unlockedCta });
-    await expectReachableTarget(startUnlocked);
-    await startUnlocked.click();
 
     await expect(page.getByText(t.activeCount)).toBeVisible();
     await expect(page.getByText(t.timeLeft)).toBeVisible();
+    await expect(page.getByText(t.previewTitle)).toHaveCount(0);
     await expect(await readRewardedCredits(page)).toBe(0);
 
     expect(consoleErrors).toEqual([]);

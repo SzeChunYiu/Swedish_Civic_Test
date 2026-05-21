@@ -12,23 +12,14 @@ export type BlockingModalDismissal = {
   launchOverlayDismissed: boolean;
 };
 
-// Storage keys matching the app's settingsStore constants.
-const settingsStorageId = 'settings';
-const settingsLanguageKey = 'language';
-const settingsSeenAboutKey = 'hasSeenAboutTheTest';
-const settingsLanguageStorageKeys = [
-  settingsLanguageKey,
-  `${settingsStorageId}\\${settingsLanguageKey}`,
-] as const;
-const settingsSeenAboutStorageKeys = [
-  settingsSeenAboutKey,
-  `${settingsStorageId}\\${settingsSeenAboutKey}`,
-] as const;
+// Storage keys matching react-native-mmkv's web localStorage namespace.
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+const legacySettingsLanguageKey = 'language';
+const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
 
-// Selector for blocking dialog/menu overlays in the rendered app.
-export const blockingModalOverlayLocator =
-  '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
-const dialogLocator = blockingModalOverlayLocator;
+// Selector for dialog/modal overlays in the rendered app.
+const dialogLocator = '[role="dialog"]';
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -57,27 +48,27 @@ export async function seedSettingsLanguage(page: Page, language: AppLanguage): P
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKeys,
+      languageKey,
+      legacyLanguageKey,
     }: {
       language: AppLanguage;
-      languageKeys: readonly string[];
+      languageKey: string;
+      legacyLanguageKey: string;
     }) => {
-      for (const languageKey of languageKeys) {
-        window.localStorage.setItem(languageKey, seededLanguage);
-      }
+      window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
     },
-    { language, languageKeys: settingsLanguageStorageKeys },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }
 
 export async function markAboutTheTestSeen(page: Page): Promise<void> {
   await page.addInitScript(
-    ({ seenKeys }: { seenKeys: readonly string[] }) => {
-      for (const seenKey of seenKeys) {
-        window.localStorage.setItem(seenKey, 'true');
-      }
+    ({ seenKey, legacySeenKey }: { seenKey: string; legacySeenKey: string }) => {
+      window.localStorage.setItem(seenKey, 'true');
+      window.localStorage.setItem(legacySeenKey, 'true');
     },
-    { seenKeys: settingsSeenAboutStorageKeys },
+    { seenKey: settingsSeenAboutKey, legacySeenKey: legacySettingsSeenAboutKey },
   );
 }
 
@@ -88,26 +79,30 @@ export async function seedFreshFirstRunSettingsLanguage(
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKeys,
-      seenKeys,
+      languageKey,
+      legacyLanguageKey,
+      seenKey,
+      legacySeenKey,
     }: {
       language: AppLanguage;
-      languageKeys: readonly string[];
-      seenKeys: readonly string[];
+      languageKey: string;
+      legacyLanguageKey: string;
+      seenKey: string;
+      legacySeenKey: string;
     }) => {
       window.localStorage.clear();
       window.sessionStorage.clear();
-      for (const languageKey of languageKeys) {
-        window.localStorage.setItem(languageKey, seededLanguage);
-      }
-      for (const seenKey of seenKeys) {
-        window.localStorage.removeItem(seenKey);
-      }
+      window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
+      window.localStorage.removeItem(seenKey);
+      window.localStorage.removeItem(legacySeenKey);
     },
     {
       language,
-      languageKeys: settingsLanguageStorageKeys,
-      seenKeys: settingsSeenAboutStorageKeys,
+      languageKey: settingsLanguageKey,
+      legacyLanguageKey: legacySettingsLanguageKey,
+      seenKey: settingsSeenAboutKey,
+      legacySeenKey: legacySettingsSeenAboutKey,
     },
   );
 }
@@ -205,15 +200,16 @@ export async function selectQuestionLanguageInSettings(
   await page.addInitScript(
     ({
       language: seededLanguage,
-      languageKeys,
+      languageKey,
+      legacyLanguageKey,
     }: {
       language: AppLanguage;
-      languageKeys: readonly string[];
+      languageKey: string;
+      legacyLanguageKey: string;
     }) => {
-      for (const languageKey of languageKeys) {
-        window.localStorage.setItem(languageKey, seededLanguage);
-      }
+      window.localStorage.setItem(languageKey, seededLanguage);
+      window.localStorage.setItem(legacyLanguageKey, seededLanguage);
     },
-    { language, languageKeys: settingsLanguageStorageKeys },
+    { language, languageKey: settingsLanguageKey, legacyLanguageKey: legacySettingsLanguageKey },
   );
 }

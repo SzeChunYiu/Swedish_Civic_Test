@@ -1312,6 +1312,12 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet',
     'Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet',
     'Provåtkomst',
+    'Välj prov',
+    'Provbibliotek',
+    'Eget övningsprov',
+    'Starta eget övningsprov',
+    'Välj minst ett kapitel för ett eget prov.',
+    'Max ${maxQuestionCount} frågor i urvalet.',
     'Kontrollerar provåtkomst.',
     'Det gick inte att läsa sparad övningsprovsstatus. Försök igen innan du startar.',
     'Dagens kostnadsfria övningsprov är tillgängligt.',
@@ -1322,7 +1328,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
-    'Skicka övningsprov',
+    'Skicka in övningsprovet',
     'Skicka prov',
     'Provresultat',
     'Övningsresultat',
@@ -1344,6 +1350,12 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam',
     'Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam',
     'Exam access',
+    'Choose exam',
+    'Exam library',
+    'Custom mock exam',
+    'Start custom mock exam',
+    'Select at least one chapter for a custom exam.',
+    'Up to ${maxQuestionCount} questions available.',
     'Checking mock exam access.',
     'Stored mock exam access could not be read. Retry before starting.',
     'Daily free mock exam available.',
@@ -1354,10 +1366,11 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Progress',
     '${answeredCount}/${questionCount} answered',
     'Select answer ${optionText} for question ${questionNumber}',
-    'Submit mock exam',
+    'Submit the mock exam',
     'Submit exam',
     'Exam result',
     'Mock exam result',
+    'Mock exam score',
     'Chapter breakdown',
     'Question review',
     'Question ${questionNumber}',
@@ -1386,9 +1399,12 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
-    '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
+    '{copy.heroSubtitle(selectedExamDurationMinutes, selectedExamQuestionCount)}',
     'exam route hero subtitle must render localized copy',
   ],
+  ['<MockExamConfigPanel', 'exam route must render the configurable mock exam panel'],
+  ['MOCK_EXAM_LIBRARY.map', 'exam route must render the named mock exam library'],
+  ['materializeMock({', 'exam route must materialize named mocks through the mock library'],
   [
     '{copy.activeHeroSubtitle(formatExamTime(remainingSeconds), examQuestions.length)}',
     'active exam hero subtitle must render localized copy',
@@ -3389,10 +3405,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentText', optional: true },
+      { name: 'nameText', type: 'Partial<LocalizedContentText>', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
+      { name: 'descriptionText', type: 'Partial<LocalizedContentText>', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -7535,16 +7551,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
   });
   process.exit(0);
 }

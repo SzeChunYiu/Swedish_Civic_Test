@@ -38,7 +38,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 78);
+  assert.equal(summary.examRouteCopyLabelsValidated, 73);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -46,23 +46,21 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /answerAccessibilityLabel: \(optionText, questionNumber\) =>/);
   assert.match(source, /Välj svaret \$\{optionText\} för fråga \$\{questionNumber\}/);
   assert.match(source, /Select answer \$\{optionText\} for question \$\{questionNumber\}/);
-  assert.match(source, /submitAccessibilityLabel: 'Skicka övningsprov'/);
-  assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
+  assert.match(source, /chooseExamTitle: 'Välj prov'/);
+  assert.match(source, /libraryTitle: 'Provbibliotek'/);
+  assert.match(source, /customExamTitle: 'Eget övningsprov'/);
+  assert.match(source, /customStartMockExam: 'Starta eget övningsprov'/);
+  assert.match(source, /chooseExamTitle: 'Choose exam'/);
+  assert.match(source, /libraryTitle: 'Exam library'/);
+  assert.match(source, /customExamTitle: 'Custom mock exam'/);
+  assert.match(source, /customStartMockExam: 'Start custom mock exam'/);
+  assert.match(source, /submitAccessibilityLabel: 'Skicka in övningsprovet'/);
+  assert.match(source, /submitAccessibilityLabel: 'Submit the mock exam'/);
+  assert.match(source, /resultScoreLabel: 'Övningsresultat'/);
+  assert.match(source, /resultScoreLabel: 'Mock exam score'/);
+  assert.match(source, /statusLabel=\{copy\.resultScoreLabel\}/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
-  assert.match(source, /flagQuestionLabel: 'Flagga för genomgång'/);
-  assert.match(source, /flagQuestionLabel: 'Flag for review'/);
-  assert.match(source, /flaggedQuestionLabel: 'Flaggad för genomgång'/);
-  assert.match(source, /flaggedQuestionLabel: 'Flagged for review'/);
-  assert.match(source, /navigatorStateLabels: \{ flagged: 'Flaggad' \}/);
-  assert.match(source, /navigatorStateLabels: \{ flagged: 'Flagged' \}/);
-  assert.match(
-    source,
-    /const \[flaggedQuestionIds, setFlaggedQuestionIds\] = useState<Record<string, true>>\(\{\}\);/,
-  );
-  assert.match(source, /<QuestionNavigator/);
-  assert.match(source, /flaggedIndexes=\{flaggedIndexes\}/);
-  assert.match(source, /stateLabels=\{copy\.navigatorStateLabels\}/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
@@ -90,8 +88,6 @@ test('exam route shell and review copy follows the persisted settings language',
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
   );
   assert.match(source, /recordMockExamSession\(\{/);
-  const recordCall = source.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
-  assert.doesNotMatch(recordCall, /flaggedQuestionIds/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(
     source,

@@ -8,7 +8,7 @@ import {
   type AppLanguage,
 } from './browserLaunch';
 
-const totalQuestions = 20;
+const totalQuestions = 25;
 const unsupportedPassVerdictPattern =
   /(?:passing line|pass line|pass threshold|official pass|passed|failed|pass\/fail|gräns för godkänt|officiell(?:a)?\s+gräns|godkänt|underkänt|75\s*%\s*(?:pass|passing|godkänt|godkänd)|(?:pass|passing|godkänt|godkänd)\s*(?:line|threshold|gräns)?\s*75\s*%)/i;
 
@@ -38,9 +38,11 @@ async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryCo
 }
 
 async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
-  await expect(
-    page.locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`).first(),
-  ).toBeVisible();
+  const summary = page
+    .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
+    .first();
+
+  await expect(summary).toBeVisible();
   await expect(page.getByRole('heading', { name: contract.title })).toBeVisible();
   await expect(page.getByText(contract.medianLabel, { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
@@ -71,18 +73,20 @@ test('mock exam requires all answers before showing Swedish score and source-bac
 
   await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-baserade frågor`))).toBeVisible();
-  const activeCount = page.getByText(`0/${totalQuestions} besvarade`);
-  if ((await activeCount.count()) === 0) {
-    const start = page.getByLabel('Starta övningsprov');
-    await expect(start).toBeEnabled();
-    await start.click();
-  }
+  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
+  await expect(page.getByText(/^Tid kvar/)).toHaveCount(0);
 
-  await expect(activeCount).toBeVisible();
+  const start = page.getByLabel('Starta övningsprov');
+  await expect(start).toBeEnabled();
+  await page.waitForTimeout(2000);
+  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
+  await start.click();
+
+  await expect(page.getByText(`0/${totalQuestions} besvarade`)).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
 
-  const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
+  const submit = page.getByLabel('Skicka in övningsprovet');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
@@ -135,19 +139,21 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
   await expect(page.getByText(new RegExp(`${totalQuestions} UHR-based questions`))).toBeVisible();
-  const activeCount = page.getByText(`0/${totalQuestions} answered`);
-  if ((await activeCount.count()) === 0) {
-    const start = page.getByLabel('Start mock exam');
-    await expect(start).toBeEnabled();
-    await start.click();
-  }
+  await expect(page.getByText(`0/${totalQuestions} answered`)).toHaveCount(0);
+  await expect(page.getByText(/^Time left/)).toHaveCount(0);
 
-  await expect(activeCount).toBeVisible();
+  const start = page.getByLabel('Start mock exam');
+  await expect(start).toBeEnabled();
+  await page.waitForTimeout(2000);
+  await expect(page.getByText(`0/${totalQuestions} answered`)).toHaveCount(0);
+  await start.click();
+
+  await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
   await expect(page.getByText(/^Time left/)).toBeVisible();
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
 
-  const submit = page.getByRole('button', { name: 'Submit mock exam' });
+  const submit = page.getByLabel('Submit the mock exam');
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
@@ -169,8 +175,8 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expectNeutralResultSummary(page, {
     correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
     progressPattern: /\d+ percent correct/,
-    summaryAriaPrefix: 'Practice result.',
-    visibleLabel: 'Practice result',
+    summaryAriaPrefix: 'Mock exam score.',
+    visibleLabel: 'Mock exam score',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expectTimeHeatmap(page, {
