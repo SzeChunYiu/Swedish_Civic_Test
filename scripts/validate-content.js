@@ -9149,6 +9149,22 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-profile-route-copy')) {
+  validateProfileRouteHeaderParity();
+  validateProfileRouteCopyParity();
+  validateBadgeCatalog();
+  exitWithValidationFailures();
+  printValidationSummary({
+    profileRouteHeadersValidated,
+    profileRouteHeaderParityValidated,
+    profileRouteCopyLabelsValidated,
+    profileRouteCopyParityValidated,
+    badgesValidated,
+    badgeMilestoneParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-settings-route-copy')) {
   validateSettingsRouteCopyParity();
   exitWithValidationFailures();
@@ -11901,6 +11917,13 @@ function validateProfileRouteCopyParity() {
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
   });
+
+  if (!profileRoute.includes('const removeAdsPaywall = entitlementsReady ? (')) {
+    reject('profile premium banner must fail closed while entitlements load');
+  }
+  if (!profileRoute.includes('{entitlementsReady && proRuntimeScopeEnabled ? (')) {
+    reject('profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -16266,6 +16289,28 @@ function validateBadgeCatalog() {
         reject(`${label} duplicates badge description`);
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+
+      for (const field of [
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing localized ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (
+        label === 'first_practice' &&
+        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
+      ) {
+        reject('first_practice titleSv must be localized separately from titleEn');
+      }
     }
 
     if (valid) badgesValidated += 1;
@@ -17479,8 +17524,7 @@ function validateStreakRules() {
     },
     {
       label: 'invalid local date fallback',
-      actual: () =>
-        /^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0,
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
       expected: 1,
     },
   ];
