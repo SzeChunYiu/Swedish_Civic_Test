@@ -37,6 +37,21 @@ const evidenceRequirements = {
     ['audio smoke result', /audio/i],
     ['build URL, ID, or TestFlight evidence', /build|TestFlight|https?:\/\/|install/i],
   ],
+  'remove-ads-device-qa': [
+    ['Android Remove Ads device QA', /Android|Pixel|Galaxy/i],
+    ['iOS Remove Ads device QA', /iOS|iPhone|iPad|TestFlight/i],
+    ['EAS preview or TestFlight build', /EAS|preview|TestFlight|build/i],
+    ['AdMob test ads rendered before purchase', /AdMob|test ads?|ads? render/i],
+    [
+      'Remove Ads purchase disables ads',
+      /Remove Ads.*purchase|purchase.*Remove Ads|disables? ads|hides? ads/i,
+    ],
+    ['entitlement persists after relaunch', /entitlement|persist|relaunch/i],
+    ['restore purchase works', /restore/i],
+    ['ATT prompt exercised', /\bATT\b|App Tracking Transparency/i],
+    ['UMP consent prompt exercised', /\bUMP\b|consent/i],
+    ['exam screens render no ads', /no ad renders?.*exam|exam.*no ads?|mock exam/i],
+  ],
   'store-records': [
     ['App Store Connect record', /App Store Connect|Apple/i],
     ['Google Play Console record', /Google Play/i],
@@ -1209,6 +1224,7 @@ function validateReleaseOwnerApprovalEvidence(evidencePath) {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'remove-ads-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',
@@ -1507,6 +1523,18 @@ function validateLocalArtifactContents(id, artifactPaths) {
       validateDeviceAudioEvidence(jsonPath, expectedPlatform).map(
         (error) => `${jsonPath}: ${error}`,
       ),
+    );
+    return errors.length > 0 ? errors : null;
+  }
+
+  if (id === 'remove-ads-device-qa') {
+    const reportPaths = artifactPaths.filter((artifactPath) =>
+      /release-ads-iap-device-qa\.md$/i.test(artifactPath),
+    );
+    if (reportPaths.length === 0) return null;
+
+    const errors = reportPaths.flatMap((reportPath) =>
+      validateRemoveAdsDeviceQaReport(reportPath).map((error) => `${reportPath}: ${error}`),
     );
     return errors.length > 0 ? errors : null;
   }
@@ -1812,6 +1840,47 @@ function publicUrlsGate(manualEvidence) {
   );
 }
 
+function removeAdsDeviceQaGate(manualEvidence) {
+  const manualGate = evidenceGate(
+    manualEvidence,
+    'remove-ads-device-qa',
+    'Remove Ads Android/iOS device QA',
+    'No Android/iOS Remove Ads device QA evidence is recorded.',
+    `Run Android and iOS EAS preview/TestFlight device QA, then record results in ${removeAdsDeviceQaPath} and linked ${removeAdsDeviceQaArtifactRoot} JSON artifacts.`,
+  );
+
+  if (manualEvidence.error) {
+    return manualGate;
+  }
+
+  const reportErrors = exists(removeAdsDeviceQaPath)
+    ? validateRemoveAdsDeviceQaReport(removeAdsDeviceQaPath)
+    : [`${removeAdsDeviceQaPath} is missing`];
+  if (reportErrors.length > 0) {
+    return gate(
+      manualGate.id,
+      manualGate.label,
+      'BLOCKED',
+      `${manualGate.evidence}\nDevice QA report ${removeAdsDeviceQaPath} is incomplete: ${reportErrors.join(
+        '; ',
+      )}.`,
+      `Run real Android and iOS EAS preview/TestFlight QA, then update ${removeAdsDeviceQaPath} and linked ${removeAdsDeviceQaArtifactRoot} JSON artifacts with passed checks and proof files.`,
+    );
+  }
+
+  if (manualGate.status !== 'READY') {
+    return manualGate;
+  }
+
+  return gate(
+    manualGate.id,
+    manualGate.label,
+    'READY',
+    `${manualGate.evidence}\nDevice QA report validation passed for ${removeAdsDeviceQaPath}.`,
+    manualGate.nextAction,
+  );
+}
+
 function buildReport() {
   const manualEvidence = loadManualEvidence();
   const validation = runValidate ? commandSucceeds('npm', ['run', 'validate']) : null;
@@ -1891,6 +1960,7 @@ function buildReport() {
       'No iOS physical-device/TestFlight build/install/audio evidence is recorded.',
       'Create an EAS preview/TestFlight build and record iOS audio smoke results in a release evidence file.',
     ),
+    removeAdsDeviceQaGate(manualEvidence),
     evidenceGate(
       manualEvidence,
       'store-records',

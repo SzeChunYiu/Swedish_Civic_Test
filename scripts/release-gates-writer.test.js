@@ -289,6 +289,12 @@ test('release evidence stub list stays synchronized with blocked manual gates', 
     rows.some((row) => row.gate === 'public-urls'),
     false,
   );
+  assert.ok(
+    rows.some(
+      (row) =>
+        row.gate === 'remove-ads-device-qa' && row.path === 'reports/release-ads-iap-device-qa.md',
+    ),
+  );
   for (const row of rows) {
     assert.match(row.path, /^reports\//);
     assert.equal(row.status, 'blocked');
@@ -346,10 +352,12 @@ test('release owner action packet lists only remaining external blockers', () =>
   const report = fs.readFileSync(reportPath, 'utf8');
   assert.match(report, /# Release owner action packet/);
   assert.match(report, /Status \| BLOCKED/);
-  assert.match(report, /Remaining owner actions \| 10/);
+  assert.match(report, /Remaining owner actions \| 11/);
   assert.match(report, /npm run release:evidence-stubs-all/);
   assert.match(report, /`eas-auth`/);
   assert.match(report, /EXPO_TOKEN/);
+  assert.match(report, /`remove-ads-device-qa`/);
+  assert.match(report, /reports\/release-ads-iap-device-qa\.md/);
   assert.match(report, /`store-records`/);
   assert.match(report, /App Store Connect/);
   assert.match(report, /Google Play Console/);

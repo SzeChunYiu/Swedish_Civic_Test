@@ -376,6 +376,10 @@ test('current release gate evidence records ad-supported ads posture', () => {
   assert.match(releaseGates['privacy-review'].evidence, /Remove Ads/i);
   assert.match(releaseGates['privacy-review'].evidence, /29 SEK/i);
   assert.match(releaseGates['privacy-review'].evidence, /ATT\/UMP/i);
+  assert.match(releaseGates['remove-ads-device-qa'].evidence, /Remove Ads device QA/i);
+  assert.match(releaseGates['remove-ads-device-qa'].evidence, /AdMob test ads/i);
+  assert.match(releaseGates['remove-ads-device-qa'].evidence, /ATT and UMP/i);
+  assert.match(releaseGates['remove-ads-device-qa'].evidence, /exam screens/i);
 
   assert.ok(questionnaire.evidenceBasis.includes('publishing/admob-progress.md'));
   assert.ok(questionnaire.evidenceBasis.includes('reports/store-records/store-records.json'));
@@ -458,6 +462,7 @@ test('external release blocker checklist is tied to SzeChunYiu tracker', () => {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'remove-ads-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',
