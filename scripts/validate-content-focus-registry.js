@@ -462,6 +462,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'questionProvenanceRuntime',
+    flags: ['--focus-question-provenance-runtime'],
+    summaryKeys: [
+      'questionProvenanceRuntimeCasesValidated',
+      'questionProvenanceRuntimeParityValidated',
+    ],
+  },
+  {
     id: 'examGeneratorSchema',
     flags: ['--focus-exam-generator-schema'],
     summaryKeys: [
