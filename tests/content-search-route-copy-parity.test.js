@@ -226,7 +226,7 @@ test('validate-content reports Search route query hydration parity', () => {
     },
   );
 
-  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*25/);
+  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*31/);
   assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
 });
 
