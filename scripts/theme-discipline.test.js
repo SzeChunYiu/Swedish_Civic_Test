@@ -10,6 +10,8 @@ const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
   /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
+const BORDER_WIDTH_LITERAL =
+  /\bborder(?:Top|Right|Bottom|Left)?Width:\s*(?:StyleSheet\.hairlineWidth|\d)/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
@@ -43,6 +45,29 @@ function walk(dir) {
 
 function read(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
+}
+
+function collectThemeTokenLiteralOffenders(readFile = fs.readFileSync) {
+  const offenders = [];
+
+  for (const sourceDir of SOURCE_DIRS) {
+    for (const filePath of walk(path.join(ROOT, sourceDir))) {
+      const relPath = path.relative(ROOT, filePath);
+      const lines = readFile(filePath, 'utf8').split('\n');
+      lines.forEach((line, index) => {
+        if (
+          COLOR_LITERAL.test(line) ||
+          SPACING_LITERAL.test(line) ||
+          TYPOGRAPHY_LITERAL.test(line) ||
+          BORDER_WIDTH_LITERAL.test(line)
+        ) {
+          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
+        }
+      });
+    }
+  }
+
+  return offenders;
 }
 
 function readColorTokens() {
@@ -96,25 +121,27 @@ function contrastRatio(foreground, background) {
 }
 
 test('app and component styles use theme tokens instead of literal colors, spacing, or typography', () => {
-  const offenders = [];
+  assert.deepEqual(collectThemeTokenLiteralOffenders(), []);
+});
 
-  for (const sourceDir of SOURCE_DIRS) {
-    for (const filePath of walk(path.join(ROOT, sourceDir))) {
-      const relPath = path.relative(ROOT, filePath);
-      const lines = fs.readFileSync(filePath, 'utf8').split('\n');
-      lines.forEach((line, index) => {
-        if (
-          COLOR_LITERAL.test(line) ||
-          SPACING_LITERAL.test(line) ||
-          TYPOGRAPHY_LITERAL.test(line)
-        ) {
-          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
-        }
-      });
-    }
-  }
+test('theme discipline rejects raw border width literals in app and component styles', () => {
+  const cardPath = path.join(ROOT, 'components/ui/Card.tsx');
+  const mutatedCard = read('components/ui/Card.tsx').replace(
+    'borderWidth: space.hairline,',
+    'borderWidth: StyleSheet.hairlineWidth,',
+  );
+  const offenders = collectThemeTokenLiteralOffenders((filePath, encoding) => {
+    if (filePath === cardPath) return mutatedCard;
+    return fs.readFileSync(filePath, encoding);
+  });
 
-  assert.deepEqual(offenders, []);
+  assert.ok(
+    offenders.some(
+      (offender) =>
+        offender.includes('components/ui/Card.tsx') &&
+        offender.includes('borderWidth: StyleSheet.hairlineWidth,'),
+    ),
+  );
 });
 
 test('theme discipline rejects negative literal typography drift', () => {

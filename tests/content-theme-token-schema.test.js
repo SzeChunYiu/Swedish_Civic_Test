@@ -23,6 +23,8 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
   assert.equal(summary.themeMotionTokensValidated, 7);
+  assert.ok(summary.themeBorderWidthTokenFilesValidated > 0);
+  assert.equal(summary.themeBorderWidthTokenParityValidated, true);
   assert.equal(summary.themeContrastPairsValidated, 20);
   assert.equal(summary.themeContrastPairsAAValidated, true);
   assert.equal(summary.themeDarkColorTokensValidated, 37);
@@ -40,6 +42,36 @@ test('theme token schema validates the exported design-token catalog', () => {
   );
   assert.match(themeIndex, /export \{ space \} from '\.\/spacing';/);
   assert.match(themeIndex, /export \{ typography \} from '\.\/typography';/);
+});
+
+test('theme token schema rejects raw app border width literals', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/ui/Card.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('borderWidth: space.hairline,', 'borderWidth: StyleSheet.hairlineWidth,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme border width tokens required: .*components\/ui\/Card\.tsx.*borderWidth: StyleSheet\.hairlineWidth/,
+  );
 });
 
 test('theme token schema rejects spacing token drift', () => {

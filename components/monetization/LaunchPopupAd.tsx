@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1],
     maxWidth: 360,
     padding: space[3],

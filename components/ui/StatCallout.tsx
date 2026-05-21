@@ -53,7 +53,7 @@ export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps
 const styles = StyleSheet.create({
   card: {
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     flex: 1,
     gap: space[0.5],
     padding: space[1.5],

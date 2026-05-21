@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.25],
     padding: space[2],
   },

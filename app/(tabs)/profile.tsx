@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   removeAdsPaywallFocused: {
     borderColor: colors.accent,
     borderRadius: radius.card,
-    borderWidth: 2,
+    borderWidth: space.hairline,
     padding: space[1],
   },
   removeAdsFocusCue: {

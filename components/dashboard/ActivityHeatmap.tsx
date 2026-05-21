@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   legendSwatch: {
     borderColor: colors.border,
     borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     height: space[1.5],
     width: space[1.5],
   },
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   cell: {
     borderColor: colors.border,
     borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     height: space[1],
     width: space[1],
   },

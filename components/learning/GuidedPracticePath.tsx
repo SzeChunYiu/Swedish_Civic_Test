@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   stageRow: {
     borderColor: colors.border,
     borderRadius: radius.micro,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[0.75],
     padding: space[1.5],
   },
