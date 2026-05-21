@@ -41,6 +41,9 @@ const {
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
+const {
+  createMalformedAdaptiveDifficultyCases,
+} = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const focusPublishedQuestionSchema = process.argv.includes('--focus-published-question-schema');
@@ -18154,11 +18157,7 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
   }
 
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const malformedDifficultyCases = [
-    { label: 'invalid string difficulty', difficulty: 'expert' },
-    { label: 'null difficulty', difficulty: null },
-    { label: 'object difficulty', difficulty: { level: 'expert' } },
-  ];
+  const malformedDifficultyCases = createMalformedAdaptiveDifficultyCases();
   let rulesAreValid = true;
 
   malformedDifficultyCases.forEach(({ label, difficulty }, index) => {

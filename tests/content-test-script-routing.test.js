@@ -476,6 +476,34 @@ test('adaptive difficulty focused content validation runs only its runtime summa
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('adaptive difficulty runtime fixtures are shared by validator and selector tests', () => {
+  const validatorSource = readValidateContentSource();
+  const selectorTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-adaptive-resume.test.js'),
+    'utf8',
+  );
+  const fixtureSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/helpers/adaptivePracticeRuntimeFixtures.cjs'),
+    'utf8',
+  );
+
+  assert.match(fixtureSource, /MALFORMED_ADAPTIVE_DIFFICULTY_CASES/);
+  assert.match(fixtureSource, /createMalformedAdaptiveDifficultyCases/);
+  assert.match(fixtureSource, /invalid string difficulty/);
+  assert.match(fixtureSource, /null difficulty/);
+  assert.match(fixtureSource, /object difficulty/);
+  assert.match(
+    validatorSource,
+    /require\('\.\.\/tests\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/,
+  );
+  assert.match(
+    selectorTestSource,
+    /require\('\.\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/,
+  );
+  assert.doesNotMatch(validatorSource, /const malformedDifficultyCases = \[/);
+  assert.doesNotMatch(selectorTestSource, /const malformedDifficultyCases = \[/);
+});
+
 test('exam submission finality focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,

@@ -6,6 +6,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const {
+  createMalformedAdaptiveDifficultyCases,
+} = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -236,11 +239,7 @@ test('explainAdaptivePick: reports the same difficulty-adjusted bucket that was 
 test('pickAdaptiveSession: unsupported adaptive difficulty values are neutral', () => {
   const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const malformedDifficultyCases = [
-    { label: 'invalid string difficulty', difficulty: 'expert' },
-    { label: 'null difficulty', difficulty: null },
-    { label: 'object difficulty', difficulty: { level: 'expert' } },
-  ];
+  const malformedDifficultyCases = createMalformedAdaptiveDifficultyCases();
   const answers = malformedDifficultyCases.map((item, index) => ({
     questionId: `stale-invalid-${index + 1}`,
     selectedOptionIds: [],
