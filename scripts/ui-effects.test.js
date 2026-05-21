@@ -81,7 +81,10 @@ test('provenance badge source note uses tokenized toggle feedback', () => {
   assert.match(source, /onBlur=\{hideSourceNote\}/);
   assert.match(source, /onFocus=\{showSourceNote\}/);
   assert.match(source, /onPress=\{toggleSourceNote\}/);
+  assert.match(source, /accessibilityLabel=\{`\$\{copy\.accessibilityPrefix\}: \$\{label\}`\}/);
   assert.match(source, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
+  assert.match(source, /accessibilityLiveRegion="polite"/);
+  assert.match(source, /aria-live="polite"/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /pressed && !reduceMotion \? styles\.badgePressed : null/);

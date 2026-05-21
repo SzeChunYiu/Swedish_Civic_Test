@@ -142,7 +142,12 @@ export function ProvenanceBadge({
         <Text style={[styles.badgeText, textTone]}>{label}</Text>
       </Pressable>
       {sourceNoteVisible ? (
-        <Text accessibilityRole="text" style={styles.sourceNote}>
+        <Text
+          accessibilityLiveRegion="polite"
+          accessibilityRole="text"
+          aria-live="polite"
+          style={styles.sourceNote}
+        >
           {copy.sourceNoteLabel}: {sourceNote}
         </Text>
       ) : null}
