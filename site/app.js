@@ -1511,6 +1511,71 @@ const SMT_QUIZ_COPY = {
   },
 };
 
+const SMT_QUIZ_BUDDY_COPY = {
+  perfect: {
+    en: 'Brilliant! 10/10. Tell people I helped.',
+    sv: 'Lysande! 10/10. Berätta att jag hjälpte.',
+    'zh-Hans': '太棒了！10/10。记得说我帮忙了。',
+    'zh-Hant': '太棒了！10/10。記得說我幫忙了。',
+    ar: 'رائع! 10/10. أخبرهم أنني ساعدت.',
+    ckb: 'ناوازە! 10/10. بە خەڵک بڵێ من یارمەتیم دا.',
+    fa: 'درخشان! ۱۰ از ۱۰. به بقیه بگو من کمک کردم.',
+    pl: 'Świetnie! 10/10. Powiedz innym, że pomogłem.',
+    so: 'Cajiib! 10/10. Dadka u sheeg inaan ku caawiyay.',
+    ti: 'ብሉጽ! 10/10። ከም ዝሓገዝኩ ንሰባት ንገሮም።',
+    tr: 'Harika! 10/10. Yardım ettiğimi söyle.',
+    uk: 'Блискуче! 10/10. Скажи іншим, що я допоміг.',
+  },
+  streak: {
+    en: '{streak} in a row. You are on a roll.',
+    sv: '{streak} i rad. Du är på gång.',
+    'zh-Hans': '连续 {streak} 题。状态正好。',
+    'zh-Hant': '連續 {streak} 題。狀態正好。',
+    ar: '{streak} على التوالي. أنت منطلق.',
+    ckb: '{streak} لەسەر یەک. تۆ لە ڕێگادایت.',
+    fa: '{streak} تا پشت سر هم. روی دور هستی.',
+    pl: '{streak} z rzędu. Masz dobrą passę.',
+    so: '{streak} isku xigta. Si fiican baad u socotaa.',
+    ti: '{streak} ብተኸታታሊ። ጽቡቕ ትኸይድ ኣለኻ።',
+    tr: 'Üst üste {streak}. İyi gidiyorsun.',
+    uk: '{streak} поспіль. Ти набираєш хід.',
+  },
+  praise: {
+    en: 'Nice one.',
+    sv: 'Snyggt.',
+    'zh-Hans': '答得好。',
+    'zh-Hant': '答得好。',
+    ar: 'إجابة جميلة.',
+    ckb: 'جوان بوو.',
+    fa: 'خوب بود.',
+    pl: 'Dobra odpowiedź.',
+    so: 'Si fiican.',
+    ti: 'ጽቡቕ።',
+    tr: 'Güzel cevap.',
+    uk: 'Гарна відповідь.',
+  },
+  wrong: {
+    en: "Not this time. You'll see this one again — that's how it sticks.",
+    sv: 'Inte den här gången. Du får se den igen — så fastnar den.',
+    'zh-Hans': '这次不是。之后还会再看到——这样才记得住。',
+    'zh-Hant': '這次不是。之後還會再看到——這樣才記得住。',
+    ar: 'ليس هذه المرة. سترى هذا السؤال مرة أخرى — هكذا يثبت في الذاكرة.',
+    ckb: 'ئەم جارە نا. دیسان ئەمە دەبینیتەوە — ئاوا لەبیر دەمێنێت.',
+    fa: 'این بار نه. دوباره این یکی را می‌بینی — همین‌طور در ذهن می‌ماند.',
+    pl: 'Nie tym razem. Zobaczysz to jeszcze raz — tak się utrwala.',
+    so: 'Markan ma aha. Mar kale ayaad arki doontaa — sidaas ayay ku xasuusnaanaysaa.',
+    ti: 'ኣብዚ ግዜ ኣይኮነን። እዚ እንደገና ክትርእዮ ኢኻ — ከምኡ እዩ ዝጸንዕ።',
+    tr: 'Bu kez değil. Bunu tekrar göreceksin — böyle akılda kalır.',
+    uk: 'Не цього разу. Ти побачиш це ще раз — так воно запам’ятовується.',
+  },
+};
+
+function smtQuizBuddyMessage(key, values = {}) {
+  const copy = SMT_QUIZ_BUDDY_COPY[key] || SMT_QUIZ_BUDDY_COPY.praise;
+  const template = copy[smtQuizCurrentLang()] || copy.en;
+  return template.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
+}
+
 const SMT_QUIZ = { i: 0, score: 0, answers: [], scope: '' };
 
 function smtQuizCurrentLang() {
@@ -1918,11 +1983,7 @@ function smtQuizRender() {
       fx.countUp(document.getElementById('score-num'), 0, correct, 1100);
       if (pct === 100) {
         setTimeout(() => fx.rain({ colors: fx.PALETTES.big, count: 120 }), 300);
-        if (window.smtBuddyCelebrate)
-          window.smtBuddyCelebrate(
-            'Lysande! 10/10. Tell people I helped.',
-            'Lysande! 10/10. Berätta att jag hjälpte.',
-          );
+        if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(smtQuizBuddyMessage('perfect'));
       } else if (pct >= 70) {
         setTimeout(() => fx.rain({ colors: fx.PALETTES.flag, count: 60 }), 300);
       }
@@ -2102,24 +2163,12 @@ document.addEventListener('click', (e) => {
         fx.burst(cx, cy, { colors: fx.PALETTES.streak, count: 40, spread: 200 });
       }
       if (window.smtBuddyCelebrate) {
-        if (streak >= 3)
-          window.smtBuddyCelebrate(
-            `${streak} in a row. Du är på gång.`,
-            `${streak} i rad. Du är på gång.`,
-          );
-        else
-          window.smtBuddyCelebrate(
-            ['Bra!', 'Nice one.', 'Snyggt.', 'Spot on.'][Math.floor(Math.random() * 4)],
-            ['Bra!', 'Snyggt.', 'Just det.'][Math.floor(Math.random() * 3)],
-          );
+        if (streak >= 3) window.smtBuddyCelebrate(smtQuizBuddyMessage('streak', { streak }));
+        else window.smtBuddyCelebrate(smtQuizBuddyMessage('praise'));
       }
     } else {
       if (fx) fx.shakeEl(opt);
-      if (window.smtBuddyConsole)
-        window.smtBuddyConsole(
-          "Not this time. You'll see this one again — that's how it sticks.",
-          'Inte den här gången. Du får se den igen — så fastnar den.',
-        );
+      if (window.smtBuddyConsole) window.smtBuddyConsole(smtQuizBuddyMessage('wrong'));
     }
 
     smtQuizRender();
