@@ -71,6 +71,10 @@ test('exam route shell and review copy follows the persisted settings language',
     source,
     /import \{ ProvenanceBadge \} from '..\/..\/components\/quiz\/ProvenanceBadge';/,
   );
+  assert.match(
+    source,
+    /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+  );
   assert.match(source, /getQuestionSourceCitation\(item, language\)/);
   assert.match(source, /getQuestionSourceCitation\(question, language\)/);
   assert.match(source, /const examQuestionById = useMemo\(/);
@@ -79,9 +83,14 @@ test('exam route shell and review copy follows the persisted settings language',
     /new Map\(examQuestions\.map\(\(question\) => \[question\.id, question\] as const\)\)/,
   );
   assert.match(source, /<ProvenanceBadge language=\{language\} question=\{question\} \/>/);
+  assert.match(source, /<ProvenanceBadge language=\{language\} question=\{reviewQuestion\} \/>/);
   assert.match(
     source,
-    /<ProvenanceBadge language=\{language\} question=\{examQuestionById\.get\(item\.questionId\)\} \/>/,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
+  );
+  assert.match(
+    source,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   );
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
   assert.match(
@@ -234,7 +243,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       .call(this, filePath, ...args)
       .replace('<ProvenanceBadge language={language} question={question} />', 'null')
       .replace(
-        '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
+        '<ProvenanceBadge language={language} question={reviewQuestion} />',
         'null',
       );
   }

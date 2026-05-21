@@ -120,10 +120,11 @@ test('question report CTA is wired from question surfaces to support context', (
     'utf8',
   );
   const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 23);
+  assert.equal(summary.questionReportLinkRulesValidated, 26);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
@@ -137,8 +138,19 @@ test('question report CTA is wired from question surfaces to support context', (
     /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
   );
   assert.doesNotMatch(chapterSource, /screen="chapter"[\s\S]*selectedOptionId=/);
+  assert.match(examSource, /import \{ QuestionReportLink \}/);
+  assert.match(
+    examSource,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
+  );
+  assert.match(
+    examSource,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
+  );
   assert.match(supportSource, /Lägg inte till namn, personnummer, ärendenummer/);
   assert.match(supportSource, /Do not add names, personal identity numbers, case numbers/);
+  assert.match(supportSource, /exam: 'Övningsprov'/);
+  assert.match(supportSource, /exam: 'Mock exam'/);
   assert.doesNotMatch(supportSource, /mailto:|Linking\.openURL|fetch\(/);
   assert.match(
     packageJson.scripts['test:content'],
@@ -212,6 +224,21 @@ test('buildQuestionReportSupportHref selects localized answer text before encodi
   assert.equal(url.searchParams.get('selectedAnswer'), 'Rösta & välja');
 });
 
+test('buildQuestionReportSupportHref labels mock exam report context', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const href = buildQuestionReportSupportHref({
+    language: 'en',
+    question: createReportQuestion(),
+    screen: 'exam',
+    selectedOptionId: 'a',
+  });
+  const url = supportUrl(href);
+
+  assert.equal(url.searchParams.get('reportScreen'), 'exam');
+  assert.equal(url.searchParams.get('screen'), 'exam');
+  assert.equal(url.searchParams.get('selectedAnswer'), 'Vote & choose');
+});
+
 test('question report parity rejects dropping the practice feedback CTA', () => {
   const result = spawnSync(
     process.execPath,
@@ -272,6 +299,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionReportLink missing chapter reader source context/,
+  );
+});
+
+test('question report parity rejects dropping mock exam report context', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-question-report-link-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/exam.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/\\n\\s*<QuestionReportLink\\s+language=\\{language\\}\\s+question=\\{question\\}\\s+screen="exam"\\s+\\/>/, '')
+      .replace(/\\n\\s*<QuestionReportLink[\\s\\S]*?question=\\{reviewQuestion\\}[\\s\\S]*?selectedOptionId=\\{answers\\[item\\.questionId\\]\\}[\\s\\S]*?\\/>/, '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionReportLink missing active exam source context|QuestionReportLink missing submitted exam selected answer context/,
   );
 });
 

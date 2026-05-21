@@ -122,6 +122,10 @@ test('mock exam requires all answers before showing Swedish score and source pro
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
   });
+  const activeReportLink = page.getByRole('link', { name: /Rapportera frågan q\d+/ }).first();
+  await expect(activeReportLink).toBeVisible();
+  await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -155,6 +159,10 @@ test('mock exam requires all answers before showing Swedish score and source pro
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,
   });
+  const reviewReportLink = page.getByRole('link', { name: /Rapportera frågan q\d+/ }).first();
+  await expect(reviewReportLink).toBeVisible();
+  await expect(reviewReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(reviewReportLink).toHaveAttribute('href', /selectedAnswer=/);
   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
   await expectNoPassVerdictCopy(page);
@@ -196,6 +204,10 @@ test('mock exam provenance review follows English support mode', async ({ page }
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
   });
+  const activeReportLink = page.getByRole('link', { name: /Report question q\d+/ }).first();
+  await expect(activeReportLink).toBeVisible();
+  await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -235,6 +247,10 @@ test('mock exam provenance review follows English support mode', async ({ page }
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,
   });
+  const reviewReportLink = page.getByRole('link', { name: /Report question q\d+/ }).first();
+  await expect(reviewReportLink).toBeVisible();
+  await expect(reviewReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(reviewReportLink).toHaveAttribute('href', /selectedAnswer=/);
   await expect(page.getByText('Submitted results are final')).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);

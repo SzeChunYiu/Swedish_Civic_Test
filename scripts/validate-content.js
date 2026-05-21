@@ -1828,7 +1828,7 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'active exam questions must render provenance badges',
   ],
   [
-    '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
+    '<ProvenanceBadge language={language} question={reviewQuestion} />',
     'exam review questions must render provenance badges',
   ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
@@ -4011,6 +4011,26 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
     label: 'quiz feedback selected answer context',
     pattern:
       /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="quiz"\s+selectedOptionId=\{selectedOptionId\}\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/exam.tsx',
+    label: 'exam route QuestionReportLink import',
+    pattern:
+      /import \{ QuestionReportLink \} from '\.\.\/\.\.\/components\/quiz\/QuestionReportLink';/,
+  },
+  {
+    file: 'app/(tabs)/exam.tsx',
+    label: 'active exam source context',
+    message: 'QuestionReportLink missing active exam source context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
+  },
+  {
+    file: 'app/(tabs)/exam.tsx',
+    label: 'submitted exam selected answer context',
+    message: 'QuestionReportLink missing submitted exam selected answer context',
+    pattern:
+      /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   },
   {
     file: 'app/chapter/[chapterId].tsx',
