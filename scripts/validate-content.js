@@ -12378,11 +12378,28 @@ function validateSettingsDailyGoalParity() {
   }
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
-  const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
-  if (!normalizedSettingsStore.includes(expectedClamp)) {
-    reject(
-      `setDailyGoalAnswers must clamp between ${EXPECTED_DAILY_GOAL_MIN} and ${EXPECTED_DAILY_GOAL_MAX}`,
-    );
+  if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
+    reject('readDailyGoalAnswers must normalize the raw persisted value');
+  }
+  if (settingsStore.includes('storedValue && storedValue > 0 ? storedValue : 10')) {
+    reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'const safeGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
+    )
+  ) {
+    reject('setDailyGoalAnswers must normalize runtime daily-goal input before persisting');
+  }
+  if (settingsStore.includes('Math.round(dailyGoalAnswers)')) {
+    reject('setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);',
+    )
+  ) {
+    reject('normalizeImportedSettings must normalize imported daily-goal input');
   }
 
   const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');

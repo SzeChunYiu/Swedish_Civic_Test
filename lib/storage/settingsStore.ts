@@ -136,11 +136,8 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
   if (typeof candidate.audioEnabled === 'boolean') {
     settings.audioEnabled = candidate.audioEnabled;
   }
-  if (
-    typeof candidate.dailyGoalAnswers === 'number' &&
-    Number.isFinite(candidate.dailyGoalAnswers)
-  ) {
-    settings.dailyGoalAnswers = Math.max(1, Math.min(50, Math.round(candidate.dailyGoalAnswers)));
+  if (Object.prototype.hasOwnProperty.call(candidate, 'dailyGoalAnswers')) {
+    settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
@@ -182,7 +179,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     set({ audioEnabled, persistenceWarning });
   },
   setDailyGoalAnswers: (dailyGoalAnswers) => {
-    const safeGoal = Math.max(1, Math.min(50, Math.round(dailyGoalAnswers)));
+    const safeGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);
     const persistenceWarning = writeRecoverably(
       settingsStorage,
       settingsStorageId,
