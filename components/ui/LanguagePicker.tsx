@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { locales, type LocaleOption } from '../../lib/i18n/locales';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import { GlobeIcon } from './icons/GlobeIcon';
@@ -68,6 +69,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const triggerRef = useRef<FocusableElement | null>(null);
   const closeButtonRef = useRef<FocusableElement | null>(null);
   const rowRefs = useRef<Record<string, FocusableElement | null>>({});
+  const reduceMotion = useReducedMotion();
 
   const language = languageOverride ?? settingsLanguage;
   const currentCode = language === 'sv' ? 'sv' : 'en';
@@ -227,7 +229,14 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
         ref={(node) => {
           triggerRef.current = node as FocusableElement | null;
         }}
-        style={({ pressed }) => [styles.trigger, pressed ? styles.triggerPressed : null]}
+        style={({ pressed }) => [
+          styles.trigger,
+          pressed
+            ? reduceMotion
+              ? styles.triggerPressedReducedMotion
+              : styles.triggerPressed
+            : null,
+        ]}
       >
         <GlobeIcon size={triggerIconSize} color={colors.textMuted} />
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
@@ -247,7 +256,10 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
             accessibilityRole="menu"
             hitSlop={space[0]}
             onPress={(e) => e.stopPropagation()}
-            style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+            style={({ pressed }) => [
+              styles.card,
+              pressed ? (reduceMotion ? null : styles.cardPressed) : null,
+            ]}
           >
             <View style={styles.header}>
               <View style={styles.headerText}>
@@ -262,7 +274,14 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                 ref={(node) => {
                   closeButtonRef.current = node as FocusableElement | null;
                 }}
-                style={({ pressed }) => [styles.closeButton, pressed ? styles.closePressed : null]}
+                style={({ pressed }) => [
+                  styles.closeButton,
+                  pressed
+                    ? reduceMotion
+                      ? styles.closePressedReducedMotion
+                      : styles.closePressed
+                    : null,
+                ]}
                 {...getCloseWebKeyboardProps()}
               >
                 <Text style={styles.closeText}>x</Text>
@@ -289,7 +308,11 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                     style={({ pressed }) => [
                       styles.row,
                       selected ? styles.rowSelected : null,
-                      pressed && opt.available ? styles.rowPressed : null,
+                      pressed && opt.available
+                        ? reduceMotion
+                          ? styles.rowPressedReducedMotion
+                          : styles.rowPressed
+                        : null,
                     ]}
                     {...getRowWebKeyboardProps(opt)}
                   >
@@ -340,6 +363,9 @@ const styles = StyleSheet.create({
   triggerPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  triggerPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
   triggerLabel: {
     color: colors.text,
@@ -407,6 +433,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
   },
+  closePressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
+  },
   closeText: {
     color: colors.textMuted,
     fontFamily: typography.bodyBold.fontFamily,
@@ -431,6 +460,9 @@ const styles = StyleSheet.create({
   rowPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  rowPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
   rowText: {
     flex: 1,

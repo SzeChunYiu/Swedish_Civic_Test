@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space } from '../../lib/theme';
@@ -84,6 +85,19 @@ function useTopBarActionLinkWebStyles() {
   background-color: ${colors.focusSoft};
   transform: scale(${motion.pressedScale});
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .${topBarActionLinkClassName} {
+    transition: background-color ${motion.duration.fast}ms ${motion.easing.press};
+  }
+
+  .${topBarActionLinkClassName}:hover,
+  .${topBarActionLinkClassName}:focus,
+  .${topBarActionLinkClassName}:focus-visible,
+  .${topBarActionLinkClassName}:active {
+    transform: none;
+  }
+}
 `;
     document.head.appendChild(styleElement);
   }, []);
@@ -134,6 +148,7 @@ function TopBarAudioSwitch({
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const interactionHandlers = {
     onBlur: () => {
       setIsFocused(false);
@@ -160,8 +175,16 @@ function TopBarAudioSwitch({
       onPressOut={() => setIsPressed(false)}
       style={[
         styles.iconButton,
-        isFocused || isHovered ? styles.iconButtonHover : null,
-        isPressed ? styles.iconButtonPressed : null,
+        isFocused || isHovered
+          ? reduceMotion
+            ? styles.iconButtonHoverReducedMotion
+            : styles.iconButtonHover
+          : null,
+        isPressed
+          ? reduceMotion
+            ? styles.iconButtonPressedReducedMotion
+            : styles.iconButtonPressed
+          : null,
       ]}
     >
       <AudioIcon size={iconSize} muted={!audioEnabled} />
@@ -175,6 +198,7 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const webClassName =
     Platform.OS === 'web'
       ? {
@@ -216,8 +240,16 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
       onPressOut={() => setIsPressed(false)}
       style={[
         styles.iconLink,
-        isFocused || isHovered ? styles.iconLinkHover : null,
-        isPressed ? styles.iconLinkPressed : null,
+        isFocused || isHovered
+          ? reduceMotion
+            ? styles.iconLinkHoverReducedMotion
+            : styles.iconLinkHover
+          : null,
+        isPressed
+          ? reduceMotion
+            ? styles.iconLinkPressedReducedMotion
+            : styles.iconLinkPressed
+          : null,
       ]}
     >
       {children}
@@ -247,9 +279,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.hoverScale }],
   },
+  iconButtonHoverReducedMotion: {
+    backgroundColor: colors.focusSoft,
+  },
   iconButtonPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  iconButtonPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
   iconLink: {
     alignItems: 'center',
@@ -266,8 +304,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.hoverScale }],
   },
+  iconLinkHoverReducedMotion: {
+    backgroundColor: colors.focusSoft,
+  },
   iconLinkPressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  iconLinkPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
 });

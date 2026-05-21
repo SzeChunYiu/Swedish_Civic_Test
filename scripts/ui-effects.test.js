@@ -76,7 +76,7 @@ test('provenance badge source note uses tokenized toggle feedback', () => {
   assert.match(source, /accessibilityState=\{\{ expanded: sourceNoteVisible \}\}/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight: space\[6\]/);
-  assert.match(source, /pressed \? styles\.badgePressed : null/);
+  assert.match(source, /pressed && !reduceMotion \? styles\.badgePressed : null/);
   assert.match(source, /transform: \[\{ scale: motion\.pressedScale \}\]/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -105,7 +105,7 @@ test('button derives an accessibility label from plain text children by default'
   assert.match(source, /android_ripple=\{android_ripple \?\? \{ color: colors\.focusSoft/);
   assert.match(source, /hitSlop=\{hitSlop \?\? space\[0\.5\]\}/);
   assert.match(source, /style=\{\(\{ pressed \}\) => \[/);
-  assert.match(source, /pressed && !disabled \? styles\.pressed : null/);
+  assert.match(source, /pressed && !disabled && !reduceMotion \? styles\.pressedMotion : null/);
   assert.match(
     source,
     /pressed && !disabled && variant === 'primary' \? styles\.primaryPressed : null/,
@@ -125,7 +125,10 @@ test('language picker future-language rows are disabled instead of selectable', 
   assert.match(source, /if \(!option\.available\) return;/);
   assert.match(source, /disabled=\{!opt\.available\}/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
-  assert.match(source, /pressed && opt\.available \? styles\.rowPressed : null/);
+  assert.match(
+    source,
+    /pressed && opt\.available[\s\S]*styles\.rowPressedReducedMotion[\s\S]*styles\.rowPressed/,
+  );
   assert.doesNotMatch(
     source,
     /const handleSelect = \(option: LocaleOption\) => \{[\s\S]*setOpen\(false\);[\s\S]*if \(!option\.available\) return;/,
@@ -385,7 +388,10 @@ test('practice header controls keep accessible targets and token feedback', () =
     /focusedHeaderControl === 'supplementary' \? styles\.headerControlFocused : null/,
   );
   assert.match(source, /focusedHeaderControl === 'sources' \? styles\.headerControlFocused : null/);
-  assert.match(source, /pressed \? styles\.headerControlPressed : null/);
+  assert.match(
+    source,
+    /pressed[\s\S]*styles\.headerControlPressedReducedMotion[\s\S]*styles\.headerControlPressed/,
+  );
   assert.match(source, /minHeight: space\[6\]/);
   assert.match(source, /minWidth: space\[6\]/);
   assert.match(source, /backgroundColor: colors\.focusSoft/);

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
@@ -50,6 +51,7 @@ export function ProvenanceBadge({
   const fallbackThemeColors = useThemeColors();
   const themeColors = providedThemeColors ?? fallbackThemeColors;
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const reduceMotion = useReducedMotion();
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -99,7 +101,7 @@ export function ProvenanceBadge({
           styles.badge,
           tone,
           focused || hovered ? styles.badgeFocused : null,
-          pressed ? styles.badgePressed : null,
+          pressed && !reduceMotion ? styles.badgePressed : null,
         ]}
       >
         <Text style={[styles.badgeText, textTone]}>{label}</Text>

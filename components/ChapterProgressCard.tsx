@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { AccessibilityRole, PressableProps, StyleProp, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
 import { PillBadge } from './PillBadge';
@@ -112,6 +113,7 @@ export function ChapterProgressCard({
   totalCount,
   ...pressableProps
 }: ChapterProgressCardProps) {
+  const reduceMotion = useReducedMotion();
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = chapterProgressCopy[language];
@@ -157,7 +159,7 @@ export function ChapterProgressCard({
       onPress={onPress}
       style={({ pressed }) => [
         styles.card,
-        pressed && !isDisabled ? styles.pressed : null,
+        pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
         style,
       ]}

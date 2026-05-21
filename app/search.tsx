@@ -24,6 +24,7 @@ import {
   getQuestionSearchTitle,
   searchQuestions,
 } from '../lib/search/questionSearch';
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, motion, radius, space, typography } from '../lib/theme';
@@ -56,6 +57,7 @@ function SearchRouteLink({
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
@@ -97,8 +99,16 @@ function SearchRouteLink({
       style={[
         styles.routeLinkBase,
         linkStyle,
-        isFocused || isHovered ? styles.routeLinkInteractive : null,
-        isPressed ? styles.routeLinkPressed : null,
+        isFocused || isHovered
+          ? reduceMotion
+            ? styles.routeLinkInteractiveReducedMotion
+            : styles.routeLinkInteractive
+          : null,
+        isPressed
+          ? reduceMotion
+            ? styles.routeLinkPressedReducedMotion
+            : styles.routeLinkPressed
+          : null,
       ]}
     >
       {children}
@@ -580,10 +590,18 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.focus,
       transform: [{ scale: motion.hoverScale }],
     },
+    routeLinkInteractiveReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
     routeLinkPressed: {
       backgroundColor: themeColors.focusSoft,
       borderColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
+    },
+    routeLinkPressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.accentActive,
     },
     searchLabel: {
       color: themeColors.text,

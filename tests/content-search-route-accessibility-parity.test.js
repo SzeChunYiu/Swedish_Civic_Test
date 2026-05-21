@@ -86,6 +86,15 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /onPressIn=\{\(\) => \{/);
   assert.match(source, /styles\.routeLinkInteractive/);
   assert.match(source, /styles\.routeLinkPressed/);
+  assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
+  assert.match(
+    source,
+    /isFocused \|\| isHovered[\s\S]*styles\.routeLinkInteractiveReducedMotion[\s\S]*styles\.routeLinkInteractive/,
+  );
+  assert.match(
+    source,
+    /isPressed[\s\S]*styles\.routeLinkPressedReducedMotion[\s\S]*styles\.routeLinkPressed/,
+  );
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
   assert.match(source, /transform:\s*\[\{ scale: motion\.hoverScale \}\]/);

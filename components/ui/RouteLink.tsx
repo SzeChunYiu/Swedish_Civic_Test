@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 export type RouteLinkVariant = 'primary' | 'secondary' | 'text' | 'card';
@@ -82,6 +83,7 @@ export function RouteLink({
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
@@ -153,10 +155,22 @@ export function RouteLink({
         styles[variant],
         isFocused || isHovered
           ? variant === 'primary'
-            ? styles.primaryInteractive
-            : styles.interactive
+            ? reduceMotion
+              ? styles.primaryInteractiveReducedMotion
+              : styles.primaryInteractive
+            : reduceMotion
+              ? styles.interactiveReducedMotion
+              : styles.interactive
           : null,
-        isPressed ? (variant === 'primary' ? styles.primaryPressed : styles.pressed) : null,
+        isPressed
+          ? variant === 'primary'
+            ? reduceMotion
+              ? styles.primaryPressedReducedMotion
+              : styles.primaryPressed
+            : reduceMotion
+              ? styles.pressedReducedMotion
+              : styles.pressed
+          : null,
         style,
       ]}
     >
@@ -213,18 +227,32 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.hoverScale }],
   },
+  interactiveReducedMotion: {
+    backgroundColor: colors.focusSoft,
+  },
   primaryInteractive: {
     backgroundColor: colors.accentActive,
     borderColor: colors.accentActive,
     transform: [{ scale: motion.hoverScale }],
   },
+  primaryInteractiveReducedMotion: {
+    backgroundColor: colors.accentActive,
+    borderColor: colors.accentActive,
+  },
   pressed: {
     backgroundColor: colors.focusSoft,
     transform: [{ scale: motion.pressedScale }],
+  },
+  pressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
   },
   primaryPressed: {
     backgroundColor: colors.accentActive,
     borderColor: colors.accentActive,
     transform: [{ scale: motion.pressedScale }],
+  },
+  primaryPressedReducedMotion: {
+    backgroundColor: colors.accentActive,
+    borderColor: colors.accentActive,
   },
 });

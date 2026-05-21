@@ -1,6 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
@@ -77,6 +78,7 @@ export function FirstRunAboutTheTestModal({
   const settingsLanguage = useSettingsStore((state) => state.language);
   const hasSeen = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
+  const reduceMotion = useReducedMotion();
 
   if (hasSeen) return null;
   if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
@@ -114,7 +116,10 @@ export function FirstRunAboutTheTestModal({
           accessibilityLabel={copy.title}
           hitSlop={space[0]}
           onPress={(event) => event.stopPropagation()}
-          style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
+          style={({ pressed }) => [
+            styles.card,
+            pressed && !reduceMotion ? styles.cardPressed : null,
+          ]}
         >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
           <Text
@@ -135,7 +140,11 @@ export function FirstRunAboutTheTestModal({
               onPress={handleOpenGuide}
               style={({ pressed }) => [
                 styles.primaryButton,
-                pressed ? styles.primaryButtonPressed : null,
+                pressed
+                  ? reduceMotion
+                    ? styles.primaryButtonPressedReducedMotion
+                    : styles.primaryButtonPressed
+                  : null,
               ]}
             >
               <Text style={styles.primaryButtonText}>{copy.open}</Text>
@@ -147,7 +156,11 @@ export function FirstRunAboutTheTestModal({
               onPress={markSeen}
               style={({ pressed }) => [
                 styles.secondaryButton,
-                pressed ? styles.secondaryButtonPressed : null,
+                pressed
+                  ? reduceMotion
+                    ? styles.secondaryButtonPressedReducedMotion
+                    : styles.secondaryButtonPressed
+                  : null,
               ]}
             >
               <Text style={styles.secondaryButtonText}>{copy.skip}</Text>
@@ -219,6 +232,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentActive,
     transform: [{ scale: motion.pressedScale }],
   },
+  primaryButtonPressedReducedMotion: {
+    backgroundColor: colors.accentActive,
+  },
   primaryButtonText: {
     color: colors.surface,
     fontSize: typography.navButton.fontSize,
@@ -235,6 +251,9 @@ const styles = StyleSheet.create({
   secondaryButtonPressed: {
     backgroundColor: colors.surfaceWarm,
     transform: [{ scale: motion.pressedScale }],
+  },
+  secondaryButtonPressedReducedMotion: {
+    backgroundColor: colors.surfaceWarm,
   },
   secondaryButtonText: {
     color: colors.textMuted,

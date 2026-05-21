@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text as NativeText, View } from 'react-native';
 import type { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { useMemo } from 'react';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { motion, radius, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
@@ -74,6 +75,7 @@ export function OptionCard({
   ...pressableProps
 }: OptionCardProps) {
   const themeColors = useThemeColors();
+  const reduceMotion = useReducedMotion();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const settingsLanguage = useSettingsStore((settings) => settings.language);
   const language = languageOverride ?? settingsLanguage;
@@ -104,7 +106,7 @@ export function OptionCard({
       style={({ pressed }) => [
         styles.base,
         getCardStateStyle(styles, state),
-        pressed && !isDisabled ? styles.pressed : null,
+        pressed && !isDisabled && !reduceMotion ? styles.pressed : null,
         isDisabled ? styles.disabled : null,
         style,
       ]}

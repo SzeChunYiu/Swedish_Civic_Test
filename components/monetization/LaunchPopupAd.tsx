@@ -3,6 +3,7 @@ import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native
 
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PremiumEntitlements } from '../../types/monetization';
@@ -63,6 +64,7 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
   const language = useSettingsStore((state) => state.language);
   const copy = launchPopupAdCopy[language];
   const [visible, setVisible] = useState(() => getInitialVisibility(entitlements));
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (visible) {
@@ -126,7 +128,11 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
             onPress={() => setVisible(false)}
             style={({ pressed }) => [
               styles.closeButton,
-              pressed ? styles.closeButtonPressed : null,
+              pressed
+                ? reduceMotion
+                  ? styles.closeButtonPressedReducedMotion
+                  : styles.closeButtonPressed
+                : null,
             ]}
           >
             <Text style={styles.closeText}>{copy.closeLabel}</Text>
@@ -187,6 +193,9 @@ const styles = StyleSheet.create({
   closeButtonPressed: {
     backgroundColor: colors.accentActive,
     transform: [{ scale: motion.pressedScale }],
+  },
+  closeButtonPressedReducedMotion: {
+    backgroundColor: colors.accentActive,
   },
   closeText: {
     color: colors.surface,

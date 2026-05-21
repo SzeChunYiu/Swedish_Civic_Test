@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import type { AccessibilityActionEvent, StyleProp, ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, shadows, space } from '../lib/theme';
 import { Button } from './Button';
@@ -208,6 +209,7 @@ function Stepper({
   value,
   valueLabel,
 }: StepperProps) {
+  const reduceMotion = useReducedMotion();
   const canDecrement = value > min && !disabled && Boolean(onChange);
   const canIncrement = value < max && !disabled && Boolean(onChange);
   const stepperAccessibilityActions = [
@@ -255,7 +257,7 @@ function Stepper({
           onPress={() => onChange?.(getNextValue(value, step, -1, min, max))}
           style={({ pressed }) => [
             styles.stepperButton,
-            pressed && canDecrement ? styles.pressed : null,
+            pressed && canDecrement && !reduceMotion ? styles.pressed : null,
             !canDecrement ? styles.disabledControl : null,
           ]}
         >
@@ -272,7 +274,7 @@ function Stepper({
           onPress={() => onChange?.(getNextValue(value, step, 1, min, max))}
           style={({ pressed }) => [
             styles.stepperButton,
-            pressed && canIncrement ? styles.pressed : null,
+            pressed && canIncrement && !reduceMotion ? styles.pressed : null,
             !canIncrement ? styles.disabledControl : null,
           ]}
         >
@@ -337,6 +339,7 @@ export function MockExamConfigPanel({
   tone = 'surface',
   ...surfaceProps
 }: MockExamConfigPanelProps) {
+  const reduceMotion = useReducedMotion();
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = mockExamConfigPanelCopy[language];
@@ -536,7 +539,7 @@ export function MockExamConfigPanel({
                 style={({ pressed }) => [
                   styles.chapterChip,
                   selected ? styles.chapterChipSelected : null,
-                  pressed && !disabled ? styles.pressed : null,
+                  pressed && !disabled && !reduceMotion ? styles.pressed : null,
                   disabled ? styles.disabledControl : null,
                 ]}
               >

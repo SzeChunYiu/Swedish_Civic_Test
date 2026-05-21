@@ -159,6 +159,46 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
   assert.doesNotMatch(backdropTag[0], /accessibilityRole=|accessibilityLabel=/);
 });
 
+test('shared interactive scale feedback respects reduced-motion preferences', () => {
+  const checkedSources = [
+    'app/(tabs)/practice.tsx',
+    'app/search.tsx',
+    'app/settings.tsx',
+    'components/Button.tsx',
+    'components/ChapterProgressCard.tsx',
+    'components/MockExamConfigPanel.tsx',
+    'components/OptionCard.tsx',
+    'components/QuestionNavigator.tsx',
+    'components/compliance/ComplianceActionLink.tsx',
+    'components/monetization/LaunchPopupAd.tsx',
+    'components/onboarding/FirstRunAboutTheTestModal.tsx',
+    'components/quiz/ConfidenceRatingPicker.tsx',
+    'components/quiz/ProvenanceBadge.tsx',
+    'components/ui/Button.tsx',
+    'components/ui/LanguagePicker.tsx',
+    'components/ui/RouteLink.tsx',
+    'components/ui/SocialProofRow.tsx',
+    'components/ui/TopBarActions.tsx',
+  ];
+
+  checkedSources.forEach((relativePath) => {
+    const source = fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
+    assert.match(source, /useReducedMotion/);
+    assert.match(source, /reduceMotion/);
+  });
+
+  const topBarSource = fs.readFileSync(TOP_BAR_ACTIONS_SOURCE, 'utf8');
+  const complianceSource = fs.readFileSync(
+    path.join(ROOT, 'components', 'compliance', 'ComplianceActionLink.tsx'),
+    'utf8',
+  );
+
+  [topBarSource, complianceSource].forEach((source) => {
+    assert.match(source, /@media \(prefers-reduced-motion: reduce\)/);
+    assert.match(source, /transform: none;/);
+  });
+});
+
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
   const source = fs.readFileSync(
     path.join(ROOT, 'components', 'monetization', 'NativeAdCard.native.tsx'),
@@ -279,14 +319,29 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   );
   assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
   assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
-  assert.match(source, /isFocused \|\| isHovered \? styles\.iconButtonHover : null/);
-  assert.match(source, /isPressed \? styles\.iconButtonPressed : null/);
+  assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
+  assert.match(
+    source,
+    /isFocused \|\| isHovered[\s\S]*styles\.iconButtonHoverReducedMotion[\s\S]*styles\.iconButtonHover/,
+  );
+  assert.match(
+    source,
+    /isPressed[\s\S]*styles\.iconButtonPressedReducedMotion[\s\S]*styles\.iconButtonPressed/,
+  );
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
   assert.match(source, /iconButtonHover:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/);
   assert.match(
     source,
+    /iconButtonHoverReducedMotion:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/,
+  );
+  assert.match(
+    source,
     /iconButtonHover:\s*\{[\s\S]*transform: \[\{ scale: motion\.hoverScale \}\]/,
+  );
+  assert.match(
+    source,
+    /iconButtonPressedReducedMotion:\s*\{[\s\S]*backgroundColor: colors\.focusSoft/,
   );
   assert.match(
     source,

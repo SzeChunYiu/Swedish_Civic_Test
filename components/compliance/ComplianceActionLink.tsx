@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 
 type ComplianceActionLinkHref = ComponentProps<typeof Link>['href'];
@@ -68,6 +69,18 @@ function useComplianceActionLinkWebStyles() {
 .${complianceActionLinkClassName}:active {
   transform: scale(${motion.pressedScale});
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .${complianceActionLinkClassName} {
+    transition: background-color ${motion.duration.fast}ms ${motion.easing.press}, border-color ${motion.duration.fast}ms ${motion.easing.press};
+  }
+
+  .${complianceActionLinkClassName}:hover,
+  .${complianceActionLinkClassName}:focus-visible,
+  .${complianceActionLinkClassName}:active {
+    transform: none;
+  }
+}
 `;
     document.head.appendChild(styleElement);
   }, []);
@@ -83,6 +96,7 @@ export function ComplianceActionLink({
   useComplianceActionLinkWebStyles();
 
   const [isPressed, setIsPressed] = useState(false);
+  const reduceMotion = useReducedMotion();
   const clearPressedState = () => setIsPressed(false);
   const linkInteractionHandlers = {
     onPressIn: () => setIsPressed(true),
@@ -106,7 +120,11 @@ export function ComplianceActionLink({
         styles.link,
         styles[variant],
         detail ? styles.linkWithDetail : null,
-        isPressed ? styles[`${variant}Pressed`] : null,
+        isPressed
+          ? reduceMotion
+            ? styles[`${variant}PressedReducedMotion`]
+            : styles[`${variant}Pressed`]
+          : null,
       ]}
     >
       <Text
@@ -156,6 +174,10 @@ const styles = StyleSheet.create({
     borderColor: colors.accentActive,
     transform: [{ scale: motion.pressedScale }],
   },
+  primaryPressedReducedMotion: {
+    backgroundColor: colors.accentActive,
+    borderColor: colors.accentActive,
+  },
   secondary: {
     backgroundColor: colors.surfaceMuted,
   },
@@ -163,6 +185,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     borderColor: colors.focus,
     transform: [{ scale: motion.pressedScale }],
+  },
+  secondaryPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
   },
   label: {
     fontSize: typography.navButton.fontSize,

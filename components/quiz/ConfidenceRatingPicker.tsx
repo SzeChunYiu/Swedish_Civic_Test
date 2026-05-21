@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import type { ConfidenceRating } from '../../types/progress';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
@@ -51,6 +52,7 @@ export function ConfidenceRatingPicker({
   value,
 }: ConfidenceRatingPickerProps) {
   const localizedCopy = copy[language];
+  const reduceMotion = useReducedMotion();
 
   return (
     <View
@@ -82,7 +84,11 @@ export function ConfidenceRatingPicker({
                 styles.option,
                 selected ? styles.optionSelected : null,
                 disabled ? styles.optionDisabled : null,
-                pressed && !disabled ? styles.optionPressed : null,
+                pressed && !disabled
+                  ? reduceMotion
+                    ? styles.optionPressedReducedMotion
+                    : styles.optionPressed
+                  : null,
               ]}
             >
               <Text style={[styles.value, selected ? styles.valueSelected : null]}>
@@ -145,6 +151,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     borderColor: colors.focus,
     transform: [{ scale: motion.pressedScale }],
+  },
+  optionPressedReducedMotion: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
   },
   optionSelected: {
     backgroundColor: colors.badgeBlueBg,
