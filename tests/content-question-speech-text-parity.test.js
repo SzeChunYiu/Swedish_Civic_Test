@@ -146,8 +146,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'const promptText = stripSourceAuthorityPhrasing(question.questionSv) || question.questionSv;',
-        'const promptText = question.questionSv;'
+        'const promptText = stripSourceAuthorityPhrasing(rawPromptText) || rawPromptText;',
+        'const promptText = rawPromptText;'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -181,8 +181,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'const optionText = question.options',
-        'const optionText = question.options.slice(0, 0)'
+        'const optionText = getQuestionOptions(question)',
+        'const optionText = getQuestionOptions(question).slice(0, 0)'
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);

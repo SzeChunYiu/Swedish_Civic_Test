@@ -200,6 +200,14 @@ Blocked? no - the dedicated option bilingual-text schema test now proves the val
 Next suggested validator action: review and accept this DATA-INTEGRITY schema coverage atom, then keep `tests/content-option-bilingual-text.test.js`, `npm run validate:content`, and `npm run test:content` as the nearest regression gates. Note that the shared checkout still contains pre-existing dirty files outside this atom.
 
 Lane: DATA-INTEGRITY
+Host/branch: task/data-integrity/practice-hub-1779373648
+Task/checklist item: PRACTICE-HUB-E2E-CONTRACT-DRIFT-1.
+Artifacts changed: `app/(tabs)/practice.tsx`, `lib/quiz/practiceSessionStore.ts`, `scripts/validate-content.js`, `scripts/content-production.test.js`, `tests/content-practice-route-copy-parity.test.js`, and impacted Playwright practice-entry specs.
+Verification: `npm run typecheck -- --pretty false` passed; `npm run lint` passed; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS="--v8-pool-size=1" npm run build:web:export -- --max-workers 2` passed; `CI=1 NODE_OPTIONS="--v8-pool-size=1" npm run test:e2e -- tests/e2e/practice-chapter-hub.spec.ts --workers=1` passed 3/3; `CI=1 NODE_OPTIONS="--v8-pool-size=1" npm run test:e2e -- tests/e2e/web-aria-false-state.spec.ts --workers=1` passed 2/2; `CI=1 NODE_OPTIONS="--v8-pool-size=1" npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1` passed 10/10; `CI=1 NODE_OPTIONS="--v8-pool-size=1" npm run test:e2e -- tests/e2e/mistakes-empty-state-cta.spec.ts tests/e2e/web-ad-real-fallback.spec.ts tests/e2e/theme-typography-geometry.spec.ts --workers=1` passed the mistakes CTA cases but exposed pre-existing unrelated failures in the typography badge letter-spacing assertions and missing home ad fixture; `npm run format:check` passed; targeted `npx prettier --check` over changed app/test files passed; `git diff --check` passed; a direct practice-copy label audit reported `{ count: 70 }`.
+Blocked? partial - `NODE_OPTIONS="--v8-pool-size=1" node scripts/validate-content.js --focus-practice-route-copy-parity` is still blocked by the existing `q001 generated variant[1] options do not match generated answer template` failure on current main, and the broader typography/ad e2e checks fail before this route-specific slice for unrelated reasons.
+Next suggested validator action: review and accept the practice hub route contract if the PR e2e checks are green, while leaving the q001 generated-template and existing typography/ad-fixture failures to their already queued follow-ups.
+
+Lane: DATA-INTEGRITY
 Host/branch: local/main
 Task/checklist item: UHR section-map adjacent page-range negative coverage atom.
 Artifacts changed: `tests/content-uhr-map-page-ranges.test.js`.

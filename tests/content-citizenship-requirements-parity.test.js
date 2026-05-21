@@ -147,6 +147,30 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
 });
 
+test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
+  const routeSource = read('app/citizenship-requirements.tsx');
+  const sourceLinkCount = (routeSource.match(/Linking\.openURL\(source\.url\)/g) || []).length;
+
+  assert.match(routeSource, /areaSourceAccessibilityPrefix/);
+  assert.match(routeSource, /source\.title\[language\]/);
+  assert.match(routeSource, /formatSourceMeta\(source, copy\)/);
+  assert.match(routeSource, /source\.sourceDate/);
+  assert.match(routeSource, /source\.retrievedDate/);
+  assert.match(routeSource, /source\.url/);
+  assert.match(routeSource, /styles\.sourceRefRow/);
+  assert.match(routeSource, /accessibilityRole="link"/);
+  assert.equal(
+    sourceLinkCount >= 2,
+    true,
+    'area source refs and official source list should both open source URLs',
+  );
+  assert.doesNotMatch(
+    routeSource,
+    /areaSources\.map\(\(source\) => source\.publisher\)\.join\(' · '\)/,
+    'area cards must not collapse source provenance to publisher-only labels',
+  );
+});
+
 test('citizenship requirements route is discoverable from about-the-test copy', () => {
   const aboutSource = read('app/about-the-test.tsx');
 

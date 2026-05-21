@@ -12,14 +12,14 @@ const emptyStateCases = [
     ctaLabel: 'Öva svåra frågor',
     emptyText: 'När du missar en övningsfråga visas den här.',
     emptyTitle: 'Inga missade frågor ännu',
-    firstQuestionLabel: 'Fråga 1',
+    hubTitle: 'Välj hur du vill öva',
     language: 'sv',
   },
   {
     ctaLabel: 'Practice weak questions',
     emptyText: 'Answer a practice question incorrectly and it will appear here.',
     emptyTitle: 'No mistakes yet',
-    firstQuestionLabel: 'Question 1',
+    hubTitle: 'Choose how to practise',
     language: 'en',
   },
 ] as const;
@@ -49,7 +49,7 @@ for (const copy of emptyStateCases) {
     await practiceCta.click();
 
     await expect(page).toHaveURL(/\/practice$/);
-    await expect(page.getByText(copy.firstQuestionLabel, { exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: copy.hubTitle })).toBeVisible();
     expect(consoleErrors.get()).toEqual([]);
   });
 }

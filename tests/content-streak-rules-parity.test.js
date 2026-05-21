@@ -30,7 +30,7 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.ok(match, 'validation should print JSON summary');
 
   const summary = JSON.parse(match[0]);
-  const { calculateStreak } = loadTs('lib/learning/streaks.ts');
+  const { calculateStreak, getLocalDateKey } = loadTs('lib/learning/streaks.ts');
   const today = '2026-05-15';
 
   assert.equal(summary.streakRulesValidated, 13);
@@ -46,6 +46,8 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
   assert.equal(calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
+  assert.match(getLocalDateKey(new Date(Number.NaN)), /^\d{4}-\d{2}-\d{2}$/);
+  assert.notEqual(getLocalDateKey(new Date(Number.NaN)), 'NaN-NaN-NaN');
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 

@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import { ActivityHeatmap } from '../components/dashboard/ActivityHeatmap';
 import { MockExamHistoryCard } from '../components/dashboard/MockExamHistoryCard';
@@ -20,12 +20,10 @@ import {
 } from '../lib/learning/dashboardStats';
 import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
 import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
-import { hasProEntitlement } from '../lib/monetization/premium';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../lib/theme';
 import { useThemeColors } from '../lib/theme/ThemeProvider';
-import type { ProTierEntitlements } from '../types/monetization';
 
 const ACTIVITY_DAYS = 53 * 7;
 const XP_DAYS = 30;
@@ -273,21 +271,6 @@ function createQuestionChapterIndex() {
   return Object.fromEntries(questions.map((question) => [question.id, question.chapterId]));
 }
 
-function createDashboardProEntitlements(): ProTierEntitlements {
-  return {
-    adsDisabled: false,
-    confidenceSlider: false,
-    customStudyPlan: false,
-    fullMistakeReview: false,
-    multiColorHighlights: false,
-    nativeLangExplanations: false,
-    notesExport: false,
-    predictedPassProbability: false,
-    spacedRepetition: false,
-    unlimitedMockExams: false,
-  };
-}
-
 export default function DashboardScreen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const answerHistory = useProgressStore((state) => state.answerHistory);
@@ -335,9 +318,6 @@ export default function DashboardScreen() {
       }),
     [answerDates, streakFreezeState],
   );
-  const proEntitlements = useMemo(createDashboardProEntitlements, []);
-  const advancedAnalyticsUnlocked =
-    hasProEntitlement(proEntitlements) && proEntitlements.predictedPassProbability;
   const summaryAccessibilityLabel = copy.summaryAccessibilityLabel(
     summary.questionsAnsweredThisWeek,
     summary.chaptersWithAnyAnswer,
@@ -386,7 +366,6 @@ export default function DashboardScreen() {
         copy={copy.mockHistory}
         entries={mockHistoryEntries}
       />
-      {advancedAnalyticsUnlocked ? <View style={styles.proAnalyticsPlaceholder} /> : null}
     </ScreenShell>
   );
 }
@@ -419,9 +398,6 @@ function createStyles(themeColors: ThemeColors) {
       paddingHorizontal: space[2],
       paddingVertical: space[1],
       textDecorationLine: 'none',
-    },
-    proAnalyticsPlaceholder: {
-      display: 'none',
     },
   });
 }
