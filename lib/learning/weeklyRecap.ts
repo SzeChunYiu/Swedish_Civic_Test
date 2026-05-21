@@ -9,7 +9,6 @@
 // just finished.
 
 import { getLocalDateKey } from './streaks';
-import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -67,19 +66,16 @@ export function endOfWeek(date: Date): Date {
   return new Date(start.getTime() + 7 * DAY_MS - 1);
 }
 
-function isWithin(iso: unknown, start: Date, end: Date, now: Date): boolean {
-  const t = validAnswerTimestampMs(iso, now);
-  if (t === null) return false;
+function isWithin(iso: unknown, start: Date, end: Date): boolean {
+  if (typeof iso !== 'string') return false;
+  if (!iso) return false;
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return false;
   return t >= start.getTime() && t <= end.getTime();
 }
 
-function isAnsweredInWindow(
-  answer: { answeredAt?: unknown },
-  start: Date,
-  end: Date,
-  now: Date,
-): boolean {
-  return isWithin(answer.answeredAt, start, end, now);
+function isAnsweredInWindow(answer: { answeredAt?: unknown }, start: Date, end: Date): boolean {
+  return isWithin(answer.answeredAt, start, end);
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -127,7 +123,6 @@ function answersFromSessions(
   sessions: readonly unknown[],
   start: Date,
   end: Date,
-  now: Date,
 ): {
   total: number;
   correct: number;
@@ -143,7 +138,7 @@ function answersFromSessions(
     if (!isRecord(session) || !Array.isArray(session.answers)) continue;
     for (const answer of session.answers) {
       if (!isRecord(answer)) continue;
-      if (!isAnsweredInWindow(answer, start, end, now)) continue;
+      if (!isAnsweredInWindow(answer, start, end)) continue;
       total += 1;
       if (answer.isCorrect === true) correct += 1;
       if (typeof answer.questionId === 'string' && answer.questionId.trim()) {
@@ -181,13 +176,12 @@ function mistakesResolvedInWindow(
   questionProgress: Record<string, unknown>,
   start: Date,
   end: Date,
-  now: Date,
 ): number {
   let count = 0;
   for (const qp of Object.values(questionProgress)) {
     if (!isRecord(qp)) continue;
     if (!qp.lastAnsweredAt) continue;
-    if (!isWithin(qp.lastAnsweredAt, start, end, now)) continue;
+    if (!isWithin(qp.lastAnsweredAt, start, end)) continue;
     const correctStreak = finiteNumber(qp.correctStreak);
     const wrongCount = finiteNumber(qp.wrongCount);
     if (correctStreak !== null && correctStreak >= 1 && wrongCount !== null && wrongCount > 0) {
@@ -201,7 +195,6 @@ function countMocks(
   sessions: readonly unknown[],
   start: Date,
   end: Date,
-  now: Date,
 ): {
   count: number;
   bestScore: number | null;
@@ -212,7 +205,7 @@ function countMocks(
     if (!isRecord(session)) continue;
     if (session.mode !== 'exam') continue;
     if (!session.completedAt) continue;
-    if (!isWithin(session.completedAt, start, end, now)) continue;
+    if (!isWithin(session.completedAt, start, end)) continue;
     count += 1;
     const score = normalizedMockScore(session.score);
     if (score !== null) {
@@ -232,8 +225,8 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
   const sessions = progressSessions(input.progress);
   const questionProgress = progressQuestionMap(input.progress);
 
-  const current = answersFromSessions(sessions, start, end, now);
-  const previous = answersFromSessions(sessions, previousStart, previousEnd, now);
+  const current = answersFromSessions(sessions, start, end);
+  const previous = answersFromSessions(sessions, previousStart, previousEnd);
 
   // Resolve chaptersTouched from the question→chapter index if provided.
   if (input.questionChapterIndex) {
@@ -259,8 +252,8 @@ export function generateWeeklyRecap(input: WeeklyRecapInput): WeeklyRecap {
         )
       : null;
 
-  const mocks = countMocks(sessions, start, end, now);
-  const mistakesResolved = mistakesResolvedInWindow(questionProgress, start, end, now);
+  const mocks = countMocks(sessions, start, end);
+  const mistakesResolved = mistakesResolvedInWindow(questionProgress, start, end);
 
   return {
     weekStart: getLocalDateKey(start),
