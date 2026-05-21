@@ -1685,6 +1685,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vad betyder det att (.+)$/i);
   if (match) {
+    if (source.id === 'q050' && /^vara källkritisk$/i.test(match[1])) {
+      if (/^Att ifrågasätta och kontrollera om information är korrekt$/i.test(answer)) {
+        return 'Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt';
+      }
+      if (/^Att aldrig läsa nyheter$/i.test(answer)) {
+        return 'Källkritik innebär att man aldrig läser nyheter';
+      }
+      return `Källkritik innebär ${lowerFirst(answer)}`;
+    }
     if (/^mänskliga rättigheter gäller alla$/i.test(match[1])) {
       const statement = universalHumanRightsStatementSv(answer);
       if (statement) return statement;
@@ -2337,7 +2346,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^What does it mean to (.+)$/i);
-  if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  if (match) {
+    if (source.id === 'q050' && /^be source-critical$/i.test(match[1])) {
+      return `Source criticism means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+    }
+    return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+  }
 
   match = q.match(/^What can make (.+?) (stronger)$/i);
   if (match) {
