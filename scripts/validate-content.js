@@ -10002,6 +10002,21 @@ function validateAdPlacementRouteParity() {
       routeIsValid = false;
     }
 
+    if (spec.file === 'app/(tabs)/home.tsx') {
+      const homeAdWaitsForEntitlements =
+        source.includes(
+          'const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;',
+        ) &&
+        /\{entitlementsReady\s*\?\s*\([\s\S]{0,1200}<PremiumBanner[\s\S]{0,1200}<AdBanner\s+entitlements=\{monetizationEntitlements\}\s+placement="home_banner"\s*\/>/.test(
+          source,
+        );
+
+      if (!homeAdWaitsForEntitlements) {
+        reject('app/(tabs)/home.tsx must gate home_banner behind Remove Ads entitlement readiness');
+        routeIsValid = false;
+      }
+    }
+
     if (!safePlacements.includes(spec.placement)) {
       reject(`adsConfig.safePlacements must include routed placement ${spec.placement}`);
       routeIsValid = false;

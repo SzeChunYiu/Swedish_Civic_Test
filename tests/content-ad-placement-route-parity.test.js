@@ -415,6 +415,37 @@ test('Home ad placement waits for Remove Ads entitlements before rendering', () 
   );
 });
 
+test('ad placement route parity rejects ungated Home banner entitlements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (', '{true ? (');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/\(tabs\)\/home\.tsx must gate home_banner behind Remove Ads entitlement readiness/,
+  );
+});
+
 test('ad placement route parity rejects practice interstitial keys scoped to selected answers', () => {
   const result = spawnSync(
     process.execPath,
