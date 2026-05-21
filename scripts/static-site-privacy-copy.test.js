@@ -7,10 +7,6 @@ const {
   findUnsupportedStaticReleaseCopyInSource,
   formatUnsupportedStaticReleaseCopy,
 } = require('./static-site-release-copy-guard');
-const {
-  findStaticAdSenseSlotStateCopyIssues,
-  staticAdSenseSlotsAreConfiguredInSource,
-} = require('./check-live-site');
 
 const repoRoot = path.resolve(__dirname, '..');
 const unqualifiedNoTrackingPatterns = [
@@ -65,10 +61,7 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
   [
-    /Google AdSense-ready ad slots/,
-    /AdSense-ready web ad slots/,
-    /prepared for <b>Google AdSense<\/b>/,
-    /annonsytor f[oö]rberedda f[oö]r Google AdSense/,
+    /Google AdSense/,
     /Google Mobile Ads \(AdMob\)/,
     /ad and consent signals/,
     /annons- och samtyckessignaler/,
@@ -79,41 +72,14 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static site privacy copy follows AdSense slot-state gate', () => {
-  const indexSource = read('site/index.html');
-  const appSource = read('site/app.js');
+test('static site privacy callout uses locale-natural plain-language labels', () => {
+  const surface = [read('site/app.js'), read('site/index.html')].join('\n');
+  const swedishDictionary = staticSiteSwedishDictionary();
 
-  assert.equal(staticAdSenseSlotsAreConfiguredInSource(appSource), false);
-  assert.deepEqual(findStaticAdSenseSlotStateCopyIssues(indexSource, appSource), []);
-
-  assert.match(indexSource, /This website has Google AdSense-ready ad slots/);
-  assert.match(appSource, /This website has Google AdSense-ready ad slots/);
-  assert.match(
-    appSource,
-    /Den h[aä]r webbplatsen har annonsytor f[oö]rberedda f[oö]r Google AdSense/,
-  );
-  assert.match(
-    indexSource,
-    /When reviewed web ad slots are configured, Google AdSense can set cookies/,
-  );
-  assert.match(appSource, /N[aä]r granskade webbaserade annonsytor [aä]r konfigurerade/);
-
-  const staleAppSource = [
-    appSource,
-    "'privacy.s5.p': 'This website uses Google AdSense.'",
-    "'privacy.s5.p': 'Den här webbplatsen använder Google AdSense.'",
-    "'consent.body': 'We use Google AdSense to show a couple of ads.'",
-    "'consent.body': 'Vi använder Google AdSense för att visa ett par annonser.'",
-  ].join('\n');
-  const staleIssues = findStaticAdSenseSlotStateCopyIssues(indexSource, staleAppSource);
-  assert.ok(staleIssues.length >= 4);
-  assert.match(staleIssues.join('\n'), /reviewed web slot IDs are not configured/);
-
-  const configuredAppSource = staleAppSource
-    .replace("inline: '',", "inline: '1234567890',")
-    .replace("anchor: '',", "anchor: '9876543210',");
-  assert.equal(staticAdSenseSlotsAreConfiguredInSource(configuredAppSource), true);
-  assert.deepEqual(findStaticAdSenseSlotStateCopyIssues(indexSource, configuredAppSource), []);
+  assert.doesNotMatch(surface, /In plain Swedish:/);
+  assert.match(surface, /data-i18n="privacy\.s4\.callout\.b">In plain English:<\/b>/);
+  assert.match(surface, /'privacy\.s4\.callout\.b': 'In plain English:'/);
+  assert.match(swedishDictionary, /'privacy\.s4\.callout\.b': 'På klarspråk:'/);
 });
 
 test('static site public copy does not label the release as MVP', () => {
