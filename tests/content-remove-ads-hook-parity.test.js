@@ -157,10 +157,17 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(focusedHarnessSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
   assert.match(focusedHarnessSource, /monetizationRuntimeHarness\.cjs/);
+  assert.match(focusedHarnessSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
   assert.match(runtimeHarnessSource, /function createTsLoader/);
   assert.match(runtimeHarnessSource, /function createReactHookStub/);
   assert.match(runtimeHarnessSource, /function createReactNativeWebStub/);
+  assert.match(runtimeHarnessSource, /function createMemoryLocalStorage/);
+  assert.match(runtimeHarnessSource, /async function withGlobalProperties/);
   assert.doesNotMatch(focusedHarnessSource, /function loadTs|ts\.transpileModule/);
+  assert.doesNotMatch(focusedHarnessSource, /function createMemoryLocalStorage/);
+  assert.doesNotMatch(focusedHarnessSource, /function withGlobalProperties/);
+  assert.doesNotMatch(focusedHarnessSource, /Object\.getOwnPropertyDescriptor\(globalThis/);
+  assert.doesNotMatch(focusedHarnessSource, /Object\.defineProperty\(globalThis/);
   assert.doesNotMatch(monetizationTestFileSources, /function createReactHookStub/);
   assert.doesNotMatch(monetizationTestFileSources, /Platform:\s*\{\s*OS:\s*'web'\s*\}/);
   assert.match(
