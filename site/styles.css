@@ -7124,3 +7124,240 @@ html[dir='rtl'] .lang-menu {
     padding: 24px 20px;
   }
 }
+
+/* ------------------------------------------------------------------
+   DOC + SUPPORT BOX OPTIMIZATION ROUND
+   Privacy, terms, sources, and support pages now use tactile reading
+   surfaces: boxed meta, sticky table-of-contents cards, and raised callouts.
+------------------------------------------------------------------ */
+
+.doc__inner {
+  max-width: 980px;
+}
+
+.doc__back a,
+.doc__kicker,
+.doc__lede,
+.doc__meta,
+.doc__body {
+  position: relative;
+  z-index: 1;
+}
+
+.doc__back a {
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 999px;
+  display: inline-flex;
+  padding: 7px 11px;
+}
+
+.doc__kicker {
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 8px 12px;
+}
+
+.doc h1 {
+  max-width: 18ch;
+}
+
+.doc__meta {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  gap: 12px;
+  padding: 14px;
+}
+
+.doc__meta span {
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.doc__body {
+  gap: 32px;
+  grid-template-columns: 250px minmax(0, 1fr);
+}
+
+.doc__nav,
+.doc__main {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.doc__nav {
+  border-radius: 22px;
+  padding: 20px 18px 18px 24px;
+}
+
+.doc__main {
+  border-radius: 28px;
+  padding: 34px clamp(24px, 4vw, 44px) 40px;
+}
+
+.doc__nav::before,
+.doc__main::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  background: var(--card-rail);
+  opacity: 0.86;
+  z-index: -1;
+}
+
+.doc__nav h5 {
+  color: var(--blue);
+}
+
+.doc__nav ol {
+  display: grid;
+  gap: 8px;
+}
+
+.doc__nav li {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.44);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 14px;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.doc__nav li::before {
+  background: var(--gold-soft);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 999px;
+  min-width: 32px;
+  padding: 2px 6px;
+  text-align: center;
+}
+
+.doc__nav a {
+  line-height: 1.25;
+}
+
+.doc__main h2 {
+  border-top: 0;
+  padding-top: 18px;
+}
+
+.doc__main > h2:first-child {
+  padding-top: 0;
+}
+
+.doc__main h2:not(:first-child)::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin: -18px 0 28px;
+  background: linear-gradient(90deg, var(--card-border), transparent);
+}
+
+.doc__main ul {
+  background: rgba(255, 255, 255, 0.36);
+  border: 1px solid rgba(0, 106, 167, 0.08);
+  border-radius: 18px;
+  padding: 16px 18px 16px 38px;
+}
+
+.doc__main li + li {
+  border-top: 1px solid rgba(0, 106, 167, 0.08);
+  padding-top: 8px;
+}
+
+.callout {
+  background:
+    linear-gradient(135deg, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 44%),
+    var(--card-surface);
+  border: 1px solid rgba(217, 169, 0, 0.36);
+  border-left: 7px solid var(--gold);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px;
+}
+
+.callout--blue {
+  background:
+    linear-gradient(135deg, rgba(0, 106, 167, 0.12), rgba(0, 106, 167, 0) 44%),
+    var(--card-surface);
+  border-color: rgba(0, 106, 167, 0.28);
+  border-left-color: var(--blue);
+}
+
+:root[data-theme='dark'] .doc__back a,
+:root[data-theme='dark'] .doc__kicker,
+:root[data-theme='dark'] .doc__meta span,
+:root[data-theme='dark'] .doc__nav li,
+:root[data-theme='dark'] .doc__main ul {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .doc__meta,
+:root[data-theme='dark'] .doc__nav,
+:root[data-theme='dark'] .doc__main,
+:root[data-theme='dark'] .callout {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .callout,
+:root[data-theme='dark'] .callout p,
+:root[data-theme='dark'] .callout b,
+:root[data-theme='dark'] .callout--blue,
+:root[data-theme='dark'] .callout--blue p,
+:root[data-theme='dark'] .callout--blue b {
+  color: var(--ink) !important;
+}
+
+@media (max-width: 980px) {
+  .doc__body {
+    grid-template-columns: 1fr;
+  }
+  .doc__nav {
+    position: static;
+  }
+  .doc__nav ol {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .doc {
+    padding-inline: 18px;
+  }
+  .doc__meta {
+    flex-direction: column;
+  }
+  .doc__meta span {
+    width: 100%;
+  }
+  .doc__nav,
+  .doc__main {
+    border-radius: 20px;
+  }
+  .doc__nav::before,
+  .doc__main::before {
+    width: 5px;
+  }
+  .doc__main {
+    padding: 28px 20px 32px 24px;
+  }
+  .doc__nav ol {
+    grid-template-columns: 1fr;
+  }
+}

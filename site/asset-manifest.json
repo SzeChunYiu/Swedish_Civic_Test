@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 111250,
-      "sha256": "6765013878aab0aba416f2b65bcf92b6662499c2bd798e492121a26a42ce33e5"
+      "bytes": 112018,
+      "sha256": "1e718e6688cf230bb1e58fe93ef13f7ded6e8d5c456a4179e54db44790fea03b"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -96,8 +96,8 @@
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 72386,
-      "sha256": "49299d04e95fe1ae53b504e45742b8af49a53ba3cc0e1b93994700b0df6e6f18"
+      "bytes": 72599,
+      "sha256": "690bf27c2d41115e7a48a65be7349e9b4b0c8da34e51632ab6c1504169735148"
     },
     "practice.js": {
       "bytes": 68033,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 146077,
-      "sha256": "153f1656ffd830afef891bed56360ae8169b980ffd08a11ac0299128593904f0"
+      "bytes": 150881,
+      "sha256": "2a3c9deec9d8778e1394bee6b57cbaa32d580c53a785611710f6ab36181c3e68"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
