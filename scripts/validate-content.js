@@ -7238,6 +7238,8 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let launchAdFirstRunDeferralSourcesValidated = 0;
+let launchAdFirstRunDeferralParityValidated = false;
 let tabNavigationRulesValidated = 0;
 let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
@@ -7562,6 +7564,18 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-launch-ad-deferral')) {
+  validateLaunchAdRouteSuppressionParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    launchAdSuppressedRoutesValidated,
+    launchAdRouteSuppressionParityValidated,
+    launchAdFirstRunDeferralSourcesValidated,
+    launchAdFirstRunDeferralParityValidated,
   });
   process.exit(0);
 }
@@ -7950,11 +7964,19 @@ function validateAppConfigSchema() {
 
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
+  let deferralValid = true;
   let rootLayout = '';
+  let webLaunchPopupAd = '';
+  let nativeLaunchPopupAd = '';
 
   function reject(message) {
     valid = false;
     fail(message);
+  }
+
+  function rejectDeferral(message) {
+    deferralValid = false;
+    reject(message);
   }
 
   const suppressedRoutes = adsConfig?.suppressedLaunchPopupRoutes;
@@ -8009,6 +8031,72 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
+  }
+  if (
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') === -1 ||
+    rootLayout.indexOf('<FirstRunAboutTheTestModal />') === -1 ||
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') >
+      rootLayout.indexOf('<FirstRunAboutTheTestModal />')
+  ) {
+    rejectDeferral(
+      'root layout must render the launch ad deferral check before the first-run modal',
+    );
+  }
+
+  try {
+    webLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.tsx'),
+      'utf8',
+    );
+    nativeLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    rejectDeferral(`launch popup ad sources could not be read: ${error.message}`);
+  }
+
+  for (const [label, source] of [
+    ['web', webLaunchPopupAd],
+    ['native', nativeLaunchPopupAd],
+  ]) {
+    let sourceValid = true;
+
+    if (
+      !source.includes(
+        "import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';",
+      )
+    ) {
+      sourceValid = false;
+      rejectDeferral(`${label} launch ad must import the first-run modal deferral helper`);
+    }
+    if (!source.includes('deferFirstRunAboutModalForLaunchSession();')) {
+      sourceValid = false;
+      rejectDeferral(
+        label === 'native'
+          ? 'native launch ad must defer the first-run About modal when eligible'
+          : `${label} launch ad must defer the first-run About modal when eligible`,
+      );
+    }
+
+    if (sourceValid) {
+      launchAdFirstRunDeferralSourcesValidated += 1;
+    }
+  }
+
+  if (!nativeLaunchPopupAd.includes('if (nativeLaunchPopupMayShow)')) {
+    rejectDeferral('native launch ad must set first-run deferral during the eligible render pass');
+  }
+  if (
+    !/const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*!launchPopupShownThisRuntime[\s\S]*!launchPopupLoadInFlight[\s\S]*!entitlements\.adsDisabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/.test(
+      nativeLaunchPopupAd,
+    )
+  ) {
+    rejectDeferral('native launch ad deferral eligibility must match the app-open launch path');
+  }
+
+  if (deferralValid && launchAdFirstRunDeferralSourcesValidated === 2) {
+    launchAdFirstRunDeferralParityValidated = true;
   }
 
   if (
@@ -16053,6 +16141,8 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      launchAdFirstRunDeferralSourcesValidated,
+      launchAdFirstRunDeferralParityValidated,
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,

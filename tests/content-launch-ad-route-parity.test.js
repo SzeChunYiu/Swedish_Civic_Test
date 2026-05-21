@@ -34,6 +34,8 @@ function launchSuppressedRoutes(source = read('lib/monetization/ads.ts')) {
 test('launch popup ad route suppression stays aligned with release-safe routes', () => {
   const adsSource = read('lib/monetization/ads.ts');
   const rootLayout = read('app/_layout.tsx');
+  const webLaunchPopupAd = read('components/monetization/LaunchPopupAd.tsx');
+  const nativeLaunchPopupAd = read('components/monetization/LaunchPopupAd.native.tsx');
 
   assert.deepEqual(launchSuppressedRoutes(adsSource), expectedSuppressedRoutes);
   for (const route of expectedSuppressedRoutes) {
@@ -43,6 +45,19 @@ test('launch popup ad route suppression stays aligned with release-safe routes',
   assert.match(rootLayout, /usePathname\(\)/);
   assert.match(rootLayout, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
   assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
+  assert.notEqual(
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />'),
+    -1,
+  );
+  assert.notEqual(rootLayout.indexOf('<FirstRunAboutTheTestModal />'), -1);
+  assert.ok(
+    rootLayout.indexOf('<LaunchPopupAd entitlements={monetizationEntitlements} />') <
+      rootLayout.indexOf('<FirstRunAboutTheTestModal />'),
+    'root layout should render LaunchPopupAd before the first-run modal',
+  );
+  assert.match(webLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
+  assert.match(nativeLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
+  assert.match(nativeLaunchPopupAd, /if \(nativeLaunchPopupMayShow\) \{/);
 });
 
 test('launch popup ad route suppression rejects missing compliance routes', () => {
@@ -103,7 +118,18 @@ test('native launch popup load failures clear only the in-flight attempt', () =>
   );
 
   assert.match(nativeSource, /let launchPopupLoadInFlight = false;/);
-  assert.match(nativeSource, /launchPopupLoadInFlight \|\|[\s\S]*!mobileAdsConsent\.initialized/);
+  assert.match(
+    nativeSource,
+    /const nativeLaunchPopupMayShow =[\s\S]*!launchPopupLoadInFlight[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
+  );
+  assert.match(
+    nativeSource,
+    /const launchPopupAdUnitId =[\s\S]*mobileAdsConsent\.initialized[\s\S]*shouldShowLaunchPopupAd/,
+  );
+  assert.match(
+    nativeSource,
+    /useEffect\(\(\) => \{[\s\S]*if \(!launchPopupAdUnitId\) return undefined;/,
+  );
   assert.match(nativeSource, /launchPopupLoadInFlight = true;[\s\S]*appOpenAd\.load\(\);/);
   assert.match(
     nativeSource,
@@ -174,4 +200,32 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /native LaunchPopupAd must clear the in-flight flag when load callbacks stall/,
   );
+});
+
+test('native first-run deferral stays wired to the eligible app-open path', () => {
+  const nativeSource = read('components/monetization/LaunchPopupAd.native.tsx');
+  const validatorSource = read('scripts/validate-content.js');
+
+  assert.match(
+    nativeSource,
+    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
+  );
+  assert.match(
+    nativeSource,
+    /const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*!launchPopupShownThisRuntime[\s\S]*!launchPopupLoadInFlight[\s\S]*!entitlements\.adsDisabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
+  );
+  assert.match(
+    nativeSource,
+    /if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+  );
+  assert.match(
+    validatorSource,
+    /native launch ad must defer the first-run About modal when eligible/,
+  );
+  assert.match(
+    validatorSource,
+    /native launch ad must set first-run deferral during the eligible render pass/,
+  );
+  assert.match(validatorSource, /--focus-launch-ad-deferral/);
+  assert.match(validatorSource, /launchAdFirstRunDeferralParityValidated/);
 });
