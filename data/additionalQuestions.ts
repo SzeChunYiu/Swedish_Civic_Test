@@ -3716,7 +3716,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch07',
     { chapter: 'Mänskliga rättigheter', section: 'Jämställdhet mellan könen', pageApprox: 23 },
     'Vilket exempel hör till arbetet för jämställdhet mellan könen?',
-    'Which example is part of work for gender equality?',
+    'Which example is part of efforts to promote gender equality?',
     [
       [
         'Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst',
@@ -3778,7 +3778,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       pageApprox: 26,
     },
     'Vad är ett mål med arbetet för personer med funktionsnedsättning?',
-    'What is one aim of work for people with disabilities?',
+    'What is one aim of disability rights work?',
     [
       [
         'Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor',
@@ -3796,7 +3796,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.',
-    'Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
+    'Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
     ['disability-rights', 'accessibility', 'equal-participation'],
   ),
   single(
