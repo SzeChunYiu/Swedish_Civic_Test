@@ -1,0 +1,474 @@
+diff --git a/docs/parallel-sessions/journals/setup.md b/docs/parallel-sessions/journals/setup.md
+index dbc2bf978..e5d2deb8c 100644
+--- a/docs/parallel-sessions/journals/setup.md
++++ b/docs/parallel-sessions/journals/setup.md
+@@ -1390,3 +1390,11 @@ Artifacts changed: `components/ui/TopBarActions.tsx`, `tests/e2e/topbar-language
+ Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0 with 7/7 passing; `npm run test:theme-discipline` exit 0 with 5/5 passing; `npm run test:router-shell` exit 0 with 11/11 passing; `node --test tests/content-topbar-actions-accessibility-parity.test.js` exit 0 with 1/1 passing; `npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npx --no-install playwright test tests/e2e/topbar-language-picker-target.spec.ts --workers=1` exit 0 with 1/1 passing.
+ Blocked? no for this top-bar link target and interaction-feedback atom; no Vercel CLI was run.
+ Next suggested validator action: inspect `TopBarActionLink` web styling and rerun the focused top-bar browser smoke plus typecheck, lint, a11y labels, theme discipline, router shell, ownership, and web export before accepting `TOPBAR-LINK-PRESSED-FEEDBACK-1`.
++
++## Iteration 277 - 2026-05-21
++
++Task completed: STORE-HARNESS-TS-LOADER-CENTRALIZATION-1 - moved the storage-backed TypeScript loader into the shared storage harness, migrated review/highlight/learning tests off local require hooks, kept the existing source guard green, and tightened the companion/progress/review storage guard behavior surfaced by the shared harness.
++Artifacts changed: `tests/helpers/storageStoreHarness.cjs`, `tests/v1-1-review-store.test.js`, `tests/v1-1-highlights-store.test.js`, `scripts/learning.test.js`, `lib/storage/companionStore.ts`, `lib/storage/progressStore.ts`, `lib/storage/reviewStore.ts`, `tests/v1-1-companion-store.test.js`, `docs/parallel-sessions/journals/setup.md`.
++Verification: clean SETUP task worktree from current `origin/main` `31f1bcf78`; linked shared ignored `node_modules`; focused storage harness command exit 0 with 34/34 passing; `npm run test:learning` exit 0 with 25/25 passing; `node --test tests/content-local-study-data-import-parity.test.js` exit 0 with 12/12 passing; `node --test tests/v1-1-review-store.test.js` exit 0 with 14/14 passing; `node --test tests/v1-1-companion-store.test.js` exit 0 with 15/15 passing; focused highlight/harness command exit 0 with 3/3 passing; `node scripts/validate-content.js --focus-progress-schema-parity` exit 0; `npm run typecheck -- --pretty false` exit 0; `npm run test:ownership` exit 0; `git diff --check` exit 0. Broader `npm run validate:content` remains red on current-main q001 generated-template drift outside this atom. No Vercel CLI was run.
++Blocked? no for storage harness centralization and the storage guards it surfaced.
++Next suggested validator action: inspect the shared loader/stub harness, runtime storage guards, and source guard, then rerun the focused storage harness command, `test:learning`, local-import/review/companion store tests, focused progress schema parity, typecheck, ownership, and diff checks before accepting `STORE-HARNESS-TS-LOADER-CENTRALIZATION-1`.
+diff --git a/lib/storage/companionStore.ts b/lib/storage/companionStore.ts
+index 4b921c13c..02c7ee415 100644
+--- a/lib/storage/companionStore.ts
++++ b/lib/storage/companionStore.ts
+@@ -11,7 +11,7 @@ import { create } from 'zustand';
+ 
+ import { DEFAULT_COMPANION_ID, isMascotId, type MascotId } from '../mascot/catalog';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+-import { writeRecoverably } from './persistenceWarning';
++import { readRecoverably, writeRecoverably } from './persistenceWarning';
+ 
+ const SELECTED_ID_KEY = 'companion.selectedId.v1';
+ const companionStorageId = 'companion';
+@@ -23,12 +23,17 @@ try {
+   companionStorage = null;
+ }
+ 
+-function readSelected(): MascotId {
+-  try {
+-    return resolveCompanionId(companionStorage?.getString(SELECTED_ID_KEY));
+-  } catch {
+-    return DEFAULT_COMPANION_ID;
+-  }
++function readSelected(): {
++  persistenceWarning: RecoverablePersistenceWarning | null;
++  selectedId: MascotId;
++} {
++  const result = readRecoverably(companionStorage, companionStorageId, SELECTED_ID_KEY, () =>
++    companionStorage?.getString(SELECTED_ID_KEY),
++  );
++  return {
++    persistenceWarning: result.warning,
++    selectedId: resolveCompanionId(result.value),
++  };
+ }
+ 
+ type CompanionState = {
+@@ -39,9 +44,11 @@ type CompanionState = {
+   clearPersistenceWarning: () => void;
+ };
+ 
++const initialCompanionState = readSelected();
++
+ export const useCompanionStore = create<CompanionState>((set) => ({
+-  selectedId: readSelected(),
+-  persistenceWarning: null,
++  selectedId: initialCompanionState.selectedId,
++  persistenceWarning: initialCompanionState.persistenceWarning,
+   setSelected: (id) => {
+     if (!isMascotId(id)) return;
+     const persistenceWarning = writeRecoverably(
+diff --git a/lib/storage/progressStore.ts b/lib/storage/progressStore.ts
+index 19464124f..d45b5b5ed 100644
+--- a/lib/storage/progressStore.ts
++++ b/lib/storage/progressStore.ts
+@@ -8,6 +8,7 @@ import { getNextReviewAt } from '../learning/spacedRepetition';
+ import { createInitialFreezeState, type StreakFreezeState } from '../learning/streakWithFreeze';
+ import { getLocalDateKey } from '../learning/streaks';
+ import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
++import { isSafeImportedMapKey } from './importKeySafety';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+ import { writeRecoverably } from './persistenceWarning';
+ 
+@@ -307,7 +308,9 @@ function normalizeProgress(value: unknown): PersistedProgress {
+ 
+   const candidate = value as Partial<PersistedProgress>;
+   const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
+-    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
++    ? candidate.completedQuestionIds.filter(
++        (id): id is string => typeof id === 'string' && isSafeImportedMapKey(id),
++      )
+     : [];
+   const answerDates = Array.isArray(candidate.answerDates)
+     ? [
+@@ -328,6 +331,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
+ 
+   if (candidate.questionProgress && typeof candidate.questionProgress === 'object') {
+     for (const [questionId, progress] of Object.entries(candidate.questionProgress)) {
++      if (!isSafeImportedMapKey(questionId)) continue;
+       if (!progress || typeof progress !== 'object') continue;
+       const item = progress as Partial<QuestionProgress>;
+       const rawCorrectCount = normalizeNonNegativeInteger(
+diff --git a/lib/storage/reviewStore.ts b/lib/storage/reviewStore.ts
+index 10b9edbd2..3aa281783 100644
+--- a/lib/storage/reviewStore.ts
++++ b/lib/storage/reviewStore.ts
+@@ -24,7 +24,7 @@ import {
+ import { getLocalDateKey } from '../learning/streaks';
+ import { isSafeImportedMapKey } from './importKeySafety';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+-import { readRecoverably, writeRecoverably } from './persistenceWarning';
++import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
+ 
+ export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
+ export const FREE_DAILY_REVIEW_CAP = 3;
+@@ -80,6 +80,17 @@ function isReviewCard(value: unknown, id?: string): value is ReviewCard {
+   );
+ }
+ 
++function assertSafeReviewQuestionId(questionId: unknown): asserts questionId is string {
++  if (
++    typeof questionId !== 'string' ||
++    questionId.trim() !== questionId ||
++    questionId.length === 0 ||
++    !isSafeImportedMapKey(questionId)
++  ) {
++    throw new Error('Review questionId must be a non-empty safe string');
++  }
++}
++
+ function normalize(value: unknown): PersistedReviews {
+   if (!value || typeof value !== 'object') return EMPTY;
+   const candidate = value as Partial<PersistedReviews>;
+@@ -121,11 +132,14 @@ function read(): {
+     () => reviewStorage?.getString(REVIEW_STORE_KEY),
+   );
+   if (!raw) return { reviews: EMPTY, persistenceWarning: warning };
+-  try {
+-    return { reviews: normalize(JSON.parse(raw)), persistenceWarning: warning };
+-  } catch {
+-    return { reviews: EMPTY, persistenceWarning: warning };
+-  }
++  const parseResult = parseJsonRecoverably(
++    raw,
++    reviewStorageId,
++    REVIEW_STORE_KEY,
++    (value) => normalize(JSON.parse(value)),
++    EMPTY,
++  );
++  return { reviews: parseResult.value, persistenceWarning: warning ?? parseResult.warning };
+ }
+ 
+ function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
+@@ -161,6 +175,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
+   ...initial.reviews,
+   persistenceWarning: initial.persistenceWarning,
+   ensureCard: (questionId, now) => {
++    assertSafeReviewQuestionId(questionId);
+     const existing = get().byId[questionId];
+     if (existing) return existing;
+     const card = createNewCard(questionId, now);
+@@ -175,6 +190,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
+     return card;
+   },
+   grade: (questionId, grade, now = new Date().toISOString()) => {
++    assertSafeReviewQuestionId(questionId);
+     const state = get();
+     if (!isReviewGrade(grade) || !isCanonicalReviewTimestamp(now)) {
+       return state.byId[questionId] ?? null;
+@@ -235,10 +251,13 @@ export function remainingDailyReviews(
+   state: Pick<PersistedReviews, 'gradedPerDay'>,
+   options: { now?: Date; isPro?: boolean; freeCap?: number } = {},
+ ): number {
+-  if (options.isPro) return Number.POSITIVE_INFINITY;
+-  const cap = options.freeCap ?? FREE_DAILY_REVIEW_CAP;
++  if (options.isPro === true) return Number.POSITIVE_INFINITY;
++  const cap =
++    options.freeCap === undefined || !isNonNegativeInteger(options.freeCap)
++      ? FREE_DAILY_REVIEW_CAP
++      : options.freeCap;
+   const dayKey = getLocalDateKey(options.now ?? new Date());
+-  const used = state.gradedPerDay[dayKey] ?? 0;
++  const used = isNonNegativeInteger(state.gradedPerDay[dayKey]) ? state.gradedPerDay[dayKey] : 0;
+   return Math.max(0, cap - used);
+ }
+ 
+diff --git a/scripts/learning.test.js b/scripts/learning.test.js
+index 195a01339..69b71150d 100644
+--- a/scripts/learning.test.js
++++ b/scripts/learning.test.js
+@@ -2,60 +2,13 @@ const assert = require('node:assert/strict');
+ const fs = require('node:fs');
+ const path = require('node:path');
+ const test = require('node:test');
+-const ts = require('typescript');
+ 
+-const repoRoot = path.resolve(__dirname, '..');
++const { loadTsModule } = require('../tests/helpers/storageStoreHarness.cjs');
+ 
+-function loadTs(relativePath, exportName) {
+-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+-  const output = ts.transpileModule(source, {
+-    compilerOptions: {
+-      module: ts.ModuleKind.CommonJS,
+-      target: ts.ScriptTarget.ES2020,
+-    },
+-  }).outputText;
+-  const mod = { exports: {} };
+-  function localRequire(request) {
+-    if (request.startsWith('.')) {
+-      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
+-      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
+-      return loadAllTs(normalized);
+-    }
+-    if (request === 'react-native-mmkv') {
+-      const memory = new Map();
+-      return {
+-        createMMKV: () => ({
+-          getString: (key) => memory.get(key),
+-          set: (key, value) => memory.set(key, value),
+-        }),
+-      };
+-    }
+-    if (request === 'zustand') {
+-      return {
+-        create: (initializer) => {
+-          let state;
+-          const set = (updater) => {
+-            const next = typeof updater === 'function' ? updater(state) : updater;
+-            if (next === state) return;
+-            state = { ...state, ...next };
+-          };
+-          const get = () => state;
+-          const store = (selector) => (selector ? selector(state) : state);
+-          store.getState = get;
+-          store.setState = set;
+-          state = initializer(set, get);
+-          return store;
+-        },
+-      };
+-    }
+-    return require(request);
+-  }
+-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+-  return exportName ? mod.exports[exportName] : mod.exports;
+-}
++const repoRoot = path.resolve(__dirname, '..');
+ 
+ function loadAllTs(relativePath) {
+-  return loadTs(relativePath);
++  return loadTsModule(repoRoot, relativePath);
+ }
+ 
+ test('XP rules follow the MVP gamification table', () => {
+diff --git a/tests/helpers/storageStoreHarness.cjs b/tests/helpers/storageStoreHarness.cjs
+index d79c31afa..c7480199d 100644
+--- a/tests/helpers/storageStoreHarness.cjs
++++ b/tests/helpers/storageStoreHarness.cjs
+@@ -1,5 +1,7 @@
+ const Module = require('node:module');
++const fs = require('node:fs');
+ const path = require('node:path');
++const ts = require('typescript');
+ 
+ function createMemoryMMKV(initial = {}) {
+   const values = new Map(Object.entries(initial));
+@@ -58,17 +60,20 @@ function createThrowingReadMMKV(message = 'MMKV read failed') {
+ function createZustandStub() {
+   return {
+     create: (factory) => {
+-      let state;
+-      const setFn = (partial) => {
++      const state = {};
++      const setFn = (partial, replace = false) => {
+         const next = typeof partial === 'function' ? partial(state) : partial;
+-        if (next && next !== state) {
+-          state = { ...state, ...next };
++        if (next && typeof next === 'object' && next !== state) {
++          if (replace) {
++            for (const key of Object.keys(state)) delete state[key];
++          }
++          Object.assign(state, next);
+         }
+       };
+       const getFn = () => state;
+-      state = factory(setFn, getFn);
++      Object.assign(state, factory(setFn, getFn));
+ 
+-      const useStore = () => state;
++      const useStore = (selector) => (typeof selector === 'function' ? selector(state) : state);
+       useStore.getState = () => state;
+       useStore.setState = (partial) => setFn(partial);
+       return useStore;
+@@ -84,6 +89,63 @@ function clearModuleCache(modulePath) {
+   }
+ }
+ 
++function compileTypeScriptModule(module, filename) {
++  const source = fs.readFileSync(filename, 'utf8');
++  const transpiled = ts.transpileModule(source, {
++    compilerOptions: {
++      jsx: ts.JsxEmit.React,
++      module: ts.ModuleKind.CommonJS,
++      target: ts.ScriptTarget.ES2020,
++    },
++    fileName: filename,
++  }).outputText;
++  module._compile(transpiled, filename);
++}
++
++function withTypeScriptLoader(callback) {
++  const originalTsLoader = require.extensions['.ts'];
++  const originalTsxLoader = require.extensions['.tsx'];
++
++  require.extensions['.ts'] = compileTypeScriptModule;
++  require.extensions['.tsx'] = compileTypeScriptModule;
++
++  try {
++    return callback();
++  } finally {
++    if (originalTsLoader) {
++      require.extensions['.ts'] = originalTsLoader;
++    } else {
++      delete require.extensions['.ts'];
++    }
++    if (originalTsxLoader) {
++      require.extensions['.tsx'] = originalTsxLoader;
++    } else {
++      delete require.extensions['.tsx'];
++    }
++  }
++}
++
++function resolveLocalTypeScriptModule(parent, request) {
++  if (!parent?.filename || (!request.startsWith('.') && !request.startsWith('..'))) {
++    return null;
++  }
++
++  const base = path.resolve(path.dirname(parent.filename), request);
++  const candidates = [
++    base,
++    `${base}.ts`,
++    `${base}.tsx`,
++    `${base}.js`,
++    `${base}.jsx`,
++    path.join(base, 'index.ts'),
++    path.join(base, 'index.tsx'),
++    path.join(base, 'index.js'),
++  ];
++  return candidates.find(
++    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
++  );
++}
++
+ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}) {
+   const targetPath = path.join(repoRoot, relativePath);
+   clearModuleCache(targetPath);
+@@ -108,9 +170,15 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
+     ...moduleStubs,
+   };
+ 
+-  Module._resolveFilename = function patchedResolve(request, ...args) {
++  Module._resolveFilename = function patchedResolve(request, parent, ...args) {
+     if (stubs[request]) return `__storage_store_stub__:${request}`;
+-    return originalResolve.call(this, request, ...args);
++    try {
++      return originalResolve.call(this, request, parent, ...args);
++    } catch (error) {
++      const localTypeScriptModule = resolveLocalTypeScriptModule(parent, request);
++      if (localTypeScriptModule) return localTypeScriptModule;
++      throw error;
++    }
+   };
+   Module._load = function patchedLoad(request, ...args) {
+     if (stubs[request]) return stubs[request]();
+@@ -118,16 +186,21 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
+   };
+ 
+   try {
+-    return require(targetPath);
++    return withTypeScriptLoader(() => require(targetPath));
+   } finally {
+     Module._resolveFilename = originalResolve;
+     Module._load = originalLoad;
+   }
+ }
+ 
++function loadTsModule(repoRoot, relativePath, moduleStubs = {}) {
++  return loadTsWithStorage(repoRoot, relativePath, {}, moduleStubs);
++}
++
+ module.exports = {
+   createMemoryMMKV,
+   createThrowingReadMMKV,
+   createThrowingSetMMKV,
++  loadTsModule,
+   loadTsWithStorage,
+ };
+diff --git a/tests/v1-1-companion-store.test.js b/tests/v1-1-companion-store.test.js
+index 624cc2de6..9f9227281 100644
+--- a/tests/v1-1-companion-store.test.js
++++ b/tests/v1-1-companion-store.test.js
+@@ -212,9 +212,13 @@ test('companion store: throwing MMKV reads fall back to the default companion',
+     companion: storage,
+   });
+   const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
++  const state = useCompanionStore.getState();
+ 
+-  assert.equal(useCompanionStore.getState().selectedId, DEFAULT_COMPANION_ID);
+-  assert.equal(useCompanionStore.getState().persistenceWarning, null);
++  assert.equal(state.selectedId, DEFAULT_COMPANION_ID);
++  assert.equal(state.persistenceWarning.recoverable, true);
++  assert.equal(state.persistenceWarning.storageId, 'companion');
++  assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
++  assert.equal(state.persistenceWarning.operation, 'read');
+ });
+ 
+ test('companion store: successful writes persist and clear persistence warning', () => {
+diff --git a/tests/v1-1-highlights-store.test.js b/tests/v1-1-highlights-store.test.js
+index 4c661e181..86ec16158 100644
+--- a/tests/v1-1-highlights-store.test.js
++++ b/tests/v1-1-highlights-store.test.js
+@@ -2,24 +2,13 @@
+ // Run with: node --test tests/v1-1-highlights-store.test.js
+ 
+ const assert = require('node:assert/strict');
+-const fs = require('node:fs');
+ const path = require('node:path');
+ const test = require('node:test');
+-const ts = require('typescript');
+ 
+ const { loadTsWithStorage } = require('./helpers/storageStoreHarness.cjs');
+ 
+ const repoRoot = path.resolve(__dirname, '..');
+ 
+-require.extensions['.ts'] = function tsLoader(module, filename) {
+-  const source = fs.readFileSync(filename, 'utf8');
+-  const transpiled = ts.transpileModule(source, {
+-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+-    fileName: filename,
+-  }).outputText;
+-  module._compile(transpiled, filename);
+-};
+-
+ function loadTs(rel) {
+   return loadTsWithStorage(repoRoot, rel, {});
+ }
+diff --git a/tests/v1-1-review-store.test.js b/tests/v1-1-review-store.test.js
+index b7528f889..a1f1586a3 100644
+--- a/tests/v1-1-review-store.test.js
++++ b/tests/v1-1-review-store.test.js
+@@ -2,10 +2,8 @@
+ // Run with: node --test tests/v1-1-review-store.test.js
+ 
+ const assert = require('node:assert/strict');
+-const fs = require('node:fs');
+ const path = require('node:path');
+ const test = require('node:test');
+-const ts = require('typescript');
+ 
+ const {
+   createMemoryMMKV,
+@@ -16,15 +14,6 @@ const {
+ 
+ const repoRoot = path.resolve(__dirname, '..');
+ 
+-require.extensions['.ts'] = function tsLoader(module, filename) {
+-  const source = fs.readFileSync(filename, 'utf8');
+-  const transpiled = ts.transpileModule(source, {
+-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+-    fileName: filename,
+-  }).outputText;
+-  module._compile(transpiled, filename);
+-};
+-
+ function loadTs(rel) {
+   return loadTsWithStorage(repoRoot, rel, {});
+ }

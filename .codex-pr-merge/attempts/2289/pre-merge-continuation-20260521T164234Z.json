@@ -1,0 +1,22 @@
+{
+  "headRefOid": "fb93c6e017f734fbd4360f2f00a8cd207fedb28b",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2289,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239806184/job/77222794505",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:42:43Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Restore question bank CSV contract gate",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2289"
+}

@@ -13,6 +13,14 @@ async function expectSearchState(page: Page, expectedQuery: string) {
   return input;
 }
 
+function expectSearchUrlWithoutQueryParams(page: Page) {
+  const url = new URL(page.url());
+
+  expect(url.pathname).toBe('/search');
+  expect(url.searchParams.has('q')).toBe(false);
+  expect(url.searchParams.has('query')).toBe(false);
+}
+
 async function expectHydratedSearch(page: Page, url: string, expectedQuery: string) {
   await page.goto(url, { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -33,9 +41,22 @@ test('search route hydrates q and query URL parameters before typing', async ({ 
   const riksdagInput = await expectHydratedSearch(page, '/search?q=riksdag', 'riksdag');
   await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
   await expect(riksdagInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
   await expect(page.getByText(/\d+ samhällsbegrepp i referensen/)).toBeVisible();
 
-  await expectHydratedSearch(page, '/search?query=kommun', 'kommun');
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(riksdagInput).toHaveValue('');
+  await expect(page.getByText(/\d+ samhällsbegrepp i referensen/)).toBeVisible();
+
+  const kommunInput = await expectHydratedSearch(page, '/search?query=kommun', 'kommun');
+  await page.getByRole('button', { name: 'Rensa sökfältet' }).click();
+  await expect(kommunInput).toHaveValue('');
+  expectSearchUrlWithoutQueryParams(page);
+
+  await kommunInput.fill('demokrati');
+  await expect(kommunInput).toHaveValue('demokrati');
+  expectSearchUrlWithoutQueryParams(page);
 
   expect(consoleErrors).toEqual([]);
 });

@@ -1,0 +1,53 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- add a browser speech-synthesis stub and Playwright coverage for Practice and routed Quiz question-audio stop states\n- stop active Practice question audio on answer selection and pass the persisted playback rate into Practice feedback audio\n- restore the localized Settings listen-first toggle and strengthen AudioButton stop-lifecycle parity guards\n- append the UIUX component-lane journal handoff\n\n## Verification\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-audio-button-accessibility-parity.test.js --test-name-pattern \"AudioButton|question audio|listen-first\"`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `git diff --check HEAD~1..HEAD`\n- `npm run test:a11y-labels`\n- `npm run test:theme-discipline`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-settings-route-copy-parity.test.js --test-name-pattern \"settings|audio|listen|accessibility\"`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' timeout 300s npm run build:web:export -- --max-workers 2`\n- `CI=1 NODE_OPTIONS='--v8-pool-size=1' timeout 180s npm run test:e2e -- tests/e2e/practice-feedback.spec.ts --workers=1 --grep \"question audio controls expose a browser stop state\"`",
+  "files": [
+    { "path": "app/(tabs)/practice.tsx", "additions": 7, "deletions": 1, "changeType": "MODIFIED" },
+    { "path": "app/settings.tsx", "additions": 55, "deletions": 0, "changeType": "MODIFIED" },
+    {
+      "path": "docs/parallel-sessions/journals/uiux-components.md",
+      "additions": 10,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 20,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-audio-button-accessibility-parity.test.js",
+      "additions": 1,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/practice-feedback.spec.ts",
+      "additions": 190,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/question-audio-stop-e2e-1779368130",
+  "headRefOid": "ddf898ce80d7d7e90fb2968d1ecd66835b0d0514",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2399,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:01:06Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227047937/job/77176772845",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T12:51:34Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "uiux: add question audio stop e2e",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2399"
+}

@@ -1,0 +1,391 @@
+diff --git a/lib/search/questionSearch.ts b/lib/search/questionSearch.ts
+index 875323e30..e7a6c6336 100644
+--- a/lib/search/questionSearch.ts
++++ b/lib/search/questionSearch.ts
+@@ -1,5 +1,6 @@
+ import type { AppLanguage } from '../storage/settingsStore';
+ import type { Chapter, PracticeQuestion } from '../../types/content';
++import { normalizeGlossarySearchText } from '../learning/glossarySearch';
+ 
+ export type QuestionSearchResult = {
+   chapter?: Chapter;
+@@ -7,14 +8,6 @@ export type QuestionSearchResult = {
+   score: number;
+ };
+ 
+-function normalizeSearchText(value: string): string {
+-  return value
+-    .normalize('NFD')
+-    .replace(/[\u0300-\u036f]/g, '')
+-    .toLocaleLowerCase('sv-SE')
+-    .trim();
+-}
+-
+ function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {
+   return [
+     question.id,
+@@ -38,7 +31,7 @@ function scoreQuestion(
+   chapter: Chapter | undefined,
+   query: string,
+ ): number {
+-  const normalizedQuery = normalizeSearchText(query);
++  const normalizedQuery = normalizeGlossarySearchText(query);
+   if (!normalizedQuery) return 0;
+ 
+   let score = 0;
+@@ -59,7 +52,7 @@ function scoreQuestion(
+   ];
+ 
+   weightedFields.forEach(({ value, weight }) => {
+-    const normalizedValue = normalizeSearchText(value);
++    const normalizedValue = normalizeGlossarySearchText(value);
+     if (normalizedValue === normalizedQuery) score += weight * 2;
+     if (normalizedValue.startsWith(normalizedQuery)) score += weight;
+     if (normalizedValue.includes(normalizedQuery)) score += weight;
+@@ -67,7 +60,7 @@ function scoreQuestion(
+ 
+   const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+   if (tokens.length > 1) {
+-    const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');
++    const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');
+     score += tokens.filter((token) => haystack.includes(token)).length;
+   }
+ 
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..4b9fe0e53 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -7887,6 +7887,10 @@ let homeRouteCopyLabelsValidated = 0;
+ let homeRouteCopyParityValidated = false;
+ let homeRouteInternalBenchmarkCopyValidated = false;
+ let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
++let searchRouteQueryHydrationRulesValidated = 0;
++let searchRouteQueryHydrationParityValidated = false;
++let searchQuestionPunctuationRulesValidated = 0;
++let searchQuestionPunctuationParityValidated = false;
+ let aboutTheTestRouteCopyLabelsValidated = 0;
+ let aboutTheTestRouteCopyParityValidated = false;
+ let aboutTheTestOfficialSourceUrlsValidated = 0;
+@@ -8300,6 +8304,19 @@ if (process.argv.includes('--focus-settings-route')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-search-route-query-hydration')) {
++  validateSearchRouteQueryHydrationParity();
++  validateSearchQuestionPunctuationParity();
++  exitWithValidationFailures();
++  printValidationSummary({
++    searchRouteQueryHydrationRulesValidated,
++    searchRouteQueryHydrationParityValidated,
++    searchQuestionPunctuationRulesValidated,
++    searchQuestionPunctuationParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-content-exec-cwd')) {
+   validateContentTestValidateContentExecCwdGuard();
+   exitWithValidationFailures();
+@@ -10397,6 +10414,160 @@ function validateMistakesRouteCopyParity() {
+   }
+ }
+ 
++function validateSourcePatternRules(source, rules, reject) {
++  let validated = 0;
++
++  rules.forEach(({ label, pattern }) => {
++    if (!pattern.test(source)) {
++      reject(label);
++      return;
++    }
++    validated += 1;
++  });
++
++  return validated;
++}
++
++function validateSearchRouteQueryHydrationParity() {
++  let valid = true;
++  let searchRoute = '';
++
++  function reject(message) {
++    valid = false;
++    fail(`Search route query hydration parity: ${message}`);
++  }
++
++  try {
++    searchRoute = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
++  } catch (error) {
++    reject(`app/search.tsx could not be read: ${error.message}`);
++    return;
++  }
++
++  const hydrationRules = [
++    {
++      label: 'route params and router import',
++      pattern: /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
++    },
++    { label: 'route params type', pattern: /type SearchRouteParams = \{/ },
++    { label: 'q param support', pattern: /q\?: string \| string\[\];/ },
++    { label: 'query param support', pattern: /query\?: string \| string\[\];/ },
++    { label: 'router replacement hook', pattern: /const router = useRouter\(\);/ },
++    {
++      label: 'local search params read',
++      pattern: /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
++    },
++    {
++      label: 'route query resolution',
++      pattern: /const routeQuery = getRouteSearchQuery\(searchParams\);/,
++    },
++    {
++      label: 'route query initial state',
++      pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
++    },
++    {
++      label: 'route query sync ref',
++      pattern: /const previousRouteQueryRef = useRef\(routeQuery\);/,
++    },
++    { label: 'route query sync effect', pattern: /useEffect\(\(\) => \{/ },
++    {
++      label: 'unchanged route query guard',
++      pattern: /if \(previousRouteQueryRef\.current === routeQuery\) return;/,
++    },
++    {
++      label: 'route query sync ref update',
++      pattern: /previousRouteQueryRef\.current = routeQuery;/,
++    },
++    { label: 'route query state resync', pattern: /setQuery\(routeQuery\);/ },
++    { label: 'route query sync dependency', pattern: /\}, \[routeQuery\]\);/ },
++    { label: 'single-value route param helper', pattern: /function getFirstSearchParamValue/ },
++    {
++      label: 'array route param support',
++      pattern: /Array\.isArray\(value\) \? value\[0\] : value/,
++    },
++    {
++      label: 'route query helper',
++      pattern: /function getRouteSearchQuery\(params: SearchRouteParams\)/,
++    },
++    {
++      label: 'q then query fallback order',
++      pattern:
++        /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
++    },
++    { label: 'manual typing remains controlled', pattern: /onChangeText=\{setQuery\}/ },
++    { label: 'clear search handler', pattern: /const handleClearSearch = \(\) => \{/ },
++    { label: 'clear search state reset', pattern: /setQuery\(''\);/ },
++    { label: 'clear search URL replacement', pattern: /router\.replace\('\/search'\);/ },
++    { label: 'clear search uses URL-aware handler', pattern: /onPress=\{handleClearSearch\}/ },
++    { label: 'submit search handler', pattern: /const handleSubmitSearch = \(\) => \{/ },
++    {
++      label: 'non-empty submit writes q URL param',
++      pattern: /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
++    },
++  ];
++
++  searchRouteQueryHydrationRulesValidated = validateSourcePatternRules(
++    searchRoute,
++    hydrationRules,
++    reject,
++  );
++  if (valid && searchRouteQueryHydrationRulesValidated === hydrationRules.length) {
++    searchRouteQueryHydrationParityValidated = true;
++  }
++}
++
++function validateSearchQuestionPunctuationParity() {
++  let valid = true;
++  let questionSearch = '';
++
++  function reject(message) {
++    valid = false;
++    fail(`Question search punctuation parity: ${message}`);
++  }
++
++  try {
++    questionSearch = fs.readFileSync(path.join(repoRoot, 'lib/search/questionSearch.ts'), 'utf8');
++  } catch (error) {
++    reject(`lib/search/questionSearch.ts could not be read: ${error.message}`);
++    return;
++  }
++
++  const punctuationRules = [
++    {
++      label: 'shared glossary normalizer import',
++      pattern: /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
++    },
++    {
++      label: 'normalized query',
++      pattern: /const normalizedQuery = normalizeGlossarySearchText\(query\);/,
++    },
++    {
++      label: 'normalized weighted field',
++      pattern: /const normalizedValue = normalizeGlossarySearchText\(value\);/,
++    },
++    {
++      label: 'normalized token haystack',
++      pattern:
++        /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
++    },
++  ];
++
++  searchQuestionPunctuationRulesValidated = validateSourcePatternRules(
++    questionSearch,
++    punctuationRules,
++    reject,
++  );
++  if (/function normalizeSearchText/.test(questionSearch)) {
++    reject('private punctuation-preserving normalizeSearchText function must stay removed');
++  }
++  if (/\.normalize\('NFD'\)[\s\S]*?\.trim\(\);/.test(questionSearch)) {
++    reject('question search must not fork accent-only normalization away from glossary search');
++  }
++  if (valid && searchQuestionPunctuationRulesValidated === punctuationRules.length) {
++    searchQuestionPunctuationParityValidated = true;
++  }
++}
++
+ function validateChapterRouteHeaderParity() {
+   let valid = true;
+   let chapterRoute = '';
+@@ -17785,6 +17956,8 @@ validateProfileRouteCopyParity();
+ validateHomeRouteHeaderParity();
+ validateHomeRouteSwedishMistakeReviewCopyNaturalness();
+ validateHomeRouteCopyParity();
++validateSearchRouteQueryHydrationParity();
++validateSearchQuestionPunctuationParity();
+ validateAboutTheTestRouteCopyParity();
+ validateMistakesRouteHeaderParity();
+ validateMistakesRouteCopyParity();
+@@ -17935,6 +18108,10 @@ console.log(
+       homeRouteCopyParityValidated,
+       homeRouteInternalBenchmarkCopyValidated,
+       homeRouteSwedishMistakeReviewCopyNaturalnessValidated,
++      searchRouteQueryHydrationRulesValidated,
++      searchRouteQueryHydrationParityValidated,
++      searchQuestionPunctuationRulesValidated,
++      searchQuestionPunctuationParityValidated,
+       aboutTheTestRouteCopyLabelsValidated,
+       aboutTheTestRouteCopyParityValidated,
+       aboutTheTestOfficialSourceUrlsValidated,
+diff --git a/tests/content-search-route-copy-parity.test.js b/tests/content-search-route-copy-parity.test.js
+index ab25046ca..490dfa017 100644
+--- a/tests/content-search-route-copy-parity.test.js
++++ b/tests/content-search-route-copy-parity.test.js
+@@ -7,6 +7,7 @@ const test = require('node:test');
+ const repoRoot = path.resolve(__dirname, '..');
+ const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
+ const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
++const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
+ 
+ function readSearchRouteSource() {
+   return fs.readFileSync(searchRoutePath, 'utf8');
+@@ -16,6 +17,10 @@ function readGlossarySearchSource() {
+   return fs.readFileSync(glossarySearchPath, 'utf8');
+ }
+ 
++function readQuestionSearchSource() {
++  return fs.readFileSync(questionSearchPath, 'utf8');
++}
++
+ function assertSearchRouteQuestionResults(source) {
+   const requiredRules = [
+     [
+@@ -129,6 +134,36 @@ function assertSharedGlossaryPunctuationNormalizer(source) {
+   );
+ }
+ 
++function assertQuestionSearchPunctuationNormalizer(source) {
++  const requiredRules = [
++    [
++      /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
++      'shared glossary normalizer import',
++    ],
++    [/const normalizedQuery = normalizeGlossarySearchText\(query\);/, 'normalized query'],
++    [/const normalizedValue = normalizeGlossarySearchText\(value\);/, 'normalized weighted field'],
++    [
++      /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
++      'normalized token haystack',
++    ],
++  ];
++
++  for (const [pattern, label] of requiredRules) {
++    assert.match(source, pattern, `Question search missing ${label}`);
++  }
++
++  assert.doesNotMatch(
++    source,
++    /function normalizeSearchText/,
++    'Question search must not keep a private punctuation-preserving normalizer',
++  );
++  assert.doesNotMatch(
++    source,
++    /\.normalize\('NFD'\)[\s\S]*?\.trim\(\);/,
++    'Question search must not fork accent-only normalization away from glossary search',
++  );
++}
++
+ function assertSearchRouteQueryHydration(source) {
+   const requiredRules = [
+     [
+@@ -197,6 +232,7 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
+   assertSearchRouteQuestionResults(source);
+   assertSearchRouteGlossarySearchParity(source);
+   assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
++  assertQuestionSearchPunctuationNormalizer(readQuestionSearchSource());
+ });
+ 
+ test('validate-content reports Search route query hydration parity', () => {
+@@ -211,6 +247,8 @@ test('validate-content reports Search route query hydration parity', () => {
+ 
+   assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*25/);
+   assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
++  assert.match(output, /"searchQuestionPunctuationRulesValidated":\s*4/);
++  assert.match(output, /"searchQuestionPunctuationParityValidated":\s*true/);
+ });
+ 
+ test('Search route hydration rejects blank initial query drift', () => {
+@@ -307,6 +345,32 @@ test('Shared glossary normalizer rejects dropping punctuation stripping', () =>
+   );
+ });
+ 
++test('Question search rejects route-local punctuation-preserving normalization drift', () => {
++  const mutatedSource = readQuestionSearchSource()
++    .replace("import { normalizeGlossarySearchText } from '../learning/glossarySearch';\n", '')
++    .replace(
++      'const normalizedQuery = normalizeGlossarySearchText(query);',
++      'const normalizedQuery = normalizeSearchText(query);',
++    )
++    .replace(
++      'const normalizedValue = normalizeGlossarySearchText(value);',
++      'const normalizedValue = normalizeSearchText(value);',
++    )
++    .replace(
++      "const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');",
++      "const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');",
++    )
++    .replace(
++      'function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {',
++      "function normalizeSearchText(value: string): string {\n  return value\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLocaleLowerCase('sv-SE')\n    .trim();\n}\n\nfunction searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {",
++    );
++
++  assert.throws(
++    () => assertQuestionSearchPunctuationNormalizer(mutatedSource),
++    /shared glossary normalizer/,
++  );
++});
++
+ test('Search route question results reject dropping routed quiz links', () => {
+   const mutatedSource = readSearchRouteSource().replace(
+     'href={`/quiz/${result.question.id}`}',
+diff --git a/tests/e2e/search-accessibility.spec.ts b/tests/e2e/search-accessibility.spec.ts
+index 60fbbac70..a3caeca07 100644
+--- a/tests/e2e/search-accessibility.spec.ts
++++ b/tests/e2e/search-accessibility.spec.ts
+@@ -137,6 +137,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
+     await expect(
+       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
+     ).toBeVisible();
++    await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
+ 
+     expect(consoleErrors).toEqual([]);
+   });
