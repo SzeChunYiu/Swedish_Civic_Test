@@ -2208,6 +2208,14 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam route must read language from settings store',
   ],
   ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
+  [
+    "import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';",
+    'exam route must import shared provenance badge',
+  ],
+  [
+    'const examQuestionById = useMemo(',
+    'exam review must keep original question records for provenance badges',
+  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -2231,10 +2239,18 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.submitLabel}', 'exam submit control must render localized copy'],
   [
+    '<ProvenanceBadge language={language} question={question} />',
+    'exam questions must render provenance badges during active attempts',
+  ],
+  [
     "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
     'exam chapter breakdown must use selected-language chapter names',
   ],
   ['{copy.questionReviewTitle}', 'exam review title must render localized copy'],
+  [
+    '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
+    'exam questions must render provenance badges during review',
+  ],
   ['{copy.selectedAnswerLabel}', 'exam selected-answer label must render localized copy'],
   ['{copy.correctAnswerLabel}', 'exam correct-answer label must render localized copy'],
   ['ExplanationPanel', 'exam review must render the localized explanation panel'],

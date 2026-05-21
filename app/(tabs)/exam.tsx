@@ -4,6 +4,7 @@ import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'r
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -286,6 +287,10 @@ export default function Screen() {
       Object.fromEntries(
         examQuestions.map((question) => [question.id, question.chapterId] as const),
       ),
+    [examQuestions],
+  );
+  const examQuestionById = useMemo(
+    () => new Map(examQuestions.map((question) => [question.id, question] as const)),
     [examQuestions],
   );
   const examDiagnostic = useMemo(
@@ -584,6 +589,7 @@ export default function Screen() {
                 {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
               </Badge>
             </View>
+            <ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />
             <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
             <QuestionSourceCitation
               bodyStyle={styles.questionSourceCitation}
@@ -646,6 +652,7 @@ export default function Screen() {
       {examQuestions.map((question, index) => (
         <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+          <ProvenanceBadge language={language} question={question} />
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <QuestionSourceCitation
             bodyStyle={styles.questionSourceCitation}
