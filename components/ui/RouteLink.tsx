@@ -1,7 +1,7 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
@@ -10,15 +10,24 @@ import { colors, motion, radius, space, typography } from '../../lib/theme';
 export type RouteLinkVariant = 'primary' | 'secondary' | 'text' | 'card';
 
 type ExpoLinkProps = ComponentProps<typeof Link>;
-type RouteLinkKeyboardEvent = {
-  currentTarget?: { click?: () => void };
-  defaultPrevented?: boolean;
-  key?: string;
-  preventDefault?: () => void;
-  repeat?: boolean;
-};
+type RouteLinkHandledProps =
+  | 'accessibilityLabel'
+  | 'children'
+  | 'href'
+  | 'onBlur'
+  | 'onFocus'
+  | 'onKeyDown'
+  | 'onKeyUp'
+  | 'onMouseDown'
+  | 'onMouseEnter'
+  | 'onMouseLeave'
+  | 'onMouseUp'
+  | 'onTouchCancel'
+  | 'onTouchEnd'
+  | 'onTouchStart'
+  | 'style';
+type RouteLinkKeyboardEventHandler = (event: { key?: string }) => void;
 type RouteLinkWebEventHandler = (event: unknown) => void;
-type RouteLinkKeyboardEventHandler = (event: RouteLinkKeyboardEvent) => void;
 
 const keyboardActivationKeys = new Set(['Enter', ' ', 'Spacebar']);
 
@@ -31,10 +40,7 @@ function isKeyboardActivationKey(key: string | undefined) {
  * 48px token-sized target, and token hover/focus/pressed feedback on web.
  * Pass an explicit `accessibilityLabel` that describes the destination.
  */
-export interface RouteLinkProps extends Omit<
-  ExpoLinkProps,
-  'accessibilityLabel' | 'children' | 'href' | 'style'
-> {
+export interface RouteLinkProps extends Omit<ExpoLinkProps, RouteLinkHandledProps> {
   accessibilityLabel: string;
   children: ReactNode;
   href: Href;
@@ -42,8 +48,13 @@ export interface RouteLinkProps extends Omit<
   onFocus?: RouteLinkWebEventHandler;
   onKeyDown?: RouteLinkKeyboardEventHandler;
   onKeyUp?: RouteLinkKeyboardEventHandler;
+  onMouseDown?: RouteLinkWebEventHandler;
   onMouseEnter?: RouteLinkWebEventHandler;
   onMouseLeave?: RouteLinkWebEventHandler;
+  onMouseUp?: RouteLinkWebEventHandler;
+  onTouchCancel?: RouteLinkWebEventHandler;
+  onTouchEnd?: RouteLinkWebEventHandler;
+  onTouchStart?: RouteLinkWebEventHandler;
   style?: StyleProp<TextStyle | ViewStyle>;
   variant?: RouteLinkVariant;
 }
@@ -55,15 +66,19 @@ export function RouteLink({
   onFocus,
   onKeyDown,
   onKeyUp,
+  onMouseDown,
   onMouseEnter,
   onMouseLeave,
+  onMouseUp,
   onPressIn,
   onPressOut,
+  onTouchCancel,
+  onTouchEnd,
+  onTouchStart,
   style,
   variant = 'text',
   ...linkProps
 }: RouteLinkProps) {
-  const keyboardPressStarted = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -73,33 +88,23 @@ export function RouteLink({
           onBlur: (event: Parameters<NonNullable<typeof onBlur>>[0]) => {
             setIsFocused(false);
             setIsPressed(false);
-            keyboardPressStarted.current = false;
             onBlur?.(event);
           },
           onFocus: (event: Parameters<NonNullable<typeof onFocus>>[0]) => {
             setIsFocused(true);
             onFocus?.(event);
           },
-          onKeyDown: (event: RouteLinkKeyboardEvent) => {
+          onKeyDown: (event: Parameters<NonNullable<typeof onKeyDown>>[0]) => {
+            if (isKeyboardActivationKey(event.key)) setIsPressed(true);
             onKeyDown?.(event);
-            if (isKeyboardActivationKey(event.key) && !event.repeat && !event.defaultPrevented) {
-              keyboardPressStarted.current = true;
-              setIsPressed(true);
-              event.preventDefault?.();
-            }
           },
-          onKeyUp: (event: RouteLinkKeyboardEvent) => {
-            const shouldActivate =
-              keyboardPressStarted.current && isKeyboardActivationKey(event.key);
-            if (isKeyboardActivationKey(event.key)) {
-              keyboardPressStarted.current = false;
-              setIsPressed(false);
-            }
+          onKeyUp: (event: Parameters<NonNullable<typeof onKeyUp>>[0]) => {
+            if (isKeyboardActivationKey(event.key)) setIsPressed(false);
             onKeyUp?.(event);
-            if (shouldActivate && !event.defaultPrevented) {
-              event.preventDefault?.();
-              event.currentTarget?.click?.();
-            }
+          },
+          onMouseDown: (event: Parameters<NonNullable<typeof onMouseDown>>[0]) => {
+            setIsPressed(true);
+            onMouseDown?.(event);
           },
           onMouseEnter: (event: Parameters<NonNullable<typeof onMouseEnter>>[0]) => {
             setIsHovered(true);
@@ -109,6 +114,22 @@ export function RouteLink({
             setIsHovered(false);
             setIsPressed(false);
             onMouseLeave?.(event);
+          },
+          onMouseUp: (event: Parameters<NonNullable<typeof onMouseUp>>[0]) => {
+            setIsPressed(false);
+            onMouseUp?.(event);
+          },
+          onTouchCancel: (event: Parameters<NonNullable<typeof onTouchCancel>>[0]) => {
+            setIsPressed(false);
+            onTouchCancel?.(event);
+          },
+          onTouchEnd: (event: Parameters<NonNullable<typeof onTouchEnd>>[0]) => {
+            setIsPressed(false);
+            onTouchEnd?.(event);
+          },
+          onTouchStart: (event: Parameters<NonNullable<typeof onTouchStart>>[0]) => {
+            setIsPressed(true);
+            onTouchStart?.(event);
           },
         }
       : {};

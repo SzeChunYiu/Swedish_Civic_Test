@@ -74,6 +74,17 @@ async function getInteractionStyle(locator: Locator) {
   });
 }
 
+async function getComputedInteractionStyle(locator: Locator) {
+  return locator.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      backgroundColor: style.backgroundColor,
+      transform: style.transform,
+    };
+  });
+}
+
 async function seedHomeDefaults(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.clear();
@@ -125,11 +136,40 @@ test('Home action links keep mobile-safe targets', async ({ page }) => {
   await dismissBlockingModals(page);
 
   for (const link of homeActionLinks) {
-    await expectMinimumTargetSize(
-      page.getByRole('link', { exact: true, name: link.label }),
-      link.name,
-    );
+    const matchingLinks = page.getByRole('link', { exact: true, name: link.label });
+    const matchingLinkCount = await matchingLinks.count();
+
+    expect(
+      matchingLinkCount,
+      `${link.name} should render at least one matching link`,
+    ).toBeGreaterThan(0);
+
+    for (let index = 0; index < matchingLinkCount; index += 1) {
+      await expectMinimumTargetSize(matchingLinks.nth(index), `${link.name} ${index + 1}`);
+    }
   }
+
+  const primaryPracticeLink = page.getByRole('link', {
+    exact: true,
+    name: 'Starta den rekommenderade övningen',
+  });
+  const idleStyle = await getComputedInteractionStyle(primaryPracticeLink);
+
+  await primaryPracticeLink.focus();
+  const focusStyle = await getComputedInteractionStyle(primaryPracticeLink);
+  expect(focusStyle.backgroundColor).not.toBe(idleStyle.backgroundColor);
+  expect(focusStyle.transform).not.toBe('none');
+
+  await page.keyboard.down('Space');
+  const keyboardPressedStyle = await getComputedInteractionStyle(primaryPracticeLink);
+  expect(keyboardPressedStyle.backgroundColor).toBe(focusStyle.backgroundColor);
+  expect(keyboardPressedStyle.transform).not.toBe(focusStyle.transform);
+  expect(keyboardPressedStyle.transform).not.toBe('none');
+
+  await page.keyboard.up('Space');
+  const keyboardReleasedStyle = await getComputedInteractionStyle(primaryPracticeLink);
+  expect(keyboardReleasedStyle.transform).toBe(focusStyle.transform);
+  await expect(page).toHaveURL(/\/home$/);
 
   expect(consoleErrors).toEqual([]);
 });

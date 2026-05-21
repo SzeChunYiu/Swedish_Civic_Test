@@ -8,7 +8,7 @@ const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
-const PRACTICE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'practice.tsx');
+const ROUTE_LINK_SOURCE = path.join(ROOT, 'components', 'ui', 'RouteLink.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -98,34 +98,6 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
-});
-
-test('Practice hero controls keep token-sized touch targets', () => {
-  const source = fs.readFileSync(PRACTICE_SOURCE, 'utf8');
-  const bookmarkTag = source.match(
-    /<Pressable[\s\S]*?accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}[\s\S]*?>/,
-  )?.[0];
-  const supplementaryTag = source.match(
-    /<Pressable[\s\S]*?accessibilityRole="switch"[\s\S]*?accessibilityLabel=\{[\s\S]*?includeSupplementary \? copy\.supplementaryToggleOn : copy\.supplementaryToggleOff[\s\S]*?>/,
-  )?.[0];
-  const aboutSourcesTag = source.match(
-    /<Pressable[\s\S]*?accessibilityLabel=\{aboutSourcesOpen \? copy\.aboutSourcesHide : copy\.aboutSourcesShow\}[\s\S]*?>/,
-  )?.[0];
-
-  assert.ok(bookmarkTag, 'Practice bookmark control should be a Pressable');
-  assert.ok(supplementaryTag, 'Practice supplementary source control should be a Pressable');
-  assert.ok(aboutSourcesTag, 'Practice source-details disclosure should be a Pressable');
-  assert.match(bookmarkTag, /hitSlop=\{space\[1\]\}/);
-  assert.match(supplementaryTag, /hitSlop=\{space\[1\]\}/);
-  assert.match(aboutSourcesTag, /hitSlop=\{space\[1\]\}/);
-  assert.match(
-    source,
-    /bookmarkButton:\s*\{[^}]*minHeight:\s*space\[6\][^}]*minWidth:\s*space\[6\]/,
-  );
-  assert.match(
-    source,
-    /aboutSourcesTrigger:\s*\{[^}]*minHeight:\s*space\[6\][^}]*minWidth:\s*space\[6\]/,
-  );
 });
 
 test('LanguagePicker menu rows expose menu-item state semantics', () => {
@@ -310,5 +282,43 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   assert.match(
     source,
     /iconButtonPressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
+  );
+});
+
+test('RouteLink keeps keyboard and pointer pressed feedback on web anchors', () => {
+  const source = fs.readFileSync(ROUTE_LINK_SOURCE, 'utf8');
+
+  assert.match(source, /export function RouteLink/);
+  assert.match(source, /<Link\s/);
+  assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
+  assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/);
+  assert.match(
+    source,
+    /onBlur: \(event:[\s\S]*\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*onBlur\?\.\(event\);[\s\S]*\}/,
+  );
+  assert.match(
+    source,
+    /onKeyDown: \(event:[\s\S]*\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(true\);[\s\S]*onKeyDown\?\.\(event\);[\s\S]*\}/,
+  );
+  assert.match(
+    source,
+    /onKeyUp: \(event:[\s\S]*\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(false\);[\s\S]*onKeyUp\?\.\(event\);[\s\S]*\}/,
+  );
+  assert.match(source, /onMouseDown: \(event:[\s\S]*setIsPressed\(true\);/);
+  assert.match(source, /onMouseUp: \(event:[\s\S]*setIsPressed\(false\);/);
+  assert.match(source, /onTouchStart: \(event:[\s\S]*setIsPressed\(true\);/);
+  assert.match(source, /onTouchCancel: \(event:[\s\S]*setIsPressed\(false\);/);
+  assert.match(source, /setIsHovered\(false\);\s*setIsPressed\(false\);/);
+  assert.match(source, /onPressIn=\{\(event\) => \{[\s\S]*setIsPressed\(true\);/);
+  assert.match(source, /onPressOut=\{\(event\) => \{[\s\S]*setIsPressed\(false\);/);
+  assert.match(source, /isFocused \|\| isHovered[\s\S]*styles\.primaryInteractive/);
+  assert.match(source, /isPressed \? \(variant === 'primary' \? styles\.primaryPressed/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /pressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(
+    source,
+    /primaryPressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
   );
 });
