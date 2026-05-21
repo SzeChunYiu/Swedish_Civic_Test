@@ -32,7 +32,7 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.equal(result.status, 0, output);
   assert.doesNotMatch(
     output,
-    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|E2E-owned web Remove Ads mock provider must require __SMT_E2E__|E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__|default web purchase runtime must fail closed without a public mock provider|Home monetization surfaces must wait for Remove Ads entitlements before rendering|PremiumBanner must render localized mobile-app-only copy when web purchases are unavailable/,
+    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|explicit ad entitlements must skip purchase runtime creation and storage reads|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|E2E-owned web Remove Ads mock provider must require __SMT_E2E__|E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__|default web purchase runtime must fail closed without a public mock provider|Home monetization surfaces must wait for Remove Ads entitlements before rendering|PremiumBanner must render localized mobile-app-only copy when web purchases are unavailable/,
   );
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /RemoveAdsEntitlementStatus = 'loading' \| 'ready' \| 'read_failed'/);
@@ -69,6 +69,7 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /setCurrentEntitlements\(AD_BLOCKED_PENDING_ENTITLEMENTS\)/);
   assert.match(hookSource, /setEntitlementStatus\('read_failed'\)/);
   assert.match(hookSource, /entitlements: explicitEntitlements/);
+  assert.match(hookSource, /skipPurchaseRuntime:\s*hasExplicitEntitlements/);
   assert.match(hookSource, /entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /entitlementStatus:\s*'ready'\s+as\s+const/);
   assert.match(hookSource, /entitlementStatus,\s*\n\s*\};/);
@@ -386,6 +387,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /explicit ad entitlements must bypass async purchase loading as ready/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects explicit runtime side effects', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('skipPurchaseRuntime: hasExplicitEntitlements,', 'skipPurchaseRuntime: false,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /explicit ad entitlements must skip purchase runtime creation and storage reads/,
   );
 });
 
