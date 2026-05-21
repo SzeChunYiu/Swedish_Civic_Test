@@ -509,6 +509,10 @@ const i18n = (window.i18n = {
     'settings.consent.reset': 'Reset cookie / ad consent…',
     'settings.savedHint': 'Changes save automatically.',
     'settings.done': 'Done',
+    'a11y.settings.open': 'Settings',
+    'a11y.close': 'Close',
+    'a11y.ad.close': 'Close ad',
+    'a11y.studyBuddy': 'Study buddy',
     'palette.flag.hint': 'Blue + gold, the original',
     'palette.midsommar.hint': 'Pasture green + flower yellow',
     'palette.falu.hint': 'The red of every Swedish barn',
@@ -901,6 +905,10 @@ const i18n = (window.i18n = {
     'settings.consent.reset': 'Återställ cookie-/annonssamtycke…',
     'settings.savedHint': 'Ändringar sparas automatiskt.',
     'settings.done': 'Klar',
+    'a11y.settings.open': 'Inställningar',
+    'a11y.close': 'Stäng',
+    'a11y.ad.close': 'Stäng annons',
+    'a11y.studyBuddy': 'Studiekompis',
     'palette.flag.hint': 'Blått + gult, originalet',
     'palette.midsommar.hint': 'Ängsgrönt + blomgult',
     'palette.falu.hint': 'Rött som svenska lador',
@@ -933,6 +941,12 @@ function applyLang(lang) {
     if (value === undefined) return;
     // some strings have HTML (em, b, a) — preserve via innerHTML
     el.innerHTML = value;
+  });
+  document.querySelectorAll('[data-a11y-label]').forEach((el) => {
+    const key = el.dataset.a11yLabel;
+    const value = i18n[lang] && i18n[lang][key];
+    if (value === undefined) return;
+    el.setAttribute('aria-label', value);
   });
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
     b.classList.toggle('is-on', b.dataset.lang === lang);
@@ -967,13 +981,16 @@ document.addEventListener('click', (e) => {
   smtSetLanguage(btn.dataset.lang);
 });
 
-window.addEventListener('DOMContentLoaded', () => {
+function applySavedLanguage() {
   let saved = 'en';
   try {
     saved = localStorage.getItem('smt_lang') || 'en';
   } catch {}
   applyLang(saved);
-});
+}
+
+applySavedLanguage();
+window.addEventListener('DOMContentLoaded', applySavedLanguage);
 
 /* ============================ TRY-A-QUESTION DEMO */
 

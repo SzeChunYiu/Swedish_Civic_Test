@@ -1,4 +1,4 @@
-/* Almost Swedish — Settings modal
+/* Sveriges Medborgartest — Settings modal
    - Theme (light/dark/auto)
    - Color palette (5 Swedish-named presets)
    - Buddy picker (10 buddies)
@@ -110,32 +110,27 @@
     document.documentElement.style.fontSize = 16 * (parseInt(s, 10) / 100) + 'px';
     lsSet('smt_textsize', s);
   }
-  function prefersReducedMotion() {
-    try {
-      return matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch {
-      return false;
-    }
-  }
-  function resolvedMotionPreference() {
-    const stored = lsRaw('smt_motion');
-    if (stored === 'reduce') return true;
-    if (stored !== null) return false;
-    return prefersReducedMotion();
-  }
-  function emitMotionChange(reduced) {
+  function emitMotionChange(on) {
     if (typeof window.dispatchEvent !== 'function') return;
     const event =
       typeof CustomEvent === 'function'
-        ? new CustomEvent('smt:motionchange', { detail: { reduced } })
-        : { type: 'smt:motionchange', detail: { reduced } };
+        ? new CustomEvent('smt:motionchange', { detail: { reduced: on } })
+        : { type: 'smt:motionchange', detail: { reduced: on } };
     window.dispatchEvent(event);
   }
   function applyMotion(on, options = {}) {
-    const reduced = !!on;
-    document.documentElement.setAttribute('data-motion', reduced ? 'reduce' : '');
-    if (options.persist !== false) lsSet('smt_motion', reduced ? 'reduce' : '');
-    if (options.emit) emitMotionChange(reduced);
+    document.documentElement.setAttribute('data-motion', on ? 'reduce' : '');
+    if (options.persist !== false) lsSet('smt_motion', on ? 'reduce' : '');
+    if (options.emit !== false) emitMotionChange(on);
+  }
+  function applyInitialMotion() {
+    const saved = lsRaw('smt_motion');
+    if (saved === 'reduce' || saved === '') {
+      applyMotion(saved === 'reduce', { persist: false, emit: false });
+      return;
+    }
+    const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    applyMotion(prefersReduced, { persist: false, emit: false });
   }
   function applyAurora(on) {
     document.documentElement.setAttribute('data-aurora', on ? 'on' : 'off');
@@ -154,28 +149,6 @@
     }
   }
 
-  function activeLanguage() {
-    return window.smtNormalizeLanguage
-      ? window.smtNormalizeLanguage(ls('smt_lang', 'en'))
-      : ls('smt_lang', 'en');
-  }
-  function tA11y(key) {
-    const lang = activeLanguage();
-    const dict = (window.i18n && window.i18n[lang]) || {};
-    const fallback = {
-      'a11y.settings.open': { en: 'Settings', sv: 'Inställningar' },
-      'a11y.close': { en: 'Close', sv: 'Stäng' },
-      'a11y.ad.close': { en: 'Close ad', sv: 'Stäng annons' },
-      'a11y.studyBuddy': { en: 'Study buddy', sv: 'Studiekompis' },
-    };
-    return dict[key] || fallback[key]?.[lang] || fallback[key]?.en || key;
-  }
-  function applyA11yLabels() {
-    document.querySelectorAll('[data-a11y-label]').forEach((el) => {
-      el.setAttribute('aria-label', tA11y(el.dataset.a11yLabel));
-    });
-  }
-
   // -------- MODAL OPEN/CLOSE --------
 
   let settingsModalInvoker = null;
@@ -183,18 +156,19 @@
   function focusElement(el) {
     if (el && typeof el.focus === 'function') el.focus();
   }
+
   function getSettingsFocusableControls(modal) {
-    if (!modal || typeof modal.querySelectorAll !== 'function') return [];
     return Array.from(
       modal.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       ),
-    ).filter((el) => !el.disabled && !el.hidden);
+    ).filter((el) => !el.disabled && !el.hidden && el.getAttribute('aria-hidden') !== 'true');
   }
+
   function trapSettingsModalTab(e, modal) {
     const controls = getSettingsFocusableControls(modal);
-    if (!controls.length) {
-      e.preventDefault?.();
+    if (controls.length === 0) {
+      e.preventDefault();
       focusElement(modal);
       return;
     }
@@ -202,30 +176,33 @@
     const last = controls[controls.length - 1];
     const active = document.activeElement;
     if (!modal.contains(active) || active === modal) {
-      e.preventDefault?.();
+      e.preventDefault();
       focusElement(e.shiftKey ? last : first);
-    } else if (e.shiftKey && active === first) {
-      e.preventDefault?.();
+      return;
+    }
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
       focusElement(last);
     } else if (!e.shiftKey && active === last) {
-      e.preventDefault?.();
+      e.preventDefault();
       focusElement(first);
     }
   }
+
   function restoreSettingsInvoker() {
     const invoker = settingsModalInvoker;
     settingsModalInvoker = null;
     if (invoker && document.contains(invoker)) focusElement(invoker);
   }
+
   function focusConsentPrompt() {
-    const c = document.getElementById('consent');
-    focusElement(c);
+    focusElement(document.getElementById('consent-min'));
   }
 
   function open(invoker) {
     const m = document.getElementById('settings-modal');
     if (!m) return;
-    settingsModalInvoker = invoker || document.activeElement || null;
+    settingsModalInvoker = invoker || document.activeElement;
     m.hidden = false;
     document.body.style.overflow = 'hidden';
     syncControls();
@@ -243,8 +220,8 @@
   // -------- SYNC CONTROL STATE --------
 
   function setPressedState(el, on) {
-    el.classList.toggle("is-on", on);
-    el.setAttribute("aria-pressed", on ? "true" : "false");
+    el.classList.toggle('is-on', on);
+    el.setAttribute('aria-pressed', on ? 'true' : 'false');
   }
 
   function setSegment(group, value) {
@@ -269,8 +246,7 @@
       : ls('smt_lang', 'en');
     setSegment('language', lang);
     setSegment('textsize', ls('smt_textsize', '100'));
-    setSegment('sources', ls('smt_question_sources', 'all'));
-    setCheckbox('motion', resolvedMotionPreference());
+    setCheckbox('motion', ls('smt_motion', '') === 'reduce');
     setCheckbox('aurora', ls('smt_aurora', 'on') !== 'off');
     setCheckbox('flagcross', ls('smt_flagcross', '1') === '1');
     setCheckbox('buddyshow', ls('smt_buddy_hidden', '') !== '1');
@@ -287,7 +263,7 @@
     host.innerHTML = buddies
       .map(
         (b) => `
-      <button class="buddy-card ${b.id === cur ? 'is-on' : ''}" data-buddy="${b.id}" title="${b.name}" aria-pressed="${b.id === cur ? "true" : "false"}">
+      <button class="buddy-card ${b.id === cur ? 'is-on' : ''}" data-buddy="${b.id}" title="${b.name}" aria-pressed="${b.id === cur ? 'true' : 'false'}">
         <span class="buddy-card__svg">${b.svg}</span>
         <span class="buddy-card__name">${b.name}</span>
         <span class="buddy-card__sub">${b.subtitle[lang] || b.subtitle.en}</span>
@@ -300,8 +276,11 @@
   // -------- WIRE EVENTS --------
 
   document.addEventListener('click', (e) => {
-    const settingsOpen = e.target.closest("#settings-open");
-    if (settingsOpen) { open(settingsOpen); return; }
+    const settingsOpen = e.target.closest('#settings-open');
+    if (settingsOpen) {
+      open(settingsOpen);
+      return;
+    }
     if (e.target.closest('#settings-modal [data-close="settings"]')) {
       close();
       return;
@@ -321,10 +300,6 @@
           location.reload();
         }
       } else if (group === 'textsize') applyTextSize(v);
-      else if (group === 'sources') {
-        if (window.smtSetQuestionSources) window.smtSetQuestionSources(v);
-        else lsSet('smt_question_sources', v);
-      }
       setSegment(group, v);
       return;
     }
@@ -365,7 +340,7 @@
     if (e.target.matches('input[type=checkbox][data-set]')) {
       const group = e.target.dataset.set;
       const on = e.target.checked;
-      if (group === 'motion') applyMotion(on, { emit: true });
+      if (group === 'motion') applyMotion(on);
       else if (group === 'aurora') applyAurora(on);
       else if (group === 'flagcross') applyFlagcross(on);
       else if (group === 'buddyshow') applyBuddyVisible(on);
@@ -375,21 +350,17 @@
   document.addEventListener('keydown', (e) => {
     const m = document.getElementById('settings-modal');
     if (!m || m.hidden) return;
-    if (e.key === "Tab") trapSettingsModalTab(e, m);
     if (e.key === 'Escape') close();
+    if (e.key === 'Tab') trapSettingsModalTab(e, m);
   });
 
   // -------- BOOT (restore saved settings) --------
 
-  window.addEventListener('smt:languagechange', applyA11yLabels);
-  applyA11yLabels();
-
   window.addEventListener('DOMContentLoaded', () => {
-    applyA11yLabels();
     applyTheme(ls('smt_theme', 'auto'));
     applyPalette(ls('smt_palette', 'flag'));
     applyTextSize(ls('smt_textsize', '100'));
-    applyMotion(resolvedMotionPreference(), { persist: false });
+    applyInitialMotion();
     applyAurora(ls('smt_aurora', 'on') !== 'off');
     applyFlagcross(ls('smt_flagcross', '1') === '1');
 
