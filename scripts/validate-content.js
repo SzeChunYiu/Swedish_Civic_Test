@@ -8477,6 +8477,8 @@ let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
 let aboutTheTestSwedishMockprovCopyGuardValidated = 0;
 let citizenshipRequirementsLimitedSeatCopyValidated = 0;
+let citizenshipRequirementsChecklistPersistenceRulesValidated = 0;
+let citizenshipRequirementsChecklistPersistenceParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let examRouteCopyLabelsValidated = 0;
@@ -9227,6 +9229,7 @@ if (focusedValidationRequested('aboutTheTestRouteCopy')) {
   validateAboutTheTestRouteCopyParity();
   validateAboutTheTestSeenEffectParity();
   validateCitizenshipRequirementsLimitedSeatParity();
+  validateCitizenshipRequirementsChecklistPersistenceParity();
   exitWithValidationFailures();
   printValidationSummary({
     aboutTheTestRouteCopyLabelsValidated,
@@ -9237,6 +9240,8 @@ if (focusedValidationRequested('aboutTheTestRouteCopy')) {
     aboutTheTestSeenEffectParityValidated,
     aboutTheTestSwedishMockprovCopyGuardValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
+    citizenshipRequirementsChecklistPersistenceRulesValidated,
+    citizenshipRequirementsChecklistPersistenceParityValidated,
   });
   process.exit(0);
 }
@@ -10915,6 +10920,100 @@ function validateCitizenshipRequirementsLimitedSeatParity() {
   });
 
   if (!valid) return;
+}
+
+function validateCitizenshipRequirementsChecklistPersistenceParity() {
+  let valid = true;
+  let routeSource = '';
+  let storeSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    routeSource = fs.readFileSync(path.join(repoRoot, 'app/citizenship-requirements.tsx'), 'utf8');
+  } catch (error) {
+    reject(`app/citizenship-requirements.tsx could not be read: ${error.message}`);
+    return;
+  }
+
+  try {
+    storeSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/storage/citizenshipRequirementsStore.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/storage/citizenshipRequirementsStore.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  [
+    [
+      'useCitizenshipRequirementsChecklistStore',
+      routeSource,
+      'route must use persisted checklist store',
+    ],
+    ['PersistenceWarningNotice', routeSource, 'route must render recoverable persistence warnings'],
+    [
+      'const checkedAreaIds = useCitizenshipRequirementsChecklistStore',
+      routeSource,
+      'route must select checked ids from the store',
+    ],
+    [
+      'const toggleChecklistArea = useCitizenshipRequirementsChecklistStore',
+      routeSource,
+      'route must toggle through the store',
+    ],
+    [
+      'warning={persistenceWarning}',
+      routeSource,
+      'route must pass checklist persistence warnings to the notice',
+    ],
+    [
+      'onPress={() => toggleChecklistArea(area.id)}',
+      routeSource,
+      'checkbox presses must persist through the checklist store',
+    ],
+    [
+      "const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';",
+      storeSource,
+      'checklist store must use a versioned checked-area key',
+    ],
+    [
+      "const citizenshipRequirementsStorageId = 'citizenship-requirements';",
+      storeSource,
+      'checklist store must use a dedicated MMKV id',
+    ],
+    [
+      'normalizeCitizenshipRequirementAreaIds',
+      storeSource,
+      'checklist store must normalize stale imported area ids',
+    ],
+    ['readRecoverably(', storeSource, 'checklist store must recover from read failures'],
+    ['parseJsonRecoverably(', storeSource, 'checklist store must recover from corrupt JSON'],
+    ['writeRecoverably(', storeSource, 'checklist store must recover from write failures'],
+    [
+      'citizenshipRequirementAreas.map((area) => area.id)',
+      storeSource,
+      'checklist store must preserve canonical area order',
+    ],
+  ].forEach(([snippet, source, message]) => {
+    if (!source.includes(snippet)) {
+      reject(message);
+      return;
+    }
+    citizenshipRequirementsChecklistPersistenceRulesValidated += 1;
+  });
+
+  if (/useState<ReadonlySet/.test(routeSource)) {
+    reject('citizenship requirements checklist must not use component-local checked id state');
+  }
+
+  if (valid && citizenshipRequirementsChecklistPersistenceRulesValidated === 13) {
+    citizenshipRequirementsChecklistPersistenceParityValidated = true;
+  }
 }
 
 function validateAboutTheTestRouteCopyParity() {
@@ -19531,6 +19630,7 @@ validateExamSubmissionFinalityParity();
 validateAboutTheTestRouteCopyParity();
 validateAboutTheTestSeenEffectParity();
 validateCitizenshipRequirementsLimitedSeatParity();
+validateCitizenshipRequirementsChecklistPersistenceParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateNativeMockExamComponentLegalCopy();
@@ -19677,6 +19777,8 @@ console.log(
       aboutTheTestSeenEffectParityValidated,
       aboutTheTestSwedishMockprovCopyGuardValidated,
       citizenshipRequirementsLimitedSeatCopyValidated,
+      citizenshipRequirementsChecklistPersistenceRulesValidated,
+      citizenshipRequirementsChecklistPersistenceParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
       examRouteCopyLabelsValidated,

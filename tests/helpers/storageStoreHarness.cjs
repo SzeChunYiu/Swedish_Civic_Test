@@ -64,13 +64,13 @@ function createZustandStub() {
       const setFn = (partial) => {
         const next = typeof partial === 'function' ? partial(state) : partial;
         if (next && next !== state) {
-          Object.assign(state, next);
+          state = { ...state, ...next };
         }
       };
       const getFn = () => state;
       state = factory(setFn, getFn);
 
-      const useStore = (selector) => (typeof selector === 'function' ? selector(state) : state);
+      const useStore = () => state;
       useStore.getState = () => state;
       useStore.setState = (partial) => setFn(partial);
       return useStore;
@@ -86,24 +86,12 @@ function clearModuleCache(modulePath) {
   }
 }
 
-function installTsLoader() {
-  const originalTsExtension = require.extensions['.ts'];
-  require.extensions['.ts'] = function tsLoader(module, filename) {
-    const source = fs.readFileSync(filename, 'utf8');
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-      fileName: filename,
-    }).outputText;
-    module._compile(transpiled, filename);
-  };
-
-  return () => {
-    if (originalTsExtension) {
-      require.extensions['.ts'] = originalTsExtension;
-    } else {
-      delete require.extensions['.ts'];
-    }
-  };
+function resolveLocalTs(parentFilename, request) {
+  const base = path.resolve(path.dirname(parentFilename), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  return candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
 }
 
 function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}) {
@@ -118,7 +106,7 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
-  const restoreTsLoader = installTsLoader();
+  const originalTsExtension = require.extensions['.ts'];
   const stubs = {
     'expo-speech': () => ({
       speak() {},
@@ -131,13 +119,25 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
     ...moduleStubs,
   };
 
-  Module._resolveFilename = function patchedResolve(request, ...args) {
+  Module._resolveFilename = function patchedResolve(request, parent, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
-    return originalResolve.call(this, request, ...args);
+    if (request.startsWith('.') && parent?.filename) {
+      const localTsPath = resolveLocalTs(parent.filename, request);
+      if (localTsPath) return localTsPath;
+    }
+    return originalResolve.call(this, request, parent, ...args);
   };
   Module._load = function patchedLoad(request, ...args) {
     if (stubs[request]) return stubs[request]();
     return originalLoad.call(this, request, ...args);
+  };
+  require.extensions['.ts'] = function tsLoader(module, filename) {
+    const source = fs.readFileSync(filename, 'utf8');
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+      fileName: filename,
+    }).outputText;
+    module._compile(transpiled, filename);
   };
 
   try {
@@ -145,18 +145,17 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
   } finally {
     Module._resolveFilename = originalResolve;
     Module._load = originalLoad;
-    restoreTsLoader();
+    if (originalTsExtension) {
+      require.extensions['.ts'] = originalTsExtension;
+    } else {
+      delete require.extensions['.ts'];
+    }
   }
-}
-
-function loadTsModule(repoRoot, relativePath, moduleStubs = {}) {
-  return loadTsWithStorage(repoRoot, relativePath, {}, moduleStubs);
 }
 
 module.exports = {
   createMemoryMMKV,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
-  loadTsModule,
   loadTsWithStorage,
 };
