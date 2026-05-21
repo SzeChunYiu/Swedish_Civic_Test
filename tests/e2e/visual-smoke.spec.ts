@@ -3,12 +3,15 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
-import { resolveVisualSmokeOutput } from './visualSmokeOutput';
+import { dismissBlockingModals } from './browserLaunch';
+import {
+  isVisualSmokeCommittedBaselineOutput,
+  resolveVisualSmokeOutput,
+} from './visualSmokeOutput';
 
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
 const visualSmokeOutput = resolveVisualSmokeOutput();
-const screenshotDir = visualSmokeOutput.dir;
+const screenshotDir = visualSmokeOutput.outputDir;
 type RouteCapture = {
   name: string;
   route: string;
@@ -106,7 +109,8 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   expectExportBundleToContainRouteContext();
   expect(
-    process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1' || !visualSmokeOutput.writesCommittedBaseline,
+    visualSmokeOutput.refreshCommittedBaseline ||
+      !isVisualSmokeCommittedBaselineOutput(visualSmokeOutput.outputDir),
     'Default visual-smoke runs must not write into the committed screenshot baseline',
   ).toBe(true);
 
@@ -137,7 +141,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     const bytes = fs.statSync(filePath).size;
     const sha256 = sha256File(filePath);
     const launchOverlayVisibleAfterDismissal =
-      (await page.locator(blockingModalOverlayLocator).count()) > 0;
+      (await page.locator('[role="dialog"][aria-modal="true"]').count()) > 0;
     expect(bytes, `${file} should not be empty`).toBeGreaterThan(10_000);
     expect(launchOverlayVisibleAfterDismissal, `${file} should not show launch overlay`).toBe(
       false,
@@ -163,13 +167,14 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     JSON.stringify(
       {
         capturedAt: new Date().toISOString(),
-        outputMode: visualSmokeOutput.mode,
+        outputMode: visualSmokeOutput.outputMode,
         outputPolicy: visualSmokeOutput.outputPolicy,
-        writesCommittedBaseline: visualSmokeOutput.writesCommittedBaseline,
+        outputRefreshRequested: visualSmokeOutput.refreshCommittedBaseline,
+        outputWritesCommittedBaseline: visualSmokeOutput.writesCommittedBaseline,
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
         launchOverlayPolicy:
-          'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible dialog or modal menu overlays.',
+          'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
         duplicateExplanations: explainedDuplicateScreenshotGroups,
