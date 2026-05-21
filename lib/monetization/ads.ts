@@ -1,10 +1,16 @@
 import type { AdPlacement, AdUnitConfig, PremiumEntitlements } from '../../types/monetization';
 import type { AdConsentDecision } from './consent';
+import {
+  REAL_AD_UNITS_JSON_ENV,
+  readRealAdUnitOverrides,
+  type RealAdUnitOverride,
+} from './adUnitsReal';
 
 export type SafeAdPlacement = AdPlacement | 'exam_screen';
 export type AdRuntimePlatform = 'ios' | 'android';
+export type RealAdUnitSource = 'env' | 'json' | 'none';
 type AdUnitEnvKeys = Record<AdPlacement, Record<AdRuntimePlatform, string>>;
-type AdUnitEnvValues = Record<AdPlacement, Record<AdRuntimePlatform, string | undefined>>;
+type AdUnitSources = Record<AdPlacement, Record<AdRuntimePlatform, RealAdUnitSource>>;
 type AdConsentGate = Pick<AdConsentDecision, 'adServingAllowed'>;
 
 // Web placeholders do not initialize the native ad SDK; this keeps real-unit web exports previewable.
@@ -43,14 +49,15 @@ function readBooleanFlag(value: string | undefined, defaultValue: boolean): bool
   return defaultValue;
 }
 
-function readEnvString(value: string | undefined): string | undefined {
-  const normalized = value?.trim();
-  return normalized ? normalized : undefined;
+function readEnvString(key: string): string | undefined {
+  const value = process.env[key]?.trim();
+  return value ? value : undefined;
 }
 
 export const REAL_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_REAL_ADS_ENABLED, false);
 
 const GOOGLE_ADS_ENABLED = readBooleanFlag(process.env.EXPO_PUBLIC_GOOGLE_ADS_ENABLED, true);
+const REAL_AD_UNIT_OVERRIDES = readRealAdUnitOverrides();
 
 const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   app_open_launch: {
@@ -76,35 +83,6 @@ const REAL_AD_UNIT_ENV_KEYS: AdUnitEnvKeys = {
   rewarded_extra_exam: {
     android: 'EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID',
     ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
-  },
-};
-
-const REAL_AD_UNIT_ENV_VALUES: AdUnitEnvValues = {
-  app_open_launch: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_OPEN_LAUNCH_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_APP_OPEN_LAUNCH_UNIT_ID),
-  },
-  chapter_list_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_CHAPTER_LIST_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_CHAPTER_LIST_BANNER_UNIT_ID),
-  },
-  home_banner: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_HOME_BANNER_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_HOME_BANNER_UNIT_ID),
-  },
-  quiz_completed_interstitial: {
-    android: readEnvString(
-      process.env.EXPO_PUBLIC_ADMOB_ANDROID_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID,
-    ),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_QUIZ_COMPLETED_INTERSTITIAL_UNIT_ID),
-  },
-  results_native: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_RESULTS_NATIVE_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_RESULTS_NATIVE_UNIT_ID),
-  },
-  rewarded_extra_exam: {
-    android: readEnvString(process.env.EXPO_PUBLIC_ADMOB_ANDROID_REWARDED_EXTRA_EXAM_UNIT_ID),
-    ios: readEnvString(process.env.EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID),
   },
 };
 
@@ -153,19 +131,46 @@ export const TEST_AD_UNITS: AdUnitConfig[] = [
   },
 ];
 
+function readRealAdUnitForPlatform(
+  placement: AdPlacement,
+  platform: AdRuntimePlatform,
+  override?: RealAdUnitOverride,
+): { source: RealAdUnitSource; unitId?: string } {
+  const envUnitId = readEnvString(REAL_AD_UNIT_ENV_KEYS[placement][platform]);
+  if (envUnitId) return { source: 'env', unitId: envUnitId };
+
+  const overrideUnitId = platform === 'android' ? override?.androidUnitId : override?.iosUnitId;
+  if (overrideUnitId) return { source: 'json', unitId: overrideUnitId };
+
+  return { source: 'none' };
+}
+
 export const REAL_AD_UNITS: AdUnitConfig[] = TEST_AD_UNITS.map((unit) => {
-  const envValues = REAL_AD_UNIT_ENV_VALUES[unit.placement];
-  const androidUnitId = envValues.android;
-  const iosUnitId = envValues.ios;
+  const override = REAL_AD_UNIT_OVERRIDES[unit.placement];
+  const android = readRealAdUnitForPlatform(unit.placement, 'android', override);
+  const ios = readRealAdUnitForPlatform(unit.placement, 'ios', override);
 
   return {
     ...unit,
-    androidUnitId,
-    enabled: Boolean(androidUnitId || iosUnitId),
-    iosUnitId,
+    androidUnitId: android.unitId,
+    enabled: Boolean(android.unitId || ios.unitId),
+    iosUnitId: ios.unitId,
     testOnly: false,
   };
 });
+
+export const REAL_AD_UNIT_SOURCES: AdUnitSources = Object.fromEntries(
+  TEST_AD_UNITS.map((unit) => {
+    const override = REAL_AD_UNIT_OVERRIDES[unit.placement];
+    return [
+      unit.placement,
+      {
+        android: readRealAdUnitForPlatform(unit.placement, 'android', override).source,
+        ios: readRealAdUnitForPlatform(unit.placement, 'ios', override).source,
+      },
+    ];
+  }),
+) as AdUnitSources;
 
 export function getConfiguredAdUnits(): AdUnitConfig[] {
   return REAL_ADS_ENABLED ? REAL_AD_UNITS : TEST_AD_UNITS;
@@ -248,7 +253,9 @@ export const adsConfig = {
   googleMobileAdsEnabled: GOOGLE_ADS_ENABLED,
   realAdsEnabled: REAL_ADS_ENABLED,
   realAdsRequireConsentDecision: true,
+  realUnitJsonEnvKey: REAL_AD_UNITS_JSON_ENV,
   realUnitEnvKeys: REAL_AD_UNIT_ENV_KEYS,
+  realUnitSources: REAL_AD_UNIT_SOURCES,
   realUnits: REAL_AD_UNITS,
   testUnits: TEST_AD_UNITS,
   units: getConfiguredAdUnits(),
