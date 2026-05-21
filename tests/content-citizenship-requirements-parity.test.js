@@ -141,11 +141,15 @@ test('citizenship requirements screen renders interactive sourced checklist with
 
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
+  assert.match(routeSource, /useCitizenshipRequirementsStore/);
+  assert.match(routeSource, /PersistenceWarningNotice/);
   assert.match(routeSource, /QuestionDisclaimer/);
   assert.match(routeSource, /accessibilityRole="checkbox"/);
   assert.match(routeSource, /accessibilityState=\{\{\s*checked\s*\}\}/);
   assert.match(routeSource, /aria-checked=\{checked\}/);
   assert.match(routeSource, /buildSummary\(/);
+  assert.match(routeSource, /checkedAreaIds/);
+  assert.match(routeSource, /toggleArea/);
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
