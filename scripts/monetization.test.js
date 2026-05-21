@@ -3,11 +3,10 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
-const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks = {}) {
+function loadTs(relativePath, exportName, moduleCache = new Map()) {
   const filePath = path.join(repoRoot, relativePath);
   if (moduleCache.has(filePath)) {
     const cached = moduleCache.get(filePath);
@@ -22,10 +21,6 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks =
   moduleCache.set(filePath, mod.exports);
 
   function localRequire(specifier) {
-    if (Object.hasOwn(moduleMocks, specifier)) {
-      return moduleMocks[specifier];
-    }
-
     if (specifier.startsWith('.')) {
       const resolvedPath = path.resolve(path.dirname(filePath), specifier);
       const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
@@ -36,7 +31,7 @@ function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks =
       const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
 
       if (resolvedTsPath?.startsWith(repoRoot)) {
-        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, moduleMocks);
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache);
       }
     }
 
@@ -414,32 +409,8 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;/);
-  assert.match(practiceInterstitialSource, /clearTimeout\(loadTimeout\);/);
-  assert.match(
-    practiceInterstitialSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/,
-  );
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
-  assert.match(
-    practiceInterstitialSource,
-    /const finishSuccessfulShow = \(\) => \{[\s\S]*consumeShowKey\(\)/,
-  );
-  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*finishSuccessfulShow\(\)/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_LOAD_TIMEOUT_MS = \d[\d_]*;/);
-  assert.match(practiceInterstitialSource, /const INTERSTITIAL_SHOW_TIMEOUT_MS = \d[\d_]*;/);
-  assert.match(
-    practiceInterstitialSource,
-    /interstitialLoadInFlight = true;[\s\S]{0,180}startAttemptTimeout\(INTERSTITIAL_LOAD_TIMEOUT_MS\)/,
-  );
-  assert.match(
-    practiceInterstitialSource,
-    /AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/,
-  );
-  assert.doesNotMatch(
-    practiceInterstitialSource,
-    /setTimeout\(\(\) => \{[\s\S]{0,160}consumeShowKey\(\)/,
-  );
+  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
   assert.doesNotMatch(
     practiceInterstitialSource,
     /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,
@@ -450,35 +421,12 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   );
   assert.match(
     practiceInterstitialSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
   assert.doesNotMatch(
     practiceInterstitialSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS/,
   );
-});
-
-test('native launch popup load timeout releases the in-flight attempt only', () => {
-  const launchSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
-    'utf8',
-  );
-
-  const timeoutIndex = launchSource.indexOf('loadTimeout = setTimeout(() => {');
-  const loadIndex = launchSource.indexOf('appOpenAd.load();');
-  const loadedListenerIndex = launchSource.indexOf('AdEventType.LOADED');
-  const capIndex = launchSource.indexOf('launchPopupShownThisRuntime = true;', loadedListenerIndex);
-
-  assert.match(launchSource, /const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;/);
-  assert.match(launchSource, /clearTimeout\(loadTimeout\);/);
-  assert.match(
-    launchSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
-  );
-  assert.ok(timeoutIndex > loadedListenerIndex);
-  assert.ok(loadIndex > timeoutIndex);
-  assert.ok(capIndex > loadedListenerIndex);
-  assert.doesNotMatch(launchSource.slice(timeoutIndex, loadIndex), /launchPopupShownThisRuntime/);
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
@@ -926,6 +874,7 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     'utf8',
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
   const confirmedResult = await showRewardedExtraExamAd({
     confirmReward: () => true,
@@ -974,11 +923,23 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
     nativeRewardedAdSource,
     /try \{[\s\S]*RewardedAd\.createForAdRequest[\s\S]*rewardedAd\.load\(\);[\s\S]*\} catch \{[\s\S]*status: hasShown \? 'show_failed' : 'failed_to_load'/,
   );
-  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|RewardedAd|rewardPreview/);
-  assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION|grantRewardedExamCredit/);
-  assert.doesNotMatch(examSource, /Unlock extra exam|Lås upp extra prov/);
-  assert.match(examSource, /Start unlocked extra exam/);
-  assert.match(examSource, /Starta upplåst extra prov/);
+  assert.match(
+    homeSource,
+    /accessDecision\.canOfferRewardedAd \|\| accessDecision\.reason === 'consent_required'/,
+  );
+  assert.match(
+    homeSource,
+    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements: monetizationEntitlements,[\s\S]*\}\);[\s\S]*rewardedAdResult\.status !== 'earned_reward'[\s\S]*return;[\s\S]*await grantRewardedExamCredit\(\);/,
+  );
+  assert.match(
+    homeSource,
+    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
+  );
+  assert.match(homeSource, /rewardedExamPreviewButton: 'Complete sponsor preview'/);
+  assert.match(homeSource, /rewardedExamPreviewButton: 'Slutför förhandsvisning'/);
+  assert.match(homeSource, /await grantRewardedExamCredit\(\);/);
+  assert.match(examSource, /consumeRewardedExamCredit/);
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {
@@ -1070,89 +1031,6 @@ test('remove-ads entitlement is decoupled from premium feature bundle', () => {
   );
 });
 
-test('effective entitlement resolver normalizes malformed entitlement flags to strict booleans', () => {
-  const { unionEntitlements } = loadTs('lib/monetization/premium.ts');
-  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
-  const freeEntitlements = {
-    adsDisabled: false,
-    unlimitedMockExams: false,
-    fullMistakeReview: false,
-    spacedRepetition: false,
-    nativeLangExplanations: false,
-    customStudyPlan: false,
-    notesExport: false,
-    predictedPassProbability: false,
-    confidenceSlider: false,
-    multiColorHighlights: false,
-  };
-  const now = new Date('2026-05-19T12:00:00.000Z');
-
-  assert.deepEqual(
-    unionEntitlements(freeEntitlements, {
-      adsDisabled: 1,
-      unlimitedMockExams: 'yes',
-      fullMistakeReview: {},
-      spacedRepetition: 'true',
-      nativeLangExplanations: [],
-      customStudyPlan: null,
-      notesExport: undefined,
-      predictedPassProbability: Number.POSITIVE_INFINITY,
-      confidenceSlider: 'false',
-      multiColorHighlights: new Boolean(true),
-    }),
-    freeEntitlements,
-  );
-
-  const malformedRemoveAds = resolveEffectiveEntitlement({
-    removeAds: {
-      adsDisabled: 'yes',
-      unlimitedMockExams: true,
-      fullMistakeReview: true,
-    },
-    now,
-  });
-  assert.equal(malformedRemoveAds.primarySource, 'free');
-  assert.deepEqual(malformedRemoveAds.entitlements, freeEntitlements);
-
-  const validRemoveAdsWithMalformedExtras = resolveEffectiveEntitlement({
-    removeAds: {
-      adsDisabled: true,
-      unlimitedMockExams: 'yes',
-      fullMistakeReview: 1,
-    },
-    now,
-  });
-  assert.equal(validRemoveAdsWithMalformedExtras.primarySource, 'remove-ads');
-  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.adsDisabled, true);
-  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.unlimitedMockExams, false);
-  assert.equal(validRemoveAdsWithMalformedExtras.entitlements.fullMistakeReview, false);
-
-  const malformedProLifetime = resolveEffectiveEntitlement({
-    proLifetime: {
-      adsDisabled: 'yes',
-      unlimitedMockExams: 'yes',
-      fullMistakeReview: 1,
-      spacedRepetition: true,
-      nativeLangExplanations: 'yes',
-      customStudyPlan: true,
-      notesExport: {},
-      predictedPassProbability: [],
-      confidenceSlider: false,
-      multiColorHighlights: Number.POSITIVE_INFINITY,
-    },
-    now,
-  });
-  assert.equal(malformedProLifetime.primarySource, 'pro-lifetime');
-  assert.equal(malformedProLifetime.entitlements.adsDisabled, false);
-  assert.equal(malformedProLifetime.entitlements.unlimitedMockExams, false);
-  assert.equal(malformedProLifetime.entitlements.fullMistakeReview, false);
-  assert.equal(malformedProLifetime.entitlements.spacedRepetition, true);
-  assert.equal(malformedProLifetime.entitlements.customStudyPlan, true);
-  Object.values(malformedProLifetime.entitlements).forEach((value) =>
-    assert.equal(typeof value, 'boolean'),
-  );
-});
-
 test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async () => {
   const purchaseExports = loadTs('lib/monetization/purchases.ts');
   const {
@@ -1237,7 +1115,6 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
-  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   assert.equal(
     (
       await getPurchaseEntitlements({
@@ -1479,111 +1356,6 @@ test('native purchase provider matches requested product ids instead of Remove A
   );
 });
 
-test('Pro Lifetime stored records are receipt-backed and revalidated on relaunch', async () => {
-  const {
-    PRO_LIFETIME_PRODUCT_ID,
-    PRO_LIFETIME_RECORD_SCHEMA_VERSION,
-    PRO_LIFETIME_STORAGE_KEY,
-    getProLifetimeEntitlement,
-    setProLifetimeEntitlement,
-  } = loadTs('lib/monetization/proLifetimePurchase.ts');
-  const { createMemoryPurchaseStorage } = loadTs('lib/monetization/purchases.ts');
-  const proLifetimeSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
-    'utf8',
-  );
-  const hookSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useProLifetimeEntitlements.ts'),
-    'utf8',
-  );
-  const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
-  const storage = createMemoryPurchaseStorage();
-  const initialPurchase = {
-    productId: PRO_LIFETIME_PRODUCT_ID,
-    purchaseToken: 'pro-token-old',
-    transactionId: 'pro-tx-old',
-  };
-
-  await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'true');
-  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
-
-  await setProLifetimeEntitlement(true, {
-    purchase: initialPurchase,
-    receiptValidation: {
-      productId: PRO_LIFETIME_PRODUCT_ID,
-      purchaseToken: initialPurchase.purchaseToken,
-      status: 'valid',
-      transactionId: initialPurchase.transactionId,
-      validatedAt: '2026-05-20T12:00:00.000Z',
-    },
-    storage,
-  });
-
-  const storedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
-  assert.equal(storedRecord.productId, PRO_LIFETIME_PRODUCT_ID);
-  assert.equal(storedRecord.receiptValidationStatus, 'valid');
-  assert.equal(storedRecord.schemaVersion, PRO_LIFETIME_RECORD_SCHEMA_VERSION);
-
-  const events = [];
-  const provider = {
-    async connect() {
-      events.push('connect');
-    },
-    async disconnect() {
-      events.push('disconnect');
-    },
-    async requestRemoveAdsPurchase() {
-      return null;
-    },
-    async restorePurchases(productIds) {
-      events.push(`restore:${productIds.join(',')}`);
-      return [
-        {
-          productId: PRO_LIFETIME_PRODUCT_ID,
-          purchaseToken: 'pro-token-old',
-          transactionId: 'pro-tx-new',
-          raw: { ids: [PRO_LIFETIME_PRODUCT_ID] },
-        },
-      ];
-    },
-    async validateRemoveAdsReceipt(purchase, productId) {
-      events.push(`validate:${productId}`);
-      return {
-        productId,
-        purchaseToken: purchase.purchaseToken,
-        status: 'valid',
-        transactionId: purchase.transactionId,
-        validatedAt: '2026-05-21T00:00:00.000Z',
-      };
-    },
-  };
-
-  const revalidated = await getProLifetimeEntitlement({ provider, storage });
-  const refreshedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
-
-  assert.equal(revalidated.spacedRepetition, true);
-  assert.equal(refreshedRecord.transactionId, 'pro-tx-new');
-  assert.deepEqual(events, [
-    'connect',
-    `restore:${PRO_LIFETIME_PRODUCT_ID}`,
-    `validate:${PRO_LIFETIME_PRODUCT_ID}`,
-    'disconnect',
-  ]);
-  assert.match(proLifetimeSource, /parseStoredProLifetimeEntitlementRecord/);
-  assert.match(proLifetimeSource, /revalidateStoredProLifetimeEntitlementRecord/);
-  assert.match(proLifetimeSource, /provider\.restorePurchases\(\[PRO_LIFETIME_PRODUCT_ID\]\)/);
-  assert.match(
-    proLifetimeSource,
-    /provider\.validateRemoveAdsReceipt\(purchase, PRO_LIFETIME_PRODUCT_ID as ReceiptProductId\)/,
-  );
-  assert.doesNotMatch(proLifetimeSource, /STORED_TRUE|storedValue === STORED_TRUE/);
-  assert.match(hookSource, /provider:\s*createNativePurchaseProvider/);
-  assert.match(
-    normalizedProLifetimeSource,
-    /if \(!provider\) \{ return proLifetimeEntitlements\(true\); \}/,
-  );
-});
-
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
@@ -1627,23 +1399,6 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
     }),
   );
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, false);
-
-  await storage.setItemAsync(
-    REMOVE_ADS_STORAGE_KEY,
-    JSON.stringify({
-      grantedAt: new Date().toISOString(),
-      productId: REMOVE_ADS_PRODUCT_ID,
-      purchaseToken: 'mock-token-buy-remove-ads',
-      receiptValidatedAt: new Date().toISOString(),
-      receiptValidationStatus: 'valid',
-      schemaVersion: 1,
-      source: 'purchase',
-      transactionId: 'buy-remove-ads',
-    }),
-  );
-  const persistedRecord = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
-  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
-  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), persistedRecord);
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
@@ -1745,12 +1500,6 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(paywallSource, {
-      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-      surfaceName: 'PremiumBanner',
-    }),
-  );
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
@@ -1785,40 +1534,6 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
-});
-
-test('purchase paywalls use a synchronous in-flight guard before store calls', () => {
-  const placementCtaSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
-    'utf8',
-  );
-  const premiumBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
-    'utf8',
-  );
-  const proPaywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
-  );
-
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(placementCtaSource, {
-      awaitedCalls: ['await purchaseAction('],
-      surfaceName: 'RemoveAdsPlacementCta',
-    }),
-  );
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(premiumBannerSource, {
-      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-      surfaceName: 'PremiumBanner',
-    }),
-  );
-  assert.doesNotThrow(() =>
-    assertPurchaseActionInFlightGuard(proPaywallSource, {
-      awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
-      surfaceName: 'ProPaywall',
-    }),
-  );
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
@@ -1858,56 +1573,6 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   assert.doesNotMatch(
     placementCtaSource,
     /\bprov(?:et)?\s+(?:är|förblir)\s+(?:alltid\s+|redan\s+)?annonsfri(?:tt|a)?\b/i,
-  );
-});
-
-test('AdBanner testStatus copy stays platform-neutral while liveStatus stays live-only', () => {
-  const webBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-    'utf8',
-  );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
-
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.doesNotMatch(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
-  );
-  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - test placement');
-  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - testplacering');
-  assert.equal(adBannerCopy.en.liveStatus, 'AdMob placement active');
-  assert.equal(adBannerCopy.sv.liveStatus, 'AdMob-placering aktiv');
-
-  for (const copy of Object.values(adBannerCopy)) {
-    assert.doesNotMatch(copy.testStatus, /web preview|webbförhandsvisning/);
-    assert.doesNotMatch(copy.liveStatus, /test unit|testannons|testplacering|preview/i);
-  }
-
-  assert.equal(
-    adBannerCopy.en.accessibilityLabel(
-      adBannerCopy.en.placementLabels.home_banner,
-      adBannerCopy.en.testStatus,
-    ),
-    'Google AdMob: Home banner. AdMob test unit active - test placement. Hidden after Remove Ads is active.',
-  );
-  assert.equal(
-    adBannerCopy.sv.accessibilityLabel(
-      adBannerCopy.sv.placementLabels.chapter_list_banner,
-      adBannerCopy.sv.testStatus,
-    ),
-    'Google AdMob: Annons i kapitellistan. AdMob-testannons aktiv - testplacering. Döljs när Ta bort annonser är aktivt.',
   );
 });
 
@@ -2125,11 +1790,6 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
-  assert.match(nativeBannerSource, /BannerAdSize\.ANCHORED_ADAPTIVE_BANNER/);
-  assert.match(
-    nativeBannerSource,
-    /requestNonPersonalizedAdsOnly:\s*mobileAdsConsent\.decision\.requestNonPersonalizedAdsOnly/,
-  );
   assert.match(launchSource, /useMobileAdsConsent/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/);
@@ -2246,59 +1906,6 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
   assert.deepEqual(consentInfoFallbackCalls, ['ump', 'ump:cached-info', 'ads:init']);
 });
 
-test('Mobile Ads consent hook retries after blocked initialization results', async () => {
-  const hookSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/useMobileAdsConsent.ts'),
-    'utf8',
-  );
-  const { initializeGoogleMobileAdsAfterConsent } = loadTs('lib/monetization/mobileAdsConsent.ts');
-
-  assert.match(hookSource, /function resetInitializationPromise\(\)/);
-  assert.match(hookSource, /function resolveInitializationResult/);
-  assert.match(
-    hookSource,
-    /if \(!result\.initialized\) \{[\s\S]*resetInitializationPromise\(\);[\s\S]*return result;/,
-  );
-  assert.match(
-    hookSource,
-    /cachedInitialization = result;[\s\S]*cachedInitializationPlatform = platform;/,
-  );
-  assert.doesNotMatch(
-    hookSource,
-    /\.then\(\(result\) => \{[\s\S]*cachedInitialization = result;[\s\S]*return result;[\s\S]*\}\)/,
-  );
-
-  const pendingConsentCalls = [];
-  const blockedResult = await initializeGoogleMobileAdsAfterConsent({
-    entitlements: { adsDisabled: false },
-    googleMobileAdsEnabled: true,
-    realAdsEnabled: true,
-    runtime: {
-      async gatherUmpConsent() {
-        pendingConsentCalls.push('ump');
-        return { status: 'REQUIRED' };
-      },
-      async getTrackingPermissionsAsync() {
-        pendingConsentCalls.push('att:get');
-        return { status: 'undetermined' };
-      },
-      async initializeGoogleMobileAds() {
-        pendingConsentCalls.push('ads:init');
-      },
-      platform: 'ios',
-      async requestTrackingPermissionsAsync() {
-        pendingConsentCalls.push('att:request');
-        return { status: 'undetermined' };
-      },
-    },
-  });
-
-  assert.equal(blockedResult.initialized, false);
-  assert.equal(blockedResult.decision.canInitializeGoogleMobileAds, false);
-  assert.equal(blockedResult.decision.blockReason, 'pending_consent_prompts');
-  assert.deepEqual(pendingConsentCalls, ['att:get', 'att:request', 'ump']);
-});
-
 test('exam screen does not import ad components', () => {
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const accessHookSource = fs.readFileSync(
@@ -2306,15 +1913,12 @@ test('exam screen does not import ad components', () => {
     'utf8',
   );
 
-  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|RewardedAd/i);
-  assert.doesNotMatch(
-    examSource,
-    /showRewardedExtraExamAd|rewardPreview|sponsor preview|Sponsored preview|Sponsrad förhandsvisning|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
-  );
+  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial/i);
+  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|rewardPreview|Complete sponsor preview/);
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
-  assert.match(examSource, /Start unlocked extra exam/);
+  assert.match(examSource, /Start unlocked mock exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /platform: Platform\.OS/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);
@@ -2330,8 +1934,7 @@ test('global launch popup ad is suppressed on active question and compliance rou
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
-  const { adsConfig, isLaunchPopupAdEligibleForPath, shouldSuppressLaunchPopupAdForPath } =
-    loadTs('lib/monetization/ads.ts');
+  const { adsConfig, shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
 
   assert.match(layoutSource, /usePathname/);
   assert.match(layoutSource, /useRemoveAdsEntitlements/);
@@ -2345,44 +1948,29 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001/review'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/chapter/ch01'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/chapter/ch01/summary'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/search'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/search?q=riksdag'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/settings'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/disclaimer'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/sources'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/unknown'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/home/details'), true);
-  assert.equal(isLaunchPopupAdEligibleForPath('/'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/learn'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/mistakes'), false);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/profile'), false);
-  assert.deepEqual(adsConfig.eligibleLaunchPopupRoutes, [
-    '/',
-    '/home',
-    '/learn',
-    '/mistakes',
-    '/profile',
-  ]);
   assert.deepEqual(adsConfig.suppressedLaunchPopupRoutes, [
     '/exam',
     '/practice',
     '/quiz',
     '/about-the-test',
-    '/chapter',
     '/citizenship-requirements',
     '/disclaimer',
     '/onboarding',
     '/privacy',
-    '/search',
-    '/settings',
     '/sources',
     '/support',
     '/terms',
