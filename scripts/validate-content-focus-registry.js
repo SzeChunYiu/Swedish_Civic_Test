@@ -71,6 +71,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'legalSectionRendering',
+    flags: ['--focus-legal-section-rendering'],
+    summaryKeys: [
+      'legalSectionRenderingTestsRoutedValidated',
+      'legalSectionRenderingCasesValidated',
+      'legalSectionRenderingParityValidated',
+    ],
+  },
+  {
     id: 'settingsRouteCopy',
     flags: ['--focus-settings-route-copy'],
     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
