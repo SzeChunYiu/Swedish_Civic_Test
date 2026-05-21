@@ -217,6 +217,27 @@ function renderedSourceKeys(html) {
   return new Set(Array.from(html.matchAll(/data-source-key="([^"]+)"/g), (match) => match[1]));
 }
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function renderedAnchorsForHref(html, href) {
+  return Array.from(
+    html.matchAll(new RegExp(`<a\\s+[^>]*href="${escapeRegex(href)}"[^>]*>`, 'g')),
+    (match) => match[0],
+  );
+}
+
+function assertExternalEbookSourceLinksAreSafe(html, href, label) {
+  const anchors = renderedAnchorsForHref(html, href);
+  assert.ok(anchors.length > 0, `${label} should render at least one ebook source link`);
+
+  for (const anchor of anchors) {
+    assert.match(anchor, /\starget="_blank"/, `${label} should open in a new tab`);
+    assert.match(anchor, /\srel="noreferrer"/, `${label} should use noreferrer`);
+  }
+}
+
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
@@ -292,6 +313,55 @@ test('static ebook rendered source keys match chapter external-source metadata',
       );
     }
   }
+});
+
+test('static ebook external source links use safe web attributes', () => {
+  const harness = createEbookHarness();
+  const externalSources = [
+    {
+      chapterId: 'intro',
+      href: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+      label: 'UHR study material',
+    },
+    {
+      chapterId: '1',
+      href: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+      label: 'Government Offices NATO source',
+    },
+    {
+      chapterId: '7',
+      href: 'https://www.scb.se/mi0803-en',
+      label: 'SCB land-use source',
+    },
+    {
+      chapterId: '9',
+      href: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+      label: 'Riksbank history source',
+    },
+  ];
+
+  for (const { chapterId, href, label } of externalSources) {
+    for (const lang of ['en', 'sv']) {
+      assertExternalEbookSourceLinksAreSafe(renderChapter(harness, lang, chapterId), href, label);
+    }
+  }
+
+  const introHtml = renderChapter(harness, 'en', 'intro');
+  assert.match(
+    introHtml,
+    /data-source-key="editorialCommentary"><a href="#ebook-fnref-[^"]+"[^>]*>↩<\/a> Editorial commentary \(2026-05-19\)<\/li>/,
+    'text-only editorial source notes should remain plain text',
+  );
+  assert.doesNotMatch(
+    introHtml,
+    /<a\s+[^>]*href="#ebook-fnref-[^"]+"[^>]*(?:target|rel)=/,
+    'internal ebook footnote backlinks should not use external-link attributes',
+  );
+  assert.doesNotMatch(
+    introHtml,
+    /<a\s+[^>]*href="#ebook-fn-[^"]+"[^>]*(?:target|rel)=/,
+    'internal ebook footnote references should not use external-link attributes',
+  );
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
