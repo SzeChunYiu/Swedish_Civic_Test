@@ -79,13 +79,12 @@ test('profile route shell copy stays keyed by the settings language', () => {
   assert.match(source, /accessibilityLabel=\{copy\.dashboardAccessibilityLabel\}/);
   assert.match(source, /href="\/dashboard"/);
   assert.match(source, /label=\{copy\.dashboardCta\}/);
-  assert.match(source, /weeklyRecapTitle: 'Veckans översikt'/);
-  assert.match(source, /weeklyRecapTitle: 'Weekly recap'/);
-  assert.match(source, /weeklyRecapCta: 'Visa veckan'/);
-  assert.match(source, /weeklyRecapCta: 'View this week'/);
+  assert.match(source, /<SectionHeader title=\{copy\.weeklyRecapTitle\}/);
   assert.match(source, /accessibilityLabel=\{copy\.weeklyRecapAccessibilityLabel\}/);
   assert.match(source, /href="\/recap"/);
   assert.match(source, /label=\{copy\.weeklyRecapCta\}/);
+  assert.match(source, /weeklyRecapTitle: 'Veckans översikt'/);
+  assert.match(source, /weeklyRecapTitle: 'Weekly recap'/);
   assert.match(source, /copy\.removeAdsFocusCue/);
   assert.doesNotMatch(source, new RegExp(['Misstags', 'repetition'].join('')));
   assert.match(source, /Ta bort annonser är markerat/);

@@ -143,9 +143,9 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.learnRouteHeaderParityValidated, true);
   assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
-  assert.equal(summary.profileRouteHeadersValidated, 3);
+  assert.equal(summary.profileRouteHeadersValidated, 4);
   assert.equal(summary.profileRouteHeaderParityValidated, true);
-  assert.equal(summary.profileRouteCopyLabelsValidated, 40);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 46);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.homeRouteHeadersValidated, 6);
   assert.equal(summary.homeRouteHeaderParityValidated, true);

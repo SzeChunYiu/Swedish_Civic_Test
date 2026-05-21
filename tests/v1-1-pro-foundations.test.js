@@ -540,30 +540,29 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
   assert.equal(recap.chapterNowMastered, null);
 });
 
-test('Weekly recap route surfaces local selector output without Pro gating', () => {
-  const recapSource = fs.readFileSync(path.join(repoRoot, 'app/recap.tsx'), 'utf8');
-  const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+test('weekly recap screen and Profile entry point surface the selector locally', () => {
+  const recapRoute = fs.readFileSync(path.join(repoRoot, 'app/recap.tsx'), 'utf8');
+  const profileRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.match(recapSource, /generateWeeklyRecap/);
-  assert.match(recapSource, /buildDashboardProgressSnapshot/);
-  assert.match(recapSource, /perChapterProgress/);
-  assert.match(recapSource, /getChapterQuizRouteParams/);
-  assert.match(recapSource, /weakAccuracyThreshold = 0\.8/);
-  assert.match(
-    recapSource,
-    /href=\{\{[\s\S]*pathname: '\/quiz\/\[sessionId\]'[\s\S]*params: weakChapter\.routeParams[\s\S]*\}\}/,
-  );
-  assert.match(recapSource, /href="\/practice"/);
-  assert.match(recapSource, /A quiet week is fine/);
-  assert.match(recapSource, /En lugn vecka är okej/);
-  assert.match(recapSource, /accessibilityRole="summary"/);
-  assert.match(profileSource, /href="\/recap"/);
-  assert.match(profileSource, /weeklyRecapCta: 'View this week'/);
-  assert.match(profileSource, /weeklyRecapCta: 'Visa veckan'/);
-  assert.doesNotMatch(
-    recapSource,
-    /useProLifetimeEntitlements|useRemoveAdsEntitlements|PremiumBanner|ProPaywall/,
-  );
+  assert.match(recapRoute, /import \{ generateWeeklyRecap, type WeeklyRecap \}/);
+  assert.match(recapRoute, /import \{ calculateStreakWithFreeze \}/);
+  assert.match(recapRoute, /import \{ topWeakChapters \}/);
+  assert.match(recapRoute, /const questionChapterIndex = Object\.fromEntries/);
+  assert.match(recapRoute, /activeDayKeys: answerDates/);
+  assert.match(recapRoute, /buildWeeklyRecapProgress/);
+  assert.match(recapRoute, /answerHistory: AnswerHistoryEntry\[\]/);
+  assert.match(recapRoute, /mockExamSessions: MockExamProgress\[\]/);
+  assert.match(recapRoute, /generateWeeklyRecap\(\{ progress, questionChapterIndex \}\)/);
+  assert.match(recapRoute, /getTouchedWeakChapter\(recap, progress\)/);
+  assert.match(recapRoute, /href=\{`\/chapter\/\$\{touchedWeakChapter\.chapterId\}`\}/);
+  assert.match(recapRoute, /No problem\. A quiet week still counts/);
+  assert.match(recapRoute, /En lugn vecka räknas också/);
+  assert.doesNotMatch(recapRoute, /useProLifetimeEntitlements|useRemoveAdsEntitlements|account/i);
+
+  assert.match(profileRoute, /weeklyRecapTitle: 'Veckans översikt'/);
+  assert.match(profileRoute, /weeklyRecapTitle: 'Weekly recap'/);
+  assert.match(profileRoute, /href="\/recap"/);
+  assert.match(profileRoute, /label=\{copy\.weeklyRecapCta\}/);
 });
 
 // -------------------------------------------------------- Tier comparison

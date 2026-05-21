@@ -40,6 +40,10 @@ type ProfileCopy = {
   dashboardCta: string;
   dashboardSubtitle: string;
   dashboardTitle: string;
+  weeklyRecapAccessibilityLabel: string;
+  weeklyRecapCta: string;
+  weeklyRecapSubtitle: string;
+  weeklyRecapTitle: string;
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -79,6 +83,10 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     dashboardCta: 'Visa översikt',
     dashboardSubtitle: 'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     dashboardTitle: 'Framstegsöversikt',
+    weeklyRecapAccessibilityLabel: 'Öppna veckans studieöversikt',
+    weeklyRecapCta: 'Visa veckan',
+    weeklyRecapSubtitle: 'Svar, övningsprov och nästa lugna repetition samlas i en lokal veckovy.',
+    weeklyRecapTitle: 'Veckans översikt',
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
@@ -117,6 +125,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     dashboardCta: 'View dashboard',
     dashboardSubtitle: 'Activity, chapter progress, and XP live on a dedicated page.',
     dashboardTitle: 'Progress dashboard',
+    weeklyRecapAccessibilityLabel: 'Open this week’s study recap',
+    weeklyRecapCta: 'View this week',
+    weeklyRecapSubtitle:
+      'Answers, mock exams, and the next calm review live in a local weekly view.',
+    weeklyRecapTitle: 'Weekly recap',
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',

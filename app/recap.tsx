@@ -2,373 +2,332 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
-import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { MetricCard } from '../components/ui/MetricCard';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { questions } from '../data/questions';
-import { buildDashboardProgressSnapshot } from '../lib/learning/dashboardProgressSnapshot';
-import { perChapterProgress } from '../lib/learning/dashboardStats';
-import { generateWeeklyRecap } from '../lib/learning/weeklyRecap';
-import { getChapterQuizRouteParams, type ChapterQuizRouteParams } from '../lib/quiz/practiceFlow';
-import { useProgressStore } from '../lib/storage/progressStore';
+import { generateWeeklyRecap, type WeeklyRecap } from '../lib/learning/weeklyRecap';
+import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
+import { topWeakChapters } from '../lib/learning/weakChapters';
+import {
+  useProgressStore,
+  type AnswerHistoryEntry,
+  type MockExamProgress,
+} from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { colors, space, typography } from '../lib/theme';
+import type { QuizSession, UserProgress } from '../types/progress';
 
 type RecapCopy = {
-  accuracyDelta: (deltaPoints: number) => string;
-  accuracyMetric: string;
-  bestMockScoreMetric: string;
-  chapterListEmpty: string;
-  chapterListTitle: string;
-  chaptersTouchedMetric: string;
-  dateRange: (start: string, end: string) => string;
-  defaultPracticeAccessibilityLabel: string;
-  defaultPracticeCta: string;
-  defaultPracticeSubtitle: string;
+  accuracyHelper: string;
+  accuracyLabel: string;
+  backToProfile: string;
+  backToProfileAccessibilityLabel: string;
+  bestMockScore: (scorePercent: number) => string;
   eyebrow: string;
-  mistakesResolvedMetric: string;
-  mockExamsMetric: string;
-  noScoreYet: string;
-  profileAccessibilityLabel: string;
-  profileCta: string;
-  questionsMetric: string;
+  mistakesResolvedLabel: string;
+  mockExamsLabel: string;
+  noAccuracy: string;
+  practiceWeakChapter: (chapterName: string) => string;
+  practiceWeakChapterAccessibilityLabel: (chapterName: string) => string;
+  questionsAnsweredLabel: string;
   quietBody: string;
   quietTitle: string;
-  streakDaysMetric: string;
   subtitle: string;
-  summary: (
-    questionsAnswered: number,
-    accuracy: string,
-    chaptersTouched: number,
-    mistakesResolved: number,
-    mockExamsTaken: number,
-  ) => string;
   title: string;
-  weakChapterAccessibilityLabel: (chapterName: string) => string;
-  weakChapterCta: (chapterName: string) => string;
-  weakChapterDetail: (accuracy: string) => string;
+  weekRange: (start: string, end: string) => string;
+  weakChapterBody: (chapterName: string) => string;
   weakChapterTitle: string;
 };
 
 const recapCopy: Record<AppLanguage, RecapCopy> = {
   sv: {
-    accuracyDelta: (deltaPoints) => {
-      if (deltaPoints === 0) return 'Oförändrat jämfört med förra veckan';
-      return `${Math.abs(deltaPoints)} procentenheter ${
-        deltaPoints > 0 ? 'upp' : 'ned'
-      } från förra veckan`;
-    },
-    accuracyMetric: 'rätt',
-    bestMockScoreMetric: 'bästa prov',
-    chapterListEmpty: 'Inga kapitel provades den här veckan.',
-    chapterListTitle: 'Kapitel den här veckan',
-    chaptersTouchedMetric: 'kapitel',
-    dateRange: (start, end) => `${start} till ${end}`,
-    defaultPracticeAccessibilityLabel: 'Starta en kort övning från veckans översikt',
-    defaultPracticeCta: 'Starta en kort övning',
-    defaultPracticeSubtitle: 'En fråga räcker för att ge nästa vecka mer underlag.',
-    eyebrow: 'Lokal repetition',
-    mistakesResolvedMetric: 'misstag lösta',
-    mockExamsMetric: 'övningsprov',
-    noScoreYet: 'Inte ännu',
-    profileAccessibilityLabel: 'Gå tillbaka till profilen',
-    profileCta: 'Till profilen',
-    questionsMetric: 'svar',
-    quietBody:
-      'En lugn vecka är okej. Börja med en kort övning när det passar, så byggs nästa översikt automatiskt.',
-    quietTitle: 'Ingen aktivitet den här veckan',
-    streakDaysMetric: 'svitdagar',
-    subtitle: 'Summera veckans svar, övningsprov och nästa tydliga steg utan konto.',
-    summary: (questionsAnswered, accuracy, chaptersTouched, mistakesResolved, mockExamsTaken) =>
-      `Veckans översikt: ${questionsAnswered} svar, ${accuracy} rätt, ${chaptersTouched} kapitel, ${mistakesResolved} misstag lösta och ${mockExamsTaken} övningsprov.`,
-    title: 'Veckans översikt',
-    weakChapterAccessibilityLabel: (chapterName) => `Öva svagt kapitel: ${chapterName}`,
-    weakChapterCta: (chapterName) => `Öva ${chapterName}`,
-    weakChapterDetail: (accuracy) =>
-      `Svagast av kapitlen du rörde den här veckan: ${accuracy} rätt.`,
-    weakChapterTitle: 'Fokusera härnäst',
+    accuracyHelper: 'rätt den här veckan',
+    accuracyLabel: 'träffsäkerhet',
+    backToProfile: 'Tillbaka till profil',
+    backToProfileAccessibilityLabel: 'Gå tillbaka till profilsidan',
+    bestMockScore: (scorePercent) => `bästa resultat ${scorePercent}%`,
+    eyebrow: 'Veckans översikt',
+    mistakesResolvedLabel: 'rättade misstag',
+    mockExamsLabel: 'övningsprov',
+    noAccuracy: 'Inte än',
+    practiceWeakChapter: (chapterName) => `Öva ${chapterName}`,
+    practiceWeakChapterAccessibilityLabel: (chapterName) =>
+      `Öva kapitlet ${chapterName} från veckans översikt`,
+    questionsAnsweredLabel: 'svarade frågor',
+    quietBody: 'Inga problem. En lugn vecka räknas också; börja med några frågor när det passar.',
+    quietTitle: 'Lugn vecka',
+    subtitle: 'En lokal summering av veckans svar, övningsprov och nästa rimliga repetition.',
+    title: 'Din vecka i studierna',
+    weekRange: (start, end) => `${start} till ${end}`,
+    weakChapterBody: (chapterName) =>
+      `${chapterName} dök upp i veckans svar och är ett bra nästa steg för repetition.`,
+    weakChapterTitle: 'Nästa lugna repetition',
   },
   en: {
-    accuracyDelta: (deltaPoints) => {
-      if (deltaPoints === 0) return 'Unchanged from last week';
-      return `${Math.abs(deltaPoints)} points ${deltaPoints > 0 ? 'up' : 'down'} from last week`;
-    },
-    accuracyMetric: 'accuracy',
-    bestMockScoreMetric: 'best mock',
-    chapterListEmpty: 'No chapters were touched this week.',
-    chapterListTitle: 'Chapters this week',
-    chaptersTouchedMetric: 'chapters',
-    dateRange: (start, end) => `${start} to ${end}`,
-    defaultPracticeAccessibilityLabel: 'Start a short practice session from weekly recap',
-    defaultPracticeCta: 'Start a short practice',
-    defaultPracticeSubtitle: 'One question is enough to give next week more signal.',
-    eyebrow: 'Local review',
-    mistakesResolvedMetric: 'mistakes fixed',
-    mockExamsMetric: 'mock exams',
-    noScoreYet: 'Not yet',
-    profileAccessibilityLabel: 'Go back to Profile',
-    profileCta: 'Back to Profile',
-    questionsMetric: 'answers',
-    quietBody:
-      'A quiet week is fine. Start with a short practice when it fits, and the next recap will build automatically.',
-    quietTitle: 'No activity this week',
-    streakDaysMetric: 'streak days',
-    subtitle:
-      'Summarize this week of answers, mock exams, and the next clear step without an account.',
-    summary: (questionsAnswered, accuracy, chaptersTouched, mistakesResolved, mockExamsTaken) => {
-      const answerNoun = questionsAnswered === 1 ? 'answer' : 'answers';
-      const chapterNoun = chaptersTouched === 1 ? 'chapter' : 'chapters';
-      const mistakeNoun = mistakesResolved === 1 ? 'mistake' : 'mistakes';
-      const mockNoun = mockExamsTaken === 1 ? 'mock exam' : 'mock exams';
-      return `Weekly recap: ${questionsAnswered} ${answerNoun}, ${accuracy} accuracy, ${chaptersTouched} ${chapterNoun}, ${mistakesResolved} ${mistakeNoun} fixed, and ${mockExamsTaken} ${mockNoun}.`;
-    },
-    title: 'Weekly recap',
-    weakChapterAccessibilityLabel: (chapterName) => `Practise weak chapter: ${chapterName}`,
-    weakChapterCta: (chapterName) => `Practise ${chapterName}`,
-    weakChapterDetail: (accuracy) => `Weakest chapter you touched this week: ${accuracy} accuracy.`,
-    weakChapterTitle: 'Focus next',
+    accuracyHelper: 'correct this week',
+    accuracyLabel: 'accuracy',
+    backToProfile: 'Back to Profile',
+    backToProfileAccessibilityLabel: 'Go back to the Profile page',
+    bestMockScore: (scorePercent) => `best score ${scorePercent}%`,
+    eyebrow: 'Weekly recap',
+    mistakesResolvedLabel: 'mistakes resolved',
+    mockExamsLabel: 'mock exams',
+    noAccuracy: 'Not yet',
+    practiceWeakChapter: (chapterName) => `Practise ${chapterName}`,
+    practiceWeakChapterAccessibilityLabel: (chapterName) =>
+      `Practise the chapter ${chapterName} from this weekly recap`,
+    questionsAnsweredLabel: 'questions answered',
+    quietBody: 'No problem. A quiet week still counts; start with a few questions when it fits.',
+    quietTitle: 'Quiet week',
+    subtitle: 'A local summary of this week’s answers, mock exams, and next sensible review.',
+    title: 'Your study week',
+    weekRange: (start, end) => `${start} to ${end}`,
+    weakChapterBody: (chapterName) =>
+      `${chapterName} appeared in this week’s answers and is a good next review step.`,
+    weakChapterTitle: 'Next calm review',
   },
 };
 
-const questionChapterIndex: Record<string, string> = Object.fromEntries(
+const questionChapterIndex = Object.fromEntries(
   questions.map((question) => [question.id, question.chapterId]),
 );
 const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
-const weakAccuracyThreshold = 0.8;
 
-type WeakChapterCta = {
-  accuracy: number;
-  name: string;
-  routeParams: ChapterQuizRouteParams;
-};
+function formatDateKey(dateKey: string, language: AppLanguage): string {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  if (!year || !month || !day) return dateKey;
 
-function getLocalizedChapterName(chapterId: string, language: AppLanguage): string {
-  const chapter = chapterById.get(chapterId);
-  if (!chapter) return chapterId;
-  return chapter.nameText?.[language] ?? (language === 'sv' ? chapter.nameSv : chapter.nameEn);
+  return new Intl.DateTimeFormat(language === 'sv' ? 'sv-SE' : 'en-US', {
+    day: 'numeric',
+    month: 'short',
+  }).format(new Date(year, month - 1, day));
 }
 
 function formatPercent(value: number | null, fallback: string): string {
-  if (value === null) return fallback;
-  return `${Math.round(value * 100)}%`;
+  return value === null ? fallback : `${Math.round(value * 100)}%`;
 }
 
-export default function WeeklyRecapScreen() {
-  const answerDates = useProgressStore((state) => state.answerDates);
+function buildWeeklyRecapProgress({
+  answerHistory,
+  currentStreak,
+  dailyChallengeCompletions,
+  dailyGoalAnswers,
+  mockExamSessions,
+  questionProgress,
+  totalXp,
+}: Pick<
+  UserProgress,
+  | 'currentStreak'
+  | 'dailyChallengeCompletions'
+  | 'dailyGoalAnswers'
+  | 'questionProgress'
+  | 'totalXp'
+> & {
+  answerHistory: AnswerHistoryEntry[];
+  mockExamSessions: MockExamProgress[];
+}): UserProgress {
+  const answerSession: QuizSession = {
+    answers: answerHistory.map((answer) => ({
+      answeredAt: answer.answeredAt,
+      confidenceRating: answer.confidenceRating,
+      isCorrect: answer.isCorrect,
+      questionId: answer.questionId,
+      selectedOptionIds: [],
+      timeSpentSeconds: answer.timeSpentSeconds ?? 0,
+    })),
+    id: 'weekly-answer-history',
+    mode: 'study',
+    questionIds: answerHistory.map((answer) => answer.questionId),
+    startedAt: answerHistory[0]?.answeredAt ?? new Date().toISOString(),
+  };
+  const mockSessions: QuizSession[] = mockExamSessions.map((session) => ({
+    answers: [],
+    completedAt: session.completedAt,
+    id: session.sessionId,
+    mode: 'exam',
+    questionIds: session.questionTimings.map((timing) => timing.questionId),
+    score: session.score,
+    startedAt: session.completedAt,
+  }));
+
+  return {
+    currentStreak,
+    dailyChallengeCompletions,
+    dailyGoalAnswers,
+    level: 1,
+    questionProgress,
+    sessions: [answerSession, ...mockSessions],
+    totalXp,
+  };
+}
+
+function getTouchedWeakChapter(recap: WeeklyRecap, progress: UserProgress) {
+  const touchedChapters = new Set(recap.chaptersTouched);
+  if (touchedChapters.size === 0) return null;
+
+  return (
+    topWeakChapters(
+      {
+        chapters,
+        progress,
+        questionChapterIndex,
+      },
+      chapters.length,
+    ).find((chapter) => touchedChapters.has(chapter.chapterId)) ?? null
+  );
+}
+
+function chapterName(chapterId: string, language: AppLanguage): string {
+  const chapter = chapterById.get(chapterId);
+  if (!chapter) return chapterId;
+  return language === 'sv' ? chapter.nameSv : chapter.nameEn;
+}
+
+export default function Screen() {
   const answerHistory = useProgressStore((state) => state.answerHistory);
+  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const totalXp = useProgressStore((state) => state.totalXp);
+  const answerDates = useProgressStore((state) => state.answerDates);
+  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = recapCopy[language];
+  const streakWithFreeze = useMemo(
+    () =>
+      calculateStreakWithFreeze({
+        activeDayKeys: answerDates,
+        freezeState: streakFreezeState,
+      }),
+    [answerDates, streakFreezeState],
+  );
+  const currentStreak = streakWithFreeze.streakDays;
   const progress = useMemo(
     () =>
-      buildDashboardProgressSnapshot({
-        answerDates,
+      buildWeeklyRecapProgress({
         answerHistory,
+        currentStreak,
+        dailyChallengeCompletions,
         dailyGoalAnswers,
         mockExamSessions,
         questionProgress,
         totalXp,
       }),
-    [answerDates, answerHistory, dailyGoalAnswers, mockExamSessions, questionProgress, totalXp],
+    [
+      answerHistory,
+      currentStreak,
+      dailyChallengeCompletions,
+      dailyGoalAnswers,
+      mockExamSessions,
+      questionProgress,
+      totalXp,
+    ],
   );
   const recap = useMemo(() => generateWeeklyRecap({ progress, questionChapterIndex }), [progress]);
-  const chapterBars = useMemo(
-    () => perChapterProgress(progress, chapters, questionChapterIndex),
-    [progress],
+  const touchedWeakChapter = useMemo(
+    () => getTouchedWeakChapter(recap, progress),
+    [progress, recap],
   );
-  const weakChapter = useMemo<WeakChapterCta | null>(() => {
-    const touchedChapterIds = new Set(recap.chaptersTouched);
-    const candidates = chapterBars
-      .filter(
-        (bar) =>
-          touchedChapterIds.has(bar.chapterId) &&
-          bar.answers > 0 &&
-          bar.accuracy !== null &&
-          bar.accuracy < weakAccuracyThreshold,
-      )
-      .sort((a, b) => {
-        const accuracyDelta = (a.accuracy ?? 1) - (b.accuracy ?? 1);
-        if (accuracyDelta !== 0) return accuracyDelta;
-        return b.answers - a.answers || a.chapterId.localeCompare(b.chapterId);
-      });
-    const candidate = candidates[0];
-    const routeParams = candidate
-      ? getChapterQuizRouteParams(questions, candidate.chapterId)
-      : null;
-    if (!candidate || !routeParams || candidate.accuracy === null) return null;
-    return {
-      accuracy: candidate.accuracy,
-      name: getLocalizedChapterName(candidate.chapterId, language),
-      routeParams,
-    };
-  }, [chapterBars, language, recap.chaptersTouched]);
-  const touchedChapterNames = recap.chaptersTouched.map((chapterId) =>
-    getLocalizedChapterName(chapterId, language),
-  );
-  const accuracyValue = formatPercent(recap.accuracy, copy.noScoreYet);
-  const bestMockScoreValue = formatPercent(recap.bestMockScore, copy.noScoreYet);
-  const summary = copy.summary(
-    recap.questionsAnswered,
-    accuracyValue,
-    recap.chaptersTouched.length,
-    recap.mistakesResolved,
-    recap.mockExamsTaken,
-  );
-  const isQuietWeek = recap.questionsAnswered === 0 && recap.mockExamsTaken === 0;
+  const touchedWeakChapterName = touchedWeakChapter
+    ? chapterName(touchedWeakChapter.chapterId, language)
+    : null;
+  const accuracyValue = formatPercent(recap.accuracy, copy.noAccuracy);
+  const bestMockScore =
+    recap.bestMockScore === null
+      ? undefined
+      : copy.bestMockScore(Math.round(recap.bestMockScore * 100));
+  const weekStart = formatDateKey(recap.weekStart, language);
+  const weekEnd = formatDateKey(recap.weekEnd, language);
+  const quietWeek = recap.questionsAnswered === 0 && recap.mockExamsTaken === 0;
 
   return (
-    <ScreenShell eyebrow={copy.eyebrow} title={copy.title} subtitle={copy.subtitle}>
-      <Text accessibilityRole="summary" style={styles.hiddenSummary}>
-        {summary}
-      </Text>
-      <Card style={styles.summaryCard}>
-        <Badge tone="blue">{copy.dateRange(recap.weekStart, recap.weekEnd)}</Badge>
-        <Text style={styles.summaryText}>{summary}</Text>
-      </Card>
-
-      <View style={styles.metricGrid}>
+    <ScreenShell
+      eyebrow={copy.eyebrow}
+      title={copy.title}
+      subtitle={`${copy.subtitle} ${copy.weekRange(weekStart, weekEnd)}.`}
+    >
+      <View style={styles.statsRow}>
         <MetricCard
-          accessibilityLabel={`${copy.questionsMetric}: ${recap.questionsAnswered}`}
-          label={copy.questionsMetric}
-          style={styles.metricCard}
+          label={copy.questionsAnsweredLabel}
           value={recap.questionsAnswered}
+          tone="blue"
         />
         <MetricCard
-          accessibilityLabel={`${copy.accuracyMetric}: ${accuracyValue}${
-            recap.accuracyDeltaPoints === null
-              ? ''
-              : `. ${copy.accuracyDelta(recap.accuracyDeltaPoints)}`
-          }`}
-          helper={
-            recap.accuracyDeltaPoints === null
-              ? undefined
-              : copy.accuracyDelta(recap.accuracyDeltaPoints)
-          }
-          label={copy.accuracyMetric}
-          style={styles.metricCard}
-          tone="blue"
+          helper={recap.accuracy === null ? undefined : copy.accuracyHelper}
+          label={copy.accuracyLabel}
           value={accuracyValue}
         />
+      </View>
+      <View style={styles.statsRow}>
         <MetricCard
-          accessibilityLabel={`${copy.chaptersTouchedMetric}: ${recap.chaptersTouched.length}`}
-          label={copy.chaptersTouchedMetric}
-          style={styles.metricCard}
-          value={recap.chaptersTouched.length}
-        />
-        <MetricCard
-          accessibilityLabel={`${copy.mistakesResolvedMetric}: ${recap.mistakesResolved}`}
-          label={copy.mistakesResolvedMetric}
-          style={styles.metricCard}
-          value={recap.mistakesResolved}
-        />
-        <MetricCard
-          accessibilityLabel={`${copy.mockExamsMetric}: ${recap.mockExamsTaken}`}
-          label={copy.mockExamsMetric}
-          style={styles.metricCard}
+          helper={bestMockScore}
+          label={copy.mockExamsLabel}
           value={recap.mockExamsTaken}
         />
-        <MetricCard
-          accessibilityLabel={`${copy.bestMockScoreMetric}: ${bestMockScoreValue}`}
-          label={copy.bestMockScoreMetric}
-          style={styles.metricCard}
-          tone="blue"
-          value={bestMockScoreValue}
-        />
-        <MetricCard
-          accessibilityLabel={`${copy.streakDaysMetric}: ${recap.streakDays}`}
-          label={copy.streakDaysMetric}
-          style={styles.metricCard}
-          value={recap.streakDays}
-        />
+        <MetricCard label={copy.mistakesResolvedLabel} value={recap.mistakesResolved} />
       </View>
 
-      {isQuietWeek ? (
-        <Card style={styles.card}>
-          <SectionHeader title={copy.quietTitle} subtitle={copy.quietBody} />
+      {quietWeek ? (
+        <Card
+          accessible
+          accessibilityLabel={`${copy.quietTitle}. ${copy.quietBody}`}
+          style={styles.card}
+        >
+          <Text accessibilityRole="header" style={styles.cardTitle}>
+            {copy.quietTitle}
+          </Text>
+          <Text style={styles.cardBody}>{copy.quietBody}</Text>
         </Card>
       ) : null}
 
-      <Card style={styles.card}>
-        <SectionHeader title={copy.chapterListTitle} />
-        <Text style={styles.chapterListText}>
-          {touchedChapterNames.length > 0 ? touchedChapterNames.join(', ') : copy.chapterListEmpty}
-        </Text>
-      </Card>
-
-      <Card style={styles.card}>
-        <SectionHeader
-          title={weakChapter ? copy.weakChapterTitle : copy.defaultPracticeCta}
-          subtitle={
-            weakChapter
-              ? copy.weakChapterDetail(formatPercent(weakChapter.accuracy, copy.noScoreYet))
-              : copy.defaultPracticeSubtitle
-          }
-        />
-        {weakChapter ? (
+      {touchedWeakChapter && touchedWeakChapterName ? (
+        <Card
+          accessible
+          accessibilityLabel={`${copy.weakChapterTitle}. ${copy.weakChapterBody(
+            touchedWeakChapterName,
+          )}`}
+          style={styles.card}
+        >
+          <SectionHeader
+            title={copy.weakChapterTitle}
+            subtitle={copy.weakChapterBody(touchedWeakChapterName)}
+          />
           <ComplianceActionLink
-            accessibilityLabel={copy.weakChapterAccessibilityLabel(weakChapter.name)}
-            href={{
-              pathname: '/quiz/[sessionId]',
-              params: weakChapter.routeParams,
-            }}
-            label={copy.weakChapterCta(weakChapter.name)}
+            accessibilityLabel={copy.practiceWeakChapterAccessibilityLabel(touchedWeakChapterName)}
+            href={`/chapter/${touchedWeakChapter.chapterId}`}
+            label={copy.practiceWeakChapter(touchedWeakChapterName)}
             variant="primary"
           />
-        ) : (
-          <ComplianceActionLink
-            accessibilityLabel={copy.defaultPracticeAccessibilityLabel}
-            href="/practice"
-            label={copy.defaultPracticeCta}
-            variant="primary"
-          />
-        )}
-      </Card>
+        </Card>
+      ) : null}
 
       <ComplianceActionLink
-        accessibilityLabel={copy.profileAccessibilityLabel}
+        accessibilityLabel={copy.backToProfileAccessibilityLabel}
         href="/profile"
-        label={copy.profileCta}
+        label={copy.backToProfile}
       />
     </ScreenShell>
   );
 }
 
 const styles = StyleSheet.create({
-  hiddenSummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
-  summaryCard: {
-    gap: space[1],
-  },
-  summaryText: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  metricGrid: {
+  statsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.25],
-  },
-  metricCard: {
-    flexBasis: 150,
-    flexGrow: 1,
-    minWidth: 140,
+    gap: space[1.5],
   },
   card: {
-    borderRadius: radius.card,
-    gap: space[1.25],
+    gap: space[1.5],
   },
-  chapterListText: {
+  cardTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  cardBody: {
     color: colors.textSecondary,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
