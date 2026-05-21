@@ -19,7 +19,10 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
-const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
+const CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS = [
+  { label: 'welfare', pattern: /\(welfare\)/i },
+  { label: 'public service', pattern: /\bpublic service\b/i },
+];
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -59,18 +62,18 @@ function staticSomaliSegments(question) {
   ];
 }
 
-function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
+function chapterLocalizationEnglishGlossOffenders(chapters, scope) {
   const offenders = [];
   for (const chapter of chapters) {
     for (const field of ['title', 'description']) {
       const localized = chapter[field] || {};
       for (const [locale, value] of Object.entries(localized)) {
         if (BASE_LOCALES.has(locale)) continue;
-        if (
-          typeof value === 'string' &&
-          CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN.test(value)
-        ) {
-          offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}`);
+        if (typeof value !== 'string') continue;
+        for (const { label, pattern } of CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS) {
+          if (pattern.test(value)) {
+            offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}.${label}`);
+          }
         }
       }
     }
@@ -143,14 +146,14 @@ test('static site question bank avoids English geography common terms in Somali 
   assert.deepEqual(offenders, []);
 });
 
-test('chapter localization metadata avoids parenthetical English welfare glosses', () => {
+test('chapter localization metadata avoids raw English glossary tokens', () => {
   const bank = buildSiteQuestionBank();
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
 
-  assert.deepEqual(chapterLocalizationWelfareGlossOffenders(bank.chapters, 'canonical'), []);
+  assert.deepEqual(chapterLocalizationEnglishGlossOffenders(bank.chapters, 'canonical'), []);
   assert.deepEqual(
-    chapterLocalizationWelfareGlossOffenders(context.window.SMT_CHAPTERS_META, 'static'),
+    chapterLocalizationEnglishGlossOffenders(context.window.SMT_CHAPTERS_META, 'static'),
     [],
   );
 });
