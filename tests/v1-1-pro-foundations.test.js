@@ -95,6 +95,33 @@ test('FSRS-lite: isDue compares dueAt against now', () => {
   assert.equal(isDue({ dueAt: '2026-05-25T00:00:00.000Z' }, now), false);
 });
 
+test('FSRS-lite: sortByDueAscending demotes malformed review timestamps', () => {
+  const { isDue, sortByDueAscending } = loadTs('lib/learning/spacedRepetition.ts');
+  const now = '2026-03-02T12:00:00.000Z';
+
+  for (const dueAt of [
+    '2026-02-30T00:00:00.000Z',
+    '2026-03-02',
+    '2026-03-02T12:00:00+00:00',
+    'not-a-date',
+  ]) {
+    assert.equal(isDue({ dueAt }, now), false);
+  }
+
+  assert.equal(isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-02-30T12:00:00.000Z'), false);
+  assert.deepEqual(
+    [
+      { questionId: 'date-only', dueAt: '2026-03-01' },
+      { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
+      { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
+      { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
+    ]
+      .sort(sortByDueAscending)
+      .map((card) => card.questionId),
+    ['past', 'future', 'date-only', 'rollover'],
+  );
+});
+
 // ----------------------------------------------------------- Study plan algo
 
 test('generateStudyPlan: 27 days out, regular intensity → reasonable target', () => {

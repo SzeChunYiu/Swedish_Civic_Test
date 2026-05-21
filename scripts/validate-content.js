@@ -7779,6 +7779,8 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const createNewCard = spacedRepetitionModule.createNewCard;
 const gradeCard = spacedRepetitionModule.gradeCard;
+const isDue = spacedRepetitionModule.isDue;
+const sortByDueAscending = spacedRepetitionModule.sortByDueAscending;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
@@ -8065,6 +8067,8 @@ let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
 let spacedRepetitionRuntimeInputCasesValidated = 0;
 let spacedRepetitionRuntimeInputParityValidated = false;
+let spacedRepetitionDueTimestampCasesValidated = 0;
+let spacedRepetitionDueTimestampParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -8392,6 +8396,8 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
     spacedRepetitionRuntimeParityValidated,
     spacedRepetitionRuntimeInputCasesValidated,
     spacedRepetitionRuntimeInputParityValidated,
+    spacedRepetitionDueTimestampCasesValidated,
+    spacedRepetitionDueTimestampParityValidated,
   });
   process.exit(0);
 }
@@ -15756,6 +15762,88 @@ function validateSpacedRepetitionSchedule() {
   ) {
     spacedRepetitionRuntimeInputParityValidated = true;
   }
+
+  const dueTimestampCases = [];
+  if (typeof isDue === 'function') {
+    const now = '2026-03-02T12:00:00.000Z';
+    dueTimestampCases.push(
+      {
+        label: 'canonical past dueAt',
+        actual: () => isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, now),
+        expected: true,
+      },
+      {
+        label: 'canonical future dueAt',
+        actual: () => isDue({ dueAt: '2026-03-03T00:00:00.000Z' }, now),
+        expected: false,
+      },
+      {
+        label: 'rollover dueAt',
+        actual: () => isDue({ dueAt: '2026-02-30T00:00:00.000Z' }, now),
+        expected: false,
+      },
+      {
+        label: 'date-only dueAt',
+        actual: () => isDue({ dueAt: '2026-03-02' }, now),
+        expected: false,
+      },
+      {
+        label: 'timezone-offset dueAt',
+        actual: () => isDue({ dueAt: '2026-03-02T12:00:00+00:00' }, now),
+        expected: false,
+      },
+      {
+        label: 'rollover now',
+        actual: () => isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-02-30T12:00:00.000Z'),
+        expected: false,
+      },
+    );
+  }
+  if (typeof sortByDueAscending === 'function') {
+    dueTimestampCases.push({
+      label: 'sort demotes malformed dueAt values',
+      actual: () =>
+        [
+          { questionId: 'date-only', dueAt: '2026-03-01' },
+          { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
+          { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
+          { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
+        ]
+          .sort(sortByDueAscending)
+          .map((card) => card.questionId),
+      expected: ['past', 'future', 'date-only', 'rollover'],
+    });
+  }
+
+  let dueTimestampParityIsValid = true;
+  dueTimestampCases.forEach(({ actual, expected, label }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      dueTimestampParityIsValid = false;
+      fail(`spaced repetition due timestamp ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      dueTimestampParityIsValid = false;
+      fail(
+        `spaced repetition due timestamp ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      spacedRepetitionDueTimestampCasesValidated += 1;
+    }
+  });
+
+  if (
+    dueTimestampParityIsValid &&
+    spacedRepetitionDueTimestampCasesValidated === dueTimestampCases.length
+  ) {
+    spacedRepetitionDueTimestampParityValidated = true;
+  }
 }
 
 function validateStreakRules() {
@@ -18118,6 +18206,8 @@ console.log(
       spacedRepetitionRuntimeParityValidated,
       spacedRepetitionRuntimeInputCasesValidated,
       spacedRepetitionRuntimeInputParityValidated,
+      spacedRepetitionDueTimestampCasesValidated,
+      spacedRepetitionDueTimestampParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
