@@ -1480,7 +1480,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     'Visa översikt',
     'Öppna framstegsöversikten',
-    'Öppna inställningar',
+    'Ändra mål, språk och ljud',
     'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
   ],
   en: [
@@ -1506,7 +1506,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Activity, chapter progress, and XP live on a dedicated page.',
     'View dashboard',
     'Open progress dashboard',
-    'Open settings',
+    'Adjust goal, language, and audio',
     'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };

@@ -60,6 +60,8 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
   assert.match(source, /copy\.studySetupCta/);
+  assert.match(source, /studySetupCta: 'Ändra mål, språk och ljud'/);
+  assert.match(source, /studySetupCta: 'Adjust goal, language, and audio'/);
   assert.match(source, /const badgeInput: BadgeInput = \{/);
   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
   assert.match(source, /<BadgeRow/);
