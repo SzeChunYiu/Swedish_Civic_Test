@@ -11,7 +11,7 @@ import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { getChapterQuizRouteParams } from '../../lib/quiz/practiceFlow';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { colors, radius, space, typography } from '../../lib/theme';
 import type { Chapter, PracticeQuestion } from '../../types/content';
 
 type ChapterRouteCopy = {
@@ -202,9 +202,21 @@ const styles = StyleSheet.create({
     lineHeight: typography.bodyTight.lineHeight,
   },
   link: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
     color: colors.accent,
+    display: 'flex',
     fontSize: typography.navButton.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[0.75],
     textDecorationLine: 'none',
   },
   startQuizButton: {
