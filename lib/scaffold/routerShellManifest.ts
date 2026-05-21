@@ -210,6 +210,7 @@ export const expoRouterNativeIntentStaticRoutes = [
   '/citizenship-requirements',
   '/dashboard',
   '/disclaimer',
+  '/ebook',
   '/exam',
   '/home',
   '/learn',
@@ -262,8 +263,24 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/search?q=riksdag',
   },
   {
+    input: '/ebook',
+    expectedPath: '/ebook',
+  },
+  {
+    input: '/ebook?c=1',
+    expectedPath: '/ebook?c=1',
+  },
+  {
     input: 'almost-swedish://app/chapter/ch01?from=learn',
     expectedPath: '/chapter/ch01?from=learn',
+  },
+  {
+    input: 'almost-swedish://app/ebook?c=1',
+    expectedPath: '/ebook?c=1',
+  },
+  {
+    input: 'almost-swedish://ebook?c=1',
+    expectedPath: '/ebook?c=1',
   },
   {
     input: 'almost-swedish://app/search?q=riksdag',
