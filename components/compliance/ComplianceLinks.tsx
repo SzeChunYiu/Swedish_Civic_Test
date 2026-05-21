@@ -107,9 +107,18 @@ const styles = StyleSheet.create({
     gap: space[1.25],
   },
   link: {
+    alignItems: 'center',
+    borderRadius: radius.button,
     color: colors.accent,
+    display: 'flex',
     fontSize: typography.caption.fontSize,
     fontWeight: typography.navButton.fontWeight,
+    justifyContent: 'center',
+    lineHeight: typography.caption.lineHeight,
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.5],
+    textAlign: 'center',
     textDecorationLine: 'none',
   },
 });
