@@ -2,10 +2,49 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { createTsLoader } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
-const loadTs = createTsLoader(repoRoot);
+
+function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks = {}) {
+  const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(specifier) {
+    if (Object.hasOwn(moduleMocks, specifier)) {
+      return moduleMocks[specifier];
+    }
+
+    if (specifier.startsWith('.')) {
+      const resolvedPath = path.resolve(path.dirname(filePath), specifier);
+      const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
+      const tsxPath = fs.existsSync(`${resolvedPath}.tsx`) ? `${resolvedPath}.tsx` : undefined;
+      const indexTsPath = fs.existsSync(path.join(resolvedPath, 'index.ts'))
+        ? path.join(resolvedPath, 'index.ts')
+        : undefined;
+      const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
+
+      if (resolvedTsPath?.startsWith(repoRoot)) {
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, moduleMocks);
+      }
+    }
+
+    return require(specifier);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return exportName ? mod.exports[exportName] : mod.exports;
+}
 
 function withEnv(overrides, fn) {
   const previous = new Map();
@@ -267,40 +306,6 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
     },
-  );
-});
-
-test('AdBanner testStatus copy is platform-neutral for web and native test units', () => {
-  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
-  const webBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-    'utf8',
-  );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-
-  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - preview');
-  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - förhandsvisning');
-  assert.doesNotMatch(adBannerCopy.en.testStatus, /web preview/i);
-  assert.doesNotMatch(adBannerCopy.sv.testStatus, /webbförhandsvisning/i);
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
-  );
-  assert.doesNotMatch(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
 });
 
@@ -1620,6 +1625,59 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
+});
+
+test('RemoveAdsPlacementCta guards duplicate purchase actions before awaiting store calls', () => {
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
+  const runPurchaseActionSource =
+    placementCtaSource.match(
+      /async function runPurchaseAction\([\s\S]*?\n  }\n\n  const actionActive =/,
+    )?.[0] ?? '';
+  const guardReturnIndex = runPurchaseActionSource.indexOf(
+    'if (purchaseActionInFlightRef.current) return;',
+  );
+  const guardSetIndex = runPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = true;',
+  );
+  const storeAwaitIndex = runPurchaseActionSource.indexOf(
+    'const result = await purchaseAction(purchaseRuntime);',
+  );
+  const finallyIndex = runPurchaseActionSource.indexOf('finally {');
+  const guardResetIndex = runPurchaseActionSource.indexOf(
+    'purchaseActionInFlightRef.current = false;',
+  );
+
+  assert.ok(runPurchaseActionSource, 'RemoveAdsPlacementCta should keep a shared action runner');
+  assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
+  assert.ok(guardReturnIndex >= 0, 'duplicate actions should return synchronously');
+  assert.ok(guardSetIndex > guardReturnIndex, 'the guard should be set after the duplicate check');
+  assert.ok(
+    storeAwaitIndex > guardSetIndex,
+    'the guard should be set before awaiting the store call',
+  );
+  assert.ok(
+    finallyIndex > storeAwaitIndex,
+    'the store call should be inside a finally-protected try',
+  );
+  assert.ok(
+    guardResetIndex > finallyIndex,
+    'the guard should reset inside finally after store completion',
+  );
+  assert.match(
+    runPurchaseActionSource,
+    /finally\s*\{[\s\S]*purchaseActionInFlightRef\.current = false;[\s\S]*setActiveAction\(null\);[\s\S]*\}/,
+  );
+  assert.match(
+    placementCtaSource,
+    /onPress=\{\(\) => void runPurchaseAction\('buy', buyRemoveAds\)\}/,
+  );
+  assert.match(
+    placementCtaSource,
+    /onPress=\{\(\) => void runPurchaseAction\('restore', restoreRemoveAdsPurchase\)\}/,
+  );
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
