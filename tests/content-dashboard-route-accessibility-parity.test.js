@@ -29,7 +29,7 @@ function loadSources(overrides = {}) {
 }
 
 function extractNamedStyle(source, styleName) {
-  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
+  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n\\s*\\},`));
   assert.ok(match, `${styleName} style must exist`);
   return match[0];
 }
@@ -280,8 +280,8 @@ function assertDashboardAccessibilitySeparation(sources) {
   for (const styleName of ['heatZero', 'heatSoft', 'heatMedium', 'heatStrong']) {
     assert.match(
       sources.activity,
-      new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?backgroundColor: colors\\.`),
-      `${styleName} must keep a tokenized background color`,
+      new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?backgroundColor: themeColors\\.`),
+      `${styleName} must keep a theme-token background color`,
     );
   }
 
@@ -345,7 +345,7 @@ function assertDashboardAccessibilitySeparation(sources) {
     'MockExamHistoryCard trend bars must be bounded by score percent',
   );
   assert.match(sources.history, /scoreTrendChart/);
-  assert.match(sources.history, /backgroundColor: colors\.accent/);
+  assert.match(sources.history, /backgroundColor: themeColors\.accent/);
   assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
   assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);

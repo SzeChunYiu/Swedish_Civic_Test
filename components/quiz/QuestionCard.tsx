@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { PracticeQuestion } from '../../types/content';
 import { Card } from '../ui/Card';
@@ -7,7 +8,8 @@ import {
   getQuestionTranslationText,
 } from '../../lib/quiz/questionText';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { ProvenanceBadge } from './ProvenanceBadge';
 import { QuestionSourceCitation } from './QuestionSourceCitation';
 
@@ -53,6 +55,8 @@ export function QuestionCard({
   language?: AppLanguage;
   question?: PracticeQuestion;
 }) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const copy = questionCardCopy[language];
   const difficulty = question?.difficulty ?? 'practice';
   const difficultyLabel = copy.difficultyValueLabels[difficulty];
@@ -90,32 +94,34 @@ export function QuestionCard({
   );
 }
 
-const styles = StyleSheet.create({
-  label: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    textTransform: 'uppercase',
-  },
-  question: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.body.lineHeight,
-    marginTop: space[0.75],
-  },
-  sourceCitation: {
-    color: colors.textDisclaimer,
-    fontSize: typography.disclaimer.fontSize,
-    lineHeight: typography.disclaimer.lineHeight,
-  },
-  sourceCitationSurface: {
-    marginTop: space[0.75],
-  },
-  translation: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[1],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    label: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      textTransform: 'uppercase',
+    },
+    question: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.body.lineHeight,
+      marginTop: space[0.75],
+    },
+    sourceCitation: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.disclaimer.fontSize,
+      lineHeight: typography.disclaimer.lineHeight,
+    },
+    sourceCitationSurface: {
+      marginTop: space[0.75],
+    },
+    translation: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginTop: space[1],
+    },
+  });
+}
