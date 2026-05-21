@@ -17,6 +17,12 @@ async function expectPreviewAsset(preview: Locator, pattern: RegExp) {
     .toMatch(pattern);
 }
 
+async function expectStableCompanionPreview(preview: Locator, assetPattern: RegExp) {
+  await expect(preview).toHaveCSS('height', '48px');
+  await expect(preview).toHaveCSS('width', '48px');
+  await expectPreviewAsset(preview, assetPattern);
+}
+
 test('settings controls expose selected and checked state on web', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -29,6 +35,14 @@ test('settings controls expose selected and checked state on web', async ({ page
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('radiogroup', { name: 'Välj studiekompis' })).toBeVisible();
+  await expectStableCompanionPreview(
+    page.getByTestId('companion-preview-kanelbulle'),
+    /kanelbulle\/idle(?:\.[a-f0-9]+)?\.svg/,
+  );
+  await expectStableCompanionPreview(
+    page.getByTestId('companion-preview-skoglimpa'),
+    /skoglimpa\/idle(?:\.[a-f0-9]+)?\.svg/,
+  );
   await expect(
     page.getByRole('radio', {
       name: /Kanelbulle är vald som studiekompis\. Fika och vardagskultur\./,
@@ -67,6 +81,10 @@ test('settings controls expose selected and checked state on web', async ({ page
       name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
     })
     .click();
+  await expectStableCompanionPreview(
+    page.getByTestId('companion-preview-dala-horse'),
+    /dala-horse\/idle(?:\.[a-f0-9]+)?\.svg/,
+  );
   await expect(
     page.getByRole('radio', {
       name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,
