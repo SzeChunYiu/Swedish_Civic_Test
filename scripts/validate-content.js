@@ -37,6 +37,9 @@ const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard
 const {
   findGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
+const {
+  MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
+} = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -9259,6 +9262,9 @@ const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 const provenanceModule = loadTs('lib/content/provenance.ts');
 const getQuestionProvenance = provenanceModule.getQuestionProvenance;
+const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
+const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
+const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
@@ -9529,6 +9535,8 @@ let spacedRepetitionRuntimeInputCasesValidated = 0;
 let spacedRepetitionRuntimeInputParityValidated = false;
 let spacedRepetitionDueTimestampCasesValidated = 0;
 let spacedRepetitionDueTimestampParityValidated = false;
+let adaptivePracticeSizeRuntimeCasesValidated = 0;
+let adaptivePracticeSizeRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -10252,6 +10260,16 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
     spacedRepetitionRuntimeInputParityValidated,
     spacedRepetitionDueTimestampCasesValidated,
     spacedRepetitionDueTimestampParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-adaptive-practice-size')) {
+  validateAdaptivePracticeSizeRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeSizeRuntimeCasesValidated,
+    adaptivePracticeSizeRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -19336,6 +19354,109 @@ function validateSpacedRepetitionSchedule() {
   }
 }
 
+function adaptivePracticeProgressFromAnswers(answers) {
+  return {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'adaptive-runtime-validation',
+        mode: 'study',
+        questionIds: [],
+        answers,
+        startedAt: '2026-05-19T00:00:00.000Z',
+      },
+    ],
+  };
+}
+
+function validateAdaptivePracticeSizeRuntimeGuards() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    fail(
+      'adaptive practice size runtime guard requires pickAdaptiveSession and explainAdaptivePick',
+    );
+    return;
+  }
+
+  const bank = [
+    ...Array.from({ length: 12 }, (_, index) => ({
+      id: `adaptive-size-default-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch01',
+    })),
+    ...Array.from({ length: 4 }, (_, index) => ({
+      id: `adaptive-size-filtered-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch02',
+    })),
+  ];
+  const baseInput = {
+    progress: adaptivePracticeProgressFromAnswers([]),
+    bank,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+  let runtimeParityIsValid = true;
+
+  function reject(message) {
+    runtimeParityIsValid = false;
+    fail(message);
+  }
+
+  for (const { label, size } of MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES) {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+    const explainedCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+    if (picked.length !== 10 || explainedCount !== 10 || counts.unseen !== 10) {
+      reject(
+        `adaptive practice malformed ${label} size picked ${picked.length} with ${explainedCount} explained and ${counts.unseen} unseen, expected default cap 10`,
+      );
+      continue;
+    }
+
+    adaptivePracticeSizeRuntimeCasesValidated += 1;
+  }
+
+  const zeroPick = pickAdaptiveSession({ ...baseInput, size: 0 });
+  if (zeroPick.length !== 0) {
+    reject(`adaptive practice explicit zero size picked ${zeroPick.length}, expected 0`);
+  }
+
+  const validPick = pickAdaptiveSession({ ...baseInput, size: 2 });
+  if (validPick.length !== 2) {
+    reject(`adaptive practice valid size picked ${validPick.length}, expected 2`);
+  }
+
+  const oversizePick = pickAdaptiveSession({ ...baseInput, size: 99 });
+  if (oversizePick.length !== bank.length) {
+    reject(`adaptive practice oversize picked ${oversizePick.length}, expected ${bank.length}`);
+  }
+
+  const filteredPick = pickAdaptiveSession({
+    ...baseInput,
+    size: Number.NaN,
+    chapterId: 'ch02',
+  });
+  if (
+    filteredPick.length !== 4 ||
+    filteredPick.some((id) => !id.startsWith('adaptive-size-filtered-'))
+  ) {
+    reject(
+      `adaptive practice malformed size with chapter filter picked ${JSON.stringify(filteredPick)}, expected the 4 eligible filtered questions`,
+    );
+  }
+
+  if (
+    runtimeParityIsValid &&
+    adaptivePracticeSizeRuntimeCasesValidated === MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES.length
+  ) {
+    adaptivePracticeSizeRuntimeParityValidated = true;
+  }
+}
+
 function validateWeeklyRecapRuntimeGuard() {
   if (typeof generateWeeklyRecap !== 'function') {
     fail('generateWeeklyRecap export is not a function');
@@ -22285,6 +22406,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateAdaptivePracticeSizeRuntimeGuards();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -22590,6 +22712,8 @@ console.log(
       spacedRepetitionRuntimeInputParityValidated,
       spacedRepetitionDueTimestampCasesValidated,
       spacedRepetitionDueTimestampParityValidated,
+      adaptivePracticeSizeRuntimeCasesValidated,
+      adaptivePracticeSizeRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
