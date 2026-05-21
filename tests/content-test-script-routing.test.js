@@ -580,6 +580,29 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('XP rules parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const xpRulesTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-xp-rules-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-xp-rules/);
+  assert.match(
+    validatorSource,
+    /validateXpRules\(\);[\s\S]*xpRulesValidated[\s\S]*xpRulesParityValidated/,
+  );
+  assert.match(xpRulesTestSource, /--focus-xp-rules/);
+  assert.doesNotMatch(
+    xpRulesTestSource,
+    /--focus-badge-xp-runtime/,
+    'XP rules tests must not route through the broader badge XP runtime focus',
+  );
+});
+
 test('adaptive size focused content validation runs only its runtime summary', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
