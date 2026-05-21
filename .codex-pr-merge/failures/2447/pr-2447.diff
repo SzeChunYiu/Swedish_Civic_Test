@@ -1,0 +1,252 @@
+diff --git a/content/question-bank.csv b/content/question-bank.csv
+index 1deb4d0f7..d77def3dc 100644
+--- a/content/question-bank.csv
++++ b/content/question-bank.csv
+@@ -759,8 +759,8 @@
+ "q758","ch02","true_false","Hemliga val betyder att bara myndigheter får veta hur varje person röstar.","Secret elections mean only authorities may know how each person votes.","Hemliga val betyder att väljare inte behöver avslöja hur de röstar. Det skyddar människor från hot och tvång och hör ihop med fria val, där flera partier kan ställa upp och varje röstberättigad har en röst.","Secret elections mean voters do not have to reveal how they vote. This protects people from threats and coercion and is part of free elections, where several parties can stand and each eligible voter has one vote.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|secret-ballot|free-elections|published-variant|false-statement","derived"
+ "q759","ch02","single_choice","Välj rätt alternativ: Vad betyder det att val i en demokrati är hemliga?","Choose the correct option: What does it mean that elections in a democracy are secret?","Hemliga val betyder att väljare inte behöver avslöja hur de röstar. Det skyddar människor från hot och tvång och hör ihop med fria val, där flera partier kan ställa upp och varje röstberättigad har en röst.","Secret elections mean voters do not have to reveal how they vote. This protects people from threats and coercion and is part of free elections, where several parties can stand and each eligible voter has one vote.","a","[{""id"":""a"",""text"":""Att väljare inte behöver avslöja hur de röstar""},{""id"":""b"",""text"":""Bara myndigheter får veta hur varje person röstar""},{""id"":""c"",""text"":""Väljare måste säga offentligt vilket parti de väljer""},{""id"":""d"",""text"":""Bara ett parti får ställa upp i valet""}]","[{""id"":""a"",""text"":""No one has to reveal how they vote""},{""id"":""b"",""text"":""Only authorities may know how each person votes""},{""id"":""c"",""text"":""Voters must publicly say which party they choose""},{""id"":""d"",""text"":""Only one party may stand in the election""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|secret-ballot|free-elections|published-variant|judgement","derived"
+ "q760","ch02","single_choice","Vilket svar stämmer bäst? Vilken rätt har människor, grupper och partier i en demokrati?","Which answer best matches? What right do people, groups, and parties have in a democracy?","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","a","[{""id"":""a"",""text"":""Att försöka övertyga andra om sina politiska idéer""},{""id"":""b"",""text"":""Att hindra andra från att rösta""},{""id"":""c"",""text"":""Att bestämma domstolarnas domar""},{""id"":""d"",""text"":""Att förbjuda alla andra partier""}]","[{""id"":""a"",""text"":""To try to persuade others of their political ideas""},{""id"":""b"",""text"":""To stop others from voting""},{""id"":""c"",""text"":""To decide court judgments""},{""id"":""d"",""text"":""To ban all other parties""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|section-practice","derived"
+-"q761","ch02","true_false","Försöka övertyga andra om sina politiska idéer.","Try to persuade others of their political ideas.","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|true-false","derived"
+-"q762","ch02","true_false","Hindra andra från att rösta.","Stop others from voting.","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|false-statement","derived"
++"q761","ch02","true_false","I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.","In a democracy, people, groups, and parties may try to persuade others of their political ideas.","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|true-false","derived"
++"q762","ch02","true_false","I en demokrati får människor, grupper och partier inte hindra andra från att rösta.","In a democracy, people, groups, and parties may not stop others from voting.","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","false","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|false-statement","derived"
+ "q763","ch02","single_choice","Välj rätt alternativ: Vilken rätt har människor, grupper och partier i en demokrati?","Choose the correct option: What right do people, groups, and parties have in a democracy?","I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer. Det hänger ihop med yttrandefriheten, alltså rätten att skriva och säga vad man tycker.","In a democracy, people, groups, and parties have the right to try to persuade others of their political ideas. This is connected to freedom of expression, the right to write and say what one thinks.","a","[{""id"":""a"",""text"":""Att försöka övertyga andra om sina politiska idéer""},{""id"":""b"",""text"":""Att hindra andra från att rösta""},{""id"":""c"",""text"":""Att bestämma domstolarnas domar""},{""id"":""d"",""text"":""Att förbjuda alla andra partier""}]","[{""id"":""a"",""text"":""To try to persuade others of their political ideas""},{""id"":""b"",""text"":""To stop others from voting""},{""id"":""c"",""text"":""To decide court judgments""},{""id"":""d"",""text"":""To ban all other parties""}]","Sveriges demokratiska system","Demokrati betyder folkstyre","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|freedom-of-expression|political-ideas|published-variant|judgement","derived"
+ "q764","ch02","single_choice","Vilket svar stämmer bäst? Vad kan göra demokratin starkare?","Which answer best matches? What can make democracy stronger?","Demokratin blir starkare när många röstar, engagerar sig och skaffar sig kunskap om samhällsfrågor. Färre deltagare, mindre debatt och begränsade politiska samtal skulle i stället försvaga demokratin.","Democracy becomes stronger when many people vote, get involved, and learn about social issues. Fewer participants, less debate, and limited political discussion would weaken democracy instead.","a","[{""id"":""a"",""text"":""Att många röstar, engagerar sig och skaffar kunskap om samhällsfrågor""},{""id"":""b"",""text"":""Att färre människor deltar i val""},{""id"":""c"",""text"":""Att människor undviker all samhällsdebatt""},{""id"":""d"",""text"":""Att bara myndigheter får diskutera politik""}]","[{""id"":""a"",""text"":""Many people voting, getting involved, and learning about social issues""},{""id"":""b"",""text"":""Fewer people taking part in elections""},{""id"":""c"",""text"":""People avoiding all public debate""},{""id"":""d"",""text"":""Only authorities being allowed to discuss politics""}]","Sveriges demokratiska system","En stark demokrati","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|participation|civic-knowledge|published-variant|section-practice","derived"
+ "q765","ch02","true_false","Demokratin blir starkare när många röstar, engagerar sig och skaffar kunskap om samhällsfrågor.","Democracy becomes stronger when many people vote, get involved, and learn about social issues.","Demokratin blir starkare när många röstar, engagerar sig och skaffar sig kunskap om samhällsfrågor. Färre deltagare, mindre debatt och begränsade politiska samtal skulle i stället försvaga demokratin.","Democracy becomes stronger when many people vote, get involved, and learn about social issues. Fewer participants, less debate, and limited political discussion would weaken democracy instead.","true","[{""id"":""true"",""text"":""Sant""},{""id"":""false"",""text"":""Falskt""}]","[{""id"":""true"",""text"":""True""},{""id"":""false"",""text"":""False""}]","Sveriges demokratiska system","En stark demokrati","10","Sverige i fokus. Utbildningsmaterial till medborgarskapsprov. Grundläggande kunskaper om det svenska samhället. 1:a upplagan","Universitets- och högskolerådet (UHR)","https://www.uhr.se/globalassets/_uhr.se/medborgarskapsprovet/utbildningsmaterial/sverige-i-fokus.pdf","2026-05-15","easy","published","democracy|participation|civic-knowledge|published-variant|true-false","derived"
+diff --git a/lib/content/derivedQuestions.ts b/lib/content/derivedQuestions.ts
+index 5d62dd2b2..17d2f445a 100644
+--- a/lib/content/derivedQuestions.ts
++++ b/lib/content/derivedQuestions.ts
+@@ -1410,6 +1410,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
+   const answer = stripFinalPunctuation(answerLabel(option));
+   const q = stripFinalPunctuation(source.questionSv);
+ 
++  if (source.id === 'q146') {
++    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
++      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
++    }
++    if (/^Att hindra andra från att rösta$/i.test(answer)) {
++      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
++    }
++  }
++
+   if (source.id === 'q151') {
+     if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
+       return 'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam';
+@@ -2000,6 +2009,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
+   const answer = stripFinalPunctuation(answerTextEn(option));
+   const q = stripFinalPunctuation(source.questionEn);
+ 
++  if (source.id === 'q146') {
++    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
++      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
++    }
++    if (/^To stop others from voting$/i.test(answer)) {
++      return 'In a democracy, people, groups, and parties may not stop others from voting';
++    }
++  }
++
+   if (source.id === 'q151') {
+     if (
+       /^They are often run by private companies and earn income from advertising$/i.test(answer)
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 00a55bc1f..5dc314136 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -565,8 +565,24 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
+   /\bthere are buddhist and Hindu\b/,
+   /\bcalled Lucia procession\b/i,
+   /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
++  /^Försöka övertyga andra om sina politiska idéer\.?$/i,
++  /^Hindra andra från att rösta\.?$/i,
++  /^Try to persuade others of their political ideas\.?$/i,
++  /^Stop others from voting\.?$/i,
+   /^Light candles on graves to remember and honour people who have died\.?$/i,
+   /^Open an Advent calendar every day until Christmas Eve\.?$/i,
++  /^Vårdcentraler, barnavårdscentraler och mödravårdscentraler\.?$/i,
++  /^Domstolar, åklagare och kriminalvård\.?$/i,
++  /^Health centres, child health centres, and maternity clinics\.?$/i,
++  /^Courts, prosecutors, and prison and probation services\.?$/i,
++  /^Ordna förskolor, fritidshem, grundskolor och gymnasieskolor\.?$/i,
++  /^Betala sjukförsäkring och statliga pensioner\.?$/i,
++  /^Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools\.?$/i,
++  /^Pay sickness insurance and state pensions\.?$/i,
++  /^Vård och service hemma eller boende som är anpassat för äldre personer\.?$/i,
++  /^Automatiskt studiestöd och plats på universitet\.?$/i,
++  /^Care and services at home or housing adapted for older people\.?$/i,
++  /^Automatic study support and a university place\.?$/i,
+   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
+   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
+   /\bMany people voting, getting involved, and learning about social issues\b/i,
+@@ -6528,6 +6544,14 @@ function civicStatementSv(source, option) {
+   }
+   const answer = stripFinalPunctuation(answerLabel(option));
+   const q = stripFinalPunctuation(source.questionSv);
++  if (source.id === 'q146') {
++    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
++      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
++    }
++    if (/^Att hindra andra från att rösta$/i.test(answer)) {
++      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
++    }
++  }
+   let match = q.match(/^Var ligger (.+)$/i);
+   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
+   match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
+@@ -6878,6 +6902,14 @@ function civicStatementEn(source, option) {
+   }
+   const answer = stripFinalPunctuation(answerTextEn(option));
+   const q = stripFinalPunctuation(source.questionEn);
++  if (source.id === 'q146') {
++    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
++      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
++    }
++    if (/^To stop others from voting$/i.test(answer)) {
++      return 'In a democracy, people, groups, and parties may not stop others from voting';
++    }
++  }
+   let match = q.match(/^Where is (.+) located$/i);
+   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
+   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
+@@ -8059,13 +8091,17 @@ const sourceQuestions = questionModule.sourceQuestions;
+ const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+ const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
+ const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
+-const expectedGeneratedPublishedQuestions =
+-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
+-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
+-    : [];
+ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+ const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
+ const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
++const expectedGeneratedPublishedQuestions =
++  Array.isArray(sourceQuestions) &&
++  typeof derivePublishedQuestions === 'function' &&
++  typeof applyQuestionLocalizationPilot === 'function'
++    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map(
++        applyQuestionLocalizationPilot,
++      )
++    : [];
+ const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
+ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
+ const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+diff --git a/site/questions.js b/site/questions.js
+index 55e155c0a..5b113cc4b 100644
+--- a/site/questions.js
++++ b/site/questions.js
+@@ -55415,8 +55415,8 @@
+     "chapter": "Ch. 02 · Sweden's democratic system",
+     "type": "true_false",
+     "q": {
+-      "en": "Try to persuade others of their political ideas.",
+-      "sv": "Försöka övertyga andra om sina politiska idéer."
++      "en": "In a democracy, people, groups, and parties may try to persuade others of their political ideas.",
++      "sv": "I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer."
+     },
+     "opts": [
+       {
+@@ -55455,8 +55455,8 @@
+     "chapter": "Ch. 02 · Sweden's democratic system",
+     "type": "true_false",
+     "q": {
+-      "en": "Stop others from voting.",
+-      "sv": "Hindra andra från att rösta."
++      "en": "In a democracy, people, groups, and parties may not stop others from voting.",
++      "sv": "I en demokrati får människor, grupper och partier inte hindra andra från att rösta."
+     },
+     "opts": [
+       {
+diff --git a/tests/content-published-question-types.test.js b/tests/content-published-question-types.test.js
+index d1e8351d5..5b968c122 100644
+--- a/tests/content-published-question-types.test.js
++++ b/tests/content-published-question-types.test.js
+@@ -3738,7 +3738,48 @@ require('./scripts/validate-content.js');
+   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
+ });
+ 
++test('q146 political-rights generated true/false exports direct propositions', () => {
++  const generatedSiteBank = buildSiteQuestionBank().questions;
++  const sourceQuestions = generatedSiteBank.filter(
++    (question) => question.questionProvenance === 'uhr',
++  );
++  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
++  const trueStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'));
++  const falseStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'));
++
++  assert.equal(
++    trueStatement?.q.sv,
++    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
++  );
++  assert.equal(
++    trueStatement?.q.en,
++    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
++  );
++  assert.equal(
++    falseStatement?.q.sv,
++    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
++  );
++  assert.equal(
++    falseStatement?.q.en,
++    'In a democracy, people, groups, and parties may not stop others from voting.',
++  );
++});
++
+ test('published question schema rejects generated true/false bare answer phrases', () => {
++  const generatedSiteBank = buildSiteQuestionBank().questions;
++  const sourceQuestions = generatedSiteBank.filter(
++    (question) => question.questionProvenance === 'uhr',
++  );
++  const expectedOffenderIds = [
++    generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'),
++    generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'),
++    generatedQuestionId(sourceQuestions, 'q157', 'trueStatement'),
++    generatedQuestionId(sourceQuestions, 'q157', 'falseStatement'),
++    generatedQuestionId(sourceQuestions, 'q158', 'trueStatement'),
++    generatedQuestionId(sourceQuestions, 'q158', 'falseStatement'),
++    generatedQuestionId(sourceQuestions, 'q159', 'trueStatement'),
++    generatedQuestionId(sourceQuestions, 'q159', 'falseStatement'),
++  ];
+   const result = spawnSync(
+     process.execPath,
+     [
+@@ -3756,14 +3797,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+       [
+         ${JSON.stringify(generatedFixtureIdHelperSource())},
+         "const bareAnswerPhraseResiduals = {",
+-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll A.', questionEn: 'Incomplete answer fragment for naturalness guard A.' },",
+-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll B.', questionEn: 'Incomplete answer fragment for naturalness guard B.' },",
+-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll C.', questionEn: 'Incomplete answer fragment for naturalness guard C.' },",
+-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll D.', questionEn: 'Incomplete answer fragment for naturalness guard D.' },",
+-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll E.', questionEn: 'Incomplete answer fragment for naturalness guard E.' },",
+-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll F.', questionEn: 'Incomplete answer fragment for naturalness guard F.' },",
+-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll G.', questionEn: 'Incomplete answer fragment for naturalness guard G.' },",
+-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll H.', questionEn: 'Incomplete answer fragment for naturalness guard H.' },",
++        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
++        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
++        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
++        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
++        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
++        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
++        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
++        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
+         "};",
+         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+         "  bareAnswerPhraseResiduals[question.id]",
+@@ -3778,6 +3819,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   }
+   return contents;
+ };
++process.argv.push('--focus-generated-true-false-naturalness');
+ require('./scripts/validate-content.js');
+ `,
+     ],
+@@ -3786,6 +3828,9 @@ require('./scripts/validate-content.js');
+ 
+   const output = `${result.stdout}\n${result.stderr}`;
+   assert.notEqual(result.status, 0);
++  for (const id of expectedOffenderIds) {
++    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
++  }
+   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+ });
+ 

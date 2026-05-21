@@ -1,0 +1,59 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Add focused `validate-content` exits for `--focus-audio-button-accessibility` and `--focus-speech-runtime-parity`.\n- Expand AudioButton and speech runtime parity coverage for play/stop lifecycle, playback rate handling, lifecycle callbacks, and synchronous `Speech.speak` errors.\n- Wire Practice to the existing listen-first/rate-aware audio path and expose the Settings listen-first switch; consolidate the duplicate `LegalPage` import that blocked lint.\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-audio-button-accessibility`\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-speech-runtime-parity`\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-settings-store`\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-audio-button-accessibility-parity.test.js tests/content-speech-runtime-parity.test.js tests/content-test-script-routing.test.js tests/content-settings-audio-parity.test.js`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:audio`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run lint`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:ownership`\n- `npx --no-install prettier --check 'app/(tabs)/practice.tsx' app/settings.tsx app/sources.tsx scripts/validate-content.js tests/content-audio-button-accessibility-parity.test.js tests/content-speech-runtime-parity.test.js tests/content-test-script-routing.test.js && git diff --check`\n\n## Known Broader Suite Status\n- `NODE_OPTIONS='--v8-pool-size=1' npm run test:content` still exits 1 on widespread existing current-main contract drift unrelated to this atom, including production-summary count mismatches, ad placement/app-config/content naturalness guards, dashboard/theme/UHRReferenceCard expected-count drift, and `content-validator-schema-drift` expecting `validate:content` to remain red even though it is now green.",
+  "files": [
+    {
+      "path": "app/(tabs)/practice.tsx",
+      "additions": 29,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    },
+    { "path": "app/settings.tsx", "additions": 49, "deletions": 0, "changeType": "MODIFIED" },
+    { "path": "app/sources.tsx", "additions": 1, "deletions": 2, "changeType": "MODIFIED" },
+    {
+      "path": "docs/parallel-sessions/journals/setup.md",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 128,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-audio-button-accessibility-parity.test.js",
+      "additions": 6,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-test-script-routing.test.js",
+      "additions": 46,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/audio-speech-focused-parity-177936",
+  "headRefOid": "6e3106db5ad0e885a36c5b1ffbe15dc53f8ff816",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2329,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:22:37Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220134347/job/77152687282",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:21:33Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: focus audio speech parity gates",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2329"
+}

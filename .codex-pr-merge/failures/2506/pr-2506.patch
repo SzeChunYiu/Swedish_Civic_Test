@@ -1,0 +1,272 @@
+From e3b0185e70e805856c53962f94e3e42b8e488e1c Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 18:51:21 +0200
+Subject: [PATCH] Guard citizenship source row layout
+
+---
+ app/citizenship-requirements.tsx              |  63 ++++++-----
+ ...nt-citizenship-requirements-parity.test.js |  16 +++
+ ...citizenship-requirements-checklist.spec.ts | 105 +++++++++++++++++-
+ 3 files changed, 156 insertions(+), 28 deletions(-)
+
+diff --git a/app/citizenship-requirements.tsx b/app/citizenship-requirements.tsx
+index 5f88d5f2e..931cc180a 100644
+--- a/app/citizenship-requirements.tsx
++++ b/app/citizenship-requirements.tsx
+@@ -1,5 +1,5 @@
+ import { Link } from 'expo-router';
+-import { useMemo } from 'react';
++import { useMemo, useState } from 'react';
+ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+ 
+ import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+@@ -200,6 +200,7 @@ export default function CitizenshipRequirementsScreen() {
+   );
+   const copy = copyByLanguage[language];
+   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
++  const [focusedSourceRefKey, setFocusedSourceRefKey] = useState<string | null>(null);
+ 
+   const missingAreas = useMemo(
+     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
+@@ -260,30 +261,38 @@ export default function CitizenshipRequirementsScreen() {
+               <View style={styles.sourceRefs}>
+                 <Text style={styles.sourceRefsLabel}>{copy.sourceRefsLabel}</Text>
+                 <View style={styles.sourceRefList}>
+-                  {areaSources.map((source) => (
+-                    <Pressable
+-                      key={`${area.id}-${source.id}`}
+-                      accessibilityHint={copy.openSourceHint}
+-                      accessibilityLabel={buildAreaSourceAccessibilityLabel(
+-                        copy,
+-                        area.title[language],
+-                        source,
+-                        language,
+-                      )}
+-                      accessibilityRole="link"
+-                      onPress={() => {
+-                        void Linking.openURL(source.url);
+-                      }}
+-                      style={({ pressed }) => [
+-                        styles.sourceRefRow,
+-                        pressed ? styles.sourceRefRowPressed : null,
+-                      ]}
+-                    >
+-                      <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
+-                      <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
+-                      <Text style={styles.sourceRefUrl}>{source.url}</Text>
+-                    </Pressable>
+-                  ))}
++                  {areaSources.map((source) => {
++                    const sourceFocusKey = `${area.id}-${source.id}`;
++                    return (
++                      <Pressable
++                        key={sourceFocusKey}
++                        accessibilityHint={copy.openSourceHint}
++                        accessibilityLabel={buildAreaSourceAccessibilityLabel(
++                          copy,
++                          area.title[language],
++                          source,
++                          language,
++                        )}
++                        accessibilityRole="link"
++                        onBlur={() => setFocusedSourceRefKey(null)}
++                        onFocus={() => setFocusedSourceRefKey(sourceFocusKey)}
++                        onPress={() => {
++                          void Linking.openURL(source.url);
++                        }}
++                        style={({ pressed }) => [
++                          styles.sourceRefRow,
++                          focusedSourceRefKey === sourceFocusKey
++                            ? styles.sourceRefRowFocused
++                            : null,
++                          pressed ? styles.sourceRefRowPressed : null,
++                        ]}
++                      >
++                        <Text style={styles.sourceRefTitle}>{source.title[language]}</Text>
++                        <Text style={styles.sourceRefMeta}>{formatSourceMeta(source, copy)}</Text>
++                        <Text style={styles.sourceRefUrl}>{source.url}</Text>
++                      </Pressable>
++                    );
++                  })}
+                 </View>
+               </View>
+               <Pressable
+@@ -428,6 +437,10 @@ const styles = StyleSheet.create({
+     paddingHorizontal: space[1],
+     paddingVertical: space[0.75],
+   },
++  sourceRefRowFocused: {
++    backgroundColor: colors.focusSoft,
++    borderColor: colors.focus,
++  },
+   sourceRefRowPressed: {
+     backgroundColor: colors.surfaceMuted,
+   },
+diff --git a/tests/content-citizenship-requirements-parity.test.js b/tests/content-citizenship-requirements-parity.test.js
+index 56ed50e76..66e394815 100644
+--- a/tests/content-citizenship-requirements-parity.test.js
++++ b/tests/content-citizenship-requirements-parity.test.js
+@@ -52,6 +52,12 @@ function loadTs(relativePath) {
+   return mod.exports;
+ }
+ 
++function extractNamedStyle(source, styleName) {
++  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
++  assert.ok(match, `${styleName} style must exist`);
++  return match[0];
++}
++
+ function assertLocalizedText(value, label) {
+   assert.equal(typeof value, 'object', `${label} should be a localized object`);
+ 
+@@ -155,15 +161,25 @@ test('citizenship requirements screen renders interactive sourced checklist with
+ test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
+   const routeSource = read('app/citizenship-requirements.tsx');
+   const sourceLinkCount = (routeSource.match(/Linking\.openURL\(source\.url\)/g) || []).length;
++  const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
++  const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
+ 
+   assert.match(routeSource, /areaSourceAccessibilityPrefix/);
++  assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Källa för'/);
++  assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Source for'/);
+   assert.match(routeSource, /source\.title\[language\]/);
+   assert.match(routeSource, /formatSourceMeta\(source, copy\)/);
+   assert.match(routeSource, /source\.sourceDate/);
+   assert.match(routeSource, /source\.retrievedDate/);
+   assert.match(routeSource, /source\.url/);
+   assert.match(routeSource, /styles\.sourceRefRow/);
++  assert.match(routeSource, /focusedSourceRefKey === sourceFocusKey/);
++  assert.match(routeSource, /onFocus=\{\(\) => setFocusedSourceRefKey\(sourceFocusKey\)\}/);
++  assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRefKey\(null\)\}/);
+   assert.match(routeSource, /accessibilityRole="link"/);
++  assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
++  assert.match(sourceRefRowFocusedStyle, /backgroundColor: colors\.focusSoft/);
++  assert.match(sourceRefRowFocusedStyle, /borderColor: colors\.focus/);
+   assert.equal(
+     sourceLinkCount >= 2,
+     true,
+diff --git a/tests/e2e/citizenship-requirements-checklist.spec.ts b/tests/e2e/citizenship-requirements-checklist.spec.ts
+index 59e8b3dae..744aa3ace 100644
+--- a/tests/e2e/citizenship-requirements-checklist.spec.ts
++++ b/tests/e2e/citizenship-requirements-checklist.spec.ts
+@@ -1,4 +1,5 @@
+ import { expect, test } from '@playwright/test';
++import type { Locator, Page } from '@playwright/test';
+ 
+ import {
+   collectConsoleAndPageErrors,
+@@ -9,13 +10,111 @@ import {
+ 
+ const checklistStorageKey = 'citizenship-requirements\\citizenshipRequirements.checkedAreaIds.v1';
+ 
+-test('citizenship requirements checklist persists checked planning areas', async ({ page }) => {
+-  const consoleErrors = collectConsoleAndPageErrors(page);
++const areaSourceLayoutCases = [
++  {
++    accessibleName: /Källa för Styrkt identitet: Migrationsverket: Ansök om svenskt medborgarskap/i,
++    checkedText: 'Kontrollerad 2026-05-19',
++    language: 'sv',
++    title: 'Ansök om svenskt medborgarskap',
++    urlPart: 'migrationsverket.se',
++    viewport: { height: 844, width: 390 },
++    viewportName: 'mobile',
++  },
++  {
++    accessibleName: /Source for Proven identity: Migrationsverket: Apply for Swedish citizenship/i,
++    checkedText: 'Checked 2026-05-19',
++    language: 'en',
++    title: 'Apply for Swedish citizenship',
++    urlPart: 'migrationsverket.se',
++    viewport: { height: 800, width: 1024 },
++    viewportName: 'desktop',
++  },
++] as const;
+ 
+-  await seedSettingsLanguage(page, 'en');
++async function openRequirementsRoute(page: Page, language: 'sv' | 'en') {
++  await seedSettingsLanguage(page, language);
+   await markAboutTheTestSeen(page);
+   await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+   await dismissBlockingModals(page);
++}
++
++async function expectNoHorizontalOverflow(page: Page) {
++  const metrics = await page.evaluate(() => {
++    const root = document.documentElement;
++    const body = document.body;
++
++    return {
++      bodyScrollWidth: body.scrollWidth,
++      clientWidth: root.clientWidth,
++      rootScrollWidth: root.scrollWidth,
++    };
++  });
++
++  expect(metrics.rootScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
++  expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
++}
++
++async function getPaint(locator: Locator) {
++  return locator.evaluate((element) => {
++    const style = window.getComputedStyle(element);
++    return {
++      backgroundColor: style.backgroundColor,
++      borderColor: style.borderColor,
++    };
++  });
++}
++
++async function expectSourceRowFits(locator: Locator) {
++  const metrics = await locator.evaluate((element) => {
++    const rect = element.getBoundingClientRect();
++    return {
++      clientWidth: element.clientWidth,
++      height: rect.height,
++      left: rect.left,
++      right: rect.right,
++      scrollWidth: element.scrollWidth,
++      viewportWidth: document.documentElement.clientWidth,
++    };
++  });
++
++  expect(metrics.height).toBeGreaterThanOrEqual(44);
++  expect(metrics.left).toBeGreaterThanOrEqual(0);
++  expect(metrics.right).toBeLessThanOrEqual(metrics.viewportWidth + 1);
++  expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
++}
++
++for (const fixture of areaSourceLayoutCases) {
++  test(`citizenship requirements area source rows fit and focus on ${fixture.viewportName} in ${fixture.language}`, async ({
++    page,
++  }) => {
++    const consoleErrors = collectConsoleAndPageErrors(page);
++
++    await page.setViewportSize(fixture.viewport);
++    await openRequirementsRoute(page, fixture.language);
++
++    const sourceRow = page.getByRole('link', { name: fixture.accessibleName }).first();
++    await expect(sourceRow).toBeVisible();
++    await expect(sourceRow).toContainText(fixture.title);
++    await expect(sourceRow).toContainText(fixture.checkedText);
++    await expect(sourceRow).toContainText(fixture.urlPart);
++    await expectSourceRowFits(sourceRow);
++    await expectNoHorizontalOverflow(page);
++
++    const beforeFocus = await getPaint(sourceRow);
++    await sourceRow.focus();
++    await expect(sourceRow).toBeFocused();
++    const afterFocus = await getPaint(sourceRow);
++
++    expect(afterFocus.borderColor).not.toBe(beforeFocus.borderColor);
++    expect(afterFocus.backgroundColor).not.toBe(beforeFocus.backgroundColor);
++    expect(consoleErrors.get()).toEqual([]);
++  });
++}
++
++test('citizenship requirements checklist persists checked planning areas', async ({ page }) => {
++  const consoleErrors = collectConsoleAndPageErrors(page);
++
++  await openRequirementsRoute(page, 'en');
+ 
+   const identity = page.getByRole('checkbox', {
+     name: /I can prove my identity or have checked which exception route applies/i,

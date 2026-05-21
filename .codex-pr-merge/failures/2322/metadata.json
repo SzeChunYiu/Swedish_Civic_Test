@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Restores provenance badge keyboard focus behavior by deferring focus disclosure so pointer clicks can still toggle the source note correctly.\n- Refreshes `test:ui-effects` static assertions to match the current tokenized/theme-aware implementation contracts.\n- Updates the focused web ARIA e2e locator to assert the current collapsed provenance button label while still verifying source-note disclosure.\n\n## Validation\n- `npm run test:ui-effects`\n- `npm run typecheck -- --pretty false`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `npm run test:theme-discipline`\n- `npm run build:web:export`\n- `E2E_PORT=4273 npx playwright test tests/e2e/web-aria-false-state.spec.ts`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "components/quiz/ProvenanceBadge.tsx",
+      "additions": 40,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/ui-effects.test.js",
+      "additions": 102,
+      "deletions": 30,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/web-aria-false-state.spec.ts",
+      "additions": 1,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/ui-effects-release-gate-1779356862-4115758",
+  "headRefOid": "a7e09ed0d90b4524fe94b7feb1832ad13b5ca458",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2322,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:04:06Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219287070/job/77149744172",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:03:08Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "uiux: restore ui effects accessibility gate",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2322"
+}

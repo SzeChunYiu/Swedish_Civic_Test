@@ -1,0 +1,39 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Add a focused question-provenance runtime validation mode for malformed question/tag/provenance inputs.\n- Surface CSV provenance/public-row summary counters in `validate-content` and the focus registry.\n- Report whole-bank UHR source URL metadata drift as a summarized failure instead of hundreds of row failures, while preserving row-level CSV drift checks.\n\n## Validation\n- `node scripts/validate-content.js --focus-question-provenance-runtime`\n- `node scripts/validate-content.js --focus-question-bank-csv`\n- `node --test --test-name-pattern \"provenance|getQuestionProvenance|ProvenanceBadge|UHR|derived|editorial|invalid|tags|source note\" scripts/static-site-source-provenance-copy.test.js tests/content-question-bank-csv-contract.test.js tests/content-question-card-accessibility-parity.test.js`\n- `npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `node --test tests/content-test-script-routing.test.js`\n- `git diff --check HEAD~1..HEAD`",
+  "files": [
+    {
+      "path": "scripts/validate-content-focus-registry.js",
+      "additions": 8,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 204,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/question-provenance-runtime-guard-177936",
+  "headRefOid": "81fff09f2f6671fd0142696b0a7745e8527e5eea",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2339,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239788122/job/77222727843",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:44:02Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: harden question provenance validation",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2339"
+}

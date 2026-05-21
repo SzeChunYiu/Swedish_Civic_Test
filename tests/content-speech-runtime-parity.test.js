@@ -78,6 +78,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "    const onError = getSpeechCallback<'onError'>(options.onError);\\n" +
           "    onError?.(error instanceof Error ? error : new Error(String(error)));\\n",
         "",
+      )
+      .replace(
+        "    const onError = getSpeechCallback<'onError'>(safeOptions.onError);\\n" +
+          "    onError?.(error instanceof Error ? error : new Error(String(error)));\\n",
+        "",
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
