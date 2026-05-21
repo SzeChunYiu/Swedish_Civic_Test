@@ -228,6 +228,11 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
   const dialogs = page.locator('[role="dialog"][aria-modal="true"]');
   await expect(dialogs).toHaveCount(1);
   await expect(dialogs.first()).toHaveAttribute('aria-label', 'Vad är medborgarskapsprovet?');
+  await expect(dialogs.first()).toHaveAttribute('aria-labelledby', 'first-run-about-modal-title');
+  await expect(dialogs.first()).toHaveAttribute('aria-describedby', 'first-run-about-modal-body');
+  await expect(page.locator('#first-run-about-modal-title')).toHaveText(
+    'Vad är medborgarskapsprovet?',
+  );
   await expect(page.getByRole('heading', { name: 'Vad är medborgarskapsprovet?' })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Öppna guiden om medborgarskapsprovet' }),

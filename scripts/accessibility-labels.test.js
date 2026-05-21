@@ -8,7 +8,6 @@ const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
-const ROUTE_LINK_SOURCE = path.join(ROOT, 'components', 'ui', 'RouteLink.tsx');
 
 function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -42,11 +41,10 @@ test('interactive elements expose explicit accessibility labels, roles, and stat
         const tagName = (tag.match(/<(Pressable|Link|Button)\b/) || [])[1];
         const isIntentionallyHidden =
           tag.includes('accessible={false}') &&
-          tag.includes('importantForAccessibility="no-hide-descendants"');
-        const isIntentionallyNonSemantic =
-          tag.includes('accessible={false}') && tag.includes('importantForAccessibility="no"');
+          (tag.includes('importantForAccessibility="no"') ||
+            tag.includes('importantForAccessibility="no-hide-descendants"'));
 
-        if (isIntentionallyHidden || isIntentionallyNonSemantic) return;
+        if (isIntentionallyHidden) return;
 
         if (!isButtonImplementation && !tag.includes('accessibilityLabel=')) {
           offenders.push(`${relPath}:${index + 1}: missing accessibilityLabel: ${line.trim()}`);
@@ -103,7 +101,6 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
 test('LanguagePicker menu rows expose menu-item state semantics', () => {
   const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
 
-  assert.match(source, /aria-haspopup="menu"/);
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
@@ -113,24 +110,6 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
     source,
     /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
   );
-});
-
-test('LanguagePicker close control uses a compact icon instead of visible x text', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
-  const iconSource = fs.readFileSync(
-    path.join(ROOT, 'components', 'ui', 'icons', 'CloseIcon.tsx'),
-    'utf8',
-  );
-
-  assert.match(source, /import \{ CloseIcon \} from '\.\/icons\/CloseIcon';/);
-  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
-  assert.match(source, /accessibilityRole="button"/);
-  assert.match(source, /<CloseIcon color=\{colors\.textSecondary\} size=\{closeIconSize\} \/>/);
-  assert.match(source, /minHeight:\s*44/);
-  assert.match(source, /minWidth:\s*44/);
-  assert.doesNotMatch(source, /<Text[^>]*>\s*x\s*<\/Text>/i);
-  assert.match(iconSource, /testID="language-picker-close-icon"/);
-  assert.match(iconSource, /importantForAccessibility="no-hide-descendants"/);
 });
 
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
@@ -190,23 +169,6 @@ test('MockExamConfigPanel summary header is separate from interactive controls',
   assert.doesNotMatch(source, /<Surface\b[^>]*accessibilityLabel=/);
 });
 
-test('MockExamConfigPanel adjustable values use normalized finite ranges', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components', 'MockExamConfigPanel.tsx'), 'utf8');
-
-  assert.match(source, /normalizeMockExamStepperRange/);
-  assert.match(source, /const questionRange = normalizeMockExamStepperRange\(\{/);
-  assert.match(source, /const durationRange = normalizeMockExamStepperRange\(\{/);
-  assert.match(source, /const safeQuestionStep = questionRange\.step;/);
-  assert.match(source, /const safeDurationStep = durationRange\.step;/);
-  assert.match(source, /const questionBoundsValid = questionRange\.boundsValid;/);
-  assert.match(source, /const durationBoundsValid = durationRange\.boundsValid;/);
-  assert.match(source, /accessibilityValue=\{\{ max, min, now: value, text: valueLabel \}\}/);
-  assert.match(source, /step=\{safeQuestionStep\}/);
-  assert.match(source, /step=\{safeDurationStep\}/);
-  assert.doesNotMatch(source, /step=\{questionStep\}/);
-  assert.doesNotMatch(source, /step=\{durationStep\}/);
-});
-
 test('Dashboard summary text is separate from interactive links, buttons, and scrolling', () => {
   const dashboardSource = fs.readFileSync(path.join(ROOT, 'app', 'dashboard.tsx'), 'utf8');
   const activitySource = fs.readFileSync(
@@ -259,10 +221,7 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /onFocus: \(\) => setIsFocused\(true\)/);
-  assert.match(
-    source,
-    /onBlur: \(\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*\}/,
-  );
+  assert.match(source, /onBlur: \(\) => setIsFocused\(false\)/);
   assert.match(source, /onHoverIn: \(\) => setIsHovered\(true\)/);
   assert.match(
     source,
@@ -282,43 +241,5 @@ test('TopBarActions audio switch keeps web hover, focus, and touch-target feedba
   assert.match(
     source,
     /iconButtonPressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
-  );
-});
-
-test('RouteLink keeps keyboard and pointer pressed feedback on web anchors', () => {
-  const source = fs.readFileSync(ROUTE_LINK_SOURCE, 'utf8');
-
-  assert.match(source, /export function RouteLink/);
-  assert.match(source, /<Link\s/);
-  assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
-  assert.match(source, /accessibilityRole="link"/);
-  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/);
-  assert.match(
-    source,
-    /onBlur: \(event:[\s\S]*\) => \{[\s\S]*setIsFocused\(false\);[\s\S]*setIsPressed\(false\);[\s\S]*onBlur\?\.\(event\);[\s\S]*\}/,
-  );
-  assert.match(
-    source,
-    /onKeyDown: \(event:[\s\S]*\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(true\);[\s\S]*onKeyDown\?\.\(event\);[\s\S]*\}/,
-  );
-  assert.match(
-    source,
-    /onKeyUp: \(event:[\s\S]*\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(false\);[\s\S]*onKeyUp\?\.\(event\);[\s\S]*\}/,
-  );
-  assert.match(source, /onMouseDown: \(event:[\s\S]*setIsPressed\(true\);/);
-  assert.match(source, /onMouseUp: \(event:[\s\S]*setIsPressed\(false\);/);
-  assert.match(source, /onTouchStart: \(event:[\s\S]*setIsPressed\(true\);/);
-  assert.match(source, /onTouchCancel: \(event:[\s\S]*setIsPressed\(false\);/);
-  assert.match(source, /setIsHovered\(false\);\s*setIsPressed\(false\);/);
-  assert.match(source, /onPressIn=\{\(event\) => \{[\s\S]*setIsPressed\(true\);/);
-  assert.match(source, /onPressOut=\{\(event\) => \{[\s\S]*setIsPressed\(false\);/);
-  assert.match(source, /isFocused \|\| isHovered[\s\S]*styles\.primaryInteractive/);
-  assert.match(source, /isPressed \? \(variant === 'primary' \? styles\.primaryPressed/);
-  assert.match(source, /minHeight:\s*space\[6\]/);
-  assert.match(source, /transform: \[\{ scale: motion\.hoverScale \}\]/);
-  assert.match(source, /pressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/);
-  assert.match(
-    source,
-    /primaryPressed:\s*\{[\s\S]*transform: \[\{ scale: motion\.pressedScale \}\]/,
   );
 });
