@@ -136,6 +136,8 @@ export interface StreakWithFreezeResult {
   streakDays: number;
   /** Freeze state AFTER applying any auto-saves. */
   freezeState: StreakFreezeState;
+  /** Rescued day keys that are part of the currently visible streak. */
+  rescuedInCurrentStreak: string[];
   /** Day keys rescued during THIS computation. Empty when no save happened. */
   rescuedThisRun: string[];
 }
@@ -154,6 +156,7 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     normalizeDayKey(input.today) ?? normalizeDayKey(input.now) ?? getLocalDateKey(new Date());
   const activeSet = new Set(normalizeDayKeyList(input.activeDayKeys));
   const previousRescuedDayKeys = normalizeDayKeyList(refilled.rescuedDayKeys);
+  const previousRescuedSet = new Set(previousRescuedDayKeys);
   // Also include previously-rescued days so streaks stay intact across calls.
   for (const rescued of previousRescuedDayKeys) activeSet.add(rescued);
 
@@ -161,10 +164,12 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
   let streak = 0;
   let availableFreezes = refilled.available;
   let lifetimeSpent = refilled.lifetimeSpent;
+  const rescuedInCurrentStreak: string[] = [];
   const rescuedThisRun: string[] = [];
 
   while (true) {
     if (activeSet.has(cursor)) {
+      if (previousRescuedSet.has(cursor)) rescuedInCurrentStreak.push(cursor);
       streak += 1;
       cursor = previousDayKey(cursor);
       continue;
@@ -176,6 +181,7 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     if (!activeSet.has(previous)) break;
     availableFreezes -= 1;
     lifetimeSpent += 1;
+    rescuedInCurrentStreak.push(cursor);
     rescuedThisRun.push(cursor);
     streak += 1;
     cursor = previous;
@@ -191,6 +197,7 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
       lifetimeSpent,
       rescuedDayKeys: newRescuedKeys,
     },
+    rescuedInCurrentStreak,
     rescuedThisRun,
   };
 }
@@ -201,8 +208,13 @@ export function freezeBannerCopy(
   result: StreakWithFreezeResult,
   language: 'sv' | 'en',
 ): string | null {
-  if (result.rescuedThisRun.length === 0) return null;
+  const rescuedInCurrentStreak = Array.isArray(result.rescuedInCurrentStreak)
+    ? result.rescuedInCurrentStreak
+    : [];
+  if (result.rescuedThisRun.length === 0 && rescuedInCurrentStreak.length === 0) return null;
+  const freezeLabel = result.freezeState.available === 1 ? 'freeze' : 'freezes';
+
   return language === 'sv'
-    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
-    : `Streak protected — ${result.freezeState.available} freezes left.`;
+    ? `Sviten är räddad — du har ${result.freezeState.available} svitskydd kvar.`
+    : `Streak protected — ${result.freezeState.available} ${freezeLabel} left.`;
 }

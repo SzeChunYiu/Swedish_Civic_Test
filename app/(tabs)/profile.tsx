@@ -120,21 +120,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
 };
 
-const localizedBadgeTitles: Record<AppLanguage, Record<string, string>> = {
-  sv: {
-    first_practice: 'Första övningen',
-    level_2: 'Nivå 2',
-    mistake_reviewer: 'Misstagsrepetition',
-    streak_3: 'Tre dagars svit',
-  },
-  en: {
-    first_practice: 'First practice',
-    level_2: 'Level 2',
-    mistake_reviewer: 'Mistake reviewer',
-    streak_3: 'Three-day streak',
-  },
-};
-
 export default function Screen() {
   const { focus } = useLocalSearchParams<{ focus?: string }>();
   const {
@@ -303,8 +288,7 @@ export default function Screen() {
 function formatBadges(badges: LearningBadge[], language: AppLanguage, noBadges: string) {
   if (badges.length === 0) return noBadges;
 
-  const badgeTitles = localizedBadgeTitles[language];
-  return badges.map((badge) => badgeTitles[badge.id] ?? getBadgeTitle(badge, language)).join(', ');
+  return badges.map((badge) => getBadgeTitle(badge, language)).join(', ');
 }
 
 const styles = StyleSheet.create({

@@ -112,6 +112,7 @@ test('streakWithFreeze: malformed active days and today fall back without corrup
   assert.deepEqual(result.rescuedThisRun, []);
   assert.equal(result.freezeState.available, 1);
   assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+  assert.deepEqual(result.rescuedInCurrentStreak, ['2026-05-17']);
 });
 
 test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid now inputs', () => {
@@ -136,9 +137,24 @@ test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid n
 
 test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was used', () => {
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
-  const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 0 } };
-  assert.match(freezeBannerCopy(withRescue, 'en'), /protected/i);
-  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad|räddat/i);
+  const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 1 } };
+  const englishCopy = freezeBannerCopy(withRescue, 'en');
+  const swedishCopy = freezeBannerCopy(withRescue, 'sv');
+
+  assert.match(englishCopy, /Streak protected/i);
+  assert.match(englishCopy, /1 freeze left/);
+  assert.match(swedishCopy, /Sviten är räddad/i);
+  assert.match(swedishCopy, /1 svitskydd kvar/);
+  assert.doesNotMatch(swedishCopy, /streak|freeze|Strecket|fryser/i);
+
+  const persistedRescue = {
+    rescuedInCurrentStreak: ['2026-05-17'],
+    rescuedThisRun: [],
+    freezeState: { available: 1 },
+  };
+  assert.match(freezeBannerCopy(persistedRescue, 'en'), /1 freeze left/);
+  assert.match(freezeBannerCopy(persistedRescue, 'sv'), /1 svitskydd kvar/);
+
   const noRescue = { rescuedThisRun: [], freezeState: { available: 1 } };
   assert.equal(freezeBannerCopy(noRescue, 'en'), null);
 });
