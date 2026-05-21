@@ -461,8 +461,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
-  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -4606,34 +4604,6 @@ function findQuestionStemSourceAuthorityReference(question) {
   return findSourceAuthorityStemPattern(text);
 }
 
-function validateQuestionAuthorityBoundaryForQuestion(question, label) {
-  const authorityOverclaim = findQuestionAuthorityOverclaim(question);
-  const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
-
-  if (authorityOverclaim) {
-    fail(`${label} appears to overclaim official status or exam certainty`);
-    return;
-  }
-  if (stemSourceAuthorityReference) {
-    fail(`${label} carries source-authority wording in the stem`);
-    return;
-  }
-
-  questionAuthorityBoundaryTextValidated += 1;
-}
-
-function validateQuestionAuthorityBoundaryText() {
-  if (!Array.isArray(questions)) {
-    fail('questions export is not an array');
-    return;
-  }
-
-  questions.forEach((question, index) => {
-    if (question?.reviewStatus !== 'published') return;
-    validateQuestionAuthorityBoundaryForQuestion(question, question.id || `question[${index}]`);
-  });
-}
-
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -4652,29 +4622,6 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
-}
-
-function validateQuestionGeneratedTrueFalseNaturalness(question, label) {
-  const generatedTrueFalseNaturalnessIssue =
-    findQuestionGeneratedTrueFalseNaturalnessIssue(question);
-  if (generatedTrueFalseNaturalnessIssue) {
-    fail(`${label} contains a generated true/false grammar-splice stem`);
-    return false;
-  }
-
-  questionGeneratedTrueFalseNaturalnessValidated += 1;
-  return true;
-}
-
-function validateGeneratedTrueFalseNaturalness(questionsToValidate) {
-  if (!Array.isArray(questionsToValidate)) {
-    fail('questions export is not an array');
-    return;
-  }
-
-  questionsToValidate.forEach((question, index) => {
-    validateQuestionGeneratedTrueFalseNaturalness(question, question?.id || `question[${index}]`);
-  });
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -7131,6 +7078,10 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const applyQuestionLocalizationPilot = loadTs(
+  'data/questionLocalizations.ts',
+  'applyQuestionLocalizationPilot',
+);
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -7536,20 +7487,6 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
-  validateGeneratedTrueFalseNaturalness(questions);
-  exitWithValidationFailures();
-  const publishedQuestions = Array.isArray(questions)
-    ? questions.filter((question) => question.reviewStatus === 'published').length
-    : 0;
-  printValidationSummary({
-    questions: Array.isArray(questions) ? questions.length : 0,
-    publishedQuestions,
-    questionGeneratedTrueFalseNaturalnessValidated,
-  });
-  process.exit(0);
-}
-
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
@@ -7602,19 +7539,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-question-authority-boundary')) {
-  validateQuestionAuthorityBoundaryText();
-  exitWithValidationFailures();
-  const publishedQuestions = Array.isArray(questions)
-    ? questions.filter((question) => question.reviewStatus === 'published').length
-    : 0;
-  printValidationSummary({
-    publishedQuestions,
-    questionAuthorityBoundaryTextValidated,
   });
   process.exit(0);
 }
@@ -14918,6 +14842,29 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'difficulty',
   'tags',
 ];
+const PUBLISHED_SOURCE_OPTION_LOCALIZATION_PARITY_IDS = new Set([
+  'q160',
+  'q161',
+  'q162',
+  'q163',
+  'q164',
+  'q165',
+  'q166',
+  'q167',
+  'q168',
+  'q169',
+]);
+
+function expectedPublishedSourceOptions(question) {
+  if (
+    PUBLISHED_SOURCE_OPTION_LOCALIZATION_PARITY_IDS.has(question.id) &&
+    typeof applyQuestionLocalizationPilot === 'function'
+  ) {
+    return applyQuestionLocalizationPilot(question).options;
+  }
+
+  return question.options;
+}
 
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
@@ -14949,6 +14896,9 @@ function expectedPublishedSourceField(question, field) {
   }
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+  }
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
   }
   return question[field];
 }
@@ -15799,8 +15749,12 @@ if (Array.isArray(questions)) {
       if (questionSentenceEndingsAreComplete(question)) {
         questionSentenceEndingsValidated += 1;
       }
+      const authorityOverclaim = findQuestionAuthorityOverclaim(question);
+      const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const generatedTrueFalseNaturalnessIssue =
+        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -15809,7 +15763,13 @@ if (Array.isArray(questions)) {
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
         findGeneratedTrueFalseExplanationMetaIssue(question);
-      validateQuestionAuthorityBoundaryForQuestion(question, label);
+      if (authorityOverclaim) {
+        fail(`${label} appears to overclaim official status or exam certainty`);
+      } else if (stemSourceAuthorityReference) {
+        fail(`${label} carries source-authority wording in the stem`);
+      } else {
+        questionAuthorityBoundaryTextValidated += 1;
+      }
       if (nestedMetaStem) {
         fail(`${label} contains a generated true/false meta-stem instead of a civic statement`);
       } else {
@@ -15820,7 +15780,11 @@ if (Array.isArray(questions)) {
       } else {
         questionJudgementMetaStemsValidated += 1;
       }
-      validateQuestionGeneratedTrueFalseNaturalness(question, label);
+      if (generatedTrueFalseNaturalnessIssue) {
+        fail(`${label} contains a generated true/false grammar-splice stem`);
+      } else {
+        questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
       } else {

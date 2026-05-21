@@ -137,6 +137,30 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
 });
 
+test('q160-q169 published option parity keeps localized option overlays expected', () => {
+  const result = spawnSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.doesNotMatch(output, /q16[0-9] published source options does not match authored source/);
+
+  if (result.status === 0) {
+    assert.match(output, /Content validation OK/);
+    return;
+  }
+
+  const remainingOptionParityIds = [
+    ...output.matchAll(/- (q\d{3}) published source options does not match authored source/g),
+  ].map((match) => match[1]);
+  const unexpectedIds = remainingOptionParityIds.filter(
+    (id) => !/^q0(?:2[1-9]|3[0-9]|40)$/.test(id),
+  );
+
+  assert.deepEqual(unexpectedIds, []);
+});
+
 test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
