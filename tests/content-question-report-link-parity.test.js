@@ -71,6 +71,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-report-link-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -167,6 +168,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-report-link-parity');
 require('./scripts/validate-content.js');
 `,
     ],

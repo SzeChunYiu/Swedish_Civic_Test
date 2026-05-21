@@ -159,3 +159,22 @@ test('unsupported npm test selectors fail before running any suite', () => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
 });
+
+test('content validator exposes focused question report link parity path', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-report-link-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused validator should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.questionReportLinkRulesValidated, 20);
+  assert.equal(summary.questionReportLinkParityValidated, true);
+});

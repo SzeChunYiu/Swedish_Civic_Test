@@ -6921,52 +6921,6 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
     reject(`${label} has invalid questionCount`);
   }
 
-  if (validateChapterLocalizedTextMap(chapter, label, 'nameText', 'nameSv', 'nameEn', reject)) {
-    chapterLocalizedTextMapsValidated += 1;
-  }
-  if (
-    validateChapterLocalizedTextMap(
-      chapter,
-      label,
-      'descriptionText',
-      'descriptionSv',
-      'descriptionEn',
-      reject,
-    )
-  ) {
-    chapterLocalizedTextMapsValidated += 1;
-  }
-
-  return valid;
-}
-
-function validateChapterLocalizedTextMap(chapter, label, localizedField, svField, enField, reject) {
-  const localizedText = chapter[localizedField];
-  if (!isObjectRecord(localizedText)) {
-    reject(`${label} ${localizedField} must be a localized text map`);
-    return false;
-  }
-
-  let valid = true;
-  for (const [locale, canonicalField] of [
-    ['sv', svField],
-    ['en', enField],
-  ]) {
-    if (!hasText(localizedText[locale])) {
-      reject(`${label} ${localizedField}.${locale} must be filled`);
-      valid = false;
-      continue;
-    }
-    if (localizedText[locale] !== chapter[canonicalField]) {
-      reject(`${label} ${localizedField}.${locale} must match ${canonicalField}`);
-      valid = false;
-    }
-    if (!textIsTrimmedSingleSpaced(localizedText[locale])) {
-      reject(`${label} ${localizedField}.${locale} must be trimmed and single-spaced`);
-      valid = false;
-    }
-  }
-
   return valid;
 }
 
@@ -6974,29 +6928,6 @@ function chapterTextFieldsAreNormalized(chapter) {
   return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
     textIsTrimmedSingleSpaced(chapter[field]),
   );
-}
-
-function validateChapterMetadata() {
-  if (!Array.isArray(chapters)) {
-    fail('chapters export is not an array');
-    return;
-  }
-  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
-  const seenChapterIds = new Set();
-  const seenNamesSv = new Set();
-  const seenNamesEn = new Set();
-  chapters.forEach((chapter, index) => {
-    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
-      chapterSchemasValidated += 1;
-      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
-        chapterExactSchemaKeysValidated += 1;
-      }
-      if (chapterTextFieldsAreNormalized(chapter)) {
-        chapterTextFieldsNormalizedValidated += 1;
-      }
-    }
-  });
-  chapterLocalizedTextParityValidated = chapterLocalizedTextMapsValidated === chapters.length * 2;
 }
 
 function validateQuestionSchema(question, index) {
@@ -7240,8 +7171,6 @@ const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
-let chapterLocalizedTextMapsValidated = 0;
-let chapterLocalizedTextParityValidated = false;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
@@ -7372,6 +7301,8 @@ let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
+let questionReportLinkRulesValidated = 0;
+let questionReportLinkParityValidated = false;
 let provenanceAuthorityCopyFilesValidated = 0;
 let provenanceAuthorityCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
@@ -7610,6 +7541,16 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-question-report-link-parity')) {
+  validateQuestionReportLinkParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionReportLinkRulesValidated,
+    questionReportLinkParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -7628,21 +7569,6 @@ if (
 ) {
   fail('strings export is not an object');
 }
-
-if (process.argv.includes('--focus-chapter-metadata')) {
-  validateChapterMetadata();
-  exitWithValidationFailures();
-  printValidationSummary({
-    chapters: Array.isArray(chapters) ? chapters.length : 0,
-    chapterSchemasValidated,
-    chapterTextFieldsNormalizedValidated,
-    chapterExactSchemaKeysValidated,
-    chapterLocalizedTextMapsValidated,
-    chapterLocalizedTextParityValidated,
-  });
-  process.exit(0);
-}
-
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -9386,6 +9312,152 @@ function validatePracticeRouteCopyParity() {
   );
   if (valid && practiceRouteCopyLabelsValidated === expectedLabelCount) {
     practiceRouteCopyParityValidated = true;
+  }
+}
+
+function validateQuestionReportLinkParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function read(relativePath) {
+    try {
+      return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(`${relativePath} could not be read for question report link parity: ${error.message}`);
+      return '';
+    }
+  }
+
+  const componentSource = read('components/quiz/QuestionReportLink.tsx');
+  const supportSource = read('app/support.tsx');
+  const practiceRoute = read('app/(tabs)/practice.tsx');
+  const quizRoute = read('app/quiz/[sessionId].tsx');
+  const chapterRoute = read('app/chapter/[chapterId].tsx');
+
+  const rules = [
+    {
+      source: componentSource,
+      pattern: /type QuestionReportScreen = 'chapter' \| 'practice' \| 'quiz';/,
+      message: 'QuestionReportLink missing chapter/practice/quiz screen type',
+    },
+    {
+      source: componentSource,
+      pattern: /selectedOptionId\?: string \| null/,
+      message: 'QuestionReportLink missing optional selected answer prop',
+    },
+    {
+      source: componentSource,
+      pattern: /Rapportera den här frågan/,
+      message: 'QuestionReportLink missing Swedish report label',
+    },
+    {
+      source: componentSource,
+      pattern: /Report this question/,
+      message: 'QuestionReportLink missing English report label',
+    },
+    {
+      source: componentSource,
+      pattern: /accessibilityLabel=\{copy\.accessibilityLabel\(question\.id\)\}/,
+      message: 'QuestionReportLink missing localized accessibility label',
+    },
+    {
+      source: componentSource,
+      pattern: /getQuestionSourceCitation\(question, language\)/,
+      message: 'QuestionReportLink missing source citation context',
+    },
+    {
+      source: componentSource,
+      pattern: /\['questionId', question\.id\]/,
+      message: 'QuestionReportLink missing question id support parameter',
+    },
+    {
+      source: componentSource,
+      pattern: /\['source', getQuestionSourceCitation\(question, language\)\]/,
+      message: 'QuestionReportLink missing source support parameter',
+    },
+    {
+      source: componentSource,
+      pattern: /\['language', language\]/,
+      message: 'QuestionReportLink missing language support parameter',
+    },
+    {
+      source: componentSource,
+      pattern: /\['screen', screen\]/,
+      message: 'QuestionReportLink missing screen support parameter',
+    },
+    {
+      source: componentSource,
+      pattern: /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/,
+      message: 'QuestionReportLink missing optional selected answer support parameter',
+    },
+    {
+      source: componentSource,
+      pattern: /minHeight: space\[6\]/,
+      message: 'QuestionReportLink target must keep a 48px token-sized hit target',
+    },
+    {
+      source: practiceRoute,
+      pattern:
+        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+      message: 'QuestionReportLink missing Practice route import',
+    },
+    {
+      source: practiceRoute,
+      pattern:
+        /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="practice"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
+      message: 'QuestionReportLink missing practice feedback selected answer context',
+    },
+    {
+      source: quizRoute,
+      pattern:
+        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+      message: 'QuestionReportLink missing routed quiz import',
+    },
+    {
+      source: quizRoute,
+      pattern:
+        /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="quiz"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
+      message: 'QuestionReportLink missing routed quiz selected answer context',
+    },
+    {
+      source: chapterRoute,
+      pattern:
+        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
+      message: 'QuestionReportLink missing chapter route import',
+    },
+    {
+      source: chapterRoute,
+      pattern:
+        /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
+      message: 'QuestionReportLink missing chapter review source context',
+    },
+    {
+      source: supportSource,
+      pattern:
+        /Lägg inte till namn, personnummer, ärendenummer[\s\S]*Do not add names, personal identity numbers, case numbers/,
+      message: 'QuestionReportLink missing support context non-PII copy',
+    },
+    {
+      source: supportSource,
+      pattern: /^(?![\s\S]*(?:mailto:|Linking\.openURL|fetch\())[\s\S]*$/,
+      message: 'QuestionReportLink support route must not send reports or personal data directly',
+    },
+  ];
+
+  rules.forEach(({ source, pattern, message }) => {
+    if (!pattern.test(source)) {
+      reject(message);
+      return;
+    }
+    questionReportLinkRulesValidated += 1;
+  });
+
+  if (valid && questionReportLinkRulesValidated === rules.length) {
+    questionReportLinkParityValidated = true;
   }
 }
 
@@ -15694,7 +15766,21 @@ validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
 if (Array.isArray(chapters)) {
-  validateChapterMetadata();
+  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
+  const seenChapterIds = new Set();
+  const seenNamesSv = new Set();
+  const seenNamesEn = new Set();
+  chapters.forEach((chapter, index) => {
+    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
+      chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
+    }
+  });
 }
 
 if (Array.isArray(questions)) {
@@ -15941,6 +16027,7 @@ validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
+validateQuestionReportLinkParity();
 validateProvenanceAuthorityCopyBoundary();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
@@ -16033,8 +16120,6 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       chapterExactSchemaKeysValidated,
-      chapterLocalizedTextMapsValidated,
-      chapterLocalizedTextParityValidated,
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
@@ -16077,6 +16162,8 @@ console.log(
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
       practiceRouteCopyParityValidated,
+      questionReportLinkRulesValidated,
+      questionReportLinkParityValidated,
       provenanceAuthorityCopyFilesValidated,
       provenanceAuthorityCopyParityValidated,
       chapterRouteHeadersValidated,
