@@ -8495,13 +8495,17 @@ const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
-const expectedGeneratedPublishedQuestions =
-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
-    : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
 const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+const expectedGeneratedPublishedQuestions =
+  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
+    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map((question) =>
+        typeof applyQuestionLocalizationPilot === 'function'
+          ? applyQuestionLocalizationPilot(question)
+          : question,
+      )
+    : [];
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
