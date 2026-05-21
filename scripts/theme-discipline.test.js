@@ -12,6 +12,8 @@ const TYPOGRAPHY_LITERAL =
   /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
 const BORDER_WIDTH_LITERAL =
   /\b(?:border(?:Top|Right|Bottom|Left)?Width):\s*(?:StyleSheet\.hairlineWidth|\d)/;
+const SHADOW_LITERAL =
+  /\b(?:shadowColor|shadowOpacity|shadowRadius|shadowOffset|boxShadow):\s*|\belevation:\s*\d/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
@@ -100,7 +102,7 @@ function contrastRatio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-test('app and component styles use theme tokens instead of literal colors, spacing, typography, or border widths', () => {
+test('app and component styles use theme tokens instead of literal colors, spacing, typography, border widths, or shadows', () => {
   const offenders = [];
 
   for (const sourceDir of SOURCE_DIRS) {
@@ -112,7 +114,8 @@ test('app and component styles use theme tokens instead of literal colors, spaci
           COLOR_LITERAL.test(line) ||
           SPACING_LITERAL.test(line) ||
           TYPOGRAPHY_LITERAL.test(line) ||
-          BORDER_WIDTH_LITERAL.test(line)
+          BORDER_WIDTH_LITERAL.test(line) ||
+          SHADOW_LITERAL.test(line)
         ) {
           offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
         }
@@ -121,6 +124,27 @@ test('app and component styles use theme tokens instead of literal colors, spaci
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('theme discipline rejects raw shadow and elevation style declarations', () => {
+  for (const literal of [
+    "shadowColor: 'rgba(0, 0, 0, 0.08)'",
+    'shadowOpacity: 0.4',
+    'shadowRadius: 18',
+    'shadowOffset: { width: 0, height: 12 }',
+    "boxShadow: '0 8px 24px rgba(0,0,0,0.12)'",
+    'elevation: 3',
+  ]) {
+    assert.match(literal, SHADOW_LITERAL, `${literal} should be rejected as a raw shadow`);
+  }
+
+  for (const tokenized of ['...shadows.card', '...shadows.deep', 'elevation={elevation}']) {
+    assert.doesNotMatch(
+      tokenized,
+      SHADOW_LITERAL,
+      `${tokenized} should remain available for tokenized shadow usage`,
+    );
+  }
 });
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {
