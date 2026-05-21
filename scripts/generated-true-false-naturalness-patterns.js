@@ -11,6 +11,9 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
   /\b(?:It is correct that\s+)?(?:the answer is)\b/i,
   /\bdescribes that\b/i,
+  /\btillåtet att gifta sig\b/i,
+  /\bwhen false information affects democracy\b/i,
+  /\bnär falsk information påverkar demokratin\b/i,
   /\bis\s+(?:be|judge)\b/i,
   /\bis an example of municipal responsibilities\b/i,
   /\b(?:has one vote each|may stand for election)\s+is part of\b/i,
@@ -29,8 +32,12 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
-  /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
+  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i,
   /\binnebär att den ger\b/i,
+  /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
+  /^Important activities such as school, work, and health care can continue to function\.?$/i,
+  /^Politiska val ersätts med militära beslut\.?$/i,
+  /^Political elections are replaced with military decisions\.?$/i,
   /\bfrom (?:13|15) years\b/i,
   /^En anledning är\b/i,
   /^One reason is\b/i,
@@ -79,6 +86,7 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
   /,\s*,/,
   /\bit is common to large bonfires\b/i,
+  /\bbrukar\s+\S+\s+arrangerar\b/i,
   /\bbrukar\s+[^.?!]*\s+arrangerar\b/i,
   /\b(?:spreadinging|welcominging)\b/i,
   /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
@@ -89,6 +97,10 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
+  /\bMany people voting, getting involved, and learning about social issues\b/i,
+  /\bFewer people taking part in elections\b/i,
+  /\bPeople with different backgrounds and economic situations living closer\b/i,
+  /\bPeople living completely separated by income or ethnic background\b/i,
   /^Försöka övertyga andra om sina politiska idéer\.?$/i,
   /^Hindra andra från att rösta\.?$/i,
   /^Try to persuade others of their political ideas\.?$/i,
@@ -135,6 +147,17 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
   /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
   /^Only responsible publishers may write posts there\.?$/i,
+  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
+  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
+  /^Water and sewage\b/i,
+  /^Vatten och avlopp\b/i,
+  /^Sending ambassadors\b/i,
+  /^Skicka ambassadörer\b/i,
+  /^Incomplete answer fragment for naturalness guard\b/i,
+  /^Ofullständig svarsfras för naturlighetskontroll\b/i,
+  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
+  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
+  /\b(?:bli Sveriges största religiösa grupp|become Sweden’s largest religious group)\b/i,
   /^De kan ha politik bara för den egna kommunen eller regionen\.?$/i,
   /^They can have policies only for their own municipality or region\.?$/i,
   /^De måste alltid vara partier i riksdagen\.?$/i,
@@ -170,15 +193,26 @@ function generatedTrueFalseNaturalnessCategory(pattern) {
   return 'grammar-splice';
 }
 
-const GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES =
-  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.map((pattern, index) => {
+function stablePatternRuleId(pattern, category) {
+  const source = `${pattern.source}/${pattern.flags}`;
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return `${category}-${hash.toString(36).padStart(7, '0')}`;
+}
+
+const GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES = Object.freeze(
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.map((pattern) => {
     const category = generatedTrueFalseNaturalnessCategory(pattern);
     return Object.freeze({
-      id: `${category}-${String(index + 1).padStart(3, '0')}`,
+      id: stablePatternRuleId(pattern, category),
       category,
       pattern,
     });
-  });
+  }),
+);
 
 function findGeneratedTrueFalseNaturalnessPatternMatch(text) {
   return GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.find(({ pattern }) => pattern.test(text));
@@ -199,4 +233,5 @@ module.exports = {
   findGeneratedTrueFalseNaturalnessPattern,
   findGeneratedTrueFalseNaturalnessPatternMatch,
   formatGeneratedTrueFalseNaturalnessPatternMatch,
+  stablePatternRuleId,
 };

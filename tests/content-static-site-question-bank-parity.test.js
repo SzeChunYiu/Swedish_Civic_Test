@@ -14,6 +14,7 @@ const {
 } = require('../scripts/export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
+const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
@@ -44,6 +45,23 @@ function withQ020AdvisoryFixture(question) {
   };
 }
 
+function generatedQuestionId(sourceQuestions, sourceQuestionId, variantOffset) {
+  const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceQuestionId);
+  assert.notEqual(sourceIndex, -1, `expected source question ${sourceQuestionId}`);
+  return `q${String(sourceQuestions.length + 1 + sourceIndex * 4 + variantOffset).padStart(
+    3,
+    '0',
+  )}`;
+}
+
+function staticSomaliSegments(question) {
+  return [
+    [`${question.id}.q.so`, question.q?.so],
+    [`${question.id}.why.so`, question.why?.so],
+    ...(question.opts || []).map((option, index) => [`${question.id}.opts.${index}.so`, option.so]),
+  ];
+}
+
 test('static site question bank is semantically generated from canonical content', () => {
   const expectedBank = buildSiteQuestionBank();
   const generated = generateStaticSiteQuestionBankJs();
@@ -64,6 +82,10 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_QUESTIONS.length, bank.questions.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(context.window.SMT_QUESTION_BANK_META)),
+    bank.metadata,
+  );
 });
 
 test('static site question bank preserves canonical question provenance', () => {
@@ -87,6 +109,22 @@ test('static site question bank preserves canonical question provenance', () => 
       `${question.id} should expose supported questionProvenance`,
     );
   }
+});
+
+test('static site question bank avoids English geography common terms in Somali text', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+
+  const offenders = [];
+  for (const question of context.window.SMT_QUESTIONS) {
+    for (const [segment, value] of staticSomaliSegments(question)) {
+      if (typeof value === 'string' && SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN.test(value)) {
+        offenders.push(segment);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
 });
 
 test('static site question bank drift report classifies format-only mismatches', () => {
@@ -118,13 +156,12 @@ test('static site question bank source fixture limits one-question localization 
   });
 
   const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
+  const q020GeneratedVariantIds = [0, 1, 2, 3].map((variantOffset) =>
+    generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset),
+  );
 
   assert.equal(drift.hasSemanticDrift, true);
   assert.equal(drift.questionIds[0], 'q020');
-  assert.equal(drift.questionIds.length, 5);
-  assert.ok(
-    drift.questionIds.slice(1).every((questionId) => /^q\d{3}$/.test(questionId)),
-    `expected only generated q020 variants to drift, got ${drift.questionIds.join(', ')}`,
-  );
+  assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
 });

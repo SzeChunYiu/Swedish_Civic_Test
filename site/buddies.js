@@ -132,6 +132,10 @@
   ];
 
   function randomFact(lang) {
+    if (lang !== 'en' && lang !== 'sv' && typeof BUDDY_GENERIC_COPY !== 'undefined') {
+      const genericFacts = (BUDDY_GENERIC_COPY[lang] || BUDDY_GENERIC_COPY.en).facts;
+      return genericFacts[Math.floor(Math.random() * genericFacts.length)];
+    }
     const f = SMT_FACTS[Math.floor(Math.random() * SMT_FACTS.length)];
     return f[lang] || f.en;
   }
@@ -466,6 +470,203 @@
     },
   };
 
+  const BUDDY_GENERIC_COPY = {
+    en: {
+      subtitle: 'Study buddy',
+      factPrefix: 'Did you know — ',
+      facts: ['Sweden has 290 municipalities.', "The Riksdag is Sweden\'s parliament."],
+      tips: [
+        'Read the whole option before you answer.',
+        'Short practice every day beats one stressful cram session.',
+      ],
+      greetings: ["Hej. I\'m {name}. I\'ll be your study buddy. Tap me anytime."],
+      page: {
+        '/practice': '{name} says: ten questions, no penalty for wrong ones. Just tap and learn.',
+        '/ebook': '{name} loves a quiet read. Pick a chapter from the left.',
+      },
+      pet: ['Hej hej.', 'I am on duty.'],
+      selected: (name) => `Hej. I'm ${name}. Nice to be on duty.`,
+    },
+    sv: {
+      subtitle: 'Studiekompis',
+      factPrefix: 'Visste du — ',
+      facts: ['Sverige har 290 kommuner.', 'Riksdagen är Sveriges parlament.'],
+      tips: [
+        'Läs hela alternativet innan du svarar.',
+        'Lite övning varje dag slår en stressig sista-minuten-kväll.',
+      ],
+      greetings: ['Hej. Jag är {name}. Din pluggkompis. Tryck när du vill.'],
+      page: {
+        '/practice': '{name} säger: tio frågor, inget straff för fel. Tryck och lär.',
+        '/ebook': '{name} gillar en lugn läsning. Välj kapitel till vänster.',
+      },
+      pet: ['Hej hej.', 'Jag är redo.'],
+      selected: (name) => `Hej. Jag är ${name}. Trevligt att hänga ihop.`,
+    },
+    'zh-Hans': {
+      subtitle: '学习伙伴',
+      factPrefix: '你知道吗 — ',
+      facts: ['瑞典有 290 个市镇。', 'Riksdagen 是瑞典议会。'],
+      tips: ['回答前先读完整个选项。', '每天短时间练习，比考前一次性硬背更稳。'],
+      greetings: ['Hej，我是 {name}。我会陪你学习，随时点我。'],
+      page: {
+        '/practice': '{name} 提醒你：十道题，答错也没关系，点选后学习。',
+        '/ebook': '{name} 喜欢安静阅读。请从左侧选择章节。',
+      },
+      pet: ['Hej hej。', '我准备好了。'],
+      selected: (name) => `Hej，我是 ${name}。很高兴陪你学习。`,
+    },
+    'zh-Hant': {
+      subtitle: '學習夥伴',
+      factPrefix: '你知道嗎 — ',
+      facts: ['瑞典有 290 個市鎮。', 'Riksdagen 是瑞典議會。'],
+      tips: ['回答前先讀完整個選項。', '每天短時間練習，比考前一次硬背更穩。'],
+      greetings: ['Hej，我是 {name}。我會陪你學習，隨時點我。'],
+      page: {
+        '/practice': '{name} 提醒你：十題，答錯也沒關係，點選後學習。',
+        '/ebook': '{name} 喜歡安靜閱讀。請從左側選擇章節。',
+      },
+      pet: ['Hej hej。', '我準備好了。'],
+      selected: (name) => `Hej，我是 ${name}。很高興陪你學習。`,
+    },
+    ar: {
+      subtitle: 'رفيق الدراسة',
+      factPrefix: 'هل تعلم — ',
+      facts: ['في السويد 290 بلدية.', 'الريكسداغ هو برلمان السويد.'],
+      tips: [
+        'اقرأ الخيار كاملًا قبل الإجابة.',
+        'تدريب قصير كل يوم أفضل من مذاكرة متوترة في اللحظة الأخيرة.',
+      ],
+      greetings: ['مرحبًا، أنا {name}. سأكون رفيقك في الدراسة. اضغط عليّ في أي وقت.'],
+      page: {
+        '/practice': '{name} يقول: عشر أسئلة، ولا عقوبة على الخطأ. اضغط وتعلّم.',
+        '/ebook': '{name} يحب القراءة الهادئة. اختر فصلًا من اليسار.',
+      },
+      pet: ['مرحبًا.', 'أنا جاهز.'],
+      selected: (name) => `مرحبًا، أنا ${name}. يسعدني أن أرافقك في الدراسة.`,
+    },
+    ckb: {
+      subtitle: 'هاوڕێی خوێندن',
+      factPrefix: 'ئایا دەزانی — ',
+      facts: ['سوید ٢٩٠ شارەوانی هەیە.', 'Riksdagen پەرلەمانی سویدە.'],
+      tips: [
+        'پێش وەڵامدانەوە هەموو بژاردەکە بخوێنەوە.',
+        'مەشقی کورت هەموو ڕۆژێک باشترە لە خوێندنی پڕفشار لە کۆتا ساتدا.',
+      ],
+      greetings: ['سڵاو، من {name}م. هاوڕێی خوێندنت دەبم. هەر کاتێک ویستت لێم بدە.'],
+      page: {
+        '/practice': '{name} دەڵێت: دە پرسیار، هیچ سزایەک بۆ هەڵە نییە. لێبدە و فێربە.',
+        '/ebook': '{name} خوێندنەوەی ئارام حەز دەکات. بەشێک لە لای چەپ هەڵبژێرە.',
+      },
+      pet: ['سڵاو.', 'ئامادەم.'],
+      selected: (name) => `سڵاو، من ${name}م. خۆشحاڵم لەگەڵت بم.`,
+    },
+    fa: {
+      subtitle: 'همراه مطالعه',
+      factPrefix: 'آیا می‌دانستی — ',
+      facts: ['سوئد ۲۹۰ شهرداری دارد.', 'Riksdagen پارلمان سوئد است.'],
+      tips: [
+        'پیش از پاسخ دادن، کل گزینه را بخوان.',
+        'تمرین کوتاه روزانه بهتر از مرور پراسترس دقیقه آخر است.',
+      ],
+      greetings: ['سلام، من {name} هستم. همراه مطالعه‌ات می‌شوم. هر وقت خواستی روی من بزن.'],
+      page: {
+        '/practice': '{name} می‌گوید: ده پرسش، جریمه‌ای برای پاسخ غلط نیست. بزن و یاد بگیر.',
+        '/ebook': '{name} مطالعه آرام را دوست دارد. از سمت چپ یک فصل انتخاب کن.',
+      },
+      pet: ['سلام.', 'آماده‌ام.'],
+      selected: (name) => `سلام، من ${name} هستم. خوشحالم همراهت باشم.`,
+    },
+    pl: {
+      subtitle: 'Towarzysz nauki',
+      factPrefix: 'Czy wiesz — ',
+      facts: ['Szwecja ma 290 gmin.', 'Riksdag to parlament Szwecji.'],
+      tips: [
+        'Przeczytaj całą odpowiedź, zanim wybierzesz.',
+        'Krótka codzienna praktyka jest lepsza niż stresujące kucie na końcu.',
+      ],
+      greetings: [
+        'Hej, jestem {name}. Będę Twoim towarzyszem nauki. Kliknij mnie w dowolnej chwili.',
+      ],
+      page: {
+        '/practice': '{name} mówi: dziesięć pytań, bez kary za błędy. Klikaj i ucz się.',
+        '/ebook': '{name} lubi spokojne czytanie. Wybierz rozdział po lewej.',
+      },
+      pet: ['Hej hej.', 'Jestem gotowy.'],
+      selected: (name) => `Hej, jestem ${name}. Miło być na dyżurze.`,
+    },
+    so: {
+      subtitle: 'Saaxiib waxbarasho',
+      factPrefix: 'Ma ogtahay — ',
+      facts: ['Iswiidhan waxay leedahay 290 degmo.', 'Riksdagen waa baarlamaanka Iswiidhan.'],
+      tips: [
+        'Akhri doorashada oo dhan ka hor intaadan jawaabin.',
+        'Tababar gaaban maalin kasta ayaa ka fiican ku celcelin degdeg ah oo walwal leh.',
+      ],
+      greetings: [
+        'Hej, waxaan ahay {name}. Waxaan noqonayaa saaxiibkaaga waxbarasho. I taabo wakhti kasta.',
+      ],
+      page: {
+        '/practice':
+          '{name} wuxuu leeyahay: toban su’aalood, ciqaab kama jirto qaladka. Taabo oo baro.',
+        '/ebook': '{name} wuxuu jecel yahay akhris deggan. Ka dooro cutubka bidix.',
+      },
+      pet: ['Hej hej.', 'Waan diyaar ahay.'],
+      selected: (name) => `Hej, waxaan ahay ${name}. Waan ku faraxsanahay inaan kula joogo.`,
+    },
+    ti: {
+      subtitle: 'መጽናዕቲ መሓዛ',
+      factPrefix: 'ትፈልጥዶ — ',
+      facts: ['ሽወደን 290 ኮሙናት ኣለዋ።', 'Riksdagen ፓርላማ ሽወደን እዩ።'],
+      tips: ['ቅድሚ ምምላስካ ሙሉእ ምርጫ ኣንብብ።', 'ኩሉ መዓልቲ ሓጺር ልምምድ ካብ ናይ መወዳእታ ጭንቀት ዝበለጸ እዩ።'],
+      greetings: ['ሰላም፣ ኣነ {name} እየ። መሓዛ መጽናዕትኻ ክኸውን እየ። ዝደለኻ ግዜ ጠውቐኒ።'],
+      page: {
+        '/practice': '{name} ይብል፦ ዓሰርተ ሕቶታት፣ ንጌጋ ቅጽዓት የለን። ጠውቕን ተማሃርን።',
+        '/ebook': '{name} ህዱእ ንባብ ይፈቱ። ካብ ጸጋም ምዕራፍ ምረጽ።',
+      },
+      pet: ['ሰላም።', 'ድሉው እየ።'],
+      selected: (name) => `ሰላም፣ ኣነ ${name} እየ። ምሳኻ ምዃነይ ደስ ይብለኒ።`,
+    },
+    tr: {
+      subtitle: 'Çalışma arkadaşı',
+      factPrefix: 'Biliyor musun — ',
+      facts: ['İsveç’te 290 belediye vardır.', 'Riksdagen İsveç parlamentosudur.'],
+      tips: [
+        'Cevaplamadan önce tüm seçeneği oku.',
+        'Her gün kısa pratik, son dakika stresinden daha iyidir.',
+      ],
+      greetings: ['Hej, ben {name}. Çalışma arkadaşın olacağım. İstediğin zaman bana dokun.'],
+      page: {
+        '/practice': '{name} diyor ki: on soru, yanlış için ceza yok. Dokun ve öğren.',
+        '/ebook': '{name} sakin okumayı sever. Soldan bir bölüm seç.',
+      },
+      pet: ['Hej hej.', 'Hazırım.'],
+      selected: (name) => `Hej, ben ${name}. Görevde olmak güzel.`,
+    },
+    uk: {
+      subtitle: 'Навчальний помічник',
+      factPrefix: 'Чи знали ви — ',
+      facts: ['У Швеції 290 муніципалітетів.', 'Riksdagen — парламент Швеції.'],
+      tips: [
+        'Перед відповіддю прочитайте весь варіант.',
+        'Коротка щоденна практика краща за стресове зубріння в останній момент.',
+      ],
+      greetings: [
+        'Hej, я {name}. Я буду вашим навчальним помічником. Натискайте на мене будь-коли.',
+      ],
+      page: {
+        '/practice': '{name} каже: десять питань, без штрафу за помилки. Натискайте й навчайтеся.',
+        '/ebook': '{name} любить спокійне читання. Оберіть розділ ліворуч.',
+      },
+      pet: ['Hej hej.', 'Я готовий.'],
+      selected: (name) => `Hej, я ${name}. Радий бути поруч.`,
+    },
+  };
+
+  function buddyGenericCopy(lang) {
+    return BUDDY_GENERIC_COPY[lang] || BUDDY_GENERIC_COPY.en;
+  }
+
   function buddyCopy(template, buddy) {
     return template.replace(/\{name\}/g, buddy.name);
   }
@@ -489,7 +690,8 @@
     if (!fig) return;
     const b = getBuddy();
     fig.innerHTML = b.svg;
-    if (nameEl) nameEl.textContent = `${b.name} · ${b.subtitle[currentLang()] || b.subtitle.en}`;
+    if (nameEl)
+      nameEl.textContent = `${b.name} · ${b.subtitle[currentLang()] || buddyGenericCopy(currentLang()).subtitle}`;
   }
 
   let hideTimer = null;
@@ -531,10 +733,10 @@
   function pickLine() {
     const b = getBuddy();
     const lang = currentLang();
-    const tips = b.tips[lang] || b.tips.en;
+    const tips = b.tips[lang] || buddyGenericCopy(lang).tips;
     // 60% personality tip, 40% Swedish fact
     if (Math.random() < 0.4) {
-      const prefix = b.factPrefix[lang] || b.factPrefix.en;
+      const prefix = b.factPrefix[lang] || buddyGenericCopy(lang).factPrefix;
       return `<em>${prefix}</em>${randomFact(lang)}`;
     }
     return tips[Math.floor(Math.random() * tips.length)];
@@ -547,7 +749,7 @@
   function showGreeting() {
     const b = getBuddy();
     const lang = currentLang();
-    const list = (BUDDY_GREETING_LINES[lang] || BUDDY_GREETING_LINES.en).map((line) =>
+    const list = (BUDDY_GREETING_LINES[lang] || buddyGenericCopy(lang).greetings).map((line) =>
       buddyCopy(line, b),
     );
     showMessage(list[Math.floor(Math.random() * list.length)]);
@@ -556,7 +758,7 @@
   function petReaction() {
     const b = getBuddy();
     const lang = currentLang();
-    const pool = b.pet[lang] || b.pet.en;
+    const pool = b.pet[lang] || buddyGenericCopy(lang).pet;
     showMessage(pool[Math.floor(Math.random() * pool.length)], { autoHide: 3500 });
   }
 
@@ -567,7 +769,7 @@
     const b = getBuddy();
     const lang = currentLang();
     const line = BUDDY_PAGE_NUDGES[path];
-    if (line) showMessage(buddyCopy(line[lang] || line.en, b));
+    if (line) showMessage(buddyCopy(line[lang] || buddyGenericCopy(lang).page[path] || line.en, b));
   }
 
   // ---------- Public API ----------
@@ -587,20 +789,22 @@
     setTimeout(() => {
       const b = getBuddy();
       const lang = currentLang();
-      showMessage(
-        lang === 'sv'
-          ? `Hej. Jag är ${b.name}. Trevligt att hänga ihop.`
-          : `Hej. I'm ${b.name}. Nice to be on duty.`,
-      );
+      showMessage(buddyGenericCopy(lang).selected(b.name));
     }, 100);
   };
-  window.smtBuddyCelebrate = (msgEn, msgSv) => {
+  function buddyRuntimeMessage(message, fallback) {
     const lang = currentLang();
-    showMessage(lang === 'sv' ? msgSv : msgEn, { autoHide: 6000 });
+    if (message && typeof message === 'object')
+      return message[lang] || message.en || fallback || '';
+    if (lang === 'sv' && fallback) return fallback;
+    return message || fallback || '';
+  }
+
+  window.smtBuddyCelebrate = (message, fallback) => {
+    showMessage(buddyRuntimeMessage(message, fallback), { autoHide: 6000 });
   };
-  window.smtBuddyConsole = (msgEn, msgSv) => {
-    const lang = currentLang();
-    showMessage(lang === 'sv' ? msgSv : msgEn, { autoHide: 5500 });
+  window.smtBuddyConsole = (message, fallback) => {
+    showMessage(buddyRuntimeMessage(message, fallback), { autoHide: 5500 });
   };
   window.smtBuddyHide = () => {
     const w = document.getElementById('dala-buddy');

@@ -45,12 +45,12 @@ type ProfileCopy = {
   eyebrow: string;
   languageBadge: string;
   levelMetric: string;
-  openSettings: string;
   openSettingsAccessibilityLabel: string;
   noBadges: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
   streakFreezeBadge: string;
+  studySetupCta: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -76,11 +76,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Öppna inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
+    studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -105,11 +105,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Open settings',
-    openSettingsAccessibilityLabel: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
+    studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -229,7 +229,7 @@ export default function Screen() {
             accessibilityRole="link"
             style={styles.settingsLink}
           >
-            {copy.openSettings}
+            {copy.studySetupCta}
           </Button>
         </Link>
       </Card>
