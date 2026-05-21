@@ -17807,30 +17807,90 @@
     "type": "single_choice",
     "q": {
       "en": "What does the Fundamental Law on Freedom of Expression give everyone the right to do?",
-      "sv": "Vad ger yttrandefrihetsgrundlagen alla rätt att göra?"
+      "sv": "Vad ger yttrandefrihetsgrundlagen alla rätt att göra?",
+      "zh-Hant": "《表達自由基本法》（Yttrandefrihetsgrundlagen）賦予所有人什麼權利？",
+      "zh-Hans": "《表达自由基本法》（Yttrandefrihetsgrundlagen）赋予所有人什么权利？",
+      "ar": "ما الحق الذي يمنحه القانون الأساسي لحرية التعبير (Yttrandefrihetsgrundlagen) للجميع؟",
+      "ckb": "یاسای بنەڕەتی ئازادی دەربڕین (Yttrandefrihetsgrundlagen) چی مافێک بە هەمووان دەدات؟",
+      "fa": "قانون بنیادین آزادی بیان (Yttrandefrihetsgrundlagen) چه حقی به همه می‌دهد؟",
+      "pl": "Jakie prawo daje wszystkim konstytucyjna ustawa o wolności wypowiedzi (Yttrandefrihetsgrundlagen)?",
+      "so": "Xuquuqdee ayuu xeerka aasaasiga ah ee xorriyadda hadalka (Yttrandefrihetsgrundlagen) qof walba siinayaa?",
+      "ti": "መሰረታዊ ሕጊ ናጽነት መግለጺ (Yttrandefrihetsgrundlagen) ንኩሉ ሰብ እንታይ መሰል ይህብ?",
+      "tr": "İfade Özgürlüğü Temel Yasası (Yttrandefrihetsgrundlagen) herkese hangi hakkı verir?",
+      "uk": "Яке право Основний закон про свободу висловлення (Yttrandefrihetsgrundlagen) дає кожному?"
     },
     "opts": [
       {
         "en": "To express thoughts and opinions freely, for example on radio, TV, and in newspapers",
-        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar"
+        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar",
+        "zh-Hant": "自由表達思想和意見，例如在廣播、電視和日報中",
+        "zh-Hans": "自由表达思想和意见，例如在广播、电视和日报中",
+        "ar": "التعبير عن الأفكار والآراء بحرية، مثلًا في الإذاعة والتلفزيون والصحف اليومية",
+        "ckb": "ئازادانە دەربڕینی بیر و بۆچوون، بۆ نموونە لە ڕادیۆ، تەلەفزیۆن و ڕۆژنامەدا",
+        "fa": "بیان آزادانهٔ اندیشه‌ها و نظرها، مثلاً در رادیو، تلویزیون و روزنامه‌ها",
+        "pl": "Swobodnie wyrażać myśli i opinie, na przykład w radiu, telewizji i gazetach codziennych",
+        "so": "In si xor ah loo muujiyo fikrado iyo aragtiyo, tusaale ahaan raadiyaha, TV-ga iyo wargeysyada",
+        "ti": "ሓሳባትን ርእይቶታትን ብናጽነት ምግላጽ፣ ንኣብነት ኣብ ሬድዮ፣ ተለቪዥንን ዕለታዊ ጋዜጣታትን",
+        "tr": "Düşünce ve görüşleri, örneğin radyo, televizyon ve günlük gazetelerde özgürce ifade etmek",
+        "uk": "Вільно висловлювати думки й погляди, наприклад на радіо, телебаченні та в щоденних газетах"
       },
       {
         "en": "It makes every expression legal regardless of content",
-        "sv": "Den gör alla yttranden lagliga oavsett innehåll"
+        "sv": "Den gör alla yttranden lagliga oavsett innehåll",
+        "zh-Hant": "它使所有表達不論內容為何都合法",
+        "zh-Hans": "它使所有表达不论内容为何都合法",
+        "ar": "يجعل كل تعبير قانونيًا مهما كان محتواه",
+        "ckb": "هەموو دەربڕینێک بەبێ گوێدان بە ناوەڕۆکەکەی یاسایی دەکات",
+        "fa": "هر نوع بیان را بدون توجه به محتوایش قانونی می‌کند",
+        "pl": "Sprawia, że każda wypowiedź jest legalna niezależnie od treści",
+        "so": "Wuxuu ka dhigaa hadal kasta mid sharci ah iyada oo aan loo eegin waxa ku jira",
+        "ti": "ኩሉ መግለጺ ብዘይ ግድን ትሕዝቶኡ ሕጋዊ ይገብሮ",
+        "tr": "İçeriği ne olursa olsun her ifadeyi yasal hale getirir",
+        "uk": "Робить будь-яке висловлення законним незалежно від змісту"
       },
       {
         "en": "It decides that courts must judge according to instructions from the Riksdag",
-        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner"
+        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner",
+        "zh-Hant": "它規定法院必須按照 Riksdag（議會）的指示判決",
+        "zh-Hans": "它规定法院必须按照 Riksdag（议会）的指示判决",
+        "ar": "ينصّ على أن المحاكم يجب أن تحكم وفق تعليمات برلمان السويد (Riksdag)",
+        "ckb": "دیاری دەکات دادگاکان دەبێت بەپێی ڕێنماییەکانی Riksdag (پارلەمانی سوید) دادوەری بکەن",
+        "fa": "تعیین می‌کند که دادگاه‌ها باید طبق دستورهای Riksdag (پارلمان سوئد) رأی بدهند",
+        "pl": "Ustala, że sądy mają orzekać według instrukcji Riksdagu",
+        "so": "Wuxuu go’aamiyaa in maxkamaduhu xukumaan sida uu Riksdag-gu (baarlamaanku) u faro",
+        "ti": "ፍርድቤታት ብመምርሒ Riksdag (ሃገራዊ ባይቶ) ክፈርዱ ከም ዘለዎም ይውስን",
+        "tr": "Mahkemelerin Riksdag’ın talimatlarına göre karar vermesi gerektiğini belirler",
+        "uk": "Визначає, що суди мають ухвалювати рішення за вказівками Riksdag"
       },
       {
         "en": "It replaces the right to form associations and demonstrate",
-        "sv": "Den ersätter rätten att bilda föreningar och demonstrera"
+        "sv": "Den ersätter rätten att bilda föreningar och demonstrera",
+        "zh-Hant": "它取代了成立協會和示威的權利",
+        "zh-Hans": "它取代了成立协会和示威的权利",
+        "ar": "يحلّ محلّ الحق في تكوين الجمعيات والتظاهر",
+        "ckb": "جێگەی مافی دامەزراندنی کۆمەڵە و خۆپیشاندان دەگرێتەوە",
+        "fa": "جایگزین حق تشکیل انجمن‌ها و تظاهرات می‌شود",
+        "pl": "Zastępuje prawo do zakładania stowarzyszeń i demonstrowania",
+        "so": "Wuxuu beddelaa xuquuqda samaynta ururro iyo mudaharaadidda",
+        "ti": "መሰል ማሕበራት ምቛምን ሰልፊ ምውጻእን ይትክእ",
+        "tr": "Dernek kurma ve gösteri yapma hakkının yerine geçer",
+        "uk": "Замінює право створювати об’єднання та демонструвати"
       }
     ],
     "answer": 0,
     "why": {
       "en": "The Fundamental Law on Freedom of Expression gives everyone the right to express thoughts and opinions freely, for example on radio, TV, and in newspapers. It protects freedom of expression, but some expressions remain prohibited by law, such as defamation, agitation against a population group, and information that can harm Sweden’s security.",
-      "sv": "Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar. Den skyddar yttrandefriheten, men vissa yttranden är fortfarande förbjudna i lag, till exempel förtal, hets mot folkgrupp och information som kan skada Sveriges säkerhet."
+      "sv": "Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar. Den skyddar yttrandefriheten, men vissa yttranden är fortfarande förbjudna i lag, till exempel förtal, hets mot folkgrupp och information som kan skada Sveriges säkerhet.",
+      "zh-Hant": "Yttrandefrihetsgrundlagen 賦予所有人自由表達思想和意見的權利，例如在廣播、電視和日報中。它保障表達自由，但某些表達仍受法律禁止，例如誹謗、煽動針對族群的仇恨，以及可能損害瑞典安全的資訊。",
+      "zh-Hans": "Yttrandefrihetsgrundlagen 赋予所有人自由表达思想和意见的权利，例如在广播、电视和日报中。它保护表达自由，但某些表达仍受法律禁止，例如诽谤、煽动针对族群的仇恨，以及可能损害瑞典安全的信息。",
+      "ar": "يمنح Yttrandefrihetsgrundlagen الجميع حق التعبير عن الأفكار والآراء بحرية، مثلًا في الإذاعة والتلفزيون والصحف اليومية. وهو يحمي حرية التعبير، لكن بعض التعبيرات تبقى محظورة قانونًا، مثل التشهير، والتحريض ضد فئة سكانية، والمعلومات التي قد تضر بأمن السويد.",
+      "ckb": "Yttrandefrihetsgrundlagen مافی دەربڕینی ئازادانەی بیر و بۆچوون بە هەمووان دەدات، بۆ نموونە لە ڕادیۆ، تەلەفزیۆن و ڕۆژنامەدا. ئەم یاسایە ئازادی دەربڕین دەپارێزێت، بەڵام هەندێک دەربڕین هێشتا بە یاسا قەدەغەن، وەک بوختان، هاندانی دژ بە گرووپێکی خەڵک، و زانیاریی کە دەتوانێت زیان بە ئاسایشی سوید بگەیەنێت.",
+      "fa": "Yttrandefrihetsgrundlagen به همه حق می‌دهد که اندیشه‌ها و نظرهای خود را آزادانه بیان کنند، مثلاً در رادیو، تلویزیون و روزنامه‌ها. این قانون از آزادی بیان حمایت می‌کند، اما برخی بیان‌ها همچنان طبق قانون ممنوع‌اند، مانند افترا، تحریک علیه یک گروه جمعیتی و اطلاعاتی که می‌تواند به امنیت سوئد آسیب بزند.",
+      "pl": "Yttrandefrihetsgrundlagen daje każdemu prawo do swobodnego wyrażania myśli i opinii, na przykład w radiu, telewizji i gazetach codziennych. Chroni wolność wypowiedzi, ale niektóre wypowiedzi nadal są zakazane przez prawo, na przykład zniesławienie, nawoływanie przeciwko grupie ludności oraz informacje mogące zaszkodzić bezpieczeństwu Szwecji.",
+      "so": "Yttrandefrihetsgrundlagen wuxuu qof walba siinayaa xaqa inuu si xor ah u muujiyo fikrado iyo aragtiyo, tusaale ahaan raadiyaha, TV-ga iyo wargeysyada. Wuxuu ilaaliyaa xorriyadda hadalka, laakiin hadallo qaarkood weli sharcigu wuu mamnuucaa, sida sumcad-dilid, kicin ka dhan ah koox dad ah, iyo xog dhaawici karta ammaanka Iswiidhan.",
+      "ti": "Yttrandefrihetsgrundlagen ንኩሉ ሰብ ሓሳባትን ርእይቶታትን ብናጽነት ናይ ምግላጽ መሰል ይህብ፣ ንኣብነት ኣብ ሬድዮ፣ ተለቪዥንን ዕለታዊ ጋዜጣታትን። ናጽነት መግለጺ ይከላኸል፣ ግን ገለ መግለጺታት ከም ጸለመ፣ ኣንጻር ጉጅለ ህዝቢ ምሕራር፣ ከምኡ’ውን ንድሕነት ሽወደን ክጎድእ ዝኽእል ሓበሬታ ብሕጊ ክልኩላት እዮም።",
+      "tr": "Yttrandefrihetsgrundlagen herkese düşünce ve görüşlerini, örneğin radyo, televizyon ve günlük gazetelerde özgürce ifade etme hakkı verir. İfade özgürlüğünü korur; ancak hakaret, bir nüfus grubuna karşı kışkırtma ve İsveç’in güvenliğine zarar verebilecek bilgiler gibi bazı ifadeler hâlâ yasayla yasaktır.",
+      "uk": "Yttrandefrihetsgrundlagen дає кожному право вільно висловлювати думки й погляди, наприклад на радіо, телебаченні та в щоденних газетах. Він захищає свободу висловлення, але деякі висловлення все одно заборонені законом, наприклад наклеп, підбурювання проти групи населення та інформація, що може зашкодити безпеці Швеції."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -61193,19 +61253,59 @@
     "opts": [
       {
         "en": "To express thoughts and opinions freely, for example on radio, TV, and in newspapers",
-        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar"
+        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar",
+        "zh-Hant": "自由表達思想和意見，例如在廣播、電視和日報中",
+        "zh-Hans": "自由表达思想和意见，例如在广播、电视和日报中",
+        "ar": "التعبير عن الأفكار والآراء بحرية، مثلًا في الإذاعة والتلفزيون والصحف اليومية",
+        "ckb": "ئازادانە دەربڕینی بیر و بۆچوون، بۆ نموونە لە ڕادیۆ، تەلەفزیۆن و ڕۆژنامەدا",
+        "fa": "بیان آزادانهٔ اندیشه‌ها و نظرها، مثلاً در رادیو، تلویزیون و روزنامه‌ها",
+        "pl": "Swobodnie wyrażać myśli i opinie, na przykład w radiu, telewizji i gazetach codziennych",
+        "so": "In si xor ah loo muujiyo fikrado iyo aragtiyo, tusaale ahaan raadiyaha, TV-ga iyo wargeysyada",
+        "ti": "ሓሳባትን ርእይቶታትን ብናጽነት ምግላጽ፣ ንኣብነት ኣብ ሬድዮ፣ ተለቪዥንን ዕለታዊ ጋዜጣታትን",
+        "tr": "Düşünce ve görüşleri, örneğin radyo, televizyon ve günlük gazetelerde özgürce ifade etmek",
+        "uk": "Вільно висловлювати думки й погляди, наприклад на радіо, телебаченні та в щоденних газетах"
       },
       {
         "en": "It makes every expression legal regardless of content",
-        "sv": "Den gör alla yttranden lagliga oavsett innehåll"
+        "sv": "Den gör alla yttranden lagliga oavsett innehåll",
+        "zh-Hant": "它使所有表達不論內容為何都合法",
+        "zh-Hans": "它使所有表达不论内容为何都合法",
+        "ar": "يجعل كل تعبير قانونيًا مهما كان محتواه",
+        "ckb": "هەموو دەربڕینێک بەبێ گوێدان بە ناوەڕۆکەکەی یاسایی دەکات",
+        "fa": "هر نوع بیان را بدون توجه به محتوایش قانونی می‌کند",
+        "pl": "Sprawia, że każda wypowiedź jest legalna niezależnie od treści",
+        "so": "Wuxuu ka dhigaa hadal kasta mid sharci ah iyada oo aan loo eegin waxa ku jira",
+        "ti": "ኩሉ መግለጺ ብዘይ ግድን ትሕዝቶኡ ሕጋዊ ይገብሮ",
+        "tr": "İçeriği ne olursa olsun her ifadeyi yasal hale getirir",
+        "uk": "Робить будь-яке висловлення законним незалежно від змісту"
       },
       {
         "en": "It decides that courts must judge according to instructions from the Riksdag",
-        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner"
+        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner",
+        "zh-Hant": "它規定法院必須按照 Riksdag（議會）的指示判決",
+        "zh-Hans": "它规定法院必须按照 Riksdag（议会）的指示判决",
+        "ar": "ينصّ على أن المحاكم يجب أن تحكم وفق تعليمات برلمان السويد (Riksdag)",
+        "ckb": "دیاری دەکات دادگاکان دەبێت بەپێی ڕێنماییەکانی Riksdag (پارلەمانی سوید) دادوەری بکەن",
+        "fa": "تعیین می‌کند که دادگاه‌ها باید طبق دستورهای Riksdag (پارلمان سوئد) رأی بدهند",
+        "pl": "Ustala, że sądy mają orzekać według instrukcji Riksdagu",
+        "so": "Wuxuu go’aamiyaa in maxkamaduhu xukumaan sida uu Riksdag-gu (baarlamaanku) u faro",
+        "ti": "ፍርድቤታት ብመምርሒ Riksdag (ሃገራዊ ባይቶ) ክፈርዱ ከም ዘለዎም ይውስን",
+        "tr": "Mahkemelerin Riksdag’ın talimatlarına göre karar vermesi gerektiğini belirler",
+        "uk": "Визначає, що суди мають ухвалювати рішення за вказівками Riksdag"
       },
       {
         "en": "It replaces the right to form associations and demonstrate",
-        "sv": "Den ersätter rätten att bilda föreningar och demonstrera"
+        "sv": "Den ersätter rätten att bilda föreningar och demonstrera",
+        "zh-Hant": "它取代了成立協會和示威的權利",
+        "zh-Hans": "它取代了成立协会和示威的权利",
+        "ar": "يحلّ محلّ الحق في تكوين الجمعيات والتظاهر",
+        "ckb": "جێگەی مافی دامەزراندنی کۆمەڵە و خۆپیشاندان دەگرێتەوە",
+        "fa": "جایگزین حق تشکیل انجمن‌ها و تظاهرات می‌شود",
+        "pl": "Zastępuje prawo do zakładania stowarzyszeń i demonstrowania",
+        "so": "Wuxuu beddelaa xuquuqda samaynta ururro iyo mudaharaadidda",
+        "ti": "መሰል ማሕበራት ምቛምን ሰልፊ ምውጻእን ይትክእ",
+        "tr": "Dernek kurma ve gösteri yapma hakkının yerine geçer",
+        "uk": "Замінює право створювати об’єднання та демонструвати"
       }
     ],
     "answer": 0,
@@ -61321,19 +61421,59 @@
     "opts": [
       {
         "en": "To express thoughts and opinions freely, for example on radio, TV, and in newspapers",
-        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar"
+        "sv": "Att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar",
+        "zh-Hant": "自由表達思想和意見，例如在廣播、電視和日報中",
+        "zh-Hans": "自由表达思想和意见，例如在广播、电视和日报中",
+        "ar": "التعبير عن الأفكار والآراء بحرية، مثلًا في الإذاعة والتلفزيون والصحف اليومية",
+        "ckb": "ئازادانە دەربڕینی بیر و بۆچوون، بۆ نموونە لە ڕادیۆ، تەلەفزیۆن و ڕۆژنامەدا",
+        "fa": "بیان آزادانهٔ اندیشه‌ها و نظرها، مثلاً در رادیو، تلویزیون و روزنامه‌ها",
+        "pl": "Swobodnie wyrażać myśli i opinie, na przykład w radiu, telewizji i gazetach codziennych",
+        "so": "In si xor ah loo muujiyo fikrado iyo aragtiyo, tusaale ahaan raadiyaha, TV-ga iyo wargeysyada",
+        "ti": "ሓሳባትን ርእይቶታትን ብናጽነት ምግላጽ፣ ንኣብነት ኣብ ሬድዮ፣ ተለቪዥንን ዕለታዊ ጋዜጣታትን",
+        "tr": "Düşünce ve görüşleri, örneğin radyo, televizyon ve günlük gazetelerde özgürce ifade etmek",
+        "uk": "Вільно висловлювати думки й погляди, наприклад на радіо, телебаченні та в щоденних газетах"
       },
       {
         "en": "It makes every expression legal regardless of content",
-        "sv": "Den gör alla yttranden lagliga oavsett innehåll"
+        "sv": "Den gör alla yttranden lagliga oavsett innehåll",
+        "zh-Hant": "它使所有表達不論內容為何都合法",
+        "zh-Hans": "它使所有表达不论内容为何都合法",
+        "ar": "يجعل كل تعبير قانونيًا مهما كان محتواه",
+        "ckb": "هەموو دەربڕینێک بەبێ گوێدان بە ناوەڕۆکەکەی یاسایی دەکات",
+        "fa": "هر نوع بیان را بدون توجه به محتوایش قانونی می‌کند",
+        "pl": "Sprawia, że każda wypowiedź jest legalna niezależnie od treści",
+        "so": "Wuxuu ka dhigaa hadal kasta mid sharci ah iyada oo aan loo eegin waxa ku jira",
+        "ti": "ኩሉ መግለጺ ብዘይ ግድን ትሕዝቶኡ ሕጋዊ ይገብሮ",
+        "tr": "İçeriği ne olursa olsun her ifadeyi yasal hale getirir",
+        "uk": "Робить будь-яке висловлення законним незалежно від змісту"
       },
       {
         "en": "It decides that courts must judge according to instructions from the Riksdag",
-        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner"
+        "sv": "Den bestämmer att domstolar ska döma efter riksdagens instruktioner",
+        "zh-Hant": "它規定法院必須按照 Riksdag（議會）的指示判決",
+        "zh-Hans": "它规定法院必须按照 Riksdag（议会）的指示判决",
+        "ar": "ينصّ على أن المحاكم يجب أن تحكم وفق تعليمات برلمان السويد (Riksdag)",
+        "ckb": "دیاری دەکات دادگاکان دەبێت بەپێی ڕێنماییەکانی Riksdag (پارلەمانی سوید) دادوەری بکەن",
+        "fa": "تعیین می‌کند که دادگاه‌ها باید طبق دستورهای Riksdag (پارلمان سوئد) رأی بدهند",
+        "pl": "Ustala, że sądy mają orzekać według instrukcji Riksdagu",
+        "so": "Wuxuu go’aamiyaa in maxkamaduhu xukumaan sida uu Riksdag-gu (baarlamaanku) u faro",
+        "ti": "ፍርድቤታት ብመምርሒ Riksdag (ሃገራዊ ባይቶ) ክፈርዱ ከም ዘለዎም ይውስን",
+        "tr": "Mahkemelerin Riksdag’ın talimatlarına göre karar vermesi gerektiğini belirler",
+        "uk": "Визначає, що суди мають ухвалювати рішення за вказівками Riksdag"
       },
       {
         "en": "It replaces the right to form associations and demonstrate",
-        "sv": "Den ersätter rätten att bilda föreningar och demonstrera"
+        "sv": "Den ersätter rätten att bilda föreningar och demonstrera",
+        "zh-Hant": "它取代了成立協會和示威的權利",
+        "zh-Hans": "它取代了成立协会和示威的权利",
+        "ar": "يحلّ محلّ الحق في تكوين الجمعيات والتظاهر",
+        "ckb": "جێگەی مافی دامەزراندنی کۆمەڵە و خۆپیشاندان دەگرێتەوە",
+        "fa": "جایگزین حق تشکیل انجمن‌ها و تظاهرات می‌شود",
+        "pl": "Zastępuje prawo do zakładania stowarzyszeń i demonstrowania",
+        "so": "Wuxuu beddelaa xuquuqda samaynta ururro iyo mudaharaadidda",
+        "ti": "መሰል ማሕበራት ምቛምን ሰልፊ ምውጻእን ይትክእ",
+        "tr": "Dernek kurma ve gösteri yapma hakkının yerine geçer",
+        "uk": "Замінює право створювати об’єднання та демонструвати"
       }
     ],
     "answer": 0,
