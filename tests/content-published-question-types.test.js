@@ -733,13 +733,16 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
   assert.equal(
     q097SingleChoice?.q.en,
-    'How is New Year’s Eve on 31 December commonly celebrated in Sweden ...?',
+    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
   assert.equal(
     q097Judgement?.q.en,
     'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
-  assert.equal(q104SingleChoice?.q.en, 'All Saints’ Day is commonly observed by ...');
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
+  );
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
@@ -2797,8 +2800,7 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
-  const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -4265,6 +4267,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -4906,8 +4909,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
-        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
+        "        questionSv: 'Vilket svar är korrekt? Var ligger Sverige?',",
+        "        questionEn: 'Which answer is correct? Where is Sweden located?',",
         "      }",
         "    : question,",
         ");",

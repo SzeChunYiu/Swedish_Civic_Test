@@ -471,6 +471,8 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
   /\bA correct answer to\s+"True or false:/i,
   /\bVilket svar stämmer bäst\?\s*Sant eller falskt:/i,
   /\bWhich answer best matches\?\s*True or false:/i,
+  /\bpåståendet som motsvarar den uppgiften\b/i,
+  /\bstatement that matches that fact\b/i,
 ];
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
@@ -545,6 +547,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^One reason is that Sweden had\b/,
   /^En anledning är att Det\b/,
   /^One reason is that It\b/,
+  /^En anledning är\b/i,
+  /^One reason is\b/i,
   /\bhar förändrat bara hur\b/i,
   /\bhas changed only how\b/i,
   /\barbetar för endast\b/i,
@@ -586,11 +590,69 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
   /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
   /^Only responsible publishers may write posts there\.?$/i,
+  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
+  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
+  /^Water and sewage\b/i,
+  /^Vatten och avlopp\b/i,
+  /^Sending ambassadors\b/i,
+  /^Skicka ambassadörer\b/i,
+  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
+  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
+];
+const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
+  /\btax-funded\b/i,
+  /\btax revenue pays for it\b/i,
+];
+const QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS = [
+  /\b(?:sjukförsäkring|föräldraförsäkring|arbetslöshetsförsäkring)\b/i,
+  /\b(?:sickness insurance|parental insurance|unemployment insurance)\b/i,
+];
+const QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_PATTERNS = [
+  /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i,
+];
+const QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS = [/\bFirst of May\b/i];
+const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
+  /\bmåste inte följa resultatet\b/i,
+  /\bbetyder att politikerna måste (?:inte|alltid) följa resultatet\b/i,
+];
+const QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i,
+];
+const QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat does the Council of Europe work for\??/i,
+  /\bThe Council of Europe works (?:only )?for\b/i,
+];
+const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bWhat did the 1938 Saltsj(?:ö|o)baden Agreement become important for\??/i,
+  /\bbecame important for\b/i,
+];
+const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];
+const QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS = [
+  /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
+  /\bThe right to practice (?:one’s|one's) religion and protection from discrimination because of belief\b/i,
+];
+const QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS = [
+  /\b(?:skatt och moms|tax and VAT)\b/i,
+  /\bFöretag betalar också skatt,\s+och moms betalas\b/i,
+  /\bCompanies also pay tax,\s+and VAT is paid\b/i,
+  /\bSkatt betalas både av personer som arbetar och av företag\.\s+Moms är\b/i,
+  /\bBoth people who work and companies pay tax\.\s+VAT is\b/i,
+];
+const QUESTION_Q038_OLD_VAT_DISTRACTOR_PATTERNS = [
+  /\bVilka varor som har moms\b/i,
+  /\bWhich goods have VAT\b/i,
+];
+const QUESTION_SECRET_BALLOT_SINGULAR_SWEDISH_PATTERNS = [/\bhur den röstar\b/i];
+const QUESTION_LUCIA_ROLE_SCAFFOLD_NATURALNESS_PATTERNS = [
+  /\bIn a Lucia procession,\s+one person is Lucia\b/i,
+  /\bI ett luciatåg\s+(?:är en person Lucia|en person är Lucia)\b/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const TARGETLESS_GENERATED_WHY_REASON_STEM_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -5088,6 +5150,174 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function questionText(
+  question,
+  fields = ['questionSv', 'questionEn', 'explanationSv', 'explanationEn'],
+) {
+  return [
+    ...fields.map((field) => question[field]),
+    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
+function findQuestionStateWelfareEnglishNaturalnessIssue(question) {
+  return QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionLuciaExplanationRoleScaffoldIssue(question) {
+  return QUESTION_LUCIA_ROLE_SCAFFOLD_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question)),
+  );
+}
+
+function findQuestionUmeaDemonymSwedishNaturalnessIssue(question) {
+  return /\bumebor\b/i.test(questionText(question, ['questionSv', 'explanationSv']));
+}
+
+function findQuestionQ071SocialInsuranceOverlapIssue(question) {
+  if (
+    question.id !== 'q071' &&
+    !(
+      question.tags?.includes('published-variant') &&
+      question.tags?.includes('higher-education') &&
+      question.tags?.includes('research')
+    )
+  ) {
+    return null;
+  }
+
+  return QUESTION_Q071_SOCIAL_INSURANCE_OVERLAP_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question)),
+  );
+}
+
+function findQuestionTraditionCommonToDoEnglishIssue(question) {
+  return QUESTION_TRADITION_COMMON_TO_DO_ENGLISH_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionMayDayEnglishNaturalnessIssue(question) {
+  return QUESTION_MAY_DAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionReferendumAdvisorySwedishNaturalnessIssue(question) {
+  return QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionSv', 'explanationSv'])),
+  );
+}
+
+function findQuestionGoodFridayEnglishNaturalnessIssue(question) {
+  return QUESTION_GOOD_FRIDAY_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question) {
+  return QUESTION_COUNCIL_OF_EUROPE_WORK_FOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionSaltsjobadenEnglishNaturalnessIssue(question) {
+  return QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
+  );
+}
+
+function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
+  return QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(question.explanationEn || ''),
+  );
+}
+
+function findQuestionReligiousFreedomOptionParallelismIssue(question) {
+  return QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question)),
+  );
+}
+
+function findQuestionAnswerKeyPromptIssue(question) {
+  const text = questionText(question, ['questionSv', 'questionEn']);
+
+  if (
+    /\b(?:Vilket svar beskriver|Which answer describes)\b/i.test(text) &&
+    /\b(?:fria medier|free media)\b/i.test(text)
+  ) {
+    return 'q045 source prompt asks about the answer instead of the civic concept';
+  }
+  if (
+    /\b(?:Vilket svar beskriver|Which answer describes)\b/i.test(text) &&
+    /\b(?:rösträtt i kommun- och regionval|voting rights in municipal and regional elections)\b/i.test(
+      text,
+    )
+  ) {
+    return 'q166 source prompt asks about the answer instead of the civic concept';
+  }
+  if (/\b(?:Vilket är ett sätt att|Which is a way to)\b/i.test(text)) {
+    return 'q013 source prompt asks about the answer instead of the civic concept';
+  }
+  if (
+    /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i.test(
+      text,
+    )
+  ) {
+    return 'q026 source prompt asks about the answer instead of the civic concept';
+  }
+  if (
+    /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i.test(
+      text,
+    )
+  ) {
+    return 'q140 asks about the answer instead of the civic concept';
+  }
+
+  return null;
+}
+
+function findQuestionTaxVatTwoConceptIssue(question) {
+  return QUESTION_TAX_VAT_TWO_CONCEPT_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question)),
+  );
+}
+
+function findQuestionQ038OldVatDistractorIssue(question) {
+  return QUESTION_Q038_OLD_VAT_DISTRACTOR_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question)),
+  );
+}
+
+function findQuestionSecretBallotSingularSwedishIssue(question) {
+  return QUESTION_SECRET_BALLOT_SINGULAR_SWEDISH_PATTERNS.find((pattern) =>
+    pattern.test(questionText(question, ['questionSv', 'explanationSv'])),
+  );
+}
+
+function findGeneratedWhyReasonTargetStemIssue(question) {
+  if (question.type !== 'true_false' || !question.tags?.includes('published-variant')) {
+    return null;
+  }
+
+  return TARGETLESS_GENERATED_WHY_REASON_STEM_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
+}
+
+function isGeneratedWhyReasonTargetStem(question) {
+  return (
+    question.type === 'true_false' &&
+    question.tags?.includes('published-variant') &&
+    (/^En anledning till att\b/i.test(question.questionSv) ||
+      /^One reason\b/i.test(question.questionEn))
+  );
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -5267,7 +5497,7 @@ function lowerLeadingSwedishCommonStart(value) {
 }
 function lowerLeadingSwedishClauseStart(value) {
   return value.replace(
-    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politiker|All|Samarbetet)\b/,
+    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politikerna|Politiker|All|Samarbetet)\b/,
     (match) => match.toLowerCase(),
   );
 }
@@ -6321,6 +6551,14 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
   if (match) return webSocialMediaStatementSv(answer);
   if (source.id === 'q015') return swedishLowVoterTurnoutStatement(answer);
+  if (
+    source.id === 'q013' &&
+    /^Hur kan människor påverka samhället och delta i demokratin$/i.test(q)
+  ) {
+    return `Människor kan påverka samhället och delta i demokratin genom att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -6346,6 +6584,21 @@ function civicStatementSv(source, option) {
     if (/^mänskliga rättigheter gäller alla$/i.test(match[1])) {
       const statement = universalHumanRightsStatementSv(answer);
       if (statement) return statement;
+    }
+    if (/^folkomröstningar i Sverige är rådgivande$/i.test(match[1])) {
+      return `Att ${match[1]} betyder att ${answer
+        .replace(
+          /^politikerna behöver inte följa resultatet$/i,
+          'politikerna inte behöver följa resultatet',
+        )
+        .replace(
+          /^politikerna måste inte följa resultatet$/i,
+          'politikerna inte behöver följa resultatet',
+        )
+        .replace(
+          /^politikerna måste alltid följa resultatet$/i,
+          'politikerna alltid måste följa resultatet',
+        )}`;
     }
     return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   }
@@ -6652,6 +6905,23 @@ function civicStatementEn(source, option) {
   match = q.match(/^What is important to remember about the web and social media$/i);
   if (match) return webSocialMediaStatementEn(answer);
   if (source.id === 'q015') return englishLowVoterTurnoutStatement(answer);
+  if (
+    source.id === 'q013' &&
+    /^How can people influence society and participate in democracy$/i.test(q)
+  ) {
+    const action = answer
+      .replace(
+        /^Contact politicians, demonstrate, or sign a petition$/i,
+        'contacting politicians, demonstrating, or signing a petition',
+      )
+      .replace(
+        /^Ban others from voting in political elections$/i,
+        'banning others from voting in political elections',
+      );
+    return `People can influence society and participate in democracy by ${englishGerundPhrase(
+      action,
+    )}`;
+  }
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
@@ -7706,6 +7976,57 @@ function validateQuestionSchema(question, index) {
     });
   }
 
+  if (findQuestionStateWelfareEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses stilted state-welfare English wording`);
+  }
+  if (findQuestionLuciaExplanationRoleScaffoldIssue(question)) {
+    reject(`${label} uses Lucia role-scaffold explanation wording`);
+  }
+  if (findQuestionUmeaDemonymSwedishNaturalnessIssue(question)) {
+    reject(`${label} uses nonstandard Umeå demonym Swedish wording`);
+  }
+  if (findQuestionQ071SocialInsuranceOverlapIssue(question)) {
+    reject(`${label} overlaps q071/q156 state-welfare source coverage`);
+  }
+  if (findQuestionTraditionCommonToDoEnglishIssue(question)) {
+    reject(`${label} uses literal common-to-do English wording`);
+  }
+  if (findQuestionMayDayEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses literal First of May English wording`);
+  }
+  if (findQuestionReferendumAdvisorySwedishNaturalnessIssue(question)) {
+    reject(`${label} uses ambiguous advisory-referendum Swedish wording`);
+  }
+  if (findQuestionGoodFridayEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses stilted Good Friday English wording`);
+  }
+  if (findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses literal Council of Europe work-for English wording`);
+  }
+  if (findQuestionSaltsjobadenEnglishNaturalnessIssue(question)) {
+    reject(`${label} uses stilted Saltsjöbaden Agreement English wording`);
+  }
+  if (findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question)) {
+    reject(`${label} uses stilted 1951 religious-freedom English wording`);
+  }
+  if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
+    reject(`${label} uses nonparallel religious-freedom option wording`);
+  }
+  const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
+  if (answerKeyPromptIssue) reject(answerKeyPromptIssue);
+  if (findQuestionTaxVatTwoConceptIssue(question)) {
+    reject(`${label} combines tax liability and VAT purchase taxation in one learner-facing item`);
+  }
+  if (findQuestionQ038OldVatDistractorIssue(question)) {
+    reject(`${label} uses the old q038 VAT distractor wording`);
+  }
+  if (findQuestionSecretBallotSingularSwedishIssue(question)) {
+    reject(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
+  }
+  if (findQuestionGeneratedTrueFalseNaturalnessIssue(question)) {
+    reject(`${label} contains a generated true/false grammar-splice stem`);
+  }
+
   if (question.uhrReference && typeof question.uhrReference === 'object') {
     for (const field of ['chapter', 'section']) {
       if (
@@ -8088,6 +8409,14 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
+let questionMayDayEnglishNaturalnessValidated = 0;
+let questionLuciaExplanationRoleScaffoldValidated = 0;
+let questionGoodFridayEnglishNaturalnessValidated = 0;
+let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
+let derivedCivicStatementPromptMirrorValidated = 0;
+let generatedWhyReasonTargetStemsValidated = 0;
+let generatedWhyReasonTargetStemParityValidated = false;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -8350,6 +8679,32 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   printValidationSummary({
     generatedTrueFalseNaturalnessFocusValidated: true,
     questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-generated-why-reason-stems')) {
+  if (Array.isArray(questions)) {
+    questions
+      .filter(
+        (question) =>
+          question.type === 'true_false' && question.tags?.includes('published-variant'),
+      )
+      .forEach((question) => {
+        const issue = findGeneratedWhyReasonTargetStemIssue(question);
+        if (issue) {
+          fail(`${question.id} contains a targetless generated why-reason stem`);
+        } else if (isGeneratedWhyReasonTargetStem(question)) {
+          generatedWhyReasonTargetStemsValidated += 1;
+        }
+      });
+  }
+  generatedWhyReasonTargetStemParityValidated =
+    generatedWhyReasonTargetStemsValidated > 0 && failures.length === 0;
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedWhyReasonTargetStemsValidated,
+    generatedWhyReasonTargetStemParityValidated,
   });
   process.exit(0);
 }
@@ -17413,6 +17768,88 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+function validatePublishedQuestionNaturalnessGuards() {
+  if (!Array.isArray(questions)) return;
+
+  questions.forEach((question, index) => {
+    const label = question.id || `question[${index}]`;
+    const guardFailures = [
+      [
+        findQuestionStateWelfareEnglishNaturalnessIssue(question),
+        `${label} uses stilted state-welfare English wording`,
+      ],
+      [
+        findQuestionLuciaExplanationRoleScaffoldIssue(question),
+        `${label} uses Lucia role-scaffold explanation wording`,
+      ],
+      [
+        findQuestionUmeaDemonymSwedishNaturalnessIssue(question),
+        `${label} uses nonstandard Umeå demonym Swedish wording`,
+      ],
+      [
+        findQuestionQ071SocialInsuranceOverlapIssue(question),
+        `${label} overlaps q071/q156 state-welfare source coverage`,
+      ],
+      [
+        findQuestionTraditionCommonToDoEnglishIssue(question),
+        `${label} uses literal common-to-do English wording`,
+      ],
+      [
+        findQuestionMayDayEnglishNaturalnessIssue(question),
+        `${label} uses literal First of May English wording`,
+      ],
+      [
+        findQuestionReferendumAdvisorySwedishNaturalnessIssue(question),
+        `${label} uses ambiguous advisory-referendum Swedish wording`,
+      ],
+      [
+        findQuestionGoodFridayEnglishNaturalnessIssue(question),
+        `${label} uses stilted Good Friday English wording`,
+      ],
+      [
+        findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question),
+        `${label} uses literal Council of Europe work-for English wording`,
+      ],
+      [
+        findQuestionSaltsjobadenEnglishNaturalnessIssue(question),
+        `${label} uses stilted Saltsjöbaden Agreement English wording`,
+      ],
+      [
+        findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question),
+        `${label} uses stilted 1951 religious-freedom English wording`,
+      ],
+      [
+        findQuestionReligiousFreedomOptionParallelismIssue(question),
+        `${label} uses nonparallel religious-freedom option wording`,
+      ],
+      [
+        findQuestionTaxVatTwoConceptIssue(question),
+        `${label} combines tax liability and VAT purchase taxation in one learner-facing item`,
+      ],
+      [
+        findQuestionQ038OldVatDistractorIssue(question),
+        `${label} uses the old q038 VAT distractor wording`,
+      ],
+      [
+        findQuestionSecretBallotSingularSwedishIssue(question),
+        `${label} uses unnatural secret-ballot Swedish voting pronoun`,
+      ],
+      [
+        findQuestionGeneratedTrueFalseNaturalnessIssue(question),
+        `${label} contains a generated true/false grammar-splice stem`,
+      ],
+    ];
+
+    guardFailures.forEach(([issue, message]) => {
+      if (issue) fail(message);
+    });
+
+    const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
+    if (answerKeyPromptIssue) fail(answerKeyPromptIssue);
+  });
+}
+
+validatePublishedQuestionNaturalnessGuards();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-legal-route-parity')) {
@@ -17635,6 +18072,16 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const councilOfEuropeWorkForEnglishNaturalnessIssue =
+        findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
+      const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
+      const luciaExplanationRoleScaffoldIssue =
+        findQuestionLuciaExplanationRoleScaffoldIssue(question);
+      const goodFridayEnglishNaturalnessIssue =
+        findQuestionGoodFridayEnglishNaturalnessIssue(question);
+      const referendumAdvisorySwedishNaturalnessIssue =
+        findQuestionReferendumAdvisorySwedishNaturalnessIssue(question);
+      const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17670,6 +18117,36 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
+        fail(`${label} uses literal Council of Europe work-for English wording`);
+      } else {
+        questionCouncilOfEuropeWorkForEnglishNaturalnessValidated += 1;
+      }
+      if (mayDayEnglishNaturalnessIssue) {
+        fail(`${label} uses literal First of May English wording`);
+      } else {
+        questionMayDayEnglishNaturalnessValidated += 1;
+      }
+      if (luciaExplanationRoleScaffoldIssue) {
+        fail(`${label} uses Lucia role-scaffold explanation wording`);
+      } else {
+        questionLuciaExplanationRoleScaffoldValidated += 1;
+      }
+      if (goodFridayEnglishNaturalnessIssue) {
+        fail(`${label} uses stilted Good Friday English wording`);
+      } else {
+        questionGoodFridayEnglishNaturalnessValidated += 1;
+      }
+      if (referendumAdvisorySwedishNaturalnessIssue) {
+        fail(`${label} uses ambiguous advisory-referendum Swedish wording`);
+      } else {
+        questionReferendumAdvisorySwedishNaturalnessValidated += 1;
+      }
+      if (answerKeyPromptIssue) {
+        fail(answerKeyPromptIssue);
+      } else if (label === 'q013' || label === 'q045') {
+        derivedCivicStatementPromptMirrorValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -18161,6 +18638,12 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionCouncilOfEuropeWorkForEnglishNaturalnessValidated,
+      questionMayDayEnglishNaturalnessValidated,
+      questionLuciaExplanationRoleScaffoldValidated,
+      questionGoodFridayEnglishNaturalnessValidated,
+      questionReferendumAdvisorySwedishNaturalnessValidated,
+      derivedCivicStatementPromptMirrorValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

@@ -1234,8 +1234,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which is a way to influence and participate in society?",
-      "sv": "Vilket är ett sätt att påverka och delta i samhället?",
+      "en": "How can people influence society and participate in democracy?",
+      "sv": "Hur kan människor påverka samhället och delta i demokratin?",
       "zh-Hant": "哪一種方式可以影響並參與社會？",
       "zh-Hans": "哪一种方式可以影响并参与社会？",
       "ar": "ما الطريقة التي يمكن بها التأثير والمشاركة في المجتمع؟",
@@ -2050,7 +2050,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.",
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.",
       "zh-Hant": "公投可以就某個特定問題在全國、地區或市鎮舉行。它們是諮詢性的，所以政治人物不一定必須遵循結果。",
       "zh-Hans": "公投可以就某个特定问题在全国、地区或市镇举行。它们是咨询性的，所以政治人物不一定必须遵循结果。",
       "ar": "يمكن إجراء الاستفتاءات حول مسألة معينة على المستوى الوطني أو في إقليم أو بلدية. وهي استشارية، لذلك لا يجب على السياسيين بالضرورة اتباع النتيجة.",
@@ -17273,8 +17273,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
+      "en": "What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?",
       "zh-Hant": "對於非瑞典公民，哪項說法描述了他們在 kommun（市鎮）和 region（大區）選舉中的投票權？",
       "zh-Hans": "对于非瑞典公民，哪项说法描述了他们在 kommun（市镇）和 region（大区）选举中的投票权？",
       "ar": "أيُّ إجابةٍ تصف حقّ التصويت في انتخابات البلديات (kommun) والأقاليم (region) لمن ليسوا مواطنين سويديين؟",
@@ -21095,8 +21095,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which is a way to influence and participate in society?",
-      "sv": "Vilket svar stämmer bäst? Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Which answer best matches? How can people influence society and participate in democracy?",
+      "sv": "Vilket svar stämmer bäst? Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -21183,8 +21183,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to contact politicians, demonstrate, or sign a petition.",
-      "sv": "Ett sätt att påverka och delta i samhället är att kontakta politiker, demonstrera eller skriva på en namninsamling."
+      "en": "People can influence society and participate in democracy by contacting politicians, demonstrating, or signing a petition.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att kontakta politiker, demonstrera eller skriva på en namninsamling."
     },
     "opts": [
       {
@@ -21223,8 +21223,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "true_false",
     "q": {
-      "en": "One way to influence and participate in society is to ban others from voting in political elections.",
-      "sv": "Ett sätt att påverka och delta i samhället är att förbjuda andra från att rösta i politiska val."
+      "en": "People can influence society and participate in democracy by banning others from voting in political elections.",
+      "sv": "Människor kan påverka samhället och delta i demokratin genom att förbjuda andra från att rösta i politiska val."
     },
     "opts": [
       {
@@ -21263,8 +21263,8 @@
     "chapter": "Ch. 02 · Sweden's democratic system",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which is a way to influence and participate in society?",
-      "sv": "Välj rätt alternativ: Vilket är ett sätt att påverka och delta i samhället?"
+      "en": "Choose the correct option: How can people influence society and participate in democracy?",
+      "sv": "Välj rätt alternativ: Hur kan människor påverka samhället och delta i demokratin?"
     },
     "opts": [
       {
@@ -22951,7 +22951,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -22991,7 +22991,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23031,7 +23031,7 @@
     "answer": 1,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -23119,7 +23119,7 @@
     "answer": 0,
     "why": {
       "en": "Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.",
-      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet."
+      "sv": "Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -59835,8 +59835,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Vilket svar stämmer bäst? Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Which answer best matches? What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Vilket svar stämmer bäst? Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {
@@ -60006,8 +60006,8 @@
     "chapter": "Ch. 04 · Political elections and parties",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?",
-      "sv": "Välj rätt alternativ: Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
+      "en": "Choose the correct option: What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?",
+      "sv": "Välj rätt alternativ: Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?"
     },
     "opts": [
       {

@@ -348,8 +348,8 @@ const rawBaseQuestions: PracticeQuestion[] = [
     id: 'q013',
     chapterId: 'ch02',
     type: 'single_choice',
-    questionSv: 'Vilket är ett sätt att påverka och delta i samhället?',
-    questionEn: 'Which is a way to influence and participate in society?',
+    questionSv: 'Hur kan människor påverka samhället och delta i demokratin?',
+    questionEn: 'How can people influence society and participate in democracy?',
     options: [
       {
         id: 'a',
@@ -612,7 +612,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.',
     explanationEn:
       'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
     uhrReference: {
