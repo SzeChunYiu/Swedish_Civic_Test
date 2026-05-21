@@ -23719,8 +23719,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'true_false',
       q: {
-        en: 'That Sweden is a constitutional monarchy means that the head of state is a king or queen but lacks political power.',
-        sv: 'Att Sverige är en konstitutionell monarki betyder att statschefen är kung eller drottning men saknar politisk makt.',
+        en: "In Sweden's constitutional monarchy, the head of state is a king or queen without political power.",
+        sv: 'I Sveriges konstitutionella monarki är statschefen kung eller drottning utan politisk makt.',
       },
       opts: [
         {
@@ -23759,8 +23759,8 @@
       chapter: 'Ch. 03 · How Sweden is governed',
       type: 'true_false',
       q: {
-        en: 'That Sweden is a constitutional monarchy means that the monarch has all political power.',
-        sv: 'Att Sverige är en konstitutionell monarki betyder att monarken har all politisk makt.',
+        en: "In Sweden's constitutional monarchy, the monarch has all political power.",
+        sv: 'I Sveriges konstitutionella monarki har monarken all politisk makt.',
       },
       opts: [
         {
@@ -38971,8 +38971,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'true_false',
       q: {
-        en: 'That Sweden is a secular state means the state is religiously neutral and neither takes sides for nor discriminates against any religion.',
-        sv: 'Att Sverige är en sekulär stat betyder att staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion.',
+        en: 'Sweden is a secular state, so the state is religiously neutral and neither takes sides for nor discriminates against any religion.',
+        sv: 'Sverige är en sekulär stat, så staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion.',
       },
       opts: [
         {
@@ -39005,8 +39005,8 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'true_false',
       q: {
-        en: 'That Sweden is a secular state means everyone must belong to the same religion.',
-        sv: 'Att Sverige är en sekulär stat betyder att alla måste tillhöra samma religion.',
+        en: 'Sweden is a secular state, so everyone must belong to the same religion.',
+        sv: 'Sverige är en sekulär stat, så alla måste tillhöra samma religion.',
       },
       opts: [
         {
@@ -52336,8 +52336,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'That elections in a democracy are secret means no one has to reveal how they vote.',
-        sv: 'Att val i en demokrati är hemliga betyder att väljare inte behöver avslöja hur de röstar.',
+        en: 'Secret elections mean voters do not have to reveal how they vote.',
+        sv: 'Hemliga val betyder att väljare inte behöver avslöja hur de röstar.',
       },
       opts: [
         {
@@ -52370,8 +52370,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'That elections in a democracy are secret means only authorities may know how each person votes.',
-        sv: 'Att val i en demokrati är hemliga betyder att bara myndigheter får veta hur varje person röstar.',
+        en: 'Secret elections mean only authorities may know how each person votes.',
+        sv: 'Hemliga val betyder att bara myndigheter får veta hur varje person röstar.',
       },
       opts: [
         {
