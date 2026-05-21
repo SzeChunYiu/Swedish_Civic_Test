@@ -1,9 +1,8 @@
 import { Circle, Ellipse, G, Path, Svg } from 'react-native-svg';
 import type { SvgProps } from 'react-native-svg';
 
+import type { MascotExpression } from '../../lib/mascot/catalog';
 import { colors, flagColors } from '../../lib/theme';
-
-export type MascotExpression = 'idle' | 'happy' | 'oops' | 'thinking' | 'celebrate';
 
 export interface DalaMascotProps extends Omit<SvgProps, 'height' | 'viewBox' | 'width'> {
   accessibilityLabel?: string;
@@ -15,7 +14,7 @@ const expressionLabels: Record<MascotExpression, string> = {
   idle: 'Dala mascot idle',
   happy: 'Dala mascot happy',
   oops: 'Dala mascot oops',
-  thinking: 'Dala mascot thinking',
+  think: 'Dala mascot thinking',
   celebrate: 'Dala mascot celebrate',
 };
 
@@ -69,7 +68,7 @@ export function DalaMascot({
           fill={
             expression === 'oops'
               ? colors.warning
-              : expression === 'thinking'
+              : expression === 'think'
                 ? colors.teal
                 : flagColors.gold
           }
@@ -79,7 +78,7 @@ export function DalaMascot({
       {renderFace(expression)}
       {expression === 'happy' ? renderHappyAccent() : null}
       {expression === 'oops' ? renderOopsAccent() : null}
-      {expression === 'thinking' ? renderThinkingAccent() : null}
+      {expression === 'think' ? renderThinkingAccent() : null}
       {expression === 'celebrate' ? renderCelebrateAccent() : null}
     </Svg>
   );
@@ -103,7 +102,7 @@ function renderFace(expression: MascotExpression) {
     );
   }
 
-  if (expression === 'thinking') {
+  if (expression === 'think') {
     return (
       <G
         id="face"
