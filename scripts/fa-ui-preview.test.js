@@ -96,6 +96,6 @@ test('Persian preview does not enable runtime release', () => {
   assert.match(locales, /code: 'fa',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.fa.appAvailable, false);
   assert.equal(readiness.locales.fa.uiStrings, 'not_started');
-  assert.equal(readiness.locales.fa.questionContent, 'pilot_q001_q172_machine_assisted');
+  assert.equal(readiness.locales.fa.questionContent, 'pilot_q001_q173_machine_assisted');
   assert.equal(readiness.locales.fa.releaseGate, 'blocked');
 });
