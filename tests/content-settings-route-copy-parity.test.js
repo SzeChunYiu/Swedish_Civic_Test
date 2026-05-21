@@ -192,6 +192,37 @@ test('settings import summary copy keeps singular and plural labels for bookmark
   assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
 });
 
+test('settings import reset coverage proves no-write preview and feedback clearing', () => {
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    settingsSource,
+    /const handleResetImport = \(\) => \{[\s\S]*setImportText\(''\);[\s\S]*setImportPreview\(null\);[\s\S]*setImportFeedback\(null\);[\s\S]*\};/,
+    'Settings reset handler must clear text, preview, and feedback state',
+  );
+  assertIncludes(settingsSource, "importReset: 'Återställ importfält'", 'settings reset copy');
+  assertIncludes(settingsSource, "importReset: 'Reset import field'", 'settings reset copy');
+  assertIncludes(e2eSource, "resetName: 'Återställ importfält'", 'settings reset E2E labels');
+  assertIncludes(e2eSource, "resetName: 'Reset import field'", 'settings reset E2E labels');
+  assertIncludes(e2eSource, 'expectImportFormCleared', 'settings reset E2E clearing helper');
+  assertIncludes(e2eSource, 'JSON kunde inte läsas.', 'settings reset E2E error feedback');
+  assertIncludes(e2eSource, 'JSON could not be read.', 'settings reset E2E error feedback');
+  assertIncludes(
+    e2eSource,
+    'settings import reset clears preview and feedback without writes',
+    'settings reset E2E test',
+  );
+  assertIncludes(
+    e2eSource,
+    'await expectNoImportApplied(page, scenario.language);',
+    'settings reset E2E no-write assertions',
+  );
+});
+
 test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {
   const result = spawnSync(
     process.execPath,
