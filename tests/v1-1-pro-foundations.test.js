@@ -383,6 +383,27 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
           answeredAt: '2026-05-20T09:03:00.000Z',
           timeSpentSeconds: 10,
         },
+        {
+          questionId: 'q-rollover',
+          selectedOptionIds: ['a'],
+          isCorrect: true,
+          answeredAt: '2026-02-30T09:04:00.000Z',
+          timeSpentSeconds: 10,
+        },
+        {
+          questionId: 'q-local-time',
+          selectedOptionIds: ['a'],
+          isCorrect: true,
+          answeredAt: '2026-05-20T09:05:00',
+          timeSpentSeconds: 10,
+        },
+        {
+          questionId: 'q-future',
+          selectedOptionIds: ['a'],
+          isCorrect: true,
+          answeredAt: '2026-05-20T12:10:01.000Z',
+          timeSpentSeconds: 10,
+        },
       ],
     },
     {
@@ -402,6 +423,33 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
       startedAt: '2026-05-20T11:00:00.000Z',
       completedAt: '2026-05-20T11:20:00.000Z',
       score: -0.2,
+    },
+    {
+      id: 'rollover-completed-at',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-02-30T11:00:00.000Z',
+      completedAt: '2026-02-30T11:20:00.000Z',
+      score: 1,
+    },
+    {
+      id: 'local-time-completed-at',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-20T11:30:00',
+      completedAt: '2026-05-20T11:40:00',
+      score: 1,
+    },
+    {
+      id: 'future-completed-at',
+      mode: 'exam',
+      questionIds: [],
+      answers: [],
+      startedAt: '2026-05-20T12:06:00.000Z',
+      completedAt: '2026-05-20T12:10:01.000Z',
+      score: 1,
     },
   ];
   const recap = generateWeeklyRecap({
@@ -428,6 +476,24 @@ test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
           correctStreak: Infinity,
           wrongCount: 1,
           lastAnsweredAt: '2026-05-20T09:07:00.000Z',
+        },
+        qRollover: {
+          questionId: 'qRollover',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-02-30T09:08:00.000Z',
+        },
+        qLocalTime: {
+          questionId: 'qLocalTime',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T09:09:00',
+        },
+        qFuture: {
+          questionId: 'qFuture',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T12:10:01.000Z',
         },
       },
       sessions,
@@ -481,7 +547,11 @@ test('tierComparison: Pro Lifetime is study-only while Remove Ads stays non-Pro'
   assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
   assert.equal(adsRow.flag, undefined);
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'vid sessionsskifte', en: 'at session boundaries' });
+  assert.deepEqual(adsRow.pro, {
+    kind: 'text',
+    sv: 'vid sessionsskifte',
+    en: 'at session boundaries',
+  });
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -509,7 +579,9 @@ test('tierComparison: Swedish mock exam row uses övningsprov copy, not provexam
   assert.deepEqual(mockExamRow.adFree, { kind: 'text', sv: '3 / vecka', en: '3 / week' });
   assert.deepEqual(mockExamRow.pro, { kind: 'text', sv: 'obegränsat', en: 'unlimited' });
   assert.doesNotMatch(
-    [mockExamRow.labelSv, mockExamRow.free.sv, mockExamRow.adFree.sv, mockExamRow.pro.sv].join('\n'),
+    [mockExamRow.labelSv, mockExamRow.free.sv, mockExamRow.adFree.sv, mockExamRow.pro.sv].join(
+      '\n',
+    ),
     /\bprovexamen\b|\bprovexamina\b/i,
   );
 });
