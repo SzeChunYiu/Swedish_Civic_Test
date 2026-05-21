@@ -10,6 +10,9 @@ const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
 const scalarAssetReferenceAttributes = new Set(['href', 'poster', 'src']);
 const srcsetAssetReferenceAttributes = new Set(['imagesrcset', 'srcset']);
+const htmlAttributePattern = /\b([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+const htmlLinkTagPattern = /<link\b[^>]*>/gi;
+const cssUrlReferencePattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)/gi;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -53,10 +56,21 @@ function normalizeAssetReference(value) {
     .replace(/^\.?\//, '');
 }
 
-function normalizeLocalAssetReference(value) {
-  if (!value || isExternalAssetReference(value.trim())) return null;
-  const normalized = normalizeAssetReference(value);
-  return normalized || null;
+function normalizeLocalAssetReference(value, basePath = '') {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  if (!trimmed || /^var\(/i.test(trimmed) || isExternalAssetReference(trimmed)) return null;
+
+  const isRootRelative = trimmed.startsWith('/');
+  const normalized = normalizeAssetReference(trimmed);
+  if (!normalized) return null;
+
+  if (!basePath || isRootRelative) return normalized;
+  return normalizeRelativePath(path.posix.normalize(path.posix.join(basePath, normalized))).replace(
+    /^\.\//,
+    '',
+  );
 }
 
 function parseSrcsetAssetCandidates(value) {
@@ -85,13 +99,68 @@ function parseSrcsetAssetCandidates(value) {
   return candidates;
 }
 
-function extractLocalAssetReferences(indexHtml) {
-  const references = [];
-  const attributePattern = /\b([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+function parseHtmlAttributes(html) {
+  return Array.from(html.matchAll(htmlAttributePattern), (match) => ({
+    name: match[1].toLowerCase(),
+    value: match[2] ?? match[3] ?? match[4] ?? '',
+  }));
+}
 
-  for (const match of indexHtml.matchAll(attributePattern)) {
-    const attributeName = match[1].toLowerCase();
-    const attributeValue = match[2] ?? match[3] ?? match[4] ?? '';
+function parseCssUrlAssetCandidates(cssText) {
+  return Array.from(cssText.matchAll(cssUrlReferencePattern), (match) =>
+    (match[1] ?? match[2] ?? match[3] ?? '').trim(),
+  ).filter(Boolean);
+}
+
+function extractLinkedStylesheetReferences(indexHtml) {
+  const references = [];
+
+  for (const match of indexHtml.matchAll(htmlLinkTagPattern)) {
+    const attributes = new Map(
+      parseHtmlAttributes(match[0]).map((attribute) => [attribute.name, attribute.value]),
+    );
+    const relTokens = (attributes.get('rel') || '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (!relTokens.includes('stylesheet')) continue;
+
+    const reference = normalizeLocalAssetReference(attributes.get('href'));
+    if (reference) references.push(reference);
+  }
+
+  return [...new Set(references)];
+}
+
+function extractLinkedStylesheetAssetReferences(indexHtml, siteDir) {
+  const references = [];
+
+  for (const stylesheetPath of extractLinkedStylesheetReferences(indexHtml)) {
+    const absolutePath = path.join(siteDir, stylesheetPath);
+    if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) continue;
+
+    const cssText = fs.readFileSync(absolutePath, 'utf8');
+    const stylesheetBasePath = path.posix.dirname(stylesheetPath);
+    const basePath = stylesheetBasePath === '.' ? '' : stylesheetBasePath;
+
+    for (const candidate of parseCssUrlAssetCandidates(cssText)) {
+      const reference = normalizeLocalAssetReference(candidate, basePath);
+      if (reference) references.push(reference);
+    }
+  }
+
+  return references;
+}
+
+function extractLocalAssetReferences(indexHtml, options = {}) {
+  const siteDir = path.resolve(options.siteDir || defaultSiteDir);
+  const references = [];
+
+  for (const { name: attributeName, value: attributeValue } of parseHtmlAttributes(indexHtml)) {
+    if (attributeName === 'style') {
+      for (const candidate of parseCssUrlAssetCandidates(attributeValue)) {
+        const reference = normalizeLocalAssetReference(candidate);
+        if (reference) references.push(reference);
+      }
+      continue;
+    }
 
     if (scalarAssetReferenceAttributes.has(attributeName)) {
       const reference = normalizeLocalAssetReference(attributeValue);
@@ -107,12 +176,14 @@ function extractLocalAssetReferences(indexHtml) {
     }
   }
 
+  references.push(...extractLinkedStylesheetAssetReferences(indexHtml, siteDir));
+
   return [...new Set(references)];
 }
 
-function findAssetReferencesMissingFromManifest(indexHtml, manifest) {
+function findAssetReferencesMissingFromManifest(indexHtml, manifest, options = {}) {
   const manifestAssets = new Set(Object.keys(manifest.assets || {}));
-  return extractLocalAssetReferences(indexHtml).filter(
+  return extractLocalAssetReferences(indexHtml, options).filter(
     (assetPath) => !manifestAssets.has(assetPath),
   );
 }
@@ -264,6 +335,7 @@ module.exports = {
   isExternalAssetReference,
   listSiteAssetFiles,
   normalizeAssetReference,
+  parseCssUrlAssetCandidates,
   parseSrcsetAssetCandidates,
   writeAssetManifest,
 };
