@@ -13169,8 +13169,16 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'readRecoverably(progressStorage, progressStorageId, progressStateKey',
+      'readProgress must read persisted JSON recoverably through progressStateKey',
+    ],
+    [
+      'progressStorage?.getString(progressStateKey)',
       'readProgress must read persisted JSON through progressStateKey',
+    ],
+    [
+      'parseJsonRecoverably( readResult.value, progressStorageId, progressStateKey',
+      'readProgress must preserve parse failures as recoverable read warnings',
     ],
     [
       'return normalizeProgress(JSON.parse(rawProgress));',

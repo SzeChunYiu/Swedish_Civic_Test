@@ -285,6 +285,12 @@ export default function Screen() {
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const accessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
@@ -418,6 +424,12 @@ export default function Screen() {
         language={language}
         onDismiss={clearPersistenceWarning}
         warning={persistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
       />
 
       <View style={styles.section}>
