@@ -556,6 +556,37 @@ test('local study data import rejects nested purchase fields with useful detail'
   assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
 
+test('local study data import formats rejected field details with bounded head and tail', () => {
+  const storageById = createStorageById();
+  const { formatLocalStudyDataImportErrorDetail } = loadImportModule(storageById);
+  const longPath = [
+    'source',
+    ...Array.from({ length: 80 }, (_, index) => `level${index}`),
+    'removeAdsReceipt',
+  ].join('.');
+  const longKey = `removeAdsReceipt${'x'.repeat(120)}transaction`;
+
+  assert.equal(formatLocalStudyDataImportErrorDetail('purchase'), 'purchase');
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(longPath),
+    'source.level0.level1.[...].level79.removeAdsReceipt',
+  );
+  assert.equal(
+    formatLocalStudyDataImportErrorDetail(`source.${longKey}`),
+    `source.removeAdsReceiptxxxxxxxxxxxx...xtransaction`,
+  );
+  assert.equal(formatLocalStudyDataImportErrorDetail(''), null);
+  assert.equal(formatLocalStudyDataImportErrorDetail(), null);
+  assert.ok(
+    formatLocalStudyDataImportErrorDetail(longPath).length < 80,
+    'deep rejected field detail should stay short enough for alert text',
+  );
+  assert.ok(
+    !formatLocalStudyDataImportErrorDetail(longPath).includes('level2.level3.level4'),
+    'deep rejected field detail should not render the entire middle path',
+  );
+});
+
 test('local study data import rejects deeply nested payloads without throwing or writing', () => {
   const storageById = createStorageById();
   const { LOCAL_STUDY_DATA_IMPORT_MAX_BYTES, previewLocalStudyDataImport } =

@@ -87,16 +87,44 @@ test('settings import shows nested purchase-field detail before any writes', asy
   await dismissBlockingModals(page);
 
   const importInput = page.getByLabel('Klistra in JSON-export');
-  const payload = deepSourcePayload(48, '{"removeAdsReceipt":"local-test-receipt"}');
+  const payload = deepSourcePayload(480, '{"removeAdsReceipt":"local-test-receipt"}');
 
   await forceTextInputValue(importInput, payload);
   await page.getByRole('button', { name: 'Förhandsgranska lokal studiedataimport' }).click();
 
   const alert = page.getByRole('alert');
   await expect(alert).toContainText('Importen innehåller fält för köp i appen eller kvitton.');
-  await expect(alert).toContainText('Fält: source.level0.level1');
-  await expect(alert).toContainText('level47.removeAdsReceipt');
+  await expect(alert).toContainText('Fält: source.level0.level1.[...]');
+  await expect(alert).toContainText('level479.removeAdsReceipt');
+  await expect(alert).not.toContainText('level2.level3.level4');
   await expect(page.getByRole('button', { name: 'Bekräfta lokal studiedataimport' })).toHaveCount(
+    0,
+  );
+  await expectNoImportWrites(page);
+  expect(errors.get()).toEqual([]);
+});
+
+test('settings import shows English nested purchase-field detail before any writes', async ({
+  page,
+}) => {
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  const errors = collectConsoleAndPageErrors(page);
+
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  const importInput = page.getByLabel('Paste JSON export');
+  const payload = deepSourcePayload(480, '{"removeAdsReceipt":"local-test-receipt"}');
+
+  await forceTextInputValue(importInput, payload);
+  await page.getByRole('button', { name: 'Preview local study data import' }).click();
+
+  const alert = page.getByRole('alert');
+  await expect(alert).toContainText('The import contains purchase, receipt, or IAP fields.');
+  await expect(alert).toContainText('Field: source.level0.level1.[...]');
+  await expect(alert).toContainText('level479.removeAdsReceipt');
+  await expect(alert).not.toContainText('level2.level3.level4');
+  await expect(page.getByRole('button', { name: 'Confirm local study data import' })).toHaveCount(
     0,
   );
   await expectNoImportWrites(page);
