@@ -24,6 +24,7 @@ const {
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
 const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
+const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
@@ -63,6 +64,28 @@ function staticSomaliSegments(question) {
     [`${question.id}.why.so`, question.why?.so],
     ...(question.opts || []).map((option, index) => [`${question.id}.opts.${index}.so`, option.so]),
   ];
+}
+
+function staticPublicServiceSegments(question) {
+  return [
+    ...Object.entries(question.q || {}).map(([locale, value]) => [
+      `${question.id}.q.${locale}`,
+      value,
+    ]),
+    ...Object.entries(question.why || {}).map(([locale, value]) => [
+      `${question.id}.why.${locale}`,
+      value,
+    ]),
+    ...(question.opts || []).flatMap((option, index) =>
+      Object.entries(option || {}).map(([locale, value]) => [
+        `${question.id}.opts.${index}.${locale}`,
+        value,
+      ]),
+    ),
+  ].filter(([segment]) => {
+    const locale = String(segment).split('.').at(-1);
+    return !BASE_LOCALES.has(locale);
+  });
 }
 
 function staticQuestionToI18nQuestion(question) {

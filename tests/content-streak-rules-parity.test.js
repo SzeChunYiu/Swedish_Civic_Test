@@ -33,7 +33,7 @@ test('streak runtime parity validates daily habit rules', () => {
   const { calculateStreak, getLocalDateKey } = loadTs('lib/learning/streaks.ts');
   const today = '2026-05-15';
 
-  assert.equal(summary.streakRulesValidated, 13);
+  assert.equal(summary.streakRulesValidated, 17);
   assert.equal(summary.streakRulesParityValidated, true);
   assert.equal(calculateStreak([], today), 0);
   assert.equal(calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today), 3);
