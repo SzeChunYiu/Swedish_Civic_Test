@@ -26,6 +26,11 @@ type TimeHeatmapContract = {
   title: string;
 };
 
+type ProvenanceSourceNoteContract = {
+  buttonName: RegExp;
+  sourceNoteText: string;
+};
+
 async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryContract) {
   const summary = page
     .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
@@ -48,6 +53,37 @@ async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
 
 async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
+}
+
+async function expectProvenanceSourceNoteToggle(
+  page: Page,
+  contract: ProvenanceSourceNoteContract,
+) {
+  const provenance = page.getByRole('button', { name: contract.buttonName }).first();
+  const sourceNote = page.getByText(contract.sourceNoteText, { exact: true });
+
+  await expect(provenance).toBeVisible();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote.first()).toBeVisible();
+
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+
+  await provenance.evaluate((element: HTMLElement) => element.blur());
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+
+  await provenance.focus();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote.first()).toBeVisible();
+
+  await page.keyboard.press('Enter');
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
 }
 
 async function openExamWithLanguage(page: Page, language: AppLanguage) {
@@ -89,6 +125,10 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(
     page.getByRole('button', { name: /Källtyp: UHR-källa\. Källanteckning:/ }),
   ).toHaveCount(totalQuestions);
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Källtyp: UHR-källa\. Källanteckning:/,
+    sourceNoteText: 'Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus.',
+  });
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -118,6 +158,10 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Källtyp: UHR-källa\. Källanteckning:/,
+    sourceNoteText: 'Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus.',
+  });
   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
   await expectNoPassVerdictCopy(page);
@@ -149,6 +193,10 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(
     page.getByRole('button', { name: /Provenance: UHR source\. Source note:/ }),
   ).toHaveCount(totalQuestions);
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Provenance: UHR source\. Source note:/,
+    sourceNoteText: "Source note: Based on UHR's study material Sverige i fokus.",
+  });
   await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
@@ -185,6 +233,10 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Provenance: UHR source\. Source note:/,
+    sourceNoteText: "Source note: Based on UHR's study material Sverige i fokus.",
+  });
   await expect(page.getByText('Submitted results are final')).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
