@@ -6671,3 +6671,232 @@ html[dir='rtl'] .lang-menu {
     padding: 12px;
   }
 }
+
+/* ------------------------------------------------------------------
+   EBOOK READER BOX OPTIMIZATION ROUND
+   The long-form reader now uses the same tactile study-card system:
+   boxed sidebar navigation, clearer reading surface, and raised callouts.
+------------------------------------------------------------------ */
+
+.ebook__sidebar,
+.ebook__reader {
+  background: var(--card-surface);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+}
+
+.ebook__sidebar::before,
+.ebook__reader::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  background: var(--card-rail);
+  opacity: 0.9;
+  z-index: -1;
+}
+
+.ebook__reader::after {
+  content: '';
+  position: absolute;
+  inset: -18% -12% auto auto;
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ebook__sidebar {
+  border-radius: 24px;
+  padding: 20px 16px 18px 22px;
+}
+
+.ebook__brand,
+.ebook__sub,
+.ebook__local-note,
+.ebook__nav {
+  position: relative;
+  z-index: 1;
+}
+
+.ebook__local-note {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 106, 167, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+}
+
+.ebook__nav {
+  border-top: 0;
+  gap: 7px;
+}
+
+.ebook__nav a {
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 14px;
+  padding: 11px 12px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.ebook__nav a:hover {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(0, 106, 167, 0.28);
+  box-shadow: var(--card-shadow);
+  transform: translateX(2px);
+}
+
+.ebook__nav a.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 0 16px 32px -24px rgba(11, 31, 51, 0.88);
+  color: var(--gold);
+}
+
+.ebook__nav a.is-active .ebook__nav-n {
+  color: var(--gold);
+}
+
+.ebook__reader {
+  border-radius: 28px;
+  padding-left: clamp(34px, 5vw, 70px);
+}
+
+.ebook__crumb,
+.ebook__h1,
+.ebook__lede,
+.ebook__reader h2,
+.ebook__reader h3,
+.ebook__reader p,
+.ebook__reader ul,
+.ebook__reader ol,
+.ebook__study-actions,
+.ebook__footnotes,
+.ebook__provenance-badge {
+  position: relative;
+  z-index: 1;
+}
+
+.ebook__provenance-badge,
+.ebook__footnotes,
+.ebook__study-actions {
+  background: rgba(255, 255, 255, 0.46) !important;
+  border-color: rgba(0, 106, 167, 0.12) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+
+.ebook__study-actions {
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.ebook__reader blockquote,
+.ebook__factbox {
+  background:
+    linear-gradient(135deg, rgba(254, 204, 0, 0.14), rgba(254, 204, 0, 0) 46%),
+    var(--card-surface);
+  border: 1px solid rgba(217, 169, 0, 0.38);
+  border-left: 7px solid var(--gold);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  z-index: 1;
+}
+
+.ebook__reader h2 {
+  border-top: 0;
+  padding-top: 18px;
+}
+
+.ebook__reader h2:not(:first-of-type)::before {
+  content: '';
+  display: block;
+  height: 1px;
+  margin: -18px 0 28px;
+  background: linear-gradient(90deg, var(--card-border), transparent);
+}
+
+:root[data-theme='dark'] .ebook__sidebar,
+:root[data-theme='dark'] .ebook__reader {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .ebook__local-note,
+:root[data-theme='dark'] .ebook__nav a,
+:root[data-theme='dark'] .ebook__provenance-badge,
+:root[data-theme='dark'] .ebook__footnotes,
+:root[data-theme='dark'] .ebook__study-actions {
+  background: rgba(255, 255, 255, 0.045) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+:root[data-theme='dark'] .ebook__nav a.is-active {
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
+  color: var(--gold);
+}
+
+:root[data-theme='dark'] .ebook__reader blockquote,
+:root[data-theme='dark'] .ebook__factbox {
+  background:
+    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%),
+    var(--card-surface);
+  border-color: rgba(254, 204, 0, 0.26);
+}
+
+:root[data-theme='dark'] .ebook__factbox p,
+:root[data-theme='dark'] .ebook__factbox h4,
+:root[data-theme='dark'] .ebook__reader blockquote,
+:root[data-theme='dark'] .ebook__reader blockquote p {
+  color: var(--ink) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ebook__nav a {
+    transition: none;
+  }
+  .ebook__nav a:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .ebook__sidebar {
+    max-height: none;
+  }
+  .ebook__nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .ebook {
+    padding-inline: 18px;
+  }
+  .ebook__sidebar,
+  .ebook__reader {
+    border-radius: 22px;
+  }
+  .ebook__sidebar::before,
+  .ebook__reader::before {
+    width: 5px;
+  }
+  .ebook__reader {
+    padding: 36px 22px 42px 26px;
+  }
+  .ebook__nav {
+    grid-template-columns: 1fr;
+  }
+}
