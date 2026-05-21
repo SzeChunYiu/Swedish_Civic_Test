@@ -24,6 +24,16 @@ import {
   normalizeImportedSettings,
   useSettingsStore,
 } from './settingsStore';
+import {
+  type ImportableAccessibilityPreferences,
+  normalizeImportedAccessibilityPreferences,
+  useAccessibilityStore,
+} from './accessibilityStore';
+import {
+  type ImportableCompanion,
+  normalizeImportedCompanion,
+  useCompanionStore,
+} from './companionStore';
 import { LOCAL_STUDY_DATA_IMPORT_VERSION } from './localStudyDataImport';
 
 export type LocalStudyDataExportSnapshot = {
@@ -34,6 +44,8 @@ export type LocalStudyDataExportSnapshot = {
   mistakeReview: PersistedMistakeReview;
   reviews: PersistedReviews;
   settings: ImportableSettings;
+  accessibility: ImportableAccessibilityPreferences;
+  companion: ImportableCompanion;
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist;
   highlights: PersistedHighlights;
 };
@@ -77,6 +89,23 @@ function settingsSnapshot(): ImportableSettings {
   });
 }
 
+function accessibilitySnapshot(): ImportableAccessibilityPreferences {
+  const state = useAccessibilityStore.getState();
+  return normalizeImportedAccessibilityPreferences({
+    easyReadFont: state.easyReadFont,
+    fontSizeStep: state.fontSizeStep,
+    audioPlaybackRate: state.audioPlaybackRate,
+    listenFirstAudioEnabled: state.listenFirstAudioEnabled,
+    themeMode: state.themeMode,
+  });
+}
+
+function companionSnapshot(): ImportableCompanion {
+  return normalizeImportedCompanion({
+    selectedId: useCompanionStore.getState().selectedId,
+  });
+}
+
 function citizenshipRequirementsSnapshot(): PersistedCitizenshipRequirementsChecklist {
   return normalizeImportedCitizenshipRequirementsChecklist({
     checkedAreaIds: useCitizenshipRequirementsChecklistStore.getState().checkedAreaIds,
@@ -100,6 +129,8 @@ export function buildLocalStudyDataExportSnapshot(
     mistakeReview: mistakeReviewSnapshot(),
     reviews: reviewsSnapshot(),
     settings: settingsSnapshot(),
+    accessibility: accessibilitySnapshot(),
+    companion: companionSnapshot(),
     citizenshipRequirements: citizenshipRequirementsSnapshot(),
     highlights: highlightsSnapshot(),
   };

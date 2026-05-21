@@ -131,6 +131,54 @@ test('accessibilityStore: successful writes persist values and clear warning', (
   assert.equal(storage.values.get('a11y.themeMode.v1'), 'dark');
 });
 
+test('accessibilityStore: local study data import normalizes portable preferences', () => {
+  const storage = createMemoryMMKV({
+    'a11y.fontSizeStep.v1': 2,
+    'a11y.audioPlaybackRate.v1': 0.75,
+    'a11y.themeMode.v1': 'dark',
+  });
+  const {
+    importAccessibilityPreferencesSnapshot,
+    normalizeImportedAccessibilityPreferences,
+    useAccessibilityStore,
+  } = loadTsWithStorage(repoRoot, 'lib/storage/accessibilityStore.ts', {
+    accessibility: storage,
+  });
+
+  assert.deepEqual(
+    normalizeImportedAccessibilityPreferences({
+      easyReadFont: true,
+      fontSizeStep: 8,
+      audioPlaybackRate: 1.5,
+      listenFirstAudioEnabled: true,
+      themeMode: 'sepia',
+    }),
+    {
+      easyReadFont: true,
+      listenFirstAudioEnabled: true,
+    },
+  );
+
+  importAccessibilityPreferencesSnapshot({
+    easyReadFont: true,
+    fontSizeStep: 3,
+    audioPlaybackRate: 1.25,
+    listenFirstAudioEnabled: true,
+    themeMode: 'system',
+  });
+
+  assert.equal(useAccessibilityStore.getState().easyReadFont, true);
+  assert.equal(useAccessibilityStore.getState().fontSizeStep, 3);
+  assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1.25);
+  assert.equal(useAccessibilityStore.getState().listenFirstAudioEnabled, true);
+  assert.equal(useAccessibilityStore.getState().themeMode, 'system');
+  assert.equal(storage.values.get('a11y.easyReadFont.v1'), true);
+  assert.equal(storage.values.get('a11y.fontSizeStep.v1'), 3);
+  assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1.25);
+  assert.equal(storage.values.get('a11y.listenFirstAudio.v1'), true);
+  assert.equal(storage.values.get('a11y.themeMode.v1'), 'system');
+});
+
 test('accessibilityStore: runtime writes and font scale reads normalize invalid values', () => {
   const storage = createMemoryMMKV();
   const { fontScaleFor, useAccessibilityStore } = loadTsWithStorage(

@@ -24,6 +24,16 @@ import {
   type ImportableSettings,
 } from './settingsStore';
 import {
+  importAccessibilityPreferencesSnapshot,
+  normalizeImportedAccessibilityPreferences,
+  type ImportableAccessibilityPreferences,
+} from './accessibilityStore';
+import {
+  importCompanionSnapshot,
+  normalizeImportedCompanion,
+  type ImportableCompanion,
+} from './companionStore';
+import {
   importCitizenshipRequirementsChecklistSnapshot,
   normalizeImportedCitizenshipRequirementsChecklist,
   type PersistedCitizenshipRequirementsChecklist,
@@ -50,6 +60,8 @@ export type LocalStudyDataImportSummary = {
   fsrsReviewCardCount: number;
   gradedReviewDayCount: number;
   settingCount: number;
+  accessibilityPreferenceCount: number;
+  companionPreferenceCount: number;
   citizenshipRequirementChecklistCount: number;
   highlightCount: number;
 };
@@ -59,6 +71,8 @@ export type LocalStudyDataImportPreview = {
   mistakeReview: PersistedMistakeReview;
   reviews: PersistedReviews;
   settings: ImportableSettings;
+  accessibility: ImportableAccessibilityPreferences;
+  companion: ImportableCompanion;
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist;
   highlights: PersistedHighlights;
   sections: {
@@ -66,6 +80,8 @@ export type LocalStudyDataImportPreview = {
     mistakeReview: boolean;
     reviews: boolean;
     settings: boolean;
+    accessibility: boolean;
+    companion: boolean;
     streakFreezeState: boolean;
     citizenshipRequirements: boolean;
     highlights: boolean;
@@ -82,9 +98,11 @@ export type LocalStudyDataImportResult =
     };
 
 const allowedTopLevelKeys = new Set([
+  'accessibility',
   'appVersion',
   'citizenshipRequirements',
   'citizenshipRequirementsChecklist',
+  'companion',
   'exportedAt',
   'exportedFrom',
   'fsrsReviews',
@@ -236,6 +254,14 @@ function readSettingsSection(value: Record<string, unknown>): unknown {
   return value.settings;
 }
 
+function readAccessibilitySection(value: Record<string, unknown>): unknown {
+  return value.accessibility;
+}
+
+function readCompanionSection(value: Record<string, unknown>): unknown {
+  return value.companion;
+}
+
 function readCitizenshipRequirementsSection(value: Record<string, unknown>): unknown {
   if (value.citizenshipRequirements !== undefined) return value.citizenshipRequirements;
   if (value.citizenshipRequirementsChecklist !== undefined) {
@@ -256,6 +282,16 @@ function countImportedSettings(settings: ImportableSettings): number {
   return Object.values(settings).filter((value) => value !== undefined).length;
 }
 
+function countImportedAccessibilityPreferences(
+  accessibility: ImportableAccessibilityPreferences,
+): number {
+  return Object.values(accessibility).filter((value) => value !== undefined).length;
+}
+
+function countImportedCompanion(companion: ImportableCompanion): number {
+  return companion.selectedId === undefined ? 0 : 1;
+}
+
 function countImportedHighlights(highlights: PersistedHighlights): number {
   return Object.values(highlights.byChapter).reduce((count, list) => count + list.length, 0);
 }
@@ -265,6 +301,8 @@ function buildSummary(
   mistakeReview: PersistedMistakeReview,
   reviews: PersistedReviews,
   settings: ImportableSettings,
+  accessibility: ImportableAccessibilityPreferences,
+  companion: ImportableCompanion,
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist,
   highlights: PersistedHighlights,
   sections: LocalStudyDataImportPreview['sections'],
@@ -282,6 +320,10 @@ function buildSummary(
     fsrsReviewCardCount: sections.reviews ? Object.keys(reviews.byId).length : 0,
     gradedReviewDayCount: sections.reviews ? Object.keys(reviews.gradedPerDay).length : 0,
     settingCount: sections.settings ? countImportedSettings(settings) : 0,
+    accessibilityPreferenceCount: sections.accessibility
+      ? countImportedAccessibilityPreferences(accessibility)
+      : 0,
+    companionPreferenceCount: sections.companion ? countImportedCompanion(companion) : 0,
     citizenshipRequirementChecklistCount: sections.citizenshipRequirements
       ? citizenshipRequirements.checkedAreaIds.length
       : 0,
@@ -299,6 +341,8 @@ function hasImportableData(summary: LocalStudyDataImportSummary): boolean {
     summary.fsrsReviewCardCount > 0 ||
     summary.gradedReviewDayCount > 0 ||
     summary.settingCount > 0 ||
+    summary.accessibilityPreferenceCount > 0 ||
+    summary.companionPreferenceCount > 0 ||
     summary.citizenshipRequirementChecklistCount > 0 ||
     summary.highlightCount > 0
   );
@@ -359,6 +403,8 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
   const mistakeReviewInput = readMistakeReviewSection(parsed);
   const reviewInput = readReviewSection(parsed);
   const settingsInput = readSettingsSection(parsed);
+  const accessibilityInput = readAccessibilitySection(parsed);
+  const companionInput = readCompanionSection(parsed);
   const citizenshipRequirementsInput = readCitizenshipRequirementsSection(parsed);
   const highlightsInput = readHighlightsSection(parsed);
   const sections = {
@@ -366,6 +412,8 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     mistakeReview: mistakeReviewInput !== undefined,
     reviews: reviewInput !== undefined,
     settings: settingsInput !== undefined,
+    accessibility: accessibilityInput !== undefined,
+    companion: companionInput !== undefined,
     streakFreezeState: isRecord(progressInput) && hasOwnKey(progressInput, 'streakFreezeState'),
     citizenshipRequirements: citizenshipRequirementsInput !== undefined,
     highlights: highlightsInput !== undefined,
@@ -376,6 +424,8 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     mistakeReview: normalizeImportedMistakeReview(mistakeReviewInput),
     reviews: normalizeImportedReviewState(reviewInput),
     settings: normalizeImportedSettings(settingsInput),
+    accessibility: normalizeImportedAccessibilityPreferences(accessibilityInput),
+    companion: normalizeImportedCompanion(companionInput),
     citizenshipRequirements: normalizeImportedCitizenshipRequirementsChecklist(
       citizenshipRequirementsInput,
     ),
@@ -390,6 +440,8 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
       fsrsReviewCardCount: 0,
       gradedReviewDayCount: 0,
       settingCount: 0,
+      accessibilityPreferenceCount: 0,
+      companionPreferenceCount: 0,
       citizenshipRequirementChecklistCount: 0,
       highlightCount: 0,
     },
@@ -399,6 +451,8 @@ export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImpo
     preview.mistakeReview,
     preview.reviews,
     preview.settings,
+    preview.accessibility,
+    preview.companion,
     preview.citizenshipRequirements,
     preview.highlights,
     preview.sections,
@@ -416,6 +470,10 @@ export function applyLocalStudyDataImport(
   if (preview.sections.mistakeReview) importMistakeReviewSnapshot(preview.mistakeReview);
   if (preview.sections.reviews) importReviewSnapshot(preview.reviews);
   if (preview.sections.settings) importSettingsSnapshot(preview.settings);
+  if (preview.sections.accessibility) {
+    importAccessibilityPreferencesSnapshot(preview.accessibility);
+  }
+  if (preview.sections.companion) importCompanionSnapshot(preview.companion);
   if (preview.sections.citizenshipRequirements) {
     importCitizenshipRequirementsChecklistSnapshot(preview.citizenshipRequirements);
   }
