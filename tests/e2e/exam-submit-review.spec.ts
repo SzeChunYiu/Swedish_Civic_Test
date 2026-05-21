@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import {
   dismissBlockingModals,
@@ -57,6 +57,16 @@ async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
 
 async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
+}
+
+async function expectTapTarget(locator: Locator, label: string) {
+  await expect(locator, `${label} should be visible`).toBeVisible();
+  await locator.scrollIntoViewIfNeeded();
+
+  const box = await locator.boundingBox();
+  expect(box, `${label} should render a measurable target`).not.toBeNull();
+  expect(box!.width, `${label} width`).toBeGreaterThanOrEqual(44);
+  expect(box!.height, `${label} height`).toBeGreaterThanOrEqual(44);
 }
 
 async function expectProvenanceSourceNoteToggle(
@@ -133,6 +143,16 @@ test('mock exam requires all answers before showing Swedish score and source-bac
     buttonName: /Källtyp: UHR-källa\. Källanteckning:/,
     sourceNoteText: 'Källanteckning: Baserad på UHR:s studiematerial Sverige i fokus.',
   });
+  const firstFlagControl = page.getByRole('button', {
+    name: 'Markera fråga 1 för genomgång',
+  });
+  await expectTapTarget(firstFlagControl, 'Swedish flag-for-review control');
+  await firstFlagControl.click();
+  await expect(
+    page.getByRole('button', { name: 'Ta bort genomgångsflagga från fråga 1' }),
+  ).toBeVisible();
+  await expect(page.getByText('1 flaggad för genomgång')).toBeVisible();
+  await expect(page.getByRole('tab', { name: /Fråga 1\. Flaggad\./ })).toBeVisible();
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -158,6 +178,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   });
   await expect(page.getByText('Kapitelöversikt')).toBeVisible();
   await expect(page.getByText('Frågegenomgång')).toBeVisible();
+  await expect(page.getByText('Flaggad för genomgång').first()).toBeVisible();
   await expect(page.getByText('Valt svar').first()).toBeVisible();
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
@@ -201,6 +222,16 @@ test('mock exam review follows English support mode', async ({ page }) => {
     buttonName: /Provenance: UHR source\. Source note:/,
     sourceNoteText: "Source note: Based on UHR's study material Sverige i fokus.",
   });
+  const firstFlagControl = page.getByRole('button', {
+    name: 'Flag question 1 for review',
+  });
+  await expectTapTarget(firstFlagControl, 'English flag-for-review control');
+  await firstFlagControl.click();
+  await expect(
+    page.getByRole('button', { name: 'Remove review flag from question 1' }),
+  ).toBeVisible();
+  await expect(page.getByText('1 question flagged for review')).toBeVisible();
+  await expect(page.getByRole('tab', { name: /Question 1\. Flagged\./ })).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
@@ -233,6 +264,7 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText('Chapter breakdown')).toBeVisible();
   await expect(page.getByText('The country of Sweden')).toBeVisible();
   await expect(page.getByText('Question review')).toBeVisible();
+  await expect(page.getByText('Flagged for review').first()).toBeVisible();
   await expect(page.getByText('Selected answer').first()).toBeVisible();
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();

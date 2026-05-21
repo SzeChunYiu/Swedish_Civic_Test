@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
+import {
+  QuestionNavigator,
+  type QuestionNavigatorItemState,
+} from '../../components/QuestionNavigator';
 import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';
@@ -45,11 +49,17 @@ type ExamRouteCopy = {
   correctCount: (correctCount: number, totalCount: number) => string;
   examResultTitle: string;
   extraExamUnavailable: string;
+  flagCount: (flaggedCount: number) => string;
+  flagQuestionAccessibilityLabel: (questionNumber: number) => string;
+  flagQuestionLabel: string;
+  flaggedQuestionLabel: string;
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
   mockExamTitle: string;
+  navigatorStateLabels: Pick<Record<QuestionNavigatorItemState, string>, 'flagged'>;
   nextExamTitle: string;
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
+  questionNavigationLabel: string;
   questionReviewTitle: string;
   resultBadge: string;
   resultNote: string;
@@ -67,6 +77,8 @@ type ExamRouteCopy = {
   timedSimulationBadge: string;
   timeExpiredBadge: string;
   timeExpiredResultNote: string;
+  unflagQuestionAccessibilityLabel: (questionNumber: number) => string;
+  unflagQuestionLabel: string;
   unlockFailure: string;
 };
 
@@ -100,12 +112,20 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
     examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
+    flagCount: (flaggedCount) =>
+      flaggedCount === 1 ? '1 flaggad för genomgång' : `${flaggedCount} flaggade för genomgång`,
+    flagQuestionAccessibilityLabel: (questionNumber) =>
+      `Markera fråga ${questionNumber} för genomgång`,
+    flagQuestionLabel: 'Flagga för genomgång',
+    flaggedQuestionLabel: 'Flaggad för genomgång',
     heroSubtitle: (durationMinutes, questionCount) =>
       `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     mockExamTitle: 'Övningsprov',
+    navigatorStateLabels: { flagged: 'Flaggad' },
     nextExamTitle: 'Nästa prov',
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
+    questionNavigationLabel: 'Frågenavigering',
     questionReviewTitle: 'Frågegenomgång',
     resultBadge: 'Övningsresultat',
     resultNote:
@@ -124,6 +144,9 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
     timeExpiredResultNote: ' Obesvarade frågor räknas som fel och markeras som inte besvarade.',
+    unflagQuestionAccessibilityLabel: (questionNumber) =>
+      `Ta bort genomgångsflagga från fråga ${questionNumber}`,
+    unflagQuestionLabel: 'Ta bort flagga',
     unlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
   },
   en: {
@@ -153,12 +176,22 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
     examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
+    flagCount: (flaggedCount) =>
+      flaggedCount === 1
+        ? '1 question flagged for review'
+        : `${flaggedCount} questions flagged for review`,
+    flagQuestionAccessibilityLabel: (questionNumber) =>
+      `Flag question ${questionNumber} for review`,
+    flagQuestionLabel: 'Flag for review',
+    flaggedQuestionLabel: 'Flagged for review',
     heroSubtitle: (durationMinutes, questionCount) =>
       `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
     mockExamTitle: 'Mock exam',
+    navigatorStateLabels: { flagged: 'Flagged' },
     nextExamTitle: 'Next exam',
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
+    questionNavigationLabel: 'Question navigation',
     questionReviewTitle: 'Question review',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
@@ -176,6 +209,9 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
     timeExpiredResultNote: ' Unanswered questions count as incorrect and are marked Not answered.',
+    unflagQuestionAccessibilityLabel: (questionNumber) =>
+      `Remove review flag from question ${questionNumber}`,
+    unflagQuestionLabel: 'Remove flag',
     unlockFailure: 'Extra mock exam could not be unlocked right now.',
   },
 };
@@ -186,6 +222,7 @@ function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage
 
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
+  const questionCardRefs = useRef<Record<string, View | null>>({});
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
@@ -201,11 +238,13 @@ export default function Screen() {
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [answerTimings, setAnswerTimings] = useState<Record<string, number>>({});
+  const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Record<string, true>>({});
   const [submitted, setSubmitted] = useState(false);
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [examUnlocked, setExamUnlocked] = useState(false);
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
+  const [focusedExamQuestionId, setFocusedExamQuestionId] = useState<string | null>(null);
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
@@ -266,6 +305,19 @@ export default function Screen() {
     : [];
   const reviewItems = result ? buildExamReviewItems(examQuestions, answers) : [];
   const answeredCount = Object.keys(answers).length;
+  const flaggedCount = Object.keys(flaggedQuestionIds).length;
+  const answeredIndexes = useMemo(
+    () => examQuestions.flatMap((question, index) => (answers[question.id] ? [index] : [])),
+    [answers, examQuestions],
+  );
+  const flaggedIndexes = useMemo(
+    () =>
+      examQuestions.flatMap((question, index) => (flaggedQuestionIds[question.id] ? [index] : [])),
+    [examQuestions, flaggedQuestionIds],
+  );
+  const focusedExamQuestionIndex = focusedExamQuestionId
+    ? examQuestions.findIndex((question) => question.id === focusedExamQuestionId)
+    : null;
   const canSubmit = answeredCount === examQuestions.length && examQuestions.length > 0;
   const endedByTime = Boolean(result && remainingSeconds <= 0);
   const submittedExamSession = useMemo(
@@ -325,9 +377,11 @@ export default function Screen() {
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
     setAnswerTimings({});
+    setFlaggedQuestionIds({});
     setSubmitted(false);
     setSubmittedAt(null);
     setCompletionRecorded(false);
+    setFocusedExamQuestionId(null);
     setFocusedReviewQuestionId(null);
     setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
@@ -351,6 +405,38 @@ export default function Screen() {
       ),
     }));
   }, []);
+
+  const toggleFlaggedQuestion = useCallback((questionId: string) => {
+    setFlaggedQuestionIds((current) => {
+      if (current[questionId]) {
+        const { [questionId]: _removed, ...rest } = current;
+        return rest;
+      }
+
+      return { ...current, [questionId]: true };
+    });
+  }, []);
+
+  const jumpToExamQuestion = useCallback(
+    (index: number) => {
+      const question = examQuestions[index];
+      if (!question) return;
+
+      setFocusedExamQuestionId(question.id);
+
+      const scrollView = scrollViewRef.current;
+      const questionCard = questionCardRefs.current[question.id];
+      const scrollHandle = scrollView ? findNodeHandle(scrollView) : null;
+      if (!scrollView || !questionCard || !scrollHandle) return;
+
+      questionCard.measureLayout(
+        scrollHandle,
+        (_x, y) => scrollView.scrollTo({ animated: true, y: Math.max(0, y - space[2]) }),
+        () => {},
+      );
+    },
+    [examQuestions],
+  );
 
   const jumpToReviewQuestion = useCallback((questionId: string) => {
     setFocusedReviewQuestionId(questionId);
@@ -586,9 +672,14 @@ export default function Screen() {
           >
             <View style={styles.reviewHeader}>
               <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
-              <Badge tone={item.isCorrect ? 'green' : 'orange'}>
-                {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
-              </Badge>
+              <View style={styles.reviewBadges}>
+                {flaggedQuestionIds[item.questionId] ? (
+                  <Badge tone="warm">{copy.flaggedQuestionLabel}</Badge>
+                ) : null}
+                <Badge tone={item.isCorrect ? 'green' : 'orange'}>
+                  {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
+                </Badge>
+              </View>
             </View>
             <ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />
             <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
@@ -625,7 +716,7 @@ export default function Screen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView ref={scrollViewRef} style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <Badge tone="orange">{copy.timedSimulationBadge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
@@ -648,11 +739,52 @@ export default function Screen() {
         <Text style={styles.subtitle}>
           {copy.answeredCount(answeredCount, examQuestions.length)}
         </Text>
+        <Text style={styles.subtitle}>{copy.flagCount(flaggedCount)}</Text>
+        <QuestionNavigator
+          accessibilityLabel={copy.questionNavigationLabel}
+          answeredIndexes={answeredIndexes}
+          currentIndex={
+            focusedExamQuestionIndex == null || focusedExamQuestionIndex < 0
+              ? null
+              : focusedExamQuestionIndex
+          }
+          flaggedIndexes={flaggedIndexes}
+          languageOverride={language}
+          onSelect={jumpToExamQuestion}
+          stateLabels={copy.navigatorStateLabels}
+          style={styles.questionNavigator}
+          totalCount={examQuestions.length}
+        />
       </View>
 
       {examQuestions.map((question, index) => (
-        <View key={question.id} style={styles.questionCard}>
-          <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+        <View
+          key={question.id}
+          ref={(node) => {
+            questionCardRefs.current[question.id] = node;
+          }}
+          style={[
+            styles.questionCard,
+            focusedExamQuestionId === question.id ? styles.reviewCardFocused : null,
+          ]}
+        >
+          <View style={styles.questionHeader}>
+            <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+            <Button
+              accessibilityLabel={
+                flaggedQuestionIds[question.id]
+                  ? copy.unflagQuestionAccessibilityLabel(index + 1)
+                  : copy.flagQuestionAccessibilityLabel(index + 1)
+              }
+              accessibilityRole="button"
+              accessibilityState={{ selected: Boolean(flaggedQuestionIds[question.id]) }}
+              onPress={() => toggleFlaggedQuestion(question.id)}
+              style={styles.flagButton}
+              variant="secondary"
+            >
+              {flaggedQuestionIds[question.id] ? copy.flaggedQuestionLabel : copy.flagQuestionLabel}
+            </Button>
+          </View>
           <ProvenanceBadge language={language} question={question} />
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <QuestionSourceCitation
@@ -740,6 +872,9 @@ const styles = StyleSheet.create({
     gap: space[0.5],
     padding: space[2],
   },
+  questionNavigator: {
+    marginTop: space[0.5],
+  },
   accessCard: {
     backgroundColor: colors.surfaceWarm,
     borderRadius: radius.card,
@@ -758,11 +893,18 @@ const styles = StyleSheet.create({
     gap: space[1.5],
     padding: space[2],
   },
+  questionHeader: {
+    alignItems: 'flex-start',
+    gap: space[1],
+  },
   questionMeta: {
     color: colors.badgeBlueText,
     fontSize: typography.badge.fontSize,
     fontWeight: typography.bodyBold.fontWeight,
     textTransform: 'uppercase',
+  },
+  flagButton: {
+    alignSelf: 'flex-start',
   },
   questionText: {
     color: colors.text,
@@ -841,6 +983,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  reviewBadges: {
+    alignItems: 'flex-end',
+    flexShrink: 1,
+    gap: space[0.5],
   },
   answerGrid: {
     gap: space[1],

@@ -5,7 +5,7 @@ import type { AccessibilityRole, StyleProp, TextStyle, ViewStyle } from 'react-n
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../lib/theme';
 
-export type QuestionNavigatorItemState = 'current' | 'answered' | 'unanswered';
+export type QuestionNavigatorItemState = 'current' | 'answered' | 'flagged' | 'unanswered';
 
 type QuestionNavigatorCopy = {
   navigationLabel: string;
@@ -20,6 +20,7 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
     stateLabels: {
       current: 'Aktuell fråga',
       answered: 'Besvarad',
+      flagged: 'Flaggad',
       unanswered: 'Obesvarad',
     },
   },
@@ -29,6 +30,7 @@ const questionNavigatorCopy: Record<AppLanguage, QuestionNavigatorCopy> = {
     stateLabels: {
       current: 'Current question',
       answered: 'Answered',
+      flagged: 'Flagged',
       unanswered: 'Unanswered',
     },
   },
@@ -45,8 +47,9 @@ export interface QuestionNavigatorProps extends Omit<
   'children' | 'style'
 > {
   answeredIndexes?: readonly number[];
-  currentIndex?: number;
+  currentIndex?: number | null;
   disabled?: boolean;
+  flaggedIndexes?: readonly number[];
   itemAccessibilityLabel?: (questionNumber: number, state: QuestionNavigatorItemState) => string;
   itemStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: StyleProp<TextStyle>;
@@ -70,13 +73,16 @@ function getSafeIndex(index: number, totalCount: number) {
 function getItemState({
   answeredSet,
   currentIndex,
+  flaggedSet,
   index,
 }: {
   answeredSet: ReadonlySet<number>;
-  currentIndex: number;
+  currentIndex: number | null;
+  flaggedSet: ReadonlySet<number>;
   index: number;
 }): QuestionNavigatorItemState {
-  if (index === currentIndex) return 'current';
+  if (currentIndex != null && index === currentIndex) return 'current';
+  if (flaggedSet.has(index)) return 'flagged';
   return answeredSet.has(index) ? 'answered' : 'unanswered';
 }
 
@@ -100,6 +106,7 @@ export function QuestionNavigator({
   answeredIndexes = [],
   currentIndex = 0,
   disabled = false,
+  flaggedIndexes = [],
   itemAccessibilityLabel,
   itemStyle,
   itemTextStyle,
@@ -114,9 +121,14 @@ export function QuestionNavigator({
   const language = languageOverride ?? settingsLanguage;
   const copy = questionNavigatorCopy[language];
   const safeTotalCount = getSafeTotalCount(totalCount);
-  const safeCurrentIndex = getSafeIndex(currentIndex, safeTotalCount);
+  const safeCurrentIndex = currentIndex == null ? null : getSafeIndex(currentIndex, safeTotalCount);
   const answeredSet = new Set(
     answeredIndexes
+      .filter((index) => Number.isFinite(index))
+      .map((index) => Math.max(0, Math.min(Math.round(index), safeTotalCount - 1))),
+  );
+  const flaggedSet = new Set(
+    flaggedIndexes
       .filter((index) => Number.isFinite(index))
       .map((index) => Math.max(0, Math.min(Math.round(index), safeTotalCount - 1))),
   );
@@ -134,7 +146,12 @@ export function QuestionNavigator({
     >
       {Array.from({ length: safeTotalCount }, (_, index) => {
         const questionNumber = index + 1;
-        const state = getItemState({ answeredSet, currentIndex: safeCurrentIndex, index });
+        const state = getItemState({
+          answeredSet,
+          currentIndex: safeCurrentIndex,
+          flaggedSet,
+          index,
+        });
         const selected = state === 'current';
 
         return (
@@ -195,6 +212,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.focusSoft,
     borderColor: colors.accent,
   },
+  flagged: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueText,
+  },
   current: {
     backgroundColor: colors.text,
     borderColor: colors.text,
@@ -213,6 +234,9 @@ const styles = StyleSheet.create({
   },
   answeredText: {
     color: colors.accent,
+  },
+  flaggedText: {
+    color: colors.badgeBlueText,
   },
   currentText: {
     color: colors.surface,

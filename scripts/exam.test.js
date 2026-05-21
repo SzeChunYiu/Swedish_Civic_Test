@@ -449,6 +449,47 @@ test('exam route wires timed quiz-session diagnostics to the review heatmap', ()
   assert.doesNotMatch(heatmapSource, /Math\.round\(medianMs \/ 1000\)/);
 });
 
+test('exam route keeps flag-for-review state local to the current attempt', () => {
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const navigatorSource = fs.readFileSync(
+    path.join(repoRoot, 'components/QuestionNavigator.tsx'),
+    'utf8',
+  );
+  const sessionBuilderCall =
+    examRouteSource.match(/buildMockExamQuizSession\(\{[\s\S]*?\n\s*\}\)/)?.[0] ?? '';
+  const progressRecordCall =
+    examRouteSource.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
+
+  assert.match(
+    examRouteSource,
+    /const \[flaggedQuestionIds, setFlaggedQuestionIds\] = useState<Record<string, true>>\(\{\}\);/,
+  );
+  assert.match(examRouteSource, /const toggleFlaggedQuestion = useCallback/);
+  assert.match(examRouteSource, /setFlaggedQuestionIds\(\{\}\);/);
+  assert.match(examRouteSource, /flaggedIndexes=\{flaggedIndexes\}/);
+  assert.match(examRouteSource, /stateLabels=\{copy\.navigatorStateLabels\}/);
+  assert.match(examRouteSource, /copy\.flagQuestionAccessibilityLabel\(index \+ 1\)/);
+  assert.match(examRouteSource, /copy\.unflagQuestionAccessibilityLabel\(index \+ 1\)/);
+  assert.match(examRouteSource, /\{flaggedQuestionIds\[item\.questionId\] \? \(/);
+  assert.match(examRouteSource, /<Badge tone="warm">\{copy\.flaggedQuestionLabel\}<\/Badge>/);
+  assert.doesNotMatch(
+    sessionBuilderCall,
+    /flaggedQuestionIds/,
+    'flagged review markers should not become answer or score data',
+  );
+  assert.doesNotMatch(
+    progressRecordCall,
+    /flaggedQuestionIds/,
+    'flagged review markers should not become persisted score history',
+  );
+  assert.match(
+    navigatorSource,
+    /export type QuestionNavigatorItemState = 'current' \| 'answered' \| 'flagged' \| 'unanswered';/,
+  );
+  assert.match(navigatorSource, /flaggedIndexes\?: readonly number\[\];/);
+  assert.match(navigatorSource, /if \(flaggedSet\.has\(index\)\) return 'flagged';/);
+});
+
 test('formatExamTime renders remaining seconds as mm:ss', () => {
   const { formatExamTime } = loadTs('lib/quiz/examGenerator.ts');
 
