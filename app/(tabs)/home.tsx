@@ -632,12 +632,20 @@ export default function Screen() {
             </Text>
           ) : null}
           {rewardedExamUnlocked ? (
-            <Link accessibilityRole="link" href="/exam" style={styles.rewardedExamLink}>
+            <Link
+              accessibilityLabel={copy.rewardedExamUnlockedCta}
+              accessibilityRole="link"
+              href="/exam"
+              style={styles.rewardedExamLink}
+            >
               {copy.rewardedExamUnlockedCta}
             </Link>
           ) : (
             <View style={styles.rewardedExamActions}>
               <Button
+                accessibilityLabel={copy.rewardedExamPreviewButton}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: rewardPreviewCompleted }}
                 disabled={rewardPreviewCompleted}
                 onPress={handleCompleteRewardPreview}
                 style={styles.rewardedExamButton}
@@ -646,6 +654,8 @@ export default function Screen() {
                 {copy.rewardedExamPreviewButton}
               </Button>
               <Button
+                accessibilityLabel={copy.rewardedExamUnlockButton}
+                accessibilityRole="button"
                 accessibilityState={{
                   busy: rewardUnlockInFlight,
                   disabled: !rewardPreviewCompleted || rewardUnlockInFlight,

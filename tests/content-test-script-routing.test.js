@@ -83,6 +83,12 @@ test('npm test keeps selector routing in the project dispatcher', () => {
     'test:content must include the study reminder runtime parity guard exactly once',
   );
   assert.equal(
+    (testContentScript.match(/tests\/content-route-link-accessibility-parity\.test\.js/g) ?? [])
+      .length,
+    1,
+    'test:content must include the RouteLink accessibility parity guard exactly once',
+  );
+  assert.equal(
     pkg.scripts['test:content-focused'],
     'node scripts/test-dispatch.js content-focused',
   );
