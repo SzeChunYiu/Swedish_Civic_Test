@@ -107,6 +107,13 @@
               ></path>
             </svg>
           </button>
+          <button class="btn btn--ghost btn--sm signin-trigger" id="signin-open" type="button" aria-haspopup="dialog" title="Sign in">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21a8 8 0 0 1 16 0"></path>
+            </svg>
+            <span>Sign in</span>
+          </button>
         </div>
         <a class="cta-pill" href="#/" data-i18n="nav.cta" style="display: none">Get the app ↗</a>
       </div>
@@ -1214,6 +1221,32 @@
       </div>
     </div>
 
+    <!-- ============================================================ SIGN IN -->
+    <div class="modal" id="signin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="signin-title" tabindex="-1">
+      <div class="modal__backdrop" data-close="signin"></div>
+      <div class="modal__panel modal__panel--signin">
+        <header class="modal__head">
+          <h2 id="signin-title" class="modal__title"><span>Sign in</span></h2>
+          <button class="modal__close" data-close="signin" aria-label="Close" data-a11y-label="a11y.close">✕</button>
+        </header>
+        <div class="modal__body">
+          <p class="signin__lede">Save your highlights, notes, and progress across devices. Totally optional — everything works without an account.</p>
+          <button class="signin__btn" type="button">
+            <span class="signin__btn-icon" aria-hidden="true">G</span>
+            <span>Continue with Google</span>
+          </button>
+          <button class="signin__btn" type="button">
+            <span class="signin__btn-icon" aria-hidden="true"></span>
+            <span>Continue with Apple</span>
+          </button>
+          <div class="signin__divider"><span>or</span></div>
+          <input class="signin__input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" aria-label="Email address" />
+          <button class="btn btn--gold signin__magic" type="button">Email me a magic link</button>
+          <p class="signin__fineprint">No password needed. We never post anything or share your study data.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- ============================================================ ANCHOR AD (mobile, dismissible) -->
     <div class="ad-anchor" data-ad-slot="anchor" hidden>
       <button
@@ -1296,6 +1329,7 @@
     <script src="extras.js"></script>
     <script src="ebook.js"></script>
     <script src="v11.js"></script>
+    <script src="signin.js"></script>
     <script>
       // Show dashboard wrapper once v11 has content.
       (function () {
