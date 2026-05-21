@@ -129,7 +129,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   },
   {
     actionLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
-    bodyText: 'Källorna nedan visar vilket UHR-material',
+    bodyText: 'Se källänkarna nedan när du vill kontrollera studiematerialet',
     language: 'sv',
     path: '/terms',
     sectionTitle: 'Respektera källmaterialet',
@@ -139,7 +139,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
   },
   {
     actionLabel: 'Open UHR About the citizenship test page',
-    bodyText: 'The sources below show the UHR material',
+    bodyText: 'Use the source links below to check the study material',
     language: 'en',
     path: '/terms',
     sectionTitle: 'Respect source material',

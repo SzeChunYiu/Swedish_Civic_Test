@@ -28,7 +28,7 @@ const termsCopy: Record<AppLanguage, TermsRouteCopy> = {
         title: 'Ingen garanti',
       },
       sourceMaterial: {
-        body: 'Frågor och förklaringar är skrivna för att stödja lärande från UHR-refererade avsnitt. Använd dem tillsammans med UHR:s utbildningsmaterial och aktuell myndighetsinformation. Källorna nedan visar vilket UHR-material och vilken källgräns den här vägledningen bygger på.',
+        body: 'Frågor och förklaringar är skrivna för att stödja lärande från refererade avsnitt. Använd dem tillsammans med det primära utbildningsmaterialet och aktuell myndighetsinformation. Se källänkarna nedan när du vill kontrollera studiematerialet och gränsen mot fristående övningsprov.',
         title: 'Respektera källmaterialet',
       },
     },
@@ -45,7 +45,7 @@ const termsCopy: Record<AppLanguage, TermsRouteCopy> = {
         title: 'No guarantee',
       },
       sourceMaterial: {
-        body: 'Questions and explanations are written to support learning from UHR-referenced sections. Use them together with the UHR education material and current authority information. The sources below show the UHR material and source-boundary guidance this notice relies on.',
+        body: 'Questions and explanations are written to support learning from referenced sections. Use them together with the primary education material and current authority information. Use the source links below to check the study material and the boundary with independent practice tests.',
         title: 'Respect source material',
       },
     },

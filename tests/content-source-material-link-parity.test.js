@@ -96,6 +96,12 @@ test('legal source-material pages stay in parity with UHR source metadata', () =
     disclaimerRoute,
     /UHR:s\s+egen\s+sida|UHR's\s+own\s+page|beskriver\s+också\s+källgränsen|provides\s+source-boundary\s+guidance/i,
   );
+  assert.match(termsRoute, /Använd dem tillsammans med det primära utbildningsmaterialet/);
+  assert.match(termsRoute, /Use them together with the primary education material/);
+  assert.doesNotMatch(
+    termsRoute,
+    /Källorna\s+nedan\s+visar\s+vilket\s+UHR-material|The\s+sources\s+below\s+show\s+the\s+UHR\s+material|vilken\s+källgräns\s+den\s+här\s+vägledningen\s+bygger\s+på|source-boundary\s+guidance\s+this\s+notice\s+relies\s+on/i,
+  );
   assert.match(sourceLinks, /Öppna UHR:s utbildningsmaterial/);
   assert.match(sourceLinks, /Open UHR education material/);
   assert.match(sourceLinks, /Öppna UHR:s sida Om medborgarskapsprovet/);
@@ -208,6 +214,36 @@ test('source material parity rejects Disclaimer body source-authority phrasing',
   assert.match(
     `${swedishResult.stdout}\n${swedishResult.stderr}`,
     /app\/disclaimer\.tsx source-material body must state study advice neutrally/,
+  );
+});
+
+test('source material parity rejects Terms body source-authority phrasing', () => {
+  const englishResult = runValidationWithRoutePatch(
+    'app/terms.tsx',
+    `replace(
+      'Use the source links below to check the study material and the boundary with independent practice tests.',
+      'The sources below show the UHR material and source-boundary guidance this notice relies on.',
+    )`,
+  );
+
+  assert.notEqual(englishResult.status, 0);
+  assert.match(
+    `${englishResult.stdout}\n${englishResult.stderr}`,
+    /app\/terms\.tsx source-material body must state study advice neutrally/,
+  );
+
+  const swedishResult = runValidationWithRoutePatch(
+    'app/terms.tsx',
+    `replace(
+      'Se källänkarna nedan när du vill kontrollera studiematerialet och gränsen mot fristående övningsprov.',
+      'Källorna nedan visar vilket UHR-material och vilken källgräns den här vägledningen bygger på.',
+    )`,
+  );
+
+  assert.notEqual(swedishResult.status, 0);
+  assert.match(
+    `${swedishResult.stdout}\n${swedishResult.stderr}`,
+    /app\/terms\.tsx source-material body must state study advice neutrally/,
   );
 });
 
