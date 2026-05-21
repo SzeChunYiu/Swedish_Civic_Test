@@ -337,6 +337,11 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   assert.match(nativeAdCardSource, /NativeAssetType\.CALL_TO_ACTION/);
   assert.match(nativeAdCardSource, /NativeMediaView/);
   assert.match(nativeAdCardSource, /getNativeAdCardCopy/);
+  assert.match(nativeAdCardSource, /getNativeAdSummaryAccessibilityLabel/);
+  assert.match(
+    nativeAdCardSource,
+    /const summaryAccessibilityLabel = getNativeAdSummaryAccessibilityLabel\(copy, \{\s*advertiser: nativeAd\.advertiser,\s*body: nativeAd\.body,\s*headline: nativeAd\.headline,\s*\}\);/,
+  );
   assert.match(nativeAdCardSource, /const resultsNativeUnit = getAdUnit\('results_native'\);/);
   assert.match(
     nativeAdCardSource,
@@ -368,6 +373,7 @@ test('results native placement uses the native Google Mobile Ads surface on nati
   );
   assert.doesNotMatch(webAdCardSource, /react-native-google-mobile-ads|NativeAdView/);
   assert.match(adCopySource, /getNativeAdCardCopy/);
+  assert.match(adCopySource, /getNativeAdSummaryAccessibilityLabel/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Annons:/);
   assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
@@ -385,7 +391,9 @@ test('results native placement uses the native Google Mobile Ads surface on nati
 });
 
 test('native ad card copy switches between live attribution and test disclosure', () => {
-  const { getNativeAdCardCopy } = loadTs('lib/monetization/adCopy.ts');
+  const { getNativeAdCardCopy, getNativeAdSummaryAccessibilityLabel } = loadTs(
+    'lib/monetization/adCopy.ts',
+  );
 
   const englishLiveCopy = JSON.stringify(getNativeAdCardCopy('en', { testOnly: false }));
   const swedishLiveCopy = JSON.stringify(getNativeAdCardCopy('sv', { testOnly: false }));
@@ -401,6 +409,23 @@ test('native ad card copy switches between live attribution and test disclosure'
     /Test native ad|AdMob test placement preview|Sponsored study placement/,
   );
   assert.doesNotMatch(swedishLiveCopy, /Inbyggd testannons|AdMob-testplacering/);
+
+  assert.equal(
+    getNativeAdSummaryAccessibilityLabel(getNativeAdCardCopy('en'), {
+      advertiser: 'Civic Prep AB',
+      body: 'Short offer body',
+      headline: 'Practice smarter today',
+    }),
+    'Ad: Results ad. Sponsored placement. Keep out of timed exams. Hidden after Remove Ads is active. Practice smarter today Civic Prep AB Short offer body',
+  );
+  assert.equal(
+    getNativeAdSummaryAccessibilityLabel(getNativeAdCardCopy('sv', { testOnly: true }), {
+      advertiser: '',
+      body: '  Samma text  ',
+      headline: 'Samma text',
+    }),
+    'Inbyggd testannons: Annons i resultatvyn. Förhandsvisning av AdMob-testplacering. Visas inte i tidsatta prov. Döljs när Ta bort annonser är aktivt. Samma text',
+  );
 });
 
 test('native practice interstitial uses consent-aware ad gate and platform unit lookup', () => {
