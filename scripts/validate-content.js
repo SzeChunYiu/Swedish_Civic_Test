@@ -8980,6 +8980,34 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      const consentAwareShouldShowPattern =
+        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
+      const webFallbackShouldShowPattern =
+        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/;
+      const webAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
+      const nativeAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
+
+      if (!webFallbackShouldShowPattern.test(webAdBannerSource)) {
+        reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+        reject('AdBanner native placement must resolve banner units by Platform.OS');
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(nativeAdBannerSource)) {
+        reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
@@ -9514,8 +9542,12 @@ function validatePremiumEntitlementParity() {
     reject('shouldShowAd must not render home_banner when adsDisabled is true');
   }
 
-  if (!/if\s*\(\s*entitlements\.adsDisabled\s*\)\s*return false;/.test(adsSource)) {
-    reject('shouldShowAd must keep an explicit adsDisabled fail-closed branch');
+  if (!/if\s*\(\s*entitlements\.adsDisabled\s*===\s*true\s*\)\s*return false;/.test(adsSource)) {
+    reject('shouldShowAd must keep an explicit strict-boolean adsDisabled fail-closed branch');
+  }
+
+  if (typeof shouldShowAd === 'function' && !shouldShowAd('home_banner', { adsDisabled: 'yes' })) {
+    reject('shouldShowAd must ignore malformed truthy adsDisabled values');
   }
 
   if (

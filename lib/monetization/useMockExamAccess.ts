@@ -122,7 +122,7 @@ export function useMockExamAccess({
 
   const accessDecision = useMemo(
     () =>
-      accessReadFailed && !entitlements.unlimitedMockExams
+      accessReadFailed && entitlements.unlimitedMockExams !== true
         ? getMockExamAccessReadFailedDecision()
         : buildAccessDecision({
             consentDecision,

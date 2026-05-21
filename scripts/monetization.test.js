@@ -562,6 +562,78 @@ test('rewarded extra exam access uses free limits before offering ads', () => {
   );
 });
 
+test('ad and mock exam entitlement consumers require strict boolean gates', () => {
+  withEnv(
+    {
+      EXPO_PUBLIC_GOOGLE_ADS_ENABLED: undefined,
+      EXPO_PUBLIC_REAL_ADS_ENABLED: undefined,
+    },
+    () => {
+      const { shouldShowAd } = loadTs('lib/monetization/ads.ts');
+      const { getMockExamAccessDecision } = loadTs('lib/monetization/rewardedExam.ts');
+      const exhaustedFreeExamState = {
+        completedMockExamsToday: 1,
+        freeMockExamLimit: 1,
+      };
+
+      assert.equal(shouldShowAd('home_banner', { adsDisabled: true }), false);
+      assert.equal(shouldShowAd('home_banner', { adsDisabled: 'false' }), true);
+      assert.equal(shouldShowAd('home_banner', { adsDisabled: 'yes' }), true);
+      assert.equal(shouldShowAd('home_banner', { adsDisabled: 1 }), true);
+
+      assert.deepEqual(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: false, unlimitedMockExams: true },
+        }),
+        {
+          canOfferRewardedAd: false,
+          canStartExam: true,
+          freeExamsRemaining: 0,
+          placement: 'rewarded_extra_exam',
+          reason: 'premium_unlimited_mock_exams',
+          rewardedExtraExamCredits: 0,
+        },
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: false, unlimitedMockExams: 'yes' },
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: false, unlimitedMockExams: 1 },
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: true, unlimitedMockExams: false },
+        }).reason,
+        'remove_ads_active',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: 'yes', unlimitedMockExams: false },
+        }).reason,
+        'rewarded_ad_available',
+      );
+      assert.equal(
+        getMockExamAccessDecision({
+          ...exhaustedFreeExamState,
+          entitlements: { adsDisabled: 1, unlimitedMockExams: false },
+        }).reason,
+        'rewarded_ad_available',
+      );
+    },
+  );
+});
+
 test('mock exam access read failures fail closed until retry succeeds', () => {
   const accessHookSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/useMockExamAccess.ts'),
@@ -571,7 +643,7 @@ test('mock exam access read failures fail closed until retry succeeds', () => {
 
   assert.match(accessHookSource, /const \[accessReadFailed, setAccessReadFailed\]/);
   assert.match(accessHookSource, /getMockExamAccessReadFailedDecision\(\)/);
-  assert.match(accessHookSource, /accessReadFailed && !entitlements\.unlimitedMockExams/);
+  assert.match(accessHookSource, /accessReadFailed && entitlements\.unlimitedMockExams !== true/);
   assert.match(accessHookSource, /setAccessReadFailed\(true\);\s*setAccessReady\(true\);/);
   assert.match(accessHookSource, /setAccessReadFailed\(false\);\s*setAccessReady\(true\);/);
   assert.doesNotMatch(

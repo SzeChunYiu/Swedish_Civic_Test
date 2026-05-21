@@ -443,7 +443,7 @@ export function getMockExamAccessDecision({
     rewardedExtraExamCredits: credits,
   };
 
-  if (entitlements.unlimitedMockExams) {
+  if (entitlements.unlimitedMockExams === true) {
     return {
       ...baseDecision,
       canOfferRewardedAd: false,
@@ -470,7 +470,7 @@ export function getMockExamAccessDecision({
     };
   }
 
-  if (entitlements.adsDisabled) {
+  if (entitlements.adsDisabled === true) {
     return {
       ...baseDecision,
       canOfferRewardedAd: false,
