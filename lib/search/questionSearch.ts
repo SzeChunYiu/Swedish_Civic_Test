@@ -1,6 +1,9 @@
 import type { AppLanguage } from '../storage/settingsStore';
 import type { Chapter, PracticeQuestion } from '../../types/content';
-import { normalizeGlossarySearchText } from '../learning/glossarySearch';
+import {
+  normalizeGlossarySearchText,
+  normalizeSearchResultLimit,
+} from '../learning/glossarySearch';
 
 export type QuestionSearchResult = {
   chapter?: Chapter;
@@ -79,8 +82,9 @@ export function searchQuestions({
   questions: PracticeQuestion[];
 }): QuestionSearchResult[] {
   const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+  const normalizedLimit = normalizeSearchResultLimit(limit, 12);
 
-  return questions
+  const results = questions
     .map((question) => {
       const chapter = chapterById.get(question.chapterId);
       return { chapter, question, score: scoreQuestion(question, chapter, query) };
@@ -89,8 +93,9 @@ export function searchQuestions({
     .sort(
       (left, right) =>
         right.score - left.score || left.question.id.localeCompare(right.question.id),
-    )
-    .slice(0, limit);
+    );
+
+  return normalizedLimit === undefined ? results : results.slice(0, normalizedLimit);
 }
 
 export function getQuestionSearchTitle(question: PracticeQuestion, language: AppLanguage): string {

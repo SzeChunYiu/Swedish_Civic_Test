@@ -10,6 +10,16 @@ export type GlossarySearchResult = GlossaryTerm & {
 
 const chaptersById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
 
+export function normalizeSearchResultLimit(
+  limit: unknown,
+  defaultLimit: number,
+): number | undefined {
+  const safeDefault = Number.isInteger(defaultLimit) && defaultLimit >= 0 ? defaultLimit : 0;
+  if (limit === Number.POSITIVE_INFINITY) return undefined;
+  if (typeof limit === 'number' && Number.isInteger(limit) && limit >= 0) return limit;
+  return safeDefault;
+}
+
 export function normalizeGlossarySearchText(value: string) {
   return value
     .normalize('NFKD')
@@ -72,6 +82,7 @@ export function searchGlossary(
   language: AppLanguage,
   limit = 10,
 ): GlossarySearchResult[] {
+  const normalizedLimit = normalizeSearchResultLimit(limit, 10);
   const normalizedQuery = normalizeGlossarySearchText(query);
   const sortedTerms = [...glossaryTerms].sort((left, right) =>
     getTermForLanguage(left, language).localeCompare(getTermForLanguage(right, language), language),
@@ -91,7 +102,9 @@ export function searchGlossary(
         .map((entry) => entry.term)
     : sortedTerms;
 
-  return terms.slice(0, limit).map((term) => {
+  const limitedTerms = normalizedLimit === undefined ? terms : terms.slice(0, normalizedLimit);
+
+  return limitedTerms.map((term) => {
     const chapter = term.chapterId ? chaptersById.get(term.chapterId) : undefined;
     return {
       ...term,

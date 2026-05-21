@@ -74,7 +74,7 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /nativeID=\{questionSummaryId\}/);
   assert.match(source, /aria-describedby=\{questionSummaryId\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openQuestionAccessibilityLabel\(title\)\}/);
-  assert.match(source, /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/);
+  assert.match(source, /href=\{getQuestionResultHref\(result\.question\.id, trimmedQuery\)\}/);
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /function SearchRouteLink\(/);
   assert.match(source, /Platform\.OS === 'web'/);
