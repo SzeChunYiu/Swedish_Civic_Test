@@ -24,6 +24,7 @@ import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore
 import { colors, radius, space, typography } from '../lib/theme';
 
 type EbookRouteCopy = {
+  articleNavGroupAccessibilityLabel: string;
   articleNavAccessibilityLabel: (kicker: string, title: string) => string;
   backToLearn: string;
   backToLearnAccessibilityLabel: string;
@@ -43,6 +44,7 @@ type EbookRouteCopy = {
 
 const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
   sv: {
+    articleNavGroupAccessibilityLabel: 'Välj studieartikel',
     articleNavAccessibilityLabel: (kicker, title) => `Öppna artikel ${kicker}: ${title}`,
     backToLearn: 'Tillbaka till studievägen',
     backToLearnAccessibilityLabel: 'Tillbaka till studievägen',
@@ -63,6 +65,7 @@ const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
     title: 'Studieguide i appen',
   },
   en: {
+    articleNavGroupAccessibilityLabel: 'Choose study article',
     articleNavAccessibilityLabel: (kicker, title) => `Open article ${kicker}: ${title}`,
     backToLearn: 'Back to Learn',
     backToLearnAccessibilityLabel: 'Back to Learn',
@@ -126,6 +129,9 @@ export default function EbookScreen() {
 
       <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
       <ScrollView
+        aria-label={copy.articleNavGroupAccessibilityLabel}
+        accessibilityLabel={copy.articleNavGroupAccessibilityLabel}
+        accessibilityRole="tablist"
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.articleNavContent}
@@ -139,8 +145,9 @@ export default function EbookScreen() {
           return (
             <Pressable
               key={item.staticChapterId}
+              aria-selected={selected}
               accessibilityLabel={copy.articleNavAccessibilityLabel(kicker, title)}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={{ selected }}
               hitSlop={space[1]}
               onPress={() => navigateToArticle(router, item)}

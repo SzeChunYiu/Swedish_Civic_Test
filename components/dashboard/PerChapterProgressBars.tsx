@@ -4,7 +4,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ChapterProgressBar } from '../../lib/learning/dashboardStats';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { Chapter } from '../../types/content';
 import { Card } from '../ui/Card';
 import { ProgressBar } from '../ui/ProgressBar';
@@ -51,6 +52,8 @@ export function PerChapterProgressBars({
   copy,
   language,
 }: PerChapterProgressBarsProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [sortMode, setSortMode] = useState<ChapterSortMode>('chapter');
   const chapterById = useMemo(
     () => new Map(chapters.map((chapter) => [chapter.id, chapter])),
@@ -153,99 +156,101 @@ export function PerChapterProgressBars({
   );
 }
 
-const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: space[0],
-    left: space[0],
-    opacity: 0,
-    position: 'absolute',
-    top: space[0],
-    width: space[0],
-  },
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    gap: space[0.5],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sortRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  sortButton: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[0.75],
-  },
-  sortButtonSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.focusSoft,
-  },
-  sortButtonPressed: {
-    backgroundColor: colors.surfaceWarm,
-  },
-  sortButtonText: {
-    color: colors.textSecondary,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  sortButtonTextSelected: {
-    color: colors.text,
-  },
-  emptyState: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  list: {
-    gap: space[1],
-  },
-  chapterLink: {
-    textDecorationLine: 'none',
-  },
-  chapterRow: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[1],
-    minHeight: space[6],
-    padding: space[1.5],
-  },
-  chapterName: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  progressPair: {
-    gap: space[1],
-  },
-  progressLine: {
-    gap: space[0.5],
-  },
-  progressLabel: {
-    color: colors.textSecondary,
-    fontSize: typography.micro.fontSize,
-    lineHeight: typography.micro.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    accessibilitySummary: {
+      height: space[0],
+      left: space[0],
+      opacity: 0,
+      position: 'absolute',
+      top: space[0],
+      width: space[0],
+    },
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      gap: space[0.5],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sortRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    sortButton: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      justifyContent: 'center',
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[0.75],
+    },
+    sortButtonSelected: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.focusSoft,
+    },
+    sortButtonPressed: {
+      backgroundColor: themeColors.surfaceWarm,
+    },
+    sortButtonText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    sortButtonTextSelected: {
+      color: themeColors.text,
+    },
+    emptyState: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    list: {
+      gap: space[1],
+    },
+    chapterLink: {
+      textDecorationLine: 'none',
+    },
+    chapterRow: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[1],
+      minHeight: space[6],
+      padding: space[1.5],
+    },
+    chapterName: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    progressPair: {
+      gap: space[1],
+    },
+    progressLine: {
+      gap: space[0.5],
+    },
+    progressLabel: {
+      color: themeColors.textSecondary,
+      fontSize: typography.micro.fontSize,
+      lineHeight: typography.micro.lineHeight,
+    },
+  });
+}

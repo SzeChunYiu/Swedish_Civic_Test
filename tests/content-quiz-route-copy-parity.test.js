@@ -23,12 +23,18 @@ function parseValidationSummary() {
 test('routed quiz shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  const searchSource = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
 
-  assert.equal(summary.quizRouteCopyLabelsValidated, 16);
+  assert.equal(summary.quizRouteCopyLabelsValidated, 20);
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.match(source, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
+  assert.match(
+    source,
+    /getChapterContextForQuizSession\(chapters, pickedQuestion, normalizedChapterId\)/,
+  );
+  assert.match(source, /chapterId\?: string \| string\[\];/);
   assert.match(source, /Frågan hittades inte/);
   assert.match(source, /Vi hittar ingen övningsfråga för den här länken\./);
   assert.match(source, /Sök övningsfrågor/);
@@ -38,8 +44,13 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
   assert.match(source, /Frågepass \$\{currentSessionId\}/);
+  assert.match(source, /Quiz session: \$\{chapterTitle\}/);
+  assert.match(source, /Frågepass: \$\{chapterTitle\}/);
+  assert.match(source, /\{sessionTitle\}/);
+  assert.match(source, /\{sessionSubtitle\}/);
   assert.match(source, /Försök igen med den här frågan/);
   assert.match(source, /Try this quiz question again/);
+  assert.match(searchSource, /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/);
   assert.doesNotMatch(
     source,
     new RegExp(
@@ -209,6 +220,40 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /quiz route Swedish copy must avoid English quiz loanwords/,
+  );
+});
+
+test('routed quiz copy parity rejects dropping chapter route context', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId)',
+        'null',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-native-quiz-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /quiz route must resolve chapter context from the routed question/,
   );
 });
 

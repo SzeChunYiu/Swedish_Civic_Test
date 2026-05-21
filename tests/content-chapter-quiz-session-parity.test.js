@@ -55,21 +55,33 @@ test('chapter quiz sessions resolve to the first published question per chapter'
   const summary = JSON.parse(match[0]);
   const chapters = loadTs('data/chapters.ts', 'chapters');
   const { questions } = loadTs('data/questions.ts');
-  const { getChapterQuizSessionId } = loadTs('lib/quiz/practiceFlow.ts');
+  const { getChapterContextForQuizSession, getChapterQuizRouteParams, getChapterQuizSessionId } =
+    loadTs('lib/quiz/practiceFlow.ts');
 
   assert.equal(summary.chapterQuizSessionParityValidated, chapters.length);
 
   chapters.forEach((chapter) => {
     const expectedQuestion = questions.find((question) => question.chapterId === chapter.id);
     const sessionId = getChapterQuizSessionId(questions, chapter.id);
+    const routeParams = getChapterQuizRouteParams(questions, chapter.id);
     const sessionQuestion = questions.find((question) => question.id === sessionId);
 
     assert.ok(expectedQuestion, `${chapter.id} should have a bundled question`);
     assert.equal(sessionId, expectedQuestion.id);
+    assert.deepEqual(routeParams, { chapterId: chapter.id, sessionId: expectedQuestion.id });
     assert.equal(sessionQuestion.chapterId, chapter.id);
     assert.equal(sessionQuestion.reviewStatus, 'published');
+    assert.equal(getChapterContextForQuizSession(chapters, sessionQuestion, chapter.id), chapter);
+    assert.equal(
+      getChapterContextForQuizSession(chapters, sessionQuestion, 'missing-chapter'),
+      null,
+    );
   });
 
   assert.equal(getChapterQuizSessionId(questions, 'missing-chapter'), null);
   assert.equal(getChapterQuizSessionId(questions, null), null);
+  assert.equal(getChapterQuizRouteParams(questions, 'missing-chapter'), null);
+  assert.equal(getChapterQuizRouteParams(questions, null), null);
+  assert.equal(getChapterContextForQuizSession(chapters, undefined, 'ch01'), null);
+  assert.equal(getChapterContextForQuizSession(chapters, questions[0], null), null);
 });
