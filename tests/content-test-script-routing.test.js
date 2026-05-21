@@ -292,6 +292,43 @@ test('generated localization overlay parity uses focused content validation rout
   );
 });
 
+test('Search route query hydration parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const searchRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-search-route-copy-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('searchRouteQueryHydration');
+
+  assert.ok(registryEntry, 'Search route query hydration focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-search-route-query-hydration']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'searchRouteQueryHydrationRulesValidated',
+    'searchRouteQueryHydrationParityValidated',
+    'searchQuestionPunctuationRulesValidated',
+    'searchQuestionPunctuationParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-search-route-query-hydration/);
+  assert.match(
+    validatorSource,
+    /validateSearchRouteQueryHydrationParity\(\);[\s\S]*validateSearchQuestionPunctuationParity\(\);[\s\S]*searchRouteQueryHydrationRulesValidated[\s\S]*searchRouteQueryHydrationParityValidated[\s\S]*searchQuestionPunctuationRulesValidated[\s\S]*searchQuestionPunctuationParityValidated/,
+  );
+  assert.equal(
+    (validatorSource.match(/validateSearchRouteQueryHydrationParity\(\);/g) ?? []).length,
+    2,
+    'Search route query hydration validation should run once in focus mode and once in full validation',
+  );
+  assert.match(searchRouteTestSource, /--focus-search-route-query-hydration/);
+  assert.doesNotMatch(
+    searchRouteTestSource,
+    /searchRouteQueryHydrationRulesValidated":\\s\*\d+/,
+    'Search route focused test must derive the rule count instead of hardcoding it',
+  );
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,
