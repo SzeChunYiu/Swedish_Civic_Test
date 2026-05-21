@@ -91,6 +91,7 @@ export function speakSwedish(text: string, options: SpeakSwedishOptions = {}): v
     });
   } catch (error) {
     console.warn('Speech unavailable:', error);
+    options.onError?.(error instanceof Error ? error : new Error(String(error)));
   }
 }
 
