@@ -461,6 +461,21 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
         answeredAt: '2026-05-19T10:02:00.000Z',
       },
       {
+        questionId: ' __proto__ ',
+        isCorrect: true,
+        answeredAt: '2026-05-19T10:02:30.000Z',
+      },
+      {
+        questionId: 'constructor',
+        isCorrect: true,
+        answeredAt: '2026-05-19T10:02:40.000Z',
+      },
+      {
+        questionId: 'prototype',
+        isCorrect: true,
+        answeredAt: '2026-05-19T10:02:50.000Z',
+      },
+      {
         questionId: 'q002',
         isCorrect: 'yes',
         answeredAt: '2026-05-19T10:03:00.000Z',
@@ -488,6 +503,10 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
           { questionId: 'q001', timeSpentSeconds: 99 },
           { questionId: 'q002', timeSpentSeconds: 3.5 },
           { questionId: 'q003', timeSpentSeconds: 999999999 },
+          { questionId: ' q003 ', timeSpentSeconds: 88 },
+          { questionId: ' __proto__ ', timeSpentSeconds: 11 },
+          { questionId: 'constructor', timeSpentSeconds: 12 },
+          { questionId: 'prototype', timeSpentSeconds: 13 },
           { questionId: '', timeSpentSeconds: 8 },
         ],
         totalCount: 1000,
