@@ -8870,6 +8870,11 @@ const adsModule = loadTs('lib/monetization/ads.ts');
 const adsConfig = adsModule.adsConfig;
 const shouldShowAd = adsModule.shouldShowAd;
 const shouldSuppressLaunchPopupAdForPath = adsModule.shouldSuppressLaunchPopupAdForPath;
+const firstRunAboutModalRoutesModule = loadTs('lib/onboarding/firstRunAboutModalRoutes.ts');
+const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES =
+  firstRunAboutModalRoutesModule.FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES;
+const shouldSuppressFirstRunAboutModalForPath =
+  firstRunAboutModalRoutesModule.shouldSuppressFirstRunAboutModalForPath;
 const consentModule = loadTs('lib/monetization/consent.ts');
 const consentConfig = consentModule.consentConfig;
 const premiumModule = loadTs('lib/monetization/premium.ts');
@@ -13414,6 +13419,7 @@ function validateOnboardingRouteCopyParity() {
 function validateFirstRunAboutModalSuppressionParity() {
   let valid = true;
   let modalSource = '';
+  let routeHelperSource = '';
 
   function reject(message) {
     valid = false;
@@ -13432,39 +13438,95 @@ function validateFirstRunAboutModalSuppressionParity() {
     return;
   }
 
-  const suppressedPrefixMatch = modalSource.match(
-    /const SUPPRESSED_PATH_PREFIXES = \[([\s\S]*?)\] as const;/,
-  );
-  if (!suppressedPrefixMatch) {
-    reject('first-run about modal suppression prefixes must be declared as a const array');
+  try {
+    routeHelperSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/onboarding/firstRunAboutModalRoutes.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `lib/onboarding/firstRunAboutModalRoutes.ts could not be read for first-run route suppression: ${error.message}`,
+    );
     return;
   }
 
-  const suppressedPrefixes = [...suppressedPrefixMatch[1].matchAll(/'([^']+)'/g)].map(
-    (match) => match[1],
-  );
+  if (!modalSource.includes('shouldSuppressFirstRunAboutModalForPath(pathname,')) {
+    reject('first-run about modal must consume shouldSuppressFirstRunAboutModalForPath(pathname)');
+  }
 
-  if (!arrayEquals(suppressedPrefixes, EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES)) {
+  if (!modalSource.includes('FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES')) {
+    reject('first-run about modal must use the shared first-run suppressed-route constants');
+  }
+
+  if (
+    /const SUPPRESSED_PATH_PREFIXES =/.test(modalSource) ||
+    /function pathIsSuppressed/.test(modalSource)
+  ) {
+    reject(
+      'first-run about modal route policy must live in lib/onboarding/firstRunAboutModalRoutes.ts',
+    );
+  }
+
+  if (
+    !routeHelperSource.includes('export function shouldSuppressFirstRunAboutModalForPath') ||
+    !routeHelperSource.includes('export const FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES')
+  ) {
+    reject('first-run about modal route helper must export the route predicate and prefix table');
+  }
+
+  if (typeof shouldSuppressFirstRunAboutModalForPath !== 'function') {
+    reject('shouldSuppressFirstRunAboutModalForPath export is not a function');
+    return;
+  }
+
+  if (!Array.isArray(FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES)) {
+    reject('FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES export is not an array');
+    return;
+  }
+
+  if (
+    !arrayEquals(
+      FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
+      EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES,
+    )
+  ) {
     reject(
       `first-run about modal suppressed prefixes are ${JSON.stringify(
-        suppressedPrefixes,
+        FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
       )}, expected ${JSON.stringify(EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES)}`,
     );
   }
 
   for (const prefix of EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES) {
-    if (!suppressedPrefixes.includes(prefix)) {
+    if (!FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES.includes(prefix)) {
       reject(`first-run about modal must suppress ${prefix}`);
+      continue;
+    }
+    if (!shouldSuppressFirstRunAboutModalForPath(prefix)) {
+      reject(`first-run about modal helper must suppress exact path ${prefix}`);
+      continue;
+    }
+    if (!shouldSuppressFirstRunAboutModalForPath(`${prefix}/nested`)) {
+      reject(`first-run about modal helper must suppress nested path ${prefix}/nested`);
       continue;
     }
     firstRunAboutModalSuppressedRoutesValidated += 1;
   }
 
   for (const eligiblePath of EXPECTED_FIRST_RUN_ABOUT_MODAL_ELIGIBLE_PATHS) {
-    if (suppressedPrefixes.includes(eligiblePath)) {
+    if (FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES.includes(eligiblePath)) {
+      reject(`first-run about modal must remain eligible on ${eligiblePath}`);
+    }
+    if (shouldSuppressFirstRunAboutModalForPath(eligiblePath)) {
       reject(`first-run about modal must remain eligible on ${eligiblePath}`);
     }
   }
+
+  ['/examined', '/quizmaster', '/about-the-tested', '/onboarding-extra'].forEach((pathName) => {
+    if (shouldSuppressFirstRunAboutModalForPath(pathName)) {
+      reject(`first-run about modal helper must not suppress unrelated path ${pathName}`);
+    }
+  });
 
   const launchPopupRoutes = adsConfig?.suppressedLaunchPopupRoutes;
   if (!Array.isArray(launchPopupRoutes) || !launchPopupRoutes.includes('/onboarding')) {

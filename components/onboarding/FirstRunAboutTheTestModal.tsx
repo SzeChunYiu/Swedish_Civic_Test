@@ -1,25 +1,13 @@
 import { usePathname, useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import {
+  FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
+  shouldSuppressFirstRunAboutModalForPath,
+} from '../../lib/onboarding/firstRunAboutModalRoutes';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
-
-/**
- * Suppress on routes where a blocking modal would be hostile to flow:
- * - exam routes (timed)
- * - quiz mid-session
- * - auth modals
- * - the about-the-test screen itself (otherwise the modal sits on top of the page it sends you to)
- * - the dedicated onboarding route (it is already the first-run guide)
- */
-const SUPPRESSED_PATH_PREFIXES = [
-  '/exam',
-  '/quiz',
-  '/(auth)',
-  '/about-the-test',
-  '/onboarding',
-] as const;
 
 type FirstRunCopy = {
   eyebrow: string;
@@ -64,18 +52,10 @@ export interface FirstRunAboutTheTestModalProps {
   suppressedPathPrefixes?: readonly string[];
 }
 
-function pathIsSuppressed(
-  pathname: string | null,
-  suppressedPathPrefixes: readonly string[],
-): boolean {
-  if (!pathname) return false;
-  return suppressedPathPrefixes.some((prefix) => pathname.startsWith(prefix));
-}
-
 export function FirstRunAboutTheTestModal({
   deferWhenLaunchPopupAdShown = true,
   languageOverride,
-  suppressedPathPrefixes = SUPPRESSED_PATH_PREFIXES,
+  suppressedPathPrefixes = FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
 }: FirstRunAboutTheTestModalProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
@@ -84,7 +64,7 @@ export function FirstRunAboutTheTestModal({
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
 
   if (hasSeen) return null;
-  if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
+  if (shouldSuppressFirstRunAboutModalForPath(pathname, suppressedPathPrefixes)) return null;
   if (deferWhenLaunchPopupAdShown && shouldDeferFirstRunAboutModalForLaunchSession()) return null;
 
   const language = languageOverride ?? settingsLanguage;
