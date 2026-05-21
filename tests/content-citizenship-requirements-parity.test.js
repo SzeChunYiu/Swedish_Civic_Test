@@ -130,6 +130,25 @@ test('citizenship requirements data covers seven sourced bilingual planning area
 
   assert.match(areas.find((area) => area.id === 'selfSupport').summary.sv, /250 200 kronor/);
   assert.match(areas.find((area) => area.id === 'selfSupport').summary.en, /SEK 250,200/);
+  assert.match(areas.find((area) => area.id === 'selfSupport').detail.sv, /Inkomster från partner/);
+  assert.match(areas.find((area) => area.id === 'selfSupport').detail.sv, /tillgångar/);
+  assert.match(
+    areas.find((area) => area.id === 'selfSupport').detail.sv,
+    /tillfälliga anställningar utan varaktighet/,
+  );
+  assert.match(areas.find((area) => area.id === 'selfSupport').detail.en, /Partner income/);
+  assert.match(
+    areas.find((area) => area.id === 'selfSupport').detail.en,
+    /assets such as savings or property/,
+  );
+  assert.match(
+    areas.find((area) => area.id === 'selfSupport').detail.en,
+    /temporary jobs without long-term duration/,
+  );
+  assert.deepEqual(areas.find((area) => area.id === 'selfSupport').sourceIds, [
+    'migrationsverketRules2026',
+    'governmentIncomeBaseAmount2026',
+  ]);
   assert.match(areas.find((area) => area.id === 'civicKnowledge').summary.sv, /15 augusti 2026/);
   assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.sv,
