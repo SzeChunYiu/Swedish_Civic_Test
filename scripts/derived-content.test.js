@@ -190,6 +190,51 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   );
 });
 
+test('derivePublishedQuestions keeps same-source generated single-choice stems distinct', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q900',
+    chapterId: 'ch01',
+    type: 'single_choice',
+    questionSv: 'Var ligger Sverige?',
+    questionEn: 'Where is Sweden located?',
+    options: [
+      { id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' },
+      { id: 'b', textSv: 'I Asien', textEn: 'In Asia' },
+      { id: 'c', textSv: 'I Afrika', textEn: 'In Africa' },
+      { id: 'd', textSv: 'I Sydamerika', textEn: 'In South America' },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Sverige ligger i Norden.',
+    explanationEn: 'Sweden is in the Nordic region.',
+    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['geography'],
+  };
+
+  const singleChoiceVariants = derivePublishedQuestions([source], 901).filter(
+    (question) => question.type === 'single_choice',
+  );
+  const signatures = singleChoiceVariants.map((question) =>
+    [
+      question.questionSv.trim().toLocaleLowerCase('sv-SE'),
+      question.questionEn.trim().toLocaleLowerCase('en-US'),
+      question.options
+        .map((option) =>
+          [
+            option.textSv.trim().toLocaleLowerCase('sv-SE'),
+            option.textEn.trim().toLocaleLowerCase('en-US'),
+          ].join(' / '),
+        )
+        .join(' | '),
+    ].join(' :: '),
+  );
+
+  assert.equal(singleChoiceVariants.length, 2);
+  assert.equal(new Set(signatures).size, singleChoiceVariants.length);
+});
+
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [

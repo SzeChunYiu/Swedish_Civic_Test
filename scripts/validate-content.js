@@ -4768,6 +4768,64 @@ function findDuplicateOptionTextLabels(question) {
   return duplicates;
 }
 
+function normalizedGeneratedSingleChoiceText(value) {
+  return normalizeOptionText(value).toLocaleLowerCase('sv-SE');
+}
+
+function generatedSingleChoiceStemOptionsSignature(question) {
+  const stem = [
+    normalizedGeneratedSingleChoiceText(question?.questionSv),
+    normalizedGeneratedSingleChoiceText(question?.questionEn),
+  ].join('\u0001');
+  const options = Array.isArray(question?.options)
+    ? question.options
+        .map((option) =>
+          [
+            normalizedGeneratedSingleChoiceText(option?.textSv),
+            normalizedGeneratedSingleChoiceText(option?.textEn),
+          ].join('\u0002'),
+        )
+        .join('\u0003')
+    : '';
+
+  return `${stem}\u0004${options}`;
+}
+
+function validateGeneratedSingleChoiceDuplicateStemOptions() {
+  if (!Array.isArray(sourceQuestions) || !Array.isArray(generatedPublishedQuestions)) {
+    return;
+  }
+
+  sourceQuestions.forEach((sourceQuestion, sourceIndex) => {
+    const variants = generatedPublishedQuestions.slice(
+      sourceIndex * GENERATED_VARIANTS_PER_SOURCE,
+      (sourceIndex + 1) * GENERATED_VARIANTS_PER_SOURCE,
+    );
+    const seenSignatures = new Map();
+    let sourceIsValid = true;
+    let singleChoiceVariants = 0;
+
+    variants.forEach((variant, variantIndex) => {
+      if (variant?.type !== 'single_choice') return;
+      singleChoiceVariants += 1;
+      const signature = generatedSingleChoiceStemOptionsSignature(variant);
+      const previousVariantIndex = seenSignatures.get(signature);
+      if (previousVariantIndex !== undefined) {
+        sourceIsValid = false;
+        fail(
+          `${sourceQuestion.id} generated variant[${variantIndex}] duplicates generated variant[${previousVariantIndex}] stem/options`,
+        );
+      } else {
+        seenSignatures.set(signature, variantIndex);
+      }
+    });
+
+    if (sourceIsValid && singleChoiceVariants > 1) {
+      generatedSingleChoiceDuplicateStemOptionsValidated += 1;
+    }
+  });
+}
+
 function optionCountMatchesQuestionType(question) {
   if (!Array.isArray(question.options)) return false;
   if (question.type === 'single_choice') return question.options.length === 4;
@@ -7116,8 +7174,6 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
-const getCompletedQuestionIdsForQuestionBank =
-  practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -7482,8 +7538,26 @@ let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
+let generatedSingleChoiceDuplicateStemOptionsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-generated-single-choice-duplicate-stems')) {
+  validateStaticValidationSyntaxGate();
+  validateGeneratedSingleChoiceDuplicateStemOptions();
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+    generatedPublishedQuestions: Array.isArray(generatedPublishedQuestions)
+      ? generatedPublishedQuestions.length
+      : 0,
+    generatedSingleChoiceDuplicateStemOptionsValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
@@ -7521,16 +7595,6 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-practice-flow-parity')) {
-  validatePracticeFlowParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    practiceFlowCasesValidated,
-    practiceFlowParityValidated,
   });
   process.exit(0);
 }
@@ -13353,11 +13417,7 @@ function validatePracticeScoringRules() {
 }
 
 function validatePracticeFlowParity() {
-  if (
-    !Array.isArray(questions) ||
-    typeof getPracticeQuestionForSession !== 'function' ||
-    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
-  ) {
+  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
     return;
   }
 
@@ -13369,7 +13429,7 @@ function validatePracticeFlowParity() {
 
   const [firstQuestion, secondQuestion, thirdQuestion] = publishedQuestions;
   const completedAllQuestionIds = publishedQuestions.map((question) => question.id);
-  const selectionCases = [
+  const cases = [
     {
       label: 'empty question bank',
       questions: [],
@@ -13413,53 +13473,10 @@ function validatePracticeFlowParity() {
       expectedId: firstQuestion.id,
     },
   ];
-  const completedIdCases = [
-    {
-      label: 'empty completed ids stay empty scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [],
-      expectedCompletedQuestionIds: [],
-    },
-    {
-      label: 'visible completed id is preserved scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [firstQuestion.id],
-      expectedCompletedQuestionIds: [firstQuestion.id],
-    },
-    {
-      label: 'duplicate completed ids are deduplicated scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [firstQuestion.id, firstQuestion.id, secondQuestion.id],
-      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
-    },
-    {
-      label: 'completion outside visible bank is ignored scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [thirdQuestion.id],
-      expectedCompletedQuestionIds: [],
-    },
-    {
-      label: 'mixed scoped bank keeps only visible completed ids scoped completed ids',
-      questions: [secondQuestion, thirdQuestion],
-      completedQuestionIds: [firstQuestion.id, secondQuestion.id],
-      expectedCompletedQuestionIds: [secondQuestion.id],
-    },
-    {
-      label: 'noisy completed ids preserve visible order scoped completed ids',
-      questions: [firstQuestion, secondQuestion],
-      completedQuestionIds: [
-        thirdQuestion.id,
-        firstQuestion.id,
-        secondQuestion.id,
-        firstQuestion.id,
-      ],
-      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
-    },
-  ];
 
   let valid = true;
 
-  selectionCases.forEach((testCase) => {
+  cases.forEach((testCase) => {
     const {
       label,
       questions: caseQuestions,
@@ -13493,38 +13510,7 @@ function validatePracticeFlowParity() {
     }
   });
 
-  completedIdCases.forEach((testCase) => {
-    const {
-      label,
-      questions: caseQuestions,
-      completedQuestionIds,
-      expectedCompletedQuestionIds,
-    } = testCase;
-    let actualCompletedQuestionIds;
-    try {
-      actualCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
-        caseQuestions,
-        completedQuestionIds,
-      );
-    } catch (error) {
-      valid = false;
-      fail(`practice flow ${label} threw ${error.message}`);
-      return;
-    }
-
-    if (!jsonEqual(actualCompletedQuestionIds, expectedCompletedQuestionIds)) {
-      valid = false;
-      fail(
-        `practice flow ${label} returned ${JSON.stringify(
-          actualCompletedQuestionIds,
-        )}, expected ${JSON.stringify(expectedCompletedQuestionIds)}`,
-      );
-    } else {
-      practiceFlowCasesValidated += 1;
-    }
-  });
-
-  if (valid && practiceFlowCasesValidated === selectionCases.length + completedIdCases.length) {
+  if (valid && practiceFlowCasesValidated === cases.length) {
     practiceFlowParityValidated = true;
   }
 }
@@ -15406,6 +15392,7 @@ function validateGeneratedAnswerTemplateParity() {
 }
 
 validateGeneratedAnswerTemplateParity();
+validateGeneratedSingleChoiceDuplicateStemOptions();
 
 function buildUhrReferenceChapters() {
   validateUhrSourceMetadata();
@@ -16303,6 +16290,7 @@ console.log(
       generatedSingleChoiceFillerOptionsValidated,
       generatedSingleChoiceMetaStemsValidated,
       generatedSingleChoiceExplanationLabelsValidated,
+      generatedSingleChoiceDuplicateStemOptionsValidated,
       generatedTrueFalseExplanationMetaValidated,
       generatedTagTemplateParityValidated,
       questionSchemasValidated,

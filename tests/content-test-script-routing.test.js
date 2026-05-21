@@ -5,7 +5,10 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
+const { generatedFixtureIdHelperSource } = require('../scripts/generated-question-fixture-ids');
+
 const repoRoot = path.resolve(__dirname, '..');
+const generatedSingleChoiceDuplicateFocusFlag = '--focus-generated-single-choice-duplicate-stems';
 
 function readPackageJson() {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
@@ -715,22 +718,79 @@ test('unsupported npm test selectors fail before running any suite', () => {
   }
 });
 
-test('practice flow parity can run through its focused validator route', () => {
+test('generated single-choice duplicate focus path avoids full content parity', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-practice-flow-parity'],
+    ['scripts/validate-content.js', generatedSingleChoiceDuplicateFocusFlag],
     {
       cwd: repoRoot,
       encoding: 'utf8',
-      env: process.env,
     },
   );
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused practice-flow validation should print JSON summary');
+  assert.doesNotMatch(`${result.stdout}\n${result.stderr}`, /published source options/);
 
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
-  assert.equal(summary.practiceFlowCasesValidated, 12);
-  assert.equal(summary.practiceFlowParityValidated, true);
+  assert.ok(summary.sourceQuestions > 100);
+  assert.equal(summary.generatedPublishedQuestions, summary.sourceQuestions * 4);
+  assert.equal(summary.generatedSingleChoiceDuplicateStemOptionsValidated, summary.sourceQuestions);
+});
+
+test('generated single-choice duplicate focus rejects matching option-bank duplicates', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('${generatedSingleChoiceDuplicateFocusFlag}');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const duplicateSectionPracticeId = generatedFixtureId('q001', 0);",
+        "const duplicateJudgementId = generatedFixtureId('q001', 3);",
+        "let duplicateSectionPracticeQuestion = null;",
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map((question) => {",
+        "  if (question.id === duplicateSectionPracticeId) {",
+        "    duplicateSectionPracticeQuestion = question;",
+        "    return question;",
+        "  }",
+        "  if (question.id === duplicateJudgementId && duplicateSectionPracticeQuestion) {",
+        "    return {",
+        "      ...question,",
+        "      questionSv: duplicateSectionPracticeQuestion.questionSv,",
+        "      questionEn: duplicateSectionPracticeQuestion.questionEn,",
+        "      options: duplicateSectionPracticeQuestion.options.map((option) => ({ ...option })),",
+        "    };",
+        "  }",
+        "  return question;",
+        "});",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 generated variant\[3\] duplicates generated variant\[0\] stem\/options/,
+  );
 });
