@@ -15751,9 +15751,13 @@ function validateThemeTokenSchema() {
         }
         if (
           style.letterSpacing !== undefined &&
-          (!Number.isFinite(style.letterSpacing) || Math.abs(style.letterSpacing) > 4)
+          (!Number.isFinite(style.letterSpacing) ||
+            style.letterSpacing < 0 ||
+            style.letterSpacing > 4)
         ) {
-          rejectToken(`theme typography.${token}.letterSpacing must be a bounded number`);
+          rejectToken(
+            `theme typography.${token}.letterSpacing must be a non-negative bounded number`,
+          );
         }
       }
 
