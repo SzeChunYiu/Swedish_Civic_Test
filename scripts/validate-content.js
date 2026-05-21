@@ -1453,7 +1453,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
     'Försök läsa övningsprovsstatus igen',
-    'Starta upplåst extra prov',
+    'Starta upplåst övningsprov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
@@ -1484,7 +1484,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Daily free mock exam available.',
     'Start mock exam',
     'Retry mock exam access check',
-    'Start unlocked extra exam',
+    'Start unlocked mock exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
     'Select answer ${optionText} for question ${questionNumber}',
@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',

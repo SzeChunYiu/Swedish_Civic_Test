@@ -956,8 +956,8 @@ test('rewarded extra exam credit is granted only after an earned ad reward', asy
   assert.doesNotMatch(examSource, /showRewardedExtraExamAd|RewardedAd|rewardPreview/);
   assert.doesNotMatch(examSource, /WEB_AD_FALLBACK_CONSENT_DECISION|grantRewardedExamCredit/);
   assert.doesNotMatch(examSource, /Unlock extra exam|Lås upp extra prov/);
-  assert.match(examSource, /Start unlocked extra exam/);
-  assert.match(examSource, /Starta upplåst extra prov/);
+  assert.match(examSource, /Start unlocked mock exam/);
+  assert.match(examSource, /Starta upplåst övningsprov/);
 });
 
 test('ad rendering flag disables all placements even for free users', () => {
@@ -2188,7 +2188,7 @@ test('exam screen does not import ad components', () => {
   assert.match(examSource, /useMockExamAccess/);
   assert.match(examSource, /recordExamCompletion\(examSessionId\)/);
   assert.match(examSource, /handleStartAccessibleExam/);
-  assert.match(examSource, /Start unlocked extra exam/);
+  assert.match(examSource, /Start unlocked mock exam/);
   assert.match(accessHookSource, /getMockExamAccessDecision/);
   assert.match(accessHookSource, /platform: Platform\.OS/);
   assert.match(accessHookSource, /recordStoredMockExamCompletion\(\{ storage, sessionId \}\)/);

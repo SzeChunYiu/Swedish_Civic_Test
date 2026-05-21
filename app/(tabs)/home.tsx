@@ -1,11 +1,12 @@
 import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
@@ -31,7 +32,8 @@ import {
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
-import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { showRewardedExtraExamAd } from '../../lib/monetization/rewardedAd';
+import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { radius, space, typography, type ThemeColors } from '../../lib/theme';
@@ -103,6 +105,13 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  rewardedExamBody: string;
+  rewardedExamHeading: string;
+  rewardedExamPreviewButton: string;
+  rewardedExamUnlockButton: string;
+  rewardedExamUnlockFailure: string;
+  rewardedExamUnlockedCta: string;
+  rewardedExamUnlockedStatus: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
@@ -226,6 +235,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Stadig övning',
       strong_preparation: 'Stark övningsgrund',
     },
+    rewardedExamBody:
+      'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
+    rewardedExamHeading: 'Lås upp ett extra övningsprov',
+    rewardedExamPreviewButton: 'Slutför förhandsvisning',
+    rewardedExamUnlockButton: 'Lås upp extra övningsprov',
+    rewardedExamUnlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
+    rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
+    rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
@@ -370,6 +387,14 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Steady practice',
       strong_preparation: 'Strong practice base',
     },
+    rewardedExamBody:
+      'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
+    rewardedExamHeading: 'Unlock an extra mock exam',
+    rewardedExamPreviewButton: 'Complete sponsor preview',
+    rewardedExamUnlockButton: 'Unlock extra mock exam',
+    rewardedExamUnlockFailure: 'Extra mock exam could not be unlocked right now.',
+    rewardedExamUnlockedCta: 'Start unlocked mock exam',
+    rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
@@ -408,12 +433,18 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 };
 
 export default function Screen() {
+  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
+  const [rewardUnlockInFlight, setRewardUnlockInFlight] = useState(false);
+  const [rewardUnlockMessage, setRewardUnlockMessage] = useState<string | null>(null);
   const {
+    accessDecision,
+    accessReady,
     entitlements: monetizationEntitlements,
     entitlementsReady,
+    grantRewardedExamCredit,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
-  } = useRemoveAdsEntitlements();
+  } = useMockExamAccess();
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
@@ -465,6 +496,56 @@ export default function Screen() {
     readinessDetails,
   );
   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
+  const rewardedExamUnlocked = accessDecision.reason === 'rewarded_exam_credit';
+  const showRewardedExamOffer =
+    accessReady && entitlementsReady && (accessDecision.canOfferRewardedAd || rewardedExamUnlocked);
+
+  const handleCompleteRewardPreview = useCallback(() => {
+    setRewardPreviewCompleted(true);
+    setRewardUnlockMessage(null);
+  }, []);
+
+  const handleUnlockRewardedExam = useCallback(async () => {
+    if (
+      !rewardPreviewCompleted ||
+      rewardUnlockInFlight ||
+      rewardedExamUnlocked ||
+      !accessDecision.canOfferRewardedAd
+    ) {
+      return;
+    }
+
+    setRewardUnlockInFlight(true);
+    setRewardUnlockMessage(null);
+
+    try {
+      const result = await showRewardedExtraExamAd({
+        confirmReward: () => rewardPreviewCompleted,
+        entitlements: monetizationEntitlements,
+      });
+
+      if (result.status !== 'earned_reward') {
+        setRewardUnlockMessage(copy.rewardedExamUnlockFailure);
+        return;
+      }
+
+      await grantRewardedExamCredit();
+      setRewardUnlockMessage(copy.rewardedExamUnlockedStatus);
+    } catch {
+      setRewardUnlockMessage(copy.rewardedExamUnlockFailure);
+    } finally {
+      setRewardUnlockInFlight(false);
+    }
+  }, [
+    accessDecision.canOfferRewardedAd,
+    copy.rewardedExamUnlockFailure,
+    copy.rewardedExamUnlockedStatus,
+    grantRewardedExamCredit,
+    monetizationEntitlements,
+    rewardPreviewCompleted,
+    rewardUnlockInFlight,
+    rewardedExamUnlocked,
+  ]);
 
   useEffect(() => {
     setStreakFreezeState(streakWithFreeze.freezeState);
@@ -532,6 +613,53 @@ export default function Screen() {
         </Link>
       </Card>
       <SocialProofRow language={language} />
+      {showRewardedExamOffer ? (
+        <Card style={styles.rewardedExamCard}>
+          <Badge tone={rewardedExamUnlocked ? 'blue' : 'warm'}>
+            {language === 'sv' ? 'Extra prov' : 'Extra exam'}
+          </Badge>
+          <Text accessibilityRole="header" style={styles.rewardedExamTitle}>
+            {copy.rewardedExamHeading}
+          </Text>
+          <Text style={styles.rewardedExamText}>{copy.rewardedExamBody}</Text>
+          {rewardUnlockMessage ? (
+            <Text
+              accessibilityLiveRegion="polite"
+              aria-live="polite"
+              style={styles.rewardedExamStatus}
+            >
+              {rewardUnlockMessage}
+            </Text>
+          ) : null}
+          {rewardedExamUnlocked ? (
+            <Link accessibilityRole="link" href="/exam" style={styles.rewardedExamLink}>
+              {copy.rewardedExamUnlockedCta}
+            </Link>
+          ) : (
+            <View style={styles.rewardedExamActions}>
+              <Button
+                disabled={rewardPreviewCompleted}
+                onPress={handleCompleteRewardPreview}
+                style={styles.rewardedExamButton}
+                variant="secondary"
+              >
+                {copy.rewardedExamPreviewButton}
+              </Button>
+              <Button
+                accessibilityState={{
+                  busy: rewardUnlockInFlight,
+                  disabled: !rewardPreviewCompleted || rewardUnlockInFlight,
+                }}
+                disabled={!rewardPreviewCompleted || rewardUnlockInFlight}
+                onPress={handleUnlockRewardedExam}
+                style={styles.rewardedExamButton}
+              >
+                {copy.rewardedExamUnlockButton}
+              </Button>
+            </View>
+          )}
+        </Card>
+      ) : null}
       <Card style={styles.dailyChallengeCard}>
         <Badge tone={dailyChallengeCompleted ? 'blue' : 'warm'}>{dailyChallengeCopy.title}</Badge>
         <Text style={styles.dailyChallengeText}>{dailyChallengeCopy.subtitle}</Text>
@@ -782,6 +910,51 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.textSecondary,
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
+    },
+    rewardedExamCard: {
+      gap: space[1],
+    },
+    rewardedExamTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    rewardedExamText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    rewardedExamStatus: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    rewardedExamActions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    rewardedExamButton: {
+      flexBasis: 210,
+      flexGrow: 1,
+      maxWidth: '100%',
+    },
+    rewardedExamLink: {
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.micro,
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      justifyContent: 'center',
+      marginTop: space[0.5],
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
     },
     dailyChallengeCard: {
       gap: space[1],
