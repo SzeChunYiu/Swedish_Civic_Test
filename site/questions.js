@@ -6290,7 +6290,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "What is meant by the public sector in Sweden?",
+      "en": "What does Sweden's public sector consist of?",
       "sv": "Vad menas med offentlig sektor i Sverige?",
       "zh-Hant": "在瑞典，「公共部門」是什麼意思？",
       "zh-Hans": "在瑞典，“公共部门”是什么意思？",
@@ -6305,7 +6305,7 @@
     },
     "opts": [
       {
-        "en": "Activities for which the state, regions, and municipalities are responsible",
+        "en": "Services and activities that the state, regions, and municipalities are responsible for",
         "sv": "Verksamheter som staten, regionerna och kommunerna ansvarar för",
         "zh-Hant": "由國家、區域和市鎮負責的活動",
         "zh-Hans": "由国家、地区和市镇负责的活动",
@@ -6363,7 +6363,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "en": "The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
       "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar.",
       "zh-Hant": "公共部門是指由國家、區域和市鎮負責並以稅收資助的活動。例如醫療人員、教師、幼兒照護人員、警察和消防員；因此私人公司、銀行和非營利協會不是正確答案。",
       "zh-Hans": "公共部门是指由国家、地区和市镇负责并由税收资助的活动。例如医疗人员、教师、幼儿照护人员、警察和消防员；因此私人公司、银行和非营利协会不是正确答案。",
@@ -33907,12 +33907,12 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is meant by the public sector in Sweden?",
+      "en": "Which answer best matches? What does Sweden's public sector consist of?",
       "sv": "Vilket svar stämmer bäst? Vad menas med offentlig sektor i Sverige?"
     },
     "opts": [
       {
-        "en": "Activities for which the state, regions, and municipalities are responsible",
+        "en": "Services and activities that the state, regions, and municipalities are responsible for",
         "sv": "Verksamheter som staten, regionerna och kommunerna ansvarar för",
         "zh-Hant": "由國家、區域和市鎮負責的活動",
         "zh-Hans": "由国家、地区和市镇负责的活动",
@@ -33970,7 +33970,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "en": "The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
       "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
     },
     "source": {
@@ -33995,7 +33995,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "The public sector in Sweden means activities for which the state, regions, and municipalities are responsible.",
+      "en": "The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.",
       "sv": "Offentlig sektor i Sverige är verksamheter som staten, regionerna och kommunerna ansvarar för."
     },
     "opts": [
@@ -34010,7 +34010,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "en": "The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
       "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
     },
     "source": {
@@ -34035,7 +34035,7 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "true_false",
     "q": {
-      "en": "The public sector in Sweden means all privately owned companies.",
+      "en": "The public sector in Sweden consists only of privately owned companies.",
       "sv": "Offentlig sektor i Sverige är alla privatägda företag."
     },
     "opts": [
@@ -34050,7 +34050,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "en": "The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
       "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
     },
     "source": {
@@ -34075,12 +34075,12 @@
     "chapter": "Ch. 08 · Labour market and personal finance",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is meant by the public sector in Sweden?",
+      "en": "Choose the correct option: What does Sweden's public sector consist of?",
       "sv": "Välj rätt alternativ: Vad menas med offentlig sektor i Sverige?"
     },
     "opts": [
       {
-        "en": "Activities for which the state, regions, and municipalities are responsible",
+        "en": "Services and activities that the state, regions, and municipalities are responsible for",
         "sv": "Verksamheter som staten, regionerna och kommunerna ansvarar för",
         "zh-Hant": "由國家、區域和市鎮負責的活動",
         "zh-Hans": "由国家、地区和市镇负责的活动",
@@ -34138,7 +34138,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
+      "en": "The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.",
       "sv": "Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar."
     },
     "source": {

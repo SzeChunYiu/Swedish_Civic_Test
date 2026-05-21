@@ -962,11 +962,11 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       pageApprox: 27,
     },
     'Vad menas med offentlig sektor i Sverige?',
-    'What is meant by the public sector in Sweden?',
+    "What does Sweden's public sector consist of?",
     [
       [
         'Verksamheter som staten, regionerna och kommunerna ansvarar för',
-        'Activities for which the state, regions, and municipalities are responsible',
+        'Services and activities that the state, regions, and municipalities are responsible for',
       ],
       ['Alla privatägda företag', 'All privately owned companies'],
       ['Endast banker och försäkringsbolag', 'Only banks and insurance companies'],
@@ -974,7 +974,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Offentlig sektor är verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter. Dit hör till exempel sjukvårdspersonal, lärare, barnskötare, polis och brandman; privata företag, banker och ideella föreningar är därför fel svar.',
-    'The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.',
+    'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes. Examples include health-care staff, teachers, childcare workers, police, and firefighters; private companies, banks, and non-profit associations are therefore wrong answers.',
     ['public-sector', 'work', 'tax'],
   ),
   single(

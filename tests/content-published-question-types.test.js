@@ -179,6 +179,7 @@ test('published question types stay answerable by quiz runtime', () => {
     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
     summary.publishedQuestions,
   );
+  assert.equal(summary.questionPublicSectorEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
@@ -4387,6 +4388,64 @@ test('q146 political-rights generated true/false exports direct propositions', (
   assert.equal(
     falseStatement?.q.en,
     'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+});
+
+test('q062 public-sector exports natural English in canonical and static banks', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const rowIds = [
+    'q062',
+    generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+  ];
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const stalePattern =
+    /What is meant by the public sector|public sector(?: in Sweden)? means (?:activities for which|all privately owned companies)|Activities for which the state, regions, and municipalities are responsible/i;
+
+  assert.equal(byId.get('q062')?.q.en, "What does Sweden's public sector consist of?");
+  assert.equal(
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'))?.q.en,
+    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+  );
+  assert.equal(
+    byId.get(generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'))?.q.en,
+    'The public sector in Sweden consists only of privately owned companies.',
+  );
+  assert.ok(
+    rowIds.every((id) => byId.has(id)),
+    'canonical q062 generated rows should exist',
+  );
+  assert.ok(
+    rowIds.every((id) => actualById.has(id)),
+    'static q062 generated rows should exist',
+  );
+
+  const combinedText = [
+    ...rowIds.map((id) => byId.get(id)),
+    ...rowIds.map((id) => actualById.get(id)),
+  ]
+    .map(
+      (question) =>
+        `${question?.q.en} ${question?.why.en} ${question?.opts?.map((option) => option.en).join(' ')}`,
+    )
+    .join('\n');
+  assert.doesNotMatch(combinedText, stalePattern);
+
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => rowIds.includes(line.match(/^"([^"]+)"/)?.[1]));
+  assert.equal(csvRows.length, rowIds.length);
+  assert.deepEqual(
+    csvRows.filter((line) => stalePattern.test(line)),
+    [],
   );
 });
 
