@@ -16,7 +16,8 @@ import { questions } from '../../data/questions';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PracticeQuestion } from '../../types/content';
 
 type MistakesCopy = {
@@ -58,6 +59,7 @@ type AnswerReviewBlockProps = {
   copy: MistakesCopy;
   correctAnswer: string;
   selectedWrongAnswer?: string;
+  styles: ReturnType<typeof createStyles>;
 };
 
 const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
@@ -68,19 +70,20 @@ const mistakesCopy: Record<AppLanguage, MistakesCopy> = {
         : `Fråga att öva igen. Rätt svar: ${correctAnswer}.`,
     badge: 'Smart repetition',
     bookmarkedBadge: 'Sparat',
-    bookmarkedMeta: 'Sparad för fokuserad repetition',
+    bookmarkedMeta: 'Sparad till senare övning',
     bookmarkedTitle: 'Bokmärkta frågor',
     correctAnswerLabel: 'Rätt svar',
     emptyPracticeAccessibilityLabel: 'Öva svåra frågor',
     emptyPracticeLink: 'Starta övning',
     emptyText: 'När du missar en övningsfråga visas den här.',
     emptyTitle: 'Inga missade frågor ännu',
-    mistakeBadge: 'Öva igen',
-    mistakeTitle: 'Frågor att öva igen',
-    selectedWrongAnswerLabel: 'Ditt senaste felaktiga svar',
-    subtitle: 'Här finns frågor du har missat, med förklaring, källhänvisning och antal missar.',
-    title: 'Missade frågor',
-    wrongAnswers: (count) => `Antal missar: ${count}`,
+    mistakeBadge: 'Missade frågor',
+    mistakeTitle: 'Frågor att öva på',
+    selectedWrongAnswerLabel: 'Ditt senaste svar',
+    subtitle:
+      'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och ditt senaste svar.',
+    title: 'Misstag',
+    wrongAnswers: (count) => `Fel svar: ${count}`,
   },
   en: {
     answerReviewAccessibilityLabel: (correctAnswer, selectedWrongAnswer) =>
@@ -123,9 +126,15 @@ type MistakesListHeaderProps = {
     typeof useMistakeReviewStore.getState
   >['persistenceWarning'];
   progressPersistenceWarning: ReturnType<typeof useProgressStore.getState>['persistenceWarning'];
+  styles: ReturnType<typeof createStyles>;
 };
 
-function AnswerReviewBlock({ copy, correctAnswer, selectedWrongAnswer }: AnswerReviewBlockProps) {
+function AnswerReviewBlock({
+  copy,
+  correctAnswer,
+  selectedWrongAnswer,
+  styles,
+}: AnswerReviewBlockProps) {
   return (
     <View
       accessible
@@ -153,6 +162,7 @@ function renderListHeader({
   language,
   mistakeReviewPersistenceWarning,
   progressPersistenceWarning,
+  styles,
 }: MistakesListHeaderProps) {
   return (
     <View style={styles.headerStack}>
@@ -185,6 +195,8 @@ export default function Screen() {
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const copy = mistakesCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
@@ -287,12 +299,13 @@ export default function Screen() {
         )}
         {correctAnswer ? (
           item.kind === 'bookmarked' ? (
-            <AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />
+            <AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} styles={styles} />
           ) : (
             <AnswerReviewBlock
               copy={copy}
               correctAnswer={correctAnswer}
               selectedWrongAnswer={selectedWrongAnswer}
+              styles={styles}
             />
           )
         ) : null}
@@ -337,6 +350,7 @@ export default function Screen() {
         language,
         mistakeReviewPersistenceWarning,
         progressPersistenceWarning,
+        styles,
       })}
       maxToRenderPerBatch={8}
       renderItem={renderReviewItem}
@@ -348,105 +362,107 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-  },
-  content: {
-    gap: space[2],
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  headerStack: {
-    gap: space[2],
-  },
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.25],
-    padding: space[3],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sectionHeading: {
-    gap: space[0.75],
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  questionBlock: {
-    gap: space[1],
-  },
-  bookmarkMeta: {
-    color: colors.badgeBlueText,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  meta: {
-    color: colors.warning,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  answerReview: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  answerReviewRow: {
-    gap: space[0.5],
-  },
-  answerReviewLabel: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-  answerReviewValue: {
-    color: colors.warning,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  correctAnswerValue: {
-    color: colors.success,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  emptyCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    gap: space[1],
-    padding: space[2],
-  },
-  emptyTitle: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  emptyText: {
-    color: colors.textMuted,
-    fontSize: typography.navButton.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-  practiceButton: {
-    alignSelf: 'flex-start',
-    marginTop: space[1],
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surface,
+      flex: 1,
+    },
+    content: {
+      gap: space[2],
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    headerStack: {
+      gap: space[2],
+    },
+    hero: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.25],
+      padding: space[3],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sectionHeading: {
+      gap: space[0.75],
+    },
+    sectionTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      letterSpacing: typography.cardTitle.letterSpacing,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    questionBlock: {
+      gap: space[1],
+    },
+    bookmarkMeta: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+    meta: {
+      color: themeColors.warning,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+    answerReview: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1],
+      padding: space[1.5],
+    },
+    answerReviewRow: {
+      gap: space[0.5],
+    },
+    answerReviewLabel: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+    answerReviewValue: {
+      color: themeColors.warning,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    correctAnswerValue: {
+      color: themeColors.success,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    emptyCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderRadius: radius.card,
+      gap: space[1],
+      padding: space[2],
+    },
+    emptyTitle: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    emptyText: {
+      color: themeColors.textMuted,
+      fontSize: typography.navButton.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+    practiceButton: {
+      alignSelf: 'flex-start',
+      marginTop: space[1],
+    },
+  });
+}

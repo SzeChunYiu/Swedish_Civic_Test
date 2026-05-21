@@ -340,15 +340,71 @@ test('accessibilityStore: audio-rate read failures are surfaced', () => {
 
 test('RootLayout applies persisted theme mode to system chrome before screens render', () => {
   const source = loadSource('app/_layout.tsx');
-  assert.match(source, /useColorScheme/);
-  assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
-  assert.match(source, /const themeColors = colorsForThemeMode\(themeMode, systemColorScheme\);/);
+  assert.match(
+    source,
+    /import \{ ThemeProvider, useTheme \} from '\.\.\/lib\/theme\/ThemeProvider';/,
+  );
+  assert.match(source, /function RootLayoutContent\(\)/);
+  assert.match(source, /const \{ colors: themeColors, resolvedColorScheme \} = useTheme\(\);/);
   assert.match(source, /useSystemCanvasColor\(themeColors\.canvas\);/);
   assert.match(source, /headerStyle: \{ backgroundColor: themeColors\.canvas \}/);
   assert.match(
     source,
     /<StatusBar style=\{resolvedColorScheme === 'dark' \? 'light' : 'dark'\} \/>/,
   );
+  assert.match(source, /<ThemeProvider>[\s\S]*<RootLayoutContent \/>[\s\S]*<\/ThemeProvider>/);
+  assert.doesNotMatch(source, /colorsForThemeMode|useColorScheme|useAccessibilityStore/);
+});
+
+test('ThemeProvider resolves persisted theme mode once for app-wide consumers', () => {
+  const source = loadSource('lib/theme/ThemeProvider.tsx');
+  assert.match(source, /useColorScheme/);
+  assert.match(source, /useAccessibilityStore\(\(state\) => state\.themeMode\)/);
+  assert.match(source, /colorsForThemeMode\(preference, systemColorScheme\)/);
+  assert.match(source, /resolveThemePreference\(preference, systemColorScheme\)/);
+  assert.match(source, /createElement\(ThemeContext\.Provider, \{ value \}, children\)/);
+  assert.match(source, /export function useTheme\(\)/);
+  assert.match(source, /export function useThemeColors\(\)/);
+});
+
+test('main native surfaces consume app-wide theme colors instead of static tokens', () => {
+  const useThemeFiles = ['app/settings.tsx'];
+  const useThemeColorsFiles = [
+    'components/Button.tsx',
+    'components/OptionCard.tsx',
+    'components/ui/Button.tsx',
+    'components/ui/Card.tsx',
+    'components/ui/ScreenShell.tsx',
+    'app/(tabs)/home.tsx',
+    'app/(tabs)/practice.tsx',
+    'app/(tabs)/exam.tsx',
+    'app/(tabs)/learn.tsx',
+    'app/(tabs)/mistakes.tsx',
+    'app/dashboard.tsx',
+  ];
+
+  for (const file of useThemeFiles) {
+    const source = loadSource(file);
+    assert.match(source, /useTheme\(\)/, `${file} should read the shared theme context`);
+    assert.match(
+      source,
+      /createStyles\(themeColors\)/,
+      `${file} should bind styles to theme colors`,
+    );
+    assert.doesNotMatch(source, /colorsForThemeMode|useColorScheme|\bcolors\./, file);
+  }
+
+  for (const file of useThemeColorsFiles) {
+    const source = loadSource(file);
+    assert.match(source, /useThemeColors\(\)/, `${file} should read shared theme colors`);
+    assert.match(
+      source,
+      /createStyles\(themeColors\)/,
+      `${file} should bind styles to theme colors`,
+    );
+    assert.doesNotMatch(source, /import \{[^}]*\bcolors\b[^}]*\} from .*lib\/theme/, file);
+    assert.doesNotMatch(source, /\bcolors\./, file);
+  }
 });
 
 test('speak.ts: speakSwedish accepts a rate option', () => {

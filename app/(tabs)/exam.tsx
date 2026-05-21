@@ -1,22 +1,10 @@
-import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  findNodeHandle,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { findNodeHandle, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  MockExamConfigPanel,
-  type MockExamChapterOption,
-} from '../../components/MockExamConfigPanel';
 import { MockExamTimeHeatmap } from '../../components/MockExamTimeHeatmap';
 import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
+import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
@@ -26,19 +14,7 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { chapters } from '../../data/chapters';
 import { defaultMockExamConfig } from '../../data/mockExamConfig';
 import { questions } from '../../data/questions';
-import { isUhrQuestion } from '../../lib/content/provenance';
 import { buildExamDiagnostic } from '../../lib/learning/examDiagnostic';
-import {
-  MOCK_EXAM_LIBRARY,
-  MOCK_EXAM_QUESTION_COUNT,
-  MOCK_EXAM_TIME_LIMIT_MINUTES,
-  materializeMock,
-  type MockExamDifficulty,
-} from '../../lib/learning/mockExamLibrary';
-import {
-  showRewardedExtraExamAd,
-  type RewardedExtraExamAdStatus,
-} from '../../lib/monetization/rewardedAd';
 import {
   buildExamChapterBreakdownItems,
   buildExamReviewItems,
@@ -48,32 +24,13 @@ import {
   scoreExam,
   shouldAutoSubmitExam,
 } from '../../lib/quiz/examGenerator';
-import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import { getQuestionDisplayText, getQuestionSourceCitation } from '../../lib/quiz/questionText';
 import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import type { MockExamAccessReason } from '../../lib/monetization/rewardedExam';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../../lib/theme';
-import type { PracticeQuestion } from '../../types/content';
-
-const CUSTOM_MIN_QUESTION_COUNT = 5;
-const CUSTOM_MAX_QUESTION_COUNT = 50;
-const DEFAULT_LIBRARY_MOCK_ID = MOCK_EXAM_LIBRARY[0]?.id ?? 'mock-1';
-
-type LibraryExamSelection = {
-  mockId: string;
-  mode: 'library';
-};
-
-type CustomExamSelection = {
-  chapterIds: string[];
-  durationMinutes: number;
-  mode: 'custom';
-  questionCount: number;
-};
-
-type ExamSelection = LibraryExamSelection | CustomExamSelection;
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type ExamRouteCopy = {
   accessStatus: Record<MockExamAccessReason, string>;
@@ -82,46 +39,28 @@ type ExamRouteCopy = {
   answerAccessibilityLabel: (optionText: string, questionNumber: number) => string;
   answeredCount: (answeredCount: number, questionCount: number) => string;
   chapterBreakdownTitle: string;
-  chooseExamSubtitle: string;
-  chooseExamTitle: string;
   checkingAccess: string;
   completionStoreFailure: string;
   correctAnswerLabel: string;
   correctBadge: string;
   correctCount: (correctCount: number, totalCount: number) => string;
-  customChaptersHint: string;
-  customDurationHint: string;
-  customExamSubtitle: string;
-  customExamTitle: string;
-  customQuestionCountHint: (maxQuestionCount: number) => string;
-  customStartMockExam: string;
-  difficultyLabel: Record<MockExamDifficulty, string>;
   examResultTitle: string;
   extraExamUnavailable: string;
   heroSubtitle: (durationMinutes: number, questionCount: number) => string;
-  libraryCardSubtitle: (questionCount: number, durationMinutes: number) => string;
-  libraryTitle: string;
-  mockChoiceAccessibilityLabel: (label: string, selected: boolean) => string;
   mockExamTitle: string;
   nextExamTitle: string;
   progressTitle: string;
   questionNumber: (questionNumber: number) => string;
   questionReviewTitle: string;
-  rewardPreviewBody: string;
-  rewardPreviewButton: string;
-  rewardPreviewTitle: string;
   resultBadge: string;
   resultNote: string;
-  resultScoreLabel: string;
   resultSubtitle: string;
   reviewBadge: string;
-  rewardedAdStatus: Record<RewardedExtraExamAdStatus, string>;
   savedBadge: string;
   savingBadge: string;
   savingCompletion: string;
   selectedAnswerLabel: string;
   retryAccess: string;
-  startExtraExam: string;
   startMockExam: string;
   startUnlockedExtraExam: string;
   submitAccessibilityLabel: string;
@@ -138,12 +77,14 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       ads_unavailable: 'Extra övningsprov är inte tillgängliga just nu.',
       access_read_failed:
         'Det gick inte att läsa sparad övningsprovsstatus. Försök igen innan du startar.',
-      consent_required: 'Annonsmedgivande krävs innan ett extra prov kan låsas upp.',
+      consent_required:
+        'Dagens kostnadsfria övningsprov är använt. Extra prov låses inte upp på provskärmen.',
       free_exam_available: 'Dagens kostnadsfria övningsprov är tillgängligt.',
       premium_unlimited_mock_exams: 'Obegränsade övningsprov är aktiva.',
-      remove_ads_active: 'Dagens kostnadsfria övningsprov är använt. Belöningsannonser är dolda.',
+      remove_ads_active:
+        'Dagens kostnadsfria övningsprov är använt. Provskärmen visar inga annonsupplåsningar.',
       rewarded_ad_available:
-        'Dagens kostnadsfria övningsprov är använt. Extra prov är tillgängligt.',
+        'Dagens kostnadsfria övningsprov är använt. Extra prov låses inte upp på provskärmen.',
       rewarded_exam_credit: 'Extra övningsprov är upplåst.',
     },
     accessTitle: 'Provåtkomst',
@@ -153,67 +94,33 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
-    chooseExamSubtitle:
-      'Välj en färdig provexamen, en ny slumpad provexamen eller ett eget UHR-baserat upplägg innan du startar.',
-    chooseExamTitle: 'Välj prov',
     checkingAccess: 'Kontrollerar provåtkomst.',
     completionStoreFailure: 'Provresultatet kunde inte sparas på den här enheten.',
     correctAnswerLabel: 'Rätt svar',
     correctBadge: 'Rätt',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} rätt`,
-    customChaptersHint: 'Välj minst ett kapitel för ett eget prov.',
-    customDurationHint: 'Anpassa tiden efter frågeantalet.',
-    customExamSubtitle: 'Bygg ett eget övningsprov med valda kapitel, frågeantal och tidsgräns.',
-    customExamTitle: 'Eget övningsprov',
-    customQuestionCountHint: (maxQuestionCount) => `Max ${maxQuestionCount} frågor i urvalet.`,
-    customStartMockExam: 'Starta eget övningsprov',
-    difficultyLabel: {
-      easy: 'Lätt',
-      hard: 'Svår',
-      medium: 'Medel',
-      mixed: 'Blandad',
-    },
     examResultTitle: 'Provresultat',
     extraExamUnavailable: 'Extra övningsprov är inte tillgängliga just nu.',
     heroSubtitle: (durationMinutes, questionCount) =>
       `Tidsgräns ${durationMinutes} minuter · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
-    libraryCardSubtitle: (questionCount, durationMinutes) =>
-      `${questionCount} frågor · ${durationMinutes} minuter`,
-    libraryTitle: 'Provbibliotek',
-    mockChoiceAccessibilityLabel: (label, selected) =>
-      `${label}. ${selected ? 'Valt prov' : 'Välj prov'}.`,
     mockExamTitle: 'Övningsprov',
     nextExamTitle: 'Nästa prov',
     progressTitle: 'Framsteg',
     questionNumber: (questionNumber) => `Fråga ${questionNumber}`,
     questionReviewTitle: 'Frågegenomgång',
-    rewardPreviewBody:
-      'Slutför den korta annonsförhandsvisningen för att låsa upp ett extra övningsprov. Inga annonser visas under själva provet.',
-    rewardPreviewButton: 'Slutför förhandsvisning',
-    rewardPreviewTitle: 'Sponsrad förhandsvisning',
     resultBadge: 'Övningsresultat',
     resultNote:
       'Skickade resultat är slutgiltiga. Starta ett nytt övningsprov för ett nytt försök.',
-    resultScoreLabel: 'Övningsresultat',
     resultSubtitle: 'Förklaringar och genomgång visas först efter att provet har skickats in.',
     reviewBadge: 'Granska',
-    rewardedAdStatus: {
-      closed_without_reward: 'Det extra övningsprovet kräver att belöningsannonsen slutförs.',
-      earned_reward: 'Extra övningsprov upplåst.',
-      failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
-      show_failed: 'Belöningsannonsen kunde inte visas just nu.',
-      timed_out: 'Belöningsannonsen hann löpa ut innan det extra provet låstes upp.',
-      unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
-    },
     savedBadge: 'Sparat',
     savingBadge: 'Sparar',
     savingCompletion: 'Sparar dagens övningsprov.',
     selectedAnswerLabel: 'Valt svar',
     retryAccess: 'Försök läsa övningsprovsstatus igen',
-    startExtraExam: 'Lås upp extra prov',
     startMockExam: 'Starta övningsprov',
     startUnlockedExtraExam: 'Starta upplåst extra prov',
-    submitAccessibilityLabel: 'Skicka in övningsprovet',
+    submitAccessibilityLabel: 'Skicka övningsprov',
     submitLabel: 'Skicka prov',
     timedSimulationBadge: 'Tidsatt simulering',
     timeExpiredBadge: 'Tiden gick ut',
@@ -224,11 +131,13 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
     accessStatus: {
       ads_unavailable: 'Extra mock exams are unavailable right now.',
       access_read_failed: 'Stored mock exam access could not be read. Retry before starting.',
-      consent_required: 'Ad consent is needed before an extra exam can be unlocked.',
+      consent_required:
+        'Daily free mock exam used. Extra exams are not unlocked on the exam screen.',
       free_exam_available: 'Daily free mock exam available.',
       premium_unlimited_mock_exams: 'Unlimited mock exams active.',
-      remove_ads_active: 'Daily free mock exam used. Rewarded ads are hidden.',
-      rewarded_ad_available: 'Daily free mock exam used. Extra exam available.',
+      remove_ads_active: 'Daily free mock exam used. The exam screen does not show ad unlocks.',
+      rewarded_ad_available:
+        'Daily free mock exam used. Extra exams are not unlocked on the exam screen.',
       rewarded_exam_credit: 'Extra mock exam unlocked.',
     },
     accessTitle: 'Exam access',
@@ -238,66 +147,32 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Select answer ${optionText} for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
     chapterBreakdownTitle: 'Chapter breakdown',
-    chooseExamSubtitle:
-      'Choose a named mock, a fresh random mock, or a custom UHR-based setup before you start.',
-    chooseExamTitle: 'Choose exam',
     checkingAccess: 'Checking mock exam access.',
     completionStoreFailure: 'Mock exam completion could not be stored on this device.',
     correctAnswerLabel: 'Correct answer',
     correctBadge: 'Correct',
     correctCount: (correctCount, totalCount) => `${correctCount}/${totalCount} correct`,
-    customChaptersHint: 'Select at least one chapter for a custom exam.',
-    customDurationHint: 'Tune the time limit to the question count.',
-    customExamSubtitle: 'Build a custom mock exam with selected chapters, questions, and time.',
-    customExamTitle: 'Custom mock exam',
-    customQuestionCountHint: (maxQuestionCount) => `Up to ${maxQuestionCount} questions available.`,
-    customStartMockExam: 'Start custom mock exam',
-    difficultyLabel: {
-      easy: 'Easy',
-      hard: 'Hard',
-      medium: 'Medium',
-      mixed: 'Mixed',
-    },
     examResultTitle: 'Exam result',
     extraExamUnavailable: 'Extra mock exams are unavailable right now.',
     heroSubtitle: (durationMinutes, questionCount) =>
       `Time limit ${durationMinutes} minutes · ${questionCount} UHR-based questions · no ads during exam`,
-    libraryCardSubtitle: (questionCount, durationMinutes) =>
-      `${questionCount} questions · ${durationMinutes} minutes`,
-    libraryTitle: 'Exam library',
-    mockChoiceAccessibilityLabel: (label, selected) =>
-      `${label}. ${selected ? 'Selected exam' : 'Choose exam'}.`,
     mockExamTitle: 'Mock exam',
     nextExamTitle: 'Next exam',
     progressTitle: 'Progress',
     questionNumber: (questionNumber) => `Question ${questionNumber}`,
     questionReviewTitle: 'Question review',
-    rewardPreviewBody:
-      'Complete the short ad preview to unlock one extra mock exam. No ads appear during the exam itself.',
-    rewardPreviewButton: 'Complete sponsor preview',
-    rewardPreviewTitle: 'Sponsored preview',
     resultBadge: 'Mock exam result',
     resultNote: 'Submitted results are final. Start another mock exam for a fresh attempt.',
-    resultScoreLabel: 'Mock exam score',
     resultSubtitle: 'Explanations and review are shown only after the exam is submitted.',
     reviewBadge: 'Review',
-    rewardedAdStatus: {
-      closed_without_reward: 'Extra mock exam unlock needs a completed rewarded ad.',
-      earned_reward: 'Extra mock exam unlocked.',
-      failed_to_load: 'Rewarded ad could not load right now.',
-      show_failed: 'Rewarded ad could not be shown right now.',
-      timed_out: 'Rewarded ad timed out before the extra exam unlocked.',
-      unavailable: 'Rewarded ad is unavailable on this device right now.',
-    },
     savedBadge: 'Saved',
     savingBadge: 'Saving',
     savingCompletion: "Saving today's mock exam completion.",
     selectedAnswerLabel: 'Selected answer',
     retryAccess: 'Retry mock exam access check',
-    startExtraExam: 'Unlock extra exam',
     startMockExam: 'Start mock exam',
     startUnlockedExtraExam: 'Start unlocked extra exam',
-    submitAccessibilityLabel: 'Submit the mock exam',
+    submitAccessibilityLabel: 'Submit mock exam',
     submitLabel: 'Submit exam',
     timedSimulationBadge: 'Timed simulation',
     timeExpiredBadge: 'Time expired',
@@ -310,147 +185,20 @@ function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage
   return examRouteCopy[language].accessStatus[reason];
 }
 
-function getRewardedAdStatusText(status: RewardedExtraExamAdStatus, language: AppLanguage): string {
-  return examRouteCopy[language].rewardedAdStatus[status];
-}
-
-function isReviewedUhrExamQuestion(question: PracticeQuestion) {
-  return (
-    question.reviewStatus === 'published' &&
-    Boolean(question.uhrReference?.chapter && question.uhrReference?.section) &&
-    isUhrQuestion(question)
-  );
-}
-
-function clampInteger(value: number, min: number, max: number) {
-  if (!Number.isFinite(value)) return min;
-  return Math.max(min, Math.min(Math.round(value), max));
-}
-
-function getSelectionDurationMinutes(selection: ExamSelection) {
-  return selection.mode === 'library' ? MOCK_EXAM_TIME_LIMIT_MINUTES : selection.durationMinutes;
-}
-
-function getSelectionQuestionCount({
-  reviewedQuestions,
-  selection,
-}: {
-  reviewedQuestions: PracticeQuestion[];
-  selection: ExamSelection;
-}) {
-  if (selection.mode === 'library') {
-    const materialized = materializeMock({ bank: reviewedQuestions, mockId: selection.mockId });
-    return materialized?.questions.length ?? 0;
-  }
-
-  const selectedChapterIds = new Set(selection.chapterIds);
-  const availableQuestions = reviewedQuestions.filter((question) =>
-    selectedChapterIds.has(question.chapterId),
-  ).length;
-  return Math.min(selection.questionCount, availableQuestions);
-}
-
-function buildExamQuestions({
-  questionsById,
-  reviewedQuestions,
-  selection,
-  sessionId,
-}: {
-  questionsById: Map<string, PracticeQuestion>;
-  reviewedQuestions: PracticeQuestion[];
-  selection: ExamSelection;
-  sessionId: string;
-}) {
-  if (selection.mode === 'custom') {
-    const selectedChapterIds = new Set(selection.chapterIds);
-    return generateExam(
-      reviewedQuestions.filter((question) => selectedChapterIds.has(question.chapterId)),
-      {
-        questionCount: selection.questionCount,
-        sessionId,
-      },
-    );
-  }
-
-  const materialized = materializeMock({
-    bank: reviewedQuestions,
-    mockId: selection.mockId,
-  });
-  if (!materialized) return [];
-
-  return materialized.questions
-    .map((pick) => questionsById.get(pick.questionId))
-    .filter((question): question is PracticeQuestion => Boolean(question))
-    .map((question) => shuffleQuestionOptionsForSession(question, sessionId));
-}
-
 export default function Screen() {
-  const router = useRouter();
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
   const [examAttemptIndex, setExamAttemptIndex] = useState(0);
-  const [selectedExamMode, setSelectedExamMode] = useState<ExamSelection['mode']>('library');
-  const [selectedMockId, setSelectedMockId] = useState(DEFAULT_LIBRARY_MOCK_ID);
-  const [customQuestionCount, setCustomQuestionCount] = useState(
-    defaultMockExamConfig.questionCount,
-  );
-  const [customDurationMinutes, setCustomDurationMinutes] = useState(
-    defaultMockExamConfig.durationMinutes,
-  );
-  const [selectedChapterIds, setSelectedChapterIds] = useState<string[]>(
-    chapters.map((chapter) => chapter.id),
-  );
-  const reviewedExamQuestions = useMemo(() => questions.filter(isReviewedUhrExamQuestion), []);
-  const questionsById = useMemo(
-    () => new Map(reviewedExamQuestions.map((question) => [question.id, question])),
-    [reviewedExamQuestions],
-  );
-  const selectedCustomQuestionPoolSize = useMemo(() => {
-    const selectedChapterSet = new Set(selectedChapterIds);
-    return reviewedExamQuestions.filter((question) => selectedChapterSet.has(question.chapterId))
-      .length;
-  }, [reviewedExamQuestions, selectedChapterIds]);
-  const maxCustomQuestionCount = Math.max(
-    CUSTOM_MIN_QUESTION_COUNT,
-    Math.min(CUSTOM_MAX_QUESTION_COUNT, selectedCustomQuestionPoolSize),
-  );
-  const effectiveCustomQuestionCount = clampInteger(
-    customQuestionCount,
-    CUSTOM_MIN_QUESTION_COUNT,
-    maxCustomQuestionCount,
-  );
-  const selectedExamSelection: ExamSelection = useMemo(
-    () =>
-      selectedExamMode === 'library'
-        ? { mockId: selectedMockId, mode: 'library' }
-        : {
-            chapterIds: selectedChapterIds,
-            durationMinutes: customDurationMinutes,
-            mode: 'custom',
-            questionCount: effectiveCustomQuestionCount,
-          },
-    [
-      customDurationMinutes,
-      effectiveCustomQuestionCount,
-      selectedChapterIds,
-      selectedExamMode,
-      selectedMockId,
-    ],
-  );
-  const [activeExamSelection, setActiveExamSelection] =
-    useState<ExamSelection>(selectedExamSelection);
   const examSessionId = `mock-exam-${examAttemptIndex}`;
   const examQuestions = useMemo(
     () =>
-      buildExamQuestions({
-        questionsById,
-        reviewedQuestions: reviewedExamQuestions,
-        selection: activeExamSelection,
+      generateExam(questions, {
+        questionCount: defaultMockExamConfig.questionCount,
         sessionId: examSessionId,
       }),
-    [activeExamSelection, examSessionId, questionsById, reviewedExamQuestions],
+    [examSessionId],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [answerTimings, setAnswerTimings] = useState<Record<string, number>>({});
@@ -460,43 +208,24 @@ export default function Screen() {
   const [completionRecorded, setCompletionRecorded] = useState(false);
   const [accessStatusMessage, setAccessStatusMessage] = useState<string | null>(null);
   const [focusedReviewQuestionId, setFocusedReviewQuestionId] = useState<string | null>(null);
-  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
   const [startingAccessibleExam, setStartingAccessibleExam] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(
-    getSelectionDurationMinutes(activeExamSelection) * 60,
+    defaultMockExamConfig.durationMinutes * 60,
   );
   const recordMockExamSession = useProgressStore((state) => state.recordMockExamSession);
   const language = useSettingsStore((state) => state.language);
   const copy = examRouteCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const {
     accessDecision,
     accessReady,
     consumeRewardedExamCredit,
-    entitlements,
     entitlementsReady,
-    grantRewardedExamCredit,
     recordExamCompletion,
     refreshAccess,
   } = useMockExamAccess();
   const accessLoading = !accessReady || !entitlementsReady;
-  const selectedExamDurationMinutes = getSelectionDurationMinutes(selectedExamSelection);
-  const selectedExamQuestionCount = getSelectionQuestionCount({
-    reviewedQuestions: reviewedExamQuestions,
-    selection: selectedExamSelection,
-  });
-  const selectedExamCanStart = selectedExamQuestionCount > 0;
-  const chapterOptions: MockExamChapterOption[] = useMemo(
-    () =>
-      chapters.map((chapter) => ({
-        id: chapter.id,
-        subtitle:
-          language === 'en'
-            ? `${chapter.questionCount} source questions`
-            : `${chapter.questionCount} källfrågor`,
-        title: language === 'en' ? chapter.nameEn : chapter.nameSv,
-      })),
-    [language],
-  );
 
   useEffect(() => {
     if (!examUnlocked || submitted || remainingSeconds <= 0) return undefined;
@@ -521,6 +250,16 @@ export default function Screen() {
       setSubmitted(true);
     }
   }, [examQuestions.length, examUnlocked, remainingSeconds, submitted]);
+
+  useEffect(() => {
+    if (examUnlocked || submitted || accessLoading) return;
+    if (accessDecision.canStartExam && accessDecision.reason !== 'rewarded_exam_credit') {
+      const now = Date.now();
+      examStartedAtIsoRef.current = new Date(now).toISOString();
+      timingCheckpointMsRef.current = now;
+      setExamUnlocked(true);
+    }
+  }, [accessDecision.canStartExam, accessDecision.reason, accessLoading, examUnlocked, submitted]);
 
   const result = submitted ? scoreExam(examQuestions, answers) : null;
   const resultCorrectCount = result?.correctCount ?? 0;
@@ -553,6 +292,10 @@ export default function Screen() {
       ),
     [examQuestions],
   );
+  const examQuestionById = useMemo(
+    () => new Map(examQuestions.map((question) => [question.id, question] as const)),
+    [examQuestions],
+  );
   const examDiagnostic = useMemo(
     () =>
       submittedExamSession
@@ -563,56 +306,25 @@ export default function Screen() {
         : null,
     [questionChapterIndex, submittedExamSession],
   );
-  const shouldAttemptRewardedAd =
-    accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
-  const usesWebRewardPreview = Platform.OS === 'web' && shouldAttemptRewardedAd;
   const shouldRetryAccessRead = accessDecision.reason === 'access_read_failed';
   const startAccessibleExamLabel = shouldRetryAccessRead
     ? copy.retryAccess
-    : shouldAttemptRewardedAd
-      ? copy.startExtraExam
-      : accessDecision.reason === 'rewarded_exam_credit'
-        ? copy.startUnlockedExtraExam
-        : copy.startMockExam;
+    : accessDecision.reason === 'rewarded_exam_credit'
+      ? copy.startUnlockedExtraExam
+      : copy.startMockExam;
   const canStartAccessibleExam =
     !accessLoading &&
-    selectedExamCanStart &&
-    (!usesWebRewardPreview || rewardPreviewCompleted) &&
     (shouldRetryAccessRead ||
       accessDecision.canStartExam ||
-      shouldAttemptRewardedAd ||
       accessDecision.reason === 'rewarded_exam_credit');
   const accessStatusText = accessLoading
     ? copy.checkingAccess
     : getAccessStatusText(accessDecision.reason, language);
-  const rewardPreviewPanel = usesWebRewardPreview ? (
-    <View style={styles.rewardPreviewCard}>
-      <Text accessibilityRole="header" style={styles.rewardPreviewTitle}>
-        {copy.rewardPreviewTitle}
-      </Text>
-      <Text style={styles.subtitle}>{copy.rewardPreviewBody}</Text>
-      <Button
-        accessibilityLabel={copy.rewardPreviewButton}
-        accessibilityRole="button"
-        accessibilityState={{ selected: rewardPreviewCompleted }}
-        disabled={rewardPreviewCompleted}
-        onPress={() => {
-          setRewardPreviewCompleted(true);
-          setAccessStatusMessage(null);
-        }}
-        style={styles.actionButton}
-        variant="secondary"
-      >
-        {copy.rewardPreviewButton}
-      </Button>
-    </View>
-  ) : null;
 
-  const resetExamAttempt = useCallback((selection: ExamSelection) => {
+  const resetExamAttempt = useCallback(() => {
     const now = Date.now();
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
-    setActiveExamSelection(selection);
     setExamAttemptIndex((current) => current + 1);
     setAnswers({});
     setAnswerTimings({});
@@ -620,8 +332,7 @@ export default function Screen() {
     setSubmittedAt(null);
     setCompletionRecorded(false);
     setFocusedReviewQuestionId(null);
-    setRewardPreviewCompleted(false);
-    setRemainingSeconds(getSelectionDurationMinutes(selection) * 60);
+    setRemainingSeconds(defaultMockExamConfig.durationMinutes * 60);
     setExamUnlocked(true);
   }, []);
 
@@ -630,22 +341,19 @@ export default function Screen() {
     setSubmitted(true);
   }, []);
 
-  const recordQuestionAnswer = useCallback(
-    (questionId: string, optionId: string) => {
-      const now = Date.now();
-      const elapsedSeconds = Math.max(1, Math.round((now - timingCheckpointMsRef.current) / 1000));
-      timingCheckpointMsRef.current = now;
-      setAnswers((current) => ({ ...current, [questionId]: optionId }));
-      setAnswerTimings((current) => ({
-        ...current,
-        [questionId]: Math.min(
-          getSelectionDurationMinutes(activeExamSelection) * 60,
-          (current[questionId] ?? 0) + elapsedSeconds,
-        ),
-      }));
-    },
-    [activeExamSelection],
-  );
+  const recordQuestionAnswer = useCallback((questionId: string, optionId: string) => {
+    const now = Date.now();
+    const elapsedSeconds = Math.max(1, Math.round((now - timingCheckpointMsRef.current) / 1000));
+    timingCheckpointMsRef.current = now;
+    setAnswers((current) => ({ ...current, [questionId]: optionId }));
+    setAnswerTimings((current) => ({
+      ...current,
+      [questionId]: Math.min(
+        defaultMockExamConfig.durationMinutes * 60,
+        (current[questionId] ?? 0) + elapsedSeconds,
+      ),
+    }));
+  }, []);
 
   const jumpToReviewQuestion = useCallback((questionId: string) => {
     setFocusedReviewQuestionId(questionId);
@@ -662,66 +370,43 @@ export default function Screen() {
     );
   }, []);
 
-  const handleStartAccessibleExam = useCallback(
-    async (selection = selectedExamSelection) => {
-      if (!canStartAccessibleExam || startingAccessibleExam) return;
+  const handleStartAccessibleExam = useCallback(async () => {
+    if (!canStartAccessibleExam || startingAccessibleExam) return;
 
-      setAccessStatusMessage(null);
-      setStartingAccessibleExam(true);
+    setAccessStatusMessage(null);
+    setStartingAccessibleExam(true);
 
-      try {
-        if (shouldRetryAccessRead) {
-          await refreshAccess();
-          return;
-        }
-
-        if (accessDecision.reason === 'rewarded_exam_credit') {
-          await consumeRewardedExamCredit();
-        } else if (shouldAttemptRewardedAd) {
-          const rewardedAdResult = await showRewardedExtraExamAd({
-            confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
-            entitlements,
-          });
-
-          if (rewardedAdResult.status !== 'earned_reward') {
-            setAccessStatusMessage(getRewardedAdStatusText(rewardedAdResult.status, language));
-            return;
-          }
-
-          await grantRewardedExamCredit();
-          await consumeRewardedExamCredit();
-          setRewardPreviewCompleted(false);
-        } else if (!accessDecision.canStartExam) {
-          setAccessStatusMessage(copy.extraExamUnavailable);
-          return;
-        }
-
-        resetExamAttempt(selection);
-      } catch {
-        setAccessStatusMessage(copy.unlockFailure);
-      } finally {
-        setStartingAccessibleExam(false);
+    try {
+      if (shouldRetryAccessRead) {
+        await refreshAccess();
+        return;
       }
-    },
-    [
-      accessDecision.canStartExam,
-      accessDecision.reason,
-      canStartAccessibleExam,
-      consumeRewardedExamCredit,
-      copy.extraExamUnavailable,
-      copy.unlockFailure,
-      entitlements,
-      grantRewardedExamCredit,
-      language,
-      refreshAccess,
-      resetExamAttempt,
-      rewardPreviewCompleted,
-      selectedExamSelection,
-      shouldAttemptRewardedAd,
-      shouldRetryAccessRead,
-      startingAccessibleExam,
-    ],
-  );
+
+      if (accessDecision.reason === 'rewarded_exam_credit') {
+        await consumeRewardedExamCredit();
+      } else if (!accessDecision.canStartExam) {
+        setAccessStatusMessage(copy.extraExamUnavailable);
+        return;
+      }
+
+      resetExamAttempt();
+    } catch {
+      setAccessStatusMessage(copy.unlockFailure);
+    } finally {
+      setStartingAccessibleExam(false);
+    }
+  }, [
+    accessDecision.canStartExam,
+    accessDecision.reason,
+    canStartAccessibleExam,
+    consumeRewardedExamCredit,
+    copy.extraExamUnavailable,
+    copy.unlockFailure,
+    refreshAccess,
+    resetExamAttempt,
+    shouldRetryAccessRead,
+    startingAccessibleExam,
+  ]);
 
   useEffect(() => {
     if (!submitted || completionRecorded) return undefined;
@@ -767,68 +452,6 @@ export default function Screen() {
     submittedExamSession,
   ]);
 
-  const selectLibraryMock = useCallback((mockId: string) => {
-    setSelectedExamMode('library');
-    setSelectedMockId(mockId);
-  }, []);
-
-  const handleCustomQuestionCountChange = useCallback((count: number) => {
-    setSelectedExamMode('custom');
-    setCustomQuestionCount(count);
-  }, []);
-
-  const handleCustomDurationChange = useCallback((minutes: number) => {
-    setSelectedExamMode('custom');
-    setCustomDurationMinutes(minutes);
-  }, []);
-
-  const handleToggleChapter = useCallback((chapterId: string | number) => {
-    setSelectedExamMode('custom');
-    const normalizedChapterId = String(chapterId);
-    setSelectedChapterIds((current) =>
-      current.includes(normalizedChapterId)
-        ? current.filter((id) => id !== normalizedChapterId)
-        : [...current, normalizedChapterId],
-    );
-  }, []);
-
-  const handleSelectAllChapters = useCallback(() => {
-    setSelectedExamMode('custom');
-    setSelectedChapterIds(chapters.map((chapter) => chapter.id));
-  }, []);
-
-  const handleClearChapters = useCallback(() => {
-    setSelectedExamMode('custom');
-    setSelectedChapterIds([]);
-  }, []);
-
-  const handleResetCustomExam = useCallback(() => {
-    setSelectedExamMode('custom');
-    setCustomQuestionCount(defaultMockExamConfig.questionCount);
-    setCustomDurationMinutes(defaultMockExamConfig.durationMinutes);
-    setSelectedChapterIds(chapters.map((chapter) => chapter.id));
-  }, []);
-
-  const startSelectedExam = useCallback(() => {
-    void handleStartAccessibleExam(selectedExamSelection);
-  }, [handleStartAccessibleExam, selectedExamSelection]);
-
-  const startCustomExam = useCallback(() => {
-    const customSelection: CustomExamSelection = {
-      chapterIds: selectedChapterIds,
-      durationMinutes: customDurationMinutes,
-      mode: 'custom',
-      questionCount: effectiveCustomQuestionCount,
-    };
-    setSelectedExamMode('custom');
-    void handleStartAccessibleExam(customSelection);
-  }, [
-    customDurationMinutes,
-    effectiveCustomQuestionCount,
-    handleStartAccessibleExam,
-    selectedChapterIds,
-  ]);
-
   if (!result && !examUnlocked) {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -838,80 +461,10 @@ export default function Screen() {
             {copy.mockExamTitle}
           </Text>
           <Text style={styles.subtitle}>
-            {copy.heroSubtitle(selectedExamDurationMinutes, selectedExamQuestionCount)}
+            {copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}
           </Text>
         </View>
         <QuestionDisclaimer />
-        <View style={styles.librarySection}>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            {copy.chooseExamTitle}
-          </Text>
-          <Text style={styles.subtitle}>{copy.chooseExamSubtitle}</Text>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            {copy.libraryTitle}
-          </Text>
-          <View style={styles.mockChoiceGrid}>
-            {MOCK_EXAM_LIBRARY.map((mock) => {
-              const selected = selectedExamMode === 'library' && selectedMockId === mock.id;
-              const label = language === 'en' ? mock.labelEn : mock.labelSv;
-
-              return (
-                <Pressable
-                  aria-checked={selected}
-                  accessibilityLabel={copy.mockChoiceAccessibilityLabel(label, selected)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: selected, selected }}
-                  key={mock.id}
-                  onPress={() => selectLibraryMock(mock.id)}
-                  style={({ pressed }) => [
-                    styles.mockChoice,
-                    selected ? styles.mockChoiceSelected : null,
-                    pressed ? styles.mockChoicePressed : null,
-                  ]}
-                >
-                  <View pointerEvents="none" style={styles.mockChoiceHeader}>
-                    <Text style={styles.mockChoiceTitle}>{label}</Text>
-                    <Badge tone={selected ? 'blue' : 'warm'}>
-                      {copy.difficultyLabel[mock.difficulty]}
-                    </Badge>
-                  </View>
-                  <Text style={styles.subtitle}>
-                    {copy.libraryCardSubtitle(
-                      MOCK_EXAM_QUESTION_COUNT,
-                      MOCK_EXAM_TIME_LIMIT_MINUTES,
-                    )}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-        <MockExamConfigPanel
-          chapters={chapterOptions}
-          chaptersHint={copy.customChaptersHint}
-          durationHint={copy.customDurationHint}
-          durationMinutes={customDurationMinutes}
-          languageOverride={language}
-          maxQuestionCount={maxCustomQuestionCount}
-          minQuestionCount={CUSTOM_MIN_QUESTION_COUNT}
-          onClearChapters={handleClearChapters}
-          onDurationMinutesChange={handleCustomDurationChange}
-          onPractice={() => router.push('/practice')}
-          onQuestionCountChange={handleCustomQuestionCountChange}
-          onReset={handleResetCustomExam}
-          onSelectAllChapters={handleSelectAllChapters}
-          onStart={startCustomExam}
-          onToggleChapter={handleToggleChapter}
-          questionCount={effectiveCustomQuestionCount}
-          questionCountHint={copy.customQuestionCountHint(maxCustomQuestionCount)}
-          selectedChapterIds={selectedChapterIds}
-          startAccessibilityLabel={copy.customStartMockExam}
-          startDisabled={!canStartAccessibleExam || startingAccessibleExam}
-          startLabel={copy.customStartMockExam}
-          style={selectedExamMode === 'custom' ? styles.customPanelSelected : null}
-          subtitle={copy.customExamSubtitle}
-          title={copy.customExamTitle}
-        />
         <View style={styles.accessCard}>
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             {copy.accessTitle}
@@ -920,14 +473,13 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          {rewardPreviewPanel}
           <Button
             aria-disabled={!canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
             accessibilityRole="button"
             accessibilityState={{ disabled: !canStartAccessibleExam || startingAccessibleExam }}
             disabled={!canStartAccessibleExam || startingAccessibleExam}
-            onPress={startSelectedExam}
+            onPress={handleStartAccessibleExam}
             style={styles.actionButton}
           >
             {startAccessibleExamLabel}
@@ -960,7 +512,6 @@ export default function Screen() {
         <ResultSummary
           correctCount={result.correctCount}
           languageOverride={language}
-          statusLabel={copy.resultScoreLabel}
           subtitle={copy.resultNote}
           totalCount={result.totalCount}
         />
@@ -979,7 +530,6 @@ export default function Screen() {
           {accessStatusMessage ? (
             <Text style={styles.statusText}>{accessStatusMessage}</Text>
           ) : null}
-          {rewardPreviewPanel}
           <Button
             aria-disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
             accessibilityLabel={startAccessibleExamLabel}
@@ -988,7 +538,7 @@ export default function Screen() {
               disabled: !completionRecorded || !canStartAccessibleExam || startingAccessibleExam,
             }}
             disabled={!completionRecorded || !canStartAccessibleExam || startingAccessibleExam}
-            onPress={startSelectedExam}
+            onPress={handleStartAccessibleExam}
             style={styles.actionButton}
             variant="secondary"
           >
@@ -1042,6 +592,7 @@ export default function Screen() {
                 {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
               </Badge>
             </View>
+            <ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />
             <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
             <QuestionSourceCitation
               bodyStyle={styles.questionSourceCitation}
@@ -1104,6 +655,7 @@ export default function Screen() {
       {examQuestions.map((question, index) => (
         <View key={question.id} style={styles.questionCard}>
           <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+          <ProvenanceBadge language={language} question={question} />
           <Text style={styles.questionText}>{getQuestionDisplayText(question, language)}</Text>
           <QuestionSourceCitation
             bodyStyle={styles.questionSourceCitation}
@@ -1118,10 +670,10 @@ export default function Screen() {
               return (
                 <Pressable
                   key={option.id}
-                  aria-checked={isSelected}
+                  aria-selected={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: isSelected }}
                   onPress={() => recordQuestionAnswer(question.id, option.id)}
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
@@ -1150,216 +702,168 @@ export default function Screen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.surface,
-    flex: 1,
-  },
-  content: {
-    gap: space[2],
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.25],
-    padding: space[3],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  progressCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    gap: space[0.5],
-    padding: space[2],
-  },
-  accessCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.card,
-    gap: space[1.25],
-    padding: space[2],
-  },
-  librarySection: {
-    gap: space[1.25],
-  },
-  mockChoiceGrid: {
-    gap: space[1],
-  },
-  mockChoice: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  mockChoiceSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  mockChoicePressed: {
-    borderColor: colors.focus,
-  },
-  mockChoiceHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[1],
-    justifyContent: 'space-between',
-  },
-  mockChoiceTitle: {
-    color: colors.text,
-    flex: 1,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  customPanelSelected: {
-    borderColor: colors.badgeBlueText,
-  },
-  rewardPreviewCard: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1],
-    padding: space[1.5],
-  },
-  rewardPreviewTitle: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  statusText: {
-    color: colors.warning,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  questionCard: {
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.5],
-    padding: space[2],
-  },
-  questionMeta: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  questionText: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.body.lineHeight,
-  },
-  questionSourceCitation: {
-    color: colors.textDisclaimer,
-    fontSize: typography.disclaimer.fontSize,
-    lineHeight: typography.disclaimer.lineHeight,
-  },
-  options: {
-    gap: space[1],
-  },
-  option: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space[1.5],
-  },
-  optionSelected: {
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.badgeBlueText,
-  },
-  optionText: {
-    color: colors.textSoft,
-    fontSize: typography.navButton.fontSize,
-  },
-  optionTextSelected: {
-    color: colors.badgeBlueText,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  actionButton: {
-    minHeight: space[5] + space[0.5],
-  },
-  breakdownRow: {
-    alignItems: 'center',
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: space[1.5],
-  },
-  breakdownLabel: {
-    flex: 1,
-    gap: space[0.5],
-  },
-  breakdownChapter: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-  },
-  breakdownId: {
-    color: colors.textMuted,
-    fontSize: typography.badge.fontSize,
-    textTransform: 'uppercase',
-  },
-  breakdownScore: {
-    color: colors.textMuted,
-    fontSize: typography.navButton.fontSize,
-  },
-  reviewCard: {
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[1.5],
-    padding: space[2],
-  },
-  reviewCardFocused: {
-    borderColor: colors.focus,
-    borderWidth: 2,
-  },
-  reviewHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  answerGrid: {
-    gap: space[1],
-  },
-  answerCard: {
-    backgroundColor: colors.surfaceWarm,
-    borderRadius: radius.small,
-    gap: space[0.5],
-    padding: space[1.5],
-  },
-  answerLabel: {
-    color: colors.textMuted,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  answerText: {
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    lineHeight: typography.bodyTight.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.surface,
+      flex: 1,
+    },
+    content: {
+      gap: space[2],
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    hero: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.25],
+      padding: space[3],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sectionTitle: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    progressCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderRadius: radius.card,
+      gap: space[0.5],
+      padding: space[2],
+    },
+    accessCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderRadius: radius.card,
+      gap: space[1.25],
+      padding: space[2],
+    },
+    statusText: {
+      color: themeColors.warning,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    questionCard: {
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.5],
+      padding: space[2],
+    },
+    questionMeta: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    questionText: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.body.lineHeight,
+    },
+    questionSourceCitation: {
+      color: themeColors.textDisclaimer,
+      fontSize: typography.disclaimer.fontSize,
+      lineHeight: typography.disclaimer.lineHeight,
+    },
+    options: {
+      gap: space[1],
+    },
+    option: {
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      padding: space[1.5],
+    },
+    optionSelected: {
+      backgroundColor: themeColors.badgeBlueBg,
+      borderColor: themeColors.badgeBlueText,
+    },
+    optionText: {
+      color: themeColors.textSoft,
+      fontSize: typography.navButton.fontSize,
+    },
+    optionTextSelected: {
+      color: themeColors.badgeBlueText,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    actionButton: {
+      minHeight: space[5] + space[0.5],
+    },
+    breakdownRow: {
+      alignItems: 'center',
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: space[1.5],
+    },
+    breakdownLabel: {
+      flex: 1,
+      gap: space[0.5],
+    },
+    breakdownChapter: {
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+    },
+    breakdownId: {
+      color: themeColors.textMuted,
+      fontSize: typography.badge.fontSize,
+      textTransform: 'uppercase',
+    },
+    breakdownScore: {
+      color: themeColors.textMuted,
+      fontSize: typography.navButton.fontSize,
+    },
+    reviewCard: {
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.5],
+      padding: space[2],
+    },
+    reviewCardFocused: {
+      borderColor: themeColors.focus,
+      borderWidth: 2,
+    },
+    reviewHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    answerGrid: {
+      gap: space[1],
+    },
+    answerCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderRadius: radius.small,
+      gap: space[0.5],
+      padding: space[1.5],
+    },
+    answerLabel: {
+      color: themeColors.textMuted,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    answerText: {
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      lineHeight: typography.bodyTight.lineHeight,
+    },
+  });
+}

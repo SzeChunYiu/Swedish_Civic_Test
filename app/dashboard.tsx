@@ -23,7 +23,8 @@ import { calculateStreakWithFreeze } from '../lib/learning/streakWithFreeze';
 import { hasProEntitlement } from '../lib/monetization/premium';
 import { useProgressStore } from '../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useThemeColors } from '../lib/theme/ThemeProvider';
 import type { ProTierEntitlements } from '../types/monetization';
 
 const ACTIVITY_DAYS = 53 * 7;
@@ -297,6 +298,8 @@ export default function DashboardScreen() {
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = dashboardCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const progress = useMemo(
     () =>
       buildDashboardProgressSnapshot({
@@ -388,35 +391,37 @@ export default function DashboardScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
-  summaryCard: {
-    gap: space[1],
-  },
-  summaryText: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  homeLink: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  proAnalyticsPlaceholder: {
-    display: 'none',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    accessibilitySummary: {
+      height: 1,
+      left: -10000,
+      overflow: 'hidden',
+      position: 'absolute',
+      width: 1,
+    },
+    summaryCard: {
+      gap: space[1],
+    },
+    summaryText: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    homeLink: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    proAnalyticsPlaceholder: {
+      display: 'none',
+    },
+  });
+}

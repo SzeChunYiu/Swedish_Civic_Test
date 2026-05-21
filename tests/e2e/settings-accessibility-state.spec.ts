@@ -34,6 +34,18 @@ test('settings controls expose selected and checked state on web', async ({ page
   const disabledAudio = page.getByRole('switch', { name: 'Enable audio' });
   await expect(disabledAudio).toHaveAttribute('aria-checked', 'false');
 
+  const darkTheme = page.getByRole('button', { name: 'Choose theme: Dark' });
+  await darkTheme.click();
+  await expect(darkTheme).toHaveAttribute('aria-selected', 'true');
+  await expect(page.getByRole('button', { name: 'Choose theme: Use system' })).toHaveAttribute(
+    'aria-selected',
+    'false',
+  );
+  await expect(page.getByRole('heading', { name: 'Settings' })).toHaveCSS(
+    'color',
+    'rgb(245, 247, 250)',
+  );
+
   await page.reload({ waitUntil: 'networkidle' });
 
   await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
@@ -48,6 +60,18 @@ test('settings controls expose selected and checked state on web', async ({ page
     'aria-checked',
     'false',
   );
+  await expect(page.getByRole('button', { name: 'Choose theme: Dark' })).toHaveAttribute(
+    'aria-selected',
+    'true',
+  );
+
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(
+    page.getByRole('heading', {
+      name: 'Prepare calmly, one civic concept at a time',
+    }),
+  ).toHaveCSS('color', 'rgb(245, 247, 250)');
 
   expect(consoleErrors).toEqual([]);
 });

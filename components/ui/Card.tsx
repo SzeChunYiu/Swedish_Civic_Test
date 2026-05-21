@@ -1,12 +1,11 @@
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { useId, useMemo } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
-import { colors, radius, shadows, space } from '../../lib/theme';
-import type { ThemeColors } from '../../lib/theme';
+import { radius, shadows, space, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 export interface CardProps extends PropsWithChildren<ComponentProps<typeof View>> {
   elevated?: boolean;
-  themeColors?: ThemeColors;
 }
 
 export function Card({
@@ -17,10 +16,10 @@ export function Card({
   children,
   style,
   elevated = false,
-  themeColors,
   ...viewProps
 }: CardProps) {
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const groupedForAccessibility = accessible ?? Boolean(accessibilityLabel || accessibilityRole);
   const resolvedAccessibilityRole =
     accessibilityRole ?? (groupedForAccessibility ? 'summary' : undefined);

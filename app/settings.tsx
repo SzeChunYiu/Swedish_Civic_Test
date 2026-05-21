@@ -1,13 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -24,7 +16,8 @@ import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
+import { motion, radius, shadows, space, typography } from '../lib/theme';
+import { useTheme } from '../lib/theme/ThemeProvider';
 import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
@@ -286,7 +279,7 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
-  const systemColorScheme = useColorScheme();
+  const { colors: themeColors } = useTheme();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -308,7 +301,6 @@ export default function Screen() {
     (state) => state.clearPersistenceWarning,
   );
   const copy = settingsCopy[language];
-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const [importText, setImportText] = useState('');
