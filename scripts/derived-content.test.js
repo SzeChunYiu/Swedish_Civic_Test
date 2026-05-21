@@ -899,6 +899,72 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   assert.deepEqual(trueExplanationOffenders, []);
 });
 
+test('derivePublishedQuestions avoids generic how-can-affect when splices', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q999',
+    chapterId: 'ch02',
+    type: 'single_choice',
+    questionSv: 'Hur kan falsk information påverka demokratin?',
+    questionEn: 'How can false information affect democracy?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Falska uppgifter kan spridas snabbt och påverka människors åsikter',
+        textEn: "False information can spread quickly and affect people's opinions",
+      },
+      {
+        id: 'b',
+        textSv: 'Alla väljare får två röster automatiskt',
+        textEn: 'All voters automatically get two votes',
+      },
+      {
+        id: 'c',
+        textSv: 'Domstolarna tar över riksdagens uppgifter',
+        textEn: "The courts take over the Riksdag's tasks",
+      },
+      {
+        id: 'd',
+        textSv: 'Samhället blir automatiskt mer integrerat',
+        textEn: 'Society automatically becomes more integrated',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv:
+      'Falsk information kan påverka demokratin genom att göra det svårare att lita på gemensamma fakta.',
+    explanationEn:
+      'False information can affect democracy by making it harder to trust shared facts.',
+    uhrReference: {
+      chapter: 'Sveriges demokratiska system',
+      section: 'Hot mot demokratin',
+      pageApprox: 11,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['democracy', 'source-criticism'],
+  };
+
+  const derived = derivePublishedQuestions([source], 901);
+  const generatedTrueFalse = derived.filter((question) => question.type === 'true_false');
+
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'En möjlig följd för demokratin är att falska uppgifter kan spridas snabbt och påverka människors åsikter.',
+    "One possible effect on democracy is that false information can spread quickly and affect people's opinions.",
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'En möjlig följd för demokratin är att alla väljare får två röster automatiskt.',
+    'One possible effect on democracy is that all voters automatically get two votes.',
+  );
+  assert.doesNotMatch(
+    generatedTrueFalse
+      .map((question) => `${question.questionSv} ${question.questionEn}`)
+      .join('\n'),
+    /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+|\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
+  );
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
@@ -1163,7 +1229,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy|när\s+[^.?!]+?\spåverkar\s+[^.?!]+|when\s+[^.?!]+?\saffects\s+[^.?!]+|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
   );
   assert.doesNotMatch(
     residualText,
