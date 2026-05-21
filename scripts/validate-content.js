@@ -9932,6 +9932,56 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      const adBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+        'utf8',
+      );
+      const nativeAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
+      const adCopySource = fs.readFileSync(
+        path.join(repoRoot, 'lib/monetization/adCopy.ts'),
+        'utf8',
+      );
+
+      if (
+        !adBannerSource.includes(
+          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        )
+      ) {
+        reject('AdBanner web fallback must choose live/test status from the configured unit');
+        routeIsValid = false;
+      }
+      if (!nativeAdBannerSource.includes('const unit = getAdUnit(placement);')) {
+        reject('AdBanner native placement must read the configured unit for test status copy');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdBannerSource.includes(
+          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        ) ||
+        !nativeAdBannerSource.includes(
+          'accessibilityLabel={copy.accessibilityLabel(placementLabel, adStatusLabel)}',
+        )
+      ) {
+        reject('AdBanner native accessibility label must choose live/test status by unit');
+        routeIsValid = false;
+      }
+      if (
+        !adCopySource.includes("testStatus: 'AdMob test unit active - preview'") ||
+        !adCopySource.includes("testStatus: 'AdMob-testannons aktiv - förhandsvisning'")
+      ) {
+        reject('AdBanner testStatus copy must use platform-neutral preview wording');
+        routeIsValid = false;
+      }
+      if (/web preview|webbförhandsvisning/.test(adCopySource)) {
+        reject('AdBanner testStatus copy must not say web preview for native test units');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,

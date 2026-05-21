@@ -21,6 +21,7 @@ export function AdBanner({
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
   const mobileAdsConsent = useMobileAdsConsent(resolvedEntitlements);
+  const unit = getAdUnit(placement);
   const unitId = getPlatformAdUnitId(placement, Platform.OS);
   const visible =
     entitlementsReady &&
