@@ -2224,7 +2224,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Disclaimer',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -2272,7 +2272,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Terms of use',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -2282,10 +2282,11 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
-      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
-      "retrievedDate: '2026-05-20'",
-      "title: 'UHR: Om medborgarskapsprovet'",
-      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+      "from '../components/compliance/SourceMaterialLinks'",
+      'UHR_AUTHORITY_BOUNDARY_SOURCE,',
+      'UhrAuthorityBoundaryLink,',
+      'UhrEducationMaterialLink,',
+      'UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
       'Källor',
@@ -19111,6 +19112,15 @@ if (focusedValidationRequested('practiceFlowParity')) {
   process.exit(0);
 }
 
+if (focusedValidationRequested('sourceMaterialLinkParity')) {
+  validateUhrSourceMaterialLinkParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    uhrSourceMaterialLinkParityValidated,
+  });
+  process.exit(0);
+}
+
 validateAuthoredSourceParity();
 validateGenerationParity();
 
@@ -19621,18 +19631,30 @@ function validateUhrSectionMapExactSchemaKeys() {
 function validateUhrSourceMaterialLinkParity() {
   let valid = true;
   let sourcesRoute = '';
+  let disclaimerRoute = '';
+  let termsRoute = '';
+  let sourceMaterialLinks = '';
+  let legalPage = '';
 
   function reject(message) {
     valid = false;
     fail(message);
   }
 
-  try {
-    sourcesRoute = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
-  } catch (error) {
-    reject(`app/sources.tsx could not be read: ${error.message}`);
-    return;
+  function readRoute(relativePath) {
+    try {
+      return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(`${relativePath} could not be read: ${error.message}`);
+      return '';
+    }
   }
+
+  sourcesRoute = readRoute('app/sources.tsx');
+  disclaimerRoute = readRoute('app/disclaimer.tsx');
+  termsRoute = readRoute('app/terms.tsx');
+  sourceMaterialLinks = readRoute('components/compliance/SourceMaterialLinks.tsx');
+  legalPage = readRoute('components/compliance/LegalPage.tsx');
 
   const routeMaterialUrl = extractStringConstantFromTs(sourcesRoute, 'UHR_EDUCATION_MATERIAL_URL');
   if (routeMaterialUrl !== EXPECTED_UHR_EDUCATION_MATERIAL_URL) {
@@ -19665,9 +19687,15 @@ function validateUhrSourceMaterialLinkParity() {
     'spreadsheet-friendly',
     'kalkylbladsvänliga',
   ];
-  for (const forbiddenCopy of forbiddenLearnerFacingSourceCopy) {
-    if (sourcesRoute.includes(forbiddenCopy)) {
-      reject(`app/sources.tsx learner-facing copy must not mention ${forbiddenCopy}`);
+  for (const [routePath, routeSource] of [
+    ['app/sources.tsx', sourcesRoute],
+    ['app/disclaimer.tsx', disclaimerRoute],
+    ['app/terms.tsx', termsRoute],
+  ]) {
+    for (const forbiddenCopy of forbiddenLearnerFacingSourceCopy) {
+      if (routeSource.includes(forbiddenCopy)) {
+        reject(`${routePath} learner-facing copy must not mention ${forbiddenCopy}`);
+      }
     }
   }
   if (!sourcesRoute.includes('Varje övningsfråga visar en källrad med UHR:s kapitel')) {
@@ -19676,19 +19704,73 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes('Every practice question shows a source line with the UHR chapter')) {
     reject('app/sources.tsx must explain English learner-visible source lines');
   }
-  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
-    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
+  if (!/<UhrEducationMaterialLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through the shared source link');
   }
-  if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
-    reject('app/sources.tsx UHR material link needs the localized accessibility label');
+  if (!/<UhrAuthorityBoundaryLink[\s\S]*language=\{language\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR authority-boundary source link');
   }
   if (
-    !sourcesRoute.includes(
+    !sourceMaterialLinks.includes(
       "openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial'",
     ) ||
-    !sourcesRoute.includes("openEducationMaterialAccessibilityLabel: 'Open UHR education material'")
+    !sourceMaterialLinks.includes(
+      "openEducationMaterialAccessibilityLabel: 'Open UHR education material'",
+    ) ||
+    !sourceMaterialLinks.includes(
+      "openAuthorityBoundarySourceAccessibilityLabel: 'Öppna UHR:s sida Om medborgarskapsprovet'",
+    ) ||
+    !sourceMaterialLinks.includes(
+      "openAuthorityBoundarySourceAccessibilityLabel: 'Open UHR About the citizenship test page'",
+    )
   ) {
-    reject('app/sources.tsx UHR material link needs Swedish and English accessibility labels');
+    reject('shared UHR source links need Swedish and English accessibility labels');
+  }
+  for (const snippet of [
+    "publisher: 'Universitets- och högskolerådet (UHR)'",
+    "retrievedDate: '2026-05-20'",
+    "titleSv: 'UHR: Utbildningsmaterial om det svenska samhället'",
+    "titleEn: 'UHR: Study material about Swedish society'",
+    `url: '${EXPECTED_UHR_EDUCATION_MATERIAL_URL}'`,
+    "titleSv: 'UHR: Om medborgarskapsprovet'",
+    "titleEn: 'UHR: About the citizenship test'",
+    "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+    '<LegalExternalLink',
+    'target="_blank"',
+    'rel="noreferrer"',
+  ]) {
+    const haystack =
+      snippet === 'target="_blank"' || snippet === 'rel="noreferrer"'
+        ? legalPage
+        : sourceMaterialLinks;
+    if (!haystack.includes(snippet)) {
+      reject(`shared UHR source link contract missing ${snippet}`);
+    }
+  }
+
+  if (!/minHeight:\s*space\[6\]/.test(legalPage) || !/minWidth:\s*space\[6\]/.test(legalPage)) {
+    reject('LegalExternalLink must keep at least 44px touch target dimensions');
+  }
+
+  for (const [routePath, routeSource] of [
+    ['app/disclaimer.tsx', disclaimerRoute],
+    ['app/terms.tsx', termsRoute],
+  ]) {
+    if (!routeSource.includes('import { SourceMaterialLinkList }')) {
+      reject(`${routePath} must import the shared source-material link list`);
+    }
+    if (!/<SourceMaterialLinkList\s+language=\{language\}\s*\/>/.test(routeSource)) {
+      reject(`${routePath} source-material section must render shared UHR source links`);
+    }
+    if (
+      !routeSource.includes('UHR:s utbildningsmaterial') &&
+      !routeSource.includes('UHR education material')
+    ) {
+      reject(`${routePath} must mention the UHR education material in source-material copy`);
+    }
+    if (!routeSource.includes('källgräns') && !routeSource.includes('source-boundary')) {
+      reject(`${routePath} must mention the source-boundary guidance in source-material copy`);
+    }
   }
 
   if (valid) uhrSourceMaterialLinkParityValidated = true;

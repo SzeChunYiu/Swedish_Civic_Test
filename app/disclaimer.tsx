@@ -1,4 +1,5 @@
 import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+import { SourceMaterialLinkList } from '../components/compliance/SourceMaterialLinks';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 
 type LegalRouteSectionCopy = {
@@ -27,7 +28,7 @@ const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {
         title: 'Övningsinnehåll',
       },
       sourceMaterial: {
-        body: 'Studera alltid UHR:s utbildningsmaterial direkt. Appen är ett komplement för repetition, förklaringar och framsteg.',
+        body: 'Studera alltid UHR:s utbildningsmaterial direkt. Appen är ett komplement för repetition, förklaringar och framsteg. UHR:s egen sida om provet beskriver också källgränsen mellan UHR:s material och övningsprov från andra aktörer.',
         title: 'Använd med källmaterialet',
       },
     },
@@ -44,7 +45,7 @@ const disclaimerCopy: Record<AppLanguage, DisclaimerRouteCopy> = {
         title: 'Practice content',
       },
       sourceMaterial: {
-        body: 'Always study the UHR education material directly. This app is a companion for repetition, explanations, and progress tracking.',
+        body: "Always study the UHR education material directly. This app is a companion for repetition, explanations, and progress tracking. UHR's own page about the test also provides source-boundary guidance for UHR material and practice tests from other actors.",
         title: 'Use with source material',
       },
     },
@@ -64,8 +65,11 @@ export default function Screen() {
       <LegalSection title={copy.sections.practiceContent.title}>
         {copy.sections.practiceContent.body}
       </LegalSection>
-      <LegalSection title={copy.sections.sourceMaterial.title}>
-        {copy.sections.sourceMaterial.body}
+      <LegalSection
+        title={copy.sections.sourceMaterial.title}
+        body={copy.sections.sourceMaterial.body}
+      >
+        <SourceMaterialLinkList language={language} />
       </LegalSection>
     </LegalPage>
   );

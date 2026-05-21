@@ -474,6 +474,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
   },
   {
+    id: 'sourceMaterialLinkParity',
+    flags: ['--focus-source-material-link-parity'],
+    summaryKeys: ['uhrSourceMaterialLinkParityValidated'],
+  },
+  {
     id: 'contentExecCwd',
     flags: ['--focus-content-exec-cwd'],
     summaryKeys: [

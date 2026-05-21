@@ -20,7 +20,7 @@ const expectedLegalRoutes = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Disclaimer',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -68,7 +68,7 @@ const expectedLegalRoutes = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
     ],
     title: 'Terms of use',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -78,10 +78,11 @@ const expectedLegalRoutes = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
-      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
-      "retrievedDate: '2026-05-20'",
-      "title: 'UHR: Om medborgarskapsprovet'",
-      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+      "from '../components/compliance/SourceMaterialLinks'",
+      'UHR_AUTHORITY_BOUNDARY_SOURCE,',
+      'UhrAuthorityBoundaryLink,',
+      'UhrEducationMaterialLink,',
+      'UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate',
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
       "backAccessibilityLabel: 'Tillbaka till startsidan'",
@@ -161,10 +162,11 @@ test('sources route authority boundary cites the current UHR page', () => {
   const routeSource = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
 
   for (const snippet of [
-    'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
-    "retrievedDate: '2026-05-20'",
-    "title: 'UHR: Om medborgarskapsprovet'",
-    "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
+    "from '../components/compliance/SourceMaterialLinks'",
+    'UHR_AUTHORITY_BOUNDARY_SOURCE,',
+    'UhrAuthorityBoundaryLink,',
+    'UhrEducationMaterialLink,',
+    'UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate',
     'UHR inte står bakom dessa',
     'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
     'quality is not controlled by UHR or any other authority',
@@ -173,7 +175,7 @@ test('sources route authority boundary cites the current UHR page', () => {
     assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
   }
 
-  assert.match(routeSource, /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/);
+  assert.match(routeSource, /<UhrAuthorityBoundaryLink[\s\S]*language=\{language\}/);
   assert.doesNotMatch(routeSource, /UHR\s+varnar|UHR\s+warns/i);
   assert.doesNotMatch(
     routeSource,
