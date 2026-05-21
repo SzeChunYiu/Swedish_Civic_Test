@@ -24,11 +24,16 @@ test('shared ProgressBar keeps visual progress and accessibility values in parit
   );
   const source = fs.readFileSync(path.join(repoRoot, 'components/ui/ProgressBar.tsx'), 'utf8');
 
-  assert.equal(summary.progressBarAccessibilityRulesValidated, 20);
+  assert.equal(
+    summary.progressBarAccessibilityRulesValidated,
+    summary.progressBarAccessibilityRulesExpected,
+  );
   assert.equal(summary.progressBarAccessibilityParityValidated, true);
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(foundationSource, /useReducedMotion/);
   assert.match(foundationSource, /const shouldAnimate = animated && !reducedMotionEnabled;/);
+  assert.match(foundationSource, /aria-valuenow=\{progressPercent\}/);
+  assert.match(foundationSource, /aria-valuetext=\{resolvedAccessibilityLabel\}/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);

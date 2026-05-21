@@ -83,6 +83,12 @@ export function ProgressBar({
 
   return (
     <View
+      {...viewProps}
+      aria-label={resolvedAccessibilityLabel}
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={progressPercent}
+      aria-valuetext={resolvedAccessibilityLabel}
       accessibilityLabel={resolvedAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityValue={{
@@ -93,7 +99,6 @@ export function ProgressBar({
         ...accessibilityValue,
       }}
       style={[styles.track, style]}
-      {...viewProps}
     >
       <Animated.View style={[styles.fill, { width: fillWidth }, fillStyle]} />
     </View>
