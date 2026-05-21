@@ -22,8 +22,8 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
   sv: {
     sections: {
       noAccountRequired: {
-        body: 'Appen kräver inget konto, ingen e-postadress, inget telefonnummer och ingen profilregistrering. Du kan använda hela studieupplevelsen anonymt.',
-        title: 'Inget konto krävs',
+        body: 'Den grundläggande studieupplevelsen fungerar utan inloggning. Valfria kontofunktioner i v1.1 kan använda Supabase och Google-inloggning för kontoanknutna funktioner, men lokala studieframsteg sparas fortfarande på enheten som standard.',
+        title: 'Konto är valfritt',
       },
       localProgressStorage: {
         body: 'Studieframsteg, inställningar, bokmärken, misstag, XP, studiesviter och ljudinställningar sparas lokalt på enheten så att appen kan komma ihåg din övningsstatus.',
@@ -42,7 +42,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Annonssamtycke',
       },
       providerProcessing: {
-        body: 'Google Mobile Ads och appbutikerna kan behandla enhets-, annonserings-, samtyckes- och köpstatusinformation för att visa annonser, tillämpa Ta bort annonser och återställa köp. Appen samlar inte in medborgarskapsstatus, detaljer om migrationsärenden, myndighets-ID eller registrerade profiluppgifter.',
+        body: 'Google Mobile Ads och appbutikerna kan behandla enhets-, annonserings-, samtyckes- och köpstatusinformation för att visa annonser, tillämpa Ta bort annonser och återställa köp. Om du väljer kontoanknutna v1.1-funktioner kan Supabase och Google-inloggning behandla den kontoidentitet som krävs för funktionen. Appen samlar inte in medborgarskapsstatus, detaljer om migrationsärenden eller myndighets-ID.',
         title: 'Leverantörers behandling',
       },
     },
@@ -51,8 +51,8 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
   en: {
     sections: {
       noAccountRequired: {
-        body: 'No account is required. The app works without sign-in, email address, phone number, or profile registration. You can use the full study experience anonymously.',
-        title: 'No account required',
+        body: 'The core study experience works without sign-in. Optional v1.1 account features may use Supabase and Google sign-in for account-backed functionality, while local study progress stays on the device by default.',
+        title: 'Account optional',
       },
       localProgressStorage: {
         body: 'Study progress, settings, bookmarks, mistakes, XP, streaks, and audio preferences are stored locally on the device so the app can remember your practice state.',
@@ -71,7 +71,7 @@ const privacyCopy: Record<AppLanguage, PrivacyRouteCopy> = {
         title: 'Ad consent',
       },
       providerProcessing: {
-        body: 'Google Mobile Ads and the app stores may process device, advertising, consent, and purchase status information to serve ads, apply Remove Ads, and restore purchases. The app does not collect citizenship status, immigration case details, government IDs, or registered profile details.',
+        body: 'Google Mobile Ads and the app stores may process device, advertising, consent, and purchase status information to serve ads, apply Remove Ads, and restore purchases. If you choose account-backed v1.1 features, Supabase and Google sign-in may process the account identity required for that feature. The app does not collect citizenship status, immigration case details, or government IDs.',
         title: 'Provider processing',
       },
     },

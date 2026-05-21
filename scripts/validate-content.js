@@ -2459,9 +2459,10 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const language = useSettingsStore((state) => state.language);',
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
-      'Inget konto krävs',
+      'Konto är valfritt',
       'Privacy policy',
-      'No account required',
+      'Account optional',
+      'Supabase and Google sign-in',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}[\s\S]*?>/,
@@ -2473,7 +2474,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     title: 'Privacy policy',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: [
-      'No account required',
+      'Account optional',
       'Local progress storage',
       'Ads and purchases',
       'Ad consent',
@@ -14237,6 +14238,22 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (expectedRoute.file === 'app/privacy.tsx') {
+      const staleNoAccountPrivacyPatterns = [
+        /No account (?:is )?required/i,
+        /without sign-in, email address, phone number, or profile registration/i,
+        /registered profile details/i,
+        /Inget konto krävs/i,
+        /kräver inget konto/i,
+        /profilregistrering/i,
+      ];
+      for (const pattern of staleNoAccountPrivacyPatterns) {
+        if (pattern.test(routeSource)) {
+          reject(
+            `app/privacy.tsx must use the optional-account v1.1 privacy contract, not stale no-account copy matching ${pattern}`,
+          );
+        }
+      }
+
       const swedishPrivacyBlock = routeSource.match(
         /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
       )?.[0];

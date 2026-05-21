@@ -11,10 +11,12 @@ Reference:
 
 Answer **Yes, data is collected** for the v1.0 release draft.
 
-The app itself still has no account system, developer profile database, remote
-progress sync, support form, analytics SDK, or crash reporting SDK. Study
-progress, settings, mistakes, XP, streaks, bookmarks, and audio preference stay
-on the local device.
+Core study works without sign-in, and study progress, settings, mistakes, XP,
+streaks, bookmarks, and audio preference stay on the local device by default.
+Optional v1.1 account-backed features may use Supabase and Google sign-in for
+account identity, purchases, highlights, notes, or sync. The app does not use an
+analytics SDK, crash reporting SDK, or remote progress sync for anonymous core
+study.
 
 The release binary includes Google Mobile Ads, Google UMP consent, and a
 one-time Remove Ads non-consumable in-app product for **29 SEK**. Google Mobile
@@ -49,7 +51,8 @@ fraud prevention.
 - Analytics: Google Mobile Ads measurement and SDK performance signals.
 - Fraud prevention, security, and compliance: Google Mobile Ads integrity and
   abuse-prevention signals.
-- App functionality: Remove Ads purchase, restore, and local entitlement state.
+- App functionality: Remove Ads purchase, restore, optional account identity for
+  account-backed features, and local entitlement state.
 
 ## Security practices and user controls
 
@@ -58,7 +61,8 @@ fraud prevention.
 - The app gates real ad serving through Google UMP consent where required.
 - Remove Ads disables ad placements for the local entitlement state.
 - Users can clear local app data through the operating system to remove local
-  study progress and the local entitlement cache.
+  study progress and the local entitlement cache. Optional account-backed data
+  can be managed through the account feature once sign-in is enabled.
 
 ## Binary review checklist before Google Play submission
 
@@ -69,5 +73,6 @@ fraud prevention.
 - Confirm UMP consent appears in regions where consent is required.
 - Confirm Remove Ads purchase and restore use the configured Play in-app product
   and the displayed price remains **29 SEK**.
-- Update this file before submission if analytics, crash reporting, accounts,
-  remote content, or support collection is enabled.
+- Update this file before submission if analytics, crash reporting, remote
+  progress sync, or support collection is enabled beyond the optional
+  account-backed features described above.

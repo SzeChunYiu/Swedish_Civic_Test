@@ -208,9 +208,10 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(privacySource, /const copy = privacyCopy\[language\];/);
   assert.match(privacySource, /<LegalPage title=\{copy\.title\}>/);
   assert.match(privacySource, /Integritetspolicy/);
-  assert.match(privacySource, /Inget konto krävs/);
+  assert.match(privacySource, /Konto är valfritt/);
   assert.match(privacySource, /Privacy policy/);
-  assert.match(privacySource, /No account required/);
+  assert.match(privacySource, /Account optional/);
+  assert.match(privacySource, /Supabase and Google sign-in/);
   assert.match(sourcesSource, /const sourcesCopy: Record<AppLanguage, SourcesRouteCopy>/);
   assert.match(sourcesSource, /const copy = sourcesCopy\[language\];/);
   assert.match(sourcesSource, /<LegalPage title=\{copy\.title\}>/);

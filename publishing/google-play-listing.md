@@ -21,7 +21,8 @@ Features:
 - Timed mock exam mode with no ads during exam sessions.
 - Local progress tracking, mistakes, XP, streaks, weak chapters, and badges.
 - Optional Swedish audio for questions and answer choices.
-- No account required: study progress is stored locally on your device.
+- Core study works without sign-in: study progress is stored locally on your
+  device by default, and optional account-backed features may use sign-in.
 
 Important: This app is not official and is not affiliated with UHR, Skolverket, Migrationsverket, or the Swedish government. Practice questions are created for learning and are not real exam questions. Always use the official UHR education material as your primary source.
 
