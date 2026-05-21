@@ -13,6 +13,13 @@ test('settings controls expose selected and checked state on web', async ({ page
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
+  await expect(page.getByRole('radiogroup', { name: 'Välj studiekompis' })).toBeVisible();
+  await expect(
+    page.getByRole('radio', {
+      name: /Kanelbulle är vald som studiekompis\. Fika och vardagskultur\./,
+    }),
+  ).toHaveAttribute('aria-checked', 'true');
+
   await page.getByLabel('Byt studiespråk till Engelskt stöd').click();
   const swedishLanguage = page.getByLabel('Set study language to Swedish');
   const englishLanguage = page.getByLabel('Set study language to English support');
@@ -34,21 +41,22 @@ test('settings controls expose selected and checked state on web', async ({ page
   await expect(darkTheme).toHaveAttribute('aria-checked', 'true');
   await expect(systemTheme).toHaveAttribute('aria-checked', 'false');
 
+  await expect(page.getByRole('radiogroup', { name: 'Choose study companion' })).toBeVisible();
   await expect(
-    page.getByRole('button', {
+    page.getByRole('radio', {
       name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
     }),
-  ).toHaveAttribute('aria-selected', 'true');
+  ).toHaveAttribute('aria-checked', 'true');
   await page
-    .getByRole('button', {
+    .getByRole('radio', {
       name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
     })
     .click();
   await expect(
-    page.getByRole('button', {
+    page.getByRole('radio', {
       name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,
     }),
-  ).toHaveAttribute('aria-selected', 'true');
+  ).toHaveAttribute('aria-checked', 'true');
 
   const enabledAudio = page.getByRole('switch', { name: 'Disable audio' });
   await expect(enabledAudio).toHaveAttribute('aria-checked', 'true');
@@ -72,11 +80,12 @@ test('settings controls expose selected and checked state on web', async ({ page
     'false',
   );
   await expect(page.getByLabel('Choose theme: Dark')).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByRole('radiogroup', { name: 'Choose study companion' })).toBeVisible();
   await expect(
-    page.getByRole('button', {
+    page.getByRole('radio', {
       name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,
     }),
-  ).toHaveAttribute('aria-selected', 'true');
+  ).toHaveAttribute('aria-checked', 'true');
 
   expect(consoleErrors).toEqual([]);
 });
