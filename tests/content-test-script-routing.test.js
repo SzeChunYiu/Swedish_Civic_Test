@@ -313,6 +313,30 @@ test('question speech text focused content validation runs only its parity summa
   );
 });
 
+test('static ebook footnote hash focused content validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-ebook-footnote-hash-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused static ebook footnote validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.staticEbookFootnoteHashChaptersValidated, 14);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
+  assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'staticEbookOutcomeClaimParityValidated'),
+    false,
+  );
+});
+
 test('XP rules focused content validation runs only its parity summary', () => {
   const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
     cwd: repoRoot,

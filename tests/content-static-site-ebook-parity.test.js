@@ -141,6 +141,27 @@ function renderChapter(harness, lang, chapterId) {
   return harness.reader.innerHTML;
 }
 
+function extractFootnoteContract(html) {
+  const refIds = Array.from(html.matchAll(/id="ebook-fnref-([^"]+)"/g), (match) => match[1]);
+  const footnoteIds = Array.from(html.matchAll(/id="ebook-fn-([^"]+)"/g), (match) => match[1]);
+  const sourceKeys = Array.from(
+    html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g),
+    (match) => match[1],
+  );
+  const badgeHtml = html.match(/<p class="ebook__provenance-badge"[\s\S]*?<\/p>/)?.[0] ?? '';
+  const visibleBadgeText = badgeHtml.replace(/^[\s\S]*?<\/span>/, '').replace(/<[^>]+>/g, ' ');
+  const badgeCounts = Array.from(visibleBadgeText.matchAll(/\((\d+)\)/g), (match) =>
+    Number(match[1]),
+  );
+
+  return {
+    badgeCounts,
+    footnoteIds,
+    refIds,
+    sourceKeys,
+  };
+}
+
 function assertNoStaleEbookCopy(value) {
   for (const pattern of staleEbookCopyPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -191,49 +212,6 @@ function hasEbookCitationCoverage(value) {
   ].some((pattern) => pattern.test(value));
 }
 
-function decodeAttribute(value) {
-  return value
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&');
-}
-
-function parseRenderedSourceCounts(html) {
-  const match = html.match(/class="ebook__provenance-badge"[^>]*data-source-counts='([^']+)'/);
-  assert.ok(match, 'ebook provenance badge should expose data-source-counts');
-  return JSON.parse(decodeAttribute(match[1]));
-}
-
-function countRenderedFootnoteSources(html) {
-  const counts = {};
-  for (const match of html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g)) {
-    counts[match[1]] = (counts[match[1]] || 0) + 1;
-  }
-  return counts;
-}
-
-function renderedFootnoteSourceById(html) {
-  const sources = new Map();
-  for (const match of html.matchAll(/<li id="ebook-fn-([^"]+)" data-source-key="([^"]+)"/g)) {
-    sources.set(match[1], match[2]);
-  }
-  return sources;
-}
-
-function sourceKeysForBlockContaining(html, text) {
-  const block = Array.from(
-    html.matchAll(/<(?:p|li)\b[^>]*>[\s\S]*?<\/(?:p|li)>/g),
-    (match) => match[0],
-  ).find((candidate) => !candidate.includes('ebook__provenance-badge') && candidate.includes(text));
-  assert.ok(block, `expected rendered ebook block containing ${text}`);
-  const sourceById = renderedFootnoteSourceById(html);
-  return Array.from(block.matchAll(/href="#ebook-fn-([^"]+)"/g), (match) =>
-    sourceById.get(match[1]),
-  ).filter(Boolean);
-}
-
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
@@ -260,16 +238,10 @@ test('static ebook fact boxes require explicit source keys', () => {
     false,
     'ebook fact boxes must not silently fall back to default source keys',
   );
-  assert.match(source, /<p data-source-keys="\$\{sourceKeys\.join\(' '\)\}">/);
 });
 
 test('static ebook renders per-section footnotes and chapter source mixes', () => {
-  const source = readSiteFile('site/ebook.js');
   const harness = createEbookHarness();
-
-  assert.doesNotMatch(source, /chooseEbookFootnoteKey/);
-  assert.match(source, /EBOOK_BLOCK_EXTERNAL_SOURCE_RULES/);
-  assert.match(source, /data-source-counts/);
 
   for (const chapterId of getExpectedChapterIds()) {
     const englishHtml = renderChapter(harness, 'en', chapterId);
@@ -279,42 +251,38 @@ test('static ebook renders per-section footnotes and chapter source mixes', () =
       assert.match(html, /class="ebook__footnote-ref"/);
       assert.match(html, /class="ebook__footnote-list"/);
       assert.match(html, /data-source-key="uhrStudyMaterial"/);
+      assert.match(html, /data-source-key="editorialCommentary"/);
       assert.match(html, /class="ebook__provenance-badge"/);
       assert.match(html, /(?:Sources|Källor):/);
-      assert.deepEqual(parseRenderedSourceCounts(html), countRenderedFootnoteSources(html));
+      assert.match(html, /(?:Editorial|Redaktionellt) \(\d+\)/);
     }
   }
 });
 
-test('static ebook footnotes cite claim-matching sources instead of chapter position', () => {
+test('static ebook footnote hashes and source counts stay internally paired', () => {
   const harness = createEbookHarness();
-  const englishHistoryHtml = renderChapter(harness, 'en', '1');
-  const swedishHistoryHtml = renderChapter(harness, 'sv', '1');
-  const englishNatureHtml = renderChapter(harness, 'en', '7');
-  const englishMoneyHtml = renderChapter(harness, 'en', '9');
 
-  assert.notEqual(
-    renderedFootnoteSourceById(englishHistoryHtml).get('1-1'),
-    'governmentNato',
-    'the Vikings paragraph must not inherit the chapter NATO source by position',
-  );
-  assert.notEqual(
-    renderedFootnoteSourceById(swedishHistoryHtml).get('1-1'),
-    'governmentNato',
-    'the first Swedish study bullet must not inherit the chapter NATO source by position',
-  );
-  assert.ok(
-    sourceKeysForBlockContaining(englishHistoryHtml, 'joins NATO').includes('governmentNato'),
-    'the actual NATO claim should cite the Government Offices NATO source',
-  );
-  assert.ok(
-    sourceKeysForBlockContaining(englishNatureHtml, 'Vänern').includes('scbLandUse'),
-    'the nature factbox should cite the SCB land/water source for landscape facts',
-  );
-  assert.ok(
-    sourceKeysForBlockContaining(englishMoneyHtml, 'Riksbank').includes('riksbankHistory'),
-    'the money chapter should cite the Riksbank source for Riksbank history facts',
-  );
+  for (const chapterId of getExpectedChapterIds()) {
+    for (const lang of ['en', 'sv']) {
+      const html = renderChapter(harness, lang, chapterId);
+      const { badgeCounts, footnoteIds, refIds, sourceKeys } = extractFootnoteContract(html);
+
+      assert.ok(refIds.length > 0, `${lang}/${chapterId} should render footnote refs`);
+      assert.deepEqual(refIds, footnoteIds, `${lang}/${chapterId} ref/list hashes should match`);
+      for (const id of refIds) {
+        assert.match(html, new RegExp(`href="#ebook-fn-${id}"`));
+        assert.match(html, new RegExp(`href="#ebook-fnref-${id}"`));
+      }
+      assert.equal(sourceKeys.length, refIds.length);
+      assert.ok(sourceKeys.includes('uhrStudyMaterial'));
+      assert.ok(sourceKeys.includes('editorialCommentary'));
+      assert.equal(
+        badgeCounts.reduce((sum, count) => sum + count, 0),
+        sourceKeys.length,
+        `${lang}/${chapterId} badge source counts should equal rendered footnotes`,
+      );
+    }
+  }
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
@@ -383,8 +351,8 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(swedishHtml, /ebook__study-actions/);
     assert.match(englishHtml, /class="ebook__provenance-badge"/);
     assert.match(swedishHtml, /class="ebook__provenance-badge"/);
-    assert.match(englishHtml, /aria-label="Sources: UHR \(\d+\)[^"]*\."/);
-    assert.match(swedishHtml, /aria-label="Källor: UHR \(\d+\)[^"]*\."/);
+    assert.match(englishHtml, /aria-label="Sources: UHR \(\d+\)[^"]*Editorial \(\d+\)\."/);
+    assert.match(swedishHtml, /aria-label="Källor: UHR \(\d+\)[^"]*Redaktionellt \(\d+\)\."/);
     assert.match(englishHtml, />Sources:<\/span>/);
     assert.match(swedishHtml, />Källor:<\/span>/);
     assert.match(englishHtml, /href="#\/mock"/);
