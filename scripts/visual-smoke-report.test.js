@@ -63,12 +63,14 @@ function expectedVisualSmokeRoutes() {
 
 function visualSmokeDuplicateContract() {
   const {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
   return {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
@@ -103,6 +105,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeRoutesSource, /file: 'chapter-ch01\.png'/);
   assert.match(visualSmokeRoutesSource, /export function visualSmokeRouteManifestEntries/);
   assert.match(visualSmokeRoutesSource, /export const visualSmokeDuplicateExplanations/);
+  assert.match(visualSmokeRoutesSource, /export function hasValidVisualSmokeDuplicateExplanation/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
   assert.match(
     visualSmokeSource,
@@ -115,10 +118,84 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
 });
 
+test('visual smoke duplicate helper requires exact groups and nonempty reasons', () => {
+  const {
+    hasValidVisualSmokeDuplicateExplanation,
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationKey,
+    visualSmokeDuplicateExplanations,
+  } = visualSmokeDuplicateContract();
+  const exactHomeIndexExplanation = {
+    names: ['home', 'index'],
+    reason: 'The root route is a redirect to /home.',
+  };
+
+  assert.equal(visualSmokeDuplicateExplanationKey(['index', 'home']), 'home,index');
+  assert.equal(isExplainedVisualSmokeDuplicate(['index', 'home']), true);
+
+  for (const explanation of visualSmokeDuplicateExplanations) {
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), true);
+  }
+
+  const duplicateCases = [
+    {
+      label: 'same group with reversed order',
+      names: ['index', 'home'],
+      explanations: [exactHomeIndexExplanation],
+      expected: true,
+    },
+    {
+      label: 'superset of the allowed duplicate group',
+      names: ['home', 'index', 'practice'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'subset of the allowed duplicate group',
+      names: ['home'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'unknown duplicate group',
+      names: ['learn', 'practice'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'exact group with an empty reason',
+      names: ['home', 'index'],
+      explanations: [{ names: ['home', 'index'], reason: '' }],
+      expected: false,
+    },
+    {
+      label: 'exact group with a blank reason',
+      names: ['home', 'index'],
+      explanations: [{ names: ['home', 'index'], reason: '   ' }],
+      expected: false,
+    },
+  ];
+
+  for (const { label, names, explanations, expected } of duplicateCases) {
+    assert.equal(isExplainedVisualSmokeDuplicate(names, explanations), expected, label);
+  }
+
+  const invalidExplanationCases = [
+    { names: ['home', 'index'], reason: '' },
+    { names: ['home', 'index'], reason: '   ' },
+    { names: ['home'], reason: 'A singleton cannot describe a duplicate screenshot group.' },
+  ];
+
+  for (const explanation of invalidExplanationCases) {
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), false);
+  }
+});
+
 test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
   const manifest = readManifest();
   const expectedRoutes = expectedVisualSmokeRoutes();
   const {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
@@ -143,6 +220,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.ok(Array.isArray(explanation.names));
     assert.equal(typeof explanation.reason, 'string');
     assert.ok(explanation.reason.length > 20);
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), true);
   }
 
   const routes = manifest.routes || [];
