@@ -3,19 +3,15 @@ import { Platform } from 'react-native';
 import { AdEventType, InterstitialAd } from 'react-native-google-mobile-ads';
 
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
-import {
-  createPracticeInterstitialAttemptState,
-  PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS,
-  PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS,
-  reducePracticeInterstitialAttemptState,
-  type PracticeInterstitialAttemptEvent,
-} from '../../lib/monetization/practiceInterstitialAttempt';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type { PremiumEntitlements } from '../../types/monetization';
 
 let lastInterstitialShowKey: string | undefined;
 let interstitialLoadInFlight = false;
+
+const INTERSTITIAL_LOAD_TIMEOUT_MS = 15_000;
+const INTERSTITIAL_SHOW_TIMEOUT_MS = 10_000;
 
 export function PracticeInterstitialAd({
   entitlements,
@@ -52,45 +48,35 @@ export function PracticeInterstitialAd({
     let unsubscribeError: (() => void) | undefined;
     let unsubscribeOpened: (() => void) | undefined;
     let unsubscribeClosed: (() => void) | undefined;
-    let loadTimeout: ReturnType<typeof setTimeout> | undefined;
-    let showTimeout: ReturnType<typeof setTimeout> | undefined;
-    let attemptState = createPracticeInterstitialAttemptState();
+    let attemptTimeout: ReturnType<typeof setTimeout> | undefined;
+    let attemptSettled = false;
 
-    const clearAttemptTimers = () => {
-      if (loadTimeout) {
-        clearTimeout(loadTimeout);
-        loadTimeout = undefined;
+    const clearAttemptTimeout = () => {
+      if (attemptTimeout) {
+        clearTimeout(attemptTimeout);
+        attemptTimeout = undefined;
       }
-      if (showTimeout) {
-        clearTimeout(showTimeout);
-        showTimeout = undefined;
-      }
+    };
+
+    const finishAttempt = () => {
+      if (attemptSettled) return;
+      clearAttemptTimeout();
+      interstitialLoadInFlight = false;
+      attemptSettled = true;
     };
     const consumeShowKey = () => {
       lastInterstitialShowKey = showKey;
     };
-    const applyAttemptEvent = (event: PracticeInterstitialAttemptEvent) => {
-      const previousState = attemptState;
-      attemptState = reducePracticeInterstitialAttemptState(attemptState, event);
-      if (attemptState === previousState) return;
-
-      interstitialLoadInFlight = attemptState.inFlight;
-      if (!previousState.showKeyConsumed && attemptState.showKeyConsumed) {
-        consumeShowKey();
-      }
-      if (previousState.phase === 'loading' && attemptState.phase === 'showing') {
-        if (loadTimeout) {
-          clearTimeout(loadTimeout);
-          loadTimeout = undefined;
-        }
-        showTimeout = setTimeout(
-          () => applyAttemptEvent('show_timeout'),
-          PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS,
-        );
-      }
-      if (!previousState.settled && attemptState.settled) {
-        clearAttemptTimers();
-      }
+    const finishSuccessfulShow = () => {
+      if (attemptSettled) return;
+      consumeShowKey();
+      finishAttempt();
+    };
+    const startAttemptTimeout = (timeoutMs: number) => {
+      clearAttemptTimeout();
+      attemptTimeout = setTimeout(() => {
+        finishAttempt();
+      }, timeoutMs);
     };
 
     try {
@@ -98,38 +84,36 @@ export function PracticeInterstitialAd({
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
       });
 
-      interstitialLoadInFlight = attemptState.inFlight;
-      loadTimeout = setTimeout(
-        () => applyAttemptEvent('load_timeout'),
-        PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS,
-      );
+      interstitialLoadInFlight = true;
+      startAttemptTimeout(INTERSTITIAL_LOAD_TIMEOUT_MS);
 
       unsubscribeLoaded = interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
-        applyAttemptEvent('loaded');
+        if (attemptSettled) return;
+        startAttemptTimeout(INTERSTITIAL_SHOW_TIMEOUT_MS);
 
         try {
           void Promise.resolve(interstitialAd.show())
             .then(() => {
-              applyAttemptEvent('show_resolved');
+              finishSuccessfulShow();
             })
             .catch(() => {
-              applyAttemptEvent('show_rejected');
+              finishAttempt();
             });
         } catch {
-          applyAttemptEvent('show_rejected');
+          finishAttempt();
         }
       });
 
       unsubscribeError = interstitialAd.addAdEventListener(AdEventType.ERROR, () => {
-        applyAttemptEvent('error');
+        finishAttempt();
       });
 
       unsubscribeOpened = interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
-        applyAttemptEvent('opened');
+        finishSuccessfulShow();
       });
 
       unsubscribeClosed = interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
-        applyAttemptEvent('closed');
+        finishSuccessfulShow();
       });
 
       interstitialAd.load();
@@ -138,15 +122,14 @@ export function PracticeInterstitialAd({
         unsubscribeError?.();
         unsubscribeOpened?.();
         unsubscribeClosed?.();
-        applyAttemptEvent('cleanup');
+        finishAttempt();
       };
     } catch {
       unsubscribeLoaded?.();
       unsubscribeError?.();
       unsubscribeOpened?.();
       unsubscribeClosed?.();
-      clearAttemptTimers();
-      applyAttemptEvent('error');
+      finishAttempt();
       return undefined;
     }
   }, [entitlementsReady, mobileAdsConsent, resolvedEntitlements, showKey]);

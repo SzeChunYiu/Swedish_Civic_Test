@@ -10314,6 +10314,19 @@ function validateAdPlacementRouteParity() {
         reject('PracticeInterstitialAd must not consume the show key in the LOADED listener');
         routeIsValid = false;
       }
+      if (
+        !nativeInterstitialSource.includes('INTERSTITIAL_LOAD_TIMEOUT_MS') ||
+        !nativeInterstitialSource.includes('INTERSTITIAL_SHOW_TIMEOUT_MS') ||
+        !nativeInterstitialSource.includes('startAttemptTimeout(INTERSTITIAL_LOAD_TIMEOUT_MS)') ||
+        !/AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/.test(
+          nativeInterstitialSource,
+        )
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must bound load and show in-flight attempts with timeouts',
+        );
+        routeIsValid = false;
+      }
     }
 
     if (routeIsValid) adPlacementRoutesValidated += 1;

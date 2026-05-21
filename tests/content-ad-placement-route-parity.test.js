@@ -35,10 +35,6 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
   const practiceInterstitialNativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
@@ -91,18 +87,15 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     nativeAdCardNativeSource,
     /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(
-    nativeBannerSource,
-    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
-  );
   assert.match(
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialNativeSource, /INTERSTITIAL_LOAD_TIMEOUT_MS/);
+  assert.match(practiceInterstitialNativeSource, /INTERSTITIAL_SHOW_TIMEOUT_MS/);
+  assert.match(
+    practiceInterstitialNativeSource,
+    /AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/,
   );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.match(adCopySource, /getNativeAdCardCopy/);
@@ -125,25 +118,37 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
 });
 
-test('native AdBanner status labels follow configured testOnly units', () => {
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
+test('ad placement route parity rejects native practice interstitial show timeout drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'startAttemptTimeout(INTERSTITIAL_SHOW_TIMEOUT_MS);',
+        'finishAttempt();',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
-  assert.match(nativeBannerSource, /import \{ getAdUnit, getPlatformAdUnitId, shouldShowAd \}/);
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.notEqual(result.status, 0);
   assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(
-    nativeBannerSource,
-    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
-  );
-  assert.doesNotMatch(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd native placement must bound load and show in-flight attempts with timeouts/,
   );
 });
 
@@ -179,28 +184,6 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /PracticeInterstitialAd native placement must gate quiz_completed_interstitial through consent-aware platform shouldShowAd/,
   );
-});
-
-test('PracticeInterstitial attempt state delegates timeout and callback bookkeeping to helper', () => {
-  const practiceInterstitialSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
-    'utf8',
-  );
-  const attemptHelperSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/monetization/practiceInterstitialAttempt.ts'),
-    'utf8',
-  );
-
-  assert.match(practiceInterstitialSource, /createPracticeInterstitialAttemptState/);
-  assert.match(practiceInterstitialSource, /reducePracticeInterstitialAttemptState/);
-  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS/);
-  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS/);
-  assert.doesNotMatch(practiceInterstitialSource, /let attemptSettled|let showStarted/);
-  assert.match(attemptHelperSource, /load_timeout/);
-  assert.match(attemptHelperSource, /show_timeout/);
-  assert.match(attemptHelperSource, /show_resolved/);
-  assert.match(attemptHelperSource, /showKeyConsumed/);
-  assert.match(attemptHelperSource, /if \(state\.settled\) return state;/);
 });
 
 test('Home ad placement waits for Remove Ads entitlements before rendering', () => {

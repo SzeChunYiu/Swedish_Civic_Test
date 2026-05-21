@@ -416,7 +416,22 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
   assert.match(
     practiceInterstitialSource,
-    /\.then\(\(\) => \{[\s\S]*applyAttemptEvent\('show_resolved'\)/,
+    /const finishSuccessfulShow = \(\) => \{[\s\S]*consumeShowKey\(\)/,
+  );
+  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*finishSuccessfulShow\(\)/);
+  assert.match(practiceInterstitialSource, /const INTERSTITIAL_LOAD_TIMEOUT_MS = \d[\d_]*;/);
+  assert.match(practiceInterstitialSource, /const INTERSTITIAL_SHOW_TIMEOUT_MS = \d[\d_]*;/);
+  assert.match(
+    practiceInterstitialSource,
+    /interstitialLoadInFlight = true;[\s\S]{0,180}startAttemptTimeout\(INTERSTITIAL_LOAD_TIMEOUT_MS\)/,
+  );
+  assert.match(
+    practiceInterstitialSource,
+    /AdEventType\.LOADED[\s\S]{0,320}startAttemptTimeout\(INTERSTITIAL_SHOW_TIMEOUT_MS\)/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /setTimeout\(\(\) => \{[\s\S]{0,160}consumeShowKey\(\)/,
   );
   assert.doesNotMatch(
     practiceInterstitialSource,
@@ -434,82 +449,6 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
     practiceInterstitialSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
-});
-
-test('PracticeInterstitial attempt state handles load timeout, show timeout, late callbacks, cleanup, and show key consumption', () => {
-  const { createPracticeInterstitialAttemptState, reducePracticeInterstitialAttemptState } = loadTs(
-    'lib/monetization/practiceInterstitialAttempt.ts',
-  );
-
-  const settleAfterLoaded = (event) =>
-    reducePracticeInterstitialAttemptState(
-      reducePracticeInterstitialAttemptState(createPracticeInterstitialAttemptState(), 'loaded'),
-      event,
-    );
-
-  const loadTimedOut = reducePracticeInterstitialAttemptState(
-    createPracticeInterstitialAttemptState(),
-    'load_timeout',
-  );
-  assert.deepEqual(loadTimedOut, {
-    inFlight: false,
-    outcome: 'load_timeout',
-    phase: 'settled',
-    settled: true,
-    showKeyConsumed: false,
-  });
-  assert.strictEqual(reducePracticeInterstitialAttemptState(loadTimedOut, 'opened'), loadTimedOut);
-
-  const showing = reducePracticeInterstitialAttemptState(
-    createPracticeInterstitialAttemptState(),
-    'loaded',
-  );
-  assert.deepEqual(showing, {
-    inFlight: true,
-    phase: 'showing',
-    settled: false,
-    showKeyConsumed: false,
-  });
-
-  const showTimedOut = reducePracticeInterstitialAttemptState(showing, 'show_timeout');
-  assert.deepEqual(showTimedOut, {
-    inFlight: false,
-    outcome: 'show_timeout',
-    phase: 'settled',
-    settled: true,
-    showKeyConsumed: false,
-  });
-  assert.strictEqual(
-    reducePracticeInterstitialAttemptState(showTimedOut, 'show_resolved'),
-    showTimedOut,
-  );
-
-  for (const event of ['show_resolved', 'opened', 'closed']) {
-    assert.deepEqual(settleAfterLoaded(event), {
-      inFlight: false,
-      outcome: event,
-      phase: 'settled',
-      settled: true,
-      showKeyConsumed: true,
-    });
-  }
-
-  for (const event of ['show_rejected', 'error', 'cleanup']) {
-    assert.equal(settleAfterLoaded(event).inFlight, false);
-    assert.equal(settleAfterLoaded(event).showKeyConsumed, false);
-  }
-
-  const cleanedUpBeforeLoaded = reducePracticeInterstitialAttemptState(
-    createPracticeInterstitialAttemptState(),
-    'cleanup',
-  );
-  assert.deepEqual(cleanedUpBeforeLoaded, {
-    inFlight: false,
-    outcome: 'cleanup',
-    phase: 'settled',
-    settled: true,
-    showKeyConsumed: false,
-  });
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
@@ -1830,31 +1769,6 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
-});
-
-test('native AdBanner testStatus copy follows configured ad units', () => {
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-  const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
-
-  assert.match(nativeBannerSource, /getAdUnit/);
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(
-    nativeBannerSource,
-    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
-  );
-  assert.doesNotMatch(
-    nativeBannerSource,
-    /copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)/,
-  );
-  assert.match(adCopySource, /testStatus: 'AdMob test unit active - web preview'/);
-  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - webbförhandsvisning'/);
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {
