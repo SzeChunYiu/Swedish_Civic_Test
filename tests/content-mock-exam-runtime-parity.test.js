@@ -83,6 +83,8 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   const exam = generateExam(questions, { questionCount: config.questionCount });
 
   assert.equal(summary.mockExamRuntimeParityValidated, true);
+  assert.equal(summary.mockExamChapterDistributionSafetyCasesValidated, 9);
+  assert.equal(summary.mockExamChapterDistributionSafetyParityValidated, true);
   assert.match(rewardedAdSource, /confirmReward\?: RewardedExtraExamRewardConfirmation/);
   assert.match(rewardedAdSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
   assert.match(rewardedAdSource, /webConsentDecision\?: RewardedExtraExamWebConsentDecision/);

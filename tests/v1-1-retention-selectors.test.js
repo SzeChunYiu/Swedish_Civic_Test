@@ -606,6 +606,35 @@ test('materializeMock: small bank gets topped up from wider pool, isUnderfilled 
   assert.equal(mat.isUnderfilled, false);
 });
 
+test('materializeMock: chapter distribution ignores unsafe and malformed chapter ids', () => {
+  const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
+  const bank = [
+    { id: 'q-valid-1', difficulty: 'medium', chapterId: 'ch01' },
+    { id: 'q-valid-2', difficulty: 'medium', chapterId: ' ch02 ' },
+    { id: 'q-valid-3', difficulty: 'medium', chapterId: 'ch02' },
+    { id: 'q-proto', difficulty: 'medium', chapterId: '__proto__' },
+    { id: 'q-constructor', difficulty: 'medium', chapterId: 'constructor' },
+    { id: 'q-prototype', difficulty: 'medium', chapterId: 'prototype' },
+    { id: 'q-blank', difficulty: 'medium', chapterId: '   ' },
+    { id: 'q-missing', difficulty: 'medium' },
+    { id: 'q-number', difficulty: 'medium', chapterId: 17 },
+    { id: 'q-object', difficulty: 'medium', chapterId: { id: 'ch03' } },
+  ];
+
+  const mat = materializeMock({ mockId: 'mock-2', bank });
+
+  assert.ok(mat);
+  assert.equal(Object.getPrototypeOf(mat.chapterDistribution), null);
+  assert.deepEqual(Object.entries(mat.chapterDistribution).sort(), [
+    ['ch01', 1],
+    ['ch02', 2],
+  ]);
+  for (const unsafeKey of ['__proto__', 'constructor', 'prototype']) {
+    assert.equal(Object.prototype.hasOwnProperty.call(mat.chapterDistribution, unsafeKey), false);
+    assert.equal(mat.chapterDistribution[unsafeKey], undefined);
+  }
+});
+
 test('materializeMock: unknown mock id → null', () => {
   const { materializeMock } = loadTs('lib/learning/mockExamLibrary.ts');
   const result = materializeMock({ mockId: 'mock-nonexistent', bank: [] });

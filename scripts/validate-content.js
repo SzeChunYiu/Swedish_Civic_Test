@@ -8392,6 +8392,8 @@ const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
 const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
 const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
+const mockExamLibraryModule = loadTs('lib/learning/mockExamLibrary.ts');
+const materializeMock = mockExamLibraryModule.materializeMock;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
@@ -8420,6 +8422,8 @@ let mockExamConfigExactSchemaKeysValidated = false;
 let mockExamConfigValidated = false;
 let mockExamRuntimeParityValidated = false;
 let mockExamChapterBalanceParityValidated = false;
+let mockExamChapterDistributionSafetyCasesValidated = 0;
+let mockExamChapterDistributionSafetyParityValidated = false;
 let mockExamTimerParityValidated = false;
 let examSubmissionFinalityParityValidated = false;
 let examRouteHeadersValidated = 0;
@@ -9764,6 +9768,7 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
   );
   validateMockExamConfigTypeSchemaParity();
   validateMockExamRuntimeParity(defaultMockExamConfig);
+  validateMockExamChapterDistributionSafety();
   validateMockExamTimerParity(defaultMockExamConfig);
   validateExamRouteHeaderParity();
   validateExamRouteCopyParity();
@@ -9775,6 +9780,8 @@ if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
     mockExamConfigValidated,
     mockExamRuntimeParityValidated,
     mockExamChapterBalanceParityValidated,
+    mockExamChapterDistributionSafetyCasesValidated,
+    mockExamChapterDistributionSafetyParityValidated,
     mockExamTimerParityValidated,
     examRouteHeadersValidated,
     examRouteHeaderParityValidated,
@@ -11452,6 +11459,86 @@ function validateMockExamRuntimeParity(config) {
 
   if (valid) mockExamRuntimeParityValidated = true;
   if (valid) mockExamChapterBalanceParityValidated = true;
+}
+
+function validateMockExamChapterDistributionSafety() {
+  if (typeof materializeMock !== 'function') return;
+
+  let valid = true;
+  let casesValidated = 0;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function validateCase(condition, message) {
+    casesValidated += 1;
+    if (!condition) reject(message);
+  }
+
+  const materialized = materializeMock({
+    mockId: 'mock-2',
+    bank: [
+      { id: 'distribution-valid-1', difficulty: 'medium', chapterId: 'ch01' },
+      { id: 'distribution-valid-2', difficulty: 'medium', chapterId: ' ch02 ' },
+      { id: 'distribution-valid-3', difficulty: 'medium', chapterId: 'ch02' },
+      { id: 'distribution-proto', difficulty: 'medium', chapterId: '__proto__' },
+      { id: 'distribution-constructor', difficulty: 'medium', chapterId: 'constructor' },
+      { id: 'distribution-prototype', difficulty: 'medium', chapterId: 'prototype' },
+      { id: 'distribution-blank', difficulty: 'medium', chapterId: '   ' },
+      { id: 'distribution-number', difficulty: 'medium', chapterId: 17 },
+      { id: 'distribution-object', difficulty: 'medium', chapterId: { id: 'ch03' } },
+    ],
+  });
+  const distribution = materialized?.chapterDistribution;
+
+  validateCase(
+    distribution && typeof distribution === 'object',
+    'mock exam library must return a chapterDistribution object',
+  );
+  if (!distribution || typeof distribution !== 'object') {
+    mockExamChapterDistributionSafetyCasesValidated = casesValidated;
+    return;
+  }
+
+  validateCase(
+    Object.getPrototypeOf(distribution) === null,
+    'mock exam chapterDistribution must use a null-prototype map',
+  );
+  validateCase(
+    distribution.ch01 === 1,
+    `mock exam chapterDistribution ch01 count is ${distribution.ch01}, expected 1`,
+  );
+  validateCase(
+    distribution.ch02 === 2,
+    `mock exam chapterDistribution ch02 count is ${distribution.ch02}, expected 2`,
+  );
+
+  for (const unsafeKey of ['__proto__', 'constructor', 'prototype']) {
+    validateCase(
+      !Object.prototype.hasOwnProperty.call(distribution, unsafeKey) &&
+        distribution[unsafeKey] === undefined,
+      `mock exam chapterDistribution must reject unsafe chapter id ${unsafeKey}`,
+    );
+  }
+
+  const distributionKeys = Object.keys(distribution).sort();
+  validateCase(
+    JSON.stringify(distributionKeys) === JSON.stringify(['ch01', 'ch02']),
+    `mock exam chapterDistribution keys are ${JSON.stringify(
+      distributionKeys,
+    )}, expected only ch01/ch02`,
+  );
+  validateCase(
+    Object.values(distribution).every(
+      (count) => Number.isInteger(count) && Number.isFinite(count) && count > 0,
+    ),
+    'mock exam chapterDistribution counts must be positive finite integers',
+  );
+
+  mockExamChapterDistributionSafetyCasesValidated = casesValidated;
+  if (valid && casesValidated === 9) mockExamChapterDistributionSafetyParityValidated = true;
 }
 
 function expectedFormattedExamTime(totalSeconds) {
@@ -22100,6 +22187,7 @@ validatePremiumEntitlementParity();
 validateQuestionDisclaimerParity();
 validateMockExamConfigTypeSchemaParity();
 validateMockExamRuntimeParity(defaultMockExamConfig);
+validateMockExamChapterDistributionSafety();
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateExamRouteHeaderParity();
@@ -22245,6 +22333,8 @@ console.log(
       mockExamConfigValidated,
       mockExamRuntimeParityValidated,
       mockExamChapterBalanceParityValidated,
+      mockExamChapterDistributionSafetyCasesValidated,
+      mockExamChapterDistributionSafetyParityValidated,
       mockExamTimerParityValidated,
       examSubmissionFinalityParityValidated,
       examRouteHeadersValidated,
