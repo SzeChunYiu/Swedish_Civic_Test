@@ -10,6 +10,7 @@ import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
+  getLocalStudyDataImportPayloadByteCount,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
   type LocalStudyDataImportPreview,
@@ -44,6 +45,7 @@ type SettingsCopy = {
   enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
+  importByteLimitExceeded: (byteCountLabel: string, maxLabel: string) => string;
   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
@@ -88,6 +90,10 @@ function formatCount(count: number, labels: CountLabels): string {
   return `${count} ${count === 1 ? labels.one : labels.other}`;
 }
 
+function formatImportByteCount(byteCount: number, language: AppLanguage): string {
+  return new Intl.NumberFormat(language === 'sv' ? 'sv-SE' : 'en-US').format(byteCount);
+}
+
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
@@ -118,6 +124,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Slå på automatisk uppläsning av nya frågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
+    importByteLimitExceeded: (byteCountLabel, maxLabel) =>
+      `Importen är ${byteCountLabel} byte. Gränsen är ${maxLabel}; klistra in en mindre export innan du förhandsgranskar.`,
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
       if (code === 'input_too_large') {
@@ -202,6 +210,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     enableListenFirstAudioAccessibilityLabel: 'Enable automatic playback for new questions',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
+    importByteLimitExceeded: (byteCountLabel, maxLabel) =>
+      `The import is ${byteCountLabel} bytes. The limit is ${maxLabel}; paste a smaller export before previewing.`,
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
       if (code === 'input_too_large') {
@@ -332,6 +342,17 @@ export default function Screen() {
   ];
   const activeThemeLabel =
     themeOptions.find((option) => option.value === themeMode)?.label ?? copy.themeSystemLabel;
+  const importPayloadByteCount = useMemo(
+    () => getLocalStudyDataImportPayloadByteCount(importText),
+    [importText],
+  );
+  const importPayloadOverByteLimit = importPayloadByteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES;
+  const importByteLimitFeedback = importPayloadOverByteLimit
+    ? copy.importByteLimitExceeded(
+        formatImportByteCount(importPayloadByteCount, language),
+        localStudyDataImportMaxLabel,
+      )
+    : null;
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
@@ -404,6 +425,12 @@ export default function Screen() {
   };
 
   const handlePreviewImport = () => {
+    if (importPayloadOverByteLimit) {
+      setImportPreview(null);
+      setImportFeedback({ tone: 'error', text: copy.importErrorMessage('input_too_large') });
+      return;
+    }
+
     const result = previewLocalStudyDataImport(importText);
     if (!result.ok) {
       setImportPreview(null);
@@ -466,133 +493,132 @@ export default function Screen() {
         ) : null}
 
         <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.dailyGoalTitle}
-        </Text>
-        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
-        <View
-          aria-label={copy.dailyGoalTitle}
-          accessibilityLabel={copy.dailyGoalTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
-          {supportedDailyGoalAnswerOptions.map((goal) => {
-            const selected = dailyGoalAnswers === goal;
-            const focusKey = `daily-goal-${goal}`;
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.dailyGoalTitle}
+          </Text>
+          <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
+          <View
+            aria-label={copy.dailyGoalTitle}
+            accessibilityLabel={copy.dailyGoalTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {supportedDailyGoalAnswerOptions.map((goal) => {
+              const selected = dailyGoalAnswers === goal;
+              const focusKey = `daily-goal-${goal}`;
 
-            return (
-              <Pressable
-                key={goal}
-                aria-checked={dailyGoalAnswers === goal}
-                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
-                hitSlop={space[1]}
-                onBlur={() => setFocusedControl(null)}
-                onFocus={() => setFocusedControl(focusKey)}
-                onPress={() => setDailyGoalAnswers(goal)}
-                style={({ pressed }) => [
-                  styles.pill,
-                  styles.goalPill,
-                  selected ? styles.pillActive : null,
-                  focusedControl === focusKey ? styles.controlFocused : null,
-                  pressed
-                    ? reduceMotion
-                      ? styles.controlPressedReducedMotion
-                      : styles.controlPressed
-                    : null,
-                ]}
-              >
-                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
-                  {goal}
-                </Text>
-                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
-                  {copy.dailyGoalPresetLabel(goal)}
-                </Text>
-              </Pressable>
-            );
-          })}
+              return (
+                <Pressable
+                  key={goal}
+                  aria-checked={dailyGoalAnswers === goal}
+                  accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: dailyGoalAnswers === goal }}
+                  hitSlop={space[1]}
+                  onBlur={() => setFocusedControl(null)}
+                  onFocus={() => setFocusedControl(focusKey)}
+                  onPress={() => setDailyGoalAnswers(goal)}
+                  style={({ pressed }) => [
+                    styles.pill,
+                    styles.goalPill,
+                    selected ? styles.pillActive : null,
+                    focusedControl === focusKey ? styles.controlFocused : null,
+                    pressed
+                      ? reduceMotion
+                        ? styles.controlPressedReducedMotion
+                        : styles.controlPressed
+                      : null,
+                  ]}
+                >
+                  <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
+                    {goal}
+                  </Text>
+                  <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
+                    {copy.dailyGoalPresetLabel(goal)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-      </View>
 
         <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.studyLanguageTitle}
-        </Text>
-        <View
-          aria-label={copy.studyLanguageTitle}
-          accessibilityLabel={copy.studyLanguageTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
-          {[
-            renderLanguageButton('sv', 'Swedish', 'Svenska'),
-            renderLanguageButton('en', 'English support', 'Engelskt stöd'),
-          ]}
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.studyLanguageTitle}
+          </Text>
+          <View
+            aria-label={copy.studyLanguageTitle}
+            accessibilityLabel={copy.studyLanguageTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {[
+              renderLanguageButton('sv', 'Swedish', 'Svenska'),
+              renderLanguageButton('en', 'English support', 'Engelskt stöd'),
+            ]}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.audioTitle}
-        </Text>
-        <Pressable
-          aria-checked={audioEnabled}
-          accessibilityLabel={
-            audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: audioEnabled }}
-          hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('audio')}
-          onPress={() => setAudioEnabled(!audioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
-            pressed
-              ? reduceMotion
-                ? styles.secondaryButtonPressedReducedMotion
-                : styles.secondaryButtonPressed
-              : null,
-          ]}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+        <View style={styles.section}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.audioTitle}
           </Text>
-        </Pressable>
-        <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
-        <Pressable
-          aria-checked={listenFirstAudioEnabled}
-          accessibilityLabel={
-            listenFirstAudioEnabled
-              ? copy.disableListenFirstAudioAccessibilityLabel
-              : copy.enableListenFirstAudioAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: listenFirstAudioEnabled }}
-          hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('listen-first-audio')}
-          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
-            pressed
-              ? reduceMotion
-                ? styles.secondaryButtonPressedReducedMotion
-                : styles.secondaryButtonPressed
-              : null,
-          ]}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {listenFirstAudioEnabled
-              ? copy.audioListenFirstEnabledLabel
-              : copy.audioListenFirstDisabledLabel}
-          </Text>
-        </Pressable>
-      </View>
-
+          <Pressable
+            aria-checked={audioEnabled}
+            accessibilityLabel={
+              audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
+            }
+            accessibilityRole="switch"
+            accessibilityState={{ checked: audioEnabled }}
+            hitSlop={space[1]}
+            onBlur={() => setFocusedControl(null)}
+            onFocus={() => setFocusedControl('audio')}
+            onPress={() => setAudioEnabled(!audioEnabled)}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
+              pressed
+                ? reduceMotion
+                  ? styles.secondaryButtonPressedReducedMotion
+                  : styles.secondaryButtonPressed
+                : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+            </Text>
+          </Pressable>
+          <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
+          <Pressable
+            aria-checked={listenFirstAudioEnabled}
+            accessibilityLabel={
+              listenFirstAudioEnabled
+                ? copy.disableListenFirstAudioAccessibilityLabel
+                : copy.enableListenFirstAudioAccessibilityLabel
+            }
+            accessibilityRole="switch"
+            accessibilityState={{ checked: listenFirstAudioEnabled }}
+            hitSlop={space[1]}
+            onBlur={() => setFocusedControl(null)}
+            onFocus={() => setFocusedControl('listen-first-audio')}
+            onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
+              pressed
+                ? reduceMotion
+                  ? styles.secondaryButtonPressedReducedMotion
+                  : styles.secondaryButtonPressed
+                : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {listenFirstAudioEnabled
+                ? copy.audioListenFirstEnabledLabel
+                : copy.audioListenFirstDisabledLabel}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -650,22 +676,42 @@ export default function Screen() {
           textAlignVertical="top"
           value={importText}
         />
+        {importByteLimitFeedback ? (
+          <Text
+            accessibilityLiveRegion="polite"
+            aria-live="polite"
+            style={[styles.feedbackText, styles.feedbackError]}
+          >
+            {importByteLimitFeedback}
+          </Text>
+        ) : null}
         <View style={styles.importActions}>
           <Pressable
+            aria-disabled={importPayloadOverByteLimit}
             accessibilityLabel={copy.importPreviewAccessibilityLabel}
             accessibilityRole="button"
+            accessibilityState={{ disabled: importPayloadOverByteLimit }}
+            disabled={importPayloadOverByteLimit}
             hitSlop={space[1]}
             onPress={handlePreviewImport}
             style={({ pressed }) => [
               styles.secondaryButton,
-              pressed
+              importPayloadOverByteLimit ? styles.secondaryButtonDisabled : null,
+              pressed && !importPayloadOverByteLimit
                 ? reduceMotion
                   ? styles.secondaryButtonPressedReducedMotion
                   : styles.secondaryButtonPressed
                 : null,
             ]}
           >
-            <Text style={styles.secondaryButtonText}>{copy.importPreview}</Text>
+            <Text
+              style={[
+                styles.secondaryButtonText,
+                importPayloadOverByteLimit ? styles.secondaryButtonTextDisabled : null,
+              ]}
+            >
+              {copy.importPreview}
+            </Text>
           </Pressable>
           <Pressable
             accessibilityLabel={copy.importReset}
@@ -861,6 +907,10 @@ function createStyles(themeColors: ThemeColors) {
     secondaryButtonFocused: {
       borderColor: themeColors.focus,
     },
+    secondaryButtonDisabled: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
     secondaryButtonPressed: {
       backgroundColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
@@ -872,6 +922,9 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.surface,
       fontSize: typography.navButton.fontSize,
       fontWeight: typography.navButton.fontWeight,
+    },
+    secondaryButtonTextDisabled: {
+      color: themeColors.textMuted,
     },
     disclaimerText: {
       color: themeColors.textDisclaimer,
