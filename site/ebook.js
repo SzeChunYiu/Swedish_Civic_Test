@@ -926,15 +926,15 @@
         en: "A king who can't decide, a Riksdag that does, and 290 municipalities you'll mostly only meet at the recycling station.",
         sv: 'En kung som inte bestämmer, en riksdag som gör det, och 290 kommuner du oftast bara träffar vid återvinningen.',
         'zh-Hans':
-          '一位无权决断的国王、一个真正做决定的 Riksdag（议会），以及 290 个你大概只会在回收站碰到的 kommun（市镇）。',
+          '一位无权决断的国王、一个真正做决定的 Riksdag（议会），以及 290 个你大概只会在回收站碰到的市镇。',
         'zh-Hant':
-          '一位無權決斷的國王、一個真正做決定的 Riksdag（議會），以及 290 個你大概只會在回收站碰到的 kommun（市鎮）。',
+          '一位無權決斷的國王、一個真正做決定的 Riksdag（議會），以及 290 個你大概只會在回收站碰到的市鎮。',
         ar: 'ملكٌ لا يستطيع أن يقرّر، و Riksdag (البرلمان) يقرّر، و290 بلدية لن تلتقي بها في الغالب إلا عند محطة إعادة التدوير.',
         ckb: 'پاشایەک کە ناتوانێت بڕیار بدات، Riksdagـێک (پەرلەمان) کە بڕیار دەدات، و 290 شارەوانی کە زۆرتر تەنها لە وێستگەی پیتاندنەوەدا دەیانبینیت.',
         fa: 'پادشاهی که نمی‌تواند تصمیم بگیرد، یک Riksdag (پارلمان) که تصمیم می‌گیرد، و 290 کمون که بیشتر فقط در ایستگاه بازیافت با آن‌ها سروکار خواهید داشت.',
         pl: 'Król, który nie może decydować, Riksdag (parlament), który decyduje, oraz 290 gmin (kommuner), które spotkasz głównie przy stacji recyklingu.',
         so: "Boqor aan go'aan qaadan karin, Riksdag (baarlamaan) oo qaada, iyo 290 degmo (kommuner) oo aad badanaa kula kulmi doonto saldhigga dib-u-warshadaynta.",
-        ti: 'ክውስን ዘይክእል ንጉስ፣ ዝውስን Riksdag (ባይቶ)፣ ከምኡ’ውን መብዛሕትኡ ግዜ ኣብ መደበር ዳግመ-ምጥቃም ጥራይ እትረኽቦም 290 kommun (ምምሕዳር ከተማ)።',
+        ti: 'ክውስን ዘይክእል ንጉስ፣ ዝውስን Riksdag (ባይቶ)፣ ከምኡ’ውን መብዛሕትኡ ግዜ ኣብ መደበር ዳግመ-ምጥቃም ጥራይ እትረኽቦም 290 ምምሕዳራት ከተማ።',
         tr: 'Karar veremeyen bir kral, karar veren bir Riksdag (parlamento) ve çoğunlukla yalnızca geri dönüşüm istasyonunda karşılaşacağınız 290 belediye (kommuner).',
         uk: 'Король, який не може вирішувати, Riksdag (парламент), який вирішує, та 290 муніципалітетів (kommuner), які ви здебільшого зустрінете лише на станції переробки.',
       },
@@ -977,8 +977,8 @@
           <p>瑞典是一个 <em>君主立宪制国家</em>，也是一个 <em>议会民主制国家</em>。权力在三个层级上运作：</p>
           <ul>
             <li><b>全国层级</b>——Riksdag（议会）、regering（政府）和国王（礼仪性角色）。</li>
-            <li><b>区域层级</b>——21 个 region（大区），主要负责医疗和公共交通。</li>
-            <li><b>地方层级</b>——290 个 kommun（<em>市镇</em>），负责学校、社会服务、供水和垃圾处理。</li>
+            <li><b>区域层级</b>——21 个大区，主要负责医疗和公共交通。</li>
+            <li><b>地方层级</b>——290 个市镇，负责学校、社会服务、供水和垃圾处理。</li>
           </ul>
           <h2>Riksdag（议会）</h2>
           <p>共 349 个席位。每四年选举一次（大选，9 月的第二个星期日）。4% 的门槛把小党挡在门外。Riksdag 负责立法、掌控预算，并确认首相人选。</p>
@@ -993,15 +993,15 @@
             <li><b>法院</b>——独立运作，以 Högsta domstolen（最高法院）居于顶端。</li>
           </ul>
           <h2>投票</h2>
-          <p>你会在同一天参加三场各自独立的选举：Riksdag、region 和 kommun。此外，你每五年还会参加一次 EU（欧盟）选举。瑞典公民这四种选举都能参加；永久居民在居住满三年后，可以参加区域和市镇选举。</p>
-          ${ebookFactBox('zh-Hans', null, 'Riksdag 席位数：349 · 门槛：4% · 选举间隔：4 年 · region 数量：21 · kommun 数量：290。', ['uhrStudyMaterial'])}
+          <p>你会在同一天参加三场各自独立的选举：Riksdag、区域和市镇。此外，你每五年还会参加一次 EU（欧盟）选举。瑞典公民这四种选举都能参加；永久居民在居住满三年后，可以参加区域和市镇选举。</p>
+          ${ebookFactBox('zh-Hans', null, 'Riksdag 席位数：349 · 门槛：4% · 选举间隔：4 年 · 大区数量：21 · 市镇数量：290。', ['uhrStudyMaterial'])}
         `,
         'zh-Hant': `<h2>三級政府</h2>
           <p>瑞典是一個 <em>君主立憲制國家</em>，也是一個 <em>議會民主制國家</em>。權力在三個層級上運作：</p>
           <ul>
             <li><b>全國層級</b>——Riksdag（議會）、regering（政府）和國王（禮儀性角色）。</li>
-            <li><b>區域層級</b>——21 個 region（大區），主要負責醫療和公共交通。</li>
-            <li><b>地方層級</b>——290 個 kommun（<em>市鎮</em>），負責學校、社會服務、供水和垃圾處理。</li>
+            <li><b>區域層級</b>——21 個大區，主要負責醫療和公共交通。</li>
+            <li><b>地方層級</b>——290 個市鎮，負責學校、社會服務、供水和垃圾處理。</li>
           </ul>
           <h2>Riksdag（議會）</h2>
           <p>共 349 個席位。每四年選舉一次（大選，9 月的第二個星期日）。4% 的門檻把小黨擋在門外。Riksdag 負責立法、掌控預算，並確認首相人選。</p>
@@ -1016,14 +1016,14 @@
             <li><b>法院</b>——獨立運作，以 Högsta domstolen（最高法院）居於頂端。</li>
           </ul>
           <h2>投票</h2>
-          <p>你會在同一天參加三場各自獨立的選舉：Riksdag、region 和 kommun。此外，你每五年還會參加一次 EU（歐盟）選舉。瑞典公民這四種選舉都能參加；永久居民在居住滿三年後，可以參加區域和市鎮選舉。</p>
-          ${ebookFactBox('zh-Hant', null, 'Riksdag 席位數：349 · 門檻：4% · 選舉間隔：4 年 · region 數量：21 · kommun 數量：290。', ['uhrStudyMaterial'])}
+          <p>你會在同一天參加三場各自獨立的選舉：Riksdag、區域和市鎮。此外，你每五年還會參加一次 EU（歐盟）選舉。瑞典公民這四種選舉都能參加；永久居民在居住滿三年後，可以參加區域和市鎮選舉。</p>
+          ${ebookFactBox('zh-Hant', null, 'Riksdag 席位數：349 · 門檻：4% · 選舉間隔：4 年 · 大區數量：21 · 市鎮數量：290。', ['uhrStudyMaterial'])}
         `,
         ar: `<h2>ثلاثة مستويات للحكم</h2>
           <p>السويد <em>ملكية دستورية</em> و<em>ديمقراطية برلمانية</em>. وتجري السلطة على ثلاثة مستويات:</p>
           <ul>
             <li><b>الوطني</b> — Riksdag (البرلمان)، وregering (الحكومة)، والملك (دور تشريفي).</li>
-            <li><b>الإقليمي</b> — 21 إقليمًا (region)، مسؤولة أساسًا عن الرعاية الصحية والنقل العام.</li>
+            <li><b>الإقليمي</b> — 21 إقليمًا، مسؤولة أساسًا عن الرعاية الصحية والنقل العام.</li>
             <li><b>المحلي</b> — 290 بلدية (<em>kommuner</em>)، مسؤولة عن المدارس والخدمات الاجتماعية والمياه والنفايات.</li>
           </ul>
           <h2>الـ Riksdag</h2>
@@ -1039,14 +1039,14 @@
             <li><b>المحاكم</b> — مستقلة، وعلى رأسها المحكمة العليا (Högsta domstolen).</li>
           </ul>
           <h2>التصويت</h2>
-          <p>تصوّت في ثلاثة انتخابات منفصلة في اليوم نفسه: Riksdag، والإقليم (region)، والبلدية (kommun). كما تصوّت في انتخابات EU كل خمس سنوات. ويصوّت المواطنون السويديون في الأربعة جميعًا؛ أما المقيمون الدائمون فيصوّتون في الانتخابات الإقليمية والبلدية بعد ثلاث سنوات.</p>
+          <p>تصوّت في ثلاثة انتخابات منفصلة في اليوم نفسه: Riksdag، والإقليم، والبلدية. كما تصوّت في انتخابات EU كل خمس سنوات. ويصوّت المواطنون السويديون في الأربعة جميعًا؛ أما المقيمون الدائمون فيصوّتون في الانتخابات الإقليمية والبلدية بعد ثلاث سنوات.</p>
           ${ebookFactBox('ar', null, 'حجم Riksdag: 349 · العتبة: 4% · فترة الانتخابات: 4 سنوات · عدد الأقاليم: 21 · عدد البلديات: 290.', ['uhrStudyMaterial'])}
         `,
         ckb: `<h2>سێ ئاستی فەرمانڕەوایی</h2>
           <p>سوید <em>پاشایەتییەکی دەستوورییە</em> و <em>دیموکراسییەکی پەرلەمانی</em>یە. هێز لە سێ ئاستدا کاردەکات:</p>
           <ul>
             <li><b>نیشتمانی</b> — Riksdag (پەرلەمان)، regering (حکومەت) و پاشا (ڕێوڕەسمی).</li>
-            <li><b>هەرێمی</b> — 21 هەرێم (region)، کە زۆرتر بەرپرسی خزمەتگوزاریی تەندروستی و گواستنەوەی گشتین.</li>
+            <li><b>هەرێمی</b> — 21 هەرێم، کە زۆرتر بەرپرسی خزمەتگوزاریی تەندروستی و گواستنەوەی گشتین.</li>
             <li><b>ناوخۆیی</b> — 290 شارەوانی (<em>kommuner</em>)، کە بەرپرسی قوتابخانە، خزمەتگوزاریی کۆمەڵایەتی، ئاو و خۆڵن.</li>
           </ul>
           <h2>Riksdag</h2>
@@ -1062,14 +1062,14 @@
             <li><b>دادگاکان</b> — سەربەخۆن، لەگەڵ دادگای باڵا (Högsta domstolen) لە سەرەوەیان.</li>
           </ul>
           <h2>دەنگدان</h2>
-          <p>لە یەک ڕۆژدا لە سێ هەڵبژاردنی جیاوازدا دەنگ دەدەیت: Riksdag، هەرێم (region) و شارەوانی (kommun). هەروەها هەر پێنج ساڵ جارێک لە هەڵبژاردنی EUدا دەنگ دەدەیت. هاووڵاتیانی سویدی لە هەر چوارەکەدا دەنگ دەدەن؛ نیشتەجێ هەمیشەییەکان دوای سێ ساڵ لە هەڵبژاردنی هەرێمی و شارەوانیدا دەنگ دەدەن.</p>
+          <p>لە یەک ڕۆژدا لە سێ هەڵبژاردنی جیاوازدا دەنگ دەدەیت: Riksdag، هەرێم و شارەوانی. هەروەها هەر پێنج ساڵ جارێک لە هەڵبژاردنی EUدا دەنگ دەدەیت. هاووڵاتیانی سویدی لە هەر چوارەکەدا دەنگ دەدەن؛ نیشتەجێ هەمیشەییەکان دوای سێ ساڵ لە هەڵبژاردنی هەرێمی و شارەوانیدا دەنگ دەدەن.</p>
           ${ebookFactBox('ckb', null, 'قەبارەی Riksdag: 349 · سنوور: 4% · ماوەی هەڵبژاردن: 4 ساڵ · ژمارەی هەرێمەکان: 21 · ژمارەی شارەوانییەکان: 290.', ['uhrStudyMaterial'])}
         `,
         fa: `<h2>سه سطح حکومت</h2>
           <p>سوئد یک <em>پادشاهی مشروطه</em> و <em>دموکراسی پارلمانی</em> است. قدرت در سه سطح جریان دارد:</p>
           <ul>
             <li><b>ملی</b> — Riksdag (پارلمان)، regering (دولت) و پادشاه (تشریفاتی).</li>
-            <li><b>منطقه‌ای</b> — 21 منطقه (region) که عمدتاً مسئول خدمات بهداشتی و حمل‌ونقل عمومی هستند.</li>
+            <li><b>منطقه‌ای</b> — 21 منطقه که عمدتاً مسئول خدمات بهداشتی و حمل‌ونقل عمومی هستند.</li>
             <li><b>محلی</b> — 290 کمون (<em>kommuner</em>) که مسئول مدرسه‌ها، خدمات اجتماعی، آب و زباله هستند.</li>
           </ul>
           <h2>Riksdag</h2>
@@ -1085,7 +1085,7 @@
             <li><b>دادگاه‌ها</b> — مستقل، با دیوان عالی کشور (Högsta domstolen) در رأس آن.</li>
           </ul>
           <h2>رأی‌گیری</h2>
-          <p>شما در یک روز در سه انتخابات جداگانه رأی می‌دهید: Riksdag، منطقه (region) و کمون (kommun). همچنین هر پنج سال در انتخابات EU رأی می‌دهید. شهروندان سوئدی در هر چهار انتخابات رأی می‌دهند؛ مقیمان دائم پس از سه سال در انتخابات منطقه‌ای و کمونی رأی می‌دهند.</p>
+          <p>شما در یک روز در سه انتخابات جداگانه رأی می‌دهید: Riksdag، منطقه و کمون. همچنین هر پنج سال در انتخابات EU رأی می‌دهید. شهروندان سوئدی در هر چهار انتخابات رأی می‌دهند؛ مقیمان دائم پس از سه سال در انتخابات منطقه‌ای و کمونی رأی می‌دهند.</p>
           ${ebookFactBox('fa', null, 'اندازهٔ Riksdag: 349 · آستانه: 4% · فاصلهٔ انتخابات: 4 سال · تعداد مناطق: 21 · تعداد کمون‌ها: 290.', ['uhrStudyMaterial'])}
         `,
         pl: `<h2>Trzy poziomy władzy</h2>
@@ -1108,14 +1108,14 @@
             <li><b>Sądy</b> — niezależne, z Sądem Najwyższym (Högsta domstolen) na szczycie.</li>
           </ul>
           <h2>Głosowanie</h2>
-          <p>Głosujesz w trzech odrębnych wyborach tego samego dnia: Riksdag, region i kommun. Głosujesz też w wyborach do EU co pięć lat. Obywatele szwedzcy głosują we wszystkich czterech; stali rezydenci głosują w wyborach regionalnych i gminnych po trzech latach.</p>
+          <p>Głosujesz w trzech odrębnych wyborach tego samego dnia: do Riksdagu oraz w wyborach regionalnych i gminnych. Głosujesz też w wyborach do EU co pięć lat. Obywatele szwedzcy głosują we wszystkich czterech; stali rezydenci głosują w wyborach regionalnych i gminnych po trzech latach.</p>
           ${ebookFactBox('pl', null, 'Liczebność Riksdagu: 349 · Próg: 4% · Częstotliwość wyborów: 4 lata · Liczba regionów: 21 · Liczba gmin: 290.', ['uhrStudyMaterial'])}
         `,
         so: `<h2>Saddex heer oo dawladnimo</h2>
           <p>Iswiidhan waa <em>boqortooyo dastuuri ah</em> iyo <em>dimoqraadiyad baarlamaani ah</em>. Awooddu waxay ka shaqaysaa saddex heer:</p>
           <ul>
             <li><b>Heer qaran</b> — Riksdag (baarlamaan), regering (dawlad) iyo boqorka (xafladeed).</li>
-            <li><b>Heer gobol</b> — 21 region (gobol), oo inta badan mas'uul ka ah daryeelka caafimaadka iyo gaadiidka dadweynaha.</li>
+            <li><b>Heer gobol</b> — 21 gobol, oo inta badan mas'uul ka ah daryeelka caafimaadka iyo gaadiidka dadweynaha.</li>
             <li><b>Heer maxalli ah</b> — 290 degmo (<em>kommuner</em>), oo mas'uul ka ah iskuullada, adeegyada bulshada, biyaha iyo qashinka.</li>
           </ul>
           <h2>Riksdag</h2>
@@ -1131,15 +1131,15 @@
             <li><b>Maxkamadaha</b> — madax-bannaan, oo Maxkamadda Sare (Högsta domstolen) ay ugu sarrayso.</li>
           </ul>
           <h2>Codbixinta</h2>
-          <p>Waxaad ka codaysaa saddex doorasho oo kala duwan maalin isku mid ah: Riksdag, region iyo kommun. Waxaad sidoo kale ka codaysaa doorashooyinka EU shantii sanaba mar. Muwaadiniinta Iswiidhan waxay ka codeeyaan dhammaan afarta; dadka deganaanshaha joogtada ah waxay ka codeeyaan doorashooyinka gobolka iyo degmada saddex sano ka dib.</p>
-          ${ebookFactBox('so', null, 'Cabbirka Riksdag: 349 · Xadka: 4% · Muddada doorashada: 4 sano · Tirada region: 21 · Tirada degmooyinka: 290.', ['uhrStudyMaterial'])}
+          <p>Waxaad ka codaysaa saddex doorasho oo kala duwan maalin isku mid ah: Riksdag, gobolka iyo degmada. Waxaad sidoo kale ka codaysaa doorashooyinka EU shantii sanaba mar. Muwaadiniinta Iswiidhan waxay ka codeeyaan dhammaan afarta; dadka deganaanshaha joogtada ah waxay ka codeeyaan doorashooyinka gobolka iyo degmada saddex sano ka dib.</p>
+          ${ebookFactBox('so', null, 'Cabbirka Riksdag: 349 · Xadka: 4% · Muddada doorashada: 4 sano · Tirada gobollada: 21 · Tirada degmooyinka: 290.', ['uhrStudyMaterial'])}
         `,
         ti: `<h2>ሰለስተ ደረጃታት ምሕደራ</h2>
           <p>ሽወደን <em>ቅዋማዊ ንግስና</em>ን <em>ፓርላሜንታዊ ደሞክራሲ</em>ን እያ። ስልጣን ኣብ ሰለስተ ደረጃ ይሰርሕ፦</p>
           <ul>
             <li><b>ሃገራዊ</b> — Riksdag (ባይቶ)፣ regering (መንግስቲ)ን ንጉስ (ስነ-ስርዓታዊ)ን።</li>
-            <li><b>ዞባዊ</b> — 21 region (ዞባ)፣ ብቐንዱ ንክንክን ጥዕናን ህዝባዊ መጓዓዝያን ሓላፍነት ዘለዎም።</li>
-            <li><b>ከባብያዊ</b> — 290 kommun (<em>kommuner</em>)፣ ንኣብያተ ትምህርቲ፣ ማሕበራዊ ኣገልግሎት፣ ማይን ጓሓፍን ሓላፍነት ዘለዎም።</li>
+            <li><b>ዞባዊ</b> — 21 ዞባታት፣ ብቐንዱ ንክንክን ጥዕናን ህዝባዊ መጓዓዝያን ሓላፍነት ዘለዎም።</li>
+            <li><b>ከባብያዊ</b> — 290 ምምሕዳራት ከተማ፣ ንኣብያተ ትምህርቲ፣ ማሕበራዊ ኣገልግሎት፣ ማይን ጓሓፍን ሓላፍነት ዘለዎም።</li>
           </ul>
           <h2>Riksdag</h2>
           <p>349 መናብር። ኣብ ነፍሲ ወከፍ ኣርባዕተ ዓመት ይምረጽ (ሓፈሻዊ ምርጫ፣ ካልኣይ ሰንበት መስከረም)። 4% ደረት ንናኣሽቱ ሰልፍታት ኣብ ደገ የትርፎም። Riksdag ሕግታት የውጽእ፣ ባጀት ይቆጻጸር፣ ቀዳማይ ሚኒስተር ድማ የጽድቕ።</p>
@@ -1154,14 +1154,14 @@
             <li><b>ኣብያተ ፍርዲ</b> — ናጻ፣ ኣብ ላዕሊ ጠቕላይ ቤት ፍርዲ (Högsta domstolen) ዘለዎ።</li>
           </ul>
           <h2>ምድማጽ</h2>
-          <p>ኣብ ሓደ መዓልቲ ኣብ ሰለስተ በበይኖም ምርጫታት ትመርጽ፦ Riksdag፣ region ከምኡ’ውን kommun። ከምኡ’ውን ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት ኣብ ምርጫታት EU ትመርጽ። ዜጋታት ሽወደን ኣብ ኩሉ ኣርባዕተ ይመርጹ፣ ቀወምቲ ነበርቲ ድሕሪ ሰለስተ ዓመት ኣብ ዞባውን ምምሕዳር ከተማን ምርጫታት ይመርጹ።</p>
-          ${ebookFactBox('ti', null, 'ዓቐን Riksdag፦ 349 · ደረት፦ 4% · ግዜ ምርጫ፦ 4 ዓመት · ቍጽሪ region፦ 21 · ቍጽሪ kommun፦ 290።', ['uhrStudyMaterial'])}
+          <p>ኣብ ሓደ መዓልቲ ኣብ ሰለስተ በበይኖም ምርጫታት ትመርጽ፦ Riksdag፣ ዞባን ምምሕዳር ከተማን። ከምኡ’ውን ኣብ ነፍሲ ወከፍ ሓሙሽተ ዓመት ኣብ ምርጫታት EU ትመርጽ። ዜጋታት ሽወደን ኣብ ኩሉ ኣርባዕተ ይመርጹ፣ ቀወምቲ ነበርቲ ድሕሪ ሰለስተ ዓመት ኣብ ዞባውን ምምሕዳር ከተማን ምርጫታት ይመርጹ።</p>
+          ${ebookFactBox('ti', null, 'ዓቐን Riksdag፦ 349 · ደረት፦ 4% · ግዜ ምርጫ፦ 4 ዓመት · ቍጽሪ ዞባታት፦ 21 · ቍጽሪ ምምሕዳራት ከተማ፦ 290።', ['uhrStudyMaterial'])}
         `,
         tr: `<h2>Üç yönetim düzeyi</h2>
           <p>İsveç bir <em>anayasal monarşi</em> ve <em>parlamenter demokrasi</em>dir. Erk üç düzeyde işler:</p>
           <ul>
             <li><b>Ulusal</b> — Riksdag (parlamento), regering (hükümet) ve kral (törensel).</li>
-            <li><b>Bölgesel</b> — başlıca sağlık hizmetleri ve toplu taşımadan sorumlu 21 region (bölge).</li>
+            <li><b>Bölgesel</b> — başlıca sağlık hizmetleri ve toplu taşımadan sorumlu 21 bölge.</li>
             <li><b>Yerel</b> — okullar, sosyal hizmetler, su ve çöpten sorumlu 290 belediye (<em>kommuner</em>).</li>
           </ul>
           <h2>Riksdag</h2>
@@ -1177,15 +1177,15 @@
             <li><b>Mahkemeler</b> — bağımsız, en tepede Yüksek Mahkeme (Högsta domstolen) ile.</li>
           </ul>
           <h2>Oy verme</h2>
-          <p>Aynı gün üç ayrı seçimde oy verirsiniz: Riksdag, region ve kommun. Ayrıca beş yılda bir EU seçimlerinde oy verirsiniz. İsveç vatandaşları dördünde de oy verir; daimi oturum sahipleri üç yıl sonra bölge ve belediye seçimlerinde oy verir.</p>
-          ${ebookFactBox('tr', null, 'Riksdag büyüklüğü: 349 · Baraj: %4 · Seçim aralığı: 4 yıl · region sayısı: 21 · belediye sayısı: 290.', ['uhrStudyMaterial'])}
+          <p>Aynı gün üç ayrı seçimde oy verirsiniz: Riksdag, bölge ve belediye. Ayrıca beş yılda bir EU seçimlerinde oy verirsiniz. İsveç vatandaşları dördünde de oy verir; daimi oturum sahipleri üç yıl sonra bölge ve belediye seçimlerinde oy verir.</p>
+          ${ebookFactBox('tr', null, 'Riksdag büyüklüğü: 349 · Baraj: %4 · Seçim aralığı: 4 yıl · bölge sayısı: 21 · belediye sayısı: 290.', ['uhrStudyMaterial'])}
         `,
         uk: `<h2>Три рівні влади</h2>
           <p>Швеція є <em>конституційною монархією</em> та <em>парламентською демократією</em>. Влада діє на трьох рівнях:</p>
           <ul>
             <li><b>Загальнодержавний</b> — Riksdag (парламент), regering (уряд) і король (церемоніальний).</li>
-            <li><b>Регіональний</b> — 21 region (регіон), що відповідають переважно за охорону здоров'я та громадський транспорт.</li>
-            <li><b>Місцевий</b> — 290 муніципалітетів (<em>kommuner</em>), що відповідають за школи, соціальні служби, воду та сміття.</li>
+            <li><b>Регіональний</b> — 21 регіон, що відповідають переважно за охорону здоров'я та громадський транспорт.</li>
+            <li><b>Місцевий</b> — 290 муніципалітетів, що відповідають за школи, соціальні служби, воду та сміття.</li>
           </ul>
           <h2>Riksdag</h2>
           <p>349 місць. Обирається кожні чотири роки (загальні вибори, друга неділя вересня). Поріг у 4% не пускає до парламенту дрібні партії. Riksdag ухвалює закони, контролює бюджет і затверджує прем'єр-міністра.</p>
@@ -1200,8 +1200,8 @@
             <li><b>Суди</b> — незалежні, з Верховним судом (Högsta domstolen) на чолі.</li>
           </ul>
           <h2>Голосування</h2>
-          <p>Ви голосуєте на трьох окремих виборах одного дня: Riksdag, region і kommun. Також ви голосуєте на виборах до EU кожні п'ять років. Громадяни Швеції голосують на всіх чотирьох; постійні мешканці голосують на регіональних і муніципальних виборах через три роки.</p>
-          ${ebookFactBox('uk', null, 'Розмір Riksdag: 349 · Поріг: 4% · Інтервал виборів: 4 роки · Кількість region: 21 · Кількість муніципалітетів: 290.', ['uhrStudyMaterial'])}
+          <p>Ви голосуєте на трьох окремих виборах одного дня: Riksdag, регіон і муніципалітет. Також ви голосуєте на виборах до EU кожні п'ять років. Громадяни Швеції голосують на всіх чотирьох; постійні мешканці голосують на регіональних і муніципальних виборах через три роки.</p>
+          ${ebookFactBox('uk', null, 'Розмір Riksdag: 349 · Поріг: 4% · Інтервал виборів: 4 роки · Кількість регіонів: 21 · Кількість муніципалітетів: 290.', ['uhrStudyMaterial'])}
         `,
       },
     },
@@ -1674,7 +1674,7 @@
           <p>ኣብ ሽወደን ደሞዝን ኩነታትን መብዛሕትኡ ግዜ ብ<em>ሓባራዊ ስምምዓት</em> (kollektivavtal) ይውሰን — ኣብ መንጎ ሰራሕተኛታት ማሕበራትን ትካላት ወሃብቲ ስራሕን ዝድራደር። ሕጋዊ ዝተሓተ ደሞዝ የለን፣ ኣብ ዝኾነ ጽላት ዝተሰማምዑሉ ዝተሓተ ግን መብዛሕትኡ ግዜ ካብ ወጻኢ መነባብሮ ኣዝዩ ላዕሊ እዩ።</p>
           <p>ኣባልነት ሰራሕተኛታት ማሕበር ብፍታው እዩ። ኣስታት 65% ሰራሕተኛታት ኣባል እዮም። ምእታው መብዛሕትኡ ግዜ መድሕን ስእነት ስራሕ (<em>a-kassa</em>) የጠቓልል።</p>
           <h2>ቀረጽ</h2>
-          <p>ቀረጽ ንመንግስቲ ድሕነት ይምውል። መብዛሕትኦም ሰባት ኣስታት 30% ደሞዞም ከም ቀረጽ እቶት kommun ይኸፍሉ። ካብ ደረት ቀረጽ መንግስቲ (ኣብ 2024 ኣስታት 613 900 SEK) ንላዕሊ ዝረኽቡ ሰባት፣ ካብቲ መስመር ንላዕሊ ኣብ ዘሎ እቶት ተወሳኺ 20% ይኸፍሉ። ካብ ካፒታል ዝርከብ መኽሰብ ብ30% ይቕረጽ። VAT (<em>moms</em>) ኣብ መብዛሕትኡ ኣቕሑ 25%፣ ኣብ ምግቢ 12%፣ ኣብ መጻሕፍትን ባህልን 6% እዩ።</p>
+          <p>ቀረጽ ንመንግስቲ ድሕነት ይምውል። መብዛሕትኦም ሰባት ኣስታት 30% ደሞዞም ከም ናይ ከባቢ ምምሕዳር ቀረጽ እቶት ይኸፍሉ። ካብ ደረት ቀረጽ መንግስቲ (ኣብ 2024 ኣስታት 613 900 SEK) ንላዕሊ ዝረኽቡ ሰባት፣ ካብቲ መስመር ንላዕሊ ኣብ ዘሎ እቶት ተወሳኺ 20% ይኸፍሉ። ካብ ካፒታል ዝርከብ መኽሰብ ብ30% ይቕረጽ። VAT (<em>moms</em>) ኣብ መብዛሕትኡ ኣቕሑ 25%፣ ኣብ ምግቢ 12%፣ ኣብ መጻሕፍትን ባህልን 6% እዩ።</p>
           <h2>Skatteverket</h2>
           <p>Skatteverket — ቤት ጽሕፈት ቀረጽ ሽወደን — መዝገብ ህዝቢ እውን እዩ። <em>personnummer</em>ካ (ውልቃዊ ቍጽሪ) ምስ ቀረጽ፣ ክንክን ጥዕና፣ ኣብያተ ትምህርትን ኣድራሻኻን የተኣሳስረካ። ግዒዝካ? ኣብ ውሽጢ ሰሙን ንገሮም።</p>
           <h2>መንግስቲ ድሕነት</h2>
@@ -1996,25 +1996,25 @@
           <p>义务教育阶段（<em>grundskolan</em>，基础学校）为期十年，从 6 岁（förskoleklass，学前班）一直到 9 年级。之后是三年的高中（<em>gymnasium</em>）——分学术或职业方向，两者都免费。大学对公民、欧盟/欧洲经济区居民以及持有瑞典居留许可的人也是免费的。</p>
           <p>《教育法》保障平等的入学机会，无论背景、性别或居住地。私立学校和"自由学校"（<em>friskolor</em>）也存在，但不得收取学费。</p>
           <h2>医疗</h2>
-          <p>医疗主要由税收资助，在区域层级运作（21 个 region）。你每次看医生需支付一笔小额费用（通常为 100–400 瑞典克朗），处方药和住院费用每年设有上限（<em>högkostnadsskydd</em>，高费用保障）。儿童医疗免费。</p>
+          <p>医疗主要由税收资助，在区域层级运作（21 个大区）。你每次看医生需支付一笔小额费用（通常为 100–400 瑞典克朗），处方药和住院费用每年设有上限（<em>högkostnadsskydd</em>，高费用保障）。儿童医疗免费。</p>
           <p>1177 是全国性的医疗热线和网站。日常就诊通过你的 <em>vårdcentral</em>（社区医疗中心）；急诊通过 <em>akutmottagning</em>（急诊科）；心理和牙科医疗也有，但收费规则不同。</p>
           <h2>养老照护</h2>
-          <p>养老照护由 kommun（市镇）负责——居家帮助（<em>hemtjänst</em>，居家照护服务）、特殊住所以及紧急呼叫警报。其原则是尽可能长久地独立生活的权利；而实际情况则因市镇而异。</p>
+          <p>养老照护由市镇负责——居家帮助（<em>hemtjänst</em>，居家照护服务）、特殊住所以及紧急呼叫警报。其原则是尽可能长久地独立生活的权利；而实际情况则因市镇而异。</p>
           <h2>社会服务</h2>
           <p>Socialtjänsten（社会服务局）为任何无法自食其力的人提供支持——经济援助（försörjningsstöd，生活补助）、儿童福利、成瘾支持、家庭帮助。当某个儿童处于危险中时，他们还负有法定的干预义务。</p>
-          ${ebookFactBox('zh-Hans', null, '义务教育：10 年（förskoleklass + 1–9 年级） · 医疗热线：1177 · region 数量：21 · 大学学费：居民免费。', ['uhrStudyMaterial'])}
+          ${ebookFactBox('zh-Hans', null, '义务教育：10 年（förskoleklass + 1–9 年级） · 医疗热线：1177 · 大区数量：21 · 大学学费：居民免费。', ['uhrStudyMaterial'])}
         `,
         'zh-Hant': `<h2>學校</h2>
           <p>義務教育階段（<em>grundskolan</em>，基礎學校）為期十年，從 6 歲（förskoleklass，學前班）一直到 9 年級。之後是三年的高中（<em>gymnasium</em>）——分學術或職業方向，兩者都免費。大學對公民、歐盟/歐洲經濟區居民以及持有瑞典居留許可的人也是免費的。</p>
           <p>《教育法》保障平等的入學機會，無論背景、性別或居住地。私立學校和「自由學校」（<em>friskolor</em>）也存在，但不得收取學費。</p>
           <h2>醫療</h2>
-          <p>醫療主要由稅收資助，在區域層級運作（21 個 region）。你每次看醫生需支付一筆小額費用（通常為 100–400 瑞典克朗），處方藥和住院費用每年設有上限（<em>högkostnadsskydd</em>，高費用保障）。兒童醫療免費。</p>
+          <p>醫療主要由稅收資助，在區域層級運作（21 個大區）。你每次看醫生需支付一筆小額費用（通常為 100–400 瑞典克朗），處方藥和住院費用每年設有上限（<em>högkostnadsskydd</em>，高費用保障）。兒童醫療免費。</p>
           <p>1177 是全國性的醫療熱線和網站。日常就診透過你的 <em>vårdcentral</em>（社區醫療中心）；急診透過 <em>akutmottagning</em>（急診科）；心理和牙科醫療也有，但收費規則不同。</p>
           <h2>養老照護</h2>
-          <p>養老照護由 kommun（市鎮）負責——居家幫助（<em>hemtjänst</em>，居家照護服務）、特殊住所以及緊急呼叫警報。其原則是盡可能長久地獨立生活的權利；而實際情況則因市鎮而異。</p>
+          <p>養老照護由市鎮負責——居家幫助（<em>hemtjänst</em>，居家照護服務）、特殊住所以及緊急呼叫警報。其原則是盡可能長久地獨立生活的權利；而實際情況則因市鎮而異。</p>
           <h2>社會服務</h2>
           <p>Socialtjänsten（社會服務局）為任何無法自食其力的人提供支援——經濟援助（försörjningsstöd，生活補助）、兒童福利、成癮支援、家庭幫助。當某個兒童處於危險中時，他們還負有法定的介入義務。</p>
-          ${ebookFactBox('zh-Hant', null, '義務教育：10 年（förskoleklass + 1–9 年級） · 醫療熱線：1177 · region 數量：21 · 大學學費：居民免費。', ['uhrStudyMaterial'])}
+          ${ebookFactBox('zh-Hant', null, '義務教育：10 年（förskoleklass + 1–9 年級） · 醫療熱線：1177 · 大區數量：21 · 大學學費：居民免費。', ['uhrStudyMaterial'])}
         `,
         ar: `<h2>المدرسة</h2>
           <p>التعليم الإلزامي (<em>grundskolan</em> — المدرسة الأساسية) عشر سنوات، من سنّ 6 (förskoleklass — صف ما قبل المدرسة) حتى الصف التاسع. بعد ذلك ثلاث سنوات من المرحلة الثانوية العليا (<em>gymnasium</em>) — مسارات أكاديمية أو مهنية، وكلاهما مجاني. والجامعة مجانية أيضًا للمواطنين، ومقيمي الاتحاد الأوروبي/المنطقة الاقتصادية الأوروبية، ومن يحملون تصريح إقامة سويدي.</p>

@@ -2592,7 +2592,11 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.audioTitle}', 'settings audio section must render localized copy'],
   [
-    'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    'copy.disableAudioAccessibilityLabel',
+    'settings audio switch must expose localized accessibility copy',
+  ],
+  [
+    'copy.enableAudioAccessibilityLabel',
     'settings audio switch must expose localized accessibility copy',
   ],
   [
@@ -5771,6 +5775,58 @@ function validateStaticEbookProseSourceMetadata() {
   };
 }
 
+const STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+const STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS = ['2', '4', '6'];
+const STATIC_EBOOK_BARE_CIVIC_TERM_PATTERN =
+  /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
+
+function validateStaticEbookCivicTermGlosses() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  let checksValidated = 0;
+  let valid = true;
+
+  STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS.forEach((chapterId) => {
+    STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES.forEach((language) => {
+      const html = renderStaticEbookChapter(harness, language, chapterId);
+      const offenders = Array.from(
+        html.matchAll(STATIC_EBOOK_BARE_CIVIC_TERM_PATTERN),
+        (match) => match[2],
+      );
+
+      if (offenders.length > 0) {
+        valid = false;
+        fail(
+          `static ebook ${language} chapter ${chapterId} contains bare civic terms: ${Array.from(
+            new Set(offenders),
+          ).join(', ')}`,
+        );
+        return;
+      }
+
+      checksValidated += 1;
+    });
+  });
+
+  return {
+    checksExpected:
+      STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS.length *
+      STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES.length,
+    checksValidated,
+    parityValidated: valid,
+  };
+}
+
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -8794,6 +8850,8 @@ let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
+let staticEbookCivicTermGlossesChecksValidated = 0;
+let staticEbookCivicTermGlossesParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9148,6 +9206,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   staticEbookSourceAuthorityCopyParityValidated =
     staticEbookSourceAuthorityPatternsValidated ===
     STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS.length;
+  const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
+  staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
+  staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
   exitWithValidationFailures();
   printValidationSummary({
     staticEbookFactboxClaimPatternsValidated,
@@ -9158,6 +9219,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookProseSourceMetadataParityValidated,
     staticEbookSourceAuthorityPatternsValidated,
     staticEbookSourceAuthorityCopyParityValidated,
+    staticEbookCivicTermGlossesChecksValidated,
+    staticEbookCivicTermGlossesParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -9930,6 +9993,11 @@ staticEbookSourceAuthorityCopyParityValidated =
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+}
+{
+  const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
+  staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
+  staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
 }
 {
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
@@ -22664,6 +22732,8 @@ console.log(
       staticEbookSourceAuthorityCopyParityValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
+      staticEbookCivicTermGlossesChecksValidated,
+      staticEbookCivicTermGlossesParityValidated,
       staticEbookFootnoteHashChaptersValidated,
       staticEbookFootnoteHashLanguagesValidated,
       staticEbookFootnoteHashParityValidated,
