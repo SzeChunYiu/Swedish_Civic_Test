@@ -148,6 +148,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('ProgressBar accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const progressBarTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-progress-bar-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-progress-bar-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateProgressBarAccessibilityParity\(\);[\s\S]*progressBarAccessibilityRulesExpected[\s\S]*progressBarAccessibilityRulesValidated[\s\S]*progressBarAccessibilityParityValidated/,
+  );
+  assert.match(progressBarTestSource, /--focus-progress-bar-accessibility/);
+  assert.doesNotMatch(
+    progressBarTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'ProgressBar accessibility tests must not route through full content validation',
+  );
+});
+
 test('CelebrationBurst accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

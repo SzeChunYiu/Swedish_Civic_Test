@@ -8847,6 +8847,17 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-progress-bar-accessibility')) {
+  validateProgressBarAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    progressBarAccessibilityRulesExpected,
+    progressBarAccessibilityRulesValidated,
+    progressBarAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-celebration-burst-accessibility')) {
   validateCelebrationBurstAccessibilityParity();
   exitWithValidationFailures();
