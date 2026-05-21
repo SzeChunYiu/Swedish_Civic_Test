@@ -8489,6 +8489,8 @@ let settingsDailyGoalOptionsValidated = 0;
 let settingsDailyGoalParityValidated = false;
 let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
+let persistenceWarningScopeCasesValidated = 0;
+let persistenceWarningScopeParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
@@ -9134,6 +9136,16 @@ if (process.argv.includes('--focus-settings-parity')) {
     settingsDailyGoalParityValidated,
     settingsAudioLabelsValidated,
     settingsAudioParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-persistence-warning-scope')) {
+  validatePersistenceWarningScopeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    persistenceWarningScopeCasesValidated,
+    persistenceWarningScopeParityValidated,
   });
   process.exit(0);
 }
@@ -14656,6 +14668,155 @@ function validateSettingsStoreSchemaParity() {
 
   if (valid && settingsStoreFieldsValidated === EXPECTED_SETTINGS_STORE_FIELDS.length) {
     settingsStoreSchemaParityValidated = true;
+  }
+}
+
+function validatePersistenceWarningScopeParity() {
+  let valid = true;
+  let componentSource = '';
+  let settingsSource = '';
+  let practiceSource = '';
+  let mistakesSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    componentSource = fs.readFileSync(
+      path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
+      'utf8',
+    );
+    settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+    practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+    mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
+  } catch (error) {
+    reject(`persistence warning scope source could not be read: ${error.message}`);
+    return;
+  }
+
+  const expectedCopyCases = [
+    {
+      language: 'sv',
+      scope: 'accessibilityPreferences',
+      operation: 'read',
+      snippets: [
+        'Tillgänglighetsinställningar kunde inte läsas',
+        'standardinställningar för tema, text och ljud',
+      ],
+    },
+    {
+      language: 'sv',
+      scope: 'accessibilityPreferences',
+      operation: 'write',
+      snippets: [
+        'Tillgänglighetsinställningar kunde inte sparas',
+        'Ändringen för tema, text eller ljud fungerar nu',
+      ],
+    },
+    {
+      language: 'sv',
+      scope: 'studyData',
+      operation: 'read',
+      snippets: ['Lokal studiedata kunde inte läsas', 'tomt tillfälligt läge i den här sessionen'],
+    },
+    {
+      language: 'sv',
+      scope: 'studyData',
+      operation: 'write',
+      snippets: ['Sparningen misslyckades', 'Sparades bara tillfälligt'],
+    },
+    {
+      language: 'en',
+      scope: 'accessibilityPreferences',
+      operation: 'read',
+      snippets: [
+        'Accessibility preferences could not be loaded',
+        'default theme, text, and audio preferences',
+      ],
+    },
+    {
+      language: 'en',
+      scope: 'accessibilityPreferences',
+      operation: 'write',
+      snippets: [
+        'Accessibility preferences could not be saved',
+        'The theme, text, or audio change works now',
+      ],
+    },
+    {
+      language: 'en',
+      scope: 'studyData',
+      operation: 'read',
+      snippets: [
+        'Local study data could not be loaded',
+        'empty in-memory study data for this session',
+      ],
+    },
+    {
+      language: 'en',
+      scope: 'studyData',
+      operation: 'write',
+      snippets: ['Saving failed', 'Saved only for this session'],
+    },
+  ];
+
+  if (
+    !/export\s+function\s+getPersistenceWarningNoticeCopy\(/.test(componentSource) ||
+    !/persistenceWarningNoticeCopy\[language\]\[warningScope\]\[operation\]/.test(componentSource)
+  ) {
+    reject('PersistenceWarningNotice must route copy through getPersistenceWarningNoticeCopy');
+  }
+
+  if (!/warningScope\s*=\s*'studyData'/.test(componentSource)) {
+    reject('PersistenceWarningNotice must keep studyData as the default warningScope');
+  }
+
+  if (
+    !/PersistenceWarningNoticeScope\s*=\s*'accessibilityPreferences'\s*\|\s*'studyData'/.test(
+      componentSource,
+    )
+  ) {
+    reject('PersistenceWarningNoticeScope must expose accessibilityPreferences and studyData');
+  }
+
+  for (const copyCase of expectedCopyCases) {
+    const caseIsCovered = copyCase.snippets.every((snippet) => componentSource.includes(snippet));
+    if (!caseIsCovered) {
+      reject(
+        `PersistenceWarningNotice missing ${copyCase.language} ${copyCase.scope} ${copyCase.operation} copy`,
+      );
+    } else {
+      persistenceWarningScopeCasesValidated += 1;
+    }
+  }
+
+  if (
+    !/warning=\{accessibilityPersistenceWarning\}[\s\S]*?warningScope="accessibilityPreferences"/.test(
+      settingsSource,
+    )
+  ) {
+    reject('Settings must pass warningScope="accessibilityPreferences" for accessibility warnings');
+  }
+
+  if (
+    !/warning=\{persistenceWarning\}/.test(settingsSource) ||
+    /warning=\{persistenceWarning\}[\s\S]{0,160}?warningScope=/.test(settingsSource)
+  ) {
+    reject('Settings study-data warnings must keep the default studyData scope');
+  }
+
+  if (/warningScope="accessibilityPreferences"/.test(practiceSource)) {
+    reject('Practice persistence warnings must keep the default studyData scope');
+  }
+
+  if (/warningScope="accessibilityPreferences"/.test(mistakesSource)) {
+    reject('Mistakes persistence warnings must keep the default studyData scope');
+  }
+
+  if (valid && persistenceWarningScopeCasesValidated === expectedCopyCases.length) {
+    persistenceWarningScopeParityValidated = true;
   }
 }
 
@@ -21612,6 +21773,7 @@ validateLegalRouteHeaderParity();
 validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
+validatePersistenceWarningScopeParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
 validateScreenShellLayoutParity();
@@ -21921,6 +22083,8 @@ console.log(
       settingsDailyGoalParityValidated,
       settingsAudioLabelsValidated,
       settingsAudioParityValidated,
+      persistenceWarningScopeCasesValidated,
+      persistenceWarningScopeParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
       progressTypeUnionsValidated,
