@@ -48,7 +48,7 @@ const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
 const referendumAdvisorySwedishNaturalnessPattern =
-  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
+  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet|Att folkomröstningar i Sverige är rådgivande betyder att|That referendums in Sweden are advisory means)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -895,9 +895,13 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   ];
   const q020Ids = ['q020', ...q020GeneratedIds];
   const textForQuestion = (question) =>
-    [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
-      ' ',
-    );
+    [
+      question.q?.sv,
+      question.q?.en,
+      question.why?.sv,
+      question.why?.en,
+      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
+    ].join(' ');
   const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
     .filter((relativePath) =>
       referendumAdvisorySwedishNaturalnessPattern.test(
@@ -930,16 +934,83 @@ test('referendum advisory Swedish copy stays natural across source and exports',
   assert.deepEqual(actualOffenders, []);
   assert.ok(q020, 'q020 should be published in the site bank');
   assert.equal(q020.opts[0]?.sv, 'Politikerna behöver inte följa resultatet');
-  assert.match(q020.why.sv, /politikerna behöver inte följa resultatet/);
+  assert.match(q020.why.sv, /politikerna inte behöver följa resultatet/);
   assert.ok(q020True, 'q020 true generated variant should be published');
   assert.ok(q020False, 'q020 false generated variant should be published');
   assert.equal(
     q020True.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+    'Folkomröstningar i Sverige är rådgivande och binder inte politikerna till resultatet.',
+  );
+  assert.equal(
+    q020True.q.en,
+    'Referendums in Sweden are advisory and do not bind politicians to the result.',
   );
   assert.equal(
     q020False.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+    'Folkomröstningar i Sverige är bindande och kräver att politikerna följer resultatet.',
+  );
+  assert.equal(
+    q020False.q.en,
+    'Referendums in Sweden are binding and require politicians to follow the result.',
+  );
+});
+
+test('published question schema rejects q020 generated referendum definition-cleft stems', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q020TrueId = generatedQuestionId(sourceQuestions, 'q020', 'trueStatement');
+  const q020FalseId = generatedQuestionId(sourceQuestions, 'q020', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const referendumDefinitionCleftResiduals = {",
+        "  [generatedFixtureId('q020', 1)]: { questionSv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.', questionEn: 'That referendums in Sweden are advisory means politicians do not have to follow the result.' },",
+        "  [generatedFixtureId('q020', 2)]: { questionSv: 'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.', questionEn: 'That referendums in Sweden are advisory means politicians must always follow the result.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  referendumDefinitionCleftResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...referendumDefinitionCleftResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q020TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q020FalseId} contains a generated true/false grammar-splice stem`),
   );
 });
 

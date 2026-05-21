@@ -1534,6 +1534,14 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
       const statement = universalHumanRightsStatementSv(answer);
       if (statement) return statement;
     }
+    if (source.id === 'q020') {
+      if (/^Politikerna (?:behöver|måste) inte följa resultatet$/i.test(answer)) {
+        return 'Folkomröstningar i Sverige är rådgivande och binder inte politikerna till resultatet';
+      }
+      if (/^Politikerna måste alltid följa resultatet$/i.test(answer)) {
+        return 'Folkomröstningar i Sverige är bindande och kräver att politikerna följer resultatet';
+      }
+    }
     return `Att ${match[1]} betyder att ${embeddedSwedishClause(answer)}`;
   }
 
@@ -2079,6 +2087,14 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     if (/^human rights apply to everyone$/i.test(match[1])) {
       const statement = universalHumanRightsStatementEn(answer);
       if (statement) return statement;
+    }
+    if (source.id === 'q020') {
+      if (/^Politicians do not have to follow the result$/i.test(answer)) {
+        return 'Referendums in Sweden are advisory and do not bind politicians to the result';
+      }
+      if (/^Politicians must always follow the result$/i.test(answer)) {
+        return 'Referendums in Sweden are binding and require politicians to follow the result';
+      }
     }
     return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }

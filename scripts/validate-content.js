@@ -502,6 +502,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
+  /\b(?:Att folkomröstningar i Sverige är rådgivande betyder att|That referendums in Sweden are advisory means)\b/i,
   /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
   /\binnebär att den ger\b/i,
   /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
@@ -2383,8 +2384,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -7640,6 +7640,20 @@ function validateQuestionSchema(question, index) {
     if (hasText(question[field]) && !textHasSentenceEnding(question[field])) {
       reject(`${label} ${field} must end with sentence punctuation`);
     }
+  }
+  if (
+    label === 'q020' &&
+    /\bmåste inte följa resultatet\b/i.test(
+      [
+        question.questionSv,
+        question.explanationSv,
+        ...(Array.isArray(question.options)
+          ? question.options.map((option) => option?.textSv)
+          : []),
+      ].join(' '),
+    )
+  ) {
+    reject('q020 uses ambiguous advisory-referendum Swedish wording');
   }
 
   if (!Array.isArray(question.options) || ![2, 4].includes(question.options.length)) {

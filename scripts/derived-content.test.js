@@ -844,21 +844,27 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text,
     /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|^One reason is\b|^En anledning är\b|One reason is that (?:so|It)|En anledning är att Det|have they|har de/im,
   );
-  assert.doesNotMatch(text, /betyder att politikerna måste (?:inte|alltid) följa resultatet/i);
+  assert.doesNotMatch(
+    text,
+    /(?:Att folkomröstningar i Sverige är rådgivande betyder att|That referendums in Sweden are advisory means)/i,
+  );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+      'Folkomröstningar i Sverige är rådgivande och binder inte politikerna till resultatet.',
     ),
   );
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
+      'Folkomröstningar i Sverige är bindande och kräver att politikerna följer resultatet.',
     ),
   );
   assert.ok(
+    text.includes('Referendums in Sweden are advisory and do not bind politicians to the result.'),
+  );
+  assert.ok(
     text.includes(
-      'That referendums in Sweden are advisory means politicians do not have to follow the result.',
+      'Referendums in Sweden are binding and require politicians to follow the result.',
     ),
   );
   assert.ok(
