@@ -20937,8 +20937,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.',
-        sv: 'Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin.',
+        en: "Low voter turnout can reduce people's opportunities to influence political decisions.",
+        sv: 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut.',
       },
       opts: [
         {
@@ -20977,8 +20977,8 @@
       chapter: "Ch. 02 · Sweden's democratic system",
       type: 'true_false',
       q: {
-        en: 'All voters get two votes each in the next election when a low voter turnout affects democracy.',
-        sv: 'Alla väljare får två röster var i nästa val när ett lågt valdeltagande påverkar demokratin.',
+        en: 'Low voter turnout gives all voters two votes each in the next election.',
+        sv: 'Ett lågt valdeltagande ger alla väljare två röster var i nästa val.',
       },
       opts: [
         {

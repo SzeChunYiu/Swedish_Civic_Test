@@ -445,6 +445,46 @@ test('derivePublishedQuestions names the non-citizen voting subject in true/fals
   assert.equal(derived[2].correctOptionId, 'false');
 });
 
+test('derivePublishedQuestions renders q015 voter-turnout true/false without when-splices', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const sourceQuestions = loadTs('data/questions.ts', 'sourceQuestions');
+  const source = sourceQuestions.find((question) => question.id === 'q015');
+
+  assert.ok(source, 'q015 source question should exist');
+
+  const derived = derivePublishedQuestions([source], 236);
+  const trueStatement = derived.find((question) => question.id === 'q237');
+  const falseStatement = derived.find((question) => question.id === 'q238');
+  const whenSplicePattern =
+    /\b(?:när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy)\b/i;
+
+  assert.equal(
+    trueStatement?.questionSv,
+    'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut.',
+  );
+  assert.equal(
+    trueStatement?.questionEn,
+    "Low voter turnout can reduce people's opportunities to influence political decisions.",
+  );
+  assert.equal(falseStatement?.correctOptionId, 'false');
+  assert.equal(
+    falseStatement?.questionSv,
+    'Ett lågt valdeltagande ger alla väljare två röster var i nästa val.',
+  );
+  assert.equal(
+    falseStatement?.questionEn,
+    'Low voter turnout gives all voters two votes each in the next election.',
+  );
+  assert.doesNotMatch(
+    `${trueStatement?.questionSv} ${trueStatement?.questionEn}`,
+    whenSplicePattern,
+  );
+  assert.doesNotMatch(
+    `${falseStatement?.questionSv} ${falseStatement?.questionEn}`,
+    whenSplicePattern,
+  );
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [

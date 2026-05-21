@@ -277,6 +277,28 @@ function englishCivicActionClause(value: string): string {
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
 
+function swedishLowVoterTurnoutStatement(answer: string): string {
+  const phrase = lowerFirst(stripLeadingPurposeSv(answer).trim());
+  if (/^människor kan få mindre möjlighet att påverka politiska beslut$/i.test(phrase)) {
+    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
+  }
+  if (/^alla väljare får två röster var i nästa val$/i.test(phrase)) {
+    return 'Ett lågt valdeltagande ger alla väljare två röster var i nästa val';
+  }
+  return `Ett lågt valdeltagande kan innebära att ${phrase}`;
+}
+
+function englishLowVoterTurnoutStatement(answer: string): string {
+  const phrase = lowerFirst(stripLeadingPurposeEn(answer).trim());
+  if (/^people may have fewer opportunities to influence political decisions$/i.test(phrase)) {
+    return "Low voter turnout can reduce people's opportunities to influence political decisions";
+  }
+  if (/^all voters get two votes each in the next election$/i.test(phrase)) {
+    return 'Low voter turnout gives all voters two votes each in the next election';
+  }
+  return `Low voter turnout can mean that ${phrase}`;
+}
+
 function swedishCommonToDoStatement(timePhrase: string, answer: string): string {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -1475,6 +1497,8 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
 
+  if (source.id === 'q015') return swedishLowVoterTurnoutStatement(answer);
+
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
@@ -2013,6 +2037,8 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
+
+  if (source.id === 'q015') return englishLowVoterTurnoutStatement(answer);
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;

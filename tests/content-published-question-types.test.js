@@ -1713,6 +1713,66 @@ test('gender-equality policy goal true/false exports use direct English proposit
   );
 });
 
+test('voter-turnout generated true/false exports avoid when-splices', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q015TrueId = generatedQuestionId(sourceQuestions, 'q015', 'trueStatement');
+  const q015FalseId = generatedQuestionId(sourceQuestions, 'q015', 'falseStatement');
+  const expectedSv = [
+    'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut.',
+    'Ett lågt valdeltagande ger alla väljare två röster var i nästa val.',
+  ];
+  const expectedEn = [
+    "Low voter turnout can reduce people's opportunities to influence political decisions.",
+    'Low voter turnout gives all voters two votes each in the next election.',
+  ];
+  const whenSplicePattern =
+    /\b(?:när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy)\b/i;
+  const generatedRows = [q015TrueId, q015FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q015TrueId, q015FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q015TrueId, q015FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+
+  assert.ok(generatedRows.every(Boolean), 'generated q015 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q015 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) => whenSplicePattern.test(`${question.q.sv} ${question.q.en}`))
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => whenSplicePattern.test(line)),
+    [],
+  );
+});
+
 test('civil-defence generated true/false exports keep war-or-crisis context', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -3132,6 +3192,65 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('published question schema rejects voter-turnout generated when-splice residuals', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q015TrueId = generatedQuestionId(sourceQuestions, 'q015', 'trueStatement');
+  const q015FalseId = generatedQuestionId(sourceQuestions, 'q015', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const voterTurnoutWhenSpliceResiduals = {",
+        "  [generatedFixtureId('q015', 1)]: { questionSv: 'Människor kan få mindre möjlighet att påverka politiska beslut när ett lågt valdeltagande påverkar demokratin.', questionEn: 'People may have fewer opportunities to influence political decisions when a low voter turnout affects democracy.' },",
+        "  [generatedFixtureId('q015', 2)]: { questionSv: 'Alla väljare får två röster var i nästa val när ett lågt valdeltagande påverkar demokratin.', questionEn: 'All voters get two votes each in the next election when a low voter turnout affects democracy.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  voterTurnoutWhenSpliceResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...voterTurnoutWhenSpliceResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q015TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q015FalseId} contains a generated true/false grammar-splice stem`),
   );
 });
 

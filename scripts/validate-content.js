@@ -566,6 +566,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
+  /\bwhen a low voter turnout affects democracy\b/i,
   /^De drivs ofta av privata företag och får inkomster genom reklam\.?$/i,
   /^They are often run by private companies and earn income from advertising\.?$/i,
   /^De får aldrig sälja reklamplats\.?$/i,
@@ -5052,6 +5054,26 @@ function englishCivicActionClause(value) {
     .replace(/^public services being available\b/i, 'public services are available')
     .replace(/^political engagement always decreasing\b/i, 'political engagement always decreases');
 }
+function swedishLowVoterTurnoutStatement(answer) {
+  const phrase = lowerFirst(stripLeadingPurposeSv(answer).trim());
+  if (/^människor kan få mindre möjlighet att påverka politiska beslut$/i.test(phrase)) {
+    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
+  }
+  if (/^alla väljare får två röster var i nästa val$/i.test(phrase)) {
+    return 'Ett lågt valdeltagande ger alla väljare två röster var i nästa val';
+  }
+  return `Ett lågt valdeltagande kan innebära att ${phrase}`;
+}
+function englishLowVoterTurnoutStatement(answer) {
+  const phrase = lowerFirst(stripLeadingPurposeEn(answer).trim());
+  if (/^people may have fewer opportunities to influence political decisions$/i.test(phrase)) {
+    return "Low voter turnout can reduce people's opportunities to influence political decisions";
+  }
+  if (/^all voters get two votes each in the next election$/i.test(phrase)) {
+    return 'Low voter turnout gives all voters two votes each in the next election';
+  }
+  return `Low voter turnout can mean that ${phrase}`;
+}
 function swedishCommonToDoStatement(timePhrase, answer) {
   const activity = lowerFirst(stripLeadingPurposeSv(answer));
   if (
@@ -6020,6 +6042,7 @@ function civicStatementSv(source, option) {
   if (match) return replaceLeadingSwedishSubject('många tidningar', answer);
   match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
   if (match) return webSocialMediaStatementSv(answer);
+  if (source.id === 'q015') return swedishLowVoterTurnoutStatement(answer);
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -6350,6 +6373,7 @@ function civicStatementEn(source, option) {
   if (match) return replaceLeadingEnglishSubject('many newspapers', answer);
   match = q.match(/^What is important to remember about the web and social media$/i);
   if (match) return webSocialMediaStatementEn(answer);
+  if (source.id === 'q015') return englishLowVoterTurnoutStatement(answer);
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
