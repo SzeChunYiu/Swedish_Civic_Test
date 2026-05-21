@@ -1,13 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -27,8 +19,9 @@ import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
+import { motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme/ThemeProvider';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
@@ -274,7 +267,6 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
-  const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -285,6 +277,12 @@ export default function Screen() {
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const accessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.persistenceWarning,
+  );
+  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
@@ -293,7 +291,7 @@ export default function Screen() {
   );
   const copy = settingsCopy[language];
   const reduceMotion = useReducedMotion();
-  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
+  const { colors: themeColors } = useTheme();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
@@ -473,6 +471,12 @@ export default function Screen() {
           {copy.themeModeTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
+        <PersistenceWarningNotice
+          language={language}
+          onDismiss={clearAccessibilityPersistenceWarning}
+          warning={accessibilityPersistenceWarning}
+          warningScope="accessibilityPreferences"
+        />
         <View style={styles.row}>
           {themeOptions.map((option) => renderThemeButton(option.value, option.label))}
         </View>

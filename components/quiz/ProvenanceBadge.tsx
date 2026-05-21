@@ -154,9 +154,15 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surfaceMuted,
     },
     sourceNote: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: space.hairline,
       color: themeColors.textSecondary,
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
+      paddingHorizontal: space[1],
+      paddingVertical: space[0.75],
     },
     uhrText: {
       color: themeColors.badgeBlueText,

@@ -17,7 +17,8 @@ import {
 } from '../data/citizenshipRequirements';
 import { useCitizenshipRequirementsChecklistStore } from '../lib/storage/citizenshipRequirementsStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
-import { colors, radius, space, typography } from '../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme/ThemeProvider';
 
 type CitizenshipRequirementsCopy = {
   eyebrow: string;
@@ -169,6 +170,7 @@ function buildSummary(
 
 export default function CitizenshipRequirementsScreen() {
   const language = useSettingsStore((state) => state.language);
+  const { colors: themeColors } = useTheme();
   const checkedAreaIds = useCitizenshipRequirementsChecklistStore((state) => state.checkedAreaIds);
   const toggleChecklistArea = useCitizenshipRequirementsChecklistStore((state) => state.toggleArea);
   const persistenceWarning = useCitizenshipRequirementsChecklistStore(
@@ -178,6 +180,7 @@ export default function CitizenshipRequirementsScreen() {
     (state) => state.clearPersistenceWarning,
   );
   const copy = copyByLanguage[language];
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
 
   const missingAreas = useMemo(
@@ -196,14 +199,19 @@ export default function CitizenshipRequirementsScreen() {
       eyebrow={copy.eyebrow}
       title={copy.title}
       subtitle={copy.subtitle}
+      themeColors={themeColors}
       rightSlot={
         <View style={styles.heroBadges}>
-          <Badge tone="warm">{copy.effectiveBadge}</Badge>
-          <Badge tone="green">{copy.yearlyIncomeBadge}</Badge>
+          <Badge themeColors={themeColors} tone="warm">
+            {copy.effectiveBadge}
+          </Badge>
+          <Badge themeColors={themeColors} tone="green">
+            {copy.yearlyIncomeBadge}
+          </Badge>
         </View>
       }
     >
-      <Card style={styles.summaryCard}>
+      <Card style={styles.summaryCard} themeColors={themeColors}>
         <Text accessibilityRole="header" style={styles.summaryTitle}>
           {copy.summaryTitle}
         </Text>
@@ -216,7 +224,11 @@ export default function CitizenshipRequirementsScreen() {
         warning={persistenceWarning}
       />
 
-      <SectionHeader title={copy.checklistTitle} subtitle={copy.checklistSubtitle} />
+      <SectionHeader
+        title={copy.checklistTitle}
+        subtitle={copy.checklistSubtitle}
+        themeColors={themeColors}
+      />
 
       <View style={styles.requirementsList}>
         {citizenshipRequirementAreas.map((area) => {
@@ -227,9 +239,11 @@ export default function CitizenshipRequirementsScreen() {
           }`;
 
           return (
-            <Card key={area.id} style={styles.requirementCard}>
+            <Card key={area.id} style={styles.requirementCard} themeColors={themeColors}>
               <View style={styles.requirementHeader}>
-                <Badge tone={checked ? 'green' : 'blue'}>{area.badge[language]}</Badge>
+                <Badge themeColors={themeColors} tone={checked ? 'green' : 'blue'}>
+                  {area.badge[language]}
+                </Badge>
                 <Text accessibilityRole="header" style={styles.requirementTitle}>
                   {area.order}. {area.title[language]}
                 </Text>
@@ -265,9 +279,9 @@ export default function CitizenshipRequirementsScreen() {
         })}
       </View>
 
-      <QuestionDisclaimer />
+      <QuestionDisclaimer themeColors={themeColors} />
 
-      <Card style={styles.sourcesCard}>
+      <Card style={styles.sourcesCard} themeColors={themeColors}>
         <Text accessibilityRole="header" style={styles.sourcesTitle}>
           {copy.sourceListTitle}
         </Text>
@@ -319,182 +333,184 @@ export default function CitizenshipRequirementsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  heroBadges: {
-    alignItems: 'flex-start',
-    gap: space[1],
-  },
-  summaryCard: {
-    backgroundColor: colors.surfaceWarm,
-    gap: space[0.75],
-  },
-  summaryTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  summaryBody: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  requirementsList: {
-    gap: space[2],
-  },
-  requirementCard: {
-    gap: space[1.25],
-  },
-  requirementHeader: {
-    gap: space[0.75],
-  },
-  requirementTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  requirementSummary: {
-    color: colors.text,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    lineHeight: typography.bodySemibold.lineHeight,
-  },
-  requirementDetail: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sourceRefs: {
-    borderColor: colors.border,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    gap: space[0.5],
-    paddingTop: space[1],
-  },
-  sourceRefsLabel: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.caption.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sourceRefsText: {
-    color: colors.textSecondary,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  checkboxRow: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flexDirection: 'row',
-    gap: space[1.25],
-    minHeight: space[6],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1],
-  },
-  checkboxRowChecked: {
-    backgroundColor: colors.successSoft,
-    borderColor: colors.success,
-  },
-  checkboxRowPressed: {
-    opacity: 0.78,
-  },
-  checkboxBox: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.textMuted,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    height: space[3],
-    justifyContent: 'center',
-    width: space[3],
-  },
-  checkboxBoxChecked: {
-    backgroundColor: colors.success,
-    borderColor: colors.success,
-  },
-  checkboxDot: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    height: space[1],
-    width: space[1],
-  },
-  checkboxText: {
-    color: colors.text,
-    flex: 1,
-    fontSize: typography.bodyMedium.fontSize,
-    fontWeight: typography.bodyMedium.fontWeight,
-    lineHeight: typography.bodyMedium.lineHeight,
-  },
-  sourcesCard: {
-    gap: space[1.25],
-  },
-  sourcesTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  sourcesSubtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  sourceList: {
-    gap: space[1],
-  },
-  sourceRow: {
-    borderColor: colors.border,
-    borderRadius: radius.small,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[0.5],
-    minHeight: space[6],
-    padding: space[1.25],
-  },
-  sourceRowPressed: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  sourceTitle: {
-    color: colors.text,
-    fontSize: typography.bodySemibold.fontSize,
-    fontWeight: typography.bodySemibold.fontWeight,
-    lineHeight: typography.bodySemibold.lineHeight,
-  },
-  sourceMeta: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  sourceUrl: {
-    color: colors.accent,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.finePrint.lineHeight,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    heroBadges: {
+      alignItems: 'flex-start',
+      gap: space[1],
+    },
+    summaryCard: {
+      backgroundColor: themeColors.surfaceWarm,
+      gap: space[0.75],
+    },
+    summaryTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    summaryBody: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    requirementsList: {
+      gap: space[2],
+    },
+    requirementCard: {
+      gap: space[1.25],
+    },
+    requirementHeader: {
+      gap: space[0.75],
+    },
+    requirementTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    requirementSummary: {
+      color: themeColors.text,
+      fontSize: typography.bodySemibold.fontSize,
+      fontWeight: typography.bodySemibold.fontWeight,
+      lineHeight: typography.bodySemibold.lineHeight,
+    },
+    requirementDetail: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sourceRefs: {
+      borderColor: themeColors.border,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      gap: space[0.5],
+      paddingTop: space[1],
+    },
+    sourceRefsLabel: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.caption.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sourceRefsText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    checkboxRow: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flexDirection: 'row',
+      gap: space[1.25],
+      minHeight: space[6],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1],
+    },
+    checkboxRowChecked: {
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+    },
+    checkboxRowPressed: {
+      opacity: 0.78,
+    },
+    checkboxBox: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.textMuted,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      height: space[3],
+      justifyContent: 'center',
+      width: space[3],
+    },
+    checkboxBoxChecked: {
+      backgroundColor: themeColors.success,
+      borderColor: themeColors.success,
+    },
+    checkboxDot: {
+      backgroundColor: themeColors.surface,
+      borderRadius: radius.pill,
+      height: space[1],
+      width: space[1],
+    },
+    checkboxText: {
+      color: themeColors.text,
+      flex: 1,
+      fontSize: typography.bodyMedium.fontSize,
+      fontWeight: typography.bodyMedium.fontWeight,
+      lineHeight: typography.bodyMedium.lineHeight,
+    },
+    sourcesCard: {
+      gap: space[1.25],
+    },
+    sourcesTitle: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    sourcesSubtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    sourceList: {
+      gap: space[1],
+    },
+    sourceRow: {
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[0.5],
+      minHeight: space[6],
+      padding: space[1.25],
+    },
+    sourceRowPressed: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    sourceTitle: {
+      color: themeColors.text,
+      fontSize: typography.bodySemibold.fontSize,
+      fontWeight: typography.bodySemibold.fontWeight,
+      lineHeight: typography.bodySemibold.lineHeight,
+    },
+    sourceMeta: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    sourceUrl: {
+      color: themeColors.accent,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.finePrint.lineHeight,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1.5],
+    },
+    primaryLink: {
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.micro,
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+    secondaryLink: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderRadius: radius.micro,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      textDecorationLine: 'none',
+    },
+  });
+}

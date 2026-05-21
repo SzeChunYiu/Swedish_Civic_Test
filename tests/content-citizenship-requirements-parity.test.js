@@ -144,6 +144,16 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
+  assert.match(routeSource, /const \{ colors: themeColors \} = useTheme\(\);/);
+  assert.match(
+    routeSource,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+  );
+  assert.match(routeSource, /<ScreenShell[\s\S]*themeColors=\{themeColors\}/);
+  assert.match(routeSource, /<QuestionDisclaimer themeColors=\{themeColors\}/);
+  assert.match(routeSource, /function createStyles\(themeColors: ThemeColors\)/);
+  assert.doesNotMatch(routeSource, /import \{ colors[,}]/);
+  assert.doesNotMatch(routeSource, /\bcolors\./);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
 });
 
