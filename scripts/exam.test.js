@@ -466,6 +466,25 @@ test('exam route keeps flag-for-review state local to the current attempt', () =
   );
   assert.match(examRouteSource, /const toggleFlaggedQuestion = useCallback/);
   assert.match(examRouteSource, /setFlaggedQuestionIds\(\{\}\);/);
+  assert.match(
+    examRouteSource,
+    /const \[reviewFilter, setReviewFilter\] = useState<ReviewFilter>\('all'\);/,
+  );
+  assert.match(examRouteSource, /const flaggedReviewCount = reviewItems\.filter/);
+  assert.match(examRouteSource, /const filteredReviewItems =/);
+  assert.match(examRouteSource, /reviewFilter === 'flagged'/);
+  assert.match(examRouteSource, /copy\.flaggedReviewCount\(flaggedReviewCount\)/);
+  assert.match(
+    examRouteSource,
+    /copy\.reviewFilterSummary\(filteredReviewItems\.length, reviewItems\.length\)/,
+  );
+  assert.match(examRouteSource, /copy\.reviewFilterFlagged\(flaggedReviewCount\)/);
+  assert.match(examRouteSource, /\{copy\.reviewFilterAll\}/);
+  assert.match(examRouteSource, /onPress=\{\(\) => setReviewFilter\('flagged'\)\}/);
+  assert.match(examRouteSource, /onPress=\{\(\) => setReviewFilter\('all'\)\}/);
+  assert.match(examRouteSource, /filteredReviewItems\.map/);
+  assert.match(examRouteSource, /const examQuestionNumberById = useMemo/);
+  assert.match(examRouteSource, /copy\.questionNumber\(questionNumber\)/);
   assert.match(examRouteSource, /flaggedIndexes=\{flaggedIndexes\}/);
   assert.match(examRouteSource, /stateLabels=\{copy\.navigatorStateLabels\}/);
   assert.match(examRouteSource, /copy\.flagQuestionAccessibilityLabel\(index \+ 1\)/);
