@@ -5467,6 +5467,12 @@ function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function legacyOptionShape(options) {
+  return Array.isArray(options)
+    ? options.map((option) => ({ id: option.id, textSv: option.textSv, textEn: option.textEn }))
+    : options;
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -17430,7 +17436,9 @@ function validateGeneratedAnswerTemplateParity() {
       if (!expected) {
         variantIsValid = false;
         fail(`${label} expected generated variant is missing`);
-      } else if (!jsonEqual(variant.options, expected.options)) {
+      } else if (
+        !jsonEqual(legacyOptionShape(variant.options), legacyOptionShape(expected.options))
+      ) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }

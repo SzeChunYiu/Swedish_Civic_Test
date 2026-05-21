@@ -553,6 +553,7 @@ export default function Screen() {
         <Text style={styles.disclaimerText}>{copy.importPurchasesNote}</Text>
         <TextInput
           accessibilityLabel={copy.importPasteLabel}
+          maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}
           multiline
           onChangeText={handleImportTextChange}
           placeholder={copy.importPastePlaceholder}
