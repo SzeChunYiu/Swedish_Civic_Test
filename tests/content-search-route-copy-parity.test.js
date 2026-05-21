@@ -9,6 +9,7 @@ const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-hydration.spec.ts');
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
+const validateContentPath = path.join(repoRoot, 'scripts/validate-content.js');
 
 function readSearchRouteSource() {
   return fs.readFileSync(searchRoutePath, 'utf8');
@@ -24,6 +25,36 @@ function readQuestionSearchSource() {
 
 function readSearchQueryHydrationE2eSource() {
   return fs.readFileSync(searchQueryHydrationE2ePath, 'utf8');
+}
+
+function getExpectedSearchRouteFocusedRuleCount() {
+  const source = fs.readFileSync(validateContentPath, 'utf8');
+  const match = source.match(
+    /const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object\.freeze\(\[([\s\S]*?)\]\);/,
+  );
+
+  assert.ok(match, 'validate-content must declare focused Search route rules');
+
+  return (match[1].match(/\bmessage:/g) ?? []).length;
+}
+
+function getExpectedSearchQuestionPunctuationRuleCount() {
+  const source = fs.readFileSync(validateContentPath, 'utf8');
+  const match = source.match(
+    /function validateSearchQuestionPunctuationParity\(\) \{[\s\S]*?const punctuationRules = \[([\s\S]*?)\];/,
+  );
+
+  assert.ok(match, 'validate-content must declare focused Search punctuation rules');
+
+  return (match[1].match(/\blabel:/g) ?? []).length;
+}
+
+function parseValidationSummary(output) {
+  const jsonStart = output.indexOf('{');
+
+  assert.notEqual(jsonStart, -1, 'validate-content output must include a JSON summary');
+
+  return JSON.parse(output.slice(jsonStart));
 }
 
 function assertSearchRouteQuestionResults(source) {
@@ -261,11 +292,24 @@ test('validate-content reports Search route query hydration parity', () => {
       encoding: 'utf8',
     },
   );
+  const summary = parseValidationSummary(output);
 
-  assert.match(output, /"searchRouteQueryHydrationRulesValidated":\s*25/);
-  assert.match(output, /"searchRouteQueryHydrationParityValidated":\s*true/);
-  assert.match(output, /"searchQuestionPunctuationRulesValidated":\s*4/);
-  assert.match(output, /"searchQuestionPunctuationParityValidated":\s*true/);
+  assert.deepEqual(Object.keys(summary).sort(), [
+    'searchQuestionPunctuationParityValidated',
+    'searchQuestionPunctuationRulesValidated',
+    'searchRouteQueryHydrationParityValidated',
+    'searchRouteQueryHydrationRulesValidated',
+  ]);
+  assert.equal(
+    summary.searchRouteQueryHydrationRulesValidated,
+    getExpectedSearchRouteFocusedRuleCount(),
+  );
+  assert.equal(summary.searchRouteQueryHydrationParityValidated, true);
+  assert.equal(
+    summary.searchQuestionPunctuationRulesValidated,
+    getExpectedSearchQuestionPunctuationRuleCount(),
+  );
+  assert.equal(summary.searchQuestionPunctuationParityValidated, true);
 });
 
 test('Search route hydration rejects blank initial query drift', () => {

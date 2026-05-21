@@ -292,6 +292,43 @@ test('generated localization overlay parity uses focused content validation rout
   );
 });
 
+test('Search route query hydration parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const searchRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-search-route-copy-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('searchRouteQueryHydration');
+
+  assert.ok(registryEntry, 'Search route query hydration focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-search-route-query-hydration']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'searchRouteQueryHydrationRulesValidated',
+    'searchRouteQueryHydrationParityValidated',
+    'searchQuestionPunctuationRulesValidated',
+    'searchQuestionPunctuationParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-search-route-query-hydration/);
+  assert.match(
+    validatorSource,
+    /validateSearchRouteQueryHydrationParity\(\);[\s\S]*validateSearchQuestionPunctuationParity\(\);[\s\S]*searchRouteQueryHydrationRulesValidated[\s\S]*searchRouteQueryHydrationParityValidated[\s\S]*searchQuestionPunctuationRulesValidated[\s\S]*searchQuestionPunctuationParityValidated/,
+  );
+  assert.equal(
+    (validatorSource.match(/validateSearchRouteQueryHydrationParity\(\);/g) ?? []).length,
+    2,
+    'Search route query hydration validation should run once in focus mode and once in full validation',
+  );
+  assert.match(searchRouteTestSource, /--focus-search-route-query-hydration/);
+  assert.doesNotMatch(
+    searchRouteTestSource,
+    /searchRouteQueryHydrationRulesValidated":\\s\*\d+/,
+    'Search route focused test must derive the rule count instead of hardcoding it',
+  );
+});
+
 test('generated localization overlay parity rejects typoed focus flags', () => {
   const result = spawnSync(
     process.execPath,
@@ -568,6 +605,27 @@ test('weekly recap runtime guard uses focused content validation routing', () =>
     'full content validation must still invoke the weekly recap runtime guard',
   );
 });
+
+test('readiness adapter runtime guard uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const learningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/learning.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-readiness-adapter-rules/);
+  assert.match(
+    validatorSource,
+    /validateReadinessAdapterRules\(\);[\s\S]*readinessAdapterRulesValidated[\s\S]*readinessAdapterRuntimeParityValidated/,
+  );
+  assert.match(learningTestSource, /readiness adapter ignores malformed counters/);
+  assert.match(learningTestSource, /correctCount:\s*999/);
+  assert.match(learningTestSource, /totalCount:\s*999/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

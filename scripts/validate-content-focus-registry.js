@@ -436,6 +436,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'searchRouteQueryHydrationRulesValidated',
       'searchRouteQueryHydrationParityValidated',
+      'searchQuestionPunctuationRulesValidated',
+      'searchQuestionPunctuationParityValidated',
     ],
   },
   {

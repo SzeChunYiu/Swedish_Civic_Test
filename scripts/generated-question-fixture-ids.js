@@ -44,9 +44,33 @@ function generatedFixtureIdHelperSource(functionName = 'generatedFixtureId') {
   ].join('\n');
 }
 
+function questionIdNumber(questionId) {
+  const match = String(questionId).match(/^q(\d{3,})$/);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
+function isGeneratedQuestionId(sourceQuestions, questionId) {
+  const number = questionIdNumber(questionId);
+  return number !== null && number > sourceQuestions.length;
+}
+
+function generatedQuestionIdLiteralsInSource(source, sourceQuestions) {
+  const literals = [];
+  const literalPattern = /(['"`])(q\d{3,})\1/g;
+  for (const match of source.matchAll(literalPattern)) {
+    const questionId = match[2];
+    if (isGeneratedQuestionId(sourceQuestions, questionId)) {
+      literals.push(questionId);
+    }
+  }
+  return [...new Set(literals)].sort();
+}
+
 module.exports = {
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
+  generatedQuestionIdLiteralsInSource,
   generatedQuestionId,
   generatedVariantOffsets,
+  isGeneratedQuestionId,
 };

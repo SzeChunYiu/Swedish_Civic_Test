@@ -601,6 +601,7 @@ const EXPECTED_STREAK_RULE_COUNT = 17;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
+const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -907,6 +908,155 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     file: 'app/search.tsx',
     pattern: /const trimmedQuery = query\.trim\(\);/,
     message: 'search route results must derive from the controlled query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ ProvenanceBadge \} from '\.\.\/components\/quiz\/ProvenanceBadge';/,
+    message: 'search route must import the visible provenance badge',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /getProvenanceDescription,[\s\S]*?getProvenanceLabel,[\s\S]*?getQuestionProvenance,/,
+    message: 'search route must import provenance label and source-note helpers',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ questions \} from '\.\.\/data\/questions';/,
+    message: 'search route must search the published question bank',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /searchQuestions,/,
+    message: 'search route must import ranked question search',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /getQuestionSearchChapterName,[\s\S]*?getQuestionSearchExcerpt,[\s\S]*?getQuestionSearchTitle,/,
+    message: 'search route must import localized question search presenters',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const questionResults = useMemo\(\(\) => \{[\s\S]*?return searchQuestions\(\{/,
+    message: 'search route must derive question results through the shared ranked helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /query: trimmedQuery,[\s\S]*?questions,/,
+    message: 'search route must pass the hydrated query and question bank to searchQuestions',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /copy\.filteredSummary\(filteredTerms\.length, glossaryTerms\.length, questionResults\.length\)/,
+    message: 'search route result summary must include matching question count',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const title = getQuestionSearchTitle\(result\.question, language\);/,
+    message: 'search route must render localized question result titles',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const excerpt = getQuestionSearchExcerpt\(result\.question, language\);/,
+    message: 'search route must render localized question result excerpts',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenance = getQuestionProvenance\(result\.question\);/,
+    message: 'search route must derive question provenance for each result',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenanceLabel = getProvenanceLabel\(provenance, language\);/,
+    message: 'search route must localize provenance labels',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const provenanceDescription = getProvenanceDescription\(provenance, language\);/,
+    message: 'search route must localize provenance source notes',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /<ProvenanceBadge\s+language=\{language\}\s+question=\{result\.question\}\s+themeColors=\{themeColors\}\s+\/>/,
+    message: 'search route must show theme-aware provenance badges for question results',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/,
+    message: 'search route question results must link to the quiz question route',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /questionSectionTitle: 'Övningsfrågor'/,
+    message: 'search route must include Swedish question section copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /questionSectionTitle: 'Practice questions'/,
+    message: 'search route must include English question section copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /openQuestionAccessibilityLabel: \(title\) => `Öppna övningsfrågan: \$\{title\}`/,
+    message: 'search route must include Swedish question link accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /openQuestionAccessibilityLabel: \(title\) => `Open practice question: \$\{title\}`/,
+    message: 'search route must include English question link accessibility copy',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ searchGlossary \} from '\.\.\/lib\/learning\/glossarySearch';/,
+    message: 'search route must use the shared glossary search helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /searchGlossary\(trimmedQuery, language, glossaryTerms\.length\)\.map\(\(term\) => \(\{/,
+    message: 'search route must search the full glossary through searchGlossary',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /chapterName: language === 'en' \? term\.chapterNameEn : term\.chapterNameSv,/,
+    message: 'search route must render localized glossary chapter labels',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /copy\.allTermsSummary\(glossaryTerms\.length\)/,
+    message: 'search route must preserve full glossary count summary',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /href=\{`\/chapter\/\$\{term\.chapterId\}`\}/,
+    message: 'search route glossary results must link to chapter routes',
+  },
+  {
+    file: 'app/search.tsx',
+    rejectPattern: /function normalizeSearchText/,
+    message: 'search route must not use a route-local glossary normalizer',
+  },
+  {
+    file: 'app/search.tsx',
+    rejectPattern: /glossaryTermMatchesQuery/,
+    message: 'search route must not fork glossary filtering away from searchGlossary',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /export function normalizeGlossarySearchText\(value: string\)/,
+    message: 'shared glossary normalizer must be exported for route parity',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /\.replace\(\/\[\^a-z0-9\\s-\]\/g, ' '\)/,
+    message: 'shared glossary normalizer must replace punctuation with spaces',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /\.replace\(\/\\s\+\/g, ' '\)/,
+    message: 'shared glossary normalizer must collapse punctuation-created whitespace',
   },
   {
     file: 'tests/e2e/search-query-hydration.spec.ts',
@@ -9266,6 +9416,8 @@ const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const weakChaptersModule = loadTs('lib/learning/weakChapters.ts');
 const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
 const topWeakChapters = weakChaptersModule.topWeakChapters;
+const readinessModule = loadTs('lib/learning/readiness.ts');
+const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -9577,6 +9729,8 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
+let readinessAdapterRulesValidated = 0;
+let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -10236,6 +10390,16 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
   printValidationSummary({
     weakChapterRulesValidated,
     weakChapterRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-readiness-adapter-rules')) {
+  validateReadinessAdapterRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    readinessAdapterRulesValidated,
+    readinessAdapterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -13306,6 +13470,7 @@ function validateSourcePatternRules(source, rules, reject) {
 
 function validateSearchRouteQueryHydrationParity() {
   const sourceByFile = new Map();
+  let rulesValidated = 0;
   let valid = true;
 
   function reject(message) {
@@ -13313,7 +13478,12 @@ function validateSearchRouteQueryHydrationParity() {
     fail(message);
   }
 
-  for (const { file, message, pattern } of EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES) {
+  for (const {
+    file,
+    message,
+    pattern,
+    rejectPattern,
+  } of EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES) {
     let source = sourceByFile.get(file);
     if (source === undefined) {
       try {
@@ -13325,17 +13495,22 @@ function validateSearchRouteQueryHydrationParity() {
       }
     }
 
-    if (!pattern.test(source)) {
+    if (pattern && !pattern.test(source)) {
       reject(message);
       continue;
     }
 
-    searchRouteQueryHydrationRulesValidated += 1;
+    if (rejectPattern && rejectPattern.test(source)) {
+      reject(message);
+      continue;
+    }
+
+    rulesValidated += 1;
   }
 
+  searchRouteQueryHydrationRulesValidated = rulesValidated;
   searchRouteQueryHydrationParityValidated =
-    valid &&
-    searchRouteQueryHydrationRulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length;
+    valid && rulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length;
 }
 
 function validateAboutTheTestRouteCopyParity() {
@@ -15570,6 +15745,9 @@ function validateSettingsAudioParity() {
   }
   if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
+  }
+  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
   }
 
   if (
@@ -20221,6 +20399,203 @@ function validateWeakChapterRules() {
   }
 }
 
+function validateReadinessAdapterRules() {
+  if (typeof computeReadinessFromQuestionProgress !== 'function') return;
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const singleQuestion = [{ id: 'q1', chapterId: 'ch01' }];
+  const singleChapter = [{ id: 'ch01', questionCount: 10 }];
+  const fiveQuestionBank = Array.from({ length: 5 }, (_, index) => ({
+    id: `q${index + 1}`,
+    chapterId: 'ch01',
+  }));
+  const fiveQuestionChapter = [{ id: 'ch01', questionCount: 5 }];
+
+  const cases = [
+    {
+      label: 'valid persisted study counters feed readiness',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: 1,
+              correctCount: 1,
+              wrongCount: 0,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 1, coverage: 1, score: 100, sparse: true },
+    },
+    {
+      label: 'string study counters do not create readiness answers',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: '5',
+              correctCount: '5',
+              wrongCount: '0',
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, coverage: 0, score: 0, sparse: true },
+    },
+    {
+      label: 'non-finite study counters do not create readiness answers',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: Number.NaN,
+              correctCount: Number.POSITIVE_INFINITY,
+              wrongCount: Number.NEGATIVE_INFINITY,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, coverage: 0, score: 0, sparse: true },
+    },
+    {
+      label: 'oversized persisted study counters stay bounded to the bank',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: 999,
+              correctCount: 999,
+              wrongCount: 999,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: fiveQuestionBank,
+          chapters: fiveQuestionChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 1, coverage: 1, score: 100, sparse: true },
+    },
+    {
+      label: 'mock exam counts feed mock average without practice accuracy',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {},
+          questions: singleQuestion,
+          chapters: singleChapter,
+          mockExamSessions: [
+            {
+              sessionId: 'mock-with-counts',
+              score: 0.8,
+              completedAt: '2026-05-19T10:00:00.000Z',
+              correctCount: 32,
+              totalCount: 40,
+            },
+          ],
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0.8, score: 34, sparse: true },
+    },
+    {
+      label: 'oversized mock exam totals stay sparse and bounded',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {},
+          questions: singleQuestion,
+          chapters: singleChapter,
+          mockExamSessions: [
+            {
+              sessionId: 'oversized-mock-counts',
+              score: 0.9,
+              completedAt: '2026-05-19T10:00:00.000Z',
+              correctCount: 999,
+              totalCount: 999,
+            },
+          ],
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0.9, sparse: true },
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`readiness adapter rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `readiness adapter rule ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      readinessAdapterRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
+    readinessAdapterRuntimeParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -22086,6 +22461,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateReadinessAdapterRules();
 validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
@@ -22396,6 +22772,8 @@ console.log(
       masteryRulesParityValidated,
       weakChapterRulesValidated,
       weakChapterRulesParityValidated,
+      readinessAdapterRulesValidated,
+      readinessAdapterRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
