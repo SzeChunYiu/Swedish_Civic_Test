@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 import { questions } from '../../data/questions';
 import { dismissBlockingModals } from './browserLaunch';
@@ -16,7 +16,15 @@ function extractQuestionCount(text: string | null, pattern: RegExp) {
   return Number(match?.[1] ?? '0');
 }
 
-test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
+async function expectStableBackLinkTarget(locator: Locator) {
+  await expect(locator).toBeVisible();
+  const box = await locator.boundingBox();
+  if (!box) throw new Error('Back link should have a measurable target box');
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(box.height).toBeGreaterThanOrEqual(44);
+}
+
+test('learning path opens a source-backed chapter detail screen and returns through a target-sized chapter list link', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
@@ -63,7 +71,9 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await expect(chapterScreen).toContainText('UHR-källa');
   await page.evaluate(() => window.scrollTo(0, 0));
 
-  await page.getByLabel('Tillbaka till kapitellistan').click();
+  const backToChapterList = page.getByLabel('Tillbaka till kapitellistan');
+  await expectStableBackLinkTarget(backToChapterList);
+  await backToChapterList.click();
 
   await expect(page).toHaveURL(/\/learn$/);
   await expect(page.locator('body')).toContainText('13 samhällsområden');
@@ -71,7 +81,9 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   expect(consoleErrors).toEqual([]);
 });
 
-test('learning path chapter cards follow English support mode', async ({ page }) => {
+test('learning path chapter cards follow English support mode with Back to chapter list target', async ({
+  page,
+}) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -118,7 +130,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(page.locator('body')).toContainText('Geography, climate, nature');
   await expect(page.locator('body')).toContainText(`Practice questions (${questionCount})`);
   const backToChapterList = page.getByLabel('Back to chapter list');
-  await expect(backToChapterList).toBeVisible();
+  await expectStableBackLinkTarget(backToChapterList);
   await backToChapterList.click();
 
   await expect(page).toHaveURL(/\/learn$/);
@@ -128,6 +140,30 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(returnedFirstChapter).toContainText('The country of Sweden');
   await expect(returnedFirstChapter).toContainText('Landet Sverige');
   await expect(returnedFirstChapter).toContainText(`0/${questionCount} practiced`);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('deep-linked missing chapter fallback exposes a target-sized chapter list link', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/chapter/not-a-real-chapter', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.locator('body')).toContainText('Kapitlet hittades inte');
+  const backToChapterList = page.getByLabel('Tillbaka till kapitellistan');
+  await expectStableBackLinkTarget(backToChapterList);
+  await backToChapterList.click();
+
+  await expect(page).toHaveURL(/\/learn$/);
+  await expect(page.locator('body')).toContainText('13 samhällsområden');
 
   expect(consoleErrors).toEqual([]);
 });

@@ -292,13 +292,33 @@ test('learn chapter navigation covers localized back-link round trips', () => {
 
   assert.match(
     source,
-    /page\.getByLabel\(['"]Tillbaka till kapitellistan['"]\)\.click\(\)/,
-    'Swedish chapter navigation should activate the localized back link',
+    /page\.getByLabel\(['"]Tillbaka till kapitellistan['"]\)/,
+    'Swedish chapter navigation should locate the localized back link',
+  );
+  assert.match(
+    source,
+    /async function expectStableBackLinkTarget\(locator: Locator\)/,
+    'learn chapter navigation should measure the back-link target',
+  );
+  assert.match(
+    source,
+    /expect\(box\.width\)\.toBeGreaterThanOrEqual\(44\);[\s\S]*expect\(box\.height\)\.toBeGreaterThanOrEqual\(44\);/,
+    'learn chapter navigation should require a 44px back-link target',
+  );
+  assert.match(
+    source,
+    /const backToChapterList = page\.getByLabel\('Tillbaka till kapitellistan'\);[\s\S]*await expectStableBackLinkTarget\(backToChapterList\);[\s\S]*await backToChapterList\.click\(\);/,
+    'Swedish chapter navigation should verify the target before activating the back link',
   );
   assert.match(
     source,
     /page\.getByLabel\(['"]Back to chapter list['"]\)/,
     'English chapter navigation should locate the localized back link',
+  );
+  assert.match(
+    source,
+    /const backToChapterList = page\.getByLabel\('Back to chapter list'\);[\s\S]*await expectStableBackLinkTarget\(backToChapterList\);[\s\S]*await backToChapterList\.click\(\);/,
+    'English chapter navigation should verify the target before activating the back link',
   );
   assert.match(
     source,
@@ -323,13 +343,28 @@ test('learn chapter navigation covers localized back-link round trips', () => {
   const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
   assert.match(
     chapterSource,
+    /import \{ colors, radius, space, typography \} from '\.\.\/\.\.\/lib\/theme';/,
+    'Chapter back-link target should use theme radius and spacing tokens',
+  );
+  assert.match(
+    chapterSource,
     /accessibilityLabel=\{copy\.backToListAccessibilityLabel\}[\s\S]*href="\/learn"[\s\S]*replace[\s\S]*style=\{styles\.link\}/,
     'Chapter back links should replace the detail route instead of pushing a duplicate Learn route',
+  );
+  assert.match(
+    chapterSource,
+    /link:\s*\{[\s\S]*alignSelf: 'flex-start',[\s\S]*borderRadius: radius\.pill,[\s\S]*borderWidth: space\.hairline,[\s\S]*display: 'flex',[\s\S]*justifyContent: 'center',[\s\S]*minHeight: space\[6\],[\s\S]*minWidth: space\[6\],[\s\S]*paddingHorizontal: space\[1\.5\],[\s\S]*paddingVertical: space\[0\.75\],[\s\S]*textDecorationLine: 'none'/,
+    'Chapter back links should keep a tokenized target-sized style',
   );
   assert.match(
     source,
     /await expect\(returnedFirstChapter\)\.toContainText\(['"]The country of Sweden['"]\);[\s\S]*await expect\(returnedFirstChapter\)\.toContainText\(['"]Landet Sverige['"]\);[\s\S]*await expect\(returnedFirstChapter\)\.toContainText\(`0\/\$\{questionCount\} practiced`\);/,
     'English chapter navigation should verify language-specific chapter card copy after returning to Learn',
+  );
+  assert.match(
+    source,
+    /deep-linked missing chapter fallback exposes a target-sized chapter list link/,
+    'learn chapter navigation should cover the deep-linked missing-chapter fallback target',
   );
 });
 
