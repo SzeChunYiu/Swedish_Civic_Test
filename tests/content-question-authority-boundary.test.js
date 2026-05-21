@@ -1,13 +1,11 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
 
-const repoRoot = path.resolve(__dirname, '..');
+const FOCUS_FLAG = '--focus-question-authority-boundary';
 
 test('published question text keeps the independent study boundary', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js', FOCUS_FLAG], {
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -23,6 +21,7 @@ test('question authority boundary rejects official exam overclaims', () => {
     [
       '-e',
       `
+process.argv.push('--focus-question-authority-boundary');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
@@ -55,6 +54,7 @@ test('question authority boundary rejects UHR source wording in stems', () => {
     [
       '-e',
       `
+process.argv.push('--focus-question-authority-boundary');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
@@ -87,6 +87,7 @@ test('question authority boundary rejects UHR source wording in true/false stems
     [
       '-e',
       `
+process.argv.push('--focus-question-authority-boundary');
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {

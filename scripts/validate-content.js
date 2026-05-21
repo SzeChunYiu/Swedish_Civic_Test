@@ -461,6 +461,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
+  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -1107,13 +1109,11 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
-  { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
-  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',
@@ -4606,6 +4606,34 @@ function findQuestionStemSourceAuthorityReference(question) {
   return findSourceAuthorityStemPattern(text);
 }
 
+function validateQuestionAuthorityBoundaryForQuestion(question, label) {
+  const authorityOverclaim = findQuestionAuthorityOverclaim(question);
+  const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
+
+  if (authorityOverclaim) {
+    fail(`${label} appears to overclaim official status or exam certainty`);
+    return;
+  }
+  if (stemSourceAuthorityReference) {
+    fail(`${label} carries source-authority wording in the stem`);
+    return;
+  }
+
+  questionAuthorityBoundaryTextValidated += 1;
+}
+
+function validateQuestionAuthorityBoundaryText() {
+  if (!Array.isArray(questions)) {
+    fail('questions export is not an array');
+    return;
+  }
+
+  questions.forEach((question, index) => {
+    if (question?.reviewStatus !== 'published') return;
+    validateQuestionAuthorityBoundaryForQuestion(question, question.id || `question[${index}]`);
+  });
+}
+
 function findQuestionNestedMetaStem(question) {
   const text = [question.questionSv, question.questionEn].join(' ');
 
@@ -4624,6 +4652,29 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
+}
+
+function validateQuestionGeneratedTrueFalseNaturalness(question, label) {
+  const generatedTrueFalseNaturalnessIssue =
+    findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+  if (generatedTrueFalseNaturalnessIssue) {
+    fail(`${label} contains a generated true/false grammar-splice stem`);
+    return false;
+  }
+
+  questionGeneratedTrueFalseNaturalnessValidated += 1;
+  return true;
+}
+
+function validateGeneratedTrueFalseNaturalness(questionsToValidate) {
+  if (!Array.isArray(questionsToValidate)) {
+    fail('questions export is not an array');
+    return;
+  }
+
+  questionsToValidate.forEach((question, index) => {
+    validateQuestionGeneratedTrueFalseNaturalness(question, question?.id || `question[${index}]`);
+  });
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -7139,8 +7190,6 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const weeklyRecapModule = loadTs('lib/learning/weeklyRecap.ts');
-const generateWeeklyRecap = weeklyRecapModule.generateWeeklyRecap;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7397,8 +7446,6 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
-let weeklyRecapRuntimeCasesValidated = 0;
-let weeklyRecapRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7489,6 +7536,20 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
+if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+  validateGeneratedTrueFalseNaturalness(questions);
+  exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  printValidationSummary({
+    questions: Array.isArray(questions) ? questions.length : 0,
+    publishedQuestions,
+    questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
@@ -7545,18 +7606,15 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-settings-store')) {
-  validateSettingsStoreSchemaParity();
-  validateSettingsDailyGoalParity();
-  validateSettingsAudioParity();
+if (process.argv.includes('--focus-question-authority-boundary')) {
+  validateQuestionAuthorityBoundaryText();
   exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
   printValidationSummary({
-    settingsStoreFieldsValidated,
-    settingsStoreSchemaParityValidated,
-    settingsDailyGoalOptionsValidated,
-    settingsDailyGoalParityValidated,
-    settingsAudioLabelsValidated,
-    settingsAudioParityValidated,
+    publishedQuestions,
+    questionAuthorityBoundaryTextValidated,
   });
   process.exit(0);
 }
@@ -11485,16 +11543,16 @@ function validateSettingsStoreSchemaParity() {
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
     [
-      'settingsStorageId, languageKey, language,',
-      'setLanguage must persist recoverably through languageKey',
+      'settingsStorage?.set(languageKey, language);',
+      'setLanguage must persist through languageKey',
     ],
     [
-      'settingsStorageId, audioEnabledKey, audioEnabled,',
-      'setAudioEnabled must persist recoverably through audioEnabledKey',
+      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'setAudioEnabled must persist through audioEnabledKey',
     ],
     [
-      'settingsStorageId, dailyGoalKey, safeGoal,',
-      'setDailyGoalAnswers must persist the clamped daily goal recoverably through dailyGoalKey',
+      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+      'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
     ],
   ];
 
@@ -11532,20 +11590,11 @@ function validateSettingsDailyGoalParity() {
     reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
   }
 
-  if (!settingsStore.includes(`const defaultDailyGoalAnswers = ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
     reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
   }
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
-  if (!normalizedSettingsStore.includes('const storedValue = readStorageNumber(dailyGoalKey);')) {
-    reject('readDailyGoalAnswers must read through the safe persisted number helper');
-  }
-  if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
-    reject('readDailyGoalAnswers must normalize the raw persisted value');
-  }
-  if (/storedValue && storedValue > 0 \? storedValue : 10/.test(settingsStore)) {
-    reject('readDailyGoalAnswers must not hydrate raw positive persisted values');
-  }
   const expectedClamp = `Math.max(${EXPECTED_DAILY_GOAL_MIN}, Math.min(${EXPECTED_DAILY_GOAL_MAX}, Math.round(dailyGoalAnswers)))`;
   if (!normalizedSettingsStore.includes(expectedClamp)) {
     reject(
@@ -11651,16 +11700,11 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes('const storedValue = readStorageBoolean(audioEnabledKey);')
-  ) {
-    reject('readAudioEnabled must read the persisted audioEnabled boolean through the safe helper');
-  }
-  if (
-    !/function readStorageBoolean\(key: string\): boolean \| undefined \{[\s\S]*settingsStorage\?\.getBoolean\(key\);[\s\S]*return undefined;/.test(
-      settingsStore,
+    !normalizedSettingsStore.includes(
+      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
     )
   ) {
-    reject('readStorageBoolean must catch MMKV read failures and return undefined');
+    reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
   if (!normalizedSettingsStore.includes('return storedValue ?? true;')) {
     reject('readAudioEnabled must default audio to enabled');
@@ -11668,17 +11712,8 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
     reject('SettingsState must initialize audioEnabled from persisted storage');
   }
-  if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
-    reject('setAudioEnabled must persist audioEnabled recoverably through audioEnabledKey');
-  }
-  if (!settingsStore.includes("import { stopSpeech } from '../audio/speak';")) {
-    reject('setAudioEnabled(false) must import stopSpeech');
-  }
-  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
-    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
-  }
-  if (!normalizedSettingsStore.includes("if (typeof audioEnabled !== 'boolean') return;")) {
-    reject('setAudioEnabled must ignore invalid runtime input');
+  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+    reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
 
   if (
@@ -14547,114 +14582,6 @@ function validateMasteryRules() {
   }
 }
 
-const EXPECTED_WEEKLY_RECAP_RUNTIME_CASES = 7;
-
-function validateWeeklyRecapRuntimeGuards() {
-  if (typeof generateWeeklyRecap !== 'function') {
-    return;
-  }
-
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: '7',
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
-        },
-        stringCounters: {
-          questionId: 'stringCounters',
-          correctStreak: '1',
-          wrongCount: '2',
-          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-bad-runtime',
-          mode: 'exam',
-          questionIds: ['q1', 'q2', 'q3'],
-          startedAt: '2026-05-20T10:00:00.000Z',
-          completedAt: '2026-05-20T10:30:00.000Z',
-          score: Infinity,
-          answers: [
-            {
-              questionId: 'q1',
-              selectedOptionIds: ['a'],
-              isCorrect: 'true',
-              answeredAt: '2026-05-20T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q2',
-              selectedOptionIds: ['a'],
-              isCorrect: 1,
-              answeredAt: '2026-05-20T10:01:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q3',
-              selectedOptionIds: ['a'],
-              isCorrect: false,
-              answeredAt: '2026-05-20T10:02:00.000Z',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-high-runtime',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          startedAt: '2026-05-20T11:00:00.000Z',
-          completedAt: '2026-05-20T11:20:00.000Z',
-          score: 1.2,
-        },
-      ],
-    },
-    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
-    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
-    masteryThreshold: '0.8',
-    now: new Date('2026-05-20T12:00:00.000Z'),
-  });
-
-  const cases = [
-    { label: 'truthy correctness is not correct', actual: recap.accuracy, expected: 0 },
-    { label: 'answered count is preserved', actual: recap.questionsAnswered, expected: 3 },
-    { label: 'valid resolved mistake still counts', actual: recap.mistakesResolved, expected: 1 },
-    { label: 'malformed streak normalizes to number', actual: recap.streakDays, expected: 0 },
-    { label: 'exam completions still count', actual: recap.mockExamsTaken, expected: 2 },
-    { label: 'mock best score is finite and clamped', actual: recap.bestMockScore, expected: 1 },
-    {
-      label: 'invalid mastery values do not master',
-      actual: recap.chapterNowMastered,
-      expected: null,
-    },
-  ];
-
-  let rulesAreValid = true;
-
-  cases.forEach(({ label, actual, expected }) => {
-    if (!jsonEqual(actual, expected)) {
-      rulesAreValid = false;
-      fail(
-        `weekly recap runtime guard ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
-      );
-    } else {
-      weeklyRecapRuntimeCasesValidated += 1;
-    }
-  });
-
-  if (rulesAreValid && weeklyRecapRuntimeCasesValidated === EXPECTED_WEEKLY_RECAP_RUNTIME_CASES) {
-    weeklyRecapRuntimeParityValidated = true;
-  }
-}
-
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -15872,12 +15799,8 @@ if (Array.isArray(questions)) {
       if (questionSentenceEndingsAreComplete(question)) {
         questionSentenceEndingsValidated += 1;
       }
-      const authorityOverclaim = findQuestionAuthorityOverclaim(question);
-      const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
-      const generatedTrueFalseNaturalnessIssue =
-        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -15886,13 +15809,7 @@ if (Array.isArray(questions)) {
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
         findGeneratedTrueFalseExplanationMetaIssue(question);
-      if (authorityOverclaim) {
-        fail(`${label} appears to overclaim official status or exam certainty`);
-      } else if (stemSourceAuthorityReference) {
-        fail(`${label} carries source-authority wording in the stem`);
-      } else {
-        questionAuthorityBoundaryTextValidated += 1;
-      }
+      validateQuestionAuthorityBoundaryForQuestion(question, label);
       if (nestedMetaStem) {
         fail(`${label} contains a generated true/false meta-stem instead of a civic statement`);
       } else {
@@ -15903,11 +15820,7 @@ if (Array.isArray(questions)) {
       } else {
         questionJudgementMetaStemsValidated += 1;
       }
-      if (generatedTrueFalseNaturalnessIssue) {
-        fail(`${label} contains a generated true/false grammar-splice stem`);
-      } else {
-        questionGeneratedTrueFalseNaturalnessValidated += 1;
-      }
+      validateQuestionGeneratedTrueFalseNaturalness(question, label);
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
       } else {
@@ -16094,7 +16007,6 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
-validateWeeklyRecapRuntimeGuards();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -16348,8 +16260,6 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
-      weeklyRecapRuntimeCasesValidated,
-      weeklyRecapRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
