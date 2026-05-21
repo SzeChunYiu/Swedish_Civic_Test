@@ -15,6 +15,10 @@ const {
   findUnsupportedStaticReleaseCopyInSource,
   formatUnsupportedStaticReleaseCopy,
 } = require('./static-site-release-copy-guard');
+const {
+  findStaticAdSenseSlotStateCopyIssues,
+  staticAdSenseSlotsAreConfiguredInSource,
+} = require('./static-adsense-slot-state');
 
 const TIMEOUT_MS = Number(process.env.SITE_LIVE_TIMEOUT_MS || 15000);
 const LOCAL_SITE_INDEX_PATH = path.join(__dirname, '..', 'site', 'index.html');
@@ -244,60 +248,6 @@ function findStaticAdSenseSlotConfigIssues(indexSource, appSource) {
   }
 
   return issues;
-}
-
-function readStaticAdSenseStringProperty(source, propertyName) {
-  const pattern = new RegExp(`\\b${propertyName}\\s*:\\s*(['"])([\\s\\S]*?)\\1`);
-  const match = String(source || '').match(pattern);
-  return match ? match[2] : '';
-}
-
-function readStaticAdSenseSlotConfig(appSource) {
-  const source = String(appSource || '');
-  const slotsBlock = source.match(/\bslots\s*:\s*{([\s\S]*?)}/);
-  return {
-    publisherId: readStaticAdSenseStringProperty(source, 'publisherId'),
-    inline: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'inline') : '',
-    anchor: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'anchor') : '',
-  };
-}
-
-function staticAdSenseSlotsAreConfiguredInSource(appSource) {
-  const config = readStaticAdSenseSlotConfig(appSource);
-  const isRealSlotId = (slotId) =>
-    typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
-  return (
-    /^ca-pub-[0-9]{16}$/.test(config.publisherId || '') &&
-    isRealSlotId(config.inline) &&
-    isRealSlotId(config.anchor)
-  );
-}
-
-function findStaticAdSenseSlotStateCopyIssues(indexSource, appSource) {
-  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
-
-  const currentUsePatterns = [
-    /This website\s+uses\s+(?:<[^>]+>\s*)?Google AdSense/i,
-    /We use\s+(?:<[^>]+>\s*)?Google AdSense to show/i,
-    /Google AdSense on the website and Google Mobile Ads/i,
-    /Google AdSense web ads/i,
-    /Den h[aä]r webbplatsen anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense/i,
-    /Vi anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense f[oö]r att visa/i,
-    /Google AdSense p[aå] webbplatsen och Google Mobile Ads/i,
-    /Google AdSense-annonser p[aå] webben/i,
-  ];
-
-  return [
-    { label: 'index.html', source: String(indexSource || '') },
-    { label: 'app.js', source: String(appSource || '') },
-  ].flatMap(({ label, source }) =>
-    currentUsePatterns
-      .filter((pattern) => pattern.test(source))
-      .map(
-        (pattern) =>
-          `${label} claims live Google AdSense use while reviewed web slot IDs are not configured: ${pattern.source}`,
-      ),
-  );
 }
 
 function findStaticNoTrackingClaimIssues(indexSource, appSource) {

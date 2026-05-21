@@ -7,6 +7,10 @@ const {
   findUnsupportedStaticReleaseCopyInSource,
   formatUnsupportedStaticReleaseCopy,
 } = require('./static-site-release-copy-guard');
+const {
+  findCurrentUseAdSenseSlotStateCopyIssues,
+  staticAdSenseSlotsAreConfiguredInSource,
+} = require('./static-adsense-slot-state');
 
 const repoRoot = path.resolve(__dirname, '..');
 const unqualifiedNoTrackingPatterns = [
@@ -34,16 +38,6 @@ const adSensePreparedDisabledCopyPatterns = [
   /förberedd för <b>Google AdSense<\/b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade/i,
   /När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies/i,
 ];
-const adSenseCurrentUseCopyPatterns = [
-  /This website\s+uses\s+(?:<[^>]+>\s*)?Google AdSense/i,
-  /We use\s+(?:<[^>]+>\s*)?Google AdSense to show/i,
-  /Google AdSense on the website and Google Mobile Ads/i,
-  /Google AdSense web ads/i,
-  /Den h[aä]r webbplatsen anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense/i,
-  /Vi anv[aä]nder\s+(?:<[^>]+>\s*)?Google AdSense f[oö]r att visa/i,
-  /Google AdSense p[aå] webbplatsen och Google Mobile Ads/i,
-  /Google AdSense-annonser p[aå] webben/i,
-];
 
 function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
@@ -51,44 +45,6 @@ function read(filePath) {
 
 function assertNoInternalMonetizationCopy(surface) {
   internalMonetizationCopyPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
-}
-
-function readStaticAdSenseStringProperty(source, propertyName) {
-  const pattern = new RegExp(`\\b${propertyName}\\s*:\\s*(['"])([\\s\\S]*?)\\1`);
-  const match = String(source || '').match(pattern);
-  return match ? match[2] : '';
-}
-
-function readStaticAdSenseSlotConfig(appSource) {
-  const source = String(appSource || '');
-  const slotsBlock = source.match(/\bslots\s*:\s*{([\s\S]*?)}/);
-  return {
-    anchor: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'anchor') : '',
-    inline: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'inline') : '',
-    publisherId: readStaticAdSenseStringProperty(source, 'publisherId'),
-  };
-}
-
-function staticAdSenseSlotsAreConfiguredInSource(appSource) {
-  const config = readStaticAdSenseSlotConfig(appSource);
-  const isRealSlotId = (slotId) =>
-    typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
-  return (
-    /^ca-pub-[0-9]{16}$/.test(config.publisherId || '') &&
-    isRealSlotId(config.inline) &&
-    isRealSlotId(config.anchor)
-  );
-}
-
-function findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource) {
-  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
-
-  return adSenseCurrentUseCopyPatterns
-    .filter((pattern) => pattern.test(surface))
-    .map(
-      (pattern) =>
-        `current-use AdSense copy requires reviewed inline and anchor slot IDs: ${pattern.source}`,
-    );
 }
 
 function configureStaticAdSenseSlots(appSource) {
@@ -180,6 +136,29 @@ test('static site current-use AdSense copy is gated by reviewed slot IDs', () =>
   const configuredApp = configureStaticAdSenseSlots(appSource);
   assert.equal(staticAdSenseSlotsAreConfiguredInSource(configuredApp), true);
   assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, configuredApp), []);
+});
+
+test('static AdSense slot-state checks use the shared helper', () => {
+  const ownSource = read('scripts/static-site-privacy-copy.test.js');
+  const liveSiteSource = read('scripts/check-live-site.js');
+  const forbiddenParserName = ['readStatic', 'AdSenseStringProperty'].join('');
+  const forbiddenPatternListName = ['adSense', 'CurrentUseCopyPatterns'].join('');
+
+  assert.match(
+    ownSource,
+    /require\('\.\/static-adsense-slot-state'\)/,
+    'static privacy copy test should import the shared AdSense slot-state helper',
+  );
+  assert.match(
+    liveSiteSource,
+    /require\('\.\/static-adsense-slot-state'\)/,
+    'live-site check should import the shared AdSense slot-state helper',
+  );
+
+  for (const source of [ownSource, liveSiteSource]) {
+    assert.doesNotMatch(source, new RegExp(`function\\s+${forbiddenParserName}\\b`));
+    assert.doesNotMatch(source, new RegExp(`const\\s+${forbiddenPatternListName}\\b`));
+  }
 });
 
 test('static site privacy and consent copy hides internal monetization implementation keys', () => {
