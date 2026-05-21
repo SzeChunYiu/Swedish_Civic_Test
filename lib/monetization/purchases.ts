@@ -138,8 +138,13 @@ function optionalStoredString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
 }
 
-function isValidIsoDate(value: unknown): value is string {
-  return typeof value === 'string' && !Number.isNaN(new Date(value).getTime());
+function isCanonicalUtcIsoTimestamp(value: unknown): value is string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
+    return false;
+  }
+
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString() === value;
 }
 
 function getBrowserPurchaseStorage(): BrowserPurchaseStorage | undefined {
@@ -251,7 +256,7 @@ function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean
   return Boolean(
     (record.purchaseToken || record.transactionId) &&
     record.receiptValidationStatus === 'valid' &&
-    isValidIsoDate(record.receiptValidatedAt),
+    isCanonicalUtcIsoTimestamp(record.receiptValidatedAt),
   );
 }
 
@@ -282,7 +287,7 @@ function isValidatedRemoveAdsReceipt(
     result &&
     result.status === 'valid' &&
     isRemoveAdsProductId(result.productId) &&
-    isValidIsoDate(result.validatedAt) &&
+    isCanonicalUtcIsoTimestamp(result.validatedAt) &&
     (result.purchaseToken || result.transactionId),
   );
 }
@@ -335,7 +340,7 @@ function parseStoredRemoveAdsEntitlementRecord(
     if (record.schemaVersion !== REMOVE_ADS_RECORD_SCHEMA_VERSION) return null;
     if (record.productId !== REMOVE_ADS_PRODUCT_ID) return null;
     if (record.source !== 'purchase' && record.source !== 'restore') return null;
-    if (!isValidIsoDate(record.grantedAt)) return null;
+    if (!isCanonicalUtcIsoTimestamp(record.grantedAt)) return null;
     if (!hasStoreConfirmation(record)) return null;
 
     return record;

@@ -42,6 +42,9 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
   assert.match(purchaseSource, /receiptValidationStatus: 'valid'/);
   assert.match(purchaseSource, /receiptValidatedAt: string/);
+  assert.match(purchaseSource, /function isCanonicalUtcIsoTimestamp/);
+  assert.match(purchaseSource, /parsed\.toISOString\(\) === value/);
+  assert.doesNotMatch(purchaseSource, /function isValidIsoDate/);
   assert.match(purchaseSource, /parseStoredRemoveAdsEntitlementRecord\(storedValue\)/);
   assert.doesNotMatch(purchaseSource, /storedValue === STORED_TRUE/);
   assert.match(purchaseSource, /requestRemoveAdsPurchase\(REMOVE_ADS_PRODUCT_ID\)/);

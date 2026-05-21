@@ -110,6 +110,30 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
   assert.equal(pendingRestore.status, 'not_found');
   assert.equal(pendingRestore.entitlements.adsDisabled, false);
 
+  for (const [label, validatedAt] of [
+    ['date-only validator timestamp', '2026-05-20'],
+    ['timezone-offset validator timestamp', '2026-05-20T12:34:56.789+00:00'],
+    ['rollover validator timestamp', '2026-02-30T00:00:00.000Z'],
+  ]) {
+    const invalidTimestampProvider = createProvider(async (purchase, productId) => ({
+      productId,
+      purchaseToken: purchase.purchaseToken ?? null,
+      status: 'valid',
+      transactionId: purchase.transactionId ?? null,
+      validatedAt,
+    }));
+    const invalidTimestampStorage = createMemoryPurchaseStorage();
+    const invalidTimestampPurchase = await buyRemoveAds({
+      provider: invalidTimestampProvider.provider,
+      storage: invalidTimestampStorage,
+    });
+
+    assert.equal(invalidTimestampPurchase.status, 'pending', label);
+    assert.equal(invalidTimestampPurchase.entitlements.adsDisabled, false, label);
+    assert.equal(invalidTimestampProvider.finishCalls, 0, label);
+    assert.equal(await invalidTimestampStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null, label);
+  }
+
   const relaunchStorage = createMemoryPurchaseStorage(true);
   const storedBeforeRelaunch = await relaunchStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
   const relaunchEntitlements = await getPurchaseEntitlements({
