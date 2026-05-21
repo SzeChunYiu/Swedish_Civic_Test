@@ -20,12 +20,13 @@ test('purchase TypeScript schema stays in parity with validator expectations', (
     'utf8',
   );
 
-  assert.equal(summary.purchaseTypeUnionsValidated, 1);
-  assert.equal(summary.purchaseTypeInterfacesValidated, 7);
+  assert.equal(summary.purchaseTypeUnionsValidated, 2);
+  assert.equal(summary.purchaseTypeInterfacesValidated, 8);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
   assert.match(purchaseSource, /export type RemoveAdsPurchaseStatus =/);
   assert.match(purchaseSource, /export interface PurchaseStorage/);
   assert.match(purchaseSource, /deleteItemAsync\?\(key: string\): Promise<void>;/);
+  assert.match(purchaseSource, /export interface RemoveAdsReceiptValidationResult/);
   assert.match(purchaseSource, /export interface RemoveAdsPurchaseProvider/);
   assert.match(
     purchaseSource,
