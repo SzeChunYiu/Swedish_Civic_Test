@@ -19,6 +19,9 @@ type DashboardLocaleFixture = {
   mockHistoryRecent: string;
   mockHistoryTimeUsed: string;
   mockHistoryTitle: string;
+  mockHistoryTrendLabel: string;
+  mockHistoryTrendPoint: string;
+  mockHistoryTrendSummary: string;
   profilePath: string;
   summaryLine: string;
   title: string;
@@ -40,6 +43,10 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryRecent: 'Senaste övningsprov',
     mockHistoryTimeUsed: 'Tid: 24m',
     mockHistoryTitle: 'Övningsprov över tid',
+    mockHistoryTrendLabel: 'Resultattrend',
+    mockHistoryTrendPoint: 'Trendpunkt 2 av 2: 84% den 2026-05-20.',
+    mockHistoryTrendSummary:
+      'Resultattrend för 2 senaste bedömda prov: senast 84%, 12 procentenheter högre än äldsta som visas.',
     profilePath: '/profile',
     streakXpTitle: 'Svit och XP',
     summaryLine: '0 svar den här veckan · 0 kapitel provade · 0 olösta misstag',
@@ -58,6 +65,10 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryRecent: 'Recent mock exams',
     mockHistoryTimeUsed: 'Time: 24m',
     mockHistoryTitle: 'Mock exam history',
+    mockHistoryTrendLabel: 'Score trend',
+    mockHistoryTrendPoint: 'Trend point 2 of 2: 84% on 2026-05-20.',
+    mockHistoryTrendSummary:
+      'Score trend across 2 recent scored exams: latest 84%, 12 points higher than the oldest shown.',
     profilePath: '/profile',
     streakXpTitle: 'Streak and XP',
     summaryLine: '0 answers this week · 0 chapters tried · 0 unresolved mistakes',
@@ -175,6 +186,11 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expect(page.getByRole('heading', { name: fixture.mockHistoryTitle }).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryLatest, { exact: true }).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryAverage, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryTrendLabel, { exact: true }).last()).toBeVisible();
+  await expect(
+    page.getByText(fixture.mockHistoryTrendSummary, { exact: true }).first(),
+  ).toBeVisible();
+  await expect(page.getByLabel(fixture.mockHistoryTrendPoint).last()).toBeVisible();
   await expect(page.getByText(fixture.mockHistoryRecent, { exact: true }).last()).toBeVisible();
   await expect(page.getByText('84%', { exact: true }).last()).toBeVisible();
   await expect(page.getByText('78%', { exact: true }).last()).toBeVisible();

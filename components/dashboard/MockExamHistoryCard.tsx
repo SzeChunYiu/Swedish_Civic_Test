@@ -6,6 +6,7 @@ import { colors, radius, space, typography } from '../../lib/theme';
 import { Card } from '../ui/Card';
 
 const recentMockLimit = 3;
+const trendMockLimit = 5;
 
 export type MockExamHistoryCardCopy = {
   attemptCount: (count: number) => string;
@@ -28,6 +29,14 @@ export type MockExamHistoryCardCopy = {
   ) => string;
   timeUsedLabel: (duration: string) => string;
   title: string;
+  trendLabel: string;
+  trendPointAccessibilityLabel: (
+    pointIndex: number,
+    pointCount: number,
+    scorePercent: number,
+    completedDate: string,
+  ) => string;
+  trendSummary: (pointCount: number, firstScore: number, latestScore: number) => string;
 };
 
 type MockExamHistoryCardProps = {
@@ -64,6 +73,7 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
     (entry): entry is MockHistoryEntry & { score: number } => entry.score !== null,
   );
   const recentEntries = [...scoredEntries].reverse().slice(0, recentMockLimit);
+  const trendEntries = scoredEntries.slice(-trendMockLimit);
   const latestScore = scoredEntries.at(-1)?.score ?? null;
   const lowestScore =
     scoredEntries.length > 0 ? Math.min(...scoredEntries.map((entry) => entry.score)) : null;
@@ -85,6 +95,14 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
         formatPercent(lowestScore),
       )
     : copy.emptyState;
+  const hasTrend = trendEntries.length >= 2;
+  const trendSummary = hasTrend
+    ? copy.trendSummary(
+        trendEntries.length,
+        formatPercent(trendEntries[0].score),
+        formatPercent(trendEntries.at(-1)?.score ?? trendEntries[0].score),
+      )
+    : '';
 
   return (
     <>
@@ -117,6 +135,44 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
                 </View>
               ))}
             </View>
+            {hasTrend ? (
+              <View style={styles.scoreTrendBlock}>
+                <View style={styles.scoreTrendHeader}>
+                  <Text style={styles.scoreTrendTitle}>{copy.trendLabel}</Text>
+                  <Text style={styles.scoreTrendSummaryVisible}>{trendSummary}</Text>
+                </View>
+                <Text style={styles.trendSummary}>{trendSummary}</Text>
+                <View style={styles.scoreTrendChart}>
+                  {trendEntries.map((entry, index) => {
+                    const scorePercent = formatPercent(entry.score);
+
+                    return (
+                      <View
+                        key={entry.sessionId}
+                        accessible
+                        accessibilityLabel={copy.trendPointAccessibilityLabel(
+                          index + 1,
+                          trendEntries.length,
+                          scorePercent,
+                          completedDate(entry),
+                        )}
+                        style={styles.scoreTrendPoint}
+                      >
+                        <View style={styles.scoreTrendTrack}>
+                          <View
+                            style={[
+                              styles.scoreTrendBar,
+                              { height: `${Math.max(8, scorePercent)}%` },
+                            ]}
+                          />
+                        </View>
+                        <Text style={styles.scoreTrendPercent}>{scorePercent}%</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
             <View style={styles.recentBlock}>
               <Text style={styles.recentTitle}>{copy.recentLabel}</Text>
               <View style={styles.recentList}>
@@ -227,6 +283,69 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     color: colors.textSecondary,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  scoreTrendBlock: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[1],
+    padding: space[1.5],
+  },
+  scoreTrendHeader: {
+    gap: space[0.5],
+  },
+  scoreTrendTitle: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.caption.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  scoreTrendSummaryVisible: {
+    color: colors.textSecondary,
+    fontSize: typography.micro.fontSize,
+    lineHeight: typography.micro.lineHeight,
+  },
+  trendSummary: {
+    height: space[0],
+    left: space[0],
+    opacity: 0,
+    position: 'absolute',
+    top: space[0],
+    width: space[0],
+  },
+  scoreTrendChart: {
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    gap: space[1],
+    minHeight: space[10],
+  },
+  scoreTrendPoint: {
+    alignItems: 'center',
+    flex: 1,
+    gap: space[0.5],
+    minWidth: space[4],
+  },
+  scoreTrendTrack: {
+    alignItems: 'stretch',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    height: space[8],
+    justifyContent: 'flex-end',
+    overflow: 'hidden',
+    width: '100%',
+  },
+  scoreTrendBar: {
+    backgroundColor: colors.accent,
+    borderRadius: radius.pill,
+    minHeight: space[1],
+  },
+  scoreTrendPercent: {
+    color: colors.textMuted,
     fontSize: typography.micro.fontSize,
     lineHeight: typography.micro.lineHeight,
   },
