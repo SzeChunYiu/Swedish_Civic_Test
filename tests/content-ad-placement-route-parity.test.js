@@ -101,6 +101,12 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(nativeAdCardNativeSource, /NativeAdView/);
   assert.match(nativeAdCardNativeSource, /NativeAsset/);
   assert.match(nativeAdCardNativeSource, /NativeMediaView/);
+  assert.match(nativeAdCardNativeSource, /getNativeAdSummaryAccessibilityLabel/);
+  assert.match(
+    nativeAdCardNativeSource,
+    /summaryAccessibilityLabel = getNativeAdSummaryAccessibilityLabel\(copy, \{\s*advertiser: nativeAd\.advertiser,\s*body: nativeAd\.body,\s*headline: nativeAd\.headline,\s*\}\)/,
+  );
+  assert.doesNotMatch(nativeAdCardNativeSource, /accessibilityLabel=\{copy\.accessibilityLabel\}/);
   assert.match(nativeAdCardNativeSource, /requestNonPersonalizedAdsOnly/);
   assert.match(nativeAdCardNativeSource, /getPlatformAdUnitId\('results_native', Platform\.OS\)/);
   assert.match(
@@ -143,6 +149,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /testStatus:\s*'[^']*(?:web preview|webbförhandsvisning)[^']*'/,
   );
   assert.match(adCopySource, /getNativeAdCardCopy/);
+  assert.match(adCopySource, /getNativeAdSummaryAccessibilityLabel/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);
   const liveCopyBlocks = Array.from(
