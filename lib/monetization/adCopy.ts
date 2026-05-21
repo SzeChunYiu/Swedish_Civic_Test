@@ -1,5 +1,5 @@
 import type { AppLanguage } from '../storage/settingsStore';
-import type { AdPlacement } from '../../types/monetization';
+import type { AdPlacement, AdUnitConfig } from '../../types/monetization';
 
 type AdBannerCopy = {
   accessibilityLabel: (placementLabel: string, statusLabel: string) => string;
@@ -57,6 +57,13 @@ export const adBannerCopy: Record<AppLanguage, AdBannerCopy> = {
     testStatus: 'AdMob test unit active - test placement',
   },
 };
+
+export function getAdBannerStatusLabel(
+  copy: Pick<AdBannerCopy, 'liveStatus' | 'testStatus'>,
+  unit?: Pick<AdUnitConfig, 'testOnly'> | undefined,
+): string {
+  return unit?.testOnly ? copy.testStatus : copy.liveStatus;
+}
 
 export const nativeAdCardCopy: Record<
   AppLanguage,

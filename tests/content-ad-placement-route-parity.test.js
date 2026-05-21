@@ -20,7 +20,7 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
-test('study routes keep their expected ad placements and exam stays ad-free', () => {
+test('AdBanner study routes keep their expected ad placements and exam stays ad-free', () => {
   const summary = parseValidationSummary();
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const learnSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
@@ -35,12 +35,16 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
-  const adBannerNativeSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
   const practiceInterstitialNativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+  const adBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const adBannerNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
@@ -96,14 +100,18 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
   assert.match(adBannerNativeSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
+  assert.match(adBannerSource, /getAdBannerStatusLabel\(copy, unit\)/);
+  assert.match(adBannerNativeSource, /getAdBannerStatusLabel\(copy, unit\)/);
+  assert.doesNotMatch(adBannerSource, /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/);
+  assert.doesNotMatch(
     adBannerNativeSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+    /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/,
   );
   assert.doesNotMatch(
     adBannerNativeSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+    /copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)/,
   );
+  assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/i);
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.match(adCopySource, /testStatus:\s*'AdMob-testannons aktiv - testplacering'/);
   assert.match(adCopySource, /testStatus:\s*'AdMob test unit active - test placement'/);
@@ -210,6 +218,40 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Practice route must key quiz_completed_interstitial by question and shuffle session/,
+  );
+});
+
+test('ad placement route parity rejects duplicated AdBanner status-label decisions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'copy.accessibilityLabel(placementLabel, adStatusLabel)',
+        'copy.accessibilityLabel(placementLabel, copy.liveStatus)',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner status labels must not duplicate or hardcode live\/test decisions/,
   );
 });
 

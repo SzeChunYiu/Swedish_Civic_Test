@@ -844,7 +844,7 @@ test('mistakes screen reviews selected wrong answers and correct answers', () =>
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
-test('native ads use Google Mobile Ads while web keeps a safe preview component', () => {
+test('AdBanner native ads use Google Mobile Ads while web keeps a safe preview component', () => {
   const webSource = read('components/monetization/AdBanner.tsx');
   const nativeSource = read('components/monetization/AdBanner.native.tsx');
   const copySource = read('lib/monetization/adCopy.ts');
@@ -853,10 +853,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    webSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webSource, /getAdBannerStatusLabel/);
+  assert.match(webSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     webSource,
@@ -870,7 +868,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /getAdUnit/);
   assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
+  assert.match(nativeSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
+  assert.doesNotMatch(
     nativeSource,
     /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
   );
@@ -888,13 +887,15 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   );
   assert.match(nativeSource, /<BannerAd/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
+  assert.match(copySource, /function getAdBannerStatusLabel/);
+  assert.match(copySource, /unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
   assert.match(copySource, /AdMob-testannons aktiv - testplacering/);
   assert.match(copySource, /AdMob test unit active - test placement/);
-  assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/);
+  assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/i);
 });
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
