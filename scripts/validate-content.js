@@ -520,6 +520,7 @@ const QUESTION_SALTSJOBADEN_ENGLISH_NATURALNESS_PATTERNS = [
   /\bbecame important for\b/i,
 ];
 const QUESTION_RELIGIOUS_FREEDOM_1951_ENGLISH_NATURALNESS_PATTERNS = [/\bcompletely freely\b/i];
+const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS = new Set(['q116', 'q630', 'q633']);
 const QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS = [
   /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
   /\bThe right to practice (?:one’s|one's) religion and protection from discrimination because of belief\b/i,
@@ -6343,6 +6344,50 @@ function findQuestionReligiousFreedomOptionParallelismIssue(question) {
   );
 }
 
+function validateQuestionReligiousFreedomParallelismArtifactText() {
+  const csvText = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
+  const csvOffenders = csvText
+    .split(/\r?\n/)
+    .filter((line) => QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS.has(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) =>
+      QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS.some((pattern) => pattern.test(line)),
+    )
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+
+  csvOffenders.forEach((id) => {
+    fail(`${id} uses nonparallel religious-freedom option wording in content/question-bank.csv`);
+  });
+
+  const staticText = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
+  QUESTION_RELIGIOUS_FREEDOM_OPTION_PARALLELISM_PATTERNS.forEach((pattern) => {
+    if (pattern.test(staticText)) {
+      fail('site/questions.js contains nonparallel religious-freedom option wording');
+    }
+  });
+}
+
+function countPublishedQuestions() {
+  return Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+}
+
+function validateQuestionReligiousFreedomParallelism(questionsToValidate = questions) {
+  if (!Array.isArray(questionsToValidate)) return;
+
+  questionsToValidate
+    .filter((question) => question.reviewStatus === 'published')
+    .forEach((question) => {
+      if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
+        fail(`${question.id} uses nonparallel religious-freedom option wording`);
+      } else {
+        questionReligiousFreedomParallelismValidated += 1;
+      }
+    });
+
+  validateQuestionReligiousFreedomParallelismArtifactText();
+}
+
 function findQuestionAnswerKeyPromptIssue(question) {
   const text = questionText(question, ['questionSv', 'questionEn']);
 
@@ -9762,6 +9807,7 @@ let somaliGeographyNaturalnessStaticRowsValidated = 0;
 let somaliGeographyNaturalnessParityValidated = false;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReligiousFreedomParallelismValidated = 0;
 let questionCouncilOfEuropeWorkForEnglishNaturalnessValidated = 0;
 let questionMayDayEnglishNaturalnessValidated = 0;
 let questionLuciaExplanationRoleScaffoldValidated = 0;
@@ -9770,7 +9816,6 @@ let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let derivedCivicStatementPromptMirrorValidated = 0;
 let generatedWhyReasonTargetStemsValidated = 0;
 let generatedWhyReasonTargetStemParityValidated = false;
-let questionReligiousFreedomParallelismValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -10423,6 +10468,16 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-religious-freedom-parallelism')) {
+  validateQuestionReligiousFreedomParallelism();
+  exitWithValidationFailures();
+  printValidationSummary({
+    publishedQuestions: countPublishedQuestions(),
+    questionReligiousFreedomParallelismValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-generated-why-reason-stems')) {
   if (Array.isArray(questions)) {
     questions
@@ -10463,16 +10518,6 @@ if (process.argv.includes('--focus-generated-sweden-scope-parity')) {
   printValidationSummary({
     generatedSwedenScopeFocusValidated: true,
     generatedSwedenScopeParityValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-religious-freedom-parallelism')) {
-  validateQuestionReligiousFreedomParallelism();
-  exitWithValidationFailures();
-  printValidationSummary({
-    publishedQuestions: countPublishedQuestions(),
-    questionReligiousFreedomParallelismValidated,
   });
   process.exit(0);
 }
@@ -20812,26 +20857,6 @@ function validateReadinessAdapterRules() {
   }
 }
 
-function countPublishedQuestions() {
-  return Array.isArray(questions)
-    ? questions.filter((question) => question.reviewStatus === 'published').length
-    : 0;
-}
-
-function validateQuestionReligiousFreedomParallelism() {
-  if (!Array.isArray(questions)) return;
-
-  questions
-    .filter((question) => question.reviewStatus === 'published')
-    .forEach((question) => {
-      if (findQuestionReligiousFreedomOptionParallelismIssue(question)) {
-        fail(`${question.id} uses nonparallel religious-freedom option wording`);
-      } else {
-        questionReligiousFreedomParallelismValidated += 1;
-      }
-    });
-}
-
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -22429,6 +22454,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const religiousFreedomParallelismIssue =
+        findQuestionReligiousFreedomOptionParallelismIssue(question);
       const councilOfEuropeWorkForEnglishNaturalnessIssue =
         findQuestionCouncilOfEuropeWorkForEnglishNaturalnessIssue(question);
       const mayDayEnglishNaturalnessIssue = findQuestionMayDayEnglishNaturalnessIssue(question);
@@ -22479,6 +22506,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (religiousFreedomParallelismIssue) {
+        fail(`${label} uses nonparallel religious-freedom option wording`);
+      } else {
+        questionReligiousFreedomParallelismValidated += 1;
       }
       if (councilOfEuropeWorkForEnglishNaturalnessIssue) {
         fail(`${label} uses literal Council of Europe work-for English wording`);
@@ -22587,6 +22619,8 @@ if (Array.isArray(questions)) {
       fail(`${label} reviewStatus is ${question.reviewStatus}`);
   });
 }
+
+validateQuestionReligiousFreedomParallelismArtifactText();
 
 validateMockExamConfig(
   defaultMockExamConfig,
