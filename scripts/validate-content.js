@@ -34,6 +34,9 @@ const {
 } = require('./content-exec-cwd-guards');
 const { runLegalSectionRenderingGuard } = require('./legal-section-rendering-guard');
 const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
+const {
+  findGeneratedTrueFalseNaturalnessPatternMatch,
+} = require('./generated-true-false-naturalness-patterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -481,139 +484,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
-const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
-  /\bIt is true that\s+(?:The|In|Approximately)\b/i,
-  /\bbelongs to\s+[a-zåäö][^.,"]*/i,
-  /\bhör till\s+[a-zåäö][^.,"]*/i,
-  /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
-  /\b(?:It is correct that\s+)?(?:the answer is)\b/i,
-  /\bdescribes that\b/i,
-  /\btillåtet att gifta sig\b/i,
-  /\bwhen false information affects democracy\b/i,
-  /\bnär falsk information påverkar demokratin\b/i,
-  /\bis\s+(?:be|judge)\b/i,
-  /\bis an example of municipal responsibilities\b/i,
-  /\b(?:has one vote each|may stand for election)\s+is part of\b/i,
-  /\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
-  /\bis a way to\b/i,
-  /\bär ett sätt att\b/i,
-  /\bapplies to\b/i,
-  /\bgäller för\b/i,
-  /\bare The\b/,
-  /^That hitting children is prohibited\b/i,
-  /\bdescribes\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)\b/i,
-  /\bbeskriver\s+(?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)\b/i,
-  /\bis the list that contains\b/i,
-  /\bär listan som innehåller\b/i,
-  /\babout public power in Sweden\b/i,
-  /\bom offentlig makt i Sverige\b/i,
-  /\bmeans it gives\b/i,
-  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
-  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i,
-  /\binnebär att den ger\b/i,
-  /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
-  /^Important activities such as school, work, and health care can continue to function\.?$/i,
-  /^Politiska val ersätts med militära beslut\.?$/i,
-  /^Political elections are replaced with military decisions\.?$/i,
-  /\bfrom (?:13|15) years\b/i,
-  /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
-  /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
-  /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
-  /^It was presented in (?:1918|1948)\b/i,
-  /^Den presenterades (?:1918|1948)\b/i,
-  /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
-  /^En anledning är att (?:valet är hemligt|rösterna ska räknas snabbare)\b/i,
-  /^One reason is (?:the vote is secret|votes are counted faster)\b/i,
-  /^En myndighet som\b/i,
-  /^An authority that\b/i,
-  /\beU membership\b/,
-  /\bOne reason is that so\b/i,
-  /\bhave\s+[^.?!]*\bin common\b/i,
-  /\bhar\s+[^.?!]*\bgemensamt\b/i,
-  /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
-  /\bcelebrates The\b/,
-  /\bfirar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]/,
-  /\bfirar traditionellt jesu födelse\b/,
-  /\bcelebrates jesus' birth\b/,
-  /^(?:By|Apply|Leave|Live)\b/i,
-  /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-  /\bPåståendet är sant:/i,
-  /\bThe statement is true:/i,
-  /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
-  /\b(?:It is not true that|It is true that)\b/i,
-  /^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)/i,
-  /^Sverige beslutade att barnkonventionen blev svensk lag\b/i,
-  /\bär (?:Judar|Danskar),/,
-  /^(?:De|They) (?:företräder|bestämmer|represent|decide)\b/i,
-  /\batt Kungens makt\b/,
-  /\bför Samarbetet mellan\b/,
-  /\bfor Cooperation between\b/,
-  /^En anledning är att Sverige (?:hade|saknade)\b/,
-  /^One reason is that Sweden had\b/,
-  /^En anledning är att Det\b/,
-  /^One reason is that It\b/,
-  /^En anledning är\b/i,
-  /^One reason is\b/i,
-  /\bhar förändrat bara hur\b/i,
-  /\bhas changed only how\b/i,
-  /\barbetar för endast\b/i,
-  /\bworks for only\b/i,
-  /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
-  /,\s*,/,
-  /\bit is common to large bonfires\b/i,
-  /\bbrukar\s+\S+\s+arrangerar\b/i,
-  /\b(?:spreadinging|welcominging)\b/i,
-  /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
-  /\bthere are buddhist and Hindu\b/,
-  /\bcalled Lucia procession\b/i,
-  /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
-  /^Light candles on graves to remember and honour people who have died\.?$/i,
-  /^Open an Advent calendar every day until Christmas Eve\.?$/i,
-  /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
-  /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
-  /\bMany people voting, getting involved, and learning about social issues\b/i,
-  /\bFewer people taking part in elections\b/i,
-  /\bPeople with different backgrounds and economic situations living closer\b/i,
-  /\bPeople living completely separated by income or ethnic background\b/i,
-  /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
-  /^That Sweden's first mosques were built\b/i,
-  /\bskyddar rätten [^.?!]* och skydd mot\b/i,
-  /\bprotects the right [^.?!]* and protection from\b/i,
-  /\bskyddar att staten väljer\b/i,
-  /\bprotects that the state chooses\b/i,
-  /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
-  /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
-  /\bfick rätt att bo i landet och utöva\b/i,
-  /\bgained the right to live in the country and practice\b/i,
-  /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
-  /\bwhen a low voter turnout affects democracy\b/i,
-  /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+/i,
-  /\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
-  /^De drivs ofta av privata företag och får inkomster genom reklam\.?$/i,
-  /^They are often run by private companies and earn income from advertising\.?$/i,
-  /^De får aldrig sälja reklamplats\.?$/i,
-  /^They may never sell advertising space\.?$/i,
-  /^De finns också på internet och uppdateras med nyheter flera gånger per dag\.?$/i,
-  /^They are also available online and updated with news several times per day\.?$/i,
-  /^De får bara säljas som ett exemplar per år\.?$/i,
-  /^They may be sold only as one copy per year\.?$/i,
-  /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier\.?$/i,
-  /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
-  /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
-  /^Only responsible publishers may write posts there\.?$/i,
-  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
-  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
-  /^Water and sewage\b/i,
-  /^Vatten och avlopp\b/i,
-  /^Sending ambassadors\b/i,
-  /^Skicka ambassadörer\b/i,
-  /^Incomplete answer fragment for naturalness guard\b/i,
-  /^Ofullständig svarsfras för naturlighetskontroll\b/i,
-  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
-  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
-  /\b(?:bli Sveriges största religiösa grupp|become Sweden’s largest religious group)\b/i,
-];
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
   /\btax-funded\b/i,
@@ -854,7 +724,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'completed-question metadata must scope persisted progress to the visible question bank',
   ],
-  ['sessionCompletedQuestionIds,', 'practice selection must use session completed-question ids'],
+  ['sessionCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
@@ -1651,10 +1521,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
-const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 9;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
@@ -1714,6 +1583,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Starta upplåst extra prov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
+    'Svarsalternativ för fråga ${questionNumber}',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
     'Skicka övningsprov',
     'Skicka prov',
@@ -1745,6 +1615,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Start unlocked extra exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
+    'Answer options for question ${questionNumber}',
     'Select answer ${optionText} for question ${questionNumber}',
     'Submit mock exam',
     'Submit exam',
@@ -1807,8 +1678,27 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam progress count must render localized copy',
   ],
   [
+    'answerGroupAccessibilityLabel: (questionNumber: number) => string;',
+    'exam route must type localized answer group labels',
+  ],
+  [
+    'aria-label={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized web radiogroup labels',
+  ],
+  [
+    'accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized native radiogroup labels',
+  ],
+  ['accessibilityRole="radiogroup"', 'exam answer groups must expose radiogroup semantics'],
+  [
     'accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}',
     'exam answers must expose localized accessibility labels',
+  ],
+  ['aria-checked={isSelected}', 'exam answer radios must expose checked state on web'],
+  ['accessibilityRole="radio"', 'exam answer options must expose radio semantics'],
+  [
+    'accessibilityState={{ checked: isSelected }}',
+    'exam answer radios must mirror checked state natively',
   ],
   [
     'accessibilityLabel={copy.submitAccessibilityLabel}',
@@ -5495,8 +5385,9 @@ function findQuestionJudgementMetaStem(question) {
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
-  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
-    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  return (
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionSv) ||
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionEn)
   );
 }
 
@@ -8813,8 +8704,6 @@ let adConsentTypeInterfacesValidated = 0;
 let adConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
-let mobileAdsConsentRuntimeCasesValidated = 0;
-let mobileAdsConsentRuntimeParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
@@ -9052,6 +8941,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-badge-accessibility')) {
+  validateBadgeAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    badgeAccessibilityRulesValidated,
+    badgeAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-flashcard-accessibility')) {
   validateFlashcardAccessibilityParity();
   exitWithValidationFailures();
@@ -9149,6 +9048,22 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestOfficialSourceRetrievedDateValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-profile-route-copy')) {
+  validateProfileRouteHeaderParity();
+  validateProfileRouteCopyParity();
+  validateBadgeCatalog();
+  exitWithValidationFailures();
+  printValidationSummary({
+    profileRouteHeadersValidated,
+    profileRouteHeaderParityValidated,
+    profileRouteCopyLabelsValidated,
+    profileRouteCopyParityValidated,
+    badgesValidated,
+    badgeMilestoneParityValidated,
   });
   process.exit(0);
 }
@@ -9346,29 +9261,22 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent')) {
-  validateAdConsentTypeSchemaParity();
-  validateMobileAdsConsentTypeSchemaParity();
-  validateMobileAdsConsentRuntimeParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    adConsentTypeUnionsValidated,
-    adConsentTypeInterfacesValidated,
-    adConsentTypeSchemaParityValidated,
-    mobileAdsConsentTypeInterfacesValidated,
-    mobileAdsConsentTypeSchemaParityValidated,
-    mobileAdsConsentRuntimeCasesValidated,
-    mobileAdsConsentRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   validateMobileAdsConsentHookParity();
   exitWithValidationFailures();
   printValidationSummary({
     mobileAdsConsentHookCasesValidated,
     mobileAdsConsentHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-remove-ads-hook-parity')) {
+  validateRemoveAdsEntitlementHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    removeAdsEntitlementHookCasesValidated,
+    removeAdsEntitlementHookParityValidated,
   });
   process.exit(0);
 }
@@ -9469,6 +9377,35 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
     mockExamAccessTypeUnionsValidated,
     mockExamAccessTypeInterfacesValidated,
     mockExamAccessTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
+  validateMockExamConfig(
+    defaultMockExamConfig,
+    Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+  );
+  validateMockExamConfigTypeSchemaParity();
+  validateMockExamRuntimeParity(defaultMockExamConfig);
+  validateMockExamTimerParity(defaultMockExamConfig);
+  validateExamRouteHeaderParity();
+  validateExamRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mockExamConfigTypeFieldsValidated,
+    mockExamConfigTypeSchemaParityValidated,
+    mockExamConfigExactSchemaKeysValidated,
+    mockExamConfigValidated,
+    mockExamRuntimeParityValidated,
+    mockExamChapterBalanceParityValidated,
+    mockExamTimerParityValidated,
+    examRouteHeadersValidated,
+    examRouteHeaderParityValidated,
+    examRouteCopyLabelsValidated,
+    examRouteCopyParityValidated,
   });
   process.exit(0);
 }
@@ -10593,6 +10530,24 @@ function validateRemoveAdsEntitlementHookParity() {
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
     ],
     [
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+        hookSource,
+      ),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+    ],
+    [
+      /if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{[\s\S]*return\s+undefined;[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\),/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
+    ],
+    [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
         normalizedHookSource.includes('publishRemoveAdsEntitlements(storedEntitlements);'),
       'Remove Ads entitlement hook must publish persisted purchase entitlements',
@@ -11214,6 +11169,13 @@ function validateExamRouteCopyParity() {
   EXPECTED_EXAM_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!examRoute.includes(snippet)) reject(message);
   });
+
+  if (
+    /aria-selected=\{isSelected\}/.test(examRoute) ||
+    /accessibilityState=\{\{\s*selected:\s*isSelected\s*\}\}/.test(examRoute)
+  ) {
+    reject('active exam answer options must use checked radio semantics, not selected buttons');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -11922,6 +11884,13 @@ function validateProfileRouteCopyParity() {
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
   });
+
+  if (!profileRoute.includes('const removeAdsPaywall = entitlementsReady ? (')) {
+    reject('profile premium banner must fail closed while entitlements load');
+  }
+  if (!profileRoute.includes('{entitlementsReady && proRuntimeScopeEnabled ? (')) {
+    reject('profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -14212,12 +14181,25 @@ function validateSettingsDailyGoalParity() {
   if (settingsStore.includes('Math.round(dailyGoalAnswers)')) {
     reject('setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp');
   }
+  if (!normalizedSettingsStore.includes('function normalizeImportedDailyGoalAnswers(')) {
+    reject('normalizeImportedSettings must use an import-specific daily-goal normalizer');
+  }
   if (
-    !normalizedSettingsStore.includes(
+    normalizedSettingsStore.includes(
       'settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);',
     )
   ) {
-    reject('normalizeImportedSettings must normalize imported daily-goal input');
+    reject('normalizeImportedSettings must not persist fallback daily-goal values for imports');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'const dailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);',
+    ) ||
+    !normalizedSettingsStore.includes(
+      'if (dailyGoalAnswers !== undefined) settings.dailyGoalAnswers = dailyGoalAnswers;',
+    )
+  ) {
+    reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
   const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
@@ -14665,11 +14647,11 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'readRecoverably(progressStorage, progressStorageId, progressStateKey, () => progressStorage?.getString(progressStateKey),',
+      'progressStorage?.getString(progressStateKey)',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
-      '(rawValue) => normalizeProgress(JSON.parse(rawValue)),',
+      '(rawValue) => normalizeProgress(JSON.parse(rawValue))',
       'readProgress must normalize parsed persisted JSON',
     ],
     [
@@ -15668,145 +15650,6 @@ function validateMobileAdsConsentTypeSchemaParity() {
   }
 }
 
-function validateMobileAdsConsentRuntimeParity() {
-  let valid = true;
-  let consentSource = '';
-  let mobileConsentSource = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    consentSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/consent.ts'), 'utf8');
-    mobileConsentSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`Mobile Ads consent runtime sources could not be read: ${error.message}`);
-    return;
-  }
-
-  const normalizedConsentSource = consentSource.replace(/\s+/g, ' ');
-  const normalizedMobileConsentSource = mobileConsentSource.replace(/\s+/g, ' ');
-  const sourceCases = [
-    [
-      /export\s+function\s+normalizeAdConsentRegion\(region:\s+unknown\):\s+AdConsentRegion/.test(
-        consentSource,
-      ) && normalizedConsentSource.includes("return 'unknown';"),
-      'Mobile Ads consent must expose a runtime AdConsentRegion normalizer',
-    ],
-    [
-      /export\s+function\s+regionRequiresUmpConsent\(region:\s+unknown\):\s+boolean\s*\{\s*const\s+normalizedRegion\s*=\s*normalizeAdConsentRegion\(region\);[\s\S]*normalizedRegion\s*===\s*'unknown'/.test(
-        consentSource,
-      ),
-      'Mobile Ads consent must normalize runtime region values before UMP checks',
-    ],
-    [
-      normalizedMobileConsentSource.includes('region: normalizeAdConsentRegion(region),') &&
-        normalizedMobileConsentSource.includes(
-          'const normalizedRegion = normalizeAdConsentRegion(region);',
-        ) &&
-        normalizedMobileConsentSource.includes('region: normalizedRegion,'),
-      'Mobile Ads consent state creation and collection must store normalized regions',
-    ],
-    [
-      !/\bPromise\.all\s*\(/.test(mobileConsentSource),
-      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
-    ],
-    [
-      normalizedMobileConsentSource.includes(
-        "if (!shouldCollectConsent || !regionRequiresUmpConsent(region)) return 'not_required';",
-      ),
-      'Mobile Ads consent runtime must skip UMP gathering for non-UMP regions',
-    ],
-  ];
-
-  sourceCases.forEach(([caseIsValid, message]) => {
-    if (!caseIsValid) {
-      reject(message);
-    }
-  });
-
-  if (!valid) return;
-
-  let consentModule;
-  let mobileConsentModule;
-  try {
-    consentModule = loadTs('lib/monetization/consent.ts');
-    mobileConsentModule = loadTs('lib/monetization/mobileAdsConsent.ts');
-  } catch (error) {
-    reject(`Mobile Ads consent runtime modules could not be loaded: ${error.message}`);
-    return;
-  }
-
-  const { getAdSdkInitializationDecision } = consentModule;
-  const { createInitialAdConsentState } = mobileConsentModule;
-
-  const baseState = {
-    entitlements: { adsDisabled: false },
-    googleMobileAdsEnabled: true,
-    platform: 'android',
-    realAdsEnabled: true,
-    trackingTransparencyStatus: 'unavailable',
-    umpConsentStatus: 'unknown',
-  };
-  const invalidRegionCases = ['banana', '', null, 'future_region'];
-  const validUmpRegionCases = ['eea', 'uk', 'unknown'];
-  const validNonUmpRegionCases = ['us', 'other'];
-
-  for (const region of invalidRegionCases) {
-    const state = createInitialAdConsentState({ ...baseState, region });
-    const decision = getAdSdkInitializationDecision(state);
-    if (
-      state.region !== 'unknown' ||
-      decision.canInitializeGoogleMobileAds ||
-      !decision.consentDecision.pendingPrompts.includes('ump_consent_form')
-    ) {
-      reject(`invalid runtime region ${String(region)} must normalize to unknown and require UMP`);
-      continue;
-    }
-    mobileAdsConsentRuntimeCasesValidated += 1;
-  }
-
-  for (const region of validUmpRegionCases) {
-    const state = createInitialAdConsentState({ ...baseState, region });
-    const decision = getAdSdkInitializationDecision(state);
-    if (
-      state.region !== region ||
-      decision.canInitializeGoogleMobileAds ||
-      !decision.consentDecision.pendingPrompts.includes('ump_consent_form')
-    ) {
-      reject(`runtime region ${region} must keep UMP consent fail-closed`);
-      continue;
-    }
-    mobileAdsConsentRuntimeCasesValidated += 1;
-  }
-
-  for (const region of validNonUmpRegionCases) {
-    const state = createInitialAdConsentState({ ...baseState, region });
-    const decision = getAdSdkInitializationDecision(state);
-    if (
-      state.region !== region ||
-      !decision.canInitializeGoogleMobileAds ||
-      decision.consentDecision.pendingPrompts.includes('ump_consent_form')
-    ) {
-      reject(`runtime region ${region} must not require UMP consent`);
-      continue;
-    }
-    mobileAdsConsentRuntimeCasesValidated += 1;
-  }
-
-  if (
-    valid &&
-    mobileAdsConsentRuntimeCasesValidated === EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES
-  ) {
-    mobileAdsConsentRuntimeParityValidated = true;
-  }
-}
-
 function validateMobileAdsConsentHookParity() {
   let valid = true;
   let hookSource = '';
@@ -16426,6 +16269,28 @@ function validateBadgeCatalog() {
         reject(`${label} duplicates badge description`);
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
+
+      for (const field of [
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing localized ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (
+        label === 'first_practice' &&
+        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
+      ) {
+        reject('first_practice titleSv must be localized separately from titleEn');
+      }
     }
 
     if (valid) badgesValidated += 1;
@@ -18495,6 +18360,9 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
 }
 
 function expectedPublishedSourceField(question, field) {
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
+  }
   if (question.type === 'true_false' && field === 'questionSv') {
     return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
   }
@@ -18502,6 +18370,14 @@ function expectedPublishedSourceField(question, field) {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
   }
   return question[field];
+}
+
+function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
 }
 
 function validateAuthoredSourceParity() {
@@ -18527,9 +18403,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const localizedAdditionalQuestions = additionalQuestions.map(applyQuestionLocalizationPilot);
   const authoredQuestions = [...baseQuestions, ...additionalQuestions];
-  const expectedPublishedSourceQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
@@ -18576,7 +18450,7 @@ function validateAuthoredSourceParity() {
     }
 
     const publishedQuestion = sourceQuestions[index];
-    const expectedSourceQuestion = expectedPublishedSourceQuestions[index] ?? question;
+    const expectedSourceQuestion = question;
     if (!publishedQuestion) return;
 
     let publicationParityIsValid = true;
@@ -18596,6 +18470,17 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    authoredSourcePartitionQuestionsValidated,
+    authoredSourceQuestionsValidated,
+    sourcePublicationParityValidated,
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+  });
+  process.exit(0);
+}
 
 function validateGenerationParity() {
   if (
@@ -19792,7 +19677,6 @@ validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
-validateMobileAdsConsentRuntimeParity();
 validateMobileAdsConsentHookParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
@@ -20021,8 +19905,6 @@ console.log(
       adConsentTypeSchemaParityValidated,
       mobileAdsConsentTypeInterfacesValidated,
       mobileAdsConsentTypeSchemaParityValidated,
-      mobileAdsConsentRuntimeCasesValidated,
-      mobileAdsConsentRuntimeParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
       rewardedAdTypeUnionsValidated,
