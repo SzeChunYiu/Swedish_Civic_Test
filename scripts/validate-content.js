@@ -2648,22 +2648,34 @@ const EXPECTED_CHAPTER_CARD_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
-    label: 'optional front/back/language prop contract',
+    label: 'optional front/back/language/question prop contract',
     pattern:
-      /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
+      /type FlashcardProps = \{[\s\S]*back\?: string;[\s\S]*front\?: string;[\s\S]*language\?: AppLanguage;[\s\S]*question\?: PracticeQuestion;[\s\S]*\};/,
   },
   {
     label: 'settings language import',
     pattern: /useSettingsStore, type AppLanguage/,
   },
   {
+    label: 'question source citation helper import',
+    pattern: /import \{ getQuestionSourceCitation \} from '\.\.\/\.\.\/lib\/quiz\/questionText';/,
+  },
+  {
+    label: 'QuestionSourceCitation import',
+    pattern: /import \{ QuestionSourceCitation \} from '\.\.\/quiz\/QuestionSourceCitation';/,
+  },
+  {
     label: 'localized copy map',
     pattern: /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/,
   },
   {
+    label: 'localized source citation accessibility copy',
+    pattern: /Källhänvisning: \$\{sourceCitation\}[\s\S]*Source citation: \$\{sourceCitation\}/,
+  },
+  {
     label: 'selected settings language fallback',
     pattern:
-      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const copy = flashcardCopy\[language \?\? settingsLanguage\];/,
+      /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);[\s\S]*const resolvedLanguage = language \?\? settingsLanguage;[\s\S]*const copy = flashcardCopy\[resolvedLanguage\];/,
   },
   {
     label: 'release-safe Swedish fallbacks',
@@ -2688,11 +2700,17 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'localized accessibility summary helper',
-    pattern: /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+    pattern:
+      /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer, sourceCitation\);/,
+  },
+  {
+    label: 'source citation text derived from question',
+    pattern: /const sourceCitation = getQuestionSourceCitation\(question, resolvedLanguage\);/,
   },
   {
     label: 'prompt and answer accessibility summary',
-    pattern: /<Card accessibilityLabel=\{flashcardAccessibilityLabel\} style=\{styles\.card\}>/,
+    pattern:
+      /<Card[\s\S]*accessibilityLabel=\{flashcardAccessibilityLabel\}[\s\S]*accessibilityRole="summary"[\s\S]*style=\{styles\.card\}/,
   },
   {
     label: 'visible localized flashcard badge',
@@ -2712,6 +2730,11 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
     label: 'visible prompt and answer text',
     pattern:
       /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+  },
+  {
+    label: 'visible flashcard source citation',
+    pattern:
+      /<QuestionSourceCitation[\s\S]*citationText=\{sourceCitation\}[\s\S]*language=\{resolvedLanguage\}[\s\S]*question=\{question\}/,
   },
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
@@ -7569,6 +7592,26 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-learn-flashcard-source')) {
+  validateQuestionDisclaimerParity();
+  validateLearnRouteHeaderParity();
+  validateLearnRouteLinkCopyParity();
+  validateFlashcardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionDisclaimerRoutesValidated,
+    questionDisclaimerCopyValidated,
+    learnRouteHeadersValidated,
+    learnRouteHeaderParityValidated,
+    learnRouteLinkCopyLabelsValidated,
+    learnRouteLinkCopyParityValidated,
+    flashcardAccessibilityRulesValidated,
+    flashcardAccessibilityParityValidated,
+    swedishFlashcardCopyNaturalnessValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -10660,6 +10703,12 @@ function validateFlashcardAccessibilityParity() {
     }
     flashcardAccessibilityRulesValidated += 1;
   });
+
+  if (/Flashkort|flashkort/.test(flashcardSource)) {
+    reject('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+  } else {
+    swedishFlashcardCopyNaturalnessValidated = true;
+  }
 
   if (
     valid &&
