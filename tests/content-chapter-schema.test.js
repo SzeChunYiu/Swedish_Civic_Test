@@ -1,22 +1,22 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
 
-const repoRoot = path.resolve(__dirname, '..');
-const chapterFocusArgs = ['scripts/validate-content.js', '--focus-chapter-localized-text'];
-
 test('chapter metadata schema validates every chapter', () => {
-  const output = execFileSync(process.execPath, chapterFocusArgs, {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-chapter-metadata'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
   assert.equal(summary.chapterSchemasValidated, 13);
   assert.equal(summary.chapterSchemasValidated, summary.chapters);
   assert.equal(summary.chapterLocalizedTextMapsValidated, summary.chapters * 2);
+  assert.equal(summary.chapterLocalizedTextParityValidated, true);
 });
 
 test('chapter metadata schema rejects invalid counts and copied bilingual names', () => {
@@ -37,11 +37,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-chapter-localized-text');
+process.argv.push('--focus-chapter-metadata');
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
@@ -50,7 +50,7 @@ require('./scripts/validate-content.js');
   assert.match(output, /ch02 has invalid questionCount/);
 });
 
-test('chapter localized text maps keep canonical Swedish and English entries', () => {
+test('chapter metadata schema rejects localized sv/en drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -63,23 +63,20 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/chapters.ts')) {
     return String(contents)
-      .replace("      sv: 'Landet Sverige',\\n      en: 'The country of Sweden',", "      en: 'The country of Sweden',")
-      .replace(
-        "      en: 'Geography, climate, nature, population, natural resources, and climate change.',",
-        "      en: 'Geography and climate.',",
-      );
+      .replace("      sv: 'Landet Sverige',", "      sv: 'Landet  Sverige',")
+      .replace("      en: 'The country of Sweden',", "      en: '',");
   }
   return contents;
 };
-process.argv.push('--focus-chapter-localized-text');
+process.argv.push('--focus-chapter-metadata');
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
-  assert.match(output, /ch01 nameText\.sv missing localized text/);
-  assert.match(output, /ch01 descriptionText\.en must match descriptionEn/);
+  assert.match(output, /ch01 nameText\.sv must match nameSv/);
+  assert.match(output, /ch01 nameText\.en must be filled/);
 });

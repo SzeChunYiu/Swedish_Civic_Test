@@ -4,13 +4,16 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
-const chapterFocusArgs = ['scripts/validate-content.js', '--focus-chapter-localized-text'];
 
 test('chapter metadata text fields are trimmed and single-spaced', () => {
-  const output = execFileSync(process.execPath, chapterFocusArgs, {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-chapter-metadata'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -40,7 +43,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('--focus-chapter-localized-text');
+process.argv.push('--focus-chapter-metadata');
 require('./scripts/validate-content.js');
 `,
     ],
