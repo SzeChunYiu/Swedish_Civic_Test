@@ -199,21 +199,21 @@ test('compliance scaffold exposes legal page headings as headers', () => {
     /const language = useSettingsStore\(\(state\) => state\.language\);/,
   );
   assert.match(disclaimerSource, /const copy = disclaimerCopy\[language\];/);
-  assert.match(disclaimerSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(disclaimerSource, /<LegalPage[\s\S]*title=\{copy\.title\}/);
   assert.match(disclaimerSource, /Ansvarsfriskrivning/);
   assert.match(disclaimerSource, /Oberoende studieverktyg/);
   assert.match(disclaimerSource, /Disclaimer/);
   assert.match(disclaimerSource, /Independent study tool/);
   assert.match(privacySource, /const privacyCopy: Record<AppLanguage, PrivacyRouteCopy>/);
   assert.match(privacySource, /const copy = privacyCopy\[language\];/);
-  assert.match(privacySource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(privacySource, /<LegalPage[\s\S]*title=\{copy\.title\}/);
   assert.match(privacySource, /Integritetspolicy/);
   assert.match(privacySource, /Inget konto krävs/);
   assert.match(privacySource, /Privacy policy/);
   assert.match(privacySource, /No account required/);
   assert.match(sourcesSource, /const sourcesCopy: Record<AppLanguage, SourcesRouteCopy>/);
   assert.match(sourcesSource, /const copy = sourcesCopy\[language\];/);
-  assert.match(sourcesSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(sourcesSource, /<LegalPage[\s\S]*title=\{copy\.title\}/);
   assert.match(sourcesSource, /openEducationMaterialAccessibilityLabel/);
   assert.match(sourcesSource, /openAuthorityBoundarySourceAccessibilityLabel/);
   assert.match(
@@ -227,7 +227,7 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(sourcesSource, /Primary study material/);
   assert.match(supportSource, /const supportCopy: Record<AppLanguage, SupportRouteCopy>/);
   assert.match(supportSource, /const copy = supportCopy\[language\];/);
-  assert.match(supportSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(supportSource, /<LegalPage[\s\S]*title=\{copy\.title\}/);
   assert.match(supportSource, /accessibilityLabel=\{copy\.openSupportPageAccessibilityLabel\}/);
   assert.match(supportSource, /Support och återkoppling/);
   assert.match(supportSource, /Vad du kan rapportera/);
@@ -235,7 +235,7 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(supportSource, /What to report/);
   assert.match(termsSource, /const termsCopy: Record<AppLanguage, TermsRouteCopy>/);
   assert.match(termsSource, /const copy = termsCopy\[language\];/);
-  assert.match(termsSource, /<LegalPage title=\{copy\.title\}>/);
+  assert.match(termsSource, /<LegalPage[\s\S]*title=\{copy\.title\}/);
   assert.match(termsSource, /Användarvillkor/);
   assert.match(termsSource, /Studieändamål/);
   assert.match(termsSource, /Terms of use/);
@@ -277,7 +277,7 @@ test('settings controls mirror selected and checked state to web aria attributes
   assert.match(source, /aria-checked=\{audioEnabled\}/);
   assert.match(
     source,
-    /accessibilityLabel=\{\s*audioEnabled \? copy\.disableAudioAccessibilityLabel : copy\.enableAudioAccessibilityLabel\s*\}/,
+    /accessibilityLabel=\{[\s\S]*audioEnabled[\s\S]*\? copy\.disableAudioAccessibilityLabel[\s\S]*: copy\.enableAudioAccessibilityLabel[\s\S]*\}/,
   );
   assert.match(source, /\{audioEnabled \? copy\.audioEnabledLabel : copy\.audioDisabledLabel\}/);
   assert.match(source, /accessibilityState=\{\{ checked: audioEnabled \}\}/);
@@ -298,7 +298,7 @@ test('settings route remains scrollable on narrow mobile viewports', () => {
 
   assert.match(
     source,
-    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
+    /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View\s*\}\s+from 'react-native';/,
   );
   assert.match(
     source,
@@ -437,7 +437,11 @@ test('practice and routed quiz screens expose primary titles as headers', () => 
   assert.match(routedQuizSource, /Det finns inga övningsfrågor ännu\./);
   assert.match(routedQuizSource, /Frågepass \$\{currentSessionId\}/);
   assert.match(routedQuizSource, /\{copy\.emptyTitle\}/);
-  assert.match(routedQuizSource, /\{copy\.sessionTitle\(normalizedSessionId\)\}/);
+  assert.match(
+    routedQuizSource,
+    /const sessionTitle =[\s\S]*copy\.sessionTitle\(normalizedSessionId\);/,
+  );
+  assert.match(routedQuizSource, /\{sessionTitle\}/);
   assert.doesNotMatch(practiceSource, /#[0-9a-fA-F]{6}|rgba?\(/);
   assert.doesNotMatch(routedQuizSource, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -1071,7 +1075,7 @@ test('user-facing scaffold fallbacks do not expose placeholder copy', () => {
 test('audio button disables playback when speech text is unavailable', () => {
   const source = read('components/learning/AudioButton.tsx');
 
-  assert.match(source, /const speechText = text\.trim\(\);/);
+  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /language = 'sv'/);
@@ -1144,8 +1148,9 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.match(source, /\{copy\.feedbackTitle\}/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.goalLabel\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.readinessTitle\}>/);
+  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.rewardedExamTitle\}>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.feedbackTitle\}>/);
-  assert.equal(headerMatches?.length, 3);
+  assert.equal(headerMatches?.length, 4);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1341,14 +1346,14 @@ test('exam controls mirror selected and disabled state to web aria attributes', 
     source,
     /aria-disabled=\{!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam\}/,
   );
-  assert.match(source, /aria-selected=\{isSelected\}/);
+  assert.match(source, /aria-checked=\{isSelected\}/);
   assert.match(source, /aria-disabled=\{!canSubmit\}/);
   assert.match(
     source,
     /accessibilityLabel=\{copy\.answerAccessibilityLabel\(optionText, index \+ 1\)\}/,
   );
   assert.match(source, /accessibilityLabel=\{copy\.submitAccessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ selected: isSelected \}\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: isSelected \}\}/);
   assert.match(source, /accessibilityState=\{\{ disabled: !canSubmit \}\}/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
