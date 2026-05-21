@@ -14984,6 +14984,24 @@ function validateAnswerFeedbackParity() {
     ) {
       reject(`${question.id} selected correct feedback drifted`);
     }
+    try {
+      const malformedLanguageSelectedCorrectFeedback = getAnswerOptionFeedback(
+        question,
+        correctOption.id,
+        correctOption.id,
+        'fr',
+      );
+      if (
+        malformedLanguageSelectedCorrectFeedback.resultLabel !== 'Rätt' ||
+        malformedLanguageSelectedCorrectFeedback.tone !== 'correct'
+      ) {
+        reject(
+          `${question.id} malformed language selected correct feedback must fall back to Swedish`,
+        );
+      }
+    } catch (error) {
+      reject(`${question.id} malformed language selected correct feedback threw ${error.message}`);
+    }
 
     question.options.forEach((option) => {
       const label = `${question.id} option ${option.id}`;
@@ -15008,6 +15026,22 @@ function validateAnswerFeedbackParity() {
       ) {
         reject(`${label} selected wrong feedback drifted`);
       }
+      try {
+        const malformedLanguageSelectedWrongFeedback = getAnswerOptionFeedback(
+          question,
+          option.id,
+          option.id,
+          'fr',
+        );
+        if (
+          malformedLanguageSelectedWrongFeedback.resultLabel !== 'Fel' ||
+          malformedLanguageSelectedWrongFeedback.tone !== 'incorrect'
+        ) {
+          reject(`${label} malformed language selected wrong feedback must fall back to Swedish`);
+        }
+      } catch (error) {
+        reject(`${label} malformed language selected wrong feedback threw ${error.message}`);
+      }
 
       const revealedCorrectFeedback = getAnswerOptionFeedback(
         question,
@@ -15019,6 +15053,24 @@ function validateAnswerFeedbackParity() {
         revealedCorrectFeedback.tone !== 'correct'
       ) {
         reject(`${label} correct-answer reveal feedback drifted`);
+      }
+      try {
+        const malformedLanguageRevealedCorrectFeedback = getAnswerOptionFeedback(
+          question,
+          correctOption.id,
+          option.id,
+          'fr',
+        );
+        if (
+          malformedLanguageRevealedCorrectFeedback.resultLabel !== 'Rätt svar' ||
+          malformedLanguageRevealedCorrectFeedback.tone !== 'correct'
+        ) {
+          reject(
+            `${label} malformed language correct-answer reveal feedback must fall back to Swedish`,
+          );
+        }
+      } catch (error) {
+        reject(`${label} malformed language correct-answer reveal feedback threw ${error.message}`);
       }
 
       question.options

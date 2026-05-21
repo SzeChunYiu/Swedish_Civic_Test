@@ -60,3 +60,34 @@ require('./scripts/validate-content.js');
     /lib\/quiz\/answerValidation\.ts AnswerOptionFeedbackTone values/,
   );
 });
+
+test('answer feedback runtime parity rejects invalid language fallback drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/quiz/answerValidation.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("return language === 'sv' || language === 'en' ? language : 'sv';", 'return language;');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-answer-feedback-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /malformed language selected correct feedback/,
+  );
+});
