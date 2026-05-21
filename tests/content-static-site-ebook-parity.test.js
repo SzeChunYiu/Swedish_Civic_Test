@@ -375,6 +375,8 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     );
     assert.match(englishHtml, />Sources: \d+<\/span>/);
     assert.match(swedishHtml, />Källor: \d+<\/span>/);
+    assert.match(englishHtml, /UHR \(\d+ cites?\).+Editorial \(\d+ cites?\)/);
+    assert.match(swedishHtml, /UHR \(\d+ cites?\).+Editorial \(\d+ cites?\)/);
     assert.match(englishHtml, /data-source-scope="ebook"/);
     assert.match(swedishHtml, /data-source-scope="ebook"/);
     assert.match(englishHtml, /href="#\/mock"/);

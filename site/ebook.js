@@ -9,26 +9,31 @@
   const EBOOK_FACTBOX_SOURCE_NOTES = Object.freeze({
     uhrStudyMaterial: {
       label: 'UHR public study material',
+      mixLabel: 'UHR',
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
     scbLandUse: {
       label: 'SCB land and water area statistics',
+      mixLabel: 'SCB',
       url: 'https://www.scb.se/mi0803-en',
       retrievedDate: '2026-05-19',
     },
     riksbankHistory: {
       label: 'Riksbank historical timeline',
+      mixLabel: 'Riksbank',
       url: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
       retrievedDate: '2026-05-19',
     },
     governmentNato: {
       label: 'Government Offices NATO membership notice',
+      mixLabel: 'Government Offices',
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
     },
     migrationsverketCitizenshipRules: {
       label: 'Migrationsverket citizenship rule changes from 6 June 2026',
+      mixLabel: 'Migrationsverket',
       url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
       retrievedDate: '2026-05-20',
     },
@@ -38,6 +43,7 @@
     ...EBOOK_FACTBOX_SOURCE_NOTES,
     editorialCommentary: {
       label: 'editorial commentary',
+      mixLabel: 'Editorial',
       url: '#/sources',
       retrievedDate: 'editorial',
     },
@@ -173,6 +179,18 @@
     return counts;
   }
 
+  function ebookSourceMixLabel(footnotes) {
+    const counts = ebookSourceCounts(footnotes);
+    return Object.keys(EBOOK_SOURCE_NOTES)
+      .filter((key) => counts[key])
+      .map((key) => {
+        const note = EBOOK_SOURCE_NOTES[key];
+        const count = counts[key];
+        return `${note.mixLabel || note.label} (${count} ${count === 1 ? 'cite' : 'cites'})`;
+      })
+      .join(' · ');
+  }
+
   function createEbookFootnoteCollector(chapterId, lang) {
     const footnotes = [];
     return {
@@ -206,20 +224,13 @@
   }
 
   function renderEbookProvenanceBadge(lang, footnotes) {
-    const uniqueSourceLabels = Array.from(
-      new Set(
-        footnotes.flatMap((footnote) =>
-          ebookSourceNotes(footnote.sourceKeys).map((note) => note.label),
-        ),
-      ),
-    );
-    const count = uniqueSourceLabels.length || 0;
-    const sourceSummary = uniqueSourceLabels.join(', ') || 'source metadata';
+    const count = footnotes.length || 0;
+    const sourceSummary = ebookSourceMixLabel(footnotes) || 'source metadata';
     const serializedCounts = JSON.stringify(ebookSourceCounts(footnotes));
     if (lang === 'sv') {
-      return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
+      return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Källor: ${count}. ${sourceSummary}. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet."><span>Källor: ${count}</span> · ${sourceSummary} · Egen studieguide med kapitelkällor; kontrollera fakta via <a href="#/sources">källsidan</a> och UHR-materialet.</p>`;
     }
-    return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Sources: ${count}. ${sourceSummary}. Original study guide; verify facts through the Sources page and UHR material."><span>Sources: ${count}</span> · Original study guide with chapter sources; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>`;
+    return `<p class="ebook__provenance-badge ebook__provenance-badge--source-mix" data-source-counts='${serializedCounts}' aria-label="Sources: ${count}. ${sourceSummary}. Original study guide; verify facts through the Sources page and UHR material."><span>Sources: ${count}</span> · ${sourceSummary} · Original study guide with chapter sources; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>`;
   }
 
   function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
