@@ -9,24 +9,6 @@ const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
-const expectedRoutes = [
-  '/',
-  '/onboarding',
-  '/home',
-  '/learn',
-  '/practice',
-  '/exam',
-  '/mistakes',
-  '/profile',
-  '/settings',
-  '/chapter/ch01',
-  '/disclaimer',
-  '/privacy',
-  '/terms',
-  '/sources',
-  '/support',
-];
-const explainedDuplicateScreenshotGroups = new Set(['home,index']);
 
 function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
@@ -72,6 +54,12 @@ test('visual smoke uses the shared blocking modal overlay locator', () => {
 
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
+  const {
+    explainedVisualSmokeDuplicateScreenshotGroups,
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeRouteNamesKey,
+    visualSmokeRoutes,
+  } = loadTs('tests/e2e/visualSmokeRoutes.ts');
   const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const committedBaselineOutput = resolveVisualSmokeOutput({
     cwd: repoRoot,
@@ -86,11 +74,16 @@ test('visual smoke report records route-specific screenshots without launch over
   assert.match(manifest.launchOverlayPolicy, /dismisses the launch sponsor overlay/i);
   assert.match(manifest.launchOverlayPolicy, /modal menu overlays/i);
   assert.match(manifest.duplicatePolicy, /duplicate screenshot hashes fail/i);
+  assert.deepEqual(manifest.duplicateExplanations, explainedVisualSmokeDuplicateScreenshotGroups);
+  for (const explanation of explainedVisualSmokeDuplicateScreenshotGroups) {
+    assert.ok(explanation.names.length > 1, 'duplicate explanations should name a route group');
+    assert.ok(explanation.reason.trim().length > 20, 'duplicate explanations should include why');
+  }
 
   const routes = manifest.routes || [];
   assert.deepEqual(
     routes.map((route) => route.route),
-    expectedRoutes,
+    visualSmokeRoutes.map(([, route]) => route),
   );
 
   const namesByHash = new Map();
@@ -124,8 +117,8 @@ test('visual smoke report records route-specific screenshots without launch over
 
   const unexplainedDuplicates = [...namesByHash.values()]
     .filter((names) => names.length > 1)
-    .map((names) => names.sort().join(','))
-    .filter((names) => !explainedDuplicateScreenshotGroups.has(names));
+    .filter((names) => !isExplainedVisualSmokeDuplicate(names))
+    .map((names) => visualSmokeRouteNamesKey(names));
 
   assert.deepEqual(unexplainedDuplicates, []);
 });
