@@ -930,6 +930,35 @@ test('spaced repetition schedules wrong answers soon and known answers later', (
     getNextReviewAt({ isCorrect: true, correctStreak: 3, answeredAt: '2026-05-15T10:00:00.000Z' }),
     '2026-05-30T10:00:00.000Z',
   );
+  assert.equal(
+    getNextReviewAt({
+      isCorrect: 'true',
+      correctStreak: 3,
+      answeredAt: '2026-05-15T10:00:00.000Z',
+    }),
+    '2026-05-16T10:00:00.000Z',
+  );
+  assert.equal(
+    getNextReviewAt({
+      isCorrect: true,
+      correctStreak: Number.NaN,
+      answeredAt: '2026-05-15T10:00:00.000Z',
+    }),
+    '2026-05-16T10:00:00.000Z',
+  );
+
+  const beforeInvalidAnsweredAt = Date.now();
+  const invalidAnsweredAtNext = getNextReviewAt({
+    isCorrect: true,
+    correctStreak: 4,
+    answeredAt: 'not-a-date',
+  });
+  const afterInvalidAnsweredAt = Date.now();
+  const invalidAnsweredAtNextMs = Date.parse(invalidAnsweredAtNext);
+  const dayMs = 24 * 60 * 60 * 1000;
+  assert.ok(Number.isFinite(invalidAnsweredAtNextMs));
+  assert.ok(invalidAnsweredAtNextMs >= beforeInvalidAnsweredAt + dayMs);
+  assert.ok(invalidAnsweredAtNextMs <= afterInvalidAnsweredAt + dayMs + 1000);
 });
 
 test('badges unlock from progress milestones', () => {

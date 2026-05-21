@@ -187,7 +187,8 @@ export function getNextReviewAt({
   correctStreak: unknown;
   answeredAt?: unknown;
 }): string {
-  const baseIso = safeReviewTimestamp(answeredAt);
+  const hasValidAnsweredAt = isCanonicalReviewTimestamp(answeredAt);
+  const baseIso = hasValidAnsweredAt ? answeredAt : new Date().toISOString();
   const hasValidCorrectness = typeof isCorrect === 'boolean';
   const hasValidStreak =
     typeof correctStreak === 'number' &&
@@ -195,7 +196,8 @@ export function getNextReviewAt({
     Number.isInteger(correctStreak) &&
     correctStreak >= 0;
   const safeCorrectStreak = hasValidStreak ? correctStreak : 0;
-  const answeredCorrectly = hasValidCorrectness && isCorrect === true && hasValidStreak;
+  const answeredCorrectly =
+    hasValidAnsweredAt && hasValidCorrectness && isCorrect === true && hasValidStreak;
   const scheduleIndex = answeredCorrectly
     ? Math.max(0, Math.min(safeCorrectStreak, spacedRepetitionSchedule.length - 1))
     : 0;

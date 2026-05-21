@@ -7718,6 +7718,8 @@ const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+const createNewCard = spacedRepetitionModule.createNewCard;
+const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -8000,6 +8002,8 @@ let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
+let spacedRepetitionRuntimeInputCasesValidated = 0;
+let spacedRepetitionRuntimeInputParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -8315,6 +8319,18 @@ if (process.argv.includes('--focus-practice-scoring-parity')) {
   printValidationSummary({
     practiceScoringRulesValidated,
     practiceScoringRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-spaced-repetition-schema')) {
+  validateSpacedRepetitionSchedule();
+  exitWithValidationFailures();
+  printValidationSummary({
+    spacedRepetitionIntervalsValidated,
+    spacedRepetitionRuntimeParityValidated,
+    spacedRepetitionRuntimeInputCasesValidated,
+    spacedRepetitionRuntimeInputParityValidated,
   });
   process.exit(0);
 }
@@ -15578,6 +15594,86 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
+
+  const runtimeInputCases = [];
+  if (typeof createNewCard === 'function' && typeof gradeCard === 'function') {
+    const card = createNewCard('q-runtime-guard', answeredAt);
+    runtimeInputCases.push(
+      {
+        label: 'invalid FSRS grade preserves the card',
+        actual: () => gradeCard(card, 5, answeredAt),
+        expected: card,
+      },
+      {
+        label: 'invalid FSRS grading timestamp preserves the card',
+        actual: () => gradeCard(card, 3, 'not-a-date'),
+        expected: card,
+      },
+    );
+  }
+  if (typeof getNextReviewAt === 'function') {
+    runtimeInputCases.push(
+      {
+        label: 'truthy non-boolean correctness falls back to one day',
+        actual: () => getNextReviewAt({ isCorrect: 'true', correctStreak: 4, answeredAt }),
+        expected: isoDaysAfter(answeredAt, 1),
+      },
+      {
+        label: 'non-finite correct streak falls back to one day',
+        actual: () => getNextReviewAt({ isCorrect: true, correctStreak: Number.NaN, answeredAt }),
+        expected: isoDaysAfter(answeredAt, 1),
+      },
+      {
+        label: 'invalid answeredAt falls back to a finite one-day review',
+        actual: () => {
+          const before = Date.now();
+          const actual = getNextReviewAt({
+            isCorrect: true,
+            correctStreak: 4,
+            answeredAt: 'not-a-date',
+          });
+          const after = Date.now();
+          const actualMs = Date.parse(actual);
+          return (
+            Number.isFinite(actualMs) &&
+            actualMs >= before + 24 * 60 * 60 * 1000 &&
+            actualMs <= after + 24 * 60 * 60 * 1000 + 1000
+          );
+        },
+        expected: true,
+      },
+    );
+  }
+
+  let runtimeInputParityIsValid = true;
+  runtimeInputCases.forEach(({ actual, expected, label }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      runtimeInputParityIsValid = false;
+      fail(`spaced repetition runtime input ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      runtimeInputParityIsValid = false;
+      fail(
+        `spaced repetition runtime input ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      spacedRepetitionRuntimeInputCasesValidated += 1;
+    }
+  });
+
+  if (
+    runtimeInputParityIsValid &&
+    spacedRepetitionRuntimeInputCasesValidated === runtimeInputCases.length
+  ) {
+    spacedRepetitionRuntimeInputParityValidated = true;
+  }
 }
 
 function validateStreakRules() {
@@ -17869,6 +17965,8 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
+      spacedRepetitionRuntimeInputCasesValidated,
+      spacedRepetitionRuntimeInputParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
