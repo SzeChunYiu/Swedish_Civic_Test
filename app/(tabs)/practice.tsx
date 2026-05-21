@@ -19,7 +19,12 @@ import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
+import {
+  buildAnswerFeedbackSpeechText,
+  buildQuestionSpeechText,
+  stopSpeech,
+} from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -37,6 +42,7 @@ import {
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../../lib/storage/companionStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
@@ -167,6 +173,8 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -201,6 +209,22 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const questionSpeechText = useMemo(
+    () => (question ? buildQuestionSpeechText(question) : ''),
+    [question],
+  );
+
+  useQuestionAudioAutoplay({
+    audioEnabled,
+    listenFirstAudioEnabled,
+    questionKey: question ? `practice:${question.id}:${shuffleSessionId}` : null,
+    rate: audioPlaybackRate,
+    speechText: questionSpeechText,
+    stopSignal: hasSelectedAnswer,
+  });
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
@@ -214,7 +238,6 @@ export default function Screen() {
     );
   }
 
-  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
@@ -237,6 +260,7 @@ export default function Screen() {
       ? (selectedConfidenceRating ?? undefined)
       : undefined;
 
+    stopSpeech();
     selectOption(question.id, optionId);
     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
@@ -385,7 +409,8 @@ export default function Screen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        text={buildQuestionSpeechText(question)}
+        rate={audioPlaybackRate}
+        text={questionSpeechText}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -440,6 +465,7 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

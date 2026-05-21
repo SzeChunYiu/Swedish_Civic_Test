@@ -1227,7 +1227,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -2947,11 +2946,11 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'optional text, enabled, and language prop contract',
     pattern:
-      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
+      /enabled = true,[\s\S]*language = 'sv'[\s\S]*rate,[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*rate\?: number;[\s\S]*text\?: string \| null/,
   },
   {
-    label: 'trimmed speech text source',
-    pattern: /const speechText = text\.trim\(\);/,
+    label: 'string-safe trimmed speech text source',
+    pattern: /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/,
   },
   {
     label: 'nonblank speech text guard',
@@ -2989,9 +2988,27 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
-    label: 'trimmed speech playback',
+    label: 'trimmed speech playback with lifecycle cleanup',
     pattern:
-      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onError:[\s\S]*onStopped:/,
+  },
+  {
+    label: 'second press stops active question audio',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
+  },
+  {
+    label: 'stop callback clears speaking state',
+    pattern: /onStopped: \(\) => setIsSpeaking\(false\),/,
+  },
+  {
+    label: 'error callback clears speaking state',
+    pattern: /onError: \(\) => setIsSpeaking\(false\),/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -7762,6 +7779,7 @@ const ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE =
   answerOptionShuffleModule.ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE;
 const audioModule = loadTs('lib/audio/speak.ts');
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
+const buildAnswerFeedbackSpeechText = audioModule.buildAnswerFeedbackSpeechText;
 const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
@@ -8217,6 +8235,26 @@ if (process.argv.includes('--focus-question-report-link-parity')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-audio-button-accessibility')) {
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-speech-runtime-parity')) {
+  validateSpeechRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    speechRuntimeCasesValidated,
+    speechRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-native-quiz-copy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
@@ -8625,6 +8663,9 @@ if (typeof ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE !== 'number') {
 }
 if (typeof buildQuestionSpeechText !== 'function') {
   fail('buildQuestionSpeechText export is not a function');
+}
+if (typeof buildAnswerFeedbackSpeechText !== 'function') {
+  fail('buildAnswerFeedbackSpeechText export is not a function');
 }
 if (typeof speakSwedish !== 'function') fail('speakSwedish export is not a function');
 if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function');
@@ -15484,7 +15525,12 @@ function resetSpeechEvents() {
 }
 
 function validateSpeechRuntimeParity() {
-  if (typeof speakSwedish !== 'function' || typeof stopSpeech !== 'function') {
+  if (
+    typeof buildQuestionSpeechText !== 'function' ||
+    typeof buildAnswerFeedbackSpeechText !== 'function' ||
+    typeof speakSwedish !== 'function' ||
+    typeof stopSpeech !== 'function'
+  ) {
     return;
   }
 
@@ -15495,53 +15541,154 @@ function validateSpeechRuntimeParity() {
     fail(message);
   }
 
+  function accept(condition, message) {
+    if (condition) {
+      speechRuntimeCasesValidated += 1;
+    } else {
+      reject(message);
+    }
+  }
+
   resetSpeechEvents();
   speakSwedish('');
-  if (speechEvents.length === 0) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must ignore empty text');
-  }
+  accept(speechEvents.length === 0, 'speakSwedish must ignore empty text');
 
   resetSpeechEvents();
   speakSwedish('   ');
-  if (speechEvents.length === 0) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must ignore whitespace-only text');
-  }
+  accept(speechEvents.length === 0, 'speakSwedish must ignore whitespace-only text');
 
   resetSpeechEvents();
-  speakSwedish('Hej Sverige');
+  speakSwedish(null);
+  speakSwedish(undefined);
+  speakSwedish(123);
+  accept(speechEvents.length === 0, 'speakSwedish must ignore non-string text');
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 1.25 });
   const speakEvent = speechEvents[0];
-  if (
+  accept(
     speechEvents.length === 1 &&
-    speakEvent &&
-    speakEvent.type === 'speak' &&
-    speakEvent.text === 'Hej Sverige' &&
-    speakEvent.options &&
-    speakEvent.options.language === EXPECTED_SWEDISH_SPEECH_LANGUAGE
-  ) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject(
-      `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
-    );
-  }
+      speakEvent &&
+      speakEvent.type === 'speak' &&
+      speakEvent.text === 'Hej Sverige' &&
+      speakEvent.options &&
+      speakEvent.options.language === EXPECTED_SWEDISH_SPEECH_LANGUAGE &&
+      speakEvent.options.rate === 1.25,
+    `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
+  );
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 99 });
+  const clampedRateEvent = speechEvents[0];
+  accept(
+    speechEvents.length === 1 &&
+      clampedRateEvent &&
+      clampedRateEvent.options &&
+      clampedRateEvent.options.rate === 2,
+    'speakSwedish must clamp finite playback rates to the supported range',
+  );
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', {
+    rate: Infinity,
+    onDone: 'not-a-function',
+    onError: 'not-a-function',
+    onStopped: 'not-a-function',
+  });
+  const unsafeOptionEvent = speechEvents[0];
+  accept(
+    speechEvents.length === 1 &&
+      unsafeOptionEvent &&
+      unsafeOptionEvent.options &&
+      !Object.prototype.hasOwnProperty.call(unsafeOptionEvent.options, 'rate') &&
+      unsafeOptionEvent.options.onDone === undefined &&
+      unsafeOptionEvent.options.onError === undefined &&
+      unsafeOptionEvent.options.onStopped === undefined,
+    'speakSwedish must omit non-finite rates and non-function callbacks',
+  );
 
   resetSpeechEvents();
   stopSpeech();
   const stopEvent = speechEvents[0];
-  if (speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop') {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('stopSpeech must call the Expo Speech stop handler');
+  accept(
+    speechEvents.length === 1 && stopEvent && stopEvent.type === 'stop',
+    'stopSpeech must call the Expo Speech stop handler',
+  );
+
+  resetSpeechEvents();
+  const originalSpeak = speechMock.speak;
+  const originalWarn = console.warn;
+  let onErrorCalls = 0;
+  let onErrorMessage = '';
+  speechMock.speak = () => {
+    throw new Error('speech unavailable');
+  };
+  console.warn = () => {};
+  try {
+    speakSwedish('Hej Sverige', {
+      onError(error) {
+        onErrorCalls += 1;
+        onErrorMessage = error?.message || '';
+      },
+    });
+  } catch (error) {
+    reject(`speakSwedish must not throw when Speech.speak fails synchronously: ${error.message}`);
+  } finally {
+    speechMock.speak = originalSpeak;
+    console.warn = originalWarn;
   }
+  accept(
+    onErrorCalls === 1 && onErrorMessage === 'speech unavailable',
+    'speakSwedish must call onError once when Speech.speak throws synchronously',
+  );
+
+  let malformedQuestionSpeechText = '';
+  try {
+    malformedQuestionSpeechText = buildQuestionSpeechText({
+      questionSv: null,
+      options: [
+        null,
+        { id: 'a', textSv: null, textEn: null },
+        { id: 'b', textSv: 'Sverige', textEn: 'Sweden' },
+      ],
+    });
+  } catch (error) {
+    reject(`buildQuestionSpeechText must not throw for malformed question data: ${error.message}`);
+  }
+  accept(
+    malformedQuestionSpeechText.includes('Sverige') &&
+      !/\b(?:null|undefined)\b/i.test(malformedQuestionSpeechText),
+    'buildQuestionSpeechText must skip invalid prompt and option text',
+  );
+
+  let malformedFeedbackSpeechText = '';
+  try {
+    malformedFeedbackSpeechText = buildAnswerFeedbackSpeechText(
+      {
+        correctOptionId: 'a',
+        explanationSv: null,
+      },
+      'b',
+    );
+  } catch (error) {
+    reject(
+      `buildAnswerFeedbackSpeechText must not throw for malformed feedback data: ${error.message}`,
+    );
+  }
+  accept(
+    malformedFeedbackSpeechText.includes('Du valde: det valda svaret.') &&
+      !/\b(?:null|undefined)\b/i.test(malformedFeedbackSpeechText),
+    'buildAnswerFeedbackSpeechText must skip invalid explanation and option text',
+  );
 
   resetSpeechEvents();
 
   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
     speechRuntimeParityValidated = true;
+  } else if (runtimeParityIsValid) {
+    reject(
+      `speech runtime parity validated ${speechRuntimeCasesValidated} cases, expected ${EXPECTED_SPEECH_RUNTIME_CASES}`,
+    );
   }
 }
 
