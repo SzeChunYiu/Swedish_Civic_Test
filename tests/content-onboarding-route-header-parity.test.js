@@ -6,8 +6,8 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+function parseValidationSummary(...focusFlags) {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js', ...focusFlags], {
     cwd: repoRoot,
     encoding: 'utf8',
   });
@@ -17,7 +17,7 @@ function parseValidationSummary() {
 }
 
 test('onboarding route title stays accessible as a header', () => {
-  const summary = parseValidationSummary();
+  const summary = parseValidationSummary('--focus-onboarding-route-copy');
   const source = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
 
   assert.equal(summary.onboardingRouteHeadersValidated, 1);
@@ -61,7 +61,7 @@ test('onboarding route title stays accessible as a header', () => {
 });
 
 test('about-the-test marks the first-run guide as seen after mount', () => {
-  const summary = parseValidationSummary();
+  const summary = parseValidationSummary('--focus-about-the-test-route-copy');
   const source = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
   const seenEffectPattern =
     /useEffect\(\(\) => \{\s*if \(!hasSeenAboutTheTest\) \{\s*markAboutTheTestSeen\(\);\s*\}\s*\}, \[hasSeenAboutTheTest, markAboutTheTestSeen\]\);/;
@@ -80,6 +80,57 @@ test('about-the-test marks the first-run guide as seen after mount', () => {
   assert.match(source, seenEffectPattern);
   assert.doesNotMatch(source, /useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/);
   assert.doesNotMatch(source.replace(seenEffectPattern, ''), /markAboutTheTestSeen\(\);/);
+});
+
+test('first-run about modal suppresses onboarding without blocking study routes', () => {
+  const summary = parseValidationSummary('--focus-onboarding-route-copy');
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+    'utf8',
+  );
+  const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
+
+  assert.equal(summary.firstRunAboutModalSuppressedRoutesValidated, 5);
+  assert.equal(summary.firstRunAboutModalSuppressionParityValidated, true);
+  assert.match(source, /SUPPRESSED_PATH_PREFIXES/);
+  assert.match(source, /'\/onboarding'/);
+  assert.match(adsSource, /'\/onboarding'/);
+  assert.doesNotMatch(source, /'\/home'/);
+  assert.doesNotMatch(source, /'\/learn'/);
+  assert.doesNotMatch(source, /'\/practice'/);
+  assert.doesNotMatch(source, /'\/mistakes'/);
+  assert.doesNotMatch(source, /'\/profile'/);
+});
+
+test('first-run about modal suppression rejects dropping onboarding', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/onboarding/FirstRunAboutTheTestModal.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("\\n  '/onboarding',", '');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-onboarding-route-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /first-run about modal must suppress \/onboarding/,
+  );
 });
 
 test('first-run about modal guide link keeps natural Swedish accessibility copy', () => {
@@ -150,6 +201,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-about-the-test-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -184,6 +236,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-about-the-test-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -221,6 +274,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-onboarding-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -251,6 +305,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-onboarding-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -284,6 +339,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-onboarding-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -314,6 +370,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-onboarding-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],

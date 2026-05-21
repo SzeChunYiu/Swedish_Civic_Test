@@ -12,32 +12,41 @@ const confusingPaywallCopy =
 
 const copy = {
   sv: {
-    home: [/Hela frågebanken:\s*\d+\s*övningsfrågor i\s*\d+\s*kapitel/i, /Alla frågor är gratis/i],
+    home: [
+      /\d+\s*övningsfrågor i\s*\d+\s*kapitel/i,
+      /Ta bort annonser för\s*29\s*SEK\s*en gång/i,
+      /Ingen prenumeration/i,
+      /tidsatta övningsprov är alltid annonsfria/i,
+    ],
     onboarding: [
-      /Hela frågebanken är gratis/i,
-      /Ta bort annonser påverkar bara annonser, inte tillgången till frågor/i,
+      /Förbered dig lugnt för samhällskunskapsprovet/i,
+      /Öva med UHR-refererade frågor och förklaringar/i,
+      /Följ framsteg lokalt på din enhet utan konto/i,
     ],
     profile: [
-      /Hela frågebanken är gratis och annonser finansierar studieskärmar/i,
+      /Framsteg utan konto/i,
+      /Den kostnadsfria versionen visar annonser från AdMob/i,
       /Betala 29 SEK en gång för att ta bort annonser från studieskärmar/i,
-      /det låser inte upp frågor/i,
-      /Tidsatta övningsprov är redan annonsfria/i,
+      /tidsatta övningsprov i appen redan är annonsfria/i,
     ],
     profileBuy: /Köp Ta bort annonser för 29 SEK/i,
   },
   en: {
     home: [
-      /Full question bank stays free:\s*\d+\s*practice questions across\s*\d+\s*chapters/i,
-      /All questions stay free/i,
+      /\d+\s*practice questions across\s*\d+\s*chapters/i,
+      /Remove ads forever for\s*29\s*SEK,\s*one time/i,
+      /No subscription/i,
+      /exams stay ad-free/i,
     ],
     onboarding: [
-      /The full question bank stays free/i,
-      /Remove Ads only changes ads, not question access/i,
+      /Prepare calmly for the civic test/i,
+      /Practice with UHR-referenced questions and explanations/i,
+      /Track progress locally on your device without an account/i,
     ],
     profile: [
-      /The full question bank stays free and ads support study screens/i,
+      /Progress without an account/i,
+      /Free study keeps AdMob ads on/i,
       /Pay 29 SEK once to remove ads from study screens/i,
-      /it does not unlock questions/i,
       /Exams stay ad-free/i,
     ],
     profileBuy: /Buy Remove Ads for 29 SEK/i,
@@ -86,7 +95,7 @@ async function expectNoConfusingPaywallCopy(page: Page) {
 test.use({ viewport: { width: 390, height: 844 } });
 
 for (const language of ['sv', 'en'] as const) {
-  test(`full-bank-free promise is visible in ${language.toUpperCase()} acquisition surfaces`, async ({
+  test(`free-bank and onboarding value copy is visible in ${language.toUpperCase()} acquisition surfaces`, async ({
     page,
   }) => {
     const consoleErrors = collectConsoleErrors(page);
