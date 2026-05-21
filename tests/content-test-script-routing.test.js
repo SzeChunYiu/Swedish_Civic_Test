@@ -66,15 +66,18 @@ function readValidateContentSource() {
   return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
 }
 
-function extractFocusedValidationRegistry(source) {
-  const declaration = '\nconst FOCUSED_VALIDATION_REGISTRY = Object.freeze(';
-  const start = source.indexOf(declaration);
-  assert.notEqual(start, -1, 'validate-content needs a focused validation registry');
-  const arrayStart = source.indexOf('[', start);
-  const arrayEnd = source.indexOf('\n]);\n\nconst FOCUSED_VALIDATION_REGISTRY_BY_ID', arrayStart);
-  assert.notEqual(arrayStart, -1, 'focused validation registry must start with an array literal');
-  assert.notEqual(arrayEnd, -1, 'focused validation registry must end before the lookup map');
-  return Function(`return ${source.slice(arrayStart, arrayEnd + 2)};`)();
+function readFocusedValidationRegistryModule() {
+  const modulePath = path.join(repoRoot, 'scripts/validate-content-focus-registry.js');
+  delete require.cache[require.resolve(modulePath)];
+  return require(modulePath);
+}
+
+function readFocusedValidationRegistrySource() {
+  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content-focus-registry.js'), 'utf8');
+}
+
+function extractFocusedValidationRegistry() {
+  return readFocusedValidationRegistryModule().FOCUSED_VALIDATION_REGISTRY;
 }
 
 function focusedValidationBlock(source, id) {
@@ -465,11 +468,22 @@ test('CelebrationBurst focused content validation runs only its accessibility su
 
 test('validate-content focus registry owns every focused route and summary', () => {
   const source = readValidateContentSource();
-  const registry = extractFocusedValidationRegistry(source);
+  const registry = extractFocusedValidationRegistry();
+  const registrySource = readFocusedValidationRegistrySource();
   const ids = new Set();
   const flags = new Set();
 
   assert.ok(registry.length >= 30, 'registry should cover all focused validation modes');
+  assert.match(
+    source,
+    /require\(['"]\.\/validate-content-focus-registry['"]\)/,
+    'validate-content should import the shared focused registry module',
+  );
+  assert.doesNotMatch(
+    source,
+    /focusedValidationFlagsFromRegistrySource|readFileSync\(__filename/,
+    'validate-content must not parse its own source to discover focus flags',
+  );
   assert.doesNotMatch(
     source,
     /process\.argv\.includes\(['"]--focus-/,
@@ -505,8 +519,9 @@ test('validate-content focus registry owns every focused route and summary', () 
   );
   assert.deepEqual(routedIds, ids);
 
-  const flagsInSource = new Set(source.match(/--focus-[a-z0-9-]+/g) || []);
-  assert.deepEqual(flagsInSource, flags);
+  const flagsInRegistrySource = new Set(registrySource.match(/--focus-[a-z0-9-]+/g) || []);
+  assert.deepEqual(flagsInRegistrySource, flags);
+  assert.deepEqual(new Set(source.match(/--focus-[a-z0-9-]+/g) || []), new Set());
 });
 
 test('validate-content rejects unknown focused validator flags before full validation', () => {
@@ -518,6 +533,29 @@ test('validate-content rejects unknown focused validator flags before full valid
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
   assert.match(result.stderr, /--focus-answer-feedback-parity/);
+});
+
+test('validate-content rejects unknown focus flags before loading heavy modules', () => {
+  const script = `
+    const Module = require('node:module');
+    const originalLoad = Module._load;
+    Module._load = function(request, parent, isMain) {
+      if (request === 'typescript' || request === './export-site-question-bank') {
+        throw new Error('heavy module loaded: ' + request);
+      }
+      return originalLoad.apply(this, arguments);
+    };
+    process.argv = ['node', 'scripts/validate-content.js', '--focus-not-real'];
+    require('./scripts/validate-content.js');
+  `;
+  const result = spawnSync(process.execPath, ['-e', script], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
+  assert.doesNotMatch(result.stderr, /heavy module loaded/);
 });
 
 test('unsupported npm test selectors fail before running any suite', () => {
