@@ -13,6 +13,7 @@ import { ComplianceActionLink } from '../components/compliance/ComplianceActionL
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import {
+  LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
@@ -71,6 +72,8 @@ type SettingsCopy = {
   title: string;
 };
 
+const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / 1024 / 1024} MB`;
+
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
@@ -93,6 +96,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
+      if (code === 'input_too_large') {
+        return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Välj en mindre export och försök igen.`;
+      }
       if (code === 'invalid_json') return 'JSON kunde inte läsas.';
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
@@ -108,8 +114,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPurchasesNote:
       'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
     importReset: 'Återställ importfält',
-    importSectionSubtitle:
-      'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
+    importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format (högst ${localStudyDataImportMaxLabel}). Du får en sammanfattning innan något skrivs.`,
     importSuccess: 'Importen är klar.',
     importSummaryBookmarks: (count) => `${count} bokmärken`,
     importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
@@ -154,6 +159,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
+      if (code === 'input_too_large') {
+        return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Choose a smaller export and try again.`;
+      }
       if (code === 'invalid_json') return 'JSON could not be read.';
       if (code === 'invalid_schema')
         return 'The import has the wrong format or unknown top-level fields.';
@@ -170,8 +178,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPurchasesNote:
       'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
     importReset: 'Reset import field',
-    importSectionSubtitle:
-      'Paste a local study data export in JSON format. You will see a summary before anything is written.',
+    importSectionSubtitle: `Paste a local study data export in JSON format (under ${localStudyDataImportMaxLabel}). You will see a summary before anything is written.`,
     importSuccess: 'Import complete.',
     importSummaryBookmarks: (count) => `${count} bookmarks`,
     importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
@@ -470,6 +477,7 @@ export default function Screen() {
         <Text style={styles.disclaimerText}>{copy.importPurchasesNote}</Text>
         <TextInput
           accessibilityLabel={copy.importPasteLabel}
+          maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}
           multiline
           onChangeText={handleImportTextChange}
           placeholder={copy.importPastePlaceholder}

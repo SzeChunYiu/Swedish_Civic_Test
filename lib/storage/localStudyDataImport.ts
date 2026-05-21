@@ -20,9 +20,11 @@ import {
 } from './settingsStore';
 
 export const LOCAL_STUDY_DATA_IMPORT_VERSION = 1;
+export const LOCAL_STUDY_DATA_IMPORT_MAX_BYTES = 1024 * 1024;
 
 export type LocalStudyDataImportErrorCode =
   | 'empty_input'
+  | 'input_too_large'
   | 'invalid_json'
   | 'invalid_schema'
   | 'unsupported_version'
@@ -215,7 +217,34 @@ function hasImportableData(summary: LocalStudyDataImportSummary): boolean {
   );
 }
 
+function isWithinImportPayloadSizeLimit(value: string): boolean {
+  if (value.length > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES) return false;
+
+  let byteCount = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+
+    if (code <= 0x7f) {
+      byteCount += 1;
+    } else if (code <= 0x7ff) {
+      byteCount += 2;
+    } else if (code >= 0xd800 && code <= 0xdbff) {
+      const nextCode = value.charCodeAt(index + 1);
+      byteCount += nextCode >= 0xdc00 && nextCode <= 0xdfff ? 4 : 3;
+      if (nextCode >= 0xdc00 && nextCode <= 0xdfff) index += 1;
+    } else {
+      byteCount += 3;
+    }
+
+    if (byteCount > LOCAL_STUDY_DATA_IMPORT_MAX_BYTES) return false;
+  }
+
+  return true;
+}
+
 export function previewLocalStudyDataImport(rawText: string): LocalStudyDataImportResult {
+  if (!isWithinImportPayloadSizeLimit(rawText)) return { ok: false, code: 'input_too_large' };
+
   const trimmedText = rawText.trim();
   if (!trimmedText) return { ok: false, code: 'empty_input' };
 
