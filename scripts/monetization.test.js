@@ -2024,6 +2024,7 @@ test('pending remove-ads purchase does not grant adsDisabled until store confirm
 test('failed remove-ads receipt validation does not grant adsDisabled', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_RECORD_SCHEMA_VERSION,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
@@ -2031,6 +2032,19 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
     restoreRemoveAdsPurchase,
     setRemoveAdsEntitlement,
   } = loadTs('lib/monetization/purchases.ts');
+
+  function storedFakeRecord() {
+    return JSON.stringify({
+      grantedAt: '2026-05-20T12:00:00.000Z',
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'fake-token',
+      receiptValidatedAt: '2026-05-20T12:00:00.000Z',
+      receiptValidationStatus: 'valid',
+      schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+      source: 'purchase',
+      transactionId: 'fake-tx',
+    });
+  }
 
   const failedPurchaseStorage = createMemoryPurchaseStorage();
   const failedPurchase = await buyRemoveAds({
@@ -2041,6 +2055,17 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
   assert.equal(failedPurchase.status, 'pending');
   assert.equal(failedPurchase.entitlements.adsDisabled, false);
   assert.equal(await failedPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const failedStoredPurchaseStorage = createMemoryPurchaseStorage();
+  await failedStoredPurchaseStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedFakeRecord());
+  const failedStoredPurchase = await buyRemoveAds({
+    provider: createMockPurchaseProvider({ receiptValidationStatus: 'invalid' }),
+    storage: failedStoredPurchaseStorage,
+  });
+
+  assert.equal(failedStoredPurchase.status, 'pending');
+  assert.equal(failedStoredPurchase.entitlements.adsDisabled, false);
+  assert.equal(await failedStoredPurchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 
   const pendingPurchaseStorage = createMemoryPurchaseStorage();
   const pendingPurchase = await buyRemoveAds({
@@ -2109,6 +2134,17 @@ test('failed remove-ads receipt validation does not grant adsDisabled', async ()
   assert.equal(failedRestore.status, 'not_found');
   assert.equal(failedRestore.entitlements.adsDisabled, false);
   assert.equal(await failedRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const failedStoredRestoreStorage = createMemoryPurchaseStorage();
+  await failedStoredRestoreStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedFakeRecord());
+  const failedStoredRestore = await restoreRemoveAdsPurchase({
+    provider: createMockPurchaseProvider({ owned: true, receiptValidationStatus: 'invalid' }),
+    storage: failedStoredRestoreStorage,
+  });
+
+  assert.equal(failedStoredRestore.status, 'not_found');
+  assert.equal(failedStoredRestore.entitlements.adsDisabled, false);
+  assert.equal(await failedStoredRestoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 
   const directGrantStorage = createMemoryPurchaseStorage();
   const directGrant = await setRemoveAdsEntitlement(true, { storage: directGrantStorage });
