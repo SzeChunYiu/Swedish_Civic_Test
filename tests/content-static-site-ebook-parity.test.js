@@ -347,6 +347,7 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
   officialPracticalTestSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
 
   assert.match(englishHtml, /15 August 2026 in Stockholm/);
+  assert.match(englishHtml, /Registration opens in early June 2026/);
   assert.match(englishHtml, /Migrationsverket letter/);
   assert.match(englishHtml, /Seats are limited/);
   assert.match(englishHtml, /free of charge/);
@@ -355,6 +356,7 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
   assert.match(englishHtml, /Sources accessed 2026-05-19/);
 
   assert.match(swedishHtml, /15 augusti 2026 i Stockholm/);
+  assert.match(swedishHtml, /Anmälan öppnar i början av juni 2026/);
   assert.match(swedishHtml, /brev från Migrationsverket/);
   assert.match(swedishHtml, /Antalet platser är begränsat/);
   assert.match(swedishHtml, /kostnadsfritt/);
