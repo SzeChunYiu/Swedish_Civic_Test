@@ -1466,7 +1466,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -8059,13 +8059,17 @@ const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
-const expectedGeneratedPublishedQuestions =
-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
-    : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
 const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+const expectedGeneratedPublishedQuestions =
+  Array.isArray(sourceQuestions) &&
+  typeof derivePublishedQuestions === 'function' &&
+  typeof applyQuestionLocalizationPilot === 'function'
+    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map(
+        applyQuestionLocalizationPilot,
+      )
+    : [];
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
@@ -9725,6 +9729,24 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
         normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+    ],
+    [
+      normalizedHookSource.includes(
+        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
+      ) && normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),'),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+    ],
+    [
+      normalizedHookSource.includes(
+        "if (!runtime.__SMT_E2E__ || typeof runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean')",
+      ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      normalizedHookSource.includes(
+        'provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),',
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
     ],
     [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
