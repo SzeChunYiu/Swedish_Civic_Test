@@ -52,6 +52,11 @@ const topBarActionsCopy: Record<AppLanguage, TopBarActionsCopy> = {
 };
 
 const defaultIconSize = space[3];
+const keyboardActivationKeys = new Set(['Enter', ' ', 'Spacebar']);
+
+function isKeyboardActivationKey(key: string | undefined) {
+  return key ? keyboardActivationKeys.has(key) : false;
+}
 
 /**
  * Defaults: reads language and audio state from settings, renders token-sized
@@ -143,6 +148,12 @@ function TopBarActionLink({ accessibilityLabel, children, href }: TopBarActionLi
       setIsPressed(false);
     },
     onFocus: () => setIsFocused(true),
+    onKeyDown: (event: { key?: string }) => {
+      if (isKeyboardActivationKey(event.key)) setIsPressed(true);
+    },
+    onKeyUp: (event: { key?: string }) => {
+      if (isKeyboardActivationKey(event.key)) setIsPressed(false);
+    },
     onMouseDown: () => setIsPressed(true),
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => {

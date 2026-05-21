@@ -17,8 +17,17 @@ test('top bar route links keep web anchor touch targets and token feedback', () 
   assert.match(source, /<Link\s/);
   assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
   assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/);
   assert.match(source, /onPressIn=\{\(\) => setIsPressed\(true\)\}/);
   assert.match(source, /onPressOut=\{\(\) => setIsPressed\(false\)\}/);
+  assert.match(
+    source,
+    /onKeyDown: \(event: \{ key\?: string \}\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(true\)/,
+  );
+  assert.match(
+    source,
+    /onKeyUp: \(event: \{ key\?: string \}\) => \{[\s\S]*isKeyboardActivationKey\(event\.key\)[\s\S]*setIsPressed\(false\)/,
+  );
   assert.match(source, /onMouseDown: \(\) => setIsPressed\(true\)/);
   assert.match(source, /onMouseUp: \(\) => setIsPressed\(false\)/);
   assert.match(source, /onMouseEnter: \(\) => setIsHovered\(true\)/);

@@ -1,37 +1,12 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+
 const topBarLinks = [
   { href: /\/search$/, label: 'Sök' },
   { href: /\/mistakes$/, label: 'Öppna sparade frågor' },
   { href: /\/settings$/, label: 'Öppna inställningar' },
 ] as const;
-
-async function closeBlockingModals(page: Page) {
-  const closeLaunchSponsorAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-
-  if (
-    await closeLaunchSponsorAd
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await closeLaunchSponsorAd.first().click();
-  }
-
-  const skipGuide = page.getByRole('button', { name: /Hoppa över guiden|Skip guide/ });
-  if (
-    await skipGuide
-      .first()
-      .isVisible()
-      .catch(() => false)
-  ) {
-    await skipGuide.first().click();
-  }
-
-  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
-}
 
 async function getBox(locator: Locator, label: string) {
   const box = await locator.boundingBox();
@@ -59,8 +34,9 @@ test('top bar route links keep 44px web targets and token feedback', async ({ pa
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  await markAboutTheTestSeen(page);
   await page.goto('/home', { waitUntil: 'networkidle' });
-  await closeBlockingModals(page);
+  await dismissBlockingModals(page);
 
   for (const { href, label } of topBarLinks) {
     const link = page.getByRole('link', { name: label }).first();
@@ -74,6 +50,8 @@ test('top bar route links keep 44px web targets and token feedback', async ({ pa
     const style = await getComputedInteractionStyle(link);
     expect(style.display, `${label} anchor should size as a flex target`).toBe('flex');
   }
+
+  await dismissBlockingModals(page);
 
   const searchLink = page.getByRole('link', { name: 'Sök' }).first();
   const idleStyle = await getComputedInteractionStyle(searchLink);
