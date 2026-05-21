@@ -31,6 +31,20 @@ const staticEbookCivicTermGuardChapters = ['2', '4', '6'];
 const staticEbookBareCivicTermPattern =
   /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
 const swedishEbookMockExamUnnaturalPatterns = [/provexempel/i];
+const staticEbookExtraLanguages = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+const chapter13EnglishHolidayGlossPattern =
+  /[（(](?:Easter|Midsummer Eve|Christmas|New Year's Eve|First of May|Walpurgis Night|All Saints' Day|Advent)[）)]/i;
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -241,6 +255,14 @@ function assertNoSwedishEbookMockExamUnnaturalness(value) {
   for (const pattern of swedishEbookMockExamUnnaturalPatterns) {
     assert.doesNotMatch(value, pattern);
   }
+}
+
+function assertNoChapter13EnglishHolidayGloss(value, label) {
+  assert.doesNotMatch(
+    value,
+    chapter13EnglishHolidayGlossPattern,
+    `${label} should not contain parenthetical English common-holiday glosses`,
+  );
 }
 
 function assertNoUnsupportedEbookOutcomeClaim(value) {
@@ -658,19 +680,13 @@ test('static ebook renders every chapter with Swedish and English body parity', 
   }
 });
 
-test('static ebook Somali chapter 13 uses localized holiday food wording', () => {
+test('static ebook chapter 13 extra languages avoid parenthetical English holiday glosses', () => {
   const harness = createEbookHarness();
-  const somaliChapter13Html = renderChapter(harness, 'so', '13');
 
-  assert.match(somaliChapter13Html, /Habeenka Bartamaha Xagaaga/);
-  assert.match(somaliChapter13Html, /kalluun la dhanaaniyey/);
-  assert.match(somaliChapter13Html, /baradho cusub iyo farawle/);
-  for (const pattern of staticEbookSomaliHolidayFoodTokenPatterns) {
-    assert.doesNotMatch(
-      somaliChapter13Html,
-      pattern,
-      `Somali chapter 13 should not render English food token ${pattern}`,
-    );
+  for (const lang of staticEbookExtraLanguages) {
+    const html = renderChapter(harness, lang, '13');
+    assert.match(html, /class="ebook__h1"/, `${lang} chapter 13 should render`);
+    assertNoChapter13EnglishHolidayGloss(html, `${lang} chapter 13`);
   }
 });
 

@@ -3621,18 +3621,18 @@
           <p>瑞典的国庆日是 6 月 6 日。它与 Gustav Vasa（古斯塔夫·瓦萨）于 1523 年当选国王，以及 1809 年《政府组织法》相关联。如今人们升旗、发表演讲，许多市镇还会在仪式上欢迎新的瑞典公民。</p>
           <h2>春季与夏季</h2>
           <ul>
-            <li><b>复活节（Easter）</b>在 3 月或 4 月，源于基督教，不过许多人把它当作家庭与春天的节日来庆祝。</li>
-            <li><b>沃尔普吉斯之夜（Walpurgis Night）</b>，4 月 30 日，通常意味着点燃篝火、唱歌迎接春天。</li>
-            <li><b>五一（First of May）</b>是国际劳动节，以游行示威和政治演讲为标志。</li>
-            <li><b>仲夏夜（Midsummer Eve）</b>总是在 6 月 19 日至 25 日之间的一个星期五，人们户外聚会、戴花环、立仲夏柱，吃鲱鱼、新土豆和草莓。</li>
+            <li><b>复活节</b>在 3 月或 4 月，源于基督教，不过许多人把它当作家庭与春天的节日来庆祝。</li>
+            <li><b>瓦尔普吉斯之夜</b>，4 月 30 日，通常意味着点燃篝火、唱歌迎接春天。</li>
+            <li><b>五一劳动节</b>是国际劳动节，以游行示威和政治演讲为标志。</li>
+            <li><b>仲夏夜</b>总是在 6 月 19 日至 25 日之间的一个星期五，人们户外聚会、戴花环、立仲夏柱，吃鲱鱼、新土豆和草莓。</li>
           </ul>
           <h2>秋季与冬季</h2>
           <ul>
-            <li><b>万圣节（All Saints' Day）</b>是许多人在墓前点蜡烛、缅怀已逝亲友的日子。</li>
-            <li><b>将临期（Advent）</b>是圣诞日之前的四个星期日。许多家庭会使用将临期蜡烛、星星或日历。</li>
+            <li><b>诸圣节</b>是许多人在墓前点蜡烛、缅怀已逝亲友的日子。</li>
+            <li><b>将临期</b>是圣诞日之前的四个星期日。许多家庭会使用将临期蜡烛、星星或日历。</li>
             <li><b>露西亚节（Lucia）</b>，12 月 13 日，主题是一年中最黑暗时节里的光明，常有游行、蜡烛和歌唱。</li>
-            <li><b>圣诞节（Christmas）</b>源于基督教，也是一个重要的家庭节日。在瑞典，主要的庆祝通常在 12 月 24 日的平安夜。</li>
-            <li><b>除夕（New Year's Eve）</b>，12 月 31 日，人们通常以晚宴、聚会和午夜的烟花来庆祝。</li>
+            <li><b>圣诞节</b>源于基督教，也是一个重要的家庭节日。在瑞典，主要的庆祝通常在 12 月 24 日的平安夜。</li>
+            <li><b>除夕</b>，12 月 31 日，人们通常以晚宴、聚会和午夜的烟花来庆祝。</li>
           </ul>
           <h2>新的传统</h2>
           <p>移民为瑞典的公共生活增添了更多可见的传统。Eid al-Fitr（开斋节）、Nouruz、Newroz、Diwali（排灯节）以及其他庆典，可能出现在学校、职场、社区和城市活动中。其中重要的规律很简单：传统可以迁移，也可以适应。</p>
@@ -3645,18 +3645,18 @@
           <p>瑞典的國慶日是 6 月 6 日。它與 Gustav Vasa（古斯塔夫·瓦薩）於 1523 年當選國王，以及 1809 年《政府組織法》相關聯。如今人們升旗、發表演講，許多市鎮還會在儀式上歡迎新的瑞典公民。</p>
           <h2>春季與夏季</h2>
           <ul>
-            <li><b>復活節（Easter）</b>在 3 月或 4 月，源於基督教，不過許多人把它當作家庭與春天的節日來慶祝。</li>
-            <li><b>沃爾普吉斯之夜（Walpurgis Night）</b>，4 月 30 日，通常意味著點燃篝火、唱歌迎接春天。</li>
-            <li><b>五一（First of May）</b>是國際勞動節，以遊行示威和政治演講為標誌。</li>
-            <li><b>仲夏夜（Midsummer Eve）</b>總是在 6 月 19 日至 25 日之間的一個星期五，人們戶外聚會、戴花環、立仲夏柱，吃鯡魚、新馬鈴薯和草莓。</li>
+            <li><b>復活節</b>在 3 月或 4 月，源於基督教，不過許多人把它當作家庭與春天的節日來慶祝。</li>
+            <li><b>瓦爾普吉斯之夜</b>，4 月 30 日，通常意味著點燃篝火、唱歌迎接春天。</li>
+            <li><b>五一勞動節</b>是國際勞動節，以遊行示威和政治演講為標誌。</li>
+            <li><b>仲夏夜</b>總是在 6 月 19 日至 25 日之間的一個星期五，人們戶外聚會、戴花環、立仲夏柱，吃鯡魚、新馬鈴薯和草莓。</li>
           </ul>
           <h2>秋季與冬季</h2>
           <ul>
-            <li><b>萬聖節（All Saints' Day）</b>是許多人在墓前點蠟燭、緬懷已逝親友的日子。</li>
-            <li><b>將臨期（Advent）</b>是聖誕日之前的四個星期日。許多家庭會使用將臨期蠟燭、星星或日曆。</li>
+            <li><b>諸聖節</b>是許多人在墓前點蠟燭、緬懷已逝親友的日子。</li>
+            <li><b>將臨期</b>是聖誕日之前的四個星期日。許多家庭會使用將臨期蠟燭、星星或日曆。</li>
             <li><b>露西亞節（Lucia）</b>，12 月 13 日，主題是一年中最黑暗時節裡的光明，常有遊行、蠟燭和歌唱。</li>
-            <li><b>聖誕節（Christmas）</b>源於基督教，也是一個重要的家庭節日。在瑞典，主要的慶祝通常在 12 月 24 日的平安夜。</li>
-            <li><b>除夕（New Year's Eve）</b>，12 月 31 日，人們通常以晚宴、聚會和午夜的煙火來慶祝。</li>
+            <li><b>聖誕節</b>源於基督教，也是一個重要的家庭節日。在瑞典，主要的慶祝通常在 12 月 24 日的平安夜。</li>
+            <li><b>除夕</b>，12 月 31 日，人們通常以晚宴、聚會和午夜的煙火來慶祝。</li>
           </ul>
           <h2>新的傳統</h2>
           <p>移民為瑞典的公共生活增添了更多可見的傳統。Eid al-Fitr（開齋節）、Nouruz、Newroz、Diwali（排燈節）以及其他慶典，可能出現在學校、職場、社區和城市活動中。其中重要的規律很簡單：傳統可以遷移，也可以適應。</p>
@@ -3669,18 +3669,18 @@
           <p>اليوم الوطني للسويد هو 6 يونيو. وهو مرتبط بانتخاب Gustav Vasa ملكًا عام 1523 وبصك الحكم لعام 1809. واليوم تُرفع الأعلام وتُلقى الخطب، وترحّب كثير من البلديات بالمواطنين السويديين الجدد في مراسم.</p>
           <h2>الربيع والصيف</h2>
           <ul>
-            <li><b>عيد الفصح (Easter)</b> يقع في مارس أو أبريل وله جذور مسيحية، وإن كان كثير من الناس يحتفلون به كعيد عائلي وربيعي.</li>
-            <li><b>ليلة فالبورغ (Walpurgis Night)</b>، 30 أبريل، تعني غالبًا نيرانًا وأغانيَ ترحيبًا بالربيع.</li>
-            <li><b>الأول من مايو (First of May)</b> هو اليوم العالمي للعمّال، يُحتفى به بالمظاهرات والخطب السياسية.</li>
-            <li><b>ليلة منتصف الصيف (Midsummer Eve)</b> تكون دائمًا يوم جمعة بين 19 و25 يونيو، مع تجمّعات في الهواء الطلق، وأكاليل الزهور، وعمود منتصف الصيف، والرنجة، والبطاطس الجديدة، والفراولة.</li>
+            <li><b>عيد الفصح</b> يقع في مارس أو أبريل وله جذور مسيحية، وإن كان كثير من الناس يحتفلون به كعيد عائلي وربيعي.</li>
+            <li><b>ليلة فالبورغ</b>، 30 أبريل، تعني غالبًا نيرانًا وأغانيَ ترحيبًا بالربيع.</li>
+            <li><b>الأول من مايو</b> هو اليوم العالمي للعمّال، يُحتفى به بالمظاهرات والخطب السياسية.</li>
+            <li><b>ليلة منتصف الصيف</b> تكون دائمًا يوم جمعة بين 19 و25 يونيو، مع تجمّعات في الهواء الطلق، وأكاليل الزهور، وعمود منتصف الصيف، والرنجة، والبطاطس الجديدة، والفراولة.</li>
           </ul>
           <h2>الخريف والشتاء</h2>
           <ul>
-            <li><b>عيد جميع القدّيسين (All Saints' Day)</b> هو حين يُشعل كثير من الناس الشموع عند القبور لتذكّر الأقارب والأصدقاء الذين رحلوا.</li>
-            <li><b>زمن المجيء (Advent)</b> هو آحاد الأربعة السابقة ليوم عيد الميلاد. تستخدم بيوت كثيرة شموع المجيء، أو النجوم، أو الأناجيل/التقاويم.</li>
+            <li><b>عيد جميع القدّيسين</b> هو حين يُشعل كثير من الناس الشموع عند القبور لتذكّر الأقارب والأصدقاء الذين رحلوا.</li>
+            <li><b>زمن المجيء</b> هو آحاد الأربعة السابقة ليوم عيد الميلاد. تستخدم بيوت كثيرة شموع المجيء، أو النجوم، أو التقويمات.</li>
             <li><b>لوسيا (Lucia)</b>، 13 ديسمبر، تدور حول النور في أشدّ أوقات السنة ظلامًا، وغالبًا بمواكب وشموع وغناء.</li>
-            <li><b>عيد الميلاد (Christmas)</b> له جذور مسيحية، وهو أيضًا عيد عائلي كبير. وفي السويد يكون الاحتفال الرئيسي عادةً ليلة عيد الميلاد، 24 ديسمبر.</li>
-            <li><b>ليلة رأس السنة (New Year's Eve)</b>، 31 ديسمبر، يُحتفل بها عادةً بالعشاءات والحفلات والألعاب النارية عند منتصف الليل.</li>
+            <li><b>عيد الميلاد</b> له جذور مسيحية، وهو أيضًا عيد عائلي كبير. وفي السويد يكون الاحتفال الرئيسي عادةً ليلة عيد الميلاد، 24 ديسمبر.</li>
+            <li><b>ليلة رأس السنة</b>، 31 ديسمبر، يُحتفل بها عادةً بالعشاءات والحفلات والألعاب النارية عند منتصف الليل.</li>
           </ul>
           <h2>تقاليد جديدة</h2>
           <p>أضافت الهجرة تقاليد أكثر ظهورًا إلى الحياة العامة في السويد. فقد تظهر احتفالات عيد الفطر (Eid al-Fitr) ونوروز (Nouruz) ونوروز الكردي (Newroz) وديوالي (Diwali) وغيرها في المدارس وأماكن العمل والأحياء وفعاليات المدن. والنمط المهمّ بسيط: التقاليد يمكن أن تنتقل وتتكيّف.</p>
@@ -3693,18 +3693,18 @@
           <p>ڕۆژی نیشتمانیی سوید 6ی ژوئنە. پەیوەستە بە هەڵبژاردنی Gustav Vasa وەک پاشا لە ساڵی 1523 و بەڵگەنامەی فەرمانڕەواییی ساڵی 1809. ئەمڕۆ ئاڵاکان بەرز دەکرێنەوە، وتارەکان دەخوێنرێنەوە، و زۆر شارەوانی لە ڕێوڕەسمدا بەخێرهاتنی هاووڵاتییە نوێیە سویدییەکان دەکەن.</p>
           <h2>بەهار و هاوین</h2>
           <ul>
-            <li><b>جەژنی هەستانەوە (Easter)</b> لە مارس یان ئاپریلدا دێت و ڕەگی مەسیحیی هەیە، هەرچەندە زۆر کەس وەک جەژنێکی خێزانی و بەهاری دەیگێڕن.</li>
-            <li><b>شەوی ڤالبۆرگ (Walpurgis Night)</b>، 30ی ئاپریل، زۆرجار مانای ئاگری گەورە و گۆرانییە بۆ بەخێرهاتنی بەهار.</li>
-            <li><b>یەکی مایس (First of May)</b> ڕۆژی نێودەوڵەتیی کرێکارانە، بە خۆپیشاندان و وتاری سیاسی نیشانە دەکرێت.</li>
-            <li><b>شەوی ناوەڕاستی هاوین (Midsummer Eve)</b> هەمیشە ڕۆژی هەینییەکە لەنێوان 19 و 25ی ژوئندا، لەگەڵ کۆبوونەوەی دەرەوە، تاجی گوڵ، کۆڵەکەی ناوەڕاستی هاوین، ماسیی هێرینگ، پەتاتەی نوێ و فڕاولە.</li>
+            <li><b>جەژنی هەستانەوە</b> لە مارس یان ئاپریلدا دێت و ڕەگی مەسیحیی هەیە، هەرچەندە زۆر کەس وەک جەژنێکی خێزانی و بەهاری دەیگێڕن.</li>
+            <li><b>شەوی ڤالبۆرگ</b>، 30ی ئاپریل، زۆرجار مانای ئاگری گەورە و گۆرانییە بۆ بەخێرهاتنی بەهار.</li>
+            <li><b>یەکی مایس</b> ڕۆژی نێودەوڵەتیی کرێکارانە، بە خۆپیشاندان و وتاری سیاسی نیشانە دەکرێت.</li>
+            <li><b>شەوی ناوەڕاستی هاوین</b> هەمیشە ڕۆژی هەینییەکە لەنێوان 19 و 25ی ژوئندا، لەگەڵ کۆبوونەوەی دەرەوە، تاجی گوڵ، کۆڵەکەی ناوەڕاستی هاوین، ماسیی هێرینگ، پەتاتەی نوێ و فڕاولە.</li>
           </ul>
           <h2>پاییز و زستان</h2>
           <ul>
-            <li><b>ڕۆژی هەموو پیرۆزان (All Saints' Day)</b> ئەو ڕۆژەیە کە زۆر کەس مۆم لەسەر گۆڕەکان دادەگیرسێنن بۆ بیرکردنەوەی ئەو خزم و دۆستانەی کۆچی دوایییان کردووە.</li>
-            <li><b>ئادڤێنت (Advent)</b> چوار ڕۆژی یەکشەممەی پێش ڕۆژی کریسمسە. زۆر ماڵ مۆمی ئادڤێنت، ئەستێرە، یان ساڵنامە بەکاردەهێنن.</li>
+            <li><b>ڕۆژی هەموو پیرۆزان</b> ئەو ڕۆژەیە کە زۆر کەس مۆم لەسەر گۆڕەکان دادەگیرسێنن بۆ بیرکردنەوەی ئەو خزم و دۆستانەی کۆچی دوایییان کردووە.</li>
+            <li><b>ئادڤێنت</b> چوار ڕۆژی یەکشەممەی پێش ڕۆژی کریسمسە. زۆر ماڵ مۆمی ئادڤێنت، ئەستێرە، یان ساڵنامە بەکاردەهێنن.</li>
             <li><b>لووسیا (Lucia)</b>، 13ی دیسەمبەر، دەربارەی ڕووناکییە لە تاریکترین بەشی ساڵدا، زۆرجار بە ڕێپێوان، مۆم و گۆرانییەوە.</li>
-            <li><b>کریسمس (Christmas)</b> ڕەگی مەسیحیی هەیە و هەروەها جەژنێکی گەورەی خێزانییە. لە سویددا ئاهەنگی سەرەکی زۆرتر شەوی کریسمسە، 24ی دیسەمبەر.</li>
-            <li><b>شەوی ساڵی نوێ (New Year's Eve)</b>، 31ی دیسەمبەر، بەگشتی بە نانی ئێوارە، ئاهەنگ و ئاگری ساختە لە نیوەشەودا دەگێڕدرێت.</li>
+            <li><b>کریسمس</b> ڕەگی مەسیحیی هەیە و هەروەها جەژنێکی گەورەی خێزانییە. لە سویددا ئاهەنگی سەرەکی زۆرتر شەوی کریسمسە، 24ی دیسەمبەر.</li>
+            <li><b>شەوی ساڵی نوێ</b>، 31ی دیسەمبەر، بەگشتی بە نانی ئێوارە، ئاهەنگ و ئاگری ساختە لە نیوەشەودا دەگێڕدرێت.</li>
           </ul>
           <h2>نەریتە نوێیەکان</h2>
           <p>کۆچ نەریتی زیاتری بەرچاوی بۆ ژیانی گشتیی سوید زیادکردووە. جەژنی Eid al-Fitr، Nouruz، Newroz، Diwali و ئاهەنگی تر لەوانەیە لە قوتابخانە، شوێنی کار، گەڕەک و چالاکییەکانی شاردا دەربکەون. ئەو شێوازە گرنگە سادەیە: نەریتەکان دەتوانن بگوازرێنەوە و خۆیان بگونجێنن.</p>
@@ -3717,18 +3717,18 @@
           <p>روز ملی سوئد 6 ژوئن است. این روز به انتخاب Gustav Vasa به پادشاهی در سال 1523 و به سند حکومت سال 1809 پیوند دارد. امروزه پرچم‌ها برافراشته می‌شوند، سخنرانی‌ها برگزار می‌شود، و بسیاری از کمون‌ها در آیین‌هایی به شهروندان تازهٔ سوئدی خوش‌آمد می‌گویند.</p>
           <h2>بهار و تابستان</h2>
           <ul>
-            <li><b>عید پاک (Easter)</b> در مارس یا آوریل می‌افتد و ریشهٔ مسیحی دارد، هرچند بسیاری آن را همچون جشنی خانوادگی و بهاری می‌گیرند.</li>
-            <li><b>شب والپورگیس (Walpurgis Night)</b>، 30 آوریل، اغلب به معنای آتش‌افروزی و ترانه‌هایی برای خوش‌آمدگویی به بهار است.</li>
-            <li><b>اول مه (First of May)</b> روز جهانی کارگر است که با راهپیمایی‌ها و سخنرانی‌های سیاسی برگزار می‌شود.</li>
-            <li><b>شب میانهٔ تابستان (Midsummer Eve)</b> همیشه یک جمعه میان 19 و 25 ژوئن است، با گردهمایی‌های فضای باز، تاج‌های گل، ستون میانهٔ تابستان، شاه‌ماهی، سیب‌زمینیِ نوبر و توت‌فرنگی.</li>
+            <li><b>عید پاک</b> در مارس یا آوریل می‌افتد و ریشهٔ مسیحی دارد، هرچند بسیاری آن را همچون جشنی خانوادگی و بهاری می‌گیرند.</li>
+            <li><b>شب والپورگیس</b>، 30 آوریل، اغلب به معنای آتش‌افروزی و ترانه‌هایی برای خوش‌آمدگویی به بهار است.</li>
+            <li><b>اول مه</b> روز جهانی کارگر است که با راهپیمایی‌ها و سخنرانی‌های سیاسی برگزار می‌شود.</li>
+            <li><b>شب میانهٔ تابستان</b> همیشه یک جمعه میان 19 و 25 ژوئن است، با گردهمایی‌های فضای باز، تاج‌های گل، ستون میانهٔ تابستان، شاه‌ماهی، سیب‌زمینیِ نوبر و توت‌فرنگی.</li>
           </ul>
           <h2>پاییز و زمستان</h2>
           <ul>
-            <li><b>روز همهٔ مقدسان (All Saints' Day)</b> روزی است که بسیاری بر سر گورها شمع روشن می‌کنند تا یاد خویشان و دوستانِ درگذشته را گرامی بدارند.</li>
-            <li><b>آدونت (Advent)</b> چهار یکشنبهٔ پیش از روز کریسمس است. بسیاری از خانه‌ها از شمع‌های آدونت، ستاره‌ها یا تقویم‌ها استفاده می‌کنند.</li>
+            <li><b>روز همهٔ مقدسان</b> روزی است که بسیاری بر سر گورها شمع روشن می‌کنند تا یاد خویشان و دوستانِ درگذشته را گرامی بدارند.</li>
+            <li><b>آدونت</b> چهار یکشنبهٔ پیش از روز کریسمس است. بسیاری از خانه‌ها از شمع‌های آدونت، ستاره‌ها یا تقویم‌ها استفاده می‌کنند.</li>
             <li><b>لوسیا (Lucia)</b>، 13 دسامبر، دربارهٔ نور در تاریک‌ترین بخش سال است، اغلب با دسته‌های راهپیمایی، شمع و آواز.</li>
-            <li><b>کریسمس (Christmas)</b> ریشهٔ مسیحی دارد و جشنی خانوادگیِ مهم نیز هست. در سوئد جشن اصلی معمولاً شب کریسمس، 24 دسامبر است.</li>
-            <li><b>شب سال نو (New Year's Eve)</b>، 31 دسامبر، معمولاً با شام، مهمانی و آتش‌بازی در نیمه‌شب جشن گرفته می‌شود.</li>
+            <li><b>کریسمس</b> ریشهٔ مسیحی دارد و جشنی خانوادگیِ مهم نیز هست. در سوئد جشن اصلی معمولاً شب کریسمس، 24 دسامبر است.</li>
+            <li><b>شب سال نو</b>، 31 دسامبر، معمولاً با شام، مهمانی و آتش‌بازی در نیمه‌شب جشن گرفته می‌شود.</li>
           </ul>
           <h2>سنت‌های تازه</h2>
           <p>مهاجرت سنت‌های آشکارتری به زندگی عمومی سوئد افزوده است. عید فطر (Eid al-Fitr)، نوروز (Nouruz)، نوروز کردی (Newroz)، دیوالی (Diwali) و جشن‌های دیگر ممکن است در مدارس، محل‌های کار، محله‌ها و رویدادهای شهری نمایان شوند. الگوی مهم ساده است: سنت‌ها می‌توانند سفر کنند و خود را وفق دهند.</p>
@@ -3741,18 +3741,18 @@
           <p>Szwedzkie święto narodowe przypada 6 czerwca. Wiąże się z wyborem Gustava Vasy na króla w 1523 oraz z Aktem o formie rządu z 1809. Dziś wciąga się flagi, wygłasza przemówienia, a wiele gmin wita podczas ceremonii nowych obywateli Szwecji.</p>
           <h2>Wiosna i lato</h2>
           <ul>
-            <li><b>Wielkanoc (Easter)</b> wypada w marcu lub kwietniu i ma chrześcijańskie korzenie, choć wielu ludzi obchodzi ją jako święto rodzinne i wiosenne.</li>
-            <li><b>Noc Walpurgi (Walpurgis Night)</b>, 30 kwietnia, często oznacza ogniska i pieśni witające wiosnę.</li>
-            <li><b>Pierwszy maja (First of May)</b> to Międzynarodowy Dzień Pracy, obchodzony manifestacjami i przemówieniami politycznymi.</li>
-            <li><b>Wigilia nocy świętojańskiej (Midsummer Eve)</b> to zawsze piątek między 19 a 25 czerwca, z plenerowymi spotkaniami, wiankami z kwiatów, słupem świętojańskim, śledziem, młodymi ziemniakami i truskawkami.</li>
+            <li><b>Wielkanoc</b> wypada w marcu lub kwietniu i ma chrześcijańskie korzenie, choć wielu ludzi obchodzi ją jako święto rodzinne i wiosenne.</li>
+            <li><b>Noc Walpurgi</b>, 30 kwietnia, często oznacza ogniska i pieśni witające wiosnę.</li>
+            <li><b>1 maja</b> to Międzynarodowy Dzień Pracy, obchodzony manifestacjami i przemówieniami politycznymi.</li>
+            <li><b>Wigilia nocy świętojańskiej</b> to zawsze piątek między 19 a 25 czerwca, z plenerowymi spotkaniami, wiankami z kwiatów, słupem świętojańskim, śledziem, młodymi ziemniakami i truskawkami.</li>
           </ul>
           <h2>Jesień i zima</h2>
           <ul>
-            <li><b>Dzień Wszystkich Świętych (All Saints' Day)</b> to dzień, w którym wielu ludzi zapala świece na grobach, by wspomnieć zmarłych krewnych i przyjaciół.</li>
-            <li><b>Adwent (Advent)</b> to cztery niedziele przed Bożym Narodzeniem. Wiele domów używa świec adwentowych, gwiazd lub kalendarzy.</li>
+            <li><b>Dzień Wszystkich Świętych</b> to dzień, w którym wielu ludzi zapala świece na grobach, by wspomnieć zmarłych krewnych i przyjaciół.</li>
+            <li><b>Adwent</b> to cztery niedziele przed Bożym Narodzeniem. Wiele domów używa świec adwentowych, gwiazd lub kalendarzy.</li>
             <li><b>Lucia (Lucia)</b>, 13 grudnia, dotyczy światła w najciemniejszej porze roku, często z procesjami, świecami i śpiewem.</li>
-            <li><b>Boże Narodzenie (Christmas)</b> ma chrześcijańskie korzenie i jest też ważnym świętem rodzinnym. W Szwecji główne obchody przypadają zwykle na Wigilię, 24 grudnia.</li>
-            <li><b>Sylwester (New Year's Eve)</b>, 31 grudnia, świętuje się zwykle kolacjami, przyjęciami i fajerwerkami o północy.</li>
+            <li><b>Boże Narodzenie</b> ma chrześcijańskie korzenie i jest też ważnym świętem rodzinnym. W Szwecji główne obchody przypadają zwykle na Wigilię, 24 grudnia.</li>
+            <li><b>Sylwester</b>, 31 grudnia, świętuje się zwykle kolacjami, przyjęciami i fajerwerkami o północy.</li>
           </ul>
           <h2>Nowe tradycje</h2>
           <p>Migracja dodała do szwedzkiego życia publicznego więcej widocznych tradycji. Eid al-Fitr, Nouruz, Newroz, Diwali i inne uroczystości mogą pojawiać się w szkołach, miejscach pracy, dzielnicach i wydarzeniach miejskich. Ważny wzorzec jest prosty: tradycje mogą podróżować i się dostosowywać.</p>
@@ -3765,18 +3765,18 @@
           <p>Maalinta qaranka Iswiidhan waa 6 Juun. Waxay la xidhiidhaa doorashada Gustav Vasa oo boqor lagu doortay 1523 iyo Qoraalka Dawladnimada ee 1809. Maanta calammada waa la taagaa, khudbado waa la jeediyaa, degmooyin badanna waxay xafladaha ku soo dhoweeyaan muwaadiniinta cusub ee Iswiidhishka ah.</p>
           <h2>Gu' iyo xagaa</h2>
           <ul>
-            <li><b>Iidda Faasiga (Easter)</b> waxay ku dhacdaa Maarso ama Abriil waxayna leedahay xididdo Masiixi ah, inkastoo dad badani u xuso sidii fasax qoys iyo gu'.</li>
-            <li><b>Habeenka Walpurgis (Walpurgis Night)</b>, 30 Abriil, badanaa wuxuu macnaheedu yahay dab-shidan iyo heeso lagu soo dhoweynayo gu'ga.</li>
-            <li><b>Kowda Maajo (First of May)</b> waa Maalinta Caalamiga ah ee Shaqaalaha, oo lagu calaamadiyo bannaanbaxyo iyo khudbado siyaasadeed.</li>
-            <li><b>Habeenka Bartamaha Xagaaga (Midsummer Eve)</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluun la dhanaaniyey, baradho cusub iyo farawle.</li>
+            <li><b>Iidda Faasiga</b> waxay ku dhacdaa Maarso ama Abriil waxayna leedahay xididdo Masiixi ah, inkastoo dad badani u xuso sidii fasax qoys iyo gu'.</li>
+            <li><b>Habeenka Walpurgis</b>, 30 Abriil, badanaa wuxuu macnaheedu yahay dab-shidan iyo heeso lagu soo dhoweynayo gu'ga.</li>
+            <li><b>Kowda Maajo</b> waa Maalinta Caalamiga ah ee Shaqaalaha, oo lagu calaamadiyo bannaanbaxyo iyo khudbado siyaasadeed.</li>
+            <li><b>Habeenka Bartamaha Xagaaga</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluunka herring, baradho cusub iyo farawle.</li>
           </ul>
           <h2>Dayr iyo jiilaal</h2>
           <ul>
-            <li><b>Maalinta Quduusiinta oo dhan (All Saints' Day)</b> waa marka dad badani shumacyo ku shidaan qabuuraha si ay u xusuustaan qaraabo iyo saaxiibbo dhintay.</li>
-            <li><b>Advent (Advent)</b> waa afarta Axad ee ka horreeya Maalinta Kirismaska. Guryo badan waxay isticmaalaan shumacyada Advent, xiddigaha, ama jadwallada.</li>
+            <li><b>Maalinta Quduusiinta oo dhan</b> waa marka dad badani shumacyo ku shidaan qabuuraha si ay u xusuustaan qaraabo iyo saaxiibbo dhintay.</li>
+            <li><b>Xilliga Advent</b> waa afarta Axad ee ka horreeya Maalinta Kirismaska. Guryo badan waxay isticmaalaan shumacyada Advent, xiddigaha, ama jadwallada.</li>
             <li><b>Lucia (Lucia)</b>, 13 Diseembar, waxay ku saabsan tahay iftiinka qaybta ugu mugdiga badan sannadka, badanaa oo leh socod, shumacyo iyo heeso.</li>
-            <li><b>Kirismaska (Christmas)</b> wuxuu leeyahay xididdo Masiixi ah waana sidoo kale fasax qoys oo weyn. Iswiidhan dabbaaldegga ugu weyn badanaa waa Habeenka Kirismaska, 24 Diseembar.</li>
-            <li><b>Habeenka Sannadcusubka (New Year's Eve)</b>, 31 Diseembar, badanaa waxaa lagu dabbaaldegaa casheeyo, xafillado iyo foosto-dab habeenbadhe.</li>
+            <li><b>Kirismaska</b> wuxuu leeyahay xididdo Masiixi ah waana sidoo kale fasax qoys oo weyn. Iswiidhan dabbaaldegga ugu weyn badanaa waa Habeenka Kirismaska, 24 Diseembar.</li>
+            <li><b>Habeenka Sannadka Cusub</b>, 31 Diseembar, badanaa waxaa lagu dabbaaldegaa casheeyo, xafillado iyo foosto-dab habeenbadhe.</li>
           </ul>
           <h2>Caadooyin cusub</h2>
           <p>Socdaalku wuxuu nolosha guud ee Iswiidhan ku daray caadooyin badan oo muuqda. Eid al-Fitr, Nouruz, Newroz, Diwali iyo dabbaaldegyo kale waxay ka muuqan karaan dugsiyada, goobaha shaqada, xaafadaha iyo munaasabadaha magaalada. Qaabka muhiimka ah waa fudud: caadooyinku way socdaali karaan oo isla qabsan karaan.</p>
@@ -3789,18 +3789,18 @@
           <p>ሃገራዊ መዓልቲ ሽወደን 6 ሰነ እዩ። ምስ ምርጫ Gustav Vasa ከም ንጉስ ኣብ 1523 ከምኡ’ውን ምስ ሰነድ ምሕደራ መንግስቲ ናይ 1809 ይተኣሳሰር። ሎሚ ባንዴራታት ይለዓሉ፣ መደረታት ይካየዱ፣ ብዙሓት ምምሕዳራት ከተማ ድማ ኣብ ስነ ስርዓታት ንሓደስቲ ሽወደናውያን ዜጋታት እንቋዕ ብደሓን መጻእኩም ይብሉ።</p>
           <h2>ጽድያን ሓጋይን</h2>
           <ul>
-            <li><b>ፋሲካ (Easter)</b> ኣብ መጋቢት ወይ ሚያዝያ ይወድቕ ክርስትያናዊ ሱር ድማ ኣለዎ፣ እንተኾነ ብዙሓት ሰባት ከም ስድራቤታውን ጽድያውን በዓል የብዕልዎ።</li>
-            <li><b>ለይቲ ቫልቦርግ (Walpurgis Night)</b>፣ 30 ሚያዝያ፣ መብዛሕትኡ ግዜ ሓዊ ምውላዕን ንጽድያ ናይ ምቕባል ደርፍታትን ማለት እዩ።</li>
-            <li><b>ቀዳማይ ግንቦት (First of May)</b> ዓለማዊ መዓልቲ ሰራሕተኛታት እዩ፣ ብሰልፍታትን ፖለቲካዊ መደረታትን ይምልከት።</li>
-            <li><b>ለይቲ ማእከል ሓጋይ (Midsummer Eve)</b> ኩሉ ግዜ ኣብ መንጎ 19ን 25ን ሰነ ዘሎ ዓርቢ እዩ፣ ምስ ናይ ደገ ምትእኽኻብ፣ ናይ ዕምባባ ዘውድታት፣ ናይ ማእከል ሓጋይ ዓንዲ፣ ሄሪንግ ዓሳ፣ ሓድሽ ድንሽን ፍራውለን።</li>
+            <li><b>ፋሲካ</b> ኣብ መጋቢት ወይ ሚያዝያ ይወድቕ ክርስትያናዊ ሱር ድማ ኣለዎ፣ እንተኾነ ብዙሓት ሰባት ከም ስድራቤታውን ጽድያውን በዓል የብዕልዎ።</li>
+            <li><b>ለይቲ ቫልቦርግ</b>፣ 30 ሚያዝያ፣ መብዛሕትኡ ግዜ ሓዊ ምውላዕን ንጽድያ ናይ ምቕባል ደርፍታትን ማለት እዩ።</li>
+            <li><b>ቀዳማይ ግንቦት</b> ዓለማዊ መዓልቲ ሰራሕተኛታት እዩ፣ ብሰልፍታትን ፖለቲካዊ መደረታትን ይምልከት።</li>
+            <li><b>ለይቲ ማእከል ሓጋይ</b> ኩሉ ግዜ ኣብ መንጎ 19ን 25ን ሰነ ዘሎ ዓርቢ እዩ፣ ምስ ናይ ደገ ምትእኽኻብ፣ ናይ ዕምባባ ዘውድታት፣ ናይ ማእከል ሓጋይ ዓንዲ፣ ሄሪንግ ዓሳ፣ ሓድሽ ድንሽን ፍራውለን።</li>
           </ul>
           <h2>ቀውዕን ክረምትን</h2>
           <ul>
-            <li><b>መዓልቲ ኩሎም ቅዱሳን (All Saints' Day)</b> ብዙሓት ሰባት ነቶም ዝሞቱ ኣዝማድን ኣዕሩኽን ንምዝካር ኣብ መቓብር ሽምዓ ዘብርሁሉ ግዜ እዩ።</li>
-            <li><b>ኣድቨንት (Advent)</b> እተን ቅድሚ መዓልቲ ልደት ዘለዋ ኣርባዕተ ሰናብቲ እየን። ብዙሓት ኣባይቲ ናይ ኣድቨንት ሽምዓታት፣ ኮኾባት፣ ወይ ዓውደ-ኣዋርሕ ይጥቀሙ።</li>
+            <li><b>መዓልቲ ኩሎም ቅዱሳን</b> ብዙሓት ሰባት ነቶም ዝሞቱ ኣዝማድን ኣዕሩኽን ንምዝካር ኣብ መቓብር ሽምዓ ዘብርሁሉ ግዜ እዩ።</li>
+            <li><b>ኣድቨንት</b> እተን ቅድሚ መዓልቲ ልደት ዘለዋ ኣርባዕተ ሰናብቲ እየን። ብዙሓት ኣባይቲ ናይ ኣድቨንት ሽምዓታት፣ ኮኾባት፣ ወይ ዓውደ-ኣዋርሕ ይጥቀሙ።</li>
             <li><b>ሉስያ (Lucia)</b>፣ 13 ታሕሳስ፣ ብዛዕባ ብርሃን ኣብቲ ኣዝዩ ጸልማት ክፋል ዓመት እዩ፣ መብዛሕትኡ ግዜ ምስ ሰልፍታት፣ ሽምዓታትን ዝማረን።</li>
-            <li><b>ልደት (Christmas)</b> ክርስትያናዊ ሱር ኣለዎ ከምኡ’ውን ዓብዪ ስድራቤታዊ በዓል እዩ። ኣብ ሽወደን እቲ ቀንዲ በዓል መብዛሕትኡ ግዜ ለይቲ ልደት፣ 24 ታሕሳስ እዩ።</li>
-            <li><b>ለይቲ ሓድሽ ዓመት (New Year's Eve)</b>፣ 31 ታሕሳስ፣ ብተለምዶ ብድራራት፣ ድግሳትን ኣብ ፍርቂ ለይቲ ብርሕሰት ባሩድን ይብዓል።</li>
+            <li><b>ልደት</b> ክርስትያናዊ ሱር ኣለዎ ከምኡ’ውን ዓብዪ ስድራቤታዊ በዓል እዩ። ኣብ ሽወደን እቲ ቀንዲ በዓል መብዛሕትኡ ግዜ ለይቲ ልደት፣ 24 ታሕሳስ እዩ።</li>
+            <li><b>ለይቲ ሓድሽ ዓመት</b>፣ 31 ታሕሳስ፣ ብተለምዶ ብድራራት፣ ድግሳትን ኣብ ፍርቂ ለይቲ ብርሕሰት ባሩድን ይብዓል።</li>
           </ul>
           <h2>ሓደስቲ ባህልታት</h2>
           <p>ስደት ናብ ህዝባዊ ህይወት ሽወደን ዝያዳ ዝረኣዩ ባህልታት ወሲኹ። Eid al-Fitr፣ Nouruz፣ Newroz፣ Diwali ከምኡ’ውን ካልኦት በዓላት ኣብ ኣብያተ ትምህርቲ፣ ቦታታት ስራሕ፣ ጐረባብትን ናይ ከተማ ምigበራትን ክርኣዩ ይኽእሉ። እቲ ኣገዳሲ ኣገባብ ቀሊል እዩ፦ ባህልታት ክግዕዙን ክመዓራረዩን ይኽእሉ።</p>
@@ -3813,18 +3813,18 @@
           <p>İsveç'in ulusal günü 6 Haziran'dır. Gustav Vasa'nın 1523'te kral seçilmesine ve 1809 Yönetim Belgesi'ne bağlıdır. Bugün bayraklar göndere çekilir, konuşmalar yapılır ve birçok belediye törenlerle yeni İsveç vatandaşlarını karşılar.</p>
           <h2>İlkbahar ve yaz</h2>
           <ul>
-            <li><b>Paskalya (Easter)</b> mart veya nisana denk gelir ve Hristiyan kökenlidir, yine de birçok kişi onu bir aile ve bahar bayramı olarak kutlar.</li>
-            <li><b>Walpurgis Gecesi (Walpurgis Night)</b>, 30 Nisan, çoğu zaman bahara hoş geldin diyen şenlik ateşleri ve şarkılar demektir.</li>
-            <li><b>Bir Mayıs (First of May)</b> Uluslararası İşçi Bayramı'dır; gösteriler ve siyasi konuşmalarla anılır.</li>
-            <li><b>Yaz Ortası Arifesi (Midsummer Eve)</b> her zaman 19 ile 25 Haziran arasındaki bir cumadır; açık havada toplanmalar, çiçekten taçlar, bir yaz ortası direği, ringa, taze patates ve çilek eşlik eder.</li>
+            <li><b>Paskalya</b> mart veya nisana denk gelir ve Hristiyan kökenlidir, yine de birçok kişi onu bir aile ve bahar bayramı olarak kutlar.</li>
+            <li><b>Walpurgis Gecesi</b>, 30 Nisan, çoğu zaman bahara hoş geldin diyen şenlik ateşleri ve şarkılar demektir.</li>
+            <li><b>Bir Mayıs</b> Uluslararası İşçi Bayramı'dır; gösteriler ve siyasi konuşmalarla anılır.</li>
+            <li><b>Yaz Ortası Arifesi</b> her zaman 19 ile 25 Haziran arasındaki bir cumadır; açık havada toplanmalar, çiçekten taçlar, bir yaz ortası direği, ringa, taze patates ve çilek eşlik eder.</li>
           </ul>
           <h2>Sonbahar ve kış</h2>
           <ul>
-            <li><b>Azizler Günü (All Saints' Day)</b>, birçok kişinin ölen akraba ve dostlarını anmak için mezarlarda mum yaktığı gündür.</li>
-            <li><b>Advent (Advent)</b>, Noel Günü'nden önceki dört pazardır. Birçok evde Advent mumları, yıldızlar veya takvimler kullanılır.</li>
+            <li><b>Azizler Günü</b>, birçok kişinin ölen akraba ve dostlarını anmak için mezarlarda mum yaktığı gündür.</li>
+            <li><b>Advent dönemi</b>, Noel Günü'nden önceki dört pazardır. Birçok evde Advent mumları, yıldızlar veya takvimler kullanılır.</li>
             <li><b>Lucia (Lucia)</b>, 13 Aralık, yılın en karanlık döneminde ışıkla ilgilidir; çoğu zaman geçit alayları, mumlar ve şarkılarla.</li>
-            <li><b>Noel (Christmas)</b> Hristiyan kökenlidir ve aynı zamanda önemli bir aile bayramıdır. İsveç'te asıl kutlama genellikle 24 Aralık'taki Noel Arifesi'dir.</li>
-            <li><b>Yılbaşı Gecesi (New Year's Eve)</b>, 31 Aralık, genellikle akşam yemekleri, partiler ve gece yarısı havai fişeklerle kutlanır.</li>
+            <li><b>Noel</b> Hristiyan kökenlidir ve aynı zamanda önemli bir aile bayramıdır. İsveç'te asıl kutlama genellikle 24 Aralık'taki Noel Arifesi'dir.</li>
+            <li><b>Yılbaşı Gecesi</b>, 31 Aralık, genellikle akşam yemekleri, partiler ve gece yarısı havai fişeklerle kutlanır.</li>
           </ul>
           <h2>Yeni gelenekler</h2>
           <p>Göç, İsveç'in kamusal yaşamına daha görünür gelenekler kattı. Eid al-Fitr, Nouruz, Newroz, Diwali ve başka kutlamalar okullarda, iş yerlerinde, mahallelerde ve şehir etkinliklerinde görülebilir. Önemli örüntü basittir: gelenekler yolculuk edebilir ve uyum sağlayabilir.</p>
@@ -3837,18 +3837,18 @@
           <p>Національне свято Швеції — 6 червня. Воно пов'язане з обранням Gustav Vasa королем у 1523 та з Актом про форму правління 1809 року. Сьогодні піднімають прапори, виголошують промови, а багато муніципалітетів вітають нових шведських громадян на церемоніях.</p>
           <h2>Весна та літо</h2>
           <ul>
-            <li><b>Великдень (Easter)</b> припадає на березень або квітень і має християнське коріння, хоча багато людей святкують його як родинне й весняне свято.</li>
-            <li><b>Вальпургієва ніч (Walpurgis Night)</b>, 30 квітня, часто означає вогнища й пісні на честь весни.</li>
-            <li><b>Перше травня (First of May)</b> — Міжнародний день трудящих, який відзначають демонстраціями та політичними промовами.</li>
-            <li><b>Переддень Середини літа (Midsummer Eve)</b> — це завжди п'ятниця між 19 та 25 червня, із зібраннями просто неба, вінками з квітів, стовпом Середини літа, оселедцем, молодою картоплею та полуницею.</li>
+            <li><b>Великдень</b> припадає на березень або квітень і має християнське коріння, хоча багато людей святкують його як родинне й весняне свято.</li>
+            <li><b>Вальпургієва ніч</b>, 30 квітня, часто означає вогнища й пісні на честь весни.</li>
+            <li><b>Перше травня</b> — Міжнародний день трудящих, який відзначають демонстраціями та політичними промовами.</li>
+            <li><b>Переддень Середини літа</b> — це завжди п'ятниця між 19 та 25 червня, із зібраннями просто неба, вінками з квітів, стовпом Середини літа, оселедцем, молодою картоплею та полуницею.</li>
           </ul>
           <h2>Осінь та зима</h2>
           <ul>
-            <li><b>День усіх святих (All Saints' Day)</b> — це коли багато людей запалюють свічки на могилах, щоб згадати померлих рідних і друзів.</li>
-            <li><b>Адвент (Advent)</b> — це чотири неділі перед Різдвом. Багато домівок використовують адвентські свічки, зірки або календарі.</li>
+            <li><b>День усіх святих</b> — це коли багато людей запалюють свічки на могилах, щоб згадати померлих рідних і друзів.</li>
+            <li><b>Адвент</b> — це чотири неділі перед Різдвом. Багато домівок використовують адвентські свічки, зірки або календарі.</li>
             <li><b>Луція (Lucia)</b>, 13 грудня, — це про світло в найтемнішу пору року, часто з процесіями, свічками та співом.</li>
-            <li><b>Різдво (Christmas)</b> має християнське коріння і є також важливим родинним святом. У Швеції головне святкування зазвичай припадає на Святвечір, 24 грудня.</li>
-            <li><b>Переддень Нового року (New Year's Eve)</b>, 31 грудня, зазвичай святкують вечерями, вечірками та феєрверками опівночі.</li>
+            <li><b>Різдво</b> має християнське коріння і є також важливим родинним святом. У Швеції головне святкування зазвичай припадає на Святвечір, 24 грудня.</li>
+            <li><b>Переддень Нового року</b>, 31 грудня, зазвичай святкують вечерями, вечірками та феєрверками опівночі.</li>
           </ul>
           <h2>Нові традиції</h2>
           <p>Міграція додала більше помітних традицій до публічного життя Швеції. Eid al-Fitr, Nouruz, Newroz, Diwali та інші святкування можуть з'являтися у школах, на робочих місцях, у районах і на міських подіях. Важлива закономірність проста: традиції можуть подорожувати й пристосовуватися.</p>

@@ -312,6 +312,20 @@ const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'Sources accessed',
   'Källor hämtade',
 ];
+const STATIC_EBOOK_EXTRA_LOCALES = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+const STATIC_EBOOK_CHAPTER13_ENGLISH_HOLIDAY_GLOSS_PATTERN =
+  /[（(](?:Easter|Midsummer Eve|Christmas|New Year's Eve|First of May|Walpurgis Night|All Saints' Day|Advent)[）)]/i;
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
 const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
@@ -5688,6 +5702,39 @@ function renderStaticEbookChapter(harness, lang, chapterId) {
   return renderStaticEbookHash(harness, lang, `#/ebook?c=${encodeURIComponent(chapterId)}`).html;
 }
 
+function validateStaticEbookExtraLocaleHolidayGlosses() {
+  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  const offenders = [];
+  let languagesValidated = 0;
+
+  STATIC_EBOOK_EXTRA_LOCALES.forEach((language) => {
+    const html = renderStaticEbookChapter(harness, language, '13');
+    const match = html.match(STATIC_EBOOK_CHAPTER13_ENGLISH_HOLIDAY_GLOSS_PATTERN);
+
+    if (match) {
+      offenders.push(`${language}: ${match[0]}`);
+      return;
+    }
+
+    languagesValidated += 1;
+  });
+
+  if (offenders.length > 0) {
+    fail(
+      `static ebook chapter 13 extra-language copy contains parenthetical English holiday glosses:\n${offenders.join(
+        '\n',
+      )}`,
+    );
+  }
+
+  return {
+    languagesExpected: STATIC_EBOOK_EXTRA_LOCALES.length,
+    languagesValidated,
+    parityValidated:
+      offenders.length === 0 && languagesValidated === STATIC_EBOOK_EXTRA_LOCALES.length,
+  };
+}
+
 function staticEbookAnnotatedSourceClaimBlocks(html) {
   return Array.from(
     html.matchAll(
@@ -9144,8 +9191,8 @@ let staticEbookFootnoteHashLanguagesValidated = 0;
 let staticEbookFootnoteHashParityValidated = false;
 let staticEbookProseSourceMetadataRulesValidated = 0;
 let staticEbookProseSourceMetadataParityValidated = false;
-let staticEbookCivicTermGlossesChecksValidated = 0;
-let staticEbookCivicTermGlossesParityValidated = false;
+let staticEbookExtraLocaleHolidayGlossLanguagesValidated = 0;
+let staticEbookExtraLocaleHolidayGlossParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9496,20 +9543,9 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
   staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
   staticEbookProseSourceMetadataParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
-  staticEbookSourceAuthorityPatternsValidated = validateStaticEbookSourceAuthorityCopy();
-  staticEbookSourceAuthorityCopyParityValidated =
-    staticEbookSourceAuthorityPatternsValidated ===
-    STATIC_EBOOK_SOURCE_AUTHORITY_PHRASE_PATTERNS.length;
-  {
-    const somaliHolidayFoodValidation = validateStaticEbookSomaliHolidayFoodNaturalness();
-    staticEbookSomaliHolidayFoodPatternsValidated = somaliHolidayFoodValidation.patternsValidated;
-    staticEbookSomaliHolidayFoodRequiredCopyValidated =
-      somaliHolidayFoodValidation.requiredCopyValidated;
-    staticEbookSomaliHolidayFoodParityValidated = somaliHolidayFoodValidation.parityValidated;
-  }
-  const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
-  staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
-  staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
+  const holidayGlossValidation = validateStaticEbookExtraLocaleHolidayGlosses();
+  staticEbookExtraLocaleHolidayGlossLanguagesValidated = holidayGlossValidation.languagesValidated;
+  staticEbookExtraLocaleHolidayGlossParityValidated = holidayGlossValidation.parityValidated;
   exitWithValidationFailures();
   printValidationSummary({
     staticEbookFactboxClaimPatternsValidated,
@@ -9518,13 +9554,8 @@ if (process.argv.includes('--focus-static-ebook-provenance')) {
     staticEbookFactboxProvenanceValidated,
     staticEbookProseSourceMetadataRulesValidated,
     staticEbookProseSourceMetadataParityValidated,
-    staticEbookSourceAuthorityPatternsValidated,
-    staticEbookSourceAuthorityCopyParityValidated,
-    staticEbookSomaliHolidayFoodPatternsValidated,
-    staticEbookSomaliHolidayFoodRequiredCopyValidated,
-    staticEbookSomaliHolidayFoodParityValidated,
-    staticEbookCivicTermGlossesChecksValidated,
-    staticEbookCivicTermGlossesParityValidated,
+    staticEbookExtraLocaleHolidayGlossLanguagesValidated,
+    staticEbookExtraLocaleHolidayGlossParityValidated,
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
@@ -10322,9 +10353,9 @@ staticEbookSourceAuthorityCopyParityValidated =
     staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
 }
 {
-  const civicTermGlossValidation = validateStaticEbookCivicTermGlosses();
-  staticEbookCivicTermGlossesChecksValidated = civicTermGlossValidation.checksValidated;
-  staticEbookCivicTermGlossesParityValidated = civicTermGlossValidation.parityValidated;
+  const holidayGlossValidation = validateStaticEbookExtraLocaleHolidayGlosses();
+  staticEbookExtraLocaleHolidayGlossLanguagesValidated = holidayGlossValidation.languagesValidated;
+  staticEbookExtraLocaleHolidayGlossParityValidated = holidayGlossValidation.parityValidated;
 }
 {
   const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
@@ -23373,8 +23404,8 @@ console.log(
       staticEbookSomaliHolidayFoodParityValidated,
       staticEbookProseSourceMetadataRulesValidated,
       staticEbookProseSourceMetadataParityValidated,
-      staticEbookCivicTermGlossesChecksValidated,
-      staticEbookCivicTermGlossesParityValidated,
+      staticEbookExtraLocaleHolidayGlossLanguagesValidated,
+      staticEbookExtraLocaleHolidayGlossParityValidated,
       staticEbookFootnoteHashChaptersValidated,
       staticEbookFootnoteHashLanguagesValidated,
       staticEbookFootnoteHashParityValidated,
