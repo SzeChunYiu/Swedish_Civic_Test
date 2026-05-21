@@ -210,12 +210,12 @@ export default function Screen() {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
 
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
   const questionSpeechText = useMemo(
     () => (question ? buildQuestionSpeechText(question) : ''),
     [question],
-  );
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
   );
 
   useQuestionAudioAutoplay({

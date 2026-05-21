@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -3718,6 +3717,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
   { name: 'activeQuestionId', type: 'string | null', optional: false },
+  { name: 'answeredQuestionIds', type: 'string[]', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
@@ -14881,6 +14881,7 @@ function validatePracticeSessionStoreParity() {
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
+      answeredQuestionIds: [],
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
     });
@@ -14889,6 +14890,9 @@ function validatePracticeSessionStoreParity() {
     let state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
+    }
+    if (!Array.isArray(state.answeredQuestionIds) || state.answeredQuestionIds.length !== 0) {
+      rejectRuntime('practice session selectOption must not advance answered question ids');
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session selectOption must keep the current shuffle session seed');
@@ -14904,6 +14908,9 @@ function validatePracticeSessionStoreParity() {
       rejectRuntime(
         'practice session resetSelection must keep active question while clearing answer',
       );
+    }
+    if (!Array.isArray(state.answeredQuestionIds) || state.answeredQuestionIds.length !== 0) {
+      rejectRuntime('practice retry must not advance answered question ids');
     }
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session resetSelection must keep the current shuffle session seed');
@@ -14921,6 +14928,12 @@ function validatePracticeSessionStoreParity() {
       rejectRuntime(
         'practice session advanceQuestion must clear active question and selected answer',
       );
+    }
+    if (
+      !Array.isArray(state.answeredQuestionIds) ||
+      state.answeredQuestionIds.join(',') !== 'q-validator'
+    ) {
+      rejectRuntime('practice session advanceQuestion must record the answered question id');
     }
     if (state.shuffleSessionId !== 'practice-session-1') {
       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
