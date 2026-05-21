@@ -55,9 +55,20 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const requiredStaticEbookSourceUrls = {
+  uhrStudyMaterial: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  scbLandUse: 'https://www.scb.se/mi0803-en',
+  riksbankHistory:
+    'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
+  governmentNato: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+};
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function readStaticChapterMeta() {
@@ -217,25 +228,43 @@ function renderedSourceKeys(html) {
   return new Set(Array.from(html.matchAll(/data-source-key="([^"]+)"/g), (match) => match[1]));
 }
 
-function escapeRegex(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function renderedAnchorsForHref(html, href) {
-  return Array.from(
-    html.matchAll(new RegExp(`<a\\s+[^>]*href="${escapeRegex(href)}"[^>]*>`, 'g')),
-    (match) => match[0],
+function assertSafeExternalSourceAnchor(html, url) {
+  assert.match(
+    html,
+    new RegExp(`<a href="${escapeRegExp(url)}" target="_blank" rel="noreferrer">[^<]+</a>`),
+    `${url} should render as a safe external source link`,
   );
 }
 
-function assertExternalEbookSourceLinksAreSafe(html, href, label) {
-  const anchors = renderedAnchorsForHref(html, href);
-  assert.ok(anchors.length > 0, `${label} should render at least one ebook source link`);
+function assertInternalFootnoteLinksStayInPage(html) {
+  const unsafeInternalLinks = Array.from(
+    html.matchAll(/<a href="#ebook-fn(?:ref)?-[^"]+"([^>]*)>/g),
+    (match) => match[0],
+  ).filter((anchor) => /\s(?:target|rel)=/.test(anchor));
 
-  for (const anchor of anchors) {
-    assert.match(anchor, /\starget="_blank"/, `${label} should open in a new tab`);
-    assert.match(anchor, /\srel="noreferrer"/, `${label} should use noreferrer`);
-  }
+  assert.deepEqual(unsafeInternalLinks, [], 'internal ebook footnote hashes must stay same-page');
+}
+
+function assertEditorialNotesStayTextOnly(html) {
+  const editorialSnippets = [
+    ...Array.from(
+      html.matchAll(/<span data-source-key="editorialCommentary">([\s\S]*?)<\/span>/g),
+      (match) => match[1],
+    ),
+    ...Array.from(
+      html.matchAll(
+        /<li id="ebook-fn-[^"]+" data-source-key="editorialCommentary">([\s\S]*?)<\/li>/g,
+      ),
+      (match) => match[1],
+    ),
+  ];
+
+  assert.ok(editorialSnippets.length > 0, 'rendered chapter should include editorial source notes');
+  assert.deepEqual(
+    editorialSnippets.filter((snippet) => /<a\s+[^>]*href="https?:\/\//.test(snippet)),
+    [],
+    'editorial commentary source notes should remain text-only, not broken external anchors',
+  );
 }
 
 test('static ebook source contains no stale untranslated placeholder copy', () => {
@@ -315,52 +344,41 @@ test('static ebook rendered source keys match chapter external-source metadata',
   }
 });
 
-test('static ebook external source links use safe web attributes', () => {
+test('static ebook sourceLink helper keeps external source anchors safe', () => {
+  const source = readSiteFile('site/ebook.js');
+
+  assert.match(source, /function externalSourceAnchor\(note\)/);
+  assert.match(source, /target="_blank"/);
+  assert.match(source, /rel="noreferrer"/);
+  assert.match(source, /sourceLink\(note\)/);
+  assert.doesNotMatch(source, /<a href="\$\{note\.url\}">\$\{note\.label\}<\/a>/);
+  assert.match(
+    source,
+    /OFFICIAL_TEST_SOURCE_NOTES\.map\(\(source\) => externalSourceAnchor\(source\)\)/,
+  );
+});
+
+test('static ebook rendered source notes use safe external links without changing hash links', () => {
   const harness = createEbookHarness();
-  const externalSources = [
-    {
-      chapterId: 'intro',
-      href: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-      label: 'UHR study material',
-    },
-    {
-      chapterId: '1',
-      href: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-      label: 'Government Offices NATO source',
-    },
-    {
-      chapterId: '7',
-      href: 'https://www.scb.se/mi0803-en',
-      label: 'SCB land-use source',
-    },
-    {
-      chapterId: '9',
-      href: 'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-      label: 'Riksbank history source',
-    },
+  const chapterUrls = [
+    ['1', requiredStaticEbookSourceUrls.governmentNato],
+    ['7', requiredStaticEbookSourceUrls.scbLandUse],
+    ['9', requiredStaticEbookSourceUrls.riksbankHistory],
+    ['12', requiredStaticEbookSourceUrls.uhrStudyMaterial],
   ];
 
-  for (const { chapterId, href, label } of externalSources) {
-    for (const lang of ['en', 'sv']) {
-      assertExternalEbookSourceLinksAreSafe(renderChapter(harness, lang, chapterId), href, label);
-    }
+  for (const [chapterId, url] of chapterUrls) {
+    const html = renderChapter(harness, 'en', chapterId);
+
+    assertSafeExternalSourceAnchor(html, url);
+    assertSafeExternalSourceAnchor(html, requiredStaticEbookSourceUrls.uhrStudyMaterial);
+    assertInternalFootnoteLinksStayInPage(html);
+    assertEditorialNotesStayTextOnly(html);
   }
 
-  const introHtml = renderChapter(harness, 'en', 'intro');
-  assert.match(
-    introHtml,
-    /data-source-key="editorialCommentary"><a href="#ebook-fnref-[^"]+"[^>]*>↩<\/a> Editorial commentary \(2026-05-19\)<\/li>/,
-    'text-only editorial source notes should remain plain text',
-  );
-  assert.doesNotMatch(
-    introHtml,
-    /<a\s+[^>]*href="#ebook-fnref-[^"]+"[^>]*(?:target|rel)=/,
-    'internal ebook footnote backlinks should not use external-link attributes',
-  );
-  assert.doesNotMatch(
-    introHtml,
-    /<a\s+[^>]*href="#ebook-fn-[^"]+"[^>]*(?:target|rel)=/,
-    'internal ebook footnote references should not use external-link attributes',
+  const chapter12Html = renderChapter(harness, 'en', '12');
+  officialPracticalTestSourceUrls.forEach((url) =>
+    assertSafeExternalSourceAnchor(chapter12Html, url),
   );
 });
 

@@ -76,19 +76,17 @@
     },
   ]);
 
-  function externalSourceLink(url, label) {
-    return `<a href="${url}" target="_blank" rel="noreferrer">${label}</a>`;
+  function externalSourceAnchor(note) {
+    return `<a href="${note.url}" target="_blank" rel="noreferrer">${note.label}</a>`;
   }
 
   function sourceLink(note) {
     if (!note.url) return `${note.label} (${note.retrievedDate})`;
-    return `${externalSourceLink(note.url, note.label)} (${note.retrievedDate})`;
+    return `${externalSourceAnchor(note)} (${note.retrievedDate})`;
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map((source) =>
-      externalSourceLink(source.url, source.label),
-    ).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map((source) => externalSourceAnchor(source)).join(' · ');
   }
 
   function ebookSourceNote(lang, sourceKeys) {
