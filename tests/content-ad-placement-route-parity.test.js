@@ -181,6 +181,28 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('PracticeInterstitial attempt state delegates timeout and callback bookkeeping to helper', () => {
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+    'utf8',
+  );
+  const attemptHelperSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/practiceInterstitialAttempt.ts'),
+    'utf8',
+  );
+
+  assert.match(practiceInterstitialSource, /createPracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialSource, /reducePracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS/);
+  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS/);
+  assert.doesNotMatch(practiceInterstitialSource, /let attemptSettled|let showStarted/);
+  assert.match(attemptHelperSource, /load_timeout/);
+  assert.match(attemptHelperSource, /show_timeout/);
+  assert.match(attemptHelperSource, /show_resolved/);
+  assert.match(attemptHelperSource, /showKeyConsumed/);
+  assert.match(attemptHelperSource, /if \(state\.settled\) return state;/);
+});
+
 test('Home ad placement waits for Remove Ads entitlements before rendering', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 

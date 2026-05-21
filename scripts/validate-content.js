@@ -10062,6 +10062,10 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
         'utf8',
       );
+      const practiceInterstitialAttemptSource = fs.readFileSync(
+        path.join(repoRoot, 'lib/monetization/practiceInterstitialAttempt.ts'),
+        'utf8',
+      );
 
       if (/showKey=\{[\s\S]{0,160}selectedOptionId/.test(source)) {
         reject(
@@ -10122,6 +10126,28 @@ function validateAdPlacementRouteParity() {
         /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/.test(nativeInterstitialSource)
       ) {
         reject('PracticeInterstitialAd must not consume the show key in the LOADED listener');
+        routeIsValid = false;
+      }
+      if (
+        !nativeInterstitialSource.includes('createPracticeInterstitialAttemptState') ||
+        !nativeInterstitialSource.includes('reducePracticeInterstitialAttemptState') ||
+        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS') ||
+        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS')
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must delegate attempt state timeout bookkeeping to the helper',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !practiceInterstitialAttemptSource.includes('load_timeout') ||
+        !practiceInterstitialAttemptSource.includes('show_timeout') ||
+        !practiceInterstitialAttemptSource.includes('showKeyConsumed') ||
+        !practiceInterstitialAttemptSource.includes('if (state.settled) return state;')
+      ) {
+        reject(
+          'PracticeInterstitial attempt helper must model timeout outcomes, show-key consumption, and late-callback no-ops',
+        );
         routeIsValid = false;
       }
     }

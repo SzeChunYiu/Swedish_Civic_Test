@@ -414,7 +414,10 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
-  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
+  assert.match(
+    practiceInterstitialSource,
+    /\.then\(\(\) => \{[\s\S]*applyAttemptEvent\('show_resolved'\)/,
+  );
   assert.doesNotMatch(
     practiceInterstitialSource,
     /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,
@@ -431,6 +434,82 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
     practiceInterstitialSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
+});
+
+test('PracticeInterstitial attempt state handles load timeout, show timeout, late callbacks, cleanup, and show key consumption', () => {
+  const { createPracticeInterstitialAttemptState, reducePracticeInterstitialAttemptState } = loadTs(
+    'lib/monetization/practiceInterstitialAttempt.ts',
+  );
+
+  const settleAfterLoaded = (event) =>
+    reducePracticeInterstitialAttemptState(
+      reducePracticeInterstitialAttemptState(createPracticeInterstitialAttemptState(), 'loaded'),
+      event,
+    );
+
+  const loadTimedOut = reducePracticeInterstitialAttemptState(
+    createPracticeInterstitialAttemptState(),
+    'load_timeout',
+  );
+  assert.deepEqual(loadTimedOut, {
+    inFlight: false,
+    outcome: 'load_timeout',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+  assert.strictEqual(reducePracticeInterstitialAttemptState(loadTimedOut, 'opened'), loadTimedOut);
+
+  const showing = reducePracticeInterstitialAttemptState(
+    createPracticeInterstitialAttemptState(),
+    'loaded',
+  );
+  assert.deepEqual(showing, {
+    inFlight: true,
+    phase: 'showing',
+    settled: false,
+    showKeyConsumed: false,
+  });
+
+  const showTimedOut = reducePracticeInterstitialAttemptState(showing, 'show_timeout');
+  assert.deepEqual(showTimedOut, {
+    inFlight: false,
+    outcome: 'show_timeout',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+  assert.strictEqual(
+    reducePracticeInterstitialAttemptState(showTimedOut, 'show_resolved'),
+    showTimedOut,
+  );
+
+  for (const event of ['show_resolved', 'opened', 'closed']) {
+    assert.deepEqual(settleAfterLoaded(event), {
+      inFlight: false,
+      outcome: event,
+      phase: 'settled',
+      settled: true,
+      showKeyConsumed: true,
+    });
+  }
+
+  for (const event of ['show_rejected', 'error', 'cleanup']) {
+    assert.equal(settleAfterLoaded(event).inFlight, false);
+    assert.equal(settleAfterLoaded(event).showKeyConsumed, false);
+  }
+
+  const cleanedUpBeforeLoaded = reducePracticeInterstitialAttemptState(
+    createPracticeInterstitialAttemptState(),
+    'cleanup',
+  );
+  assert.deepEqual(cleanedUpBeforeLoaded, {
+    inFlight: false,
+    outcome: 'cleanup',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
