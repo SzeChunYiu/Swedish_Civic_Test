@@ -13,8 +13,8 @@ import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/l
  * - the about-the-test screen itself (otherwise the modal sits on top of the page it sends you to)
  */
 const SUPPRESSED_PATH_PREFIXES = ['/exam', '/quiz', '/(auth)', '/about-the-test'] as const;
-const dialogTitleId = 'first-run-about-modal-title';
-const dialogBodyId = 'first-run-about-modal-body';
+const firstRunAboutDialogTitleId = 'first-run-about-dialog-title';
+const firstRunAboutDialogBodyId = 'first-run-about-dialog-body';
 
 type FirstRunCopy = {
   eyebrow: string;
@@ -91,19 +91,20 @@ export function FirstRunAboutTheTestModal({
 
   return (
     <Modal
-      accessibilityLabel={copy.title}
-      accessibilityViewIsModal
+      aria-describedby={firstRunAboutDialogBodyId}
+      aria-labelledby={firstRunAboutDialogTitleId}
+      aria-modal={true}
       animationType="fade"
-      aria-describedby={dialogBodyId}
-      aria-labelledby={dialogTitleId}
       transparent
       visible
       onRequestClose={markSeen}
+      accessibilityLabel={copy.title}
+      accessibilityViewIsModal
+      role="dialog"
     >
       <Pressable
         accessible={false}
         hitSlop={space[1]}
-        importantForAccessibility="no"
         onPress={markSeen}
         style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
       >
@@ -115,10 +116,14 @@ export function FirstRunAboutTheTestModal({
           style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
         >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
-          <Text accessibilityRole="header" id={dialogTitleId} style={styles.title}>
+          <Text
+            accessibilityRole="header"
+            nativeID={firstRunAboutDialogTitleId}
+            style={styles.title}
+          >
             {copy.title}
           </Text>
-          <Text id={dialogBodyId} style={styles.body}>
+          <Text nativeID={firstRunAboutDialogBodyId} style={styles.body}>
             {copy.body}
           </Text>
           <View style={styles.actions}>

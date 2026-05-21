@@ -208,14 +208,7 @@ test('compliance scaffold exposes legal page headings as headers', () => {
   assert.match(privacySource, /No account required/);
   assert.match(sourcesSource, /const sourcesCopy: Record<AppLanguage, SourcesRouteCopy>/);
   assert.match(sourcesSource, /const copy = sourcesCopy\[language\];/);
-  assert.match(
-    sourcesSource,
-    /<LegalPage[\s\S]*backAccessibilityLabel=\{copy\.backAccessibilityLabel\}[\s\S]*backHref="\/home"[\s\S]*backLabel=\{copy\.backLabel\}[\s\S]*title=\{copy\.title\}\s*>/,
-  );
-  assert.match(sourcesSource, /backLabel: '← Tillbaka till startsidan'/);
-  assert.match(sourcesSource, /backAccessibilityLabel: 'Tillbaka till startsidan'/);
-  assert.match(sourcesSource, /backLabel: '← Back to Home'/);
-  assert.match(sourcesSource, /backAccessibilityLabel: 'Back to Home'/);
+  assert.match(sourcesSource, /<LegalPage title=\{copy\.title\}>/);
   assert.match(
     sourcesSource,
     /accessibilityLabel=\{copy\.openEducationMaterialAccessibilityLabel\}/,
@@ -867,6 +860,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
+  assert.match(nativeSource, /getAdUnit/);
   assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
   assert.match(
@@ -881,14 +875,18 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
     nativeSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
   );
+  assert.doesNotMatch(
+    nativeSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
   assert.match(nativeSource, /<BannerAd/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
-  assert.match(copySource, /AdMob test unit active - preview/);
-  assert.match(copySource, /AdMob-testannons aktiv - förhandsvisning/);
+  assert.match(copySource, /AdMob-testannons aktiv - testplacering/);
+  assert.match(copySource, /AdMob test unit active - test placement/);
   assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/);
 });
 
@@ -1227,6 +1225,16 @@ test('first-run about modal uses natural Swedish guide accessibility copy', () =
   const source = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
   const staleGuideLabel = ['Öppna om-', 'provet-', 'guiden'].join('');
 
+  assert.match(source, /const firstRunAboutDialogTitleId = 'first-run-about-dialog-title';/);
+  assert.match(source, /const firstRunAboutDialogBodyId = 'first-run-about-dialog-body';/);
+  assert.match(source, /aria-labelledby=\{firstRunAboutDialogTitleId\}/);
+  assert.match(source, /aria-describedby=\{firstRunAboutDialogBodyId\}/);
+  assert.match(source, /aria-modal=\{true\}/);
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(source, /role="dialog"/);
+  assert.match(source, /<Pressable\s+accessible=\{false\}[\s\S]*styles\.backdrop/);
+  assert.match(source, /nativeID=\{firstRunAboutDialogTitleId\}/);
+  assert.match(source, /nativeID=\{firstRunAboutDialogBodyId\}/);
   assert.match(source, /open: 'Läs guiden'/);
   assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
   assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);
