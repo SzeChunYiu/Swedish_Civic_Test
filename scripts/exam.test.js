@@ -496,6 +496,15 @@ test('formatExamTime renders remaining seconds as mm:ss', () => {
   assert.equal(formatExamTime(1800), '30:00');
   assert.equal(formatExamTime(75), '01:15');
   assert.equal(formatExamTime(-5), '00:00');
+  for (const malformedRemainingSeconds of [
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    'abc',
+    null,
+    undefined,
+  ]) {
+    assert.equal(formatExamTime(malformedRemainingSeconds), '00:00');
+  }
 });
 
 test('shouldAutoSubmitExam submits only when a live exam reaches zero', () => {
@@ -555,4 +564,27 @@ test('shouldAutoSubmitExam submits only when a live exam reaches zero', () => {
     }),
     false,
   );
+  for (const malformedState of [
+    { examActive: undefined, remainingSeconds: 0, submitted: false, questionCount: 20 },
+    { examActive: 'yes', remainingSeconds: 0, submitted: false, questionCount: 20 },
+    { examActive: true, remainingSeconds: '0', submitted: false, questionCount: 20 },
+    { examActive: true, remainingSeconds: Number.NaN, submitted: false, questionCount: 20 },
+    {
+      examActive: true,
+      remainingSeconds: Number.POSITIVE_INFINITY,
+      submitted: false,
+      questionCount: 20,
+    },
+    { examActive: true, remainingSeconds: 0, submitted: 0, questionCount: 20 },
+    { examActive: true, remainingSeconds: 0, submitted: false, questionCount: '1' },
+    { examActive: true, remainingSeconds: 0, submitted: false, questionCount: null },
+    {
+      examActive: true,
+      remainingSeconds: 0,
+      submitted: false,
+      questionCount: Number.POSITIVE_INFINITY,
+    },
+  ]) {
+    assert.equal(shouldAutoSubmitExam(malformedState), false);
+  }
 });

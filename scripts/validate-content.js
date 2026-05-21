@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -9821,6 +9820,7 @@ function validateMockExamTimerParity(config) {
   }
 
   const liveExamState = {
+    examActive: true,
     remainingSeconds: totalSeconds,
     submitted: false,
     questionCount: config.questionCount,
@@ -9856,6 +9856,34 @@ function validateMockExamTimerParity(config) {
   }
   if (formatExamTime(-1) !== '00:00') {
     reject('formatExamTime must clamp negative remaining time to 00:00');
+  }
+  for (const malformedRemainingSeconds of [
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    '0',
+    null,
+    undefined,
+  ]) {
+    if (formatExamTime(malformedRemainingSeconds) !== '00:00') {
+      reject('formatExamTime must render malformed remaining time as 00:00');
+      break;
+    }
+  }
+  const malformedAutoSubmitStates = [
+    { ...liveExamState, examActive: undefined, remainingSeconds: 0 },
+    { ...liveExamState, examActive: 'yes', remainingSeconds: 0 },
+    { ...liveExamState, remainingSeconds: '0' },
+    { ...liveExamState, remainingSeconds: Number.NaN },
+    { ...liveExamState, submitted: 0, remainingSeconds: 0 },
+    { ...liveExamState, questionCount: '1', remainingSeconds: 0 },
+    { ...liveExamState, questionCount: null, remainingSeconds: 0 },
+    { ...liveExamState, questionCount: Number.POSITIVE_INFINITY, remainingSeconds: 0 },
+  ];
+  for (const malformedState of malformedAutoSubmitStates) {
+    if (shouldAutoSubmitExam(malformedState)) {
+      reject('shouldAutoSubmitExam must ignore malformed runtime timer state');
+      break;
+    }
   }
 
   if (valid) mockExamTimerParityValidated = true;
