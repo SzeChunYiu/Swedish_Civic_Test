@@ -8100,6 +8100,16 @@ if (process.argv.includes('--focus-mastery-rules')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-practice-scoring-parity')) {
+  validatePracticeScoringRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    practiceScoringRulesValidated,
+    practiceScoringRulesParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   validateMobileAdsConsentHookParity();
   exitWithValidationFailures();
@@ -14243,12 +14253,24 @@ function validateBadgeCatalog() {
 function validatePracticeScoringRules() {
   if (typeof scoreAnswers !== 'function') return;
 
+  const sparseResults = Object.assign(Array(3), { 0: true, 2: false });
   const cases = [
     { label: 'default empty results', input: undefined, expected: { correct: 0, total: 0 } },
     { label: 'empty results', input: [], expected: { correct: 0, total: 0 } },
     { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
     { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
     { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
+    {
+      label: 'truthy non-boolean results',
+      input: [true, 'yes', 1, {}, [], false],
+      expected: { correct: 1, total: 6 },
+    },
+    { label: 'sparse runtime results', input: sparseResults, expected: { correct: 1, total: 3 } },
+    {
+      label: 'non-array runtime results',
+      input: { 0: true, length: 1 },
+      expected: { correct: 0, total: 0 },
+    },
   ];
   let rulesAreValid = true;
 

@@ -98,6 +98,29 @@ test('answer feedback parity uses focused content validation routing', () => {
   );
 });
 
+test('practice scoring parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const practiceScoringTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-practice-scoring-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-practice-scoring-parity/);
+  assert.match(
+    validatorSource,
+    /validatePracticeScoringRules\(\);[\s\S]*practiceScoringRulesValidated[\s\S]*practiceScoringRulesParityValidated/,
+  );
+  assert.match(practiceScoringTestSource, /--focus-practice-scoring-parity/);
+  assert.doesNotMatch(
+    practiceScoringTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'practice scoring tests must not route through full content validation',
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
