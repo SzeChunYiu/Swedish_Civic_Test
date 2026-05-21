@@ -461,8 +461,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /^Sverige gick med i EU\.?$/i,
-  /^Sweden joined the EU\.?$/i,
+  /^Sjukförsäkring,\s*föräldraförsäkring och arbetslöshetsförsäkring\.?$/i,
+  /^Sickness insurance,\s*parental insurance,\s*and unemployment insurance\.?$/i,
+  /^Vårdcentraler,\s*sjukhus och regional kollektivtrafik\.?$/i,
+  /^Health centres,\s*hospitals,\s*and regional public transport\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -4626,6 +4628,59 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function sourceCanQuestionPredicateSv(question) {
+  const match = stripFinalPunctuation(question.questionSv).match(/^Vilka\s+.+?\s+kan\s+(.+)$/i);
+  return match?.[1] ?? null;
+}
+
+function sourceCanQuestionPredicateEn(question) {
+  const match = stripFinalPunctuation(question.questionEn).match(/^Which\s+.+?\s+can\s+(.+)$/i);
+  return match?.[1] ?? null;
+}
+
+function textIncludesPhrase(text, phrase) {
+  const phrasePattern = phrase.trim().split(/\s+/).map(escapeRegExp).join('\\s+');
+  return new RegExp(phrasePattern, 'i').test(stripFinalPunctuation(text));
+}
+
+function findGeneratedCanQuestionTrueFalseFragmentIssue(sourceQuestion, variant) {
+  if (variant.type !== 'true_false') return null;
+
+  const svPredicate = sourceCanQuestionPredicateSv(sourceQuestion);
+  if (svPredicate && !textIncludesPhrase(variant.questionSv, svPredicate)) {
+    return 'questionSv';
+  }
+
+  const enPredicate = sourceCanQuestionPredicateEn(sourceQuestion);
+  if (enPredicate && !textIncludesPhrase(variant.questionEn, enPredicate)) {
+    return 'questionEn';
+  }
+
+  return null;
+}
+
+function generatedTrueFalseSourceOption(sourceQuestion, variantIndex) {
+  if (variantIndex === 1) return correctOption(sourceQuestion);
+  if (variantIndex === 2) return wrongOption(sourceQuestion);
+  return null;
+}
+
+function findGeneratedTrueFalseBareSourceOptionIssue(sourceQuestion, variant, variantIndex) {
+  if (!sourceQuestion || variant.type !== 'true_false') return null;
+
+  const option = generatedTrueFalseSourceOption(sourceQuestion, variantIndex);
+  if (!option) return null;
+
+  const bareSv =
+    normalizeStatementForComparison(variant.questionSv) ===
+    normalizeStatementForComparison(option.textSv);
+  const bareEn =
+    normalizeStatementForComparison(variant.questionEn) ===
+    normalizeStatementForComparison(option.textEn);
+
+  return bareSv || bareEn ? 'source-option' : null;
+}
+
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
   const text = [
     question.questionEn,
@@ -5296,22 +5351,6 @@ function decisionStatementEn(subject, context, answer) {
   }
   return `${upperFirst(subject)} decided as ${context} that ${normalizedAnswer}`;
 }
-function compactEventContextSv(context) {
-  return context.trim().replace(/,\s*ett datum\b.*$/i, '');
-}
-function compactEventContextEn(context) {
-  return context.trim().replace(/,\s*a date\b.*$/i, '');
-}
-function eventStatementSv(context, answer) {
-  return `Händelsen ${compactEventContextSv(context)} var att ${lowerLeadingSwedishCommonStart(
-    answer,
-  )}`;
-}
-function eventStatementEn(context, answer) {
-  return `The event ${compactEventContextEn(context)} was that ${lowerLeadingEnglishArticle(
-    answer,
-  )}`;
-}
 function supportStatementSv(subject, answer) {
   if (/^En\s+/i.test(answer)) return `${upperFirst(subject)} är ${lowerFirst(answer)}`;
   return replaceLeadingSwedishSubject(subject, answer);
@@ -5708,6 +5747,11 @@ function civicStatementSv(source, option) {
   if (match) return `${upperFirst(answer)} ${match[1]}`;
   match = q.match(/^Vilka (.+?) är viktiga i Sverige$/i);
   if (match) return `${upperFirst(answer)} är viktiga ${match[1]} i Sverige`;
+  match = q.match(/^Vilka (.+?) kan (.+)$/i);
+  if (match) {
+    if (option.id === source.correctOptionId) return `${upperFirst(answer)} kan ${match[2]}`;
+    return `${upperFirst(answer)} är ${match[1]} som kan ${match[2]}`;
+  }
   match = q.match(/^Vad betyder (?!det att\b)(.+)$/i);
   if (match) return `${upperFirst(match[1])} betyder ${lowerFirst(answer)}`;
   match = q.match(/^Vilket av följande ingår i (.+)$/i);
@@ -5853,8 +5897,6 @@ function civicStatementSv(source, option) {
   if (match) return describesStatementSv(match[1], answer);
   match = q.match(/^Vad beslutade (.+?) som (.+)$/i);
   if (match) return decisionStatementSv(match[1], match[2], answer);
-  match = q.match(/^Vad hände (.+)$/i);
-  if (match) return eventStatementSv(match[1], answer);
   match = q.match(/^Vilket år hölls (.+)$/i);
   if (match) return `${upperFirst(match[1])} hölls ${answer}`;
   match = q.match(/^Vad blev (.+?) viktigt för$/i);
@@ -6028,6 +6070,11 @@ function civicStatementEn(source, option) {
   if (match) return `${upperFirst(answer)} ${match[1]}`;
   match = q.match(/^Which (.+?) are important in Sweden$/i);
   if (match) return `${upperFirst(answer)} are important ${match[1]} in Sweden`;
+  match = q.match(/^Which (.+?) can (.+)$/i);
+  if (match) {
+    if (option.id === source.correctOptionId) return `${upperFirst(answer)} can ${match[2]}`;
+    return `${upperFirst(answer)} ${englishSubjectVerb(answer, 'is', 'are')} ${match[1]} that can ${match[2]}`;
+  }
   match = q.match(/^What does (.+) mean$/i);
   if (match) return meaningStatementEn(match[1], answer);
   match = q.match(/^Which of the following is part of (.+)$/i);
@@ -6184,8 +6231,6 @@ function civicStatementEn(source, option) {
   if (match) return describesStatementEn(match[1], answer);
   match = q.match(/^What did (.+?) decide as (.+)$/i);
   if (match) return decisionStatementEn(match[1], match[2], answer);
-  match = q.match(/^What happened (.+)$/i);
-  if (match) return eventStatementEn(match[1], answer);
   match = q.match(/^In which year was (.+)$/i);
   if (match) return `${upperFirst(match[1])} was in ${answer}`;
   match = q.match(/^What did (.+?) become important for$/i);
@@ -7503,7 +7548,6 @@ let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
-let generatedTrueFalseEventContextValidated = false;
 let generatedTagTemplateParityValidated = 0;
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
@@ -14983,15 +15027,38 @@ function validateAuthoredSourceParity() {
   });
 }
 
-if (process.argv.includes('--focus-generated-true-false-event-context')) {
-  validateStaticValidationSyntaxGate();
-  validateGeneratedTrueFalseEventContextFocus();
+function validateGeneratedTrueFalseNaturalnessFocus() {
+  if (!Array.isArray(questions)) return;
+
+  questions.forEach((question, index) => {
+    if (question.type !== 'true_false' || !question.tags?.includes('published-variant')) return;
+
+    const label = question.id || `question[${index}]`;
+    const generatedIndex =
+      Array.isArray(sourceQuestions) && index >= sourceQuestions.length
+        ? index - sourceQuestions.length
+        : -1;
+    const sourceIndex = generatedIndex >= 0 ? Math.floor(generatedIndex / 4) : -1;
+    const variantIndex = generatedIndex >= 0 ? generatedIndex % 4 : -1;
+    const sourceQuestion = Array.isArray(sourceQuestions) ? sourceQuestions[sourceIndex] : null;
+    const naturalnessIssue =
+      findQuestionGeneratedTrueFalseNaturalnessIssue(question) ||
+      findGeneratedTrueFalseBareSourceOptionIssue(sourceQuestion, question, variantIndex);
+
+    if (naturalnessIssue) {
+      fail(`${label} contains a generated true/false grammar-splice stem`);
+      return;
+    }
+
+    questionGeneratedTrueFalseNaturalnessValidated += 1;
+  });
+}
+
+if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+  validateGeneratedTrueFalseNaturalnessFocus();
   exitWithValidationFailures();
   printValidationSummary({
-    generatedTrueFalseEventContextValidated,
-    staticValidationSyntaxFilesValidated,
-    staticValidationImportChecksValidated,
-    staticValidationSyntaxGateValidated,
+    questionGeneratedTrueFalseNaturalnessValidated,
   });
   process.exit(0);
 }
@@ -15266,6 +15333,13 @@ function validateGeneratedPromptTemplateParity() {
       if (expected && variant.questionEn !== expected.questionEn) {
         variantIsValid = false;
         fail(`${label} questionEn does not match generated prompt template`);
+      }
+      if (
+        findGeneratedCanQuestionTrueFalseFragmentIssue(sourceQuestion, variant) ||
+        findGeneratedTrueFalseBareSourceOptionIssue(sourceQuestion, variant, variantIndex)
+      ) {
+        variantIsValid = false;
+        fail(`${label} contains a generated true/false grammar-splice stem`);
       }
 
       if (variantIsValid) generatedPromptTemplateParityValidated += 1;
@@ -15624,44 +15698,6 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
-function validateGeneratedTrueFalseEventContextFocus() {
-  const q664 = Array.isArray(questions)
-    ? questions.find((question) => question.id === 'q664')
-    : null;
-  if (!q664) {
-    fail('q664 generated true/false event-context row is missing');
-    return;
-  }
-
-  let valid = true;
-  if (q664.type !== 'true_false') {
-    valid = false;
-    fail('q664 must remain a true_false generated row');
-  }
-  if (q664.correctOptionId !== 'false') {
-    valid = false;
-    fail('q664 must remain a false generated statement');
-  }
-  if (!q664.tags?.includes('false-statement')) {
-    valid = false;
-    fail('q664 must keep the false-statement tag');
-  }
-  if (q664.questionSv !== 'Händelsen den 6 juni 1523 var att Sverige gick med i EU.') {
-    valid = false;
-    fail('q664 Swedish false statement must keep the 6 June 1523 event context');
-  }
-  if (q664.questionEn !== 'The event on 6 June 1523 was that Sweden joined the EU.') {
-    valid = false;
-    fail('q664 English false statement must keep the 6 June 1523 event context');
-  }
-  if (findQuestionGeneratedTrueFalseNaturalnessIssue(q664)) {
-    valid = false;
-    fail('q664 contains a generated true/false grammar-splice stem');
-  }
-
-  generatedTrueFalseEventContextValidated = valid;
-}
-
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
   if (failures.length) exitWithValidationFailures();

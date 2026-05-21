@@ -38651,8 +38651,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'true_false',
       q: {
-        en: 'Sickness insurance, parental insurance, and unemployment insurance.',
-        sv: 'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring.',
+        en: 'Sickness insurance, parental insurance, and unemployment insurance can provide financial support during illness, parenthood, or unemployment.',
+        sv: 'Sjukförsäkring, föräldraförsäkring och arbetslöshetsförsäkring kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet.',
       },
       opts: [
         {
@@ -38692,8 +38692,8 @@
       chapter: 'Ch. 09 · The welfare society',
       type: 'true_false',
       q: {
-        en: 'Health centres, hospitals, and regional public transport.',
-        sv: 'Vårdcentraler, sjukhus och regional kollektivtrafik.',
+        en: 'Health centres, hospitals, and regional public transport are state-funded social insurance systems that can provide financial support during illness, parenthood, or unemployment.',
+        sv: 'Vårdcentraler, sjukhus och regional kollektivtrafik är statliga trygghetssystem som kan ge ekonomiskt stöd vid sjukdom, föräldraskap eller arbetslöshet.',
       },
       opts: [
         {
