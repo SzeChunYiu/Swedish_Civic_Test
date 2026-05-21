@@ -30,6 +30,7 @@ const {
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
+const { validatePurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -56,6 +57,7 @@ const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
   'scripts/compliance-pages.test.js',
+  'scripts/purchase-inflight-guard.js',
 ]);
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
@@ -1582,7 +1584,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -14542,6 +14544,7 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let placementCtaSource = '';
+  let premiumBannerSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -14554,6 +14557,10 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
     );
+    premiumBannerSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+      'utf8',
+    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
@@ -14561,7 +14568,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
+  const placementCtaGuard = validatePurchaseActionInFlightGuard(placementCtaSource, {
+    awaitedCalls: ['await purchaseAction('],
+    surfaceName: 'RemoveAdsPlacementCta',
+  });
+  const premiumBannerGuard = validatePurchaseActionInFlightGuard(premiumBannerSource, {
+    awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
+    surfaceName: 'PremiumBanner',
+  });
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -14688,11 +14704,16 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint',
     ],
     [
-      normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
-        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
-      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+      placementCtaGuard.valid,
+      placementCtaGuard.message ||
+        'Remove Ads placement CTA must use a ref-backed in-flight guard before awaiting store calls',
+    ],
+    [
+      normalizedPremiumBannerSource.includes('restoreRemoveAdsPurchase') &&
+        normalizedPremiumBannerSource.includes("action === 'buy'") &&
+        premiumBannerGuard.valid,
+      premiumBannerGuard.message ||
+        'PremiumBanner buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 

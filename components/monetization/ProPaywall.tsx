@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -163,11 +163,15 @@ export function ProPaywall({
   const [activeAction, setActiveAction] = useState<ProAction | null>(null);
   const [comparisonVisible, setComparisonVisible] = useState(false);
   const [status, setStatus] = useState<ProPaywallStatus>('idle');
+  const purchaseActionInFlightRef = useRef(false);
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
   const statusMessage = copy.statusMessages[status];
   const runProAction = useCallback(
     async (action: ProAction) => {
+      if (purchaseActionInFlightRef.current) return;
+
+      purchaseActionInFlightRef.current = true;
       setActiveAction(action);
 
       try {
@@ -181,6 +185,7 @@ export function ProPaywall({
       } catch {
         setStatus('error');
       } finally {
+        purchaseActionInFlightRef.current = false;
         setActiveAction(null);
       }
     },
