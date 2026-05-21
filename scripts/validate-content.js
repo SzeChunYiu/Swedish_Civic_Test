@@ -10081,6 +10081,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
+  validateUhrReferenceCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    uhrReferenceCardAccessibilityRulesValidated,
+    uhrReferenceCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-onboarding-route-scroll')) {
   validateOnboardingRouteScrollParity();
   exitWithValidationFailures();
