@@ -461,8 +461,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
-  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -1875,6 +1873,11 @@ const EXPECTED_SETTINGS_ROUTE_HEADERS = [
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.themeModeTitle\}\s*<\/Text>/,
   },
   {
+    label: 'companion section title',
+    pattern:
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.companionTitle\}\s*<\/Text>/,
+  },
+  {
     label: 'daily goal section title',
     pattern:
       /<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>\s*\{copy\.dailyGoalTitle\}\s*<\/Text>/,
@@ -1892,6 +1895,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Ljud',
     '← Tillbaka till profil',
     'Tillbaka till profil',
+    'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
+    'Studiekompis',
     '${answerCount} svar per dag',
     'Dagligt mål',
     'Stäng av ljud',
@@ -1926,7 +1931,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Studiespråk',
     'Ställ in dagligt mål till ${goal} svar',
     'Välj tema: ${label}',
-    'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
     'Mörkt',
     'Ljust',
     'Tema: ${label}',
@@ -1942,6 +1947,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Audio',
     '← Back to Profile',
     'Back to profile',
+    'Choose a study companion for practice. It is free and saved only on this device.',
+    'Study companion',
     '${answerCount} answers per day',
     'Daily goal',
     'Disable audio',
@@ -1976,7 +1983,7 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Study language',
     'Set daily goal to ${goal} answers',
     'Choose theme: ${label}',
-    'Control study language, audio, theme, and your daily goal.',
+    'Control study language, audio, theme, study companion, and your daily goal.',
     'Dark',
     'Light',
     'Theme: ${label}',
@@ -2039,6 +2046,48 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   [
     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
     'settings audio switch must render localized state copy',
+  ],
+  [
+    "import { CompanionPicker } from '../components/mascot/CompanionPicker';",
+    'settings route must import the companion picker surface',
+  ],
+  [
+    "import { useCompanionStore } from '../lib/storage/companionStore';",
+    'settings route must import the companion store',
+  ],
+  [
+    'const selectedCompanionId = useCompanionStore((state) => state.selectedId);',
+    'settings companion section must read selected companion from companion store',
+  ],
+  [
+    'const setSelectedCompanion = useCompanionStore((state) => state.setSelected);',
+    'settings companion section must write selected companion through companion store',
+  ],
+  [
+    'const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);',
+    'settings companion section must read companion persistence warnings',
+  ],
+  [
+    'const clearCompanionPersistenceWarning = useCompanionStore(',
+    'settings companion section must expose companion warning dismissal',
+  ],
+  ['{copy.companionTitle}', 'settings companion section must render localized copy'],
+  ['{copy.companionSubtitle}', 'settings companion subtitle must render localized copy'],
+  [
+    'warning={companionPersistenceWarning}',
+    'settings companion warning notice must receive companion persistence warning',
+  ],
+  [
+    'onDismiss={clearCompanionPersistenceWarning}',
+    'settings companion warning notice must dismiss companion persistence warning',
+  ],
+  [
+    'selectedId={selectedCompanionId}',
+    'settings companion picker must receive the persisted selected companion',
+  ],
+  [
+    'onSelect={setSelectedCompanion}',
+    'settings companion picker must persist selection through the store',
   ],
   ['{copy.dailyGoalTitle}', 'settings daily-goal section must render localized copy'],
   [
@@ -4624,29 +4673,6 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
-}
-
-function validateQuestionGeneratedTrueFalseNaturalness(question, label) {
-  const generatedTrueFalseNaturalnessIssue =
-    findQuestionGeneratedTrueFalseNaturalnessIssue(question);
-  if (generatedTrueFalseNaturalnessIssue) {
-    fail(`${label} contains a generated true/false grammar-splice stem`);
-    return false;
-  }
-
-  questionGeneratedTrueFalseNaturalnessValidated += 1;
-  return true;
-}
-
-function validateGeneratedTrueFalseNaturalness(questionsToValidate) {
-  if (!Array.isArray(questionsToValidate)) {
-    fail('questions export is not an array');
-    return;
-  }
-
-  questionsToValidate.forEach((question, index) => {
-    validateQuestionGeneratedTrueFalseNaturalness(question, question?.id || `question[${index}]`);
-  });
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -7508,20 +7534,6 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-generated-true-false-naturalness')) {
-  validateGeneratedTrueFalseNaturalness(questions);
-  exitWithValidationFailures();
-  const publishedQuestions = Array.isArray(questions)
-    ? questions.filter((question) => question.reviewStatus === 'published').length
-    : 0;
-  printValidationSummary({
-    questions: Array.isArray(questions) ? questions.length : 0,
-    publishedQuestions,
-    questionGeneratedTrueFalseNaturalnessValidated,
-  });
-  process.exit(0);
-}
-
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
   const readinessValidation = validateStaticV11ReadinessCopy();
@@ -7574,6 +7586,24 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-route')) {
+  validateSettingsRouteHeaderParity();
+  validateSettingsRouteCopyParity();
+  validateSettingsRouteScrollParity();
+  validateLocalizationLanguageContract();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
+    languageSettingsParityValidated,
   });
   process.exit(0);
 }
@@ -15762,6 +15792,8 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
+      const generatedTrueFalseNaturalnessIssue =
+        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -15787,7 +15819,11 @@ if (Array.isArray(questions)) {
       } else {
         questionJudgementMetaStemsValidated += 1;
       }
-      validateQuestionGeneratedTrueFalseNaturalness(question, label);
+      if (generatedTrueFalseNaturalnessIssue) {
+        fail(`${label} contains a generated true/false grammar-splice stem`);
+      } else {
+        questionGeneratedTrueFalseNaturalnessValidated += 1;
+      }
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
       } else {

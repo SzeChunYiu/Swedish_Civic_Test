@@ -1,11 +1,19 @@
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+  View,
+} from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
+import { CompanionPicker } from '../components/mascot/CompanionPicker';
 import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
 import {
-  LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
@@ -14,32 +22,28 @@ import {
 } from '../lib/storage/localStudyDataImport';
 import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
+import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import { useSettingsStore } from '../lib/storage/settingsStore';
-import { motion, radius, shadows, space, typography } from '../lib/theme';
-import { useTheme } from '../lib/theme/ThemeProvider';
+import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 
 type SettingsCopy = {
   audioDisabledLabel: string;
   audioEnabledLabel: string;
-  audioListenFirstDisabledLabel: string;
-  audioListenFirstEnabledLabel: string;
-  audioListenFirstSubtitle: string;
-  audioListenFirstTitle: string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
+  companionSubtitle: string;
+  companionTitle: string;
   dailyGoalPresetLabel: (goal: number) => string;
   dailyGoalSummary: (answerCount: number) => string;
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
-  disableListenFirstAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
-  enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
-  importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
+  importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
   importPreview: string;
@@ -48,16 +52,15 @@ type SettingsCopy = {
   importReset: string;
   importSectionSubtitle: string;
   importSuccess: string;
-  importSummaryBookmarks: CountCopy;
-  importSummaryCitizenshipRequirements: CountCopy;
-  importSummaryCompletedQuestions: CountCopy;
-  importSummaryFsrsDays: CountCopy;
-  importSummaryFsrsCards: CountCopy;
-  importSummaryMockExams: CountCopy;
-  importSummarySettings: CountCopy;
+  importSummaryBookmarks: (count: number) => string;
+  importSummaryCompletedQuestions: (count: number) => string;
+  importSummaryFsrsDays: (count: number) => string;
+  importSummaryFsrsCards: (count: number) => string;
+  importSummaryMockExams: (count: number) => string;
+  importSummarySettings: (count: number) => string;
   importSummaryStreakFreeze: string;
   importSummaryTitle: string;
-  importSummaryWrongAnswers: CountCopy;
+  importSummaryWrongAnswers: (count: number) => string;
   importTitle: string;
   languageAccessibilityLabel: (label: string) => string;
   studyLanguageTitle: string;
@@ -72,25 +75,16 @@ type SettingsCopy = {
   title: string;
 };
 
-type CountCopy = {
-  one: string;
-  other: string;
-};
-
-const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / 1024 / 1024} MB`;
-
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
     audioEnabledLabel: 'Ljud på',
-    audioListenFirstDisabledLabel: 'Av',
-    audioListenFirstEnabledLabel: 'På',
-    audioListenFirstSubtitle:
-      'Spelar automatiskt upp den svenska frågan och svarsalternativen när en ny övningsfråga visas.',
-    audioListenFirstTitle: 'Lyssna först',
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
+    companionSubtitle:
+      'Välj en studiekompis för övningen. Valet är gratis och sparas bara på enheten.',
+    companionTitle: 'Studiekompis',
     dailyGoalPresetLabel: (goal) => {
       if (goal === 5) return 'Snabb';
       if (goal === 10) return 'Lagom';
@@ -101,22 +95,16 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
-    disableListenFirstAudioAccessibilityLabel: 'Stäng av lyssna först för övningsfrågor',
     enableAudioAccessibilityLabel: 'Slå på ljud',
-    enableListenFirstAudioAccessibilityLabel: 'Slå på lyssna först för övningsfrågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
-    importErrorMessage: (code, detail) => {
+    importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
-      if (code === 'input_too_large') {
-        return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Välj en mindre export och försök igen.`;
-      }
       if (code === 'invalid_json') return 'JSON kunde inte läsas.';
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
       if (code === 'purchase_fields_rejected') {
-        const detailText = detail ? ` Fält: ${detail}.` : '';
-        return `Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.${detailText}`;
+        return 'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.';
       }
       return 'Importen innehåller inga stödda studiedata.';
     },
@@ -125,35 +113,26 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPreview: 'Förhandsgranska import',
     importPreviewAccessibilityLabel: 'Förhandsgranska lokal studiedataimport',
     importPurchasesNote:
-      'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
+      'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
     importReset: 'Återställ importfält',
-    importSectionSubtitle: `Klistra in en lokal studiedataexport i JSON-format (högst ${localStudyDataImportMaxLabel}). Du får en sammanfattning innan något skrivs.`,
+    importSectionSubtitle:
+      'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
     importSuccess: 'Importen är klar.',
-    importSummaryBookmarks: { one: 'bokmärke', other: 'bokmärken' },
-    importSummaryCitizenshipRequirements: {
-      one: 'markerat kravområde',
-      other: 'markerade kravområden',
-    },
-    importSummaryCompletedQuestions: {
-      one: 'fråga med sparad progression',
-      other: 'frågor med sparad progression',
-    },
-    importSummaryFsrsDays: { one: 'repetitionsdag', other: 'repetitionsdagar' },
-    importSummaryFsrsCards: { one: 'repetitionskort', other: 'repetitionskort' },
-    importSummaryMockExams: { one: 'provhistorikpost', other: 'provhistorikposter' },
-    importSummarySettings: { one: 'sparad inställning', other: 'sparade inställningar' },
-    importSummaryStreakFreeze: 'Studiesvit och svitskydd ingår',
+    importSummaryBookmarks: (count) => `${count} bokmärken`,
+    importSummaryCompletedQuestions: (count) => `${count} frågor med sparad progression`,
+    importSummaryFsrsDays: (count) => `${count} dagar med FSRS-repetition`,
+    importSummaryFsrsCards: (count) => `${count} FSRS-repetitionskort`,
+    importSummaryMockExams: (count) => `${count} provhistorikposter`,
+    importSummarySettings: (count) => `${count} inställningar`,
+    importSummaryStreakFreeze: 'Studiesvit och frysstatus ingår',
     importSummaryTitle: 'Sammanfattning före import',
-    importSummaryWrongAnswers: {
-      one: 'granskning av fel svar',
-      other: 'granskningar av fel svar',
-    },
+    importSummaryWrongAnswers: (count) => `${count} granskningar av fel svar`,
     importTitle: 'Importera studiedata',
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
-    subtitle: 'Styr studiespråk, ljud, tema och ditt dagliga mål.',
+    subtitle: 'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
     themeDarkLabel: 'Mörkt',
     themeLightLabel: 'Ljust',
     themeModeSummary: (label) => `Tema: ${label}`,
@@ -164,14 +143,12 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   en: {
     audioDisabledLabel: 'Audio disabled',
     audioEnabledLabel: 'Audio enabled',
-    audioListenFirstDisabledLabel: 'Off',
-    audioListenFirstEnabledLabel: 'On',
-    audioListenFirstSubtitle:
-      'Automatically plays the Swedish question and answer options when a new practice question appears.',
-    audioListenFirstTitle: 'Listen first',
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
+    companionSubtitle:
+      'Choose a study companion for practice. It is free and saved only on this device.',
+    companionTitle: 'Study companion',
     dailyGoalPresetLabel: (goal) => {
       if (goal === 5) return 'Quick';
       if (goal === 10) return 'Steady';
@@ -182,23 +159,17 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
-    disableListenFirstAudioAccessibilityLabel: 'Disable listen-first practice audio',
     enableAudioAccessibilityLabel: 'Enable audio',
-    enableListenFirstAudioAccessibilityLabel: 'Enable listen-first practice audio',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
-    importErrorMessage: (code, detail) => {
+    importErrorMessage: (code) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
-      if (code === 'input_too_large') {
-        return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Choose a smaller export and try again.`;
-      }
       if (code === 'invalid_json') return 'JSON could not be read.';
       if (code === 'invalid_schema')
         return 'The import has the wrong format or unknown top-level fields.';
       if (code === 'unsupported_version') return 'This import version is not supported.';
       if (code === 'purchase_fields_rejected') {
-        const detailText = detail ? ` Field: ${detail}.` : '';
-        return `The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.${detailText}`;
+        return 'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.';
       }
       return 'The import does not contain supported study data.';
     },
@@ -209,36 +180,24 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPurchasesNote:
       'Purchases, receipts, and IAP data are not imported. Use the app store restore flow for purchases.',
     importReset: 'Reset import field',
-    importSectionSubtitle: `Paste a local study data export in JSON format (under ${localStudyDataImportMaxLabel}). You will see a summary before anything is written.`,
+    importSectionSubtitle:
+      'Paste a local study data export in JSON format. You will see a summary before anything is written.',
     importSuccess: 'Import complete.',
-    importSummaryBookmarks: { one: 'bookmark', other: 'bookmarks' },
-    importSummaryCitizenshipRequirements: {
-      one: 'marked requirement',
-      other: 'marked requirements',
-    },
-    importSummaryCompletedQuestions: {
-      one: 'question with saved progress',
-      other: 'questions with saved progress',
-    },
-    importSummaryFsrsDays: { one: 'FSRS review day', other: 'FSRS review days' },
-    importSummaryFsrsCards: { one: 'FSRS review card', other: 'FSRS review cards' },
-    importSummaryMockExams: {
-      one: 'mock exam history entry',
-      other: 'mock exam history entries',
-    },
-    importSummarySettings: { one: 'saved setting', other: 'saved settings' },
+    importSummaryBookmarks: (count) => `${count} bookmarks`,
+    importSummaryCompletedQuestions: (count) => `${count} questions with saved progress`,
+    importSummaryFsrsDays: (count) => `${count} FSRS review days`,
+    importSummaryFsrsCards: (count) => `${count} FSRS review cards`,
+    importSummaryMockExams: (count) => `${count} mock exam history entries`,
+    importSummarySettings: (count) => `${count} settings`,
     importSummaryStreakFreeze: 'Study streak and freeze status included',
     importSummaryTitle: 'Summary before import',
-    importSummaryWrongAnswers: {
-      one: 'wrong-answer review',
-      other: 'wrong-answer reviews',
-    },
+    importSummaryWrongAnswers: (count) => `${count} wrong-answer reviews`,
     importTitle: 'Import study data',
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
-    subtitle: 'Control study language, audio, theme, and your daily goal.',
+    subtitle: 'Control study language, audio, theme, study companion, and your daily goal.',
     themeDarkLabel: 'Dark',
     themeLightLabel: 'Light',
     themeModeSummary: (label) => `Theme: ${label}`,
@@ -253,33 +212,25 @@ type ImportFeedback = {
   text: string;
 };
 
-function formatImportSummaryCount(count: number, copy: CountCopy): string {
-  return `${count} ${count === 1 ? copy.one : copy.other}`;
-}
-
 function buildImportSummaryLines(
   copy: SettingsCopy,
   summary: LocalStudyDataImportSummary,
 ): string[] {
   const lines = [
-    formatImportSummaryCount(summary.completedQuestionCount, copy.importSummaryCompletedQuestions),
-    formatImportSummaryCount(summary.bookmarkedQuestionCount, copy.importSummaryBookmarks),
-    formatImportSummaryCount(summary.wrongAnswerReviewCount, copy.importSummaryWrongAnswers),
-    formatImportSummaryCount(summary.mockExamSessionCount, copy.importSummaryMockExams),
-    formatImportSummaryCount(summary.fsrsReviewCardCount, copy.importSummaryFsrsCards),
-    formatImportSummaryCount(summary.gradedReviewDayCount, copy.importSummaryFsrsDays),
-    formatImportSummaryCount(summary.settingCount, copy.importSummarySettings),
-    formatImportSummaryCount(
-      summary.citizenshipRequirementChecklistCount,
-      copy.importSummaryCitizenshipRequirements,
-    ),
+    copy.importSummaryCompletedQuestions(summary.completedQuestionCount),
+    copy.importSummaryBookmarks(summary.bookmarkedQuestionCount),
+    copy.importSummaryWrongAnswers(summary.wrongAnswerReviewCount),
+    copy.importSummaryMockExams(summary.mockExamSessionCount),
+    copy.importSummaryFsrsCards(summary.fsrsReviewCardCount),
+    copy.importSummaryFsrsDays(summary.gradedReviewDayCount),
+    copy.importSummarySettings(summary.settingCount),
   ];
   if (summary.streakFreezeStateIncluded) lines.push(copy.importSummaryStreakFreeze);
   return lines;
 }
 
 export default function Screen() {
-  const { colors: themeColors } = useTheme();
+  const systemColorScheme = useColorScheme();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -289,20 +240,16 @@ export default function Screen() {
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
-  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
-  const accessibilityPersistenceWarning = useAccessibilityStore(
-    (state) => state.persistenceWarning,
-  );
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
-  const setListenFirstAudioEnabled = useAccessibilityStore(
-    (state) => state.setListenFirstAudioEnabled,
-  );
-  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
+  const selectedCompanionId = useCompanionStore((state) => state.selectedId);
+  const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
+  const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
+  const clearCompanionPersistenceWarning = useCompanionStore(
     (state) => state.clearPersistenceWarning,
   );
   const copy = settingsCopy[language];
+  const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
-  const [focusedControl, setFocusedControl] = useState<string | null>(null);
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
@@ -316,7 +263,6 @@ export default function Screen() {
 
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
-    const focusKey = `language-${value}`;
 
     return (
       <Pressable
@@ -326,13 +272,10 @@ export default function Screen() {
         accessibilityRole="radio"
         accessibilityState={{ checked: language === value }}
         hitSlop={space[1]}
-        onBlur={() => setFocusedControl(null)}
-        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setLanguage(value)}
         style={({ pressed }) => [
           styles.pill,
           language === value ? styles.pillActive : null,
-          focusedControl === focusKey ? styles.controlFocused : null,
           pressed ? styles.controlPressed : null,
         ]}
       >
@@ -345,7 +288,6 @@ export default function Screen() {
 
   const renderThemeButton = (value: ThemeMode, label: string) => {
     const selected = themeMode === value;
-    const focusKey = `theme-${value}`;
 
     return (
       <Pressable
@@ -355,13 +297,10 @@ export default function Screen() {
         accessibilityRole="button"
         accessibilityState={{ selected }}
         hitSlop={space[1]}
-        onBlur={() => setFocusedControl(null)}
-        onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setThemeMode(value)}
         style={({ pressed }) => [
           styles.pill,
           selected ? styles.pillActive : null,
-          focusedControl === focusKey ? styles.controlFocused : null,
           pressed ? styles.controlPressed : null,
         ]}
       >
@@ -380,10 +319,7 @@ export default function Screen() {
     const result = previewLocalStudyDataImport(importText);
     if (!result.ok) {
       setImportPreview(null);
-      setImportFeedback({
-        tone: 'error',
-        text: copy.importErrorMessage(result.code, result.detail),
-      });
+      setImportFeedback({ tone: 'error', text: copy.importErrorMessage(result.code) });
       return;
     }
 
@@ -421,12 +357,6 @@ export default function Screen() {
         onDismiss={clearPersistenceWarning}
         warning={persistenceWarning}
       />
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearAccessibilityPersistenceWarning}
-        warningScope="accessibilityPreferences"
-        warning={accessibilityPersistenceWarning}
-      />
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -457,44 +387,14 @@ export default function Screen() {
           accessibilityRole="switch"
           accessibilityState={{ checked: audioEnabled }}
           hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('audio')}
           onPress={() => setAudioEnabled(!audioEnabled)}
           style={({ pressed }) => [
             styles.secondaryButton,
-            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
             pressed ? styles.secondaryButtonPressed : null,
           ]}
         >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
-          </Text>
-        </Pressable>
-        <Text style={styles.subtitle}>{copy.audioListenFirstSubtitle}</Text>
-        <Pressable
-          aria-checked={listenFirstAudioEnabled}
-          accessibilityLabel={
-            listenFirstAudioEnabled
-              ? copy.disableListenFirstAudioAccessibilityLabel
-              : copy.enableListenFirstAudioAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: listenFirstAudioEnabled }}
-          hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('listen-first-audio')}
-          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
-            pressed ? styles.secondaryButtonPressed : null,
-          ]}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {copy.audioListenFirstTitle}:{' '}
-            {listenFirstAudioEnabled
-              ? copy.audioListenFirstEnabledLabel
-              : copy.audioListenFirstDisabledLabel}
           </Text>
         </Pressable>
       </View>
@@ -511,6 +411,23 @@ export default function Screen() {
 
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.companionTitle}
+        </Text>
+        <Text style={styles.subtitle}>{copy.companionSubtitle}</Text>
+        <PersistenceWarningNotice
+          language={language}
+          onDismiss={clearCompanionPersistenceWarning}
+          warning={companionPersistenceWarning}
+        />
+        <CompanionPicker
+          language={language}
+          onSelect={setSelectedCompanion}
+          selectedId={selectedCompanionId}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.dailyGoalTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
@@ -522,7 +439,6 @@ export default function Screen() {
         >
           {[5, 10, 20, 40].map((goal) => {
             const selected = dailyGoalAnswers === goal;
-            const focusKey = `daily-goal-${goal}`;
 
             return (
               <Pressable
@@ -532,14 +448,11 @@ export default function Screen() {
                 accessibilityRole="radio"
                 accessibilityState={{ checked: dailyGoalAnswers === goal }}
                 hitSlop={space[1]}
-                onBlur={() => setFocusedControl(null)}
-                onFocus={() => setFocusedControl(focusKey)}
                 onPress={() => setDailyGoalAnswers(goal)}
                 style={({ pressed }) => [
                   styles.pill,
                   styles.goalPill,
                   selected ? styles.pillActive : null,
-                  focusedControl === focusKey ? styles.controlFocused : null,
                   pressed ? styles.controlPressed : null,
                 ]}
               >
@@ -563,7 +476,6 @@ export default function Screen() {
         <Text style={styles.disclaimerText}>{copy.importPurchasesNote}</Text>
         <TextInput
           accessibilityLabel={copy.importPasteLabel}
-          maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}
           multiline
           onChangeText={handleImportTextChange}
           placeholder={copy.importPastePlaceholder}
@@ -673,7 +585,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.card,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       gap: space[1.5],
       padding: space[2],
       ...shadows.card,
@@ -693,7 +605,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surfaceWarm,
       borderColor: themeColors.border,
       borderRadius: radius.pill,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       justifyContent: 'center',
       minHeight: space[5] + space[0.5],
       paddingHorizontal: space[1.5],
@@ -714,9 +626,6 @@ function createStyles(themeColors: ThemeColors) {
     controlPressed: {
       backgroundColor: themeColors.focusSoft,
       transform: [{ scale: motion.pressedScale }],
-    },
-    controlFocused: {
-      borderColor: themeColors.focus,
     },
     goalPill: {
       alignItems: 'flex-start',
@@ -739,8 +648,6 @@ function createStyles(themeColors: ThemeColors) {
       alignItems: 'center',
       alignSelf: 'flex-start',
       backgroundColor: themeColors.accent,
-      borderColor: themeColors.accent,
-      borderWidth: space.hairline,
       borderRadius: radius.button,
       justifyContent: 'center',
       minHeight: space[5] + space[0.5],
@@ -750,9 +657,6 @@ function createStyles(themeColors: ThemeColors) {
     secondaryButtonPressed: {
       backgroundColor: themeColors.accentActive,
       transform: [{ scale: motion.pressedScale }],
-    },
-    secondaryButtonFocused: {
-      borderColor: themeColors.focus,
     },
     secondaryButtonText: {
       color: themeColors.surface,
@@ -768,7 +672,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.input,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       color: themeColors.text,
       fontSize: typography.body.fontSize,
       lineHeight: typography.body.lineHeight,
@@ -786,7 +690,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.button,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       justifyContent: 'center',
       minHeight: space[5] + space[0.5],
       paddingHorizontal: space[2],
@@ -805,7 +709,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surfaceWarm,
       borderColor: themeColors.border,
       borderRadius: radius.card,
-      borderWidth: space.hairline,
+      borderWidth: StyleSheet.hairlineWidth,
       gap: space[0.75],
       padding: space[1.5],
     },

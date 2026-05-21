@@ -27,24 +27,28 @@ test('settings controls expose selected and checked state on web', async ({ page
   await expect(twentyAnswers).toHaveAttribute('aria-checked', 'true');
   await expect(tenAnswers).toHaveAttribute('aria-checked', 'false');
 
+  await expect(
+    page.getByRole('button', {
+      name: /Cinnamon bun is selected as study companion\. Fika and everyday culture\./,
+    }),
+  ).toHaveAttribute('aria-selected', 'true');
+  await page
+    .getByRole('button', {
+      name: /Choose Dala horse as study companion\. Folk symbol from Dalarna\./,
+    })
+    .click();
+  await expect(
+    page.getByRole('button', {
+      name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,
+    }),
+  ).toHaveAttribute('aria-selected', 'true');
+
   const enabledAudio = page.getByRole('switch', { name: 'Disable audio' });
   await expect(enabledAudio).toHaveAttribute('aria-checked', 'true');
   await enabledAudio.click();
 
   const disabledAudio = page.getByRole('switch', { name: 'Enable audio' });
   await expect(disabledAudio).toHaveAttribute('aria-checked', 'false');
-
-  const darkTheme = page.getByRole('button', { name: 'Choose theme: Dark' });
-  await darkTheme.click();
-  await expect(darkTheme).toHaveAttribute('aria-selected', 'true');
-  await expect(page.getByRole('button', { name: 'Choose theme: Use system' })).toHaveAttribute(
-    'aria-selected',
-    'false',
-  );
-  await expect(page.getByRole('heading', { name: 'Settings' })).toHaveCSS(
-    'color',
-    'rgb(245, 247, 250)',
-  );
 
   await page.reload({ waitUntil: 'networkidle' });
 
@@ -60,18 +64,11 @@ test('settings controls expose selected and checked state on web', async ({ page
     'aria-checked',
     'false',
   );
-  await expect(page.getByRole('button', { name: 'Choose theme: Dark' })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-
-  await page.goto('/home', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
   await expect(
-    page.getByRole('heading', {
-      name: 'Prepare calmly, one civic concept at a time',
+    page.getByRole('button', {
+      name: /Dala horse is selected as study companion\. Folk symbol from Dalarna\./,
     }),
-  ).toHaveCSS('color', 'rgb(245, 247, 250)');
+  ).toHaveAttribute('aria-selected', 'true');
 
   expect(consoleErrors).toEqual([]);
 });

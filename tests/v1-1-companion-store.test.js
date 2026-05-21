@@ -63,6 +63,35 @@ test('companion picker source consumes favorite ordering and store-compatible id
   assert.match(source, /accessibilityState=\{\{ selected \}\}/);
 });
 
+test('settings route renders the free companion picker with persistence warning handling', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+
+  assert.match(
+    source,
+    /import \{ CompanionPicker \} from '\.\.\/components\/mascot\/CompanionPicker';/,
+  );
+  assert.match(source, /import \{ useCompanionStore \} from '\.\.\/lib\/storage\/companionStore';/);
+  assert.match(
+    source,
+    /const selectedCompanionId = useCompanionStore\(\(state\) => state\.selectedId\);/,
+  );
+  assert.match(
+    source,
+    /const setSelectedCompanion = useCompanionStore\(\(state\) => state\.setSelected\);/,
+  );
+  assert.match(
+    source,
+    /const companionPersistenceWarning = useCompanionStore\(\(state\) => state\.persistenceWarning\);/,
+  );
+  assert.match(source, /warning=\{companionPersistenceWarning\}/);
+  assert.match(source, /onDismiss=\{clearCompanionPersistenceWarning\}/);
+  assert.match(source, /selectedId=\{selectedCompanionId\}/);
+  assert.match(source, /onSelect=\{setSelectedCompanion\}/);
+  assert.match(source, /companionTitle: 'Studiekompis'/);
+  assert.match(source, /companionTitle: 'Study companion'/);
+  assert.doesNotMatch(source, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
+});
+
 test('companion store uses MMKV id "companion" (separate from settings)', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'lib/storage/companionStore.ts'), 'utf8');
   assert.match(source, /const companionStorageId = ['"]companion['"]/);
@@ -125,6 +154,17 @@ test('companion store: throwing MMKV writes keep selected mascot in memory and r
   assert.equal(state.persistenceWarning.storageId, 'companion');
   assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
   assert.match(state.persistenceWarning.errorMessage, /disk full/);
+});
+
+test('companion store: throwing MMKV reads fall back to the default companion', () => {
+  const storage = createThrowingReadMMKV('companion read failed');
+  const { useCompanionStore } = loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
+    companion: storage,
+  });
+  const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
+
+  assert.equal(useCompanionStore.getState().selectedId, DEFAULT_COMPANION_ID);
+  assert.equal(useCompanionStore.getState().persistenceWarning, null);
 });
 
 test('companion store: successful writes persist and clear persistence warning', () => {
