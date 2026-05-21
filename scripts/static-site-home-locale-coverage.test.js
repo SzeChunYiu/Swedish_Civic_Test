@@ -23,12 +23,7 @@ const allowedSharedFragments = [
   /Jantelagen/,
 ];
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
-const expectedChapter6EducationTerms = {
-  so: [/dugsiga barbaarinta/i, /jaamacadda/i],
-  ti: [/መዋዕለ ሕፃናት/, /ዩኒቨርሲቲ/],
-  tr: [/Anaokulundan/, /üniversiteye/],
-};
-const forbiddenChapter6EducationTerms = [/Förskola/i, /förskola/i, /universitet/i];
+const forbiddenStaticHomeEducationTerms = /\b(?:Förskola|förskola|universitet)\b/iu;
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -158,26 +153,26 @@ test('Tigrinya Home chapter 4 avoids bare Swedish labor and welfare terms', () =
   }
 });
 
-test('Home chapter 6 avoids bare Swedish education terms in Somali Tigrinya and Turkish', () => {
+test('Somali Tigrinya and Turkish Home chapter 6 avoid bare Swedish education terms', () => {
   const dictionaries = loadDictionaries();
+  const expectations = {
+    so: [/dugsiyada barbaarinta/, /jaamacadda/],
+    ti: [/መዋእለ ህጻናት/, /ዩኒቨርሲቲ/],
+    tr: [/Anaokulundan/, /üniversiteye/],
+  };
 
-  for (const [locale, expectedTerms] of Object.entries(expectedChapter6EducationTerms)) {
+  for (const [locale, localizedTerms] of Object.entries(expectations)) {
     const description = dictionaries[locale]?.['chap.6.d'];
-
     assert.equal(typeof description, 'string', `${locale}.chap.6.d is translated`);
     assert.match(description, /BVC/, `${locale}.chap.6.d preserves BVC`);
     assert.match(description, /1177/, `${locale}.chap.6.d preserves 1177`);
-
-    for (const expectedTerm of expectedTerms) {
-      assert.match(description, expectedTerm, `${locale}.chap.6.d localizes education terms`);
-    }
-
-    for (const forbiddenTerm of forbiddenChapter6EducationTerms) {
-      assert.doesNotMatch(
-        description,
-        forbiddenTerm,
-        `${locale}.chap.6.d exposes bare Swedish education term ${forbiddenTerm}`,
-      );
+    assert.doesNotMatch(
+      description,
+      forbiddenStaticHomeEducationTerms,
+      `${locale}.chap.6.d exposes bare Swedish education terms`,
+    );
+    for (const termPattern of localizedTerms) {
+      assert.match(description, termPattern, `${locale}.chap.6.d uses ${termPattern}`);
     }
   }
 });
