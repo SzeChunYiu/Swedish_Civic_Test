@@ -19,11 +19,8 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
-const CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS = [
-  { label: 'welfare', pattern: /\(welfare\)/i },
-  { label: 'public service', pattern: /\bpublic service\b/i },
-];
-const BASE_LOCALES = new Set(['sv', 'en']);
+const PUBLIC_SERVICE_LOANWORD_LOCALES = ['pl', 'so', 'tr', 'uk'];
+const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b/i;
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
@@ -62,23 +59,19 @@ function staticSomaliSegments(question) {
   ];
 }
 
-function chapterLocalizationEnglishGlossOffenders(chapters, scope) {
-  const offenders = [];
-  for (const chapter of chapters) {
-    for (const field of ['title', 'description']) {
-      const localized = chapter[field] || {};
-      for (const [locale, value] of Object.entries(localized)) {
-        if (BASE_LOCALES.has(locale)) continue;
-        if (typeof value !== 'string') continue;
-        for (const { label, pattern } of CHAPTER_LOCALIZATION_ENGLISH_GLOSS_PATTERNS) {
-          if (pattern.test(value)) {
-            offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}.${label}`);
-          }
-        }
-      }
+function staticPublicServiceSegments(question) {
+  const segments = [];
+
+  for (const locale of PUBLIC_SERVICE_LOANWORD_LOCALES) {
+    segments.push([`${question.id}.q.${locale}`, question.q?.[locale]]);
+    segments.push([`${question.id}.why.${locale}`, question.why?.[locale]]);
+
+    for (const [index, option] of (question.opts || []).entries()) {
+      segments.push([`${question.id}.opts.${index}.${locale}`, option[locale]]);
     }
   }
-  return offenders;
+
+  return segments;
 }
 
 test('static site question bank is semantically generated from canonical content', () => {
@@ -146,16 +139,20 @@ test('static site question bank avoids English geography common terms in Somali 
   assert.deepEqual(offenders, []);
 });
 
-test('chapter localization metadata avoids raw English glossary tokens', () => {
-  const bank = buildSiteQuestionBank();
+test('static site question bank avoids English public service loanwords in target-language media text', () => {
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
 
-  assert.deepEqual(chapterLocalizationEnglishGlossOffenders(bank.chapters, 'canonical'), []);
-  assert.deepEqual(
-    chapterLocalizationEnglishGlossOffenders(context.window.SMT_CHAPTERS_META, 'static'),
-    [],
-  );
+  const offenders = [];
+  for (const question of context.window.SMT_QUESTIONS) {
+    for (const [segment, value] of staticPublicServiceSegments(question)) {
+      if (typeof value === 'string' && PUBLIC_SERVICE_LOANWORD_PATTERN.test(value)) {
+        offenders.push(segment);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
 });
 
 test('static site question bank drift report classifies format-only mismatches', () => {

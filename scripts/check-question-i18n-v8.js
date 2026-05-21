@@ -102,6 +102,18 @@ const TRUE_FALSE_LABELS = {
 
 const SOMALI_GEOGRAPHY_NATURALNESS_IDS = ['q004', 'q006', 'q008'];
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
+const PUBLIC_SERVICE_LOANWORD_IDS = [
+  'q048',
+  'q049',
+  'q067',
+  'q068',
+  'q081',
+  'q089',
+  'q151',
+  'q157',
+];
+const PUBLIC_SERVICE_LOANWORD_LOCALES = ['pl', 'so', 'tr', 'uk'];
+const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b/i;
 
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
@@ -362,6 +374,21 @@ function somaliLocalizedSegments(question) {
   ];
 }
 
+function publicServiceLoanwordSegments(question) {
+  const segments = [];
+
+  for (const locale of PUBLIC_SERVICE_LOANWORD_LOCALES) {
+    segments.push([`questionText.${locale}`, question.questionText?.[locale]]);
+    segments.push([`explanationText.${locale}`, question.explanationText?.[locale]]);
+
+    for (const option of question.options || []) {
+      segments.push([`options.${option.id}.text.${locale}`, option.text?.[locale]]);
+    }
+  }
+
+  return segments;
+}
+
 function summarizeSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATURALNESS_IDS) {
   const errors = [];
   const questionById = new Map(questions.map((question) => [question.id, question]));
@@ -402,6 +429,48 @@ function checkSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATUR
 
 function isSomaliGeographyNaturalnessId(id) {
   return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
+}
+
+function summarizePublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVICE_LOANWORD_IDS) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.publicServiceLoanwordNaturalness missing`);
+      continue;
+    }
+
+    for (const [path, value] of publicServiceLoanwordSegments(question)) {
+      if (typeof value === 'string' && PUBLIC_SERVICE_LOANWORD_PATTERN.test(value)) {
+        errors.push(`${id}.${path} contains English public service loanword`);
+      }
+    }
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkPublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVICE_LOANWORD_IDS) {
+  const { errors } = summarizePublicServiceLoanwordNaturalness(questions, ids);
+  return errors;
+}
+
+function isPublicServiceLoanwordNaturalnessId(id) {
+  return PUBLIC_SERVICE_LOANWORD_IDS.includes(id);
 }
 
 function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
@@ -445,6 +514,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   const somaliGeographyIds = ids.filter(isSomaliGeographyNaturalnessId);
   if (somaliGeographyIds.length > 0) {
     errors.push(...checkSomaliGeographyNaturalness(questions, somaliGeographyIds));
+  }
+
+  const publicServiceLoanwordIds = ids.filter(isPublicServiceLoanwordNaturalnessId);
+  if (publicServiceLoanwordIds.length > 0) {
+    errors.push(...checkPublicServiceLoanwordNaturalness(questions, publicServiceLoanwordIds));
   }
 
   return errors;
@@ -567,12 +641,15 @@ if (require.main === module) {
 }
 
 module.exports = {
+  PUBLIC_SERVICE_LOANWORD_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
+  checkPublicServiceLoanwordNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
   REQUIRED_REVIEW_LOCALES,
+  summarizePublicServiceLoanwordNaturalness,
   summarizeSomaliGeographyNaturalness,
 };
