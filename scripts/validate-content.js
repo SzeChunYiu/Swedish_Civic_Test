@@ -2816,8 +2816,9 @@ const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
     pattern: /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/,
   },
   {
-    label: 'Card receives accessibility summary',
-    pattern: /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/,
+    label: 'hidden accessibility summary outside parent Card grouping',
+    pattern:
+      /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
   },
   {
     label: 'visible difficulty label',
@@ -2841,7 +2842,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2851,7 +2852,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized source citation prefixes and page labels',
     pattern:
-      /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+      /primaryLanguageFor\(language\) === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -2956,9 +2957,9 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
     pattern: /Explanation unavailable for this question\./,
   },
   {
-    label: 'language-specific explanation helper selection',
+    label: 'language-specific explanation selection',
     pattern:
-      /const explanation = getQuestionExplanationText\(\s*\{\s*explanationEn,\s*explanationSv,\s*explanationText\s*\},\s*language,\s*copy\.fallback,\s*\);/,
+      /const explanation =[\s\S]*language === 'en' && explanationEn \? explanationEn : \(explanationSv \?\? copy\.fallback\);/,
   },
   {
     label: 'localized explanation in accessibility summary',
@@ -10830,6 +10831,12 @@ function validateQuestionCardAccessibilityParity() {
     return;
   }
 
+  if (/<Card accessibilityLabel=\{questionAccessibilityLabel\}>/.test(questionCardSource)) {
+    reject('QuestionCard parent Card must not group nested source controls');
+  } else {
+    questionCardAccessibilityRulesValidated += 1;
+  }
+
   EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(questionCardSource)) {
       reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
@@ -10857,10 +10864,20 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated ===
       EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
         EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
-        1
+        2
   ) {
     questionCardAccessibilityParityValidated = true;
   }
+}
+
+if (process.argv.includes('--focus-question-card-accessibility')) {
+  validateQuestionCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionCardAccessibilityRulesValidated,
+    questionCardAccessibilityParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateAnswerOptionAccessibilityParity() {
@@ -10936,16 +10953,6 @@ function validateExplanationPanelAccessibilityParity() {
   ) {
     explanationPanelAccessibilityParityValidated = true;
   }
-}
-
-if (process.argv.includes('--focus-explanation-panel-accessibility')) {
-  validateExplanationPanelAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    explanationPanelAccessibilityRulesValidated,
-    explanationPanelAccessibilityParityValidated,
-  });
-  process.exit(0);
 }
 
 function validateUhrReferenceCardAccessibilityParity() {

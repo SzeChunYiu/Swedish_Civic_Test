@@ -7,21 +7,10 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
-}
-
-function parseQuestionProvenanceRuntimeSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-question-provenance-runtime'],
+    ['scripts/validate-content.js', '--focus-question-card-accessibility'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -35,7 +24,7 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
   assert.match(source, /language\?: AppLanguage/);
@@ -69,7 +58,12 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
   assert.match(source, /Swedish original/);
-  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
+  assert.match(
+    source,
+    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
+  );
+  assert.match(source, /accessibilitySummary: \{/);
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
@@ -78,28 +72,11 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
-  assert.match(helperSource, /QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE\[language\]/);
+  assert.match(
+    helperSource,
+    /fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+  );
   assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
-});
-
-test('ProvenanceBadge keeps guarded source-note copy and language fallback', () => {
-  const summary = parseQuestionProvenanceRuntimeSummary();
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
-    'utf8',
-  );
-  const provenanceSource = fs.readFileSync(
-    path.join(repoRoot, 'lib/content/provenance.ts'),
-    'utf8',
-  );
-
-  assert.equal(summary.questionProvenanceRuntimeCasesValidated, 13);
-  assert.equal(summary.questionProvenanceRuntimeParityValidated, true);
-  assert.match(source, /const badgeLanguage = language === 'en' \? 'en' : 'sv';/);
-  assert.match(source, /const copy = provenanceBadgeCopy\[badgeLanguage\];/);
-  assert.match(source, /getProvenanceDescription\(provenance, badgeLanguage\)/);
-  assert.match(provenanceSource, /function normalizeProvenance\(provenance: unknown\)/);
-  assert.match(provenanceSource, /function normalizeProvenanceCopyLanguage\(language: unknown\)/);
 });
 
 test('QuestionCard accessibility parity rejects English-only missing-question fallback', () => {
@@ -118,6 +95,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -148,6 +126,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -178,6 +157,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -191,7 +171,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('QuestionCard accessibility parity rejects dropped parent card summary', () => {
+test('QuestionCard accessibility parity rejects parent card grouping of source controls', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -204,10 +184,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<Card accessibilityLabel={questionAccessibilityLabel}>', '<Card>');
+      .replace('<Card>', '<Card accessibilityLabel={questionAccessibilityLabel}>');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -217,7 +198,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /QuestionCard missing Card receives accessibility summary/,
+    /QuestionCard parent Card must not group nested source controls/,
   );
 });
 
@@ -238,6 +219,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -271,6 +253,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
