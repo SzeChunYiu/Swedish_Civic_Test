@@ -1528,7 +1528,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -14427,12 +14427,15 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       ) &&
         normalizedPurchaseSource.includes(
           ": ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);",
-        ) &&
-        normalizedPurchaseSource.includes('return removeAdsEntitlements(true);') &&
+        ),
+      'default native and missing Remove Ads receipt validation must fail closed as pending',
+    ],
+    [
+      normalizedPurchaseSource.includes('return removeAdsEntitlements(true);') &&
         !/if \(!provider\) \{[\s\S]*clearStoredRemoveAdsEntitlement\(storage\)/.test(
           purchaseSource,
         ),
-      'default native, missing receipt validation, and providerless relaunch entitlements must fail closed correctly',
+      'Remove Ads stored valid entitlement must survive relaunch without a live provider',
     ],
     [
       normalizedPurchaseSource.includes(
