@@ -442,6 +442,31 @@ const i18n = (window.i18n = {
       'When reviewed web ad slots are configured, Google AdSense can set cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
     'consent.min': 'Necessary only',
     'consent.all': 'Accept all',
+    'purchase.eyebrow': 'Account purchases',
+    'purchase.h1a': 'Upgrade only after sign-in.',
+    'purchase.h1b': 'Your purchase stays with that account.',
+    'purchase.lede':
+      'Web upgrades require a signed-in Almost Swedish account first. After sign-in we create a Supabase purchase intent for that user, then hand Android buyers to Google Play to finish the one-time purchase with the same account in the app.',
+    'purchase.removeAds.eyebrow': 'Ad-free',
+    'purchase.removeAds.title': 'Remove Ads',
+    'purchase.removeAds.body':
+      'Turns off study ads after Google Play/App Store confirmation. Core study stays free.',
+    'purchase.removeAds.locked': 'Sign in to buy ad-free',
+    'purchase.removeAds.ready': 'Continue with Google Play — 29 kr',
+    'purchase.premium.eyebrow': 'Premium',
+    'purchase.premium.title': 'Premium Lifetime',
+    'purchase.premium.body':
+      'Unlocks premium study tools for the account you sign in with. Remove Ads remains separate.',
+    'purchase.premium.locked': 'Sign in to buy Premium',
+    'purchase.premium.ready': 'Continue with Google Play — 59 kr',
+    'purchase.price.once': 'one-time',
+    'purchase.status.locked': 'Sign in first so the upgrade can be attached to your account.',
+    'purchase.status.ready': 'Ready for purchases as {account}.',
+    'purchase.status.needSignIn':
+      'Sign in first. Purchases are attached to the account you use here.',
+    'purchase.status.realSignin': 'Real Supabase sign-in is required before purchase handoff.',
+    'purchase.status.preparing': 'Preparing your account-bound Google Play handoff…',
+    'purchase.status.error': 'Purchase could not start. Please sign in again and retry.',
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
       'This website is prepared for <b>Google AdSense</b>, but the static build does not load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
@@ -826,6 +851,30 @@ const i18n = (window.i18n = {
       'När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies och använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
     'consent.min': 'Bara nödvändiga',
     'consent.all': 'Godkänn allt',
+    'purchase.eyebrow': 'Kontoköp',
+    'purchase.h1a': 'Uppgradera först efter inloggning.',
+    'purchase.h1b': 'Köpet följer det kontot.',
+    'purchase.lede':
+      'Webbuppgraderingar kräver först ett inloggat Almost Swedish-konto. Efter inloggning skapar vi en Supabase-köpavsikt för den användaren och skickar sedan Android-köpare till Google Play för att slutföra engångsköpet med samma konto i appen.',
+    'purchase.removeAds.eyebrow': 'Annonsfritt',
+    'purchase.removeAds.title': 'Ta bort annonser',
+    'purchase.removeAds.body':
+      'Stänger av studieannonser efter bekräftelse från Google Play/App Store. Kärnstudierna förblir gratis.',
+    'purchase.removeAds.locked': 'Logga in för att köpa annonsfritt',
+    'purchase.removeAds.ready': 'Fortsätt med Google Play — 29 kr',
+    'purchase.premium.eyebrow': 'Premium',
+    'purchase.premium.title': 'Premium livstid',
+    'purchase.premium.body':
+      'Låser upp premiumverktyg för kontot du loggar in med. Ta bort annonser är separat.',
+    'purchase.premium.locked': 'Logga in för att köpa Premium',
+    'purchase.premium.ready': 'Fortsätt med Google Play — 59 kr',
+    'purchase.price.once': 'engångsköp',
+    'purchase.status.locked': 'Logga in först så uppgraderingen kan kopplas till ditt konto.',
+    'purchase.status.ready': 'Redo för köp som {account}.',
+    'purchase.status.needSignIn': 'Logga in först. Köp kopplas till kontot du använder här.',
+    'purchase.status.realSignin': 'Riktig Supabase-inloggning krävs innan köpet skickas vidare.',
+    'purchase.status.preparing': 'Förbereder kontoanknuten vidarebefordran till Google Play…',
+    'purchase.status.error': 'Köpet kunde inte starta. Logga in igen och försök på nytt.',
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
       'Den här webbplatsen är förberedd för <b>Google AdSense</b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade. När AdSense är aktiverat kan AdSense och dess partner sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
@@ -1798,13 +1847,27 @@ function smtQuizRender() {
   const answered = ans !== undefined;
   const sessionId = `practice:${scope}`;
   const sourceRow = smtQuizQuestionSourceRow(q, lang);
-  const qNavLabel = smtTr({ sv: 'Fråga', en: 'Question', 'zh-Hans': '题目', 'zh-Hant': '題目', ar: 'سؤال', ckb: 'پرسیار', fa: 'سؤال', pl: 'Pytanie', so: "Su'aal", ti: 'ሕቶ', tr: 'Soru', uk: 'Питання' });
+  const qNavLabel = smtTr({
+    sv: 'Fråga',
+    en: 'Question',
+    'zh-Hans': '题目',
+    'zh-Hant': '題目',
+    ar: 'سؤال',
+    ckb: 'پرسیار',
+    fa: 'سؤال',
+    pl: 'Pytanie',
+    so: "Su'aal",
+    ti: 'ሕቶ',
+    tr: 'Soru',
+    uk: 'Питання',
+  });
   const dots = Array.from({ length: n }, (_, k) => {
     const isAnswered = SMT_QUIZ.answers[k] !== undefined;
     const navigable = isAnswered || k === SMT_QUIZ.i;
     let cls = '';
     if (k === SMT_QUIZ.i) cls = 'is-on';
-    else if (isAnswered) cls = SMT_QUIZ.answers[k] === questions[k].answer ? 'is-right' : 'is-wrong';
+    else if (isAnswered)
+      cls = SMT_QUIZ.answers[k] === questions[k].answer ? 'is-right' : 'is-wrong';
     if (navigable) cls += ' is-nav';
     cls = cls.trim();
     if (!navigable) return `<span class="quiz__dot ${cls}"></span>`;
@@ -1841,9 +1904,48 @@ function smtQuizRender() {
 
   const isLast = SMT_QUIZ.i === n - 1;
   const nextLabel = isLast
-    ? smtTr({ sv: 'Visa resultat', en: 'See score', 'zh-Hans': '查看成绩', 'zh-Hant': '查看成績', ar: 'عرض النتيجة', ckb: 'بینینی ئەنجام', fa: 'مشاهده نتیجه', pl: 'Zobacz wynik', so: 'Arag natiijada', ti: 'ውጽኢት ርአ', tr: 'Sonucu gör', uk: 'Переглянути результат' })
-    : smtTr({ sv: 'Nästa', en: 'Next', 'zh-Hans': '下一题', 'zh-Hant': '下一題', ar: 'التالي', ckb: 'دواتر', fa: 'بعدی', pl: 'Następne', so: 'Xiga', ti: 'ዝቕጽል', tr: 'Sonraki', uk: 'Наступне' });
-  const skipLabel = smtTr({ sv: 'Hoppa över', en: 'Skip', 'zh-Hans': '跳过', 'zh-Hant': '跳過', ar: 'تخطّي', ckb: 'پەڕاندن', fa: 'رد کردن', pl: 'Pomiń', so: 'Ka bood', ti: 'ሕለፍ', tr: 'Atla', uk: 'Пропустити' });
+    ? smtTr({
+        sv: 'Visa resultat',
+        en: 'See score',
+        'zh-Hans': '查看成绩',
+        'zh-Hant': '查看成績',
+        ar: 'عرض النتيجة',
+        ckb: 'بینینی ئەنجام',
+        fa: 'مشاهده نتیجه',
+        pl: 'Zobacz wynik',
+        so: 'Arag natiijada',
+        ti: 'ውጽኢት ርአ',
+        tr: 'Sonucu gör',
+        uk: 'Переглянути результат',
+      })
+    : smtTr({
+        sv: 'Nästa',
+        en: 'Next',
+        'zh-Hans': '下一题',
+        'zh-Hant': '下一題',
+        ar: 'التالي',
+        ckb: 'دواتر',
+        fa: 'بعدی',
+        pl: 'Następne',
+        so: 'Xiga',
+        ti: 'ዝቕጽል',
+        tr: 'Sonraki',
+        uk: 'Наступне',
+      });
+  const skipLabel = smtTr({
+    sv: 'Hoppa över',
+    en: 'Skip',
+    'zh-Hans': '跳过',
+    'zh-Hant': '跳過',
+    ar: 'تخطّي',
+    ckb: 'پەڕاندن',
+    fa: 'رد کردن',
+    pl: 'Pomiń',
+    so: 'Ka bood',
+    ti: 'ሕለፍ',
+    tr: 'Atla',
+    uk: 'Пропустити',
+  });
   const nextBtn = answered
     ? `<button class="btn btn--gold" id="quiz-next">${nextLabel} →</button>`
     : `<button class="btn btn--ghost" id="quiz-skip">${skipLabel} →</button>`;
@@ -1998,57 +2100,62 @@ document.addEventListener('click', (e) => {
   }
 });
 
-
-  // ---- Topbar language picker dropdown ------------------------------------
-  function smtInitLangPicker() {
-    const btn = document.getElementById('lang-open');
-    const menu = document.getElementById('lang-menu');
-    if (!btn || !menu) return;
-    function close() {
-      menu.hidden = true;
-      btn.setAttribute('aria-expanded', 'false');
-    }
-    function open() {
-      menu.hidden = false;
-      btn.setAttribute('aria-expanded', 'true');
-      const cur = (function () {
-        try { return localStorage.getItem('smt_lang') || 'en'; } catch { return 'en'; }
-      })();
-      menu.querySelectorAll('button[data-lang]').forEach(function (b) {
-        b.classList.toggle('is-on', b.dataset.lang === cur);
-      });
-    }
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      if (menu.hidden) open();
-      else close();
-    });
-    menu.addEventListener('click', function (e) {
-      const b = e.target.closest('button[data-lang]');
-      if (!b) return;
-      const lang = b.dataset.lang;
-      if (window.smtSetLanguage) {
-        window.smtSetLanguage(lang);
-      } else if (window.applyLang) {
-        window.applyLang(lang);
-      } else {
-        try { localStorage.setItem('smt_lang', lang); } catch {}
-        location.reload();
+// ---- Topbar language picker dropdown ------------------------------------
+function smtInitLangPicker() {
+  const btn = document.getElementById('lang-open');
+  const menu = document.getElementById('lang-menu');
+  if (!btn || !menu) return;
+  function close() {
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+  }
+  function open() {
+    menu.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    const cur = (function () {
+      try {
+        return localStorage.getItem('smt_lang') || 'en';
+      } catch {
+        return 'en';
       }
-      close();
-    });
-    document.addEventListener('click', function (e) {
-      if (menu.hidden) return;
-      if (e.target === btn || btn.contains(e.target)) return;
-      if (menu.contains(e.target)) return;
-      close();
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !menu.hidden) close();
+    })();
+    menu.querySelectorAll('button[data-lang]').forEach(function (b) {
+      b.classList.toggle('is-on', b.dataset.lang === cur);
     });
   }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', smtInitLangPicker);
-  } else {
-    smtInitLangPicker();
-  }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (menu.hidden) open();
+    else close();
+  });
+  menu.addEventListener('click', function (e) {
+    const b = e.target.closest('button[data-lang]');
+    if (!b) return;
+    const lang = b.dataset.lang;
+    if (window.smtSetLanguage) {
+      window.smtSetLanguage(lang);
+    } else if (window.applyLang) {
+      window.applyLang(lang);
+    } else {
+      try {
+        localStorage.setItem('smt_lang', lang);
+      } catch {}
+      location.reload();
+    }
+    close();
+  });
+  document.addEventListener('click', function (e) {
+    if (menu.hidden) return;
+    if (e.target === btn || btn.contains(e.target)) return;
+    if (menu.contains(e.target)) return;
+    close();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !menu.hidden) close();
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', smtInitLangPicker);
+} else {
+  smtInitLangPicker();
+}
