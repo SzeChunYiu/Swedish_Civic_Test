@@ -12,6 +12,10 @@ const {
   loadCanonicalExportInputs,
   summarizeStaticQuestionBankDrift,
 } = require('../scripts/export-site-question-bank');
+const {
+  generatedQuestionId,
+  generatedQuestionIdLiteralFindingsForSource,
+} = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
@@ -43,15 +47,6 @@ function withQ020AdvisoryFixture(question) {
       };
     }),
   };
-}
-
-function generatedQuestionId(sourceQuestions, sourceQuestionId, variantOffset) {
-  const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceQuestionId);
-  assert.notEqual(sourceIndex, -1, `expected source question ${sourceQuestionId}`);
-  return `q${String(sourceQuestions.length + 1 + sourceIndex * 4 + variantOffset).padStart(
-    3,
-    '0',
-  )}`;
 }
 
 function staticSomaliSegments(question) {
@@ -164,4 +159,41 @@ test('static site question bank source fixture limits one-question localization 
   assert.equal(drift.questionIds[0], 'q020');
   assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
+});
+
+test('static question-bank drift fixture derives generated ids from source ids', () => {
+  const canonical = loadCanonicalExportInputs();
+  const source = fs.readFileSync(__filename, 'utf8');
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
+    source,
+    canonical.sourceQuestions.length + 1,
+  );
+
+  assert.deepEqual(findings, []);
+  assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions, 'q020', variantOffset\)/);
+  assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
+});
+
+test('static generated-id fixture guard rejects literal generated ids but allows source ids', () => {
+  const firstGeneratedNumber = 900;
+  const generatedLiteral = `q${String(firstGeneratedNumber).padStart(3, '0')}`;
+  const nextGeneratedLiteral = `q${String(firstGeneratedNumber + 1).padStart(3, '0')}`;
+  const findings = generatedQuestionIdLiteralFindingsForSource(
+    'tests/content-static-site-question-bank-parity.test.js',
+    [
+      "assert.equal(drift.questionIds[0], 'q020');",
+      `assert.deepEqual(drift.questionIds.slice(1), ['${generatedLiteral}']);`,
+      'const expected = {',
+      `  ${nextGeneratedLiteral}: { questionSv: 'stale generated fixture' },`,
+      '};',
+      "const derived = generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset);",
+    ].join('\n'),
+    firstGeneratedNumber,
+  );
+
+  assert.deepEqual(findings, [
+    `tests/content-static-site-question-bank-parity.test.js:2 hardcodes generated question id literal ${generatedLiteral}`,
+    `tests/content-static-site-question-bank-parity.test.js:4 hardcodes generated question id object key ${nextGeneratedLiteral}`,
+  ]);
 });
