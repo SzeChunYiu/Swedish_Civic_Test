@@ -3457,7 +3457,7 @@
           <ul>
             <li><b>Easter</b> falls in March or April and has Christian roots, though many people celebrate it as a family and spring holiday.</li>
             <li><b>Walpurgis Night</b>, 30 April, often means bonfires and songs welcoming spring.</li>
-            <li><b>First of May</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
+            <li><b>May Day</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
             <li><b>Midsummer Eve</b> is always a Friday between 19 and 25 June, with outdoor gatherings, flower wreaths, a midsummer pole, herring, new potatoes, and strawberries.</li>
           </ul>
           <h2>Autumn and winter</h2>
@@ -3493,7 +3493,7 @@
           <ul>
             <li><b>复活节</b>（Easter）落在3月或4月，源于基督教，不过许多人把它当作家庭与春季的节日来庆祝。</li>
             <li><b>瓦尔普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味着篝火和迎接春天的歌声。</li>
-            <li><b>五一</b>（First of May）是国际劳动节，以游行和政治演讲来标记。</li>
+            <li><b>五一</b>（May Day）是国际劳动节，以游行和政治演讲来标记。</li>
             <li><b>仲夏前夜</b>（Midsummer Eve）总是在6月19日至25日之间的一个星期五，人们在户外聚会，戴花环、立仲夏柱，享用鲱鱼、新土豆和草莓。</li>
           </ul>
           <h2>秋与冬</h2>
@@ -3517,7 +3517,7 @@
           <ul>
             <li><b>復活節</b>（Easter）落在3月或4月，源於基督教，不過許多人把它當作家庭與春季的節日來慶祝。</li>
             <li><b>瓦爾普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味著篝火和迎接春天的歌聲。</li>
-            <li><b>五一</b>（First of May）是國際勞動節，以遊行和政治演講來標記。</li>
+            <li><b>五一</b>（May Day）是國際勞動節，以遊行和政治演講來標記。</li>
             <li><b>仲夏前夜</b>（Midsummer Eve）總是在6月19日至25日之間的一個星期五，人們在戶外聚會，戴花環、立仲夏柱，享用鯡魚、新馬鈴薯和草莓。</li>
           </ul>
           <h2>秋與冬</h2>

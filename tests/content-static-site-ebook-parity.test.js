@@ -19,6 +19,7 @@ const staleEbookCopyPatterns = [
   /We're writing this chapter now/i,
   /Coming soon/i,
   /Kommer snart/i,
+  /\bFirst of May\b/i,
 ];
 const swedishEbookQuizLoanwordPatterns = [
   phrasePattern('gör ett ', 'quiz'),
@@ -254,6 +255,18 @@ test('static ebook Swedish mock-exam wording uses övningsprov', () => {
   assert.match(swedishMockExamHtml, /Starta [oö]vningsprov/);
   assert.match(swedishMockExamHtml, /gör ett [oö]vningsprov/);
   assert.match(englishMockExamHtml, /Start mock exam/);
+});
+
+test('static ebook chapter 13 uses natural May Day English wording', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '13');
+  const swedishHtml = renderChapter(harness, 'sv', '13');
+
+  assert.doesNotMatch(source, /\bFirst of May\b/);
+  assert.doesNotMatch(englishHtml, /\bFirst of May\b/);
+  assert.match(englishHtml, /<b>May Day<\/b> is International Workers' Day/);
+  assert.match(swedishHtml, /första maj/i);
 });
 
 test('static ebook does not promise source-backed footnotes without citation coverage', () => {
