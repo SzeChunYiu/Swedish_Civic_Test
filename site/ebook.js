@@ -3305,8 +3305,8 @@
         uk: 'Пробний іспит',
       },
       title_em: {
-        en: 'and current test status.',
-        sv: 'och aktuell provstatus.',
+        en: '& survival guide',
+        sv: '& överlevnadsguide',
         'zh-Hans': '与当前的考试状态。',
         'zh-Hant': '與當前的考試狀態。',
         ar: 'وحالة الاختبار الراهنة.',

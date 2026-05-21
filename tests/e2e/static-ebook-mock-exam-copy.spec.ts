@@ -75,7 +75,7 @@ test('static-site browser specs use the shared sanitized server helper', async (
   }
 });
 
-test('static ebook mock-exam wording renders naturally in Swedish and English', async ({
+test('static ebook Mock exam / Övningsprov survival guide wording renders naturally in Swedish and English', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
