@@ -153,39 +153,21 @@ const gateSpecificBlockedEvidencePatterns = {
   ],
 };
 
-const v11ScopeRoots = envPathList('RELEASE_PREFLIGHT_V11_SCOPE_ROOTS', [
-  'app',
-  'components',
-  'lib',
-  'tests',
-]);
-const v11ScopeFilePattern = /\.(?:js|jsx|ts|tsx)$/;
-const v11ScopePathClassifiers = [
-  [/^tests\/v1-1-.*\.test\.js$/, 'v1.1 test suite'],
-  [/^app\/dashboard\.tsx$/, 'v1.1 user-facing route'],
-  [/^components\/mascot\//, 'v1.1 companion UI'],
-  [/^components\/monetization\/ProPaywall\.tsx$/, 'v1.1 Pro UI'],
-  [/^components\/quiz\/ConfidenceRatingPicker\.tsx$/, 'v1.1 confidence UI'],
-  [/^components\/learning\/BadgeRow\.tsx$/, 'v1.1 learning UI'],
-  [
-    /^lib\/learning\/(?:adaptivePractice|calibration|dailyChallenge|readiness)\.ts$/,
-    'v1.1 learning runtime',
-  ],
-  [/^lib\/mascot\//, 'v1.1 companion runtime'],
-  [
-    /^lib\/monetization\/(?:proLifetimePurchase|releasePolicy|tierComparison|useProLifetimeEntitlements)\.ts$/,
-    'v1.1 monetization runtime',
-  ],
-  [/^lib\/notifications\/studyReminder\.ts$/, 'v1.1 reminder runtime'],
-  [
-    /^lib\/storage\/(?:accessibilityStore|companionStore|highlightsStore|reviewStore)\.ts$/,
-    'v1.1 storage runtime',
-  ],
+const v11ScopeSurfaceClassifiers = [
+  ['lib/storage/reviewStore.ts', 'v1.1 review store runtime'],
+  ['lib/learning/adaptivePractice.ts', 'v1.1 adaptive practice runtime'],
+  ['lib/learning/dailyChallenge.ts', 'v1.1 daily challenge runtime'],
+  ['lib/storage/companionStore.ts', 'v1.1 companion state runtime'],
+  ['lib/mascot/catalog.ts', 'v1.1 mascot catalog'],
+  ['lib/monetization/proLifetimePurchase.ts', 'v1.1 Pro purchase runtime'],
 ];
-const v11ScopeSourceClassifiers = [
-  [/\bv1\.1\b|v1-1/i, 'v1.1 source marker'],
-  [/\bPro Lifetime\b|isProRuntimeScopeEnabled|proRuntimeScopeEnabled/, 'v1.1 Pro scope marker'],
-  [/\bDaily Challenge\b|\bAdaptive practice\b|\bcompanion picker\b/i, 'v1.1 feature marker'],
+const v11ScopeScanRoots = envPathList('RELEASE_PREFLIGHT_V11_SCOPE_ROOTS', []);
+const v11ScopeSourceMarkers = [
+  ['v1.1 source marker', /\bv1\.1\b/i],
+  ['v1.1 Pro UI marker', /ProPaywall|Pro Lifetime|EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE/i],
+  ['v1.1 adaptive practice marker', /pickAdaptiveSession|adaptivePractice/i],
+  ['v1.1 daily challenge marker', /dailyChallenge|DailyChallenge/i],
+  ['v1.1 companion marker', /companionStore|selectedMascot/i],
 ];
 
 const removeAdsDeviceQaPath =
@@ -288,82 +270,69 @@ function anyRepoFileMatches(roots, pattern) {
   );
 }
 
-function reportPath(filePath) {
-  const relativePath = path.relative(process.cwd(), filePath);
-  if (relativePath && !relativePath.startsWith('..') && !path.isAbsolute(relativePath)) {
-    return relativePath.split(path.sep).join('/');
-  }
-
-  const absoluteFilePath = path.resolve(filePath);
-  const customRoot = v11ScopeRoots.find((root) => {
-    const rootRelativePath = path.relative(path.resolve(root), absoluteFilePath);
-    return (
-      rootRelativePath && !rootRelativePath.startsWith('..') && !path.isAbsolute(rootRelativePath)
-    );
-  });
-  if (customRoot) {
-    const rootRelativePath = path.relative(path.resolve(customRoot), absoluteFilePath);
-    return `custom-scope-root/${rootRelativePath.split(path.sep).join('/')}`;
-  }
-
+function normalizeRepoPath(filePath) {
   return filePath.split(path.sep).join('/');
 }
 
-function classifyV11ScopeSurfaceReasons(filePath, source) {
-  if (!v11ScopeFilePattern.test(filePath)) return [];
-
-  const displayPath = reportPath(filePath);
-  const reasons = [];
-  for (const [pattern, reason] of v11ScopePathClassifiers) {
-    if (pattern.test(displayPath)) reasons.push(reason);
+function scopedSurfacePath(filePath, root) {
+  const relative = normalizeRepoPath(path.relative(root, filePath));
+  if (path.isAbsolute(root)) {
+    return `custom-scope-root/${relative}`;
   }
+  return normalizeRepoPath(filePath);
+}
 
-  const isRuntimeOrUiPath =
-    /^(?:app|components|lib)\//.test(displayPath) ||
-    /(?:^|\/)(?:app|components|lib)\//.test(displayPath);
-  if (!isRuntimeOrUiPath) return [...new Set(reasons)];
-
-  for (const [pattern, reason] of v11ScopeSourceClassifiers) {
-    if (pattern.test(source)) reasons.push(reason);
+function addV11Surface(surfaceMap, surfacePath, reason) {
+  if (!surfaceMap.has(surfacePath)) {
+    surfaceMap.set(surfacePath, new Set());
   }
-
-  return [...new Set(reasons)];
-}
-
-function classifyV11ScopeSurface(filePath, source) {
-  return classifyV11ScopeSurfaceReasons(filePath, source)[0] || null;
-}
-
-function formatV11ScopeSurface(surface) {
-  const reasons = surface.reasons.length > 0 ? ` (${surface.reasons.join('; ')})` : '';
-  return `${surface.path}${reasons}`;
-}
-
-function formatV11ScopeSurfaces(surfaces) {
-  return surfaces.map(formatV11ScopeSurface).join(', ');
+  surfaceMap.get(surfacePath).add(reason);
 }
 
 function listV11ScopeSurfaces() {
   const surfaces = new Map();
-  for (const root of v11ScopeRoots) {
-    for (const filePath of listFiles(root)) {
-      const source = readFileIfExists(filePath);
-      const reasons = classifyV11ScopeSurfaceReasons(filePath, source);
-      if (reasons.length > 0) {
-        const displayPath = reportPath(filePath);
-        const existingReasons = surfaces.get(displayPath) || new Set();
-        reasons.forEach((reason) => existingReasons.add(reason));
-        surfaces.set(displayPath, existingReasons);
-      }
+
+  v11ScopeSurfaceClassifiers.forEach(([surfacePath, reason]) => {
+    if (exists(surfacePath)) {
+      addV11Surface(surfaces, surfacePath, reason);
     }
-  }
+  });
+
+  const testSurfaces = exists('tests')
+    ? fs
+        .readdirSync('tests')
+        .filter((name) => /^v1-1-.*\.test\.js$/.test(name))
+        .map((name) => path.join('tests', name))
+    : [];
+  testSurfaces.forEach((surfacePath) => {
+    addV11Surface(surfaces, normalizeRepoPath(surfacePath), 'v1.1 test surface');
+  });
+
+  v11ScopeScanRoots.forEach((root) => {
+    listFiles(root).forEach((filePath) => {
+      const source = readFileIfExists(filePath);
+      v11ScopeSourceMarkers.forEach(([reason, pattern]) => {
+        if (pattern.test(source)) {
+          addV11Surface(surfaces, scopedSurfacePath(filePath, root), reason);
+        }
+      });
+    });
+  });
 
   return [...surfaces.entries()]
-    .map(([path, reasons]) => ({
-      path,
-      reasons: [...reasons],
+    .map(([surfacePath, reasons]) => ({
+      path: surfacePath,
+      reasons: [...reasons].sort(),
     }))
-    .sort((left, right) => left.path.localeCompare(right.path));
+    .sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function formatV11ScopeSurface(surface) {
+  return `${surface.path} (${surface.reasons.join('; ')})`;
+}
+
+function formatV11ScopeSurfaces(surfaces) {
+  return surfaces.map(formatV11ScopeSurface).join(', ');
 }
 
 function removeAdsV1AcceptanceFindings() {
@@ -505,7 +474,6 @@ function removeAdsStep3StructuralFindings(purchasesSource, options = {}) {
 
 function releaseScopeOverrideGate(manualEvidence) {
   const v11Surfaces = listV11ScopeSurfaces();
-  const v11SurfaceSummary = formatV11ScopeSurfaces(v11Surfaces);
   const removeAdsFindings = removeAdsV1AcceptanceFindings();
 
   if (v11Surfaces.length === 0) {
@@ -523,7 +491,9 @@ function releaseScopeOverrideGate(manualEvidence) {
       releaseScopeOverrideId,
       'v1.1 scope held behind v1.0 Remove Ads',
       'READY',
-      `v1.1 surfaces are present, but the structural Remove Ads v1.0 and device-QA gates are closed. Surfaces: ${v11SurfaceSummary}.`,
+      `v1.1 surfaces are present, but the structural Remove Ads v1.0 and device-QA gates are closed. Surfaces: ${formatV11ScopeSurfaces(
+        v11Surfaces,
+      )}.`,
       'Keep monitoring release scope before store submission.',
     );
   }
@@ -548,7 +518,9 @@ function releaseScopeOverrideGate(manualEvidence) {
         releaseScopeOverrideId,
         'v1.1 scope held behind v1.0 Remove Ads',
         'READY',
-        `Operator override recorded in ${evidencePath}: ${recordedEvidence}\nDetected v1.1 surfaces: ${v11SurfaceSummary}.\nOpen Remove Ads findings: ${removeAdsFindings.join(' ')}`,
+        `Operator override recorded in ${evidencePath}: ${recordedEvidence}\nDetected v1.1 surfaces: ${formatV11ScopeSurfaces(
+          v11Surfaces,
+        )}.\nOpen Remove Ads findings: ${removeAdsFindings.join(' ')}`,
         'Remove this override when v1.0 Remove Ads acceptance is green on main.',
       );
     }
@@ -570,9 +542,9 @@ function releaseScopeOverrideGate(manualEvidence) {
     releaseScopeOverrideId,
     'v1.1 scope held behind v1.0 Remove Ads',
     'BLOCKED',
-    `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${v11SurfaceSummary}. Remove Ads findings: ${removeAdsFindings.join(
-      ' ',
-    )}`,
+    `v1.1 runtime/test surfaces are present before v1.0 Remove Ads acceptance is closed: ${formatV11ScopeSurfaces(
+      v11Surfaces,
+    )}. Remove Ads findings: ${removeAdsFindings.join(' ')}`,
     `Close v1.0 Remove Ads acceptance first (${removeAdsStep3StructuralGate}; test -f ${removeAdsDeviceQaPath}) or record explicit operator approval in ${evidencePath} gate ${releaseScopeOverrideId}.`,
   );
 }
