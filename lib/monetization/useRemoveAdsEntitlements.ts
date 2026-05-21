@@ -10,8 +10,10 @@ import {
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
+  type RemoveAdsPurchaseProvider,
   type RemoveAdsStorePlatform,
 } from './purchases';
+import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
 
 const AD_BLOCKED_PENDING_ENTITLEMENTS: PremiumEntitlements = {
   ...FREE_ENTITLEMENTS,
@@ -77,6 +79,13 @@ function createE2EWebPurchaseRuntimeOptions(
       return undefined;
     }
 
+    const instrumentedRuntimeOptions = createInstrumentedE2EPurchaseRuntimeOptions({
+      owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__,
+      scope: 'removeAds',
+      storage: createWebPurchaseStorage(initialAdsDisabled),
+    });
+    if (instrumentedRuntimeOptions) return instrumentedRuntimeOptions;
+
     return {
       provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),
       storage: createWebPurchaseStorage(initialAdsDisabled),
@@ -84,6 +93,22 @@ function createE2EWebPurchaseRuntimeOptions(
   }
 
   return undefined;
+}
+
+function createUnavailableWebPurchaseProvider(): RemoveAdsPurchaseProvider {
+  return {
+    async connect() {},
+    async disconnect() {},
+    async validateRemoveAdsReceipt() {
+      return { status: 'invalid' };
+    },
+    async requestRemoveAdsPurchase() {
+      return null;
+    },
+    async restorePurchases() {
+      return [];
+    },
+  };
 }
 
 export function createDefaultPurchaseRuntimeOptions(
@@ -94,8 +119,9 @@ export function createDefaultPurchaseRuntimeOptions(
     if (e2eRuntimeOptions) return e2eRuntimeOptions;
 
     defaultWebPurchaseRuntimeOptions ??= {
-      provider: createMockPurchaseProvider(),
-      storage: createWebPurchaseStorage(initialAdsDisabled),
+      provider: createUnavailableWebPurchaseProvider(),
+      purchaseUnavailableReason: 'web_store_unavailable',
+      storage: createWebPurchaseStorage(false),
     };
 
     return defaultWebPurchaseRuntimeOptions;

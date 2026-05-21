@@ -38,14 +38,47 @@ function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
+function listJavaScriptFiles(rootDir) {
+  const files = [];
+  const entries = fs.readdirSync(rootDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      listJavaScriptFiles(entryPath).forEach((file) => files.push(file));
+    } else if (/\.(?:cjs|js)$/.test(entry.name)) {
+      files.push(entryPath);
+    }
+  }
+
+  return files;
+}
+
+function findStorageHarnessConsumers() {
+  return ['tests', 'scripts']
+    .flatMap((relativeRoot) => listJavaScriptFiles(path.join(repoRoot, relativeRoot)))
+    .map((filePath) => path.relative(repoRoot, filePath))
+    .filter((relativePath) => {
+      if (relativePath === 'tests/helpers/storageStoreHarness.cjs') return false;
+      const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+      return source.includes('storageStoreHarness.cjs');
+    })
+    .sort();
+}
+
 test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
-  const storageHarnessConsumers = [
-    'tests/v1-1-review-store.test.js',
-    'tests/v1-1-highlights-store.test.js',
-    'scripts/learning.test.js',
-    'tests/content-local-study-data-import-parity.test.js',
-    'tests/v1-1-companion-store.test.js',
-  ];
+  const storageHarnessConsumers = findStorageHarnessConsumers();
+
+  assert.deepEqual(
+    storageHarnessConsumers,
+    [...storageHarnessConsumers].sort(),
+    'storage harness consumers should be scanned in stable order',
+  );
+  assert.ok(
+    storageHarnessConsumers.includes('scripts/learning.test.js') &&
+      storageHarnessConsumers.includes('tests/content-local-study-data-import-parity.test.js'),
+    'guard should dynamically cover storage harness consumers in tests/ and scripts/',
+  );
 
   for (const relativePath of storageHarnessConsumers) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -55,8 +88,8 @@ test('storage-backed tests share the storage harness TypeScript loader and nativ
       `${relativePath} must consume the shared storage harness`,
     );
     assert.doesNotMatch(
-      source,
-      /require\.extensions\[['"]\.ts['"]\]\s*=/,
+      source.replace(/storageStoreHarness\.cjs/g, ''),
+      /require\.extensions\[['"]\.tsx?['"]\]\s*=/,
       `${relativePath} must not install its own TypeScript require hook`,
     );
     assert.doesNotMatch(
@@ -66,12 +99,12 @@ test('storage-backed tests share the storage harness TypeScript loader and nativ
     );
     assert.doesNotMatch(
       source,
-      /['"]react-native-mmkv['"]\s*:/,
+      /(?:request\s*===\s*['"]react-native-mmkv['"]|['"]react-native-mmkv['"]\s*:)/,
       `${relativePath} must not define a local MMKV module stub`,
     );
     assert.doesNotMatch(
       source,
-      /['"]zustand['"]\s*:/,
+      /(?:request\s*===\s*['"]zustand['"]|['"]zustand['"]\s*:)/,
       `${relativePath} must not define a local Zustand module stub`,
     );
     assert.doesNotMatch(
@@ -93,6 +126,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'repetitionsdagar'/);
   assert.match(swedishCopyMatch[0], /one: 'repetitionskort'/);
   assert.match(swedishCopyMatch[0], /other: 'repetitionskort'/);
+  assert.match(swedishCopyMatch[0], /one: 'genomfört övningsprov'/);
+  assert.match(swedishCopyMatch[0], /other: 'genomförda övningsprov'/);
   assert.match(swedishCopyMatch[0], /one: 'markerat kravområde'/);
   assert.match(swedishCopyMatch[0], /other: 'markerade kravområden'/);
   assert.match(swedishCopyMatch[0], /one: 'granskning av fel svar'/);
@@ -112,6 +147,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
   assert.match(englishCopyMatch[0], /one: 'FSRS review card'/);
   assert.match(englishCopyMatch[0], /other: 'FSRS review cards'/);
+  assert.match(englishCopyMatch[0], /one: 'completed mock exam'/);
+  assert.match(englishCopyMatch[0], /other: 'completed mock exams'/);
   assert.match(englishCopyMatch[0], /one: 'marked requirement'/);
   assert.match(englishCopyMatch[0], /other: 'marked requirements'/);
   assert.match(englishCopyMatch[0], /one: 'wrong-answer review'/);
@@ -125,6 +162,7 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   );
   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
   assert.match(englishCopyMatch[0], /\bIAP data\b/);
+  assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
 });
 
 test('local study data import previews and applies all learner snapshot sections', () => {
@@ -289,6 +327,34 @@ test('local study data export round-trips citizenship requirements without purch
     'selfSupport',
     'swedishLanguage',
   ]);
+});
+
+test('local study data import omits malformed daily-goal settings before applying', () => {
+  const storageById = createStorageById();
+  storageById.settings.set('dailyGoalAnswers', 20);
+  const { applyLocalStudyDataImport, previewLocalStudyDataImport } = loadImportModule(storageById);
+  const rawPayload = JSON.stringify({
+    version: 1,
+    settings: {
+      language: 'en',
+      dailyGoalAnswers: 19.6,
+      audioEnabled: false,
+    },
+  });
+
+  const previewResult = previewLocalStudyDataImport(rawPayload);
+  assert.equal(previewResult.ok, true);
+  assert.deepEqual(previewResult.preview.settings, {
+    language: 'en',
+    audioEnabled: false,
+  });
+  assert.equal(previewResult.preview.summary.settingCount, 2);
+
+  applyLocalStudyDataImport(previewResult.preview);
+
+  assert.equal(storageById.settings.values.get('language'), 'en');
+  assert.equal(storageById.settings.values.get('audioEnabled'), false);
+  assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
 });
 
 test('local study data import rejects purchase fields before any snapshot writes', () => {

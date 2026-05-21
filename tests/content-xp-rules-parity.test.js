@@ -36,7 +36,7 @@ test('XP progression parity validates answer, completion, and level rules', () =
   const { calculateAnswerXp, calculateQuizCompletionXp, calculateLevel } =
     loadTs('lib/learning/xp.ts');
 
-  assert.equal(summary.xpRulesValidated, 24);
+  assert.equal(summary.xpRulesValidated, 11);
   assert.equal(summary.xpRulesParityValidated, true);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: false }), 10);

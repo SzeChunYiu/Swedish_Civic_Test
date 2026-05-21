@@ -25,7 +25,7 @@ test('profile route shell copy stays keyed by the settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
-  assert.equal(summary.profileRouteCopyLabelsValidated, 48);
+  assert.equal(summary.profileRouteCopyLabelsValidated, 38);
   assert.equal(summary.profileRouteCopyParityValidated, true);
   assert.equal(summary.badgesValidated, 4);
   assert.equal(summary.badgeMilestoneParityValidated, true);
@@ -55,14 +55,19 @@ test('profile route shell copy stays keyed by the settings language', () => {
     /<MetricCard label=\{copy\.dayStreakMetric\} value=\{currentStreak\} helper=\{dayStreakHelper\}/,
   );
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
+  assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(
     source,
-    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+    /openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud'/,
   );
-  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
-  assert.match(source, /copy\.studySetupCta/);
+  assert.match(
+    source,
+    /openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio'/,
+  );
   assert.match(source, /studySetupCta: 'Ändra mål, språk och ljud'/);
   assert.match(source, /studySetupCta: 'Adjust goal, language, and audio'/);
+  assert.doesNotMatch(source, /openSettings: '/);
   assert.match(source, /const badgeInput: BadgeInput = \{/);
   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
   assert.match(source, /<BadgeRow/);
@@ -145,12 +150,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{ disabled: activeAction !== null \|\| adsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: activeAction !== null \|\| adsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
   );
   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{ disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'restore'[\s\S]*disabled: activeAction !== null[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
   );
   assert.match(
     bannerSource,
@@ -180,16 +185,16 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.ok(studySetupStart < badgesStart, 'study setup card should render before badges card');
   assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
   assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
-  assert.match(source, /const audioEnabled = useSettingsStore/);
-  assert.match(
-    studySetupCard,
-    /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
-  );
+  assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
+  assert.match(studySetupCard, /\{dailyGoalAnswers\} \{copy\.answersPerDay\}/);
+  assert.match(studySetupCard, /<Badge tone="warm">\{copy\.languageBadge\}<\/Badge>/);
   assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
   assert.match(
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
+  assert.doesNotMatch(studySetupCard, /audioEnabled|audioEnabledBadge|audioDisabledBadge/);
+  assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
   assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });

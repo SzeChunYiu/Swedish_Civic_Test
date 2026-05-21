@@ -15,9 +15,12 @@ const fixtures: Record<
   AppLanguage,
   {
     audioSwitchName: string;
+    backToProfileName: string;
     dailyGoalGroup: string;
+    dailyGoalSetupBadge: string;
     dailyGoalRadioName: string;
     languageGroup: string;
+    languageSetupBadge: string;
     languageRadioName: string;
     profileHeading: string;
     settingsCtaName: string;
@@ -27,9 +30,12 @@ const fixtures: Record<
 > = {
   sv: {
     audioSwitchName: 'Stäng av ljud',
+    backToProfileName: 'Tillbaka till profil',
     dailyGoalGroup: 'Dagligt mål',
+    dailyGoalSetupBadge: '10 svar/dag',
     dailyGoalRadioName: 'Ställ in dagligt mål till 10 svar',
     languageGroup: 'Studiespråk',
+    languageSetupBadge: 'Svenska',
     languageRadioName: 'Byt studiespråk till Svenska',
     profileHeading: 'Framsteg utan konto',
     settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
@@ -38,9 +44,12 @@ const fixtures: Record<
   },
   en: {
     audioSwitchName: 'Disable audio',
+    backToProfileName: 'Back to profile',
     dailyGoalGroup: 'Daily goal',
+    dailyGoalSetupBadge: '10 answers/day',
     dailyGoalRadioName: 'Set daily goal to 10 answers',
     languageGroup: 'Study language',
+    languageSetupBadge: 'English support',
     languageRadioName: 'Set study language to English support',
     profileHeading: 'Progress without an account',
     settingsCtaName: 'Open settings for daily goal, language, and audio',
@@ -56,6 +65,17 @@ async function expectMinimumTargetSize(locator: Locator, name: string): Promise<
   expect(box, `${name} should have a rendered target box`).not.toBeNull();
   expect(box!.width, `${name} target width`).toBeGreaterThanOrEqual(minimumTargetSizePx);
   expect(box!.height, `${name} target height`).toBeGreaterThanOrEqual(minimumTargetSizePx);
+}
+
+async function expectAnyVisibleExactText(page: Page, text: string): Promise<void> {
+  const matches = page.getByText(text, { exact: true });
+  const count = await matches.count();
+
+  expect(count, `${text} should render at least once`).toBeGreaterThan(0);
+  for (let index = 0; index < count; index += 1) {
+    if (await matches.nth(index).isVisible()) return;
+  }
+  expect(false, `${text} should have at least one visible rendered instance`).toBe(true);
 }
 
 async function openProfile(page: Page, language: AppLanguage): Promise<void> {
@@ -97,6 +117,34 @@ for (const language of ['sv', 'en'] as const) {
       'aria-checked',
       'true',
     );
+
+    expect(errors.get()).toEqual([]);
+  });
+
+  test(`Settings back action returns to localized Profile setup in ${language}`, async ({
+    page,
+  }) => {
+    const copy = fixtures[language];
+    const errors = collectConsoleAndPageErrors(page);
+
+    await openProfile(page, language);
+
+    await page.getByRole('link', { name: copy.settingsCtaName }).click();
+    await expect(page).toHaveURL(/\/settings$/);
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
+
+    const backToProfile = page.getByRole('link', { name: copy.backToProfileName });
+    await expect(backToProfile).toHaveCount(1);
+    await expectMinimumTargetSize(backToProfile, `${language} settings back to profile link`);
+    await backToProfile.click();
+
+    await expect(page).toHaveURL(/\/profile$/);
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: copy.profileHeading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: copy.studySetupHeading })).toBeVisible();
+    await expectAnyVisibleExactText(page, copy.dailyGoalSetupBadge);
+    await expectAnyVisibleExactText(page, copy.languageSetupBadge);
 
     expect(errors.get()).toEqual([]);
   });

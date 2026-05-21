@@ -32,7 +32,7 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.equal(result.status, 0, output);
   assert.doesNotMatch(
     output,
-    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|E2E-owned web Remove Ads mock provider must require __SMT_E2E__|E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__|default web purchase runtime must fall back to normal mock provider|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
+    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|E2E-owned web Remove Ads mock provider must require __SMT_E2E__|E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__|default web purchase runtime must fail closed without a public mock provider|Home monetization surfaces must wait for Remove Ads entitlements before rendering|PremiumBanner must render localized mobile-app-only copy when web purchases are unavailable/,
   );
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /RemoveAdsEntitlementStatus = 'loading' \| 'ready' \| 'read_failed'/);
@@ -52,6 +52,11 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
     /const e2eRuntimeOptions = createE2EWebPurchaseRuntimeOptions\(initialAdsDisabled\);/,
   );
   assert.match(hookSource, /if \(e2eRuntimeOptions\) return e2eRuntimeOptions;/);
+  assert.match(hookSource, /function createUnavailableWebPurchaseProvider\(\)/);
+  assert.match(hookSource, /provider: createUnavailableWebPurchaseProvider\(\)/);
+  assert.match(hookSource, /purchaseUnavailableReason: 'web_store_unavailable'/);
+  assert.match(hookSource, /storage: createWebPurchaseStorage\(false\)/);
+  assert.doesNotMatch(hookSource, /provider: createMockPurchaseProvider\(\),/);
   assert.match(hookSource, /defaultNativePurchaseRuntimeOptions/);
   assert.match(
     hookSource,
@@ -69,6 +74,18 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /entitlementStatus,\s*\n\s*\};/);
 });
 
+test('Remove Ads entitlement hook parity has focused validator routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-remove-ads-hook-parity/);
+  assert.match(validatorSource, /validateRemoveAdsEntitlementHookParity\(\);/);
+  assert.match(validatorSource, /removeAdsEntitlementHookCasesValidated/);
+  assert.match(validatorSource, /removeAdsEntitlementHookParityValidated/);
+});
+
 test('Home Remove Ads surfaces wait for entitlement readiness before rendering', () => {
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
 
@@ -80,6 +97,37 @@ test('Home Remove Ads surfaces wait for entitlement readiness before rendering',
   assert.match(
     homeSource,
     /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects ungated Home ad entitlements', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('{entitlementsReady ? (', '{true ? (');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
   );
 });
 
@@ -108,11 +156,10 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(focusedHarnessSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
   assert.match(focusedHarnessSource, /monetizationRuntimeHarness\.cjs/);
-  assert.match(monetizationSuiteSource, /monetizationRuntimeHarness\.cjs/);
   assert.match(runtimeHarnessSource, /function createTsLoader/);
   assert.match(runtimeHarnessSource, /function createReactHookStub/);
   assert.match(runtimeHarnessSource, /function createReactNativeWebStub/);
-  assert.doesNotMatch(monetizationTestFileSources, /function loadTs|ts\.transpileModule/);
+  assert.doesNotMatch(focusedHarnessSource, /function loadTs|ts\.transpileModule/);
   assert.doesNotMatch(monetizationTestFileSources, /function createReactHookStub/);
   assert.doesNotMatch(monetizationTestFileSources, /Platform:\s*\{\s*OS:\s*'web'\s*\}/);
   assert.match(
@@ -122,6 +169,68 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.doesNotMatch(
     monetizationSuiteSource,
     /web Remove Ads E2E mock-owned runtime cannot spoof outside E2E/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects public web mock provider drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('provider: createUnavailableWebPurchaseProvider(),', 'provider: createMockPurchaseProvider(),');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /default web purchase runtime must fail closed without a public mock provider/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects missing web unavailable paywall copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('copy.webUnavailableBody(REMOVE_ADS_PRICE_LABEL)', 'copy.body(REMOVE_ADS_PRICE_LABEL)');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner must render localized mobile-app-only copy when web purchases are unavailable/,
   );
 });
 

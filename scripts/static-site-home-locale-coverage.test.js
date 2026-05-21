@@ -15,6 +15,7 @@ const allowedSharedFragments = [
   /Migrationsverket/,
   /AdSense/,
   /Google/,
+  /Premium/,
   /Cookie/i,
   /fika/i,
   /lagom/i,

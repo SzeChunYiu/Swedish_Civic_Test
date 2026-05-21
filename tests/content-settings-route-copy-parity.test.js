@@ -55,6 +55,8 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'repetitionsdagar'/);
   assert.match(source, /one: 'repetitionskort'/);
   assert.match(source, /other: 'repetitionskort'/);
+  assert.match(source, /one: 'genomfört övningsprov'/);
+  assert.match(source, /other: 'genomförda övningsprov'/);
   assert.match(source, /one: 'markerat kravområde'/);
   assert.match(source, /other: 'markerade kravområden'/);
   assert.match(source, /Studiesvit och svitskydd ingår/);
@@ -62,10 +64,24 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'FSRS review days'/);
   assert.match(source, /one: 'FSRS review card'/);
   assert.match(source, /other: 'FSRS review cards'/);
+  assert.match(source, /one: 'completed mock exam'/);
+  assert.match(source, /other: 'completed mock exams'/);
   assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
+  assert.match(
+    source,
+    /const renderThemeButton = \(value: ThemeMode, label: string\) => \{[\s\S]*aria-checked=\{selected\}[\s\S]*accessibilityRole="radio"[\s\S]*accessibilityState=\{\{ checked: selected \}\}/,
+  );
+  assert.match(
+    source,
+    /aria-label=\{copy\.themeModeTitle\}[\s\S]*accessibilityLabel=\{copy\.themeModeTitle\}[\s\S]*accessibilityRole="radiogroup"[\s\S]*\{themeOptions\.map/,
+  );
+  assert.doesNotMatch(
+    source,
+    /aria-selected=\{selected\}|accessibilityState=\{\{\s*selected(?::\s*selected)?\s*\}\}/,
+  );
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
   assert.match(
@@ -198,6 +214,38 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('settings route copy parity rejects theme selected-button semantics', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('aria-checked={selected}', 'aria-selected={selected}')
+      .replace('accessibilityState={{ checked: selected }}', 'accessibilityState={{ selected }}');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-route');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route theme-mode options must use radio checked semantics/,
+  );
+});
+
 test('settings route copy parity rejects selected-button segmented controls', () => {
   const result = spawnSync(
     process.execPath,
@@ -227,6 +275,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /settings route language and daily-goal options must use radio semantics|must not use aria-selected/,
+    /settings route language and daily-goal options must use radio semantics|settings route theme-mode options must use radio checked semantics|must not use aria-selected/,
   );
 });

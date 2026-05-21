@@ -5,7 +5,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const {
   createMemoryMMKV,
@@ -14,15 +13,6 @@ const {
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
 
 function loadSource(rel) {
   return fs.readFileSync(path.join(repoRoot, rel), 'utf8');
@@ -400,6 +390,40 @@ test('main native surfaces consume app-wide theme colors instead of static token
     assert.match(
       source,
       /createStyles\(themeColors\)/,
+      `${file} should bind styles to theme colors`,
+    );
+    assert.doesNotMatch(source, /import \{[^}]*\bcolors\b[^}]*\} from .*lib\/theme/, file);
+    assert.doesNotMatch(source, /\bcolors\./, file);
+  }
+});
+
+test('nested native surfaces consume app-wide theme colors instead of static tokens', () => {
+  const nestedThemeFiles = [
+    'components/ui/Badge.tsx',
+    'components/ui/ProgressBar.tsx',
+    'components/ui/RouteLink.tsx',
+    'components/ui/MetricCard.tsx',
+    'components/ui/StatCallout.tsx',
+    'components/ui/CountdownBanner.tsx',
+    'components/quiz/QuestionCard.tsx',
+    'components/quiz/ExplanationPanel.tsx',
+    'components/quiz/UHRReferenceCard.tsx',
+    'components/dashboard/ActivityHeatmap.tsx',
+    'components/dashboard/MockExamHistoryCard.tsx',
+    'components/dashboard/PerChapterProgressBars.tsx',
+    'components/dashboard/StreakXpSparkline.tsx',
+  ];
+
+  for (const file of nestedThemeFiles) {
+    const source = loadSource(file);
+    assert.match(
+      source,
+      /useThemeColors\(\)|useResolvedThemeColors\(/,
+      `${file} should read shared theme colors`,
+    );
+    assert.match(
+      source,
+      /createStyles\((themeColors|resolvedThemeColors)\)/,
       `${file} should bind styles to theme colors`,
     );
     assert.doesNotMatch(source, /import \{[^}]*\bcolors\b[^}]*\} from .*lib\/theme/, file);

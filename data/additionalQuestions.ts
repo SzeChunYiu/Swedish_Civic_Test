@@ -1,4 +1,3 @@
-import { applyQuestionLocalizationPilot } from './questionLocalizations';
 import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
@@ -65,29 +64,6 @@ function trueFalse(
     tags,
   };
 }
-
-const ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
-  'q021',
-  'q022',
-  'q023',
-  'q024',
-  'q025',
-  'q026',
-  'q027',
-  'q028',
-  'q029',
-  'q030',
-  'q031',
-  'q032',
-  'q033',
-  'q034',
-  'q035',
-  'q036',
-  'q037',
-  'q038',
-  'q039',
-  'q040',
-]);
 
 const rawAdditionalQuestions: PracticeQuestion[] = [
   single(
@@ -669,7 +645,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch06',
     { chapter: 'Mediernas roll', section: 'Källkritik', pageApprox: 21 },
     'Vad betyder det att vara källkritisk?',
-    'What does it mean to be source-critical?',
+    'What does source criticism mean?',
     [
       [
         'Att ifrågasätta och kontrollera om information är korrekt',
@@ -684,7 +660,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
-    'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
     ['source-criticism', 'media-literacy', 'information'],
     'easy',
   ),
@@ -2216,7 +2192,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Att helt fritt välja vilken religion som helst eller ingen religion alls',
-        'To choose any religion or no religion at all completely freely',
+        'To freely choose any religion or none',
       ],
       [
         'Att staten och Svenska kyrkan skildes åt',
@@ -2229,7 +2205,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
-    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
     ['religious-freedom', 'church-of-sweden', '1860', 'christian-community'],
     'medium',
   ),
@@ -3451,8 +3427,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'q166',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
-    'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+    'Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+    'What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?',
     [
       [
         'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
@@ -3740,7 +3716,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch07',
     { chapter: 'Mänskliga rättigheter', section: 'Jämställdhet mellan könen', pageApprox: 23 },
     'Vilket exempel hör till arbetet för jämställdhet mellan könen?',
-    'Which example is part of work for gender equality?',
+    'Which example is part of efforts to promote gender equality?',
     [
       [
         'Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst',
@@ -3802,7 +3778,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       pageApprox: 26,
     },
     'Vad är ett mål med arbetet för personer med funktionsnedsättning?',
-    'What is one aim of work for people with disabilities?',
+    'What is one aim of disability rights work?',
     [
       [
         'Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor',
@@ -3820,7 +3796,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.',
-    'Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
+    'Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
     ['disability-rights', 'accessibility', 'equal-participation'],
   ),
   single(
@@ -3858,8 +3834,4 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
   ),
 ];
 
-export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions.map((question) =>
-  ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id)
-    ? applyQuestionLocalizationPilot(question)
-    : question,
-);
+export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions;

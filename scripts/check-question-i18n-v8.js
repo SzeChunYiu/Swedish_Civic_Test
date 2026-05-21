@@ -100,6 +100,9 @@ const TRUE_FALSE_LABELS = {
   },
 };
 
+const SOMALI_GEOGRAPHY_NATURALNESS_IDS = ['q004', 'q006', 'q008'];
+const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
+
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
     if (!map || typeof map[locale] !== 'string' || map[locale].trim() === '') {
@@ -351,6 +354,56 @@ function checkTrueFalseLabels(question, errors) {
   }
 }
 
+function somaliLocalizedSegments(question) {
+  return [
+    ['questionText.so', question.questionText?.so],
+    ['explanationText.so', question.explanationText?.so],
+    ...(question.options || []).map((option) => [`options.${option.id}.text.so`, option.text?.so]),
+  ];
+}
+
+function summarizeSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATURALNESS_IDS) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.somaliGeographyNaturalness missing`);
+      continue;
+    }
+
+    for (const [path, value] of somaliLocalizedSegments(question)) {
+      if (typeof value === 'string' && SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN.test(value)) {
+        errors.push(`${id}.${path} contains English geography term`);
+      }
+    }
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATURALNESS_IDS) {
+  const { errors } = summarizeSomaliGeographyNaturalness(questions, ids);
+  return errors;
+}
+
+function isSomaliGeographyNaturalnessId(id) {
+  return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
+}
+
 function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   const errors = [];
   const questionById = new Map(questions.map((question) => [question.id, question]));
@@ -387,6 +440,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
     checkTrueFalseLabels(q, errors);
     checkProtectedTerms(q, errors);
     checkNumericFacts(q, errors);
+  }
+
+  const somaliGeographyIds = ids.filter(isSomaliGeographyNaturalnessId);
+  if (somaliGeographyIds.length > 0) {
+    errors.push(...checkSomaliGeographyNaturalness(questions, somaliGeographyIds));
   }
 
   return errors;
@@ -509,9 +567,12 @@ if (require.main === module) {
 }
 
 module.exports = {
+  SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
+  checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
   REQUIRED_REVIEW_LOCALES,
+  summarizeSomaliGeographyNaturalness,
 };
