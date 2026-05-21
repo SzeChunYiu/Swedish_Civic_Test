@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 87404,
-      "sha256": "84509e9dbde1e839723e3f108a0ecbe4ab4887985c7d982ad6339d706a537731"
+      "bytes": 88003,
+      "sha256": "c99d6c0a07ee63084e2f4a673f58064645b76cd8dde34e91dd24e166a836616e"
     },
     "buddies.js": {
       "bytes": 34479,
@@ -40,16 +40,16 @@
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 64303,
-      "sha256": "7d74c265f75c7cd548dbcbeadde5cea95015956a17a58f2128528ca2d5d01927"
+      "bytes": 64395,
+      "sha256": "2c3b9639233c11ed63bd0dd74fcef3bc76770001103a19778d265cb13e6d1f29"
     },
     "practice.js": {
-      "bytes": 53929,
-      "sha256": "bc7cae723d532d947babf8aeaf08984513f9c8bcdd9c3056cea27ac3376aaf0b"
+      "bytes": 57058,
+      "sha256": "78451992ecdd855d5f2106da8d59ea0f7f2b58696beaa6bdfa1a8788e3de2d8d"
     },
     "questions.js": {
-      "bytes": 3624980,
-      "sha256": "fc4073c87197c4bd02dc459719ea6afec74bd8f08be45b9b2bc7b81de02098d8"
+      "bytes": 3624824,
+      "sha256": "9d1569da9549602b61414bf7ff9ade207d7dfc9948bee8e67d95e95484270362"
     },
     "settings.js": {
       "bytes": 12779,
@@ -72,8 +72,8 @@
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
-      "bytes": 20051,
-      "sha256": "8226fb9298e20c16953cfff6d60714174e1b49fa6530afc41ed4be7435daef1e"
+      "bytes": 23321,
+      "sha256": "01ab2f357835272a5d4293c3ee82712bf809010acd79de384d4ba38b4ef79c5f"
     }
   }
 }

@@ -12,7 +12,10 @@ const scalarAssetReferenceAttributes = new Set(['href', 'poster', 'src']);
 const srcsetAssetReferenceAttributes = new Set(['imagesrcset', 'srcset']);
 const htmlAttributePattern = /\b([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
 const htmlLinkTagPattern = /<link\b[^>]*>/gi;
+const cssImportReferencePattern =
+  /@import\s+(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)|"([^"]*)"|'([^']*)')/gi;
 const cssUrlReferencePattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)/gi;
+const maxStylesheetImportDepth = 20;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -112,6 +115,12 @@ function parseCssUrlAssetCandidates(cssText) {
   ).filter(Boolean);
 }
 
+function parseCssImportAssetCandidates(cssText) {
+  return Array.from(cssText.matchAll(cssImportReferencePattern), (match) =>
+    (match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '').trim(),
+  ).filter(Boolean);
+}
+
 function extractLinkedStylesheetReferences(indexHtml) {
   const references = [];
 
@@ -129,21 +138,53 @@ function extractLinkedStylesheetReferences(indexHtml) {
   return [...new Set(references)];
 }
 
+function extractStylesheetAssetReferences(stylesheetPath, siteDir, options = {}) {
+  const references = [];
+  const visitedStylesheets = options.visitedStylesheets || new Set();
+  const depth = options.depth || 0;
+  const normalizedStylesheetPath = normalizeRelativePath(path.posix.normalize(stylesheetPath));
+
+  if (depth > maxStylesheetImportDepth || visitedStylesheets.has(normalizedStylesheetPath)) {
+    return references;
+  }
+
+  visitedStylesheets.add(normalizedStylesheetPath);
+
+  const absolutePath = path.join(siteDir, normalizedStylesheetPath);
+  if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) {
+    return references;
+  }
+
+  const cssText = fs.readFileSync(absolutePath, 'utf8');
+  const stylesheetBasePath = path.posix.dirname(normalizedStylesheetPath);
+  const basePath = stylesheetBasePath === '.' ? '' : stylesheetBasePath;
+
+  for (const candidate of parseCssUrlAssetCandidates(cssText)) {
+    const reference = normalizeLocalAssetReference(candidate, basePath);
+    if (reference) references.push(reference);
+  }
+
+  for (const candidate of parseCssImportAssetCandidates(cssText)) {
+    const reference = normalizeLocalAssetReference(candidate, basePath);
+    if (!reference) continue;
+
+    references.push(reference);
+    references.push(
+      ...extractStylesheetAssetReferences(reference, siteDir, {
+        visitedStylesheets,
+        depth: depth + 1,
+      }),
+    );
+  }
+
+  return references;
+}
+
 function extractLinkedStylesheetAssetReferences(indexHtml, siteDir) {
   const references = [];
 
   for (const stylesheetPath of extractLinkedStylesheetReferences(indexHtml)) {
-    const absolutePath = path.join(siteDir, stylesheetPath);
-    if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) continue;
-
-    const cssText = fs.readFileSync(absolutePath, 'utf8');
-    const stylesheetBasePath = path.posix.dirname(stylesheetPath);
-    const basePath = stylesheetBasePath === '.' ? '' : stylesheetBasePath;
-
-    for (const candidate of parseCssUrlAssetCandidates(cssText)) {
-      const reference = normalizeLocalAssetReference(candidate, basePath);
-      if (reference) references.push(reference);
-    }
+    references.push(...extractStylesheetAssetReferences(stylesheetPath, siteDir));
   }
 
   return references;
@@ -336,6 +377,7 @@ module.exports = {
   listSiteAssetFiles,
   normalizeAssetReference,
   parseCssUrlAssetCandidates,
+  parseCssImportAssetCandidates,
   parseSrcsetAssetCandidates,
   writeAssetManifest,
 };
