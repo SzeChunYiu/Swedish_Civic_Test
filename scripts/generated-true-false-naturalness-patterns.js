@@ -35,6 +35,7 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Att vara källkritisk betyder\b/i,
   /^To be source-critical means\b/i,
   /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i,
+  /\bThe public sector in Sweden means\b/i,
   /\binnebär att den ger\b/i,
   /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
   /^Important activities such as school, work, and health care can continue to function\.?$/i,
