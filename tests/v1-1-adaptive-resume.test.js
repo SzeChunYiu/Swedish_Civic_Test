@@ -505,6 +505,103 @@ test('resumeWhereLeftOff: ignores invalid and future answer dates', () => {
   assert.equal(result.questionsAnsweredInChapter, 1);
 });
 
+test('resumeWhereLeftOff: ignores malformed imported answers and non-finite maxAgeDays', () => {
+  const { resumeWhereLeftOff } = loadTs('lib/learning/resumeWhereLeftOff.ts');
+  for (const maxAgeDays of [Number.NaN, Number.POSITIVE_INFINITY]) {
+    const result = resumeWhereLeftOff({
+      progress: {
+        ...progressFromAnswers([]),
+        sessions: [
+          {
+            id: 's1',
+            mode: 'study',
+            questionIds: [],
+            startedAt: '2026-05-15T00:00:00.000Z',
+            answers: [
+              {
+                questionId: 'q1',
+                selectedOptionIds: [],
+                isCorrect: true,
+                answeredAt: '2026-05-19T10:00:00.000Z',
+                timeSpentSeconds: 5,
+              },
+              {
+                questionId: 'q2',
+                selectedOptionIds: [],
+                isCorrect: true,
+                answeredAt: '2026-05-18T10:00:00.000Z',
+                timeSpentSeconds: 5,
+              },
+              {
+                questionId: 'old',
+                selectedOptionIds: [],
+                isCorrect: true,
+                answeredAt: '2026-01-15T10:00:00.000Z',
+                timeSpentSeconds: 5,
+              },
+              {
+                questionId: 'bad-date',
+                selectedOptionIds: [],
+                isCorrect: true,
+                answeredAt: 'zzzz',
+                timeSpentSeconds: 5,
+              },
+              {
+                questionId: 'future-date',
+                selectedOptionIds: [],
+                isCorrect: true,
+                answeredAt: '9999-01-01T00:00:00.000Z',
+                timeSpentSeconds: 5,
+              },
+              { questionId: 99, answeredAt: '2026-05-20T10:00:00.000Z' },
+              { questionId: 'missing-date' },
+              { answeredAt: '2026-05-20T10:00:00.000Z' },
+              null,
+            ],
+          },
+          null,
+          { id: 's2', mode: 'study', questionIds: [], answers: null },
+        ],
+      },
+      questionChapterIndex: {
+        q1: 'ch03',
+        q2: 'ch03',
+        old: 'ch03',
+        'bad-date': 'ch03',
+        'future-date': 'ch03',
+      },
+      maxAgeDays,
+      now: new Date('2026-05-20T12:00:00.000Z'),
+    });
+
+    assert.equal(result.chapterId, 'ch03');
+    assert.equal(result.lastQuestionId, 'q1');
+    assert.equal(result.lastAnsweredAt, '2026-05-19T10:00:00.000Z');
+    assert.equal(result.questionsAnsweredInChapter, 2);
+  }
+});
+
+test('resumeWhereLeftOff: defaults negative maxAgeDays instead of disabling the cutoff', () => {
+  const { resumeWhereLeftOff } = loadTs('lib/learning/resumeWhereLeftOff.ts');
+  const result = resumeWhereLeftOff({
+    progress: progressFromAnswers([
+      {
+        questionId: 'recent',
+        selectedOptionIds: [],
+        isCorrect: true,
+        answeredAt: '2026-05-19T10:00:00.000Z',
+        timeSpentSeconds: 5,
+      },
+    ]),
+    questionChapterIndex: { recent: 'c1' },
+    maxAgeDays: -1,
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  assert.equal(result.chapterId, 'c1');
+  assert.equal(result.lastQuestionId, 'recent');
+});
+
 test('resumeBannerCopy: bilingual messages', () => {
   const { resumeBannerCopy } = loadTs('lib/learning/resumeWhereLeftOff.ts');
   const sv = resumeBannerCopy(
