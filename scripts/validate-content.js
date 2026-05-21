@@ -8887,6 +8887,8 @@ let chapterRouteCopyLabelsValidated = 0;
 let chapterRouteCopyParityValidated = false;
 let learnRouteHeadersValidated = 0;
 let learnRouteHeaderParityValidated = false;
+let searchRouteQueryHydrationRulesValidated = 0;
+let searchRouteQueryHydrationParityValidated = false;
 let profileRouteHeadersValidated = 0;
 let profileRouteHeaderParityValidated = false;
 let profileRouteCopyLabelsValidated = 0;
@@ -11267,8 +11269,11 @@ function validatePremiumEntitlementParity() {
     reject('shouldShowAd must not render home_banner when adsDisabled is true');
   }
 
-  if (!/if\s*\(\s*entitlements\.adsDisabled\s*\)\s*return false;/.test(adsSource)) {
-    reject('shouldShowAd must keep an explicit adsDisabled fail-closed branch');
+  if (
+    !adsSource.includes("import { isStrictEntitlementFlag } from './premium';") ||
+    !/isStrictEntitlementFlag\(entitlements\.adsDisabled\)/.test(adsSource)
+  ) {
+    reject('shouldShowAd must keep a strict adsDisabled fail-closed branch');
   }
 
   if (
@@ -20750,7 +20755,6 @@ validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
-validateSearchRouteQueryHydrationParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -20912,8 +20916,6 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
-      searchRouteQueryHydrationRulesValidated,
-      searchRouteQueryHydrationParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,

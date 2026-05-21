@@ -14,6 +14,7 @@ const {
 } = require('../scripts/export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
+const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
@@ -51,6 +52,14 @@ function generatedQuestionId(sourceQuestions, sourceQuestionId, variantOffset) {
     3,
     '0',
   )}`;
+}
+
+function staticSomaliSegments(question) {
+  return [
+    [`${question.id}.q.so`, question.q?.so],
+    [`${question.id}.why.so`, question.why?.so],
+    ...(question.opts || []).map((option, index) => [`${question.id}.opts.${index}.so`, option.so]),
+  ];
 }
 
 test('static site question bank is semantically generated from canonical content', () => {
@@ -102,6 +111,22 @@ test('static site question bank preserves canonical question provenance', () => 
   }
 });
 
+test('static site question bank avoids English geography common terms in Somali text', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+
+  const offenders = [];
+  for (const question of context.window.SMT_QUESTIONS) {
+    for (const [segment, value] of staticSomaliSegments(question)) {
+      if (typeof value === 'string' && SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN.test(value)) {
+        offenders.push(segment);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, []);
+});
+
 test('static site question bank drift report classifies format-only mismatches', () => {
   const expectedBank = buildSiteQuestionBank();
   const generated = generateStaticSiteQuestionBankJs();
@@ -131,18 +156,12 @@ test('static site question bank source fixture limits one-question localization 
   });
 
   const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
-  const localizedQ001OptionOverlayIds = [
-    generatedQuestionId(canonical.sourceQuestions, 'q001', 0),
-    generatedQuestionId(canonical.sourceQuestions, 'q001', 1),
-  ];
+  const q020GeneratedVariantIds = [0, 1, 2, 3].map((variantOffset) =>
+    generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset),
+  );
 
   assert.equal(drift.hasSemanticDrift, true);
   assert.equal(drift.questionIds[0], 'q020');
-  assert.equal(drift.questionIds.length, 7);
-  assert.deepEqual(drift.questionIds.slice(1, 3), localizedQ001OptionOverlayIds);
-  assert.ok(
-    drift.questionIds.slice(3).every((questionId) => /^q\d{3}$/.test(questionId)),
-    `expected only localized q001 option overlays plus generated q020 variants to drift, got ${drift.questionIds.join(', ')}`,
-  );
+  assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
 });
