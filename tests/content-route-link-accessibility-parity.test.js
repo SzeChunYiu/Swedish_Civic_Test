@@ -51,15 +51,21 @@ test('RouteLink preserves web anchors, keyboard feedback, caller handlers, and r
   assert.match(source, /<Link\s/);
   assert.doesNotMatch(source, /<Link[^>]*\basChild\b/);
   assert.match(source, /accessibilityRole="link"/);
-  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Spacebar'\]\)/);
+  assert.match(source, /keyboardActivationKeys = new Set\(\['Enter', ' ', 'Space', 'Spacebar'\]\)/);
   assert.match(source, /const reduceMotion = useReducedMotion\(\);/);
   assert.match(
     source,
     /onKeyDown: \(event: Parameters<NonNullable<typeof onKeyDown>>\[0\]\) => \{/,
   );
-  assert.match(source, /if \(isKeyboardActivationKey\(event\.key\)\) setIsPressed\(true\);/);
+  assert.match(
+    source,
+    /if \(isKeyboardActivationKey\(event\.key\)\) \{[\s\S]*setIsPressed\(true\);/,
+  );
   assert.match(source, /onKeyDown\?\.\(event\);/);
-  assert.match(source, /if \(isKeyboardActivationKey\(event\.key\)\) setIsPressed\(false\);/);
+  assert.match(
+    source,
+    /if \(isKeyboardActivationKey\(event\.key\)\) \{[\s\S]*setIsPressed\(false\);/,
+  );
   assert.match(source, /onKeyUp\?\.\(event\);/);
   assert.match(source, /onMouseDown\?\.\(event\);/);
   assert.match(source, /onMouseUp\?\.\(event\);/);
