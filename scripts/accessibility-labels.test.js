@@ -6,6 +6,7 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
+const PRACTICE_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'practice.tsx');
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
 
@@ -96,6 +97,27 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
+});
+
+test('Practice hero controls keep token-sized touch targets', () => {
+  const source = fs.readFileSync(PRACTICE_ROUTE_SOURCE, 'utf8');
+
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}[\s\S]*?accessibilityRole="button"[\s\S]*?hitSlop=\{space\[1\]\}[\s\S]*?styles\.bookmarkButton/,
+  );
+  assert.match(
+    source,
+    /accessibilityRole="switch"[\s\S]*?accessibilityState=\{\{ checked: includeSupplementary \}\}[\s\S]*?hitSlop=\{space\[1\]\}[\s\S]*?styles\.bookmarkButton/,
+  );
+  assert.match(
+    source,
+    /accessibilityState=\{\{ expanded: aboutSourcesOpen \}\}[\s\S]*?accessibilityLabel=\{aboutSourcesOpen \? copy\.aboutSourcesHide : copy\.aboutSourcesShow\}[\s\S]*?hitSlop=\{space\[1\]\}[\s\S]*?styles\.aboutSourcesTrigger/,
+  );
+  assert.match(source, /bookmarkButton:\s*\{[\s\S]*?minHeight:\s*space\[6\]/);
+  assert.match(source, /bookmarkButton:\s*\{[\s\S]*?minWidth:\s*space\[6\]/);
+  assert.match(source, /aboutSourcesTrigger:\s*\{[\s\S]*?minHeight:\s*space\[6\]/);
+  assert.match(source, /aboutSourcesTrigger:\s*\{[\s\S]*?minWidth:\s*space\[6\]/);
 });
 
 test('LanguagePicker menu rows expose menu-item state semantics', () => {

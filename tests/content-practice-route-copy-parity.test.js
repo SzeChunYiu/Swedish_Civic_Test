@@ -139,6 +139,41 @@ test('web aria false-state e2e covers localized Practice control labels', () => 
   );
 });
 
+test('practice route coverage keeps hero controls at the touch-target bar', () => {
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(
+    practiceSource,
+    /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}[\s\S]*?hitSlop=\{space\[1\]\}/,
+  );
+  assert.match(
+    practiceSource,
+    /accessibilityRole="switch"[\s\S]*?accessibilityState=\{\{ checked: includeSupplementary \}\}[\s\S]*?hitSlop=\{space\[1\]\}/,
+  );
+  assert.match(
+    practiceSource,
+    /accessibilityState=\{\{ expanded: aboutSourcesOpen \}\}[\s\S]*?hitSlop=\{space\[1\]\}/,
+  );
+  assert.match(practiceSource, /bookmarkButton:\s*\{[\s\S]*?minHeight:\s*space\[6\]/);
+  assert.match(practiceSource, /bookmarkButton:\s*\{[\s\S]*?minWidth:\s*space\[6\]/);
+  assert.match(practiceSource, /aboutSourcesTrigger:\s*\{[\s\S]*?minHeight:\s*space\[6\]/);
+  assert.match(practiceSource, /aboutSourcesTrigger:\s*\{[\s\S]*?minWidth:\s*space\[6\]/);
+  assert.match(e2eSource, /async function expectTouchTarget\(locator: Locator\)/);
+  assert.match(e2eSource, /toBeGreaterThanOrEqual\(44\)/);
+  assert.match(
+    e2eSource,
+    /await expectTouchTarget\(page\.getByRole\('button', \{ name: labels\.bookmark \}\)\)/,
+  );
+  assert.match(e2eSource, /await expectTouchTarget\(uhrOnly\)/);
+  assert.match(e2eSource, /await expectTouchTarget\(supplementary\)/);
+  assert.match(e2eSource, /await expectTouchTarget\(aboutSources\)/);
+  assert.match(e2eSource, /await expectTouchTarget\(closeSources\)/);
+});
+
 test('practice route copy parity rejects bypassing the settings language', () => {
   const result = spawnSync(
     process.execPath,
