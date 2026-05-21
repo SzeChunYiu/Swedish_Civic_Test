@@ -6,6 +6,9 @@ const path = require('node:path');
 const test = require('node:test');
 
 const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
+const {
+  MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
+} = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -464,6 +467,52 @@ test('spaced repetition schema parity uses focused content validation routing', 
     /\['scripts\/validate-content\.js'\]/,
     'spaced repetition tests must not route through full content validation',
   );
+});
+
+test('adaptive size focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('adaptivePracticeSize');
+
+  assert.ok(registryEntry, 'adaptive practice size focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-adaptive-practice-size']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'adaptivePracticeSizeRuntimeCasesValidated',
+    'adaptivePracticeSizeRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-adaptive-practice-size/);
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*adaptivePracticeSizeRuntimeCasesValidated[\s\S]*adaptivePracticeSizeRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateSpacedRepetitionSchedule\(\);[\s\S]*validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the adaptive practice size runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-adaptive-practice-size'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused adaptive size validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(
+    summary.adaptivePracticeSizeRuntimeCasesValidated,
+    MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES.length,
+  );
+  assert.equal(summary.adaptivePracticeSizeRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('Pro Lifetime relaunch parity uses focused content validation routing', () => {
