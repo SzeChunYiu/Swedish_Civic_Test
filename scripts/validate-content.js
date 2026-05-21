@@ -1651,7 +1651,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -9352,6 +9352,16 @@ if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-remove-ads-hook-parity')) {
+  validateRemoveAdsEntitlementHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    removeAdsEntitlementHookCasesValidated,
+    removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-settings-store')) {
   validateSettingsStoreSchemaParity();
   validateSettingsDailyGoalParity();
@@ -10570,6 +10580,24 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
         normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+    ],
+    [
+      /defaultNativePurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createNativePurchaseProvider\(\{\s*platform:\s*getNativePurchasePlatform\(\)\s*\}\),[\s\S]*storage:\s*createSecureStorePurchaseStorage\(\),[\s\S]*\};/.test(
+        hookSource,
+      ),
+      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
+    ],
+    [
+      /if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{[\s\S]*return\s+undefined;[\s\S]*\}/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\),/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
     ],
     [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
@@ -17479,8 +17507,7 @@ function validateStreakRules() {
     },
     {
       label: 'invalid local date fallback',
-      actual: () =>
-        /^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0,
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
       expected: 1,
     },
   ];
