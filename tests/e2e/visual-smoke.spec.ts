@@ -4,14 +4,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { dismissBlockingModals } from './browserLaunch';
-import {
-  isVisualSmokeCommittedBaselineOutput,
-  resolveVisualSmokeOutput,
-} from './visualSmokeOutput';
 
+const committedScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
+const defaultRuntimeScreenshotDir = path.resolve('tmp/visual-smoke-screenshots');
+const updateCommittedBaseline = process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
+const configuredRuntimeScreenshotDir = path.resolve(
+  process.env.VISUAL_SMOKE_SCREENSHOT_DIR ?? defaultRuntimeScreenshotDir,
+);
+
+if (!updateCommittedBaseline && configuredRuntimeScreenshotDir === committedScreenshotDir) {
+  throw new Error(
+    'Refusing to write visual-smoke runtime captures to the committed baseline without VISUAL_SMOKE_UPDATE_BASELINE=1.',
+  );
+}
+
+const screenshotDir = updateCommittedBaseline
+  ? committedScreenshotDir
+  : configuredRuntimeScreenshotDir;
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
-const visualSmokeOutput = resolveVisualSmokeOutput();
-const screenshotDir = visualSmokeOutput.outputDir;
 type RouteCapture = {
   name: string;
   route: string;
@@ -108,11 +118,6 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
 
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   expectExportBundleToContainRouteContext();
-  expect(
-    visualSmokeOutput.refreshCommittedBaseline ||
-      !isVisualSmokeCommittedBaselineOutput(visualSmokeOutput.outputDir),
-    'Default visual-smoke runs must not write into the committed screenshot baseline',
-  ).toBe(true);
 
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
@@ -167,14 +172,12 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     JSON.stringify(
       {
         capturedAt: new Date().toISOString(),
-        outputMode: visualSmokeOutput.outputMode,
-        outputPolicy: visualSmokeOutput.outputPolicy,
-        outputRefreshRequested: visualSmokeOutput.refreshCommittedBaseline,
-        outputWritesCommittedBaseline: visualSmokeOutput.writesCommittedBaseline,
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
         launchOverlayPolicy:
           'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible overlays.',
+        refreshPolicy:
+          'Default visual-smoke runs write runtime captures to tmp/visual-smoke-screenshots, which is ignored. Set VISUAL_SMOKE_UPDATE_BASELINE=1 to refresh this committed baseline intentionally, or VISUAL_SMOKE_SCREENSHOT_DIR to inspect another runtime output directory.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
         duplicateExplanations: explainedDuplicateScreenshotGroups,
