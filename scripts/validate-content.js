@@ -23024,6 +23024,7 @@ if (process.argv.includes('--focus-question-bank-csv')) {
   validateUhrSourceMaterialLinkParity();
   validateQuestionBankCsvContract();
   if (failures.length) exitWithValidationFailures();
+  const questionCount = Array.isArray(questions) ? questions.length : 0;
   const publishedQuestions = Array.isArray(questions)
     ? questions.filter((question) => question.reviewStatus === 'published').length
     : 0;
@@ -23031,6 +23032,7 @@ if (process.argv.includes('--focus-question-bank-csv')) {
   console.log(
     JSON.stringify(
       {
+        questions: questionCount,
         publishedQuestions,
         questionBankCsvRowsValidated,
         questionBankCsvHeaderColumnsValidated,
