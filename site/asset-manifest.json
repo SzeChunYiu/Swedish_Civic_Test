@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 111112,
-      "sha256": "b9783b7b60378ef9b9a55c5f66e298b09b5d084c851c3ca94c81087c64acc86e"
+      "bytes": 111250,
+      "sha256": "6765013878aab0aba416f2b65bcf92b6662499c2bd798e492121a26a42ce33e5"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -88,16 +88,16 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 346114,
-      "sha256": "18e698dc0f28e4e3466894daafbf3e9bd5f1022a06fb41f5a9e70f3adc1a0cc2"
+      "bytes": 346790,
+      "sha256": "e81e4e6840d1918b1903f0c492550ede124b0752642867964b8b55eea138562b"
     },
     "icon.png": {
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 71881,
-      "sha256": "56802de2884ed91346bfbfb6dc8ec769b34ccb78293008a00fd38546a488d03a"
+      "bytes": 72386,
+      "sha256": "49299d04e95fe1ae53b504e45742b8af49a53ba3cc0e1b93994700b0df6e6f18"
     },
     "practice.js": {
       "bytes": 68033,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 141102,
-      "sha256": "b9fb3906976647a8779c1290867a498bfc00674ea82c9ca7288e09ecce86a2fd"
+      "bytes": 146077,
+      "sha256": "153f1656ffd830afef891bed56360ae8169b980ffd08a11ac0299128593904f0"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
@@ -136,8 +136,8 @@
       "sha256": "67435e90bc00665d368d0d6c39e217485a8014e5d394ecb463a5fef166d36bcc"
     },
     "v11.js": {
-      "bytes": 41167,
-      "sha256": "1b4e936da660acee54d57af83975e9923d8f74fe86834c791c7178bfb56f3aa0"
+      "bytes": 41148,
+      "sha256": "ffff3e431142c147d0f4d6a0bf2a70aa1c3ec4a204d063ecaa0762253d14e7eb"
     }
   }
 }
