@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -30,6 +30,7 @@ type ProPaywallCopy = {
   body: string;
   columnHeader: string;
   excluded: string;
+  hideComparison: string;
   included: string;
   includedAccessibilityLabel: string;
   priceAccessibilityLabel: (column: TierColumn) => string;
@@ -40,6 +41,8 @@ type ProPaywallCopy = {
   restoreIdle: string;
   rowSummary: (row: TierRow, columns: readonly TierColumn[]) => string;
   secondaryPathHint: (label: string, alreadyAdFree: boolean) => string;
+  showComparison: string;
+  showComparisonAccessibilityLabel: string;
   statusAccessibilityLabel: (message: string) => string;
   statusMessages: Record<ProPaywallStatus, string>;
   title: string;
@@ -52,6 +55,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     body: 'Pro är ett separat engångsköp för avancerad repetition, studieplanering och fler språkstöd. Ta bort annonser för 29 kr finns kvar som en egen enklare väg.',
     columnHeader: 'Funktion',
     excluded: 'Ingår inte',
+    hideComparison: 'Dölj Pro-jämförelse',
     included: 'Ingår',
     includedAccessibilityLabel: 'Ingår i nivån',
     priceAccessibilityLabel: (column) => `${column.labelSv}: ${column.priceSv}`,
@@ -72,6 +76,8 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       alreadyAdFree
         ? `${label}: din annonsfria studie behålls när du lägger till Pro.`
         : `${label} finns i Ta bort annonser-kortet ovan. Pro ändrar inte den vägen.`,
+    showComparison: 'Jämför Pro-funktioner',
+    showComparisonAccessibilityLabel: 'Visa jämförelse mellan Gratis, Annonsfri och Pro',
     statusAccessibilityLabel: (message) => `Status för Pro: ${message}`,
     statusMessages: {
       error: 'Pro-köp är inte tillgängligt. Försök igen senare.',
@@ -79,7 +85,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       not_found: 'Inget tidigare Pro-köp hittades.',
       pending: 'Väntar på butikens bekräftelse innan Pro aktiveras.',
       persistence_failed:
-        'Pro-köpet bekräftades men kunde inte sparas lokalt. Försök återställa köpet.',
+        'Pro-köpet kunde inte sparas säkert på den här enheten. Försök återställa köpet.',
       purchased: 'Pro är aktiverat på den här enheten.',
       restored: 'Pro är återställt på den här enheten.',
     },
@@ -91,6 +97,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
     body: 'Pro is a separate one-time purchase for advanced review, study planning, and broader language support. Remove Ads for 29 SEK stays available as its own simpler path.',
     columnHeader: 'Feature',
     excluded: 'Not included',
+    hideComparison: 'Hide Pro comparison',
     included: 'Included',
     includedAccessibilityLabel: 'Included in this tier',
     priceAccessibilityLabel: (column) => `${column.labelEn}: ${column.priceEn}`,
@@ -111,6 +118,8 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       alreadyAdFree
         ? `${label}: your ad-free study stays active when you add Pro.`
         : `${label} is still handled by the Remove Ads card above. Pro does not change that path.`,
+    showComparison: 'Compare Pro features',
+    showComparisonAccessibilityLabel: 'Show comparison between Free, Ad-Free, and Pro',
     statusAccessibilityLabel: (message) => `Pro status: ${message}`,
     statusMessages: {
       error: 'Pro purchase is unavailable. Try again later.',
@@ -118,7 +127,7 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       not_found: 'No previous Pro purchase was found.',
       pending: 'Waiting for store confirmation before enabling Pro.',
       persistence_failed:
-        'Pro was confirmed but could not be saved locally. Try restoring the purchase.',
+        'The Pro purchase could not be saved securely on this device. Try restoring the purchase.',
       purchased: 'Pro is active on this device.',
       restored: 'Pro has been restored on this device.',
     },
@@ -152,16 +161,13 @@ export function ProPaywall({
   const copy = proPaywallCopy[language];
   const ctaLabels = paywallCtaLabels({ alreadyAdFree });
   const [activeAction, setActiveAction] = useState<ProAction | null>(null);
+  const [comparisonVisible, setComparisonVisible] = useState(false);
   const [status, setStatus] = useState<ProPaywallStatus>('idle');
-  const purchaseActionInFlightRef = useRef(false);
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
   const statusMessage = copy.statusMessages[status];
   const runProAction = useCallback(
     async (action: ProAction) => {
-      if (purchaseActionInFlightRef.current) return;
-
-      purchaseActionInFlightRef.current = true;
       setActiveAction(action);
 
       try {
@@ -175,7 +181,6 @@ export function ProPaywall({
       } catch {
         setStatus('error');
       } finally {
-        purchaseActionInFlightRef.current = false;
         setActiveAction(null);
       }
     },
@@ -192,100 +197,121 @@ export function ProPaywall({
         <Text style={styles.body}>{copy.body}</Text>
       </View>
 
-      <View style={styles.table}>
-        <View style={[styles.row, styles.headerRow]}>
-          <Text style={[styles.featureCell, styles.columnHeader]}>{copy.columnHeader}</Text>
-          {TIER_COLUMNS.map((column) => (
+      <Button
+        accessibilityLabel={copy.showComparisonAccessibilityLabel}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: comparisonVisible }}
+        onPress={() => setComparisonVisible((visible) => !visible)}
+        style={styles.toggleButton}
+        variant="secondary"
+      >
+        {comparisonVisible ? copy.hideComparison : copy.showComparison}
+      </Button>
+
+      {comparisonVisible ? (
+        <View style={styles.table}>
+          <View style={[styles.row, styles.headerRow]}>
+            <Text style={[styles.featureCell, styles.columnHeader]}>{copy.columnHeader}</Text>
+            {TIER_COLUMNS.map((column) => (
+              <View
+                accessibilityLabel={copy.priceAccessibilityLabel(column)}
+                accessibilityRole="text"
+                key={column.id}
+                style={styles.tierHeaderCell}
+              >
+                <Text style={styles.tierName}>
+                  {language === 'sv' ? column.labelSv : column.labelEn}
+                </Text>
+                <Text style={styles.tierPrice}>
+                  {language === 'sv' ? column.priceSv : column.priceEn}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          {TIER_ROWS.map((row) => (
             <View
-              accessibilityLabel={copy.priceAccessibilityLabel(column)}
-              accessibilityRole="text"
-              key={column.id}
-              style={styles.tierHeaderCell}
+              accessible
+              accessibilityLabel={`${language === 'sv' ? row.labelSv : row.labelEn}. ${copy.rowSummary(
+                row,
+                TIER_COLUMNS,
+              )}`}
+              accessibilityRole="summary"
+              key={row.id}
+              style={styles.row}
             >
-              <Text style={styles.tierName}>
-                {language === 'sv' ? column.labelSv : column.labelEn}
+              <Text style={styles.featureCell}>
+                {language === 'sv' ? row.labelSv : row.labelEn}
               </Text>
-              <Text style={styles.tierPrice}>
-                {language === 'sv' ? column.priceSv : column.priceEn}
-              </Text>
+              {TIER_COLUMNS.map((column) => {
+                const cellText = getCellText(getRowCell(row, column.id), language);
+                return (
+                  <Text
+                    accessibilityLabel={
+                      getRowCell(row, column.id).kind === 'check'
+                        ? copy.includedAccessibilityLabel
+                        : cellText
+                    }
+                    accessibilityRole="text"
+                    key={column.id}
+                    style={styles.tierCell}
+                  >
+                    {cellText}
+                  </Text>
+                );
+              })}
             </View>
           ))}
         </View>
+      ) : null}
 
-        {TIER_ROWS.map((row) => (
-          <View
-            accessible
-            accessibilityLabel={`${language === 'sv' ? row.labelSv : row.labelEn}. ${copy.rowSummary(
-              row,
-              TIER_COLUMNS,
-            )}`}
-            accessibilityRole="summary"
-            key={row.id}
-            style={styles.row}
+      {comparisonVisible ? (
+        <View style={styles.actions}>
+          <Button
+            accessibilityHint={copy.primaryAccessibilityHint}
+            accessibilityLabel={primaryLabel}
+            accessibilityRole="button"
+            accessibilityState={{ busy: activeAction === 'buy', disabled: activeAction !== null }}
+            disabled={activeAction !== null}
+            onPress={() => void runProAction('buy')}
+            style={styles.actionButton}
           >
-            <Text style={styles.featureCell}>{language === 'sv' ? row.labelSv : row.labelEn}</Text>
-            {TIER_COLUMNS.map((column) => {
-              const cellText = getCellText(getRowCell(row, column.id), language);
-              return (
-                <Text
-                  accessibilityLabel={
-                    getRowCell(row, column.id).kind === 'check'
-                      ? copy.includedAccessibilityLabel
-                      : cellText
-                  }
-                  accessibilityRole="text"
-                  key={column.id}
-                  style={styles.tierCell}
-                >
-                  {cellText}
-                </Text>
-              );
-            })}
-          </View>
-        ))}
-      </View>
+            {activeAction === 'buy' ? copy.upgrading : primaryLabel}
+          </Button>
+          <Button
+            accessibilityHint={copy.restoreAccessibilityHint}
+            accessibilityLabel={copy.restoreAccessibilityLabel}
+            accessibilityRole="button"
+            accessibilityState={{
+              busy: activeAction === 'restore',
+              disabled: activeAction !== null,
+            }}
+            disabled={activeAction !== null}
+            onPress={() => void runProAction('restore')}
+            style={styles.actionButton}
+            variant="secondary"
+          >
+            {activeAction === 'restore' ? copy.restoring : copy.restoreIdle}
+          </Button>
+        </View>
+      ) : null}
 
-      <View style={styles.actions}>
-        <Button
-          accessibilityHint={copy.primaryAccessibilityHint}
-          accessibilityLabel={primaryLabel}
-          accessibilityRole="button"
-          accessibilityState={{ busy: activeAction === 'buy', disabled: activeAction !== null }}
-          disabled={activeAction !== null}
-          onPress={() => void runProAction('buy')}
-          style={styles.actionButton}
-        >
-          {activeAction === 'buy' ? copy.upgrading : primaryLabel}
-        </Button>
-        <Button
-          accessibilityHint={copy.restoreAccessibilityHint}
-          accessibilityLabel={copy.restoreAccessibilityLabel}
-          accessibilityRole="button"
-          accessibilityState={{
-            busy: activeAction === 'restore',
-            disabled: activeAction !== null,
-          }}
-          disabled={activeAction !== null}
-          onPress={() => void runProAction('restore')}
-          style={styles.actionButton}
-          variant="secondary"
-        >
-          {activeAction === 'restore' ? copy.restoring : copy.restoreIdle}
-        </Button>
-      </View>
-
-      <Text style={styles.secondaryPath}>
-        {copy.secondaryPathHint(secondaryLabel, alreadyAdFree)}
-      </Text>
-      <Text
-        aria-live="polite"
-        accessibilityLabel={copy.statusAccessibilityLabel(statusMessage)}
-        accessibilityLiveRegion="polite"
-        style={styles.status}
-      >
-        {statusMessage}
-      </Text>
-      <Text style={styles.priceNote}>{PRO_LIFETIME_PRICE_LABEL}</Text>
+      {comparisonVisible ? (
+        <>
+          <Text style={styles.secondaryPath}>
+            {copy.secondaryPathHint(secondaryLabel, alreadyAdFree)}
+          </Text>
+          <Text
+            aria-live="polite"
+            accessibilityLabel={copy.statusAccessibilityLabel(statusMessage)}
+            accessibilityLiveRegion="polite"
+            style={styles.status}
+          >
+            {statusMessage}
+          </Text>
+          <Text style={styles.priceNote}>{PRO_LIFETIME_PRICE_LABEL}</Text>
+        </>
+      ) : null}
     </Card>
   );
 }
@@ -368,6 +394,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1],
+  },
+  toggleButton: {
+    alignSelf: 'flex-start',
+    minHeight: space[6],
   },
   actionButton: {
     minWidth: 132,

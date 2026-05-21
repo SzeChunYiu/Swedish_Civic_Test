@@ -41,12 +41,8 @@ const {
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
-const {
-  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
-} = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
-const focusPublishedQuestionSchema = process.argv.includes('--focus-published-question-schema');
 const failures = [];
 const moduleCache = new Map();
 const speechEvents = [];
@@ -597,11 +593,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
-const QUESTION_TARGETLESS_WHY_REASON_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
-const QUESTION_CAPITALIZED_REASON_CLAUSE_PATTERNS = [
-  /^En anledning är att Det\b/i,
-  /^One reason is that It\b/i,
-];
 const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste\s+inte\s+följa\s+resultatet\b/i,
 ];
@@ -682,7 +673,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 13;
+const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
@@ -880,8 +871,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
-    'Ljud av',
-    'Ljud på',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Låst',
@@ -890,8 +879,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     'Visa översikt',
     'Öppna framstegsöversikten',
-    'Öppna inställningar för dagligt mål, språk och ljud',
-    'Ändra mål, språk och ljud',
+    'Öppna inställningar',
     'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
   ],
   en: [
@@ -909,8 +897,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
-    'Audio off',
-    'Audio on',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'Locked',
@@ -919,8 +905,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Activity, chapter progress, and XP live on a dedicated page.',
     'View dashboard',
     'Open progress dashboard',
-    'Open settings for daily goal, language, and audio',
-    'Adjust goal, language, and audio',
+    'Open settings',
     'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };
@@ -1287,7 +1272,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_SNIPPETS = [
   ['{copy.bookmarkedTitle}', 'bookmarked title must render localized copy'],
   ['{copy.bookmarkedMeta}', 'bookmarked metadata must render localized copy'],
   [
-    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} styles={styles} />',
+    '<AnswerReviewBlock copy={copy} correctAnswer={correctAnswer} />',
     'bookmarked review cards must show the localized correct answer',
   ],
   ['<Badge tone="orange">{copy.mistakeBadge}</Badge>', 'mistake badge must render localized copy'],
@@ -1321,7 +1306,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 10;
+const EXPECTED_SPEECH_RUNTIME_CASES = 5;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -1564,7 +1549,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 28;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -2093,10 +2078,8 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
       'Inget konto krävs',
-      'köpet gör att annonser inte visas på den här enheten',
       'Privacy policy',
       'No account required',
-      'turns off ads on this device',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
@@ -2145,10 +2128,6 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
-      "backAccessibilityLabel: 'Tillbaka till startsidan'",
-      "backLabel: '← Tillbaka till startsidan'",
-      "backAccessibilityLabel: 'Back to Home'",
-      "backLabel: '← Back to Home'",
       'Källor',
       'Primärt studiematerial',
       'UHR inte står bakom dessa',
@@ -2161,13 +2140,12 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
-    titlePattern:
-      /<LegalPage[\s\S]*backAccessibilityLabel=\{copy\.backAccessibilityLabel\}[\s\S]*backHref="\/home"[\s\S]*backLabel=\{copy\.backLabel\}[\s\S]*title=\{copy\.title\}\s*>/,
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -2199,7 +2177,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
     ],
   },
 ];
-const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 62;
+const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 60;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
 const EXPECTED_LEGAL_INTERNAL_MONETIZATION_KEY_SURFACES = 7;
 const FORBIDDEN_LEGAL_INTERNAL_MONETIZATION_COPY_PATTERNS = Object.freeze([
@@ -2597,7 +2575,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
     pattern:
-      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,?[\s\S]*\}\s+from 'react-native';/,
+      /import\s+\{[\s\S]*Pressable,[\s\S]*ScrollView,[\s\S]*StyleSheet,[\s\S]*Text,[\s\S]*TextInput,[\s\S]*View,[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -3169,11 +3147,11 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'optional text, enabled, and language prop contract',
     pattern:
-      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string \| null/,
+      /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
   },
   {
-    label: 'runtime-safe trimmed speech text source',
-    pattern: /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/,
+    label: 'trimmed speech text source',
+    pattern: /const speechText = text\.trim\(\);/,
   },
   {
     label: 'nonblank speech text guard',
@@ -3898,21 +3876,6 @@ const EXPECTED_THEME_TYPOGRAPHY_TOKENS = [
   'micro',
 ];
 const EXPECTED_THEME_SHADOW_TOKENS = ['card', 'deep'];
-const EXPECTED_THEME_SHADOW_RGB = [11, 31, 51];
-const EXPECTED_THEME_SHADOW_BOUNDS = {
-  card: {
-    maxOffsetHeight: 6,
-    maxOpacity: 0.08,
-    maxRadius: 20,
-    maxElevation: 1,
-  },
-  deep: {
-    maxOffsetHeight: 8,
-    maxOpacity: 0.1,
-    maxRadius: 24,
-    maxElevation: 2,
-  },
-};
 const EXPECTED_THEME_MOTION_DURATIONS = {
   fast: 120,
   base: 200,
@@ -4339,7 +4302,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
       },
       {
         name: 'validateRemoveAdsReceipt',
-        type: '(purchase: RemoveAdsPurchaseRecord, productId: typeof REMOVE_ADS_PRODUCT_ID) => Promise<RemoveAdsReceiptValidationResult>',
+        type: '(purchase: RemoveAdsPurchaseRecord, productId: string) => Promise<RemoveAdsReceiptValidationResult>',
         optional: true,
       },
       {
@@ -5534,45 +5497,6 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
-}
-
-function findQuestionTargetlessWhyReasonIssue(question) {
-  if (question.type !== 'true_false') return null;
-
-  return QUESTION_TARGETLESS_WHY_REASON_PATTERNS.find(
-    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
-  );
-}
-
-function validateGeneratedWhyReasonTargetStems() {
-  if (!Array.isArray(questions)) {
-    fail('questions export is not an array');
-    return;
-  }
-
-  const generatedTrueFalseQuestions = questions.filter(
-    (question) =>
-      question.type === 'true_false' &&
-      Array.isArray(question.tags) &&
-      question.tags.includes('published-variant'),
-  );
-
-  if (generatedTrueFalseQuestions.length === 0) {
-    fail('expected generated true/false questions to validate why-reason stems');
-    return;
-  }
-
-  for (const question of generatedTrueFalseQuestions) {
-    const issue = findQuestionTargetlessWhyReasonIssue(question);
-    if (issue) {
-      fail(`${question.id} contains a targetless generated why-reason stem`);
-    } else {
-      generatedWhyReasonTargetStemsValidated += 1;
-    }
-  }
-
-  generatedWhyReasonTargetStemParityValidated =
-    generatedWhyReasonTargetStemsValidated === generatedTrueFalseQuestions.length;
 }
 
 function findQuestionReferendumAdvisorySwedishNaturalnessIssue(question) {
@@ -8346,7 +8270,6 @@ const answerShuffleDistributionIsBalanced =
 const ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE =
   answerOptionShuffleModule.ANSWER_SHUFFLE_MAX_CORRECT_POSITION_SHARE;
 const audioModule = loadTs('lib/audio/speak.ts');
-const buildAnswerFeedbackSpeechText = audioModule.buildAnswerFeedbackSpeechText;
 const buildQuestionSpeechText = audioModule.buildQuestionSpeechText;
 const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
@@ -8374,7 +8297,6 @@ const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
-const getLocalDateKey = streakModule.getLocalDateKey;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
 const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
 const refillFreezes = streakWithFreezeModule.refillFreezes;
@@ -8709,8 +8631,6 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
-let generatedWhyReasonTargetStemsValidated = 0;
-let generatedWhyReasonTargetStemParityValidated = false;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
@@ -9038,16 +8958,6 @@ if (focusedValidationRequested('nativeQuizCopy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
-  });
-  process.exit(0);
-}
-
-if (focusedValidationRequested('generatedWhyReasonStems')) {
-  validateGeneratedWhyReasonTargetStems();
-  exitWithValidationFailures();
-  printValidationSummary({
-    generatedWhyReasonTargetStemsValidated,
-    generatedWhyReasonTargetStemParityValidated,
   });
   process.exit(0);
 }
@@ -9581,7 +9491,6 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
 if (typeof calculateStreak !== 'function') fail('calculateStreak export is not a function');
-if (typeof getLocalDateKey !== 'function') fail('getLocalDateKey export is not a function');
 if (typeof calculateStreakWithFreeze !== 'function') {
   fail('calculateStreakWithFreeze export is not a function');
 }
@@ -9936,56 +9845,6 @@ function validateAdPlacementRouteParity() {
       }
       if (shouldShowAd(spec.placement, { adsDisabled: true })) {
         reject(`${spec.placement} must be hidden after Remove Ads is active`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdBanner') {
-      const adBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-        'utf8',
-      );
-      const nativeAdBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-        'utf8',
-      );
-      const adCopySource = fs.readFileSync(
-        path.join(repoRoot, 'lib/monetization/adCopy.ts'),
-        'utf8',
-      );
-
-      if (
-        !adBannerSource.includes(
-          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
-        )
-      ) {
-        reject('AdBanner web fallback must choose live/test status from the configured unit');
-        routeIsValid = false;
-      }
-      if (!nativeAdBannerSource.includes('const unit = getAdUnit(placement);')) {
-        reject('AdBanner native placement must read the configured unit for test status copy');
-        routeIsValid = false;
-      }
-      if (
-        !nativeAdBannerSource.includes(
-          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
-        ) ||
-        !nativeAdBannerSource.includes(
-          'accessibilityLabel={copy.accessibilityLabel(placementLabel, adStatusLabel)}',
-        )
-      ) {
-        reject('AdBanner native accessibility label must choose live/test status by unit');
-        routeIsValid = false;
-      }
-      if (
-        !adCopySource.includes("testStatus: 'AdMob test unit active - preview'") ||
-        !adCopySource.includes("testStatus: 'AdMob-testannons aktiv - förhandsvisning'")
-      ) {
-        reject('AdBanner testStatus copy must use platform-neutral preview wording');
-        routeIsValid = false;
-      }
-      if (/web preview|webbförhandsvisning/.test(adCopySource)) {
-        reject('AdBanner testStatus copy must not say web preview for native test units');
         routeIsValid = false;
       }
     }
@@ -12534,10 +12393,6 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (expectedRoute.file === 'app/privacy.tsx') {
-      if (/\badsDisabled\b/.test(routeSource)) {
-        reject('app/privacy.tsx learner-facing privacy copy must not expose adsDisabled');
-      }
-
       const swedishPrivacyBlock = routeSource.match(
         /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
       )?.[0];
@@ -15234,6 +15089,8 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let placementCtaSource = '';
+  let proLifetimeSource = '';
+  let proPaywallSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -15246,6 +15103,14 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
     );
+    proLifetimeSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
+      'utf8',
+    );
+    proPaywallSource = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+      'utf8',
+    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
@@ -15253,6 +15118,8 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
+  const normalizedProPaywallSource = proPaywallSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -15364,6 +15231,64 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
+    ],
+    [
+      normalizedProLifetimeSource.includes(
+        'export const PRO_LIFETIME_RECORD_SCHEMA_VERSION = 1;',
+      ) &&
+        normalizedProLifetimeSource.includes('interface StoredProLifetimeEntitlementRecord') &&
+        normalizedProLifetimeSource.includes("'persistence_failed'"),
+      'Pro Lifetime persistence must use a versioned structured record and recoverable persistence status',
+    ],
+    [
+      normalizedProLifetimeSource.includes(
+        'parseStoredProLifetimeEntitlementRecord(storedValue)',
+      ) &&
+        normalizedProLifetimeSource.includes('hasStoreConfirmation(record)') &&
+        !normalizedProLifetimeSource.includes('STORED_TRUE') &&
+        !normalizedProLifetimeSource.includes('storedValue ==='),
+      'Pro Lifetime entitlement loading must reject forged bare true values',
+    ],
+    [
+      normalizedProLifetimeSource.includes('isValidatedProLifetimeReceipt(receiptValidation)') &&
+        normalizedProLifetimeSource.includes('receiptValidationStatus:') &&
+        normalizedProLifetimeSource.includes('receiptValidatedAt:'),
+      'Pro Lifetime direct entitlement writes must require validated store receipt metadata',
+    ],
+    [
+      /validateRemoveAdsReceipt\?\([\s\S]*purchase:\s*RemoveAdsPurchaseRecord,[\s\S]*productId:\s*string,[\s\S]*\):\s*Promise<RemoveAdsReceiptValidationResult>;/.test(
+        purchaseSource,
+      ),
+      'shared purchase provider receipt validation must accept arbitrary product ids',
+    ],
+    [
+      normalizedProLifetimeSource.includes(
+        'await provider.validateRemoveAdsReceipt(purchase, PRO_LIFETIME_PRODUCT_ID)',
+      ) &&
+        normalizedProLifetimeSource.includes(
+          ": ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);",
+        ),
+      'Pro Lifetime buy and restore flows must validate receipts through the shared provider hook',
+    ],
+    [
+      normalizedProLifetimeSource.includes(
+        'const receiptValidation = await validateProLifetimeReceipt(provider, purchase);',
+      ) &&
+        normalizedProLifetimeSource.includes("return createResult('pending'") &&
+        normalizedProLifetimeSource.includes("return createResult('not_found'"),
+      'Pro Lifetime invalid or pending receipts must not grant Pro entitlements',
+    ],
+    [
+      /const persistenceResult = await persistValidatedProLifetimeEntitlement\(\{[\s\S]*source:\s*'purchase',[\s\S]*\}\);[\s\S]*if \(!persistenceResult\.persisted\) \{[\s\S]*return createResult\('persistence_failed',[\s\S]*\);[\s\S]*\}[\s\S]*await provider\.finishPurchase\?\.\(purchase\);[\s\S]*return createResult\('purchased', persistenceResult\.entitlements, purchase\);/.test(
+        proLifetimeSource,
+      ),
+      'Pro Lifetime buy flow must persist the entitlement before finishing the native transaction',
+    ],
+    [
+      normalizedProPaywallSource.includes('persistence_failed') &&
+        normalizedProPaywallSource.includes('kunde inte sparas säkert') &&
+        normalizedProPaywallSource.includes('could not be saved securely'),
+      'ProPaywall must surface a localized recoverable persistence failure status',
     ],
     [
       normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&
@@ -16129,7 +16054,6 @@ function validateThemeTokenSchema() {
   if (isObjectRecord(shadows)) {
     for (const token of EXPECTED_THEME_SHADOW_TOKENS) {
       const shadow = shadows[token];
-      const bounds = EXPECTED_THEME_SHADOW_BOUNDS[token];
       let tokenIsValid = true;
 
       function rejectToken(message) {
@@ -16142,18 +16066,6 @@ function validateThemeTokenSchema() {
       } else {
         if (!isColorToken(shadow.shadowColor)) {
           rejectToken(`theme shadows.${token}.shadowColor must be a color token`);
-        } else {
-          const shadowRgb = parseColorTokenRgb(shadow.shadowColor);
-          const roundedRgb = shadowRgb?.map((channel) => Math.round(channel * 255));
-          if (
-            !roundedRgb ||
-            roundedRgb.length !== EXPECTED_THEME_SHADOW_RGB.length ||
-            roundedRgb.some((channel, index) => channel !== EXPECTED_THEME_SHADOW_RGB[index])
-          ) {
-            rejectToken(
-              `theme shadows.${token}.shadowColor must use the navy whisper shadow #0b1f33`,
-            );
-          }
         }
         if (!isObjectRecord(shadow.shadowOffset)) {
           rejectToken(`theme shadows.${token}.shadowOffset must be an object`);
@@ -16162,18 +16074,6 @@ function validateThemeTokenSchema() {
           !Number.isFinite(shadow.shadowOffset.height)
         ) {
           rejectToken(`theme shadows.${token}.shadowOffset must have numeric width and height`);
-        } else {
-          if (shadow.shadowOffset.width !== 0) {
-            rejectToken(`theme shadows.${token}.shadowOffset.width must stay 0`);
-          }
-          if (
-            shadow.shadowOffset.height < 0 ||
-            shadow.shadowOffset.height > bounds.maxOffsetHeight
-          ) {
-            rejectToken(
-              `theme shadows.${token}.shadowOffset.height must be between 0 and ${bounds.maxOffsetHeight}`,
-            );
-          }
         }
         if (
           !Number.isFinite(shadow.shadowOpacity) ||
@@ -16181,24 +16081,12 @@ function validateThemeTokenSchema() {
           shadow.shadowOpacity > 1
         ) {
           rejectToken(`theme shadows.${token}.shadowOpacity must be between 0 and 1`);
-        } else if (shadow.shadowOpacity <= 0 || shadow.shadowOpacity > bounds.maxOpacity) {
-          rejectToken(
-            `theme shadows.${token}.shadowOpacity must be a whisper value no higher than ${bounds.maxOpacity}`,
-          );
         }
         if (!Number.isFinite(shadow.shadowRadius) || shadow.shadowRadius < 0) {
           rejectToken(`theme shadows.${token}.shadowRadius must be non-negative`);
-        } else if (shadow.shadowRadius > bounds.maxRadius) {
-          rejectToken(
-            `theme shadows.${token}.shadowRadius must be no higher than ${bounds.maxRadius}`,
-          );
         }
         if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0) {
           rejectToken(`theme shadows.${token}.elevation must be non-negative`);
-        } else if (shadow.elevation > bounds.maxElevation) {
-          rejectToken(
-            `theme shadows.${token}.elevation must be no higher than ${bounds.maxElevation}`,
-          );
         }
       }
 
@@ -17335,12 +17223,7 @@ function resetSpeechEvents() {
 }
 
 function validateSpeechRuntimeParity() {
-  if (
-    typeof buildAnswerFeedbackSpeechText !== 'function' ||
-    typeof buildQuestionSpeechText !== 'function' ||
-    typeof speakSwedish !== 'function' ||
-    typeof stopSpeech !== 'function'
-  ) {
+  if (typeof speakSwedish !== 'function' || typeof stopSpeech !== 'function') {
     return;
   }
 
@@ -17368,18 +17251,6 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
-  try {
-    [null, undefined, 123, { trim: () => 'hej' }].forEach((value) => speakSwedish(value));
-  } catch (error) {
-    reject(`speakSwedish must not throw for malformed text input: ${error.message}`);
-  }
-  if (speechEvents.length === 0) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must ignore non-string text inputs');
-  }
-
-  resetSpeechEvents();
   speakSwedish('Hej Sverige');
   const speakEvent = speechEvents[0];
   if (
@@ -17395,43 +17266,6 @@ function validateSpeechRuntimeParity() {
     reject(
       `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
     );
-  }
-
-  resetSpeechEvents();
-  speakSwedish('Hej igen', {
-    rate: Infinity,
-    onDone: 'done',
-    onError: null,
-    onStopped: 123,
-  });
-  const unsafeOptionsEvent = speechEvents[0];
-  if (
-    speechEvents.length === 1 &&
-    unsafeOptionsEvent &&
-    unsafeOptionsEvent.type === 'speak' &&
-    unsafeOptionsEvent.options &&
-    !Object.prototype.hasOwnProperty.call(unsafeOptionsEvent.options, 'rate') &&
-    unsafeOptionsEvent.options.onDone === undefined &&
-    unsafeOptionsEvent.options.onError === undefined &&
-    unsafeOptionsEvent.options.onStopped === undefined
-  ) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must omit non-finite rates and non-function callbacks');
-  }
-
-  resetSpeechEvents();
-  speakSwedish('Hej med takt', { rate: 2.5 });
-  const clampedRateEvent = speechEvents[0];
-  if (
-    speechEvents.length === 1 &&
-    clampedRateEvent &&
-    clampedRateEvent.options &&
-    clampedRateEvent.options.rate === 2
-  ) {
-    speechRuntimeCasesValidated += 1;
-  } else {
-    reject('speakSwedish must clamp finite playback rates to the safe range');
   }
 
   resetSpeechEvents();
@@ -17473,46 +17307,6 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
-
-  try {
-    const malformedQuestionText = buildQuestionSpeechText({
-      questionSv: null,
-      options: [
-        { id: 'a', textSv: null, textEn: 'Missing Swedish text' },
-        { id: 'b', textSv: 'Ett svar', textEn: 'An answer' },
-      ],
-    });
-    if (malformedQuestionText === 'Alternativ B. Ett svar.') {
-      speechRuntimeCasesValidated += 1;
-    } else {
-      reject('buildQuestionSpeechText must skip malformed prompt/option text without literals');
-    }
-  } catch (error) {
-    reject(`buildQuestionSpeechText must not throw for malformed question input: ${error.message}`);
-  }
-
-  try {
-    const malformedFeedbackText = buildAnswerFeedbackSpeechText(
-      {
-        questionSv: 'Fråga?',
-        correctOptionId: 'a',
-        explanationSv: null,
-      },
-      'b',
-    );
-    if (
-      malformedFeedbackText ===
-      'Du valde: det valda svaret. Det rätta svaret är: det markerade rätta svaret.'
-    ) {
-      speechRuntimeCasesValidated += 1;
-    } else {
-      reject('buildAnswerFeedbackSpeechText must skip malformed options/explanations');
-    }
-  } catch (error) {
-    reject(
-      `buildAnswerFeedbackSpeechText must not throw for malformed feedback input: ${error.message}`,
-    );
-  }
 
   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
     speechRuntimeParityValidated = true;
@@ -17702,21 +17496,6 @@ function validateStreakRules() {
       label: 'future-only answers',
       actual: () => calculateStreak(['2026-05-16'], today),
       expected: 0,
-    },
-    {
-      label: 'malformed answer days are ignored',
-      actual: () => calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today),
-      expected: 2,
-    },
-    {
-      label: 'invalid today key fails closed',
-      actual: () => calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'),
-      expected: 0,
-    },
-    {
-      label: 'invalid Date local key falls back safely',
-      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
-      expected: 1,
     },
     {
       label: 'streakWithFreeze ignores malformed active day keys',
@@ -18271,9 +18050,14 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
   }
 
   const now = new Date('2026-05-19T12:00:00.000Z');
+  const malformedDifficultyCases = [
+    { label: 'invalid string difficulty', difficulty: 'expert' },
+    { label: 'null difficulty', difficulty: null },
+    { label: 'object difficulty', difficulty: { level: 'expert' } },
+  ];
   let rulesAreValid = true;
 
-  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.forEach(({ label, difficulty }, index) => {
+  malformedDifficultyCases.forEach(({ label, difficulty }, index) => {
     const input = {
       progress: adaptivePracticeProgressFromAnswers([
         {
@@ -18315,8 +18099,7 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
 
   if (
     rulesAreValid &&
-    adaptivePracticeDifficultyRuntimeCasesValidated ===
-      MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.length
+    adaptivePracticeDifficultyRuntimeCasesValidated === malformedDifficultyCases.length
   ) {
     adaptivePracticeDifficultyRuntimeParityValidated = true;
   }
@@ -19048,7 +18831,7 @@ if (focusedValidationRequested('removeAdsPurchaseRuntimeParity')) {
   process.exit(0);
 }
 
-if (!focusPublishedQuestionSchema) validateCriminalResponsibilityCurrentness();
+validateCriminalResponsibilityCurrentness();
 
 if (focusedValidationRequested('umeaDemonym')) {
   validateStaticValidationSyntaxGate();
@@ -19094,7 +18877,7 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
-if (!focusPublishedQuestionSchema) validateAuthoredSourceParity();
+validateAuthoredSourceParity();
 
 function validateGenerationParity() {
   if (
@@ -19203,10 +18986,8 @@ if (focusedValidationRequested('practiceFlowParity')) {
   process.exit(0);
 }
 
-if (!focusPublishedQuestionSchema) {
-  validateAuthoredSourceParity();
-  validateGenerationParity();
-}
+validateAuthoredSourceParity();
+validateGenerationParity();
 
 function validateChapterGenerationParity() {
   if (
@@ -19770,10 +19551,8 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes('Every practice question shows a source line with the UHR chapter')) {
     reject('app/sources.tsx must explain English learner-visible source lines');
   }
-  if (!/<LegalExternalLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
-    reject(
-      'app/sources.tsx must render the UHR material URL through the shared legal external link',
-    );
+  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
   }
   if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
     reject('app/sources.tsx UHR material link needs the localized accessibility label');

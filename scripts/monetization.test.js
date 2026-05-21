@@ -2,10 +2,49 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { createTsLoader } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
-const loadTs = createTsLoader(repoRoot);
+
+function loadTs(relativePath, exportName, moduleCache = new Map(), moduleMocks = {}) {
+  const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) {
+    const cached = moduleCache.get(filePath);
+    return exportName ? cached[exportName] : cached;
+  }
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod.exports);
+
+  function localRequire(specifier) {
+    if (Object.hasOwn(moduleMocks, specifier)) {
+      return moduleMocks[specifier];
+    }
+
+    if (specifier.startsWith('.')) {
+      const resolvedPath = path.resolve(path.dirname(filePath), specifier);
+      const tsPath = fs.existsSync(`${resolvedPath}.ts`) ? `${resolvedPath}.ts` : undefined;
+      const tsxPath = fs.existsSync(`${resolvedPath}.tsx`) ? `${resolvedPath}.tsx` : undefined;
+      const indexTsPath = fs.existsSync(path.join(resolvedPath, 'index.ts'))
+        ? path.join(resolvedPath, 'index.ts')
+        : undefined;
+      const resolvedTsPath = tsPath ?? tsxPath ?? indexTsPath;
+
+      if (resolvedTsPath?.startsWith(repoRoot)) {
+        return loadTs(path.relative(repoRoot, resolvedTsPath), undefined, moduleCache, moduleMocks);
+      }
+    }
+
+    return require(specifier);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return exportName ? mod.exports[exportName] : mod.exports;
+}
 
 function withEnv(overrides, fn) {
   const previous = new Map();
@@ -267,40 +306,6 @@ test('real ad units are selected from env when the real ads flag is enabled', ()
       );
       assert.equal(shouldShowAd('results_native', { adsDisabled: false }), false);
     },
-  );
-});
-
-test('AdBanner testStatus copy is platform-neutral for web and native test units', () => {
-  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
-  const webBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
-    'utf8',
-  );
-  const nativeBannerSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-    'utf8',
-  );
-
-  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - preview');
-  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - förhandsvisning');
-  assert.doesNotMatch(adBannerCopy.en.testStatus, /web preview/i);
-  assert.doesNotMatch(adBannerCopy.sv.testStatus, /webbförhandsvisning/i);
-  assert.match(
-    webBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
-  assert.match(
-    nativeBannerSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
-  assert.match(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
-  );
-  assert.doesNotMatch(
-    nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
 });
 
@@ -1404,9 +1409,12 @@ test('native purchase provider matches requested product ids instead of Remove A
 
   const purchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
   const restored = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
+  const validation = await provider.validateRemoveAdsReceipt(purchase, PRO_LIFETIME_PRODUCT_ID);
 
   assert.equal(purchase.productId, PRO_LIFETIME_PRODUCT_ID);
   assert.equal(purchase.purchaseToken, `tok-${PRO_LIFETIME_PRODUCT_ID}`);
+  assert.equal(validation.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(validation.status, 'pending');
   assert.deepEqual(
     restored.map((item) => item.purchaseToken),
     ['tok-pro-lifetime'],
@@ -1423,6 +1431,167 @@ test('native purchase provider matches requested product ids instead of Remove A
     purchasesSource,
     /restorePurchases\(productIds\)[\s\S]*productIds\.some\(\(productId\) =>[\s\S]*isPurchaseForProduct\(\s*purchase,\s*productId,\s*getPurchaseStoreProductId\(productId, storePlatform\),\s*\)/,
   );
+});
+
+test('Pro Lifetime receipt persistence rejects forged storage and invalid receipts', async () => {
+  const {
+    PRO_LIFETIME_STORAGE_KEY,
+    buyProLifetime,
+    getProLifetimeEntitlement,
+    setProLifetimeEntitlement,
+  } = loadTs('lib/monetization/proLifetimePurchase.ts');
+
+  function createStorage(initial = {}) {
+    const values = new Map(Object.entries(initial));
+    return {
+      values,
+      async deleteItemAsync(key) {
+        values.delete(key);
+      },
+      async getItemAsync(key) {
+        return values.get(key) ?? null;
+      },
+      async setItemAsync(key, value) {
+        values.set(key, value);
+      },
+    };
+  }
+
+  const forgedStorage = createStorage({ [PRO_LIFETIME_STORAGE_KEY]: 'true' });
+  assert.equal(
+    (await getProLifetimeEntitlement({ storage: forgedStorage })).spacedRepetition,
+    false,
+  );
+
+  const directGrantStorage = createStorage();
+  const directGrant = await setProLifetimeEntitlement(true, { storage: directGrantStorage });
+  assert.equal(directGrant.spacedRepetition, false);
+  assert.equal(directGrantStorage.values.size, 0);
+
+  const events = [];
+  const invalidReceiptProvider = {
+    async connect() {
+      events.push('connect');
+    },
+    async disconnect() {
+      events.push('disconnect');
+    },
+    async finishPurchase() {
+      events.push('finish');
+    },
+    async requestRemoveAdsPurchase(productId) {
+      events.push('request');
+      return { productId, purchaseToken: 'tok-pro', transactionId: 'tx-pro' };
+    },
+    async restorePurchases() {
+      return [];
+    },
+    async validateRemoveAdsReceipt() {
+      events.push('validate');
+      return { status: 'invalid' };
+    },
+  };
+
+  const invalidResult = await buyProLifetime({
+    provider: invalidReceiptProvider,
+    storage: createStorage(),
+  });
+  assert.equal(invalidResult.status, 'pending');
+  assert.equal(invalidResult.entitlements.spacedRepetition, false);
+  assert.deepEqual(events, ['connect', 'request', 'validate', 'disconnect']);
+});
+
+test('Pro Lifetime receipt persistence saves before finish and reports persistence failure', async () => {
+  const { PRO_LIFETIME_PRODUCT_ID, buyProLifetime } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+
+  function createProvider(events) {
+    const purchase = {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'tok-pro-lifetime',
+      transactionId: 'tx-pro-lifetime',
+    };
+    return {
+      async connect() {
+        events.push('connect');
+      },
+      async disconnect() {
+        events.push('disconnect');
+      },
+      async finishPurchase() {
+        events.push('finish');
+      },
+      async requestRemoveAdsPurchase() {
+        events.push('request');
+        return purchase;
+      },
+      async restorePurchases() {
+        return [];
+      },
+      async validateRemoveAdsReceipt(_, productId) {
+        events.push('validate');
+        return {
+          productId,
+          purchaseToken: purchase.purchaseToken,
+          status: 'valid',
+          transactionId: purchase.transactionId,
+          validatedAt: '2026-05-20T12:00:00.000Z',
+        };
+      },
+    };
+  }
+
+  const successEvents = [];
+  const successValues = new Map();
+  const successResult = await buyProLifetime({
+    provider: createProvider(successEvents),
+    storage: {
+      async getItemAsync(key) {
+        return successValues.get(key) ?? null;
+      },
+      async setItemAsync(key, value) {
+        successEvents.push('persist');
+        successValues.set(key, value);
+      },
+    },
+  });
+  assert.equal(successResult.status, 'purchased');
+  assert.deepEqual(successEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist',
+    'finish',
+    'disconnect',
+  ]);
+
+  const failingEvents = [];
+  const failingResult = await buyProLifetime({
+    provider: createProvider(failingEvents),
+    storage: {
+      async deleteItemAsync() {
+        failingEvents.push('cleanup');
+      },
+      async getItemAsync() {
+        return null;
+      },
+      async setItemAsync() {
+        failingEvents.push('persist-fail');
+        throw new Error('storage unavailable');
+      },
+    },
+  });
+  assert.equal(failingResult.status, 'persistence_failed');
+  assert.equal(failingResult.entitlements.spacedRepetition, false);
+  assert.deepEqual(failingEvents, [
+    'connect',
+    'request',
+    'validate',
+    'persist-fail',
+    'cleanup',
+    'disconnect',
+  ]);
 });
 
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {

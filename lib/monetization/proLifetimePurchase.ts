@@ -1,8 +1,8 @@
 // Pro Lifetime IAP wiring (blueprint 13).
 //
 // Parallel module to `purchases.ts` rather than an extension — the v1.0
-// Remove-Ads purchase contract is pinned by schema-parity tests, so we keep
-// that file untouched and ship Pro Lifetime as a separate non-consumable.
+// Remove-Ads purchase contract is pinned by schema-parity tests, while the
+// shared provider hook remains generic for non-consumable products.
 //
 // Reuses the existing `RemoveAdsPurchaseProvider` interface from
 // `purchases.ts` — its methods take a productId param, the "RemoveAds" name
@@ -24,14 +24,14 @@ export const PRO_LIFETIME_PRICE_LABEL = '59 SEK';
 export const PRO_LIFETIME_STORAGE_KEY = 'monetization.proLifetime.entitled.v1';
 export const PRO_LIFETIME_RECORD_SCHEMA_VERSION = 1;
 
-type ProLifetimeGrantSource = 'purchase' | 'restore';
-
 export type ProLifetimePurchaseStatus =
   | 'purchased'
   | 'pending'
   | 'restored'
   | 'not_found'
   | 'persistence_failed';
+
+export type ProLifetimeGrantSource = 'purchase' | 'restore';
 
 export interface StoredProLifetimeEntitlementRecord {
   grantedAt: string;
@@ -82,18 +82,10 @@ function isValidIsoDate(value: unknown): value is string {
 
 function isProLifetimePurchase(purchase: RemoveAdsPurchaseRecord): boolean {
   if (purchase.productId === PRO_LIFETIME_PRODUCT_ID) return true;
-  if (!purchase.raw || typeof purchase.raw !== 'object') return false;
+  if (!isRecord(purchase.raw)) return false;
   const raw = purchase.raw as { ids?: unknown };
   return (
     Array.isArray(raw.ids) && raw.ids.some((productId) => productId === PRO_LIFETIME_PRODUCT_ID)
-  );
-}
-
-function hasStoreConfirmation(record: StoredProLifetimeEntitlementRecord): boolean {
-  return Boolean(
-    (record.purchaseToken || record.transactionId) &&
-    record.receiptValidationStatus === 'valid' &&
-    isValidIsoDate(record.receiptValidatedAt),
   );
 }
 
@@ -111,6 +103,47 @@ function isValidatedProLifetimeReceipt(
     isValidIsoDate(result.validatedAt) &&
     (result.purchaseToken || result.transactionId),
   );
+}
+
+function hasStoreConfirmation(record: StoredProLifetimeEntitlementRecord): boolean {
+  return Boolean(
+    (record.purchaseToken || record.transactionId) &&
+    record.receiptValidationStatus === 'valid' &&
+    isValidIsoDate(record.receiptValidatedAt),
+  );
+}
+
+function proLifetimeEntitlements(active: boolean): ProTierEntitlements {
+  if (!active) {
+    return {
+      adsDisabled: false,
+      unlimitedMockExams: false,
+      fullMistakeReview: false,
+      spacedRepetition: false,
+      nativeLangExplanations: false,
+      customStudyPlan: false,
+      notesExport: false,
+      predictedPassProbability: false,
+      confidenceSlider: false,
+      multiColorHighlights: false,
+    };
+  }
+  return PRO_LIFETIME_ENTITLEMENTS;
+}
+
+function createResult(
+  status: ProLifetimePurchaseStatus,
+  entitlements: ProTierEntitlements,
+  purchase?: RemoveAdsPurchaseRecord,
+): ProLifetimePurchaseResult {
+  return {
+    entitlements,
+    priceLabel: PRO_LIFETIME_PRICE_LABEL,
+    productId: PRO_LIFETIME_PRODUCT_ID,
+    purchaseToken: purchase?.purchaseToken,
+    status,
+    transactionId: purchase?.transactionId,
+  };
 }
 
 function createStoredProLifetimeEntitlementRecord({
@@ -185,25 +218,12 @@ async function clearStoredProLifetimeEntitlement(storage: PurchaseStorage): Prom
   await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'false');
 }
 
-function purchaseMatchesStoredRecord(
-  purchase: RemoveAdsPurchaseRecord,
-  record: StoredProLifetimeEntitlementRecord,
-): boolean {
-  if (!isProLifetimePurchase(purchase)) return false;
-  if (record.purchaseToken && purchase.purchaseToken === record.purchaseToken) return true;
-  if (record.transactionId && purchase.transactionId === record.transactionId) return true;
-  return false;
-}
-
 async function validateProLifetimeReceipt(
   provider: RemoveAdsPurchaseProvider,
   purchase: RemoveAdsPurchaseRecord,
 ): Promise<RemoveAdsReceiptValidationResult | null> {
-  type ReceiptProductId = Parameters<
-    NonNullable<RemoveAdsPurchaseProvider['validateRemoveAdsReceipt']>
-  >[1];
   const receiptValidation = provider.validateRemoveAdsReceipt
-    ? await provider.validateRemoveAdsReceipt(purchase, PRO_LIFETIME_PRODUCT_ID as ReceiptProductId)
+    ? await provider.validateRemoveAdsReceipt(purchase, PRO_LIFETIME_PRODUCT_ID)
     : ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);
 
   return isValidatedProLifetimeReceipt(receiptValidation) ? receiptValidation : null;
@@ -244,91 +264,6 @@ async function persistValidatedProLifetimeEntitlement({
   }
 }
 
-async function revalidateStoredProLifetimeEntitlementRecord({
-  provider,
-  record,
-  storage,
-}: {
-  provider: RemoveAdsPurchaseProvider;
-  record: StoredProLifetimeEntitlementRecord;
-  storage: PurchaseStorage;
-}): Promise<boolean> {
-  let connected = false;
-
-  try {
-    await provider.connect();
-    connected = true;
-
-    const availablePurchases = await provider.restorePurchases([PRO_LIFETIME_PRODUCT_ID]);
-    const restoredPurchase =
-      availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
-      availablePurchases.find(isProLifetimePurchase);
-
-    if (!restoredPurchase) {
-      await clearStoredProLifetimeEntitlement(storage);
-      return false;
-    }
-
-    const receiptValidation = await validateProLifetimeReceipt(provider, restoredPurchase);
-    if (!receiptValidation) {
-      await clearStoredProLifetimeEntitlement(storage);
-      return false;
-    }
-
-    await storage.setItemAsync(
-      PRO_LIFETIME_STORAGE_KEY,
-      serializeStoredProLifetimeEntitlementRecord(
-        createStoredProLifetimeEntitlementRecord({
-          purchase: restoredPurchase,
-          receiptValidation,
-          source: 'restore',
-        }),
-      ),
-    );
-    return true;
-  } catch {
-    await clearStoredProLifetimeEntitlement(storage);
-    return false;
-  } finally {
-    if (connected) {
-      await provider.disconnect?.();
-    }
-  }
-}
-
-function proLifetimeEntitlements(active: boolean): ProTierEntitlements {
-  if (!active) {
-    return {
-      adsDisabled: false,
-      unlimitedMockExams: false,
-      fullMistakeReview: false,
-      spacedRepetition: false,
-      nativeLangExplanations: false,
-      customStudyPlan: false,
-      notesExport: false,
-      predictedPassProbability: false,
-      confidenceSlider: false,
-      multiColorHighlights: false,
-    };
-  }
-  return PRO_LIFETIME_ENTITLEMENTS;
-}
-
-function createResult(
-  status: ProLifetimePurchaseStatus,
-  entitlements: ProTierEntitlements,
-  purchase?: RemoveAdsPurchaseRecord,
-): ProLifetimePurchaseResult {
-  return {
-    entitlements,
-    priceLabel: PRO_LIFETIME_PRICE_LABEL,
-    productId: PRO_LIFETIME_PRODUCT_ID,
-    purchaseToken: purchase?.purchaseToken,
-    status,
-    transactionId: purchase?.transactionId,
-  };
-}
-
 export async function setProLifetimeEntitlement(
   active: boolean,
   {
@@ -359,36 +294,17 @@ export async function setProLifetimeEntitlement(
       PRO_LIFETIME_STORAGE_KEY,
       serializeStoredProLifetimeEntitlementRecord(record),
     );
-  } else if (storage.deleteItemAsync) {
-    await storage.deleteItemAsync(PRO_LIFETIME_STORAGE_KEY);
   } else {
-    await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'false');
+    await clearStoredProLifetimeEntitlement(storage);
   }
   return proLifetimeEntitlements(active);
 }
 
 export async function getProLifetimeEntitlement({
-  provider,
   storage = createSecureStorePurchaseStorage(),
-}: ProLifetimeRuntimeOptions = {}): Promise<ProTierEntitlements> {
+}: Pick<ProLifetimeRuntimeOptions, 'storage'> = {}): Promise<ProTierEntitlements> {
   const storedValue = await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY);
-  const record = parseStoredProLifetimeEntitlementRecord(storedValue);
-
-  if (!record) {
-    return proLifetimeEntitlements(false);
-  }
-
-  if (!provider) {
-    return proLifetimeEntitlements(true);
-  }
-
-  return proLifetimeEntitlements(
-    await revalidateStoredProLifetimeEntitlementRecord({
-      provider,
-      record,
-      storage,
-    }),
-  );
+  return proLifetimeEntitlements(Boolean(parseStoredProLifetimeEntitlementRecord(storedValue)));
 }
 
 export async function buyProLifetime({
@@ -447,11 +363,11 @@ export async function restoreProLifetime({
       source: 'restore',
       storage,
     });
-    if (!persistenceResult.persisted) {
-      return createResult('persistence_failed', persistenceResult.entitlements, purchase);
-    }
-
-    return createResult('restored', persistenceResult.entitlements, purchase);
+    return createResult(
+      persistenceResult.persisted ? 'restored' : 'persistence_failed',
+      persistenceResult.entitlements,
+      purchase,
+    );
   } finally {
     await provider.disconnect?.();
   }

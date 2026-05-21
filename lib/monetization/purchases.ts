@@ -61,7 +61,7 @@ export interface RemoveAdsPurchaseProvider {
   finishPurchase?(purchase: RemoveAdsPurchaseRecord): Promise<void>;
   validateRemoveAdsReceipt?(
     purchase: RemoveAdsPurchaseRecord,
-    productId: typeof REMOVE_ADS_PRODUCT_ID,
+    productId: string,
   ): Promise<RemoveAdsReceiptValidationResult>;
   requestRemoveAdsPurchase(productId: string): Promise<RemoveAdsPurchaseRecord | null>;
   restorePurchases(productIds: readonly string[]): Promise<RemoveAdsPurchaseRecord[]>;
@@ -95,7 +95,7 @@ interface RemoveAdsPersistenceResult {
 
 export type NativeRemoveAdsReceiptValidator = (
   purchase: RemoveAdsPurchaseRecord,
-  productId: typeof REMOVE_ADS_PRODUCT_ID,
+  productId: string,
 ) => Promise<RemoveAdsReceiptValidationResult>;
 
 export interface NativePurchaseProviderOptions {
@@ -257,13 +257,14 @@ function hasStoreConfirmation(record: StoredRemoveAdsEntitlementRecord): boolean
 
 function createReceiptValidationResult(
   purchase: RemoveAdsPurchaseRecord,
+  productId: string = REMOVE_ADS_PRODUCT_ID,
   validatedAt = new Date(),
 ): RemoveAdsReceiptValidationResult {
-  if (!isRemoveAdsPurchase(purchase)) return { status: 'invalid' };
+  if (!isPurchaseForProduct(purchase, productId)) return { status: 'invalid' };
   if (!purchase.purchaseToken && !purchase.transactionId) return { status: 'pending' };
 
   return {
-    productId: REMOVE_ADS_PRODUCT_ID,
+    productId,
     purchaseToken: purchase.purchaseToken ?? null,
     status: 'valid',
     transactionId: purchase.transactionId ?? null,
@@ -801,10 +802,10 @@ export function createMockPurchaseProvider({
     async finishPurchase() {
       assertConnected();
     },
-    async validateRemoveAdsReceipt(purchase) {
+    async validateRemoveAdsReceipt(purchase, productId) {
       assertConnected();
       if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
-      return createReceiptValidationResult(purchase);
+      return createReceiptValidationResult(purchase, productId);
     },
     async requestRemoveAdsPurchase() {
       assertConnected();
