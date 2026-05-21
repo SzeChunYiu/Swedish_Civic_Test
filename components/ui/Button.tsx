@@ -1,11 +1,13 @@
 import { Platform, Pressable, StyleSheet, Text } from 'react-native';
 import type { PressableProps, StyleProp, ViewStyle } from 'react-native';
-import { useId, type PropsWithChildren } from 'react';
+import { useId, useMemo, type PropsWithChildren } from 'react';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
+import type { ThemeColors } from '../../lib/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
   style?: StyleProp<ViewStyle>;
+  themeColors?: ThemeColors;
   variant?: ButtonVariant;
 }
 
@@ -20,12 +22,15 @@ export function Button({
   children,
   hitSlop,
   style,
+  themeColors,
   accessibilityRole = 'button',
   accessibilityState,
   disabled,
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
+  const resolvedColors = themeColors ?? colors;
+  const styles = useMemo(() => createStyles(resolvedColors), [resolvedColors]);
   const mergedAccessibilityState = {
     ...accessibilityState,
     ...(disabled == null ? {} : { disabled }),
@@ -52,7 +57,7 @@ export function Button({
       accessibilityLabel={buttonAccessibilityLabel}
       accessibilityRole={accessibilityRole}
       accessibilityState={mergedAccessibilityState}
-      android_ripple={android_ripple ?? { color: colors.focusSoft, borderless: false }}
+      android_ripple={android_ripple ?? { color: resolvedColors.focusSoft, borderless: false }}
       disabled={disabled}
       hitSlop={hitSlop ?? space[0.5]}
       style={({ pressed }) => [
@@ -83,75 +88,77 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    borderColor: colors.border,
-    borderRadius: radius.button,
-    borderWidth: space.hairline,
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-  },
-  primary: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  primaryPressed: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-  },
-  secondary: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  option: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.surface,
-    borderRadius: radius.small,
-    paddingVertical: space[1.5],
-  },
-  success: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.successSoft,
-    borderColor: colors.success,
-    borderRadius: radius.small,
-    paddingVertical: space[1.5],
-  },
-  danger: {
-    alignItems: 'flex-start',
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.warning,
-    borderRadius: radius.small,
-    paddingVertical: space[1.5],
-  },
-  disabled: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-  },
-  pressed: {
-    opacity: 0.86,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  label: {
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  accessibilityHintText: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
-  primaryLabel: {
-    color: colors.surface,
-  },
-  darkLabel: {
-    color: colors.text,
-  },
-  disabledLabel: {
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    button: {
+      alignItems: 'center',
+      borderColor: themeColors.border,
+      borderRadius: radius.button,
+      borderWidth: space.hairline,
+      justifyContent: 'center',
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.25],
+    },
+    primary: {
+      backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+    },
+    primaryPressed: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+    },
+    secondary: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    option: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.surface,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
+    success: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.successSoft,
+      borderColor: themeColors.success,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
+    danger: {
+      alignItems: 'flex-start',
+      backgroundColor: themeColors.warningSoft,
+      borderColor: themeColors.warning,
+      borderRadius: radius.small,
+      paddingVertical: space[1.5],
+    },
+    disabled: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+    },
+    pressed: {
+      opacity: 0.86,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    label: {
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    accessibilityHintText: {
+      height: 1,
+      left: -10000,
+      overflow: 'hidden',
+      position: 'absolute',
+      width: 1,
+    },
+    primaryLabel: {
+      color: themeColors.surface,
+    },
+    darkLabel: {
+      color: themeColors.text,
+    },
+    disabledLabel: {
+      color: themeColors.textMuted,
+    },
+  });
+}

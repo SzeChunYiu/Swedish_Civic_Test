@@ -1,9 +1,11 @@
 import type { ComponentProps } from 'react';
+import { useMemo } from 'react';
 import { StyleSheet, Text as NativeText, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
+import type { ThemeColors } from '../lib/theme';
 
 type DisclaimerBannerCopy = {
   message: string;
@@ -39,6 +41,7 @@ export interface DisclaimerBannerProps extends Omit<
   message?: string;
   messageStyle?: StyleProp<TextStyle>;
   style?: StyleProp<ViewStyle>;
+  themeColors?: ThemeColors;
   title?: string;
   titleStyle?: StyleProp<TextStyle>;
 }
@@ -55,10 +58,12 @@ export function DisclaimerBanner({
   message,
   messageStyle,
   style,
+  themeColors,
   title,
   titleStyle,
   ...viewProps
 }: DisclaimerBannerProps) {
+  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
   const settingsLanguage = useSettingsStore((state) => state.language);
   const language = languageOverride ?? settingsLanguage;
   const copy = disclaimerBannerCopy[language];
@@ -83,23 +88,25 @@ export function DisclaimerBanner({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    backgroundColor: colors.surfaceWarm,
-    borderColor: colors.border,
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    gap: space[0.5],
-    paddingHorizontal: space[1.5],
-    paddingVertical: space[1.25],
-  },
-  title: {
-    ...typography.badge,
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-  },
-  message: {
-    ...typography.disclaimer,
-    color: colors.textDisclaimer,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      gap: space[0.5],
+      paddingHorizontal: space[1.5],
+      paddingVertical: space[1.25],
+    },
+    title: {
+      ...typography.badge,
+      color: themeColors.textSecondary,
+      textTransform: 'uppercase',
+    },
+    message: {
+      ...typography.disclaimer,
+      color: themeColors.textDisclaimer,
+    },
+  });
+}
