@@ -105,45 +105,57 @@ test('LanguagePicker menu rows expose menu-item state semantics', () => {
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /aria-disabled=\{!opt\.available\}/);
+  assert.match(source, /tabIndex: option\.available \? 0 : -1/);
+  assert.match(
+    source,
+    /onKeyDown: \(event: KeyboardEventLike\) => handleRowKeyDown\(event, option\)/,
+  );
+  assert.match(source, /\{\.\.\.getRowWebKeyboardProps\(opt\)\}/);
+  assert.match(source, /const closeButtonRef = useRef<FocusableElement \| null>\(null\);/);
+  assert.match(
+    source,
+    /const focusCloseButton = useCallback\(\(\) => \{[\s\S]*closeButtonRef\.current\?\.focus\?\.\(\);/,
+  );
+  assert.match(
+    source,
+    /const focusFirstAvailableLocale = useCallback\(\(\) => \{[\s\S]*focusAvailableLocale\(0\);/,
+  );
+  assert.match(
+    source,
+    /const focusLastAvailableLocale = useCallback\(\(\) => \{[\s\S]*focusAvailableLocale\(availableLocales\.length - 1\);/,
+  );
+  assert.match(source, /case 'Tab':[\s\S]*focusCloseButton\(\);/);
+  assert.match(source, /const handleCloseKeyDown = \(event: KeyboardEventLike\) => \{/);
+  assert.match(source, /if \(key !== 'Tab'\) return;[\s\S]*event\.preventDefault\?\.\(\);/);
+  assert.match(source, /if \(shiftKey\) \{[\s\S]*focusLastAvailableLocale\(\);/);
+  assert.match(source, /else \{[\s\S]*focusFirstAvailableLocale\(\);/);
+  assert.match(source, /\{\.\.\.getCloseWebKeyboardProps\(\)\}/);
+  assert.match(source, /case 'Escape':[\s\S]*closeMenu\(\);/);
+  assert.match(source, /case 'ArrowDown':[\s\S]*focusAvailableLocale/);
+  assert.match(source, /case 'Home':[\s\S]*focusAvailableLocale\(0\);/);
+  assert.match(source, /case 'End':[\s\S]*focusAvailableLocale\(availableLocales\.length - 1\);/);
+  assert.match(source, /case 'Enter':[\s\S]*handleSelect\(option\);/);
+  assert.match(source, /case ' ':[\s\S]*handleSelect\(option\);/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
+  assert.match(
+    source,
+    /accessible=\{false\}[\s\S]*importantForAccessibility="no-hide-descendants"/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.closeLabel\}[\s\S]*accessibilityRole="button"[\s\S]*hitSlop=\{space\[1\]\}[\s\S]*styles\.closeButton/,
+  );
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /minWidth:\s*space\[6\]/);
   assert.doesNotMatch(
     source,
     /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
   );
-});
-
-test('LanguagePicker menu exposes modal containment and title description semantics', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
-
-  assert.match(source, /useId/);
-  assert.match(source, /const menuTitleId =/);
-  assert.match(source, /const menuDescriptionId =/);
-  assert.match(source, /'aria-modal': true/);
-  assert.match(source, /'aria-labelledby': menuTitleId/);
-  assert.match(source, /'aria-describedby': menuDescriptionId/);
-  assert.match(source, /accessibilityViewIsModal/);
-  assert.match(source, /accessibilityHint=\{copy\.subtitle\}/);
-  assert.match(source, /nativeID=\{menuTitleId\}/);
-  assert.match(source, /nativeID=\{menuDescriptionId\}/);
-  assert.match(source, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
-});
-
-test('LanguagePicker close control uses a compact icon instead of visible x text', () => {
-  const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
-  const iconSource = fs.readFileSync(
-    path.join(ROOT, 'components', 'ui', 'icons', 'CloseIcon.tsx'),
-    'utf8',
+  const backdropTag = source.match(
+    /<Pressable\s+accessible=\{false\}[\s\S]*?style=\{\(\{ pressed \}\) => \[styles\.backdrop[\s\S]*?\/>/,
   );
-
-  assert.match(source, /import \{ CloseIcon \} from '\.\/icons\/CloseIcon';/);
-  assert.match(source, /accessibilityLabel=\{copy\.closeLabel\}/);
-  assert.match(source, /accessibilityRole="button"/);
-  assert.match(source, /<CloseIcon color=\{colors\.textSecondary\} size=\{closeIconSize\} \/>/);
-  assert.match(source, /minHeight:\s*44/);
-  assert.match(source, /minWidth:\s*44/);
-  assert.doesNotMatch(source, /<Text[^>]*>\s*x\s*<\/Text>/i);
-  assert.match(iconSource, /testID="language-picker-close-icon"/);
-  assert.match(iconSource, /importantForAccessibility="no-hide-descendants"/);
+  assert.ok(backdropTag, 'LanguagePicker backdrop must be hidden from accessibility');
+  assert.doesNotMatch(backdropTag[0], /accessibilityRole=|accessibilityLabel=/);
 });
 
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {

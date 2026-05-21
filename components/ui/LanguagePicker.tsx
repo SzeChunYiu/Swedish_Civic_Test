@@ -1,10 +1,9 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Modal, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { locales, type LocaleOption } from '../../lib/i18n/locales';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
-import { CloseIcon } from './icons/CloseIcon';
 import { GlobeIcon } from './icons/GlobeIcon';
 
 type LanguagePickerCopy = {
@@ -41,44 +40,17 @@ const languagePickerCopy: Record<AppLanguage, LanguagePickerCopy> = {
 };
 
 const triggerIconSize = space[2];
-const closeIconSize = space[2];
-
-type FocusableElement = {
-  focus?: () => void;
-};
-
-type LanguagePickerKeyboardEvent = {
+type FocusableElement = { focus?: () => void };
+type KeyboardEventLike = {
   key?: string;
   shiftKey?: boolean;
+  nativeEvent?: { key?: string; shiftKey?: boolean };
   preventDefault?: () => void;
-  stopPropagation?: () => void;
-  nativeEvent?: {
-    key?: string;
-    shiftKey?: boolean;
-    preventDefault?: () => void;
-    stopPropagation?: () => void;
-  };
 };
-
-type FocusedMenuTarget = 'close' | `row:${string}` | null;
-
-type WebModalAccessibilityProps = {
-  'aria-describedby'?: string;
-  'aria-labelledby'?: string;
-  'aria-modal'?: boolean;
+type WebPressableKeyboardProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  tabIndex?: 0 | -1;
 };
-
-function focusElement(element: FocusableElement | null | undefined) {
-  if (!element?.focus) return;
-  requestAnimationFrame(() => element.focus?.());
-}
-
-function preventKeyboardDefault(event: LanguagePickerKeyboardEvent) {
-  event.preventDefault?.();
-  event.stopPropagation?.();
-  event.nativeEvent?.preventDefault?.();
-  event.nativeEvent?.stopPropagation?.();
-}
 
 /**
  * Defaults: reads and writes the settings-store language, opens the locale
@@ -93,8 +65,6 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const settingsLanguage = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const [open, setOpen] = useState(false);
-  const [focusedMenuTarget, setFocusedMenuTarget] = useState<FocusedMenuTarget>(null);
-  const accessibilityId = useId();
   const triggerRef = useRef<FocusableElement | null>(null);
   const closeButtonRef = useRef<FocusableElement | null>(null);
   const rowRefs = useRef<Record<string, FocusableElement | null>>({});
@@ -103,144 +73,146 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
   const currentCode = language === 'sv' ? 'sv' : 'en';
   const currentLabel = currentCode.toUpperCase();
   const copy = languagePickerCopy[language];
-  const webAccessibilityId = accessibilityId.replace(/:/g, '');
-  const menuTitleId =
-    Platform.OS === 'web' ? `language-picker-title-${webAccessibilityId}` : undefined;
-  const menuDescriptionId =
-    Platform.OS === 'web' ? `language-picker-description-${webAccessibilityId}` : undefined;
-  const webModalAccessibilityProps: WebModalAccessibilityProps =
-    Platform.OS === 'web'
-      ? {
-          'aria-describedby': menuDescriptionId,
-          'aria-labelledby': menuTitleId,
-          'aria-modal': true,
-        }
-      : {};
-  const availableLocaleCodes = useMemo(
-    () => locales.filter((option) => option.available).map((option) => option.code),
-    [],
+  const availableLocales = useMemo(() => locales.filter((option) => option.available), []);
+  const selectedAvailableIndex = Math.max(
+    0,
+    availableLocales.findIndex((option) => option.fallback === language),
   );
-  const selectedAvailableLocaleCode =
-    locales.find((option) => option.available && option.fallback === language)?.code ??
-    availableLocaleCodes[0];
 
-  const closePicker = () => {
+  const focusAvailableLocale = useCallback(
+    (index: number) => {
+      if (Platform.OS !== 'web') return;
+      const option = availableLocales[index];
+      if (!option) return;
+      rowRefs.current[option.code]?.focus?.();
+    },
+    [availableLocales],
+  );
+
+  const focusCloseButton = useCallback(() => {
+    if (Platform.OS !== 'web') return;
+    closeButtonRef.current?.focus?.();
+  }, []);
+
+  const focusFirstAvailableLocale = useCallback(() => {
+    focusAvailableLocale(0);
+  }, [focusAvailableLocale]);
+
+  const focusLastAvailableLocale = useCallback(() => {
+    focusAvailableLocale(availableLocales.length - 1);
+  }, [availableLocales.length, focusAvailableLocale]);
+
+  const closeMenu = useCallback(() => {
     setOpen(false);
-    setFocusedMenuTarget(null);
-    if (Platform.OS === 'web') focusElement(triggerRef.current);
-  };
+    if (Platform.OS === 'web') {
+      window.setTimeout(() => triggerRef.current?.focus?.(), 0);
+    }
+  }, []);
 
   const handleSelect = (option: LocaleOption) => {
     if (!option.available) return;
     setLanguage(option.fallback);
-    closePicker();
+    closeMenu();
   };
 
-  const focusCloseButton = () => {
-    focusElement(closeButtonRef.current);
-  };
+  const handleRowKeyDown = (event: KeyboardEventLike, option: LocaleOption) => {
+    const key = event.nativeEvent?.key ?? event.key;
+    const shiftKey = event.nativeEvent?.shiftKey ?? event.shiftKey;
+    const currentIndex = availableLocales.findIndex((candidate) => candidate.code === option.code);
+    if (currentIndex < 0) return;
 
-  const focusLocaleRow = (code: string | undefined) => {
-    if (!code) return;
-    focusElement(rowRefs.current[code]);
-  };
-
-  const focusedLocaleCode = focusedMenuTarget?.startsWith('row:')
-    ? focusedMenuTarget.slice('row:'.length)
-    : null;
-
-  const focusNextAvailableRow = (direction: 1 | -1) => {
-    const currentIndex = focusedLocaleCode
-      ? availableLocaleCodes.findIndex((code) => code === focusedLocaleCode)
-      : -1;
-    const fallbackIndex = direction === 1 ? 0 : availableLocaleCodes.length - 1;
-    const nextIndex =
-      currentIndex >= 0
-        ? (currentIndex + direction + availableLocaleCodes.length) % availableLocaleCodes.length
-        : fallbackIndex;
-    focusLocaleRow(availableLocaleCodes[nextIndex]);
-  };
-
-  const handleMenuKeyDown = (event: LanguagePickerKeyboardEvent) => {
-    const key = event.key ?? event.nativeEvent?.key;
-    const shiftKey = event.shiftKey ?? event.nativeEvent?.shiftKey ?? false;
-    const firstCode = availableLocaleCodes[0];
-    const lastCode = availableLocaleCodes[availableLocaleCodes.length - 1];
-
-    if (key === 'Escape') {
-      preventKeyboardDefault(event);
-      closePicker();
-      return;
-    }
-
-    if (key === 'Tab') {
-      if (focusedMenuTarget === 'close') {
-        preventKeyboardDefault(event);
-        focusLocaleRow(shiftKey ? lastCode : firstCode);
-        return;
-      }
-      if (focusedLocaleCode === firstCode && shiftKey) {
-        preventKeyboardDefault(event);
-        focusCloseButton();
-        return;
-      }
-      if (focusedLocaleCode === lastCode && !shiftKey) {
-        preventKeyboardDefault(event);
-        focusCloseButton();
-      }
-      return;
-    }
-
-    if (key === 'ArrowDown') {
-      preventKeyboardDefault(event);
-      focusNextAvailableRow(1);
-      return;
-    }
-
-    if (key === 'ArrowUp') {
-      preventKeyboardDefault(event);
-      focusNextAvailableRow(-1);
-      return;
-    }
-
-    if (key === 'Home') {
-      preventKeyboardDefault(event);
-      focusLocaleRow(firstCode);
-      return;
-    }
-
-    if (key === 'End') {
-      preventKeyboardDefault(event);
-      focusLocaleRow(lastCode);
-      return;
-    }
-
-    if ((key === 'Enter' || key === ' ') && focusedLocaleCode) {
-      const option = locales.find((candidate) => candidate.code === focusedLocaleCode);
-      if (option?.available) {
-        preventKeyboardDefault(event);
+    switch (key) {
+      case 'Tab':
+        if (shiftKey && currentIndex === 0) {
+          event.preventDefault?.();
+          focusCloseButton();
+        } else if (!shiftKey && currentIndex === availableLocales.length - 1) {
+          event.preventDefault?.();
+          focusCloseButton();
+        }
+        break;
+      case 'Escape':
+        event.preventDefault?.();
+        closeMenu();
+        break;
+      case 'ArrowDown':
+      case 'ArrowRight':
+        event.preventDefault?.();
+        focusAvailableLocale((currentIndex + 1) % availableLocales.length);
+        break;
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        event.preventDefault?.();
+        focusAvailableLocale(
+          (currentIndex - 1 + availableLocales.length) % availableLocales.length,
+        );
+        break;
+      case 'Home':
+        event.preventDefault?.();
+        focusAvailableLocale(0);
+        break;
+      case 'End':
+        event.preventDefault?.();
+        focusAvailableLocale(availableLocales.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+      case 'Spacebar':
+        event.preventDefault?.();
         handleSelect(option);
-      }
+        break;
+      default:
+        break;
     }
   };
 
-  useEffect(() => {
-    if (!open || Platform.OS !== 'web') return;
-    focusLocaleRow(selectedAvailableLocaleCode);
-  }, [open, selectedAvailableLocaleCode]);
+  const handleCloseKeyDown = (event: KeyboardEventLike) => {
+    const key = event.nativeEvent?.key ?? event.key;
+    const shiftKey = event.nativeEvent?.shiftKey ?? event.shiftKey;
+    if (key !== 'Tab') return;
+
+    event.preventDefault?.();
+    if (shiftKey) {
+      focusLastAvailableLocale();
+    } else {
+      focusFirstAvailableLocale();
+    }
+  };
+
+  const getRowWebKeyboardProps = (option: LocaleOption): WebPressableKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: (event: KeyboardEventLike) => handleRowKeyDown(event, option),
+          tabIndex: option.available ? 0 : -1,
+        }
+      : {};
+
+  const getCloseWebKeyboardProps = (): WebPressableKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: handleCloseKeyDown,
+          tabIndex: 0,
+        }
+      : {};
 
   useEffect(() => {
-    if (!open || Platform.OS !== 'web' || typeof document === 'undefined') return undefined;
+    if (!open || Platform.OS !== 'web') return undefined;
+    const focusTimer = window.setTimeout(() => focusAvailableLocale(selectedAvailableIndex), 0);
+    return () => window.clearTimeout(focusTimer);
+  }, [focusAvailableLocale, open, selectedAvailableIndex]);
+
+  useEffect(() => {
+    if (!open || Platform.OS !== 'web') return undefined;
 
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
       event.preventDefault();
-      closePicker();
+      closeMenu();
     };
 
-    document.addEventListener('keydown', handleDocumentKeyDown);
-    return () => document.removeEventListener('keydown', handleDocumentKeyDown);
-  }, [open]);
+    window.document.addEventListener('keydown', handleDocumentKeyDown);
+    return () => window.document.removeEventListener('keydown', handleDocumentKeyDown);
+  }, [open, closeMenu]);
 
   return (
     <>
@@ -261,61 +233,41 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
         <Text style={styles.triggerLabel}>{currentLabel}</Text>
       </Pressable>
 
-      <Modal
-        accessibilityLabel={copy.menuLabel}
-        accessibilityViewIsModal
-        animationType="fade"
-        transparent
-        visible={open}
-        onRequestClose={closePicker}
-      >
+      <Modal animationType="fade" transparent visible={open} onRequestClose={() => setOpen(false)}>
         <View style={styles.backdropLayer}>
           <Pressable
-            accessibilityElementsHidden
             accessible={false}
             hitSlop={space[0]}
             importantForAccessibility="no-hide-descendants"
-            onPress={closePicker}
+            onPress={closeMenu}
             style={({ pressed }) => [styles.backdrop, pressed ? styles.backdropPressed : null]}
           />
           <Pressable
-            {...webModalAccessibilityProps}
-            {...(Platform.OS === 'web' ? { onKeyDown: handleMenuKeyDown } : {})}
-            accessibilityHint={copy.subtitle}
             accessibilityLabel={copy.menuLabel}
             accessibilityRole="menu"
             hitSlop={space[0]}
             onPress={(e) => e.stopPropagation()}
             style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
           >
-            <Text nativeID={menuTitleId} style={styles.accessibilityTitleText}>
-              {copy.menuLabel}
-            </Text>
             <View style={styles.header}>
-              <Text accessibilityRole="header" style={styles.title}>
-                {copy.title}
-              </Text>
+              <View style={styles.headerText}>
+                <Text style={styles.title}>{copy.title}</Text>
+                <Text style={styles.subtitle}>{copy.subtitle}</Text>
+              </View>
               <Pressable
                 accessibilityLabel={copy.closeLabel}
                 accessibilityRole="button"
                 hitSlop={space[1]}
-                onFocus={() => setFocusedMenuTarget('close')}
-                onPress={closePicker}
+                onPress={closeMenu}
                 ref={(node) => {
                   closeButtonRef.current = node as FocusableElement | null;
                 }}
-                style={({ pressed }) => [
-                  styles.closeButton,
-                  focusedMenuTarget === 'close' ? styles.closeButtonFocused : null,
-                  pressed ? styles.closeButtonPressed : null,
-                ]}
+                style={({ pressed }) => [styles.closeButton, pressed ? styles.closePressed : null]}
+                {...getCloseWebKeyboardProps()}
               >
-                <CloseIcon color={colors.textSecondary} size={closeIconSize} />
+                <Text style={styles.closeText}>x</Text>
               </Pressable>
             </View>
-            <Text nativeID={menuDescriptionId} style={styles.subtitle}>
-              {copy.subtitle}
-            </Text>
             <ScrollView style={styles.list}>
               {locales.map((opt) => {
                 const selected = opt.available && opt.fallback === language;
@@ -330,9 +282,6 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                     accessibilityState={{ selected, disabled: !opt.available }}
                     disabled={!opt.available}
                     hitSlop={space[1]}
-                    onFocus={() => {
-                      if (opt.available) setFocusedMenuTarget(`row:${opt.code}`);
-                    }}
                     onPress={() => handleSelect(opt)}
                     ref={(node) => {
                       rowRefs.current[opt.code] = node as FocusableElement | null;
@@ -342,6 +291,7 @@ export function LanguagePicker({ languageOverride }: LanguagePickerProps = {}) {
                       selected ? styles.rowSelected : null,
                       pressed && opt.available ? styles.rowPressed : null,
                     ]}
+                    {...getRowWebKeyboardProps(opt)}
                   >
                     <View style={styles.rowText}>
                       <Text style={[styles.native, !opt.available && styles.dimmed]}>
@@ -425,48 +375,44 @@ const styles = StyleSheet.create({
   cardPressed: {
     transform: [{ scale: motion.pressedScale }],
   },
-  accessibilityTitleText: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
   header: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: space[1],
-    justifyContent: 'space-between',
+  },
+  headerText: {
+    flex: 1,
+    gap: space[1],
   },
   title: {
-    flex: 1,
     color: colors.text,
     fontFamily: typography.subHeading.fontFamily,
     fontSize: typography.subHeading.fontSize,
     fontWeight: typography.subHeading.fontWeight,
-  },
-  closeButton: {
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: 44,
-    minWidth: 44,
-  },
-  closeButtonFocused: {
-    borderColor: colors.focus,
-  },
-  closeButtonPressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
   },
   subtitle: {
     color: colors.textMuted,
     fontFamily: typography.bodyTight.fontFamily,
     fontSize: typography.bodyTight.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  closeButton: {
+    alignItems: 'center',
+    borderRadius: radius.pill,
+    justifyContent: 'center',
+    minHeight: space[6],
+    minWidth: space[6],
+  },
+  closePressed: {
+    backgroundColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  closeText: {
+    color: colors.textMuted,
+    fontFamily: typography.bodyBold.fontFamily,
+    fontSize: typography.bodyBold.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyBold.lineHeight,
   },
   list: {
     marginTop: space[1],
