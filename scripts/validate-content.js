@@ -2227,6 +2227,24 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'settings daily-goal buttons must expose localized accessibility copy',
   ],
   [
+    'aria-label={copy.themeModeTitle}',
+    'settings theme-mode group must expose a localized radiogroup label',
+  ],
+  [
+    'accessibilityLabel={copy.themeModeTitle}',
+    'settings theme-mode group must mirror its localized radiogroup label natively',
+  ],
+  [
+    'accessibilityLabel={copy.setThemeModeAccessibilityLabel(label)}',
+    'settings theme-mode choices must expose localized accessibility copy',
+  ],
+  ['aria-checked={selected}', 'settings theme-mode options must expose checked state'],
+  ['accessibilityRole="radio"', 'settings segmented choices must expose radio semantics'],
+  [
+    'accessibilityState={{ checked: selected }}',
+    'settings theme-mode options must mirror checked state to accessibilityState',
+  ],
+  [
     'aria-checked={dailyGoalAnswers === goal}',
     'settings daily-goal options must expose checked state',
   ],
@@ -2383,8 +2401,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -11274,6 +11291,13 @@ function validateSettingsRouteCopyParity() {
     )
   ) {
     reject('settings route language and daily-goal options must use radio semantics');
+  }
+  if (
+    /aria-selected=\{selected\}/.test(settingsRoute) ||
+    /accessibilityState=\{\{\s*selected\s*\}\}/.test(settingsRoute) ||
+    /accessibilityState=\{\{\s*selected:\s*selected\s*\}\}/.test(settingsRoute)
+  ) {
+    reject('settings route theme-mode options must use radio checked semantics');
   }
 
   const seenLabels = new Set();

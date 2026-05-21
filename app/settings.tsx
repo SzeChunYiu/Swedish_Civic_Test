@@ -347,10 +347,10 @@ export default function Screen() {
     return (
       <Pressable
         key={value}
-        aria-selected={selected}
+        aria-checked={selected}
         accessibilityLabel={copy.setThemeModeAccessibilityLabel(label)}
-        accessibilityRole="button"
-        accessibilityState={{ selected }}
+        accessibilityRole="radio"
+        accessibilityState={{ checked: selected }}
         hitSlop={space[1]}
         onBlur={() => setFocusedControl(null)}
         onFocus={() => setFocusedControl(focusKey)}
@@ -473,7 +473,12 @@ export default function Screen() {
           {copy.themeModeTitle}
         </Text>
         <Text style={styles.subtitle}>{copy.themeModeSummary(activeThemeLabel)}</Text>
-        <View style={styles.row}>
+        <View
+          aria-label={copy.themeModeTitle}
+          accessibilityLabel={copy.themeModeTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
           {themeOptions.map((option) => renderThemeButton(option.value, option.label))}
         </View>
       </View>
