@@ -7155,6 +7155,9 @@ const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
 const calculateLevel = xpModule.calculateLevel;
+const dashboardProgressSnapshotModule = loadTs('lib/learning/dashboardProgressSnapshot.ts');
+const buildDashboardProgressSnapshot =
+  dashboardProgressSnapshotModule.buildDashboardProgressSnapshot;
 const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
@@ -7345,6 +7348,8 @@ let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
 let progressStoreFieldsValidated = 0;
 let progressStoreSchemaParityValidated = false;
+let dashboardProgressSnapshotCasesValidated = 0;
+let dashboardProgressSnapshotParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -7558,6 +7563,16 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
+  validateDashboardProgressSnapshotParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    dashboardProgressSnapshotCasesValidated,
+    dashboardProgressSnapshotParityValidated,
   });
   process.exit(0);
 }
@@ -12024,6 +12039,147 @@ function validateProgressStoreSchemaParity() {
   }
 }
 
+function practiceAnswersFromDashboardSnapshot(snapshot) {
+  const practiceSession = Array.isArray(snapshot?.sessions)
+    ? snapshot.sessions.find((session) => session.mode === 'study')
+    : null;
+  return Array.isArray(practiceSession?.answers) ? practiceSession.answers : [];
+}
+
+function validateDashboardProgressSnapshotParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (typeof buildDashboardProgressSnapshot !== 'function') {
+    reject('dashboard progress snapshot builder must be exported');
+    return;
+  }
+
+  const baseInput = {
+    answerDates: ['2026-05-17', '2026-05-18', '2026-05-19'],
+    dailyGoalAnswers: 10,
+    mockExamSessions: [],
+    totalXp: 120,
+  };
+
+  try {
+    const aliasSnapshot = buildDashboardProgressSnapshot({
+      ...baseInput,
+      answerAttempts: [
+        { questionId: 'q2', isCorrect: false, answeredAt: '2026-05-18T10:00:00.000Z' },
+        { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
+        { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T11:00:00.000Z' },
+      ],
+      questionProgress: {
+        q1: {
+          questionId: 'q1',
+          seenCount: 3,
+          correctCount: 2,
+          wrongCount: 1,
+          correctStreak: 1,
+          lastAnsweredAt: '2026-05-19T12:00:00.000Z',
+        },
+        q2: {
+          questionId: 'q2',
+          seenCount: 1,
+          correctCount: 0,
+          wrongCount: 1,
+          correctStreak: 0,
+          lastAnsweredAt: '2026-05-18T12:00:00.000Z',
+        },
+      },
+    });
+    const aliasAnswers = practiceAnswersFromDashboardSnapshot(aliasSnapshot);
+    const aliasQ1Answers = aliasAnswers.filter((answer) => answer.questionId === 'q1');
+    const aliasQ2Answers = aliasAnswers.filter((answer) => answer.questionId === 'q2');
+    if (aliasAnswers.length === 3 && aliasQ1Answers.length === 2 && aliasQ2Answers.length === 1) {
+      dashboardProgressSnapshotCasesValidated += 1;
+    } else {
+      reject(
+        'dashboard progress snapshot must treat answerAttempts as the legacy answerHistory alias',
+      );
+    }
+
+    const precedenceSnapshot = buildDashboardProgressSnapshot({
+      ...baseInput,
+      answerAttempts: [
+        { questionId: 'q1', isCorrect: false, answeredAt: '2026-05-17T10:00:00.000Z' },
+      ],
+      answerHistory: [
+        { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
+      ],
+      questionProgress: {
+        q1: {
+          questionId: 'q1',
+          seenCount: 4,
+          correctCount: 2,
+          wrongCount: 2,
+          correctStreak: 0,
+          lastAnsweredAt: '2026-05-18T12:00:00.000Z',
+        },
+      },
+    });
+    const precedenceAnswers = practiceAnswersFromDashboardSnapshot(precedenceSnapshot);
+    if (
+      precedenceAnswers.length === 1 &&
+      precedenceAnswers[0]?.answeredAt === '2026-05-19T10:00:00.000Z' &&
+      precedenceAnswers[0]?.isCorrect === true
+    ) {
+      dashboardProgressSnapshotCasesValidated += 1;
+    } else {
+      reject('dashboard progress snapshot must prefer answerHistory over answerAttempts');
+    }
+
+    const fallbackSnapshot = buildDashboardProgressSnapshot({
+      ...baseInput,
+      answerHistory: [
+        { questionId: 'q1', isCorrect: false, answeredAt: '2026-05-17T10:00:00.000Z' },
+        { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
+      ],
+      questionProgress: {
+        q1: {
+          questionId: 'q1',
+          seenCount: 7,
+          correctCount: 4,
+          wrongCount: 3,
+          correctStreak: 2,
+          lastAnsweredAt: '2026-05-19T12:00:00.000Z',
+        },
+        q2: {
+          questionId: 'q2',
+          seenCount: 1,
+          correctCount: 0,
+          wrongCount: 1,
+          correctStreak: 0,
+          lastAnsweredAt: '2026-05-18T12:00:00.000Z',
+        },
+      },
+    });
+    const fallbackAnswers = practiceAnswersFromDashboardSnapshot(fallbackSnapshot);
+    const fallbackQ1Answers = fallbackAnswers.filter((answer) => answer.questionId === 'q1');
+    const fallbackQ2Answers = fallbackAnswers.filter((answer) => answer.questionId === 'q2');
+    if (
+      fallbackAnswers.length === 3 &&
+      fallbackQ1Answers.length === 2 &&
+      fallbackQ2Answers.length === 1
+    ) {
+      dashboardProgressSnapshotCasesValidated += 1;
+    } else {
+      reject(
+        'dashboard progress snapshot must not double-count questionProgress fallback when answerHistory exists',
+      );
+    }
+  } catch (error) {
+    reject(`dashboard progress snapshot parity threw: ${error.message}`);
+  }
+
+  dashboardProgressSnapshotParityValidated = valid && dashboardProgressSnapshotCasesValidated === 3;
+}
+
 function validateContentTypeSchemaParity() {
   let valid = true;
   let contentTypesSource = '';
@@ -16001,6 +16157,7 @@ validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
+validateDashboardProgressSnapshotParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -16228,6 +16385,8 @@ console.log(
       progressTypeSchemaParityValidated,
       progressStoreFieldsValidated,
       progressStoreSchemaParityValidated,
+      dashboardProgressSnapshotCasesValidated,
+      dashboardProgressSnapshotParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
