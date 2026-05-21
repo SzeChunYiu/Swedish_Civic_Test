@@ -10122,16 +10122,6 @@ if (process.argv.includes('--focus-flashcard-accessibility')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
-  validateUhrReferenceCardAccessibilityParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    uhrReferenceCardAccessibilityRulesValidated,
-    uhrReferenceCardAccessibilityParityValidated,
-  });
-  process.exit(0);
-}
-
 if (process.argv.includes('--focus-question-report-link-parity')) {
   validateQuestionReportLinkParity();
   exitWithValidationFailures();

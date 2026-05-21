@@ -222,28 +222,6 @@ test('Badge accessibility parity uses focused content validation routing', () =>
   );
 });
 
-test('UHRReferenceCard accessibility parity uses focused content validation routing', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-  const uhrReferenceCardTestSource = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-uhr-reference-card-accessibility-parity.test.js'),
-    'utf8',
-  );
-
-  assert.match(validatorSource, /--focus-uhr-reference-card-accessibility/);
-  assert.match(
-    validatorSource,
-    /validateUhrReferenceCardAccessibilityParity\(\);[\s\S]*uhrReferenceCardAccessibilityRulesValidated[\s\S]*uhrReferenceCardAccessibilityParityValidated/,
-  );
-  assert.match(uhrReferenceCardTestSource, /--focus-uhr-reference-card-accessibility/);
-  assert.doesNotMatch(
-    uhrReferenceCardTestSource,
-    /\['scripts\/validate-content\.js'\]/,
-    'UHRReferenceCard accessibility tests must not route through full content validation',
-  );
-});
 
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
