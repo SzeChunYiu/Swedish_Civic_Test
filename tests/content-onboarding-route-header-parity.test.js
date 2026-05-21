@@ -172,6 +172,20 @@ test('first-run about modal guide link keeps natural Swedish accessibility copy'
   );
   const staleGuideLabel = ['Öppna om-', 'provet-', 'guiden'].join('');
 
+  assert.match(source, /const dialogTitleId = 'first-run-about-modal-title';/);
+  assert.match(source, /const dialogBodyId = 'first-run-about-modal-body';/);
+  assert.match(source, /accessibilityViewIsModal/);
+  assert.match(source, /aria-describedby=\{dialogBodyId\}/);
+  assert.match(source, /aria-labelledby=\{dialogTitleId\}/);
+  assert.match(
+    source,
+    /<Pressable\s+accessible=\{false\}\s+hitSlop=\{space\[1\]\}\s+importantForAccessibility="no"[\s\S]*?style=\{\(\{ pressed \}\) => \[styles\.backdrop,/,
+  );
+  assert.match(
+    source,
+    /<Text accessibilityRole="header" id=\{dialogTitleId\} style=\{styles\.title\}>/,
+  );
+  assert.match(source, /<Text id=\{dialogBodyId\} style=\{styles\.body\}>/);
   assert.match(source, /open: 'Läs guiden'/);
   assert.match(source, /openAccessibilityLabel: 'Öppna guiden om medborgarskapsprovet'/);
   assert.match(source, /openAccessibilityLabel: 'Open the about-the-test guide'/);

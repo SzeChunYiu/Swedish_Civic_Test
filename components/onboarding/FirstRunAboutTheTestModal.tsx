@@ -1,13 +1,20 @@
 import { usePathname, useRouter } from 'expo-router';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import {
-  FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
-  shouldSuppressFirstRunAboutModalForPath,
-} from '../../lib/onboarding/firstRunAboutModalRoutes';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
+
+/**
+ * Suppress on routes where a blocking modal would be hostile to flow:
+ * - exam routes (timed)
+ * - quiz mid-session
+ * - auth modals
+ * - the about-the-test screen itself (otherwise the modal sits on top of the page it sends you to)
+ */
+const SUPPRESSED_PATH_PREFIXES = ['/exam', '/quiz', '/(auth)', '/about-the-test'] as const;
+const dialogTitleId = 'first-run-about-modal-title';
+const dialogBodyId = 'first-run-about-modal-body';
 
 type FirstRunCopy = {
   eyebrow: string;
@@ -52,10 +59,18 @@ export interface FirstRunAboutTheTestModalProps {
   suppressedPathPrefixes?: readonly string[];
 }
 
+function pathIsSuppressed(
+  pathname: string | null,
+  suppressedPathPrefixes: readonly string[],
+): boolean {
+  if (!pathname) return false;
+  return suppressedPathPrefixes.some((prefix) => pathname.startsWith(prefix));
+}
+
 export function FirstRunAboutTheTestModal({
   deferWhenLaunchPopupAdShown = true,
   languageOverride,
-  suppressedPathPrefixes = FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PATH_PREFIXES,
+  suppressedPathPrefixes = SUPPRESSED_PATH_PREFIXES,
 }: FirstRunAboutTheTestModalProps = {}) {
   const pathname = usePathname();
   const router = useRouter();
@@ -64,7 +79,7 @@ export function FirstRunAboutTheTestModal({
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
 
   if (hasSeen) return null;
-  if (shouldSuppressFirstRunAboutModalForPath(pathname, suppressedPathPrefixes)) return null;
+  if (pathIsSuppressed(pathname, suppressedPathPrefixes)) return null;
   if (deferWhenLaunchPopupAdShown && shouldDeferFirstRunAboutModalForLaunchSession()) return null;
 
   const language = languageOverride ?? settingsLanguage;
@@ -76,11 +91,14 @@ export function FirstRunAboutTheTestModal({
 
   return (
     <Modal
+      accessibilityLabel={copy.title}
+      accessibilityViewIsModal
       animationType="fade"
+      aria-describedby={dialogBodyId}
+      aria-labelledby={dialogTitleId}
       transparent
       visible
       onRequestClose={markSeen}
-      accessibilityLabel={copy.title}
     >
       <Pressable
         accessible={false}
@@ -97,10 +115,12 @@ export function FirstRunAboutTheTestModal({
           style={({ pressed }) => [styles.card, pressed ? styles.cardPressed : null]}
         >
           <Text style={styles.eyebrow}>{copy.eyebrow}</Text>
-          <Text accessibilityRole="header" style={styles.title}>
+          <Text accessibilityRole="header" id={dialogTitleId} style={styles.title}>
             {copy.title}
           </Text>
-          <Text style={styles.body}>{copy.body}</Text>
+          <Text id={dialogBodyId} style={styles.body}>
+            {copy.body}
+          </Text>
           <View style={styles.actions}>
             <Pressable
               accessibilityLabel={copy.openAccessibilityLabel}
