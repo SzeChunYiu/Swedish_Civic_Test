@@ -500,6 +500,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   recordAnswer: (questionId, isCorrect, confidenceRating, options) =>
     set((state) => {
+      if (typeof isCorrect !== 'boolean') return state;
+
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
       const normalizedConfidenceRating = normalizeConfidenceRating(confidenceRating);
@@ -612,13 +614,22 @@ export const useProgressStore = create<ProgressState>((set) => ({
   recordMockExamSession: (session) =>
     set((state) => {
       const completedAt = session.completedAt ?? new Date().toISOString();
+      const totalCount = normalizeNonNegativeInteger(
+        session.totalCount,
+        0,
+        maxHydratedMockQuestionCount,
+      );
+      const correctCount = Math.min(
+        normalizeNonNegativeInteger(session.correctCount, 0, maxHydratedMockQuestionCount),
+        totalCount,
+      );
       const nextSession: MockExamProgress = {
         sessionId: session.sessionId,
         score: clampScore(session.score),
         completedAt,
-        correctCount: Math.max(0, session.correctCount ?? 0),
+        correctCount,
         questionTimings: normalizeMockExamQuestionTimings(session.questionTimings),
-        totalCount: Math.max(0, session.totalCount ?? 0),
+        totalCount,
       };
       const existingSession = state.mockExamSessions.find(
         (item) => item.sessionId === nextSession.sessionId,
