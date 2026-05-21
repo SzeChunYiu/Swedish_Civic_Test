@@ -69,6 +69,17 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'monetizationSchema',
+    flags: ['--focus-monetization-schema-parity'],
+    summaryKeys: [
+      'monetizationTypeUnionsValidated',
+      'monetizationTypeInterfacesValidated',
+      'monetizationTypeSchemaParityValidated',
+      'effectiveEntitlementExpiryCasesValidated',
+      'effectiveEntitlementExpiryParityValidated',
+    ],
+  },
+  {
     id: 'nativeQuizCopy',
     flags: ['--focus-native-quiz-copy'],
     summaryKeys: [

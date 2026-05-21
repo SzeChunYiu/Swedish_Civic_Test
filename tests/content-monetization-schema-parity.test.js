@@ -34,6 +34,8 @@ test('monetization TypeScript schema stays in parity with validator expectations
   assert.equal(summary.monetizationTypeUnionsValidated, 1);
   assert.equal(summary.monetizationTypeInterfacesValidated, 3);
   assert.equal(summary.monetizationTypeSchemaParityValidated, true);
+  assert.equal(summary.effectiveEntitlementExpiryCasesValidated, 5);
+  assert.equal(summary.effectiveEntitlementExpiryParityValidated, true);
   assert.match(monetizationTypes, /export type AdPlacement =/);
   assert.match(monetizationTypes, /'rewarded_extra_exam'/);
   assert.match(monetizationTypes, /export interface PremiumEntitlements/);
@@ -99,6 +101,39 @@ test('effective entitlement schema guard keeps malformed runtime flags strict bo
   Object.values(malformedProLifetime.entitlements).forEach((value) =>
     assert.equal(typeof value, 'boolean'),
   );
+});
+
+test('effective entitlement schema guard rejects non-canonical temporary Pro expiry values', () => {
+  const { resolveEffectiveEntitlement, timeBoundedExpiry } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const canonicalReferral = '2026-05-26T12:00:00.000Z';
+
+  for (const expiresAtIso of [
+    '2026-06-31T00:00:00.000Z',
+    '2026-06-01',
+    '2026-06-01T00:30:00+02:00',
+  ]) {
+    const result = resolveEffectiveEntitlement({
+      proTrial: { expiresAtIso },
+      now,
+    });
+
+    assert.equal(result.primarySource, 'free');
+    assert.equal(result.entitlements.spacedRepetition, false);
+    assert.equal(result.nextExpiryIso, null);
+    assert.equal(timeBoundedExpiry({ proTrial: { expiresAtIso }, now }), null);
+  }
+
+  const stacked = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: '2026-06-01T00:30:00+02:00' },
+    referralGrant: { expiresAtIso: canonicalReferral },
+    now,
+  });
+  assert.equal(stacked.primarySource, 'referral-grant-active');
+  assert.deepEqual(stacked.activeSources, ['referral-grant-active']);
+  assert.equal(stacked.nextExpiryIso, canonicalReferral);
 });
 
 test('monetization schema parity rejects entitlement optionality drift', () => {
