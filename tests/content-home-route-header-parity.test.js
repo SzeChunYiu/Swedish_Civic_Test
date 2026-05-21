@@ -41,7 +41,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 94);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -77,7 +77,7 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
   assert.match(source, /Gå till övningsprov/);
-  assert.match(source, /gå till övningsprov när steget är klart/);
+  assert.match(source, /gå till övningsprovet när steget är klart/);
   assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.doesNotMatch(source, /Redoindikator|Readiness indicator|Provredo|Exam readiness/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);

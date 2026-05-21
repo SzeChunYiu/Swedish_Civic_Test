@@ -255,7 +255,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       'Välj ett tydligt nästa steg, få snabb återkoppling och följ framstegen utan att provläget störs.',
     studyLoopTitle: 'Smarta studievanor',
     subtitle:
-      'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+      'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     title: 'Studera lugnt, ett samhällsbegrepp i taget',
     weakChaptersHelper: 'behöver repetition',
     weakChaptersMetric: 'svaga kapitel',

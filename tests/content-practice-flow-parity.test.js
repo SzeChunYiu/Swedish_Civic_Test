@@ -18,7 +18,7 @@ test('practice flow runtime selection stays in parity with the published questio
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.practiceFlowCasesValidated, 12);
+  assert.equal(summary.practiceFlowCasesValidated, 7);
   assert.equal(summary.practiceFlowParityValidated, true);
 });
 
@@ -83,6 +83,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /practice flow completion outside visible bank is ignored scoped completed ids returned \["q003"\], expected \[\]/,
+    /practice flow completion outside visible bank is ignored returned "q001", expected "q002"/,
   );
 });

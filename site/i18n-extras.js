@@ -11,6 +11,8 @@
   const extra = {
     'zh-Hans': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 学习与练习。',
+      'meta.description': '非官方瑞典公民知识练习，包含有来源的问题、短章节和从容复习工具。',
       'nav.home': '首页',
       'nav.practice': '练习',
       'nav.ebook': '电子书',
@@ -90,7 +92,30 @@
       'footer.copyright': '© 2026 瑞典公民测验。在斯德哥尔摩用肉桂卷制作。',
       'footer.fika': 'Lagom 打造 · Fika 测试。',
       'nav.mock': '模拟考',
+      'nav.dashboard': '学习面板',
       'nav.cta': '获取应用 ↗',
+      'purchase.eyebrow': '账号购买',
+      'purchase.h1a': '登录后再升级。',
+      'purchase.h1b': '购买会保留在该账号下。',
+      'purchase.lede':
+        '网页升级需要先登录 Almost Swedish 账号。登录后，我们会为该用户创建 Supabase 购买意向，然后把 Android 用户带到 Google Play，用同一个应用账号完成一次性购买。',
+      'purchase.removeAds.eyebrow': '无广告',
+      'purchase.removeAds.title': '移除广告',
+      'purchase.removeAds.body': 'Google Play/App Store 确认后关闭学习广告。核心学习功能仍然免费。',
+      'purchase.removeAds.locked': '登录后购买无广告',
+      'purchase.removeAds.ready': '继续前往 Google Play — 29 kr',
+      'purchase.premium.eyebrow': '高级版',
+      'purchase.premium.title': '终身高级版',
+      'purchase.premium.body': '包含“移除广告”的全部内容，外加高级学习工具——电子书标注、笔记等——绑定到你登录的账号。',
+      'purchase.premium.locked': '登录后购买高级版',
+      'purchase.premium.ready': '继续前往 Google Play — 59 kr',
+      'purchase.price.once': '一次性购买',
+      'purchase.status.locked': '请先登录，这样升级才能绑定到你的账号。',
+      'purchase.status.ready': '已准备好以 {account} 购买。',
+      'purchase.status.needSignIn': '请先登录。购买会绑定到你在这里使用的账号。',
+      'purchase.status.realSignin': '购买跳转前需要真实的 Supabase 登录。',
+      'purchase.status.preparing': '正在准备绑定账号的 Google Play 跳转…',
+      'purchase.status.error': '购买无法开始。请重新登录后再试。',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': '瑞典简史',
       'chap.2.t': '瑞典如何治理',
@@ -143,13 +168,13 @@
         '它会帮助你<em>学习</em>。其他取决于你、官方资料，以及你休息喝 fika 的次数。我们从公开题库整理问题，并用简单语言解释。',
       'faq.3.q': '我需要账号吗？',
       'faq.3.a':
-        '不需要。MVP 不要求注册。没有邮箱、没有手机号，也不用上传尴尬头像。学习进度保存在你的设备上。',
+        '不需要——不注册也能使用全部功能，学习进度保存在你的设备上。登录是可选的，但能解锁更多：你的标注、笔记和学习面板会在所有设备间同步。',
       'faq.4.q': '它是免费的吗？',
       'faq.4.a':
         '可以免费开始、免费学习，也可以免费做模拟考。广告帮助保持核心功能可用；“移除广告”是可选的一次性 29 SEK 购买。',
       'faq.5.q': '也可以用瑞典语吗？',
       'faq.5.a':
-        '可以。在导航里切换 EN / SV，或在应用内更改。很多学习者会同时使用两种语言：先读瑞典语，卡住时看英文。',
+        '可以。点击顶部栏的语言按钮即可切换——瑞典语、英语，还有另外十种语言。很多人会同时用两种：先读瑞典语，卡住时再看另一种。',
       'faq.6.q': '我的数据会分享给别人吗？',
       'faq.6.a':
         '你的学习进度、答案、错题和设置保存在本地。网站的 Google AdSense 和应用内的 Google Mobile Ads（AdMob）可能处理广告和同意信号，但广告不会收到你的学习答案或进度。',
@@ -375,6 +400,8 @@
     },
     'zh-Hant': {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — 學習與練習。',
+      'meta.description': '非官方瑞典公民知識練習，包含有來源的題目、短章節和從容複習工具。',
       'nav.home': '首頁',
       'nav.practice': '練習',
       'nav.ebook': '電子書',
@@ -454,7 +481,30 @@
       'footer.copyright': '© 2026 瑞典公民測驗。在斯德哥爾摩用肉桂捲製作。',
       'footer.fika': 'Lagom 打造 · Fika 測試。',
       'nav.mock': '模擬考',
+      'nav.dashboard': '學習面板',
       'nav.cta': '取得應用 ↗',
+      'purchase.eyebrow': '帳號購買',
+      'purchase.h1a': '登入後再升級。',
+      'purchase.h1b': '購買會保留在該帳號下。',
+      'purchase.lede':
+        '網頁升級需要先登入 Almost Swedish 帳號。登入後，我們會為該使用者建立 Supabase 購買意向，然後把 Android 使用者帶到 Google Play，用同一個應用程式帳號完成一次性購買。',
+      'purchase.removeAds.eyebrow': '無廣告',
+      'purchase.removeAds.title': '移除廣告',
+      'purchase.removeAds.body': 'Google Play/App Store 確認後關閉學習廣告。核心學習功能仍然免費。',
+      'purchase.removeAds.locked': '登入後購買無廣告',
+      'purchase.removeAds.ready': '繼續前往 Google Play — 29 kr',
+      'purchase.premium.eyebrow': '進階版',
+      'purchase.premium.title': '終身進階版',
+      'purchase.premium.body': '包含「移除廣告」的全部內容，外加進階學習工具——電子書標註、筆記等——綁定到你登入的帳號。',
+      'purchase.premium.locked': '登入後購買進階版',
+      'purchase.premium.ready': '繼續前往 Google Play — 59 kr',
+      'purchase.price.once': '一次性購買',
+      'purchase.status.locked': '請先登入，這樣升級才能綁定到你的帳號。',
+      'purchase.status.ready': '已準備好以 {account} 購買。',
+      'purchase.status.needSignIn': '請先登入。購買會綁定到你在這裡使用的帳號。',
+      'purchase.status.realSignin': '購買跳轉前需要真實的 Supabase 登入。',
+      'purchase.status.preparing': '正在準備綁定帳號的 Google Play 跳轉…',
+      'purchase.status.error': '購買無法開始。請重新登入後再試。',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': '瑞典簡史',
       'chap.2.t': '瑞典如何治理',
@@ -507,13 +557,13 @@
         '它會幫助你<em>學習</em>。其他取決於你、官方資料，以及你休息喝 fika 的次數。我們整理公開題庫，並用簡單語言解釋每一題。',
       'faq.3.q': '我需要帳號嗎？',
       'faq.3.a':
-        '不需要。MVP 不要求註冊。沒有電子郵件、沒有電話號碼，也不用上傳尷尬大頭照。學習進度保存在你的裝置上。',
+        '不需要——不註冊也能使用全部功能，學習進度保存在你的裝置上。登入是可選的，但能解鎖更多：你的標註、筆記和學習面板會在所有裝置間同步。',
       'faq.4.q': '它是免費的嗎？',
       'faq.4.a':
         '可以免費開始、免費學習，也可以免費做模擬考。廣告幫助維持核心功能可用；「移除廣告」是可選的一次性 29 SEK 購買。',
       'faq.5.q': '也可以用瑞典語嗎？',
       'faq.5.a':
-        '可以。在導覽列切換 EN / SV，或在應用程式內更改。很多學習者會同時使用兩種語言：先讀瑞典語，卡住時看英文。',
+        '可以。點擊頂部列的語言按鈕即可切換——瑞典語、英語，還有另外十種語言。很多人會同時用兩種：先讀瑞典語，卡住時再看另一種。',
       'faq.6.q': '我的資料會分享給別人嗎？',
       'faq.6.a':
         '你的學習進度、答案、錯題和設定保存在本機。網站的 Google AdSense 和應用程式內的 Google Mobile Ads（AdMob）可能處理廣告和同意訊號，但廣告不會收到你的學習答案或進度。',
@@ -742,6 +792,8 @@
     },
     ar: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — دراسة وتدريب.',
+      'meta.description': 'تدريب غير رسمي على المعرفة المدنية السويدية مع أسئلة موثقة المصادر وفصول قصيرة وأدوات مراجعة هادئة.',
       'nav.home': 'الرئيسية',
       'nav.practice': 'تدريب',
       'nav.ebook': 'دليل الدراسة',
@@ -824,7 +876,32 @@
       'footer.copyright': '© 2026 اختبار المواطنة السويدي. صُنع بلفائف القرفة في ستوكهولم.',
       'footer.fika': 'صُنع بروح لاغوم · جُرِّب مع القهوة.',
       'nav.mock': 'اختبار تدريبي',
+      'nav.dashboard': 'لوحة المعلومات',
       'nav.cta': 'احصل على التطبيق ↗',
+      'purchase.eyebrow': 'مشتريات الحساب',
+      'purchase.h1a': 'الترقية بعد تسجيل الدخول فقط.',
+      'purchase.h1b': 'يبقى الشراء مرتبطًا بذلك الحساب.',
+      'purchase.lede':
+        'تتطلب ترقيات الويب تسجيل الدخول أولًا إلى حساب Almost Swedish. بعد تسجيل الدخول ننشئ نية شراء في Supabase لذلك المستخدم، ثم ننقل مشتري Android إلى Google Play لإكمال الشراء لمرة واحدة بالحساب نفسه في التطبيق.',
+      'purchase.removeAds.eyebrow': 'بلا إعلانات',
+      'purchase.removeAds.title': 'إزالة الإعلانات',
+      'purchase.removeAds.body':
+        'يوقف إعلانات الدراسة بعد تأكيد Google Play/App Store. تبقى الدراسة الأساسية مجانية.',
+      'purchase.removeAds.locked': 'سجّل الدخول لشراء إزالة الإعلانات',
+      'purchase.removeAds.ready': 'تابع إلى Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'مميز',
+      'purchase.premium.title': 'مميز مدى الحياة',
+      'purchase.premium.body':
+        'يشمل كل ما في خطة بلا إعلانات، بالإضافة إلى أدوات دراسة مميّزة — تظليل الكتاب الإلكتروني والملاحظات وغيرها — للحساب الذي تسجّل الدخول به.',
+      'purchase.premium.locked': 'سجّل الدخول لشراء Premium',
+      'purchase.premium.ready': 'تابع إلى Google Play — 59 kr',
+      'purchase.price.once': 'مرة واحدة',
+      'purchase.status.locked': 'سجّل الدخول أولًا حتى تُربط الترقية بحسابك.',
+      'purchase.status.ready': 'جاهز للمشتريات باسم {account}.',
+      'purchase.status.needSignIn': 'سجّل الدخول أولًا. ترتبط المشتريات بالحساب الذي تستخدمه هنا.',
+      'purchase.status.realSignin': 'يلزم تسجيل دخول Supabase حقيقي قبل تحويل الشراء.',
+      'purchase.status.preparing': 'نحضّر تحويل Google Play المرتبط بحسابك…',
+      'purchase.status.error': 'تعذر بدء الشراء. سجّل الدخول مرة أخرى وحاول مجددًا.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'تاريخ قصير جداً للسويد',
       'chap.2.t': 'كيف تُحكم السويد',
@@ -877,13 +954,13 @@
         'سيساعدك على <em>الدراسة</em>. الباقي يعتمد عليك، وعلى المواد الرسمية، وعلى مقدار الراحة التي تأخذها. نجمع الأسئلة من المصادر العامة ونشرح كل سؤال بلغة بسيطة.',
       'faq.3.q': 'هل أحتاج إلى حساب؟',
       'faq.3.a':
-        'لا. نسخة MVP لا تحتاج إلى تسجيل. لا بريد إلكتروني ولا رقم هاتف ولا صورة ملف محرجة. تقدمك يبقى على جهازك.',
+        'لا — يمكنك فعل كل شيء دون تسجيل، وتقدّمك محفوظ على جهازك. تسجيل الدخول اختياري، لكنه يفتح المزيد: تتزامن تظليلاتك وملاحظاتك ولوحتك عبر كل أجهزتك.',
       'faq.4.q': 'هل هو مجاني؟',
       'faq.4.a':
         'مجاني للبدء والدراسة وأداء الاختبارات التجريبية. الإعلانات تساعد على بقاء التطبيق الأساسي متاحاً؛ إزالة الإعلانات شراء اختياري لمرة واحدة بقيمة 29 كرونة.',
       'faq.5.q': 'هل يعمل باللغة السويدية أيضاً؟',
       'faq.5.a':
-        'نعم. بدّل EN / SV في شريط التنقل أو غيّره داخل التطبيق. كثير من المتعلمين يستخدمون اللغتين معاً: اقرأ السؤال بالسويدية وانظر إلى الإنجليزية عند الحاجة.',
+        'نعم. اضغط على زر اللغة في الشريط العلوي للتبديل — السويدية والإنجليزية وعشر لغات أخرى. كثيرون يستخدمون لغتين معًا: اقرأ بالسويدية ثم ألقِ نظرة على لغة أخرى عند التعثّر.',
       'faq.6.q': 'هل تُشارك بياناتي مع أحد؟',
       'faq.6.a':
         'تقدمك وإجاباتك وأخطاؤك وإعداداتك تبقى محلية. يمكن لـ Google AdSense على الموقع وGoogle Mobile Ads (AdMob) في التطبيق معالجة إشارات الإعلان والموافقة، لكن الإعلانات لا تتلقى إجاباتك أو تقدمك.',
@@ -1121,6 +1198,8 @@
     },
     ckb: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — خوێندن و مەشق.',
+      'meta.description': 'مەشقی ناڕەسمی بۆ زانیاریی مەدەنیی سوید، بە پرسیاری پشتبەستوو بە سەرچاوە، بەشی کورت و ئامرازی دووبارەکردنەوەی ئارام.',
       'nav.home': 'سەرەتا',
       'nav.practice': 'مەشق',
       'nav.ebook': 'کتێبی ئەلیکترۆنی',
@@ -1205,7 +1284,33 @@
       'footer.copyright': '© 2026 Almost Swedish. لە ستۆکهۆڵم بە نانی دارچینی ئامادە کرا.',
       'footer.fika': 'بە ڕۆحی lagom دروست کرا · بە fika تاقی کرایەوە.',
       'nav.mock': 'تاقیکردنەوەی ئەزموونی',
+      'nav.dashboard': 'داشبۆرد',
       'nav.cta': 'ئەپەکە وەربگرە ↗',
+      'purchase.eyebrow': 'کڕینی هەژمار',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'هەموو ئەوەی پلانی بێ‌ڕیکلام لەخۆدەگرێت، لەگەڵ ئامرازی خوێندنی پڕیمیەم — نیشانەکردن و تێبینی لە کتێبە ئەلیکترۆنییەکە و زیاتر — بۆ ئەو هەژمارەی پێیدا دەچیتە ژوورەوە.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'مێژوویەکی زۆر کورتی سوید',
       'chap.2.t': 'سوید چۆن بەڕێوە دەبرێت',
@@ -1259,13 +1364,13 @@
         'یارمەتیت دەدات <em>بخوێنیتەوە</em>. ئەوەی تر بە تۆ، سەرچاوە فەرمییەکان و چەند پشووێکی fika دەگریت پەیوەستە. پرسیارەکان لە سەرچاوە گشتییەکان وەردەگرین و بە زمانی سادە ڕوونیان دەکەینەوە.',
       'faq.3.q': 'پێویستم بە هەژمار هەیە؟',
       'faq.3.a':
-        'نەخێر. MVP هیچ تۆمارکردنێک ناوێت. نە ئیمەیڵ، نە ژمارەی مۆبایل، نە وێنەیەکی کۆنی نەگونجاو. پێشکەوتنت لەسەر ئامێرەکەت دەمێنێتەوە.',
+        'نەخێر — دەتوانیت هەموو شتێک بکەیت بەبێ تۆمارکردن، و پێشکەوتنت لەسەر ئامێرەکەت دەمێنێتەوە. چوونەژوورەوە ئیختیارییە، بەڵام زیاتر دەکاتەوە: هایلایت، تێبینی و داشبۆردەکەت لەنێوان هەموو ئامێرەکانت هاوکات دەبن.',
       'faq.4.q': 'ئایا بەخۆڕاییە؟',
       'faq.4.a':
         'دەستپێکردن، خوێندنەوە و تاقیکردنەوەی ئەزموونی بەخۆڕایین. ڕیکلامەکان یارمەتی دەدەن بەشە سەرەکییەکە بەردەست بێت؛ لابردنی ڕیکلام کڕینی جارێکی ئارەزوومەندانەی 29 SEK ـە.',
       'faq.5.q': 'ئایا بە سویدییش کار دەکات؟',
       'faq.5.a':
-        'بەڵێ. لە ناڤیگێیشن EN / SV بگۆڕە، یان لە ناو ئەپەکەدا. زۆر فێرخواز هەردوو زمانیان پێکەوە بەکاردەهێنن.',
+        'بەڵێ. دوگمەی زمان لە تووڵە سەرەوە دابگرە بۆ گۆڕین — سویدی، ئینگلیزی و دە زمانی تر. زۆر کەس دوو زمان پێکەوە بەکاردەهێنن: بە سویدی بخوێنەوە، کاتێک گیرت خوارد سەیری یەکێکی تر بکە.',
       'faq.6.q': 'ئایا داتاکەم لەگەڵ کەسدا هاوبەش دەکرێت؟',
       'faq.6.a':
         'پێشکەوتن، وەڵامەکان، هەڵەکان و ڕێکخستنەکانت ناوخۆیی دەمێننەوە. Google AdSense لە وێبسایت و Google Mobile Ads (AdMob) لە ئەپ دەتوانن نیشانەکانی ڕیکلام و ڕەزامەندی پرۆسێس بکەن، بەڵام ڕیکلامەکان وەڵام و پێشکەوتنت وەرناگرن.',
@@ -1508,6 +1613,8 @@
     },
     fa: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — مطالعه و تمرین.',
+      'meta.description': 'تمرین غیررسمی دانش مدنی سوئد با پرسش‌های دارای منبع، فصل‌های کوتاه و ابزارهای مرور آرام.',
       'nav.home': 'خانه',
       'nav.practice': 'تمرین',
       'nav.ebook': 'کتاب الکترونیکی',
@@ -1592,7 +1699,33 @@
       'footer.copyright': '© ۲۰۲۶ Almost Swedish. در استکهلم با نان دارچینی آماده شد.',
       'footer.fika': 'با روحیه lagom ساخته شد · با fika امتحان شد.',
       'nav.mock': 'آزمون آزمایشی',
+      'nav.dashboard': 'داشبورد',
       'nav.cta': 'دریافت برنامه ↗',
+      'purchase.eyebrow': 'خریدهای حساب',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'شامل همهٔ امکانات پلن بدون تبلیغات، به‌علاوهٔ ابزارهای مطالعهٔ ویژه — هایلایت و یادداشت در کتاب الکترونیکی و موارد دیگر — برای حسابی که با آن وارد می‌شوی.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'تاریخ بسیار کوتاه سوئد',
       'chap.2.t': 'سوئد چگونه اداره می‌شود',
@@ -1646,13 +1779,13 @@
         'به شما کمک می‌کند <em>مطالعه</em> کنید. بقیه به شما، منابع رسمی و مقدار استراحت fika بستگی دارد. پرسش‌ها را از منابع عمومی می‌گیریم و ساده توضیح می‌دهیم.',
       'faq.3.q': 'آیا حساب لازم دارم؟',
       'faq.3.a':
-        'نه. MVP هیچ ثبت‌نامی نمی‌خواهد. نه ایمیل، نه شماره تلفن، نه عکس پروفایل قدیمی. پیشرفت روی دستگاه شما می‌ماند.',
+        'نه — می‌توانی همه‌چیز را بدون ثبت‌نام انجام دهی و پیشرفتت روی دستگاهت می‌ماند. ورود اختیاری است اما امکانات بیشتری باز می‌کند: هایلایت‌ها، یادداشت‌ها و داشبوردت بین همه دستگاه‌هایت همگام می‌شوند.',
       'faq.4.q': 'رایگان است؟',
       'faq.4.a':
         'شروع، مطالعه و آزمون‌های آزمایشی رایگان است. تبلیغات کمک می‌کند بخش اصلی در دسترس بماند؛ حذف تبلیغات خرید اختیاری یک‌باره 29 کرون است.',
       'faq.5.q': 'به سوئدی هم کار می‌کند؟',
       'faq.5.a':
-        'بله. EN / SV را در ناوبری تغییر دهید یا داخل برنامه عوض کنید. بسیاری از زبان‌آموزان هر دو را با هم استفاده می‌کنند.',
+        'بله. روی دکمه زبان در نوار بالا بزن تا عوض شود — سوئدی، انگلیسی و ده زبان دیگر. خیلی‌ها هم‌زمان از دو زبان استفاده می‌کنند: به سوئدی بخوان و وقتی گیر کردی نگاهی به زبان دیگر بینداز.',
       'faq.6.q': 'آیا داده‌هایم با کسی به اشتراک گذاشته می‌شود؟',
       'faq.6.a':
         'پیشرفت، پاسخ‌ها، اشتباهات و تنظیمات شما محلی می‌ماند. Google AdSense در وب‌سایت و Google Mobile Ads (AdMob) در برنامه می‌توانند سیگنال‌های تبلیغ و رضایت را پردازش کنند، اما پاسخ‌ها یا پیشرفت مطالعه را دریافت نمی‌کنند.',
@@ -1893,6 +2026,8 @@
     },
     pl: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — nauka i ćwiczenia.',
+      'meta.description': 'Nieoficjalne ćwiczenia z wiedzy obywatelskiej o Szwecji: pytania ze źródłami, krótkie rozdziały i spokojne narzędzia powtórkowe.',
       'nav.home': 'Strona główna',
       'nav.practice': 'Ćwiczenia',
       'nav.ebook': 'E-book',
@@ -1979,7 +2114,35 @@
         '© 2026 Almost Swedish. Przygotowano w Sztokholmie z bułeczkami cynamonowymi.',
       'footer.fika': 'Stworzone w duchu lagom · sprawdzone przy fika.',
       'nav.mock': 'Egzamin próbny',
+      'nav.dashboard': 'Panel',
       'nav.cta': 'Pobierz aplikację ↗',
+      'purchase.eyebrow': 'Zakupy konta',
+      'purchase.h1a': 'Ulepsz dopiero po zalogowaniu.',
+      'purchase.h1b': 'Zakup zostaje przy tym koncie.',
+      'purchase.lede':
+        'Ulepszenia w sieci wymagają najpierw zalogowania na konto Almost Swedish. Po logowaniu tworzymy w Supabase zamiar zakupu dla tego użytkownika, a następnie kierujemy kupujących z Androida do Google Play, aby dokończyli jednorazowy zakup na tym samym koncie w aplikacji.',
+      'purchase.removeAds.eyebrow': 'Bez reklam',
+      'purchase.removeAds.title': 'Usuń reklamy',
+      'purchase.removeAds.body':
+        'Wyłącza reklamy nauki po potwierdzeniu Google Play/App Store. Podstawowa nauka zostaje bezpłatna.',
+      'purchase.removeAds.locked': 'Zaloguj się, aby kupić brak reklam',
+      'purchase.removeAds.ready': 'Przejdź do Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Premium dożywotnio',
+      'purchase.premium.body':
+        'Zawiera wszystko z planu bez reklam oraz narzędzia Premium do nauki — podświetlanie w e-booku, notatki i więcej — dla konta, na które się logujesz.',
+      'purchase.premium.locked': 'Zaloguj się, aby kupić Premium',
+      'purchase.premium.ready': 'Przejdź do Google Play — 59 kr',
+      'purchase.price.once': 'jednorazowo',
+      'purchase.status.locked': 'Najpierw się zaloguj, aby ulepszenie było przypisane do konta.',
+      'purchase.status.ready': 'Gotowe do zakupów jako {account}.',
+      'purchase.status.needSignIn':
+        'Najpierw się zaloguj. Zakupy są przypisane do konta użytego tutaj.',
+      'purchase.status.realSignin':
+        'Przed przekazaniem zakupu wymagane jest prawdziwe logowanie Supabase.',
+      'purchase.status.preparing': 'Przygotowujemy przekazanie do Google Play przypisane do konta…',
+      'purchase.status.error':
+        'Nie można rozpocząć zakupu. Zaloguj się ponownie i spróbuj jeszcze raz.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Bardzo krótka historia Szwecji',
       'chap.2.t': 'Jak rządzona jest Szwecja',
@@ -2033,13 +2196,13 @@
         'Pomoże Ci <em>się uczyć</em>. Reszta zależy od Ciebie, materiałów oficjalnych i liczby przerw na fika. Bierzemy pytania z publicznych źródeł i wyjaśniamy je prostym językiem.',
       'faq.3.q': 'Czy potrzebuję konta?',
       'faq.3.a':
-        'Nie. MVP nie wymaga rejestracji. Bez e-maila, telefonu i niezręcznego zdjęcia profilowego. Postęp zostaje na Twoim urządzeniu.',
+        'Nie — wszystko zrobisz bez rejestracji, a Twoje postępy zostają na urządzeniu. Logowanie jest opcjonalne, ale odblokowuje więcej: Twoje zaznaczenia, notatki i panel synchronizują się na wszystkich urządzeniach.',
       'faq.4.q': 'Czy to darmowe?',
       'faq.4.a':
         'Start, nauka i egzaminy próbne są bezpłatne. Reklamy pomagają utrzymać podstawową aplikację; Usuń reklamy to opcjonalny jednorazowy zakup za 29 SEK.',
       'faq.5.q': 'Czy działa też po szwedzku?',
       'faq.5.a':
-        'Tak. Przełącz EN / SV w nawigacji albo w aplikacji. Wielu uczących się używa obu języków naraz.',
+        'Tak. Dotknij przycisku języka na górnym pasku, aby przełączyć — szwedzki, angielski i dziesięć innych. Wielu uczy się na dwóch naraz: czytaj po szwedzku, a gdy utkniesz, zerknij na inny język.',
       'faq.6.q': 'Czy moje dane są komuś udostępniane?',
       'faq.6.a':
         'Postępy, odpowiedzi, błędy i ustawienia zostają lokalnie. Google AdSense na stronie i Google Mobile Ads (AdMob) w aplikacji mogą przetwarzać sygnały reklam i zgody, ale reklamy nie dostają Twoich odpowiedzi ani postępów.',
@@ -2290,6 +2453,8 @@
     },
     so: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — barasho iyo tababar.',
+      'meta.description': 'Tababar aan rasmi ahayn oo aqoonta bulshada Iswiidhan ah, leh su’aalo ilo leh, cutubyo gaagaaban iyo qalab dib-u-eegis deggan.',
       'nav.home': 'Bogga Hore',
       'nav.practice': 'Tababar',
       'nav.ebook': 'Buug',
@@ -2375,7 +2540,33 @@
         '© 2026 Imtixaanka Muwaadinnimada Iswiidhan. Waxaa lagu sameeyay kanelbullar magaalada Stockholm.',
       'footer.fika': 'Si lagom ah loo dhisay · Fika lagu tijaabiyay.',
       'nav.mock': 'Imtixaan tijaabo ah',
+      'nav.dashboard': 'Guudmar',
       'nav.cta': 'Hel app-ka ↗',
+      'purchase.eyebrow': 'Iibsiyada akoonka',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'Wuxuu ku jiraa dhammaan waxa ku jira qorshaha Xayeysiis-la’aanta, iyo agab waxbarasho oo premium ah — calaamadaynta buugga elegtarooniga ah, qoraallada iyo wax kale — oo loogu talagalay akoonkaaga aad ku gasho.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Taariikh aad u kooban oo Iswiidhan ah',
       'chap.2.t': 'Sida Iswiidhan loo maamulo',
@@ -2429,13 +2620,13 @@
         'Wuxuu kaa caawinayaa <em>barashada</em>. Inta kale waxay ku xiran tahay adiga, ilaha rasmiga ah iyo inta nasasho fika aad qaadato. Su’aalaha waxaan ka soo qaadnaa ilo dadweyne oo si fudud u sharaxnaa.',
       'faq.3.q': 'Akoon ma u baahanahay?',
       'faq.3.a':
-        'Maya. MVP-ku diiwaangelin uma baahna. Email ma jiro, telefoon ma jiro, sawir profile oo dhib badan ma jiro. Horumarkaagu wuxuu ku jiraa qalabkaaga.',
+        'Maya — wax walba waad samayn kartaa adigoon diiwaangelin, horumarkaaguna wuxuu ku hadhaa qalabkaaga. Soo gelitaanku waa ikhtiyaari, laakiin wuxuu furaa wax dheeraad ah: calaamadahaaga, qoraalladaada iyo dashboard-kaaga ayaa isugu dhban dhammaan qalabkaaga.',
       'faq.4.q': 'Ma bilaash baa?',
       'faq.4.a':
         'Bilaabid, barasho iyo imtixaannada tijaabada ah waa bilaash. Xayeysiisyadu waxay caawiyaan in app-ku sii furnaado; Ka saar xayeysiisyada waa iibsasho ikhtiyaari ah oo hal mar ah, 29 SEK.',
       'faq.5.q': 'Af Iswiidhish ma ku shaqeeyaa?',
       'faq.5.a':
-        'Haa. EN / SV ka beddel navigation-ka ama app-ka dhexdiisa. Dad badan waxay isticmaalaan labada luqadood mar qura.',
+        'Haa. Taabo badhanka luqadda ee shareerka sare si aad u beddesho — Iswiidhish, Ingiriisi, iyo toban kale. Dad badan ayaa isticmaala laba isku mar: ku akhri Iswiidhish, markaad istaagto fiiri mid kale.',
       'faq.6.q': 'Xogtayda cid ma lala wadaagaa?',
       'faq.6.a':
         'Horumarkaaga, jawaabahaaga, khaladaadkaaga iyo dejintaadu waxay ku sii jiraan qalabkaaga. Google AdSense ee website-ka iyo Google Mobile Ads (AdMob) ee app-ka waxay farsameyn karaan calaamadaha xayeysiiska iyo oggolaanshaha, laakiin xayeysiisyadu ma helaan jawaabahaaga ama horumarkaaga.',
@@ -2682,6 +2873,8 @@
     },
     ti: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — መጽናዕቲን ልምምድን.',
+      'meta.description': 'ዘይወግዓዊ ልምምድ ንሽወደናዊ ሲቪክ ፍልጠት፣ ብምንጪ ዝተደገፉ ሕቶታት፣ ሓጸርቲ ምዕራፋትን ህዱእ መከለሲ መሳርሕታትን።',
       'nav.home': 'መበገሲ ገጽ',
       'nav.practice': 'ልምምድ',
       'nav.ebook': 'ኢ-መጽሓፍ',
@@ -2762,7 +2955,33 @@
       'footer.copyright': '© 2026 Almost Swedish. ኣብ ስቶክሆልም ብቡን ቀረፋ ተዳልዩ።',
       'footer.fika': 'ብመንፈስ lagom ተሰሪሑ · ብ fika ተፈቲኑ።',
       'nav.mock': 'ፈተና ልምምድ',
+      'nav.dashboard': 'ዳሽቦርድ',
       'nav.cta': 'ነቲ መተግበሪ ውሰድ ↗',
+      'purchase.eyebrow': 'ናይ ሕሳብ ዕድጊታት',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'ኩሉ ናይ ብዘይ መወዓውዒ መደብ ዘጠቓልል፣ ምስኡ ድማ ናይ ፕሪሚየም መሳርሒ መጽናዕቲ — ኣብ ኢ-ቡክ ምልክት ምግባር፣ መዘኻኸርን ካልእን — ነቲ እትኣትዎ ሕሳብ።',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'ኣዝዩ ሓጺር ታሪኽ ሽወደን',
       'chap.2.t': 'ሽወደን ከመይ ትመሓደር',
@@ -2815,12 +3034,13 @@
         '<em>ክትጽናዕ</em> ይሕግዘካ። ዝተረፈ ኣባኻ፣ ኣብ ፋዊ ምንጭታትን ክንደይ fika ከምትወስድን ይምርኮስ። ሕቶታት ካብ ህዝባዊ ምንጭታት ንወስድ እና ብቀሊል ቋንቋ ንገልጾም።',
       'faq.3.q': 'ሕሳብ የድልየኒ ድዩ?',
       'faq.3.a':
-        'ኣይፋልን። MVP ምዝገባ ኣይደልን። ኢሜይል የለን፣ ቁጽሪ ስልኪ የለን፣ ዘሕፍር ስእሊ ፕሮፋይል የለን። ምዕባለኻ ኣብ መሳርሒኻ ይቕመጥ።',
+        'ኣይፋልን — ብዘይ ምዝገባ ኩሉ ክትገብር ትኽእል፣ ምዕባለኻ ኣብ መሳርሒኻ ይተርፍ። ምእታው ኣማራጺ እዩ፣ ግን ዝያዳ ይኸፍት፦ ምልክታትካ፣ መዘኻኸርን ዳሽቦርድካን ኣብ ኩሎም መሳርሕታትካ ይሳነዩ።',
       'faq.4.q': 'ብነጻ ድዩ?',
       'faq.4.a':
         'ምጅማር፣ ምጽናዕን ፈተናታት ልምምድን ብነጻ እዮም። ምልክታት ነቲ ዋና ኣፕ ክቕጽል ይሕግዙ፤ ምልክታት ምውጋድ ናይ ሓደ ግዜ 29 SEK ክፍሊት እዩ።',
       'faq.5.q': 'ብሽወደንኛውን ይሰርሕ ድዩ?',
-      'faq.5.a': 'እወ። ኣብ navigation EN / SV ቀይር፣ ወይ ኣብ ውሽጢ ኣፕ። ብዙሓት ተማሃሮ ክልቲኡ ቋንቋታት ብሓንሳብ ይጥቀሙ።',
+      'faq.5.a':
+        'እወ። ንምቕያር ኣብ ላዕለዋይ ሰሌዳ ዘሎ መልጎም ቋንቋ ጠውቕ — ሽወደንኛ፣ እንግሊዝኛን ካልኦት ዓሰርተ ቋንቋታትን። ብዙሓት ብክልተ ቋንቋ ሓቢሮም ይጥቀሙ፦ ብሽወደንኛ ኣንብብ፣ ምስ ተሸገርካ ናብ ካልእ ጠምት።',
       'faq.6.q': 'ዳታይ ምስ ካልኦት ይካፈል ድዩ?',
       'faq.6.a':
         'ምዕባለኻ፣ መልስታትካ፣ ጌጋታትካን ቅጥዕታትካን ኣብ መሳርሒኻ ይቕመጡ። Google AdSense ኣብ ዌብሳይትን Google Mobile Ads (AdMob) ኣብ ኣፕን ምልክታት ረክላምን ፍቓድን ክሰርሑ ይኽእሉ፣ ግን መልስታትካ ወይ ምዕባለኻ ኣይቕበሉን።',
@@ -3046,6 +3266,8 @@
     },
     tr: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — çalış ve pratik yap.',
+      'meta.description': 'Kaynaklı sorular, kısa bölümler ve sakin tekrar araçlarıyla İsveç yurttaşlık bilgisi için resmi olmayan pratik.',
       'nav.home': 'Ana sayfa',
       'nav.practice': 'Alıştırma',
       'nav.ebook': 'E-kitap',
@@ -3131,7 +3353,33 @@
       'footer.copyright': '© 2026 Almost Swedish. Stockholm’de tarçınlı çöreklerle hazırlandı.',
       'footer.fika': 'Lagom ruhuyla hazırlandı · Fika ile denendi.',
       'nav.mock': 'Deneme sınavı',
+      'nav.dashboard': 'Panel',
       'nav.cta': 'Uygulamayı edin ↗',
+      'purchase.eyebrow': 'Hesap satın almaları',
+      'purchase.h1a': 'Yalnızca giriş yaptıktan sonra yükseltin.',
+      'purchase.h1b': 'Satın alma o hesapta kalır.',
+      'purchase.lede':
+        'Web yükseltmeleri önce Almost Swedish hesabıyla giriş yapmayı gerektirir. Girişten sonra bu kullanıcı için Supabase satın alma niyeti oluştururuz, ardından Android alıcılarını uygulamadaki aynı hesapla tek seferlik satın almayı tamamlamaları için Google Play’e yönlendiririz.',
+      'purchase.removeAds.eyebrow': 'Reklamsız',
+      'purchase.removeAds.title': 'Reklamları kaldır',
+      'purchase.removeAds.body':
+        'Google Play/App Store onayından sonra çalışma reklamlarını kapatır. Temel çalışma ücretsiz kalır.',
+      'purchase.removeAds.locked': 'Reklamsız satın almak için giriş yapın',
+      'purchase.removeAds.ready': 'Google Play ile devam et — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Ömür boyu Premium',
+      'purchase.premium.body':
+        'Reklamsız paketteki her şeyi ve premium çalışma araçlarını — e-kitapta vurgulama, notlar ve daha fazlası — giriş yaptığınız hesap için içerir.',
+      'purchase.premium.locked': 'Premium satın almak için giriş yapın',
+      'purchase.premium.ready': 'Google Play ile devam et — 59 kr',
+      'purchase.price.once': 'tek seferlik',
+      'purchase.status.locked': 'Yükseltmenin hesabınıza bağlanması için önce giriş yapın.',
+      'purchase.status.ready': '{account} olarak satın almaya hazır.',
+      'purchase.status.needSignIn':
+        'Önce giriş yapın. Satın almalar burada kullandığınız hesaba bağlanır.',
+      'purchase.status.realSignin': 'Satın alma aktarımından önce gerçek Supabase girişi gerekir.',
+      'purchase.status.preparing': 'Hesaba bağlı Google Play aktarımı hazırlanıyor…',
+      'purchase.status.error': 'Satın alma başlatılamadı. Lütfen tekrar giriş yapıp deneyin.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'İsveç’in çok kısa tarihi',
       'chap.2.t': 'İsveç nasıl yönetilir',
@@ -3185,13 +3433,13 @@
         '<em>Çalışmanıza</em> yardım eder. Gerisi size, resmî kaynaklara ve ne kadar fika molası verdiğinize bağlı. Soruları kamusal kaynaklardan alır ve sade bir dille açıklarız.',
       'faq.3.q': 'Hesap gerekli mi?',
       'faq.3.a':
-        'Hayır. MVP kayıt istemez. E-posta yok, telefon yok, 2017’den kalma garip profil fotoğrafı yok. İlerlemeniz cihazınızda kalır.',
+        'Hayır — kayıt olmadan her şeyi yapabilirsin ve ilerlemen cihazında kalır. Giriş yapmak isteğe bağlıdır ama daha fazlasını açar: vurguların, notların ve panon tüm cihazlarında senkronize olur.',
       'faq.4.q': 'Ücretsiz mi?',
       'faq.4.a':
         'Başlamak, çalışmak ve deneme sınavı yapmak ücretsizdir. Reklamlar temel uygulamayı erişilebilir tutar; Reklamları Kaldır isteğe bağlı, tek seferlik 29 SEK satın almadır.',
       'faq.5.q': 'İsveççe de çalışıyor mu?',
       'faq.5.a':
-        'Evet. Gezinmede EN / SV anahtarını kullanın veya uygulama içinde değiştirin. Birçok öğrenci iki dili birlikte kullanır.',
+        'Evet. Üst çubuktaki dil düğmesine dokunarak geçiş yap — İsveççe, İngilizce ve on dil daha. Çoğu kişi ikisini birlikte kullanır: İsveççe oku, takılınca başka bir dile göz at.',
       'faq.6.q': 'Verilerim biriyle paylaşılır mı?',
       'faq.6.a':
         'Çalışma ilerlemeniz, yanıtlarınız, hatalarınız ve ayarlarınız yerel kalır. Web sitesindeki Google AdSense ve uygulamadaki Google Mobile Ads (AdMob), reklam ve onay sinyallerini işleyebilir; ancak reklamlar çalışma yanıtlarınızı veya ilerlemenizi almaz.',
@@ -3433,6 +3681,8 @@
     },
     uk: {
       brand: 'Almost Swedish',
+      'meta.title': 'Almost Swedish — навчання і практика.',
+      'meta.description': 'Неофіційна практика зі шведських громадянських знань із питаннями з джерелами, короткими розділами та спокійними інструментами повторення.',
       'nav.home': 'Головна',
       'nav.practice': 'Тренування',
       'nav.ebook': 'Електронна книга',
@@ -3518,7 +3768,35 @@
       'footer.copyright': '© 2026 Almost Swedish. Підготовлено у Стокгольмі з булочками з корицею.',
       'footer.fika': 'Створено в дусі lagom · перевірено під час fika.',
       'nav.mock': 'Пробний іспит',
+      'nav.dashboard': 'Панель',
       'nav.cta': 'Отримати застосунок ↗',
+      'purchase.eyebrow': 'Покупки облікового запису',
+      'purchase.h1a': 'Оновлюйте лише після входу.',
+      'purchase.h1b': 'Покупка залишається з цим обліковим записом.',
+      'purchase.lede':
+        'Вебоновлення спершу потребують входу в обліковий запис Almost Swedish. Після входу ми створюємо в Supabase намір покупки для цього користувача, а потім спрямовуємо покупців Android до Google Play, щоб завершити одноразову покупку з тим самим обліковим записом у застосунку.',
+      'purchase.removeAds.eyebrow': 'Без реклами',
+      'purchase.removeAds.title': 'Прибрати рекламу',
+      'purchase.removeAds.body':
+        'Вимикає навчальну рекламу після підтвердження Google Play/App Store. Основне навчання залишається безкоштовним.',
+      'purchase.removeAds.locked': 'Увійдіть, щоб купити без реклами',
+      'purchase.removeAds.ready': 'Продовжити в Google Play — 29 kr',
+      'purchase.premium.eyebrow': 'Premium',
+      'purchase.premium.title': 'Premium назавжди',
+      'purchase.premium.body':
+        'Містить усе з плану без реклами, а також преміум-інструменти навчання — виділення в електронній книзі, нотатки та інше — для облікового запису, з яким ви входите.',
+      'purchase.premium.locked': 'Увійдіть, щоб купити Premium',
+      'purchase.premium.ready': 'Продовжити в Google Play — 59 kr',
+      'purchase.price.once': 'одноразово',
+      'purchase.status.locked':
+        'Спершу увійдіть, щоб оновлення прив’язалося до вашого облікового запису.',
+      'purchase.status.ready': 'Готово до покупок як {account}.',
+      'purchase.status.needSignIn':
+        'Спершу увійдіть. Покупки прив’язуються до облікового запису, який ви використовуєте тут.',
+      'purchase.status.realSignin': 'Перед передачею покупки потрібен справжній вхід Supabase.',
+      'purchase.status.preparing':
+        'Готуємо передачу до Google Play, прив’язану до вашого облікового запису…',
+      'purchase.status.error': 'Не вдалося почати покупку. Увійдіть ще раз і повторіть спробу.',
       'terms.h1a': 'Plain rules,',
       'chap.1.t': 'Дуже коротка історія Швеції',
       'chap.2.t': 'Як керується Швеція',
@@ -3572,13 +3850,13 @@
         'Це допоможе вам <em>навчатися</em>. Решта залежить від вас, офіційних джерел і кількості перерв fika. Ми беремо питання з публічних джерел і пояснюємо їх простою мовою.',
       'faq.3.q': 'Чи потрібен акаунт?',
       'faq.3.a':
-        'Ні. MVP не потребує реєстрації. Без електронної пошти, телефону чи незручного фото профілю. Прогрес зберігається на вашому пристрої.',
+        "Ні — усе можна робити без реєстрації, а ваш прогрес зберігається на пристрої. Вхід необов'язковий, але відкриває більше: ваші виділення, нотатки та панель синхронізуються на всіх пристроях.",
       'faq.4.q': 'Це безкоштовно?',
       'faq.4.a':
         'Почати, навчатися і проходити пробні тести можна безкоштовно. Реклама допомагає підтримувати основну частину доступною; Прибрати рекламу — необов’язкова одноразова покупка за 29 SEK.',
       'faq.5.q': 'Чи працює шведською теж?',
       'faq.5.a':
-        'Так. Перемкніть EN / SV у навігації або змініть у застосунку. Багато учнів використовують обидві мови одночасно.',
+        'Так. Натисніть кнопку мови на верхній панелі, щоб перемкнути — шведська, англійська та ще десять. Багато хто вчиться двома одразу: читайте шведською, а коли застрягли — зазирніть в іншу.',
       'faq.6.q': 'Чи передаються мої дані комусь?',
       'faq.6.a':
         'Ваш прогрес, відповіді, помилки й налаштування залишаються локально. Google AdSense на сайті та Google Mobile Ads (AdMob) у застосунку можуть обробляти рекламні сигнали й сигнали згоди, але реклама не отримує ваших навчальних відповідей або прогресу.',
