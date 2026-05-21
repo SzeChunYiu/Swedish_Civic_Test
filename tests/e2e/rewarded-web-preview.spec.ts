@@ -16,10 +16,13 @@ const copy: Record<
     homeHeading: string;
     previewBody: string;
     previewButton: string;
+    previewButtonLabel: string;
     unlockedCta: string;
+    unlockedCtaLabel: string;
     unlockedStatus: string;
     timeLeft: RegExp;
     unlockButton: string;
+    unlockButtonLabel: string;
   }
 > = {
   sv: {
@@ -29,10 +32,13 @@ const copy: Record<
     previewBody:
       'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
     previewButton: 'Slutför förhandsvisning',
+    previewButtonLabel: 'Slutför sponsrad förhandsvisning för ett extra övningsprov',
     unlockedCta: 'Starta upplåst övningsprov',
+    unlockedCtaLabel: 'Starta det upplåsta extra övningsprovet',
     unlockedStatus: 'Extra övningsprov upplåst.',
     timeLeft: /^Tid kvar/,
     unlockButton: 'Lås upp extra övningsprov',
+    unlockButtonLabel: 'Lås upp ett extra övningsprov efter förhandsvisningen',
   },
   en: {
     activeCount: `0/${totalQuestions} answered`,
@@ -41,10 +47,13 @@ const copy: Record<
     previewBody:
       'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
     previewButton: 'Complete sponsor preview',
+    previewButtonLabel: 'Complete the sponsored preview for an extra mock exam',
     unlockedCta: 'Start unlocked mock exam',
+    unlockedCtaLabel: 'Start the unlocked extra mock exam',
     unlockedStatus: 'Extra mock exam unlocked.',
     timeLeft: /^Time left/,
     unlockButton: 'Unlock extra mock exam',
+    unlockButtonLabel: 'Unlock an extra mock exam after the preview',
   },
 };
 
@@ -138,17 +147,17 @@ for (const language of ['sv', 'en'] as const) {
     await expect(page.getByText(t.timeLeft)).toHaveCount(0);
     await expect(await readRewardedCredits(page)).toBe(0);
 
-    const completionButton = page.getByRole('button', { name: t.previewButton });
+    const completionButton = page.getByRole('button', { name: t.previewButtonLabel });
     await expectReachableTarget(completionButton);
     await completionButton.click();
     await expect(completionButton).toBeDisabled();
 
-    const unlockButton = page.getByRole('button', { name: t.unlockButton });
+    const unlockButton = page.getByRole('button', { name: t.unlockButtonLabel });
     await expectReachableTarget(unlockButton);
     await unlockButton.click();
 
     await expect(page.getByText(t.unlockedStatus)).toBeVisible();
-    await expect(page.getByRole('link', { name: t.unlockedCta })).toBeVisible();
+    await expect(page.getByRole('link', { name: t.unlockedCtaLabel })).toBeVisible();
     await expect(await readRewardedCredits(page)).toBe(1);
 
     await page.goto('/exam', { waitUntil: 'networkidle' });
