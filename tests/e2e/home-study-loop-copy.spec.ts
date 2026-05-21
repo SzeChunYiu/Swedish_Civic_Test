@@ -20,7 +20,12 @@ async function clickIfVisible(page: Page, name: RegExp): Promise<boolean> {
     return false;
   }
 
-  await control.click({ timeout: 5_000 });
+  try {
+    await control.click({ timeout: 5_000 });
+  } catch {
+    return false;
+  }
+
   return true;
 }
 
@@ -41,29 +46,23 @@ async function readVisibleBody(page: Page): Promise<string> {
   return page.locator('body').innerText();
 }
 
-async function seedHomeLanguage(page: Page, language: 'sv' | 'en'): Promise<void> {
-  if (page.url() === 'about:blank') {
-    await page.goto('/home', { waitUntil: 'domcontentloaded' });
-  }
-
-  await page.evaluate((selectedLanguage) => {
-    localStorage.clear();
-    sessionStorage.clear();
-    localStorage.setItem('language', selectedLanguage);
-    localStorage.setItem('settings\\language', selectedLanguage);
-    localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
-  }, language);
-  await page.goto('/home', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-}
-
 test('home study-loop copy renders without stale flashcard promises', async ({ page }) => {
   const consoleErrors = collectConsoleErrors(page);
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await seedHomeLanguage(page, 'sv');
+  await page.addInitScript(() => {
+    localStorage.setItem('settings\\language', 'sv');
+    localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+  });
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
-  await expect(page.getByLabel('Tidsatt övning', { exact: true })).toBeVisible();
+  await expect(page.getByText('Tidsatt övning', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+    ),
+  ).toBeVisible();
   await expect(
     page.getByText(
       'Växla mellan tidsatta övningsprov, bokmärken, missade frågor, ljud och förberedelsesignal.',
@@ -72,12 +71,19 @@ test('home study-loop copy renders without stale flashcard promises', async ({ p
 
   let bodyText = await readVisibleBody(page);
   expect(bodyText).not.toMatch(
-    /flashcards|Flashkort|flashkort|felspårning|mistake tracking|redoindikator|Provredo/i,
+    /flashcards|Flashkort|flashkort|samhällskunskaper|felspårning|mistake tracking|redoindikator|Provredo/i,
   );
 
-  await seedHomeLanguage(page, 'en');
+  await page.getByRole('button', { name: /Nuvarande språk SV\. Öppna språkväljaren\./ }).click();
+  await page.getByRole('menuitem', { name: 'English' }).click();
+  await dismissBlockingModals(page);
 
-  await expect(page.getByLabel('Timed practice', { exact: true })).toBeVisible();
+  await expect(page.getByText('Timed practice', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(
+      'A focused path for Swedish civic knowledge: daily answers, realistic mock exams, mistake review, and source-backed explanations.',
+    ),
+  ).toBeVisible();
   await expect(
     page.getByText(
       'Switch between timed practice exams, bookmarks, missed-question review, audio, and preparation signals.',

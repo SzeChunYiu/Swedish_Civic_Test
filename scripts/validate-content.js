@@ -1013,7 +1013,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+    'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Öppna framstegsöversikten',
     'Visa framsteg',
@@ -1123,6 +1123,7 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['simulated', ' learners'],
   ['flash', 'cards'],
 ].map((parts) => parts.join(''));
+const FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY = [/samhällskunskaper/i];
 const EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   'genomgång av frågor du missat',
   'bokmärken, missade frågor, ljud',
@@ -11572,6 +11573,12 @@ function validateHomeRouteCopyParity() {
   FORBIDDEN_HOME_ROUTE_READINESS_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route preparation signal copy must not expose official-readiness wording`);
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY.forEach((pattern) => {
+    if (pattern.test(homeRoute)) {
+      reject('home route Swedish subject copy must use natural singular samhällskunskap wording');
     }
   });
 

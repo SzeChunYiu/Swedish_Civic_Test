@@ -71,6 +71,9 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
+  assert.match(source, /En tydlig väg för svensk samhällskunskap/);
+  assert.match(source, /A focused path for Swedish civic knowledge/);
+  assert.doesNotMatch(source, /svenska samhällskunskaper|samhällskunskaper/i);
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
   assert.match(source, /Gå till övningsprovet/);
@@ -255,6 +258,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /home route preparation signal copy must not expose official-readiness wording/,
+  );
+});
+
+test('home route copy parity rejects Swedish samhällskunskaper plural subject wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('--focus-home-route-copy');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('En tydlig väg för svensk samhällskunskap', 'En tydlig väg för svenska samhällskunskaper');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /home route Swedish subject copy must use natural singular samhällskunskap wording/,
   );
 });
 
