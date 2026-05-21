@@ -822,6 +822,139 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['copy,', 'learn route chapter links must pass localized copy into the label helper'],
   ['language={language}', 'learn route chapter cards must receive the settings language'],
 ];
+const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
+  {
+    file: 'app/search.tsx',
+    pattern: /import \{ Link, useLocalSearchParams, useRouter \} from 'expo-router';/,
+    message: 'search route must import route params and router',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /type SearchRouteParams = \{[\s\S]*?q\?: string \| string\[\];[\s\S]*?query\?: string \| string\[\];[\s\S]*?\};/,
+    message: 'search route must support q and query params',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const router = useRouter\(\);/,
+    message: 'search route must initialize router replacement hook',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const searchParams = useLocalSearchParams<SearchRouteParams>\(\);/,
+    message: 'search route must read local search params',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const routeQuery = getRouteSearchQuery\(searchParams\);/,
+    message: 'search route must resolve route query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const \[query, setQuery\] = useState\(\(\) => routeQuery\);/,
+    message: 'search route must hydrate initial input from route query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const previousRouteQueryRef = useRef\(routeQuery\);/,
+    message: 'search route must track the previous route query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*?if \(previousRouteQueryRef\.current === routeQuery\) return;[\s\S]*?previousRouteQueryRef\.current = routeQuery;[\s\S]*?setQuery\(routeQuery\);[\s\S]*?\}, \[routeQuery\]\);/,
+    message: 'search route must resync mounted state only when the route query changes',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /function getFirstSearchParamValue/,
+    message: 'search route must centralize first route-param value extraction',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /Array\.isArray\(value\) \? value\[0\] : value/,
+    message: 'search route must support array route params',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /function getRouteSearchQuery\(params: SearchRouteParams\)/,
+    message: 'search route must define route query helper',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /return getFirstSearchParamValue\(params\.q\) \|\| getFirstSearchParamValue\(params\.query\);/,
+    message: 'search route must prefer q then query fallback order',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onChangeText=\{setQuery\}/,
+    message: 'search route must preserve manual controlled typing',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const handleClearSearch = \(\) => \{[\s\S]*?setQuery\(''\);[\s\S]*?previousRouteQueryRef\.current = '';[\s\S]*?router\.replace\('\/search'\);[\s\S]*?\};/,
+    message: 'search route clear action must reset state and URL',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onPress=\{handleClearSearch\}/,
+    message: 'search route clear button must use URL-aware handler',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern:
+      /const handleSubmitSearch = \(\) => \{[\s\S]*?const submittedQuery = query\.trim\(\);[\s\S]*?if \(submittedQuery\.length === 0\) \{[\s\S]*?handleClearSearch\(\);[\s\S]*?setQuery\(submittedQuery\);[\s\S]*?previousRouteQueryRef\.current = submittedQuery;[\s\S]*?router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);[\s\S]*?\};/,
+    message: 'search route submit action must normalize state and URL',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /onSubmitEditing=\{handleSubmitSearch\}/,
+    message: 'search route return key must submit query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /value=\{query\}/,
+    message: 'search route input must render controlled hydrated query',
+  },
+  {
+    file: 'app/search.tsx',
+    pattern: /const trimmedQuery = query\.trim\(\);/,
+    message: 'search route results must derive from the controlled query',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /search route resyncs when URL query params change after mount/,
+    message: 'search query e2e must cover mounted route-param changes',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /window\.history\.pushState\(\{\}, '', '\/search\?query=kommun'\)/,
+    message: 'search query e2e must change the mounted route URL without page.goto',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /window\.dispatchEvent\(new PopStateEvent\('popstate'\)\)/,
+    message: 'search query e2e must dispatch browser navigation events',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await input\.fill\('egen text'\)/,
+    message: 'search query e2e must prove local typing can exist before route sync',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern: /await expectSearchState\(page, 'kommun'\)/,
+    message: 'search query e2e must assert mounted route sync updates results',
+  },
+  {
+    file: 'tests/e2e/search-query-hydration.spec.ts',
+    pattern:
+      /await input\.fill\('lokal text'\)[\s\S]*?window\.dispatchEvent\(new PopStateEvent\('popstate'\)\);[\s\S]*?await expect\(input\)\.toHaveValue\('lokal text'\)/,
+    message: 'search query e2e must prove unchanged route params do not overwrite typing',
+  },
+]);
 const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
   sv: [
     'Lokal profil',
@@ -2383,8 +2516,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -8073,6 +8205,8 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
+let searchRouteQueryHydrationRulesValidated = 0;
+let searchRouteQueryHydrationParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -8307,6 +8441,16 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-search-route-query-hydration')) {
+  validateSearchRouteQueryHydrationParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    searchRouteQueryHydrationRulesValidated,
+    searchRouteQueryHydrationParityValidated,
   });
   process.exit(0);
 }
@@ -10800,6 +10944,40 @@ function validateHomeRouteSwedishMistakeReviewCopyNaturalness() {
   });
 
   if (valid) homeRouteSwedishMistakeReviewCopyNaturalnessValidated = true;
+}
+
+function validateSearchRouteQueryHydrationParity() {
+  const sourceByFile = new Map();
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  for (const { file, message, pattern } of EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES) {
+    let source = sourceByFile.get(file);
+    if (source === undefined) {
+      try {
+        source = fs.readFileSync(path.join(repoRoot, file), 'utf8');
+        sourceByFile.set(file, source);
+      } catch (error) {
+        reject(`search route query hydration source ${file} could not be read: ${error.message}`);
+        continue;
+      }
+    }
+
+    if (!pattern.test(source)) {
+      reject(message);
+      continue;
+    }
+
+    searchRouteQueryHydrationRulesValidated += 1;
+  }
+
+  searchRouteQueryHydrationParityValidated =
+    valid &&
+    searchRouteQueryHydrationRulesValidated === EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES.length;
 }
 
 function validateAboutTheTestRouteCopyParity() {
@@ -17773,6 +17951,7 @@ validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
+validateSearchRouteQueryHydrationParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -17926,6 +18105,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      searchRouteQueryHydrationRulesValidated,
+      searchRouteQueryHydrationParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
