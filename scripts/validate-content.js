@@ -15476,6 +15476,18 @@ function validateProgressStoreSchemaParity() {
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
+      'function normalizeCompletedQuestionIds(value: unknown): string[] {',
+      'progress hydration must normalize completedQuestionIds through a dedicated helper',
+    ],
+    [
+      'if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) { continue; }',
+      'completedQuestionIds hydration must trim, reject unsafe keys, and dedupe ids',
+    ],
+    [
+      'const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);',
+      'normalizeProgress must hydrate completedQuestionIds through the safe id normalizer',
+    ],
+    [
       "if (typeof isCorrect !== 'boolean') return state;",
       'recordAnswer must ignore non-boolean correctness before mutating progress',
     ],

@@ -404,7 +404,17 @@ test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fiel
 
 test('progress hydration normalizes unsafe persisted numeric fields', () => {
   const state = loadProgressFromStorage({
-    completedQuestionIds: ['q001', 7, 'q002'],
+    completedQuestionIds: [
+      ' q001 ',
+      7,
+      'q002',
+      'q001',
+      '',
+      ' __proto__ ',
+      'constructor',
+      'prototype',
+      ' q003 ',
+    ],
     questionProgress: {
       q001: {
         questionId: 'wrong-id',
@@ -513,7 +523,7 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
     },
   });
 
-  assert.deepEqual(state.completedQuestionIds, ['q001', 'q002']);
+  assert.deepEqual(state.completedQuestionIds, ['q001', 'q002', 'q003']);
   assert.equal(state.questionProgress.q001.seenCount, 0);
   assert.equal(state.questionProgress.q001.correctCount, 0);
   assert.equal(state.questionProgress.q001.wrongCount, 0);
@@ -931,6 +941,21 @@ test('progress store schema parity rejects raw numeric hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /progress hydration must normalize seenCount with capped numeric helper/,
+  );
+});
+
+test('progress store schema parity rejects raw completed question id hydration', () => {
+  const result = runValidationWithProgressStorePatch(
+    'const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);',
+    `const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
+    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
+    : [];`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /normalizeProgress must hydrate completedQuestionIds through the safe id normalizer/,
   );
 });
 
