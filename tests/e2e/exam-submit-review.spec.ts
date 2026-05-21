@@ -43,12 +43,16 @@ async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryCo
 }
 
 async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
+  const heatmap = page
+    .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
+    .first();
+
+  await expect(heatmap).toBeVisible();
+  await expect(heatmap.getByRole('heading', { name: contract.title })).toBeVisible();
+  await expect(heatmap.getByText(contract.medianLabel, { exact: true })).toBeVisible();
   await expect(
-    page.locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`),
+    heatmap.getByRole('button', { name: contract.firstCellPattern }).first(),
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: contract.title })).toBeVisible();
-  await expect(page.getByText(contract.medianLabel, { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
 }
 
 async function expectNoPassVerdictCopy(page: Page) {
@@ -211,12 +215,12 @@ test('mock exam review follows English support mode', async ({ page }) => {
 
   await submit.click();
 
-  await expect(page.getByText('Mock exam result', { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Exam result' }).first()).toBeVisible();
   await expectNeutralResultSummary(page, {
     correctCountPattern: new RegExp(`\\d+/${totalQuestions} correct`),
     progressPattern: /\d+ percent correct/,
-    summaryAriaPrefix: 'Practice result.',
-    visibleLabel: 'Practice result',
+    summaryAriaPrefix: 'Mock exam result.',
+    visibleLabel: 'Mock exam result',
   });
   await expect(page.getByText(new RegExp(`/${totalQuestions} correct`))).toBeVisible();
   await expectTimeHeatmap(page, {

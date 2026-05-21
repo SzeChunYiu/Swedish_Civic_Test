@@ -442,6 +442,11 @@ test('exam route wires timed quiz-session diagnostics to the review heatmap', ()
   assert.match(heatmapSource, /rushed/);
   assert.match(heatmapSource, /overthought/);
   assert.match(heatmapSource, /stuck/);
+  assert.match(heatmapSource, /normalizeHeatmapSeconds/);
+  assert.match(heatmapSource, /normalizeMedianSecondsFromMs/);
+  assert.match(heatmapSource, /isStrictlyCorrectAnswer/);
+  assert.doesNotMatch(heatmapSource, /Math\.round\(answer\.timeSpentSeconds\)/);
+  assert.doesNotMatch(heatmapSource, /Math\.round\(medianMs \/ 1000\)/);
 });
 
 test('formatExamTime renders remaining seconds as mm:ss', () => {

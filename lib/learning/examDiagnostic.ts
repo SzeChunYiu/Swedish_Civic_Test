@@ -44,6 +44,33 @@ function median(values: readonly number[]): number | null {
   return sorted[mid];
 }
 
+export function isStrictlyCorrectAnswer(value: unknown): boolean {
+  return value === true;
+}
+
+export function normalizePositiveTimeSpentSeconds(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null;
+}
+
+export function normalizeHeatmapSeconds(value: unknown): number | null {
+  const seconds = normalizePositiveTimeSpentSeconds(value);
+  if (seconds == null) return null;
+  const rounded = Math.round(seconds);
+  return Number.isFinite(rounded) && rounded > 0 ? rounded : null;
+}
+
+export function normalizeMedianSecondsFromMs(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return null;
+  const rounded = Math.round(value / 1000);
+  return Number.isFinite(rounded) && rounded > 0 ? rounded : null;
+}
+
+export function normalizeWeakestChapterLimit(value: unknown, fallback = 3): number {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value !== 'number' || !Number.isFinite(value)) return fallback;
+  return Math.max(0, Math.floor(value));
+}
+
 export interface ExamDiagnosticInput {
   session: QuizSession;
   questionChapterIndex: Record<string, string>;
@@ -52,22 +79,25 @@ export interface ExamDiagnosticInput {
 }
 
 export function buildExamDiagnostic(input: ExamDiagnosticInput): ExamDiagnostic {
-  const weakestN = input.weakestN ?? 3;
+  const weakestN = normalizeWeakestChapterLimit(input.weakestN);
 
   const buckets = new Map<string, { correct: number; total: number }>();
   let correctCount = 0;
   const perQuestionMs: number[] = [];
 
   for (const answer of input.session.answers) {
-    if (answer.isCorrect) correctCount += 1;
-    if (typeof answer.timeSpentSeconds === 'number' && answer.timeSpentSeconds > 0) {
-      perQuestionMs.push(Math.round(answer.timeSpentSeconds * 1000));
+    const isCorrect = isStrictlyCorrectAnswer(answer.isCorrect);
+    if (isCorrect) correctCount += 1;
+    const timeSpentSeconds = normalizePositiveTimeSpentSeconds(answer.timeSpentSeconds);
+    if (timeSpentSeconds != null) {
+      const timeSpentMs = Math.round(timeSpentSeconds * 1000);
+      if (Number.isFinite(timeSpentMs) && timeSpentMs > 0) perQuestionMs.push(timeSpentMs);
     }
     const chapterId = input.questionChapterIndex[answer.questionId];
     if (!chapterId) continue;
     const bucket = buckets.get(chapterId) ?? { correct: 0, total: 0 };
     bucket.total += 1;
-    if (answer.isCorrect) bucket.correct += 1;
+    if (isCorrect) bucket.correct += 1;
     buckets.set(chapterId, bucket);
   }
 

@@ -509,6 +509,7 @@ export default function Screen() {
         <ResultSummary
           correctCount={result.correctCount}
           languageOverride={language}
+          statusLabel={copy.resultBadge}
           subtitle={copy.resultNote}
           totalCount={result.totalCount}
         />

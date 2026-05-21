@@ -535,6 +535,74 @@ test('buildExamDiagnostic: time-per-question + median populated', () => {
   assert.equal(diag.medianMs, 15000);
 });
 
+test('buildExamDiagnostic: malformed correctness, timing, and weakestN stay bounded', () => {
+  const {
+    buildExamDiagnostic,
+    normalizeHeatmapSeconds,
+    normalizeMedianSecondsFromMs,
+    normalizeWeakestChapterLimit,
+  } = loadTs('lib/learning/examDiagnostic.ts');
+  const answers = [
+    {
+      questionId: 'q1',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-19T09:00:00.000Z',
+      timeSpentSeconds: 12.4,
+    },
+    {
+      questionId: 'q2',
+      selectedOptionIds: [],
+      isCorrect: 'yes',
+      answeredAt: '2026-05-19T09:00:00.000Z',
+      timeSpentSeconds: Infinity,
+    },
+    {
+      questionId: 'q3',
+      selectedOptionIds: [],
+      isCorrect: 1,
+      answeredAt: '2026-05-19T09:00:00.000Z',
+      timeSpentSeconds: Number.NaN,
+    },
+    {
+      questionId: 'q4',
+      selectedOptionIds: [],
+      isCorrect: false,
+      answeredAt: '2026-05-19T09:00:00.000Z',
+      timeSpentSeconds: -5,
+    },
+    {
+      questionId: 'q5',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-19T09:00:00.000Z',
+      timeSpentSeconds: 0,
+    },
+  ];
+  const idx = { q1: 'c1', q2: 'c1', q3: 'c2', q4: 'c3', q5: 'c4' };
+  const diag = buildExamDiagnostic({
+    session: fakeExamSession(answers),
+    questionChapterIndex: idx,
+    weakestN: Infinity,
+  });
+
+  assert.equal(diag.correctCount, 2);
+  assert.equal(diag.totalCount, 5);
+  assert.equal(diag.perChapter.find((chapter) => chapter.chapterId === 'c1').correct, 1);
+  assert.deepEqual(diag.perQuestionMs, [12400]);
+  assert.equal(diag.medianMs, 12400);
+  assert.equal(diag.weakestChapters.length, 3);
+  assert.equal(normalizeWeakestChapterLimit(1.9), 1);
+  assert.equal(normalizeWeakestChapterLimit(-1), 0);
+  assert.equal(normalizeHeatmapSeconds(Infinity), null);
+  assert.equal(normalizeHeatmapSeconds(Number.NaN), null);
+  assert.equal(normalizeHeatmapSeconds(-10), null);
+  assert.equal(normalizeHeatmapSeconds(12.4), 12);
+  assert.equal(normalizeMedianSecondsFromMs(Infinity), null);
+  assert.equal(normalizeMedianSecondsFromMs(Number.NaN), null);
+  assert.equal(normalizeMedianSecondsFromMs(12400), 12);
+});
+
 test('exam diagnostic source rejects unsourced pass/fail threshold helpers', () => {
   const diagnosticSource = fs.readFileSync(
     path.join(repoRoot, 'lib/learning/examDiagnostic.ts'),

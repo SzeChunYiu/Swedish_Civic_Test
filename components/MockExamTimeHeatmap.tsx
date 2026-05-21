@@ -1,6 +1,11 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { colors, radius, space, typography } from '../lib/theme';
+import {
+  isStrictlyCorrectAnswer,
+  normalizeHeatmapSeconds,
+  normalizeMedianSecondsFromMs,
+} from '../lib/learning/examDiagnostic';
 import type { AppLanguage } from '../lib/storage/settingsStore';
 import type { QuizAnswer } from '../types/progress';
 import { PillBadge } from './PillBadge';
@@ -69,7 +74,7 @@ export interface MockExamTimeHeatmapProps {
 }
 
 function formatSeconds(seconds: number, language: AppLanguage): string {
-  const safeSeconds = Math.max(0, Math.round(seconds));
+  const safeSeconds = normalizeHeatmapSeconds(seconds) ?? 0;
   if (safeSeconds < 60) {
     return language === 'sv' ? `${safeSeconds} sek` : `${safeSeconds} sec`;
   }
@@ -79,7 +84,15 @@ function formatSeconds(seconds: number, language: AppLanguage): string {
 }
 
 function classifyPace(seconds: number, medianSeconds: number | null): TimePace {
-  if (!medianSeconds || medianSeconds <= 0) return 'median';
+  if (
+    !Number.isFinite(seconds) ||
+    seconds <= 0 ||
+    medianSeconds == null ||
+    !Number.isFinite(medianSeconds) ||
+    medianSeconds <= 0
+  ) {
+    return 'median';
+  }
   if (seconds <= Math.max(5, medianSeconds * 0.5)) return 'rushed';
   if (seconds <= medianSeconds * 1.5) return 'median';
   if (seconds <= medianSeconds * 2.5) return 'overthought';
@@ -93,22 +106,27 @@ export function MockExamTimeHeatmap({
   onSelectQuestion,
 }: MockExamTimeHeatmapProps) {
   const copy = timeHeatmapCopy[language];
-  const medianSeconds = medianMs == null ? null : Math.round(medianMs / 1000);
+  const medianSeconds = normalizeMedianSecondsFromMs(medianMs);
   const timedAnswers = answers
-    .map((answer, index) => ({
-      ...answer,
-      index,
-      seconds: Math.max(0, Math.round(answer.timeSpentSeconds)),
-    }))
-    .filter((answer) => answer.seconds > 0);
+    .map((answer, index) => {
+      const seconds = normalizeHeatmapSeconds(answer.timeSpentSeconds);
+      if (seconds == null) return null;
+      return {
+        ...answer,
+        index,
+        isCorrect: isStrictlyCorrectAnswer(answer.isCorrect),
+        seconds,
+      };
+    })
+    .filter((answer): answer is QuizAnswer & { index: number; seconds: number } => answer != null);
 
   if (timedAnswers.length === 0) return null;
+  const summaryLabel =
+    medianSeconds == null ? copy.title : `${copy.title}. ${copy.median(medianSeconds)}`;
 
   return (
     <Surface
-      accessibilityLabel={`${copy.title}. ${
-        medianSeconds == null ? '' : copy.median(medianSeconds)
-      }`}
+      accessibilityLabel={summaryLabel}
       accessibilityRole="summary"
       style={styles.card}
       tone="surface"
