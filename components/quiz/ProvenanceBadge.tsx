@@ -1,10 +1,9 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
-import type { ThemeColors } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
 
 type ProvenanceBadgeCopy = {
@@ -44,13 +43,25 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
 export interface ProvenanceBadgeProps {
   language?: AppLanguage;
   question?: PracticeQuestion;
-  themeColors?: ThemeColors;
 }
 
-export function ProvenanceBadge({ question, language = 'sv', themeColors }: ProvenanceBadgeProps) {
-  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+export function ProvenanceBadge({ question, language = 'sv' }: ProvenanceBadgeProps) {
+  const focusShowTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pointerPressStarted = useRef(false);
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
+
+  const clearFocusShowTimeout = () => {
+    if (focusShowTimeout.current === null) return;
+    clearTimeout(focusShowTimeout.current);
+    focusShowTimeout.current = null;
+  };
+
+  useEffect(
+    () => () => {
+      if (focusShowTimeout.current !== null) clearTimeout(focusShowTimeout.current);
+    },
+    [],
+  );
 
   if (!question) return null;
 
@@ -71,14 +82,23 @@ export function ProvenanceBadge({ question, language = 'sv', themeColors }: Prov
         : { badge: styles.editorialBadge, label: styles.editorialLabel };
   const noteLabel = `${copy.sourceNotePrefix}: ${sourceNoteText}`;
   const showSourceNote = () => {
-    if (!pointerPressStarted.current) setSourceNoteVisible(true);
+    clearFocusShowTimeout();
+    focusShowTimeout.current = setTimeout(() => {
+      focusShowTimeout.current = null;
+      if (!pointerPressStarted.current) setSourceNoteVisible(true);
+    }, 0);
   };
   const toggleSourceNote = () => setSourceNoteVisible((visible) => !visible);
   const beginPointerPress = () => {
+    clearFocusShowTimeout();
     pointerPressStarted.current = true;
   };
   const endPointerPress = () => {
     pointerPressStarted.current = false;
+  };
+  const hideSourceNote = () => {
+    clearFocusShowTimeout();
+    setSourceNoteVisible(false);
   };
 
   return (
@@ -91,7 +111,7 @@ export function ProvenanceBadge({ question, language = 'sv', themeColors }: Prov
         accessibilityRole="button"
         accessibilityState={{ expanded: sourceNoteVisible }}
         hitSlop={space[1]}
-        onBlur={() => setSourceNoteVisible(false)}
+        onBlur={hideSourceNote}
         onFocus={showSourceNote}
         onPress={toggleSourceNote}
         onPressIn={beginPointerPress}
@@ -114,64 +134,62 @@ export function ProvenanceBadge({ question, language = 'sv', themeColors }: Prov
   );
 }
 
-function createStyles(themeColors: ThemeColors) {
-  return StyleSheet.create({
-    container: {
-      alignSelf: 'flex-start',
-      gap: space[0.75],
-    },
-    badge: {
-      alignSelf: 'flex-start',
-      borderRadius: radius.pill,
-      borderWidth: space.hairline,
-      justifyContent: 'center',
-      minHeight: space[6],
-      overflow: 'hidden',
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[0.5],
-    },
-    badgeExpanded: {
-      borderColor: themeColors.focus,
-    },
-    badgePressed: {
-      transform: [{ scale: motion.pressedScale }],
-    },
-    label: {
-      fontSize: typography.badge.fontSize,
-      fontWeight: typography.badge.fontWeight,
-      letterSpacing: typography.badge.letterSpacing,
-      textTransform: 'uppercase',
-    },
-    sourceNote: {
-      ...typography.disclaimer,
-      backgroundColor: themeColors.surfaceWarm,
-      borderColor: themeColors.border,
-      borderRadius: radius.small,
-      borderWidth: space.hairline,
-      color: themeColors.textSecondary,
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[1],
-    },
-    uhrBadge: {
-      backgroundColor: themeColors.badgeBlueBg,
-      borderColor: themeColors.badgeBlueBg,
-    },
-    uhrLabel: {
-      color: themeColors.badgeBlueText,
-    },
-    supplementaryBadge: {
-      backgroundColor: themeColors.surfaceWarm,
-      borderColor: themeColors.border,
-    },
-    supplementaryLabel: {
-      color: themeColors.text,
-    },
-    editorialBadge: {
-      backgroundColor: themeColors.surfaceMuted,
-      borderColor: themeColors.border,
-    },
-    editorialLabel: {
-      color: themeColors.textMuted,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  container: {
+    alignSelf: 'flex-start',
+    gap: space[0.75],
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.pill,
+    borderWidth: space.hairline,
+    justifyContent: 'center',
+    minHeight: space[6],
+    overflow: 'hidden',
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.5],
+  },
+  badgeExpanded: {
+    borderColor: colors.focus,
+  },
+  badgePressed: {
+    transform: [{ scale: motion.pressedScale }],
+  },
+  label: {
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    textTransform: 'uppercase',
+  },
+  sourceNote: {
+    ...typography.disclaimer,
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: space.hairline,
+    color: colors.textSecondary,
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[1],
+  },
+  uhrBadge: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.badgeBlueBg,
+  },
+  uhrLabel: {
+    color: colors.badgeBlueText,
+  },
+  supplementaryBadge: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+  },
+  supplementaryLabel: {
+    color: colors.text,
+  },
+  editorialBadge: {
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+  },
+  editorialLabel: {
+    color: colors.textMuted,
+  },
+});
