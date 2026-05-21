@@ -93,6 +93,14 @@ test('exam route shell and review copy follows the persisted settings language',
   );
   assert.match(source, /copy\.reviewFilterFlagged\(flaggedReviewCount\)/);
   assert.match(source, /\{copy\.reviewFilterAll\}/);
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.reviewFilterFlagged\(flaggedReviewCount\)\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected: reviewFilter === 'flagged' \}\}[\s\S]*?aria-pressed=\{reviewFilter === 'flagged'\}/,
+  );
+  assert.match(
+    source,
+    /accessibilityLabel=\{copy\.reviewFilterAll\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected: reviewFilter === 'all' \}\}[\s\S]*?aria-pressed=\{reviewFilter === 'all'\}/,
+  );
   assert.match(source, /filteredReviewItems\.map/);
   assert.match(source, /const examQuestionNumberById = useMemo\(/);
   assert.match(source, /copy\.questionNumber\(questionNumber\)/);
