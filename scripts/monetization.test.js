@@ -1995,8 +1995,8 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
   );
-  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - test placement');
-  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - testplacering');
+  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - preview');
+  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - förhandsvisning');
   assert.equal(adBannerCopy.en.liveStatus, 'AdMob placement active');
   assert.equal(adBannerCopy.sv.liveStatus, 'AdMob-placering aktiv');
 
@@ -2013,14 +2013,14 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
       adBannerCopy.en.placementLabels.home_banner,
       adBannerCopy.en.testStatus,
     ),
-    'Google AdMob: Home banner. AdMob test unit active - test placement. Hidden after Remove Ads is active.',
+    'Google AdMob: Home banner. AdMob test unit active - preview. Hidden after Remove Ads is active.',
   );
   assert.equal(
     adBannerCopy.sv.accessibilityLabel(
       adBannerCopy.sv.placementLabels.chapter_list_banner,
       adBannerCopy.sv.testStatus,
     ),
-    'Google AdMob: Annons i kapitellistan. AdMob-testannons aktiv - testplacering. Döljs när Ta bort annonser är aktivt.',
+    'Google AdMob: Annons i kapitellistan. AdMob-testannons aktiv - förhandsvisning. Döljs när Ta bort annonser är aktivt.',
   );
 });
 
