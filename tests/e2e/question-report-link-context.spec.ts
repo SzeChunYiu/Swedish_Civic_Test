@@ -97,7 +97,9 @@ test('support question report context trims valid app-generated params', async (
   await expect(page.getByText('In northern Europe', { exact: true })).toBeVisible();
 });
 
-test('support question report context drops hostile direct URL params', async ({ page }) => {
+test('support question report context shows rejected direct URL params without raw values', async ({
+  page,
+}) => {
   const overlongValue = 'x'.repeat(360);
 
   await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
@@ -114,6 +116,12 @@ test('support question report context drops hostile direct URL params', async ({
   await dismissBlockingModals(page);
 
   await expect(page.getByRole('heading', { name: 'Support och återkoppling' })).toBeVisible();
+  await expect(page.getByText('Frågekontexten kunde inte användas')).toBeVisible();
+  await expect(
+    page.getByText(
+      'Länken innehöll frågeuppgifter som inte kunde kontrolleras. Av integritetsskäl visas inga avvisade värden här.',
+    ),
+  ).toBeVisible();
   await expect(page.getByRole('region', { name: 'Rapportkontext för frågan q001' })).toBeVisible();
   await expect(page.getByText('q001', { exact: true })).toBeVisible();
   await expect(page.getByText('Saknas', { exact: true })).toBeVisible();
@@ -126,9 +134,44 @@ test('support question report context drops hostile direct URL params', async ({
   });
   await dismissBlockingModals(page);
 
+  await expect(page.getByText('Frågekontexten kunde inte användas')).toBeVisible();
+  await expect(
+    page.getByText(
+      'Länken innehöll frågeuppgifter som inte kunde kontrolleras. Av integritetsskäl visas inga avvisade värden här.',
+    ),
+  ).toBeVisible();
   await expect(page.getByText('Kontext för frågerapport')).toHaveCount(0);
   await expect(page.getByText('not-a-question')).toHaveCount(0);
   await expect(page.getByText('Source: arbitrary')).toHaveCount(0);
+});
+
+test('support question report context shows English rejected-context notice without raw values', async ({
+  page,
+}) => {
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto(
+    supportUrl({
+      language: 'en',
+      questionId: 'missing-question',
+      screen: 'quiz',
+      selectedAnswer: 'raw answer that should stay hidden',
+      source: 'raw source that should stay hidden',
+    }),
+    { waitUntil: 'networkidle' },
+  );
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('heading', { name: 'Support and feedback' })).toBeVisible();
+  await expect(page.getByText('Question context could not be used')).toBeVisible();
+  await expect(
+    page.getByText(
+      'The link included question details that could not be verified. For privacy, rejected values are not shown here.',
+    ),
+  ).toBeVisible();
+  await expect(page.getByText('Question report context')).toHaveCount(0);
+  await expect(page.getByText('missing-question')).toHaveCount(0);
+  await expect(page.getByText('raw answer that should stay hidden')).toHaveCount(0);
+  await expect(page.getByText('raw source that should stay hidden')).toHaveCount(0);
 });
 
 test('practice report link carries selected answer and source context to Support', async ({
