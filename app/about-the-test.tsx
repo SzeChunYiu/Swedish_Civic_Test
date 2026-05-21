@@ -1,6 +1,6 @@
-import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
@@ -68,7 +68,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
     sectionWhoTitle: 'Vem ska göra det?',
     sectionWhoBody:
-      'Migrationsverket avgör vem som får skriva provet. UHR skriver att anmälan öppnar i början av juni 2026 och att du bara kan anmäla dig om du har fått ett brev från Migrationsverket. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+      'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
     sectionFormatTitle: 'Vad är känt om första provet?',
     sectionFormatBody:
       'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
@@ -97,7 +97,7 @@ const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {
       'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
     sectionWhoTitle: 'Who takes it?',
     sectionWhoBody:
-      'Migrationsverket decides who may take the test. UHR says registration opens in early June 2026 and that only people who have received a letter from Migrationsverket can sign up. You may be able to meet the knowledge requirement in other ways.',
+      'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
     sectionFormatTitle: 'What is known about the first test?',
     sectionFormatBody:
       'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
@@ -160,30 +160,22 @@ export default function Screen() {
       <QuestionDisclaimer />
 
       <View style={styles.actions}>
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.openRequirementsAccessibilityLabel}
-          accessibilityRole="link"
           href="/citizenship-requirements"
-          style={styles.primaryLink}
-        >
-          {copy.openRequirements}
-        </Link>
-        <Link
+          label={copy.openRequirements}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.secondaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backHomeAccessibilityLabel}
-          accessibilityRole="link"
           href="/home"
-          style={styles.secondaryLink}
-        >
-          {copy.backHome}
-        </Link>
+          label={copy.backHome}
+        />
       </View>
     </ScrollView>
   );
@@ -247,25 +239,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });
