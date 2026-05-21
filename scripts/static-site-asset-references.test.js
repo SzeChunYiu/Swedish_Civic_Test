@@ -19,8 +19,8 @@ function readSiteManifest() {
   return JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
 }
 
-function localAssetReferences(indexHtml) {
-  return extractLocalAssetReferences(indexHtml);
+function localAssetReferences(indexHtml, options) {
+  return extractLocalAssetReferences(indexHtml, options);
 }
 
 test('static site index references only shipped local assets', () => {
@@ -53,6 +53,35 @@ test('static site asset extractor covers responsive images and media posters', (
   ]);
 });
 
+test('static site asset extractor covers inline and stylesheet CSS urls', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-assets-'));
+  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'site.css'),
+    [
+      '.hero { background-image: url("../img/hero.webp?v=1#hero"); }',
+      '.icon { mask-image: url("/icons/mask.svg#mask"); }',
+      '.ignored-fragment { filter: url(#drop-shadow); }',
+      '.ignored-data { background-image: url("data:image/svg+xml,%3Csvg%3E%3C/svg%3E"); }',
+      '.ignored-external { cursor: url(https://cdn.example.com/cursor.cur), auto; }',
+      '.ignored-variable { background-image: url(var(--site-pattern)); }',
+    ].join('\n'),
+  );
+
+  const indexHtml = `
+    <link rel="stylesheet" href="./css/site.css?version=1" />
+    <div style="background-image: url('hero-inline.png#top'); mask-image: url(/icons/inline-mask.svg); filter: url(#inline-filter); background: linear-gradient(red, blue);"></div>
+  `;
+
+  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
+    'css/site.css',
+    'hero-inline.png',
+    'icons/inline-mask.svg',
+    'img/hero.webp',
+    'icons/mask.svg',
+  ]);
+});
+
 test('static site asset extractor fails responsive and poster references when files are not shipped', () => {
   const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-assets-'));
   const indexHtml = `
@@ -68,6 +97,28 @@ test('static site asset extractor fails responsive and poster references when fi
   );
 
   assert.deepEqual(missingAssets, ['hero@2x.png', 'preload.png', 'preload@2x.png', 'intro.png']);
+});
+
+test('static site asset extractor fails CSS url references omitted from the manifest', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-manifest-'));
+  fs.writeFileSync(path.join(tmpDir, 'styles.css'), '.hero { background: url("hero.css.png"); }');
+  const indexHtml = `
+    <link rel="stylesheet" href="styles.css" />
+    <div style="background-image: url('hero-inline.png')"></div>
+  `;
+  const manifest = {
+    version: 1,
+    algorithm: 'sha256',
+    assets: {
+      'index.html': { bytes: indexHtml.length, sha256: 'stub' },
+      'styles.css': { bytes: 0, sha256: 'stub' },
+    },
+  };
+
+  assert.deepEqual(
+    findAssetReferencesMissingFromManifest(indexHtml, manifest, { siteDir: tmpDir }),
+    ['hero-inline.png', 'hero.css.png'],
+  );
 });
 
 test('static site asset extractor fails responsive and poster references omitted from the manifest', () => {
