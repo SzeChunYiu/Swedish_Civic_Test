@@ -37,6 +37,9 @@ const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard
 const {
   findGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
+const {
+  MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
+} = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -5969,10 +5972,200 @@ function validateCitizenshipTimeline() {
     homeMountParity,
     homeMountRulesValidated,
     dateParity,
+    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
   };
+}
+
+function validateCountdownBannerHomeMount() {
+  let valid = true;
+  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const rules = [
+    {
+      label: 'Home route must import CountdownBanner',
+      pattern: /import \{ CountdownBanner \} from '..\/..\/components\/ui\/CountdownBanner';/,
+    },
+    {
+      label: 'Home route must mount CountdownBanner with the selected language',
+      pattern: /<CountdownBanner language=\{language\} \/>/,
+    },
+  ];
+
+  rules.forEach(({ label, pattern }) => {
+    if (!pattern.test(homeRouteSource)) {
+      valid = false;
+      fail(label);
+      return;
+    }
+    countdownBannerHomeMountRulesValidated += 1;
+  });
+
+  countdownBannerHomeMountParityValidated = valid && countdownBannerHomeMountRulesValidated === 2;
+}
+
+function validateStudyPlanRuntime() {
+  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
+  let valid = true;
+
+  if (
+    typeof daysUntil !== 'function' ||
+    typeof formatExamDate !== 'function' ||
+    typeof generateStudyPlan !== 'function'
+  ) {
+    fail('study plan runtime helpers must be exported');
+    return;
+  }
+
+  const validNow = new Date('2026-05-19T00:00:00.000Z');
+  const invalidDate = new Date('not-a-date');
+  const baseStudyPlanInput = {
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: validNow,
+    intensity: 'regular',
+  };
+  const cases = [
+    {
+      label: 'invalid dates use safe fallbacks',
+      actual: () =>
+        daysUntil(invalidDate, validNow) === 0 &&
+        daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) === 0 &&
+        formatExamDate(invalidDate, 'en') === 'date unavailable' &&
+        formatExamDate(invalidDate, 'sv') === 'datum saknas',
+    },
+    {
+      label: 'NaN dates and unknown intensity normalize',
+      actual: () => {
+        const plan = generateStudyPlan({
+          testDate: invalidDate,
+          now: invalidDate,
+          totalQuestions: Number.NaN,
+          masteredQuestions: Number.POSITIVE_INFINITY,
+          mocksTaken: '2',
+          intensity: 'turbo',
+        });
+        return (
+          plan.hasTestDate === true &&
+          plan.daysRemaining === 0 &&
+          plan.intensity === 'regular' &&
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(Date.parse(plan.testDateIso)) &&
+          Number.isFinite(Date.parse(plan.generatedAt)) &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80 &&
+          Number.isInteger(plan.weeklyMockTarget) &&
+          plan.weeklyMockTarget >= 1 &&
+          plan.weeklyMockTarget <= 2
+        );
+      },
+    },
+    {
+      label: 'string counts do not coerce into progress',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: '200',
+          masteredQuestions: '10',
+          mocksTaken: '2',
+        });
+        return (
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'fractional counts do not coerce into progress',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 200.5,
+          masteredQuestions: 10.5,
+          mocksTaken: 1.5,
+        });
+        return (
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'mastered questions and mocks are clamped',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 10,
+          masteredQuestions: 99,
+          mocksTaken: 99,
+        });
+        return (
+          plan.mocksRemaining === 0 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'valid regular plan remains bounded',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 200,
+          masteredQuestions: 0,
+          mocksTaken: 0,
+        });
+        return (
+          plan.hasTestDate === true &&
+          plan.daysRemaining === 27 &&
+          plan.mocksRemaining === 6 &&
+          plan.isCrunch === false &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80 &&
+          plan.weeklyMockTarget >= 1 &&
+          plan.weeklyMockTarget <= 2
+        );
+      },
+    },
+  ];
+
+  cases.forEach(({ label, actual }) => {
+    let passed = false;
+    try {
+      passed = actual() === true;
+    } catch (error) {
+      fail(`study plan runtime ${label} threw: ${error.message}`);
+      valid = false;
+      return;
+    }
+
+    if (!passed) {
+      fail(`study plan runtime failed: ${label}`);
+      valid = false;
+      return;
+    }
+    studyPlanRuntimeCasesValidated += 1;
+  });
+
+  studyPlanRuntimeParityValidated = valid && studyPlanRuntimeCasesValidated === 6;
+}
+
+function validateCountdownBannerFocusedParity() {
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  validateCountdownBannerHomeMount();
+  validateStudyPlanRuntime();
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -9259,6 +9452,9 @@ const appConfig = loadJson('app.json');
 const uhrSectionMap = loadJson('content/uhr-section-map.json');
 const provenanceModule = loadTs('lib/content/provenance.ts');
 const getQuestionProvenance = provenanceModule.getQuestionProvenance;
+const adaptivePracticeModule = loadTs('lib/learning/adaptivePractice.ts');
+const pickAdaptiveSession = adaptivePracticeModule.pickAdaptiveSession;
+const explainAdaptivePick = adaptivePracticeModule.explainAdaptivePick;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
@@ -9498,6 +9694,8 @@ let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
 let countdownBannerHomeMountRulesValidated = 0;
 let countdownBannerHomeMountParityValidated = false;
+let studyPlanRuntimeCasesValidated = 0;
+let studyPlanRuntimeParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -9529,6 +9727,8 @@ let spacedRepetitionRuntimeInputCasesValidated = 0;
 let spacedRepetitionRuntimeInputParityValidated = false;
 let spacedRepetitionDueTimestampCasesValidated = 0;
 let spacedRepetitionDueTimestampParityValidated = false;
+let adaptivePracticeSizeRuntimeCasesValidated = 0;
+let adaptivePracticeSizeRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -9655,34 +9855,24 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-countdown-banner')) {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  countdownBannerHomeMountRulesValidated = timelineValidation.homeMountRulesValidated;
-  countdownBannerHomeMountParityValidated = timelineValidation.homeMountParity;
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        citizenshipRulesEffectiveDateValidated,
-        civicKnowledgeTestFirstSittingDateValidated,
-        civicKnowledgeTestDeadlineDateValidated,
-        citizenshipTimelineSourceUrlsValidated,
-        citizenshipTimelineDateParityValidated,
-        countdownBannerTimelineCopyParityValidated,
-        countdownBannerHomeMountRulesValidated,
-        countdownBannerHomeMountParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+if (
+  process.argv.includes('--focus-countdown-banner-parity') ||
+  process.argv.includes('--focus-countdown-banner')
+) {
+  validateCountdownBannerFocusedParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestFirstSittingDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
+    countdownBannerHomeMountRulesValidated,
+    countdownBannerHomeMountParityValidated,
+    studyPlanRuntimeCasesValidated,
+    studyPlanRuntimeParityValidated,
+  });
   process.exit(0);
 }
 
@@ -10267,6 +10457,16 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-adaptive-practice-size')) {
+  validateAdaptivePracticeSizeRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeSizeRuntimeCasesValidated,
+    adaptivePracticeSizeRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-mobile-ads-consent')) {
   validateMobileAdsConsentTypeSchemaParity();
   validateMobileAdsConsentRuntimeParity();
@@ -10492,17 +10692,7 @@ if (process.argv.includes('--focus-mock-exam-copy-parity')) {
   process.exit(0);
 }
 
-{
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  countdownBannerHomeMountRulesValidated = timelineValidation.homeMountRulesValidated;
-  countdownBannerHomeMountParityValidated = timelineValidation.homeMountParity;
-}
+validateCountdownBannerFocusedParity();
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
   fail('buildExamReviewItems export is not a function');
@@ -19347,6 +19537,109 @@ function validateSpacedRepetitionSchedule() {
   }
 }
 
+function adaptivePracticeProgressFromAnswers(answers) {
+  return {
+    totalXp: 0,
+    level: 1,
+    currentStreak: 0,
+    dailyGoalAnswers: 10,
+    questionProgress: {},
+    sessions: [
+      {
+        id: 'adaptive-runtime-validation',
+        mode: 'study',
+        questionIds: [],
+        answers,
+        startedAt: '2026-05-19T00:00:00.000Z',
+      },
+    ],
+  };
+}
+
+function validateAdaptivePracticeSizeRuntimeGuards() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    fail(
+      'adaptive practice size runtime guard requires pickAdaptiveSession and explainAdaptivePick',
+    );
+    return;
+  }
+
+  const bank = [
+    ...Array.from({ length: 12 }, (_, index) => ({
+      id: `adaptive-size-default-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch01',
+    })),
+    ...Array.from({ length: 4 }, (_, index) => ({
+      id: `adaptive-size-filtered-${String(index + 1).padStart(2, '0')}`,
+      difficulty: 'medium',
+      chapterId: 'ch02',
+    })),
+  ];
+  const baseInput = {
+    progress: adaptivePracticeProgressFromAnswers([]),
+    bank,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+  let runtimeParityIsValid = true;
+
+  function reject(message) {
+    runtimeParityIsValid = false;
+    fail(message);
+  }
+
+  for (const { label, size } of MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES) {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+    const explainedCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+    if (picked.length !== 10 || explainedCount !== 10 || counts.unseen !== 10) {
+      reject(
+        `adaptive practice malformed ${label} size picked ${picked.length} with ${explainedCount} explained and ${counts.unseen} unseen, expected default cap 10`,
+      );
+      continue;
+    }
+
+    adaptivePracticeSizeRuntimeCasesValidated += 1;
+  }
+
+  const zeroPick = pickAdaptiveSession({ ...baseInput, size: 0 });
+  if (zeroPick.length !== 0) {
+    reject(`adaptive practice explicit zero size picked ${zeroPick.length}, expected 0`);
+  }
+
+  const validPick = pickAdaptiveSession({ ...baseInput, size: 2 });
+  if (validPick.length !== 2) {
+    reject(`adaptive practice valid size picked ${validPick.length}, expected 2`);
+  }
+
+  const oversizePick = pickAdaptiveSession({ ...baseInput, size: 99 });
+  if (oversizePick.length !== bank.length) {
+    reject(`adaptive practice oversize picked ${oversizePick.length}, expected ${bank.length}`);
+  }
+
+  const filteredPick = pickAdaptiveSession({
+    ...baseInput,
+    size: Number.NaN,
+    chapterId: 'ch02',
+  });
+  if (
+    filteredPick.length !== 4 ||
+    filteredPick.some((id) => !id.startsWith('adaptive-size-filtered-'))
+  ) {
+    reject(
+      `adaptive practice malformed size with chapter filter picked ${JSON.stringify(filteredPick)}, expected the 4 eligible filtered questions`,
+    );
+  }
+
+  if (
+    runtimeParityIsValid &&
+    adaptivePracticeSizeRuntimeCasesValidated === MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES.length
+  ) {
+    adaptivePracticeSizeRuntimeParityValidated = true;
+  }
+}
+
 function validateWeeklyRecapRuntimeGuard() {
   if (typeof generateWeeklyRecap !== 'function') {
     fail('generateWeeklyRecap export is not a function');
@@ -22316,6 +22609,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateAdaptivePracticeSizeRuntimeGuards();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -22591,6 +22885,8 @@ console.log(
       countdownBannerTimelineCopyParityValidated,
       countdownBannerHomeMountRulesValidated,
       countdownBannerHomeMountParityValidated,
+      studyPlanRuntimeCasesValidated,
+      studyPlanRuntimeParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
@@ -22622,6 +22918,8 @@ console.log(
       spacedRepetitionRuntimeInputParityValidated,
       spacedRepetitionDueTimestampCasesValidated,
       spacedRepetitionDueTimestampParityValidated,
+      adaptivePracticeSizeRuntimeCasesValidated,
+      adaptivePracticeSizeRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

@@ -5017,7 +5017,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "What does it mean to be source-critical?",
+      "en": "What does source criticism mean?",
       "sv": "Vad betyder det att vara källkritisk?",
       "zh-Hant": "具有來源批判意識是什麼意思？",
       "zh-Hans": "具有来源批判意识是什么意思？",
@@ -5090,7 +5090,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "en": "Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
       "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.",
       "zh-Hant": "具有來源批判意識表示透過質疑自己讀到、看到或聽到的內容是否正確，來檢查和審查資訊。這很重要，因為資訊可能來自許多不同來源，錯誤資訊可能快速傳播；從不閱讀新聞、只相信社交媒體或散布未經檢查的說法，都是相反做法。",
       "zh-Hans": "具有来源批判意识表示通过质疑自己读到、看到或听到的内容是否正确，来检查和审查信息。这很重要，因为信息可能来自许多不同来源，错误信息可能快速传播；从不阅读新闻、只相信社交媒体或传播未经检查的说法，都是相反做法。",
@@ -11873,7 +11873,7 @@
         "uk": "Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади"
       },
       {
-        "en": "To choose any religion or no religion at all completely freely",
+        "en": "To freely choose any religion or none",
         "sv": "Att helt fritt välja vilken religion som helst eller ingen religion alls",
         "zh-Hant": "完全自由選擇任何宗教或完全不選宗教",
         "zh-Hans": "完全自由选择任何宗教或完全不选宗教",
@@ -11917,7 +11917,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
       "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.",
       "zh-Hant": "1860 年瑞典人被允許離開瑞典教會，但只有在加入另一個基督教團體時才可以。完全自由選擇宗教或不選宗教要到 1951 年宗教自由法才實現，而國家與瑞典教會的分離發生在 2000 年。",
       "zh-Hans": "1860 年瑞典人被允许离开瑞典教会，但只有在加入另一个基督教团体时才可以。完全自由选择宗教或不选宗教要到 1951 年宗教自由法才实现，而国家与瑞典教会的分离发生在 2000 年。",
@@ -30831,7 +30831,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What does it mean to be source-critical?",
+      "en": "Which answer best matches? What does source criticism mean?",
       "sv": "Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?"
     },
     "opts": [
@@ -30894,7 +30894,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "en": "Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
       "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
     },
     "source": {
@@ -30919,7 +30919,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "To be source-critical means questioning and checking whether information is correct.",
+      "en": "Source criticism means questioning and checking whether information is correct.",
       "sv": "Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt."
     },
     "opts": [
@@ -30934,7 +30934,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "en": "Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
       "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
     },
     "source": {
@@ -30959,7 +30959,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "true_false",
     "q": {
-      "en": "To be source-critical means never reading news.",
+      "en": "Source criticism means never reading news.",
       "sv": "Att vara källkritisk betyder att aldrig läsa nyheter."
     },
     "opts": [
@@ -30974,7 +30974,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "en": "Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
       "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
     },
     "source": {
@@ -30999,7 +30999,7 @@
     "chapter": "Ch. 06 · The role of the media",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What does it mean to be source-critical?",
+      "en": "Choose the correct option: What does source criticism mean?",
       "sv": "Välj rätt alternativ: Vad betyder det att vara källkritisk?"
     },
     "opts": [
@@ -31062,7 +31062,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
+      "en": "Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.",
       "sv": "Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen."
     },
     "source": {
@@ -47334,7 +47334,7 @@
         "uk": "Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади"
       },
       {
-        "en": "To choose any religion or no religion at all completely freely",
+        "en": "To freely choose any religion or none",
         "sv": "Att helt fritt välja vilken religion som helst eller ingen religion alls",
         "zh-Hant": "完全自由選擇任何宗教或完全不選宗教",
         "zh-Hans": "完全自由选择任何宗教或完全不选宗教",
@@ -47378,7 +47378,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
       "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
     },
     "source": {
@@ -47419,7 +47419,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
       "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
     },
     "source": {
@@ -47445,7 +47445,7 @@
     "chapter": "Ch. 12 · A secular state and a multi-religious country",
     "type": "true_false",
     "q": {
-      "en": "In 1860, Swedes were permitted to choose any religion or no religion at all completely freely.",
+      "en": "In 1860, Swedes were free to choose any religion or none.",
       "sv": "År 1860 blev det tillåtet för svenskar att helt fritt välja vilken religion som helst eller ingen religion alls."
     },
     "opts": [
@@ -47460,7 +47460,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
       "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
     },
     "source": {
@@ -47505,7 +47505,7 @@
         "uk": "Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади"
       },
       {
-        "en": "To choose any religion or no religion at all completely freely",
+        "en": "To freely choose any religion or none",
         "sv": "Att helt fritt välja vilken religion som helst eller ingen religion alls",
         "zh-Hant": "完全自由選擇任何宗教或完全不選宗教",
         "zh-Hans": "完全自由选择任何宗教或完全不选宗教",
@@ -47549,7 +47549,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
+      "en": "In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.",
       "sv": "År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000."
     },
     "source": {
