@@ -68,30 +68,11 @@ function createZustandStub() {
       const getFn = () => state;
       state = factory(setFn, getFn);
 
-      const useStore = (selector) => (typeof selector === 'function' ? selector(state) : state);
+      const useStore = () => state;
       useStore.getState = () => state;
       useStore.setState = (partial) => setFn(partial);
       return useStore;
     },
-  };
-}
-
-function resolveStorage(storageById, id) {
-  if (typeof storageById === 'function') return storageById(id);
-  return storageById[id] ?? null;
-}
-
-function createStorageModuleStubs(storageById = {}, moduleStubs = {}) {
-  return {
-    'expo-speech': () => ({
-      speak() {},
-      stop() {},
-    }),
-    'react-native-mmkv': () => ({
-      createMMKV: ({ id } = {}) => resolveStorage(storageById, id),
-    }),
-    zustand: createZustandStub,
-    ...moduleStubs,
   };
 }
 
@@ -115,7 +96,17 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
   const originalResolve = Module._resolveFilename;
   const originalLoad = Module._load;
-  const stubs = createStorageModuleStubs(storageById, moduleStubs);
+  const stubs = {
+    'react-native-mmkv': () => ({
+      createMMKV: ({ id }) => storageById[id] ?? null,
+    }),
+    'expo-speech': () => ({
+      speak() {},
+      stop() {},
+    }),
+    zustand: createZustandStub,
+    ...moduleStubs,
+  };
 
   Module._resolveFilename = function patchedResolve(request, ...args) {
     if (stubs[request]) return `__storage_store_stub__:${request}`;
@@ -136,7 +127,6 @@ function loadTsWithStorage(repoRoot, relativePath, storageById, moduleStubs = {}
 
 module.exports = {
   createMemoryMMKV,
-  createStorageModuleStubs,
   createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsWithStorage,
