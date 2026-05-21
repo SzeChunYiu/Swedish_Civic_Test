@@ -71,7 +71,7 @@ test('practice route shell copy follows the persisted settings language', () => 
     source,
     /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
   );
-  assert.match(source, /<Badge>\{isChallengeMode \? copy\.challengeBadge : copy\.badge\}<\/Badge>/);
+  assert.match(source, /<Badge>\{copy\.badge\}<\/Badge>/);
   assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
   assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
   assert.match(source, /Question \$\{questionNumber\}/);
@@ -87,6 +87,8 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /Aldrig en del av övningsprovet/);
   assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
+  assert.match(source, /aria-pressed=\{isBookmarked\}/);
+  assert.doesNotMatch(source, /aria-selected=\{isBookmarked\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
 

@@ -523,7 +523,7 @@ export default function Screen() {
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
-            aria-selected={isBookmarked}
+            aria-pressed={isBookmarked}
             accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
             accessibilityRole="button"
             accessibilityState={{ selected: isBookmarked }}
