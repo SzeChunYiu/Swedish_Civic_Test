@@ -247,6 +247,7 @@ const ebookFactboxSourceUrls = [
   'https://www.scb.se/mi0803-en',
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
 ];
 const unsupportedEbookFactboxPatterns = [
   /Facts you'll see on the test/i,
@@ -258,6 +259,12 @@ const unsupportedEbookFactboxPatterns = [
   /world's oldest central bank/i,
   /historically commits\s+~?1%\s+of\s+GNI/i,
   /Citizenship test starts:\s*6 June 2026/i,
+];
+const unsupportedKnowledgeRequirementClaimPatterns = [
+  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
+  /citizenship test on civic knowledge and Swedish/i,
+  /must pass a Swedish-language test in 2026/i,
+  /Swedish-language tests? (?:start|begin|are introduced) in August 2026/i,
 ];
 
 const homeHeroFooterFallbackKeys = [
@@ -547,6 +554,29 @@ test('static ebook practical test copy is backed by current UHR source metadata'
 
   unsupportedPracticalTestClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
+  );
+});
+
+test('static ebook citizenship knowledge-requirement copy is backed by current Migrationsverket source metadata', () => {
+  const ebookSource = read('site/ebook.js');
+
+  unsupportedKnowledgeRequirementClaimPatterns.forEach((pattern) =>
+    assert.doesNotMatch(ebookSource, pattern),
+  );
+  assert.match(ebookSource, /Migrationsverket citizenship rule changes from 6 June 2026/i);
+  assert.match(ebookSource, /retrievedDate: '2026-05-20'/);
+  assert.match(ebookSource, /knowledge requirement if it applies to you \(ages 16-66\)/i);
+  assert.match(ebookSource, /Swedish school, adult education, folk high school, or SFI course D/i);
+  assert.match(ebookSource, /first test part is civic knowledge/i);
+  assert.match(ebookSource, /Swedish-language tests come later/i);
+  assert.match(ebookSource, /kunskapskravet i svenska och samhällskunskap/i);
+  assert.match(ebookSource, /mellan 16 och 66 år/i);
+  assert.match(ebookSource, /skola, komvux, folkhögskola eller SFI kurs D/i);
+  assert.match(ebookSource, /första provdelen gäller samhällskunskap/i);
+  assert.match(ebookSource, /prov i svenska kommer senare/i);
+  assert.match(
+    ebookSource,
+    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
   );
 });
 

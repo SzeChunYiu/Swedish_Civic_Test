@@ -48,6 +48,14 @@ const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('På provdagen är ', 'giltig legitimation'),
   phrasePattern('Tidsatt ', 'provträning'),
 ];
+const unsupportedKnowledgeRequirementClaimPatterns = [
+  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
+  /citizenship test on civic knowledge and Swedish/i,
+  /must pass a Swedish-language test in 2026/i,
+  /Swedish-language tests? (?:start|begin|are introduced) in August 2026/i,
+];
+const migrationsverketCitizenshipRulesUrl =
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
 const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
@@ -167,6 +175,12 @@ function assertNoUnsupportedEbookOutcomeClaim(value) {
 
 function assertNoUnsupportedPracticalTestClaim(value) {
   for (const pattern of unsupportedPracticalTestClaimPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertNoUnsupportedKnowledgeRequirementClaim(value) {
+  for (const pattern of unsupportedKnowledgeRequirementClaimPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -416,4 +430,33 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
     assert.match(englishHtml, new RegExp(url));
     assert.match(swedishHtml, new RegExp(url));
   });
+});
+
+test('static ebook chapter 11 keeps citizenship knowledge requirement current', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '11');
+  const swedishHtml = renderChapter(harness, 'sv', '11');
+
+  assertNoUnsupportedKnowledgeRequirementClaim(source);
+  assertNoUnsupportedKnowledgeRequirementClaim(englishHtml);
+  assertNoUnsupportedKnowledgeRequirementClaim(swedishHtml);
+
+  assert.match(englishHtml, /From 6 June 2026/);
+  assert.match(englishHtml, /knowledge requirement if it applies to you \(ages 16-66\)/);
+  assert.match(englishHtml, /Swedish school, adult education, folk high school, or SFI course D/);
+  assert.match(englishHtml, /first test part is civic knowledge/);
+  assert.match(englishHtml, /Swedish-language tests come later/);
+  assert.match(englishHtml, /Knowledge requirement: ages 16-66/);
+
+  assert.match(swedishHtml, /Från 6 juni 2026/);
+  assert.match(swedishHtml, /kunskapskravet i svenska och samhällskunskap/);
+  assert.match(swedishHtml, /mellan 16 och 66 år/);
+  assert.match(swedishHtml, /skola, komvux, folkhögskola eller SFI kurs D/);
+  assert.match(swedishHtml, /första provdelen gäller samhällskunskap/);
+  assert.match(swedishHtml, /prov i svenska kommer senare/);
+
+  assert.match(source, /Migrationsverket citizenship rule changes from 6 June 2026/);
+  assert.match(source, /retrievedDate: '2026-05-20'/);
+  assert.match(source, new RegExp(migrationsverketCitizenshipRulesUrl));
 });
