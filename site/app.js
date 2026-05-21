@@ -13,7 +13,17 @@ function route() {
   const [pathRaw] = hash.split('?');
   let path = pathRaw.startsWith('/') ? pathRaw : '/';
   // map unknown paths to /
-  const known = ['/', '/practice', '/mock', '/ebook', '/privacy', '/support', '/terms', '/sources'];
+  const known = [
+    '/',
+    '/practice',
+    '/dashboard',
+    '/mock',
+    '/ebook',
+    '/privacy',
+    '/support',
+    '/terms',
+    '/sources',
+  ];
   if (!known.includes(path)) path = '/';
 
   document.querySelectorAll('[data-page]').forEach((el) => {
@@ -268,13 +278,13 @@ const i18n = (window.i18n = {
       "Yes. Tap the language button in the top bar to switch — Swedish, English, and ten more. Many learners use two at once: read in Swedish, then peek at another when you're stuck.",
     'faq.6.q': 'Is my data shared with anyone?',
     'faq.6.a':
-      'Your study progress, answers, mistakes, and settings stay local. The website has AdSense-ready ad slots that stay disabled until reviewed slot IDs are configured; Google Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never receive your study answers or progress.',
+      'Your study progress, answers, mistakes, and settings stay local. The website uses Google AdSense auto ads after your cookie choice; Google Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never receive your study answers or progress.',
     'doc.back': '← Back to home',
     'privacy.kicker': 'Privacy policy',
     'privacy.h1a': 'Your data',
     'privacy.h1b': 'stays on your phone.',
     'privacy.lede':
-      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the AdSense-ready web ad slots, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
     'privacy.meta1.b': 'Effective',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -299,7 +309,7 @@ const i18n = (window.i18n = {
       'We do not run account profiles or send study answers, mistakes, progress, settings, XP, streaks, badges, bookmarks, or audio preferences to ad providers. Google ad systems may process ad and consent signals as described below.',
     'privacy.s5.t': 'Ads and purchases',
     'privacy.s5.p':
-      "This website has Google AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
+      "This website uses Google AdSense auto ads after your cookie choice. Manual in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
     'privacy.s6.t': 'Changes & contact',
     'privacy.s6.p':
       'If this policy changes, the effective date at the top of this page will change with it. Questions, concerns, or "wait, what does this actually mean?" — head over to the <a href="#/support">support page</a>.',
@@ -442,7 +452,7 @@ const i18n = (window.i18n = {
     'practice.subtitle': 'No pressure.',
     'consent.title': 'Cookies, lagom-style.',
     'consent.body':
-      'When reviewed web ad slots are configured, Google AdSense can set cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
+      'Google AdSense can set cookies after you choose. Accept all for personalised ads, accept only what\'s needed for non-personalised ads, or read the <a href="#/privacy">privacy page</a>.',
     'consent.min': 'Necessary only',
     'consent.all': 'Accept all',
     'purchase.eyebrow': 'Account purchases',
@@ -474,7 +484,7 @@ const i18n = (window.i18n = {
       'Purchase setup is not finished yet: the purchase-intent table is missing in Supabase.',
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
-      'This website is prepared for <b>Google AdSense</b>, but the static build does not load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
+      'This website uses <b>Google AdSense</b> auto ads after your cookie choice. AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. Manual in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot IDs are configured. You can change your choice by clearing site data for this domain.',
     'privacy.s5.app.t': 'Ads in the mobile app',
     'privacy.s5.app.p':
       "The mobile app uses <b>Google Mobile Ads (AdMob)</b>. On first launch the app shows Google's official consent screen (via the <em>User Messaging Platform</em> SDK), where you can pick personalised, non-personalised, or — in regions where the choice is available — opt out. Ads keep the app free. We never use ads to collect your study answers or progress.",
@@ -685,13 +695,13 @@ const i18n = (window.i18n = {
       'Ja. Tryck på språkknappen i toppmenyn för att byta — svenska, engelska och tio till. Många pluggar på två språk samtidigt: läs på svenska och kika på ett annat när du fastnar.',
     'faq.6.q': 'Delas mina data med någon?',
     'faq.6.a':
-      'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Webbplatsen har annonsytor förberedda för Google AdSense som är avstängda tills granskade annonsplats-ID:n är konfigurerade; Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler. Annonser får aldrig dina studiesvar eller framsteg.',
+      'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Webbplatsen använder automatiska Google AdSense-annonser efter ditt cookieval; Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler. Annonser får aldrig dina studiesvar eller framsteg.',
     'doc.back': '← Tillbaka till hem',
     'privacy.kicker': 'Integritetspolicy',
     'privacy.h1a': 'Dina data',
     'privacy.h1b': 'stannar i telefonen.',
     'privacy.lede':
-      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar de AdSense-förberedda annonsytorna på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
+      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
     'privacy.meta1.b': 'Gäller från',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -715,7 +725,7 @@ const i18n = (window.i18n = {
       'Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.',
     'privacy.s5.t': 'Annonser och köp',
     'privacy.s5.p':
-      'Den här webbplatsen har annonsytor förberedda för Google AdSense, men de är avstängda tills granskade annonsplats-ID:n är konfigurerade. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
+      'Den här webbplatsen använder automatiska Google AdSense-annonser efter ditt cookieval. Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
     'privacy.s6.t': 'Ändringar & kontakt',
     'privacy.s6.p':
       'Om policyn ändras uppdateras datumet längst upp. Frågor, oro, eller "vad betyder det här egentligen?" — gå till <a href="#/support">supportsidan</a>.',
@@ -856,7 +866,7 @@ const i18n = (window.i18n = {
     'practice.subtitle': 'Ingen press.',
     'consent.title': 'Cookies, på lagom-vis.',
     'consent.body':
-      'När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies och använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
+      'Google AdSense kan sätta cookies efter ditt val. Godkänn allt för personaliserade annonser, välj bara det nödvändiga för icke-personaliserade annonser, eller läs <a href="#/privacy">integritetssidan</a>.',
     'consent.min': 'Bara nödvändiga',
     'consent.all': 'Godkänn allt',
     'purchase.eyebrow': 'Kontoköp',
@@ -887,7 +897,7 @@ const i18n = (window.i18n = {
       'Köpet är inte färdigkopplat än: tabellen för köpintentioner saknas i Supabase.',
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
-      'Den här webbplatsen är förberedd för <b>Google AdSense</b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade. När AdSense är aktiverat kan AdSense och dess partner sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
+      'Den här webbplatsen använder automatiska <b>Google AdSense</b>-annonser efter ditt cookieval. AdSense och dess partner kan sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade. Du kan ändra valet genom att tömma platsdata för domänen.',
     'privacy.s5.app.t': 'Annonser i mobilappen',
     'privacy.s5.app.p':
       'Mobilappen använder <b>Google Mobile Ads (AdMob)</b>. Vid första start visar appen Googles officiella samtyckesskärm (via <em>User Messaging Platform</em>-SDK:n) där du kan välja personaliserat, icke-personaliserat eller — där det går — avstå. Annonser håller appen gratis. Vi använder aldrig annonser för att samla in dina studiesvar eller framsteg.',
@@ -1120,6 +1130,7 @@ document.addEventListener('click', (e) => {
 
 const SMT_ADS = {
   publisherId: 'ca-pub-2451892671779738',
+  autoAds: true,
   slots: {
     inline: '',
     anchor: '',
@@ -1165,11 +1176,25 @@ function smtIsRealAdSenseSlotId(slotId) {
   return typeof slotId === 'string' && /^[0-9]{10,}$/.test(slotId) && !/^0+$/.test(slotId);
 }
 
-function smtStaticAdsAreConfigured() {
+function smtAdSensePublisherIsConfigured() {
+  return /^ca-pub-[0-9]{16}$/.test(SMT_ADS.publisherId || '');
+}
+
+function smtStaticManualAdsAreConfigured() {
   return (
-    /^ca-pub-[0-9]{16}$/.test(SMT_ADS.publisherId || '') &&
+    smtAdSensePublisherIsConfigured() &&
     smtIsRealAdSenseSlotId(SMT_ADS.slots.inline) &&
     smtIsRealAdSenseSlotId(SMT_ADS.slots.anchor)
+  );
+}
+
+function smtStaticAdsAreConfigured() {
+  return smtStaticManualAdsAreConfigured();
+}
+
+function smtAdSenseCanLoad() {
+  return (
+    smtAdSensePublisherIsConfigured() && (SMT_ADS.autoAds || smtStaticManualAdsAreConfigured())
   );
 }
 
@@ -1177,19 +1202,18 @@ function smtConfigureAdSenseSlots() {
   document.querySelectorAll('ins.adsbygoogle[data-smt-ad-placement]').forEach((el) => {
     const placement = el.getAttribute('data-smt-ad-placement');
     const slotId = SMT_ADS.slots[placement];
+    el.setAttribute('data-ad-client', SMT_ADS.publisherId);
     if (!smtIsRealAdSenseSlotId(slotId)) {
-      el.removeAttribute('data-ad-client');
       el.removeAttribute('data-ad-slot');
       return;
     }
-    el.setAttribute('data-ad-client', SMT_ADS.publisherId);
     el.setAttribute('data-ad-slot', slotId);
   });
 }
 
 function smtLoadAdSense() {
   if (SMT_ADS.scriptLoaded) return;
-  if (!smtStaticAdsAreConfigured()) {
+  if (!smtAdSenseCanLoad()) {
     return;
   }
   smtConfigureAdSenseSlots();
@@ -1200,12 +1224,14 @@ function smtLoadAdSense() {
   s.src =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + SMT_ADS.publisherId;
   document.head.appendChild(s);
-  document.querySelectorAll('ins.adsbygoogle:not([data-smt-pushed])').forEach((el) => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-      el.setAttribute('data-smt-pushed', '1');
-    } catch (e) {}
-  });
+  document
+    .querySelectorAll('ins.adsbygoogle[data-ad-slot]:not([data-smt-pushed])')
+    .forEach((el) => {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        el.setAttribute('data-smt-pushed', '1');
+      } catch (e) {}
+    });
 }
 
 function smtApplyConsent(choice) {
@@ -1217,7 +1243,7 @@ function smtApplyConsent(choice) {
     if (window.smtRefreshAds) window.smtRefreshAds();
     return;
   }
-  if (!smtStaticAdsAreConfigured()) {
+  if (!smtAdSenseCanLoad()) {
     smtHideConsent();
     if (window.smtRefreshAds) window.smtRefreshAds();
     return;
@@ -1256,7 +1282,7 @@ function smtHideConsent() {
 function smtShowAds(mode) {
   // 'none' | 'inline' | 'anchor' | 'both'
   const consent = smtGetConsent();
-  const canShowAds = !!consent && smtStaticAdsAreConfigured();
+  const canShowAds = !!consent && smtAdSenseCanLoad();
   let anchorDismissed = false;
   try {
     anchorDismissed = sessionStorage.getItem('smt_anchor_closed') === '1';
@@ -2052,7 +2078,9 @@ function smtQuizRender() {
           <a class="btn btn--gold" href="#/">${copy.cta} ↗</a>
         </div>
       </div>
+      ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
     `;
+    if (window.smtMountAds) window.smtMountAds();
     // count up + celebrate
     const fx = window.smtFx;
     if (fx) {
@@ -2195,7 +2223,9 @@ function smtQuizRender() {
         ${nextBtn}
       </div>
     </div>
+    ${window.smtAdSlotMarkup ? window.smtAdSlotMarkup('practice') : ''}
   `;
+  if (window.smtMountAds) window.smtMountAds();
 }
 
 function smtQuizReset() {
