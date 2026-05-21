@@ -171,7 +171,7 @@ test('Onboarding route scroll parity uses focused content validation routing', (
   );
   assert.doesNotMatch(
     onboardingScrollTestSource,
-    /import \\{ Pressable, ScrollView, StyleSheet, Text, View \\}/,
+    /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/,
     'Onboarding route scroll tests must not require one exact react-native import list',
   );
 });
@@ -198,6 +198,30 @@ test('Badge accessibility parity uses focused content validation routing', () =>
     'Badge accessibility tests must not route through full content validation',
   );
 });
+
+test('UHRReferenceCard accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const uhrReferenceCardTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-uhr-reference-card-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-uhr-reference-card-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateUhrReferenceCardAccessibilityParity\(\);[\s\S]*uhrReferenceCardAccessibilityRulesValidated[\s\S]*uhrReferenceCardAccessibilityParityValidated/,
+  );
+  assert.match(uhrReferenceCardTestSource, /--focus-uhr-reference-card-accessibility/);
+  assert.doesNotMatch(
+    uhrReferenceCardTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'UHRReferenceCard accessibility tests must not route through full content validation',
+  );
+});
+
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -225,6 +249,7 @@ test('Flashcard accessibility parity uses focused content validation routing', (
     'Flashcard accessibility tests must not route through full content validation',
   );
 });
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
