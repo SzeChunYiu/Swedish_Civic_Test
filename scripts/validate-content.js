@@ -922,7 +922,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+    'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Förberedelsesignal',
     'lokalt',
@@ -1028,6 +1028,8 @@ const FORBIDDEN_HOME_ROUTE_LEARNER_COPY = [
   ['Optimized', ' study loop'],
   ['Optimerat', ' studieflöde'],
 ].map((parts) => parts.join(''));
+const FORBIDDEN_HOME_ROUTE_UNREACHABLE_FEATURE_COPY = [/flashcards/i, /flashkort/i];
+const FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY = [/svenska samhällskunskaper|samhällskunskaper/i];
 const EXPECTED_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   'genomgång av frågor du missat',
   'bokmärken, missade frågor, ljud',
@@ -1051,6 +1053,7 @@ const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   "readinessMetricLabel: 'redo'",
   "readinessMetricLabel: 'ready'",
 ];
+const FORBIDDEN_HOME_ROUTE_SYNTHETIC_COPY = [/simulated learners/i];
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
   ['type HomeCopy = {', 'home route must define a typed copy contract'],
@@ -1088,6 +1091,13 @@ const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['eyebrow={copy.eyebrow}', 'home route eyebrow must render localized copy'],
   ['title={copy.title}', 'home route title must render localized copy'],
   ['subtitle={copy.subtitle}', 'home route subtitle must render localized copy'],
+  ["chapterRange: 'Kapitel 10-13'", 'home route guided path must finish with chapters 10-13'],
+  ["chapterRange: 'Chapters 10-13'", 'home route guided path must finish with chapters 10-13'],
+  ['Gå till övningsprovet', 'home route Swedish native copy must use övningsprov'],
+  [
+    'gå till övningsprovet när steget är klart',
+    'home route Swedish native copy must use övningsprov',
+  ],
   ['{copy.dailyGoalTitle}', 'home daily goal title must render localized copy'],
   [
     'accessibilityLabel={copy.startPracticeAccessibilityLabel}',
@@ -10732,9 +10742,27 @@ function validateHomeRouteCopyParity() {
     }
   });
 
+  FORBIDDEN_HOME_ROUTE_UNREACHABLE_FEATURE_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route must not advertise flashcards until the feature is reachable');
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route Swedish subject copy must use natural singular samhällskunskap wording');
+    }
+  });
+
   FORBIDDEN_HOME_ROUTE_READINESS_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route preparation signal copy must not expose official-readiness wording`);
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SYNTHETIC_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route contains synthetic learner feedback copy');
     }
   });
 

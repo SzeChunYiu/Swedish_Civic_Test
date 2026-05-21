@@ -283,6 +283,21 @@ export async function setupHomeCopyRoute(page: Page, language: AppLanguage): Pro
   await dismissBlockingModals(page);
 }
 
+export async function switchLanguageThroughTopBarPicker(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  const languageMenu = page.getByRole('menu', { name: /Language picker|Språkväljare/ });
+
+  await page
+    .getByRole('button', {
+      name: /Nuvarande språk [A-Z]{2}\. Öppna språkväljaren\.|Current language [A-Z]{2}\. Open language picker\./,
+    })
+    .click();
+  await page.getByRole('menuitem', { name: language === 'sv' ? 'Swedish' : 'English' }).click();
+  await expect(languageMenu).toHaveCount(0);
+}
+
 export async function mockBrowserDate(page: Page, fixedDate: string | Date): Promise<void> {
   const mockedNow = fixedDate instanceof Date ? fixedDate.getTime() : new Date(fixedDate).getTime();
 

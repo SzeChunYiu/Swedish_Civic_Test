@@ -197,6 +197,60 @@ test('practice feedback specs target answer option accessibility result labels',
   }
 });
 
+test('Home copy specs use shared route setup and language picker helpers', () => {
+  const browserLaunchSource = readRelative('browserLaunch.ts');
+  const studyLoopSource = readRelative('home-study-loop-copy.spec.ts');
+  const mistakeReviewSource = readRelative('home-sv-mistake-review-copy.spec.ts');
+
+  assert.match(
+    browserLaunchSource,
+    /export async function setupHomeCopyRoute\(page: Page, language: AppLanguage\): Promise<void>/,
+    'browserLaunch should expose shared Home route setup',
+  );
+  assert.match(
+    browserLaunchSource,
+    /export async function switchLanguageThroughTopBarPicker\(\s+page: Page,\s+language: AppLanguage,\s+\): Promise<void>/,
+    'browserLaunch should expose shared top-bar language switching',
+  );
+  assert.match(
+    browserLaunchSource,
+    /getByRole\('menuitem', \{ name: language === 'sv' \? 'Swedish' : 'English' \}\)/,
+    'language helper should pick localized menu items through one contract',
+  );
+
+  for (const [label, source] of [
+    ['study loop', studyLoopSource],
+    ['mistake review', mistakeReviewSource],
+  ]) {
+    assert.match(
+      source,
+      /collectConsoleAndPageErrors/,
+      `${label} Home spec should share console and page error collection`,
+    );
+    assert.match(
+      source,
+      /setupHomeCopyRoute/,
+      `${label} Home spec should share language seeding, navigation, and modal dismissal`,
+    );
+    assert.doesNotMatch(
+      source,
+      /function collectConsoleErrors|async function clickIfVisible|async function dismissBlockingModals/,
+      `${label} Home spec should not define local launch or modal helpers`,
+    );
+  }
+
+  assert.match(
+    studyLoopSource,
+    /switchLanguageThroughTopBarPicker\(page, 'en'\)/,
+    'study loop Home spec should switch support language through the shared picker helper',
+  );
+  assert.doesNotMatch(
+    studyLoopSource,
+    /getByRole\('menuitem', \{ name: 'English' \}\)/,
+    'study loop Home spec should not manually drive language menu internals',
+  );
+});
+
 test('countdown browser date coverage uses the shared clock helper', () => {
   const browserLaunchSource = readRelative('browserLaunch.ts');
   const countdownSource = readRelative('countdown-banner-source-affordance.spec.ts');
