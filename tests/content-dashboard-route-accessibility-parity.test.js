@@ -9,6 +9,7 @@ const sourcePaths = {
   activity: 'components/dashboard/ActivityHeatmap.tsx',
   dashboard: 'app/dashboard.tsx',
   chapters: 'components/dashboard/PerChapterProgressBars.tsx',
+  e2e: 'tests/e2e/dashboard-route.spec.ts',
   history: 'components/dashboard/MockExamHistoryCard.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
   stats: 'lib/learning/dashboardStats.ts',
@@ -53,6 +54,46 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.dashboard,
     /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
     'Dashboard summary label must render outside the visual card',
+  );
+  assert.match(
+    sources.e2e,
+    /seedNonEmptyDashboardProgress/,
+    'Dashboard e2e must keep a seeded non-empty progress fixture',
+  );
+  assert.match(
+    sources.e2e,
+    /currentProgressStateStorageKey/,
+    'Dashboard e2e must write the current progress storage key through the shared browser helper',
+  );
+  assert.match(
+    sources.e2e,
+    /answerHistory:\s*\[/,
+    'Dashboard e2e seed must include dated answer history',
+  );
+  assert.match(
+    sources.e2e,
+    /questionProgress:\s*\{/,
+    'Dashboard e2e seed must include hydrated question progress',
+  );
+  assert.match(
+    sources.e2e,
+    /totalXp:\s*420/,
+    'Dashboard e2e seed must include XP for the non-empty sparkline/level surface',
+  );
+  assert.match(
+    sources.e2e,
+    /streakFreezeState:\s*\{/,
+    'Dashboard e2e seed must include streak state for the non-empty streak surface',
+  );
+  assert.match(
+    sources.e2e,
+    /mockExamSessions:\s*\[/,
+    'Dashboard e2e seed must include a valid mock exam session',
+  );
+  assert.match(
+    sources.e2e,
+    /expectNonEmptyProgressVisible/,
+    'Dashboard e2e must assert the non-empty rendered dashboard surface',
   );
   assert.match(
     sources.dashboard,
