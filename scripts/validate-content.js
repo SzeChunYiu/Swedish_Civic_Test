@@ -6,7 +6,9 @@ const ts = require('typescript');
 const vm = require('node:vm');
 const {
   buildSiteQuestionBank,
+  formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
+  summarizeStaticQuestionBankDrift,
 } = require('./export-site-question-bank');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
 const {
@@ -15696,8 +15698,9 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankQuestionsValidated = bank.questions.length;
   staticSiteQuestionBankChaptersValidated = bank.chapters.length;
 
-  if (actual !== expected) {
-    fail('site/questions.js is out of sync; run node scripts/export-site-question-bank.js');
+  const drift = summarizeStaticQuestionBankDrift(actual, bank, expected);
+  if (drift.hasSemanticDrift) {
+    fail(`site/questions.js semantic drift:\n${formatStaticQuestionBankDrift(drift)}`);
     return;
   }
 

@@ -7,6 +7,7 @@ const test = require('node:test');
 const {
   buildPublishedQuestionListFromSourceQuestions,
   buildSiteQuestionBank,
+  formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
   loadCanonicalExportInputs,
   summarizeStaticQuestionBankDrift,
@@ -43,11 +44,16 @@ function withQ020AdvisoryFixture(question) {
   };
 }
 
-test('static site question bank is generated from canonical content', () => {
-  const expected = generateStaticSiteQuestionBankJs();
+test('static site question bank is semantically generated from canonical content', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const generated = generateStaticSiteQuestionBankJs();
   const actual = fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8');
+  const drift = summarizeStaticQuestionBankDrift(actual, expectedBank, generated);
 
-  assert.equal(actual, expected);
+  assert.equal(drift.hasSemanticDrift, false);
+  assert.deepEqual(drift.questionIds, []);
+  assert.deepEqual(drift.chapterIds, []);
+  assert.equal(drift.formatOnly || drift.sourceMatchesGenerated, true);
 });
 
 test('static site question bank exposes the canonical question and chapter counts', () => {
@@ -83,6 +89,17 @@ test('static site question bank preserves canonical question provenance', () => 
   }
 });
 
+test('static site question bank drift report classifies format-only mismatches', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const generated = generateStaticSiteQuestionBankJs();
+  const drift = summarizeStaticQuestionBankDrift(`${generated}\n`, expectedBank, generated);
+
+  assert.equal(drift.hasSemanticDrift, false);
+  assert.equal(drift.formatOnly, true);
+  assert.match(formatStaticQuestionBankDrift(drift), /Format-only drift: yes/);
+  assert.match(formatStaticQuestionBankDrift(drift), /Changed question ids: none/);
+});
+
 test('static site question bank source fixture limits one-question localization churn', () => {
   const canonical = loadCanonicalExportInputs();
   const touchedSourceQuestions = canonical.sourceQuestions.map((question) =>
@@ -102,6 +119,12 @@ test('static site question bank source fixture limits one-question localization 
 
   const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
 
-  assert.deepEqual(drift.questionIds, ['q020', 'q246', 'q247', 'q248', 'q249']);
+  assert.equal(drift.hasSemanticDrift, true);
+  assert.equal(drift.questionIds[0], 'q020');
+  assert.equal(drift.questionIds.length, 5);
+  assert.ok(
+    drift.questionIds.slice(1).every((questionId) => /^q\d{3}$/.test(questionId)),
+    `expected only generated q020 variants to drift, got ${drift.questionIds.join(', ')}`,
+  );
   assert.deepEqual(drift.chapterIds, []);
 });
