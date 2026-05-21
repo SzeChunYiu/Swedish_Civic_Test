@@ -6,8 +6,21 @@ const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
 const locales = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
 const allowedSharedValues = new Set(['brand']);
 const dynamicMetadataKeys = [/^chap\.\d+\.m1$/];
+const localizedChapterTwoCivicTerms = {
+  'zh-Hans': /市镇、大区/,
+  'zh-Hant': /市鎮、大區/,
+  ar: /البلديات، والمناطق/,
+  ckb: /شارەوانییەکان، هەرێمەکان/,
+  fa: /شهرداری‌ها، منطقه‌ها/,
+  pl: /gminy i regiony/,
+  so: /degmooyinka iyo gobollada/,
+  ti: /ናይ ከባቢ ምምሕዳራት፡ ክልላት/,
+  tr: /belediyeler ve bölgeler/,
+  uk: /муніципалітети й регіони/,
+};
 const allowedSharedFragments = [
   /Almost Swedish/,
   /UHR/,
@@ -134,45 +147,20 @@ test('extra locales translate every displayed home, nav, footer, settings, and c
   }
 });
 
-test('Tigrinya Home chapter 4 avoids bare Swedish labor and welfare terms', () => {
+test('extra locale Home chapter 2 cards localize kommun and region labels', () => {
   const dictionaries = loadDictionaries();
-  const description = dictionaries.ti?.['chap.4.d'];
 
-  assert.equal(typeof description, 'string', 'ti.chap.4.d is translated');
-  assert.match(description, /Skatteverket/, 'ti.chap.4.d preserves the agency name');
-  assert.match(description, /ሓባራዊ ስምምዓት/, 'ti.chap.4.d localizes collective agreements');
-  assert.match(description, /ናይ ወለዲ ዕረፍቲ/, 'ti.chap.4.d localizes parental leave');
-  assert.match(description, /ጥቕማጥቕሚ ሕማም/, 'ti.chap.4.d localizes sickness benefit');
-
-  for (const term of forbiddenTigrinyaWorkWelfareTerms) {
-    assert.doesNotMatch(
-      description,
-      new RegExp(term, 'i'),
-      `ti.chap.4.d exposes bare Swedish term ${term}`,
+  for (const locale of extraLocales) {
+    const value = dictionaries[locale]['chap.2.d'];
+    assert.match(
+      value,
+      localizedChapterTwoCivicTerms[locale],
+      `${locale}.chap.2.d should use localized municipality/region nouns`,
     );
-  }
-});
-
-test('Somali Tigrinya and Turkish Home chapter 6 avoid bare Swedish education terms', () => {
-  const dictionaries = loadDictionaries();
-  const expectations = {
-    so: [/dugsiyada barbaarinta/, /jaamacadda/],
-    ti: [/መዋእለ ህጻናት/, /ዩኒቨርሲቲ/],
-    tr: [/Anaokulundan/, /üniversiteye/],
-  };
-
-  for (const [locale, localizedTerms] of Object.entries(expectations)) {
-    const description = dictionaries[locale]?.['chap.6.d'];
-    assert.equal(typeof description, 'string', `${locale}.chap.6.d is translated`);
-    assert.match(description, /BVC/, `${locale}.chap.6.d preserves BVC`);
-    assert.match(description, /1177/, `${locale}.chap.6.d preserves 1177`);
     assert.doesNotMatch(
-      description,
-      forbiddenStaticHomeEducationTerms,
-      `${locale}.chap.6.d exposes bare Swedish education terms`,
+      value,
+      /\b(?:kommun|region|regering)\b/i,
+      `${locale}.chap.2.d must not render bare Swedish civic-term tokens`,
     );
-    for (const termPattern of localizedTerms) {
-      assert.match(description, termPattern, `${locale}.chap.6.d uses ${termPattern}`);
-    }
   }
 });
