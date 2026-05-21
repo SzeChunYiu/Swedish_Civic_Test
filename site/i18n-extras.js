@@ -231,7 +231,7 @@
       'chap.10.d': '1995 年起加入欧盟，几个世纪里大致保持中立，如今加入了北约。这是它的国际故事。',
       'chap.10.m2': '约 8 分钟',
       'chap.11.d':
-        '通往护照的真实路径。各种途径、要求，以及 PUT（永久居留许可）、medborgarskap（公民身份）和「只是来访」之间的区别。',
+        '通往护照的真实路径。各种途径、要求，以及 PUT（永久居留许可）、公民身份（medborgarskap）和「只是来访」之间的区别。',
       'chap.11.m2': '约 9 分钟',
       'chap.12.d':
         '全长限时练习考试，帮助你演练答题节奏，但并不声称与官方考试一致。另附一份考试携带物品清单。',
@@ -625,7 +625,7 @@
       'chap.10.d': '自 1995 年起加入歐盟，數百年來大致保持中立，如今加入北約。這是它的國際故事。',
       'chap.10.m2': '約 8 分鐘',
       'chap.11.d':
-        '真正通往護照的路徑。各種途徑、條件，以及 PUT（永久居留）、medborgarskap（公民身分）和「只是來訪」之間的差別。',
+        '真正通往護照的路徑。各種途徑、條件，以及 PUT（永久居留）、公民身分（medborgarskap）和「只是來訪」之間的差別。',
       'chap.11.m2': '約 9 分鐘',
       'chap.12.d':
         '全長度的計時練習考試，幫助你演練答題節奏，但不聲稱能完全還原官方考試。另外還附上一份「該帶什麼」的提醒。',
@@ -1029,7 +1029,7 @@
         'عضو في الاتحاد الأوروبي منذ 1995، شبه محايدة لقرون، والآن في NATO. القصة الدولية.',
       'chap.10.m2': '~8 دقائق',
       'chap.11.d':
-        'المسار الفعلي للحصول على جواز السفر. المسارات والشروط، والفرق بين تصريح الإقامة الدائمة (PUT) وmedborgarskap و"مجرد زيارة".',
+        'المسار الفعلي للحصول على جواز السفر. المسارات والشروط، والفرق بين تصريح الإقامة الدائمة (PUT) والجنسية (medborgarskap) و"مجرد زيارة".',
       'chap.11.m2': '~9 دقائق',
       'chap.12.d':
         'اختبارات تدريبية موقوتة بالزمن وكاملة الطول تساعدك على التمرّن على إدارة الوقت، دون ادّعاء أنها تطابق الاختبار الرسمي. بالإضافة إلى ملاحظة حول ما ينبغي إحضاره.',
@@ -1442,7 +1442,7 @@
         'ئەندامی EU لە ساڵی ١٩٩٥ەوە، چەند سەدەیەک کەمێک بێلایەن، ئێستا لە NATO. چیرۆکی نێودەوڵەتی.',
       'chap.10.m2': '~8 min',
       'chap.11.d':
-        'ڕێگای ڕاستەقینە بۆ پاسپۆرت. ڕێگاکان، مەرجەکان، جیاوازیی نێوان PUT، medborgarskap، و "تەنها سەردانکردن".',
+        'ڕێگای ڕاستەقینە بۆ پاسپۆرت. ڕێگاکان، مەرجەکان، جیاوازیی نێوان PUT، هاووڵاتیبوون (medborgarskap)، و "تەنها سەردانکردن".',
       'chap.11.m2': '~9 min',
       'chap.12.d':
         'تاقیکردنەوەی مەشقیی کاتبەند بە درێژایی تەواو کە یارمەتیت دەدات خۆت بۆ ڕێکخستنی کات ڕابهێنیت، بەبێ ئەوەی بانگەشە بکات کە وەکو تاقیکردنەوەی فەرمییە. لەگەڵ تێبینییەک سەبارەت بەوەی چی لەگەڵ خۆت ببەیت.',
@@ -1860,7 +1860,7 @@
         'عضو اتحادیه‌ی اروپا از ۱۹۹۵، تقریباً بی‌طرف برای قرن‌ها، و اکنون عضو NATO. روایت بین‌المللی.',
       'chap.10.m2': '~۸ دقیقه',
       'chap.11.d':
-        'مسیر واقعی رسیدن به گذرنامه. راه‌ها، شرایط، و تفاوت میان PUT، medborgarskap (شهروندی) و «فقط مهمان بودن».',
+        'مسیر واقعی رسیدن به گذرنامه. راه‌ها، شرایط، و تفاوت میان PUT، شهروندی (medborgarskap) و «فقط مهمان بودن».',
       'chap.11.m2': '~۹ دقیقه',
       'chap.12.d':
         'آزمون‌های تمرینی زمان‌دار و کامل که کمک می‌کنند تنظیم سرعت را تمرین کنید، بدون این‌که ادعا کنند بازتاب آزمون رسمی هستند. به‌علاوه‌ی یادداشتی درباره‌ی این‌که چه چیزهایی همراه ببرید.',
@@ -2282,7 +2282,7 @@
         'Członek UE od 1995 roku, przez wieki w miarę neutralna, teraz w NATO. Wątek międzynarodowy.',
       'chap.10.m2': '~8 min',
       'chap.11.d':
-        'Faktyczna droga do paszportu. Ścieżki, wymogi, różnica między PUT, medborgarskap (obywatelstwem) a „tylko z wizytą”.',
+        'Faktyczna droga do paszportu. Ścieżki, wymogi, różnica między PUT, obywatelstwem (medborgarskap) a „tylko z wizytą”.',
       'chap.11.m2': '~9 min',
       'chap.12.d':
         'Pełnometrażowe testy próbne na czas, które pomagają przećwiczyć tempo, ale bez udawania, że odzwierciedlają oficjalny test. Plus notatka, co zabrać ze sobą.',
@@ -2708,7 +2708,7 @@
         'Xubin ka ah EU tan iyo 1995, dhexdhexaad-ish qarniyo, hadda NATO. Sheekada caalamiga ah.',
       'chap.10.m2': '~8 daqiiqo',
       'chap.11.d':
-        'Jidka dhabta ah ee loo maro baasaboorka. Jidadka, shuruudaha, iyo farqiga u dhexeeya PUT, medborgarskap, iyo "kaliya booqasho".',
+        'Jidka dhabta ah ee loo maro baasaboorka. Jidadka, shuruudaha, iyo farqiga u dhexeeya PUT, jinsiyadda (medborgarskap), iyo "kaliya booqasho".',
       'chap.11.m2': '~9 daqiiqo',
       'chap.12.d':
         'Imtixaanno tijaabo ah oo waqti leh oo dhererkoodu buuxo, kuwaas oo kaa caawiya inaad ku tababarto xaaladda imtixaanka iyada oo aan la sheegin inay u dhiganto imtixaanka rasmiga ah. Iyo qoraal ku saabsan waxa la qaadanayo.',
@@ -3114,7 +3114,7 @@
       'chap.10.d': 'ካብ 1995 ኣባል EU፡ ንዘመናት ቅሩብ ገለልተኛ፡ ሕጂ ድማ NATO። እቲ ኣህጉራዊ ዛንታ።',
       'chap.10.m2': '~8 ደቒቕ',
       'chap.11.d':
-        'እታ ናይ ሓቂ መንገዲ ናብ ፓስፖርት። መንገድታት፡ ረቛሕታት፡ እቲ ኣብ መንጎ PUT፡ medborgarskap፡ ከምኡ ድማ "ንምብጻሕ ጥራይ" ዘሎ ፍልልይ።',
+        'እታ ናይ ሓቂ መንገዲ ናብ ፓስፖርት። መንገድታት፡ ረቛሕታት፡ እቲ ኣብ መንጎ PUT፡ ዜግነት (medborgarskap)፡ ከምኡ ድማ "ንምብጻሕ ጥራይ" ዘሎ ፍልልይ።',
       'chap.11.m2': '~9 ደቒቕ',
       'chap.12.d':
         'ግዜ ዝተወሰኖም ምሉእ ናይ ልምምድ ፈተናታት ነቲ ናይ ግዜ ኣጠቓቕማ ንኽትለማመድ ዝሕግዙ፡ ነቲ ወግዓዊ ፈተና ከም ዝመስል ከይተዛረቡ። ምስኡ ድማ እንታይ ከም እትማላእ ዝሕብር መዘኻኸሪ።',
@@ -3522,7 +3522,7 @@
         "1995'ten beri AB üyesi, yüzyıllar boyunca biraz tarafsız, şimdi NATO'da. Uluslararası hikâye.",
       'chap.10.m2': '~8 dk',
       'chap.11.d':
-        'Pasaporta giden gerçek yol. Yollar, koşullar ve PUT, medborgarskap ile "sadece ziyaretteyim" arasındaki fark.',
+        'Pasaporta giden gerçek yol. Yollar, koşullar ve PUT, vatandaşlık (medborgarskap) ile "sadece ziyaretteyim" arasındaki fark.',
       'chap.11.m2': '~9 dk',
       'chap.12.d':
         'Resmî sınavı birebir yansıttığını iddia etmeden tempo provası yapmanıza yardımcı olan, tam uzunlukta süreli alıştırma sınavları. Ayrıca yanınıza ne almanız gerektiğine dair bir not.',
@@ -3944,7 +3944,7 @@
         'Член ЄС від 1995 року, кілька століть майже нейтральна, тепер у НАТО. Міжнародна історія.',
       'chap.10.m2': '~8 хв',
       'chap.11.d':
-        'Справжній шлях до паспорта. Маршрути, вимоги, різниця між PUT, medborgarskap і «просто в гостях».',
+        'Справжній шлях до паспорта. Маршрути, вимоги, різниця між PUT, громадянством (medborgarskap) і «просто в гостях».',
       'chap.11.m2': '~9 хв',
       'chap.12.d':
         "Пробні іспити повної тривалості на час, які допомагають відрепетирувати темп, але не претендують на копію офіційного іспиту. Плюс пам'ятка, що взяти із собою.",

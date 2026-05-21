@@ -91,6 +91,18 @@ const localizedHomeChapterTwoCivicTermSnippets: Record<ExtraLocale, RegExp> = {
   tr: /belediyeler ve bölgeler/,
   uk: /муніципалітети й регіони/,
 };
+const localizedHomeChapterElevenCitizenshipSnippets: Record<ExtraLocale, RegExp> = {
+  'zh-Hans': /公民身份（medborgarskap）/,
+  'zh-Hant': /公民身分（medborgarskap）/,
+  ar: /الجنسية\s*\(medborgarskap\)/,
+  ckb: /هاووڵاتیبوون\s*\(medborgarskap\)/,
+  fa: /شهروندی\s*\(medborgarskap\)/,
+  pl: /obywatelstwem\s*\(medborgarskap\)/i,
+  so: /jinsiyadda\s*\(medborgarskap\)/i,
+  ti: /ዜግነት\s*\(medborgarskap\)/,
+  tr: /vatandaşlık\s*\(medborgarskap\)/i,
+  uk: /громадянством\s*\(medborgarskap\)/i,
+};
 
 type StaticSite = {
   baseUrl: string;
@@ -296,6 +308,23 @@ async function assertHomeChapterTwoCivicTerms(page: Page, locale: ExtraLocale) {
   expect(await chapterDescription.innerText()).not.toMatch(forbiddenHomeChapterTwoCivicTerms);
 }
 
+async function assertHomeChapterElevenCitizenshipTerms(page: Page, locale: ExtraLocale) {
+  const expectedDescription = await dictionaryText(page, locale, 'chap.11.d');
+  const chapterDescription = page.locator(i18nSelector('chap.11.d'));
+
+  await expect(chapterDescription).toBeVisible();
+  await expect(chapterDescription).toHaveText(expectedDescription);
+
+  const text = await chapterDescription.innerText();
+  expect(text).toMatch(localizedHomeChapterElevenCitizenshipSnippets[locale]);
+  expect(text).toMatch(/PUT/);
+  expect(text).not.toMatch(/PUT[^.。؟]*,\s*medborgarskap|medborgarskap\s*[（(]/iu);
+
+  const glossaryIndex = text.toLowerCase().indexOf('medborgarskap');
+  expect(glossaryIndex).toBeGreaterThanOrEqual(0);
+  expect(['(', '（']).toContain(text[glossaryIndex - 1]);
+}
+
 let staticSite: StaticSite;
 
 test.beforeAll(async () => {
@@ -393,6 +422,30 @@ test('static Home chapter 2 civic terms render localized card descriptions witho
 
     await expectRootLocale(page, locale);
     await assertHomeChapterTwoCivicTerms(page, locale);
+    await expect(page.locator('.list-quiet > li')).toHaveCount(13);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Home chapter 11 citizenship terms render localized glossary before medborgarskap', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await assertHomeChapterElevenCitizenshipTerms(page, locale);
     await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
 
