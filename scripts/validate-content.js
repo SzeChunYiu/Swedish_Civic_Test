@@ -6034,29 +6034,32 @@ const STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES = [
   'tr',
   'uk',
 ];
-const STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS = ['2', '4', '6'];
 const STATIC_EBOOK_BARE_CIVIC_TERM_PATTERN =
   /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
 
 function validateStaticEbookCivicTermGlosses() {
-  const harness = createStaticEbookValidationHarness(readStaticEbookChapterIds());
+  const chapterIds = readStaticEbookChapterIds();
+  const harness = createStaticEbookValidationHarness(chapterIds);
   let checksValidated = 0;
   let valid = true;
 
-  STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS.forEach((chapterId) => {
+  chapterIds.forEach((chapterId) => {
     STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES.forEach((language) => {
       const html = renderStaticEbookChapter(harness, language, chapterId);
       const offenders = Array.from(
         html.matchAll(STATIC_EBOOK_BARE_CIVIC_TERM_PATTERN),
-        (match) => match[2],
+        (match) => ({
+          context: staticEbookCivicTermContext(html, match.index ?? 0),
+          term: match[2],
+        }),
       );
 
       if (offenders.length > 0) {
         valid = false;
         fail(
-          `static ebook ${language} chapter ${chapterId} contains bare civic terms: ${Array.from(
-            new Set(offenders),
-          ).join(', ')}`,
+          `static ebook ${language} chapter ${chapterId} contains bare civic terms: ${offenders
+            .map((offender) => `${offender.term} in "${offender.context}"`)
+            .join('; ')}`,
         );
         return;
       }
@@ -6066,12 +6069,18 @@ function validateStaticEbookCivicTermGlosses() {
   });
 
   return {
-    checksExpected:
-      STATIC_EBOOK_CIVIC_TERM_GLOSS_CHAPTERS.length *
-      STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES.length,
+    checksExpected: chapterIds.length * STATIC_EBOOK_CIVIC_TERM_GLOSS_LANGUAGES.length,
     checksValidated,
     parityValidated: valid,
   };
+}
+
+function staticEbookCivicTermContext(html, index) {
+  return html
+    .slice(Math.max(0, index - 90), index + 150)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function validateStaticV11ReadinessCopy() {

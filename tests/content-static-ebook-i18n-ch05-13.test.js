@@ -81,8 +81,19 @@ function renderChapter(harness, lang, chapterId) {
 }
 
 function assertNoBareCivicTerms(html, label) {
-  const offenders = Array.from(html.matchAll(bareCivicTermPattern), (match) => match[2]);
+  const offenders = Array.from(html.matchAll(bareCivicTermPattern), (match) => ({
+    context: civicTermContext(html, match.index ?? 0),
+    term: match[2],
+  }));
   assert.deepEqual(offenders, [], `${label} should localize kommun/region civic terms`);
+}
+
+function civicTermContext(html, index) {
+  return html
+    .slice(Math.max(0, index - 90), index + 150)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 test('static ebook chapters 5-13 do not fall back to English for non-English reader languages', () => {
@@ -118,11 +129,13 @@ test('static ebook chapters 5-13 do not fall back to English for non-English rea
   }
 });
 
-test('static ebook chapter 6 localizes kommun and region civic terms for extra languages', () => {
+test('static ebook chapters 5-13 localize kommun and region civic terms for extra languages', () => {
   const harness = createEbookHarness();
 
-  for (const lang of extraLanguages) {
-    const html = renderChapter(harness, lang, '6');
-    assertNoBareCivicTerms(html, `${lang} chapter 6`);
+  for (const chapterId of targetChapters) {
+    for (const lang of extraLanguages) {
+      const html = renderChapter(harness, lang, chapterId);
+      assertNoBareCivicTerms(html, `${lang} chapter ${chapterId}`);
+    }
   }
 });
