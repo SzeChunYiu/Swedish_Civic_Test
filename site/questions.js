@@ -64538,4 +64538,14 @@
     "questionCount": 145
   }
 ];
+
+  window.SMT_QUESTION_BANK_META = {
+  "questionCount": 895,
+  "chapterCount": 13,
+  "provenanceCounts": {
+    "uhr": 179,
+    "derived": 716,
+    "editorial": 0
+  }
+};
 })();
