@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
-import { adBannerCopy, getAdBannerStatusLabel } from '../../lib/monetization/adCopy';
+import { adBannerCopy } from '../../lib/monetization/adCopy';
 import { getAdUnit, getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
@@ -36,13 +36,14 @@ export function AdBanner({
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
-  const adStatusLabel = getAdBannerStatusLabel(copy, unit);
+  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
+  const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
 
   return (
     <View
       accessible
       accessibilityHint={`${copy.previewHint} ${copy.removeAdsHint}`}
-      accessibilityLabel={copy.accessibilityLabel(placementLabel, adStatusLabel)}
+      accessibilityLabel={accessibilityLabel}
       style={styles.nativeSlot}
     >
       <BannerAd
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
     paddingVertical: space[1],
   },
