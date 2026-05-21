@@ -2093,8 +2093,10 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
       'Inget konto krävs',
+      'köpet gör att annonser inte visas på den här enheten',
       'Privacy policy',
       'No account required',
+      'turns off ads on this device',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
@@ -12532,6 +12534,10 @@ function validateLegalRouteHeaderParity() {
     }
 
     if (expectedRoute.file === 'app/privacy.tsx') {
+      if (/\badsDisabled\b/.test(routeSource)) {
+        reject('app/privacy.tsx learner-facing privacy copy must not expose adsDisabled');
+      }
+
       const swedishPrivacyBlock = routeSource.match(
         /sv:\s*\{[\s\S]*?title:\s*'Integritetspolicy',\s*\},\s*en:/,
       )?.[0];

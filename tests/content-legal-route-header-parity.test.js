@@ -34,8 +34,10 @@ const expectedLegalRoutes = [
       'const copy = privacyCopy[language];',
       'Integritetspolicy',
       'Inget konto krävs',
+      'köpet gör att annonser inte visas på den här enheten',
       'Privacy policy',
       'No account required',
+      'turns off ads on this device',
     ],
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.noAccountRequired\.title\}>/,
@@ -254,6 +256,44 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
+  );
+});
+
+test('privacy route parity rejects internal Remove Ads entitlement flag copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'köpet gör att annonser inte visas på den här enheten',
+        'köpet sätter adsDisabled=true på den här enheten',
+      )
+      .replace(
+        'turns off ads on this device',
+        'sets adsDisabled=true on this device',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-legal-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/privacy\.tsx learner-facing privacy copy must not expose adsDisabled/,
   );
 });
 
