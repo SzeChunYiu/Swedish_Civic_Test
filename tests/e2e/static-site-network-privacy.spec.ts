@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { setStaticSiteLanguage, startStaticSiteServer, type StaticSite } from './staticSiteServer';
+import { trapExternalRequests } from './staticSiteNetworkGuards';
 
 const internalMonetizationCopyPatterns = [
   /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i,
@@ -30,20 +31,6 @@ const preparedAdSenseCopy = {
     web: /förberedd för Google AdSense[\s\S]*laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade/i,
   },
 } as const;
-
-async function trapExternalRequests(page: Page, allowedOrigin: string) {
-  await page.route('**/*', async (route) => {
-    const url = route.request().url();
-    const parsedUrl = new URL(url);
-
-    if (parsedUrl.origin !== allowedOrigin) {
-      await route.abort('blockedbyclient');
-      return;
-    }
-
-    await route.continue();
-  });
-}
 
 async function seedStaticPrivacyRun(page: Page) {
   await page.addInitScript(() => {

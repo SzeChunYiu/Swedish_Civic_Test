@@ -4,36 +4,7 @@ import {
   startStaticSiteServer,
   type StaticSite,
 } from './staticSiteServer';
-
-const googleFontHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
-
-function isGoogleFontRequest(url: string) {
-  return googleFontHosts.has(new URL(url).hostname);
-}
-
-async function trapExternalRequests(
-  page: Page,
-  allowedOrigin: string,
-  googleFontRequests: string[],
-) {
-  await page.route('**/*', async (route) => {
-    const url = route.request().url();
-    const parsedUrl = new URL(url);
-
-    if (isGoogleFontRequest(url)) {
-      googleFontRequests.push(url);
-      await route.abort('blockedbyclient');
-      return;
-    }
-
-    if (parsedUrl.origin !== allowedOrigin) {
-      await route.abort('blockedbyclient');
-      return;
-    }
-
-    await route.continue();
-  });
-}
+import { trapExternalRequests } from './staticSiteNetworkGuards';
 
 async function seedStaticNetworkRun(page: Page) {
   await page.addInitScript(() => {
