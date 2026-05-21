@@ -4004,6 +4004,10 @@ button.quiz__dot:focus-visible {
   background: #04080e !important;
 }
 .footer__inner {
+  /* override the stale earlier `.footer__inner { display:grid; 1.4fr repeat(3,1fr) }`
+     rule that was cramming hero + nav columns into a 4-cell grid */
+  display: block !important;
+  grid-template-columns: none !important;
   max-width: 1320px;
   margin: 0 auto;
   padding: 0 clamp(20px, 4vw, 56px);
