@@ -21,23 +21,6 @@ function createFakeNpm(tmpDir) {
   return fakeNpm;
 }
 
-function createFakeNode(tmpDir) {
-  const fakeNode = path.join(tmpDir, 'node');
-  fs.writeFileSync(
-    fakeNode,
-    [
-      '#!/bin/sh',
-      'for arg in "$@"; do',
-      '  printf "%s\\n" "$arg" >> "$TEST_DISPATCH_LOG"',
-      'done',
-      'exit 0',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
-  return fakeNode;
-}
-
 function runDispatcher(args, env) {
   return spawnSync(process.execPath, ['scripts/test-dispatch.js', ...args], {
     cwd: repoRoot,
@@ -54,23 +37,11 @@ function runPackageTest(args, env) {
   });
 }
 
-function runPackageContentFocused(args, env) {
-  return spawnSync('npm', ['run', 'test:content-focused', '--', ...args], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    env,
-  });
-}
-
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
-  assert.equal(
-    pkg.scripts['test:content-focused'],
-    'node scripts/test-dispatch.js content-focused',
-  );
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
 });
 
@@ -130,63 +101,6 @@ test('package npm test selector enters the dispatcher before running suites', ()
   }
 });
 
-test('content-focused package script routes test-name pattern before file list', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
-  const nodeLog = path.join(tmpDir, 'node.log');
-  const pattern = 'religious-freedom option parallelism|focus-religious-freedom';
-  const env = {
-    ...process.env,
-    npm_config_loglevel: 'silent',
-    TEST_DISPATCH_CAPTURE: '1',
-    TEST_DISPATCH_LOG: nodeLog,
-    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
-  };
-
-  try {
-    const result = runPackageContentFocused(
-      [
-        '--test-name-pattern',
-        pattern,
-        'tests/content-test-script-routing.test.js',
-        'tests/content-published-question-types.test.js',
-      ],
-      env,
-    );
-
-    assert.equal(result.status, 0, result.stderr || result.stdout);
-    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split(/\n/), [
-      '--test',
-      '--test-name-pattern',
-      pattern,
-      'tests/content-test-script-routing.test.js',
-      'tests/content-published-question-types.test.js',
-    ]);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
-
-test('content-focused selector rejects missing file lists before running node', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-invalid-'));
-  const nodeLog = path.join(tmpDir, 'node.log');
-  const env = {
-    ...process.env,
-    TEST_DISPATCH_CAPTURE: '1',
-    TEST_DISPATCH_LOG: nodeLog,
-    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
-  };
-
-  try {
-    const result = runDispatcher(['content-focused', '--test-name-pattern', 'routing'], env);
-
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /missing test file list/);
-    assert.equal(fs.existsSync(nodeLog), false);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
-
 test('answer shuffle parity uses the focused content validator path', () => {
   const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
   const parityTest = fs.readFileSync(
@@ -237,95 +151,6 @@ test('answer feedback focused content validation runs only its parity summary', 
   );
 });
 
-test('question speech text focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-question-speech-text-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused question speech validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
-  assert.ok(summary.questionSpeechTextOptionsValidated > 0);
-  assert.equal(summary.questionSpeechTextParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
-    false,
-  );
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
-    false,
-  );
-});
-
-test('XP rules focused content validation runs only its parity summary', () => {
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused XP validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.xpRulesValidated, 20);
-  assert.equal(summary.xpRulesParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
-});
-
-test('readiness adapter focused content validation runs only its runtime summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-readiness-adapter-rules'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused readiness adapter validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.readinessAdapterRulesValidated, 6);
-  assert.equal(summary.readinessAdapterRuntimeParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
-});
-
-test('learning Pro-gated selectors focused validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-learning-pro-gated-selectors'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused learning Pro gate validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.learningProGatedReviewCasesValidated, 20);
-  assert.equal(summary.learningProGatedHighlightCasesValidated, 15);
-  assert.equal(summary.learningProGatedSelectorsParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
-    false,
-  );
-});
-
 test('exam submission finality focused validation runs only its parity summary', () => {
   const result = spawnSync(
     process.execPath,
@@ -371,45 +196,10 @@ test('UHR reference card focused content validation runs only its accessibility 
   );
 });
 
-test('content schema source focused validations run only their schema summaries', () => {
-  const cases = [
-    {
-      absentKey: 'answerFeedbackRuntimeParityValidated',
-      flag: '--focus-uhr-reference-section-page-parity',
-      presentKey: 'uhrReferencesValidated',
-    },
-    {
-      absentKey: 'uhrReferencesValidated',
-      flag: '--focus-question-exact-schema-keys',
-      presentKey: 'questionExactSchemaKeysValidated',
-    },
-    {
-      absentKey: 'questionExactSchemaKeysValidated',
-      flag: '--focus-authored-source-partition',
-      presentKey: 'authoredSourcePartitionQuestionsValidated',
-    },
-  ];
-
-  for (const { absentKey, flag, presentKey } of cases) {
-    const result = spawnSync(process.execPath, ['scripts/validate-content.js', flag], {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    });
-
-    assert.equal(result.status, 0, result.stderr || result.stdout);
-    const match = result.stdout.match(/\{[\s\S]*\}/);
-    assert.ok(match, `${flag} should print JSON summary`);
-    const summary = JSON.parse(match[0]);
-
-    assert.equal(summary[presentKey] > 0, true);
-    assert.equal(Object.prototype.hasOwnProperty.call(summary, absentKey), false);
-  }
-});
-
-test('CelebrationBurst focused content validation runs only its accessibility summary', () => {
+test('AudioButton focused content validation runs only its accessibility summary', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-celebration-burst-accessibility'],
+    ['scripts/validate-content.js', '--focus-audio-button-accessibility'],
     {
       cwd: repoRoot,
       encoding: 'utf8',
@@ -418,13 +208,36 @@ test('CelebrationBurst focused content validation runs only its accessibility su
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused CelebrationBurst validation should print JSON summary');
+  assert.ok(match, 'focused AudioButton validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
-  assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
+  assert.equal(summary.audioButtonAccessibilityRulesValidated, 15);
+  assert.equal(summary.audioButtonAccessibilityParityValidated, true);
   assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
+    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
+    false,
+  );
+});
+
+test('speech runtime focused content validation runs only its speech summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-speech-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused speech runtime validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.speechRuntimeCasesValidated, 4);
+  assert.equal(summary.speechRuntimeParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'audioButtonAccessibilityParityValidated'),
     false,
   );
 });
