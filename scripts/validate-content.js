@@ -1259,7 +1259,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -7539,16 +7539,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
-  });
-  process.exit(0);
-}
-
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -12377,6 +12367,27 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      normalizedPurchaseSource.includes('export type NativeRemoveAdsReceiptValidator =') &&
+        normalizedPurchaseSource.includes('receiptValidator?: NativeRemoveAdsReceiptValidator;'),
+      'native Remove Ads provider must require an explicit receipt validator hook',
+    ],
+    [
+      /async validateRemoveAdsReceipt\(purchase, productId\) \{[\s\S]*if \(!receiptValidator\) \{[\s\S]*status:\s*'pending'[\s\S]*return receiptValidator\(purchase, productId\);/.test(
+        purchaseSource,
+      ) &&
+        normalizedPurchaseSource.includes(
+          ": ({ status: 'pending' } satisfies RemoveAdsReceiptValidationResult);",
+        ),
+      'default native and missing Remove Ads receipt validation must fail closed as pending',
+    ],
+    [
+      normalizedPurchaseSource.includes('return removeAdsEntitlements(true);') &&
+        !/if \(!provider\) \{[\s\S]*clearStoredRemoveAdsEntitlement\(storage\)/.test(
+          purchaseSource,
+        ),
+      'Remove Ads stored valid entitlement must survive relaunch without a live provider',
     ],
     [
       normalizedPurchaseSource.includes(

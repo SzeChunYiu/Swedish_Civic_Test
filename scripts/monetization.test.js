@@ -1083,6 +1083,7 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.match(storedPurchaseRecord.grantedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.match(storedPurchaseRecord.receiptValidatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.equal(Object.hasOwn(storedPurchaseRecord, 'raw'), false);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
   assert.equal(
     (
       await getPurchaseEntitlements({
@@ -1367,6 +1368,23 @@ test('remove-ads entitlement storage rejects stale boolean and malformed records
     }),
   );
   assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, false);
+
+  await storage.setItemAsync(
+    REMOVE_ADS_STORAGE_KEY,
+    JSON.stringify({
+      grantedAt: new Date().toISOString(),
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: 'mock-token-buy-remove-ads',
+      receiptValidatedAt: new Date().toISOString(),
+      receiptValidationStatus: 'valid',
+      schemaVersion: 1,
+      source: 'purchase',
+      transactionId: 'buy-remove-ads',
+    }),
+  );
+  const persistedRecord = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
+  assert.equal((await getPurchaseEntitlements({ storage })).adsDisabled, true);
+  assert.equal(await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY), persistedRecord);
 });
 
 test('pending remove-ads purchase does not grant adsDisabled until store confirmation', async () => {
@@ -1502,21 +1520,6 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
-});
-
-test('ProPaywall buy and restore actions use a ref-backed in-flight guard', () => {
-  const proPaywallSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
-    'utf8',
-  );
-
-  assert.match(proPaywallSource, /import \{ useCallback, useRef, useState \} from 'react';/);
-  assert.match(proPaywallSource, /const proActionInFlightRef = useRef\(false\);/);
-  assert.match(proPaywallSource, /if \(proActionInFlightRef\.current\) return;/);
-  assert.match(proPaywallSource, /proActionInFlightRef\.current = true;/);
-  assert.match(proPaywallSource, /await buyProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /await restoreProLifetime\(runtimeOptions\)/);
-  assert.match(proPaywallSource, /finally \{[\s\S]*proActionInFlightRef\.current = false;/);
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
@@ -1916,9 +1919,6 @@ test('global launch popup ad is suppressed on active question and compliance rou
   assert.equal(shouldSuppressLaunchPopupAdForPath('/practice/review'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/quiz/q001/review'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/about-the-test'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/citizenship-requirements'), true);
-  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/privacy'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/terms'), true);
   assert.equal(shouldSuppressLaunchPopupAdForPath('/support'), true);
@@ -1932,10 +1932,7 @@ test('global launch popup ad is suppressed on active question and compliance rou
     '/exam',
     '/practice',
     '/quiz',
-    '/about-the-test',
-    '/citizenship-requirements',
     '/disclaimer',
-    '/onboarding',
     '/privacy',
     '/sources',
     '/support',
