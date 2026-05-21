@@ -131,3 +131,16 @@ test('createDefaultPurchaseRuntimeOptions fails closed and clears stored entitle
     },
   );
 });
+
+test('placement Remove Ads CTA mirrors unavailable public web runtime copy', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(source, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(source, /Buy in mobile app/);
+  assert.match(source, /Restore in mobile app/);
+  assert.match(source, /disabled=\{actionsDisabled\}/);
+});

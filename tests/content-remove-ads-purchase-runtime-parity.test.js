@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 22);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 25);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -73,8 +73,23 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(purchaseSource, /type: 'in-app'/);
   assert.match(placementCtaSource, /restoreRemoveAdsPurchase/);
   assert.match(placementCtaSource, /runPurchaseAction\('restore', restoreRemoveAdsPurchase\)/);
+  assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(placementCtaSource, /Buy in mobile app/);
+  assert.match(placementCtaSource, /Köp i mobilappen/);
+  assert.match(placementCtaSource, /Restore in mobile app/);
+  assert.match(placementCtaSource, /Återställ i mobilappen/);
+  assert.match(placementCtaSource, /mobile app store purchase/);
+  assert.match(placementCtaSource, /butiksköp i mobilappen/);
+  assert.match(
+    placementCtaSource,
+    /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,
+  );
+  assert.match(placementCtaSource, /disabled=\{actionsDisabled\}/);
+  assert.match(placementCtaSource, /setStatus\('unavailable'\);/);
   assert.match(placementCtaSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
-  assert.match(placementCtaSource, /accessibilityHint=\{copy\.restoreAccessibilityHint\}/);
+  assert.match(placementCtaSource, /copy\.restoreAccessibilityHint/);
   assert.match(placementCtaSource, /Purchase restored\. Study ads are being removed/);
   assert.match(placementCtaSource, /const purchaseActionInFlightRef = useRef\(false\);/);
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
@@ -91,6 +106,37 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
       surfaceName: 'PremiumBanner',
     }),
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects placement CTA web-unavailable drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/RemoveAdsPlacementCta.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("purchaseRuntime?.purchaseUnavailableReason === 'web_store_unavailable'", 'false');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /RemoveAdsPlacementCta must render localized mobile-app-only copy when web purchases are unavailable|RemoveAdsPlacementCta must disable buy and restore actions for unavailable web purchase runtime/,
   );
 });
 
@@ -302,7 +348,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /RemoveAdsPlacementCta must return early from the ref-backed in-flight guard before activating it|PremiumBanner must return early from the ref-backed in-flight guard before activating it|ref-backed in-flight guard before awaiting store calls/,
+    /RemoveAdsPlacementCta must return early from the ref-backed in-flight guard before activating it|PremiumBanner must return early from the ref-backed in-flight guard before activating it|ref-backed in-flight guard before awaiting store calls|must reset purchaseActionInFlightRef\.current inside finally/,
   );
 });
 

@@ -57,6 +57,33 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
   expect(consoleErrors).toEqual([]);
 });
 
+test('placement Remove Ads CTA is disabled with mobile-app copy on public web', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/learn', { waitUntil: 'networkidle' });
+
+  await expect(
+    page.getByText('Remove Ads for 29 SEK is a mobile app store purchase.'),
+  ).toBeVisible();
+  await expect(page.getByText('Buy in mobile app')).toBeVisible();
+  await expect(page.getByText('Restore in mobile app')).toBeVisible();
+  await expect(
+    page.getByText('Remove Ads can be bought or restored in the mobile app.'),
+  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Buy Remove Ads for 29 SEK' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Restore Remove Ads purchase' })).toBeDisabled();
+
+  expect(consoleErrors).toEqual([]);
+});
+
 for (const routePath of launchCloseTargetRoutes) {
   test(`launch sponsor close control keeps a 44px target on ${routePath}`, async ({ page }) => {
     const consoleErrors: string[] = [];

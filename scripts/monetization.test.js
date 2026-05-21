@@ -1976,6 +1976,10 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
   const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const profileSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
 
@@ -2031,6 +2035,18 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
+  assert.match(placementCtaSource, /purchaseUnavailableReason === 'web_store_unavailable'/);
+  assert.match(placementCtaSource, /copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)/);
+  assert.match(placementCtaSource, /copy\.webUnavailableAccessibilityHint/);
+  assert.match(placementCtaSource, /Buy in mobile app/);
+  assert.match(placementCtaSource, /Köp i mobilappen/);
+  assert.match(placementCtaSource, /Restore in mobile app/);
+  assert.match(placementCtaSource, /Återställ i mobilappen/);
+  assert.match(
+    placementCtaSource,
+    /const actionsDisabled = activeAction !== null \|\| purchaseUnavailable;/,
+  );
+  assert.match(placementCtaSource, /disabled=\{actionsDisabled\}/);
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
