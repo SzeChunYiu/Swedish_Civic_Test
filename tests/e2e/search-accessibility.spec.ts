@@ -12,6 +12,7 @@ const copy = {
     initialSummary: /\d+ samhällsbegrepp i referensen/,
     inputName: 'Sök samhällsbegrepp och övningsfrågor',
     punctuatedQuery: 'kommun,',
+    provenanceBadge: /Källtyp: (UHR-källa|Tilläggsfråga|Redaktionell)/,
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
     termName: 'Kommun',
@@ -22,6 +23,7 @@ const copy = {
     initialSummary: /\d+ civic reference terms/,
     inputName: 'Search civic terms and practice questions',
     punctuatedQuery: 'riksdag?',
+    provenanceBadge: /Provenance: (UHR source|Supplementary|Editorial)/,
     questionLink: /Open practice question:/,
     query: 'municipality',
     termName: 'Riksdag',
@@ -63,6 +65,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
     await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: t.provenanceBadge }).first()).toBeVisible();
 
     await page.getByRole('button', { name: t.clear }).click();
     await expect(liveSummary).toHaveText(t.initialSummary);

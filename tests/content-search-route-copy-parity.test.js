@@ -18,6 +18,13 @@ function readGlossarySearchSource() {
 
 function assertSearchRouteQuestionResults(source) {
   const requiredRules = [
+    [
+      /import \{ ProvenanceBadge \} from '\.\.\/components\/quiz\/ProvenanceBadge';/,
+      'provenance badge import',
+    ],
+    [/getProvenanceDescription,/, 'provenance description helper import'],
+    [/getProvenanceLabel,/, 'provenance label helper import'],
+    [/getQuestionProvenance,/, 'provenance helper import'],
     [/import \{ questions \} from '\.\.\/data\/questions';/, 'question bank import'],
     [/searchQuestions,/, 'question search helper import'],
     [/getQuestionSearchTitle,/, 'localized question title helper import'],
@@ -35,6 +42,24 @@ function assertSearchRouteQuestionResults(source) {
     [
       /const excerpt = getQuestionSearchExcerpt\(result\.question, language\);/,
       'localized excerpt use',
+    ],
+    [
+      /const provenance = getQuestionProvenance\(result\.question\);/,
+      'question provenance derivation',
+    ],
+    [
+      /const provenanceLabel = getProvenanceLabel\(provenance, language\);/,
+      'localized provenance label',
+    ],
+    [
+      /const provenanceDescription = getProvenanceDescription\(provenance, language\);/,
+      'localized provenance source note',
+    ],
+    [/provenanceLabel,/, 'provenance label included in accessible summary'],
+    [/provenanceDescription,/, 'provenance description included in accessible summary'],
+    [
+      /<ProvenanceBadge language=\{language\} question=\{result\.question\} \/>/,
+      'visible provenance badge',
     ],
     [/href=\{`\/quiz\/\$\{result\.question\.id\}`\}/, 'routed quiz question link'],
     [/questionSectionTitle: 'Övningsfrågor'/, 'Swedish question section copy'],
@@ -242,4 +267,13 @@ test('Search route question results reject dropping ranked helper usage', () => 
   const mutatedSource = readSearchRouteSource().replace('return searchQuestions({', 'return [];');
 
   assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /searchQuestions call/);
+});
+
+test('Search route question results reject dropping provenance badges', () => {
+  const mutatedSource = readSearchRouteSource().replace(
+    '<ProvenanceBadge language={language} question={result.question} />',
+    '',
+  );
+
+  assert.throws(() => assertSearchRouteQuestionResults(mutatedSource), /visible provenance badge/);
 });

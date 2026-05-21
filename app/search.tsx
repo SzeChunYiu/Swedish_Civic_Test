@@ -2,12 +2,18 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { ProvenanceBadge } from '../components/quiz/ProvenanceBadge';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
 import { chapters } from '../data/chapters';
 import { glossaryTerms } from '../data/glossary';
 import { questions } from '../data/questions';
+import {
+  getProvenanceDescription,
+  getProvenanceLabel,
+  getQuestionProvenance,
+} from '../lib/content/provenance';
 import { searchGlossary } from '../lib/learning/glossarySearch';
 import {
   getQuestionSearchChapterName,
@@ -171,6 +177,9 @@ export default function SearchScreen() {
                 const title = getQuestionSearchTitle(result.question, language);
                 const excerpt = getQuestionSearchExcerpt(result.question, language);
                 const chapterName = getQuestionSearchChapterName(result.chapter, language);
+                const provenance = getQuestionProvenance(result.question);
+                const provenanceLabel = getProvenanceLabel(provenance, language);
+                const provenanceDescription = getProvenanceDescription(provenance, language);
                 const sourceReference = [
                   result.question.uhrReference.chapter,
                   result.question.uhrReference.section,
@@ -180,6 +189,8 @@ export default function SearchScreen() {
                 const questionSummary = copy.questionAccessibilityLabel({
                   chapterName,
                   excerpt,
+                  provenanceDescription,
+                  provenanceLabel,
                   sourceReference,
                   title,
                 });
@@ -210,6 +221,7 @@ export default function SearchScreen() {
                       </Link>
                     </View>
                     <Text style={styles.explanation}>{excerpt}</Text>
+                    <ProvenanceBadge language={language} question={result.question} />
                     {sourceReference ? (
                       <Text style={styles.questionSource}>
                         {copy.sourceLabel}: {sourceReference}
@@ -267,11 +279,15 @@ type SearchRouteCopy = {
   questionAccessibilityLabel: ({
     chapterName,
     excerpt,
+    provenanceDescription,
+    provenanceLabel,
     sourceReference,
     title,
   }: {
     chapterName: string;
     excerpt: string;
+    provenanceDescription: string;
+    provenanceLabel: string;
     sourceReference: string;
     title: string;
   }) => string;
@@ -314,11 +330,20 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Öppna kapitlet ${chapterName}`,
     openQuestion: 'Öppna fråga',
     openQuestionAccessibilityLabel: (title) => `Öppna övningsfrågan: ${title}`,
-    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
+    questionAccessibilityLabel: ({
+      chapterName,
+      excerpt,
+      provenanceDescription,
+      provenanceLabel,
+      sourceReference,
+      title,
+    }) =>
       [
         title,
         excerpt,
         chapterName ? `Kapitel: ${chapterName}` : '',
+        `Källtyp: ${provenanceLabel}`,
+        provenanceDescription,
         sourceReference ? `Källa: ${sourceReference}` : '',
       ]
         .filter(Boolean)
@@ -360,11 +385,20 @@ const searchRouteCopy: Record<AppLanguage, SearchRouteCopy> = {
     openChapterAccessibilityLabel: (chapterName) => `Open the chapter ${chapterName}`,
     openQuestion: 'Open question',
     openQuestionAccessibilityLabel: (title) => `Open practice question: ${title}`,
-    questionAccessibilityLabel: ({ chapterName, excerpt, sourceReference, title }) =>
+    questionAccessibilityLabel: ({
+      chapterName,
+      excerpt,
+      provenanceDescription,
+      provenanceLabel,
+      sourceReference,
+      title,
+    }) =>
       [
         title,
         excerpt,
         chapterName ? `Chapter: ${chapterName}` : '',
+        `Provenance: ${provenanceLabel}`,
+        provenanceDescription,
         sourceReference ? `Source: ${sourceReference}` : '',
       ]
         .filter(Boolean)
