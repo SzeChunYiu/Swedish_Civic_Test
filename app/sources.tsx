@@ -15,6 +15,8 @@ type LegalRouteSectionCopy = {
 };
 
 type SourcesRouteCopy = {
+  backAccessibilityLabel: string;
+  backLabel: string;
   openAuthorityBoundarySourceAccessibilityLabel: string;
   openEducationMaterialAccessibilityLabel: string;
   sections: {
@@ -27,6 +29,8 @@ type SourcesRouteCopy = {
 
 const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
   sv: {
+    backAccessibilityLabel: 'Tillbaka till startsidan',
+    backLabel: '← Tillbaka till startsidan',
     openAuthorityBoundarySourceAccessibilityLabel: 'Öppna UHR:s sida Om medborgarskapsprovet',
     openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial',
     sections: {
@@ -47,6 +51,8 @@ const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {
     title: 'Källor',
   },
   en: {
+    backAccessibilityLabel: 'Back to home',
+    backLabel: '← Back to home',
     openAuthorityBoundarySourceAccessibilityLabel: 'Open UHR About the citizenship test page',
     openEducationMaterialAccessibilityLabel: 'Open UHR education material',
     sections: {
@@ -73,7 +79,12 @@ export default function Screen() {
   const copy = sourcesCopy[language];
 
   return (
-    <LegalPage title={copy.title}>
+    <LegalPage
+      backAccessibilityLabel={copy.backAccessibilityLabel}
+      backHref="/(tabs)/home"
+      backLabel={copy.backLabel}
+      title={copy.title}
+    >
       <LegalSection title={copy.sections.primaryStudyMaterial.title}>
         {copy.sections.primaryStudyMaterial.body}
         <LegalLinkList>

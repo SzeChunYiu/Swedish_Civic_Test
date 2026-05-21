@@ -2467,7 +2467,7 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
       /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
-    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
+    titlePattern: /<LegalPage[\s\S]*title=\{copy\.title\}[\s\S]*?>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -6922,16 +6922,16 @@ function findQuestionReligiousFreedom1951EnglishNaturalnessIssue(question) {
   );
 }
 
-function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
-  if (!question.tags?.includes('public-sector')) return null;
-  return QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('source-criticism')) return null;
+  return QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
 
-function findQuestionSourceCriticismEnglishNaturalnessIssue(question) {
-  if (!question.tags?.includes('source-criticism')) return null;
-  return QUESTION_SOURCE_CRITICISM_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+function findQuestionPublicSectorEnglishNaturalnessIssue(question) {
+  if (!question.tags?.includes('public-sector')) return null;
+  return QUESTION_PUBLIC_SECTOR_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
     pattern.test(questionText(question, ['questionEn', 'explanationEn'])),
   );
 }
