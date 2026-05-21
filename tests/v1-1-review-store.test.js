@@ -134,10 +134,13 @@ test('remainingDailyReviews: strict Pro boolean and finite free caps', () => {
     );
   }
 
-  assert.equal(
-    remainingDailyReviews(makeState([], { [dayKey]: Number.NaN }), { now }),
-    FREE_DAILY_REVIEW_CAP,
-  );
+  for (const invalidUsedToday of [Number.NaN, Number.POSITIVE_INFINITY, -1, 1.5, '2']) {
+    const remaining = remainingDailyReviews(makeState([], { [dayKey]: invalidUsedToday }), {
+      now,
+    });
+    assert.equal(remaining, FREE_DAILY_REVIEW_CAP);
+    assert.equal(Number.isFinite(remaining), true);
+  }
 });
 
 test('reviewStats: counts mastered (stability >= 21) and review days', () => {
