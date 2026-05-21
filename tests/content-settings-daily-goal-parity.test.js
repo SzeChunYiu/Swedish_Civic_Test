@@ -145,6 +145,7 @@ test('daily goal settings stay in parity between storage and settings controls',
     process.execPath,
     ['scripts/validate-content.js', '--focus-settings-store'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

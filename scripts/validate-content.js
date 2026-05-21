@@ -27,6 +27,11 @@ const {
   findUnsupportedStaticV11ReadinessCopyInSource,
   formatStaticV11ReadinessCopyIssues,
 } = require('./static-v11-readiness-copy-guard');
+const {
+  collectValidateContentExecFileSyncCalls,
+  sourceLineNumberForIndex,
+  summarizePinnedCwdCalls,
+} = require('./content-exec-cwd-guards');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -4191,6 +4196,47 @@ function validateStaticValidationSyntaxGate() {
   if (valid) staticValidationSyntaxGateValidated = true;
 }
 
+function contentTestFileNames() {
+  return fs
+    .readdirSync(path.join(repoRoot, 'tests'))
+    .filter((fileName) => /^content-.*\.test\.js$/.test(fileName))
+    .map((fileName) => `tests/${fileName}`)
+    .sort();
+}
+
+function validateContentTestValidateContentExecCwdGuard() {
+  let total = 0;
+  let pinned = 0;
+  const unpinnedCalls = [];
+
+  for (const fileName of contentTestFileNames()) {
+    const source = fs.readFileSync(path.join(repoRoot, fileName), 'utf8');
+    const calls = collectValidateContentExecFileSyncCalls(source);
+    const summary = summarizePinnedCwdCalls(calls);
+    total += summary.total;
+    pinned += summary.pinned;
+
+    calls.forEach((call) => {
+      if (!call.hasPinnedCwd) {
+        unpinnedCalls.push(`${fileName}:${sourceLineNumberForIndex(source, call.index)}`);
+      }
+    });
+  }
+
+  contentTestValidateContentExecCallsValidated = total;
+  contentTestValidateContentExecCwdPinnedValidated = pinned;
+  contentTestValidateContentExecCwdParityValidated = total > 0 && pinned === total;
+
+  if (total === 0) {
+    fail('content-test validate-content exec cwd guard found no direct validator exec calls');
+  }
+  if (!contentTestValidateContentExecCwdParityValidated) {
+    fail(
+      `content-test validate-content exec calls missing cwd: repoRoot: ${unpinnedCalls.join(', ')}`,
+    );
+  }
+}
+
 function validateStaticI18nArabicNaturalness() {
   const result = {
     requiredCopyValidated: 0,
@@ -7846,6 +7892,9 @@ let staticV11ReadinessCopyParityValidated = false;
 let staticValidationSyntaxFilesValidated = 0;
 let staticValidationImportChecksValidated = 0;
 let staticValidationSyntaxGateValidated = false;
+let contentTestValidateContentExecCallsValidated = 0;
+let contentTestValidateContentExecCwdPinnedValidated = 0;
+let contentTestValidateContentExecCwdParityValidated = false;
 let uhrMapExactSchemaKeysValidated = false;
 let uhrMapChaptersValidated = 0;
 let uhrMapSectionsValidated = 0;
@@ -7983,6 +8032,17 @@ if (process.argv.includes('--focus-settings-route')) {
     settingsRouteCopyParityValidated,
     settingsRouteScrollRulesValidated,
     settingsRouteScrollParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-content-exec-cwd')) {
+  validateContentTestValidateContentExecCwdGuard();
+  exitWithValidationFailures();
+  printValidationSummary({
+    contentTestValidateContentExecCallsValidated,
+    contentTestValidateContentExecCwdPinnedValidated,
+    contentTestValidateContentExecCwdParityValidated,
   });
   process.exit(0);
 }
@@ -16952,6 +17012,7 @@ validateMasteryRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
+validateContentTestValidateContentExecCwdGuard();
 
 if (failures.length) {
   exitWithValidationFailures();
@@ -17287,6 +17348,9 @@ console.log(
       staticValidationSyntaxFilesValidated,
       staticValidationImportChecksValidated,
       staticValidationSyntaxGateValidated,
+      contentTestValidateContentExecCallsValidated,
+      contentTestValidateContentExecCwdPinnedValidated,
+      contentTestValidateContentExecCwdParityValidated,
       uhrSourceMetadataValidated,
       uhrMapExactSchemaKeysValidated,
       uhrMapChaptersValidated,

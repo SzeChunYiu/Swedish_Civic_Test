@@ -11,6 +11,7 @@ test('exam generator TypeScript schema stays in parity with validator expectatio
     process.execPath,
     ['scripts/validate-content.js', '--focus-exam-generator-schema'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

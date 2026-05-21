@@ -1,11 +1,15 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 const FOCUS_FLAG = '--focus-question-authority-boundary';
 
 test('published question text keeps the independent study boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js', FOCUS_FLAG], {
+    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);

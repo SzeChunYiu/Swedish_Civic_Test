@@ -28,6 +28,7 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
     process.execPath,
     ['scripts/validate-content.js', '--focus-spaced-repetition-schema'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

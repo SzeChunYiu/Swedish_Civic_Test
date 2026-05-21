@@ -184,6 +184,7 @@ test('progress question schema stays in parity with persisted progress records',
     process.execPath,
     ['scripts/validate-content.js', '--focus-progress-schema-parity'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

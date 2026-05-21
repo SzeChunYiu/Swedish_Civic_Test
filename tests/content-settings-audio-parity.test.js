@@ -80,6 +80,7 @@ test('audio setting stays in parity between storage and settings switch', () => 
     process.execPath,
     ['scripts/validate-content.js', '--focus-settings-store'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -193,6 +194,7 @@ test('settings store schema stays in parity with persisted settings state', () =
     process.execPath,
     ['scripts/validate-content.js', '--focus-settings-store'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

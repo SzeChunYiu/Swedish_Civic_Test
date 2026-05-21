@@ -12,6 +12,7 @@ function parseValidationSummary() {
     process.execPath,
     ['scripts/validate-content.js', PROFILE_ROUTE_FOCUS_FLAG],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
