@@ -2692,7 +2692,8 @@
       'chap.5.d':
         'Jämställdhet, xuquuqda LGBTQ+, sida fasaxa waalidnimada loo qaybiyo. Sababta Iswiidhan ay had iyo jeer ugu soo baxdo liisaska kala sareynta.',
       'chap.5.m2': '~9 daqiiqo',
-      'chap.6.d': 'Förskola ilaa jaamacad, BVC ilaa 1177. Sida nolosha maalinlaha ah loo dhisay.',
+      'chap.6.d':
+        'Laga bilaabo dugsiga barbaarinta ilaa jaamacadda, laga bilaabo BVC ilaa 1177. Sida nolosha maalinlaha ah loo habeeyey.',
       'chap.6.m2': '~10 daqiiqo',
       'chap.7.d':
         'Xaqa lagu socon karo dabiiciga, sharciyada deegaanka, iyo sababta aadan dhab ahaan u soo gooyn karin tufaaxa qof kale (waan ka xumahay).',
@@ -3101,7 +3102,7 @@
       'chap.5.d':
         'Jämställdhet፡ መሰላት LGBTQ+፡ ኣገባብ ምክፍፋል ናይ ወለዲ ዕረፍቲ። ሽወደን ኣብቶም ናይ ደረጃ ዝርዝራት ቀጻሊ ዝቐርበሉ ምኽንያት።',
       'chap.5.m2': '~9 ደቒቕ',
-      'chap.6.d': 'ካብ förskola ክሳብ universitet፡ ካብ BVC ክሳብ 1177። መዓልታዊ ናብራ ብኸመይ ከም ዝተሃንጸ።',
+      'chap.6.d': 'ካብ መዋዕለ ሕፃናት ክሳብ ዩኒቨርሲቲ፡ ካብ BVC ክሳብ 1177። መዓልታዊ ናብራ ብኸመይ ከም ዝተወደበ።',
       'chap.6.m2': '~10 ደቒቕ',
       'chap.7.d': 'ናይ ምንቅስቓስ መሰል፡ ሕግታት ኣከባቢ፡ ስለምንታይ ብሓቂ ናይ ካልእ ሰብ ቱፋሕ ክትቅንጥብ ዘይትኽእል (ይቕሬታ)።',
       'chap.7.m2': '~8 ደቒቕ',
@@ -3506,7 +3507,7 @@
       'chap.5.d':
         "Jämställdhet, LGBTQ+ hakları, ebeveyn izninin paylaşımı. İsveç'in o sıralama listelerinde sürekli görünmesinin nedeni.",
       'chap.5.m2': '~9 dk',
-      'chap.6.d': "Förskola'dan üniversiteye, BVC'den 1177'ye. Günlük hayatın nasıl döşendiği.",
+      'chap.6.d': "Anaokulundan üniversiteye, BVC'den 1177'ye. Günlük hayatın nasıl düzenlendiği.",
       'chap.6.m2': '~10 dk',
       'chap.7.d':
         'Doğada gezinme hakkı, çevre kuralları ve neden aslında komşunun elmalarını toplayamayacağınız (kusura bakmayın).',

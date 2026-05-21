@@ -23,6 +23,12 @@ const allowedSharedFragments = [
   /Jantelagen/,
 ];
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
+const expectedChapter6EducationTerms = {
+  so: [/dugsiga barbaarinta/i, /jaamacadda/i],
+  ti: [/መዋዕለ ሕፃናት/, /ዩኒቨርሲቲ/],
+  tr: [/Anaokulundan/, /üniversiteye/],
+};
+const forbiddenChapter6EducationTerms = [/Förskola/i, /förskola/i, /universitet/i];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -149,5 +155,29 @@ test('Tigrinya Home chapter 4 avoids bare Swedish labor and welfare terms', () =
       new RegExp(term, 'i'),
       `ti.chap.4.d exposes bare Swedish term ${term}`,
     );
+  }
+});
+
+test('Home chapter 6 avoids bare Swedish education terms in Somali Tigrinya and Turkish', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const [locale, expectedTerms] of Object.entries(expectedChapter6EducationTerms)) {
+    const description = dictionaries[locale]?.['chap.6.d'];
+
+    assert.equal(typeof description, 'string', `${locale}.chap.6.d is translated`);
+    assert.match(description, /BVC/, `${locale}.chap.6.d preserves BVC`);
+    assert.match(description, /1177/, `${locale}.chap.6.d preserves 1177`);
+
+    for (const expectedTerm of expectedTerms) {
+      assert.match(description, expectedTerm, `${locale}.chap.6.d localizes education terms`);
+    }
+
+    for (const forbiddenTerm of forbiddenChapter6EducationTerms) {
+      assert.doesNotMatch(
+        description,
+        forbiddenTerm,
+        `${locale}.chap.6.d exposes bare Swedish education term ${forbiddenTerm}`,
+      );
+    }
   }
 });

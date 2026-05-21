@@ -129,6 +129,12 @@ const expectedCentralKurdishLegalReadingTimes = {
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
 };
 const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
+const expectedChapter6EducationTerms = {
+  so: [/dugsiga barbaarinta/i, /jaamacadda/i],
+  ti: [/መዋዕለ ሕፃናት/, /ዩኒቨርሲቲ/],
+  tr: [/Anaokulundan/, /üniversiteye/],
+};
+const forbiddenChapter6EducationTerms = [/Förskola/i, /förskola/i, /universitet/i];
 
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
@@ -286,6 +292,32 @@ test('Tigrinya Home chapter 4 localizes labor and welfare common terms', () => {
       new RegExp(term, 'i'),
       `ti.chap.4.d must not expose bare Swedish term ${term}`,
     );
+  }
+});
+
+test('Somali Tigrinya and Turkish Home chapter 6 localize education common terms', () => {
+  const extra = loadExtraI18n();
+
+  for (const [locale, expectedTerms] of Object.entries(expectedChapter6EducationTerms)) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const description = dictionary['chap.6.d'];
+    assert.equal(typeof description, 'string', `${locale}.chap.6.d must be a string`);
+    assert.match(description, /BVC/, `${locale}.chap.6.d should preserve BVC`);
+    assert.match(description, /1177/, `${locale}.chap.6.d should preserve 1177`);
+
+    for (const expectedTerm of expectedTerms) {
+      assert.match(description, expectedTerm, `${locale}.chap.6.d should localize education terms`);
+    }
+
+    for (const forbiddenTerm of forbiddenChapter6EducationTerms) {
+      assert.doesNotMatch(
+        description,
+        forbiddenTerm,
+        `${locale}.chap.6.d must not expose bare Swedish education term ${forbiddenTerm}`,
+      );
+    }
   }
 });
 
