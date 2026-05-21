@@ -27,6 +27,14 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const webAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
   const nativeAdCardSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
     'utf8',
@@ -62,6 +70,17 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(practiceSource, /getPracticeInterstitialShowKey\(question\.id, shuffleSessionId\)/);
   assert.doesNotMatch(practiceSource, /showKey=\{[\s\S]{0,160}selectedOptionId/);
   assert.match(mistakesSource, /<NativeAdCard \/>/);
+  assert.match(webAdBannerSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    webAdBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(webAdBannerSource, /react-native-google-mobile-ads/);
+  assert.match(nativeAdBannerSource, /getPlatformAdUnitId\(placement, Platform\.OS\)/);
+  assert.match(
+    nativeAdBannerSource,
+    /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
   assert.match(
     nativeAdCardSource,
     /shouldShowAd\('results_native', resolvedEntitlements, WEB_AD_FALLBACK_CONSENT_DECISION\)/,
@@ -161,6 +180,105 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
+});
+
+test('ad placement route parity rejects native banner unit lookup platform drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('getPlatformAdUnitId(placement, Platform.OS)', 'getPlatformAdUnitId(placement)');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must resolve banner units by Platform\.OS/,
+  );
+});
+
+test('ad placement route parity rejects native banner shouldShowAd platform drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.native.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        /shouldShowAd\\(\\s*placement\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)/,
+        'shouldShowAd(placement, resolvedEntitlements, mobileAdsConsent.decision.consentDecision)',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner native placement must gate banners through platform-aware shouldShowAd/,
+  );
+});
+
+test('ad placement route parity rejects web banner fallback consent drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/AdBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        /shouldShowAd\\(\\s*placement\\s*,\\s*resolvedEntitlements\\s*,\\s*WEB_AD_FALLBACK_CONSENT_DECISION\\s*,?\\s*\\)/,
+        'shouldShowAd(placement, resolvedEntitlements)',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /AdBanner web fallback must use the shared web fallback consent decision/,
   );
 });
 
