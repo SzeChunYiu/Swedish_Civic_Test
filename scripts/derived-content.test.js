@@ -81,14 +81,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
-  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
+  assert.equal(derived[3].questionSv, 'Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
