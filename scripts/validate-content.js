@@ -1219,11 +1219,13 @@ const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'dailyGoalAnswers', type: 'number', optional: false },
   { name: 'includeSupplementaryQuestions', type: 'boolean', optional: false },
   { name: 'hasSeenAboutTheTest', type: 'boolean', optional: false },
+  { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
   { name: 'setLanguage', type: '(language: AppLanguage) => void', optional: false },
   { name: 'setAudioEnabled', type: '(enabled: boolean) => void', optional: false },
   { name: 'setDailyGoalAnswers', type: '(answerCount: number) => void', optional: false },
   { name: 'setIncludeSupplementaryQuestions', type: '(include: boolean) => void', optional: false },
   { name: 'markAboutTheTestSeen', type: '() => void', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_APP_CONFIG_PLUGINS = [
   'expo-router',
@@ -3340,9 +3342,15 @@ const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'correctStreak',
   'lastAnsweredAt',
   'nextReviewAt',
+  'confidenceRating',
   'bookmarked',
 ];
-const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set(['lastAnsweredAt', 'nextReviewAt', 'bookmarked']);
+const EXPECTED_PROGRESS_OPTIONAL_FIELDS = new Set([
+  'lastAnsweredAt',
+  'nextReviewAt',
+  'confidenceRating',
+  'bookmarked',
+]);
 const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   questionId: 'string',
   seenCount: 'number',
@@ -3351,11 +3359,12 @@ const EXPECTED_PROGRESS_QUESTION_FIELD_TYPES = {
   correctStreak: 'number',
   lastAnsweredAt: 'string',
   nextReviewAt: 'string',
+  confidenceRating: 'ConfidenceRating',
   bookmarked: 'boolean',
 };
 const EXPECTED_PROGRESS_TYPE_UNIONS = [
   { typeName: 'QuizMode', values: ['study', 'exam', 'mistakes', 'challenge'] },
-  { typeName: 'Confidence', values: ['low', 'medium', 'high'] },
+  { typeName: 'ConfidenceRating', values: [1, 2, 3, 4, 5] },
 ];
 const EXPECTED_PROGRESS_INTERFACES = [
   {
@@ -3368,7 +3377,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'correctStreak', type: 'number', optional: false },
       { name: 'lastAnsweredAt', type: 'string', optional: true },
       { name: 'nextReviewAt', type: 'string', optional: true },
-      { name: 'confidence', type: 'Confidence', optional: true },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
       { name: 'bookmarked', type: 'boolean', optional: true },
     ],
   },
@@ -3380,6 +3389,7 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'isCorrect', type: 'boolean', optional: false },
       { name: 'answeredAt', type: 'string', optional: false },
       { name: 'timeSpentSeconds', type: 'number', optional: false },
+      { name: 'confidenceRating', type: 'ConfidenceRating', optional: true },
     ],
   },
   {
@@ -3403,6 +3413,11 @@ const EXPECTED_PROGRESS_INTERFACES = [
       { name: 'dailyGoalAnswers', type: 'number', optional: false },
       { name: 'questionProgress', type: 'Record<string, UserQuestionProgress>', optional: false },
       { name: 'sessions', type: 'QuizSession[]', optional: false },
+      {
+        name: 'dailyChallengeCompletions',
+        type: 'Record<string, DailyChallengeCompletion>',
+        optional: false,
+      },
     ],
   },
 ];
@@ -3411,17 +3426,29 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'questionProgress', type: 'Record<string, QuestionProgress>', optional: false },
   { name: 'totalXp', type: 'number', optional: false },
   { name: 'answerDates', type: 'string[]', optional: false },
+  { name: 'answerHistory', type: 'AnswerHistoryEntry[]', optional: false },
+  {
+    name: 'dailyChallengeCompletions',
+    type: 'Record<string, DailyChallengeProgress>',
+    optional: false,
+  },
   { name: 'mockExamSessions', type: 'MockExamProgress[]', optional: false },
   { name: 'streakFreezeState', type: 'StreakFreezeState', optional: false },
+  { name: 'persistenceWarning', type: 'RecoverablePersistenceWarning | null', optional: false },
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean) => void',
+    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating, options?: { awardXp?: boolean }) => void',
     optional: false,
   },
   {
     name: 'recordMockExamSession',
     type: '(session: MockExamProgressInput) => void',
+    optional: false,
+  },
+  {
+    name: 'recordDailyChallengeCompletion',
+    type: '(completion: DailyChallengeCompletion) => void',
     optional: false,
   },
   {
@@ -3431,11 +3458,14 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   },
   { name: 'toggleBookmark', type: '(questionId: string) => void', optional: false },
   { name: 'resetProgress', type: '() => void', optional: false },
+  { name: 'clearPersistenceWarning', type: '() => void', optional: false },
 ];
 const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
+  { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
   { name: 'activeQuestionId', type: 'string | null', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
+  { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
@@ -3501,10 +3531,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentText', optional: true },
+      { name: 'nameText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
+      { name: 'descriptionText', type: 'LocalizedContentTextOverrides', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -3739,6 +3769,7 @@ const EXPECTED_PURCHASE_INTERFACES = [
       { name: 'loadIap', type: '() => Promise<NativeIapModule>', optional: true },
       { name: 'platform', type: 'RemoveAdsStorePlatform', optional: true },
       { name: 'purchaseTimeoutMs', type: 'number', optional: true },
+      { name: 'receiptValidator', type: 'NativeRemoveAdsReceiptValidator', optional: true },
     ],
   },
   {
@@ -3895,9 +3926,15 @@ const EXPECTED_REWARDED_AD_INTERFACES = [
   {
     name: 'RewardedExtraExamAdOptions',
     fields: [
+      { name: 'confirmReward', type: 'RewardedExtraExamRewardConfirmation', optional: true },
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
       { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
       { name: 'timeoutMs', type: 'number', optional: true },
+      {
+        name: 'webConsentDecision',
+        type: 'RewardedExtraExamWebConsentDecision',
+        optional: true,
+      },
     ],
   },
 ];
@@ -6829,12 +6866,13 @@ function extractStringUnionTypeFromTs(source, typeName) {
       ts.isUnionTypeNode(node.type)
     ) {
       values = node.type.types.map((typeNode) => {
-        if (
-          ts.isLiteralTypeNode(typeNode) &&
-          typeNode.literal &&
-          ts.isStringLiteralLike(typeNode.literal)
-        ) {
-          return typeNode.literal.text;
+        if (ts.isLiteralTypeNode(typeNode) && typeNode.literal) {
+          if (ts.isStringLiteralLike(typeNode.literal)) {
+            return typeNode.literal.text;
+          }
+          if (ts.isNumericLiteral(typeNode.literal)) {
+            return Number(typeNode.literal.text);
+          }
         }
         return undefined;
       });
@@ -7876,6 +7914,76 @@ if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   printValidationSummary({
     mobileAdsConsentHookCasesValidated,
     mobileAdsConsentHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-settings-store')) {
+  validateSettingsStoreSchemaParity();
+  validateSettingsDailyGoalParity();
+  validateSettingsAudioParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsStoreFieldsValidated,
+    settingsStoreSchemaParityValidated,
+    settingsDailyGoalOptionsValidated,
+    settingsDailyGoalParityValidated,
+    settingsAudioLabelsValidated,
+    settingsAudioParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-progress-schema-parity')) {
+  validateProgressQuestionSchemaParity();
+  validateProgressTypeSchemaParity();
+  validateProgressStoreSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    progressQuestionFieldsValidated,
+    progressQuestionSchemaParityValidated,
+    progressTypeUnionsValidated,
+    progressTypeInterfacesValidated,
+    progressTypeSchemaParityValidated,
+    progressStoreFieldsValidated,
+    progressStoreSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-content-type-schema-parity')) {
+  validateContentTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    contentTypeUnionsValidated,
+    contentTypeInterfacesValidated,
+    contentTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-purchase-schema')) {
+  validatePurchaseTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    purchaseTypeUnionsValidated,
+    purchaseTypeInterfacesValidated,
+    purchaseTypeSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-rewarded-exam-schema')) {
+  validateRewardedAdTypeSchemaParity();
+  validateMockExamAccessTypeSchemaParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    rewardedAdTypeUnionsValidated,
+    rewardedAdTypeInterfacesValidated,
+    rewardedAdTypeSchemaParityValidated,
+    mockExamAccessTypeUnionsValidated,
+    mockExamAccessTypeInterfacesValidated,
+    mockExamAccessTypeSchemaParityValidated,
   });
   process.exit(0);
 }
@@ -11910,16 +12018,13 @@ function validateSettingsStoreSchemaParity() {
       'dailyGoalAnswers: readDailyGoalAnswers()',
       'SettingsState must initialize dailyGoalAnswers from persisted storage',
     ],
+    ['settingsStorageId, languageKey, language,', 'setLanguage must persist through languageKey'],
     [
-      'settingsStorage?.set(languageKey, language);',
-      'setLanguage must persist through languageKey',
-    ],
-    [
-      'settingsStorage?.set(audioEnabledKey, audioEnabled);',
+      'settingsStorageId, audioEnabledKey, audioEnabled,',
       'setAudioEnabled must persist through audioEnabledKey',
     ],
     [
-      'settingsStorage?.set(dailyGoalKey, safeGoal);',
+      'settingsStorageId, dailyGoalKey, safeGoal,',
       'setDailyGoalAnswers must persist the clamped daily goal through dailyGoalKey',
     ],
   ];
@@ -11958,7 +12063,7 @@ function validateSettingsDailyGoalParity() {
     reject(`dailyGoalKey is ${JSON.stringify(dailyGoalKey)}, expected "dailyGoalAnswers"`);
   }
 
-  if (!settingsStore.includes(`: ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
+  if (!settingsStore.includes(`const defaultDailyGoalAnswers = ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
     reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
   }
 
@@ -12068,9 +12173,7 @@ function validateSettingsAudioParity() {
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (
-    !normalizedSettingsStore.includes(
-      'const storedValue = settingsStorage?.getBoolean(audioEnabledKey);',
-    )
+    !normalizedSettingsStore.includes('const storedValue = readStorageBoolean(audioEnabledKey);')
   ) {
     reject('readAudioEnabled must read the persisted audioEnabled boolean');
   }
@@ -12080,7 +12183,7 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('audioEnabled: readAudioEnabled()')) {
     reject('SettingsState must initialize audioEnabled from persisted storage');
   }
-  if (!normalizedSettingsStore.includes('settingsStorage?.set(audioEnabledKey, audioEnabled);')) {
+  if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
 
@@ -12412,9 +12515,12 @@ function validateProgressStoreSchemaParity() {
 
   const normalizedProgressStore = progressStoreSource.replace(/\s+/g, ' ');
   const requiredSnippets = [
-    ["createMMKV({ id: 'progress' })", 'progress storage must use the stable progress MMKV id'],
     [
-      'const rawProgress = progressStorage?.getString(progressStateKey);',
+      'createMMKV({ id: progressStorageId })',
+      'progress storage must use the stable progress MMKV id',
+    ],
+    [
+      'rawProgress = progressStorage?.getString(progressStateKey);',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
@@ -12422,7 +12528,7 @@ function validateProgressStoreSchemaParity() {
       'readProgress must normalize parsed persisted JSON',
     ],
     [
-      'progressStorage?.set(progressStateKey, JSON.stringify(progress));',
+      'progressStorageId, progressStateKey, serializedProgress,',
       'writeProgress must persist JSON through progressStateKey',
     ],
     ['const initialProgress = readProgress();', 'ProgressState must initialize from storage'],
