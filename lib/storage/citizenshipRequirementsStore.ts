@@ -135,3 +135,9 @@ export function importCitizenshipRequirementsChecklistSnapshot(
   useCitizenshipRequirementsStore.setState(persistedChecklist);
   return persistedChecklist;
 }
+
+export function hydrateCitizenshipRequirementsChecklistFromStorage(): PersistedCitizenshipRequirementsChecklist {
+  const persistedChecklist = readChecklist();
+  useCitizenshipRequirementsStore.setState(persistedChecklist);
+  return persistedChecklist;
+}

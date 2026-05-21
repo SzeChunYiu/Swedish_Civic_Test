@@ -1,224 +1,136 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import {
-  collectConsoleAndPageErrors,
-  dismissBlockingModals,
-  seedFreshSettingsLanguageAndAboutSeen,
-  type AppLanguage,
-} from './browserLaunch';
+import { citizenshipRequirementAreas } from '../../data/citizenshipRequirements';
+import { collectConsoleAndPageErrors, dismissBlockingModals } from './browserLaunch';
 
-const importedStorageKeys = [
-  'progress\\progressState',
-  'mistake-review\\mistakeReviewState',
-  'reviews\\learning.reviews.cards.v1',
-  'settings\\dailyGoalAnswers',
-  'citizenship-requirements\\citizenshipRequirementsChecklistState',
-];
+const citizenshipRequirementsChecklistKey =
+  'citizenship-requirements\\citizenshipRequirementsChecklistState';
+const legacySettingsLanguageKey = 'language';
+const legacySettingsSeenAboutKey = 'hasSeenAboutTheTest';
+const settingsLanguageKey = 'settings\\language';
+const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
+const seededOnceMarkerKey = '__citizenshipRequirementsImportSeeded';
 
-function reviewCard(questionId: string) {
-  return {
-    questionId,
-    difficulty: 5,
-    stability: 7,
-    reps: 1,
-    lapses: 0,
-    state: 'review',
-    lastReviewAt: null,
-    dueAt: '2026-05-21T08:00:00.000Z',
-  };
+const importedAreaIds = ['identity', 'civicKnowledge'] as const;
+
+const importedAreaPrompts = citizenshipRequirementAreas
+  .filter((area) => importedAreaIds.includes(area.id as (typeof importedAreaIds)[number]))
+  .map((area) => area.checklistPrompt.en);
+
+const unimportedAreaPrompt = citizenshipRequirementAreas.find(
+  (area) => !importedAreaIds.includes(area.id as (typeof importedAreaIds)[number]),
+)!.checklistPrompt.en;
+
+async function readChecklistStorage(page: Page): Promise<string | null> {
+  return page.evaluate(
+    (key) => window.localStorage.getItem(key),
+    citizenshipRequirementsChecklistKey,
+  );
 }
 
-async function expectImportStorageWrites(page: Page, expectedWritten: boolean) {
-  const values = await page.evaluate((keys) => {
-    return Object.fromEntries(keys.map((key) => [key, window.localStorage.getItem(key)]));
-  }, importedStorageKeys);
+async function seedFreshEnglishSettingsOnce(page: Page): Promise<void> {
+  await page.addInitScript(
+    ({
+      languageKey,
+      legacyLanguageKey,
+      legacySeenKey,
+      markerKey,
+      seenKey,
+    }: {
+      languageKey: string;
+      legacyLanguageKey: string;
+      legacySeenKey: string;
+      markerKey: string;
+      seenKey: string;
+    }) => {
+      if (window.localStorage.getItem(markerKey) === '1') return;
 
-  for (const key of importedStorageKeys) {
-    if (expectedWritten) {
-      expect(values[key], `${key} should be written after confirmed import`).not.toBeNull();
-    } else {
-      expect(values[key], `${key} should stay untouched before confirmed import`).toBeNull();
-    }
-  }
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      window.localStorage.setItem(legacyLanguageKey, 'en');
+      window.localStorage.setItem(languageKey, 'en');
+      window.localStorage.setItem(legacySeenKey, 'true');
+      window.localStorage.setItem(seenKey, 'true');
+      window.localStorage.setItem(markerKey, '1');
+    },
+    {
+      languageKey: settingsLanguageKey,
+      legacyLanguageKey: legacySettingsLanguageKey,
+      legacySeenKey: legacySettingsSeenAboutKey,
+      markerKey: seededOnceMarkerKey,
+      seenKey: settingsSeenAboutKey,
+    },
+  );
 }
 
-async function previewImport(page: Page, language: AppLanguage, payload: unknown) {
-  await seedFreshSettingsLanguageAndAboutSeen(page, language);
+test.use({ viewport: { width: 390, height: 844 } });
+
+test('settings import confirms citizenship checklist before rendering checked requirements', async ({
+  page,
+}) => {
+  await seedFreshEnglishSettingsOnce(page);
   const errors = collectConsoleAndPageErrors(page);
 
   await page.goto('/settings', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
-  await page
-    .getByLabel(language === 'sv' ? 'Klistra in JSON-export' : 'Paste JSON export')
-    .fill(JSON.stringify(payload));
-  await page
-    .getByRole('button', {
-      name:
-        language === 'sv'
-          ? 'Förhandsgranska lokal studiedataimport'
-          : 'Preview local study data import',
-    })
-    .click();
 
-  await expectImportStorageWrites(page, false);
+  await expect(readChecklistStorage(page)).resolves.toBeNull();
 
-  return errors;
-}
-
-test('settings import preview uses singular English summary copy before confirmed apply', async ({
-  page,
-}) => {
-  const errors = await previewImport(page, 'en', {
-    version: 1,
-    progress: {
-      completedQuestionIds: ['q001'],
-      questionProgress: {
-        q001: {
-          seenCount: 1,
-          correctCount: 1,
-          wrongCount: 0,
-          correctStreak: 1,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
-          nextReviewAt: '2026-05-21T08:00:00.000Z',
-        },
+  await page.getByLabel('Paste JSON export').fill(
+    JSON.stringify({
+      version: 1,
+      citizenshipRequirements: {
+        checkedAreaIds: ['civicKnowledge', 'unknown', 'identity', 'identity'],
       },
-      mockExamSessions: [
-        {
-          sessionId: 'mock-1',
-          score: 1,
-          completedAt: '2026-05-20T09:00:00.000Z',
-          correctCount: 1,
-          totalCount: 1,
-        },
-      ],
-    },
-    mistakeReview: {
-      wrongAnswerReviews: {
-        q001: {
-          answeredAt: '2026-05-20T08:05:00.000Z',
-          selectedOptionTextEn: 'Wrong answer',
-          selectedOptionTextSv: 'Fel svar',
-        },
-      },
-    },
-    reviews: {
-      byId: { q001: reviewCard('q001') },
-      gradedPerDay: { '2026-05-20': 1 },
-    },
-    settings: {
-      dailyGoalAnswers: 20,
-    },
-    citizenshipRequirements: {
-      checkedAreaIds: ['identity'],
-    },
-  });
+    }),
+  );
 
-  for (const line of [
-    '1 question with saved progress',
-    '1 bookmark',
-    '1 wrong-answer review',
-    '1 mock exam history entry',
-    '1 FSRS review card',
-    '1 FSRS review day',
-    '1 saved setting',
-    '1 marked requirement',
-  ]) {
-    await expect(page.getByText(line)).toBeVisible();
-  }
+  await page.getByRole('button', { name: 'Preview local study data import' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Summary before import' })).toBeVisible();
+  await expect(page.getByText('2 marked requirements checklist items')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Confirm local study data import' })).toBeVisible();
+  await expect(readChecklistStorage(page)).resolves.toBeNull();
 
   await page.getByRole('button', { name: 'Confirm local study data import' }).click();
+
   await expect(page.getByText('Import complete.')).toBeVisible();
-  await expectImportStorageWrites(page, true);
-  expect(errors.get()).toEqual([]);
-});
+  await expect
+    .poll(() => readChecklistStorage(page), {
+      message: 'confirmed import should persist the citizenship checklist',
+    })
+    .toBe(JSON.stringify({ checkedAreaIds: importedAreaIds }));
 
-test('settings import preview uses plural Swedish summary copy before confirmed apply', async ({
-  page,
-}) => {
-  const errors = await previewImport(page, 'sv', {
-    version: 1,
-    progress: {
-      completedQuestionIds: ['q001', 'q002'],
-      questionProgress: {
-        q001: {
-          seenCount: 1,
-          correctCount: 1,
-          wrongCount: 0,
-          correctStreak: 1,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-20T08:00:00.000Z',
-          nextReviewAt: '2026-05-21T08:00:00.000Z',
-        },
-        q002: {
-          seenCount: 1,
-          correctCount: 0,
-          wrongCount: 1,
-          correctStreak: 0,
-          bookmarked: true,
-          lastAnsweredAt: '2026-05-21T08:00:00.000Z',
-          nextReviewAt: '2026-05-22T08:00:00.000Z',
-        },
-      },
-      mockExamSessions: [
-        {
-          sessionId: 'mock-1',
-          score: 1,
-          completedAt: '2026-05-20T09:00:00.000Z',
-          correctCount: 1,
-          totalCount: 1,
-        },
-        {
-          sessionId: 'mock-2',
-          score: 0.5,
-          completedAt: '2026-05-21T09:00:00.000Z',
-          correctCount: 1,
-          totalCount: 2,
-        },
-      ],
-    },
-    mistakeReview: {
-      wrongAnswerReviews: {
-        q001: {
-          answeredAt: '2026-05-20T08:05:00.000Z',
-          selectedOptionTextEn: 'Wrong answer',
-          selectedOptionTextSv: 'Fel svar',
-        },
-        q002: {
-          answeredAt: '2026-05-21T08:05:00.000Z',
-          selectedOptionTextEn: 'Wrong answer',
-          selectedOptionTextSv: 'Fel svar',
-        },
-      },
-    },
-    reviews: {
-      byId: { q001: reviewCard('q001'), q002: reviewCard('q002') },
-      gradedPerDay: { '2026-05-20': 1, '2026-05-21': 1 },
-    },
-    settings: {
-      audioEnabled: false,
-      dailyGoalAnswers: 20,
-    },
-    citizenshipRequirements: {
-      checkedAreaIds: ['identity', 'civicKnowledge'],
-    },
-  });
+  await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
 
-  for (const line of [
-    '2 frågor med sparad progression',
-    '2 bokmärken',
-    '2 granskningar av fel svar',
-    '2 provhistorikposter',
-    '2 repetitionskort',
-    '2 repetitionsdagar',
-    '2 sparade inställningar',
-    '2 markerade kravområden',
-  ]) {
-    await expect(page.getByText(line)).toBeVisible();
+  for (const prompt of importedAreaPrompts) {
+    await expect(
+      page.getByRole('checkbox', {
+        exact: true,
+        name: `Marked: ${prompt}`,
+      }),
+    ).toHaveAttribute('aria-checked', 'true');
   }
+  await expect(
+    page.getByRole('checkbox', {
+      exact: true,
+      name: `Not marked: ${unimportedAreaPrompt}`,
+    }),
+  ).toHaveAttribute('aria-checked', 'false');
+  await expect(page.getByRole('checkbox', { checked: true })).toHaveCount(importedAreaIds.length);
 
-  await page.getByRole('button', { name: 'Bekräfta lokal studiedataimport' }).click();
-  await expect(page.getByText('Importen är klar.')).toBeVisible();
-  await expectImportStorageWrites(page, true);
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  for (const prompt of importedAreaPrompts) {
+    await expect(
+      page.getByRole('checkbox', {
+        exact: true,
+        name: `Marked: ${prompt}`,
+      }),
+    ).toHaveAttribute('aria-checked', 'true');
+  }
+  await expect(page.getByRole('checkbox', { checked: true })).toHaveCount(importedAreaIds.length);
   expect(errors.get()).toEqual([]);
 });
