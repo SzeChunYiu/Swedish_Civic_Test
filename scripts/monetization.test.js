@@ -2070,6 +2070,52 @@ test('ad consent decision covers ATT and UMP prompts before real ad serving', ()
   assert.equal(testUnitInit.blockReason, undefined);
 });
 
+test('AdConsentRegion runtime normalization fails closed for invalid Mobile Ads regions', () => {
+  const { getAdSdkInitializationDecision, normalizeAdConsentRegion, regionRequiresUmpConsent } =
+    loadTs('lib/monetization/consent.ts');
+  const { createInitialAdConsentState } = loadTs('lib/monetization/mobileAdsConsent.ts');
+  const baseState = {
+    entitlements: { adsDisabled: false },
+    googleMobileAdsEnabled: true,
+    platform: 'android',
+    realAdsEnabled: true,
+    trackingTransparencyStatus: 'unavailable',
+    umpConsentStatus: 'unknown',
+  };
+
+  for (const region of ['banana', '', null, 'future_region']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(normalizeAdConsentRegion(region), 'unknown');
+    assert.equal(regionRequiresUmpConsent(region), true);
+    assert.equal(state.region, 'unknown');
+    assert.equal(decision.canInitializeGoogleMobileAds, false);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, ['ump_consent_form']);
+    assert.equal(decision.blockReason, 'pending_consent_prompts');
+  }
+
+  for (const region of ['eea', 'uk', 'unknown']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(state.region, region);
+    assert.equal(regionRequiresUmpConsent(region), true);
+    assert.equal(decision.canInitializeGoogleMobileAds, false);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, ['ump_consent_form']);
+  }
+
+  for (const region of ['us', 'other']) {
+    const state = createInitialAdConsentState({ ...baseState, region });
+    const decision = getAdSdkInitializationDecision(state);
+
+    assert.equal(state.region, region);
+    assert.equal(regionRequiresUmpConsent(region), false);
+    assert.equal(decision.canInitializeGoogleMobileAds, true);
+    assert.deepEqual(decision.consentDecision.pendingPrompts, []);
+  }
+});
+
 test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', async () => {
   const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
