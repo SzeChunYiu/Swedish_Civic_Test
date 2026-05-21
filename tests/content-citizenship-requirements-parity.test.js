@@ -1,10 +1,19 @@
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const {
+  createMemoryMMKV,
+  createThrowingSetMMKV,
+  loadTsWithStorage,
+} = require('./helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
+const checklistStorageId = 'citizenship-requirements';
+const checklistStorageKey = 'citizenshipRequirements.checkedAreaIds.v1';
 
 const expectedAreaIds = [
   'identity',
@@ -50,6 +59,26 @@ function loadTs(relativePath) {
   new Function('module', 'exports', output)(mod, mod.exports);
 
   return mod.exports;
+}
+
+function loadChecklistStore(storage) {
+  return loadTsWithStorage(repoRoot, 'lib/storage/citizenshipRequirementsStore.ts', {
+    [checklistStorageId]: storage,
+  });
+}
+
+function parseAboutRouteValidationSummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-about-the-test-route-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
 }
 
 function assertLocalizedText(value, label) {
@@ -138,23 +167,22 @@ test('citizenship requirement sources are official, dated, and currentness-label
 
 test('citizenship requirements screen renders interactive sourced checklist without eligibility overclaim', () => {
   const routeSource = read('app/citizenship-requirements.tsx');
+  const summary = parseAboutRouteValidationSummary();
 
+  assert.equal(summary.citizenshipRequirementsChecklistPersistenceRulesValidated, 13);
+  assert.equal(summary.citizenshipRequirementsChecklistPersistenceParityValidated, true);
   assert.match(routeSource, /citizenshipRequirementAreas\.map/);
   assert.match(routeSource, /useSettingsStore/);
-  assert.match(routeSource, /useCitizenshipRequirementsStore/);
-  assert.match(routeSource, /hydrateCitizenshipRequirementsChecklistFromStorage/);
-  assert.match(
-    routeSource,
-    /useEffect\(\(\) => \{\s*hydrateCitizenshipRequirementsChecklistFromStorage\(\);/,
-  );
+  assert.match(routeSource, /useCitizenshipRequirementsChecklistStore/);
   assert.match(routeSource, /PersistenceWarningNotice/);
   assert.match(routeSource, /QuestionDisclaimer/);
   assert.match(routeSource, /accessibilityRole="checkbox"/);
   assert.match(routeSource, /accessibilityState=\{\{\s*checked\s*\}\}/);
   assert.match(routeSource, /aria-checked=\{checked\}/);
+  assert.match(routeSource, /const checkedIds = useMemo\(\(\) => new Set\(checkedAreaIds\)/);
+  assert.match(routeSource, /onPress=\{\(\) => toggleChecklistArea\(area\.id\)\}/);
+  assert.doesNotMatch(routeSource, /useState<ReadonlySet/);
   assert.match(routeSource, /buildSummary\(/);
-  assert.match(routeSource, /checkedAreaIds/);
-  assert.match(routeSource, /toggleArea/);
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
@@ -168,4 +196,73 @@ test('citizenship requirements route is discoverable from about-the-test copy', 
   assert.match(aboutSource, /Se kravguiden/);
   assert.match(aboutSource, /View requirements guide/);
   assert.match(aboutSource, /accessibilityLabel=\{copy\.openRequirementsAccessibilityLabel\}/);
+});
+
+test('citizenship requirements checklist store persists normalized area ids', () => {
+  const storage = createMemoryMMKV({
+    [checklistStorageKey]: JSON.stringify([
+      'swedishLanguage',
+      'unknownFutureArea',
+      'identity',
+      'identity',
+    ]),
+  });
+  const { useCitizenshipRequirementsChecklistStore } = loadChecklistStore(storage);
+
+  assert.deepEqual(useCitizenshipRequirementsChecklistStore.getState().checkedAreaIds, [
+    'identity',
+    'swedishLanguage',
+  ]);
+
+  useCitizenshipRequirementsChecklistStore.getState().toggleArea('residenceStatus');
+  assert.deepEqual(JSON.parse(storage.values.get(checklistStorageKey)), [
+    'identity',
+    'residenceStatus',
+    'swedishLanguage',
+  ]);
+
+  const reloaded = loadChecklistStore(storage).useCitizenshipRequirementsChecklistStore;
+  assert.deepEqual(reloaded.getState().checkedAreaIds, [
+    'identity',
+    'residenceStatus',
+    'swedishLanguage',
+  ]);
+
+  reloaded.getState().setCheckedAreaIds(['civicKnowledge', 'identity', 'civicKnowledge']);
+  assert.deepEqual(JSON.parse(storage.values.get(checklistStorageKey)), [
+    'identity',
+    'civicKnowledge',
+  ]);
+});
+
+test('citizenship requirements checklist store ignores corrupt reads with recoverable warning', () => {
+  const storage = createMemoryMMKV({
+    [checklistStorageKey]: '{broken',
+  });
+  const { useCitizenshipRequirementsChecklistStore } = loadChecklistStore(storage);
+  const state = useCitizenshipRequirementsChecklistStore.getState();
+
+  assert.deepEqual(state.checkedAreaIds, []);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.equal(state.persistenceWarning.storageId, checklistStorageId);
+  assert.equal(state.persistenceWarning.key, checklistStorageKey);
+});
+
+test('citizenship requirements checklist store keeps session state when writes fail', () => {
+  const storage = createThrowingSetMMKV('requirements disk full');
+  const { useCitizenshipRequirementsChecklistStore } = loadChecklistStore(storage);
+
+  useCitizenshipRequirementsChecklistStore.getState().toggleArea('identity');
+
+  const state = useCitizenshipRequirementsChecklistStore.getState();
+  assert.deepEqual(state.checkedAreaIds, ['identity']);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.operation, 'write');
+  assert.equal(state.persistenceWarning.storageId, checklistStorageId);
+  assert.equal(state.persistenceWarning.key, checklistStorageKey);
+  assert.match(state.persistenceWarning.errorMessage, /requirements disk full/);
+
+  state.clearPersistenceWarning();
+  assert.equal(useCitizenshipRequirementsChecklistStore.getState().persistenceWarning, null);
 });

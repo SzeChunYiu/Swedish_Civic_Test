@@ -265,6 +265,8 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'aboutTheTestSeenEffectRulesValidated',
       'aboutTheTestSeenEffectParityValidated',
       'citizenshipRequirementsLimitedSeatCopyValidated',
+      'citizenshipRequirementsChecklistPersistenceRulesValidated',
+      'citizenshipRequirementsChecklistPersistenceParityValidated',
     ],
   },
   {

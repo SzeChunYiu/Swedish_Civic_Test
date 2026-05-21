@@ -6,138 +6,117 @@ import {
   citizenshipRequirementAreas,
   type CitizenshipRequirementAreaId,
 } from '../../data/citizenshipRequirements';
-import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
-export type PersistedCitizenshipRequirementsChecklist = {
-  checkedAreaIds: CitizenshipRequirementAreaId[];
-};
-
-const checklistStateKey = 'citizenshipRequirementsChecklistState';
-const checklistStorageId = 'citizenship-requirements';
-const validAreaIds = new Set<CitizenshipRequirementAreaId>(
+const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
+const citizenshipRequirementsStorageId = 'citizenship-requirements';
+const citizenshipRequirementAreaIdSet = new Set<CitizenshipRequirementAreaId>(
   citizenshipRequirementAreas.map((area) => area.id),
 );
-const emptyChecklist: PersistedCitizenshipRequirementsChecklist = {
-  checkedAreaIds: [],
-};
 
-let checklistStorage: MMKV | null = null;
+let citizenshipRequirementsStorage: MMKV | null = null;
 
 try {
-  checklistStorage = createMMKV({ id: checklistStorageId });
+  citizenshipRequirementsStorage = createMMKV({ id: citizenshipRequirementsStorageId });
 } catch {
-  checklistStorage = null;
+  citizenshipRequirementsStorage = null;
 }
 
-function normalizeCheckedAreaIds(value: unknown): CitizenshipRequirementAreaId[] {
+export function normalizeCitizenshipRequirementAreaIds(
+  value: unknown,
+): CitizenshipRequirementAreaId[] {
   if (!Array.isArray(value)) return [];
 
-  const selected = new Set<CitizenshipRequirementAreaId>();
-  for (const item of value) {
-    if (typeof item !== 'string') continue;
-    if (!isSafeImportedMapKey(item)) continue;
-    if (validAreaIds.has(item as CitizenshipRequirementAreaId)) {
-      selected.add(item as CitizenshipRequirementAreaId);
-    }
+  const selectedIds = new Set<CitizenshipRequirementAreaId>();
+  for (const candidate of value) {
+    if (typeof candidate !== 'string') continue;
+    const areaId = candidate.trim() as CitizenshipRequirementAreaId;
+    if (citizenshipRequirementAreaIdSet.has(areaId)) selectedIds.add(areaId);
   }
 
   return citizenshipRequirementAreas
     .map((area) => area.id)
-    .filter((areaId) => selected.has(areaId));
+    .filter((areaId) => selectedIds.has(areaId));
 }
 
-export function normalizeImportedCitizenshipRequirementsChecklist(
-  value: unknown,
-): PersistedCitizenshipRequirementsChecklist {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return emptyChecklist;
-
-  const candidate = value as Partial<PersistedCitizenshipRequirementsChecklist>;
-  return {
-    checkedAreaIds: normalizeCheckedAreaIds(candidate.checkedAreaIds),
-  };
+function parseCheckedAreaIds(rawValue: string): CitizenshipRequirementAreaId[] {
+  return normalizeCitizenshipRequirementAreaIds(JSON.parse(rawValue));
 }
 
-function parseChecklist(rawChecklist: string): PersistedCitizenshipRequirementsChecklist {
-  return normalizeImportedCitizenshipRequirementsChecklist(JSON.parse(rawChecklist));
-}
-
-function readChecklist(): PersistedCitizenshipRequirementsChecklist & {
+function readCheckedAreaIds(): {
+  checkedAreaIds: CitizenshipRequirementAreaId[];
   persistenceWarning: RecoverablePersistenceWarning | null;
 } {
-  const readResult = readRecoverably(checklistStorage, checklistStorageId, checklistStateKey, () =>
-    checklistStorage?.getString(checklistStateKey),
+  const readResult = readRecoverably(
+    citizenshipRequirementsStorage,
+    citizenshipRequirementsStorageId,
+    checkedAreaIdsKey,
+    () => citizenshipRequirementsStorage?.getString(checkedAreaIdsKey),
   );
+
   if (!readResult.value) {
-    return { ...emptyChecklist, persistenceWarning: readResult.warning };
+    return { checkedAreaIds: [], persistenceWarning: readResult.warning };
   }
 
   const parseResult = parseJsonRecoverably(
     readResult.value,
-    checklistStorageId,
-    checklistStateKey,
-    parseChecklist,
-    emptyChecklist,
+    citizenshipRequirementsStorageId,
+    checkedAreaIdsKey,
+    parseCheckedAreaIds,
+    [],
   );
-  return { ...parseResult.value, persistenceWarning: parseResult.warning ?? readResult.warning };
+
+  return {
+    checkedAreaIds: parseResult.value,
+    persistenceWarning: parseResult.warning ?? readResult.warning,
+  };
 }
 
-function writeChecklist(
-  checklist: PersistedCitizenshipRequirementsChecklist,
-): PersistedCitizenshipRequirementsChecklist & {
+function persistCheckedAreaIds(checkedAreaIds: readonly CitizenshipRequirementAreaId[]): {
+  checkedAreaIds: CitizenshipRequirementAreaId[];
   persistenceWarning: RecoverablePersistenceWarning | null;
 } {
-  const normalizedChecklist = normalizeImportedCitizenshipRequirementsChecklist(checklist);
+  const normalizedCheckedAreaIds = normalizeCitizenshipRequirementAreaIds(checkedAreaIds);
   const persistenceWarning = writeRecoverably(
-    checklistStorage,
-    checklistStorageId,
-    checklistStateKey,
-    JSON.stringify(normalizedChecklist),
+    citizenshipRequirementsStorage,
+    citizenshipRequirementsStorageId,
+    checkedAreaIdsKey,
+    JSON.stringify(normalizedCheckedAreaIds),
   );
-  return { ...normalizedChecklist, persistenceWarning };
+
+  return { checkedAreaIds: normalizedCheckedAreaIds, persistenceWarning };
 }
 
-type CitizenshipRequirementsChecklistState = PersistedCitizenshipRequirementsChecklist & {
-  persistenceWarning: RecoverablePersistenceWarning | null;
+type CitizenshipRequirementsChecklistState = {
+  checkedAreaIds: CitizenshipRequirementAreaId[];
   clearPersistenceWarning: () => void;
+  isAreaChecked: (areaId: CitizenshipRequirementAreaId) => boolean;
+  persistenceWarning: RecoverablePersistenceWarning | null;
   setCheckedAreaIds: (areaIds: readonly CitizenshipRequirementAreaId[]) => void;
   toggleArea: (areaId: CitizenshipRequirementAreaId) => void;
 };
 
-const initialChecklist = readChecklist();
+const initialChecklistState = readCheckedAreaIds();
 
-export const useCitizenshipRequirementsStore = create<CitizenshipRequirementsChecklistState>(
-  (set) => ({
-    ...initialChecklist,
+export const useCitizenshipRequirementsChecklistStore =
+  create<CitizenshipRequirementsChecklistState>((set, get) => ({
+    checkedAreaIds: initialChecklistState.checkedAreaIds,
+    persistenceWarning: initialChecklistState.persistenceWarning,
     clearPersistenceWarning: () => set({ persistenceWarning: null }),
-    setCheckedAreaIds: (areaIds) => {
-      const persistedChecklist = writeChecklist({ checkedAreaIds: [...areaIds] });
-      set(persistedChecklist);
-    },
+    isAreaChecked: (areaId) => get().checkedAreaIds.includes(areaId),
+    setCheckedAreaIds: (areaIds) => set(persistCheckedAreaIds(areaIds)),
     toggleArea: (areaId) =>
       set((state) => {
-        const checkedAreaIds = state.checkedAreaIds.includes(areaId)
-          ? state.checkedAreaIds.filter((id) => id !== areaId)
-          : [...state.checkedAreaIds, areaId];
+        if (!citizenshipRequirementAreaIdSet.has(areaId)) return state;
 
-        return writeChecklist({ checkedAreaIds });
+        const checkedIds = new Set(state.checkedAreaIds);
+        if (checkedIds.has(areaId)) {
+          checkedIds.delete(areaId);
+        } else {
+          checkedIds.add(areaId);
+        }
+
+        return persistCheckedAreaIds([...checkedIds]);
       }),
-  }),
-);
-
-export function importCitizenshipRequirementsChecklistSnapshot(
-  checklist: unknown,
-): PersistedCitizenshipRequirementsChecklist {
-  const persistedChecklist = writeChecklist(
-    normalizeImportedCitizenshipRequirementsChecklist(checklist),
-  );
-  useCitizenshipRequirementsStore.setState(persistedChecklist);
-  return persistedChecklist;
-}
-
-export function hydrateCitizenshipRequirementsChecklistFromStorage(): PersistedCitizenshipRequirementsChecklist {
-  const persistedChecklist = readChecklist();
-  useCitizenshipRequirementsStore.setState(persistedChecklist);
-  return persistedChecklist;
-}
+  }));
