@@ -5,6 +5,7 @@ const test = require('node:test');
 const {
   checkQuestions,
   checkLocalizationSourceShape,
+  checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
 } = require('../scripts/check-question-i18n-v8');
@@ -138,6 +139,42 @@ test('question localization v8 rejects stale source option ids outside the locke
   );
 
   assert.ok(errors.includes('q001.localization.options.c stale option id not in source'));
+});
+
+test('question localization v8 rejects English geography terms in Somali sea and current names', () => {
+  const errors = checkSomaliGeographyNaturalness([
+    {
+      id: 'q004',
+      questionText: { so: 'Badda ku teedsan xeebta bari ee Iswiidhan maxaa la yiraahdaa?' },
+      explanationText: {
+        so: 'Badda ku teedsan xeebta bari ee Iswiidhan waa Badda Baltic.',
+      },
+      options: [
+        { id: 'a', text: { so: 'Badda Waqooyi' } },
+        { id: 'b', text: { so: 'Badda Mediterranean' } },
+      ],
+    },
+    {
+      id: 'q006',
+      questionText: { so: 'Gulf Stream waxay ka qayb qaadataa cimilada.' },
+      explanationText: { so: 'Qulqulka Waqooyiga Atlantic ayaa biyo diirran keena.' },
+      options: [],
+    },
+    {
+      id: 'q008',
+      questionText: { so: 'Saddexda haro waa kuwee?' },
+      explanationText: { so: 'Harooyinka ugu waaweyn waa Vänern, Vättern iyo Mälaren.' },
+      options: [{ id: 'b', text: { so: 'Badda Baltic, Kattegat iyo Skagerrak' } }],
+    },
+  ]);
+
+  assert.deepEqual(errors, [
+    'q004.explanationText.so contains English geography term',
+    'q004.options.b.text.so contains English geography term',
+    'q006.questionText.so contains English geography term',
+    'q006.explanationText.so contains English geography term',
+    'q008.options.b.text.so contains English geography term',
+  ]);
 });
 
 test('question localization v8 rejects missing protected Swedish civic terms in target text', () => {

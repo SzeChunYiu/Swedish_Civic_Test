@@ -40,6 +40,7 @@ export const architectureRouterShellRuntimeFiles = [
   'app/(tabs)/_layout.tsx',
   'app/search.tsx',
   'app/dashboard.tsx',
+  'app/citizenship-requirements.tsx',
   'app/+not-found.tsx',
   'app/+html.tsx',
   'app/+native-intent.ts',

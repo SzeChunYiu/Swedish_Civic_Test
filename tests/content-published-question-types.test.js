@@ -41,7 +41,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const policyGoalCleftPattern = /\bThe goal of .+?\bpolicy means(?: that)?\b/i;
+const policyGoalCleftPattern =
+  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i;
 const civilDefenceContextlessPattern =
   /\b(?:Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera|Important activities such as school, work, and health care can continue to function|Politiska val ersätts med militära beslut|Political elections are replaced with military decisions)\b/i;
 const luciaExplanationRoleScaffoldPattern =
@@ -151,11 +152,24 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
   assert.equal(
     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+});
+
+test('q001 generated answer template parity includes localized true-false options', () => {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
 });
 
 test('q160-q169 published option parity keeps localized option overlays expected', () => {
@@ -1670,6 +1684,65 @@ test('human-rights definition true/false exports use direct propositions', () =>
   );
 });
 
+test('political-rights generated true/false exports use direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q146TrueId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const q146FalseId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+  const expectedSv = [
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  ];
+  const expectedEn = [
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  ];
+  const generatedRows = [q146TrueId, q146FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q146TrueId, q146FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q146TrueId, q146FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+  const barePhrasePattern = /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/i;
+
+  assert.ok(generatedRows.every(Boolean), 'generated q146 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q146 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) => barePhrasePattern.test(`${question.q.sv}\n${question.q.en}`))
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => barePhrasePattern.test(line)),
+    [],
+  );
+});
+
 test('gender-equality policy goal true/false exports use direct English propositions', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -2571,6 +2644,55 @@ test('generated id fixture guard allows source ids and helper-derived ids', () =
   );
 });
 
+test('published question schema validates localized q001 generated answer templates', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 1)",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 0",
+        "            ? { ...option, text: { ...option.text, en: 'Template drift' } }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 generated variant\[1\] options do not match generated answer template/,
+  );
+});
+
 test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -3160,6 +3282,42 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated true/false English stems that drop Sweden scope', () => {
+  const sourceQuestions = buildSiteQuestionBank().questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q055TrueId = generatedQuestionId(sourceQuestions, 'q055', 'trueStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'What applies to buying sex in Sweden?',
+      'What applies to buying sex?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    new RegExp(`${q055TrueId} contains a generated true/false grammar-splice stem`),
+  );
+});
+
 test('published question schema rejects generated how-can-affect when-splices', () => {
   const result = spawnSync(
     process.execPath,
@@ -3525,8 +3683,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const genderEqualityPolicyGoalResiduals = {",
-        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
-        "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
+        "  [generatedFixtureId('q053', 1)]: { questionSv: 'Målet med Sveriges folkhälsopolitik betyder att människor ska ha lika möjligheter till en god hälsa.', questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
+        "  [generatedFixtureId('q053', 2)]: { questionSv: 'Målet med Sveriges jämställdhetspolitik betyder att jämställdhet bara handlar om hur många kvinnor som finns i politiken.', questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  genderEqualityPolicyGoalResiduals[question.id]",
@@ -3556,6 +3714,65 @@ require('./scripts/validate-content.js');
   assert.match(
     output,
     new RegExp(`${q053FalseId} contains a generated true/false grammar-splice stem`),
+  );
+});
+
+test('published question schema rejects generated variants that drop Sweden scope in English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q070SingleChoiceId = generatedQuestionId(sourceQuestions, 'q070', 'singleChoice');
+  const q070JudgementId = generatedQuestionId(sourceQuestions, 'q070', 'judgement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const generatedScopeResiduals = {",
+        "  [generatedFixtureId('q070', 0)]: { questionSv: 'Vilka betalar skatt i Sverige?', questionEn: 'Who pays tax?' },",
+        "  [generatedFixtureId('q070', 3)]: { questionSv: 'Vilket svar stämmer bäst? Vilka betalar skatt i Sverige?', questionEn: 'Which answer best matches? Who pays tax?' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  generatedScopeResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...generatedScopeResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-sweden-scope-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q070SingleChoiceId} drops Sweden scope from generated English question`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q070JudgementId} drops Sweden scope from generated English question`),
   );
 });
 
@@ -3738,7 +3955,48 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
+test('q146 political-rights generated true/false exports direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const trueStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'));
+  const falseStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'));
+
+  assert.equal(
+    trueStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+  );
+  assert.equal(
+    trueStatement?.q.en,
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assert.equal(
+    falseStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  );
+  assert.equal(
+    falseStatement?.q.en,
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+});
+
 test('published question schema rejects generated true/false bare answer phrases', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedOffenderIds = [
+    generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'falseStatement'),
+  ];
   const result = spawnSync(
     process.execPath,
     [
@@ -3756,14 +4014,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const bareAnswerPhraseResiduals = {",
-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll A.', questionEn: 'Incomplete answer fragment for naturalness guard A.' },",
-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll B.', questionEn: 'Incomplete answer fragment for naturalness guard B.' },",
-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll C.', questionEn: 'Incomplete answer fragment for naturalness guard C.' },",
-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll D.', questionEn: 'Incomplete answer fragment for naturalness guard D.' },",
-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll E.', questionEn: 'Incomplete answer fragment for naturalness guard E.' },",
-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll F.', questionEn: 'Incomplete answer fragment for naturalness guard F.' },",
-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll G.', questionEn: 'Incomplete answer fragment for naturalness guard G.' },",
-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll H.', questionEn: 'Incomplete answer fragment for naturalness guard H.' },",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  bareAnswerPhraseResiduals[question.id]",
@@ -3778,6 +4036,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3786,7 +4045,66 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
+  for (const id of expectedOffenderIds) {
+    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
+  }
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+});
+
+test('published question schema uses the shared generated true/false naturalness pattern source', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  assert.match(validatorSource, /require\('\.\/generated-true-false-naturalness-patterns'\)/);
+  assert.doesNotMatch(
+    validatorSource,
+    /const\s+QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS\s*=\s*\[/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const sharedPatternOnlyResiduals = {",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Det stämmer i sak att människor får övertyga andra.', questionEn: 'It is factually true that people may persuade others.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Det stämmer i sak att partier får hindra röster.', questionEn: 'It is factually true that parties may stop votes.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  sharedPatternOnlyResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...sharedPatternOnlyResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects All Saints generated true/false English action fragments', () => {
@@ -4155,13 +4473,13 @@ require('./scripts/validate-content.js');
 });
 
 test('published question schema guards capitalized generated reason clauses', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
+  const patternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
     'utf8',
   );
 
-  assert.match(validatorSource, /\/\^En anledning är att Det\\b\//);
-  assert.match(validatorSource, /\/\^One reason is that It\\b\//);
+  assert.match(patternSource, /\/\^En anledning är att Det\\b\//);
+  assert.match(patternSource, /\/\^One reason is that It\\b\//);
 });
 
 test('published question schema guards targetless generated why-reason stems', () => {
@@ -4187,6 +4505,56 @@ test('published question schema reports focused generated why-reason guard cover
   const summary = JSON.parse(match[0]);
   assert.ok(summary.generatedWhyReasonTargetStemsValidated > 0);
   assert.equal(summary.generatedWhyReasonTargetStemParityValidated, true);
+});
+
+test('published question schema reports focused generated localization overlay parity', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-localization-template-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const match = result.stdout.match(/\{\s*"generatedLocalizationTemplateParityValidated"[\s\S]*\}/);
+  assert.ok(match, 'focused generated localization validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.ok(summary.generatedLocalizationTemplateParityValidated > 0);
+  assert.ok(summary.generatedPromptTemplateParityValidated > 0);
+  assert.ok(summary.generatedAnswerTemplateParityValidated > 0);
+  assert.ok(summary.generatedPublishedQuestions > 0);
+});
+
+test('published question schema rejects unlocalized expected generated option text maps in focused mode', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const Module = require('node:module');
+const path = require('node:path');
+const scriptPath = path.join(process.cwd(), 'scripts/validate-content.js');
+const source = fs
+  .readFileSync(scriptPath, 'utf8')
+  .replace(
+    ".map((question) =>\\n        typeof applyQuestionLocalizationPilot === 'function'\\n          ? applyQuestionLocalizationPilot(question)\\n          : question,\\n      )",
+    '',
+  );
+const mod = new Module(scriptPath, module);
+mod.filename = scriptPath;
+mod.paths = Module._nodeModulePaths(path.dirname(scriptPath));
+process.argv.push('scripts/validate-content.js', '--focus-generated-localization-template-parity');
+mod._compile(source, scriptPath);
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /text map does not match localization overlay/,
+  );
 });
 
 test('published question schema rejects targetless generated why-reason stems in focused mode', () => {
@@ -4800,13 +5168,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
@@ -4817,7 +5185,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ),",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }
@@ -4849,13 +5217,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 3)",
         "    ? {",
         "        ...question,",
@@ -4866,7 +5234,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ),",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }
@@ -4898,13 +5266,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
@@ -4912,7 +5280,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        questionEn: 'Which answer is correct? Where is Sweden located?',",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }

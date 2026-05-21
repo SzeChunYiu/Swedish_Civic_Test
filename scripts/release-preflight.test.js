@@ -195,6 +195,22 @@ function runPreflight(options = {}) {
   return JSON.parse(result.stdout);
 }
 
+function runPreflightText(options = {}) {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/release-preflight.js', ...(options.args || [])],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: { ...process.env, ...(options.env || {}) },
+    },
+  );
+  if (options.expectedStatus !== undefined) {
+    assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
+  }
+  return result.stdout;
+}
+
 function runPreflightAsync(options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(
@@ -1346,6 +1362,50 @@ test('release preflight labels v1.1 source-marker surfaces without temp-root noi
     assert.equal(scopeGate.status, 'BLOCKED');
     assert.match(scopeGate.evidence, /custom-scope-root\/feature\.ts \(v1\.1 source marker\)/);
     assert.equal(scopeGate.evidence.includes(scopeRoot), false);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('release preflight text output labels v1.1 source-marker surfaces without temp-root noise', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-marker-text-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const scopeRoot = path.join(tmpDir, 'scan-root');
+
+  fs.mkdirSync(scopeRoot, { recursive: true });
+  fs.writeFileSync(
+    path.join(scopeRoot, 'feature.ts'),
+    "export const adaptivePractice = 'v1.1 experimental study surface';\n",
+  );
+  writeAllReadyEvidence(evidencePath, {}, { includeReleaseScopeOverride: false });
+  writeFakeReleaseCommands(tmpDir);
+
+  try {
+    const env = {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      RELEASE_PREFLIGHT_V11_SCOPE_ROOTS: scopeRoot,
+    };
+    const report = runPreflight({ expectedStatus: 1, env });
+    const text = runPreflightText({ expectedStatus: 1, env });
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+
+    assert.equal(scopeGate.status, 'BLOCKED');
+    assert.match(
+      scopeGate.evidence,
+      /custom-scope-root\/feature\.ts \(v1\.1 adaptive practice marker; v1\.1 source marker\)/,
+    );
+    assert.ok(
+      text.includes(scopeGate.evidence),
+      'human-readable text should preserve the same v1.1 surface evidence as JSON',
+    );
+    assert.match(text, /release-scope-v11/);
+    assert.match(
+      text,
+      /custom-scope-root\/feature\.ts \(v1\.1 adaptive practice marker; v1\.1 source marker\)/,
+    );
+    assert.equal(text.includes(scopeRoot), false);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }

@@ -9,6 +9,12 @@ const {
   findUnsupportedStaticTeamCredentialClaimsInSource,
   findStaticHeadMetadataTitleIssues,
 } = require('./static-outcome-copy-guard');
+const {
+  applyStaticSourceProvenanceCountsToAppJs,
+  applyStaticSourceProvenanceCountsToIndexHtml,
+  buildStaticSourceProvenanceTranslations,
+  summarizeQuestionProvenance,
+} = require('./export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
 const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
@@ -21,12 +27,23 @@ function uniqueSorted(values) {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
+function fromVm(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 function staticQuestionBank() {
+  return staticQuestionBankRuntime().questions;
+}
+
+function staticQuestionBankRuntime() {
   const context = { window: {} };
   context.globalThis = context.window;
   vm.createContext(context);
   vm.runInContext(read('site/questions.js'), context, { timeout: 3000 });
-  return context.window.SMT_QUESTIONS;
+  return {
+    questions: context.window.SMT_QUESTIONS,
+    metadata: context.window.SMT_QUESTION_BANK_META,
+  };
 }
 
 function staticBuddyRuntime() {
@@ -359,9 +376,26 @@ function assertStaticTermsSourceFallbackParity(indexHtml, appSource) {
   );
 }
 
+function assertStaticSettingsSourceFallbackParity(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const settingsFallback = parseStaticFallbackI18nValues(
+    indexHtml,
+    (key) => key === 'settings.sources.hint',
+  );
+  const expectedValue = englishTranslations.get('settings.sources.hint');
+
+  assert.equal(typeof expectedValue, 'string', 'settings.sources.hint should be in site/app.js');
+  assert.equal(
+    settingsFallback.get('settings.sources.hint'),
+    normalizeInlineHtml(expectedValue),
+    'settings.sources.hint no-JS fallback should match the English site/app.js dictionary',
+  );
+}
+
 function assertStaticSourceProvenanceFallbackParity(indexHtml, appSource) {
   assertStaticSourcesFallbackParity(indexHtml, appSource);
   assertStaticTermsSourceFallbackParity(indexHtml, appSource);
+  assertStaticSettingsSourceFallbackParity(indexHtml, appSource);
 }
 
 function sourceProvenanceSurface() {
@@ -376,6 +410,50 @@ function sourceProvenanceSurface() {
     .join('\n')
     .replace(/<[^>]+>/g, ' ');
 }
+
+function staticExtraI18n() {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(read('site/i18n-extras.js'), context, { timeout: 3000 });
+  return context.window.__i18n_extra;
+}
+
+const extraSourceProvenanceLocales = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+
+const extraSourceProvenanceKeys = [
+  'terms.s3.p',
+  'sources.lede',
+  'sources.meta3.v',
+  'sources.s1.li1',
+  'sources.s1.li2',
+  'sources.s1.li3',
+  'sources.s4.li1',
+  'settings.sources.hint',
+];
+
+const staleExtraSourceFragments = {
+  'zh-Hans': ['今天的题库仅来自 UHR', '不会列出其他来源系列'],
+  'zh-Hant': ['目前題庫僅採用 UHR', '不會列出其他來源類別'],
+  ar: ['يعتمد البنك اليوم على UHR فقط', 'ولا ندرج عائلات مصادر أخرى'],
+  ckb: ['بانکەکە ئەمڕۆ تەنها UHRـە', 'خێزانە سەرچاوەکانی تر ناخەینە لیستەوە'],
+  fa: ['بانک امروز تنها UHR است', 'خانواده‌های منبع دیگر را فهرست نمی‌کنیم'],
+  pl: ['Baza opiera się dziś wyłącznie na UHR', 'Nie wymieniamy innych rodzin źródeł'],
+  so: ['Bangigu maanta waa UHR-kaliya', 'Ma liiseyno qoysaska kale ee ilaha'],
+  ti: ['እታ ባንኪ ሎሚ UHR-only እያ', 'ካልኦት ስድራቤታት ምንጪ ኣይንዝርዝርን'],
+  tr: ["Banka bugün yalnızca UHR'ye dayanıyor", 'başka kaynak ailelerini listelemeyiz'],
+  uk: ['Сьогодні банк лише на основі UHR', 'Ми не перелічуємо інші родини джерел'],
+};
 
 test('static source claims match the shipped question-bank source titles', () => {
   const indexHtml = read('site/index.html');
@@ -396,7 +474,7 @@ test('static source claims match the shipped question-bank source titles', () =>
 });
 
 test('static question bank exports visible question provenance', () => {
-  const questions = staticQuestionBank();
+  const { questions, metadata } = staticQuestionBankRuntime();
   const supported = new Set(['uhr', 'derived', 'editorial']);
   const counts = { uhr: 0, derived: 0, editorial: 0 };
 
@@ -411,6 +489,8 @@ test('static question bank exports visible question provenance', () => {
   assert.equal(questions.find((question) => question.id === 'q001')?.questionProvenance, 'uhr');
   assert.ok(counts.uhr > 0, 'static bank should include UHR provenance rows');
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
+  assert.deepEqual(fromVm(metadata.provenanceCounts), counts);
+  assert.equal(metadata.questionCount, questions.length);
 });
 
 test('static ebook provenance metadata is route-preserving and count-addressable', () => {
@@ -418,6 +498,7 @@ test('static ebook provenance metadata is route-preserving and count-addressable
 
   assert.match(ebookSource, /function ebookRouteHash\(chapterId,\s*targetParam,\s*targetId\)/);
   assert.match(ebookSource, /data-source-counts='\$\{serializedCounts\}'/);
+  assert.match(ebookSource, /data-source-key="\$\{sourceKeys\}"/);
   assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fn',\s*id\)/);
   assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fnref',\s*footnote\.id\)/);
   assert.match(ebookSource, /function scrollEbookRouteTarget\(\)/);
@@ -472,6 +553,50 @@ test('static Sources and Terms no-JS fallback mirrors the English source-provena
   assertStaticSourceProvenanceFallbackParity(read('site/index.html'), read('site/app.js'));
 });
 
+test('static source provenance copy uses generated question-bank counts', () => {
+  const { questions, metadata } = staticQuestionBankRuntime();
+  const counts = summarizeQuestionProvenance(questions);
+  const appSource = read('site/app.js');
+  const indexHtml = read('site/index.html');
+  const translations = buildStaticSourceProvenanceTranslations(counts);
+  const englishTranslations = englishTranslationMap(appSource);
+  const countSurface = [
+    sourceProvenanceSurface(),
+    ...appTranslationValues(appSource, (key) => key === 'settings.sources.hint'),
+    ...parseStaticFallbackI18nValues(indexHtml, (key) => key === 'settings.sources.hint').values(),
+  ].join('\n');
+
+  assert.deepEqual(fromVm(metadata.provenanceCounts), counts);
+  assert.equal(englishTranslations.get('terms.s3.p'), translations.en['terms.s3.p']);
+  assert.equal(englishTranslations.get('sources.lede'), translations.en['sources.lede']);
+  assert.equal(englishTranslations.get('sources.s4.li1'), translations.en['sources.s4.li1']);
+  assert.equal(
+    englishTranslations.get('settings.sources.hint'),
+    translations.en['settings.sources.hint'],
+  );
+  assert.match(countSurface, new RegExp(`\\b${counts.uhr}\\b[^\\n]*(?:UHR|Sverige i fokus)`));
+  assert.match(countSurface, new RegExp(`\\b${counts.derived}\\b[^\\n]*(?:Derived|derived)`));
+  assert.doesNotMatch(countSurface, /~\d+\s+(?:questions|frågor)/i);
+});
+
+test('static source provenance count exporter rewrites count-bearing copy', () => {
+  const fixtureCounts = { uhr: 12, derived: 34, editorial: 0 };
+  const updatedApp = applyStaticSourceProvenanceCountsToAppJs(read('site/app.js'), fixtureCounts);
+  const updatedIndex = applyStaticSourceProvenanceCountsToIndexHtml(
+    read('site/index.html'),
+    fixtureCounts,
+  );
+
+  assert.match(updatedApp, /12 questions cited directly to UHR/);
+  assert.match(updatedApp, /34 editorially derived questions/);
+  assert.match(updatedApp, /12 frågor med direkt hänvisning/);
+  assert.match(updatedApp, /34 redaktionellt härledda frågor/);
+  assert.match(updatedIndex, /12 questions cited directly to UHR/);
+  assert.match(updatedIndex, /34 editorially derived questions/);
+  assert.doesNotMatch(updatedApp, /~179|~716/);
+  assert.doesNotMatch(updatedIndex, /~179|~716/);
+});
+
 test('static Sources no-JS fallback rejects stale UHR-only provenance copy', () => {
   const indexHtml = read('site/index.html');
   const appSource = read('site/app.js');
@@ -489,13 +614,74 @@ test('static Sources no-JS fallback rejects stale UHR-only provenance copy', () 
     () =>
       assertStaticTermsSourceFallbackParity(
         indexHtml.replace(
-          'The current question bank has ~179 questions cited directly to UHR',
+          'The current question bank has 179 questions cited directly to UHR',
           'The current question bank is written from UHR',
         ),
         appSource,
       ),
     /terms\.s3\.p no-JS fallback should match/,
   );
+});
+
+test('static source provenance copy covers extra locale UHR and Derived counts', () => {
+  const extraI18n = staticExtraI18n();
+
+  for (const locale of extraSourceProvenanceLocales) {
+    const dictionary = extraI18n?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary should exist`);
+
+    const guardedValues = extraSourceProvenanceKeys.map((key) => {
+      const value = dictionary[key];
+      assert.equal(typeof value, 'string', `${locale}.${key} should be translated`);
+      assert.notEqual(value.trim(), '', `${locale}.${key} should not be empty`);
+      return value;
+    });
+    const sourceAndTermsSurface = [
+      dictionary['terms.s3.p'],
+      dictionary['sources.lede'],
+      dictionary['sources.meta3.v'],
+      dictionary['sources.s1.li1'],
+      dictionary['sources.s1.li2'],
+      dictionary['sources.s1.li3'],
+      dictionary['sources.s4.li1'],
+    ].join('\n');
+
+    assert.notEqual(
+      dictionary['sources.meta3.v'],
+      'Sverige i fokus',
+      `${locale} Sources current-bank value should expose UHR + Derived, not only the title`,
+    );
+    assert.match(sourceAndTermsSurface, /179/, `${locale} source copy should include UHR count`);
+    assert.match(
+      sourceAndTermsSurface,
+      /716/,
+      `${locale} source copy should include Derived count`,
+    );
+    assert.match(sourceAndTermsSurface, /\bUHR\b/, `${locale} source copy should name UHR`);
+    assert.match(
+      `${dictionary['terms.s3.p']}\n${dictionary['sources.lede']}`,
+      /<strong>[\s\S]*?<\/strong>/,
+      `${locale} source copy should mention visible per-question provenance badges`,
+    );
+    assert.match(
+      dictionary['settings.sources.hint'],
+      /179/,
+      `${locale} UHR-only setting hint should use the current direct-UHR count`,
+    );
+    assert.doesNotMatch(
+      guardedValues.join('\n'),
+      /169|۱۶۹/,
+      `${locale} extra source copy should not keep the stale direct-UHR count`,
+    );
+
+    for (const staleFragment of staleExtraSourceFragments[locale]) {
+      assert.doesNotMatch(
+        sourceAndTermsSurface,
+        new RegExp(staleFragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+        `${locale} source copy should not keep stale UHR-only/future-source wording`,
+      );
+    }
+  }
 });
 
 test('static ebook prose provenance is footnoted from concrete source metadata', () => {

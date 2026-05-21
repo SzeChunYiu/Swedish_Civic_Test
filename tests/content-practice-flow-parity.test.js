@@ -18,8 +18,11 @@ test('practice flow runtime selection stays in parity with the published questio
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.practiceFlowCasesValidated, 12);
+  assert.equal(summary.practiceFlowCasesValidated, 7);
   assert.equal(summary.practiceFlowParityValidated, true);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 12);
+  assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
+  assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
 });
 
 test('practice flow parity rejects active-question unlock drift', () => {
@@ -53,7 +56,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('practice flow parity rejects cross-filter completed progress drift', () => {
+test('practice flow parity rejects struck-option selection drift', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -63,12 +66,12 @@ const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/quiz/practiceFlow.ts')) {
+  if (normalizedPath.endsWith('/lib/quiz/practiceSessionStore.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'if (!questionIds.has(id) || seen.has(id)) continue;',
-        'if (seen.has(id)) continue;',
+        'if (state.struckOptionIdsByQuestionId[questionId]?.includes(optionId)) {',
+        'if (false && state.struckOptionIdsByQuestionId[questionId]?.includes(optionId)) {',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
@@ -83,6 +86,6 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /practice flow completion outside visible bank is ignored scoped completed ids returned \["q003"\], expected \[\]/,
+    /practice session selectOption must not select a struck option/,
   );
 });

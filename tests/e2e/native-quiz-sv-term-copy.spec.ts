@@ -47,9 +47,13 @@ test('chapter detail and routed quiz render natural Swedish study terms', async 
 
   await page.getByLabel('Starta frågepass för Landet Sverige').click();
 
-  await expect(page).toHaveURL(/\/quiz\/q001$/);
+  await expect(page).toHaveURL(/\/quiz\/q001\?chapterId=ch01$/);
   await expect(body).toContainText('Frågepass');
-  await expect(body).toContainText('Frågepass q001');
+  await expect(body).toContainText('Frågepass: Landet Sverige');
+  await expect(body).toContainText(
+    'Besvara en fråga från Landet Sverige och gå sedan igenom den källbaserade återkopplingen.',
+  );
+  await expect(body).not.toContainText('Frågepass q001');
   await expect(body).not.toContainText(oldStartQuiz);
   await expect(body).not.toContainText(oldQuizPass);
   await expect(body).not.toContainText(oldQuizQuestions);
@@ -61,6 +65,11 @@ test('chapter detail and routed quiz render natural Swedish study terms', async 
     .click();
   await expect(page.getByLabel('Försök igen med den här frågan')).toBeVisible();
   await expect(body).not.toContainText(oldQuizQuestion);
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(body).toContainText('Frågepass q001');
+  await expect(body).not.toContainText('Frågepass: Landet Sverige');
 
   expect(pageErrors).toEqual([]);
 });
@@ -79,9 +88,13 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
 
   await page.getByLabel('Start quiz for The country of Sweden').click();
 
-  await expect(page).toHaveURL(/\/quiz\/q001$/);
+  await expect(page).toHaveURL(/\/quiz\/q001\?chapterId=ch01$/);
   await expect(body).toContainText('Quiz session');
-  await expect(body).toContainText('Session q001');
+  await expect(body).toContainText('Quiz session: The country of Sweden');
+  await expect(body).toContainText(
+    'Answer a question from The country of Sweden, then review the source-backed feedback.',
+  );
+  await expect(body).not.toContainText('Session q001');
   await expect(body).not.toContainText('Starta frågepass');
   await expect(body).not.toContainText('Frågepass q001');
 
@@ -90,6 +103,11 @@ test('chapter detail and routed quiz keep English quiz copy in support mode', as
     .first()
     .click();
   await expect(page.getByLabel('Try this quiz question again')).toBeVisible();
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+  await expect(body).toContainText('Session q001');
+  await expect(body).not.toContainText('Quiz session: The country of Sweden');
 
   expect(pageErrors).toEqual([]);
 });

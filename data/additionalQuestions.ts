@@ -1,4 +1,3 @@
-import { applyQuestionLocalizationPilot } from './questionLocalizations';
 import type { Difficulty, PracticeQuestion, UHRReference } from '../types/content';
 
 type OptionText = [textSv: string, textEn: string];
@@ -65,29 +64,6 @@ function trueFalse(
     tags,
   };
 }
-
-const ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
-  'q021',
-  'q022',
-  'q023',
-  'q024',
-  'q025',
-  'q026',
-  'q027',
-  'q028',
-  'q029',
-  'q030',
-  'q031',
-  'q032',
-  'q033',
-  'q034',
-  'q035',
-  'q036',
-  'q037',
-  'q038',
-  'q039',
-  'q040',
-]);
 
 const rawAdditionalQuestions: PracticeQuestion[] = [
   single(
@@ -3740,7 +3716,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch07',
     { chapter: 'Mänskliga rättigheter', section: 'Jämställdhet mellan könen', pageApprox: 23 },
     'Vilket exempel hör till arbetet för jämställdhet mellan könen?',
-    'Which example is part of work for gender equality?',
+    'Which example is part of efforts to promote gender equality?',
     [
       [
         'Att kvinnor och män ska ha lika möjligheter till utbildning, arbete och inkomst',
@@ -3802,7 +3778,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       pageApprox: 26,
     },
     'Vad är ett mål med arbetet för personer med funktionsnedsättning?',
-    'What is one aim of work for people with disabilities?',
+    'What is one aim of disability rights work?',
     [
       [
         'Att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor',
@@ -3820,7 +3796,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.',
-    'Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
+    'Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.',
     ['disability-rights', 'accessibility', 'equal-participation'],
   ),
   single(
@@ -3858,8 +3834,4 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
   ),
 ];
 
-export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions.map((question) =>
-  ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id)
-    ? applyQuestionLocalizationPilot(question)
-    : question,
-);
+export const additionalQuestions: PracticeQuestion[] = rawAdditionalQuestions;
