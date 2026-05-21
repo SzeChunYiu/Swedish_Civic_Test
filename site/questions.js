@@ -64384,8 +64384,8 @@
       "ckb": "کۆمەڵگای خۆشگوزەرانی",
       "fa": "جامعهٔ رفاه",
       "pl": "Społeczeństwo dobrobytu",
-      "so": "Bulshada daryeelka (welfare)",
-      "ti": "ሕብረተሰብ ድሕነት (welfare)",
+      "so": "Bulshada daryeelka bulshada",
+      "ti": "ሕብረተሰብ ድሕነት",
       "tr": "Refah toplumu",
       "uk": "Суспільство добробуту"
     },
@@ -64397,11 +64397,11 @@
       "ar": "الضرائب والرفاه وتوزيع المسؤوليات بين الدولة والأقاليم (region) والبلديات (kommun).",
       "ckb": "باجەکان، خۆشگوزەرانی و دابەشکردنی بەرپرسیارێتی لەنێوان دەوڵەت، هەرێمەکان (region) و شارەوانییەکان (kommun).",
       "fa": "مالیات‌ها، رفاه و تقسیم مسئولیت‌ها میان دولت، مناطق (region) و کمون‌ها (kommun).",
-      "pl": "Podatki, dobrobyt (welfare) i podział odpowiedzialności między państwo, regiony (region) i kommun.",
-      "so": "Canshuuraha, daryeelka (welfare) iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
-      "ti": "ቀረጽ፣ ድሕነት (welfare) ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።",
-      "tr": "Vergiler, refah (welfare) ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
-      "uk": "Податки, добробут (welfare) та розподіл відповідальності між державою, region і kommun."
+      "pl": "Podatki, system opieki społecznej i podział odpowiedzialności między państwo, regiony (region) i kommun.",
+      "so": "Canshuuraha, daryeelka bulshada iyo qaybinta mas'uuliyadda inta u dhaxaysa dawladda, region-yada iyo kommun-yada.",
+      "ti": "ቀረጽ፣ ድሕነት ከምኡ’ውን ምክፍፋል ሓላፍነት ኣብ መንጎ መንግስቲ፣ region ከምኡ’ውን kommun።",
+      "tr": "Vergiler, refah ve sorumlulukların devlet, region'lar ve kommun'lar arasında paylaşımı.",
+      "uk": "Податки, соціальний добробут та розподіл відповідальності між державою, region і kommun."
     },
     "questionCount": 55
   },
