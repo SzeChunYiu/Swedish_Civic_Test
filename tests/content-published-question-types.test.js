@@ -39,6 +39,8 @@ const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
+const humanRightsDefinitionCleftPattern =
+  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
@@ -1536,6 +1538,66 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('human-rights definition true/false exports use direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q175TrueId = generatedQuestionId(sourceQuestions, 'q175', 'trueStatement');
+  const q175FalseId = generatedQuestionId(sourceQuestions, 'q175', 'falseStatement');
+  const expectedSv = [
+    'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
+    'Mänskliga rättigheter gäller bara svenska medborgare.',
+  ];
+  const expectedEn = [
+    'Human rights apply to every person regardless of background or life situation.',
+    'Human rights apply only to Swedish citizens.',
+  ];
+  const generatedRows = [q175TrueId, q175FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q175TrueId, q175FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q175TrueId, q175FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+
+  assert.ok(generatedRows.every(Boolean), 'generated q175 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q175 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) =>
+        humanRightsDefinitionCleftPattern.test(`${question.q.sv} ${question.q.en}`),
+      )
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => humanRightsDefinitionCleftPattern.test(line)),
+    [],
+  );
+});
+
 test('free-media source prompts ask the civic concept directly in exports', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();
@@ -2921,6 +2983,51 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q002 contains a generated true\/false grammar-splice stem/,
   );
+});
+
+test('published question schema rejects human-rights definition-cleft true/false stems', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const humanRightsDefinitionResiduals = {",
+        "  [generatedFixtureId('q175', 1)]: { questionSv: 'Att mänskliga rättigheter gäller alla betyder att varje människa har rättigheter oavsett bakgrund eller livssituation.', questionEn: 'That human rights apply to everyone means every person has rights regardless of background or life situation.' },",
+        "  [generatedFixtureId('q175', 2)]: { questionSv: 'Att mänskliga rättigheter gäller alla betyder att bara svenska medborgare har mänskliga rättigheter.', questionEn: 'That human rights apply to everyone means only Swedish citizens have human rights.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  humanRightsDefinitionResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...humanRightsDefinitionResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects residual generated true/false list and meaning splices', () => {
