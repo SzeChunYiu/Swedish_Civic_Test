@@ -156,10 +156,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
@@ -171,10 +171,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
@@ -186,10 +186,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprovet när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',

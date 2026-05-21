@@ -109,7 +109,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
     challengeBadge: 'Dagens utmaning',
     challengeTimer: (remainingSeconds) => `${remainingSeconds} sekunder kvar`,
     challengeTimedOut: 'Tiden är ute. Försök igen för att starta om dagens utmaning.',

@@ -54,6 +54,8 @@ test('practice route shell copy follows the persisted settings language', () => 
     new RegExp(phrase(['generated', 'from', 'a', 'UHR', 'question']), 'i'),
   );
   assert.doesNotMatch(source, new RegExp(phrase(['kommer', 'direkt', 'från', 'UHR']), 'i'));
+  assert.match(source, /Aldrig en del av övningsprovet/);
+  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
 });
@@ -179,6 +181,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /source drawer copy must not contain hyphenated about-the-sources/,
+  );
+});
+
+test('practice route copy parity rejects Swedish mockprov wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Aldrig en del av övningsprovet', 'Aldrig en del av mock-provet');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-practice-route-copy-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /practice route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
   );
 });
 
