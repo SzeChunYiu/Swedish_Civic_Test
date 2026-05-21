@@ -52,6 +52,12 @@ function loadTs(relativePath) {
   return mod.exports;
 }
 
+function extractNamedStyle(source, styleName) {
+  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
+  assert.ok(match, `${styleName} style must exist`);
+  return match[0];
+}
+
 function assertLocalizedText(value, label) {
   assert.equal(typeof value, 'object', `${label} should be a localized object`);
 
@@ -155,15 +161,25 @@ test('citizenship requirements screen renders interactive sourced checklist with
 test('citizenship requirements cards surface precise source titles and currentness metadata', () => {
   const routeSource = read('app/citizenship-requirements.tsx');
   const sourceLinkCount = (routeSource.match(/Linking\.openURL\(source\.url\)/g) || []).length;
+  const sourceRefRowStyle = extractNamedStyle(routeSource, 'sourceRefRow');
+  const sourceRefRowFocusedStyle = extractNamedStyle(routeSource, 'sourceRefRowFocused');
 
   assert.match(routeSource, /areaSourceAccessibilityPrefix/);
+  assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Källa för'/);
+  assert.match(routeSource, /areaSourceAccessibilityPrefix: 'Source for'/);
   assert.match(routeSource, /source\.title\[language\]/);
   assert.match(routeSource, /formatSourceMeta\(source, copy\)/);
   assert.match(routeSource, /source\.sourceDate/);
   assert.match(routeSource, /source\.retrievedDate/);
   assert.match(routeSource, /source\.url/);
   assert.match(routeSource, /styles\.sourceRefRow/);
+  assert.match(routeSource, /focusedSourceRefKey === sourceFocusKey/);
+  assert.match(routeSource, /onFocus=\{\(\) => setFocusedSourceRefKey\(sourceFocusKey\)\}/);
+  assert.match(routeSource, /onBlur=\{\(\) => setFocusedSourceRefKey\(null\)\}/);
   assert.match(routeSource, /accessibilityRole="link"/);
+  assert.match(sourceRefRowStyle, /minHeight: space\[6\]/);
+  assert.match(sourceRefRowFocusedStyle, /backgroundColor: colors\.focusSoft/);
+  assert.match(sourceRefRowFocusedStyle, /borderColor: colors\.focus/);
   assert.equal(
     sourceLinkCount >= 2,
     true,
