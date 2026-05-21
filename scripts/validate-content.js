@@ -9712,6 +9712,10 @@ function validateQuizRouteCopyParity() {
     }
   }
 
+  if (/stableIndex|charCodeAt|return\s+questions\[/.test(quizRoute)) {
+    reject('routed quiz must not hash unknown session ids into real questions');
+  }
+
   const expectedLabelCount = Object.values(EXPECTED_QUIZ_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
     0,
