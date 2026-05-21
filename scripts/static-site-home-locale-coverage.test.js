@@ -7,6 +7,7 @@ const vm = require('node:vm');
 const repoRoot = path.resolve(__dirname, '..');
 const locales = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
 const allowedSharedValues = new Set(['brand']);
+const dynamicMetadataKeys = [/^chap\.\d+\.m1$/];
 const allowedSharedFragments = [
   /Almost Swedish/,
   /UHR/,
@@ -112,7 +113,7 @@ test('extra locales translate every displayed home, nav, footer, settings, and c
     const dictionary = dictionaries[locale];
     assert.equal(typeof dictionary, 'object', `${locale} dictionary exists`);
     for (const key of keys) {
-      if (/^chap\.\d+\.m1$/.test(key)) continue;
+      if (dynamicMetadataKeys.some((pattern) => pattern.test(key))) continue;
       const value = dictionary[key];
       assert.equal(typeof value, 'string', `${locale}.${key} is translated`);
       assert.notEqual(value.trim(), '', `${locale}.${key} is not empty`);
