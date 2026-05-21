@@ -2,17 +2,91 @@ import { expect, test, type Page } from '@playwright/test';
 import {
   collectPageErrors,
   openStaticEbook,
+  setStaticSiteLanguage,
   startStaticSiteServer,
   type StaticSite,
+  type StaticSiteLanguage,
 } from './staticSiteServer';
 
-const sourceUrls = {
-  uhrStudyMaterial: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  scbLandUse: 'https://www.scb.se/mi0803-en',
-  riksbankHistory:
-    'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
-  governmentNato: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+type SourceCounts = Record<string, number>;
+
+const chapterIds = ['1', '7', '9', '12'] as const;
+const languages = ['en', 'sv'] as const satisfies readonly StaticSiteLanguage[];
+
+const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
+  en: {
+    editorialCommentary: 'Editorial',
+    governmentNato: 'Government Offices NATO membership',
+    riksbankHistory: 'Riksbank historical',
+    scbLandUse: 'SCB land and water area',
+    uhrStudyMaterial: 'UHR',
+  },
+  sv: {
+    editorialCommentary: 'Redaktionellt',
+    governmentNato: 'Government Offices NATO membership',
+    riksbankHistory: 'Riksbank historical',
+    scbLandUse: 'SCB land and water area',
+    uhrStudyMaterial: 'UHR',
+  },
 };
+
+function parseSourceCounts(serialized: string): SourceCounts {
+  return Object.fromEntries(
+    serialized
+      .split(';')
+      .filter(Boolean)
+      .map((entry) => {
+        const [key, value] = entry.split(':');
+        return [key, Number(value)];
+      }),
+  );
+}
+
+async function renderEbookAfterLanguageSwitch(page: Page, language: StaticSiteLanguage) {
+  await setStaticSiteLanguage(page, language);
+  await page.evaluate(() => {
+    const staticWindow = window as typeof window & {
+      smtEbookRender?: () => void;
+    };
+    staticWindow.smtEbookRender?.();
+  });
+}
+
+async function readProvenance(page: Page) {
+  return page.locator('#ebook-reader').evaluate((reader) => {
+    const badge = reader.querySelector('.ebook__provenance-badge');
+    const footnoteItems = Array.from(
+      reader.querySelectorAll<HTMLElement>('.ebook__footnote-list li[data-source-key]'),
+    );
+    const footnoteCounts = footnoteItems.reduce<Record<string, number>>((counts, item) => {
+      const key = item.dataset.sourceKey ?? '';
+      if (!key) return counts;
+      counts[key] = (counts[key] ?? 0) + 1;
+      return counts;
+    }, {});
+    const footnoteLabels = footnoteItems.reduce<Record<string, string[]>>((labels, item) => {
+      const key = item.dataset.sourceKey ?? '';
+      if (!key) return labels;
+      const sourceLabel =
+        item.querySelector<HTMLAnchorElement>('a[href^="http"]')?.textContent?.trim() ??
+        item.textContent
+          ?.replace('↩', '')
+          .replace(/\([^)]*\)/g, '')
+          .trim() ??
+        '';
+      labels[key] = Array.from(new Set([...(labels[key] ?? []), sourceLabel].filter(Boolean)));
+      return labels;
+    }, {});
+
+    return {
+      badgeCounts: badge?.getAttribute('data-source-counts') ?? '',
+      badgeText: badge?.textContent ?? '',
+      footnoteCounts,
+      footnoteLabels,
+      footnoteTotal: footnoteItems.length,
+    };
+  });
+}
 
 let staticSite: StaticSite;
 
@@ -24,53 +98,84 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-async function expectSafeExternalSourceLinks(page: Page, url: string) {
-  const links = page.locator(`#ebook-reader a[href="${url}"]`);
-  const count = await links.count();
-  expect(count, `${url} should be rendered as an ebook source link`).toBeGreaterThan(0);
+for (const language of languages) {
+  for (const chapterId of chapterIds) {
+    test(`static ebook chapter ${chapterId} source badge matches footnotes in ${language}`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      const pageErrors = collectPageErrors(page);
 
-  for (let index = 0; index < count; index += 1) {
-    await expect(links.nth(index)).toHaveAttribute('target', '_blank');
-    await expect(links.nth(index)).toHaveAttribute('rel', /(^|\s)noreferrer(\s|$)/);
+      await openStaticEbook(page, staticSite.baseUrl, language, `#/ebook?c=${chapterId}`);
+
+      const provenance = await readProvenance(page);
+      const badgeCounts = parseSourceCounts(provenance.badgeCounts);
+
+      expect(provenance.footnoteTotal).toBeGreaterThan(0);
+      expect(badgeCounts).toEqual(provenance.footnoteCounts);
+
+      for (const [sourceKey, count] of Object.entries(badgeCounts)) {
+        expect(provenance.badgeText).toContain(`${badgeLabels[language][sourceKey]} (${count})`);
+        expect(provenance.footnoteLabels[sourceKey]?.length ?? 0).toBeGreaterThan(0);
+      }
+
+      await expect(page.locator('#ebook-reader .ebook__footnote-ref a').first()).toHaveAttribute(
+        'href',
+        new RegExp(`^#/ebook\\?c=${chapterId}&fn=${chapterId}-\\d+$`),
+      );
+      await expect(
+        page.locator('#ebook-reader .ebook__footnote-list li a').first(),
+      ).toHaveAttribute('href', new RegExp(`^#/ebook\\?c=${chapterId}&fnref=${chapterId}-\\d+$`));
+      expect(pageErrors).toEqual([]);
+    });
   }
 }
 
-async function expectInternalFootnoteLinksStayInPage(page: Page) {
-  const unsafeHashLinks = await page
-    .locator('#ebook-reader a[href^="#ebook-fn"]')
-    .evaluateAll((links) =>
-      links
-        .filter((link) => link.hasAttribute('target') || link.hasAttribute('rel'))
-        .map((link) => link.outerHTML),
-    );
-  expect(unsafeHashLinks).toEqual([]);
-}
-
-async function expectEditorialNotesStayTextOnly(page: Page) {
-  await expect(
-    page.locator('#ebook-reader [data-source-key="editorialCommentary"] a[href^="http"]'),
-  ).toHaveCount(0);
-}
-
-test('static ebook source links expose safe external-link attributes', async ({ page }) => {
+test('static ebook footnote and backlink keep the active chapter hash', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const pageErrors = collectPageErrors(page);
 
-  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
-  await expectSafeExternalSourceLinks(page, sourceUrls.uhrStudyMaterial);
-  await expectSafeExternalSourceLinks(page, sourceUrls.governmentNato);
-  await expectInternalFootnoteLinksStayInPage(page);
-  await expectEditorialNotesStayTextOnly(page);
-
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=7');
-  await expectSafeExternalSourceLinks(page, sourceUrls.scbLandUse);
-  await expectInternalFootnoteLinksStayInPage(page);
-  await expectEditorialNotesStayTextOnly(page);
 
-  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=9');
-  await expectSafeExternalSourceLinks(page, sourceUrls.riksbankHistory);
-  await expectInternalFootnoteLinksStayInPage(page);
-  await expectEditorialNotesStayTextOnly(page);
+  const firstFootnoteRef = page.locator('#ebook-reader .ebook__footnote-ref a').first();
+  await firstFootnoteRef.click();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fn=7-1$/);
+  await expect(page.locator('#ebook-fn-7-1')).toBeVisible();
+  await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
+
+  await page.locator('#ebook-fn-7-1').getByRole('link', { name: 'Back to text' }).click();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fnref=7-1$/);
+  await expect(page.locator('#ebook-fnref-7-1')).toBeVisible();
+  await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static ebook language switching keeps localized source labels', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  const badge = page.locator('#ebook-reader .ebook__provenance-badge');
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+  await expect(badge).toHaveAttribute('aria-label', /^Sources:/);
+  await expect(badge).toContainText('Editorial');
+
+  await renderEbookAfterLanguageSwitch(page, 'sv');
+  await expect(badge).toHaveAttribute('aria-label', /^Källor:/);
+  await expect(badge).toContainText('Redaktionellt');
+  await expect(badge).not.toContainText('Editorial');
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
+    'aria-label',
+    'Källnoter för kapitlet',
+  );
+
+  await renderEbookAfterLanguageSwitch(page, 'en');
+  await expect(badge).toHaveAttribute('aria-label', /^Sources:/);
+  await expect(badge).toContainText('Editorial');
+  await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
+    'aria-label',
+    'Chapter source notes',
+  );
 
   expect(pageErrors).toEqual([]);
 });
