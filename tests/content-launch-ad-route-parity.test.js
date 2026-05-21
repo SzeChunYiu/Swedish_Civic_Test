@@ -70,6 +70,20 @@ test('web launch popup close control keeps a mobile-safe touch target', () => {
   assert.match(webSource, /hitSlop=\{space\[1\]\}/);
 });
 
+test('web launch popup close control keeps keyboard button semantics', () => {
+  const webSource = read('components/monetization/LaunchPopupAd.tsx');
+  const launchModalSpec = read('tests/e2e/launch-modal-accessibility.spec.ts');
+
+  assert.match(webSource, /accessibilityRole="button"/);
+  assert.match(webSource, /accessibilityLabel=\{copy\.closeAccessibilityLabel\}/);
+  assert.match(webSource, /onPress=\{\(\) => setVisible\(false\)\}/);
+  assert.match(launchModalSpec, /launchCloseKeyboardCases/);
+  assert.match(launchModalSpec, /activationKey: 'Enter'/);
+  assert.match(launchModalSpec, /activationKey: 'Space'/);
+  assert.match(launchModalSpec, /page\.keyboard\.press\('Tab'\)/);
+  assert.match(launchModalSpec, /page\.keyboard\.press\(activationKey\)/);
+});
+
 test('native launch popup consumes the runtime cap only after load reaches the show path', () => {
   const nativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
