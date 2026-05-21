@@ -3,15 +3,18 @@ const { execFileSync } = require('node:child_process');
 const test = require('node:test');
 
 const {
+  Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
+  checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   PUBLIC_SERVICE_LOANWORD_IDS,
   REQUIRED_LOCALES,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
+  summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
 } = require('../scripts/check-question-i18n-v8');
@@ -332,6 +335,113 @@ test('question localization v8 summarizes q062 public-sector naturalness cases',
   const summary = summarizeQ062PublicSectorNaturalness(
     [q062PublicSectorFixture()],
     Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  );
+
+  assert.deepEqual(summary.errors, []);
+  assert.equal(summary.casesValidated, 1);
+  assert.equal(summary.expectedCases, 1);
+  assert.equal(summary.parityValidated, true);
+});
+
+function q050SourceCriticismFixture({ stale = false } = {}) {
+  if (stale) {
+    const staleQuestion = {
+      sv: 'Vad betyder källkritik?',
+      en: 'What does source criticism mean?',
+      'zh-Hant': '具有來源批判意識是什麼意思？',
+      'zh-Hans': '具有来源批判意识是什么意思？',
+      ar: 'ماذا يعني أن تكون ناقدًا للمصادر؟',
+      ckb: 'ئەوەی سەرچاوە-ڕەخنەیی بیت چی مانایەک دەدات؟',
+      fa: 'منبع‌سنج بودن یعنی چه؟',
+      pl: 'Co oznacza krytyczne podejście do źródeł?',
+      so: 'Maxay ka dhigan tahay in si naqdineed loo eego ilaha macluumaadka?',
+      ti: 'ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ እንታይ ማለት እዩ?',
+      tr: 'Kaynaklara eleştirel yaklaşmak ne anlama gelir?',
+      uk: 'Що означає критично ставитися до джерел?',
+    };
+    const staleExplanation = {
+      sv: 'Källkritik innebär att man kontrollerar information.',
+      en: 'Source criticism means checking information.',
+      'zh-Hant': '具有來源批判意識表示檢查資訊。',
+      'zh-Hans': '具有来源批判意识表示检查信息。',
+      ar: 'أن تكون ناقدًا للمصادر يعني أن تتحقق من المعلومات.',
+      ckb: 'سەرچاوە-ڕەخنەیی بوون واتە پشکنینی زانیاری.',
+      fa: 'منبع‌سنج بودن یعنی بررسی اطلاعات.',
+      pl: 'Krytyczne podejście do źródeł oznacza sprawdzanie informacji.',
+      so: 'In si naqdineed loo eego ilaha macluumaadka waxay ka dhigan tahay hubinta macluumaadka.',
+      ti: 'ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ ማለት ሓበሬታ ምፍታሽ እዩ።',
+      tr: 'Kaynaklara eleştirel yaklaşmak, bilgiyi kontrol etmek demektir.',
+      uk: 'Критично ставитися до джерел означає перевіряти інформацію.',
+    };
+
+    return {
+      id: 'q050',
+      questionSv: staleQuestion.sv,
+      questionEn: staleQuestion.en,
+      questionText: staleQuestion,
+      explanationSv: staleExplanation.sv,
+      explanationEn: staleExplanation.en,
+      explanationText: staleExplanation,
+      options: [{ id: 'a', textSv: 'Kontrollera information', textEn: 'Check information' }],
+      correctOptionId: 'a',
+    };
+  }
+
+  return {
+    id: 'q050',
+    questionSv: 'Vad betyder källkritik?',
+    questionEn: 'What does source criticism mean?',
+    questionText: {
+      sv: 'Vad betyder källkritik?',
+      en: 'What does source criticism mean?',
+      'zh-Hant': '來源批判是什麼意思？',
+      'zh-Hans': '来源批判是什么意思？',
+      ar: 'ماذا يعني نقد المصادر؟',
+      ckb: 'ڕەخنەی سەرچاوە چییە؟',
+      fa: 'نقد منبع یعنی چه؟',
+      pl: 'Co oznacza krytyka źródeł?',
+      so: 'Qiimeynta ilaha macluumaadka maxay ka dhigan tahay?',
+      ti: 'ናይ ምንጪ ነቐፌታ እንታይ ማለት እዩ?',
+      tr: 'Kaynak eleştirisi ne anlama gelir?',
+      uk: 'Що означає критика джерел?',
+    },
+    explanationSv: 'Källkritik innebär att man kontrollerar information.',
+    explanationEn: 'Source criticism means checking information.',
+    explanationText: {
+      sv: 'Källkritik innebär att man kontrollerar information.',
+      en: 'Source criticism means checking information.',
+      'zh-Hant': '來源批判是指檢查資訊。',
+      'zh-Hans': '来源批判是指检查信息。',
+      ar: 'نقد المصادر يعني التحقق من المعلومات.',
+      ckb: 'ڕەخنەی سەرچاوە واتە پشکنینی زانیاری.',
+      fa: 'نقد منبع یعنی بررسی اطلاعات.',
+      pl: 'Krytyka źródeł oznacza sprawdzanie informacji.',
+      so: 'Qiimeynta ilaha macluumaadka waxay ka dhigan tahay hubinta macluumaadka.',
+      ti: 'ናይ ምንጪ ነቐፌታ ማለት ሓበሬታ ምፍታሽ እዩ።',
+      tr: 'Kaynak eleştirisi, bilgiyi kontrol etmek demektir.',
+      uk: 'Критика джерел означає перевіряти інформацію.',
+    },
+    options: [{ id: 'a', textSv: 'Kontrollera information', textEn: 'Check information' }],
+    correctOptionId: 'a',
+  };
+}
+
+test('question localization v8 rejects adjective-form source-criticism wording for q050', () => {
+  const errors = checkQ050SourceCriticismNaturalness([q050SourceCriticismFixture({ stale: true })]);
+
+  assert.ok(errors.includes('q050.questionText.zh-Hant uses stale source-criticism wording'));
+  assert.ok(errors.includes('q050.explanationText.ar uses stale source-criticism wording'));
+  assert.ok(
+    errors.some((error) =>
+      error.startsWith('q050.questionText.pl missing source-criticism noun term(s):'),
+    ),
+  );
+});
+
+test('question localization v8 summarizes q050 source-criticism naturalness cases', () => {
+  const summary = summarizeQ050SourceCriticismNaturalness(
+    [q050SourceCriticismFixture()],
+    Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   );
 
   assert.deepEqual(summary.errors, []);
