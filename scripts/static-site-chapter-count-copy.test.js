@@ -45,9 +45,19 @@ function normalizeWhitespace(value) {
   return value.replace(/\s+/g, ' ');
 }
 
-function loadStaticAppContext(chapterMeta, i18nElements) {
+const locales = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+
+function loadStaticAppContext(i18nElements) {
+  const documentElement = {
+    attributes: {},
+    lang: 'en',
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+      if (name === 'lang') this.lang = value;
+    },
+  };
   const documentStub = {
-    documentElement: { lang: 'en' },
+    documentElement,
     addEventListener() {},
     createElement() {
       return {
@@ -68,7 +78,6 @@ function loadStaticAppContext(chapterMeta, i18nElements) {
     },
   };
   const windowStub = {
-    SMT_CHAPTERS_META: chapterMeta,
     addEventListener() {},
     dispatchEvent() {},
     document: documentStub,
@@ -103,6 +112,8 @@ function loadStaticAppContext(chapterMeta, i18nElements) {
   context.globalThis = context.window;
   vm.createContext(context);
   vm.runInContext(read('site/app.js'), context, { timeout: 3000 });
+  vm.runInContext(read('site/i18n-extras.js'), context, { timeout: 3000 });
+  vm.runInContext(read('site/questions.js'), context, { timeout: 3000 });
   return context;
 }
 
@@ -132,11 +143,11 @@ test('static site chapter-count copy has non-numeric localized chapter wording',
   const normalizedSurface = normalizeWhitespace(surface);
 
   [
-    /Short study chapters/,
+    /Short chapters/,
     /Compact chapters, lagom-sized/,
-    /Korta kapitel, lagom stora/,
+    /Tydligt svenskt sammanhang/,
     /简短章节/,
-    /簡短章節/,
+    /短章節/,
     /فصول قصيرة/,
     /Cutubyo gaaban/,
     /data-i18n="chap\.13\.t">Traditions, holidays &amp; everyday culture/,
@@ -147,32 +158,50 @@ test('static site chapter-card question counts are derived from generated bank m
   const chapterMeta = staticChapterMeta();
   const indexHtml = read('site/index.html');
   const chapterListHtml = homeChapterListHtml(indexHtml);
-  const appSource = read('site/app.js');
+  const staticDictionarySource = [read('site/app.js'), read('site/i18n-extras.js')].join('\n');
   const i18nElements = chapterMeta.map((chapter) => ({
     dataset: { i18n: `chap.${chapter.id}.m1` },
     innerHTML: '',
   }));
-  const context = loadStaticAppContext(chapterMeta, i18nElements);
+  const context = loadStaticAppContext(i18nElements);
+  const mutatedChapterMeta = chapterMeta.map((chapter, index) => ({
+    ...chapter,
+    questionCount: chapter.questionCount + 1000 + index,
+  }));
+  context.window.SMT_CHAPTERS_META = mutatedChapterMeta;
 
-  assert.doesNotMatch(appSource, /"chap\.\d+\.m1"\s*:/);
+  assert.doesNotMatch(staticDictionarySource, /['"]chap\.\d+\.m1['"]\s*:/);
   assert.deepEqual(
     homeChapterListMetaKeys(indexHtml),
     Array.from(chapterMeta, (chapter) => `chap.${chapter.id}.m1`),
   );
   assert.doesNotMatch(chapterListHtml, /\b\d+\s+(?:questions|frågor|full mocks)\b/i);
 
-  context.window.applyLang('en');
-  assert.deepEqual(
-    Array.from(i18nElements, (element) => String(element.innerHTML)),
-    Array.from(chapterMeta, (chapter) => `${chapter.questionCount} questions`),
-  );
+  for (const locale of locales) {
+    context.window.applyLang(locale);
+    assert.deepEqual(
+      Array.from(i18nElements, (element) => String(element.innerHTML)),
+      Array.from(mutatedChapterMeta, (chapter) =>
+        context.window.smtChapterQuestionCountLabel(chapter.id, locale),
+      ),
+      `${locale} chapter count labels should come from SMT_CHAPTERS_META`,
+    );
+  }
 
-  context.window.applyLang('sv');
-  assert.deepEqual(
-    Array.from(i18nElements, (element) => String(element.innerHTML)),
-    Array.from(chapterMeta, (chapter) => `${chapter.questionCount} frågor`),
+  assert.equal(
+    context.window.smtChapterQuestionCountLabel(12, 'en'),
+    `${mutatedChapterMeta[11].questionCount} questions`,
   );
-
-  assert.equal(context.window.smtChapterQuestionCountLabel(12, 'en'), '105 questions');
-  assert.equal(context.window.smtChapterQuestionCountLabel(12, 'sv'), '105 frågor');
+  assert.equal(
+    context.window.smtChapterQuestionCountLabel(12, 'sv'),
+    `${mutatedChapterMeta[11].questionCount} frågor`,
+  );
+  assert.equal(
+    context.window.smtChapterQuestionCountLabel(12, 'zh-Hans'),
+    `${mutatedChapterMeta[11].questionCount}道题`,
+  );
+  assert.equal(
+    context.window.smtChapterQuestionCountLabel(12, 'ar'),
+    `${mutatedChapterMeta[11].questionCount} سؤالاً`,
+  );
 });
