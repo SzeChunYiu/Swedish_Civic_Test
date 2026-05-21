@@ -5,7 +5,9 @@ const test = require('node:test');
 const ts = require('typescript');
 
 const {
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES,
   findGeneratedTrueFalseNaturalnessPatternMatch,
+  formatGeneratedTrueFalseNaturalnessPatternMatch,
 } = require('./generated-true-false-naturalness-patterns');
 const { generatedQuestionId } = require('./generated-question-fixture-ids');
 
@@ -1020,6 +1022,63 @@ test('generated true/false naturalness patterns allow direct media and web propo
   );
 });
 
+test('generated true/false naturalness rule ids are stable and categorized', () => {
+  const ids = GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.map((rule) => rule.id);
+  const categories = [
+    ...new Set(GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.map((rule) => rule.category)),
+  ].sort();
+
+  assert.equal(new Set(ids).size, ids.length);
+  assert.ok(
+    ids.every((id) =>
+      /^(?:answer-fragment|answer-scaffold|definition-cleft|grammar-splice|policy-goal)-[0-9a-z]{7}$/.test(
+        id,
+      ),
+    ),
+  );
+  assert.deepEqual(categories, [
+    'answer-fragment',
+    'answer-scaffold',
+    'definition-cleft',
+    'grammar-splice',
+    'policy-goal',
+  ]);
+
+  const stableExamples = [
+    [
+      'That human rights apply to everyone means that everyone has the same rights.',
+      'definition-cleft-0deo809',
+      'definition-cleft',
+    ],
+    [
+      'They sell advertising space or charge for a specific channel.',
+      'answer-fragment-0kt0l0w',
+      'answer-fragment',
+    ],
+    ['One reason is the vote is secret.', 'answer-scaffold-0otd4np', 'answer-scaffold'],
+    [
+      'The goal of gender equality policy means that women and men have equal power.',
+      'policy-goal-0vkfpul',
+      'policy-goal',
+    ],
+    [
+      'Important activities such as school, work, and health care can continue to function.',
+      'answer-fragment-0prnma7',
+      'answer-fragment',
+    ],
+  ];
+
+  for (const [text, expectedId, expectedCategory] of stableExamples) {
+    const match = findGeneratedTrueFalseNaturalnessPatternMatch(text);
+    assert.equal(match?.id, expectedId);
+    assert.equal(match?.category, expectedCategory);
+    assert.match(
+      formatGeneratedTrueFalseNaturalnessPatternMatch(match),
+      new RegExp(`^${expectedId} `),
+    );
+  }
+});
+
 test('derivePublishedQuestions turns policy-goal meanings into direct English propositions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const genderEqualitySource = {
@@ -1186,19 +1245,19 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
     ],
     [generatedQuestionId(sourceQuestions, 'q055', 'trueStatement')]: [
       'Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte.',
-      'In Sweden, buying sex is illegal, but the person who sells sex is not punished.',
+      'Buying sex is illegal in Sweden, but the person who sells sex is not punished.',
     ],
     [generatedQuestionId(sourceQuestions, 'q055', 'falseStatement')]: [
       'Att köpa sex är alltid lagligt i Sverige.',
-      'In Sweden, buying sex is always legal.',
+      'Buying sex is always legal in Sweden.',
     ],
     [generatedQuestionId(sourceQuestions, 'q060', 'trueStatement')]: [
       'Äktenskap mellan personer av samma kön är tillåtet i Sverige.',
-      'In Sweden, marriage between people of the same sex is permitted.',
+      'Marriage between people of the same sex is permitted in Sweden.',
     ],
     [generatedQuestionId(sourceQuestions, 'q060', 'falseStatement')]: [
       'Äktenskap mellan personer av samma kön är förbjudet i Sverige.',
-      'In Sweden, marriage between people of the same sex is prohibited.',
+      'Marriage between people of the same sex is prohibited in Sweden.',
     ],
     [generatedQuestionId(sourceQuestions, 'q074', 'falseStatement')]: [
       'Sveriges kommuner ska inte erbjuda äldre personer stöd och hjälp.',

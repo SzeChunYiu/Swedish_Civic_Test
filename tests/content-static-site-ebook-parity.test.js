@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -75,6 +76,22 @@ function readSiteFile(relativePath) {
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function runFocusedStaticEbookFootnoteHashValidator() {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-static-ebook-footnote-hash-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env: process.env,
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const jsonStart = result.stdout.indexOf('{');
+  assert.notEqual(jsonStart, -1, result.stdout);
+  return JSON.parse(result.stdout.slice(jsonStart));
 }
 
 function readStaticChapterMeta() {
@@ -538,6 +555,14 @@ test('static ebook chapters render source footnotes for every prose paragraph an
       assert.match(dataSourceMetadata(block), /^(inline|typed)$/);
     });
   }
+});
+
+test('focus-static-ebook-footnote hash validator mirrors source-counts and route links', () => {
+  const summary = runFocusedStaticEbookFootnoteHashValidator();
+
+  assert.equal(summary.staticEbookFootnoteHashChaptersValidated, getExpectedChapterIds().length);
+  assert.equal(summary.staticEbookFootnoteHashLanguagesValidated, 2);
+  assert.equal(summary.staticEbookFootnoteHashParityValidated, true);
 });
 
 test('static ebook prose source metadata is explicit or typed, never fallback annotation', () => {

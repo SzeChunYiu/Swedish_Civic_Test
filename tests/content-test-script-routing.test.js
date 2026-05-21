@@ -352,6 +352,12 @@ test('generated true/false naturalness guards share one pattern source', () => {
   assert.match(patternSource, /definition-cleft/);
   assert.match(patternSource, /answer-fragment/);
   assert.match(patternSource, /answer-scaffold/);
+  assert.match(patternSource, /stablePatternRuleId/);
+  assert.doesNotMatch(
+    patternSource,
+    /map\(\(pattern,\s*index\)/,
+    'generated true/false naturalness rule ids must not be derived from array position',
+  );
 });
 
 test('Mistakes route copy parity uses focused content validation routing', () => {
@@ -462,6 +468,28 @@ test('streak freeze normalizer parity uses focused content validation routing', 
     /validateStreakFreezeNormalizerParity\(\);[\s\S]*streakFreezeNormalizerCasesValidated[\s\S]*streakFreezeNormalizerParityValidated/,
   );
   assert.match(progressSchemaTestSource, /--focus-streak-freeze-normalizer-parity/);
+});
+
+test('static ebook footnote hash parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const staticEbookTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-static-site-ebook-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-static-ebook-footnote-hash-parity/);
+  assert.match(
+    validatorSource,
+    /validateStaticEbookFootnoteHashParity\(\);[\s\S]*staticEbookFootnoteHashChaptersValidated[\s\S]*staticEbookFootnoteHashLanguagesValidated[\s\S]*staticEbookFootnoteHashParityValidated/,
+  );
+  assert.match(staticEbookTestSource, /--focus-static-ebook-footnote-hash-parity/);
+  assert.match(
+    staticEbookTestSource,
+    /staticEbookFootnoteHashChaptersValidated[\s\S]*staticEbookFootnoteHashLanguagesValidated[\s\S]*staticEbookFootnoteHashParityValidated/,
+  );
 });
 
 test('monetization selector runs only the focused monetization suite', () => {

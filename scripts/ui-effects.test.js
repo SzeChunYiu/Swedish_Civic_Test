@@ -1023,13 +1023,15 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /Studieinställningar/);
   assert.match(source, /Märken/);
   assert.match(source, /Inga märken ännu/);
-  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Öppna inställningar för dagligt mål, språk och ljud/);
   assert.match(source, /Framstegsöversikt/);
   assert.match(source, /Svitskydd/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
   assert.match(source, /No badges yet/);
-  assert.match(source, /Open settings/);
+  assert.match(source, /Adjust goal, language, and audio/);
+  assert.match(source, /Open settings for daily goal, language, and audio/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
