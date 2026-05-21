@@ -212,6 +212,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
   },
   {
+    id: 'religiousFreedomParallelism',
+    flags: ['--focus-religious-freedom-parallelism'],
+    summaryKeys: ['publishedQuestions', 'questionReligiousFreedomParallelismValidated'],
+  },
+  {
     id: 'answerFeedbackParity',
     flags: ['--focus-answer-feedback-parity'],
     summaryKeys: [
