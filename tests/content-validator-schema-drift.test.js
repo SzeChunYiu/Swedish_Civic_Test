@@ -22,6 +22,9 @@ test('content validator schema expectations track current persisted release cont
   assert.equal(status, 0, output);
   assert.match(output, /Content validation OK/);
   assert.doesNotMatch(output, /Content validation failed/);
+  assert.match(output, /"launchAdRouteSuppressionParityValidated": true/);
+  assert.match(output, /"progressStoreSchemaParityValidated": true/);
+  assert.match(output, /"practiceSessionStoreSchemaParityValidated": true/);
 
   const staleSchemaDriftMessages = [
     /types\/content\.ts Chapter\.nameText type is LocalizedContentTextOverrides, expected LocalizedContentText/,
