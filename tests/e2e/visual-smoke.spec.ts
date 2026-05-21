@@ -4,20 +4,14 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
-import {
-  explainedVisualSmokeDuplicateScreenshotGroups,
-  findUnexplainedVisualSmokeDuplicateScreenshots,
-  requiredVisualSmokeRouteContextKeys,
-  visualSmokeRoutes,
-} from './visualSmokeRoutes';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
+import { visualSmokeDuplicateScreenshotExplanations, visualSmokeRoutes } from './visualSmokeRoutes';
+
+test.setTimeout(60_000);
 
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
 const visualSmokeOutput = resolveVisualSmokeOutput();
 const screenshotDir = visualSmokeOutput.dir;
-
-test.setTimeout(120_000);
-
 type RouteCapture = {
   name: string;
   route: string;
@@ -29,6 +23,14 @@ type RouteCapture = {
   launchOverlayDismissed: boolean;
   launchOverlayVisibleAfterDismissal: boolean;
 };
+
+const requiredRouteContextKeys = [
+  './_layout.tsx',
+  './(tabs)/home.tsx',
+  './(tabs)/practice.tsx',
+  './about-the-test.tsx',
+  './chapter/[chapterId].tsx',
+] as const;
 
 function readWebBundleText(): string {
   expect(fs.existsSync(webBundleDir), 'dist-web web bundle directory should exist').toBe(true);
@@ -48,7 +50,7 @@ function expectExportBundleToContainRouteContext() {
     bundleText,
     'Expo Router route context should not be emitted as an empty module',
   ).not.toContain('No modules in context');
-  for (const routeContextKey of requiredVisualSmokeRouteContextKeys) {
+  for (const routeContextKey of requiredRouteContextKeys) {
     expect(bundleText, `web bundle should include route module ${routeContextKey}`).toContain(
       routeContextKey,
     );
@@ -57,6 +59,26 @@ function expectExportBundleToContainRouteContext() {
 
 function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+}
+
+function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
+  const namesByHash = new Map<string, string[]>();
+
+  for (const capture of captures) {
+    const names = namesByHash.get(capture.sha256) ?? [];
+    names.push(capture.name);
+    namesByHash.set(capture.sha256, names);
+  }
+
+  return [...namesByHash.entries()]
+    .filter(([, names]) => names.length > 1)
+    .filter(([, names]) => {
+      const sortedNames = [...names].sort();
+      return !visualSmokeDuplicateScreenshotExplanations.some(
+        (group) => JSON.stringify([...group.names].sort()) === JSON.stringify(sortedNames),
+      );
+    })
+    .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
 }
 
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
@@ -76,7 +98,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const [name, route] of visualSmokeRoutes) {
+  for (const { name, route } of visualSmokeRoutes) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();
@@ -111,7 +133,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     });
   }
 
-  const unexplainedDuplicateScreenshots = findUnexplainedVisualSmokeDuplicateScreenshots(manifest);
+  const unexplainedDuplicateScreenshots = findUnexplainedDuplicateScreenshots(manifest);
   expect(unexplainedDuplicateScreenshots).toEqual([]);
 
   fs.writeFileSync(
@@ -128,7 +150,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
           'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible dialog or modal menu overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
-        duplicateExplanations: explainedVisualSmokeDuplicateScreenshotGroups,
+        duplicateExplanations: visualSmokeDuplicateScreenshotExplanations,
         routes: manifest,
       },
       null,
