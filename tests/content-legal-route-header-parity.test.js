@@ -313,6 +313,34 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('privacy Remove Ads rendered copy e2e covers both languages', () => {
+  const specSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/privacy-remove-ads-copy.spec.ts'),
+    'utf8',
+  );
+
+  for (const snippet of [
+    '/privacy',
+    'Ta bort annonser är ett engångsköp för 29 SEK som inte förbrukas',
+    'köpet gör att annonser inte visas på den här enheten',
+    'kan återställas via appbutiken',
+    'Remove Ads is a one-time, non-consumable purchase for 29 SEK',
+    'turns off ads on this device',
+    'can be restored through the app store',
+    'Google Mobile Ads',
+    'Timed mock exam screens stay ad-free',
+    'Tidsatta provskärmar är annonsfria',
+    '/privacy refreshes Remove Ads legal copy after language selection changes',
+    'Set study language to English support',
+  ]) {
+    assert.match(specSource, new RegExp(escapeRegExp(snippet)));
+  }
+
+  assert.match(specSource, /language:\s*'sv'/);
+  assert.match(specSource, /language:\s*'en'/);
+  assert.match(specSource, /not\.toContainText\(scenario\.forbiddenVisibleCopy\)/);
+});
+
 test('legal route header parity rejects shared legal section header drift', () => {
   const result = spawnSync(
     process.execPath,

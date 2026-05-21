@@ -39,12 +39,85 @@ function listSiteAssetFiles(siteDir, options = {}) {
   return files.sort((a, b) => a.localeCompare(b));
 }
 
-function isExternalReference(value) {
-  return /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(value);
+function isIgnoredReference(value) {
+  return /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(value);
 }
 
-function normalizeAssetReference(value) {
-  return value.replace(/[?#].*$/, '').replace(/^\.?\//, '');
+function normalizeAssetReference(value, baseDir = '') {
+  const trimmed = value
+    .trim()
+    .replace(/^(['"])(.*)\1$/, '$2')
+    .trim();
+  if (!trimmed || isIgnoredReference(trimmed) || /\bvar\(/i.test(trimmed)) return null;
+
+  const withoutHashOrQuery = trimmed.replace(/[?#].*$/, '');
+  if (!withoutHashOrQuery) return null;
+
+  if (withoutHashOrQuery.startsWith('/')) {
+    return path.posix.normalize(withoutHashOrQuery.replace(/^\/+/, ''));
+  }
+
+  const normalized = path.posix.normalize(path.posix.join(baseDir, withoutHashOrQuery));
+  return normalized === '.' ? null : normalized.replace(/^\.\//, '');
+}
+
+function extractCssUrlReferences(cssText, baseDir = '') {
+  const references = [];
+  const urlPattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^)]*?))\s*\)/gi;
+
+  for (const match of cssText.matchAll(urlPattern)) {
+    const reference = normalizeAssetReference(match[1] ?? match[2] ?? match[3] ?? '', baseDir);
+    if (reference) references.push(reference);
+  }
+
+  return references;
+}
+
+function extractHtmlAttribute(tag, attributeName) {
+  const attributePattern = new RegExp(
+    `\\b${attributeName}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`,
+    'i',
+  );
+  const match = tag.match(attributePattern);
+  return match ? (match[1] ?? match[2] ?? match[3] ?? '') : '';
+}
+
+function listHtmlAssetAttributeReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/gi), (match) =>
+    normalizeAssetReference(match[2]),
+  ).filter(Boolean);
+}
+
+function listInlineStyleAssetReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/\bstyle\s*=\s*(["'])([\s\S]*?)\1/gi)).flatMap((match) =>
+    extractCssUrlReferences(match[2]),
+  );
+}
+
+function listStylesheetAssetReferences(siteDir, indexHtml) {
+  const references = [];
+
+  for (const match of indexHtml.matchAll(/<link\b[^>]*>/gi)) {
+    const tag = match[0];
+    const rel = extractHtmlAttribute(tag, 'rel');
+    if (!rel.split(/\s+/).some((token) => token.toLowerCase() === 'stylesheet')) continue;
+
+    const stylesheetPath = normalizeAssetReference(extractHtmlAttribute(tag, 'href'));
+    if (!stylesheetPath || path.extname(stylesheetPath).toLowerCase() !== '.css') continue;
+
+    const absoluteStylesheetPath = path.join(siteDir, stylesheetPath);
+    if (!fs.existsSync(absoluteStylesheetPath)) continue;
+
+    const baseDir = path.posix.dirname(stylesheetPath);
+    references.push(
+      ...extractCssUrlReferences(
+        fs.readFileSync(absoluteStylesheetPath, 'utf8'),
+        baseDir === '.' ? '' : baseDir,
+      ),
+    );
+  }
+
+  return references;
 }
 
 function listIndexAssetReferences(siteDir) {
@@ -52,12 +125,11 @@ function listIndexAssetReferences(siteDir) {
   if (!fs.existsSync(indexPath)) return [];
 
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  const references = Array.from(
-    indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/g),
-    (match) => normalizeAssetReference(match[2]),
-  )
-    .filter(Boolean)
-    .filter((referencePath) => !isExternalReference(referencePath));
+  const references = [
+    ...listHtmlAssetAttributeReferences(indexHtml),
+    ...listInlineStyleAssetReferences(indexHtml),
+    ...listStylesheetAssetReferences(siteDir, indexHtml),
+  ];
 
   return [...new Set(references)].sort((a, b) => a.localeCompare(b));
 }

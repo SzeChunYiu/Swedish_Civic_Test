@@ -9,6 +9,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
+const moduleCache = new Map();
 
 function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
@@ -22,36 +23,63 @@ function sha256File(filePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
 function loadTs(relativePath) {
   const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath).exports;
+
   const source = fs.readFileSync(filePath, 'utf8');
   const output = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
   const mod = { exports: {} };
+  moduleCache.set(filePath, mod);
 
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
   return mod.exports;
 }
 
 function expectedVisualSmokeRoutes() {
-  const { visualSmokeRoutes } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+  const { visualSmokeRouteManifestEntries } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
-  return visualSmokeRoutes.map(({ file, name, route }) => ({ file, name, route }));
+  return visualSmokeRouteManifestEntries();
 }
 
 function visualSmokeDuplicateContract() {
   const {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
   return {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   };
+}
+
+function loadLaunchAdSuppressionPolicy() {
+  const { shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
+  return { shouldSuppressLaunchPopupAdForPath };
 }
 
 test('visual smoke uses the shared route filename contract and blocking modal overlay locator', () => {
@@ -64,16 +92,20 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(browserLaunchSource, /\[role="menu"\]\[aria-modal="true"\]/);
   assert.match(
     visualSmokeSource,
-    /import \{[\s\S]*visualSmokeRoutes[\s\S]*\} from '\.\/visualSmokeRoutes';/,
+    /import \{[\s\S]*visualSmokeRouteManifestEntries[\s\S]*\} from '\.\/visualSmokeRoutes';/,
   );
+  assert.match(visualSmokeSource, /visualSmokeRouteManifestEntries\(\)/);
   assert.match(visualSmokeSource, /visualSmokeDuplicateExplanations/);
   assert.match(visualSmokeSource, /isExplainedVisualSmokeDuplicate/);
   assert.doesNotMatch(visualSmokeSource, /const routes = \[/);
+  assert.doesNotMatch(visualSmokeSource, /\bvisualSmokeRoutes\b,/);
   assert.doesNotMatch(visualSmokeSource, /explainedDuplicateScreenshotGroups/);
   assert.doesNotMatch(visualSmokeSource, /\$\{name\}\.png/);
   assert.match(visualSmokeRoutesSource, /file: 'index\.png'/);
   assert.match(visualSmokeRoutesSource, /file: 'chapter-ch01\.png'/);
+  assert.match(visualSmokeRoutesSource, /export function visualSmokeRouteManifestEntries/);
   assert.match(visualSmokeRoutesSource, /export const visualSmokeDuplicateExplanations/);
+  assert.match(visualSmokeRoutesSource, /export function hasValidVisualSmokeDuplicateExplanation/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
   assert.match(
     visualSmokeSource,
@@ -86,14 +118,89 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
 });
 
-test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
-  const manifest = readManifest();
-  const expectedRoutes = expectedVisualSmokeRoutes();
+test('visual smoke duplicate helper requires exact groups and nonempty reasons', () => {
   const {
+    hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = visualSmokeDuplicateContract();
+  const exactHomeIndexExplanation = {
+    names: ['home', 'index'],
+    reason: 'The root route is a redirect to /home.',
+  };
+
+  assert.equal(visualSmokeDuplicateExplanationKey(['index', 'home']), 'home,index');
+  assert.equal(isExplainedVisualSmokeDuplicate(['index', 'home']), true);
+
+  for (const explanation of visualSmokeDuplicateExplanations) {
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), true);
+  }
+
+  const duplicateCases = [
+    {
+      label: 'same group with reversed order',
+      names: ['index', 'home'],
+      explanations: [exactHomeIndexExplanation],
+      expected: true,
+    },
+    {
+      label: 'superset of the allowed duplicate group',
+      names: ['home', 'index', 'practice'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'subset of the allowed duplicate group',
+      names: ['home'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'unknown duplicate group',
+      names: ['learn', 'practice'],
+      explanations: [exactHomeIndexExplanation],
+      expected: false,
+    },
+    {
+      label: 'exact group with an empty reason',
+      names: ['home', 'index'],
+      explanations: [{ names: ['home', 'index'], reason: '' }],
+      expected: false,
+    },
+    {
+      label: 'exact group with a blank reason',
+      names: ['home', 'index'],
+      explanations: [{ names: ['home', 'index'], reason: '   ' }],
+      expected: false,
+    },
+  ];
+
+  for (const { label, names, explanations, expected } of duplicateCases) {
+    assert.equal(isExplainedVisualSmokeDuplicate(names, explanations), expected, label);
+  }
+
+  const invalidExplanationCases = [
+    { names: ['home', 'index'], reason: '' },
+    { names: ['home', 'index'], reason: '   ' },
+    { names: ['home'], reason: 'A singleton cannot describe a duplicate screenshot group.' },
+  ];
+
+  for (const explanation of invalidExplanationCases) {
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), false);
+  }
+});
+
+test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
+  const manifest = readManifest();
+  const expectedRoutes = expectedVisualSmokeRoutes();
+  const {
+    hasValidVisualSmokeDuplicateExplanation,
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationKey,
+    visualSmokeDuplicateExplanations,
+  } = visualSmokeDuplicateContract();
+  const { shouldSuppressLaunchPopupAdForPath } = loadLaunchAdSuppressionPolicy();
   const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const committedBaselineOutput = resolveVisualSmokeOutput({
     cwd: repoRoot,
@@ -113,6 +220,7 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.ok(Array.isArray(explanation.names));
     assert.equal(typeof explanation.reason, 'string');
     assert.ok(explanation.reason.length > 20);
+    assert.equal(hasValidVisualSmokeDuplicateExplanation(explanation), true);
   }
 
   const routes = manifest.routes || [];
@@ -129,18 +237,12 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.equal(route.name, expectedRoute.name);
     assert.equal(route.file, expectedRoute.file);
     assert.equal(route.route, expectedRoute.route);
+    assert.equal(typeof route.firstRunAboutDismissed, 'boolean');
+    assert.equal(typeof route.languagePickerDismissed, 'boolean');
+    assert.equal(typeof route.launchOverlayDismissed, 'boolean');
     assert.equal(route.launchOverlayVisibleAfterDismissal, false);
     assert.ok(
-      route.launchOverlayDismissed ||
-        [
-          '/practice',
-          '/exam',
-          '/disclaimer',
-          '/privacy',
-          '/terms',
-          '/sources',
-          '/support',
-        ].includes(route.route),
+      route.launchOverlayDismissed || shouldSuppressLaunchPopupAdForPath(route.route),
       `${route.name} should either dismiss or suppress the launch overlay`,
     );
 

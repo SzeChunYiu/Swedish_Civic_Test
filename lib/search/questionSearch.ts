@@ -1,19 +1,12 @@
 import type { AppLanguage } from '../storage/settingsStore';
 import type { Chapter, PracticeQuestion } from '../../types/content';
+import { normalizeGlossarySearchText } from '../learning/glossarySearch';
 
 export type QuestionSearchResult = {
   chapter?: Chapter;
   question: PracticeQuestion;
   score: number;
 };
-
-function normalizeSearchText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('sv-SE')
-    .trim();
-}
 
 function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {
   return [
@@ -38,7 +31,7 @@ function scoreQuestion(
   chapter: Chapter | undefined,
   query: string,
 ): number {
-  const normalizedQuery = normalizeSearchText(query);
+  const normalizedQuery = normalizeGlossarySearchText(query);
   if (!normalizedQuery) return 0;
 
   let score = 0;
@@ -59,7 +52,7 @@ function scoreQuestion(
   ];
 
   weightedFields.forEach(({ value, weight }) => {
-    const normalizedValue = normalizeSearchText(value);
+    const normalizedValue = normalizeGlossarySearchText(value);
     if (normalizedValue === normalizedQuery) score += weight * 2;
     if (normalizedValue.startsWith(normalizedQuery)) score += weight;
     if (normalizedValue.includes(normalizedQuery)) score += weight;
@@ -67,7 +60,7 @@ function scoreQuestion(
 
   const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
   if (tokens.length > 1) {
-    const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');
+    const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');
     score += tokens.filter((token) => haystack.includes(token)).length;
   }
 

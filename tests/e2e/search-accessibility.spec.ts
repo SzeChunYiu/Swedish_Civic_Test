@@ -15,6 +15,7 @@ const copy = {
     provenanceBadge: /Källtyp: (UHR-källa|Tilläggsfråga|Redaktionell)/,
     questionLink: /Öppna övningsfrågan:/,
     query: 'riksdag',
+    sourceNote: /^Källanteckning:/,
     termName: 'Kommun',
     browseChapters: 'Gå till alla kapitel',
   },
@@ -27,6 +28,7 @@ const copy = {
     provenanceBadge: /Provenance: (UHR source|Supplementary|Editorial)/,
     questionLink: /Open practice question:/,
     query: 'municipality',
+    sourceNote: /^Source note:/,
     termName: 'Riksdag',
     browseChapters: 'Go to all chapters',
   },
@@ -137,6 +139,7 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
     await expect(
       page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
     ).toBeVisible();
+    await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
 
     expect(consoleErrors).toEqual([]);
   });
@@ -169,6 +172,45 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
       page.getByRole('link', { name: t.browseChapters }),
       `${language} browse chapters link`,
     );
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`Search question provenance badge toggles source notes in ${language.toUpperCase()}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    const t = copy[language];
+
+    await seedSettingsLanguage(page, language);
+    await markAboutTheTestSeen(page);
+    await page.goto('/search', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await page.getByRole('textbox', { name: t.inputName }).fill(t.query);
+
+    const provenanceBadge = page.getByRole('button', { name: t.provenanceBadge }).first();
+    const sourceNote = page.getByText(t.sourceNote);
+    await expect(provenanceBadge).toBeVisible();
+    await expect(provenanceBadge).toHaveAttribute('aria-expanded', 'false');
+    await expect(sourceNote).toHaveCount(0);
+
+    await provenanceBadge.click();
+    await expect(provenanceBadge).toHaveAttribute('aria-expanded', 'true');
+    await expect(sourceNote.first()).toBeVisible();
+
+    await provenanceBadge.click();
+    await expect(provenanceBadge).toHaveAttribute('aria-expanded', 'false');
+    await expect(sourceNote).toHaveCount(0);
+
+    await provenanceBadge.focus();
+    await page.keyboard.press('Enter');
+    await expect(provenanceBadge).toHaveAttribute('aria-expanded', 'true');
+    await expect(sourceNote.first()).toBeVisible();
+
+    await page.keyboard.press('Enter');
+    await expect(provenanceBadge).toHaveAttribute('aria-expanded', 'false');
+    await expect(sourceNote).toHaveCount(0);
 
     expect(consoleErrors).toEqual([]);
   });

@@ -26,6 +26,11 @@ type TimeHeatmapContract = {
   title: string;
 };
 
+type ProvenanceToggleContract = {
+  buttonName: RegExp;
+  sourceNoteLabel: RegExp;
+};
+
 async function expectNeutralResultSummary(page: Page, contract: NeutralSummaryContract) {
   const summary = page
     .locator(`[role="region"][aria-label^="${contract.summaryAriaPrefix}"]`)
@@ -46,6 +51,33 @@ async function expectTimeHeatmap(page: Page, contract: TimeHeatmapContract) {
   await expect(page.getByRole('button', { name: contract.firstCellPattern }).first()).toBeVisible();
 }
 
+async function expectProvenanceSourceNoteToggle(page: Page, contract: ProvenanceToggleContract) {
+  const provenance = page.getByRole('button', { name: contract.buttonName }).first();
+  const sourceNote = page.getByText(contract.sourceNoteLabel).first();
+
+  await expect(provenance).toBeVisible();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote).toBeVisible();
+
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+
+  await provenance.focus();
+  await expect(provenance).toBeFocused();
+  await provenance.press('Enter');
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote).toBeVisible();
+
+  await provenance.press('Enter');
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+}
+
 async function expectNoPassVerdictCopy(page: Page) {
   await expect(page.getByText(unsupportedPassVerdictPattern)).toHaveCount(0);
 }
@@ -57,7 +89,7 @@ async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await dismissBlockingModals(page);
 }
 
-test('mock exam requires all answers before showing Swedish score and source-backed review', async ({
+test('mock exam requires all answers before showing Swedish score and source provenance review', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
@@ -81,12 +113,14 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(activeCount).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
-
   const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('UHR-källa', { exact: true })).toHaveCount(0);
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Källtyp: UHR-källa/,
+    sourceNoteLabel: /^Källanteckning:/,
+  });
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -116,6 +150,10 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(page.getByText('Rätt svar').first()).toBeVisible();
   await expect(page.getByText('Förklaring', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR-källa', { exact: true }).first()).toBeVisible();
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Källtyp: UHR-källa/,
+    sourceNoteLabel: /^Källanteckning:/,
+  });
   await expect(page.getByText('Skickade resultat är slutgiltiga')).toBeVisible();
   await expect(page.getByLabel('Back to exam answers')).toHaveCount(0);
   await expectNoPassVerdictCopy(page);
@@ -123,7 +161,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   expect(consoleErrors).toEqual([]);
 });
 
-test('mock exam review follows English support mode', async ({ page }) => {
+test('mock exam provenance review follows English support mode', async ({ page }) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -152,6 +190,10 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText('Question review')).toHaveCount(0);
   await expect(page.getByText('Explanation', { exact: true })).toHaveCount(0);
   await expect(page.getByText('UHR reference', { exact: true })).toHaveCount(0);
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Provenance: UHR source/,
+    sourceNoteLabel: /^Source note:/,
+  });
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
     await page
@@ -187,6 +229,10 @@ test('mock exam review follows English support mode', async ({ page }) => {
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+  await expectProvenanceSourceNoteToggle(page, {
+    buttonName: /Provenance: UHR source/,
+    sourceNoteLabel: /^Source note:/,
+  });
   await expect(page.getByText('Submitted results are final')).toBeVisible();
   await expect(page.getByText('Kapitelöversikt')).toHaveCount(0);
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);

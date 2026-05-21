@@ -27,7 +27,10 @@ test('derived q002 false-variant explanation expectation stays anchored to autho
   const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
 
   assert.match(source, /const sourceQ002 = byId\.get\('q002'\);/);
-  assert.match(source, /q151:\s*\[/);
+  assert.match(
+    source,
+    /\[generatedQuestionId\(sourceQuestions,\s*'q002',\s*'falseStatement'\)\]:\s*\[/,
+  );
   assert.match(source, /const sourceQ002FalseVariant = assertQuestionTextPresent\(/);
   assert.match(
     source,

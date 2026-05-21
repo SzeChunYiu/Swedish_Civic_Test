@@ -9,6 +9,7 @@ const sourcePaths = {
   activity: 'components/dashboard/ActivityHeatmap.tsx',
   dashboard: 'app/dashboard.tsx',
   chapters: 'components/dashboard/PerChapterProgressBars.tsx',
+  e2e: 'tests/e2e/dashboard-route.spec.ts',
   history: 'components/dashboard/MockExamHistoryCard.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
   stats: 'lib/learning/dashboardStats.ts',
@@ -28,7 +29,7 @@ function loadSources(overrides = {}) {
 }
 
 function extractNamedStyle(source, styleName) {
-  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n  \\},`));
+  const match = source.match(new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?\\n\\s*\\},`));
   assert.ok(match, `${styleName} style must exist`);
   return match[0];
 }
@@ -53,6 +54,46 @@ function assertDashboardAccessibilitySeparation(sources) {
     sources.dashboard,
     /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{summaryAccessibilityLabel\}\s*<\/Text>/,
     'Dashboard summary label must render outside the visual card',
+  );
+  assert.match(
+    sources.e2e,
+    /seedNonEmptyDashboardProgress/,
+    'Dashboard e2e must keep a seeded non-empty progress fixture',
+  );
+  assert.match(
+    sources.e2e,
+    /currentProgressStateStorageKey/,
+    'Dashboard e2e must write the current progress storage key through the shared browser helper',
+  );
+  assert.match(
+    sources.e2e,
+    /answerHistory:\s*\[/,
+    'Dashboard e2e seed must include dated answer history',
+  );
+  assert.match(
+    sources.e2e,
+    /questionProgress:\s*\{/,
+    'Dashboard e2e seed must include hydrated question progress',
+  );
+  assert.match(
+    sources.e2e,
+    /totalXp:\s*420/,
+    'Dashboard e2e seed must include XP for the non-empty sparkline/level surface',
+  );
+  assert.match(
+    sources.e2e,
+    /streakFreezeState:\s*\{/,
+    'Dashboard e2e seed must include streak state for the non-empty streak surface',
+  );
+  assert.match(
+    sources.e2e,
+    /mockExamSessions:\s*\[/,
+    'Dashboard e2e seed must include a valid mock exam session',
+  );
+  assert.match(
+    sources.e2e,
+    /expectNonEmptyProgressVisible/,
+    'Dashboard e2e must assert the non-empty rendered dashboard surface',
   );
   assert.match(
     sources.dashboard,
@@ -82,8 +123,23 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.chapters,
-    /<Pressable[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ selected \}\}/,
-    'PerChapterProgressBars sort controls must remain independently reachable buttons',
+    /<View[\s\S]*?aria-label=\{copy\.sortGroupAccessibilityLabel\}[\s\S]*?accessibilityLabel=\{copy\.sortGroupAccessibilityLabel\}[\s\S]*?accessibilityRole="radiogroup"[\s\S]*?style=\{styles\.sortRow\}/,
+    'PerChapterProgressBars sort control must expose a localized radiogroup',
+  );
+  assert.match(
+    sources.chapters,
+    /<Pressable[\s\S]*?aria-checked=\{selected\}[\s\S]*?accessibilityLabel=\{copy\.sortAccessibilityLabel\(label\)\}[\s\S]*?accessibilityRole="radio"[\s\S]*?accessibilityState=\{\{ checked: selected \}\}/,
+    'PerChapterProgressBars sort options must expose radio checked semantics',
+  );
+  assert.doesNotMatch(
+    sources.chapters,
+    /accessibilityRole="button"[\s\S]{0,240}accessibilityState=\{\{\s*selected\s*\}\}/,
+    'PerChapterProgressBars sort options must not remain selected buttons',
+  );
+  assert.doesNotMatch(
+    sources.chapters,
+    /aria-selected=\{selected\}|accessibilityState=\{\{\s*selected\s*\}\}/,
+    'PerChapterProgressBars sort options must not leak selected state',
   );
   assert.match(
     sources.chapters,
@@ -239,8 +295,8 @@ function assertDashboardAccessibilitySeparation(sources) {
   for (const styleName of ['heatZero', 'heatSoft', 'heatMedium', 'heatStrong']) {
     assert.match(
       sources.activity,
-      new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?backgroundColor: colors\\.`),
-      `${styleName} must keep a tokenized background color`,
+      new RegExp(`${styleName}:\\s*\\{[\\s\\S]*?backgroundColor: themeColors\\.`),
+      `${styleName} must keep a theme-token background color`,
     );
   }
 
@@ -304,13 +360,23 @@ function assertDashboardAccessibilitySeparation(sources) {
     'MockExamHistoryCard trend bars must be bounded by score percent',
   );
   assert.match(sources.history, /scoreTrendChart/);
-  assert.match(sources.history, /backgroundColor: colors\.accent/);
+  assert.match(sources.history, /backgroundColor: themeColors\.accent/);
   assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
   assert.match(sources.dashboard, /title: 'Mock exam history'/);
   assert.match(sources.dashboard, /trendLabel: 'Resultattrend'/);
   assert.match(sources.dashboard, /trendLabel: 'Score trend'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Öppna övningsprovet'/);
   assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Open the mock exam'/);
+  assert.match(
+    sources.dashboard,
+    /sortGroupAccessibilityLabel: 'Sortera kapitelframsteg'/,
+    'Swedish chapter-progress sort group label is required',
+  );
+  assert.match(
+    sources.dashboard,
+    /sortGroupAccessibilityLabel: 'Sort chapter progress'/,
+    'English chapter-progress sort group label is required',
+  );
 
   assert.match(sources.dashboard, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.chapters, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
@@ -352,6 +418,41 @@ test('dashboard accessibility parity rejects grouped chapter controls', () => {
         ),
       }),
     /PerChapterProgressBars parent Card must not group sort buttons or chapter links/,
+  );
+});
+
+test('dashboard accessibility parity rejects an unlabelled chapter sort group', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters.replace(
+          /\s+aria-label=\{copy\.sortGroupAccessibilityLabel\}\n\s+accessibilityLabel=\{copy\.sortGroupAccessibilityLabel\}\n\s+accessibilityRole="radiogroup"\n/,
+          '\n',
+        ),
+      }),
+    /PerChapterProgressBars sort control must expose a localized radiogroup/,
+  );
+});
+
+test('dashboard accessibility parity rejects selected-button chapter sort controls', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        chapters: sources.chapters
+          .replace('aria-checked={selected}', 'aria-selected={selected}')
+          .replace('accessibilityRole="radio"', 'accessibilityRole="button"')
+          .replace(
+            'accessibilityState={{ checked: selected }}',
+            'accessibilityState={{ selected }}',
+          ),
+      }),
+    /PerChapterProgressBars sort options must expose radio checked semantics|PerChapterProgressBars sort options must not remain selected buttons|PerChapterProgressBars sort options must not leak selected state/,
   );
 });
 

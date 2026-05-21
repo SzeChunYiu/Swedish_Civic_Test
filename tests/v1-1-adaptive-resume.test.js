@@ -8,6 +8,7 @@ const test = require('node:test');
 const ts = require('typescript');
 const {
   MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
+  MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -94,17 +95,15 @@ test('pickAdaptiveSession: normalizes malformed adaptive size values including N
     bank: items,
     now: new Date('2026-05-19T12:00:00.000Z'),
   };
-  const malformedSizes = [Number.NaN, Number.POSITIVE_INFINITY, -1, 2.5, '2'];
-
-  for (const size of malformedSizes) {
+  for (const { label, size } of MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES) {
     const picked = pickAdaptiveSession({ ...baseInput, size });
     const counts = explainAdaptivePick({ ...baseInput, size });
 
-    assert.equal(picked.length, 10, `malformed size ${String(size)} should use the default cap`);
+    assert.equal(picked.length, 10, `${label} size should use the default cap`);
     assert.equal(
       Object.values(counts).reduce((sum, count) => sum + count, 0),
       picked.length,
-      `explanation count should match picker length for size ${String(size)}`,
+      `explanation count should match picker length for ${label} size`,
     );
   }
 });
@@ -172,11 +171,11 @@ test('pickAdaptiveSession: malformed runtime sizes fall back to a bounded defaul
     now: new Date('2026-05-19T12:00:00.000Z'),
   };
 
-  for (const size of [NaN, Infinity, -1, 2.5, '2']) {
+  for (const { label, size } of MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES) {
     const picked = pickAdaptiveSession({ ...baseInput, size });
     const counts = explainAdaptivePick({ ...baseInput, size });
 
-    assert.equal(picked.length, 10, `malformed size ${String(size)} should use default size`);
+    assert.equal(picked.length, 10, `${label} size should use default size`);
     assert.equal(counts.unseen, 10);
     assert.equal(counts['recently-wrong'] + counts.mastered + counts.stale, 0);
   }
