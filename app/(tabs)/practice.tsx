@@ -1,4 +1,3 @@
-import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -13,7 +12,6 @@ import { ConfidenceRatingPicker } from '../../components/quiz/ConfidenceRatingPi
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
-import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
 import { Button } from '../../components/ui/Button';
@@ -21,10 +19,6 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import {
-  buildDailyChallenge,
-  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-} from '../../lib/learning/dailyChallenge';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -33,6 +27,7 @@ import {
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import {
+  getPracticeAnswerXpAwardKey,
   getPracticeInterstitialShowKey,
   usePracticeSessionStore,
 } from '../../lib/quiz/practiceSessionStore';
@@ -40,9 +35,7 @@ import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
-import { useThemeColors } from '../../lib/theme/ThemeProvider';
-import type { PracticeQuestion } from '../../types/content';
+import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { ConfidenceRating } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
@@ -74,9 +67,6 @@ type PracticeCopy = {
   aboutSourcesSupplementaryBody: string;
   aboutSourcesEditorialTitle: string;
   aboutSourcesEditorialBody: string;
-  challengeBadge: string;
-  challengeTimer: (remainingSeconds: number) => string;
-  challengeTimedOut: string;
 };
 
 const practiceCopy: Record<AppLanguage, PracticeCopy> = {
@@ -110,10 +100,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
-    challengeBadge: 'Dagens utmaning',
-    challengeTimer: (remainingSeconds) => `${remainingSeconds} sekunder kvar`,
-    challengeTimedOut: 'Tiden är ute. Försök igen för att starta om dagens utmaning.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
   },
   en: {
     badge: '5-minute practice',
@@ -146,16 +133,13 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     aboutSourcesEditorialTitle: 'Editorial',
     aboutSourcesEditorialBody:
       'Hand-written by us to give context the UHR material does not cover directly. Never part of the mock exam.',
-    challengeBadge: 'Daily challenge',
-    challengeTimer: (remainingSeconds) => `${remainingSeconds} seconds left`,
-    challengeTimedOut: "Time is up. Try again to restart today's challenge.",
   },
 };
 
 export default function Screen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const isChallengeMode = mode === 'challenge';
+  const answerXpAwardedKey = usePracticeSessionStore((state) => state.answerXpAwardedKey);
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
+  const markAnswerXpAwarded = usePracticeSessionStore((state) => state.markAnswerXpAwarded);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
@@ -163,9 +147,6 @@ export default function Screen() {
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const recordDailyChallengeCompletion = useProgressStore(
-    (state) => state.recordDailyChallengeCompletion,
-  );
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
@@ -181,8 +162,6 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
-  const themeColors = useThemeColors();
-  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -194,33 +173,19 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
-  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
-    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  );
-  const [challengeRetryActive, setChallengeRetryActive] = useState(false);
-  const [challengeAnswers, setChallengeAnswers] = useState<Record<string, boolean>>({});
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const challengeQuestions = useMemo(
-    () =>
-      dailyChallenge.questionIds
-        .map((questionId) => questions.find((candidate) => candidate.id === questionId))
-        .filter((question): question is PracticeQuestion => Boolean(question)),
-    [dailyChallenge.questionIds],
-  );
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const practiceQuestionBank = isChallengeMode ? challengeQuestions : filteredQuestions;
   const visibleCompletedQuestionIds = useMemo(
-    () => getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
-    [completedQuestionIds, practiceQuestionBank],
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
   );
   const rawQuestion = getPracticeQuestionForSession(
-    practiceQuestionBank,
+    filteredQuestions,
     visibleCompletedQuestionIds,
     activeQuestionId,
   );
@@ -235,33 +200,6 @@ export default function Screen() {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
 
-  useEffect(() => {
-    setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-    setChallengeAnswers({});
-    setChallengeRetryActive(false);
-  }, [dailyChallenge.dayKey, isChallengeMode]);
-
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
-  );
-  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
-
-  useEffect(() => {
-    if (!isChallengeMode || hasSelectedAnswer || challengeTimedOut) return undefined;
-
-    const timer = setTimeout(() => {
-      setRemainingChallengeSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [
-    challengeRetryActive,
-    challengeTimedOut,
-    hasSelectedAnswer,
-    isChallengeMode,
-    remainingChallengeSeconds,
-  ]);
-
   if (!question) {
     return (
       <View style={styles.emptyContainer}>
@@ -270,6 +208,7 @@ export default function Screen() {
     );
   }
 
+  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
@@ -277,13 +216,10 @@ export default function Screen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress =
-    practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
+  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
-    if (challengeTimedOut) return;
-
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -291,26 +227,12 @@ export default function Screen() {
       : undefined;
 
     selectOption(question.id, optionId);
-    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
-
-    if (isChallengeMode) {
-      const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };
-      setChallengeAnswers(nextChallengeAnswers);
-
-      if (Object.keys(nextChallengeAnswers).length >= challengeQuestions.length) {
-        const correctCount = Object.values(nextChallengeAnswers).filter(Boolean).length;
-        const totalCount = challengeQuestions.length;
-        recordDailyChallengeCompletion({
-          dayKey: dailyChallenge.dayKey,
-          questionIds: dailyChallenge.questionIds,
-          correctCount,
-          totalCount,
-          score: totalCount > 0 ? correctCount / totalCount : 0,
-          timeSpentSeconds: DAILY_CHALLENGE_TIME_LIMIT_SECONDS - remainingChallengeSeconds,
-          completedAt: new Date().toISOString(),
-        });
-      }
-    }
+    const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
+    const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
+    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
+      awardXp: shouldAwardXp,
+    });
+    if (shouldAwardXp) markAnswerXpAwarded(answerXpAwardKey);
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -326,32 +248,24 @@ export default function Screen() {
   };
   const handleTryAgain = () => {
     setSelectedConfidenceRating(null);
-    if (isChallengeMode) {
-      setChallengeRetryActive(true);
-      setRemainingChallengeSeconds(DAILY_CHALLENGE_TIME_LIMIT_SECONDS);
-      setChallengeAnswers({});
-    }
     resetSelection();
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>
+        <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.questionTitle(questionNumber)}
         </Text>
         <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
         <Text style={styles.meta}>
-          {isChallengeMode
-            ? copy.challengeTimer(remainingChallengeSeconds)
-            : copy.completedQuestions(visibleCompletedQuestionIds.length)}
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
         </Text>
-        {challengeTimedOut ? <Text style={styles.meta}>{copy.challengeTimedOut}</Text> : null}
         <View style={styles.headerControls}>
           <Pressable
-            android_ripple={{ color: themeColors.focusSoft }}
+            android_ripple={{ color: colors.focusSoft }}
             aria-selected={isBookmarked}
             accessibilityLabel={copy.bookmarkAccessibilityLabel(isBookmarked)}
             accessibilityRole="button"
@@ -372,7 +286,7 @@ export default function Screen() {
             </Text>
           </Pressable>
           <Pressable
-            android_ripple={{ color: themeColors.focusSoft }}
+            android_ripple={{ color: colors.focusSoft }}
             aria-checked={includeSupplementary}
             accessibilityRole="switch"
             accessibilityState={{ checked: includeSupplementary }}
@@ -397,7 +311,7 @@ export default function Screen() {
             </Text>
           </Pressable>
           <Pressable
-            android_ripple={{ color: themeColors.focusSoft }}
+            android_ripple={{ color: colors.focusSoft }}
             aria-expanded={aboutSourcesOpen}
             accessibilityRole="button"
             accessibilityState={{ expanded: aboutSourcesOpen }}
@@ -466,7 +380,7 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
-              disabled={hasSelectedAnswer || challengeTimedOut}
+              disabled={hasSelectedAnswer}
               language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
@@ -501,12 +415,6 @@ export default function Screen() {
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />
-          <QuestionReportLink
-            language={language}
-            question={question}
-            screen="practice"
-            selectedOptionId={selectedOptionId}
-          />
           <PracticeInterstitialAd
             showKey={getPracticeInterstitialShowKey(question.id, shuffleSessionId)}
           />
@@ -536,167 +444,165 @@ export default function Screen() {
   );
 }
 
-function createStyles(themeColors: ThemeColors) {
-  return StyleSheet.create({
-    container: {
-      backgroundColor: themeColors.surface,
-      flex: 1,
-    },
-    content: {
-      gap: space[2],
-      padding: space[3],
-      paddingBottom: space[10],
-    },
-    emptyContainer: {
-      flex: 1,
-      padding: space[3],
-    },
-    hero: {
-      backgroundColor: themeColors.surface,
-      borderColor: themeColors.border,
-      borderRadius: radius.large,
-      borderWidth: StyleSheet.hairlineWidth,
-      gap: space[1.25],
-      padding: space[3],
-    },
-    title: {
-      color: themeColors.text,
-      fontSize: typography.subHeading.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-      letterSpacing: typography.subHeading.letterSpacing,
-    },
-    subtitle: {
-      color: themeColors.textMuted,
-      fontSize: typography.body.fontSize,
-      lineHeight: typography.body.lineHeight,
-    },
-    meta: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-    },
-    provenanceBadge: {
-      alignSelf: 'flex-start',
-      borderRadius: radius.pill,
-      fontSize: typography.badge.fontSize,
-      fontWeight: typography.badge.fontWeight,
-      letterSpacing: typography.badge.letterSpacing,
-      overflow: 'hidden',
-      paddingHorizontal: space[1.25],
-      paddingVertical: space[0.5],
-      textTransform: 'uppercase',
-    },
-    provenanceUhr: {
-      backgroundColor: themeColors.badgeBlueBg,
-      color: themeColors.badgeBlueText,
-    },
-    provenanceSupplementary: {
-      backgroundColor: themeColors.surfaceWarm,
-      color: themeColors.text,
-    },
-    provenanceEditorial: {
-      backgroundColor: themeColors.surfaceMuted,
-      color: themeColors.textMuted,
-    },
-    aboutSourcesTrigger: {
-      alignSelf: 'flex-start',
-      alignItems: 'center',
-      backgroundColor: themeColors.surface,
-      borderColor: themeColors.border,
-      borderRadius: radius.pill,
-      borderWidth: StyleSheet.hairlineWidth,
-      justifyContent: 'center',
-      maxWidth: '100%',
-      minHeight: space[6],
-      minWidth: space[6],
-      paddingHorizontal: space[1.5],
-      paddingVertical: space[0.75],
-    },
-    aboutSourcesTriggerText: {
-      color: themeColors.accent,
-      fontSize: typography.caption.fontSize,
-      textAlign: 'center',
-      textDecorationLine: 'underline',
-    },
-    aboutSourcesPanel: {
-      backgroundColor: themeColors.surfaceWarm,
-      borderColor: themeColors.border,
-      borderRadius: radius.small,
-      borderWidth: StyleSheet.hairlineWidth,
-      gap: space[0.5],
-      padding: space[1.5],
-    },
-    aboutSourcesItemTitle: {
-      color: themeColors.text,
-      fontSize: typography.caption.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-    },
-    aboutSourcesItemBody: {
-      color: themeColors.textMuted,
-      fontSize: typography.caption.fontSize,
-      lineHeight: typography.caption.lineHeight,
-      marginBottom: space[0.5],
-    },
-    headerControls: {
-      alignItems: 'flex-start',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[1],
-    },
-    headerControlFocused: {
-      borderColor: themeColors.focus,
-    },
-    headerControlPressed: {
-      backgroundColor: themeColors.focusSoft,
-      borderColor: themeColors.focusSoft,
-      transform: [{ scale: motion.pressedScale }],
-    },
-    bookmarkButton: {
-      alignSelf: 'flex-start',
-      alignItems: 'center',
-      backgroundColor: themeColors.surfaceMuted,
-      borderColor: themeColors.border,
-      borderRadius: radius.pill,
-      borderWidth: StyleSheet.hairlineWidth,
-      justifyContent: 'center',
-      maxWidth: '100%',
-      minHeight: space[6],
-      minWidth: space[6],
-      paddingHorizontal: space[1.5],
-      paddingVertical: space[0.75],
-    },
-    bookmarkButtonActive: {
-      backgroundColor: themeColors.badgeBlueBg,
-      borderColor: themeColors.focusSoft,
-    },
-    bookmarkText: {
-      color: themeColors.textSecondary,
-      fontSize: typography.badge.fontSize,
-      fontWeight: typography.badge.fontWeight,
-      letterSpacing: typography.badge.letterSpacing,
-      textAlign: 'center',
-      textTransform: 'uppercase',
-    },
-    bookmarkTextActive: {
-      color: themeColors.badgeBlueText,
-    },
-    options: {
-      gap: space[1],
-    },
-    feedback: {
-      gap: space[1.5],
-    },
-    feedbackActions: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[1],
-    },
-    feedbackButton: {
-      minHeight: space[5] + space[0.5],
-    },
-    score: {
-      color: themeColors.success,
-      fontSize: typography.body.fontSize,
-      fontWeight: typography.bodyBold.fontWeight,
-    },
-  });
-}
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.surface,
+    flex: 1,
+  },
+  content: {
+    gap: space[2],
+    padding: space[3],
+    paddingBottom: space[10],
+  },
+  emptyContainer: {
+    flex: 1,
+    padding: space[3],
+  },
+  hero: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.large,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[1.25],
+    padding: space[3],
+  },
+  title: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
+  },
+  subtitle: {
+    color: colors.textMuted,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  meta: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+  },
+  provenanceBadge: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.pill,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    overflow: 'hidden',
+    paddingHorizontal: space[1.25],
+    paddingVertical: space[0.5],
+    textTransform: 'uppercase',
+  },
+  provenanceUhr: {
+    backgroundColor: colors.badgeBlueBg,
+    color: colors.badgeBlueText,
+  },
+  provenanceSupplementary: {
+    backgroundColor: colors.surfaceWarm,
+    color: colors.text,
+  },
+  provenanceEditorial: {
+    backgroundColor: colors.surfaceMuted,
+    color: colors.textMuted,
+  },
+  aboutSourcesTrigger: {
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    maxWidth: '100%',
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[0.75],
+  },
+  aboutSourcesTriggerText: {
+    color: colors.accent,
+    fontSize: typography.caption.fontSize,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
+  aboutSourcesPanel: {
+    backgroundColor: colors.surfaceWarm,
+    borderColor: colors.border,
+    borderRadius: radius.small,
+    borderWidth: StyleSheet.hairlineWidth,
+    gap: space[0.5],
+    padding: space[1.5],
+  },
+  aboutSourcesItemTitle: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+  aboutSourcesItemBody: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    marginBottom: space[0.5],
+  },
+  headerControls: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  headerControlFocused: {
+    borderColor: colors.focus,
+  },
+  headerControlPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focusSoft,
+    transform: [{ scale: motion.pressedScale }],
+  },
+  bookmarkButton: {
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    maxWidth: '100%',
+    minHeight: space[6],
+    minWidth: space[6],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[0.75],
+  },
+  bookmarkButtonActive: {
+    backgroundColor: colors.badgeBlueBg,
+    borderColor: colors.focusSoft,
+  },
+  bookmarkText: {
+    color: colors.textSecondary,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    letterSpacing: typography.badge.letterSpacing,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  bookmarkTextActive: {
+    color: colors.badgeBlueText,
+  },
+  options: {
+    gap: space[1],
+  },
+  feedback: {
+    gap: space[1.5],
+  },
+  feedbackActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  feedbackButton: {
+    minHeight: space[5] + space[0.5],
+  },
+  score: {
+    color: colors.success,
+    fontSize: typography.body.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+  },
+});
