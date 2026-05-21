@@ -59,6 +59,23 @@ test('launch popup ad route allowlist stays aligned with safe study breakpoints'
   assert.match(rootLayout, /!suppressLaunchPopupAd && entitlementsReady/);
 });
 
+test('launch popup browser route matrix covers eligible Home and suppressed utility routes', () => {
+  const launchModalSpec = read('tests/e2e/launch-modal-accessibility.spec.ts');
+
+  assert.match(launchModalSpec, /const launchSuppressedRouteCases = \[/);
+  assert.match(launchModalSpec, /'\/about-the-test'/);
+  assert.match(launchModalSpec, /'\/settings'/);
+  assert.match(launchModalSpec, /'\/search\?q=riksdag'/);
+  assert.match(launchModalSpec, /'\/chapter\/ch01'/);
+  assert.match(launchModalSpec, /launch sponsor route allowlist shows Home once/);
+  assert.match(launchModalSpec, /page\.goto\('\/home', \{ waitUntil: 'networkidle' \}\)/);
+  assert.match(launchModalSpec, /seedFreshSettingsLanguageAndAboutSeen\(page, 'sv'\)/);
+  assert.match(launchModalSpec, /blockingModalOverlayLocator/);
+  assert.match(launchModalSpec, /aria-label', 'Startannons'/);
+  assert.match(launchModalSpec, /launch sponsor route allowlist suppresses \$\{routePath\}/);
+  assert.match(launchModalSpec, /Testannons för appstart visas en gång per appstart/);
+});
+
 test('launch popup ad route suppression rejects missing explicit blocked routes', () => {
   const mutated = read('lib/monetization/ads.ts').replace("'/settings',", "'/settings-disabled',");
 

@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import {
   type AppLanguage,
   blockingModalOverlayLocator,
+  collectConsoleAndPageErrors,
   seedFreshSettingsLanguageAndAboutSeen,
 } from './browserLaunch';
 
@@ -64,6 +65,13 @@ const launchEscapeCloseCases: LaunchEscapeCloseCase[] = [
   },
 ];
 
+const launchSuppressedRouteCases = [
+  '/about-the-test',
+  '/settings',
+  '/search?q=riksdag',
+  '/chapter/ch01',
+] as const;
+
 async function focusLaunchCloseControlByKeyboard(page: import('@playwright/test').Page) {
   const focusedCloseButton = page
     .getByRole('button', { name: /Close launch sponsor ad|Stäng startannons/ })
@@ -105,6 +113,45 @@ test('launch sponsor modal exposes one named dialog on web', async ({ page }) =>
 
   expect(consoleErrors).toEqual([]);
 });
+
+test('launch sponsor route allowlist shows Home once for a free user', async ({ page }) => {
+  const consoleErrors = collectConsoleAndPageErrors(page);
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
+  await page.goto('/home', { waitUntil: 'networkidle' });
+
+  const dialogs = page.locator(blockingModalOverlayLocator);
+  await expect(dialogs).toHaveCount(1);
+  await expect(dialogs.first()).toHaveAttribute('aria-label', 'Startannons');
+  await expect(page.getByRole('heading', { name: 'Startannons' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Stäng startannons' }).click();
+
+  await expect(dialogs).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Dagens mål' })).toBeVisible();
+
+  await page.waitForTimeout(150);
+
+  await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Dagens mål' })).toBeVisible();
+  expect(consoleErrors.get()).toEqual([]);
+});
+
+for (const routePath of launchSuppressedRouteCases) {
+  test(`launch sponsor route allowlist suppresses ${routePath}`, async ({ page }) => {
+    const consoleErrors = collectConsoleAndPageErrors(page);
+
+    await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
+    await page.goto(routePath, { waitUntil: 'networkidle' });
+
+    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Startannons' })).toHaveCount(0);
+    await expect(page.getByText('Testannons för appstart visas en gång per appstart.')).toHaveCount(
+      0,
+    );
+    expect(consoleErrors.get()).toEqual([]);
+  });
+}
 
 for (const {
   activationKey,
