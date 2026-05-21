@@ -549,6 +549,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bthere are buddhist and Hindu\b/,
   /\bcalled Lucia procession\b/i,
   /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
+  /^Light candles on graves to remember and honour people who have died\.?$/i,
+  /^Open an Advent calendar every day until Christmas Eve\.?$/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
@@ -6500,6 +6502,11 @@ function civicStatementEn(source, option) {
   }
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
+  match = q.match(/^How is (.+?) commonly (?:celebrated|observed) in Sweden$/i);
+  if (match) {
+    const timePhrase = match[1].replace(/\s+on\s+(\d{1,2}\s+\w+)$/i, ', $1');
+    return englishCommonToDoStatement(timePhrase, answer);
+  }
   match = q.match(/^What do families commonly do on (.+) in Sweden$/i);
   if (match)
     return `On ${stripTrailingComma(match[1])}, families commonly ${lowerFirst(stripLeadingPurposeEn(answer))}`;

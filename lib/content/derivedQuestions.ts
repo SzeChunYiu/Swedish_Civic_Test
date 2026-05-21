@@ -2330,7 +2330,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What is common to do on (.+?) in Sweden$/i);
   if (match) return englishCommonToDoStatement(match[1], answer);
 
-  match = q.match(/^How is (.+?) commonly celebrated in Sweden$/i);
+  match = q.match(/^How is (.+?) commonly (?:celebrated|observed) in Sweden$/i);
   if (match) {
     const timePhrase = match[1].replace(/\s+on\s+(\d{1,2}\s+\w+)$/i, ', $1');
     return englishCommonToDoStatement(timePhrase, answer);
