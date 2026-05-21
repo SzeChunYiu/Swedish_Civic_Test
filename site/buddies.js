@@ -792,13 +792,19 @@
       showMessage(buddyGenericCopy(lang).selected(b.name));
     }, 100);
   };
-  window.smtBuddyCelebrate = (msgEn, msgSv) => {
+  function buddyRuntimeMessage(message, fallback) {
     const lang = currentLang();
-    showMessage(lang === 'sv' ? msgSv : msgEn, { autoHide: 6000 });
+    if (message && typeof message === 'object')
+      return message[lang] || message.en || fallback || '';
+    if (lang === 'sv' && fallback) return fallback;
+    return message || fallback || '';
+  }
+
+  window.smtBuddyCelebrate = (message, fallback) => {
+    showMessage(buddyRuntimeMessage(message, fallback), { autoHide: 6000 });
   };
-  window.smtBuddyConsole = (msgEn, msgSv) => {
-    const lang = currentLang();
-    showMessage(lang === 'sv' ? msgSv : msgEn, { autoHide: 5500 });
+  window.smtBuddyConsole = (message, fallback) => {
+    showMessage(buddyRuntimeMessage(message, fallback), { autoHide: 5500 });
   };
   window.smtBuddyHide = () => {
     const w = document.getElementById('dala-buddy');

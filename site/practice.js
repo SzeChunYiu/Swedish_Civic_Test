@@ -99,6 +99,44 @@
       uk: 'Незалежне тренування, не справжній іспит і не офіційне питання UHR.',
     });
   }
+
+  const mockBuddyCopy = {
+    strong: {
+      en: '{pct}%. Strong practice round.',
+      sv: '{pct}%. Stark övningsrunda.',
+      'zh-Hans': '{pct}%。本轮练习很扎实。',
+      'zh-Hant': '{pct}%。本輪練習很扎實。',
+      ar: '{pct}%. جولة تدريب قوية.',
+      ckb: '{pct}%. خولێکی مەشقی بەهێز.',
+      fa: '{pct}٪. دور تمرین قوی بود.',
+      pl: '{pct}%. Mocna runda ćwiczeń.',
+      so: '{pct}%. Wareeg tababar oo xooggan.',
+      ti: '{pct}%. ጠንካራ ዙር ልምምድ።',
+      tr: '{pct}%. Güçlü bir alıştırma turu.',
+      uk: '{pct}%. Сильний тренувальний раунд.',
+    },
+    review: {
+      en: 'Review the weak chapters, then try another practice round.',
+      sv: 'Öva svaga kapitel och testa en ny övningsrunda.',
+      'zh-Hans': '复习薄弱章节，然后再做一轮练习。',
+      'zh-Hant': '複習薄弱章節，然後再做一輪練習。',
+      ar: 'راجع الفصول الضعيفة، ثم جرّب جولة تدريب أخرى.',
+      ckb: 'بەشە لاوازەکان دووبارە بخوێنەوە، پاشان خولێکی تری مەشق تاقی بکەرەوە.',
+      fa: 'فصل‌های ضعیف‌تر را مرور کن، بعد یک دور تمرین دیگر انجام بده.',
+      pl: 'Powtórz słabsze rozdziały, potem zrób kolejną rundę ćwiczeń.',
+      so: 'Dib u eeg cutubyada daciifka ah, kadib samee wareeg tababar kale.',
+      ti: 'ድኹማት ምዕራፋት ደጊምካ ተመልከት፣ ድሕሪኡ ካልእ ዙር ልምምድ ፈትን።',
+      tr: 'Zayıf bölümleri gözden geçir, sonra bir alıştırma turu daha dene.',
+      uk: 'Повтори слабші розділи, потім спробуй ще один тренувальний раунд.',
+    },
+  };
+
+  function mockBuddyMessage(key, values = {}) {
+    const copy = mockBuddyCopy[key] || mockBuddyCopy.review;
+    const template = copy[lang()] || copy.en;
+    return template.replace(/\{(\w+)\}/g, (_, name) => String(values[name] ?? ''));
+  }
+
   const provenanceCopy = {
     uhr: {
       en: { label: 'UHR', description: "Based on UHR's study material Sverige i fokus." },
@@ -1071,16 +1109,9 @@
       window.smtFx.countUp(document.getElementById('mock-score-num'), 0, correct, 1100);
       if (strongPracticeScore) {
         setTimeout(() => window.smtFx.rain({ colors: window.smtFx.PALETTES.big, count: 90 }), 300);
-        if (window.smtBuddyCelebrate)
-          window.smtBuddyCelebrate(
-            `${pct}%. Strong practice round.`,
-            `${pct}%. Stark övningsrunda.`,
-          );
+        if (window.smtBuddyCelebrate) window.smtBuddyCelebrate(mockBuddyMessage('strong', { pct }));
       } else if (window.smtBuddyConsole) {
-        window.smtBuddyConsole(
-          'Review the weak chapters, then try another practice round.',
-          'Öva svaga kapitel och testa en ny övningsrunda.',
-        );
+        window.smtBuddyConsole(mockBuddyMessage('review'));
       }
     }
   }
