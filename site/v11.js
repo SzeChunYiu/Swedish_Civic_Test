@@ -433,33 +433,35 @@
     cta: { en: 'Sign in', sv: 'Logga in', 'zh-Hans': '登录', 'zh-Hant': '登入', ar: 'تسجيل الدخول', ckb: 'چوونەژوورەوە', fa: 'ورود', pl: 'Zaloguj się', so: 'Soo gal', ti: 'እቶ', tr: 'Giriş yap', uk: 'Увійти' },
   };
 
-  function renderSigninGate(el) {
+  function buildLockOverlay() {
     const l = lang();
-    el.textContent = '';
-    const gate = document.createElement('div');
-    gate.className = 'v11-gate';
+    const lock = document.createElement('div');
+    lock.className = 'v11-lock';
+    const inner = document.createElement('div');
+    inner.className = 'v11-lock__inner';
     const badge = document.createElement('div');
-    badge.className = 'v11-gate__badge';
+    badge.className = 'v11-lock__badge';
     badge.setAttribute('aria-hidden', 'true');
-    badge.textContent = '📊';
+    badge.textContent = '🔒';
     const title = document.createElement('h3');
-    title.className = 'v11-gate__title';
+    title.className = 'v11-lock__title';
     title.textContent = GATE_COPY.title[l] || GATE_COPY.title.en;
     const body = document.createElement('p');
-    body.className = 'v11-gate__body';
+    body.className = 'v11-lock__body';
     body.textContent = GATE_COPY.body[l] || GATE_COPY.body.en;
     const cta = document.createElement('button');
     cta.type = 'button';
-    cta.className = 'btn btn--gold v11-gate__cta';
+    cta.className = 'btn btn--gold v11-lock__cta';
     cta.textContent = GATE_COPY.cta[l] || GATE_COPY.cta.en;
     cta.addEventListener('click', function () {
       if (typeof window.smtOpenSignin === 'function') window.smtOpenSignin();
     });
-    gate.appendChild(badge);
-    gate.appendChild(title);
-    gate.appendChild(body);
-    gate.appendChild(cta);
-    el.appendChild(gate);
+    inner.appendChild(badge);
+    inner.appendChild(title);
+    inner.appendChild(body);
+    inner.appendChild(cta);
+    lock.appendChild(inner);
+    return lock;
   }
 
   function renderDashboard() {
@@ -474,24 +476,23 @@
     const inActiveQuiz = /[?&](c|ch)=/.test(h);
     if (inActiveQuiz) {
       el.style.display = 'none';
+      el.classList.remove('v11-dashboard--locked');
       return;
     }
     const signedIn = (function () {
       try { return localStorage.getItem('smt_signed_in') === '1'; } catch { return false; }
     })();
-    if (!signedIn) {
-      el.style.display = '';
-      renderSigninGate(el);
-      return;
-    }
 
     const progress = getProgress();
     const hasAnyProgress = Object.values(progress).some(function (ch) {
       return (ch.answered || 0) > 0;
     });
 
-    if (!hasAnyProgress) {
+    // Signed in but nothing practised yet → nothing to show. When signed OUT we
+    // always render the shape (blurred, behind the sign-in overlay) as a teaser.
+    if (signedIn && !hasAnyProgress) {
       el.style.display = 'none';
+      el.classList.remove('v11-dashboard--locked');
       return;
     }
     el.style.display = '';
@@ -693,7 +694,10 @@
       row.className = 'v11-weak-item';
       const title = document.createElement('span');
       title.className = 'v11-weak-title';
-      title.textContent = ch.title;
+      title.textContent =
+        ch.title && typeof ch.title === 'object'
+          ? ch.title[l] || ch.title.en || 'Chapter ' + ch.id
+          : ch.title;
       const acc = document.createElement('span');
       acc.className = 'v11-weak-acc';
       if (ch.accuracy !== null && ch.accuracy < 0.6) acc.style.color = '#e05b2e';
@@ -716,6 +720,13 @@
     grid.appendChild(weakCard);
 
     el.appendChild(grid);
+
+    // Signed out: blur the shape and overlay a localized sign-in prompt.
+    el.classList.toggle('v11-dashboard--locked', !signedIn);
+    if (!signedIn) {
+      grid.setAttribute('aria-hidden', 'true');
+      el.appendChild(buildLockOverlay());
+    }
   }
 
   /* ----------------------------------------------- hook into app lifecycle */
