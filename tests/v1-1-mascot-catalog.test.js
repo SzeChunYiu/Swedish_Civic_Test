@@ -198,6 +198,39 @@ test('favorite companion ordering starts the picker with Kanelbulle and Skoglimp
   );
 });
 
+test('CompanionPicker renders canonical idle asset previews for every mascot', () => {
+  const { MASCOT_CATALOG } = loadTs('lib/mascot/catalog.ts');
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
+    'utf8',
+  );
+
+  assert.match(
+    source,
+    /import \{ Image, Platform, Pressable, StyleSheet, Text, View \} from 'react-native';/,
+  );
+  assert.match(source, /type \{ ImageSourcePropType, ViewStyle \} from 'react-native';/);
+  assert.match(source, /satisfies Record<MascotId, ImageSourcePropType>;/);
+  assert.match(source, /if \(typeof source === 'object' && source !== null && 'uri' in source\)/);
+  assert.match(source, /Platform\.OS === 'web' && previewUri/);
+  assert.match(source, /backgroundImage: `url\(\$\{uri\}\)`/);
+  assert.match(source, /testID=\{`companion-preview-\$\{mascot\.id\}`\}/);
+  assert.match(source, /source=\{companionPreviewSource\(mascot\.id\)\}/);
+  assert.match(source, /height: space\[6\]/);
+  assert.match(source, /width: space\[6\]/);
+
+  for (const mascot of MASCOT_CATALOG) {
+    assert.ok(
+      source.includes(
+        `${mascot.id.includes('-') ? `'${mascot.id}'` : mascot.id}: require('../../assets/mascot/${
+          mascot.id
+        }/idle.svg')`,
+      ),
+      `${mascot.id} picker preview should use the canonical idle asset`,
+    );
+  }
+});
+
 test('Skoglimpa carries bilingual labels and cultural anchors', () => {
   const { getMascot } = loadTs('lib/mascot/catalog.ts');
   const skoglimpa = getMascot('skoglimpa');
