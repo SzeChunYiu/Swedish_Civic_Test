@@ -56,6 +56,30 @@ require('./scripts/validate-content.js');
   );
 }
 
+function runFocusedStreakFreezeNormalizerValidationWithPatch(relativePath, search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith(${JSON.stringify(`/${relativePath}`)})) {
+    return String(contents).replace(${JSON.stringify(search)}, ${JSON.stringify(replacement)});
+  }
+  return contents;
+};
+process.argv.push('--focus-streak-freeze-normalizer-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 function resolveLocalTs(parentFilename, request) {
   const base = path.resolve(path.dirname(parentFilename), request);
   const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
@@ -262,6 +286,58 @@ test('progress question schema stays in parity with persisted progress records',
     /return \{ \.\.\.normalizeProgress\(JSON\.parse\(serializedProgress\)\), persistenceWarning \};/,
   );
   assert.match(progressStore, /clearPersistenceWarning: \(\) => void;/);
+});
+
+test('streak freeze normalizer focused validator mirrors shared storage policy', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-streak-freeze-normalizer-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+  const progressStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/progressStore.ts'),
+    'utf8',
+  );
+
+  assert.equal(summary.streakFreezeNormalizerCasesValidated, 3);
+  assert.equal(summary.streakFreezeNormalizerSourceChecksValidated, 3);
+  assert.equal(summary.streakFreezeNormalizerParityValidated, true);
+  assert.match(progressStore, /normalizeStreakFreezeState as normalizeStoredStreakFreezeState/);
+  assert.doesNotMatch(progressStore, /function normalizeStreakFreezeState\(value: unknown\)/);
+});
+
+test('streak freeze normalizer focused validator rejects shared policy drift', () => {
+  const result = runFocusedStreakFreezeNormalizerValidationWithPatch(
+    'lib/learning/streakWithFreeze.ts',
+    'const MAX_STOCKPILE = 4;',
+    'const MAX_STOCKPILE = 99;',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /streak-freeze normalizer must cap stockpile\/lifetime counts/,
+  );
+});
+
+test('streak freeze normalizer focused validator rejects progress store alias drift', () => {
+  const result = runFocusedStreakFreezeNormalizerValidationWithPatch(
+    'lib/storage/progressStore.ts',
+    'normalizeStreakFreezeState as normalizeStoredStreakFreezeState',
+    'normalizeStreakFreezeState',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /progressStore must import the shared streak-freeze normalizer by storage alias/,
+  );
 });
 
 test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {

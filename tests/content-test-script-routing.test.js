@@ -190,6 +190,24 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('streak freeze normalizer parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const progressSchemaTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-progress-schema-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-streak-freeze-normalizer-parity/);
+  assert.match(
+    validatorSource,
+    /validateStreakFreezeNormalizerParity\(\);[\s\S]*streakFreezeNormalizerCasesValidated[\s\S]*streakFreezeNormalizerParityValidated/,
+  );
+  assert.match(progressSchemaTestSource, /--focus-streak-freeze-normalizer-parity/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

@@ -8113,7 +8113,9 @@ const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+const createInitialFreezeState = streakWithFreezeModule.createInitialFreezeState;
 const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
+const normalizeStreakFreezeState = streakWithFreezeModule.normalizeStreakFreezeState;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -8328,6 +8330,9 @@ let progressTypeInterfacesValidated = 0;
 let progressTypeSchemaParityValidated = false;
 let progressStoreFieldsValidated = 0;
 let progressStoreSchemaParityValidated = false;
+let streakFreezeNormalizerCasesValidated = 0;
+let streakFreezeNormalizerSourceChecksValidated = 0;
+let streakFreezeNormalizerParityValidated = false;
 let dashboardProgressSnapshotCasesValidated = 0;
 let dashboardProgressSnapshotParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
@@ -8800,6 +8805,17 @@ if (process.argv.includes('--focus-progress-schema-parity')) {
     progressTypeSchemaParityValidated,
     progressStoreFieldsValidated,
     progressStoreSchemaParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-streak-freeze-normalizer-parity')) {
+  validateStreakFreezeNormalizerParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    streakFreezeNormalizerCasesValidated,
+    streakFreezeNormalizerSourceChecksValidated,
+    streakFreezeNormalizerParityValidated,
   });
   process.exit(0);
 }
@@ -13569,6 +13585,111 @@ function validateProgressStoreSchemaParity() {
   }
 }
 
+function validateStreakFreezeNormalizerParity() {
+  let valid = true;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (typeof normalizeStreakFreezeState !== 'function') {
+    reject('normalizeStreakFreezeState export is not a function');
+    return;
+  }
+  if (typeof createInitialFreezeState !== 'function') {
+    reject('createInitialFreezeState export is not a function');
+    return;
+  }
+
+  const initial = createInitialFreezeState();
+  const missing = normalizeStreakFreezeState(undefined);
+  if (
+    missing.available === initial.available &&
+    missing.lastEarnedAt === initial.lastEarnedAt &&
+    missing.lifetimeEarned === initial.lifetimeEarned &&
+    missing.lifetimeSpent === initial.lifetimeSpent &&
+    Array.isArray(missing.rescuedDayKeys) &&
+    missing.rescuedDayKeys.length === 0
+  ) {
+    streakFreezeNormalizerCasesValidated += 1;
+  } else {
+    reject('missing streak-freeze state must normalize to the initial free-freeze fallback');
+  }
+
+  const normalized = normalizeStreakFreezeState({
+    available: 99,
+    lastEarnedAt: '2099-01-01',
+    lifetimeEarned: 99999,
+    lifetimeSpent: 10001,
+    rescuedDayKeys: ['2026-05-18', '2099-01-01', 'bad-key', '2026-05-18'],
+  });
+  if (
+    normalized.available === 4 &&
+    normalized.lastEarnedAt !== '2099-01-01' &&
+    normalized.lifetimeEarned === 10000 &&
+    normalized.lifetimeSpent === 10000 &&
+    arrayEquals(normalized.rescuedDayKeys, ['2026-05-18'])
+  ) {
+    streakFreezeNormalizerCasesValidated += 1;
+  } else {
+    reject(
+      'streak-freeze normalizer must cap stockpile/lifetime counts, reject far-future day keys, and dedupe rescued days',
+    );
+  }
+
+  const validState = normalizeStreakFreezeState({
+    available: 2,
+    lastEarnedAt: '2026-05-18',
+    lifetimeEarned: 7,
+    lifetimeSpent: 3,
+    rescuedDayKeys: ['2026-05-17', '2026-05-18'],
+  });
+  if (
+    validState.available === 2 &&
+    validState.lastEarnedAt === '2026-05-18' &&
+    validState.lifetimeEarned === 7 &&
+    validState.lifetimeSpent === 3 &&
+    arrayEquals(validState.rescuedDayKeys, ['2026-05-17', '2026-05-18'])
+  ) {
+    streakFreezeNormalizerCasesValidated += 1;
+  } else {
+    reject('valid streak-freeze state must survive normalization unchanged');
+  }
+
+  const progressStoreSource = loadText('lib/storage/progressStore.ts');
+  const normalizedProgressStore = progressStoreSource.replace(/\s+/g, ' ');
+  const sourceChecks = [
+    [
+      'normalizeStreakFreezeState as normalizeStoredStreakFreezeState',
+      'progressStore must import the shared streak-freeze normalizer by storage alias',
+    ],
+    [
+      'streakFreezeState: normalizeStoredStreakFreezeState(candidate.streakFreezeState),',
+      'normalizeProgress must hydrate streakFreezeState through the shared normalizer alias',
+    ],
+  ];
+
+  sourceChecks.forEach(([snippet, message]) => {
+    if (normalizedProgressStore.includes(snippet)) {
+      streakFreezeNormalizerSourceChecksValidated += 1;
+    } else {
+      reject(message);
+    }
+  });
+
+  if (/function normalizeStreakFreezeState\(value: unknown\)/.test(progressStoreSource)) {
+    reject('progressStore must not reintroduce a local normalizeStreakFreezeState implementation');
+  } else {
+    streakFreezeNormalizerSourceChecksValidated += 1;
+  }
+
+  streakFreezeNormalizerParityValidated =
+    valid &&
+    streakFreezeNormalizerCasesValidated === 3 &&
+    streakFreezeNormalizerSourceChecksValidated === 3;
+}
+
 function practiceAnswersFromDashboardSnapshot(snapshot) {
   const practiceSession = Array.isArray(snapshot?.sessions)
     ? snapshot.sessions.find((session) => session.mode === 'study')
@@ -18323,6 +18444,7 @@ validateSettingsAudioParity();
 validateProgressQuestionSchemaParity();
 validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
+validateStreakFreezeNormalizerParity();
 validateDashboardProgressSnapshotParity();
 validateBadgeCatalog();
 validatePracticeScoringRules();
@@ -18567,6 +18689,9 @@ console.log(
       progressTypeSchemaParityValidated,
       progressStoreFieldsValidated,
       progressStoreSchemaParityValidated,
+      streakFreezeNormalizerCasesValidated,
+      streakFreezeNormalizerSourceChecksValidated,
+      streakFreezeNormalizerParityValidated,
       dashboardProgressSnapshotCasesValidated,
       dashboardProgressSnapshotParityValidated,
       badgesValidated,
