@@ -120,10 +120,11 @@ test('question report CTA is wired from question surfaces to support context', (
     'utf8',
   );
   const chapterSource = fs.readFileSync(path.join(repoRoot, 'app/chapter/[chapterId].tsx'), 'utf8');
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 23);
+  assert.equal(summary.questionReportLinkRulesValidated, 26);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
@@ -137,6 +138,15 @@ test('question report CTA is wired from question surfaces to support context', (
     /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
   );
   assert.doesNotMatch(chapterSource, /screen="chapter"[\s\S]*selectedOptionId=/);
+  assert.match(examSource, /import \{ QuestionReportLink \}/);
+  assert.match(
+    examSource,
+    /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
+  );
+  assert.match(
+    examSource,
+    /const reviewQuestion = examQuestionById\.get\(item\.questionId\);[\s\S]*<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
+  );
   assert.match(supportSource, /Lägg inte till namn, personnummer, ärendenummer/);
   assert.match(supportSource, /Do not add names, personal identity numbers, case numbers/);
   assert.doesNotMatch(supportSource, /mailto:|Linking\.openURL|fetch\(/);
@@ -210,6 +220,22 @@ test('buildQuestionReportSupportHref selects localized answer text before encodi
   );
 
   assert.equal(url.searchParams.get('selectedAnswer'), 'Rösta & välja');
+});
+
+test('buildQuestionReportSupportHref accepts exam screen reports with selected answer context', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const url = supportUrl(
+    buildQuestionReportSupportHref({
+      language: 'en',
+      question: createReportQuestion(),
+      screen: 'exam',
+      selectedOptionId: 'a',
+    }),
+  );
+
+  assert.equal(url.searchParams.get('reportScreen'), 'exam');
+  assert.equal(url.searchParams.get('screen'), 'exam');
+  assert.equal(url.searchParams.get('selectedAnswer'), 'Vote & choose');
 });
 
 test('question report parity rejects dropping the practice feedback CTA', () => {

@@ -7,6 +7,7 @@ import { ResultSummary } from '../../components/ResultSummary';
 import { ExplanationPanel } from '../../components/quiz/ExplanationPanel';
 import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
+import { QuestionReportLink } from '../../components/quiz/QuestionReportLink';
 import { QuestionSourceCitation } from '../../components/quiz/QuestionSourceCitation';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
@@ -637,57 +638,69 @@ export default function Screen() {
             onSelectQuestion={jumpToReviewQuestion}
           />
         ) : null}
-        {reviewItems.map((item, index) => (
-          <View
-            accessibilityState={{ selected: focusedReviewQuestionId === item.questionId }}
-            key={item.questionId}
-            ref={(node) => {
-              reviewCardRefs.current[item.questionId] = node;
-            }}
-            style={[
-              styles.reviewCard,
-              focusedReviewQuestionId === item.questionId ? styles.reviewCardFocused : null,
-            ]}
-          >
-            <View style={styles.reviewHeader}>
-              <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
-              <Badge tone={item.isCorrect ? 'green' : 'orange'}>
-                {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
-              </Badge>
-              {flaggedQuestionIds[item.questionId] ? (
-                <Badge tone="warm">{copy.flaggedQuestionLabel}</Badge>
+        {reviewItems.map((item, index) => {
+          const reviewQuestion = examQuestionById.get(item.questionId);
+
+          return (
+            <View
+              accessibilityState={{ selected: focusedReviewQuestionId === item.questionId }}
+              key={item.questionId}
+              ref={(node) => {
+                reviewCardRefs.current[item.questionId] = node;
+              }}
+              style={[
+                styles.reviewCard,
+                focusedReviewQuestionId === item.questionId ? styles.reviewCardFocused : null,
+              ]}
+            >
+              <View style={styles.reviewHeader}>
+                <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
+                <Badge tone={item.isCorrect ? 'green' : 'orange'}>
+                  {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
+                </Badge>
+                {flaggedQuestionIds[item.questionId] ? (
+                  <Badge tone="warm">{copy.flaggedQuestionLabel}</Badge>
+                ) : null}
+              </View>
+              <ProvenanceBadge language={language} question={reviewQuestion} />
+              <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
+              <QuestionSourceCitation
+                bodyStyle={styles.questionSourceCitation}
+                citationText={getQuestionSourceCitation(item, language)}
+                language={language}
+                question={item}
+              />
+              <View style={styles.answerGrid}>
+                <View style={styles.answerCard}>
+                  <Text style={styles.answerLabel}>{copy.selectedAnswerLabel}</Text>
+                  <Text style={styles.answerText}>
+                    {language === 'en' ? item.selectedOptionTextEn : item.selectedOptionTextSv}
+                  </Text>
+                </View>
+                <View style={styles.answerCard}>
+                  <Text style={styles.answerLabel}>{copy.correctAnswerLabel}</Text>
+                  <Text style={styles.answerText}>
+                    {language === 'en' ? item.correctOptionTextEn : item.correctOptionTextSv}
+                  </Text>
+                </View>
+              </View>
+              <ExplanationPanel
+                explanationEn={item.explanationEn}
+                explanationSv={item.explanationSv}
+                language={language}
+              />
+              <UHRReferenceCard language={language} reference={item.uhrReference} />
+              {reviewQuestion ? (
+                <QuestionReportLink
+                  language={language}
+                  question={reviewQuestion}
+                  screen="exam"
+                  selectedOptionId={answers[item.questionId]}
+                />
               ) : null}
             </View>
-            <ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />
-            <Text style={styles.questionText}>{getQuestionDisplayText(item, language)}</Text>
-            <QuestionSourceCitation
-              bodyStyle={styles.questionSourceCitation}
-              citationText={getQuestionSourceCitation(item, language)}
-              language={language}
-              question={item}
-            />
-            <View style={styles.answerGrid}>
-              <View style={styles.answerCard}>
-                <Text style={styles.answerLabel}>{copy.selectedAnswerLabel}</Text>
-                <Text style={styles.answerText}>
-                  {language === 'en' ? item.selectedOptionTextEn : item.selectedOptionTextSv}
-                </Text>
-              </View>
-              <View style={styles.answerCard}>
-                <Text style={styles.answerLabel}>{copy.correctAnswerLabel}</Text>
-                <Text style={styles.answerText}>
-                  {language === 'en' ? item.correctOptionTextEn : item.correctOptionTextSv}
-                </Text>
-              </View>
-            </View>
-            <ExplanationPanel
-              explanationEn={item.explanationEn}
-              explanationSv={item.explanationSv}
-              language={language}
-            />
-            <UHRReferenceCard language={language} reference={item.uhrReference} />
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     );
   }
@@ -755,6 +768,7 @@ export default function Screen() {
             language={language}
             question={question}
           />
+          <QuestionReportLink language={language} question={question} screen="exam" />
           <View
             aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
             accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
