@@ -1109,6 +1109,7 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\babout public power in Sweden\b/i,
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
+  /\bThe goal of .+? policy means that\b/i,
   /\binnebär att den ger\b/i,
   /\bfrom (?:13|15) years\b/i,
   /^En anledning är\b/i,
@@ -6633,9 +6634,32 @@ function meaningStatementSv(subject, answer) {
   return `${upperFirst(subject)} innebär att ${embeddedSwedishClause(answer)}`;
 }
 function meaningStatementEn(subject, answer) {
+  const genderEqualityPolicyGoalStatement = genderEqualityPolicyGoalStatementEn(subject, answer);
+  if (genderEqualityPolicyGoalStatement) return genderEqualityPolicyGoalStatement;
   const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
   if (subjectStatement !== answer) return subjectStatement;
   return `${upperFirst(subject)} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+}
+function genderEqualityPolicyGoalStatementEn(subject, answer) {
+  if (!/^the goal of Sweden’s gender equality policy$/i.test(subject.trim())) return null;
+  const normalizedAnswer = stripLeadingThatEn(answer).trim();
+  if (
+    /^women and men should have the same rights and duties and equal power to influence society and their own lives$/i.test(
+      normalizedAnswer,
+    )
+  ) {
+    return 'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives';
+  }
+  if (/^gender equality is only about how many women are in politics$/i.test(normalizedAnswer)) {
+    return 'Sweden’s gender equality policy is only about how many women are in politics';
+  }
+  if (/^women and men should have different rights in working life$/i.test(normalizedAnswer)) {
+    return 'Sweden’s gender equality policy says women and men should have different rights in working life';
+  }
+  if (/^parental leave should only be taken by women$/i.test(normalizedAnswer)) {
+    return 'Sweden’s gender equality policy says parental leave should only be taken by women';
+  }
+  return null;
 }
 function appliesStatementEn(subject, answer) {
   if (/^They are\s+/i.test(answer)) {

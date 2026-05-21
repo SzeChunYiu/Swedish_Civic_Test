@@ -29713,7 +29713,7 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'The goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.',
+        en: 'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
         sv: 'Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
       },
       opts: [
@@ -29747,7 +29747,7 @@
       chapter: 'Ch. 07 · Human rights',
       type: 'true_false',
       q: {
-        en: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.',
+        en: 'Sweden’s gender equality policy is only about how many women are in politics.',
         sv: 'Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken.',
       },
       opts: [
