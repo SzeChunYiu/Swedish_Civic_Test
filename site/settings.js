@@ -82,11 +82,11 @@
       localStorage.setItem(key, v);
     } catch {}
   }
-  function lsRaw(key) {
+  function lsHas(key) {
     try {
-      return localStorage.getItem(key);
+      return localStorage.getItem(key) != null;
     } catch {
-      return null;
+      return false;
     }
   }
 
@@ -110,27 +110,21 @@
     document.documentElement.style.fontSize = 16 * (parseInt(s, 10) / 100) + 'px';
     lsSet('smt_textsize', s);
   }
-  function emitMotionChange(on) {
+  function emitMotionChange(reduced) {
     if (typeof window.dispatchEvent !== 'function') return;
     const event =
       typeof CustomEvent === 'function'
-        ? new CustomEvent('smt:motionchange', { detail: { reduced: on } })
-        : { type: 'smt:motionchange', detail: { reduced: on } };
+        ? new CustomEvent('smt:motionchange', { detail: { reduced } })
+        : typeof Event === 'function'
+          ? new Event('smt:motionchange')
+          : { type: 'smt:motionchange', detail: { reduced } };
     window.dispatchEvent(event);
   }
   function applyMotion(on, options = {}) {
-    document.documentElement.setAttribute('data-motion', on ? 'reduce' : '');
-    if (options.persist !== false) lsSet('smt_motion', on ? 'reduce' : '');
-    if (options.emit !== false) emitMotionChange(on);
-  }
-  function applyInitialMotion() {
-    const saved = lsRaw('smt_motion');
-    if (saved === 'reduce' || saved === '') {
-      applyMotion(saved === 'reduce', { persist: false, emit: false });
-      return;
-    }
-    const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    applyMotion(prefersReduced, { persist: false, emit: false });
+    const reduced = !!on;
+    document.documentElement.setAttribute('data-motion', reduced ? 'reduce' : '');
+    if (!options.skipPersist) lsSet('smt_motion', reduced ? 'reduce' : '');
+    if (!options.silent) emitMotionChange(reduced);
   }
   function applyAurora(on) {
     document.documentElement.setAttribute('data-aurora', on ? 'on' : 'off');
@@ -154,7 +148,12 @@
   let settingsModalInvoker = null;
 
   function focusElement(el) {
-    if (el && typeof el.focus === 'function') el.focus();
+    if (!el || typeof el.focus !== 'function') return;
+    try {
+      el.focus({ preventScroll: true });
+    } catch {
+      el.focus();
+    }
   }
 
   function getSettingsFocusableControls(modal) {
@@ -167,11 +166,12 @@
 
   function trapSettingsModalTab(e, modal) {
     const controls = getSettingsFocusableControls(modal);
-    if (controls.length === 0) {
+    if (!controls.length) {
       e.preventDefault();
       focusElement(modal);
       return;
     }
+
     const first = controls[0];
     const last = controls[controls.length - 1];
     const active = document.activeElement;
@@ -195,14 +195,10 @@
     if (invoker && document.contains(invoker)) focusElement(invoker);
   }
 
-  function focusConsentPrompt() {
-    focusElement(document.getElementById('consent-min'));
-  }
-
   function open(invoker) {
     const m = document.getElementById('settings-modal');
     if (!m) return;
-    settingsModalInvoker = invoker || document.activeElement;
+    settingsModalInvoker = invoker || document.activeElement || null;
     m.hidden = false;
     document.body.style.overflow = 'hidden';
     syncControls();
@@ -214,7 +210,14 @@
     if (!m) return;
     m.hidden = true;
     document.body.style.overflow = '';
-    if (options.restoreFocus !== false) restoreSettingsInvoker();
+    if (options.restoreFocus === false) settingsModalInvoker = null;
+    else restoreSettingsInvoker();
+  }
+  function focusConsentPrompt() {
+    const c = document.getElementById('consent');
+    if (!c) return;
+    const first = c.querySelector("button, [href], input, [tabindex]:not([tabindex='-1'])");
+    focusElement(first || c);
   }
 
   // -------- SYNC CONTROL STATE --------
@@ -348,10 +351,15 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    const m = document.getElementById('settings-modal');
-    if (!m || m.hidden) return;
-    if (e.key === 'Escape') close();
-    if (e.key === 'Tab') trapSettingsModalTab(e, m);
+    if (e.key === 'Tab') {
+      const m = document.getElementById('settings-modal');
+      if (m && !m.hidden) trapSettingsModalTab(e, m);
+      return;
+    }
+    if (e.key === 'Escape') {
+      const m = document.getElementById('settings-modal');
+      if (m && !m.hidden) close();
+    }
   });
 
   // -------- BOOT (restore saved settings) --------
@@ -360,7 +368,12 @@
     applyTheme(ls('smt_theme', 'auto'));
     applyPalette(ls('smt_palette', 'flag'));
     applyTextSize(ls('smt_textsize', '100'));
-    applyInitialMotion();
+    if (lsHas('smt_motion')) {
+      applyMotion(ls('smt_motion', '') === 'reduce', { silent: true });
+    } else {
+      const systemReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      applyMotion(systemReducedMotion, { skipPersist: true, silent: true });
+    }
     applyAurora(ls('smt_aurora', 'on') !== 'off');
     applyFlagcross(ls('smt_flagcross', '1') === '1');
 
