@@ -165,6 +165,8 @@ export interface StreakWithFreezeResult {
   streakDays: number;
   /** Freeze state AFTER applying any auto-saves. */
   freezeState: StreakFreezeState;
+  /** Rescued day keys that still belong to the current streak. */
+  rescuedInCurrentStreak: string[];
   /** Day keys rescued during THIS computation. Empty when no save happened. */
   rescuedThisRun: string[];
 }
@@ -190,11 +192,13 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
   let streak = 0;
   let availableFreezes = refilled.available;
   let lifetimeSpent = refilled.lifetimeSpent;
+  const currentStreakDayKeys: string[] = [];
   const rescuedThisRun: string[] = [];
 
   while (true) {
     if (activeSet.has(cursor)) {
       streak += 1;
+      currentStreakDayKeys.push(cursor);
       cursor = previousDayKey(cursor);
       continue;
     }
@@ -207,10 +211,15 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     lifetimeSpent += 1;
     rescuedThisRun.push(cursor);
     streak += 1;
+    currentStreakDayKeys.push(cursor);
     cursor = previous;
   }
 
   const newRescuedKeys = [...previousRescuedDayKeys, ...rescuedThisRun];
+  const currentStreakDayKeySet = new Set(currentStreakDayKeys);
+  const rescuedInCurrentStreak = Array.from(new Set(newRescuedKeys)).filter((key) =>
+    currentStreakDayKeySet.has(key),
+  );
 
   return {
     streakDays: streak,
@@ -220,18 +229,37 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
       lifetimeSpent,
       rescuedDayKeys: newRescuedKeys,
     },
+    rescuedInCurrentStreak,
     rescuedThisRun,
   };
 }
 
 // Surface helpers for the UI.
 
+function normalizedFreezeCount(value: unknown): number {
+  return typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value) &&
+    value >= 0
+    ? value
+    : 0;
+}
+
+function hasVisibleRescue(result: StreakWithFreezeResult): boolean {
+  const rescuedThisRun = Array.isArray(result.rescuedThisRun) ? result.rescuedThisRun : [];
+  const rescuedInCurrentStreak = Array.isArray(result.rescuedInCurrentStreak)
+    ? result.rescuedInCurrentStreak
+    : [];
+  return rescuedThisRun.length > 0 || rescuedInCurrentStreak.length > 0;
+}
+
 export function freezeBannerCopy(
   result: StreakWithFreezeResult,
   language: 'sv' | 'en',
 ): string | null {
-  if (result.rescuedThisRun.length === 0) return null;
+  if (!hasVisibleRescue(result)) return null;
+  const freezeCount = normalizedFreezeCount(result.freezeState.available);
   return language === 'sv'
-    ? `Strecket räddat — du har ${result.freezeState.available} fryser kvar.`
-    : `Streak protected — ${result.freezeState.available} freezes left.`;
+    ? `Sviten är räddad — du har ${freezeCount} svitskydd kvar.`
+    : `Streak protected — ${freezeCount} ${freezeCount === 1 ? 'freeze' : 'freezes'} left.`;
 }
