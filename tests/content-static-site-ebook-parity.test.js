@@ -81,6 +81,11 @@ const staticEbookSourceAuthorityPhrasingPatterns = [
   /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
 ];
 const staticEbookSomaliHolidayFoodTokenPatterns = [/\bherring\b/i];
+const staticEbookChapter13FoodBeverageSourceTokenPatterns = [
+  /\bherring\b/i,
+  /\bstrawberries\b/i,
+  /\bschnapps\b/i,
+];
 const staleChildApplicationClaimPatterns = [
   /children are usually included with a parent's application/i,
   /children can be included on a parent's citizenship application/i,
@@ -288,6 +293,43 @@ function assertNoStaticEbookSourceAuthorityPhrasing(value) {
   for (const pattern of staticEbookSourceAuthorityPhrasingPatterns) {
     assert.doesNotMatch(value, pattern);
   }
+}
+
+function findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(source) {
+  const offenders = [];
+  let chapterId = null;
+  let lang = null;
+
+  source.split('\n').forEach((line, index) => {
+    const chapterMatch = line.match(/^    (\d+): \{$/);
+    if (chapterMatch) {
+      chapterId = chapterMatch[1];
+      lang = null;
+      return;
+    }
+
+    const langMatch = line.match(
+      /^        (?:(?:'([^']+)')|([a-z][a-z0-9-]*)):\s*(?:`|'|"|svStudyBrief\()/,
+    );
+    if (langMatch) {
+      lang = langMatch[1] || langMatch[2];
+    }
+
+    if (chapterId !== '13' || lang === 'en' || lang === 'sv') return;
+
+    for (const pattern of staticEbookChapter13FoodBeverageSourceTokenPatterns) {
+      if (pattern.test(line)) {
+        offenders.push({
+          line: index + 1,
+          lang: lang || 'unknown',
+          token: String(pattern),
+          text: line.trim(),
+        });
+      }
+    }
+  });
+
+  return offenders;
 }
 
 function assertNoStaleChildApplicationClaim(value) {
@@ -695,6 +737,14 @@ test('static ebook chapter 13 extra languages avoid parenthetical English holida
     assert.match(html, /class="ebook__h1"/, `${lang} chapter 13 should render`);
     assertNoChapter13EnglishHolidayGloss(html, `${lang} chapter 13`);
   }
+});
+
+test('static ebook chapter 13 source keeps English food and beverage tokens out of extra locales', () => {
+  const offenders = findStaticEbookChapter13ExtraLocaleFoodBeverageSourceOffenders(
+    readSiteFile('site/ebook.js'),
+  );
+
+  assert.deepEqual(offenders, []);
 });
 
 test('static ebook chapters render source footnotes for every prose paragraph and list item', () => {
