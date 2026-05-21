@@ -31,6 +31,10 @@ function read(filePath) {
   return fs.readFileSync(path.join(repoRoot, filePath), 'utf8');
 }
 
+function assertNoInternalMonetizationCopy(surface) {
+  internalMonetizationCopyPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+}
+
 function staticSiteSwedishDictionary() {
   const source = read('site/app.js');
   const match = source.match(/\n  sv: \{([\s\S]*?)\n  \}\n\};/);
@@ -80,14 +84,17 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static site privacy copy hides internal monetization implementation keys', () => {
+test('static site privacy and consent copy hides internal monetization implementation keys', () => {
   const surface = [read('site/app.js'), read('site/index.html')].join('\n');
 
-  internalMonetizationCopyPatterns.forEach((pattern) => assert.doesNotMatch(surface, pattern));
+  assertNoInternalMonetizationCopy(surface);
 
   const mutated = `${surface}\nRemove Ads sets adsDisabled=true through the entitlement flag.`;
   assert.match(mutated, internalMonetizationCopyPatterns[0]);
   assert.match(mutated, internalMonetizationCopyPatterns[5]);
+
+  const mutatedConsent = `${surface}\nCookie consent stores remove_ads_entitlement state.`;
+  assert.match(mutatedConsent, internalMonetizationCopyPatterns[2]);
 });
 
 test('static site public copy does not label the release as MVP', () => {
