@@ -593,6 +593,11 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
+const QUESTION_TARGETLESS_WHY_REASON_PATTERNS = [/^En anledning är\b/i, /^One reason is\b/i];
+const QUESTION_CAPITALIZED_REASON_CLAUSE_PATTERNS = [
+  /^En anledning är att Det\b/i,
+  /^One reason is that It\b/i,
+];
 const QUESTION_REFERENDUM_ADVISORY_SWEDISH_NATURALNESS_PATTERNS = [
   /\bmåste\s+inte\s+följa\s+resultatet\b/i,
 ];
@@ -5499,6 +5504,45 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function findQuestionTargetlessWhyReasonIssue(question) {
+  if (question.type !== 'true_false') return null;
+
+  return QUESTION_TARGETLESS_WHY_REASON_PATTERNS.find(
+    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  );
+}
+
+function validateGeneratedWhyReasonTargetStems() {
+  if (!Array.isArray(questions)) {
+    fail('questions export is not an array');
+    return;
+  }
+
+  const generatedTrueFalseQuestions = questions.filter(
+    (question) =>
+      question.type === 'true_false' &&
+      Array.isArray(question.tags) &&
+      question.tags.includes('published-variant'),
+  );
+
+  if (generatedTrueFalseQuestions.length === 0) {
+    fail('expected generated true/false questions to validate why-reason stems');
+    return;
+  }
+
+  for (const question of generatedTrueFalseQuestions) {
+    const issue = findQuestionTargetlessWhyReasonIssue(question);
+    if (issue) {
+      fail(`${question.id} contains a targetless generated why-reason stem`);
+    } else {
+      generatedWhyReasonTargetStemsValidated += 1;
+    }
+  }
+
+  generatedWhyReasonTargetStemParityValidated =
+    generatedWhyReasonTargetStemsValidated === generatedTrueFalseQuestions.length;
+}
+
 function findQuestionReferendumAdvisorySwedishNaturalnessIssue(question) {
   const text = [
     question.questionSv,
@@ -8632,6 +8676,8 @@ let questionAuthorityBoundaryTextValidated = 0;
 let questionNestedMetaStemsValidated = 0;
 let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
+let generatedWhyReasonTargetStemsValidated = 0;
+let generatedWhyReasonTargetStemParityValidated = false;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
@@ -8959,6 +9005,16 @@ if (focusedValidationRequested('nativeQuizCopy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('generatedWhyReasonStems')) {
+  validateGeneratedWhyReasonTargetStems();
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedWhyReasonTargetStemsValidated,
+    generatedWhyReasonTargetStemParityValidated,
   });
   process.exit(0);
 }
