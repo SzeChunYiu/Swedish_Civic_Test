@@ -34,6 +34,7 @@ type ImportPayloadCase = {
   name: 'singular' | 'plural';
   buildPayload: (importedLanguage: AppLanguage) => string;
   expected: ImportExpectation;
+  absentSummaryTexts: Record<AppLanguage, string[]>;
   summaryTexts: Record<AppLanguage, string[]>;
 };
 
@@ -107,6 +108,10 @@ const importPayloadCases: ImportPayloadCase[] = [
         'Study streak and freeze status included',
       ],
     },
+    absentSummaryTexts: {
+      sv: ['0 markeringar i e-boken', '0 markerade kravområden'],
+      en: ['0 ebook highlights', '0 marked requirements'],
+    },
   },
   {
     name: 'plural',
@@ -144,6 +149,10 @@ const importPayloadCases: ImportPayloadCase[] = [
         '3 marked requirements',
         'Study streak and freeze status included',
       ],
+    },
+    absentSummaryTexts: {
+      sv: ['0 markeringar i e-boken'],
+      en: ['0 ebook highlights'],
     },
   },
 ];
@@ -472,6 +481,9 @@ for (const scenario of scenarios) {
       for (const summaryText of payloadCase.summaryTexts[scenario.language]) {
         await expect(page.getByText(summaryText)).toBeVisible();
       }
+      for (const absentSummaryText of payloadCase.absentSummaryTexts[scenario.language]) {
+        await expect(page.getByText(absentSummaryText)).toHaveCount(0);
+      }
       await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
       await expectNoImportApplied(page, scenario.language);
 
@@ -517,6 +529,9 @@ for (const scenario of scenarios) {
 
     for (const summaryText of summaryTexts) {
       await expect(page.getByText(summaryText)).toBeVisible();
+    }
+    for (const absentSummaryText of payloadCase!.absentSummaryTexts[scenario.language]) {
+      await expect(page.getByText(absentSummaryText)).toHaveCount(0);
     }
     await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
     await expectNoImportApplied(page, scenario.language);
