@@ -106,6 +106,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
   },
   {
+    id: 'mistakesRouteCopy',
+    flags: ['--focus-mistakes-route-copy'],
+    summaryKeys: ['mistakesRouteCopyLabelsValidated', 'mistakesRouteCopyParityValidated'],
+  },
+  {
     id: 'staticHeadMetadata',
     flags: ['--focus-static-head-metadata'],
     summaryKeys: [

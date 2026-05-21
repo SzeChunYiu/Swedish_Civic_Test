@@ -1132,17 +1132,17 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
   sv: [
     'Smart repetition',
     'Sparat',
-    'Sparad för fokuserad repetition',
+    'Sparad till senare övning',
     'Bokmärkta frågor',
     'Rätt svar',
     'Öva svåra frågor',
     'Starta övning',
-    'Svara fel på en övningsfråga så visas den här.',
-    'Inga misstag ännu',
-    'Fellogg',
-    'Fel svar att repetera',
-    'Ditt senaste felaktiga svar',
-    'Gå igenom fel svar med fråga, förklaring, källreferens och repetitionsantal på samma plats.',
+    'När du missar en övningsfråga visas den här.',
+    'Inga missade frågor ännu',
+    'Missade frågor',
+    'Frågor att öva på',
+    'Ditt senaste svar',
+    'Här samlas frågor du vill öva på igen, med förklaring, källhänvisning och ditt senaste svar.',
     'Misstag',
     'Fel svar: ${count}',
   ],
@@ -17071,6 +17071,22 @@ if (process.argv.includes('--focus-legal-section-rendering')) {
         legalSectionFragmentChildrenValidated,
         legalSectionRawTextUnderViewValidated,
         legalSectionRenderingParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
+if (process.argv.includes('--focus-mistakes-route-copy')) {
+  validateMistakesRouteCopyParity();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        mistakesRouteCopyLabelsValidated,
+        mistakesRouteCopyParityValidated,
       },
       null,
       2,

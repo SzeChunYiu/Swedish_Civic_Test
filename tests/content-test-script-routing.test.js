@@ -144,6 +144,29 @@ test('question report link parity uses focused content validation routing', () =
   );
 });
 
+test('Mistakes route copy parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const mistakesRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-mistakes-route-copy-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-mistakes-route-copy/);
+  assert.match(
+    validatorSource,
+    /validateMistakesRouteCopyParity\(\);[\s\S]*mistakesRouteCopyLabelsValidated[\s\S]*mistakesRouteCopyParityValidated/,
+  );
+  assert.match(mistakesRouteTestSource, /--focus-mistakes-route-copy/);
+  assert.doesNotMatch(
+    mistakesRouteTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Mistakes route copy tests must not route through full content validation',
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');

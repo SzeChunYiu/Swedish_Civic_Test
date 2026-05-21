@@ -19,10 +19,14 @@ require.extensions['.ts'] = function tsLoader(module, filename) {
 };
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mistakes-route-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -93,6 +97,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -123,6 +128,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -153,6 +159,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -183,6 +190,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -213,6 +221,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -246,6 +255,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-mistakes-route-copy');
 require('./scripts/validate-content.js');
 `,
     ],
