@@ -2,10 +2,12 @@
 // Run with: node --test tests/v1-1-pro-iap.test.js
 
 const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -411,4 +413,43 @@ test('mergeWithRemoveAds: Remove-Ads alone does NOT promote to Pro', () => {
   assert.equal(merged.adsDisabled, true);
   assert.equal(merged.spacedRepetition, false);
   assert.equal(merged.unlimitedMockExams, false);
+});
+
+test('ProPaywall: buy and restore actions use the shared in-flight guard contract', () => {
+  const source = read('components/monetization/ProPaywall.tsx');
+
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(source, {
+      awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
+      surfaceName: 'ProPaywall',
+    }),
+  );
+});
+
+test('ProPaywall: guard contract rejects late purchase lock activation', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const { assertPurchaseActionInFlightGuard } = require('./scripts/purchase-inflight-guard');
+const source = fs
+  .readFileSync('components/monetization/ProPaywall.tsx', 'utf8')
+  .replace('purchaseActionInFlightRef.current = true;\\n      setActiveAction(action);', 'setActiveAction(action);');
+assert.throws(
+  () =>
+    assertPurchaseActionInFlightGuard(source, {
+      awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
+      surfaceName: 'ProPaywall',
+    }),
+  /ProPaywall must return early from the ref-backed in-flight guard before activating it|ProPaywall must set purchaseActionInFlightRef\\.current before awaiting store calls/,
+);
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
 });

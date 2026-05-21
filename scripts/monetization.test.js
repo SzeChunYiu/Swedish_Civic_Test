@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { assertPurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -1743,6 +1744,12 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(paywallSource, /REMOVE_ADS_PRICE_LABEL/);
   assert.match(paywallSource, /buyRemoveAds/);
   assert.match(paywallSource, /restoreRemoveAdsPurchase/);
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(paywallSource, {
+      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
+      surfaceName: 'PremiumBanner',
+    }),
+  );
   assert.match(paywallSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(paywallSource, /setCurrentEntitlements/);
   assert.match(paywallSource, /setCurrentEntitlements\(entitlements\)/);
@@ -1777,6 +1784,40 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /useRemoveAdsEntitlements/);
   assert.match(profileSource, /onEntitlementsChange=\{setMonetizationEntitlements\}/);
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
+});
+
+test('purchase paywalls use a synchronous in-flight guard before store calls', () => {
+  const placementCtaSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
+    'utf8',
+  );
+  const premiumBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
+    'utf8',
+  );
+  const proPaywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(placementCtaSource, {
+      awaitedCalls: ['await purchaseAction('],
+      surfaceName: 'RemoveAdsPlacementCta',
+    }),
+  );
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(premiumBannerSource, {
+      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
+      surfaceName: 'PremiumBanner',
+    }),
+  );
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(proPaywallSource, {
+      awaitedCalls: ['await buyProLifetime(', 'await restoreProLifetime('],
+      surfaceName: 'ProPaywall',
+    }),
+  );
 });
 
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {

@@ -3,6 +3,7 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { assertPurchaseActionInFlightGuard } = require('../scripts/purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -30,12 +31,12 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
     path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
     'utf8',
   );
-  const premiumBannerSource = fs.readFileSync(
+  const paywallSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
     'utf8',
   );
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 22);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 21);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -71,12 +72,18 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(placementCtaSource, /if \(purchaseActionInFlightRef\.current\) return;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = true;/);
   assert.match(placementCtaSource, /purchaseActionInFlightRef\.current = false;/);
-  assert.match(premiumBannerSource, /const purchaseActionInFlightRef = useRef\(false\);/);
-  assert.match(premiumBannerSource, /if \(purchaseActionInFlightRef\.current\) return;/);
-  assert.match(premiumBannerSource, /purchaseActionInFlightRef\.current = true;/);
-  assert.match(premiumBannerSource, /purchaseActionInFlightRef\.current = false;/);
-  assert.match(premiumBannerSource, /busy: activeAction === 'buy'/);
-  assert.match(premiumBannerSource, /busy: activeAction === 'restore'/);
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(placementCtaSource, {
+      awaitedCalls: ['await purchaseAction('],
+      surfaceName: 'RemoveAdsPlacementCta',
+    }),
+  );
+  assert.doesNotThrow(() =>
+    assertPurchaseActionInFlightGuard(paywallSource, {
+      awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
+      surfaceName: 'PremiumBanner',
+    }),
+  );
 });
 
 test('Remove Ads purchase runtime parity rejects buy product-id drift', () => {
@@ -99,7 +106,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -130,7 +137,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -168,7 +175,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -199,7 +206,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -234,7 +241,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-remove-ads-purchase-runtime-parity');
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -244,6 +251,44 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /(?:RemoveAdsPlacementCta|PremiumBanner) buy\/restore handlers must use a ref-backed in-flight guard before awaiting store calls/,
+    /RemoveAdsPlacementCta must return early from the ref-backed in-flight guard before activating it|PremiumBanner must return early from the ref-backed in-flight guard before activating it|ref-backed in-flight guard before awaiting store calls/,
+  );
+});
+
+test('Remove Ads purchase runtime parity rejects late in-flight guard activation', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PremiumBanner.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'purchaseActionInFlightRef.current = true;\\n    setActiveAction(action);',
+        'setActiveAction(action);'
+      )
+      .replace(
+        'const result =\\n        action === \\'buy\\'\\n          ? await buyRemoveAds(purchaseRuntime)',
+        'const result =\\n        action === \\'buy\\'\\n          ? await buyRemoveAds(purchaseRuntime)\\n          : await restoreRemoveAdsPurchase(purchaseRuntime);\\n\\n      purchaseActionInFlightRef.current = true;\\n      const ignoredResult = action === \\'buy\\' ? result'
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-purchase-runtime-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PremiumBanner must set purchaseActionInFlightRef\.current before awaiting store calls/,
   );
 });
