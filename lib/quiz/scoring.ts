@@ -1,3 +1,10 @@
-export function scoreAnswers(results: boolean[] = []): { correct: number; total: number } {
-  return { correct: results.filter(Boolean).length, total: results.length };
+export function scoreAnswers(results: readonly unknown[] = []): { correct: number; total: number } {
+  const safeResults = Array.isArray(results) ? results : [];
+  let correct = 0;
+
+  for (const result of safeResults) {
+    if (result === true) correct += 1;
+  }
+
+  return { correct, total: safeResults.length };
 }

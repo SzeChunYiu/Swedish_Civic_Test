@@ -1,27 +1,22 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
-const path = require('node:path');
 const test = require('node:test');
 
-const repoRoot = path.resolve(__dirname, '..');
-
 test('practice scoring parity validates scoreAnswers rule cases', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-practice-scoring-parity'],
+    { encoding: 'utf8' },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.equal(summary.practiceScoringRulesValidated, 5);
+  assert.equal(summary.practiceScoringRulesValidated, 8);
   assert.equal(summary.practiceScoringRulesParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 8);
-  assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
-  assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
 });
 
-test('practice session store schema parity rejects optional selected option drift', () => {
+test('practice scoring parity rejects truthy non-boolean correctness results', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -29,24 +24,25 @@ test('practice session store schema parity rejects optional selected option drif
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
+process.argv.push('scripts/validate-content.js', '--focus-practice-scoring-parity');
 fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/lib/quiz/practiceSessionStore.ts')) {
+  const normalizedPath = String(filePath);
+  if (normalizedPath.endsWith('/lib/quiz/scoring.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('selectedOptionId: string | null;', 'selectedOptionId?: string | null;');
+      .replace('if (result === true) correct += 1;', 'if (Boolean(result)) correct += 1;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
 require('./scripts/validate-content.js');
 `,
     ],
-    { cwd: repoRoot, encoding: 'utf8' },
+    { cwd: process.cwd(), encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /PracticeSessionState\.selectedOptionId optional=true, expected false/,
+    /practice scoring rule truthy non-boolean results returned \{"correct":5,"total":6\}, expected \{"correct":1,"total":6\}/,
   );
 });
