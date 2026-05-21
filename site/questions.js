@@ -18339,7 +18339,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which example is part of work for gender equality?",
+      "en": "Which example is part of efforts to promote gender equality?",
       "sv": "Vilket exempel hör till arbetet för jämställdhet mellan könen?",
       "zh-Hant": "哪個例子屬於促進性別平等的工作？",
       "zh-Hans": "哪个例子属于促进性别平等的工作？",
@@ -18553,7 +18553,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "What is one aim of work for people with disabilities?",
+      "en": "What is one aim of disability rights work?",
       "sv": "Vad är ett mål med arbetet för personer med funktionsnedsättning?",
       "zh-Hant": "為身心障礙者工作的其中一個目標是什麼？",
       "zh-Hans": "为残障人士工作的其中一个目标是什么？",
@@ -18626,7 +18626,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor.",
       "zh-Hant": "為身心障礙者工作關乎平等權利和機會。社會需要具可近性並能提供支援，讓人們能在平等條件下參與。",
       "zh-Hans": "为残障人士工作关乎平等权利和机会。社会需要具备无障碍性并能提供支持，让人们能在平等条件下参与。",
@@ -32204,7 +32204,6 @@
     "type": "true_false",
     "q": {
       "en": "Buying sex is illegal in Sweden, but the person who sells sex is not punished.",
-
       "sv": "Att köpa sex är olagligt i Sverige, men personen som säljer sex straffas inte."
     },
     "opts": [
@@ -32245,7 +32244,6 @@
     "type": "true_false",
     "q": {
       "en": "Buying sex is always legal in Sweden.",
-
       "sv": "Att köpa sex är alltid lagligt i Sverige."
     },
     "opts": [
@@ -33486,7 +33484,6 @@
     "type": "true_false",
     "q": {
       "en": "Marriage between people of the same sex is permitted in Sweden.",
-
       "sv": "Äktenskap mellan personer av samma kön är tillåtet i Sverige."
     },
     "opts": [
@@ -33527,7 +33524,6 @@
     "type": "true_false",
     "q": {
       "en": "Marriage between people of the same sex is prohibited in Sweden.",
-
       "sv": "Äktenskap mellan personer av samma kön är förbjudet i Sverige."
     },
     "opts": [
@@ -63083,7 +63079,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? Which example is part of work for gender equality?",
+      "en": "Which answer best matches? Which example is part of efforts to promote gender equality?",
       "sv": "Vilket svar stämmer bäst? Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
@@ -63254,7 +63250,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: Which example is part of work for gender equality?",
+      "en": "Choose the correct option: Which example is part of efforts to promote gender equality?",
       "sv": "Välj rätt alternativ: Vilket exempel hör till arbetet för jämställdhet mellan könen?"
     },
     "opts": [
@@ -63603,7 +63599,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What is one aim of work for people with disabilities?",
+      "en": "Which answer best matches? What is one aim of disability rights work?",
       "sv": "Vilket svar stämmer bäst? Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
@@ -63666,7 +63662,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -63706,7 +63702,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -63746,7 +63742,7 @@
     ],
     "answer": 1,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
@@ -63771,7 +63767,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What is one aim of work for people with disabilities?",
+      "en": "Choose the correct option: What is one aim of disability rights work?",
       "sv": "Välj rätt alternativ: Vad är ett mål med arbetet för personer med funktionsnedsättning?"
     },
     "opts": [
@@ -63834,7 +63830,7 @@
     ],
     "answer": 0,
     "why": {
-      "en": "Work for people with disabilities is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
+      "en": "Disability rights work is about equal rights and opportunities. Society needs to be accessible and able to provide support so people can participate on equal terms.",
       "sv": "Arbetet för personer med funktionsnedsättning handlar om lika rättigheter och möjligheter. Samhället behöver vara tillgängligt och kunna ge stöd så att människor kan delta på jämlika villkor."
     },
     "source": {
