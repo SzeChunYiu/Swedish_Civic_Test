@@ -3,6 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import {
   dismissBlockingModals,
   markAboutTheTestSeen,
+  seedFreshSettingsLanguageAndAboutSeen,
   seedSettingsLanguage,
   type AppLanguage,
 } from './browserLaunch';
@@ -14,6 +15,12 @@ test.use({ viewport: mobileViewport });
 async function openRouteWithLanguage(page: Page, route: string, language: AppLanguage) {
   await seedSettingsLanguage(page, language);
   await markAboutTheTestSeen(page);
+  await page.goto(route, { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+}
+
+async function openFreshRouteWithLanguage(page: Page, route: string, language: AppLanguage) {
+  await seedFreshSettingsLanguageAndAboutSeen(page, language);
   await page.goto(route, { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 }
@@ -70,29 +77,65 @@ async function expectNoOverlap(first: Locator, second: Locator, label: string) {
   expect(boxesOverlap(firstBox!, secondBox!), label).toBe(false);
 }
 
-async function expectCelebrationCueVisibleAndDecorative(page: Page, label: string, score: Locator) {
-  const cue = page.locator('[aria-hidden="true"]').getByText(label, { exact: true }).first();
+async function expectCelebrationCueVisibleAndDecorative(
+  page: Page,
+  label: string,
+  score: Locator,
+  options: { checkAnimatedOpacity?: boolean } = {},
+) {
+  const cueContainer = page.locator('[aria-hidden="true"]').filter({ hasText: label }).first();
+  const cue = cueContainer.getByText(label, { exact: true }).first();
 
+  await expect(cueContainer).toBeVisible();
   await expect(cue).toBeVisible();
+  if (options.checkAnimatedOpacity !== false) {
+    await expect
+      .poll(
+        () =>
+          cue.evaluate((node) => {
+            let element: Element | null = node;
+
+            while (element) {
+              const opacity = Number.parseFloat(window.getComputedStyle(element).opacity);
+              if (opacity <= 0) return false;
+              element = element.parentElement;
+            }
+
+            return true;
+          }),
+        { message: `${label} should render with visible opacity before the burst fades` },
+      )
+      .toBe(true);
+  }
+  await expect(page.getByLabel(label, { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
   await expect
     .poll(
       () =>
         cue.evaluate((node) => {
-          let element: Element | null = node;
+          const focusableSelector = [
+            'a[href]',
+            'button',
+            'input',
+            'select',
+            'textarea',
+            '[tabindex]:not([tabindex="-1"])',
+            '[role="button"]',
+            '[role="link"]',
+            '[role="tab"]',
+          ].join(',');
 
+          let element: Element | null = node;
           while (element) {
-            const opacity = Number.parseFloat(window.getComputedStyle(element).opacity);
-            if (opacity <= 0) return false;
+            if (element.matches(focusableSelector)) return false;
             element = element.parentElement;
           }
 
           return true;
         }),
-      { message: `${label} should render with visible opacity before the burst fades` },
+      { message: `${label} decorative cue should not be keyboard focusable` },
     )
     .toBe(true);
-  await expect(page.getByLabel(label, { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0);
   await expectNoOverlap(cue, score, `${label} cue should not overlap the score`);
   await expectNoHorizontalPageOverflow(page, `${label} feedback`);
 }
@@ -147,5 +190,47 @@ test('routed quiz shows the English celebration cue only for correct feedback an
   await openRouteWithLanguage(page, '/quiz/q002', 'en');
   await expect(page.getByText('Correct answer', { exact: true })).toHaveCount(0);
   await expectNoHorizontalPageOverflow(page, 'Routed quiz after session change');
+  expect(consoleErrors).toEqual([]);
+});
+
+test('reduced motion keeps celebration cues static, decorative, and cleared after navigation', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openFreshRouteWithLanguage(page, '/practice', 'sv');
+
+  await expect(page.getByText('Var ligger Sverige?', { exact: true })).toBeVisible();
+  await page.getByLabel('Välj svaret I Norden i norra Europa').click();
+
+  const practiceScore = page.getByText('Poäng: 1/1', { exact: true });
+  await expect(practiceScore).toBeVisible();
+  await expectCelebrationCueVisibleAndDecorative(page, 'Rätt svar', practiceScore, {
+    checkAnimatedOpacity: false,
+  });
+
+  await page.getByLabel('Gå till nästa övningsfråga').click();
+
+  await expect(page.getByText('Fråga 2', { exact: true })).toBeVisible();
+  await expect(page.getByText('Rätt svar', { exact: true })).toHaveCount(0);
+
+  await openFreshRouteWithLanguage(page, '/quiz/q001', 'en');
+  await expect(page.getByText('Where is Sweden located?', { exact: true })).toBeVisible();
+  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
+
+  const routedScore = page.getByText('Score: 1/1', { exact: true });
+  await expect(routedScore).toBeVisible();
+  await expectCelebrationCueVisibleAndDecorative(page, 'Correct answer', routedScore, {
+    checkAnimatedOpacity: false,
+  });
+
+  await page.getByLabel('Try this quiz question again').click();
+
+  await expect(
+    page.getByLabel('Select answer In the Nordic region in northern Europe'),
+  ).toBeVisible();
+  await expect(page.getByText('Correct answer', { exact: true })).toHaveCount(0);
+  await expectNoHorizontalPageOverflow(page, 'Reduced-motion celebration after reset');
   expect(consoleErrors).toEqual([]);
 });
