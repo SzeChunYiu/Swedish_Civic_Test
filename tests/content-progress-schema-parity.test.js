@@ -258,7 +258,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(
     progressStore,
-    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: RecordAnswerOptions,\s*\): void;/,
+    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: \{ awardXp\?: boolean \},\s*\): void;/,
   );
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(progressStore, /function normalizeConfidenceRating\(value: unknown\)/);
@@ -814,14 +814,18 @@ require('./scripts/validate-content.js');
 
 test('progress store schema parity rejects raw numeric hydration', () => {
   const result = runValidationWithProgressStorePatch(
-    'seenCount,',
-    'seenCount: Math.max(0, item.seenCount ?? 0),',
+    `const seenCount = normalizeNonNegativeInteger(
+        item.seenCount,
+        rawCorrectCount + rawWrongCount,
+        maxHydratedQuestionAnswerCount,
+      );`,
+    'const seenCount = Math.max(0, item.seenCount ?? 0);',
   );
 
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /progress hydration must not use raw numeric expression Math\.max\(0, item\.seenCount \?\? 0\)/,
+    /progress hydration must normalize seenCount with capped numeric helper/,
   );
 });
 
