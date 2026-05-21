@@ -1,0 +1,22 @@
+{
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "mergedAt": null,
+  "number": 2489,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T16:24:26Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26238318330/job/77217579793",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:15:07Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Repair practice progress validator drift",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2489"
+}

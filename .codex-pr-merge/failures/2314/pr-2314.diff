@@ -1,0 +1,161 @@
+diff --git a/app/sources.tsx b/app/sources.tsx
+index aab369db8..9b98d1b14 100644
+--- a/app/sources.tsx
++++ b/app/sources.tsx
+@@ -1,5 +1,4 @@
+-import { LegalPage, LegalSection } from '../components/compliance/LegalPage';
+-import { LegalLinkList } from '../components/compliance/LegalPage';
++import { LegalLinkList, LegalPage, LegalSection } from '../components/compliance/LegalPage';
+ import {
+   UHR_AUTHORITY_BOUNDARY_SOURCE,
+   UhrAuthorityBoundaryLink,
+diff --git a/docs/parallel-sessions/journals/setup.md b/docs/parallel-sessions/journals/setup.md
+index dbc2bf978..294694873 100644
+--- a/docs/parallel-sessions/journals/setup.md
++++ b/docs/parallel-sessions/journals/setup.md
+@@ -1390,3 +1390,11 @@ Artifacts changed: `components/ui/TopBarActions.tsx`, `tests/e2e/topbar-language
+ Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0 with 7/7 passing; `npm run test:theme-discipline` exit 0 with 5/5 passing; `npm run test:router-shell` exit 0 with 11/11 passing; `node --test tests/content-topbar-actions-accessibility-parity.test.js` exit 0 with 1/1 passing; `npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npx --no-install playwright test tests/e2e/topbar-language-picker-target.spec.ts --workers=1` exit 0 with 1/1 passing.
+ Blocked? no for this top-bar link target and interaction-feedback atom; no Vercel CLI was run.
+ Next suggested validator action: inspect `TopBarActionLink` web styling and rerun the focused top-bar browser smoke plus typecheck, lint, a11y labels, theme discipline, router shell, ownership, and web export before accepting `TOPBAR-LINK-PRESSED-FEEDBACK-1`.
++
++## Iteration 277 - 2026-05-21
++
++Task completed: SEARCH-QUESTION-RESULT-NAVIGATION-E2E-1 - extended the Search hydration E2E coverage so Swedish `/search?q=riksdag` and English `/search?query=kommun` click a visible practice-question result and verify the routed quiz opens the exact question id, localized heading, and matching source citation context.
++Artifacts changed: `tests/e2e/search-query-hydration.spec.ts`, `app/sources.tsx`, `docs/parallel-sessions/journals/setup.md`.
++Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2` exit 0; `CI=1 E2E_PORT=4191 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/search-query-hydration.spec.ts tests/e2e/search-accessibility.spec.ts --workers=1` exit 0 with 6/6 passing; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0 after consolidating a duplicate `app/sources.tsx` import already present on current main; `npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0.
++Blocked? no for this Search result navigation E2E guard; no Vercel CLI was run.
++Next suggested validator action: inspect the Search result navigation helper, rerun the focused Search E2E pair against a fresh web export, and keep the `app/sources.tsx` import consolidation as lint-only hygiene.
+diff --git a/tests/e2e/search-query-hydration.spec.ts b/tests/e2e/search-query-hydration.spec.ts
+index 2bbdc8a1e..31bb11fae 100644
+--- a/tests/e2e/search-query-hydration.spec.ts
++++ b/tests/e2e/search-query-hydration.spec.ts
+@@ -1,6 +1,6 @@
+ import { expect, test, type Page } from '@playwright/test';
+ 
+-import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
++import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
+ 
+ async function expectHydratedSearch(page: Page, url: string, expectedQuery: string) {
+   await page.goto(url, { waitUntil: 'networkidle' });
+@@ -16,6 +16,84 @@ async function expectHydratedSearch(page: Page, url: string, expectedQuery: stri
+   return input;
+ }
+ 
++function escapeRegExp(value: string) {
++  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
++}
++
++async function expectQuestionResultNavigation({
++  inputName,
++  language,
++  linkName,
++  linkPrefix,
++  page,
++  sourceSummaryLabel,
++  sourceCitationLabel,
++  url,
++}: {
++  inputName: string;
++  language: 'sv' | 'en';
++  linkName: RegExp;
++  linkPrefix: string;
++  page: Page;
++  sourceSummaryLabel: 'Källa' | 'Source';
++  sourceCitationLabel: 'Källhänvisning' | 'Source citation';
++  url: string;
++}) {
++  await seedSettingsLanguage(page, language);
++  await markAboutTheTestSeen(page);
++  await page.goto(url, { waitUntil: 'networkidle' });
++  await dismissBlockingModals(page);
++
++  await expect(page.getByRole('textbox', { name: inputName })).toBeVisible();
++
++  const questionLink = page.getByRole('link', { name: linkName }).first();
++  await expect(questionLink).toBeVisible();
++
++  const href = await questionLink.getAttribute('href');
++  expect(href).toMatch(/\/quiz\/q\d+/);
++  if (!href) throw new Error('Question result link is missing an href');
++
++  const questionId = href.match(/\/quiz\/(q\d+)/)?.[1];
++  if (!questionId) throw new Error(`Question result href did not include a question id: ${href}`);
++
++  const linkLabel = await questionLink.getAttribute('aria-label');
++  const questionTitle = linkLabel?.startsWith(linkPrefix) ? linkLabel.slice(linkPrefix.length) : '';
++  expect(questionTitle).toMatch(/\S/);
++
++  const summaryId = await questionLink.getAttribute('aria-describedby');
++  expect(summaryId).toMatch(/^search-question-summary-/);
++  if (!summaryId) throw new Error(`Question result ${questionId} is missing its summary id`);
++
++  const summaryText = (await page.locator(`#${summaryId}`).textContent()) ?? '';
++  expect(summaryText).toContain(questionTitle);
++
++  const sourceReference = summaryText.match(
++    new RegExp(`${sourceSummaryLabel}: ([^.]+?)(?:\\.|$)`),
++  )?.[1];
++  expect(sourceReference).toMatch(/\S/);
++  if (!sourceReference) throw new Error(`Question result ${questionId} is missing source context`);
++
++  const [sourceChapter, sourceSection] = sourceReference.split(' · ');
++  expect(sourceChapter).toMatch(/\S/);
++  expect(sourceSection).toMatch(/\S/);
++  if (!sourceChapter || !sourceSection) {
++    throw new Error(`Question result ${questionId} has incomplete source context`);
++  }
++
++  await questionLink.click();
++  await expect(page).toHaveURL(new RegExp(`/quiz/${questionId}$`));
++  await expect(page.getByRole('heading', { name: questionTitle }).first()).toBeVisible();
++  await expect(
++    page
++      .getByLabel(
++        new RegExp(
++          `${sourceCitationLabel}: .*${escapeRegExp(sourceChapter)}.*${escapeRegExp(sourceSection)}`,
++        ),
++      )
++      .first(),
++  ).toBeVisible();
++}
++
+ test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
+   const consoleErrors: string[] = [];
+ 
+@@ -35,3 +113,36 @@ test('search route hydrates q and query URL parameters before typing', async ({
+ 
+   expect(consoleErrors).toEqual([]);
+ });
++
++test('search question result links open the exact routed quiz question', async ({ page }) => {
++  const consoleErrors: string[] = [];
++
++  page.on('console', (message) => {
++    if (message.type() === 'error') consoleErrors.push(message.text());
++  });
++  page.on('pageerror', (error) => consoleErrors.push(error.message));
++
++  await expectQuestionResultNavigation({
++    inputName: 'Sök samhällsbegrepp och övningsfrågor',
++    language: 'sv',
++    linkName: /Öppna övningsfrågan:/,
++    linkPrefix: 'Öppna övningsfrågan: ',
++    page,
++    sourceSummaryLabel: 'Källa',
++    sourceCitationLabel: 'Källhänvisning',
++    url: '/search?q=riksdag',
++  });
++
++  await expectQuestionResultNavigation({
++    inputName: 'Search civic terms and practice questions',
++    language: 'en',
++    linkName: /Open practice question:/,
++    linkPrefix: 'Open practice question: ',
++    page,
++    sourceSummaryLabel: 'Source',
++    sourceCitationLabel: 'Source citation',
++    url: '/search?query=kommun',
++  });
++
++  expect(consoleErrors).toEqual([]);
++});

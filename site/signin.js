@@ -298,8 +298,11 @@
     // Trigger label depends on signed-in state.
     const btn = document.getElementById('signin-open');
     if (btn) {
+      const triggerText = signedIn() ? t('signin.account') : t('signin.cta');
       const label = btn.querySelector('span:not([aria-hidden])');
-      if (label) label.textContent = signedIn() ? t('signin.account') : t('signin.cta');
+      if (label) label.textContent = triggerText;
+      btn.title = triggerText;
+      btn.setAttribute('aria-label', triggerText);
       btn.classList.toggle('is-signed', signedIn());
     }
   }

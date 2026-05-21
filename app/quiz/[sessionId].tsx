@@ -15,6 +15,7 @@ import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
+import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
 import {
@@ -25,6 +26,7 @@ import {
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
+import { getChapterContextForQuizSession } from '../../lib/quiz/practiceFlow';
 import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
@@ -32,6 +34,7 @@ import { useProgressStore } from '../../lib/storage/progressStore';
 import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { Chapter } from '../../types/content';
 import type { ConfidenceRating } from '../../types/progress';
 
 type QuizSessionCopy = {
@@ -40,6 +43,9 @@ type QuizSessionCopy = {
   backToPractice: string;
   backToPracticeAccessibilityLabel: string;
   badge: string;
+  chapterSessionSubtitle: (chapterTitle: string) => string;
+  chapterSessionTitle: (chapterTitle: string) => string;
+  chapterTitle: (chapter: Chapter) => string;
   emptyBody: string;
   emptyTitle: string;
   notFoundBody: string;
@@ -58,6 +64,10 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
     badge: 'Frågepass',
+    chapterSessionSubtitle: (chapterTitle) =>
+      `Besvara en fråga från ${chapterTitle} och gå sedan igenom den källbaserade återkopplingen.`,
+    chapterSessionTitle: (chapterTitle) => `Frågepass: ${chapterTitle}`,
+    chapterTitle: (chapter) => chapter.nameSv,
     emptyBody: 'Gå tillbaka till övning eller sök när frågor har lagts till.',
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
     notFoundBody: 'Vi hittar ingen övningsfråga för den här länken.',
@@ -74,6 +84,10 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     backToPractice: 'Back to Practice',
     backToPracticeAccessibilityLabel: 'Back to practice',
     badge: 'Quiz session',
+    chapterSessionSubtitle: (chapterTitle) =>
+      `Answer a question from ${chapterTitle}, then review the source-backed feedback.`,
+    chapterSessionTitle: (chapterTitle) => `Quiz session: ${chapterTitle}`,
+    chapterTitle: (chapter) => chapter.nameEn,
     emptyBody: 'Go back to Practice or Search when questions have been added.',
     emptyTitle: 'No quiz questions are available yet.',
     notFoundBody: 'We could not find a practice question for this link.',
@@ -91,14 +105,23 @@ function normalizeSessionId(sessionId: string | string[] | undefined): string {
   return sessionId || 'practice';
 }
 
+function normalizeOptionalRouteParam(value: string | string[] | undefined): string | null {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  return rawValue && rawValue.trim().length > 0 ? rawValue : null;
+}
+
 function pickSessionQuestion(sessionId: string) {
   const exactMatch = questions.find((question) => question.id === sessionId);
   return exactMatch;
 }
 
 export default function QuizSessionScreen() {
-  const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
+  const { chapterId, sessionId } = useLocalSearchParams<{
+    chapterId?: string | string[];
+    sessionId: string | string[];
+  }>();
   const normalizedSessionId = normalizeSessionId(sessionId);
+  const normalizedChapterId = normalizeOptionalRouteParam(chapterId);
   const pickedQuestion = useMemo(
     () => pickSessionQuestion(normalizedSessionId),
     [normalizedSessionId],
@@ -109,6 +132,10 @@ export default function QuizSessionScreen() {
         ? shuffleQuestionOptionsForSession(pickedQuestion, normalizedSessionId)
         : undefined,
     [normalizedSessionId, pickedQuestion],
+  );
+  const chapterContext = useMemo(
+    () => getChapterContextForQuizSession(chapters, pickedQuestion, normalizedChapterId),
+    [normalizedChapterId, pickedQuestion],
   );
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
@@ -125,6 +152,13 @@ export default function QuizSessionScreen() {
     useProLifetimeEntitlements();
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
+  const chapterContextTitle = chapterContext ? copy.chapterTitle(chapterContext) : null;
+  const sessionTitle = chapterContextTitle
+    ? copy.chapterSessionTitle(chapterContextTitle)
+    : copy.sessionTitle(normalizedSessionId);
+  const sessionSubtitle = chapterContextTitle
+    ? copy.chapterSessionSubtitle(chapterContextTitle)
+    : copy.sessionSubtitle;
   const hasSelectedAnswer = Boolean(selectedOptionId);
   const questionSpeechText = useMemo(
     () => (question ? buildQuestionSpeechText(question) : ''),
@@ -241,9 +275,9 @@ export default function QuizSessionScreen() {
       <View style={styles.hero}>
         <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
-          {copy.sessionTitle(normalizedSessionId)}
+          {sessionTitle}
         </Text>
-        <Text style={styles.subtitle}>{copy.sessionSubtitle}</Text>
+        <Text style={styles.subtitle}>{sessionSubtitle}</Text>
         <ProgressBar language={language} progress={hasSelectedAnswer ? 1 : 0} />
       </View>
 

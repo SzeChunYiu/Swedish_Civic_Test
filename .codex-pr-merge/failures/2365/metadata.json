@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- preserve progress-store read and JSON parse failures as recoverable persistence warnings\n- render accessibility/preference persistence warnings on Settings with the existing operation-specific copy\n- update content validation to guard the recoverable progress read path\n\n## Validation\n- NODE_OPTIONS=\"--v8-pool-size=1\" NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH node --test tests/content-storage-write-fail-soft.test.js tests/content-settings-route-copy-parity.test.js tests/content-mistakes-route-copy-parity.test.js --test-name-pattern \"PersistenceWarningNotice|read warning|write warning|persistence warning|storage\"\n- NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run typecheck -- --pretty false\n- NODE_OPTIONS=\"--v8-pool-size=1\" NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH npm run validate:content\n- git diff --check origin/main..HEAD",
+  "files": [
+    { "path": "app/settings.tsx", "additions": 12, "deletions": 0, "changeType": "MODIFIED" },
+    {
+      "path": "lib/storage/progressStore.ts",
+      "additions": 20,
+      "deletions": 15,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 9,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/persistence-warning-read-copy-1779363328-813709",
+  "headRefOid": "919f0a13b398d70f222f1ba19c61792d98e420e8",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2365,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:52:06Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223758323/job/77165287270",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:42:31Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "storage: preserve recoverable read warnings",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2365"
+}

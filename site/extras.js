@@ -38,6 +38,345 @@
       return 'en';
     }
   }
+
+  const EXTRAS_COPY = {
+    fikaToast: {
+      en: '☕ Fika break.',
+      sv: '☕ Fikapaus.',
+      'zh-Hans': '☕ Fika 休息。',
+      'zh-Hant': '☕ Fika 休息。',
+      ar: '☕ استراحة فيكا.',
+      ckb: '☕ پشووی فیکا.',
+      fa: '☕ وقت فیکا.',
+      pl: '☕ Przerwa na fikę.',
+      so: '☕ Nasasho fika.',
+      ti: '☕ ናይ fika ዕረፍቲ።',
+      tr: '☕ Fika molası.',
+      uk: '☕ Перерва на фіку.',
+    },
+    fikaBuddy: {
+      en: 'Fika break? Always allowed.',
+      sv: 'Fika? Alltid tillåtet.',
+      'zh-Hans': 'Fika 休息？当然可以。',
+      'zh-Hant': 'Fika 休息？當然可以。',
+      ar: 'استراحة فيكا؟ مسموحة دائمًا.',
+      ckb: 'پشووی فیکا؟ هەمیشە ڕێگەپێدراوە.',
+      fa: 'استراحت فیکا؟ همیشه مجاز است.',
+      pl: 'Przerwa na fikę? Zawsze wolno.',
+      so: 'Nasasho fika? Mar walba waa la oggol yahay.',
+      ti: 'ዕረፍቲ fika? ኩሉ ግዜ ይፍቀድ።',
+      tr: 'Fika molası mı? Her zaman olur.',
+      uk: 'Перерва на фіку? Завжди можна.',
+    },
+    abbaToast: {
+      en: '💃 Take a chance on me.',
+      sv: '💃 Chansa på mig.',
+      'zh-Hans': '💃 给我一次机会。',
+      'zh-Hant': '💃 給我一次機會。',
+      ar: '💃 امنحني فرصة.',
+      ckb: '💃 دەرفەتێکم پێ بدە.',
+      fa: '💃 به من فرصت بده.',
+      pl: '💃 Daj mi szansę.',
+      so: '💃 Fursad i sii.',
+      ti: '💃 ዕድል ሃበኒ።',
+      tr: '💃 Bana bir şans ver.',
+      uk: '💃 Дай мені шанс.',
+    },
+    abbaBuddy: {
+      en: 'Mamma mia, here we go again.',
+      sv: 'Mamma mia, här går vi igen.',
+      'zh-Hans': 'Mamma mia，我们又来了。',
+      'zh-Hant': 'Mamma mia，我們又來了。',
+      ar: 'ماما ميا، ها نحن من جديد.',
+      ckb: 'Mamma mia، دیسان دەست پێ دەکەین.',
+      fa: 'ماما میا، دوباره شروع شد.',
+      pl: 'Mamma mia, zaczynamy znowu.',
+      so: 'Mamma mia, mar kale ayaan bilownay.',
+      ti: 'Mamma mia፣ እንደገና ንጅምር።',
+      tr: 'Mamma mia, yine başlıyoruz.',
+      uk: 'Mamma mia, знову починаємо.',
+    },
+    snowToast: {
+      en: '❄ Snow.',
+      sv: '❄ Snö.',
+      'zh-Hans': '❄ 下雪。',
+      'zh-Hant': '❄ 下雪。',
+      ar: '❄ ثلج.',
+      ckb: '❄ بەفر.',
+      fa: '❄ برف.',
+      pl: '❄ Śnieg.',
+      so: '❄ Baraf.',
+      ti: '❄ በረድ።',
+      tr: '❄ Kar.',
+      uk: '❄ Сніг.',
+    },
+    snowBuddy: {
+      en: 'Winter is here. Sip something hot.',
+      sv: 'Vintern är här. Drick något varmt.',
+      'zh-Hans': '冬天来了。喝点热的吧。',
+      'zh-Hant': '冬天來了。喝點熱的吧。',
+      ar: 'الشتاء هنا. ارتشف شيئًا ساخنًا.',
+      ckb: 'زستان هاتووە. شتێکی گەرم بخۆرەوە.',
+      fa: 'زمستان آمده است. یک نوشیدنی گرم بنوش.',
+      pl: 'Zima już tu jest. Wypij coś ciepłego.',
+      so: 'Jiilaalkii waa yimid. Cab wax kulul.',
+      ti: 'ክረምቲ መጺኡ። ገለ ውዑይ ስተ።',
+      tr: 'Kış geldi. Sıcak bir şeyler iç.',
+      uk: 'Зима тут. Випий щось гаряче.',
+    },
+    vasaToast: {
+      en: '⛵ Vasa, on its way.',
+      sv: '⛵ Vasa, på väg.',
+      'zh-Hans': '⛵ 瓦萨号出发了。',
+      'zh-Hant': '⛵ 瓦薩號出發了。',
+      ar: '⛵ فاسا في الطريق.',
+      ckb: '⛵ ڤاسا لە ڕێگادایە.',
+      fa: '⛵ واسا در راه است.',
+      pl: '⛵ Vasa w drodze.',
+      so: '⛵ Vasa way soo socotaa.',
+      ti: '⛵ Vasa ኣብ መገዲ ኣሎ።',
+      tr: '⛵ Vasa yolda.',
+      uk: '⛵ Vasa вирушає.',
+    },
+    vasaBuddy: {
+      en: "It sank in 1628. Don't get attached.",
+      sv: 'Det sjönk 1628. Knyt inte an för mycket.',
+      'zh-Hans': '它在 1628 年沉没了。别太投入。',
+      'zh-Hant': '它在 1628 年沉沒了。別太投入。',
+      ar: 'غرقت عام 1628. لا تتعلّق بها كثيرًا.',
+      ckb: 'لە ساڵی ١٦٢٨ نوقم بوو. زۆر پێوە مەبەستە.',
+      fa: 'در سال ۱۶۲۸ غرق شد. زیاد دلبسته نشو.',
+      pl: 'Zatonął w 1628 roku. Nie przywiązuj się za bardzo.',
+      so: 'Waxay degtay 1628. Aad ha ugu dhegganaan.',
+      ti: 'ብ1628 ጠሊቑ። ብዙሕ ኣይትተኣሳሰር።',
+      tr: '1628’de battı. Fazla bağlanma.',
+      uk: 'Він затонув у 1628 році. Не прив’язуйся надто сильно.',
+    },
+    ikeaToast: {
+      en: '📦 Some assembly required.',
+      sv: '📦 Viss montering krävs.',
+      'zh-Hans': '📦 需要自行组装。',
+      'zh-Hant': '📦 需要自行組裝。',
+      ar: '📦 يحتاج إلى بعض التركيب.',
+      ckb: '📦 پێویستی بە کۆکردنەوەیەکی کەم هەیە.',
+      fa: '📦 کمی سرهم‌بندی لازم است.',
+      pl: '📦 Wymagany montaż.',
+      so: '📦 Isku xirid yar ayaa loo baahan yahay.',
+      ti: '📦 ገለ ምትካል የድሊ።',
+      tr: '📦 Biraz montaj gerekir.',
+      uk: '📦 Потрібне складання.',
+    },
+    ikeaBuddy: {
+      en: 'Step 1: do not lose the small allen key. Step 2: there is no step 2.',
+      sv: 'Steg 1: tappa inte bort den lilla insexnyckeln. Steg 2: det finns inget steg 2.',
+      'zh-Hans': '第一步：别弄丢小内六角扳手。第二步：没有第二步。',
+      'zh-Hant': '第一步：別弄丟小內六角扳手。第二步：沒有第二步。',
+      ar: 'الخطوة 1: لا تُضع مفتاح ألن الصغير. الخطوة 2: لا توجد خطوة 2.',
+      ckb: 'هەنگاوی ١: کلیلی ئەلنی بچووک ون مەکە. هەنگاوی ٢: هەنگاوی ٢ نییە.',
+      fa: 'گام ۱: آچار آلن کوچک را گم نکن. گام ۲: گام دومی وجود ندارد.',
+      pl: 'Krok 1: nie zgub małego imbusa. Krok 2: nie ma kroku 2.',
+      so: 'Tallaabada 1: ha lumin furaha allen-ka yar. Tallaabada 2: tallaabo 2 ma jirto.',
+      ti: 'ስጉምቲ 1፦ እታ ንእሽቶ መፍትሕ allen ኣይተጥፍኣያ። ስጉምቲ 2፦ ስጉምቲ 2 የለን።',
+      tr: 'Adım 1: küçük alyan anahtarını kaybetme. Adım 2: ikinci adım yok.',
+      uk: 'Крок 1: не загуби маленький шестигранник. Крок 2: кроку 2 немає.',
+    },
+    skalToast: {
+      en: '🥂 Cheers!',
+      sv: '🥂 Skål!',
+      'zh-Hans': '🥂 干杯！',
+      'zh-Hant': '🥂 乾杯！',
+      ar: '🥂 بصحتك!',
+      ckb: '🥂 بەخۆشی!',
+      fa: '🥂 به سلامتی!',
+      pl: '🥂 Na zdrowie!',
+      so: '🥂 Hambalyo!',
+      ti: '🥂 ንጥዕና!',
+      tr: '🥂 Şerefe!',
+      uk: '🥂 Будьмо!',
+    },
+    skalBuddy: {
+      en: "Eyes up. Glass up. Sip. Eyes again. That's the protocol.",
+      sv: 'Ögonkontakt. Höj glaset. Klunk. Ögonkontakt igen. Så går det till.',
+      'zh-Hans': '先看对方。举杯。喝一口。再看对方。这就是流程。',
+      'zh-Hant': '先看對方。舉杯。喝一口。再看對方。這就是流程。',
+      ar: 'ارفع عينيك. ارفع الكأس. رشفة. عيون مرة أخرى. هذه هي القاعدة.',
+      ckb: 'چاوەکان بەرز بکە. پەرداخ بەرز بکە. قومێک. دیسان چاو. ئەمە ڕێساکەیە.',
+      fa: 'چشم‌ها بالا. لیوان بالا. یک جرعه. دوباره چشم‌ها. رسمش همین است.',
+      pl: 'Spójrz w oczy. Unieś kieliszek. Łyk. Znowu oczy. Taki protokół.',
+      so: 'Indhaha kor u qaad. Koobka kor u qaad. Cab. Haddana indhaha. Taasi waa habka.',
+      ti: 'ዓይኒ ንላዕሊ። ብርጭቆ ንላዕሊ። ጉንጭ። ዓይኒ እንደገና። እቲ ስርዓት እዩ።',
+      tr: 'Gözler yukarı. Bardak yukarı. Bir yudum. Yeniden gözler. Protokol bu.',
+      uk: 'Очі вгору. Келих вгору. Ковток. Знову очі. Такий протокол.',
+    },
+    lagomToast: {
+      en: '👌 Lagom.',
+      sv: '👌 Lagom.',
+      'zh-Hans': '👌 刚刚好。',
+      'zh-Hant': '👌 剛剛好。',
+      ar: '👌 باعتدال.',
+      ckb: '👌 بە ئەندازە.',
+      fa: '👌 درست به اندازه.',
+      pl: '👌 W sam raz.',
+      so: '👌 Dhexdhexaad.',
+      ti: '👌 ብመጠን።',
+      tr: '👌 Tam kararında.',
+      uk: '👌 Саме в міру.',
+    },
+    lagomBuddy: {
+      en: 'Not too much. Not too little. Just right.',
+      sv: 'Inte för mycket. Inte för lite. Precis lagom.',
+      'zh-Hans': '不太多。不太少。刚刚好。',
+      'zh-Hant': '不太多。不太少。剛剛好。',
+      ar: 'ليس كثيرًا. ليس قليلًا. تمامًا كما ينبغي.',
+      ckb: 'نە زۆر. نە کەم. تەواو گونجاو.',
+      fa: 'نه زیاد. نه کم. درست به اندازه.',
+      pl: 'Nie za dużo. Nie za mało. W sam raz.',
+      so: 'Ma badna. Ma yara. Waa ku filan.',
+      ti: 'ብዙሕ ኣይኮነን። ውሑድ ኣይኮነን። ትኽክል መጠን።',
+      tr: 'Ne fazla. Ne az. Tam kararında.',
+      uk: 'Не забагато. Не замало. Саме так.',
+    },
+    swedenModeToast: {
+      en: 'Sweden mode. Hej hej.',
+      sv: 'Sverige-läge. Hej hej.',
+      'zh-Hans': '瑞典模式。Hej hej。',
+      'zh-Hant': '瑞典模式。Hej hej。',
+      ar: 'وضع السويد. Hej hej.',
+      ckb: 'دۆخی سوێد. Hej hej.',
+      fa: 'حالت سوئد. Hej hej.',
+      pl: 'Tryb Szwecji. Hej hej.',
+      so: 'Habka Iswiidhan. Hej hej.',
+      ti: 'ሞድ ሽወደን። Hej hej.',
+      tr: 'İsveç modu. Hej hej.',
+      uk: 'Режим Швеції. Hej hej.',
+    },
+    swedenModeActivated: {
+      en: 'Sweden mode activated.',
+      sv: 'Sverige-läge aktiverat.',
+      'zh-Hans': '瑞典模式已开启。',
+      'zh-Hant': '瑞典模式已開啟。',
+      ar: 'تم تفعيل وضع السويد.',
+      ckb: 'دۆخی سوێد چالاک کرا.',
+      fa: 'حالت سوئد فعال شد.',
+      pl: 'Tryb Szwecji włączony.',
+      so: 'Habka Iswiidhan waa la hawlgeliyay.',
+      ti: 'ሞድ ሽወደን ተነቓቒሑ።',
+      tr: 'İsveç modu etkinleştirildi.',
+      uk: 'Режим Швеції ввімкнено.',
+    },
+    facts: [
+      {
+        en: 'Spotify, Skype, Minecraft, and Klarna were all started in Sweden.',
+        sv: 'Spotify, Skype, Minecraft och Klarna startade alla i Sverige.',
+        'zh-Hans': 'Spotify、Skype、Minecraft 和 Klarna 都起源于瑞典。',
+        'zh-Hant': 'Spotify、Skype、Minecraft 和 Klarna 都起源於瑞典。',
+        ar: 'بدأت Spotify وSkype وMinecraft وKlarna كلها في السويد.',
+        ckb: 'Spotify و Skype و Minecraft و Klarna هەموویان لە سوێد دەستیان پێکرد.',
+        fa: 'Spotify، Skype، Minecraft و Klarna همگی در سوئد شروع شدند.',
+        pl: 'Spotify, Skype, Minecraft i Klarna powstały w Szwecji.',
+        so: 'Spotify, Skype, Minecraft iyo Klarna dhammaantood waxay ka bilowdeen Iswiidhan.',
+        ti: 'Spotify, Skype, Minecraft እና Klarna ኩሎም ኣብ ሽወደን ጀሚሮም።',
+        tr: 'Spotify, Skype, Minecraft ve Klarna İsveç’te başladı.',
+        uk: 'Spotify, Skype, Minecraft і Klarna почалися у Швеції.',
+      },
+      {
+        en: 'Sweden has been at peace since 1814.',
+        sv: 'Sverige har varit i fred sedan 1814.',
+        'zh-Hans': '瑞典自 1814 年以来一直处于和平状态。',
+        'zh-Hant': '瑞典自 1814 年以來一直處於和平狀態。',
+        ar: 'تعيش السويد في سلام منذ عام 1814.',
+        ckb: 'سوێد لە ساڵی ١٨١٤ەوە لە ئاشتیدایە.',
+        fa: 'سوئد از سال ۱۸۱۴ در صلح بوده است.',
+        pl: 'Szwecja żyje w pokoju od 1814 roku.',
+        so: 'Iswiidhan nabad ayay ku jirtay tan iyo 1814.',
+        ti: 'ሽወደን ካብ 1814 ጀሚራ ኣብ ሰላም ኣላ።',
+        tr: 'İsveç 1814’ten beri barış içindedir.',
+        uk: 'Швеція живе в мирі з 1814 року.',
+      },
+      {
+        en: 'Sweden recycles ~99% of household waste.',
+        sv: 'Sverige återvinner ~99% av hushållsavfallet.',
+        'zh-Hans': '瑞典回收约 99% 的生活垃圾。',
+        'zh-Hant': '瑞典回收約 99% 的生活垃圾。',
+        ar: 'تعيد السويد تدوير نحو 99% من نفايات المنازل.',
+        ckb: 'سوێد نزیکەی ٩٩٪ی پاشماوەی ماڵان دووبارە بەکاردەهێنێتەوە.',
+        fa: 'سوئد حدود ۹۹٪ زباله خانگی را بازیافت می‌کند.',
+        pl: 'Szwecja odzyskuje około 99% odpadów domowych.',
+        so: 'Iswiidhan waxay dib u isticmaashaa ku dhowaad 99% qashinka guryaha.',
+        ti: 'ሽወደን ኣስታት 99% ናይ ገዛ ጎሓፍ ዳግም ትጥቀመሉ።',
+        tr: 'İsveç evsel atıkların yaklaşık %99’unu geri dönüştürür.',
+        uk: 'Швеція переробляє близько 99% побутових відходів.',
+      },
+      {
+        en: '~96,000 lakes. 200,000 islands.',
+        sv: '~96 000 sjöar. 200 000 öar.',
+        'zh-Hans': '约 96,000 个湖泊。200,000 个岛屿。',
+        'zh-Hant': '約 96,000 個湖泊。200,000 個島嶼。',
+        ar: 'نحو 96,000 بحيرة. 200,000 جزيرة.',
+        ckb: 'نزیکەی ٩٦,٠٠٠ دەریاچە. ٢٠٠,٠٠٠ دوورگە.',
+        fa: 'حدود ۹۶٬۰۰۰ دریاچه. ۲۰۰٬۰۰۰ جزیره.',
+        pl: 'Około 96 000 jezior. 200 000 wysp.',
+        so: 'Ku dhowaad 96,000 haro. 200,000 jasiiradood.',
+        ti: 'ኣስታት 96,000 ቀላያት። 200,000 ደሴታት።',
+        tr: 'Yaklaşık 96.000 göl. 200.000 ada.',
+        uk: 'Близько 96 000 озер. 200 000 островів.',
+      },
+      {
+        en: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        sv: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        'zh-Hans': 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd。',
+        'zh-Hant': 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd。',
+        ar: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        ckb: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        fa: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        pl: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        so: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        ti: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        tr: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+        uk: 'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
+      },
+      {
+        en: '480 days of paid parental leave per child.',
+        sv: '480 dagar betald föräldraledighet per barn.',
+        'zh-Hans': '每个孩子有 480 天带薪育儿假。',
+        'zh-Hant': '每個孩子有 480 天帶薪育兒假。',
+        ar: '480 يومًا من إجازة الوالدين المدفوعة لكل طفل.',
+        ckb: '٤٨٠ ڕۆژ مۆڵەتی دایک و باوکی پارەدراو بۆ هەر منداڵێک.',
+        fa: '۴۸۰ روز مرخصی والدین با حقوق برای هر کودک.',
+        pl: '480 dni płatnego urlopu rodzicielskiego na dziecko.',
+        so: '480 maalmood oo fasax waalidnimo lacag leh ilmo kasta.',
+        ti: 'ንነፍሲ ወከፍ ቆልዓ 480 መዓልቲ ዝኽፈል ናይ ወለዲ ዕረፍቲ።',
+        tr: 'Çocuk başına 480 gün ücretli ebeveyn izni.',
+        uk: '480 днів оплачуваної батьківської відпустки на дитину.',
+      },
+      {
+        en: 'Volvo invented the three-point seatbelt and gave the patent away.',
+        sv: 'Volvo uppfann trepunktsbältet och gav bort patentet.',
+        'zh-Hans': '沃尔沃发明了三点式安全带，并开放了专利。',
+        'zh-Hant': 'Volvo 發明了三點式安全帶，並開放了專利。',
+        ar: 'اخترعت فولفو حزام الأمان ثلاثي النقاط وتخلّت عن براءة الاختراع.',
+        ckb: 'Volvo پشتێنی سێ خاڵی داهێنا و پاتێنتەکەی بەخشی.',
+        fa: 'ولوو کمربند ایمنی سه‌نقطه‌ای را اختراع کرد و حق ثبت آن را آزاد گذاشت.',
+        pl: 'Volvo wynalazło trzypunktowe pasy i udostępniło patent.',
+        so: 'Volvo waxay hindistay suunka saddexda dhibcood, patent-kana way siisay dadka.',
+        ti: 'Volvo ሰለስተ ነጥቢ ዘለዎ መቐነት ድሕነት ፈጢራ፣ ፓተንቱ ድማ ሂባቶ።',
+        tr: 'Volvo üç noktalı emniyet kemerini icat etti ve patentini paylaştı.',
+        uk: 'Volvo винайшла триточковий ремінь безпеки й відкрила патент.',
+      },
+    ],
+  };
+
+  function extrasText(key) {
+    const copy = EXTRAS_COPY[key];
+    return (copy && (copy[lang()] || copy.en)) || '';
+  }
+
+  function extrasBuddy(key) {
+    if (!window.smtBuddyCelebrate) return;
+    const text = extrasText(key);
+    window.smtBuddyCelebrate(text, text);
+  }
+
   function prefersReducedMotion() {
     const fx = window.smtFx;
     if (fx && typeof fx.prefersReducedMotion === 'function') return fx.prefersReducedMotion();
@@ -89,10 +428,9 @@
       const cx = innerWidth * 0.5,
         cy = innerHeight * 0.3;
       fx.burst(cx, cy, { colors: ['#8a5a2b', '#5a3416', '#fff', '#fecc00'], count: 30 });
-      fx.toast('☕ Fika break.', { duration: 2200 });
+      fx.toast(extrasText('fikaToast'), { duration: 2200 });
     }
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate('Fika break? Always allowed.', 'Fika? Alltid tillåtet.');
+    if (window.smtBuddyCelebrate) extrasBuddy('fikaBuddy');
   }
 
   function abbaEgg() {
@@ -109,21 +447,16 @@
           });
         }, i * 220);
       }
-      fx.toast('💃 Take a chance on me.', { flavor: 'win', duration: 2800 });
+      fx.toast(extrasText('abbaToast'), { flavor: 'win', duration: 2800 });
     }
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate('Mamma mia, here we go again.', 'Mamma mia, här går vi igen.');
+    if (window.smtBuddyCelebrate) extrasBuddy('abbaBuddy');
   }
 
   function snowEgg() {
     if (document.getElementById('smt-snow')) return; // already running
     if (prefersReducedMotion()) {
-      if (window.smtFx) window.smtFx.toast('❄ Snow.', { duration: 2200 });
-      if (window.smtBuddyCelebrate)
-        window.smtBuddyCelebrate(
-          'Vinter is here. Sip something hot.',
-          'Vinter är här. Drick något varmt.',
-        );
+      if (window.smtFx) window.smtFx.toast(extrasText('snowToast'), { duration: 2200 });
+      if (window.smtBuddyCelebrate) extrasBuddy('snowBuddy');
       return;
     }
     const layer = document.createElement('div');
@@ -161,24 +494,16 @@
         { duration: dur, delay, easing: 'cubic-bezier(.3,.4,.5,1)' },
       ).onfinish = () => f.remove();
     }
-    if (window.smtFx) window.smtFx.toast('❄ Snow.', { duration: 2200 });
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate(
-        'Vinter is here. Sip something hot.',
-        'Vinter är här. Drick något varmt.',
-      );
+    if (window.smtFx) window.smtFx.toast(extrasText('snowToast'), { duration: 2200 });
+    if (window.smtBuddyCelebrate) extrasBuddy('snowBuddy');
     setTimeout(() => layer.remove(), 11000);
   }
 
   function vasaEgg() {
     if (document.getElementById('smt-vasa')) return;
     if (prefersReducedMotion()) {
-      if (window.smtFx) window.smtFx.toast('⛵ Vasa, on its way.', { duration: 2200 });
-      if (window.smtBuddyCelebrate)
-        window.smtBuddyCelebrate(
-          "It sank in 1628. Don't get attached.",
-          'Det sjönk 1628. Knyt inte an för mycket.',
-        );
+      if (window.smtFx) window.smtFx.toast(extrasText('vasaToast'), { duration: 2200 });
+      if (window.smtBuddyCelebrate) extrasBuddy('vasaBuddy');
       return;
     }
     const ship = document.createElement('div');
@@ -216,23 +541,15 @@
       ],
       { duration: 14000, easing: 'cubic-bezier(.42,.05,.7,1)' },
     ).onfinish = () => ship.remove();
-    if (window.smtFx) window.smtFx.toast('⛵ Vasa, on its way.', { duration: 2200 });
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate(
-        "It sank in 1628. Don't get attached.",
-        'Det sjönk 1628. Knyt inte an för mycket.',
-      );
+    if (window.smtFx) window.smtFx.toast(extrasText('vasaToast'), { duration: 2200 });
+    if (window.smtBuddyCelebrate) extrasBuddy('vasaBuddy');
   }
 
   function ikeaEgg() {
     if (window.smtFx) {
-      window.smtFx.toast('📦 Some assembly required.', { duration: 2400 });
+      window.smtFx.toast(extrasText('ikeaToast'), { duration: 2400 });
     }
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate(
-        'Step 1: do not lose the small allen key. Step 2: there is no step 2.',
-        'Steg 1: tappa inte bort den lilla insexnyckeln. Steg 2: det finns inget steg 2.',
-      );
+    if (window.smtBuddyCelebrate) extrasBuddy('ikeaBuddy');
   }
 
   function skalEgg() {
@@ -240,22 +557,14 @@
       const cx = innerWidth * 0.5,
         cy = innerHeight * 0.3;
       window.smtFx.burst(cx, cy, { colors: ['#fecc00', '#fff', '#fff3cf'], count: 24 });
-      window.smtFx.toast('🥂 Skål!', { duration: 1800 });
+      window.smtFx.toast(extrasText('skalToast'), { duration: 1800 });
     }
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate(
-        "Eyes up. Glass up. Sip. Eyes again. That's the protocol.",
-        'Ögonkontakt. Höj glaset. Klunk. Ögonkontakt igen. Så går det till.',
-      );
+    if (window.smtBuddyCelebrate) extrasBuddy('skalBuddy');
   }
 
   function lagomEgg() {
-    if (window.smtFx) window.smtFx.toast('👌 Lagom.', { duration: 1800 });
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate(
-        'Not too much. Not too little. Just right.',
-        'Inte för mycket. Inte för lite. Precis lagom.',
-      );
+    if (window.smtFx) window.smtFx.toast(extrasText('lagomToast'), { duration: 1800 });
+    if (window.smtBuddyCelebrate) extrasBuddy('lagomBuddy');
   }
 
   // ---------- Click brand logo 5× → flag flutter ----------
@@ -276,9 +585,8 @@
   });
   function flagFlutter() {
     if (prefersReducedMotion()) {
-      if (window.smtFx) window.smtFx.toast('Sweden mode. Hej hej.', { duration: 1800 });
-      if (window.smtBuddyCelebrate)
-        window.smtBuddyCelebrate('Sweden mode. Hej hej.', 'Sverige-läge. Hej hej.');
+      if (window.smtFx) window.smtFx.toast(extrasText('swedenModeToast'), { duration: 1800 });
+      if (window.smtBuddyCelebrate) extrasBuddy('swedenModeToast');
       return;
     }
     const flag = document.createElement('div');
@@ -306,8 +614,7 @@
       { duration: 2200, easing: 'cubic-bezier(.3,.7,.4,1)' },
     ).onfinish = () => flag.remove();
     if (window.smtFx) window.smtFx.rain({ colors: ['#006aa7', '#fecc00'], count: 80 });
-    if (window.smtBuddyCelebrate)
-      window.smtBuddyCelebrate('Sweden mode. Hej hej.', 'Sverige-läge. Hej hej.');
+    if (window.smtBuddyCelebrate) extrasBuddy('swedenModeToast');
   }
 
   // ---------- Konami → flag rain (kept from before) ----------
@@ -331,8 +638,7 @@
     if (kbuf.length > SEQ.length) kbuf.shift();
     if (kbuf.join(',') === SEQ.join(',')) {
       if (window.smtFx) window.smtFx.rain({ colors: ['#006aa7', '#fecc00'], count: 160 });
-      if (window.smtBuddyCelebrate)
-        window.smtBuddyCelebrate('Sweden mode activated.', 'Sverige-läge aktiverat.');
+      if (window.smtBuddyCelebrate) extrasBuddy('swedenModeActivated');
       kbuf = [];
     }
   });
@@ -356,32 +662,9 @@
     }, 600);
     if (clicks >= 3) {
       clicks = 0;
-      const facts = [
-        [
-          'Spotify, Skype, Minecraft, and Klarna were all started in Sweden.',
-          'Spotify, Skype, Minecraft och Klarna startade alla i Sverige.',
-        ],
-        ['Sweden has been at peace since 1814.', 'Sverige har varit i fred sedan 1814.'],
-        [
-          'Sweden recycles ~99% of household waste.',
-          'Sverige återvinner ~99% av hushållsavfallet.',
-        ],
-        ['~96,000 lakes. 200,000 islands.', '~96 000 sjöar. 200 000 öar.'],
-        [
-          'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
-          'IKEA = Ingvar Kamprad + Elmtaryd + Agunnaryd.',
-        ],
-        [
-          '480 days of paid parental leave per child.',
-          '480 dagar betald föräldraledighet per barn.',
-        ],
-        [
-          'Volvo invented the three-point seatbelt and gave the patent away.',
-          'Volvo uppfann trepunktsbältet och gav bort patentet.',
-        ],
-      ];
+      const facts = EXTRAS_COPY.facts;
       const f = facts[Math.floor(Math.random() * facts.length)];
-      if (window.smtFx) window.smtFx.toast('💡 ' + f[lang() === 'sv' ? 1 : 0], { duration: 4200 });
+      if (window.smtFx) window.smtFx.toast(`💡 ${f[lang()] || f.en}`, { duration: 4200 });
     }
   });
 

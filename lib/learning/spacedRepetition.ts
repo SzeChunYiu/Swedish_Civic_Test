@@ -54,9 +54,14 @@ export function isReviewGrade(value: unknown): value is ReviewGrade {
 }
 
 export function isCanonicalReviewTimestamp(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
+  return getCanonicalReviewTimestampMs(value) !== null;
+}
+
+function getCanonicalReviewTimestampMs(value: unknown): number | null {
+  if (typeof value !== 'string') return null;
   const timestamp = Date.parse(value);
-  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
+  if (!Number.isFinite(timestamp)) return null;
+  return new Date(timestamp).toISOString() === value ? timestamp : null;
 }
 
 function safeReviewTimestamp(value: unknown): string {
@@ -208,16 +213,16 @@ export function getNextReviewAt({
 // ---- Queue selection helpers -------------------------------------------------
 
 export function isDue(card: ReviewCard, now: string = new Date().toISOString()): boolean {
-  const dueAt = Date.parse(card.dueAt);
-  const current = Date.parse(now);
-  if (!Number.isFinite(dueAt) || !Number.isFinite(current)) return false;
+  const dueAt = getCanonicalReviewTimestampMs(card?.dueAt);
+  const current = getCanonicalReviewTimestampMs(now);
+  if (dueAt === null || current === null) return false;
   return dueAt <= current;
 }
 
 export function sortByDueAscending(a: ReviewCard, b: ReviewCard): number {
-  const aTime = Date.parse(a.dueAt);
-  const bTime = Date.parse(b.dueAt);
-  const safeATime = Number.isFinite(aTime) ? aTime : Number.POSITIVE_INFINITY;
-  const safeBTime = Number.isFinite(bTime) ? bTime : Number.POSITIVE_INFINITY;
+  const aTime = getCanonicalReviewTimestampMs(a?.dueAt);
+  const bTime = getCanonicalReviewTimestampMs(b?.dueAt);
+  const safeATime = aTime ?? Number.POSITIVE_INFINITY;
+  const safeBTime = bTime ?? Number.POSITIVE_INFINITY;
   return safeATime - safeBTime;
 }
