@@ -10,11 +10,12 @@ function read(relativePath) {
 }
 
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
-  const source = read('components/ui/ProgressBar.tsx');
+  const source = read('components/ProgressBar.tsx');
+  const adapterSource = read('components/ui/ProgressBar.tsx');
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
-  assert.match(source, /import type \{ AppLanguage \}/);
+  assert.match(source, /type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
@@ -24,17 +25,20 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
     source,
     /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   );
-  assert.match(source, /aria-label=\{progressAccessibilityLabel\}/);
+  assert.match(source, /aria-label=\{resolvedAccessibilityLabel\}/);
   assert.match(source, /aria-valuemax=\{100\}/);
   assert.match(source, /aria-valuemin=\{0\}/);
   assert.match(source, /aria-valuenow=\{progressPercent\}/);
-  assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
-  assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
-  assert.match(source, /accessibilityRole="progressbar"/);
+  assert.match(source, /aria-valuetext=\{resolvedAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{resolvedAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(
     source,
-    /accessibilityValue=\{\{\s*min: 0,\s*max: 100,\s*now: progressPercent,\s*text: progressAccessibilityLabel,\s*\}\}/,
+    /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
   );
+  assert.match(adapterSource, /ProgressBar as RootProgressBar/);
+  assert.match(adapterSource, /languageOverride=\{language\}/);
+  assert.doesNotMatch(adapterSource, /Animated\.timing|new Animated\.Value|useReducedMotion/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -824,11 +828,12 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
 
   assert.doesNotMatch(webSource, /react-native-google-mobile-ads/);
   assert.match(webSource, /useSettingsStore/);
-  assert.match(webSource, /adBannerCopy, getAdBannerStatusLabel/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
-  assert.match(webSource, /const unit = getAdUnit\(placement\);/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(webSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
+  assert.match(
+    webSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     webSource,
@@ -838,21 +843,22 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /react-native-google-mobile-ads/);
   assert.match(nativeSource, /useSettingsStore/);
   assert.match(nativeSource, /accessible/);
-  assert.match(nativeSource, /adBannerCopy, getAdBannerStatusLabel/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
-  assert.match(nativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(nativeSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(
     nativeSource,
-    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
   );
+  assert.match(nativeSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     nativeSource,
     /accessibilityHint=\{`\$\{copy\.previewHint\} \$\{copy\.removeAdsHint\}`\}/,
   );
   assert.match(nativeSource, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.doesNotMatch(nativeSource, /copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)/);
+  assert.doesNotMatch(
+    nativeSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
   assert.match(nativeSource, /<BannerAd/);
   assert.match(copySource, /const adBannerCopy: Record<AppLanguage, AdBannerCopy>/);
   assert.match(copySource, /home_banner: 'Annons på startsidan'/);
@@ -860,6 +866,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
   assert.match(copySource, /AdMob test unit active - test placement/);
+  assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/);
 });
 
 test('native ad preview card exposes a grouped accessibility summary', () => {

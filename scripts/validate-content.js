@@ -4986,6 +4986,96 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function validateStaticEbookProseSourceMetadata() {
+  const source = loadText('site/ebook.js');
+  let rulesValidated = 0;
+
+  const forbiddenPatterns = [
+    {
+      pattern: /EBOOK_DEFAULT_PROSE_SOURCE_KEYS/,
+      message: 'static ebook prose source metadata must not define a default source-key fallback',
+    },
+    {
+      pattern: /fallbackSourceKeys\s*=\s*EBOOK_DEFAULT_PROSE_SOURCE_KEYS/,
+      message: 'static ebook annotate() must not default to broad UHR prose source keys',
+    },
+    {
+      pattern: /explicitSourceKeys\s*\|\|\s*fallbackSourceKeys/,
+      message: 'static ebook annotate() must not annotate prose through fallbackSourceKeys',
+    },
+    {
+      pattern: /typeof point === 'string' \? null : point\.sourceKeys/,
+      message: 'static ebook Swedish brief string points must carry local source keys',
+    },
+    {
+      pattern: /footnoteCollector\.annotate\(rawBodyHtml\)/,
+      message: 'static ebook body annotation must pass typed chapter source metadata',
+    },
+  ];
+  const requiredSnippets = [
+    {
+      snippet: 'const EBOOK_BODY_SOURCE_KEYS = Object.freeze({',
+      message: 'static ebook must define typed body source metadata per chapter',
+    },
+    {
+      snippet: 'function ebookBodySourceKeys(chapterId) {',
+      message: 'static ebook must resolve typed body source metadata before annotation',
+    },
+    {
+      snippet: 'annotate(html, typedSourceKeys) {',
+      message:
+        'static ebook annotate() must require typed source metadata when inline keys are absent',
+    },
+    {
+      snippet: 'const normalizedTypedSourceKeys = typedSourceKeys',
+      message: 'static ebook annotate() must normalize typed source metadata before footnotes',
+    },
+    {
+      snippet: 'data-source-metadata="${metadataKind}"',
+      message:
+        'static ebook rendered prose must expose whether source metadata was inline or typed',
+    },
+    {
+      snippet: 'footnoteCollector.annotate(rawBodyHtml, ebookBodySourceKeys(id))',
+      message: 'static ebook body render must pass typed chapter source metadata',
+    },
+    {
+      snippet:
+        "const normalizedBriefSourceKeys = normalizedEbookSourceKeys(\n      sourceKeys,\n      'svStudyBrief body source metadata',",
+      message: 'static ebook Swedish study brief must normalize local source keys',
+    },
+    {
+      snippet: '? normalizedBriefSourceKeys : point.sourceKeys;',
+      message: 'static ebook Swedish study brief string points must use local source metadata',
+    },
+    {
+      snippet: '<p${ebookSourceKeyDataAttr(EBOOK_EDITORIAL_ONLY_SOURCE_KEYS)}>',
+      message: 'static ebook Swedish practice hints must be marked as editorial prose',
+    },
+  ];
+
+  forbiddenPatterns.forEach(({ pattern, message }) => {
+    if (pattern.test(source)) {
+      fail(message);
+      return;
+    }
+    rulesValidated += 1;
+  });
+
+  requiredSnippets.forEach(({ snippet, message }) => {
+    if (!source.includes(snippet)) {
+      fail(message);
+      return;
+    }
+    rulesValidated += 1;
+  });
+
+  return {
+    rulesValidated,
+    rulesExpected: forbiddenPatterns.length + requiredSnippets.length,
+  };
+}
+
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -8824,6 +8914,8 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticEbookProseSourceMetadataRulesValidated = 0;
+let staticEbookProseSourceMetadataParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9007,6 +9099,35 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-static-ebook-provenance')) {
+  validateStaticValidationSyntaxGate();
+  const factboxValidation = validateStaticEbookFactboxProvenance();
+  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
+  staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
+  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
+  staticEbookFactboxProvenanceValidated =
+    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
+    staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
+    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+  const proseValidation = validateStaticEbookProseSourceMetadata();
+  staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
+  staticEbookProseSourceMetadataParityValidated =
+    staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticEbookFactboxClaimPatternsValidated,
+    staticEbookFactboxRequiredCopyValidated,
+    staticEbookFactboxSourceUrlsValidated,
+    staticEbookFactboxProvenanceValidated,
+    staticEbookProseSourceMetadataRulesValidated,
+    staticEbookProseSourceMetadataParityValidated,
+    staticValidationSyntaxFilesValidated,
+    staticValidationImportChecksValidated,
+    staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-app-config-schema')) {
   validateValidationScriptSyntax();
   validateAppConfigSchema();
@@ -9126,6 +9247,20 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-legal-section-rendering')) {
+  validateLegalSectionRenderingParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
   });
   process.exit(0);
 }
@@ -9514,6 +9649,12 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+}
+{
+  const proseValidation = validateStaticEbookProseSourceMetadata();
+  staticEbookProseSourceMetadataRulesValidated = proseValidation.rulesValidated;
+  staticEbookProseSourceMetadataParityValidated =
+    staticEbookProseSourceMetadataRulesValidated === proseValidation.rulesExpected;
 }
 {
   const arabicI18nValidation = validateStaticI18nArabicNaturalness();
@@ -19277,26 +19418,6 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   );
   process.exit(0);
 }
-if (process.argv.includes('--focus-legal-section-rendering')) {
-  validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
 if (process.argv.includes('--focus-mistakes-route-copy')) {
   validateMistakesRouteCopyParity();
   if (failures.length) exitWithValidationFailures();
@@ -20096,6 +20217,8 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticEbookProseSourceMetadataRulesValidated,
+      staticEbookProseSourceMetadataParityValidated,
       staticI18nArabicRequiredCopyValidated,
       staticI18nArabicHighFrequencyLabelsValidated,
       staticI18nArabicForbiddenFragmentsValidated,
