@@ -133,7 +133,17 @@ test('local study data import previews and applies all learner snapshot sections
   const rawPayload = JSON.stringify({
     version: 1,
     progress: {
-      completedQuestionIds: ['q001', 'q002', 42],
+      completedQuestionIds: [
+        ' q001 ',
+        'q001',
+        '',
+        '   ',
+        '__proto__',
+        'constructor',
+        'prototype',
+        'q002',
+        42,
+      ],
       questionProgress: {
         q001: {
           seenCount: 3,

@@ -229,6 +229,12 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /function normalizeNonNegativeInteger\(value: unknown/);
   assert.match(progressStore, /function normalizeAnswerHistoryEntry\(value: unknown\)/);
   assert.match(progressStore, /const seenCount = normalizeNonNegativeInteger/);
+  assert.match(progressStore, /function normalizeCompletedQuestionIds\(value: unknown\)/);
+  assert.match(
+    progressStore,
+    /const completedQuestionIds = normalizeCompletedQuestionIds\(candidate\.completedQuestionIds\);/,
+  );
+  assert.match(progressStore, /maxHydratedCompletedQuestionIds/);
   assert.match(progressStore, /totalXp: normalizeNonNegativeInteger/);
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(
@@ -457,6 +463,44 @@ test('progress hydration normalizes unsafe persisted numeric fields', () => {
   assert.equal(state.streakFreezeState.lifetimeEarned, 1);
   assert.equal(state.streakFreezeState.lifetimeSpent, 0);
   assert.deepEqual(state.streakFreezeState.rescuedDayKeys, ['2026-05-18']);
+});
+
+test('progress hydration normalizes completed question ids before use', () => {
+  const overlargeCompletedQuestionIds = Array.from(
+    { length: 10005 },
+    (_, index) => `q-over-${index}`,
+  );
+  const state = loadProgressFromStorage({
+    completedQuestionIds: [
+      ' q001 ',
+      'q001',
+      '',
+      '   ',
+      '__proto__',
+      'constructor',
+      'prototype',
+      7,
+      'q002',
+      'q002',
+      ...overlargeCompletedQuestionIds,
+    ],
+  });
+
+  assert.equal(state.completedQuestionIds.length, 10000);
+  assert.deepEqual(state.completedQuestionIds.slice(0, 4), [
+    'q001',
+    'q002',
+    'q-over-0',
+    'q-over-1',
+  ]);
+  assert.equal(state.completedQuestionIds.at(-1), 'q-over-9997');
+  assert.equal(new Set(state.completedQuestionIds).size, state.completedQuestionIds.length);
+  assert.equal(state.completedQuestionIds.includes(' q001 '), false);
+  assert.equal(state.completedQuestionIds.includes(''), false);
+  assert.equal(state.completedQuestionIds.includes('   '), false);
+  assert.equal(state.completedQuestionIds.includes('__proto__'), false);
+  assert.equal(state.completedQuestionIds.includes('constructor'), false);
+  assert.equal(state.completedQuestionIds.includes('prototype'), false);
 });
 
 test('progress mutations return the same shape as persisted JSON readback', () => {
@@ -729,6 +773,21 @@ test('progress store schema parity rejects raw confidence hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /question progress hydration must preserve only valid 1\.\.5 confidence ratings|progress hydration must not use raw numeric expression confidenceRating: item\.confidenceRating/,
+  );
+});
+
+test('progress store schema parity rejects raw completed-question id hydration', () => {
+  const result = runValidationWithProgressStorePatch(
+    'const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);',
+    `const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
+    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
+    : [];`,
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /completed question ids must be normalized through the completed-id helper|completed question ids must not use raw string-only hydration/,
   );
 });
 

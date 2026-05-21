@@ -15047,6 +15047,22 @@ function validateProgressStoreSchemaParity() {
       'streakFreezeState: normalizeStoredStreakFreezeState(candidate.streakFreezeState),',
       'progress hydration must normalize freeze state through the shared helper',
     ],
+    [
+      'function normalizeCompletedQuestionIds(value: unknown): string[]',
+      'progress hydration must define a completed-id normalizer',
+    ],
+    [
+      'const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);',
+      'completed question ids must be normalized through the completed-id helper',
+    ],
+    [
+      'if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) { continue; }',
+      'completed question ids must drop blank, unsafe, and duplicate ids',
+    ],
+    [
+      'if (questionIds.length >= maxHydratedCompletedQuestionIds) break;',
+      'completed question ids must be capped during hydration',
+    ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [
@@ -15087,6 +15103,10 @@ function validateProgressStoreSchemaParity() {
     [
       'function normalizeStreakFreezeState(value: unknown): StreakFreezeState',
       'progress store must not duplicate the shared streak-freeze normalizer',
+    ],
+    [
+      "const completedQuestionIds = Array.isArray(candidate.completedQuestionIds) ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string') : [];",
+      'completed question ids must not use raw string-only hydration',
     ],
   ];
 

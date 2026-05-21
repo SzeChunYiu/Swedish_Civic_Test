@@ -63,6 +63,7 @@ export type DailyChallengeProgress = {
 const progressStateKey = 'progressState';
 const progressStorageId = 'progress';
 const maxHydratedQuestionAnswerCount = 10000;
+const maxHydratedCompletedQuestionIds = 10000;
 const maxHydratedAnswerHistoryCount = 10000;
 const maxHydratedAnswerTimeSeconds = 24 * 60 * 60;
 const maxHydratedTotalXp = 1000000;
@@ -242,6 +243,25 @@ function normalizeDailyChallengeQuestionIds(value: unknown): string[] {
   return questionIds;
 }
 
+function normalizeCompletedQuestionIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  const questionIds: string[] = [];
+  const seenQuestionIds = new Set<string>();
+  for (const rawQuestionId of value) {
+    const questionId = typeof rawQuestionId === 'string' ? rawQuestionId.trim() : '';
+    if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) {
+      continue;
+    }
+
+    seenQuestionIds.add(questionId);
+    questionIds.push(questionId);
+    if (questionIds.length >= maxHydratedCompletedQuestionIds) break;
+  }
+
+  return questionIds;
+}
+
 function normalizeDailyChallengeProgress(value: unknown): DailyChallengeProgress | null {
   if (!value || typeof value !== 'object') return null;
 
@@ -287,9 +307,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
   if (!value || typeof value !== 'object') return emptyProgress;
 
   const candidate = value as Partial<PersistedProgress>;
-  const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
-    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
-    : [];
+  const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);
   const answerDates = Array.isArray(candidate.answerDates)
     ? [
         ...new Set(
