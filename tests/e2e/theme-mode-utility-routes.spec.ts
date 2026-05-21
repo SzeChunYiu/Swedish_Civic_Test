@@ -3,8 +3,74 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { darkColors } from '../../lib/theme';
 import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 
+type SourceAffordanceLanguage = 'sv' | 'en';
+
 const accessibilityThemeModeKey = 'accessibility\\a11y.themeMode.v1';
 const mobileViewport = { width: 390, height: 844 };
+
+const searchSourceAffordanceCases = [
+  {
+    language: 'sv',
+    chapterQuery: 'kommun',
+    chapterLinkName: /Öppna kapitlet/,
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    provenanceBadgeName: /Källtyp: UHR-källa/,
+    provenanceLabel: 'UHR-källa',
+    provenanceQuery: 'folkomröstning',
+    sourceNoteName: /^Källanteckning:/,
+  },
+  {
+    language: 'en',
+    chapterQuery: 'municipality',
+    chapterLinkName: /Open the chapter/,
+    inputName: 'Search civic terms and practice questions',
+    provenanceBadgeName: /Provenance: UHR source/,
+    provenanceLabel: 'UHR source',
+    provenanceQuery: 'municipality',
+    sourceNoteName: /^Source note:/,
+  },
+] as const satisfies readonly {
+  chapterLinkName: RegExp;
+  chapterQuery: string;
+  inputName: string;
+  language: SourceAffordanceLanguage;
+  provenanceBadgeName: RegExp;
+  provenanceLabel: string;
+  provenanceQuery: string;
+  sourceNoteName: RegExp;
+}[];
+
+const citizenshipSourceAffordanceCases = [
+  {
+    checkboxName: /Ej markerad:/,
+    disclaimerBodyName: /^Oberoende studieverktyg\./,
+    disclaimerLabel: /Studieinformation: Oberoende studieverktyg/,
+    disclaimerTitle: 'Studieinformation',
+    language: 'sv',
+    practiceLinkName: 'Öppna övningsläget för samhällskunskap',
+    sourceLinkName: /Migrationsverket: Ansök om svenskt medborgarskap/,
+    sourceTitle: 'Ansök om svenskt medborgarskap',
+  },
+  {
+    checkboxName: /Not marked:/,
+    disclaimerBodyName: /^Independent study tool\./,
+    disclaimerLabel: /Study disclaimer: Independent study tool/,
+    disclaimerTitle: 'Study disclaimer',
+    language: 'en',
+    practiceLinkName: 'Open civic knowledge practice mode',
+    sourceLinkName: /Migrationsverket: Apply for Swedish citizenship/,
+    sourceTitle: 'Apply for Swedish citizenship',
+  },
+] as const satisfies readonly {
+  checkboxName: RegExp;
+  disclaimerBodyName: RegExp;
+  disclaimerLabel: RegExp;
+  disclaimerTitle: string;
+  language: SourceAffordanceLanguage;
+  practiceLinkName: string;
+  sourceLinkName: RegExp;
+  sourceTitle: string;
+}[];
 
 function hexToRgb(hexColor: string) {
   const hex = hexColor.replace('#', '');
@@ -44,164 +110,186 @@ async function expectComputedColor(
     .toBe(hexToRgb(expectedHexColor));
 }
 
+async function expectNoHorizontalOverflow(page: Page) {
+  const metrics = await page.evaluate(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    return {
+      bodyScrollWidth: body.scrollWidth,
+      clientWidth: root.clientWidth,
+      rootScrollWidth: root.scrollWidth,
+    };
+  });
+
+  expect(metrics.rootScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+  expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+}
+
 test.use({ viewport: mobileViewport });
 
-test('search utility route uses dark theme tokens for input and route actions', async ({
-  page,
-}) => {
-  await seedSettingsLanguage(page, 'sv');
-  await markAboutTheTestSeen(page);
-  await seedDarkTheme(page);
+for (const testCase of searchSourceAffordanceCases) {
+  test(`search utility route uses dark source-affordance tokens in ${testCase.language}`, async ({
+    page,
+  }) => {
+    await seedSettingsLanguage(page, testCase.language);
+    await markAboutTheTestSeen(page);
+    await seedDarkTheme(page);
 
-  await page.goto('/search', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+    await page.goto('/search', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
 
-  const searchInput = page.getByRole('textbox', {
-    name: 'Sök samhällsbegrepp och övningsfrågor',
+    const searchInput = page.getByRole('textbox', {
+      name: testCase.inputName,
+    });
+    await expect(searchInput).toBeVisible();
+    await expect
+      .poll(async () => (await computedColors(searchInput)).color)
+      .toBe(hexToRgb(darkColors.text));
+    await expect
+      .poll(async () => (await computedColors(searchInput)).borderColor)
+      .toBe(hexToRgb(darkColors.border));
+
+    await searchInput.fill(testCase.chapterQuery);
+    const chapterLink = page.getByRole('link', { name: testCase.chapterLinkName }).first();
+    await expect(chapterLink).toBeVisible();
+    await expectComputedColor(
+      chapterLink,
+      'borderColor',
+      darkColors.focus,
+      `Search chapter links should use the dark focus border token in ${testCase.language}`,
+    );
+
+    await searchInput.fill(testCase.provenanceQuery);
+    const provenanceBadge = page
+      .getByRole('button', { name: testCase.provenanceBadgeName })
+      .first();
+    await expect(provenanceBadge).toBeVisible();
+    await expectComputedColor(
+      provenanceBadge,
+      'backgroundColor',
+      darkColors.badgeBlueBg,
+      `Search provenance badges should use the dark UHR badge background token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      provenanceBadge.getByText(testCase.provenanceLabel),
+      'color',
+      darkColors.badgeBlueText,
+      `Search provenance badge labels should use the dark UHR badge text token in ${testCase.language}`,
+    );
+
+    await provenanceBadge.click();
+    const sourceNote = page.getByText(testCase.sourceNoteName).first();
+    await expect(sourceNote).toBeVisible();
+    await expectComputedColor(
+      provenanceBadge,
+      'borderColor',
+      darkColors.focus,
+      `Expanded Search provenance badges should use the dark focus border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      sourceNote,
+      'backgroundColor',
+      darkColors.surfaceWarm,
+      `Search provenance source notes should use the dark warm surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      sourceNote,
+      'borderColor',
+      darkColors.border,
+      `Search provenance source notes should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      sourceNote,
+      'color',
+      darkColors.textSecondary,
+      `Search provenance source notes should use the dark secondary text token in ${testCase.language}`,
+    );
+    await expectNoHorizontalOverflow(page);
   });
-  await expect(searchInput).toBeVisible();
-  await expect
-    .poll(async () => (await computedColors(searchInput)).color)
-    .toBe(hexToRgb(darkColors.text));
-  await expect
-    .poll(async () => (await computedColors(searchInput)).borderColor)
-    .toBe(hexToRgb(darkColors.border));
+}
 
-  await searchInput.fill('kommun');
-  const chapterLink = page.getByRole('link', { name: /Öppna kapitlet/ }).first();
-  await expect(chapterLink).toBeVisible();
-  await expectComputedColor(
-    chapterLink,
-    'borderColor',
-    darkColors.focus,
-    'Search chapter links should use the dark focus border token',
-  );
+for (const testCase of citizenshipSourceAffordanceCases) {
+  test(`citizenship requirements route uses dark source-affordance tokens in ${testCase.language}`, async ({
+    page,
+  }) => {
+    await seedSettingsLanguage(page, testCase.language);
+    await markAboutTheTestSeen(page);
+    await seedDarkTheme(page);
 
-  await searchInput.fill('folkomröstning');
-  const provenanceBadge = page.getByRole('button', { name: /Källtyp: UHR-källa/ }).first();
-  await expect(provenanceBadge).toBeVisible();
-  await expectComputedColor(
-    provenanceBadge,
-    'backgroundColor',
-    darkColors.badgeBlueBg,
-    'Search provenance badges should use the dark UHR badge background token',
-  );
-  await expectComputedColor(
-    provenanceBadge.getByText('UHR-källa'),
-    'color',
-    darkColors.badgeBlueText,
-    'Search provenance badge labels should use the dark UHR badge text token',
-  );
+    await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
 
-  await provenanceBadge.click();
-  const sourceNote = page.getByText(/^Källanteckning:/).first();
-  await expect(sourceNote).toBeVisible();
-  await expectComputedColor(
-    provenanceBadge,
-    'borderColor',
-    darkColors.focus,
-    'Expanded Search provenance badges should use the dark focus border token',
-  );
-  await expectComputedColor(
-    sourceNote,
-    'backgroundColor',
-    darkColors.surfaceWarm,
-    'Search provenance source notes should use the dark warm surface token',
-  );
-  await expectComputedColor(
-    sourceNote,
-    'borderColor',
-    darkColors.border,
-    'Search provenance source notes should use the dark border token',
-  );
-  await expectComputedColor(
-    sourceNote,
-    'color',
-    darkColors.textSecondary,
-    'Search provenance source notes should use the dark secondary text token',
-  );
-});
+    const firstChecklistItem = page.getByRole('checkbox', { name: testCase.checkboxName }).first();
+    await expect(firstChecklistItem).toBeVisible();
+    await expect
+      .poll(async () => (await computedColors(firstChecklistItem)).borderColor)
+      .toBe(hexToRgb(darkColors.border));
 
-test('citizenship requirements route uses dark theme tokens for checklist and CTAs', async ({
-  page,
-}) => {
-  await seedSettingsLanguage(page, 'en');
-  await markAboutTheTestSeen(page);
-  await seedDarkTheme(page);
+    const disclaimer = page.getByLabel(testCase.disclaimerLabel).first();
+    await expect(disclaimer).toBeVisible();
+    await expectComputedColor(
+      disclaimer,
+      'backgroundColor',
+      darkColors.surfaceWarm,
+      `Citizenship disclaimer should use the dark warm surface token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      disclaimer,
+      'borderColor',
+      darkColors.border,
+      `Citizenship disclaimer should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByText(testCase.disclaimerTitle).first(),
+      'color',
+      darkColors.textSecondary,
+      `Citizenship disclaimer title should use the dark secondary text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      page.getByText(testCase.disclaimerBodyName).first(),
+      'color',
+      darkColors.textDisclaimer,
+      `Citizenship disclaimer copy should use the dark disclaimer text token in ${testCase.language}`,
+    );
 
-  await page.goto('/citizenship-requirements', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+    const firstSourceLink = page.getByRole('link', { name: testCase.sourceLinkName }).first();
+    await expect(firstSourceLink).toBeVisible();
+    await expectComputedColor(
+      firstSourceLink,
+      'borderColor',
+      darkColors.border,
+      `Citizenship source links should use the dark border token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstSourceLink.getByText(testCase.sourceTitle),
+      'color',
+      darkColors.text,
+      `Citizenship source titles should use the dark primary text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstSourceLink.getByText('Migrationsverket').first(),
+      'color',
+      darkColors.textSecondary,
+      `Citizenship source metadata should use the dark secondary text token in ${testCase.language}`,
+    );
+    await expectComputedColor(
+      firstSourceLink.getByText(/https:\/\/www\.migrationsverket\.se\//).first(),
+      'color',
+      darkColors.accent,
+      `Citizenship source URLs should use the dark accent token in ${testCase.language}`,
+    );
 
-  const firstChecklistItem = page.getByRole('checkbox', { name: /Not marked:/ }).first();
-  await expect(firstChecklistItem).toBeVisible();
-  await expect
-    .poll(async () => (await computedColors(firstChecklistItem)).borderColor)
-    .toBe(hexToRgb(darkColors.border));
-
-  const disclaimer = page.getByLabel(/Study disclaimer: Independent study tool/).first();
-  await expect(disclaimer).toBeVisible();
-  await expectComputedColor(
-    disclaimer,
-    'backgroundColor',
-    darkColors.surfaceWarm,
-    'Citizenship disclaimer should use the dark warm surface token',
-  );
-  await expectComputedColor(
-    disclaimer,
-    'borderColor',
-    darkColors.border,
-    'Citizenship disclaimer should use the dark border token',
-  );
-  await expectComputedColor(
-    page.getByText('Study disclaimer').first(),
-    'color',
-    darkColors.textSecondary,
-    'Citizenship disclaimer title should use the dark secondary text token',
-  );
-  await expectComputedColor(
-    page.getByText(/^Independent study tool\./).first(),
-    'color',
-    darkColors.textDisclaimer,
-    'Citizenship disclaimer copy should use the dark disclaimer text token',
-  );
-
-  const firstSourceLink = page
-    .getByRole('link', { name: /Migrationsverket: Apply for Swedish citizenship/ })
-    .first();
-  await expect(firstSourceLink).toBeVisible();
-  await expectComputedColor(
-    firstSourceLink,
-    'borderColor',
-    darkColors.border,
-    'Citizenship source links should use the dark border token',
-  );
-  await expectComputedColor(
-    firstSourceLink.getByText('Apply for Swedish citizenship'),
-    'color',
-    darkColors.text,
-    'Citizenship source titles should use the dark primary text token',
-  );
-  await expectComputedColor(
-    firstSourceLink.getByText('Migrationsverket').first(),
-    'color',
-    darkColors.textMuted,
-    'Citizenship source metadata should use the dark muted text token',
-  );
-  await expectComputedColor(
-    firstSourceLink.getByText(/https:\/\/www\.migrationsverket\.se\//).first(),
-    'color',
-    darkColors.accent,
-    'Citizenship source URLs should use the dark accent token',
-  );
-
-  const practiceLink = page.getByRole('link', {
-    name: 'Open civic knowledge practice mode',
+    const practiceLink = page.getByRole('link', {
+      name: testCase.practiceLinkName,
+    });
+    await expect(practiceLink).toBeVisible();
+    await expect
+      .poll(async () => (await computedColors(practiceLink)).backgroundColor)
+      .toBe(hexToRgb(darkColors.accent));
+    await expect
+      .poll(async () => (await computedColors(practiceLink)).color)
+      .toBe(hexToRgb(darkColors.surface));
+    await expectNoHorizontalOverflow(page);
   });
-  await expect(practiceLink).toBeVisible();
-  await expect
-    .poll(async () => (await computedColors(practiceLink)).backgroundColor)
-    .toBe(hexToRgb(darkColors.accent));
-  await expect
-    .poll(async () => (await computedColors(practiceLink)).color)
-    .toBe(hexToRgb(darkColors.surface));
-});
+}
