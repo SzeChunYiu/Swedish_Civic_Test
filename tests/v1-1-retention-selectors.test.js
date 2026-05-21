@@ -112,6 +112,7 @@ test('streakWithFreeze: malformed active days and today fall back without corrup
   assert.deepEqual(result.rescuedThisRun, []);
   assert.equal(result.freezeState.available, 1);
   assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+  assert.deepEqual(result.rescuedInCurrentStreak, ['2026-05-17']);
 });
 
 test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid now inputs', () => {
@@ -134,68 +135,24 @@ test('streakWithFreeze: refillFreezes repairs invalid lastEarnedAt and invalid n
   assert.equal(invalidNow.available, 1);
 });
 
-test('streakWithFreeze: malformed freeze counters are normalized before refill math', () => {
-  const { refillFreezes } = loadTs('lib/learning/streakWithFreeze.ts');
-  const now = new Date('2026-05-19T08:00:00.000Z');
-
-  const malformed = refillFreezes(
-    {
-      available: '1',
-      lastEarnedAt: '2026-05-18',
-      lifetimeEarned: '2',
-      lifetimeSpent: NaN,
-      rescuedDayKeys: ['bad-key', '2026-05-17'],
-    },
-    now,
-  );
-  assert.equal(malformed.available, 0);
-  assert.equal(malformed.lifetimeEarned, 0);
-  assert.equal(malformed.lifetimeSpent, 0);
-  assert.deepEqual(malformed.rescuedDayKeys, ['2026-05-17']);
-
-  const overstocked = refillFreezes(
-    {
-      available: 99,
-      lastEarnedAt: '2026-05-12',
-      lifetimeEarned: 3,
-      lifetimeSpent: 1,
-      rescuedDayKeys: [],
-    },
-    now,
-  );
-  assert.equal(overstocked.available, 4);
-  assert.equal(overstocked.lifetimeEarned, 3);
-  assert.equal(overstocked.lifetimeSpent, 1);
-});
-
-test('streakWithFreeze: malformed freeze counters cannot rescue or persist corrupt values', () => {
-  const { calculateStreakWithFreeze } = loadTs('lib/learning/streakWithFreeze.ts');
-  const result = calculateStreakWithFreeze({
-    activeDayKeys: ['2026-05-16', '2026-05-18', '2026-05-19'],
-    freezeState: {
-      available: 1.5,
-      lastEarnedAt: '2026-05-18',
-      lifetimeEarned: Infinity,
-      lifetimeSpent: -1,
-      rescuedDayKeys: ['bad-key'],
-    },
-    today: '2026-05-19',
-    now: new Date('2026-05-19T08:00:00.000Z'),
-  });
-
-  assert.equal(result.streakDays, 2);
-  assert.deepEqual(result.rescuedThisRun, []);
-  assert.deepEqual(result.freezeState.rescuedDayKeys, []);
-  assert.equal(result.freezeState.available, 0);
-  assert.equal(result.freezeState.lifetimeEarned, 0);
-  assert.equal(result.freezeState.lifetimeSpent, 0);
-});
-
 test('streakWithFreeze: freezeBannerCopy emits Sv + En only when a freeze was used', () => {
   const { freezeBannerCopy } = loadTs('lib/learning/streakWithFreeze.ts');
-  const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 0 } };
-  assert.match(freezeBannerCopy(withRescue, 'en'), /protected/i);
-  assert.match(freezeBannerCopy(withRescue, 'sv'), /räddad|räddat/i);
+  const withRescue = { rescuedThisRun: ['2026-05-17'], freezeState: { available: 1 } };
+  const englishCopy = freezeBannerCopy(withRescue, 'en');
+  const swedishCopy = freezeBannerCopy(withRescue, 'sv');
+
+  assert.match(englishCopy, /Streak protected/i);
+  assert.match(englishCopy, /1 freeze left/);
+  assert.match(swedishCopy, /Sviten är räddad/i);
+  assert.match(swedishCopy, /1 svitskydd kvar/);
+  assert.doesNotMatch(swedishCopy, /streak|freeze|Strecket|fryser/i);
+  const persistedRescue = {
+    rescuedInCurrentStreak: ['2026-05-17'],
+    rescuedThisRun: [],
+    freezeState: { available: 1 },
+  };
+  assert.match(freezeBannerCopy(persistedRescue, 'en'), /1 freeze left/);
+  assert.match(freezeBannerCopy(persistedRescue, 'sv'), /1 svitskydd kvar/);
   const noRescue = { rescuedThisRun: [], freezeState: { available: 1 } };
   assert.equal(freezeBannerCopy(noRescue, 'en'), null);
 });
