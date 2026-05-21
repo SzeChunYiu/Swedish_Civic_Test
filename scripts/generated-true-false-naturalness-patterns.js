@@ -93,6 +93,8 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^Hindra andra från att rösta\.?$/i,
   /^Try to persuade others of their political ideas\.?$/i,
   /^Stop others from voting\.?$/i,
+  /^Light candles on graves to remember and honour people who have died\.?$/i,
+  /^Open an Advent calendar every day until Christmas Eve\.?$/i,
   /^Vårdcentraler, barnavårdscentraler och mödravårdscentraler\.?$/i,
   /^Domstolar, åklagare och kriminalvård\.?$/i,
   /^Health centres, child health centres, and maternity clinics\.?$/i,

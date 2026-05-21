@@ -746,6 +746,48 @@ test('tradition prompts avoid literal common-to-do English', () => {
   );
 });
 
+test('All Saints generated true/false stems keep English context', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const generatedById = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(actualSiteBank.map((question) => [question.id, question]));
+  const expectedQuestions = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q104', 'trueStatement'),
+      questionSv:
+        'På Alla helgons dag är det vanligt att tända ljus på gravar för att minnas och hedra dem som har dött.',
+      questionEn:
+        'On All Saints’ Day, it is common to light candles on graves to remember and honour people who have died.',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q104', 'falseStatement'),
+      questionSv:
+        'På Alla helgons dag är det vanligt att öppna en adventskalender varje dag fram till julafton.',
+      questionEn:
+        'On All Saints’ Day, it is common to open an Advent calendar every day until Christmas Eve.',
+    },
+  ];
+
+  for (const expectedQuestion of expectedQuestions) {
+    const generatedQuestion = generatedById.get(expectedQuestion.id);
+    const actualQuestion = actualById.get(expectedQuestion.id);
+
+    assert.ok(generatedQuestion, `${expectedQuestion.id} should exist in generated site bank`);
+    assert.ok(actualQuestion, `${expectedQuestion.id} should exist in static site bank`);
+    assert.equal(generatedQuestion.q.sv, expectedQuestion.questionSv);
+    assert.equal(generatedQuestion.q.en, expectedQuestion.questionEn);
+    assert.equal(actualQuestion.q.sv, expectedQuestion.questionSv);
+    assert.equal(actualQuestion.q.en, expectedQuestion.questionEn);
+    assert.doesNotMatch(
+      generatedQuestion.q.en,
+      /^(?:Light candles on graves|Open an Advent calendar)\b/,
+    );
+  }
+});
+
 test('tradition common-to-do guard rejects literal English prompts', () => {
   const result = spawnSync(
     process.execPath,
@@ -3545,6 +3587,69 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+});
+
+test('published question schema rejects All Saints generated true/false English action fragments', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q104TrueId = generatedQuestionId(sourceQuestions, 'q104', 'trueStatement');
+  const q104FalseId = generatedQuestionId(sourceQuestions, 'q104', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const allSaintsEnglishFragmentResiduals = {",
+        "  [generatedFixtureId('q104', 1)]: { questionEn: 'Light candles on graves to remember and honour people who have died.' },",
+        "  [generatedFixtureId('q104', 2)]: { questionEn: 'Open an Advent calendar every day until Christmas Eve.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  allSaintsEnglishFragmentResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...allSaintsEnglishFragmentResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q104TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q104FalseId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.ok(
+    (output.match(/contains a generated true\/false grammar-splice stem/g) ?? []).length >= 2,
+    output,
+  );
 });
 
 test('published question schema rejects generated municipal-services answer fragments', () => {
