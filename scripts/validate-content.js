@@ -1525,7 +1525,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 10;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 22;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -15155,6 +15155,11 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const normalizedPaywallSource = paywallSource.replace(/\s+/g, ' ');
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
+  const nativeReceiptValidationBlock =
+    purchaseSource.match(
+      /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
+    )?.[1] ?? '';
+
   function assertInFlightCase(source, options) {
     try {
       assertPurchaseActionInFlightGuard(source, options);
@@ -15248,6 +15253,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes('validateRemoveAdsReceipt?(') &&
         normalizedPurchaseSource.includes('Promise<RemoveAdsReceiptValidationResult>'),
       'Remove Ads purchase provider must expose a receipt validation hook',
+    ],
+    [
+      /if\s*\(\s*!receiptValidator\s*\)\s*\{\s*return\s*\{[\s\S]*productId,[\s\S]*purchaseToken:\s*purchase\.purchaseToken\s*\?\?\s*null,[\s\S]*status:\s*'pending',[\s\S]*transactionId:\s*purchase\.transactionId\s*\?\?\s*null,[\s\S]*\};\s*\}/.test(
+        nativeReceiptValidationBlock,
+      ) && !/createReceiptValidationResult\s*\(/.test(nativeReceiptValidationBlock),
+      'native Remove Ads provider must fail closed without an injected receipt verifier',
     ],
     [
       normalizedPurchaseSource.includes(
