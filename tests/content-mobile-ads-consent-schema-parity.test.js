@@ -26,7 +26,7 @@ test('mobile ads consent TypeScript schema stays in parity with validator expect
 
   assert.equal(summary.mobileAdsConsentTypeInterfacesValidated, 5);
   assert.equal(summary.mobileAdsConsentTypeSchemaParityValidated, true);
-  assert.equal(summary.mobileAdsConsentRuntimeCasesValidated, 7);
+  assert.equal(summary.mobileAdsConsentRuntimeCasesValidated, 9);
   assert.equal(summary.mobileAdsConsentRuntimeParityValidated, true);
   assert.match(mobileConsentSource, /export interface MobileAdsConsentRuntime/);
   assert.match(mobileConsentSource, /platform: AdConsentPlatform \| string;/);
@@ -34,6 +34,72 @@ test('mobile ads consent TypeScript schema stays in parity with validator expect
   assert.match(mobileConsentSource, /normalizeAdConsentRegion/);
   assert.match(mobileConsentSource, /regionRequiresUmpConsent/);
   assert.match(mobileConsentSource, /decision: AdSdkInitializationDecision;/);
+});
+
+test('mobile ads consent schema parity rejects invalid runtime region drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv = [process.argv[0], 'scripts/validate-content.js', '--focus-mobile-ads-consent'];
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/monetization/mobileAdsConsent.ts')) {
+    return String(contents).replace(
+      'region: normalizeAdConsentRegion(region),',
+      'region,',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /invalid runtime region banana must normalize to unknown and require UMP|state creation and collection must store normalized regions/,
+  );
+});
+
+test('mobile ads consent schema parity rejects raw UMP region checks', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv = [process.argv[0], 'scripts/validate-content.js', '--focus-mobile-ads-consent'];
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/monetization/consent.ts')) {
+    return String(contents).replace(
+      /export function regionRequiresUmpConsent\\(region: unknown\\): boolean \\{[\\s\\S]*?\\n\\}/,
+      "export function regionRequiresUmpConsent(region: unknown): boolean {\\n  return region === 'eea' || region === 'uk' || region === 'unknown';\\n}",
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Mobile Ads consent must normalize runtime region values before UMP checks/,
+  );
 });
 
 test('mobile ads consent schema parity rejects runtime platform optionality drift', () => {
@@ -81,7 +147,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/lib/monetization/mobileAdsConsent.ts')) {
     return String(contents).replace(
-      /const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\([\\s\\S]*?\\);\\n  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded\\([\\s\\S]*?\\);/,
+      /const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\([\\s\\S]*?\\);/,
       "const currentTrackingTransparencyStatus = 'not_determined';\\n  const [trackingTransparencyStatus, umpConsentStatus] = await Promise.all([\\n    requestTrackingTransparencyStatusIfNeeded(runtime, platform, shouldCollectConsent, currentTrackingTransparencyStatus),\\n    resolveUmpConsentStatus(runtime, shouldCollectConsent, normalizedRegion),\\n  ]);",
     );
   }

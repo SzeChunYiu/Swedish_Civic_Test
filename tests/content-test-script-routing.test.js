@@ -121,6 +121,29 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('Badge accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const badgeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-badge-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-badge-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateBadgeAccessibilityParity\(\);[\s\S]*badgeAccessibilityRulesValidated[\s\S]*badgeAccessibilityParityValidated/,
+  );
+  assert.match(badgeTestSource, /--focus-badge-accessibility/);
+  assert.doesNotMatch(
+    badgeTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Badge accessibility tests must not route through full content validation',
+  );
+});
+
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
@@ -238,6 +261,29 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
     mistakesRouteTestSource,
     /\['scripts\/validate-content\.js'\]/,
     'Mistakes route copy tests must not route through full content validation',
+  );
+});
+
+test('Profile route copy parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const profileRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-profile-route-copy-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-profile-route-copy/);
+  assert.match(
+    validatorSource,
+    /validateProfileRouteCopyParity\(\);[\s\S]*validateBadgeCatalog\(\);[\s\S]*profileRouteCopyLabelsValidated[\s\S]*profileRouteCopyParityValidated[\s\S]*badgeMilestoneParityValidated/,
+  );
+  assert.match(profileRouteTestSource, /--focus-profile-route-copy/);
+  assert.doesNotMatch(
+    profileRouteTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Profile route copy tests must not route through full content validation',
   );
 });
 
