@@ -401,6 +401,7 @@ const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
     'View requirements guide',
   ],
 };
+const CITIZENSHIP_REQUIREMENTS_SOURCE_AUTHORITY_PATTERNS = [/\bUHR says\b/i, /\bUHR\s+säger\b/i];
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   sourceId: 'q044',
@@ -6062,6 +6063,53 @@ function questionSentenceEndingsAreComplete(question) {
   );
 }
 
+function validateCitizenshipRequirementsSourceAuthorityCopy() {
+  let valid = true;
+  let fieldsValidated = 0;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (!Array.isArray(citizenshipRequirementAreas)) {
+    reject('citizenship requirement areas must be loadable from data/citizenshipRequirements.ts');
+    return;
+  }
+
+  for (const area of citizenshipRequirementAreas) {
+    for (const field of ['summary', 'detail']) {
+      const localizedText = area[field];
+
+      for (const language of ['sv', 'en']) {
+        const text = localizedText?.[language];
+
+        if (typeof text !== 'string' || !text.trim()) {
+          reject(`citizenship requirement ${area.id}.${field}.${language} must be non-empty`);
+          continue;
+        }
+
+        const sourceAuthorityPattern = CITIZENSHIP_REQUIREMENTS_SOURCE_AUTHORITY_PATTERNS.find(
+          (pattern) => pattern.test(text),
+        );
+
+        if (sourceAuthorityPattern) {
+          reject(
+            `citizenship requirement ${area.id}.${field}.${language} must not use UHR-says source-authority phrasing in learner copy`,
+          );
+          continue;
+        }
+
+        fieldsValidated += 1;
+      }
+    }
+  }
+
+  citizenshipRequirementsCopyFieldsValidated = fieldsValidated;
+  citizenshipRequirementsSourceAuthorityCopyParityValidated =
+    valid && fieldsValidated === citizenshipRequirementAreas.length * 4;
+}
+
 function validateCitizenshipTimeline() {
   let dateParity = true;
   let countdownCopyParity = true;
@@ -8367,6 +8415,8 @@ const expectedGeneratedPublishedQuestions =
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+const citizenshipRequirementsModule = loadTs('data/citizenshipRequirements.ts');
+const citizenshipRequirementAreas = citizenshipRequirementsModule.citizenshipRequirementAreas;
 const supportedLanguages = loadTs('lib/localization/language.ts', 'supportedLanguages');
 const localizationStrings = loadTs('lib/localization/strings.ts', 'strings');
 const examGeneratorModule = loadTs('lib/quiz/examGenerator.ts');
@@ -8725,6 +8775,8 @@ let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
+let citizenshipRequirementsCopyFieldsValidated = 0;
+let citizenshipRequirementsSourceAuthorityCopyParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
 let countdownBannerHomeMountRulesValidated = 0;
 let countdownBannerHomeMountParityValidated = false;
@@ -9271,6 +9323,7 @@ if (process.argv.includes('--focus-weekly-recap-runtime')) {
 
 if (process.argv.includes('--focus-about-the-test-route-copy')) {
   validateAboutTheTestRouteCopyParity();
+  validateCitizenshipRequirementsSourceAuthorityCopy();
   exitWithValidationFailures();
   printValidationSummary({
     aboutTheTestRouteCopyLabelsValidated,
@@ -9279,6 +9332,8 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestOfficialSourceRetrievedDateValidated,
     aboutTheTestSeenEffectRulesValidated,
     aboutTheTestSeenEffectParityValidated,
+    citizenshipRequirementsCopyFieldsValidated,
+    citizenshipRequirementsSourceAuthorityCopyParityValidated,
   });
   process.exit(0);
 }
@@ -22240,6 +22295,7 @@ validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
+validateCitizenshipRequirementsSourceAuthorityCopy();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -22410,6 +22466,8 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
+      citizenshipRequirementsCopyFieldsValidated,
+      citizenshipRequirementsSourceAuthorityCopyParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
