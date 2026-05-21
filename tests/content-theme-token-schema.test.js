@@ -5,9 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
+const THEME_TOKEN_FOCUS_ARGS = ['scripts/validate-content.js', '--focus-theme-token-schema'];
 
 test('theme token schema validates the exported design-token catalog', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+  const output = execFileSync(process.execPath, THEME_TOKEN_FOCUS_ARGS, {
     cwd: repoRoot,
     encoding: 'utf8',
   });
@@ -63,6 +64,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -91,6 +93,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -116,6 +119,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -141,6 +145,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -169,6 +174,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -205,6 +211,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -243,6 +250,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -273,6 +281,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-theme-token-schema');
 require('./scripts/validate-content.js');
 `,
     ],

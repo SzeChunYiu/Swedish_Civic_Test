@@ -508,6 +508,26 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'themeTokenSchema',
+    flags: ['--focus-theme-token-schema'],
+    summaryKeys: [
+      'themeColorTokensValidated',
+      'themeSpaceTokensValidated',
+      'themeRadiusTokensValidated',
+      'themeTypographyTokensValidated',
+      'themeShadowTokensValidated',
+      'themeMotionTokensValidated',
+      'themeBorderWidthTokenFilesValidated',
+      'themeBorderWidthTokenParityValidated',
+      'themeContrastPairsValidated',
+      'themeContrastPairsAAValidated',
+      'themeDarkColorTokensValidated',
+      'themeDarkContrastPairsValidated',
+      'themeDarkContrastPairsAAValidated',
+      'themeTokenSchemaValidated',
+    ],
+  },
+  {
     id: 'flashcardAccessibility',
     flags: ['--focus-flashcard-accessibility'],
     summaryKeys: [

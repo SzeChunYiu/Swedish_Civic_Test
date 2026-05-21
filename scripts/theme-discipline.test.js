@@ -10,10 +10,14 @@ const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
 const TYPOGRAPHY_LITERAL =
   /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
+const BORDER_WIDTH_LITERAL =
+  /\b(?:border(?:Top|Right|Bottom|Left)?Width):\s*(?:StyleSheet\.hairlineWidth|\d)/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
   ['text', 'canvas'],
+  ['textSoft', 'surface'],
+  ['textSoft', 'canvas'],
   ['textSecondary', 'canvas'],
   ['textSecondary', 'surfaceWarm'],
   ['textMuted', 'canvas'],
@@ -25,6 +29,7 @@ const REQUIRED_CONTRAST_PAIRS = [
   ['textPlaceholder', 'canvas'],
   ['textPlaceholder', 'surfaceWarm'],
   ['badgeBlueText', 'badgeBlueBg'],
+  ['accent', 'surface'],
   ['success', 'surface'],
   ['success', 'successSoft'],
   ['warning', 'surface'],
@@ -95,7 +100,7 @@ function contrastRatio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-test('app and component styles use theme tokens instead of literal colors, spacing, or typography', () => {
+test('app and component styles use theme tokens instead of literal colors, spacing, typography, or border widths', () => {
   const offenders = [];
 
   for (const sourceDir of SOURCE_DIRS) {
@@ -106,7 +111,8 @@ test('app and component styles use theme tokens instead of literal colors, spaci
         if (
           COLOR_LITERAL.test(line) ||
           SPACING_LITERAL.test(line) ||
-          TYPOGRAPHY_LITERAL.test(line)
+          TYPOGRAPHY_LITERAL.test(line) ||
+          BORDER_WIDTH_LITERAL.test(line)
         ) {
           offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
         }

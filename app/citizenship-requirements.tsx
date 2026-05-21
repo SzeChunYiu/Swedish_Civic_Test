@@ -418,7 +418,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     sourceRefs: {
       borderColor: themeColors.border,
-      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopWidth: space.hairline,
       gap: space[0.5],
       paddingTop: space[1],
     },
@@ -434,7 +434,7 @@ function createStyles(themeColors: ThemeColors) {
     sourceRefRow: {
       borderColor: themeColors.border,
       borderRadius: radius.small,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[0.5],
       minHeight: space[6],
       paddingHorizontal: space[1],
@@ -530,7 +530,7 @@ function createStyles(themeColors: ThemeColors) {
     sourceRow: {
       borderColor: themeColors.border,
       borderRadius: radius.small,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[0.5],
       minHeight: space[6],
       padding: space[1.25],

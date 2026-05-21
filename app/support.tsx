@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: space.hairline,
     gap: space[1.5],
     padding: space[2],
   },

@@ -814,7 +814,7 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surface,
       borderColor: themeColors.border,
       borderRadius: radius.large,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[1.25],
       padding: space[3],
     },
@@ -854,7 +854,7 @@ function createStyles(themeColors: ThemeColors) {
     questionCard: {
       borderColor: themeColors.border,
       borderRadius: radius.card,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[1.5],
       padding: space[2],
     },
@@ -873,7 +873,7 @@ function createStyles(themeColors: ThemeColors) {
     flagButton: {
       borderColor: themeColors.border,
       borderRadius: radius.pill,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       paddingHorizontal: space[1.5],
       paddingVertical: space[0.75],
     },
@@ -899,7 +899,7 @@ function createStyles(themeColors: ThemeColors) {
     option: {
       borderColor: themeColors.border,
       borderRadius: radius.small,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       justifyContent: 'center',
       minHeight: space[6],
       padding: space[1.5],
@@ -923,7 +923,7 @@ function createStyles(themeColors: ThemeColors) {
       alignItems: 'center',
       borderColor: themeColors.border,
       borderRadius: radius.small,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       flexDirection: 'row',
       justifyContent: 'space-between',
       padding: space[1.5],
@@ -949,13 +949,13 @@ function createStyles(themeColors: ThemeColors) {
     reviewCard: {
       borderColor: themeColors.border,
       borderRadius: radius.card,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: space.hairline,
       gap: space[1.5],
       padding: space[2],
     },
     reviewCardFocused: {
       borderColor: themeColors.focus,
-      borderWidth: 2,
+      borderWidth: space.hairline,
     },
     reviewHeader: {
       alignItems: 'center',

@@ -4158,6 +4158,31 @@ const EXPECTED_THEME_MOTION_DURATIONS = {
   slow: 320,
 };
 const EXPECTED_THEME_MOTION_EASING = ['standard', 'press'];
+const THEME_BORDER_WIDTH_SOURCE_DIRS = ['app', 'components'];
+const RAW_THEME_BORDER_WIDTH_PATTERN =
+  /\b(?:border(?:Top|Right|Bottom|Left)?Width):\s*(?:StyleSheet\.hairlineWidth|\d+(?:\.\d+)?)/;
+const REQUIRED_THEME_CONTRAST_PAIRS = [
+  ['text', 'surface'],
+  ['text', 'canvas'],
+  ['textSoft', 'surface'],
+  ['textSoft', 'canvas'],
+  ['textSecondary', 'canvas'],
+  ['textSecondary', 'surfaceWarm'],
+  ['textMuted', 'canvas'],
+  ['textMuted', 'surfaceWarm'],
+  ['textDisclaimer', 'surface'],
+  ['textDisclaimer', 'canvas'],
+  ['textDisclaimer', 'surfaceWarm'],
+  ['textPlaceholder', 'surface'],
+  ['textPlaceholder', 'canvas'],
+  ['textPlaceholder', 'surfaceWarm'],
+  ['badgeBlueText', 'badgeBlueBg'],
+  ['accent', 'surface'],
+  ['success', 'surface'],
+  ['success', 'successSoft'],
+  ['warning', 'surface'],
+  ['warning', 'warningSoft'],
+];
 const EXPECTED_PROGRESS_QUESTION_FIELDS = [
   'questionId',
   'seenCount',
@@ -4922,6 +4947,18 @@ function loadJson(relativePath) {
 
 function loadText(relativePath) {
   return fs.readFileSync(path.resolve(repoRoot, relativePath), 'utf8');
+}
+
+function listSourceFiles(relativeDir) {
+  const absoluteDir = path.resolve(repoRoot, relativeDir);
+  const entries = fs.readdirSync(absoluteDir, { withFileTypes: true });
+
+  return entries.flatMap((entry) => {
+    const absolutePath = path.join(absoluteDir, entry.name);
+    if (entry.isDirectory()) return listSourceFiles(path.relative(repoRoot, absolutePath));
+    if (/\.[tj]sx?$/.test(entry.name)) return [absolutePath];
+    return [];
+  });
 }
 
 function loadStaticI18nExtras() {
@@ -7574,6 +7611,25 @@ function isColorToken(value) {
   );
 }
 
+function relativeLuminance(color) {
+  const match = /^#([0-9a-fA-F]{6})$/.exec(color || '');
+  if (!match) return null;
+  const channels = [0, 2, 4].map((index) => parseInt(match[1].slice(index, index + 2), 16) / 255);
+  const [red, green, blue] = channels.map((channel) =>
+    channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+  );
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(foreground, background) {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  if (foregroundLuminance === null || backgroundLuminance === null) return null;
+  const lighter = Math.max(foregroundLuminance, backgroundLuminance);
+  const darker = Math.min(foregroundLuminance, backgroundLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 function extractStringConstantFromTs(source, constantName) {
   const sourceFile = ts.createSourceFile('source.tsx', source, ts.ScriptTarget.Latest, true);
   let value;
@@ -8282,6 +8338,7 @@ const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
+const darkColors = themeModule.darkColors;
 const motion = themeModule.motion;
 const radius = themeModule.radius;
 const shadows = themeModule.shadows;
@@ -8540,6 +8597,13 @@ let themeRadiusTokensValidated = 0;
 let themeTypographyTokensValidated = 0;
 let themeShadowTokensValidated = 0;
 let themeMotionTokensValidated = 0;
+let themeBorderWidthTokenFilesValidated = 0;
+let themeBorderWidthTokenParityValidated = false;
+let themeContrastPairsValidated = 0;
+let themeContrastPairsAAValidated = false;
+let themeDarkColorTokensValidated = 0;
+let themeDarkContrastPairsValidated = 0;
+let themeDarkContrastPairsAAValidated = false;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
@@ -8874,6 +8938,28 @@ if (process.argv.includes('--focus-uhr-reference-card-accessibility')) {
   printValidationSummary({
     uhrReferenceCardAccessibilityRulesValidated,
     uhrReferenceCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-theme-token-schema')) {
+  validateThemeTokenSchema();
+  exitWithValidationFailures();
+  printValidationSummary({
+    themeColorTokensValidated,
+    themeSpaceTokensValidated,
+    themeRadiusTokensValidated,
+    themeTypographyTokensValidated,
+    themeShadowTokensValidated,
+    themeMotionTokensValidated,
+    themeBorderWidthTokenFilesValidated,
+    themeBorderWidthTokenParityValidated,
+    themeContrastPairsValidated,
+    themeContrastPairsAAValidated,
+    themeDarkColorTokensValidated,
+    themeDarkContrastPairsValidated,
+    themeDarkContrastPairsAAValidated,
+    themeTokenSchemaValidated,
   });
   process.exit(0);
 }
@@ -9851,6 +9937,7 @@ if (typeof calculateChapterMastery !== 'function') {
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
 if (!isObjectRecord(colors)) fail('theme colors export is not an object');
+if (!isObjectRecord(darkColors)) fail('theme darkColors export is not an object');
 if (!isObjectRecord(motion)) fail('theme motion export is not an object');
 if (!isObjectRecord(radius)) fail('theme radius export is not an object');
 if (!isObjectRecord(shadows)) fail('theme shadows export is not an object');
@@ -16779,6 +16866,25 @@ function validateThemeTokenSchema() {
     }
   }
 
+  const borderWidthOffenders = [];
+  for (const sourceDir of THEME_BORDER_WIDTH_SOURCE_DIRS) {
+    for (const filePath of listSourceFiles(sourceDir)) {
+      themeBorderWidthTokenFilesValidated += 1;
+      const relativePath = path.relative(repoRoot, filePath).replace(/\\/g, '/');
+      const lines = fs.readFileSync(filePath, 'utf8').split('\n');
+      lines.forEach((line, index) => {
+        if (RAW_THEME_BORDER_WIDTH_PATTERN.test(line)) {
+          borderWidthOffenders.push(`${relativePath}:${index + 1}: ${line.trim()}`);
+        }
+      });
+    }
+  }
+  if (borderWidthOffenders.length > 0) {
+    reject(`theme border width tokens required: ${borderWidthOffenders.join('; ')}`);
+  } else {
+    themeBorderWidthTokenParityValidated = themeBorderWidthTokenFilesValidated > 0;
+  }
+
   validateNoExtraKeys(colors, EXPECTED_THEME_COLOR_TOKENS, 'theme colors');
   if (isObjectRecord(colors)) {
     for (const token of EXPECTED_THEME_COLOR_TOKENS) {
@@ -16793,6 +16899,55 @@ function validateThemeTokenSchema() {
       themeColorTokensValidated += 1;
     }
   }
+
+  validateNoExtraKeys(darkColors, EXPECTED_THEME_COLOR_TOKENS, 'theme darkColors');
+  if (isObjectRecord(darkColors)) {
+    for (const token of EXPECTED_THEME_COLOR_TOKENS) {
+      if (!Object.prototype.hasOwnProperty.call(darkColors, token)) {
+        reject(`theme darkColors missing ${token}`);
+        continue;
+      }
+      if (!isColorToken(darkColors[token])) {
+        reject(`theme darkColors.${token} must be a hex or rgb/rgba color token`);
+        continue;
+      }
+      themeDarkColorTokensValidated += 1;
+    }
+  }
+
+  function validateContrastPairs(palette, label) {
+    let pairsValidated = 0;
+    let aaValidated = true;
+
+    if (!isObjectRecord(palette)) return { pairsValidated, aaValidated: false };
+
+    for (const [foreground, background] of REQUIRED_THEME_CONTRAST_PAIRS) {
+      const ratio = contrastRatio(palette[foreground], palette[background]);
+      if (ratio === null) {
+        reject(`theme ${label} contrast ${foreground} on ${background} must use hex color tokens`);
+        aaValidated = false;
+        continue;
+      }
+      pairsValidated += 1;
+      if (ratio < 4.5) {
+        const prefix = label === 'light' ? 'theme contrast' : `theme ${label} contrast`;
+        reject(`${prefix} ${foreground} on ${background} ratio ${ratio.toFixed(2)}:1 below 4.5:1`);
+        aaValidated = false;
+      }
+    }
+
+    return {
+      pairsValidated,
+      aaValidated: aaValidated && pairsValidated === REQUIRED_THEME_CONTRAST_PAIRS.length,
+    };
+  }
+
+  const lightContrast = validateContrastPairs(colors, 'light');
+  themeContrastPairsValidated = lightContrast.pairsValidated;
+  themeContrastPairsAAValidated = lightContrast.aaValidated;
+  const darkContrast = validateContrastPairs(darkColors, 'dark');
+  themeDarkContrastPairsValidated = darkContrast.pairsValidated;
+  themeDarkContrastPairsAAValidated = darkContrast.aaValidated;
 
   validateNoExtraKeys(space, Object.keys(EXPECTED_THEME_SPACE_VALUES), 'theme space');
   if (isObjectRecord(space)) {
@@ -16878,8 +17033,10 @@ function validateThemeTokenSchema() {
       if (!isObjectRecord(shadow)) {
         rejectToken(`theme shadows.${token} must be an object`);
       } else {
-        if (!isColorToken(shadow.shadowColor)) {
-          rejectToken(`theme shadows.${token}.shadowColor must be a color token`);
+        if (shadow.shadowColor !== '#0b1f33') {
+          rejectToken(
+            `theme shadows.${token}.shadowColor must use the navy whisper shadow #0b1f33`,
+          );
         }
         if (!isObjectRecord(shadow.shadowOffset)) {
           rejectToken(`theme shadows.${token}.shadowOffset must be an object`);
@@ -16888,19 +17045,27 @@ function validateThemeTokenSchema() {
           !Number.isFinite(shadow.shadowOffset.height)
         ) {
           rejectToken(`theme shadows.${token}.shadowOffset must have numeric width and height`);
+        } else if (shadow.shadowOffset.height < 0 || shadow.shadowOffset.height > 8) {
+          rejectToken(`theme shadows.${token}.shadowOffset.height must be between 0 and 8`);
         }
         if (
           !Number.isFinite(shadow.shadowOpacity) ||
           shadow.shadowOpacity < 0 ||
-          shadow.shadowOpacity > 1
+          shadow.shadowOpacity > 0.08
         ) {
-          rejectToken(`theme shadows.${token}.shadowOpacity must be between 0 and 1`);
+          rejectToken(
+            `theme shadows.${token}.shadowOpacity must be a whisper value no higher than 0.08`,
+          );
         }
-        if (!Number.isFinite(shadow.shadowRadius) || shadow.shadowRadius < 0) {
-          rejectToken(`theme shadows.${token}.shadowRadius must be non-negative`);
+        if (
+          !Number.isFinite(shadow.shadowRadius) ||
+          shadow.shadowRadius < 0 ||
+          shadow.shadowRadius > 24
+        ) {
+          rejectToken(`theme shadows.${token}.shadowRadius must be no higher than 24`);
         }
-        if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0) {
-          rejectToken(`theme shadows.${token}.elevation must be non-negative`);
+        if (!Number.isFinite(shadow.elevation) || shadow.elevation < 0 || shadow.elevation > 2) {
+          rejectToken(`theme shadows.${token}.elevation must be no higher than 2`);
         }
       }
 
@@ -16959,8 +17124,14 @@ function validateThemeTokenSchema() {
     themeRadiusTokensValidated === Object.keys(EXPECTED_THEME_RADIUS_VALUES).length &&
     themeTypographyTokensValidated === EXPECTED_THEME_TYPOGRAPHY_TOKENS.length &&
     themeShadowTokensValidated === EXPECTED_THEME_SHADOW_TOKENS.length &&
+    themeDarkColorTokensValidated === EXPECTED_THEME_COLOR_TOKENS.length &&
+    themeContrastPairsAAValidated &&
+    themeDarkContrastPairsAAValidated &&
     themeMotionTokensValidated ===
-      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length + EXPECTED_THEME_MOTION_EASING.length + 2
+      Object.keys(EXPECTED_THEME_MOTION_DURATIONS).length +
+        EXPECTED_THEME_MOTION_EASING.length +
+        2 &&
+    themeBorderWidthTokenParityValidated
   ) {
     themeTokenSchemaValidated = true;
   }
@@ -21901,6 +22072,13 @@ console.log(
       themeTypographyTokensValidated,
       themeShadowTokensValidated,
       themeMotionTokensValidated,
+      themeBorderWidthTokenFilesValidated,
+      themeBorderWidthTokenParityValidated,
+      themeContrastPairsValidated,
+      themeContrastPairsAAValidated,
+      themeDarkColorTokensValidated,
+      themeDarkContrastPairsValidated,
+      themeDarkContrastPairsAAValidated,
       themeTokenSchemaValidated,
       glossaryTerms: Array.isArray(glossaryTerms) ? glossaryTerms.length : 0,
       glossaryTermsValidated,
