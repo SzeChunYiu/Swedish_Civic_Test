@@ -161,7 +161,6 @@ test('static site question bank source fixture limits one-question localization 
   );
 
   assert.equal(drift.hasSemanticDrift, true);
-  assert.equal(drift.questionIds[0], 'q020');
-  assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
+  assert.deepEqual(drift.questionIds, ['q020', ...q020GeneratedVariantIds]);
   assert.deepEqual(drift.chapterIds, []);
 });
