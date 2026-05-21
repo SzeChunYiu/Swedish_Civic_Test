@@ -39,6 +39,15 @@ const ownerActions = {
     nextCommand:
       'npm run release:gate -- --gate ios-device-audio --status READY --evidence-file reports/device-smoke/ios.json',
   },
+  'remove-ads-device-qa': {
+    ownerAction: 'Run Remove Ads ad/IAP QA on real Android and iOS EAS preview/TestFlight builds.',
+    neededEvidence:
+      'Android and iOS device/build metadata, AdMob test ads rendering, Remove Ads purchase disabling ads, entitlement persistence after relaunch, restore, ATT/UMP prompt exercise, no ads on exam screens, and proof screenshot/log references.',
+    recordAt:
+      '`reports/release-ads-iap-device-qa.md` plus `reports/release-device-qa/ios.json` and `reports/release-device-qa/android.json`.',
+    nextCommand:
+      'npm run release:gate -- --gate remove-ads-device-qa --status READY --evidence-file reports/release-ads-iap-device-qa.md',
+  },
   'store-records': {
     ownerAction:
       'Create App Store Connect and Google Play Console app records under the SzeChunYiu-owned accounts.',

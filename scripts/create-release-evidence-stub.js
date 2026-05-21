@@ -68,6 +68,33 @@ const templates = {
       checkedAtUtc: 'TBD',
     },
   },
+  'remove-ads-device-qa': {
+    path: 'reports/release-ads-iap-device-qa.md',
+    status: 'blocked',
+    content: [
+      '# Release Ads/IAP Device QA',
+      '',
+      '## Required Evidence',
+      '',
+      '- Android EAS preview build installed on a physical Android device.',
+      '- iOS EAS preview/TestFlight build installed on an iPhone.',
+      '- AdMob test ads render on study screens before purchase.',
+      '- Remove Ads purchase disables ads.',
+      '- Remove Ads entitlement persists after relaunch.',
+      '- Restore purchase restores entitlement.',
+      '- ATT prompt/status exercised and recorded.',
+      '- UMP consent prompt/status exercised and recorded.',
+      '- No ad renders on mock exam screens.',
+      '',
+      '## Platform Artifacts',
+      '',
+      '- iOS artifact: `reports/release-device-qa/ios.json`',
+      '- Android artifact: `reports/release-device-qa/android.json`',
+      '',
+      'Keep this gate BLOCKED until both linked JSON artifacts have status `passed`, real device/build metadata, reviewer/timestamp, all required checks passed, and proof screenshot/log references.',
+      '',
+    ].join('\n'),
+  },
   'store-records': {
     path: 'reports/store-records/store-records.json',
     content: {
@@ -266,6 +293,15 @@ function fail(message) {
   process.exit(1);
 }
 
+function templateBody(template) {
+  if (typeof template.content === 'string') return template.content;
+  return `${JSON.stringify(template.content, null, 2)}\n`;
+}
+
+function templateStatus(template) {
+  return template.status || template.content.status;
+}
+
 function blockedManualGates(root) {
   const gatesPath = path.join(root, 'reports/release-gates.json');
   if (!fs.existsSync(gatesPath)) return Object.keys(templates);
@@ -295,7 +331,7 @@ function main() {
       .map((gate) => ({
         gate,
         path: templates[gate].path,
-        status: templates[gate].content.status,
+        status: templateStatus(templates[gate]),
       }));
     process.stdout.write(`${JSON.stringify(rows, null, 2)}\n`);
     return;
@@ -312,7 +348,7 @@ function main() {
       }
 
       fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-      fs.writeFileSync(outputPath, `${JSON.stringify(template.content, null, 2)}\n`);
+      fs.writeFileSync(outputPath, templateBody(template));
       process.stdout.write(`Created ${gate} evidence stub at ${outputPath}\n`);
     }
     return;
@@ -328,7 +364,7 @@ function main() {
   }
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, `${JSON.stringify(template.content, null, 2)}\n`);
+  fs.writeFileSync(outputPath, templateBody(template));
   process.stdout.write(`Created ${args.gate} evidence stub at ${outputPath}\n`);
 }
 
@@ -338,5 +374,7 @@ if (require.main === module) {
 
 module.exports = {
   blockedManualGates,
+  templateBody,
+  templateStatus,
   templates,
 };

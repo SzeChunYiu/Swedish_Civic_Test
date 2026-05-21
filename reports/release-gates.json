@@ -14,6 +14,10 @@
       "status": "BLOCKED",
       "evidence": "No iOS physical-device/TestFlight build/install/audio evidence is recorded."
     },
+    "remove-ads-device-qa": {
+      "status": "BLOCKED",
+      "evidence": "No final Android and iOS Remove Ads device QA evidence is recorded. reports/release-ads-iap-device-qa.md must link passed reports/release-device-qa/ios.json and reports/release-device-qa/android.json artifacts showing EAS preview/TestFlight builds on real devices, AdMob test ads rendering on study screens, Remove Ads purchase disabling ads, entitlement persistence after relaunch, restore purchase working, ATT and UMP prompts exercised, and no ad renders on exam screens."
+    },
     "store-records": {
       "status": "BLOCKED",
       "evidence": "No App Store Connect or Google Play Console app record evidence is recorded. Store records must confirm the com.billyyiu.almostswedish App Store/Google Play records, hosted support/privacy URLs, Google Mobile Ads AdMob app IDs, adMob.realAdsEnabled: true, app-ads.txt review, and 29 SEK Remove Ads IAP for the ad-supported v1.0 release."

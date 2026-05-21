@@ -91,6 +91,21 @@ function privacyReviewReadyEvidence(extra = '') {
     .join(' ');
 }
 
+function removeAdsDeviceQaReadyEvidence(extra = '') {
+  return [
+    'Android EAS preview build and iOS EAS preview/TestFlight build Remove Ads device QA passed.',
+    'AdMob test ads rendered on study screens before purchase.',
+    'Remove Ads purchase disables ads.',
+    'Remove Ads entitlement persists after relaunch.',
+    'Restore purchase works.',
+    'ATT prompt exercised and UMP consent prompt exercised.',
+    'No ad renders on mock exam screens.',
+    extra,
+  ]
+    .filter(Boolean)
+    .join(' ');
+}
+
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'));
 }
@@ -157,6 +172,10 @@ test('checked-in local evidence stubs keep blocked current ad-supported shape', 
   assert.match(privacyGate.evidence, /Google Mobile Ads/i);
   assert.match(privacyGate.evidence, /ATT\/UMP|consent/i);
   assert.match(privacyGate.evidence, /Remove Ads/i);
+  assert.equal(releaseGates.gates['remove-ads-device-qa'].status, 'BLOCKED');
+  assert.match(releaseGates.gates['remove-ads-device-qa'].evidence, /Remove Ads device QA/i);
+  assert.match(releaseGates.gates['remove-ads-device-qa'].evidence, /ATT and UMP/i);
+  assert.match(releaseGates.gates['remove-ads-device-qa'].evidence, /exam screens/i);
 
   assert.deepEqual(storePolicyQuestionnaires.evidenceBasis, [
     'publishing/app-store-listing.md',
@@ -179,46 +198,84 @@ test('checked-in local evidence stubs keep blocked current ad-supported shape', 
   }
 });
 
+function preflightEnvWithReadyDeviceQa(options = {}) {
+  const env = { ...process.env, ...(options.env || {}) };
+  let qaEvidence;
+  const shouldAttachReadyDeviceQa =
+    options.readyDeviceQa === true ||
+    (options.expectedStatus === 0 && options.readyDeviceQa !== false);
+
+  if (shouldAttachReadyDeviceQa && !env.RELEASE_PREFLIGHT_DEVICE_QA_PATH) {
+    qaEvidence = createRemoveAdsDeviceQaEvidence();
+    env.RELEASE_PREFLIGHT_DEVICE_QA_PATH = qaEvidence.relativeReportPath;
+  }
+
+  return {
+    env,
+    cleanup: () => qaEvidence?.cleanup(),
+  };
+}
+
 function runPreflight(options = {}) {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/release-preflight.js', '--json', ...(options.args || [])],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env: { ...process.env, ...(options.env || {}) },
-    },
-  );
-  if (options.expectedStatus !== undefined) {
-    assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
+  const readyDeviceQa = preflightEnvWithReadyDeviceQa(options);
+  let result;
+  try {
+    result = spawnSync(
+      process.execPath,
+      ['scripts/release-preflight.js', '--json', ...(options.args || [])],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        env: readyDeviceQa.env,
+      },
+    );
+    if (options.expectedStatus !== undefined) {
+      assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
+    }
+  } finally {
+    readyDeviceQa.cleanup();
   }
   return JSON.parse(result.stdout);
 }
 
 function runPreflightText(options = {}) {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/release-preflight.js', ...(options.args || [])],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env: { ...process.env, ...(options.env || {}) },
-    },
-  );
-  if (options.expectedStatus !== undefined) {
-    assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
+  const readyDeviceQa = preflightEnvWithReadyDeviceQa(options);
+  let result;
+  try {
+    result = spawnSync(
+      process.execPath,
+      ['scripts/release-preflight.js', ...(options.args || [])],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+        env: readyDeviceQa.env,
+      },
+    );
+    if (options.expectedStatus !== undefined) {
+      assert.equal(result.status, options.expectedStatus, result.stderr || result.stdout);
+    }
+  } finally {
+    readyDeviceQa.cleanup();
   }
   return result.stdout;
 }
 
 function runPreflightAsync(options = {}) {
+  const readyDeviceQa = preflightEnvWithReadyDeviceQa(options);
+  let cleanupCalled = false;
+  const cleanup = () => {
+    if (cleanupCalled) return;
+    cleanupCalled = true;
+    readyDeviceQa.cleanup();
+  };
+
   return new Promise((resolve, reject) => {
     const child = spawn(
       process.execPath,
       ['scripts/release-preflight.js', '--json', ...(options.args || [])],
       {
         cwd: repoRoot,
-        env: { ...process.env, ...(options.env || {}) },
+        env: readyDeviceQa.env,
         stdio: ['ignore', 'pipe', 'pipe'],
       },
     );
@@ -230,9 +287,13 @@ function runPreflightAsync(options = {}) {
     child.stderr.on('data', (chunk) => {
       stderr += chunk;
     });
-    child.on('error', reject);
+    child.on('error', (error) => {
+      cleanup();
+      reject(error);
+    });
     child.on('close', (status) => {
       try {
+        cleanup();
         if (options.expectedStatus !== undefined) {
           assert.equal(status, options.expectedStatus, stderr || stdout);
         }
@@ -397,6 +458,10 @@ function writeAllReadyEvidence(evidencePath, overrides = {}, options = {}) {
             status: 'READY',
             evidence:
               'iPhone 15 TestFlight audio smoke passed; build https://appstoreconnect.apple.com/testflight-ready',
+          },
+          'remove-ads-device-qa': {
+            status: 'READY',
+            evidence: removeAdsDeviceQaReadyEvidence(),
           },
           'store-records': {
             status: 'READY',
@@ -977,6 +1042,37 @@ test('checked-in Remove Ads device QA template links structured platform JSON st
   }
 });
 
+test('release preflight blocks first-class Remove Ads device QA gate on checked-in pending report', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-device-qa-gate-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+
+  try {
+    writeAllReadyEvidence(evidencePath);
+    writeFakeReleaseCommands(tmpDir);
+
+    const report = runPreflight({
+      expectedStatus: 1,
+      env: {
+        PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+        RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+        RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+      },
+    });
+
+    const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
+    assert.equal(scopeGate.status, 'READY');
+    assert.equal(deviceQaGate.status, 'BLOCKED');
+    assert.match(deviceQaGate.evidence, /reports\/release-ads-iap-device-qa\.md is incomplete/i);
+    assert.match(deviceQaGate.evidence, /reports\/release-device-qa\/ios\.json/i);
+    assert.match(deviceQaGate.evidence, /reports\/release-device-qa\/android\.json/i);
+    assert.match(deviceQaGate.evidence, /status must be passed/i);
+    assert.match(deviceQaGate.nextAction, /real Android and iOS EAS preview\/TestFlight QA/i);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 function createStoreRecordEvidence(options = {}) {
   const relativeDir = path.join(
     'reports',
@@ -1126,6 +1222,7 @@ function createReleaseOwnerApprovalEvidence(options = {}) {
       'eas-build-artifacts',
       'android-device-audio',
       'ios-device-audio',
+      'remove-ads-device-qa',
       'store-records',
       'store-credentials',
       'store-policy-questionnaires',
@@ -1287,6 +1384,7 @@ test('release preflight fails closed on external launch blockers', () => {
     'eas-build-artifacts',
     'android-device-audio',
     'ios-device-audio',
+    'remove-ads-device-qa',
     'store-records',
     'store-credentials',
     'store-policy-questionnaires',
@@ -1519,8 +1617,11 @@ test('release preflight blocks Remove Ads device QA reports without JSON artifac
     });
 
     const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
     assert.equal(scopeGate.status, 'BLOCKED');
+    assert.equal(deviceQaGate.status, 'BLOCKED');
     assert.match(scopeGate.evidence, /must link per-platform JSON artifacts/i);
+    assert.match(deviceQaGate.evidence, /must link per-platform JSON artifacts/i);
     assert.match(scopeGate.evidence, /report must link a ios JSON artifact/i);
     assert.match(scopeGate.evidence, /report must link a android JSON artifact/i);
   } finally {
@@ -1553,8 +1654,11 @@ test('release preflight blocks Remove Ads device QA JSON artifacts missing build
     });
 
     const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
     assert.equal(scopeGate.status, 'BLOCKED');
+    assert.equal(deviceQaGate.status, 'BLOCKED');
     assert.match(scopeGate.evidence, /ios\.json: build\.id is required/i);
+    assert.match(deviceQaGate.evidence, /ios\.json: build\.id is required/i);
     assert.match(scopeGate.evidence, /build\.version is required/i);
     assert.match(scopeGate.evidence, /admob-test-ads-study-screens result must be passed/i);
     assert.match(scopeGate.evidence, /missing passed check remove-ads-purchase-hides-ads/i);
@@ -1583,8 +1687,11 @@ test('release preflight blocks Remove Ads device QA JSON artifacts without proof
     });
 
     const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
     assert.equal(scopeGate.status, 'BLOCKED');
+    assert.equal(deviceQaGate.status, 'BLOCKED');
     assert.match(scopeGate.evidence, /proof\.screenshots\[0\] does not exist/i);
+    assert.match(deviceQaGate.evidence, /proof\.screenshots\[0\] does not exist/i);
     assert.match(scopeGate.evidence, /proof\.logs\[0\] does not exist/i);
   } finally {
     qaEvidence.cleanup();
@@ -1611,8 +1718,11 @@ test('release preflight accepts valid Remove Ads device QA JSON artifacts', () =
     });
 
     const scopeGate = report.gates.find((gate) => gate.id === 'release-scope-v11');
+    const deviceQaGate = report.gates.find((gate) => gate.id === 'remove-ads-device-qa');
     assert.equal(scopeGate.status, 'READY');
+    assert.equal(deviceQaGate.status, 'READY');
     assert.doesNotMatch(scopeGate.evidence, /device-QA gate is red/i);
+    assert.match(deviceQaGate.evidence, /Device QA report validation passed/i);
     assert.doesNotMatch(scopeGate.evidence, /missing passed check/i);
     assert.doesNotMatch(scopeGate.evidence, /proof\.screenshots/i);
   } finally {
@@ -1623,6 +1733,13 @@ test('release preflight accepts valid Remove Ads device QA JSON artifacts', () =
 test('release preflight allows v1.1 surfaces only with explicit operator override evidence', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-v11-scope-override-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const purchasesPath = writeRemoveAdsPurchasesFixture(tmpDir, (source) =>
+    replaceRequired(
+      source,
+      'const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);',
+      "const purchase = await provider.requestRemoveAdsPurchase('debug.removeads');",
+    ),
+  );
 
   writeAllReadyEvidence(evidencePath);
   writeFakeReleaseCommands(tmpDir);
@@ -1632,6 +1749,7 @@ test('release preflight allows v1.1 surfaces only with explicit operator overrid
     env: {
       PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
       RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_REMOVE_ADS_PURCHASES_PATH: purchasesPath,
       RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
     },
   });
