@@ -152,11 +152,24 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
   assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
+  assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
   assert.equal(
     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
+});
+
+test('q001 generated answer template parity includes localized true-false options', () => {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.generatedAnswerTemplateParityValidated, summary.generatedPublishedQuestions);
 });
 
 test('q160-q169 published option parity keeps localized option overlays expected', () => {
@@ -5018,7 +5031,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ),",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }
@@ -5067,7 +5080,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        ),",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }
@@ -5113,7 +5126,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "        questionEn: 'Which answer is correct? Where is Sweden located?',",
         "      }",
         "    : question,",
-        ");",
+        ").map(applyQuestionLocalizationPilot);",
       ].join('\\n'),
     );
   }
