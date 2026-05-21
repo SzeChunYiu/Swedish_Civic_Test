@@ -459,7 +459,7 @@ const i18n = (window.i18n = {
     'purchase.premium.eyebrow': 'Premium',
     'purchase.premium.title': 'Premium Lifetime',
     'purchase.premium.body':
-      'Unlocks premium study tools for the account you sign in with. Remove Ads remains separate.',
+      'Includes everything in Ad-free, plus premium study tools — ebook highlighting, notes, and more — for the account you sign in with.',
     'purchase.premium.locked': 'Sign in to buy Premium',
     'purchase.premium.ready': 'Continue with Google Play — 59 kr',
     'purchase.price.once': 'one-time',
@@ -871,7 +871,7 @@ const i18n = (window.i18n = {
     'purchase.premium.eyebrow': 'Premium',
     'purchase.premium.title': 'Premium livstid',
     'purchase.premium.body':
-      'Låser upp premiumverktyg för kontot du loggar in med. Ta bort annonser är separat.',
+      'Innehåller allt i Annonsfritt, plus premiumverktyg för studier — markeringar och anteckningar i e-boken med mera — för kontot du loggar in med.',
     'purchase.premium.locked': 'Logga in för att köpa Premium',
     'purchase.premium.ready': 'Fortsätt med Google Play — 59 kr',
     'purchase.price.once': 'engångsköp',
