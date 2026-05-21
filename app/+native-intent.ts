@@ -3,7 +3,9 @@ type RedirectSystemPathEvent = {
   path: string;
 };
 
+const APP_SCHEME = 'almost-swedish:';
 const APP_LINK_BASE = 'almost-swedish://app';
+const protocolPattern = /^([A-Za-z][A-Za-z0-9+.-]*):/;
 
 const staticRoutes = new Set([
   '/',
@@ -53,6 +55,29 @@ function isKnownStudyRoute(route: string) {
   );
 }
 
+function explicitProtocol(path: string) {
+  const match = path.match(protocolPattern);
+
+  return match ? `${match[1].toLowerCase()}:` : null;
+}
+
+function routeFromNativeIntentPath(path: string) {
+  if (path.startsWith('//')) {
+    return null;
+  }
+
+  if (path.startsWith('/')) {
+    return path;
+  }
+
+  const protocol = explicitProtocol(path);
+  if (protocol && protocol !== APP_SCHEME) {
+    return null;
+  }
+
+  return routeFromUrl(new URL(path, APP_LINK_BASE));
+}
+
 export function redirectSystemPath({ path }: RedirectSystemPathEvent) {
   try {
     const trimmedPath = path.trim();
@@ -61,11 +86,9 @@ export function redirectSystemPath({ path }: RedirectSystemPathEvent) {
       return '/home';
     }
 
-    const route = trimmedPath.startsWith('/')
-      ? trimmedPath
-      : routeFromUrl(new URL(trimmedPath, APP_LINK_BASE));
+    const route = routeFromNativeIntentPath(trimmedPath);
 
-    if (isKnownStudyRoute(route)) {
+    if (route && isKnownStudyRoute(route)) {
       return route;
     }
 

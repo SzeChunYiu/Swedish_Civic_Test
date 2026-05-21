@@ -270,6 +270,10 @@ export const expoRouterNativeIntentRuntimeSamples = [
     expectedPath: '/search?q=riksdag',
   },
   {
+    input: 'almost-swedish://search?q=riksdag',
+    expectedPath: '/search?q=riksdag',
+  },
+  {
     input: 'almost-swedish://app/about-the-test',
     expectedPath: '/about-the-test',
   },
@@ -283,6 +287,22 @@ export const expoRouterNativeIntentRuntimeSamples = [
   },
   {
     input: 'almost-swedish://app/not-real',
+    expectedPath: '/home',
+  },
+  {
+    input: 'https://app/search?q=riksdag',
+    expectedPath: '/home',
+  },
+  {
+    input: 'ftp://app/settings',
+    expectedPath: '/home',
+  },
+  {
+    input: 'https://quiz/q001',
+    expectedPath: '/home',
+  },
+  {
+    input: '//app/search?q=riksdag',
     expectedPath: '/home',
   },
 ] as const satisfies readonly ExpoRouterNativeIntentRuntimeSample[];
