@@ -1,12 +1,13 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 export type RouteLinkVariant = 'primary' | 'secondary' | 'text' | 'card';
 
@@ -84,6 +85,8 @@ export function RouteLink({
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
   const reduceMotion = useReducedMotion();
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const webInteractionHandlers =
     Platform.OS === 'web'
       ? {
@@ -179,80 +182,82 @@ export function RouteLink({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    borderRadius: radius.card,
-    justifyContent: 'center',
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1.25],
-    textDecorationLine: 'none',
-  },
-  primary: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-    borderWidth: space.hairline,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  secondary: {
-    backgroundColor: colors.surfaceMuted,
-    borderColor: colors.border,
-    borderWidth: space.hairline,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-  },
-  text: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.small,
-    color: colors.accent,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    lineHeight: typography.navButton.lineHeight,
-    paddingHorizontal: space[1],
-  },
-  card: {
-    alignItems: 'stretch',
-    borderRadius: radius.card,
-    color: colors.text,
-    paddingHorizontal: space[0],
-    paddingVertical: space[0],
-  },
-  interactive: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  interactiveReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  primaryInteractive: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-    transform: [{ scale: motion.hoverScale }],
-  },
-  primaryInteractiveReducedMotion: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-  },
-  pressed: {
-    backgroundColor: colors.focusSoft,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  pressedReducedMotion: {
-    backgroundColor: colors.focusSoft,
-  },
-  primaryPressed: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  primaryPressedReducedMotion: {
-    backgroundColor: colors.accentActive,
-    borderColor: colors.accentActive,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    base: {
+      alignItems: 'center',
+      borderRadius: radius.card,
+      justifyContent: 'center',
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1.25],
+      textDecorationLine: 'none',
+    },
+    primary: {
+      backgroundColor: themeColors.accent,
+      borderColor: themeColors.accent,
+      borderWidth: space.hairline,
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    secondary: {
+      backgroundColor: themeColors.surfaceMuted,
+      borderColor: themeColors.border,
+      borderWidth: space.hairline,
+      color: themeColors.text,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+    },
+    text: {
+      alignSelf: 'flex-start',
+      borderRadius: radius.small,
+      color: themeColors.accent,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+      lineHeight: typography.navButton.lineHeight,
+      paddingHorizontal: space[1],
+    },
+    card: {
+      alignItems: 'stretch',
+      borderRadius: radius.card,
+      color: themeColors.text,
+      paddingHorizontal: space[0],
+      paddingVertical: space[0],
+    },
+    interactive: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.hoverScale }],
+    },
+    interactiveReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    primaryInteractive: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+      transform: [{ scale: motion.hoverScale }],
+    },
+    primaryInteractiveReducedMotion: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+    },
+    pressed: {
+      backgroundColor: themeColors.focusSoft,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    pressedReducedMotion: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    primaryPressed: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    primaryPressedReducedMotion: {
+      backgroundColor: themeColors.accentActive,
+      borderColor: themeColors.accentActive,
+    },
+  });
+}

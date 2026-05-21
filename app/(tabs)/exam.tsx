@@ -38,6 +38,7 @@ type ExamRouteCopy = {
   accessTitle: string;
   activeHeroSubtitle: (remainingTime: string, questionCount: number) => string;
   answerAccessibilityLabel: (optionText: string, questionNumber: number) => string;
+  answerGroupAccessibilityLabel: (questionNumber: number) => string;
   answeredCount: (answeredCount: number, questionCount: number) => string;
   chapterBreakdownTitle: string;
   checkingAccess: string;
@@ -97,6 +98,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Svarsalternativ för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
     checkingAccess: 'Kontrollerar provåtkomst.',
@@ -161,6 +164,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Answer options for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
     chapterBreakdownTitle: 'Chapter breakdown',
     checkingAccess: 'Checking mock exam access.',
@@ -212,20 +217,26 @@ function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage
   return examRouteCopy[language].accessStatus[reason];
 }
 
+function createMockExamAttemptId(now = Date.now(), random = Math.random()): string {
+  const randomPart = Math.floor(random * Number.MAX_SAFE_INTEGER).toString(36) || '0';
+  return `mock-exam-${now.toString(36)}-${randomPart}`;
+}
+
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
-  const [examAttemptIndex, setExamAttemptIndex] = useState(0);
-  const examSessionId = `mock-exam-${examAttemptIndex}`;
+  const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);
+  const [examShuffleSeedIndex, setExamShuffleSeedIndex] = useState(0);
+  const examShuffleSeed = `mock-exam-shuffle-${examShuffleSeedIndex}`;
   const examQuestions = useMemo(
     () =>
       generateExam(questions, {
         questionCount: defaultMockExamConfig.questionCount,
-        sessionId: examSessionId,
+        sessionId: examShuffleSeed,
       }),
-    [examSessionId],
+    [examShuffleSeed],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Record<string, true>>({});
@@ -316,11 +327,11 @@ export default function Screen() {
             completedAt: submittedAt,
             questionTimings: answerTimings,
             questions: examQuestions,
-            sessionId: examSessionId,
+            sessionId: examAttemptId,
             startedAt: examStartedAtIsoRef.current,
           })
         : null,
-    [answerTimings, answers, examQuestions, examSessionId, submitted, submittedAt],
+    [answerTimings, answers, examAttemptId, examQuestions, submitted, submittedAt],
   );
   const questionChapterIndex = useMemo(
     () =>
@@ -362,7 +373,8 @@ export default function Screen() {
     const now = Date.now();
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
-    setExamAttemptIndex((current) => current + 1);
+    setExamAttemptId(createMockExamAttemptId());
+    setExamShuffleSeedIndex((current) => current + 1);
     setAnswers({});
     setFlaggedQuestionIds({});
     setAnswerTimings({});
@@ -462,7 +474,7 @@ export default function Screen() {
 
     let isMounted = true;
     recordMockExamSession({
-      sessionId: examSessionId,
+      sessionId: examAttemptId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
       completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
@@ -476,7 +488,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion(examAttemptId)
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -492,7 +504,7 @@ export default function Screen() {
   }, [
     completionRecorded,
     copy.completionStoreFailure,
-    examSessionId,
+    examAttemptId,
     recordExamCompletion,
     recordMockExamSession,
     resultCorrectCount,
@@ -741,17 +753,22 @@ export default function Screen() {
             language={language}
             question={question}
           />
-          <View style={styles.options}>
+          <View
+            aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityRole="radiogroup"
+            style={styles.options}
+          >
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
                 <Pressable
                   key={option.id}
-                  aria-selected={isSelected}
+                  aria-checked={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected }}
                   onPress={() => recordQuestionAnswer(question.id, option.id)}
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
@@ -881,6 +898,8 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.border,
       borderRadius: radius.small,
       borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[6],
       padding: space[1.5],
     },
     optionSelected: {

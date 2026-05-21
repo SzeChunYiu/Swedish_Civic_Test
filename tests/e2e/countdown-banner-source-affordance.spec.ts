@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-import { dismissBlockingModals } from './browserLaunch';
+import { dismissBlockingModals, mockBrowserDate } from './browserLaunch';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
 
@@ -44,29 +44,6 @@ function collectConsoleErrors(page: Page) {
   return consoleErrors;
 }
 
-async function mockBrowserDate(page: Page, isoDateTime: string) {
-  await page.addInitScript({
-    content: `
-(() => {
-  const RealDate = Date;
-  const fixedTime = new RealDate(${JSON.stringify(isoDateTime)}).getTime();
-
-  class MockDate extends RealDate {
-    constructor(...args) {
-      super(...(args.length > 0 ? args : [fixedTime]));
-    }
-
-    static now() {
-      return fixedTime;
-    }
-  }
-
-  window.Date = MockDate;
-})();
-`,
-  });
-}
-
 async function openHomeAndDismissModals(page: Page) {
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
@@ -86,6 +63,7 @@ test('home countdown banner exposes official source links as mobile-safe targets
 }) => {
   const consoleErrors = collectConsoleErrors(page);
 
+  await mockBrowserDate(page, '2026-05-21T12:00:00.000Z');
   await openHomeAndDismissModals(page);
 
   const countdownBody = page.getByText(/Nya medborgarskapsregler gäller från/).first();

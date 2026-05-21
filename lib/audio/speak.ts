@@ -110,21 +110,24 @@ export interface SpeakSwedishOptions {
 export function speakSwedish(text: unknown, options: SpeakSwedishOptions = {}): void {
   const speechText = normalizeSpeechText(text);
   if (speechText.length === 0) return;
+  const safeOptions = options && typeof options === 'object' ? options : {};
   const rate =
-    typeof options.rate === 'number' && Number.isFinite(options.rate) && options.rate > 0
-      ? Math.max(0.1, Math.min(2.0, options.rate))
+    typeof safeOptions.rate === 'number' &&
+    Number.isFinite(safeOptions.rate) &&
+    safeOptions.rate > 0
+      ? Math.max(0.1, Math.min(2.0, safeOptions.rate))
       : undefined;
   try {
     Speech.speak(speechText, {
       language: 'sv-SE',
       ...(rate !== undefined ? { rate } : {}),
-      onDone: getSpeechCallback<'onDone'>(options.onDone),
-      onError: getSpeechCallback<'onError'>(options.onError),
-      onStopped: getSpeechCallback<'onStopped'>(options.onStopped),
+      onDone: getSpeechCallback<'onDone'>(safeOptions.onDone),
+      onError: getSpeechCallback<'onError'>(safeOptions.onError),
+      onStopped: getSpeechCallback<'onStopped'>(safeOptions.onStopped),
     });
   } catch (error) {
     console.warn('Speech unavailable:', error);
-    const onError = getSpeechCallback<'onError'>(options.onError);
+    const onError = getSpeechCallback<'onError'>(safeOptions.onError);
     onError?.(error instanceof Error ? error : new Error(String(error)));
   }
 }
