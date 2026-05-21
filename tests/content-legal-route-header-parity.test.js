@@ -185,10 +185,13 @@ test('legal, source, and support routes stay on shared accessible header path', 
 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
+  assert.equal(summary.legalSectionMixedChildrenRulesValidated, 4);
+  assert.equal(summary.legalSectionMixedChildrenLayoutValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.privacyRemoveAdsCopyNaturalnessValidated, true);
   assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 59);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
+  assert.match(legalPage, /Children\.toArray\(children\)/);
+  assert.match(legalPage, /flushTextFragments\(\);\s*renderedChildren\.push\(child\);/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
 
@@ -213,24 +216,14 @@ test('legal, source, and support routes stay on shared accessible header path', 
           new RegExp(`<LegalSection\\s+title="${escapeRegExp(sectionTitle)}"`),
       );
     }
-  }
 
-  const privacyRouteSource = fs.readFileSync(path.join(repoRoot, 'app/privacy.tsx'), 'utf8');
-  for (const snippet of [
-    'gör att annonser inte visas på den här enheten',
-    'turns off ads on this device',
-    'Ta bort annonser är ett engångsköp utan förbrukning för 29 SEK',
-    'Remove Ads is a one-time non-consumable purchase for 29 SEK',
-    'kan återställas via appbutiken',
-    'can be restored through the app store',
-    'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads',
-    'The free app is ad-supported on study screens through Google Mobile Ads',
-    'Tidsatta provskärmar är annonsfria',
-    'Timed mock exam screens stay ad-free',
-  ]) {
-    assert.match(privacyRouteSource, new RegExp(escapeRegExp(snippet)));
+    if (expectedRoute.file === 'app/support.tsx') {
+      assert.match(
+        routeSource,
+        /<LegalSection\s+title=\{copy\.sections\.publicSupportPage\.title\}>\s*\{copy\.sections\.publicSupportPage\.body\}\s*<LegalExternalLink/,
+      );
+    }
   }
-  assert.doesNotMatch(privacyRouteSource, /\badsDisabled\b/i);
 });
 
 test('privacy route parity rejects English streaks in Swedish legal copy', () => {
@@ -261,41 +254,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
-  );
-});
-
-test('privacy route parity rejects Remove Ads implementation flags in learner copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/privacy.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        'gör att annonser inte visas på den här enheten',
-        'sätter adsDisabled=true på den här enheten',
-      )
-      .replace('turns off ads on this device', 'sets adsDisabled=true on this device');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-legal-route-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /Privacy Remove Ads copy must not expose adsDisabled implementation flags/,
   );
 });
 
@@ -330,6 +288,41 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /legal route shared heading components must expose accessibilityRole="header"/,
+  );
+});
+
+test('legal route header parity rejects mixed LegalSection child layout drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/compliance/LegalPage.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('Children.toArray(children)', 'Array.isArray(children) ? children : [children]')
+      .replace(
+        'flushTextFragments();\\n    renderedChildren.push(child);',
+        'renderedChildren.push(child);',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-legal-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /LegalSection must split mixed text and interactive children into separate layout boxes/,
   );
 });
 

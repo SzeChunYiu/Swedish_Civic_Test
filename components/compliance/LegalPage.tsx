@@ -124,39 +124,33 @@ function getBackAccessibilityLabel(label: string) {
 
 function renderSectionChildren(children: ReactNode) {
   if (children == null) return null;
-  const sectionChildren = Children.toArray(children);
-  if (sectionChildren.length === 0) return null;
-
   const renderedChildren: ReactNode[] = [];
-  let textBuffer: (string | number)[] = [];
+  const textFragments: string[] = [];
 
-  const flushTextBuffer = (key: string | number) => {
-    if (textBuffer.length === 0) return;
+  const flushTextFragments = () => {
+    const paragraph = textFragments.join('').trim();
+    textFragments.length = 0;
+    if (!paragraph) return;
+
     renderedChildren.push(
-      <Text key={`paragraph-${key}`} style={styles.paragraph}>
-        {textBuffer}
+      <Text key={`section-text-${renderedChildren.length}`} style={styles.paragraph}>
+        {paragraph}
       </Text>,
     );
-    textBuffer = [];
   };
 
-  sectionChildren.forEach((child, index) => {
-    if (isTextChild(child)) {
-      textBuffer.push(child);
-      return;
+  for (const child of Children.toArray(children)) {
+    if (typeof child === 'string' || typeof child === 'number') {
+      textFragments.push(String(child));
+      continue;
     }
 
-    flushTextBuffer(index);
+    flushTextFragments();
     renderedChildren.push(child);
-  });
+  }
 
-  flushTextBuffer('tail');
-  if (renderedChildren.length === 1) return renderedChildren[0];
-  return renderedChildren;
-}
-
-function isTextChild(child: ReactNode): child is string | number {
-  return typeof child === 'string' || typeof child === 'number';
+  flushTextFragments();
+  return renderedChildren.length > 0 ? renderedChildren : null;
 }
 
 const styles = StyleSheet.create({

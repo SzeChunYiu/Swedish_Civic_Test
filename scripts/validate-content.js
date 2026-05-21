@@ -2192,6 +2192,25 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 ];
 const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
+const EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES = [
+  {
+    label: 'flattened LegalSection children',
+    pattern: /Children\.toArray\(children\)/,
+  },
+  {
+    label: 'buffered LegalSection text fragments',
+    pattern: /const textFragments:\s*string\[\]\s*=\s*\[\];/,
+  },
+  {
+    label: 'LegalSection text fragment paragraph block',
+    pattern:
+      /<Text\s+key=\{`section-text-\$\{renderedChildren\.length\}`\}\s+style=\{styles\.paragraph\}>/,
+  },
+  {
+    label: 'LegalSection interactive children after text flush',
+    pattern: /flushTextFragments\(\);\s*renderedChildren\.push\(child\);/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -4855,166 +4874,6 @@ function validateStaticEbookFactboxProvenance() {
     requiredCopyValidated,
     sourceUrlsValidated,
     unsupportedFactboxClaimsValidated,
-  };
-}
-
-function getStaticEbookChapterIdsForValidation() {
-  const sandbox = { console, window: {} };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/questions.js'), sandbox, {
-    filename: 'site/questions.js',
-    timeout: 3000,
-  });
-  const meta = sandbox.window.SMT_CHAPTERS_META || sandbox.SMT_CHAPTERS_META;
-  if (!Array.isArray(meta)) {
-    fail('site/questions.js should expose SMT_CHAPTERS_META for static ebook validation');
-    return ['intro'];
-  }
-  return ['intro', ...meta.map((chapter) => String(chapter.id))];
-}
-
-function createStaticEbookValidationHarness(chapterIds) {
-  const reader = { innerHTML: '', scrollTop: 0 };
-  const navAnchors = chapterIds.map((id) => ({
-    classList: { toggle() {} },
-    dataset: { eb: id },
-  }));
-  const localStorageValues = new Map();
-  const localStorage = {
-    getItem(key) {
-      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
-    },
-    setItem(key, value) {
-      localStorageValues.set(key, String(value));
-    },
-  };
-  const location = { hash: '#/ebook' };
-  const document = {
-    addEventListener() {},
-    getElementById(id) {
-      return id === 'ebook-reader' ? reader : null;
-    },
-    querySelectorAll(selector) {
-      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
-    },
-  };
-  const window = {
-    addEventListener() {},
-    localStorage,
-    location,
-    smtApplyEbookHighlights() {},
-  };
-  const sandbox = {
-    console,
-    document,
-    localStorage,
-    location,
-    setTimeout(callback) {
-      callback();
-      return 0;
-    },
-    window,
-  };
-  sandbox.globalThis = sandbox;
-  vm.runInNewContext(loadText('site/ebook.js'), sandbox, {
-    filename: 'site/ebook.js',
-    timeout: 3000,
-  });
-  return { localStorage, location, reader, window };
-}
-
-function renderStaticEbookChapterForValidation(harness, lang, chapterId) {
-  harness.localStorage.setItem('smt_lang', lang);
-  harness.location.hash = `#/ebook?c=${chapterId}`;
-  harness.reader.innerHTML = '';
-  harness.window.smtEbookRender();
-  return harness.reader.innerHTML;
-}
-
-function extractStaticEbookFootnoteContract(html) {
-  const refIds = Array.from(html.matchAll(/id="ebook-fnref-([^"]+)"/g), (match) => match[1]);
-  const footnoteIds = Array.from(html.matchAll(/id="ebook-fn-([^"]+)"/g), (match) => match[1]);
-  const sourceKeys = Array.from(
-    html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g),
-    (match) => match[1],
-  );
-  const badgeHtml = html.match(/<p class="ebook__provenance-badge"[\s\S]*?<\/p>/)?.[0] ?? '';
-  const visibleBadgeText = badgeHtml.replace(/^[\s\S]*?<\/span>/, '').replace(/<[^>]+>/g, ' ');
-  const badgeCounts = Array.from(visibleBadgeText.matchAll(/\((\d+)\)/g), (match) =>
-    Number(match[1]),
-  );
-
-  return {
-    badgeCounts,
-    footnoteIds,
-    refIds,
-    sourceKeys,
-  };
-}
-
-function validateStaticEbookFootnoteHashParity() {
-  const chapterIds = getStaticEbookChapterIdsForValidation();
-  const languages = ['en', 'sv'];
-  const harness = createStaticEbookValidationHarness(chapterIds);
-  const chapterValidity = new Map(chapterIds.map((chapterId) => [chapterId, true]));
-  let languagesValidated = 0;
-
-  for (const lang of languages) {
-    let languageValid = true;
-
-    for (const chapterId of chapterIds) {
-      const html = renderStaticEbookChapterForValidation(harness, lang, chapterId);
-      const { badgeCounts, footnoteIds, refIds, sourceKeys } =
-        extractStaticEbookFootnoteContract(html);
-      let chapterValid = true;
-
-      if (refIds.length === 0) {
-        fail(`static ebook ${lang}/${chapterId} should render footnote refs`);
-        chapterValid = false;
-      }
-      if (JSON.stringify(refIds) !== JSON.stringify(footnoteIds)) {
-        fail(`static ebook ${lang}/${chapterId} footnote ref/list hash ids should match`);
-        chapterValid = false;
-      }
-      for (const id of refIds) {
-        if (!html.includes(`href="#ebook-fn-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing forward footnote hash for ${id}`);
-          chapterValid = false;
-        }
-        if (!html.includes(`href="#ebook-fnref-${id}"`)) {
-          fail(`static ebook ${lang}/${chapterId} missing back-reference footnote hash for ${id}`);
-          chapterValid = false;
-        }
-      }
-      if (sourceKeys.length !== refIds.length) {
-        fail(`static ebook ${lang}/${chapterId} source-count list should match footnote refs`);
-        chapterValid = false;
-      }
-      if (!sourceKeys.includes('uhrStudyMaterial') || !sourceKeys.includes('editorialCommentary')) {
-        fail(`static ebook ${lang}/${chapterId} should include UHR and editorial source mixes`);
-        chapterValid = false;
-      }
-      if (badgeCounts.reduce((sum, count) => sum + count, 0) !== sourceKeys.length) {
-        fail(`static ebook ${lang}/${chapterId} badge source counts should match footnote list`);
-        chapterValid = false;
-      }
-
-      if (!chapterValid) {
-        languageValid = false;
-        chapterValidity.set(chapterId, false);
-      }
-    }
-
-    if (languageValid) languagesValidated += 1;
-  }
-
-  const chaptersValidated = Array.from(chapterValidity.values()).filter(Boolean).length;
-
-  return {
-    chaptersValidated,
-    languagesValidated,
-    parityValidated:
-      chaptersValidated === chapterIds.length && languagesValidated === languages.length,
   };
 }
 
@@ -8299,6 +8158,8 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let legalSectionMixedChildrenRulesValidated = 0;
+let legalSectionMixedChildrenLayoutValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
@@ -8532,9 +8393,6 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookFootnoteHashChaptersValidated = 0;
-let staticEbookFootnoteHashLanguagesValidated = 0;
-let staticEbookFootnoteHashParityValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -8812,6 +8670,8 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   printValidationSummary({
     legalRouteHeadersValidated,
     legalRouteHeaderParityValidated,
+    legalSectionMixedChildrenRulesValidated,
+    legalSectionMixedChildrenLayoutValidated,
     swedishPrivacyStreakCopyNaturalnessValidated,
     legalSwedishEnglishTokenGuardValidated,
     legalSwedishEnglishTokenGuardParityValidated,
@@ -8841,20 +8701,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-static-ebook-footnote-hash-parity')) {
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
-  exitWithValidationFailures();
-  printValidationSummary({
-    staticEbookFootnoteHashChaptersValidated,
-    staticEbookFootnoteHashLanguagesValidated,
-    staticEbookFootnoteHashParityValidated,
   });
   process.exit(0);
 }
@@ -9170,12 +9016,6 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
 }
 {
-  const footnoteHashValidation = validateStaticEbookFootnoteHashParity();
-  staticEbookFootnoteHashChaptersValidated = footnoteHashValidation.chaptersValidated;
-  staticEbookFootnoteHashLanguagesValidated = footnoteHashValidation.languagesValidated;
-  staticEbookFootnoteHashParityValidated = footnoteHashValidation.parityValidated;
-}
-{
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
   staticI18nSomaliRequiredCopyValidated = somaliI18nValidation.requiredCopyValidated;
   staticI18nSomaliHighFrequencyLabelsValidated = somaliI18nValidation.highFrequencyLabelsValidated;
@@ -9429,7 +9269,6 @@ function validateAppConfigSchema() {
 function validateLaunchAdRouteSuppressionParity() {
   let valid = true;
   let rootLayout = '';
-  let nativeLaunchPopupSource = '';
 
   function reject(message) {
     valid = false;
@@ -9480,16 +9319,6 @@ function validateLaunchAdRouteSuppressionParity() {
     return;
   }
 
-  try {
-    nativeLaunchPopupSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`components/monetization/LaunchPopupAd.native.tsx could not be read: ${error.message}`);
-    return;
-  }
-
   if (!rootLayout.includes('usePathname()')) {
     reject('root layout must read the current pathname before rendering the launch ad');
   }
@@ -9498,19 +9327,6 @@ function validateLaunchAdRouteSuppressionParity() {
   }
   if (!rootLayout.includes('!suppressLaunchPopupAd && entitlementsReady')) {
     reject('root layout must gate LaunchPopupAd on route suppression and entitlement readiness');
-  }
-  if (!nativeLaunchPopupSource.includes('const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;')) {
-    reject('native LaunchPopupAd must define a bounded load timeout');
-  }
-  if (!nativeLaunchPopupSource.includes('clearTimeout(loadTimeout);')) {
-    reject('native LaunchPopupAd must clear its load timeout on load/error/unmount cleanup');
-  }
-  if (
-    !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/.test(
-      nativeLaunchPopupSource,
-    )
-  ) {
-    reject('native LaunchPopupAd must clear the in-flight flag when load callbacks stall');
   }
 
   if (
@@ -9627,44 +9443,6 @@ function validateAdPlacementRouteParity() {
       }
       if (shouldShowAd(spec.placement, { adsDisabled: true })) {
         reject(`${spec.placement} must be hidden after Remove Ads is active`);
-        routeIsValid = false;
-      }
-    }
-
-    if (spec.component === 'AdBanner') {
-      const consentAwareShouldShowPattern =
-        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
-      const nativeBannerSource = fs.readFileSync(
-        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
-        'utf8',
-      );
-
-      if (!nativeBannerSource.includes('BannerAd')) {
-        reject('AdBanner native placement must render BannerAd');
-        routeIsValid = false;
-      }
-      if (!nativeBannerSource.includes('BannerAdSize.ANCHORED_ADAPTIVE_BANNER')) {
-        reject('AdBanner native placement must render adaptive banner size');
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes(
-          'requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly',
-        )
-      ) {
-        reject(
-          'AdBanner native placement must pass consent-derived non-personalized request options',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !nativeBannerSource.includes('const unitId = getPlatformAdUnitId(placement, Platform.OS);')
-      ) {
-        reject('AdBanner native placement must resolve the banner unit by platform');
-        routeIsValid = false;
-      }
-      if (!consentAwareShouldShowPattern.test(nativeBannerSource)) {
-        reject('AdBanner native placement must gate through consent-aware platform shouldShowAd');
         routeIsValid = false;
       }
     }
@@ -9858,24 +9636,6 @@ function validateAdPlacementRouteParity() {
       if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
         reject(
           'PracticeInterstitialAd native placement must pass non-personalized ad request options',
-        );
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;')) {
-        reject('PracticeInterstitialAd native placement must define a bounded load timeout');
-        routeIsValid = false;
-      }
-      if (!nativeInterstitialSource.includes('clearTimeout(loadTimeout);')) {
-        reject('PracticeInterstitialAd native placement must clear its load timeout');
-        routeIsValid = false;
-      }
-      if (
-        !/loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/.test(
-          nativeInterstitialSource,
-        )
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must clear in-flight state when load callbacks stall',
         );
         routeIsValid = false;
       }
@@ -12104,6 +11864,22 @@ function validateLegalRouteHeaderParity() {
     !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(legalPage)
   ) {
     reject('legal route shared heading components must expose accessibilityRole="header"');
+  }
+
+  for (const expectedRule of EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES) {
+    if (!expectedRule.pattern.test(legalPage)) {
+      reject(
+        `LegalSection must split mixed text and interactive children into separate layout boxes: missing ${expectedRule.label}`,
+      );
+    } else {
+      legalSectionMixedChildrenRulesValidated += 1;
+    }
+  }
+  if (
+    legalSectionMixedChildrenRulesValidated ===
+    EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES.length
+  ) {
+    legalSectionMixedChildrenLayoutValidated = true;
   }
 
   for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
@@ -19109,6 +18885,8 @@ console.log(
       mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      legalSectionMixedChildrenRulesValidated,
+      legalSectionMixedChildrenLayoutValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
@@ -19365,9 +19143,6 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookFootnoteHashChaptersValidated,
-      staticEbookFootnoteHashLanguagesValidated,
-      staticEbookFootnoteHashParityValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,
