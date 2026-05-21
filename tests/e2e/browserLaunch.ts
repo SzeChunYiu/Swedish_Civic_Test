@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 
@@ -22,6 +22,9 @@ const settingsSeenAboutKey = 'settings\\hasSeenAboutTheTest';
 // Selector for modal overlays that block route screenshots in the rendered app.
 export const blockingModalOverlayLocator =
   '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
+
+const languagePickerMenuName = /Language picker|Språkväljare/;
+const languagePickerTriggerName = /Open language picker|Öppna språkväljaren/;
 
 const SYSTEM_CHROMIUM_EXECUTABLES = [
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -144,6 +147,21 @@ export async function seedFreshFirstRunSettingsLanguage(
   );
 }
 
+async function clickFirstVisible(locator: Locator): Promise<boolean> {
+  const target = locator.first();
+
+  if (!(await target.isVisible().catch(() => false))) return false;
+
+  try {
+    await target.click({ timeout: 5_000 });
+  } catch {
+    // The modal controls can detach while an overlay is closing; the final
+    // overlay assertion in dismissBlockingModals catches any real failure.
+  }
+
+  return true;
+}
+
 export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
   const closeLaunchAd = page
     .getByRole('button', {
@@ -151,13 +169,7 @@ export async function closeLaunchAdIfPresent(page: Page): Promise<boolean> {
     })
     .first();
 
-  if (await closeLaunchAd.isVisible().catch(() => false)) {
-    await closeLaunchAd.click();
-    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
-    return true;
-  }
-
-  return false;
+  return clickFirstVisible(closeLaunchAd);
 }
 
 export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolean> {
@@ -167,13 +179,11 @@ export async function dismissLanguagePickerIfPresent(page: Page): Promise<boolea
     })
     .first();
 
-  if (await closeLanguagePicker.isVisible().catch(() => false)) {
-    await closeLanguagePicker.click();
-    await expect(page.getByRole('menu', { name: /Language picker|Språkväljare/ })).toHaveCount(0);
-    return true;
-  }
+  const clicked = await clickFirstVisible(closeLanguagePicker);
+  if (clicked)
+    await expect(page.getByRole('menu', { name: languagePickerMenuName })).toHaveCount(0);
 
-  return false;
+  return clicked;
 }
 
 export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<boolean> {
@@ -183,27 +193,54 @@ export async function dismissFirstRunAboutModalIfPresent(page: Page): Promise<bo
     })
     .first();
 
-  if (await skipGuide.isVisible().catch(() => false)) {
-    await skipGuide.click();
-    await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
-    return true;
-  }
-
-  return false;
+  return clickFirstVisible(skipGuide);
 }
 
 export async function dismissBlockingModals(page: Page): Promise<BlockingModalDismissal> {
-  const languagePickerDismissed = await dismissLanguagePickerIfPresent(page);
-  const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
-  const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
+  const dismissal: BlockingModalDismissal = {
+    firstRunAboutDismissed: false,
+    languagePickerDismissed: false,
+    launchOverlayDismissed: false,
+  };
+
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const languagePickerDismissed = await dismissLanguagePickerIfPresent(page);
+    const launchOverlayDismissed = await closeLaunchAdIfPresent(page);
+    const firstRunAboutDismissed = await dismissFirstRunAboutModalIfPresent(page);
+    const dismissed = languagePickerDismissed || launchOverlayDismissed || firstRunAboutDismissed;
+
+    dismissal.languagePickerDismissed ||= languagePickerDismissed;
+    dismissal.launchOverlayDismissed ||= launchOverlayDismissed;
+    dismissal.firstRunAboutDismissed ||= firstRunAboutDismissed;
+
+    if (!dismissed) break;
+    await page.waitForTimeout(150);
+  }
 
   await expect(page.locator(blockingModalOverlayLocator)).toHaveCount(0);
 
-  return {
-    firstRunAboutDismissed,
-    languagePickerDismissed,
-    launchOverlayDismissed,
-  };
+  return dismissal;
+}
+
+export async function setupHomeCopyRoute(page: Page, language: AppLanguage): Promise<void> {
+  await seedFreshSettingsLanguageAndAboutSeen(page, language);
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+}
+
+export async function switchLanguageThroughTopBarPicker(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  const targetLabel = language === 'sv' ? 'Swedish' : 'English';
+
+  await page.getByRole('button', { name: languagePickerTriggerName }).first().click();
+
+  const menu = page.getByRole('menu', { name: languagePickerMenuName });
+  await expect(menu).toBeVisible();
+  await menu.getByRole('menuitem', { exact: true, name: targetLabel }).click();
+  await expect(menu).toHaveCount(0);
+  await expect(page.getByRole('button', { name: languagePickerTriggerName }).first()).toBeVisible();
 }
 
 /**
