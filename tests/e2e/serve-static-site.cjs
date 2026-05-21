@@ -5,12 +5,6 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '../../site');
 const port = Number(process.env.PORT || 4173);
 
-function assertStaticSiteReady(siteRoot = root) {
-  if (!fs.existsSync(path.join(siteRoot, 'index.html'))) {
-    throw new Error('site/index.html is missing.');
-  }
-}
-
 const contentTypeByExt = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
@@ -19,6 +13,12 @@ const contentTypeByExt = {
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
 };
+
+function assertStaticSiteReady(siteRoot = root) {
+  if (!fs.existsSync(path.join(siteRoot, 'index.html'))) {
+    throw new Error('site/index.html is missing.');
+  }
+}
 
 function sendFile(res, filePath) {
   const ext = path.extname(filePath);

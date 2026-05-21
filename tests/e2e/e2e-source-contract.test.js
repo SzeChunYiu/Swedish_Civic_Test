@@ -54,12 +54,18 @@ function assertPortCanBind(port) {
   });
 }
 
-function waitForServerReady(child, readyText = 'Serving dist-web on http://127.0.0.1:4173') {
+function waitForServerReady(
+  child,
+  {
+    readyText = 'Serving dist-web on http://127.0.0.1:4173',
+    serverName = 'dist-web server',
+  } = {},
+) {
   return new Promise((resolve, reject) => {
     let output = '';
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error(`server did not become ready (${readyText}):\n${output}`));
+      reject(new Error(`${serverName} did not become ready:\n${output}`));
     }, 5000);
 
     const cleanup = () => {
@@ -77,7 +83,7 @@ function waitForServerReady(child, readyText = 'Serving dist-web on http://127.0
     };
     const onExit = (code, signal) => {
       cleanup();
-      reject(new Error(`dist-web server exited before ready (${code ?? signal}):\n${output}`));
+      reject(new Error(`${serverName} exited before ready (${code ?? signal}):\n${output}`));
     };
 
     child.stdout.on('data', onData);
@@ -716,7 +722,7 @@ test('dist-web e2e server releases the default port on SIGTERM', async () => {
   }
 });
 
-test('static-site e2e server releases the default port on SIGTERM', async () => {
+test('static site e2e server releases the default port on SIGTERM', async () => {
   const source = readRelative('serve-static-site.cjs');
   assert.match(
     source,
@@ -734,7 +740,7 @@ test('static-site e2e server releases the default port on SIGTERM', async () => 
   await assertPortCanBind(port);
 
   const child = spawn(process.execPath, [path.join(e2eDir, 'serve-static-site.cjs')], {
-    cwd: path.resolve(e2eDir, '../..'),
+    cwd: repoRoot,
     env: {
       ...process.env,
       PORT: String(port),
@@ -743,7 +749,10 @@ test('static-site e2e server releases the default port on SIGTERM', async () => 
   });
 
   try {
-    await waitForServerReady(child, `Serving static site on http://127.0.0.1:${port}`);
+    await waitForServerReady(child, {
+      readyText: `Serving static site on http://127.0.0.1:${port}`,
+      serverName: 'static site server',
+    });
     const exited = waitForExit(child);
     child.kill('SIGTERM');
     const result = await exited;
