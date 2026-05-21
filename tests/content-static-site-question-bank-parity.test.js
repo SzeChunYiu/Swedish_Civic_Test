@@ -17,7 +17,9 @@ const {
   generatedQuestionIdLiteralFindingsForSource,
 } = require('../scripts/generated-question-fixture-ids');
 const {
+  Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
@@ -27,6 +29,8 @@ const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
 const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b|\(welfare\)/i;
 const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
   /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const SOURCE_CRITICISM_STALE_STATIC_PATTERN =
+  /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -254,6 +258,25 @@ test('static site question bank keeps q062 public-sector i18n and generated vari
       );
     }
   }
+});
+
+test('static site question bank keeps q050 source-criticism i18n noun-based', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q050 = questionsById.get('q050');
+
+  assert.ok(q050, 'q050 should be present in static question bank');
+  assert.deepEqual(
+    summarizeQ050SourceCriticismNaturalness(
+      [staticQuestionToI18nQuestion(q050)],
+      Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
+    ).errors,
+    [],
+  );
+  assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {

@@ -174,6 +174,25 @@ const Q062_PUBLIC_SECTOR_STALE_PATTERNS = {
   explanation:
     /\bThe public sector means activities for which\b|公共部[門门]是指|القطاع العام هو الأنشطة|کەرتی گشتی بریتییە|بخش عمومی به فعالیت|Sektor publiczny to działania|Qaybta dadweynuhu waa hawlo|ህዝባዊ ዘፈር ማለት|^Kamu sektörü, devletin|Державний сектор — це діяльність/i,
 };
+const Q050_SOURCE_CRITICISM_NATURALNESS_IDS = ['q050'];
+const Q050_SOURCE_CRITICISM_REQUIRED_TERMS = {
+  'zh-Hant': ['來源批判'],
+  'zh-Hans': ['来源批判'],
+  ar: ['نقد المصادر'],
+  ckb: ['ڕەخنەی سەرچاوە'],
+  fa: ['نقد منبع'],
+  pl: ['krytyka źródeł'],
+  so: ['qiimeynta ilaha'],
+  ti: ['ናይ ምንጪ ነቐፌታ'],
+  tr: ['kaynak eleştirisi'],
+  uk: ['критика джерел'],
+};
+const Q050_SOURCE_CRITICISM_STALE_PATTERNS = {
+  question:
+    /具有(?:來|来)源批判意識|أن تكون ناقدًا للمصادر|سەرچاوە-ڕەخنەیی|منبع‌سنج بودن|krytyczne podejście do źródeł|si naqdineed loo eego ilaha|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ|kaynaklara eleştirel yaklaşmak|критично ставитися до джерел/i,
+  explanation:
+    /具有(?:來|来)源批判意識表示|أن تكون ناقدًا للمصادر يعني|سەرچاوە-ڕەخنەیی بوون واتە|منبع‌سنج بودن یعنی|krytyczne podejście do źródeł oznacza|si naqdineed loo eego ilaha macluumaadka|ንምንጭታት ብነቐፌታዊ መንገዲ ምርኣይ ማለት|kaynaklara eleştirel yaklaşmak,|критично ставитися до джерел означає/i,
+};
 
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
@@ -592,12 +611,91 @@ function checkQ062PublicSectorNaturalness(questions, ids = Q062_PUBLIC_SECTOR_NA
   return errors;
 }
 
+function q050SourceCriticismErrorsForQuestion(question) {
+  const errors = [];
+  const questionMap = localizedQuestionMap(question);
+  const explanationMap = localizedExplanationMap(question);
+
+  const segments = [
+    ['questionText', questionMap, Q050_SOURCE_CRITICISM_STALE_PATTERNS.question],
+    ['explanationText', explanationMap, Q050_SOURCE_CRITICISM_STALE_PATTERNS.explanation],
+  ];
+
+  for (const [path, map, stalePattern] of segments) {
+    for (const [locale, value] of Object.entries(map || {})) {
+      if (typeof value === 'string' && stalePattern.test(value)) {
+        errors.push(`${question.id}.${path}.${locale} uses stale source-criticism wording`);
+      }
+    }
+  }
+
+  for (const [locale, requiredTerms] of Object.entries(Q050_SOURCE_CRITICISM_REQUIRED_TERMS)) {
+    for (const [path, value] of [
+      ['questionText', questionMap[locale]],
+      ['explanationText', explanationMap[locale]],
+    ]) {
+      const missingTerms = requiredTerms.filter((term) => !includesTerm(value, term));
+      if (missingTerms.length > 0) {
+        errors.push(
+          `${question.id}.${path}.${locale} missing source-criticism noun term(s): ${missingTerms.join(', ')}`,
+        );
+      }
+    }
+  }
+
+  return errors;
+}
+
+function summarizeQ050SourceCriticismNaturalness(
+  questions,
+  ids = Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
+) {
+  const errors = [];
+  const questionById = new Map(questions.map((question) => [question.id, question]));
+  let casesValidated = 0;
+
+  for (const id of ids) {
+    const question = questionById.get(id);
+    const errorCountBefore = errors.length;
+
+    if (!question) {
+      errors.push(`${id}.sourceCriticismNaturalness missing`);
+      continue;
+    }
+
+    errors.push(...q050SourceCriticismErrorsForQuestion(question));
+
+    if (errors.length === errorCountBefore) {
+      casesValidated += 1;
+    }
+  }
+
+  return {
+    errors,
+    casesValidated,
+    expectedCases: ids.length,
+    parityValidated: errors.length === 0 && casesValidated === ids.length,
+  };
+}
+
+function checkQ050SourceCriticismNaturalness(
+  questions,
+  ids = Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
+) {
+  const { errors } = summarizeQ050SourceCriticismNaturalness(questions, ids);
+  return errors;
+}
+
 function isSomaliGeographyNaturalnessId(id) {
   return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
 }
 
 function isQ062PublicSectorNaturalnessId(id) {
   return Q062_PUBLIC_SECTOR_NATURALNESS_IDS.includes(id);
+}
+
+function isQ050SourceCriticismNaturalnessId(id) {
+  return Q050_SOURCE_CRITICISM_NATURALNESS_IDS.includes(id);
 }
 
 function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
@@ -646,6 +744,11 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
   const q062PublicSectorIds = ids.filter(isQ062PublicSectorNaturalnessId);
   if (q062PublicSectorIds.length > 0) {
     errors.push(...checkQ062PublicSectorNaturalness(questions, q062PublicSectorIds));
+  }
+
+  const q050SourceCriticismIds = ids.filter(isQ050SourceCriticismNaturalnessId);
+  if (q050SourceCriticismIds.length > 0) {
+    errors.push(...checkQ050SourceCriticismNaturalness(questions, q050SourceCriticismIds));
   }
 
   return errors;
@@ -768,15 +871,18 @@ if (require.main === module) {
 }
 
 module.exports = {
+  Q050_SOURCE_CRITICISM_NATURALNESS_IDS,
   Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
+  checkQ050SourceCriticismNaturalness,
   checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
   REQUIRED_REVIEW_LOCALES,
+  summarizeQ050SourceCriticismNaturalness,
   summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
 };
