@@ -423,6 +423,29 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('streak rules parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const streakRulesTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-streak-rules/);
+  assert.match(
+    validatorSource,
+    /validateStreakRules\(\);[\s\S]*streakRulesValidated[\s\S]*streakRulesParityValidated/,
+  );
+  assert.match(streakRulesTestSource, /--focus-streak-rules/);
+  assert.doesNotMatch(
+    streakRulesTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'streak rules tests must not route through full content validation',
+  );
+});
+
 test('streak freeze normalizer parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
