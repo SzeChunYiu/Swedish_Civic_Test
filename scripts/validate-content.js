@@ -477,12 +477,14 @@ const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
 ];
 const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'EBOOK_FACTBOX_SOURCE_NOTES',
+  'EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS',
   "retrievedDate: '2026-05-19'",
   'Facts to review',
   'Fakta att repetera',
   'Sources accessed',
   'Källor hämtade',
 ];
+const STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS = new Set(['uhrStudyMaterial', 'editorialCommentary']);
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
   sourceId: 'q044',
@@ -5121,6 +5123,193 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
+function extractStaticEbookExternalSourceMetadata(source) {
+  const match = source.match(
+    /const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object\.freeze\((\{[\s\S]*?\n  \})\);/,
+  );
+
+  if (!match) {
+    fail('static ebook must declare EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS');
+    return new Map();
+  }
+
+  let metadata;
+  try {
+    metadata = vm.runInNewContext(`(${match[1]})`);
+  } catch (error) {
+    fail(`static ebook external source metadata could not be parsed: ${error.message}`);
+    return new Map();
+  }
+
+  if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+    fail('static ebook external source metadata must be an object keyed by chapter id');
+    return new Map();
+  }
+
+  const metadataByChapter = new Map();
+  Object.entries(metadata).forEach(([chapterId, sourceKeys]) => {
+    if (!Array.isArray(sourceKeys)) {
+      fail(`static ebook chapter ${chapterId} external source metadata must be an array`);
+      return;
+    }
+
+    const normalizedKeys = sourceKeys.map(String);
+    normalizedKeys.forEach((sourceKey) => {
+      if (STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS.has(sourceKey)) {
+        fail(`static ebook chapter ${chapterId} must not declare foundational key ${sourceKey}`);
+      }
+      if (!new RegExp(`\\b${escapeRegExp(sourceKey)}\\s*:`).test(source)) {
+        fail(`static ebook external source metadata references unknown key ${sourceKey}`);
+      }
+    });
+
+    metadataByChapter.set(String(chapterId), normalizedKeys);
+  });
+
+  return metadataByChapter;
+}
+
+function getStaticEbookChapterIds() {
+  const context = { console, window: {} };
+  context.globalThis = context;
+  vm.runInNewContext(loadText('site/questions.js'), context, {
+    filename: 'site/questions.js',
+  });
+
+  const meta = context.window.SMT_CHAPTERS_META || context.SMT_CHAPTERS_META;
+  if (!Array.isArray(meta)) {
+    fail('static ebook source metadata guard could not read SMT_CHAPTERS_META');
+    return ['intro'];
+  }
+
+  return ['intro', ...meta.map((chapter) => String(chapter.id))];
+}
+
+function createStaticEbookValidationHarness() {
+  const chapterIds = getStaticEbookChapterIds();
+  const reader = { innerHTML: '', scrollTop: 0 };
+  const navAnchors = chapterIds.map((id) => ({
+    dataset: { eb: id },
+    classList: { toggle() {} },
+  }));
+  const localStorageValues = new Map();
+  const localStorage = {
+    getItem(key) {
+      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
+    },
+    setItem(key, value) {
+      localStorageValues.set(key, String(value));
+    },
+  };
+  const location = { hash: '#/ebook' };
+  const document = {
+    addEventListener() {},
+    getElementById(id) {
+      return id === 'ebook-reader' ? reader : null;
+    },
+    querySelectorAll(selector) {
+      return selector === '.ebook__nav a[data-eb]' ? navAnchors : [];
+    },
+  };
+  const window = {
+    addEventListener() {},
+    localStorage,
+    location,
+    smtApplyEbookHighlights() {},
+  };
+  const context = {
+    console,
+    document,
+    localStorage,
+    location,
+    setTimeout(callback) {
+      callback();
+      return 0;
+    },
+    window,
+  };
+  context.globalThis = context;
+
+  vm.runInNewContext(loadText('site/ebook.js'), context, { filename: 'site/ebook.js' });
+
+  return { chapterIds, localStorage, location, reader, window };
+}
+
+function renderStaticEbookChapterForValidation(harness, lang, chapterId) {
+  harness.localStorage.setItem('smt_lang', lang);
+  harness.location.hash = `#/ebook?c=${chapterId}`;
+  harness.reader.innerHTML = '';
+  harness.window.smtEbookRender();
+  return harness.reader.innerHTML;
+}
+
+function renderedStaticEbookSourceKeys(html) {
+  return new Set(Array.from(html.matchAll(/data-source-key="([^"]+)"/g), (match) => match[1]));
+}
+
+function validateStaticEbookSourceMetadataCoverage() {
+  const source = loadText('site/ebook.js');
+  const externalSourceKeysByChapter = extractStaticEbookExternalSourceMetadata(source);
+  const harness = createStaticEbookValidationHarness();
+  const chapterIdSet = new Set(harness.chapterIds);
+  let valid = true;
+  let chaptersValidated = 0;
+  let externalSourceKeysValidated = 0;
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  externalSourceKeysByChapter.forEach((sourceKeys, chapterId) => {
+    if (!chapterIdSet.has(chapterId)) {
+      reject(`static ebook external source metadata references unknown chapter ${chapterId}`);
+    }
+    externalSourceKeysValidated += sourceKeys.length;
+  });
+
+  harness.chapterIds.forEach((chapterId) => {
+    const expectedExternalKeys = new Set(externalSourceKeysByChapter.get(chapterId) || []);
+
+    for (const lang of ['en', 'sv']) {
+      const renderedKeys = renderedStaticEbookSourceKeys(
+        renderStaticEbookChapterForValidation(harness, lang, chapterId),
+      );
+      const actualExternalKeys = new Set(
+        Array.from(renderedKeys).filter((key) => !STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS.has(key)),
+      );
+
+      for (const foundationalKey of STATIC_EBOOK_FOUNDATIONAL_SOURCE_KEYS) {
+        if (!renderedKeys.has(foundationalKey)) {
+          reject(
+            `static ebook chapter ${chapterId} ${lang} missing ${foundationalKey} source note`,
+          );
+        }
+      }
+
+      expectedExternalKeys.forEach((sourceKey) => {
+        if (!actualExternalKeys.has(sourceKey)) {
+          reject(
+            `static ebook chapter ${chapterId} ${lang} declares ${sourceKey} but does not render a matching source note`,
+          );
+        }
+      });
+
+      actualExternalKeys.forEach((sourceKey) => {
+        if (!expectedExternalKeys.has(sourceKey)) {
+          reject(
+            `static ebook chapter ${chapterId} ${lang} renders undeclared external source key ${sourceKey}`,
+          );
+        }
+      });
+    }
+
+    chaptersValidated += 1;
+  });
+
+  return { chaptersValidated, externalSourceKeysValidated, valid };
+}
+
 function validateStaticV11ReadinessCopy() {
   const source = loadText('site/v11.js');
   const offenders = findUnsupportedStaticV11ReadinessCopyInSource(source);
@@ -8749,6 +8938,9 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
+let staticEbookSourceMetadataChaptersValidated = 0;
+let staticEbookSourceMetadataExternalKeysValidated = 0;
+let staticEbookSourceMetadataCoverageValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9377,6 +9569,14 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
+}
+{
+  const sourceMetadataValidation = validateStaticEbookSourceMetadataCoverage();
+  staticEbookSourceMetadataChaptersValidated = sourceMetadataValidation.chaptersValidated;
+  staticEbookSourceMetadataExternalKeysValidated =
+    sourceMetadataValidation.externalSourceKeysValidated;
+  staticEbookSourceMetadataCoverageValidated =
+    sourceMetadataValidation.valid && staticEbookSourceMetadataChaptersValidated > 0;
 }
 {
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
@@ -19813,6 +20013,9 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
+      staticEbookSourceMetadataChaptersValidated,
+      staticEbookSourceMetadataExternalKeysValidated,
+      staticEbookSourceMetadataCoverageValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,

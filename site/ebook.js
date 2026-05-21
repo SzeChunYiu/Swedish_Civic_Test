@@ -33,6 +33,16 @@
     },
   });
 
+  const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object.freeze({
+    intro: [],
+    1: ['governmentNato'],
+    7: ['scbLandUse'],
+    9: ['riksbankHistory'],
+    10: ['governmentNato'],
+    11: ['governmentNato'],
+    12: ['governmentNato'],
+  });
+
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
       label: 'UHR: Om medborgarskapsprovet',
@@ -78,7 +88,11 @@
   }
 
   function ebookSourceNote(lang, sourceKeys) {
-    const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
+    const notes = sourceKeys.map((key) => {
+      const note = EBOOK_FACTBOX_SOURCE_NOTES[key];
+      if (!note) throw new Error(`Unknown ebook source key: ${key}`);
+      return { key, note };
+    });
     const label = tr({
       sv: 'Källor hämtade',
       en: 'Sources accessed',
@@ -93,7 +107,9 @@
       tr: 'Erişilen kaynaklar',
       uk: 'Отримані джерела',
     });
-    return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
+    return `<p class="ebook__source-note">${label}: ${notes
+      .map(({ key, note }) => `<span data-source-key="${key}">${sourceLink(note)}</span>`)
+      .join(' · ')}</p>`;
   }
 
   function ebookFactBox(lang, heading, facts, sourceKeys) {
@@ -126,15 +142,8 @@
   }
 
   function getEbookChapterSourceKeys(chapterId) {
-    const externalByChapter = {
-      intro: [],
-      1: ['governmentNato'],
-      7: ['scbLandUse'],
-      10: ['riksbankHistory'],
-      11: ['governmentNato'],
-      12: ['governmentNato'],
-    };
-    return ['uhrStudyMaterial', ...(externalByChapter[chapterId] || []), 'editorialCommentary'];
+    const externalKeys = EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS[String(chapterId)] || [];
+    return ['uhrStudyMaterial', ...externalKeys, 'editorialCommentary'];
   }
 
   function labelForSourceKey(key, lang) {
