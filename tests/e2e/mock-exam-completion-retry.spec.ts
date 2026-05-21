@@ -3,6 +3,10 @@ import type { Page } from '@playwright/test';
 
 const totalQuestions = 20;
 
+type MockExamTestWindow = Window & {
+  __SMT_TEST_FAIL_MOCK_EXAM_COMPLETION_ONCE__?: boolean;
+};
+
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
     name: /Close launch sponsor ad|Stäng startannons/,
@@ -21,9 +25,7 @@ async function answerEveryMockExamQuestion(page: Page) {
   }
 }
 
-test('mock exam completion keeps next exam locked without rewarded UI on exam', async ({
-  page,
-}) => {
+test('mock exam completion retry keeps next exam locked until save succeeds', async ({ page }) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -31,10 +33,15 @@ test('mock exam completion keeps next exam locked without rewarded UI on exam', 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  await page.addInitScript(() => {
+    const testWindow = window as MockExamTestWindow;
+    testWindow.__SMT_TEST_FAIL_MOCK_EXAM_COMPLETION_ONCE__ = true;
+  });
+
   await page.goto('/exam', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
 
-  await expect(page.getByRole('heading', { name: 'Övningsprov' }).first()).toBeVisible();
+  await expect(page.getByText('Övningsprov')).toBeVisible();
   await answerEveryMockExamQuestion(page);
 
   const submit = page.getByLabel('Skicka övningsprov');
@@ -42,17 +49,29 @@ test('mock exam completion keeps next exam locked without rewarded UI on exam', 
   await submit.click();
 
   await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();
-  await expect(page.getByText('Sparat')).toBeVisible();
   await expect(
-    page.getByText(
-      'Dagens kostnadsfria övningsprov är använt. Extra prov låses inte upp på provskärmen.',
-    ),
+    page.getByText('Provresultatet kunde inte sparas på den här enheten.'),
   ).toBeVisible();
+  await expect(page.getByText('Sparfel')).toBeVisible();
 
-  await expect(page.getByText(/Sponsrad förhandsvisning|Sponsored preview/)).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Lås upp extra prov' })).toHaveCount(0);
   const nextExam = page.getByRole('button', { name: 'Starta övningsprov' });
   await expect(nextExam).toBeDisabled();
+
+  const retrySave = page.getByRole('button', {
+    name: 'Försök spara övningsprovresultatet igen',
+  });
+  await expect(retrySave).toBeVisible();
+  await retrySave.click();
+
+  await expect(page.getByText('Provresultatet kunde inte sparas på den här enheten.')).toHaveCount(
+    0,
+  );
+  await expect(page.getByText('Sparat')).toBeVisible();
+  await expect(
+    page.getByText('Dagens kostnadsfria övningsprov är använt. Lås upp ett extra från startsidan.'),
+  ).toBeVisible();
+
+  await expect(page.getByRole('button', { name: 'Starta övningsprov' })).toBeDisabled();
   await expect(page.getByText(`${totalQuestions}/${totalQuestions} besvarade`)).toHaveCount(0);
   await expect(page.getByText(`0/${totalQuestions} besvarade`)).toHaveCount(0);
   await expect(page.getByText('Provresultat', { exact: true })).toBeVisible();

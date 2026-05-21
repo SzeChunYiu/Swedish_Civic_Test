@@ -1,13 +1,13 @@
+import { useCallback, useState } from 'react';
 import { Link } from 'expo-router';
-import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { PremiumBanner } from '../../components/monetization/PremiumBanner';
 import { PricingWedge } from '../../components/monetization/PricingWedge';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { CountdownBanner } from '../../components/ui/CountdownBanner';
 import { MetricCard } from '../../components/ui/MetricCard';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RouteLink } from '../../components/ui/RouteLink';
@@ -28,10 +28,14 @@ import {
   computeReadinessFromQuestionProgress,
   type ReadinessVerdict,
 } from '../../lib/learning/readiness';
-import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
-import { countAnswersForLocalDate } from '../../lib/learning/streaks';
+import { calculateStreak, countAnswersForLocalDate } from '../../lib/learning/streaks';
 import { calculateLevel } from '../../lib/learning/xp';
-import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
+import { WEB_AD_FALLBACK_CONSENT_DECISION } from '../../lib/monetization/ads';
+import {
+  showRewardedExtraExamAd,
+  type RewardedExtraExamAdStatus,
+} from '../../lib/monetization/rewardedAd';
+import { useMockExamAccess } from '../../lib/monetization/useMockExamAccess';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
@@ -65,7 +69,6 @@ type HomeCopy = {
   dashboardLink: string;
   dailyChallengeAccessibilityLabel: (title: string, subtitle: string, completed: boolean) => string;
   dailyChallengeCta: (completed: boolean) => string;
-  dayStreakFreezeHelper: (count: number) => string;
   dayStreakHelper: string;
   dayStreakMetric: string;
   eyebrow: string;
@@ -102,11 +105,17 @@ type HomeCopy = {
   readinessSparseNote: string;
   readinessTitle: string;
   readinessVerdicts: Record<ReadinessVerdict, string>;
+  rewardedExamBody: string;
+  rewardedExamPreviewButton: string;
+  rewardedExamStatus: Record<RewardedExtraExamAdStatus, string>;
+  rewardedExamTitle: string;
+  rewardedExamUnlockButton: string;
+  rewardedExamUnlockedCta: string;
+  rewardedExamUnlockedText: string;
   reviewWeakChapters: string;
   startPractice: string;
   startPracticeAccessibilityLabel: string;
   startPracticeSet: string;
-  streakFreezeBadge: string;
   studyLoopItems: StudyLoopItemCopy[];
   studyLoopSubtitle: string;
   studyLoopTitle: string;
@@ -127,7 +136,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? 'Dagens utmaning är redan klar.' : 'Starta dagens utmaning.'
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Öva igen' : 'Starta utmaningen'),
-    dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dashboardAccessibilityLabel: 'Öppna framstegsöversikten',
     dashboardLink: 'Visa framsteg',
     dayStreakHelper: 'daglig vana',
@@ -156,10 +164,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprovet när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
@@ -171,10 +179,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprovet när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
@@ -186,10 +194,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprovet' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till övningsprovet när steget är klart.`
+            ? `${title}: gå till mockprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
@@ -225,11 +233,26 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Stadig övning',
       strong_preparation: 'Stark övningsgrund',
     },
+    rewardedExamBody:
+      'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
+    rewardedExamPreviewButton: 'Slutför förhandsvisning',
+    rewardedExamStatus: {
+      closed_without_reward: 'Det extra övningsprovet kräver en slutförd belöningsannons.',
+      earned_reward: 'Extra övningsprov upplåst.',
+      failed_to_load: 'Belöningsannonsen kunde inte laddas just nu.',
+      show_failed: 'Belöningsannonsen kunde inte visas just nu.',
+      timed_out: 'Belöningsannonsen hann löpa ut innan krediten sparades.',
+      unavailable: 'Belöningsannonsen är inte tillgänglig på den här enheten just nu.',
+    },
+    rewardedExamTitle: 'Lås upp ett extra övningsprov',
+    rewardedExamUnlockButton: 'Lås upp extra övningsprov',
+    rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
+    rewardedExamUnlockedText:
+      'Extra övningsprov är upplåst och redo på provsidan. Krediten används först när du startar provet.',
     reviewWeakChapters: 'Repetera svaga kapitel',
     startPractice: 'Starta övning',
     startPracticeAccessibilityLabel: 'Starta den rekommenderade övningen',
     startPracticeSet: 'Starta en 5-minutersövning',
-    streakFreezeBadge: 'Svitskydd',
     studyLoopItems: [
       {
         label: 'Korta pass',
@@ -269,7 +292,6 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         completed ? "Today's challenge is already complete." : "Start today's challenge."
       }`,
     dailyChallengeCta: (completed) => (completed ? 'Practise again' : 'Start challenge'),
-    dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dashboardAccessibilityLabel: 'Open progress dashboard',
     dashboardLink: 'View dashboard',
     dayStreakHelper: 'daily habit',
@@ -369,11 +391,26 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       almost_ready: 'Steady practice',
       strong_preparation: 'Strong practice base',
     },
+    rewardedExamBody:
+      'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
+    rewardedExamPreviewButton: 'Complete sponsor preview',
+    rewardedExamStatus: {
+      closed_without_reward: 'The extra mock exam needs a completed rewarded ad.',
+      earned_reward: 'Extra mock exam unlocked.',
+      failed_to_load: 'Rewarded ad could not load right now.',
+      show_failed: 'Rewarded ad could not be shown right now.',
+      timed_out: 'Rewarded ad timed out before the credit was stored.',
+      unavailable: 'Rewarded ad is unavailable on this device right now.',
+    },
+    rewardedExamTitle: 'Unlock an extra mock exam',
+    rewardedExamUnlockButton: 'Unlock extra mock exam',
+    rewardedExamUnlockedCta: 'Start unlocked mock exam',
+    rewardedExamUnlockedText:
+      'Extra mock exam unlocked and ready on the exam page. The credit is used only when you start the exam.',
     reviewWeakChapters: 'Review weak chapters',
     startPractice: 'Start practice',
     startPracticeAccessibilityLabel: 'Start the recommended practice session',
     startPracticeSet: 'Start a 5-minute practice set',
-    streakFreezeBadge: 'Streak freeze',
     studyLoopItems: [
       {
         label: 'Bite-size practice',
@@ -408,17 +445,25 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
 
 export default function Screen() {
   const {
+    accessDecision,
+    accessReady,
     entitlements: monetizationEntitlements,
     entitlementsReady,
+    grantRewardedExamCredit,
     purchaseRuntime,
     setEntitlements: setMonetizationEntitlements,
-  } = useRemoveAdsEntitlements();
+  } = useMockExamAccess({
+    consentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
+  });
+  const [rewardPreviewCompleted, setRewardPreviewCompleted] = useState(false);
+  const [rewardUnlocking, setRewardUnlocking] = useState(false);
+  const [rewardUnlockStatus, setRewardUnlockStatus] = useState<RewardedExtraExamAdStatus | null>(
+    null,
+  );
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
-  const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
@@ -428,20 +473,7 @@ export default function Screen() {
   const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
-  const streakWithFreeze = useMemo(
-    () =>
-      calculateStreakWithFreeze({
-        activeDayKeys: answerDates,
-        freezeState: streakFreezeState,
-      }),
-    [answerDates, streakFreezeState],
-  );
-  const currentStreak = streakWithFreeze.streakDays;
-  const streakRescueMessage = freezeBannerCopy(streakWithFreeze, language);
-  const dayStreakHelper =
-    currentStreak > 0 && streakWithFreeze.freezeState.available > 0
-      ? copy.dayStreakFreezeHelper(streakWithFreeze.freezeState.available)
-      : copy.dayStreakHelper;
+  const currentStreak = calculateStreak(answerDates);
   const level = calculateLevel(totalXp);
   const weakChapterCount = findWeakChapterIds(questions, questionProgress, 0.6).length;
   const nextAction = weakChapterCount > 0 ? copy.reviewWeakChapters : copy.startPracticeSet;
@@ -461,11 +493,53 @@ export default function Screen() {
     readinessVerdict,
     readinessDetails,
   );
+  const hasRewardedExamCredit =
+    accessDecision.reason === 'rewarded_exam_credit' || accessDecision.rewardedExtraExamCredits > 0;
+  const canOfferRewardedExam =
+    accessDecision.canOfferRewardedAd || accessDecision.reason === 'consent_required';
+  const usesWebRewardPreview = Platform.OS === 'web' && canOfferRewardedExam;
+  const showRewardedExamCard =
+    accessReady && entitlementsReady && (hasRewardedExamCredit || canOfferRewardedExam);
+  const canUnlockRewardedExam =
+    canOfferRewardedExam && (!usesWebRewardPreview || rewardPreviewCompleted);
+  const rewardStatusText = hasRewardedExamCredit
+    ? copy.rewardedExamUnlockedText
+    : rewardUnlockStatus
+      ? copy.rewardedExamStatus[rewardUnlockStatus]
+      : copy.rewardedExamBody;
   const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements.adsDisabled;
 
-  useEffect(() => {
-    setStreakFreezeState(streakWithFreeze.freezeState);
-  }, [setStreakFreezeState, streakWithFreeze.freezeState]);
+  const handleRewardedExamUnlock = useCallback(async () => {
+    if (!canUnlockRewardedExam || rewardUnlocking) return;
+
+    setRewardUnlocking(true);
+    setRewardUnlockStatus(null);
+
+    try {
+      const rewardedAdResult = await showRewardedExtraExamAd({
+        confirmReward: Platform.OS === 'web' ? () => rewardPreviewCompleted : undefined,
+        entitlements: monetizationEntitlements,
+        webConsentDecision: Platform.OS === 'web' ? WEB_AD_FALLBACK_CONSENT_DECISION : undefined,
+      });
+
+      setRewardUnlockStatus(rewardedAdResult.status);
+
+      if (rewardedAdResult.status !== 'earned_reward') return;
+
+      await grantRewardedExamCredit();
+      setRewardPreviewCompleted(false);
+    } catch {
+      setRewardUnlockStatus('unavailable');
+    } finally {
+      setRewardUnlocking(false);
+    }
+  }, [
+    canUnlockRewardedExam,
+    grantRewardedExamCredit,
+    monetizationEntitlements,
+    rewardPreviewCompleted,
+    rewardUnlocking,
+  ]);
 
   return (
     <ScreenShell
@@ -486,7 +560,6 @@ export default function Screen() {
       }
     >
       <SwedishFlagBand />
-      <CountdownBanner language={language} />
       <View style={styles.statRow}>
         <StatCallout value={questions.length} label={language === 'sv' ? 'frågor' : 'questions'} />
         <StatCallout
@@ -549,6 +622,52 @@ export default function Screen() {
           {copy.dailyChallengeCta(dailyChallengeCompleted)}
         </Link>
       </Card>
+      {showRewardedExamCard ? (
+        <Card style={styles.rewardedExamCard}>
+          <Badge tone={hasRewardedExamCredit ? 'green' : 'warm'}>
+            {hasRewardedExamCredit ? copy.rewardedExamStatus.earned_reward : copy.freeBankBadge}
+          </Badge>
+          <Text accessibilityRole="header" style={styles.rewardedExamTitle}>
+            {copy.rewardedExamTitle}
+          </Text>
+          <Text style={styles.rewardedExamText}>{rewardStatusText}</Text>
+          {hasRewardedExamCredit ? (
+            <Link accessibilityRole="link" href="/exam" style={styles.rewardedExamLink}>
+              {copy.rewardedExamUnlockedCta}
+            </Link>
+          ) : (
+            <View style={styles.rewardedExamActions}>
+              {usesWebRewardPreview ? (
+                <Button
+                  accessibilityLabel={copy.rewardedExamPreviewButton}
+                  accessibilityState={{ selected: rewardPreviewCompleted }}
+                  disabled={rewardPreviewCompleted}
+                  onPress={() => {
+                    setRewardPreviewCompleted(true);
+                    setRewardUnlockStatus(null);
+                  }}
+                  style={styles.rewardedExamButton}
+                  variant="secondary"
+                >
+                  {copy.rewardedExamPreviewButton}
+                </Button>
+              ) : null}
+              <Button
+                accessibilityLabel={copy.rewardedExamUnlockButton}
+                accessibilityState={{
+                  busy: rewardUnlocking,
+                  disabled: !canUnlockRewardedExam || rewardUnlocking,
+                }}
+                disabled={!canUnlockRewardedExam || rewardUnlocking}
+                onPress={handleRewardedExamUnlock}
+                style={styles.rewardedExamButton}
+              >
+                {copy.rewardedExamUnlockButton}
+              </Button>
+            </View>
+          )}
+        </Card>
+      ) : null}
       {showRemoveAdsOffer ? (
         <PricingWedge
           questionCount={questions.length}
@@ -606,14 +725,12 @@ export default function Screen() {
           tone="blue"
           helper={copy.xpBasedHelper}
         />
-        <MetricCard label={copy.dayStreakMetric} value={currentStreak} helper={dayStreakHelper} />
+        <MetricCard
+          label={copy.dayStreakMetric}
+          value={currentStreak}
+          helper={copy.dayStreakHelper}
+        />
       </View>
-      {streakRescueMessage ? (
-        <Card accessible accessibilityLabel={streakRescueMessage} style={styles.streakFreezeCard}>
-          <Badge tone="warm">{copy.streakFreezeBadge}</Badge>
-          <Text style={styles.streakFreezeText}>{streakRescueMessage}</Text>
-        </Card>
-      ) : null}
       <View style={styles.statsRow}>
         <MetricCard
           label={copy.weakChaptersMetric}
@@ -709,7 +826,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.badgeBlueBg,
     borderColor: colors.focusSoft,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     minWidth: space[9],
     paddingHorizontal: space[1.5],
     paddingVertical: space[1],
@@ -759,7 +876,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[1],
     padding: space[2],
   },
@@ -804,6 +921,43 @@ const styles = StyleSheet.create({
     paddingVertical: space[1],
     textDecorationLine: 'none',
   },
+  rewardedExamActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  rewardedExamButton: {
+    flexGrow: 1,
+  },
+  rewardedExamCard: {
+    gap: space[1],
+  },
+  rewardedExamLink: {
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: colors.accent,
+    borderRadius: radius.micro,
+    color: colors.surface,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    justifyContent: 'center',
+    minHeight: space[6],
+    paddingHorizontal: space[2],
+    paddingVertical: space[1],
+    textDecorationLine: 'none',
+  },
+  rewardedExamText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  rewardedExamTitle: {
+    color: colors.text,
+    fontSize: typography.cardTitle.fontSize,
+    fontWeight: typography.cardTitle.fontWeight,
+    letterSpacing: typography.cardTitle.letterSpacing,
+    lineHeight: typography.cardTitle.lineHeight,
+  },
   quickActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -816,14 +970,6 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     gap: space[1.5],
-  },
-  streakFreezeCard: {
-    gap: space[1],
-  },
-  streakFreezeText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
   },
   feedbackCard: {
     gap: space[1],
