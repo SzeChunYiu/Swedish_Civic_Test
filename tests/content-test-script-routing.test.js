@@ -603,6 +603,24 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
   );
 });
 
+test('persistence warning scope parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const storageWarningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-storage-write-fail-soft.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-persistence-warning-scope/);
+  assert.match(
+    validatorSource,
+    /validatePersistenceWarningScopeParity\(\);[\s\S]*persistenceWarningScopeCasesValidated[\s\S]*persistenceWarningScopeParityValidated/,
+  );
+  assert.match(storageWarningTestSource, /getPersistenceWarningNoticeCopy/);
+});
+
 test('Profile route copy parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
