@@ -804,6 +804,31 @@ test('native ebook study article audio narrates article prose with persisted rat
   assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
 });
 
+test('native ebook sections carry and render explicit source provenance', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const contentSource = readSiteFile('lib/content/ebookContent.ts');
+
+  assert.match(contentSource, /sourceNoteKeys:\s*readonly EbookSourceKey\[\]/);
+  assert.match(contentSource, /function uniqueSourceNoteKeys\(sections:/);
+  assert.match(contentSource, /sourceNoteKeys:\s*uniqueSourceNoteKeys\(sections\)/);
+  assert.doesNotMatch(contentSource, /seed\.staticChapterId === '12' \? officialTestSourceKeys/);
+  assert.match(contentSource, /migrationsverketCitizenshipRules/);
+  assert.match(
+    contentSource,
+    /sourceNoteKeys:\s*\[[\s\S]*'officialTestOverview'[\s\S]*'officialTestSignup'[\s\S]*'migrationsverketCitizenshipRules'[\s\S]*\]/,
+  );
+  assert.match(contentSource, /sourceNoteKeys:\s*studyMaterialSourceKeys/);
+  assert.match(contentSource, /getEbookSectionSourceNotes/);
+
+  assert.match(routeSource, /getEbookSectionSourceNotes,/);
+  assert.match(routeSource, /const sectionSources = getEbookSectionSourceNotes\(section\);/);
+  assert.match(routeSource, /sectionSourcesHeading: \(count\)/);
+  assert.match(routeSource, /Källor för avsnittet/);
+  assert.match(routeSource, /Section sources/);
+  assert.match(routeSource, /styles\.sectionSources/);
+  assert.match(routeSource, /sectionSources\.map\(\(source\) =>/);
+});
+
 test('native ebook article navigation uses selected tab semantics', () => {
   const routeSource = readSiteFile('app/ebook.tsx');
   const articleNavStart = routeSource.indexOf('<ScrollView');
