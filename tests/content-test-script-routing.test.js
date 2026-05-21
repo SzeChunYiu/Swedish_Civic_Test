@@ -5,6 +5,8 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
+const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function readPackageJson() {
@@ -266,6 +268,41 @@ test('question speech text parity uses focused content validation routing', () =
   );
 });
 
+test('generated localization overlay parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(
+    'generatedLocalizationTemplateParity',
+  );
+
+  assert.ok(registryEntry, 'generated localization focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-generated-localization-template-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'generatedLocalizationTemplateParityValidated',
+    'generatedPromptTemplateParityValidated',
+    'generatedAnswerTemplateParityValidated',
+    'generatedPublishedQuestions',
+  ]);
+  assert.match(validatorSource, /--focus-generated-localization-template-parity/);
+  assert.match(
+    validatorSource,
+    /validateGeneratedLocalizationTemplateParity\(\);[\s\S]*generatedLocalizationTemplateParityValidated[\s\S]*generatedPromptTemplateParityValidated[\s\S]*generatedAnswerTemplateParityValidated/,
+  );
+});
+
+test('generated localization overlay parity rejects typoed focus flags', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-localization-template-parit'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Unsupported validate-content focus flag/);
+  assert.match(result.stderr, /--focus-generated-localization-template-parity/);
+});
 test('question report link parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

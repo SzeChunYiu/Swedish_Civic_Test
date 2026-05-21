@@ -20,6 +20,16 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'generatedLocalizationTemplateParity',
+    flags: ['--focus-generated-localization-template-parity'],
+    summaryKeys: [
+      'generatedLocalizationTemplateParityValidated',
+      'generatedPromptTemplateParityValidated',
+      'generatedAnswerTemplateParityValidated',
+      'generatedPublishedQuestions',
+    ],
+  },
+  {
     id: 'staticV11ReadinessCopy',
     flags: ['--focus-static-v11-readiness-copy'],
     summaryKeys: [

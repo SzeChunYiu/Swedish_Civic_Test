@@ -9080,6 +9080,7 @@ let generatedSourceMetadataParityValidated = 0;
 let generatedExplanationTemplateParityValidated = 0;
 let generatedPromptTemplateParityValidated = 0;
 let generatedAnswerTemplateParityValidated = 0;
+let generatedLocalizationTemplateParityValidated = 0;
 let generatedOptionSourceMaterialWordingValidated = 0;
 let generatedSingleChoiceFillerOptionsValidated = 0;
 let generatedSingleChoiceMetaStemsValidated = 0;
@@ -9427,6 +9428,90 @@ if (
   Array.isArray(localizationStrings)
 ) {
   fail('strings export is not an object');
+}
+
+const GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG = '--focus-generated-localization-template-parity';
+const requestedGeneratedLocalizationFocusFlags = process.argv.filter((arg) =>
+  arg.startsWith('--focus-generated-localization'),
+);
+const unsupportedGeneratedLocalizationFocusFlags = requestedGeneratedLocalizationFocusFlags.filter(
+  (arg) => arg !== GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG,
+);
+if (unsupportedGeneratedLocalizationFocusFlags.length > 0) {
+  console.error(
+    `Unsupported validate-content focus flag: ${unsupportedGeneratedLocalizationFocusFlags.join(
+      ', ',
+    )}`,
+  );
+  console.error(
+    `Supported generated localization focus flag: ${GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG}`,
+  );
+  process.exit(1);
+}
+
+function validateGeneratedLocalizationTemplateParity() {
+  validateGeneratedPromptTemplateParity();
+  validateGeneratedAnswerTemplateParity();
+
+  if (
+    !Array.isArray(generatedPublishedQuestions) ||
+    !Array.isArray(expectedGeneratedPublishedQuestions)
+  ) {
+    return;
+  }
+
+  let localizedGeneratedTrueFalseOptionMapsValidated = 0;
+
+  generatedPublishedQuestions.forEach((question, index) => {
+    if (question.type !== 'true_false') return;
+
+    const localizedOptions = question.options.filter(
+      (option) =>
+        option.text &&
+        typeof option.text === 'object' &&
+        !Array.isArray(option.text) &&
+        Object.keys(option.text).some((locale) => locale !== 'sv' && locale !== 'en'),
+    );
+    if (localizedOptions.length === 0) return;
+
+    const expectedQuestion = expectedGeneratedPublishedQuestions[index];
+    const label = `${question.id} generated localization overlay`;
+    if (!expectedQuestion) {
+      fail(`${label} expected generated variant is missing`);
+      return;
+    }
+
+    localizedOptions.forEach((option) => {
+      const expectedOption = expectedQuestion.options.find((expected) => expected.id === option.id);
+      if (!expectedOption) {
+        fail(`${label} option ${option.id} expected generated option is missing`);
+      } else if (!jsonEqual(option.text, expectedOption.text)) {
+        fail(`${label} option ${option.id} text map does not match localization overlay`);
+      } else {
+        localizedGeneratedTrueFalseOptionMapsValidated += 1;
+      }
+    });
+  });
+
+  if (localizedGeneratedTrueFalseOptionMapsValidated === 0) {
+    fail('no localized generated true/false option text maps were validated');
+  } else {
+    generatedLocalizationTemplateParityValidated = localizedGeneratedTrueFalseOptionMapsValidated;
+  }
+}
+
+if (process.argv.includes(GENERATED_LOCALIZATION_TEMPLATE_FOCUS_FLAG)) {
+  validateGeneratedLocalizationTemplateParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    generatedLocalizationTemplateParityValidated,
+    generatedPromptTemplateParityValidated,
+    generatedAnswerTemplateParityValidated,
+    generatedPublishedQuestions: Array.isArray(generatedPublishedQuestions)
+      ? generatedPublishedQuestions.length
+      : 0,
+  });
+  process.exit(0);
 }
 
 if (process.argv.includes('--focus-generated-true-false-naturalness')) {
