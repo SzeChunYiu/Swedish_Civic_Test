@@ -160,7 +160,7 @@ function lowerLeadingSwedishCommonStart(value: string): string {
 
 function lowerLeadingSwedishClauseStart(value: string): string {
   return value.replace(
-    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politiker|All|Samarbetet)\b/,
+    /^(Havet|Nästan|Ungefär|Ett|En|Den|Det|Man|När|År|Oppositionen|Politikerna|Politiker|All|Samarbetet)\b/,
     (match) => match.toLowerCase(),
   );
 }
@@ -1500,6 +1500,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (/^Hur kan ett lågt valdeltagande påverka demokratin$/i.test(q))
     return swedishLowVoterTurnoutStatement(answer);
 
+  if (
+    source.id === 'q013' &&
+    /^Hur kan människor påverka samhället och delta i demokratin$/i.test(q)
+  ) {
+    return `Människor kan påverka samhället och delta i demokratin genom att ${lowerFirst(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
@@ -1536,10 +1545,27 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
       if (statement) return statement;
     }
     if (/^folkomröstningar i Sverige är rådgivande$/i.test(match[1])) {
-      return `Att ${match[1]} betyder att ${embeddedSwedishClause(answer).replace(
-        /(?:måste inte|inte måste) följa/i,
-        'inte behöver följa',
-      )}`;
+      return `Att ${match[1]} betyder att ${answer
+        .replace(
+          /^politikerna behöver inte följa resultatet$/i,
+          'politikerna inte behöver följa resultatet',
+        )
+        .replace(
+          /^politikerna måste inte följa resultatet$/i,
+          'politikerna inte behöver följa resultatet',
+        )
+        .replace(
+          /^politikerna måste alltid följa resultatet$/i,
+          'politikerna alltid måste följa resultatet',
+        )}`;
+    }
+    if (/^val i en demokrati är hemliga$/i.test(match[1])) {
+      if (/^(?:Att\s+)?väljare inte behöver avslöja hur de röstar$/i.test(answer)) {
+        return 'Hemliga val betyder att väljare inte behöver avslöja hur de röstar';
+      }
+      if (/^(?:Att\s+)?bara myndigheter får veta hur varje person röstar$/i.test(answer)) {
+        return 'Hemliga val betyder att bara myndigheter får veta hur varje person röstar';
+      }
     }
     if (/^Sverige är en konstitutionell monarki$/i.test(match[1])) {
       const clause = stripLeadingPurposeSv(answer)
@@ -2073,6 +2099,24 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   if (/^How can a low voter turnout affect democracy$/i.test(q))
     return englishLowVoterTurnoutStatement(answer);
+
+  if (
+    source.id === 'q013' &&
+    /^How can people influence society and participate in democracy$/i.test(q)
+  ) {
+    const action = answer
+      .replace(
+        /^Contact politicians, demonstrate, or sign a petition$/i,
+        'contacting politicians, demonstrating, or signing a petition',
+      )
+      .replace(
+        /^Ban others from voting in political elections$/i,
+        'banning others from voting in political elections',
+      );
+    return `People can influence society and participate in democracy by ${englishGerundPhrase(
+      action,
+    )}`;
+  }
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;

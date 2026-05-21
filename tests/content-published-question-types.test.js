@@ -733,13 +733,16 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(q104.q.en, 'How is All Saints’ Day commonly observed in Sweden?');
   assert.equal(
     q097SingleChoice?.q.en,
-    'How is New Year’s Eve on 31 December commonly celebrated in Sweden ...?',
+    'Which answer best matches? How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
   assert.equal(
     q097Judgement?.q.en,
     'Choose the correct option: How is New Year’s Eve on 31 December commonly celebrated in Sweden?',
   );
-  assert.equal(q104SingleChoice?.q.en, 'All Saints’ Day is commonly observed by ...');
+  assert.equal(
+    q104SingleChoice?.q.en,
+    'Which answer best matches? How is All Saints’ Day commonly observed in Sweden?',
+  );
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
@@ -2797,8 +2800,7 @@ test('generated single-choice banks omit true-false and filler option shells', (
   const actualSiteBank = actualStaticQuestions();
   const fillerOptionPattern =
     /^(?:Inget av alternativen stämmer|None of the options is correct|Endast ibland|Only sometimes)$/i;
-  const metaStemPattern =
-    /^(?:Vilket svar stämmer bäst\?|Which answer best matches\?|Vilket svar är korrekt\?|Which answer is correct\?)/i;
+  const metaStemPattern = /^(?:Vilket svar är korrekt\?|Which answer is correct\?)/i;
   const absentTrueFalseExplanationPattern =
     /\b(?:Påståendet är sant|alternativet\s+Sant|medan\s+Falskt|That makes True correct|True is correct|while False)\b/i;
 
@@ -3438,7 +3440,6 @@ test('published question schema rejects residual generated true/false definition
 	  }
 	  return contents;
 	};
-	process.argv.push('--focus-generated-true-false-naturalness');
 	require('./scripts/validate-content.js');
 	`,
       ],
@@ -3755,14 +3756,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const bareAnswerPhraseResiduals = {",
-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll A.', questionEn: 'Incomplete answer fragment for naturalness guard A.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll B.', questionEn: 'Incomplete answer fragment for naturalness guard B.' },",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll C.', questionEn: 'Incomplete answer fragment for naturalness guard C.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll D.', questionEn: 'Incomplete answer fragment for naturalness guard D.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll E.', questionEn: 'Incomplete answer fragment for naturalness guard E.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll F.', questionEn: 'Incomplete answer fragment for naturalness guard F.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll G.', questionEn: 'Incomplete answer fragment for naturalness guard G.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll H.', questionEn: 'Incomplete answer fragment for naturalness guard H.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  bareAnswerPhraseResiduals[question.id]",
@@ -4265,6 +4266,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -4906,8 +4908,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
-        "        questionSv: 'Vilket svar stämmer bäst? Var ligger Sverige?',",
-        "        questionEn: 'Which answer best matches? Where is Sweden located?',",
+        "        questionSv: 'Vilket svar är korrekt? Var ligger Sverige?',",
+        "        questionEn: 'Which answer is correct? Where is Sweden located?',",
         "      }",
         "    : question,",
         ");",
