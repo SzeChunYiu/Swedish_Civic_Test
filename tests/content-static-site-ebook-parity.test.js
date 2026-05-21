@@ -216,6 +216,53 @@ function renderedFootnoteItems(html) {
   return Array.from(html.matchAll(/<li id="eb-[^"]+-fn-\d+">[\s\S]*?<\/li>/g), (match) => match[0]);
 }
 
+function findFunctionCallArguments(source, functionName) {
+  const calls = [];
+  let searchFrom = 0;
+  while (searchFrom < source.length) {
+    const start = source.indexOf(`${functionName}(`, searchFrom);
+    if (start === -1) break;
+    if (source.slice(Math.max(0, start - 9), start) === 'function ') {
+      searchFrom = start + functionName.length + 1;
+      continue;
+    }
+
+    let depth = 0;
+    let quote = null;
+    let escaped = false;
+    let argumentCount = 1;
+    for (let index = start + functionName.length; index < source.length; index += 1) {
+      const char = source[index];
+      if (quote) {
+        if (escaped) {
+          escaped = false;
+        } else if (char === '\\') {
+          escaped = true;
+        } else if (char === quote) {
+          quote = null;
+        }
+        continue;
+      }
+
+      if (char === "'" || char === '"' || char === '`') {
+        quote = char;
+      } else if (char === '(') {
+        depth += 1;
+      } else if (char === ')') {
+        depth -= 1;
+        if (depth === 0) {
+          calls.push({ start, argumentCount, text: source.slice(start, index + 1) });
+          searchFrom = index + 1;
+          break;
+        }
+      } else if (char === ',' && depth === 1) {
+        argumentCount += 1;
+      }
+    }
+  }
+  return calls;
+}
+
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
@@ -229,6 +276,21 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assert.match(source, /const EBOOK_SOURCE_NOTES = Object\.freeze\(/);
   assert.match(source, /Starta [oö]vningsprov/);
   assert.match(source, /gör ett [oö]vningsprov/);
+});
+
+test('static ebook fact boxes must pass explicit source keys', () => {
+  const source = readSiteFile('site/ebook.js');
+  const calls = findFunctionCallArguments(source, 'ebookFactBox');
+
+  assert.match(source, /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\)/);
+  assert.doesNotMatch(source, /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\s*=/);
+  assert.ok(calls.length > 0, 'static ebook should render fact boxes');
+  calls.forEach((call) => {
+    assert.ok(
+      call.argumentCount >= 4,
+      `ebookFactBox call must include explicit sourceKeys: ${call.text}`,
+    );
+  });
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
