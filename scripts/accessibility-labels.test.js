@@ -6,6 +6,7 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const INTERACTIVE_TAG = /<(Pressable|Link|Button)\b/;
+const HOME_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'home.tsx');
 const PRACTICE_ROUTE_SOURCE = path.join(ROOT, 'app', '(tabs)', 'practice.tsx');
 const QUESTION_NAVIGATOR_SOURCE = path.join(ROOT, 'components', 'QuestionNavigator.tsx');
 const TOP_BAR_ACTIONS_SOURCE = path.join(ROOT, 'components', 'ui', 'TopBarActions.tsx');
@@ -97,6 +98,26 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /hitSlop=\{space\[1\]\}/);
   assert.match(source, /minHeight:\s*space\[6\]/);
   assert.match(source, /minWidth:\s*space\[6\]/);
+});
+
+test('Home rewarded extra exam actions expose labels roles and state', () => {
+  const source = fs.readFileSync(HOME_ROUTE_SOURCE, 'utf8');
+
+  assert.match(source, /rewardedExamPreviewAccessibilityLabel/);
+  assert.match(source, /rewardedExamUnlockAccessibilityLabel/);
+  assert.match(source, /rewardedExamUnlockedCtaAccessibilityLabel/);
+  assert.match(
+    source,
+    /<Link\s+accessibilityLabel=\{copy\.rewardedExamUnlockedCtaAccessibilityLabel\}[\s\S]*?accessibilityRole="link"[\s\S]*?style=\{styles\.rewardedExamLink\}/,
+  );
+  assert.match(
+    source,
+    /<Button\s+accessibilityLabel=\{copy\.rewardedExamPreviewAccessibilityLabel\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{ disabled: rewardPreviewCompleted \}\}[\s\S]*?disabled=\{rewardPreviewCompleted\}/,
+  );
+  assert.match(
+    source,
+    /<Button\s+accessibilityLabel=\{copy\.rewardedExamUnlockAccessibilityLabel\}[\s\S]*?accessibilityRole="button"[\s\S]*?accessibilityState=\{\{[\s\S]*?busy: rewardUnlockInFlight,[\s\S]*?disabled: !rewardPreviewCompleted \|\| rewardUnlockInFlight,[\s\S]*?\}\}[\s\S]*?disabled=\{!rewardPreviewCompleted \|\| rewardUnlockInFlight\}/,
+  );
 });
 
 test('Practice hero controls keep token-sized touch targets', () => {

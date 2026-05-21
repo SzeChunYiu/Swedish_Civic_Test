@@ -107,9 +107,12 @@ type HomeCopy = {
   readinessVerdicts: Record<ReadinessVerdict, string>;
   rewardedExamBody: string;
   rewardedExamHeading: string;
+  rewardedExamPreviewAccessibilityLabel: string;
   rewardedExamPreviewButton: string;
+  rewardedExamUnlockAccessibilityLabel: string;
   rewardedExamUnlockButton: string;
   rewardedExamUnlockFailure: string;
+  rewardedExamUnlockedCtaAccessibilityLabel: string;
   rewardedExamUnlockedCta: string;
   rewardedExamUnlockedStatus: string;
   reviewWeakChapters: string;
@@ -238,9 +241,13 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamBody:
       'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
     rewardedExamHeading: 'Lås upp ett extra övningsprov',
+    rewardedExamPreviewAccessibilityLabel:
+      'Slutför sponsrad förhandsvisning för ett extra övningsprov',
     rewardedExamPreviewButton: 'Slutför förhandsvisning',
+    rewardedExamUnlockAccessibilityLabel: 'Lås upp ett extra övningsprov efter förhandsvisningen',
     rewardedExamUnlockButton: 'Lås upp extra övningsprov',
     rewardedExamUnlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
+    rewardedExamUnlockedCtaAccessibilityLabel: 'Starta det upplåsta extra övningsprovet',
     rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
     rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
     reviewWeakChapters: 'Repetera svaga kapitel',
@@ -390,9 +397,12 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamBody:
       'When the daily free mock exam is used, unlock one extra from Home. The credit is stored only after the sponsored preview is completed.',
     rewardedExamHeading: 'Unlock an extra mock exam',
+    rewardedExamPreviewAccessibilityLabel: 'Complete the sponsored preview for an extra mock exam',
     rewardedExamPreviewButton: 'Complete sponsor preview',
+    rewardedExamUnlockAccessibilityLabel: 'Unlock an extra mock exam after the preview',
     rewardedExamUnlockButton: 'Unlock extra mock exam',
     rewardedExamUnlockFailure: 'Extra mock exam could not be unlocked right now.',
+    rewardedExamUnlockedCtaAccessibilityLabel: 'Start the unlocked extra mock exam',
     rewardedExamUnlockedCta: 'Start unlocked mock exam',
     rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
     reviewWeakChapters: 'Review weak chapters',
@@ -632,12 +642,20 @@ export default function Screen() {
             </Text>
           ) : null}
           {rewardedExamUnlocked ? (
-            <Link accessibilityRole="link" href="/exam" style={styles.rewardedExamLink}>
+            <Link
+              accessibilityLabel={copy.rewardedExamUnlockedCtaAccessibilityLabel}
+              accessibilityRole="link"
+              href="/exam"
+              style={styles.rewardedExamLink}
+            >
               {copy.rewardedExamUnlockedCta}
             </Link>
           ) : (
             <View style={styles.rewardedExamActions}>
               <Button
+                accessibilityLabel={copy.rewardedExamPreviewAccessibilityLabel}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: rewardPreviewCompleted }}
                 disabled={rewardPreviewCompleted}
                 onPress={handleCompleteRewardPreview}
                 style={styles.rewardedExamButton}
@@ -646,6 +664,8 @@ export default function Screen() {
                 {copy.rewardedExamPreviewButton}
               </Button>
               <Button
+                accessibilityLabel={copy.rewardedExamUnlockAccessibilityLabel}
+                accessibilityRole="button"
                 accessibilityState={{
                   busy: rewardUnlockInFlight,
                   disabled: !rewardPreviewCompleted || rewardUnlockInFlight,
