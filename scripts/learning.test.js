@@ -165,6 +165,45 @@ test('answer date learning consumers use the shared parser instead of direct Dat
   }
 });
 
+test('adaptive practice normalizes malformed runtime session sizes', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadAllTs(
+    'lib/learning/adaptivePractice.ts',
+  );
+  const baseInput = {
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: 0,
+      dailyGoalAnswers: 10,
+      questionProgress: {},
+      sessions: [],
+    },
+    bank: Array.from({ length: 12 }, (_, index) => ({
+      id: `q${String(index + 1).padStart(2, '0')}`,
+      chapterId: index < 4 ? 'ch01' : 'ch02',
+      difficulty: 'medium',
+    })),
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  for (const size of [Number.NaN, Number.POSITIVE_INFINITY, -1, 2.5, '2']) {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+    const explainedCount = Object.values(counts).reduce((sum, count) => sum + count, 0);
+
+    assert.equal(picked.length, 10, `malformed size ${String(size)} should use the default cap`);
+    assert.equal(explainedCount, picked.length);
+  }
+
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 0 }).length, 0);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 3 }).length, 3);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 99 }).length, 12);
+  assert.equal(
+    pickAdaptiveSession({ ...baseInput, size: Number.NaN, chapterId: 'ch01' }).length,
+    4,
+  );
+});
+
 test('daily goal counts question answers for the requested local day only', () => {
   const { countAnswersForLocalDate } = loadAllTs('lib/learning/streaks.ts');
 

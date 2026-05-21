@@ -81,6 +81,64 @@ test('pickAdaptiveSession: empty progress → returns first `size` deterministic
   assert.deepEqual([...picked].sort(), ['q1', 'q2'].sort());
 });
 
+test('pickAdaptiveSession: normalizes malformed runtime session sizes', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const items = bank(
+    Array.from({ length: 12 }, (_, index) => `q${String(index + 1).padStart(2, '0')}`),
+  );
+  const baseInput = {
+    progress: progressFromAnswers([]),
+    bank: items,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+  const malformedSizes = [Number.NaN, Number.POSITIVE_INFINITY, -1, 2.5, '2'];
+
+  for (const size of malformedSizes) {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+
+    assert.equal(picked.length, 10, `malformed size ${String(size)} should use the default cap`);
+    assert.equal(
+      Object.values(counts).reduce((sum, count) => sum + count, 0),
+      picked.length,
+      `explanation count should match picker length for size ${String(size)}`,
+    );
+  }
+});
+
+test('pickAdaptiveSession: preserves explicit zero, valid size, oversize cap and chapter filter', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const items = [
+    { id: 'a1', chapterId: 'c1' },
+    { id: 'a2', chapterId: 'c1' },
+    { id: 'a3', chapterId: 'c1' },
+    { id: 'a4', chapterId: 'c1' },
+    { id: 'b1', chapterId: 'c2' },
+    { id: 'b2', chapterId: 'c2' },
+  ];
+  const baseInput = {
+    progress: progressFromAnswers([]),
+    bank: items,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  assert.deepEqual(pickAdaptiveSession({ ...baseInput, size: 0 }), []);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 3 }).length, 3);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 99 }).length, items.length);
+  assert.deepEqual(pickAdaptiveSession({ ...baseInput, size: Number.NaN, chapterId: 'c1' }), [
+    'a1',
+    'a2',
+    'a3',
+    'a4',
+  ]);
+  assert.deepEqual(explainAdaptivePick({ ...baseInput, size: 0 }), {
+    'recently-wrong': 0,
+    unseen: 0,
+    mastered: 0,
+    stale: 0,
+  });
+});
+
 test('pickAdaptiveSession: respects chapter filter', () => {
   const { pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const items = [
