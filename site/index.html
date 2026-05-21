@@ -1230,11 +1230,11 @@
         </header>
         <div class="modal__body">
           <p class="signin__lede" data-sk="signin.lede">Save your highlights, notes, and progress across devices. Totally optional — everything works without an account.</p>
-          <button class="signin__btn" type="button">
+          <button class="signin__btn" type="button" data-prov="google">
             <span class="signin__btn-icon" aria-hidden="true">G</span>
             <span data-sk="signin.google">Continue with Google</span>
           </button>
-          <button class="signin__btn" type="button">
+          <button class="signin__btn" type="button" data-prov="apple">
             <span class="signin__btn-icon" aria-hidden="true"></span>
             <span data-sk="signin.apple">Continue with Apple</span>
           </button>
@@ -1317,6 +1317,49 @@
     </div>
 
     <!-- ============================================================ SCRIPTS -->
+    <!--
+      ============================================================
+      SUPABASE AUTH CONFIG (PUBLIC values — safe to ship in client JS)
+      ============================================================
+      These two values are intentionally LEFT EMPTY. While they are empty
+      strings, signin.js keeps its safe local-only stub behaviour (clicking a
+      provider button just flips a localStorage flag). NOTHING breaks, no CDN
+      is contacted, no console spam. Real Google/Apple OAuth only activates
+      once BOTH values below are filled in.
+
+      To make "Continue with Google" perform a REAL sign-in, the operator must:
+
+        1. Create a Supabase project (https://supabase.com/dashboard).
+           Copy its Project URL and anon/public API key (Project Settings ->
+           API). The anon key is a PUBLIC client key — safe here.
+
+        2. In Supabase: Authentication -> Providers -> Google -> Enable.
+           This needs a Google Cloud OAuth client:
+             - Google Cloud Console -> APIs & Services -> Credentials ->
+               Create OAuth client ID (type: Web application).
+             - Copy the Client ID + Client Secret into the Supabase Google
+               provider form.
+             - In the same Google OAuth client, add an "Authorized redirect
+               URI": https://<your-project-ref>.supabase.co/auth/v1/callback
+             - Add "Authorized JavaScript origins": your production domain
+               (e.g. https://medborgartest.se) AND http://localhost:<port>
+               for local dev.
+             - In Supabase: Authentication -> URL Configuration, set the
+               Site URL and add the production + local + preview URLs to the
+               allowed redirect list.
+
+        3. (Optional) Apple: Apple Developer -> create a Services ID + a
+           Sign in with Apple key, then enable the Apple provider in Supabase
+           and paste the credentials there. The "Continue with Apple" button
+           is already wired to provider 'apple'.
+
+      Then paste the Project URL and anon key into the two strings below.
+    -->
+    <script>
+      // PUBLIC config — leave EMPTY to keep the safe local-only stub active.
+      window.SMT_SUPABASE_URL = window.SMT_SUPABASE_URL || "";
+      window.SMT_SUPABASE_ANON_KEY = window.SMT_SUPABASE_ANON_KEY || "";
+    </script>
     <script src="app.js"></script>
     <script src="i18n-extras.js"></script>
     <script src="questions.js"></script>

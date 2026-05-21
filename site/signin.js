@@ -37,6 +37,20 @@
       tr: "Şifre gerekmez. Asla bir şey paylaşmaz veya çalışma verilerinizi paylaşmayız.",
       uk: "Пароль не потрібен. Ми ніколи нічого не публікуємо й не передаємо ваші навчальні дані.",
     },
+    "signin.magicsent": {
+      en: "Check your email for the sign-in link.",
+      sv: "Kolla din e-post efter inloggningslänken.",
+      "zh-Hans": "请查收邮件中的登录链接。",
+      "zh-Hant": "請查收電子郵件中的登入連結。",
+      ar: "تحقّق من بريدك للحصول على رابط تسجيل الدخول.",
+      ckb: "ئیمەیڵەکەت بپشکنە بۆ بەستەری چوونەژوورەوە.",
+      fa: "ایمیلت را برای لینک ورود بررسی کن.",
+      pl: "Sprawdź e-mail, aby znaleźć link do logowania.",
+      so: "Hubi iimaylkaaga si aad u hesho linkiga gelitaanka.",
+      ti: "ኢመይልካ ንመላግቦ መእተዊ ፈትሽ።",
+      tr: "Giriş bağlantısı için e-postanı kontrol et.",
+      uk: "Перевірте пошту — там посилання для входу.",
+    },
     "signin.toast": {
       en: "Signed in. Highlights & notes enabled.",
       sv: "Inloggad. Markeringar och anteckningar är på.",
@@ -52,6 +66,62 @@
       uk: "Ви увійшли. Виділення та нотатки увімкнено.",
     },
   };
+
+  // ----------------------------------------------------------------
+  // Supabase config (PUBLIC values, read from index.html). When BOTH are
+  // present we perform REAL OAuth; otherwise we keep the local-only stub.
+  // ----------------------------------------------------------------
+  function supaUrl() { return (typeof window !== "undefined" && window.SMT_SUPABASE_URL) || ""; }
+  function supaKey() { return (typeof window !== "undefined" && window.SMT_SUPABASE_ANON_KEY) || ""; }
+  function isConfigured() { return Boolean(supaUrl() && supaKey()); }
+
+  // Lazy singleton Supabase client. The SDK is only fetched from the CDN when
+  // configured AND a provider/magic-link action is taken (or on load to pick
+  // up an existing session). Unconfigured visitors never touch the network.
+  let _clientPromise = null;
+  function getClient() {
+    if (!isConfigured()) return Promise.resolve(null);
+    if (!_clientPromise) {
+      _clientPromise = import("https://esm.sh/@supabase/supabase-js@2")
+        .then((mod) => {
+          const createClient = mod.createClient || (mod.default && mod.default.createClient);
+          if (!createClient) throw new Error("supabase-js: createClient missing");
+          const client = createClient(supaUrl(), supaKey());
+          // detectSessionInUrl defaults to true in v2 → handles OAuth redirect-back.
+          client.auth.onAuthStateChange((event, session) => {
+            applySession(session);
+          });
+          return client;
+        })
+        .catch((err) => {
+          // Don't spam: log once, then disable real auth for this page load.
+          _clientPromise = null;
+          if (window.console && console.warn) console.warn("[signin] Supabase load failed; using local stub.", err);
+          return null;
+        });
+    }
+    return _clientPromise;
+  }
+
+  // Reflect a Supabase session into localStorage + notify the app.
+  function applySession(session) {
+    const wasSignedIn = signedIn();
+    const nowSignedIn = Boolean(session);
+    try {
+      if (nowSignedIn) localStorage.setItem("smt_signed_in", "1");
+      else localStorage.removeItem("smt_signed_in");
+    } catch {}
+    if (nowSignedIn !== wasSignedIn) {
+      localize();
+      try { window.dispatchEvent(new Event("smt:authchange")); } catch {}
+    } else {
+      localize();
+    }
+  }
+
+  function redirectTarget() {
+    try { return location.origin + location.pathname; } catch { return undefined; }
+  }
 
   function lang() {
     try { return localStorage.getItem("smt_lang") || "en"; } catch { return "en"; }
@@ -90,24 +160,65 @@
     }
   }
 
+  // Local-only stub used when Supabase is NOT configured. This preserves the
+  // exact original behaviour: flip the flag, close, toast, notify.
+  function stubSignIn() {
+    try { localStorage.setItem("smt_signed_in", "1"); } catch {}
+    close();
+    if (window.smtFx) window.smtFx.toast(t("signin.toast"), { duration: 2400 });
+    localize();
+    // Let the dashboard (login-gated) react.
+    try { window.dispatchEvent(new Event("smt:authchange")); } catch {}
+  }
+
   document.addEventListener("click", (e) => {
     if (e.target.closest("#signin-open")) { open(); return; }
     if (e.target.closest('#signin-modal [data-close="signin"]')) { close(); return; }
-    // Any provider button or magic-link button "signs in" (stub until Supabase auth lands).
+
     const provBtn = e.target.closest("#signin-modal .signin__btn, #signin-modal .btn--gold");
     if (provBtn) {
-      try { localStorage.setItem("smt_signed_in", "1"); } catch {}
-      close();
-      if (window.smtFx) window.smtFx.toast(t("signin.toast"), { duration: 2400 });
-      localize();
-      // Let the dashboard (login-gated) react.
-      try { window.dispatchEvent(new Event("smt:authchange")); } catch {}
+      // ----- REAL OAuth / magic-link path (only when configured) -----
+      if (isConfigured()) {
+        const magicBtn = e.target.closest("#signin-modal .signin__magic, #signin-modal .btn--gold");
+        const prov = provBtn.getAttribute("data-prov"); // "google" | "apple" | null
+        getClient().then((client) => {
+          if (!client) { stubSignIn(); return; } // SDK failed to load → safe fallback
+          if (prov === "google" || prov === "apple") {
+            client.auth.signInWithOAuth({
+              provider: prov,
+              options: { redirectTo: redirectTarget() },
+            }).catch((err) => { if (console && console.warn) console.warn("[signin] OAuth error", err); });
+          } else if (magicBtn) {
+            const input = document.querySelector("#signin-modal .signin__input");
+            const email = input && input.value ? input.value.trim() : "";
+            if (!email) { if (input) input.focus(); return; }
+            client.auth.signInWithOtp({
+              email,
+              options: { emailRedirectTo: redirectTarget() },
+            }).then(() => {
+              close();
+              if (window.smtFx) window.smtFx.toast(t("signin.magicsent"), { duration: 2800 });
+            }).catch((err) => { if (console && console.warn) console.warn("[signin] OTP error", err); });
+          }
+        });
+        return;
+      }
+      // ----- Unconfigured: original local-only stub (unchanged) -----
+      stubSignIn();
       return;
     }
+
     if (e.target.closest("#signout")) {
       try { localStorage.removeItem("smt_signed_in"); } catch {}
       localize();
       try { window.dispatchEvent(new Event("smt:authchange")); } catch {}
+      // Also clear the server-side Supabase session so getSession() on the next
+      // page load doesn't silently re-sign the user back in.
+      if (isConfigured()) {
+        getClient().then((client) => {
+          if (client) client.auth.signOut().catch(() => {});
+        });
+      }
       return;
     }
   });
@@ -119,7 +230,21 @@
     }
   });
 
-  window.addEventListener("DOMContentLoaded", localize);
+  // On load: when configured, load the client (which registers
+  // onAuthStateChange) and read any existing session — this also captures the
+  // session created by an OAuth redirect-back. When unconfigured this is a
+  // no-op (getClient resolves null without touching the network).
+  function initAuth() {
+    if (!isConfigured()) return;
+    getClient().then((client) => {
+      if (!client) return;
+      client.auth.getSession().then(({ data }) => {
+        applySession(data && data.session ? data.session : null);
+      }).catch(() => {});
+    });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => { localize(); initAuth(); });
   window.addEventListener("smt:languagechange", localize);
 
   window.smtOpenSignin = open;
