@@ -1,4 +1,4 @@
-/* Almost Swedish — Effects (confetti, shake, toast, count-up)
+/* Sveriges Medborgartest — Effects (confetti, shake, toast, count-up)
    No dependencies. Drop into any click handler.
 */
 
@@ -15,7 +15,14 @@
     big: ['#006aa7', '#fecc00', '#bc1f2a', '#1e874b', '#ffffff', '#0b1f33'],
   };
 
+  function prefersReducedMotion() {
+    const setting = document.documentElement.getAttribute('data-motion');
+    if (setting !== null) return setting === 'reduce';
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   function burst(x, y, opts = {}) {
+    if (prefersReducedMotion()) return;
     const colors = opts.colors || PALETTES.flag;
     const count = opts.count || 28;
     const spread = opts.spread || 140;
@@ -62,6 +69,7 @@
   }
 
   function rain(opts = {}) {
+    if (prefersReducedMotion()) return;
     // full-screen confetti from top
     const colors = opts.colors || PALETTES.big;
     const count = opts.count || 90;
@@ -114,6 +122,7 @@
 
   function shakeEl(el) {
     if (!el) return;
+    if (prefersReducedMotion()) return;
     el.classList.remove('smt-shake');
     void el.offsetWidth; // restart anim
     el.classList.add('smt-shake');
@@ -123,6 +132,7 @@
   // ---------- FLOATING "+1" ----------
 
   function floatPlus(x, y, text = '+1', color = '#1e874b') {
+    if (prefersReducedMotion()) return;
     const layer = ensureLayer();
     const el = document.createElement('span');
     el.textContent = text;
@@ -173,6 +183,10 @@
 
   function countUp(el, from, to, duration = 800) {
     if (!el) return;
+    if (prefersReducedMotion()) {
+      el.textContent = String(to);
+      return;
+    }
     const start = performance.now();
     function step(now) {
       const p = Math.min(1, (now - start) / duration);
@@ -185,5 +199,14 @@
 
   // ---------- PUBLIC API ----------
 
-  window.smtFx = { burst, rain, shakeEl, floatPlus, toast, countUp, PALETTES };
+  window.smtFx = {
+    burst,
+    rain,
+    shakeEl,
+    floatPlus,
+    toast,
+    countUp,
+    prefersReducedMotion,
+    PALETTES,
+  };
 })();

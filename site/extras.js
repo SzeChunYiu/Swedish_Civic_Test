@@ -1,4 +1,4 @@
-/* Almost Swedish — Extras
+/* Sveriges Medborgartest — Extras
    - Reveal-on-scroll for chapter list
    - Easter eggs: fika, abba, snö, vasa, ikea, skål, lagom, brand-tap, "?" cheatsheet, triple-click facts
    - Smooth in-page anchor scroll
@@ -37,6 +37,11 @@
     } catch {
       return 'en';
     }
+  }
+  function prefersReducedMotion() {
+    const fx = window.smtFx;
+    if (fx && typeof fx.prefersReducedMotion === 'function') return fx.prefersReducedMotion();
+    return document.documentElement.getAttribute('data-motion') === 'reduce';
   }
   function isTyping() {
     const a = document.activeElement;
@@ -112,6 +117,15 @@
 
   function snowEgg() {
     if (document.getElementById('smt-snow')) return; // already running
+    if (prefersReducedMotion()) {
+      if (window.smtFx) window.smtFx.toast('❄ Snow.', { duration: 2200 });
+      if (window.smtBuddyCelebrate)
+        window.smtBuddyCelebrate(
+          'Vinter is here. Sip something hot.',
+          'Vinter är här. Drick något varmt.',
+        );
+      return;
+    }
     const layer = document.createElement('div');
     layer.id = 'smt-snow';
     layer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:94;overflow:hidden';
@@ -158,6 +172,15 @@
 
   function vasaEgg() {
     if (document.getElementById('smt-vasa')) return;
+    if (prefersReducedMotion()) {
+      if (window.smtFx) window.smtFx.toast('⛵ Vasa, on its way.', { duration: 2200 });
+      if (window.smtBuddyCelebrate)
+        window.smtBuddyCelebrate(
+          "It sank in 1628. Don't get attached.",
+          'Det sjönk 1628. Knyt inte an för mycket.',
+        );
+      return;
+    }
     const ship = document.createElement('div');
     ship.id = 'smt-vasa';
     ship.innerHTML = `
@@ -252,6 +275,12 @@
     }
   });
   function flagFlutter() {
+    if (prefersReducedMotion()) {
+      if (window.smtFx) window.smtFx.toast('Sweden mode. Hej hej.', { duration: 1800 });
+      if (window.smtBuddyCelebrate)
+        window.smtBuddyCelebrate('Sweden mode. Hej hej.', 'Sverige-läge. Hej hej.');
+      return;
+    }
     const flag = document.createElement('div');
     flag.style.cssText = `
       position: fixed; top: 40%; left: 50%;
