@@ -264,6 +264,29 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
   );
 });
 
+test('Profile route copy parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const profileRouteTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-profile-route-copy-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-profile-route-copy/);
+  assert.match(
+    validatorSource,
+    /validateProfileRouteCopyParity\(\);[\s\S]*validateBadgeCatalog\(\);[\s\S]*profileRouteCopyLabelsValidated[\s\S]*profileRouteCopyParityValidated[\s\S]*badgeMilestoneParityValidated/,
+  );
+  assert.match(profileRouteTestSource, /--focus-profile-route-copy/);
+  assert.doesNotMatch(
+    profileRouteTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Profile route copy tests must not route through full content validation',
+  );
+});
+
 test('spaced repetition schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
