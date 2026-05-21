@@ -197,6 +197,10 @@ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
 function phrasePattern(...parts) {
   return new RegExp(parts.join(''), 'i');
 }
+const SOURCES_ROUTE_SOURCE_AUTHORITY_COPY_PATTERNS = [
+  /UHR:s\s+sida[^`'"\n]{0,120}\bsäger\b/i,
+  /UHR's\s+[^`'"\n]{0,120}\bpage\s+says\b/i,
+];
 const QUESTION_BANK_CSV_HEADER = [
   'id',
   'chapterId',
@@ -22463,6 +22467,13 @@ function validateUhrSourceMaterialLinkParity() {
   for (const forbiddenCopy of forbiddenLearnerFacingSourceCopy) {
     if (sourcesRoute.includes(forbiddenCopy)) {
       reject(`app/sources.tsx learner-facing copy must not mention ${forbiddenCopy}`);
+    }
+  }
+  for (const pattern of SOURCES_ROUTE_SOURCE_AUTHORITY_COPY_PATTERNS) {
+    if (pattern.test(sourcesRoute)) {
+      reject(
+        'app/sources.tsx authority-boundary copy must state facts neutrally; source links carry UHR provenance',
+      );
     }
   }
   if (!sourcesRoute.includes('Varje övningsfråga visar en källrad med UHR:s kapitel')) {
