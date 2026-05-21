@@ -187,6 +187,51 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('LegalSection rendering focus registry lists granular summary keys', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('legalSectionRendering');
+
+  assert.ok(registryEntry, 'LegalSection rendering focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-legal-section-rendering']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'legalSectionRenderingTestsRoutedValidated',
+    'legalSectionRenderingCasesValidated',
+    'legalSectionWhitespaceTextValidated',
+    'legalSectionFragmentChildrenValidated',
+    'legalSectionRawTextUnderViewValidated',
+    'legalSectionRenderingParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-legal-section-rendering/);
+  assert.match(
+    validatorSource,
+    /legalSectionRenderingTestsRoutedValidated[\s\S]*legalSectionWhitespaceTextValidated[\s\S]*legalSectionFragmentChildrenValidated[\s\S]*legalSectionRawTextUnderViewValidated[\s\S]*legalSectionRenderingParityValidated/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-legal-section-rendering'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused LegalSection validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
+  assert.equal(summary.legalSectionRenderingCasesValidated, 3);
+  assert.equal(summary.legalSectionWhitespaceTextValidated, true);
+  assert.equal(summary.legalSectionFragmentChildrenValidated, true);
+  assert.equal(summary.legalSectionRawTextUnderViewValidated, true);
+  assert.equal(summary.legalSectionRenderingParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('ProgressBar accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

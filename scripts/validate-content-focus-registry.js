@@ -134,6 +134,9 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: [
       'legalSectionRenderingTestsRoutedValidated',
       'legalSectionRenderingCasesValidated',
+      'legalSectionWhitespaceTextValidated',
+      'legalSectionFragmentChildrenValidated',
+      'legalSectionRawTextUnderViewValidated',
       'legalSectionRenderingParityValidated',
     ],
   },
