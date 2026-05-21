@@ -260,11 +260,10 @@ const unsupportedEbookFactboxPatterns = [
   /historically commits\s+~?1%\s+of\s+GNI/i,
   /Citizenship test starts:\s*6 June 2026/i,
 ];
-const unsupportedKnowledgeRequirementClaimPatterns = [
-  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
-  /citizenship test on civic knowledge and Swedish/i,
-  /must pass a Swedish-language test in 2026/i,
-  /Swedish-language tests? (?:start|begin|are introduced) in August 2026/i,
+const staleChildApplicationClaimPatterns = [
+  /children are usually included with a parent's application/i,
+  /children can be included on a parent's citizenship application/i,
+  /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
 ];
 
 const homeHeroFooterFallbackKeys = [
@@ -557,23 +556,23 @@ test('static ebook practical test copy is backed by current UHR source metadata'
   );
 });
 
-test('static ebook citizenship knowledge-requirement copy is backed by current Migrationsverket source metadata', () => {
+test('static ebook citizenship child-application copy is backed by current Migrationsverket source metadata', () => {
   const ebookSource = read('site/ebook.js');
 
-  unsupportedKnowledgeRequirementClaimPatterns.forEach((pattern) =>
+  staleChildApplicationClaimPatterns.forEach((pattern) =>
     assert.doesNotMatch(ebookSource, pattern),
   );
   assert.match(ebookSource, /Migrationsverket citizenship rule changes from 6 June 2026/i);
   assert.match(ebookSource, /retrievedDate: '2026-05-20'/);
-  assert.match(ebookSource, /knowledge requirement if it applies to you \(ages 16-66\)/i);
-  assert.match(ebookSource, /Swedish school, adult education, folk high school, or SFI course D/i);
-  assert.match(ebookSource, /first test part is civic knowledge/i);
-  assert.match(ebookSource, /Swedish-language tests come later/i);
-  assert.match(ebookSource, /kunskapskravet i svenska och samhällskunskap/i);
-  assert.match(ebookSource, /mellan 16 och 66 år/i);
-  assert.match(ebookSource, /skola, komvux, folkhögskola eller SFI kurs D/i);
-  assert.match(ebookSource, /första provdelen gäller samhällskunskap/i);
-  assert.match(ebookSource, /prov i svenska kommer senare/i);
+  assert.match(
+    ebookSource,
+    /children can no longer be included on a parent's citizenship application/i,
+  );
+  assert.match(ebookSource, /separate application signed by a guardian/i);
+  assert.match(ebookSource, /Children need a separate citizenship application from 6 June 2026/i);
+  assert.match(ebookSource, /barn inte längre stå med på en förälders medborgarskapsansökan/i);
+  assert.match(ebookSource, /barnet behöver en egen ansökan/i);
+  assert.match(ebookSource, /vårdnadshavare skriver under/i);
   assert.match(
     ebookSource,
     /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
