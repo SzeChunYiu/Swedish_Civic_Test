@@ -945,6 +945,13 @@ test('mock exam access persistence stores daily completions and rewarded credits
   assert.equal(MOCK_EXAM_ACCESS_STORAGE_KEY, 'monetization.mockExamAccess.v1');
   assert.equal(getMockExamAccessDateKey(new Date(2026, 4, 17, 0, 30)), '2026-05-17');
   assert.equal(getMockExamAccessDateKey('2026-05-17'), '2026-05-17');
+  assert.equal(getMockExamAccessDateKey('2026-05-17T09:30:00.000Z'), '2026-05-17');
+
+  const fallbackDateKey = getMockExamAccessDateKey();
+  assert.equal(getMockExamAccessDateKey('2026-02-30'), fallbackDateKey);
+  assert.equal(getMockExamAccessDateKey('2026-02-30T09:30:00.000Z'), fallbackDateKey);
+  assert.equal(getMockExamAccessDateKey('2026-05-17garbage'), fallbackDateKey);
+  assert.equal(getMockExamAccessDateKey('x2026-05-17'), fallbackDateKey);
 
   assert.deepEqual(await getStoredMockExamAccess({ date: '2026-05-17T09:30:00.000Z', storage }), {
     completedMockExamsByDate: {},
@@ -978,6 +985,20 @@ test('mock exam access persistence stores daily completions and rewarded credits
   assert.deepEqual(todaySnapshot.completedMockExamSessionIdsByDate['2026-05-17'], [
     'mock-exam-session-a',
     'mock-exam-session-b',
+  ]);
+
+  const rolloverStorage = createMemoryMockExamAccessStorage();
+  const rolloverSnapshot = await recordStoredMockExamCompletion({
+    date: '2026-02-30',
+    sessionId: 'rollover-session',
+    storage: rolloverStorage,
+  });
+
+  assert.equal(rolloverSnapshot.dateKey, fallbackDateKey);
+  assert.equal(rolloverSnapshot.completedMockExamsByDate['2026-02-30'], undefined);
+  assert.equal(rolloverSnapshot.completedMockExamsByDate[fallbackDateKey], 1);
+  assert.deepEqual(rolloverSnapshot.completedMockExamSessionIdsByDate[fallbackDateKey], [
+    'rollover-session',
   ]);
 
   const tomorrowSnapshot = await getStoredMockExamAccess({
@@ -1023,10 +1044,18 @@ test('mock exam access persistence stores daily completions and rewarded credits
   const seededStorage = createMemoryMockExamAccessStorage({
     completedMockExamsByDate: {
       '2026-05-17': 2.8,
+      '2026-05-17garbage': 7,
+      '2026-02-30': 8,
+      'x2026-05-17': 9,
+      ' 2026-05-17': 10,
       invalid: 9,
     },
     completedMockExamSessionIdsByDate: {
       '2026-05-17': [' mock-exam-session-c ', 'mock-exam-session-c', 'mock-exam-session-d'],
+      '2026-05-17garbage': ['mock-exam-session-suffix'],
+      '2026-02-30': ['mock-exam-session-rollover'],
+      'x2026-05-17': ['mock-exam-session-prefix'],
+      ' 2026-05-17': ['mock-exam-session-space'],
       invalid: ['mock-exam-session-z'],
     },
     rewardedExtraExamCredits: 1.9,
