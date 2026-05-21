@@ -65,14 +65,17 @@ test('XP rules follow the MVP gamification table', () => {
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
   assert.equal(calculateAnswerXp({ isCorrect: 'true', explanationRead: true }), 0);
+  assert.equal(calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }), 0);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }), 0);
   assert.equal(calculateLevel(0), 1);
+  assert.equal(calculateLevel('10000'), 1);
   assert.equal(calculateLevel(NaN), 1);
   assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(100), 2);
@@ -665,6 +668,33 @@ test('badges unlock from progress milestones', () => {
       wrongAnswerCount: 1,
     }).map((badge) => badge.id),
     ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: '1',
+      currentStreak: '3',
+      level: '2',
+      wrongAnswerCount: '1',
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: Infinity,
+      currentStreak: Infinity,
+      level: Infinity,
+      wrongAnswerCount: Infinity,
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: 1.5,
+      currentStreak: 3.5,
+      level: 2.5,
+      wrongAnswerCount: 1.5,
+    }).map((badge) => badge.id),
+    [],
   );
   assert.deepEqual(
     getAllBadges().map((badge) => getBadgeTitle(badge, 'sv')),

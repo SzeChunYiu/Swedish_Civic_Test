@@ -19,10 +19,14 @@ function loadTs(relativePath) {
 }
 
 test('learning badge catalog schema validates the milestone badges', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-badge-xp-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -40,20 +44,16 @@ test('learning badge catalog schema validates the milestone badges', () => {
   assert.deepEqual(Object.keys(badgeCatalog), expectedBadgeIds);
   assert.equal(summary.badgesValidated, expectedBadgeIds.length);
   assert.equal(summary.badgeMilestoneParityValidated, true);
+  assert.equal(summary.badgeRuntimeInputCasesValidated, 4);
+  assert.equal(summary.badgeRuntimeInputParityValidated, true);
   assert.equal(badgeCatalog.first_practice.titleSv, 'Första övningen');
   assert.equal(badgeCatalog.first_practice.titleEn, 'First practice');
-  assert.equal(
-    badgeCatalog.first_practice.descriptionSv,
-    'Du har besvarat din första övningsfråga.',
-  );
-  assert.equal(badgeCatalog.first_practice.descriptionEn, 'Answered your first practice question.');
+  assert.equal(badgeCatalog.first_practice.descriptionSv, 'Svara på din första övningsfråga.');
+  assert.equal(badgeCatalog.first_practice.descriptionEn, 'Answer your first practice question.');
   assert.equal(getBadgeTitle(badgeCatalog.streak_3, 'sv'), 'Tre dagars svit');
   assert.equal(getBadgeTitle(badgeCatalog.streak_3, 'en'), 'Three-day streak');
-  assert.equal(getBadgeDescription(badgeCatalog.streak_3, 'sv'), 'Du har övat tre dagar i rad.');
-  assert.equal(
-    getBadgeDescription(badgeCatalog.streak_3, 'en'),
-    'Practiced on three days in a row.',
-  );
+  assert.equal(getBadgeDescription(badgeCatalog.streak_3, 'sv'), 'Öva tre dagar i rad.');
+  assert.equal(getBadgeDescription(badgeCatalog.streak_3, 'en'), 'Practice three days in a row.');
   assert.deepEqual(
     getAllBadges().map((badge) => badge.id),
     expectedBadgeIds,
@@ -81,6 +81,33 @@ test('learning badge catalog schema validates the milestone badges', () => {
       wrongAnswerCount: 1,
     }).map((badge) => badge.id),
     expectedBadgeIds,
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: '1',
+      currentStreak: '3',
+      level: '2',
+      wrongAnswerCount: '1',
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: Infinity,
+      currentStreak: Infinity,
+      level: Infinity,
+      wrongAnswerCount: Infinity,
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: 1.5,
+      currentStreak: 3.5,
+      level: 2.5,
+      wrongAnswerCount: 1.5,
+    }).map((badge) => badge.id),
+    [],
   );
 });
 
@@ -114,6 +141,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-badge-xp-runtime');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -144,12 +172,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return String(contents)
       .replace("titleSv: 'Första övningen'", "titleSv: ''")
       .replace(
-        "descriptionSv: 'Du har besvarat din första övningsfråga.'",
+        "descriptionSv: 'Svara på din första övningsfråga.'",
         "descriptionSv: ''",
       );
   }
   return contents;
 };
+process.argv.push('--focus-badge-xp-runtime');
 require('./scripts/validate-content.js');
 `,
     ],

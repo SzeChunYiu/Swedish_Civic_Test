@@ -91,6 +91,7 @@ export function getBadgeProgressHint(
   input: BadgeInput,
   language: AppLanguage,
 ): string {
+  const normalizedInput = normalizeBadgeInput(input);
   const copy =
     language === 'en'
       ? {
@@ -110,26 +111,40 @@ export function getBadgeProgressHint(
 
   switch (badge.id) {
     case 'first_practice':
-      return input.completedQuestionCount >= 1
+      return normalizedInput.completedQuestionCount >= 1
         ? copy.ready
-        : copy.answered(input.completedQuestionCount);
+        : copy.answered(normalizedInput.completedQuestionCount);
     case 'streak_3':
-      return input.currentStreak >= 3 ? copy.ready : copy.streak(input.currentStreak);
+      return normalizedInput.currentStreak >= 3
+        ? copy.ready
+        : copy.streak(normalizedInput.currentStreak);
     case 'level_2':
-      return input.level >= 2 ? copy.ready : copy.level(input.level);
+      return normalizedInput.level >= 2 ? copy.ready : copy.level(normalizedInput.level);
     case 'mistake_reviewer':
-      return input.wrongAnswerCount >= 1 ? copy.ready : copy.mistakes(input.wrongAnswerCount);
+      return normalizedInput.wrongAnswerCount >= 1
+        ? copy.ready
+        : copy.mistakes(normalizedInput.wrongAnswerCount);
   }
 
   return copy.ready;
 }
 
-export function deriveBadges({
-  completedQuestionCount,
-  currentStreak,
-  level,
-  wrongAnswerCount,
-}: BadgeInput): Badge[] {
+function normalizeBadgeCounter(value: unknown): number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : 0;
+}
+
+function normalizeBadgeInput(input: Partial<Record<keyof BadgeInput, unknown>> | null): BadgeInput {
+  return {
+    completedQuestionCount: normalizeBadgeCounter(input?.completedQuestionCount),
+    currentStreak: normalizeBadgeCounter(input?.currentStreak),
+    level: normalizeBadgeCounter(input?.level),
+    wrongAnswerCount: normalizeBadgeCounter(input?.wrongAnswerCount),
+  };
+}
+
+export function deriveBadges(input: BadgeInput): Badge[] {
+  const { completedQuestionCount, currentStreak, level, wrongAnswerCount } =
+    normalizeBadgeInput(input);
   const badges: Badge[] = [];
 
   if (completedQuestionCount >= 1) badges.push(badgeCatalog.first_practice);
