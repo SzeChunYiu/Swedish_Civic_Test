@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '../ui/Button';
 import { speakSwedish, stopSpeech } from '../../lib/audio/speak';
@@ -9,6 +9,8 @@ type AudioButtonCopy = {
   disabledLabel: string;
   enabledHint: string;
   enabledLabel: string;
+  stopHint: string;
+  stopLabel: string;
   unavailableHint: string;
   unavailableLabel: string;
 };
@@ -19,6 +21,8 @@ const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = {
     disabledLabel: 'Ljud är avstängt',
     enabledHint: 'Spelar upp den svenska frågan och svarsalternativen.',
     enabledLabel: 'Lyssna på den svenska frågan och svaren',
+    stopHint: 'Stoppar uppläsningen av frågan och svarsalternativen.',
+    stopLabel: 'Stoppa frågeljud',
     unavailableHint: 'Ljud behöver svensk frågetext före uppspelning.',
     unavailableLabel: 'Ljud saknas för den här frågan',
   },
@@ -27,6 +31,8 @@ const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = {
     disabledLabel: 'Audio is disabled',
     enabledHint: 'Plays the Swedish question and answer options aloud.',
     enabledLabel: 'Listen to the Swedish question and answers',
+    stopHint: 'Stops the question audio playback.',
+    stopLabel: 'Stop question audio',
     unavailableHint: 'Audio needs Swedish question text before playback.',
     unavailableLabel: 'Audio is unavailable for this question',
   },
@@ -41,39 +47,62 @@ export function AudioButton({
   language?: AppLanguage;
   text?: string;
 }) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const speechText = text.trim();
   const hasSpeechText = speechText.length > 0;
   const canPlayAudio = enabled && hasSpeechText;
   const copy = audioButtonCopy[language];
   const label = !enabled
     ? copy.disabledLabel
-    : hasSpeechText
-      ? copy.enabledLabel
-      : copy.unavailableLabel;
+    : !hasSpeechText
+      ? copy.unavailableLabel
+      : isSpeaking
+        ? copy.stopLabel
+        : copy.enabledLabel;
   const accessibilityLabel = label;
   const accessibilityHint = !enabled
     ? copy.disabledHint
-    : hasSpeechText
-      ? copy.enabledHint
-      : copy.unavailableHint;
+    : !hasSpeechText
+      ? copy.unavailableHint
+      : isSpeaking
+        ? copy.stopHint
+        : copy.enabledHint;
 
   useEffect(() => {
+    setIsSpeaking(false);
     return () => {
       stopSpeech();
     };
   }, [speechText]);
+
+  useEffect(() => {
+    if (!canPlayAudio && isSpeaking) {
+      stopSpeech();
+      setIsSpeaking(false);
+    }
+  }, [canPlayAudio, isSpeaking]);
 
   return (
     <Button
       accessibilityHint={accessibilityHint}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !canPlayAudio }}
+      accessibilityState={{ busy: isSpeaking, disabled: !canPlayAudio }}
       disabled={!canPlayAudio}
       onPress={() => {
         if (!canPlayAudio) return;
+        if (isSpeaking) {
+          stopSpeech();
+          setIsSpeaking(false);
+          return;
+        }
         stopSpeech();
-        speakSwedish(speechText);
+        setIsSpeaking(true);
+        speakSwedish(speechText, {
+          onDone: () => setIsSpeaking(false),
+          onError: () => setIsSpeaking(false),
+          onStopped: () => setIsSpeaking(false),
+        });
       }}
     >
       {label}
