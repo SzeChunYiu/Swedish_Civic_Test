@@ -90,6 +90,13 @@ function getEbookNavChapterIds() {
   );
 }
 
+function getStaticSiteLanguages() {
+  return Array.from(
+    readSiteFile('site/index.html').matchAll(/<button\s+[^>]*data-lang="([^"]+)"/g),
+    (match) => match[1],
+  );
+}
+
 function createEbookHarness() {
   const chapterIds = getExpectedChapterIds();
   const reader = { innerHTML: '', scrollTop: 0 };
@@ -223,6 +230,12 @@ function dataSourceKeys(block) {
   const match = block.match(/\bdata-source-keys="([^"]+)"/);
   assert.ok(match, `source block missing data-source-keys: ${block}`);
   return match[1].split(/\s+/).filter(Boolean);
+}
+
+function dataSourceMetadata(block) {
+  const match = block.match(/\bdata-source-metadata="([^"]+)"/);
+  assert.ok(match, `source block missing data-source-metadata: ${block}`);
+  return match[1];
 }
 
 function sourceCountsFromBlocks(blocks) {
@@ -502,9 +515,72 @@ test('static ebook chapters render source footnotes for every prose paragraph an
     assert.match(swedishHtml, /class="ebook__footnotes"/);
     assert.match(englishHtml, /UHR public study material/);
     assert.match(swedishHtml, /UHR public study material/);
-    assert.doesNotMatch(englishHtml, />Editorial<\/span>/);
-    assert.doesNotMatch(swedishHtml, />Redaktionell<\/span>/);
+    assert.match(englishHtml, /Editorial \(\d+ cites?\)/);
+    assert.match(swedishHtml, /Editorial \(\d+ cites?\)/);
+
+    [...englishBlocks, ...swedishBlocks].forEach((block) => {
+      assert.match(dataSourceMetadata(block), /^(inline|typed)$/);
+    });
   }
+});
+
+test('static ebook prose source metadata is explicit or typed, never fallback annotation', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const sourceMetadataModes = new Set();
+
+  assert.doesNotMatch(source, /EBOOK_DEFAULT_PROSE_SOURCE_KEYS/);
+  assert.doesNotMatch(source, /fallbackSourceKeys\s*=\s*EBOOK_DEFAULT_PROSE_SOURCE_KEYS/);
+  assert.doesNotMatch(source, /explicitSourceKeys\s*\|\|\s*fallbackSourceKeys/);
+  assert.doesNotMatch(source, /typeof point === 'string' \? null : point\.sourceKeys/);
+  assert.match(source, /const EBOOK_BODY_SOURCE_KEYS = Object\.freeze\(\{/);
+  assert.match(source, /function ebookBodySourceKeys\(chapterId\)/);
+  assert.match(source, /annotate\(html, typedSourceKeys\)/);
+  assert.match(source, /data-source-metadata="\$\{metadataKind\}"/);
+  assert.match(source, /footnoteCollector\.annotate\(rawBodyHtml, ebookBodySourceKeys\(id\)\)/);
+
+  for (const chapterId of getExpectedChapterIds()) {
+    for (const lang of getStaticSiteLanguages()) {
+      const html = renderChapter(harness, lang, chapterId);
+      const blocks = annotatedSourceClaimBlocks(html);
+      assert.ok(blocks.length > 0, `chapter ${chapterId} ${lang} should render sourced prose`);
+      blocks.forEach((block) => {
+        sourceMetadataModes.add(dataSourceMetadata(block));
+        assert.ok(dataSourceKeys(block).length > 0, `chapter ${chapterId} ${lang} source keys`);
+      });
+      assert.deepEqual(
+        renderedSourceCounts(html),
+        sourceCountsFromBlocks(blocks),
+        `chapter ${chapterId} ${lang} source counts should come from rendered metadata`,
+      );
+    }
+  }
+
+  assert.deepEqual(
+    Array.from(sourceMetadataModes).sort(),
+    ['inline', 'typed'],
+    'ebook output should distinguish inline keys from typed section metadata',
+  );
+});
+
+test('static ebook Swedish study briefs source factual bullets and editorial practice hints locally', () => {
+  const harness = createEbookHarness();
+  const chapter2SwedishBlocks = annotatedSourceClaimBlocks(renderChapter(harness, 'sv', '2'));
+  const governmentPoint = sourceBlockContaining(
+    chapter2SwedishBlocks,
+    /Sverige är både en konstitutionell monarki/,
+    'Swedish government study point',
+  );
+  const practiceHint = sourceBlockContaining(
+    chapter2SwedishBlocks,
+    /Läs punkterna långsamt/,
+    'Swedish practice hint',
+  );
+
+  assert.deepEqual(dataSourceKeys(governmentPoint), ['uhrStudyMaterial']);
+  assert.equal(dataSourceMetadata(governmentPoint), 'inline');
+  assert.deepEqual(dataSourceKeys(practiceHint), ['editorialCommentary']);
+  assert.equal(dataSourceMetadata(practiceHint), 'inline');
 });
 
 test('static ebook source metadata keeps Vikings prose off governmentNato and source counts explicit', () => {
@@ -513,6 +589,7 @@ test('static ebook source metadata keeps Vikings prose off governmentNato and so
 
   assert.match(source, /data-ebook-source-keys/);
   assert.match(source, /function ebookLedeSourceKeys\(chapterId\)/);
+  assert.match(source, /function ebookBodySourceKeys\(chapterId\)/);
   assert.doesNotMatch(source, /function ebookChapterSourceKeys/);
   assert.doesNotMatch(source, /chooseEbookFootnoteKey/);
 
@@ -678,4 +755,25 @@ test('native ebook study article audio narrates article prose with persisted rat
   assert.match(narrationSource, /getLocalizedText\(article\.lede, 'sv'\)/);
   assert.match(narrationSource, /article\.sections\.map\(buildEbookSectionNarrationText\)/);
   assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
+});
+
+test('native ebook article navigation uses selected tab semantics', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const articleNavStart = routeSource.indexOf('<ScrollView');
+  const articleNavEnd = routeSource.indexOf('</ScrollView>', articleNavStart);
+
+  assert.ok(articleNavStart >= 0, 'native ebook route should render the article selector');
+  assert.ok(articleNavEnd > articleNavStart, 'native ebook article selector should close');
+
+  const articleNavSource = routeSource.slice(articleNavStart, articleNavEnd);
+
+  assert.match(routeSource, /articleNavGroupAccessibilityLabel: 'Välj studieartikel'/);
+  assert.match(routeSource, /articleNavGroupAccessibilityLabel: 'Choose study article'/);
+  assert.match(articleNavSource, /aria-label=\{copy\.articleNavGroupAccessibilityLabel\}/);
+  assert.match(articleNavSource, /accessibilityLabel=\{copy\.articleNavGroupAccessibilityLabel\}/);
+  assert.match(articleNavSource, /accessibilityRole="tablist"/);
+  assert.match(articleNavSource, /accessibilityRole="tab"/);
+  assert.match(articleNavSource, /aria-selected=\{selected\}/);
+  assert.match(articleNavSource, /accessibilityState=\{\{\s*selected\s*\}\}/);
+  assert.doesNotMatch(articleNavSource, /accessibilityRole="button"/);
 });
