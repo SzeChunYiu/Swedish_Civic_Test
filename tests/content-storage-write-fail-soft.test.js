@@ -220,6 +220,10 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(practiceSource, /clearMistakeReviewPersistenceWarning/);
   assert.match(settingsSource, /persistenceWarning = useSettingsStore/);
   assert.match(settingsSource, /clearPersistenceWarning = useSettingsStore/);
+  assert.match(settingsSource, /accessibilityPersistenceWarning = useAccessibilityStore/);
+  assert.match(settingsSource, /clearAccessibilityPersistenceWarning = useAccessibilityStore/);
+  assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
+  assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
   assert.match(mistakesSource, /progressPersistenceWarning/);
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
 });

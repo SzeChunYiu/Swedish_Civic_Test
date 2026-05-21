@@ -230,7 +230,13 @@ export default function Screen() {
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
+  const accessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.persistenceWarning,
+  );
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
+    (state) => state.clearPersistenceWarning,
+  );
   const copy = settingsCopy[language];
   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
@@ -349,6 +355,11 @@ export default function Screen() {
         language={language}
         onDismiss={clearPersistenceWarning}
         warning={persistenceWarning}
+      />
+      <PersistenceWarningNotice
+        language={language}
+        onDismiss={clearAccessibilityPersistenceWarning}
+        warning={accessibilityPersistenceWarning}
       />
 
       <View style={styles.section}>

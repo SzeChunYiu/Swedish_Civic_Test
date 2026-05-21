@@ -50,10 +50,16 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setDailyGoalAccessibilityLabel\(goal\)\}/);
   assert.match(source, /const themeMode = useAccessibilityStore\(\(state\) => state\.themeMode\);/);
+  assert.match(source, /const accessibilityPersistenceWarning = useAccessibilityStore\(/);
+  assert.match(source, /\(state\) => state\.persistenceWarning,/);
   assert.match(
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
   );
+  assert.match(source, /const clearAccessibilityPersistenceWarning = useAccessibilityStore\(/);
+  assert.match(source, /\(state\) => state\.clearPersistenceWarning,/);
+  assert.match(source, /warning=\{accessibilityPersistenceWarning\}/);
+  assert.match(source, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
 });
 
 test('settings route copy parity rejects bypassing the settings language', () => {
