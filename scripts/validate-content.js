@@ -678,7 +678,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 10;
+const EXPECTED_STREAK_RULE_COUNT = 13;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
@@ -8342,6 +8342,7 @@ const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
+const getLocalDateKey = streakModule.getLocalDateKey;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
 const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
 const refillFreezes = streakWithFreezeModule.refillFreezes;
@@ -9548,6 +9549,7 @@ if (!Array.isArray(spacedRepetitionSchedule)) {
 }
 if (typeof getNextReviewAt !== 'function') fail('getNextReviewAt export is not a function');
 if (typeof calculateStreak !== 'function') fail('calculateStreak export is not a function');
+if (typeof getLocalDateKey !== 'function') fail('getLocalDateKey export is not a function');
 if (typeof calculateStreakWithFreeze !== 'function') {
   fail('calculateStreakWithFreeze export is not a function');
 }
@@ -17577,6 +17579,21 @@ function validateStreakRules() {
       label: 'future-only answers',
       actual: () => calculateStreak(['2026-05-16'], today),
       expected: 0,
+    },
+    {
+      label: 'malformed answer days are ignored',
+      actual: () => calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today),
+      expected: 2,
+    },
+    {
+      label: 'invalid today key fails closed',
+      actual: () => calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'),
+      expected: 0,
+    },
+    {
+      label: 'invalid Date local key falls back safely',
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
+      expected: 1,
     },
     {
       label: 'streakWithFreeze ignores malformed active day keys',

@@ -33,7 +33,7 @@ test('streak runtime parity validates daily habit rules', () => {
   const { calculateStreak } = loadTs('lib/learning/streaks.ts');
   const today = '2026-05-15';
 
-  assert.equal(summary.streakRulesValidated, 10);
+  assert.equal(summary.streakRulesValidated, 13);
   assert.equal(summary.streakRulesParityValidated, true);
   assert.equal(calculateStreak([], today), 0);
   assert.equal(calculateStreak(['2026-05-13T09:00:00.000Z', '2026-05-14', '2026-05-15'], today), 3);
@@ -44,6 +44,8 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], today), 2);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today), 1);
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
+  assert.equal(calculateStreak(['2026-05-14', 42, 'not-a-date', '2026-05-15'], today), 2);
+  assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
@@ -60,8 +62,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/lib/learning/streaks.ts')) {
     return String(contents).replace(
-      'const uniqueDays = new Set(days.map((day) => day.slice(0, 10)));',
-      'const uniqueDays = new Set(days);',
+      'const dateKey = value.slice(0, 10);',
+      'const dateKey = value;',
     );
   }
   return contents;

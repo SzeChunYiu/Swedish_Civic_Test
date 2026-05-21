@@ -37,13 +37,18 @@ test('XP rules follow the MVP gamification table', () => {
 
 test('streak logic counts consecutive unique answer dates through today', () => {
   const { calculateStreak, getLocalDateKey } = loadAllTs('lib/learning/streaks.ts');
+  const invalidDateKey = getLocalDateKey(new Date(Number.NaN));
 
   assert.equal(getLocalDateKey(new Date(2026, 0, 5, 23, 59)), '2026-01-05');
   assert.equal(getLocalDateKey(new Date(2026, 10, 9, 0, 1)), '2026-11-09');
+  assert.match(invalidDateKey, /^\d{4}-\d{2}-\d{2}$/);
+  assert.notEqual(invalidDateKey, 'NaN-NaN-NaN');
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
+  assert.equal(calculateStreak(['2026-05-14', 42, '2026-05-15'], '2026-05-15'), 2);
+  assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
 });
 
 test('streakWithFreeze ignores malformed date inputs without corrupting freeze state', () => {
