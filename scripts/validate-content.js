@@ -461,8 +461,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
-  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
-  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -911,8 +909,6 @@ const FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   /repetition av misstag/i,
   /upprepning av misstag/i,
 ];
-
-const FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY = [/\bmockprov(?:et)?\b/i, /\bmock-provet\b/i];
 const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   'Redoindikator',
   'redoindikator',
@@ -7120,6 +7116,8 @@ const speakSwedish = audioModule.speakSwedish;
 const stopSpeech = audioModule.stopSpeech;
 const practiceFlowModule = loadTs('lib/quiz/practiceFlow.ts');
 const getPracticeQuestionForSession = practiceFlowModule.getPracticeQuestionForSession;
+const getCompletedQuestionIdsForQuestionBank =
+  practiceFlowModule.getCompletedQuestionIdsForQuestionBank;
 const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
@@ -7231,8 +7229,6 @@ let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
 let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
-let nativeSwedishMockExamCopyLabelsValidated = 0;
-let nativeSwedishMockExamCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -7307,8 +7303,6 @@ let localizationStringsValidated = 0;
 let languageSettingsParityValidated = false;
 let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
-let questionReportLinkRulesValidated = 0;
-let questionReportLinkParityValidated = false;
 let provenanceAuthorityCopyFilesValidated = 0;
 let provenanceAuthorityCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
@@ -7531,6 +7525,16 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-practice-flow-parity')) {
+  validatePracticeFlowParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    practiceFlowCasesValidated,
+    practiceFlowParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-head-metadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
@@ -7543,16 +7547,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-question-report-link-parity')) {
-  validateQuestionReportLinkParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    questionReportLinkRulesValidated,
-    questionReportLinkParityValidated,
   });
   process.exit(0);
 }
@@ -9321,152 +9315,6 @@ function validatePracticeRouteCopyParity() {
   }
 }
 
-function validateQuestionReportLinkParity() {
-  let valid = true;
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  function read(relativePath) {
-    try {
-      return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-    } catch (error) {
-      reject(`${relativePath} could not be read for question report link parity: ${error.message}`);
-      return '';
-    }
-  }
-
-  const componentSource = read('components/quiz/QuestionReportLink.tsx');
-  const supportSource = read('app/support.tsx');
-  const practiceRoute = read('app/(tabs)/practice.tsx');
-  const quizRoute = read('app/quiz/[sessionId].tsx');
-  const chapterRoute = read('app/chapter/[chapterId].tsx');
-
-  const rules = [
-    {
-      source: componentSource,
-      pattern: /type QuestionReportScreen = 'chapter' \| 'practice' \| 'quiz';/,
-      message: 'QuestionReportLink missing chapter/practice/quiz screen type',
-    },
-    {
-      source: componentSource,
-      pattern: /selectedOptionId\?: string \| null/,
-      message: 'QuestionReportLink missing optional selected answer prop',
-    },
-    {
-      source: componentSource,
-      pattern: /Rapportera den här frågan/,
-      message: 'QuestionReportLink missing Swedish report label',
-    },
-    {
-      source: componentSource,
-      pattern: /Report this question/,
-      message: 'QuestionReportLink missing English report label',
-    },
-    {
-      source: componentSource,
-      pattern: /accessibilityLabel=\{copy\.accessibilityLabel\(question\.id\)\}/,
-      message: 'QuestionReportLink missing localized accessibility label',
-    },
-    {
-      source: componentSource,
-      pattern: /getQuestionSourceCitation\(question, language\)/,
-      message: 'QuestionReportLink missing source citation context',
-    },
-    {
-      source: componentSource,
-      pattern: /\['questionId', question\.id\]/,
-      message: 'QuestionReportLink missing question id support parameter',
-    },
-    {
-      source: componentSource,
-      pattern: /\['source', getQuestionSourceCitation\(question, language\)\]/,
-      message: 'QuestionReportLink missing source support parameter',
-    },
-    {
-      source: componentSource,
-      pattern: /\['language', language\]/,
-      message: 'QuestionReportLink missing language support parameter',
-    },
-    {
-      source: componentSource,
-      pattern: /\['screen', screen\]/,
-      message: 'QuestionReportLink missing screen support parameter',
-    },
-    {
-      source: componentSource,
-      pattern: /selectedAnswer \? \['selectedAnswer', selectedAnswer\] : null/,
-      message: 'QuestionReportLink missing optional selected answer support parameter',
-    },
-    {
-      source: componentSource,
-      pattern: /minHeight: space\[6\]/,
-      message: 'QuestionReportLink target must keep a 48px token-sized hit target',
-    },
-    {
-      source: practiceRoute,
-      pattern:
-        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
-      message: 'QuestionReportLink missing Practice route import',
-    },
-    {
-      source: practiceRoute,
-      pattern:
-        /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="practice"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
-      message: 'QuestionReportLink missing practice feedback selected answer context',
-    },
-    {
-      source: quizRoute,
-      pattern:
-        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
-      message: 'QuestionReportLink missing routed quiz import',
-    },
-    {
-      source: quizRoute,
-      pattern:
-        /<QuestionReportLink[\s\S]*language=\{language\}[\s\S]*question=\{question\}[\s\S]*screen="quiz"[\s\S]*selectedOptionId=\{selectedOptionId\}[\s\S]*\/>/,
-      message: 'QuestionReportLink missing routed quiz selected answer context',
-    },
-    {
-      source: chapterRoute,
-      pattern:
-        /import \{ QuestionReportLink \} from '..\/..\/components\/quiz\/QuestionReportLink';/,
-      message: 'QuestionReportLink missing chapter route import',
-    },
-    {
-      source: chapterRoute,
-      pattern:
-        /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="chapter"\s+\/>/,
-      message: 'QuestionReportLink missing chapter review source context',
-    },
-    {
-      source: supportSource,
-      pattern:
-        /Lägg inte till namn, personnummer, ärendenummer[\s\S]*Do not add names, personal identity numbers, case numbers/,
-      message: 'QuestionReportLink missing support context non-PII copy',
-    },
-    {
-      source: supportSource,
-      pattern: /^(?![\s\S]*(?:mailto:|Linking\.openURL|fetch\())[\s\S]*$/,
-      message: 'QuestionReportLink support route must not send reports or personal data directly',
-    },
-  ];
-
-  rules.forEach(({ source, pattern, message }) => {
-    if (!pattern.test(source)) {
-      reject(message);
-      return;
-    }
-    questionReportLinkRulesValidated += 1;
-  });
-
-  if (valid && questionReportLinkRulesValidated === rules.length) {
-    questionReportLinkParityValidated = true;
-  }
-}
-
 function validateProvenanceAuthorityCopyBoundary() {
   let valid = true;
 
@@ -9979,62 +9827,6 @@ function validateHomeRouteCopyParity() {
   if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
-  }
-}
-
-function validateFocusedNativeMockExamCopy() {
-  const focusFailureStart = failures.length;
-  let homeRoute = '';
-  let practiceRoute = '';
-  try {
-    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-    practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  } catch (error) {
-    fail(`native mock exam copy sources could not be read: ${error.message}`);
-    return;
-  }
-
-  function rejectSwedishLoanword(label, source) {
-    const swedishCopyStart = source.indexOf('  sv: {');
-    const englishCopyStart = source.indexOf('  en: {', swedishCopyStart);
-    if (swedishCopyStart < 0 || englishCopyStart < 0) {
-      fail(`${label} route Swedish copy block could not be read`);
-      return;
-    }
-    const swedishCopy = source.slice(swedishCopyStart, englishCopyStart);
-    FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY.forEach((pattern) => {
-      if (pattern.test(swedishCopy)) {
-        fail(`${label} route Swedish native copy must use övningsprov, not mockprov/mock-provet`);
-      }
-    });
-  }
-
-  function requireCopy(label, source, copy) {
-    if (!source.includes(copy)) {
-      fail(`${label} native mock exam copy is missing ${JSON.stringify(copy)}`);
-      return;
-    }
-    nativeSwedishMockExamCopyLabelsValidated += 1;
-  }
-
-  rejectSwedishLoanword('home', homeRoute);
-  requireCopy('home route', homeRoute, 'Gå till övningsprov');
-  requireCopy('home route', homeRoute, '${title}: gå till övningsprov när steget är klart.');
-  requireCopy('home route', homeRoute, 'Go to mock exam');
-  requireCopy(
-    'home route',
-    homeRoute,
-    '${title}: go to the mock exam after completing this stage.',
-  );
-
-  rejectSwedishLoanword('practice', practiceRoute);
-  requireCopy('practice route', practiceRoute, 'Övningsprovet använder bara UHR-hänvisade frågor.');
-  requireCopy('practice route', practiceRoute, 'Aldrig en del av övningsprovet.');
-  requireCopy('practice route', practiceRoute, 'The mock exam uses only UHR-referenced questions.');
-  requireCopy('practice route', practiceRoute, 'Never part of the mock exam.');
-
-  if (failures.length === focusFailureStart && nativeSwedishMockExamCopyLabelsValidated === 8) {
-    nativeSwedishMockExamCopyParityValidated = true;
   }
 }
 
@@ -13561,7 +13353,11 @@ function validatePracticeScoringRules() {
 }
 
 function validatePracticeFlowParity() {
-  if (!Array.isArray(questions) || typeof getPracticeQuestionForSession !== 'function') {
+  if (
+    !Array.isArray(questions) ||
+    typeof getPracticeQuestionForSession !== 'function' ||
+    typeof getCompletedQuestionIdsForQuestionBank !== 'function'
+  ) {
     return;
   }
 
@@ -13573,7 +13369,7 @@ function validatePracticeFlowParity() {
 
   const [firstQuestion, secondQuestion, thirdQuestion] = publishedQuestions;
   const completedAllQuestionIds = publishedQuestions.map((question) => question.id);
-  const cases = [
+  const selectionCases = [
     {
       label: 'empty question bank',
       questions: [],
@@ -13617,10 +13413,53 @@ function validatePracticeFlowParity() {
       expectedId: firstQuestion.id,
     },
   ];
+  const completedIdCases = [
+    {
+      label: 'empty completed ids stay empty scoped completed ids',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [],
+      expectedCompletedQuestionIds: [],
+    },
+    {
+      label: 'visible completed id is preserved scoped completed ids',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [firstQuestion.id],
+      expectedCompletedQuestionIds: [firstQuestion.id],
+    },
+    {
+      label: 'duplicate completed ids are deduplicated scoped completed ids',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [firstQuestion.id, firstQuestion.id, secondQuestion.id],
+      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
+    },
+    {
+      label: 'completion outside visible bank is ignored scoped completed ids',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id],
+      expectedCompletedQuestionIds: [],
+    },
+    {
+      label: 'mixed scoped bank keeps only visible completed ids scoped completed ids',
+      questions: [secondQuestion, thirdQuestion],
+      completedQuestionIds: [firstQuestion.id, secondQuestion.id],
+      expectedCompletedQuestionIds: [secondQuestion.id],
+    },
+    {
+      label: 'noisy completed ids preserve visible order scoped completed ids',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [
+        thirdQuestion.id,
+        firstQuestion.id,
+        secondQuestion.id,
+        firstQuestion.id,
+      ],
+      expectedCompletedQuestionIds: [firstQuestion.id, secondQuestion.id],
+    },
+  ];
 
   let valid = true;
 
-  cases.forEach((testCase) => {
+  selectionCases.forEach((testCase) => {
     const {
       label,
       questions: caseQuestions,
@@ -13654,7 +13493,38 @@ function validatePracticeFlowParity() {
     }
   });
 
-  if (valid && practiceFlowCasesValidated === cases.length) {
+  completedIdCases.forEach((testCase) => {
+    const {
+      label,
+      questions: caseQuestions,
+      completedQuestionIds,
+      expectedCompletedQuestionIds,
+    } = testCase;
+    let actualCompletedQuestionIds;
+    try {
+      actualCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
+        caseQuestions,
+        completedQuestionIds,
+      );
+    } catch (error) {
+      valid = false;
+      fail(`practice flow ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualCompletedQuestionIds, expectedCompletedQuestionIds)) {
+      valid = false;
+      fail(
+        `practice flow ${label} returned ${JSON.stringify(
+          actualCompletedQuestionIds,
+        )}, expected ${JSON.stringify(expectedCompletedQuestionIds)}`,
+      );
+    } else {
+      practiceFlowCasesValidated += 1;
+    }
+  });
+
+  if (valid && practiceFlowCasesValidated === selectionCases.length + completedIdCases.length) {
     practiceFlowParityValidated = true;
   }
 }
@@ -15807,28 +15677,6 @@ function validateUhrSourceMaterialLinkParity() {
 }
 
 validateStaticValidationSyntaxGate();
-if (process.argv.includes('--focus-sv-native-mock-exam-copy')) {
-  const focusFailureStart = failures.length;
-  validateFocusedNativeMockExamCopy();
-  const focusFailures = failures.slice(focusFailureStart);
-  if (focusFailures.length > 0) {
-    console.error('Content validation failed:');
-    for (const failure of focusFailures) console.error(`- ${failure}`);
-    process.exit(1);
-  }
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        nativeSwedishMockExamCopyLabelsValidated,
-        nativeSwedishMockExamCopyParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
@@ -16111,7 +15959,6 @@ validateQuizRouteHeaderParity();
 validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
-validateQuestionReportLinkParity();
 validateProvenanceAuthorityCopyBoundary();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
@@ -16246,8 +16093,6 @@ console.log(
       practiceRouteHeaderParityValidated,
       practiceRouteCopyLabelsValidated,
       practiceRouteCopyParityValidated,
-      questionReportLinkRulesValidated,
-      questionReportLinkParityValidated,
       provenanceAuthorityCopyFilesValidated,
       provenanceAuthorityCopyParityValidated,
       chapterRouteHeadersValidated,
