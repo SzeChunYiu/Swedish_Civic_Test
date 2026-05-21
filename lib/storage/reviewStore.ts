@@ -24,7 +24,7 @@ import {
 import { getLocalDateKey } from '../learning/streaks';
 import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
-import { readRecoverably, writeRecoverably } from './persistenceWarning';
+import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';
 export const FREE_DAILY_REVIEW_CAP = 3;
@@ -110,6 +110,10 @@ export function normalizeImportedReviewState(value: unknown): PersistedReviews {
   return normalize(value);
 }
 
+function parseReviews(rawReviews: string): PersistedReviews {
+  return normalize(JSON.parse(rawReviews));
+}
+
 function read(): {
   reviews: PersistedReviews;
   persistenceWarning: RecoverablePersistenceWarning | null;
@@ -121,11 +125,8 @@ function read(): {
     () => reviewStorage?.getString(REVIEW_STORE_KEY),
   );
   if (!raw) return { reviews: EMPTY, persistenceWarning: warning };
-  try {
-    return { reviews: normalize(JSON.parse(raw)), persistenceWarning: warning };
-  } catch {
-    return { reviews: EMPTY, persistenceWarning: warning };
-  }
+  const parsed = parseJsonRecoverably(raw, reviewStorageId, REVIEW_STORE_KEY, parseReviews, EMPTY);
+  return { reviews: parsed.value, persistenceWarning: parsed.warning ?? warning };
 }
 
 function write(state: PersistedReviews): RecoverablePersistenceWarning | null {
