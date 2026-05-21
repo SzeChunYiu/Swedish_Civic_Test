@@ -10657,6 +10657,25 @@ function validateAdPlacementRouteParity() {
         reject('PracticeInterstitialAd web fallback must not import native-only ad SDK APIs');
         routeIsValid = false;
       }
+      if (!webInterstitialSource.includes('getAdBannerStatusLabel')) {
+        reject('PracticeInterstitialAd web fallback must use the shared live/test status selector');
+        routeIsValid = false;
+      }
+      if (
+        !webInterstitialSource.includes('const adStatusLabel = getAdBannerStatusLabel(copy, unit);')
+      ) {
+        reject('PracticeInterstitialAd web fallback must derive status copy from unit.testOnly');
+        routeIsValid = false;
+      }
+      if (
+        /unit\?\.testOnly\s*\?\s*copy\.testStatus\s*:\s*copy\.liveStatus/.test(
+          webInterstitialSource,
+        ) ||
+        webInterstitialSource.includes('const adStatusLabel = copy.liveStatus')
+      ) {
+        reject('PracticeInterstitialAd web fallback must not inline live/test status copy');
+        routeIsValid = false;
+      }
       if (!nativeInterstitialSource.includes('InterstitialAd.createForAdRequest')) {
         reject('PracticeInterstitialAd native placement must load through InterstitialAd');
         routeIsValid = false;
