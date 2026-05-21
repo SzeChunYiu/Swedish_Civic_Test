@@ -11,8 +11,15 @@ import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/l
  * - quiz mid-session
  * - auth modals
  * - the about-the-test screen itself (otherwise the modal sits on top of the page it sends you to)
+ * - the dedicated onboarding route (it is already the first-run guide)
  */
-const SUPPRESSED_PATH_PREFIXES = ['/exam', '/quiz', '/(auth)', '/about-the-test'] as const;
+const SUPPRESSED_PATH_PREFIXES = [
+  '/exam',
+  '/quiz',
+  '/(auth)',
+  '/about-the-test',
+  '/onboarding',
+] as const;
 
 type FirstRunCopy = {
   eyebrow: string;

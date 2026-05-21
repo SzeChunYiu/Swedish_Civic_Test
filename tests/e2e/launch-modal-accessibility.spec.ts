@@ -62,3 +62,29 @@ test('first-run about modal exposes only real guide actions on web', async ({ pa
 
   expect(consoleErrors).toEqual([]);
 });
+
+test('onboarding route is not covered by the first-run about modal', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.addInitScript(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\language', 'sv');
+  });
+
+  await page.goto('/onboarding', { waitUntil: 'networkidle' });
+
+  await expect(page.locator('[role="dialog"][aria-modal="true"]')).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: 'Förbered dig lugnt för samhällskunskapsprovet' }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Vad är medborgarskapsprovet?' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Välj ett mjukt dagligt mål' })).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});

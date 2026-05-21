@@ -282,6 +282,18 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'onboardingRouteCopy',
+    flags: ['--focus-onboarding-route-copy'],
+    summaryKeys: [
+      'onboardingRouteHeadersValidated',
+      'onboardingRouteHeaderParityValidated',
+      'onboardingRouteCopyLabelsValidated',
+      'onboardingRouteCopyParityValidated',
+      'firstRunAboutModalSuppressedRoutesValidated',
+      'firstRunAboutModalSuppressionParityValidated',
+    ],
+  },
+  {
     id: 'mockExamRuntimeParity',
     flags: ['--focus-mock-exam-runtime-parity'],
     summaryKeys: [
@@ -1921,6 +1933,21 @@ const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES = [
   '/sources',
   '/support',
   '/terms',
+];
+const EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES = [
+  '/exam',
+  '/quiz',
+  '/(auth)',
+  '/about-the-test',
+  '/onboarding',
+];
+const EXPECTED_FIRST_RUN_ABOUT_MODAL_ELIGIBLE_PATHS = [
+  '/',
+  '/home',
+  '/learn',
+  '/practice',
+  '/mistakes',
+  '/profile',
 ];
 const EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTE_FILES = {
   '/exam': 'app/(tabs)/exam.tsx',
@@ -8822,6 +8849,8 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let firstRunAboutModalSuppressedRoutesValidated = 0;
+let firstRunAboutModalSuppressionParityValidated = false;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -9517,6 +9546,22 @@ if (focusedValidationRequested('aboutTheTestRouteCopy')) {
     aboutTheTestSeenEffectParityValidated,
     aboutTheTestSwedishMockprovCopyGuardValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
+  });
+  process.exit(0);
+}
+
+if (focusedValidationRequested('onboardingRouteCopy')) {
+  validateOnboardingRouteHeaderParity();
+  validateOnboardingRouteCopyParity();
+  validateFirstRunAboutModalSuppressionParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteHeadersValidated,
+    onboardingRouteHeaderParityValidated,
+    onboardingRouteCopyLabelsValidated,
+    onboardingRouteCopyParityValidated,
+    firstRunAboutModalSuppressedRoutesValidated,
+    firstRunAboutModalSuppressionParityValidated,
   });
   process.exit(0);
 }
@@ -13031,6 +13076,75 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
+  }
+}
+
+function validateFirstRunAboutModalSuppressionParity() {
+  let valid = true;
+  let modalSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    modalSource = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/onboarding/FirstRunAboutTheTestModal.tsx could not be read for first-run route suppression: ${error.message}`,
+    );
+    return;
+  }
+
+  const suppressedPrefixMatch = modalSource.match(
+    /const SUPPRESSED_PATH_PREFIXES = \[([\s\S]*?)\] as const;/,
+  );
+  if (!suppressedPrefixMatch) {
+    reject('first-run about modal suppression prefixes must be declared as a const array');
+    return;
+  }
+
+  const suppressedPrefixes = [...suppressedPrefixMatch[1].matchAll(/'([^']+)'/g)].map(
+    (match) => match[1],
+  );
+
+  if (!arrayEquals(suppressedPrefixes, EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES)) {
+    reject(
+      `first-run about modal suppressed prefixes are ${JSON.stringify(
+        suppressedPrefixes,
+      )}, expected ${JSON.stringify(EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES)}`,
+    );
+  }
+
+  for (const prefix of EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES) {
+    if (!suppressedPrefixes.includes(prefix)) {
+      reject(`first-run about modal must suppress ${prefix}`);
+      continue;
+    }
+    firstRunAboutModalSuppressedRoutesValidated += 1;
+  }
+
+  for (const eligiblePath of EXPECTED_FIRST_RUN_ABOUT_MODAL_ELIGIBLE_PATHS) {
+    if (suppressedPrefixes.includes(eligiblePath)) {
+      reject(`first-run about modal must remain eligible on ${eligiblePath}`);
+    }
+  }
+
+  const launchPopupRoutes = adsConfig?.suppressedLaunchPopupRoutes;
+  if (!Array.isArray(launchPopupRoutes) || !launchPopupRoutes.includes('/onboarding')) {
+    reject('launch popup route suppression must include /onboarding');
+  }
+
+  if (
+    valid &&
+    firstRunAboutModalSuppressedRoutesValidated ===
+      EXPECTED_FIRST_RUN_ABOUT_MODAL_SUPPRESSED_PREFIXES.length
+  ) {
+    firstRunAboutModalSuppressionParityValidated = true;
   }
 }
 
@@ -19758,6 +19872,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateFirstRunAboutModalSuppressionParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -19948,6 +20063,8 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      firstRunAboutModalSuppressedRoutesValidated,
+      firstRunAboutModalSuppressionParityValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
