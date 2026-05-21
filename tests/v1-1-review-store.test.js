@@ -77,6 +77,36 @@ test('dueCards: respects limit', () => {
   assert.equal(list.length, 3);
 });
 
+test('dueCards: normalizes malformed runtime limits without dropping due cards', () => {
+  const { dueCards } = loadTs('lib/storage/reviewStore.ts');
+  const now = '2026-05-19T12:00:00.000Z';
+  const cards = [];
+  for (let i = 0; i < 4; i += 1) cards.push(fakeCard(`q${i}`, '2026-05-15T08:00:00.000Z'));
+  const state = makeState(cards);
+  const allDueIds = ['q0', 'q1', 'q2', 'q3'];
+
+  assert.deepEqual(
+    dueCards(state, { now, limit: 0 }).map((card) => card.questionId),
+    [],
+  );
+  assert.deepEqual(
+    dueCards(state, { now, limit: 2 }).map((card) => card.questionId),
+    ['q0', 'q1'],
+  );
+  assert.deepEqual(
+    dueCards(state, { now, limit: Number.POSITIVE_INFINITY }).map((card) => card.questionId),
+    allDueIds,
+  );
+
+  for (const malformedLimit of [-1, 1.5, Number.NaN, Number.NEGATIVE_INFINITY, '2', null]) {
+    assert.deepEqual(
+      dueCards(state, { now, limit: malformedLimit }).map((card) => card.questionId),
+      allDueIds,
+      `malformed limit ${String(malformedLimit)} should fall back to unlimited`,
+    );
+  }
+});
+
 test('dueCards: applies questionIdAllowlist (e.g. mistakes only)', () => {
   const { dueCards } = loadTs('lib/storage/reviewStore.ts');
   const now = '2026-05-19T12:00:00.000Z';

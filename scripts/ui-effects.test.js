@@ -1088,6 +1088,13 @@ test('home screen exposes dashboard card titles as headers', () => {
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
+test('profile dashboard CTA keeps natural Swedish dashboard copy', () => {
+  const source = read('app/(tabs)/profile.tsx');
+
+  assert.match(source, /Aktivitet, kapitelframsteg och XP visas på en egen sida/);
+  assert.doesNotMatch(source, /Kapitelprogress|kapitelprogress|XP-linjen/);
+});
+
 test('launch popup ad has native app-open implementation and safe web preview', () => {
   const layoutSource = read('app/_layout.tsx');
   const webSource = read('components/monetization/LaunchPopupAd.tsx');

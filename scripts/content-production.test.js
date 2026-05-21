@@ -125,7 +125,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.equal(summary.examRouteHeadersValidated, 8);
   assert.equal(summary.examRouteHeaderParityValidated, true);
-  assert.equal(summary.examRouteCopyLabelsValidated, 56);
+  assert.equal(summary.examRouteCopyLabelsValidated, 60);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.equal(summary.quizRouteHeadersValidated, 2);
   assert.equal(summary.quizRouteHeaderParityValidated, true);
@@ -133,7 +133,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.equal(summary.practiceRouteHeadersValidated, 1);
   assert.equal(summary.practiceRouteHeaderParityValidated, true);
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 70);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.chapterRouteHeadersValidated, 3);
   assert.equal(summary.chapterRouteHeaderParityValidated, true);
@@ -223,7 +223,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.purchaseTypeUnionsValidated, 2);
   assert.equal(summary.purchaseTypeInterfacesValidated, 8);
   assert.equal(summary.purchaseTypeSchemaParityValidated, true);
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 20);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 21);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.equal(summary.adConsentTypeUnionsValidated, 6);
   assert.equal(summary.adConsentTypeInterfacesValidated, 3);

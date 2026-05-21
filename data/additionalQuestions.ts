@@ -3451,8 +3451,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'q166',
     'ch04',
     { chapter: 'Politiska val och partier', section: 'Val och röstning', pageApprox: 14 },
-    'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
-    'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
+    'Vilka regler gäller för rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+    'What rules apply to voting rights in municipal and regional elections for people who are not Swedish citizens?',
     [
       [
         'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
