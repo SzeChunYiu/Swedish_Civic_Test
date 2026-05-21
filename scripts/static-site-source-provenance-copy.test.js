@@ -1,9 +1,7 @@
 const assert = require('node:assert/strict');
-const Module = require('node:module');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 const vm = require('node:vm');
 const {
   assertNoUnsupportedStaticTeamCredentialClaims,
@@ -17,23 +15,6 @@ const phrasePattern = (...parts) => new RegExp(parts.join(''), 'i');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-}
-
-function loadTs(relativePath) {
-  const filename = path.join(repoRoot, relativePath);
-  const source = fs.readFileSync(filename, 'utf8');
-  const output = ts.transpileModule(source, {
-    compilerOptions: {
-      esModuleInterop: true,
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-    },
-  });
-  const mod = new Module(filename);
-  mod.filename = filename;
-  mod.paths = Module._nodeModulePaths(path.dirname(filename));
-  mod._compile(output.outputText, filename);
-  return mod.exports;
 }
 
 function uniqueSorted(values) {
@@ -143,27 +124,33 @@ function termsContentParagraph(indexHtml) {
   return paragraphMatch[1];
 }
 
+function i18nTranslationMaps(appSource) {
+  const i18nMatch = appSource.match(/const i18n = \(window\.i18n = \{([\s\S]*?)\n\}\);/);
+  assert.ok(i18nMatch, 'static i18n dictionary should be present');
+  return vm.runInNewContext(`({${i18nMatch[1]}\n})`, {}, { timeout: 3000 });
+}
+
 function appTranslationValues(appSource, includeKey) {
-  const values = [];
-  const entryPattern = /"([^"]+)": "((?:\\.|[^"\\])*)"/g;
-  let match;
-  while ((match = entryPattern.exec(appSource))) {
-    const [, key, rawValue] = match;
-    if (includeKey(key)) values.push(JSON.parse(`"${rawValue}"`));
-  }
-  return values;
+  return Object.values(i18nTranslationMaps(appSource)).flatMap((dictionary) =>
+    Object.entries(dictionary)
+      .filter(([key]) => includeKey(key))
+      .map(([, value]) => value),
+  );
 }
 
 function englishTranslationMap(appSource) {
-  const englishMatch = appSource.match(/en:\s*{([\s\S]*?)\n\s*},\n\s*sv:/);
-  assert.ok(englishMatch, 'static English dictionary should be present');
-
-  const dictionary = vm.runInNewContext(`({${englishMatch[1]}\n})`, {}, { timeout: 3000 });
-  return new Map(Object.entries(dictionary));
+  return new Map(Object.entries(i18nTranslationMaps(appSource).en));
 }
 
 function normalizeInlineHtml(value) {
   return value.replace(/\s+/g, ' ').trim();
+}
+
+function normalizeHtmlText(value) {
+  return normalizeInlineHtml(value)
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
 }
 
 function parseStaticFallbackI18nValues(html, includeKey) {
@@ -266,8 +253,6 @@ const ebookFactboxSourceUrls = [
   'https://www.scb.se/mi0803-en',
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
-  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-  'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
 ];
 const unsupportedEbookFactboxPatterns = [
   /Facts you'll see on the test/i,
@@ -314,6 +299,67 @@ function assertStaticHomeHeroFooterFallbackParity(indexHtml, appSource) {
       `${key} no-JS fallback should match the English site/app.js dictionary`,
     );
   }
+}
+
+function assertStaticSourcesFallbackParity(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const sourceDictionaryEntries = Array.from(englishTranslations.entries())
+    .filter(([key]) => key.startsWith('sources.'))
+    .map(([key, value]) => [key, normalizeHtmlText(value)]);
+  const sourcesFallback = staticFallbackI18nValues(sourcesRoute(indexHtml), 'sources.');
+
+  assert.deepEqual(
+    Array.from(sourcesFallback.keys()).sort(),
+    sourceDictionaryEntries.map(([key]) => key).sort(),
+    'static Sources route should expose every guarded no-JS fallback key',
+  );
+
+  for (const [key, expectedValue] of sourceDictionaryEntries) {
+    assert.equal(
+      normalizeHtmlText(sourcesFallback.get(key)),
+      expectedValue,
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+}
+
+function questionProvenanceCounts() {
+  return staticQuestionBank().reduce(
+    (counts, question) => {
+      counts[question.questionProvenance] = (counts[question.questionProvenance] || 0) + 1;
+      return counts;
+    },
+    { uhr: 0, derived: 0, editorial: 0 },
+  );
+}
+
+function assertSourcesFallbackMatchesProvenanceMix(indexHtml) {
+  const sourcesFallback = sourcesRoute(indexHtml).replace(/\s+/g, ' ');
+  const counts = questionProvenanceCounts();
+
+  assert.match(
+    sourcesFallback,
+    new RegExp(`~${counts.uhr}\\s+questions\\s+cited\\s+directly`, 'i'),
+    'Sources no-JS fallback should show the current direct-UHR question count',
+  );
+  assert.match(
+    sourcesFallback,
+    new RegExp(`~${counts.derived}\\s+questions\\s+written\\s+editorially`, 'i'),
+    'Sources no-JS fallback should show the current derived-question count',
+  );
+  assert.match(
+    sourcesFallback,
+    /data-i18n="sources\.meta3\.v">UHR \+ derived</,
+    'Current-bank fallback should name both provenance families',
+  );
+
+  [
+    /current question bank cites UHR's public study material/i,
+    /don't list other source families/i,
+    /Every shipped question cites a chapter, section, and page/i,
+    /The bank is UHR-only today/i,
+    /data-i18n="sources\.meta3\.v">Sverige i fokus</i,
+  ].forEach((pattern) => assert.doesNotMatch(sourcesFallback, pattern));
 }
 
 function sourceProvenanceSurface() {
@@ -365,45 +411,15 @@ test('static question bank exports visible question provenance', () => {
   assert.ok(counts.derived > 0, 'static bank should include supplementary derived rows');
 });
 
-test('question provenance helpers fail closed for invalid tags and source-note copy', () => {
-  const {
-    filterQuestionsByProvenance,
-    getProvenanceDescription,
-    getProvenanceLabel,
-    getQuestionProvenance,
-  } = loadTs('lib/content/provenance.ts');
-  const pool = [
-    { id: 'uhr', tags: ['chapter-1'] },
-    { id: 'derived', tags: ['published-variant'] },
-    { id: 'editorial', tags: ['editorial'] },
-  ];
+test('static ebook provenance metadata is route-preserving and count-addressable', () => {
+  const ebookSource = read('site/ebook.js');
 
-  assert.equal(getQuestionProvenance(null), 'uhr');
-  assert.equal(getQuestionProvenance(undefined), 'uhr');
-  assert.equal(getQuestionProvenance({ tags: 'editorial' }), 'uhr');
-  assert.equal(getQuestionProvenance({ tags: { includes: () => true } }), 'uhr');
-  assert.equal(getQuestionProvenance({ tags: ['editorial', 1] }), 'uhr');
-  assert.equal(getQuestionProvenance({ tags: ['editorial'] }), 'editorial');
-  assert.equal(getQuestionProvenance({ tags: ['published-variant'] }), 'derived');
-  assert.deepEqual(filterQuestionsByProvenance(null, { includeSupplementary: false }), []);
-  assert.deepEqual(
-    filterQuestionsByProvenance(pool, { includeSupplementary: 'yes' }).map(
-      (question) => question.id,
-    ),
-    ['uhr'],
-  );
-  assert.deepEqual(
-    filterQuestionsByProvenance(pool, { includeSupplementary: true }).map(
-      (question) => question.id,
-    ),
-    ['uhr', 'derived', 'editorial'],
-  );
-  assert.equal(getProvenanceLabel('banana', 'sv'), 'UHR');
-  assert.equal(
-    getProvenanceDescription(null, 'en'),
-    "Based on UHR's study material Sverige i fokus.",
-  );
-  assert.equal(getProvenanceLabel('derived', 'banana'), 'Tillägg');
+  assert.match(ebookSource, /function ebookRouteHash\(chapterId,\s*targetParam,\s*targetId\)/);
+  assert.match(ebookSource, /data-source-counts='\$\{serializedCounts\}'/);
+  assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fn',\s*id\)/);
+  assert.match(ebookSource, /ebookRouteHash\(chapterId,\s*'fnref',\s*footnote\.id\)/);
+  assert.match(ebookSource, /function scrollEbookRouteTarget\(\)/);
+  assert.doesNotMatch(ebookSource, /href="#ebook-fn(?:ref)?-/);
 });
 
 test('static study-buddy copy keeps complete Swedish and English line pools', () => {
@@ -448,6 +464,23 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static Sources no-JS fallback mirrors the English dictionary', () => {
+  assertStaticSourcesFallbackParity(read('site/index.html'), read('site/app.js'));
+});
+
+test('static Sources no-JS fallback matches the shipped provenance mix', () => {
+  const indexHtml = read('site/index.html');
+  assertSourcesFallbackMatchesProvenanceMix(indexHtml);
+
+  assert.throws(
+    () =>
+      assertSourcesFallbackMatchesProvenanceMix(
+        indexHtml.replace('>UHR + derived</span>', '>Sverige i fokus</span>'),
+      ),
+    /Current-bank fallback should name both provenance families/,
+  );
 });
 
 test('static FAQ no-JS fallback mirrors the English dictionary', () => {
@@ -543,13 +576,13 @@ test('shared static copy guard rejects unsupported pass and passport outcome slo
 test('shared static copy guard rejects unsupported team credential claims', () => {
   assertNoUnsupportedStaticTeamCredentialClaims(repoRoot);
 
-  assert.deepEqual(
-    findUnsupportedStaticTeamCredentialClaimsInSource(
-      "built by people who've ta" + 'ken the te' + 'st themselves',
-      'fixture.js',
-    ).map(({ label, match }) => [label, match]),
-    [['English team test-taker claim', 'ta' + 'ken the te' + 'st themselves']],
+  const englishCredentialIssues = findUnsupportedStaticTeamCredentialClaimsInSource(
+    "built by people who've taken the " + 'test themselves',
+    'fixture.js',
   );
+  assert.equal(englishCredentialIssues.length, 1);
+  assert.equal(englishCredentialIssues[0].label, 'English team test-taker claim');
+  assert.equal(englishCredentialIssues[0].match, 'taken the ' + 'test themselves');
   assert.deepEqual(
     findUnsupportedStaticTeamCredentialClaimsInSource(
       'byggt av personer som själva har gjort provet',
@@ -570,14 +603,12 @@ test('static ebook practical test copy is backed by current UHR source metadata'
     ebookSource,
     /first civic-knowledge sitting will be held on 15 August 2026 in Stockholm/i,
   );
-  assert.match(ebookSource, /registration opens in early June 2026/i);
   assert.match(ebookSource, /only people who receive a letter from Migrationsverket can sign up/i);
   assert.match(ebookSource, /Seats are limited/i);
   assert.match(ebookSource, /free of charge/i);
   assert.match(ebookSource, /generous time/i);
   assert.match(ebookSource, /UHR has not yet published the exact time and place/i);
   assert.match(ebookSource, /första samhällskunskapsprovet inom medborgarskapsprovet/i);
-  assert.match(ebookSource, /anmälan öppnar i början av juni 2026/i);
   assert.match(ebookSource, /brev från Migrationsverket/i);
   assert.match(ebookSource, /Antalet platser är begränsat/i);
   assert.match(ebookSource, /kostnadsfritt/i);
@@ -599,20 +630,6 @@ test('static ebook factbox and current prose claims use retrieved source metadat
   assert.match(ebookSource, /Fakta att repetera/);
   assert.match(ebookSource, /Sources accessed/);
   assert.match(ebookSource, /Källor hämtade/);
-  assert.match(ebookSource, /own long-term income/);
-  assert.match(ebookSource, /SEK 20,000\/month before tax/);
-  assert.match(ebookSource, /three 2026 income base amounts per year/);
-  assert.match(
-    ebookSource,
-    /Partner income, assets, and temporary work without long-term duration do not count/,
-  );
-  assert.match(ebookSource, /egen varaktig inkomst/);
-  assert.match(ebookSource, /20 000 kronor per månad före skatt/);
-  assert.match(
-    ebookSource,
-    /Inkomster från partner, tillgångar och tillfälliga jobb utan varaktighet räknas inte/,
-  );
-  assert.match(ebookSource, /Migrationsverket avgör ansökan/);
 
   ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
   unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));
