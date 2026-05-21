@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useMemo, useRef, useState } from 'react';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { ComplianceLinks } from '../components/compliance/ComplianceLinks';
@@ -311,6 +311,26 @@ type ImportFeedback = {
   text: string;
 };
 
+type FocusableElement = { focus?: () => void };
+type KeyboardEventLike = {
+  key?: string;
+  nativeEvent?: { key?: string };
+  preventDefault?: () => void;
+};
+type RadioOptionValue = number | string;
+type RadioOptionRefMap = { current: Record<string, FocusableElement | null> };
+type WebRadioKeyboardProps = {
+  onKeyDown?: (event: KeyboardEventLike) => void;
+  tabIndex?: 0 | -1;
+};
+
+function getRadioArrowDirection(event: KeyboardEventLike): -1 | 1 | null {
+  const key = event.nativeEvent?.key ?? event.key;
+  if (key === 'ArrowRight' || key === 'ArrowDown') return 1;
+  if (key === 'ArrowLeft' || key === 'ArrowUp') return -1;
+  return null;
+}
+
 function buildImportSummaryLines(
   copy: SettingsCopy,
   summary: LocalStudyDataImportSummary,
@@ -379,6 +399,9 @@ export default function Screen() {
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
   const [focusedControl, setFocusedControl] = useState<string | null>(null);
+  const dailyGoalOptionRefs = useRef<Record<string, FocusableElement | null>>({});
+  const languageOptionRefs = useRef<Record<string, FocusableElement | null>>({});
+  const themeOptionRefs = useRef<Record<string, FocusableElement | null>>({});
   const themeOptions: { value: ThemeMode; label: string }[] = [
     { value: 'system', label: copy.themeSystemLabel },
     { value: 'light', label: copy.themeLightLabel },
@@ -398,6 +421,45 @@ export default function Screen() {
       )
     : null;
 
+  const handleRadioGroupKeyDown = <T extends RadioOptionValue>(
+    event: KeyboardEventLike,
+    options: readonly T[],
+    selectedValue: T,
+    selectValue: (value: T) => void,
+    optionRefs: RadioOptionRefMap,
+  ) => {
+    const direction = getRadioArrowDirection(event);
+    if (!direction || options.length === 0) return;
+
+    event.preventDefault?.();
+    const currentIndex = options.findIndex((option) => option === selectedValue);
+    const nextIndex =
+      currentIndex >= 0
+        ? (currentIndex + direction + options.length) % options.length
+        : direction > 0
+          ? 0
+          : options.length - 1;
+    const nextValue = options[nextIndex];
+
+    selectValue(nextValue);
+    optionRefs.current[String(nextValue)]?.focus?.();
+  };
+
+  const getWebRadioKeyboardProps = <T extends RadioOptionValue>(
+    options: readonly T[],
+    selectedValue: T,
+    optionValue: T,
+    selectValue: (value: T) => void,
+    optionRefs: RadioOptionRefMap,
+  ): WebRadioKeyboardProps =>
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: (event: KeyboardEventLike) =>
+            handleRadioGroupKeyDown(event, options, selectedValue, selectValue, optionRefs),
+          tabIndex: selectedValue === optionValue ? 0 : -1,
+        }
+      : {};
+
   const renderLanguageButton = (value: AppLanguage, labelEn: string, labelSv: string) => {
     const label = language === 'sv' ? labelSv : labelEn;
     const focusKey = `language-${value}`;
@@ -413,6 +475,9 @@ export default function Screen() {
         onBlur={() => setFocusedControl(null)}
         onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setLanguage(value)}
+        ref={(node) => {
+          languageOptionRefs.current[value] = node as FocusableElement | null;
+        }}
         style={({ pressed }) => [
           styles.pill,
           language === value ? styles.pillActive : null,
@@ -423,6 +488,13 @@ export default function Screen() {
               : styles.controlPressed
             : null,
         ]}
+        {...getWebRadioKeyboardProps(
+          ['sv', 'en'],
+          language,
+          value,
+          setLanguage,
+          languageOptionRefs,
+        )}
       >
         <Text style={[styles.pillText, language === value ? styles.pillTextActive : null]}>
           {label}
@@ -446,6 +518,9 @@ export default function Screen() {
         onBlur={() => setFocusedControl(null)}
         onFocus={() => setFocusedControl(focusKey)}
         onPress={() => setThemeMode(value)}
+        ref={(node) => {
+          themeOptionRefs.current[value] = node as FocusableElement | null;
+        }}
         style={({ pressed }) => [
           styles.pill,
           selected ? styles.pillActive : null,
@@ -456,6 +531,13 @@ export default function Screen() {
               : styles.controlPressed
             : null,
         ]}
+        {...getWebRadioKeyboardProps(
+          themeOptions.map((option) => option.value),
+          themeMode,
+          value,
+          setThemeMode,
+          themeOptionRefs,
+        )}
       >
         <Text style={[styles.pillText, selected ? styles.pillTextActive : null]}>{label}</Text>
       </Pressable>
@@ -565,6 +647,9 @@ export default function Screen() {
                   onBlur={() => setFocusedControl(null)}
                   onFocus={() => setFocusedControl(focusKey)}
                   onPress={() => setDailyGoalAnswers(goal)}
+                  ref={(node) => {
+                    dailyGoalOptionRefs.current[String(goal)] = node as FocusableElement | null;
+                  }}
                   style={({ pressed }) => [
                     styles.pill,
                     styles.goalPill,
@@ -576,6 +661,13 @@ export default function Screen() {
                         : styles.controlPressed
                       : null,
                   ]}
+                  {...getWebRadioKeyboardProps(
+                    supportedDailyGoalAnswerOptions,
+                    dailyGoalAnswers,
+                    goal,
+                    setDailyGoalAnswers,
+                    dailyGoalOptionRefs,
+                  )}
                 >
                   <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
                     {goal}

@@ -23,7 +23,9 @@ async function expectStableCompanionPreview(preview: Locator, assetPattern: RegE
   await expectPreviewAsset(preview, assetPattern);
 }
 
-test('settings controls expose selected and checked state on web', async ({ page }) => {
+test('settings controls expose selected state and radio arrow keyboard navigation on web', async ({
+  page,
+}) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -55,6 +57,19 @@ test('settings controls expose selected and checked state on web', async ({ page
 
   await expect(englishLanguage).toHaveAttribute('aria-checked', 'true');
   await expect(swedishLanguage).toHaveAttribute('aria-checked', 'false');
+  await englishLanguage.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(page.getByLabel('Byt studiespråk till Svenska')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  const swedishEnglishLanguage = page.getByLabel('Byt studiespråk till Engelskt stöd');
+  await swedishEnglishLanguage.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 
   const tenAnswers = page.getByLabel('Set daily goal to 10 answers');
   const twentyAnswers = page.getByLabel('Set daily goal to 20 answers');
@@ -62,6 +77,12 @@ test('settings controls expose selected and checked state on web', async ({ page
 
   await expect(twentyAnswers).toHaveAttribute('aria-checked', 'true');
   await expect(tenAnswers).toHaveAttribute('aria-checked', 'false');
+  await twentyAnswers.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(tenAnswers).toHaveAttribute('aria-checked', 'true');
+  await tenAnswers.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(twentyAnswers).toHaveAttribute('aria-checked', 'true');
 
   const systemTheme = page.getByLabel('Choose theme: Use system');
   const darkTheme = page.getByLabel('Choose theme: Dark');
@@ -69,6 +90,12 @@ test('settings controls expose selected and checked state on web', async ({ page
 
   await expect(darkTheme).toHaveAttribute('aria-checked', 'true');
   await expect(systemTheme).toHaveAttribute('aria-checked', 'false');
+  await darkTheme.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(systemTheme).toHaveAttribute('aria-checked', 'true');
+  await systemTheme.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(darkTheme).toHaveAttribute('aria-checked', 'true');
 
   await expect(page.getByRole('radiogroup', { name: 'Choose study companion' })).toBeVisible();
   await expect(
