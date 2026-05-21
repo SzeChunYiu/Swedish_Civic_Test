@@ -1,6 +1,6 @@
 # GOAL — Swedish_Civic_Test
 
-Updated: 2026-05-20 23:05 by billy (operator) — added Source-Provenance Contract
+Updated: 2026-05-21 by billy (operator) — NOW BUILDING THE FINAL VERSION (v1.1). The "no-account MVP" scope is SUPERSEDED: account/sign-in (Supabase + Google) and the full Pro tier + all v1.1 lanes are IN SCOPE and ACTIVE now. v1.0 Remove-Ads + Source-Provenance must not regress.
 
 ## Source-Provenance Contract (P0 — every release)
 
@@ -168,7 +168,7 @@ operator guard are the merge-gate until branch protection or CI is restored.
 - ≤20% of commits may have zero `app/components/lib/types/data/tests` lines (allow-meta tagged release/publishing work).
 - Each MANAGER must reject at least one bad worker iteration per day or the operator will assume the manager is rubber-stamping.
 
-## Next sprint preview — v1.1 Pro tier (NOT current sprint; queued for after v1.0 Remove-Ads ships)
+## CURRENT SPRINT — v1.1 final version (ALL lanes ACTIVE NOW)
 
 Operator has approved nine blueprints in `swedish_citizenship_app_project_plan/`:
 
@@ -191,13 +191,12 @@ Lanes that have NO Pro/auth dependency and can start as soon as v1.0 ships:
 Lanes blocked on Pro IAP wiring (lane `pro-tier` iterations 1–2):
 - `confidence-slider`, `custom-study-plan`, `fsrs-review` (UI portion).
 
-Lane blocked on Supabase + Google sign-in:
-- `referral-google`.
+FOUNDATION lane — build FIRST (unblocks `referral-google` and gates the purchase). Restore the account/sign-in surface that was deleted in `dc8fecf00` for the old MVP: recover the removed files from `dc8fecf00^` (`app/(auth)/sign-in.tsx`, `app/account.tsx`, `app/auth/callback.tsx`, `components/auth/*`, `lib/auth/*`, `lib/supabase.ts`) AS REFERENCE and rebuild them against the CURRENT codebase (Supabase optional sign-in with Google/Apple). Then `referral-google` proceeds.
 
 Lane blocked on long-form ebook content authoring:
 - `ebook-highlights` (UI portion).
 
-**Workers MUST NOT start v1.1 lanes until the current Remove-Ads v1.0 acceptance test passes on `main`.** The Pro tier extends the entitlement type without renaming existing fields, but accidental scope creep will break Remove-Ads acceptance. Off-sprint commits will be reverted.
+**v1.1 lanes are ACTIVE NOW — build them.** v1.1 is no longer gated behind v1.0; v1.0 Remove-Ads + Source-Provenance must keep passing (do not regress them). The Pro tier extends the entitlement type ADDITIVELY (do not rename existing fields). The no-account guard `scripts/native-account-scope.test.js` has been REMOVED because account/sign-in is now in scope.
 
 Operator session is concurrently implementing two foundational pieces in parallel (out-of-band, does not count against worker quotas, tagged `[allow-meta]` on any non-product touches):
 - FSRS algorithm core in `lib/learning/spacedRepetition.ts` (so the review-store lane has something to plug into).

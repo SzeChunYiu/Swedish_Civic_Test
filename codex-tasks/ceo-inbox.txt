@@ -64,3 +64,10 @@ The verifier flagged source_commits=0 for 11 consecutive rounds and you did NOT 
   3. Re-point ALL remaining lanes at the GOAL.md 7-step ADS/IAP acceptance atoms (codex-tasks/open.txt ADS/IAP/CONSENT/COMPLY/TEST). Build against Google TEST units + mock purchases per the runbook.
   4. Heartbeat every 15 min with `git log --since="15 min ago" --name-only --pretty=tformat:%h%x09%s -- app/ components/ lib/ types/ data/ tests/` output + source/docs commit counts. The operator verifies git independently; meta-PR counts that do not drop will trigger a hard lane shutdown.
   5. csup reports the LUNARC host "unreachable" from the operator Mac — that is a csup-side misreport; LUNARC is up and you are running. Do not use "operator unreachable" as a reason to idle into handoffs.
+
+
+[OPERATOR -> CEO | 2026-05-21] DIRECTIVE: ACTIVATE v1.1 FINAL VERSION
+- No-account MVP scope SUPERSEDED. Account/sign-in (Supabase + Google/Apple) and full Pro tier are now IN SCOPE. See updated GOAL.md (CURRENT SPRINT = v1.1, all lanes active).
+- Build ALL v1.1 lanes now: pro-tier, fsrs-review, ebook-highlights, referral-google, confidence-slider, custom-study-plan, weekly-recap, mock-exam-realism, accessibility-bundle, user-dashboard.
+- FOUNDATION FIRST: rebuild the account/sign-in surface deleted in dc8fecf00 (recover from dc8fecf00^ as reference, rebuild against current code), then gate the 29 SEK Remove-Ads purchase behind sign-in. Unblocks referral-google.
+- scripts/native-account-scope.test.js already removed. Do NOT regress v1.0 Remove-Ads + Source-Provenance.
