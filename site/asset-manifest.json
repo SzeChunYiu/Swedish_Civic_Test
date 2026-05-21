@@ -96,8 +96,8 @@
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 71388,
-      "sha256": "137a4c9c191947656f97bec83081bc5bb3d28ae7f0de9176133b9710ea73ac1a"
+      "bytes": 71634,
+      "sha256": "d4275cdca3e01ea3edd27fa63b01b48ae42a8d47701c36eac0c5f0b93f693bc9"
     },
     "practice.js": {
       "bytes": 68033,
@@ -112,8 +112,8 @@
       "sha256": "4c76cdb5cb1cc122f9eded930c17727e2daa5bf52addc4a9494218794fabc528"
     },
     "settings.js": {
-      "bytes": 12319,
-      "sha256": "c1e92f0f5fbbc956c1e6f62cbad70ea331ef46065e3453160882abfe72b99afb"
+      "bytes": 12903,
+      "sha256": "4b3be1332e38ecf10a23b00915e7afa9985e3a9783e199d15299afcfbd4198cc"
     },
     "signin.js": {
       "bytes": 19236,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 112094,
-      "sha256": "8c90841e0fb204cc4d53124b034d6d60058e5fb67f1f0fdec039284d95db1612"
+      "bytes": 112271,
+      "sha256": "39d9881c90330b02cbdd6c15d9af93dff03e7122a73ed7616c78df9ac4e01131"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
