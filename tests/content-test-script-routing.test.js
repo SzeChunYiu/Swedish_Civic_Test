@@ -98,6 +98,34 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('Onboarding route scroll parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const onboardingScrollTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-onboarding-route-scroll-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-onboarding-route-scroll/);
+  assert.match(
+    validatorSource,
+    /validateOnboardingRouteScrollParity\(\);[\s\S]*onboardingRouteScrollRulesValidated[\s\S]*onboardingRouteScrollParityValidated/,
+  );
+  assert.match(onboardingScrollTestSource, /--focus-onboarding-route-scroll/);
+  assert.doesNotMatch(
+    onboardingScrollTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Onboarding route scroll tests must not route through full content validation',
+  );
+  assert.doesNotMatch(
+    onboardingScrollTestSource,
+    /import \\\{ Pressable, ScrollView, StyleSheet, Text, View \\\}/,
+    'Onboarding route scroll tests must not require one exact react-native import list',
+  );
+});
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
