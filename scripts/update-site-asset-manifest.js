@@ -119,6 +119,11 @@ function listInlineStyleAssetReferences(indexHtml) {
   );
 }
 
+function listStyleBlockAssetReferences(indexHtml) {
+  return Array.from(indexHtml.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)).flatMap((match) =>
+    extractCssUrlReferences(match[1]),
+  );
+}
 
 function listSrcSetReferences(value) {
   return value
@@ -131,7 +136,8 @@ function listSrcSetReferences(value) {
 
 function listHtmlDirectAssetReferences(indexHtml) {
   const references = [];
-  const attributePattern = /\b(src|href|poster|srcset|imagesrcset|style)\s*=\s*([\"'])([\s\S]*?)\2/gi;
+  const attributePattern =
+    /\b(src|href|poster|srcset|imagesrcset|style)\s*=\s*([\"'])([\s\S]*?)\2/gi;
 
   for (const match of indexHtml.matchAll(attributePattern)) {
     const attributeName = match[1].toLowerCase();
@@ -215,6 +221,7 @@ function extractLocalAssetReferences(indexHtml, options = {}) {
   const siteDir = path.resolve(options.siteDir || defaultSiteDir);
   const references = [
     ...listHtmlDirectAssetReferences(indexHtml),
+    ...listStyleBlockAssetReferences(indexHtml),
     ...listStylesheetAssetReferences(siteDir, indexHtml),
   ];
 
