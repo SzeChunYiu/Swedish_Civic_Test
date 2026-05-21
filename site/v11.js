@@ -396,18 +396,10 @@
   /* ----------------------------------------------- UI rendering */
 
   const VERDICT_COPY = {
-    en: {
-      not_ready_yet: 'Keep practicing',
-      getting_there: 'Progress is building',
-      almost_ready: 'Practice looks steady',
-      strong_preparation: 'Strong practice base',
-    },
-    sv: {
-      not_ready_yet: 'Fortsätt öva',
-      getting_there: 'Framstegen växer',
-      almost_ready: 'Övningen ser stabil ut',
-      strong_preparation: 'Stark övningsgrund',
-    },
+    not_ready_yet: { en: 'Keep practicing', sv: 'Fortsätt öva', 'zh-Hans': '继续练习', 'zh-Hant': '繼續練習', ar: 'واصل التدرّب', ckb: 'بەردەوام بە لە مەشق', fa: 'به تمرین ادامه بده', pl: 'Ćwicz dalej', so: 'Sii wad tababarka', ti: 'ቀጽል ምልምማድ', tr: 'Pratiğe devam et', uk: 'Продовжуйте практику' },
+    getting_there: { en: 'Progress is building', sv: 'Framstegen växer', 'zh-Hans': '进步正在积累', 'zh-Hant': '進步正在累積', ar: 'التقدّم يتراكم', ckb: 'پێشکەوتن دروست دەبێت', fa: 'پیشرفت در حال شکل‌گیری است', pl: 'Postępy rosną', so: 'Horumarku waa kobcayaa', ti: 'ምዕባለ እናተወሰኸ', tr: 'İlerleme artıyor', uk: 'Прогрес зростає' },
+    almost_ready: { en: 'Practice looks steady', sv: 'Övningen ser stabil ut', 'zh-Hans': '练习状态稳定', 'zh-Hant': '練習狀態穩定', ar: 'التدرّب يبدو ثابتًا', ckb: 'مەشق جێگیر دیارە', fa: 'تمرین پایدار به نظر می‌رسد', pl: 'Ćwiczenia wyglądają stabilnie', so: 'Tababarku wuxuu u muuqdaa mid degan', ti: 'ምልምማድ ቅሱን ይመስል', tr: 'Pratik istikrarlı görünüyor', uk: 'Практика виглядає стабільною' },
+    strong_preparation: { en: 'Strong practice base', sv: 'Stark övningsgrund', 'zh-Hans': '练习基础扎实', 'zh-Hant': '練習基礎扎實', ar: 'أساس تدرّب قوي', ckb: 'بناغەیەکی بەهێزی مەشق', fa: 'پایه‌ی تمرینی قوی', pl: 'Mocna baza ćwiczeń', so: 'Saldhig tababar oo xoog leh', ti: 'ድልዱል መሰረት ምልምማድ', tr: 'Güçlü pratik temeli', uk: 'Міцна база практики' },
   };
   const VERDICT_COLOR = {
     not_ready_yet: '#e05b2e',
@@ -425,6 +417,11 @@
   }
   function pct(v) {
     return Math.round(v * 100) + '%';
+  }
+  // Locale lookup for dashboard strings. Falls back to English for any missing
+  // locale so newly added locales never render blank.
+  function dtr(map) {
+    return map[lang()] || map.en;
   }
 
   const GATE_COPY = {
@@ -468,6 +465,26 @@
     const el = document.getElementById('v11-dashboard');
     if (!el) return;
 
+    // Localize the "Your progress" eyebrow that lives in index.html. Run this on
+    // every render path (including the active-quiz, signed-out, and no-progress
+    // early returns below) so the eyebrow is always in the active locale.
+    const eb = document.querySelector('#v11-dashboard-wrap .eyebrow');
+    if (eb)
+      eb.textContent = dtr({
+        sv: 'Dina framsteg',
+        en: 'Your progress',
+        'zh-Hans': '你的学习进度',
+        'zh-Hant': '你的學習進度',
+        ar: 'تقدّمك',
+        ckb: 'پێشکەوتنت',
+        fa: 'پیشرفت تو',
+        pl: 'Twoje postępy',
+        so: 'Horumarkaaga',
+        ti: 'ምዕባለኻ',
+        tr: 'İlerlemen',
+        uk: 'Ваш прогрес',
+      });
+
     // The dashboard is a login-gated, cross-device feature. It must NOT appear
     // during an active practice/quiz session (hash carries c= or ch=) — only on
     // the practice hub. When signed out we still show the dashboard "shape"
@@ -497,7 +514,6 @@
     }
     el.style.display = '';
 
-    const l = lang();
     const readiness = computeReadiness();
     const recap = computeWeeklyRecap();
     const streakResult = computeStreakWithFreeze();
@@ -506,7 +522,7 @@
     const rescuedThisRun = streakResult.rescuedThisRun;
     const weak = computeWeakChapters(3);
 
-    const verdictLabel = (VERDICT_COPY[l] || VERDICT_COPY.en)[readiness.verdict];
+    const verdictLabel = dtr(VERDICT_COPY[readiness.verdict] || VERDICT_COPY.not_ready_yet);
     const verdictColor = VERDICT_COLOR[readiness.verdict];
     const circumference = 2 * Math.PI * 34;
     const dashLen = Math.round((readiness.score / 100) * circumference);
@@ -523,7 +539,20 @@
 
     const rlabel = document.createElement('span');
     rlabel.className = 'v11-label';
-    rlabel.textContent = l === 'sv' ? 'Lokal övningssignal' : 'Local practice signal';
+    rlabel.textContent = dtr({
+      sv: 'Lokal övningssignal',
+      en: 'Local practice signal',
+      'zh-Hans': '本机练习信号',
+      'zh-Hant': '本機練習信號',
+      ar: 'إشارة التدرّب المحلية',
+      ckb: 'سیگناڵی مەشقی ناوخۆیی',
+      fa: 'سیگنال تمرین محلی',
+      pl: 'Lokalny sygnał ćwiczeń',
+      so: 'Calaamadda tababarka maxalliga ah',
+      ti: 'ናይ ከባቢ ምልክት ምልምማድ',
+      tr: 'Yerel pratik sinyali',
+      uk: 'Локальний сигнал практики',
+    });
     readinessCard.appendChild(rlabel);
 
     const ringWrap = document.createElement('div');
@@ -573,28 +602,96 @@
     if (readiness.isSparse) {
       const sparse = document.createElement('span');
       sparse.className = 'v11-sparse';
-      sparse.textContent =
-        l === 'sv'
-          ? 'Svara på fler frågor för en stabilare lokal signal'
-          : 'Answer more questions for a steadier local signal';
+      sparse.textContent = dtr({
+        sv: 'Svara på fler frågor för en stabilare lokal signal',
+        en: 'Answer more questions for a steadier local signal',
+        'zh-Hans': '多回答一些问题，让本机信号更稳定',
+        'zh-Hant': '多回答一些問題，讓本機信號更穩定',
+        ar: 'أجب عن المزيد من الأسئلة للحصول على إشارة محلية أكثر ثباتًا',
+        ckb: 'وەڵامی پرسیاری زیاتر بدەرەوە بۆ سیگناڵێکی ناوخۆیی جێگیرتر',
+        fa: 'برای سیگنال محلی پایدارتر، به سؤالات بیشتری پاسخ بده',
+        pl: 'Odpowiedz na więcej pytań, aby lokalny sygnał był stabilniejszy',
+        so: 'Ka jawaab su’aalo dheeraad ah si calaamadda maxalliga ah u sii xasilo',
+        ti: 'ንዝያዳ ቅሱን ናይ ከባቢ ምልክት ብዙሕ ሕቶታት ምለስ',
+        tr: 'Daha kararlı bir yerel sinyal için daha fazla soru yanıtla',
+        uk: 'Дайте відповіді на більше запитань для стабільнішого локального сигналу',
+      });
       readinessCard.appendChild(sparse);
     }
 
     const caveat = document.createElement('p');
     caveat.className = 'v11-sparse';
-    caveat.textContent =
-      l === 'sv'
-        ? 'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.'
-        : 'Based only on practice and mock attempts on this device, not an official result forecast.';
+    caveat.textContent = dtr({
+      sv: 'Bygger bara på övningar och övningsprov på den här enheten, inte en officiell prognos.',
+      en: 'Based only on practice and mock attempts on this device, not an official result forecast.',
+      'zh-Hans': '仅基于本设备上的练习和模拟测验，并非官方成绩预测。',
+      'zh-Hant': '僅基於本裝置上的練習和模擬測驗，並非官方成績預測。',
+      ar: 'يستند فقط إلى التدرّب والاختبارات التجريبية على هذا الجهاز، وليس توقّعًا رسميًا للنتيجة.',
+      ckb: 'تەنها لەسەر مەشق و تاقیکردنەوەی نمونەیی لەسەر ئەم ئامێرە بنیات نراوە، پێشبینییەکی فەرمی ئەنجام نییە.',
+      fa: 'فقط بر اساس تمرین و آزمون‌های آزمایشی روی این دستگاه است، نه پیش‌بینی رسمی نتیجه.',
+      pl: 'Oparte wyłącznie na ćwiczeniach i próbnych testach na tym urządzeniu, nie jest oficjalną prognozą wyniku.',
+      so: 'Waxay ku saleysan tahay kaliya tababarka iyo imtixaannada tijaabada ah ee qalabkan, maaha saadaal rasmi ah oo natiijo.',
+      ti: 'ኣብዚ መሳርሒ ኣብ ዝግበር ምልምማድን ፈተነ ፈተናታትን ጥራይ ዝተመስረተ እዩ፣ ወግዓዊ ትንበያ ውጽኢት ኣይኮነን።',
+      tr: 'Yalnızca bu cihazdaki pratiğe ve deneme sınavlarına dayanır, resmi bir sonuç tahmini değildir.',
+      uk: 'Базується лише на практиці та пробних спробах на цьому пристрої, це не офіційний прогноз результату.',
+    });
     readinessCard.appendChild(caveat);
 
     const comps = document.createElement('div');
     comps.className = 'v11-components';
     [
-      [l === 'sv' ? 'Rätt' : 'Practice accuracy', readiness.components.accuracy],
-      [l === 'sv' ? 'Kapiteltäckning' : 'Chapter coverage', readiness.components.coverage],
+      [
+        dtr({
+          sv: 'Rätt',
+          en: 'Practice accuracy',
+          'zh-Hans': '练习正确率',
+          'zh-Hant': '練習正確率',
+          ar: 'دقة التدرّب',
+          ckb: 'وردیی مەشق',
+          fa: 'دقت تمرین',
+          pl: 'Dokładność ćwiczeń',
+          so: 'Saxnaanta tababarka',
+          ti: 'ልክዕነት ምልምማድ',
+          tr: 'Pratik doğruluğu',
+          uk: 'Точність практики',
+        }),
+        readiness.components.accuracy,
+      ],
+      [
+        dtr({
+          sv: 'Kapiteltäckning',
+          en: 'Chapter coverage',
+          'zh-Hans': '章节覆盖率',
+          'zh-Hant': '章節覆蓋率',
+          ar: 'تغطية الفصول',
+          ckb: 'بەرفراوانی بەشەکان',
+          fa: 'پوشش فصل‌ها',
+          pl: 'Pokrycie rozdziałów',
+          so: 'Daboolka cutubyada',
+          ti: 'ሽፋን ምዕራፋት',
+          tr: 'Bölüm kapsamı',
+          uk: 'Охоплення розділів',
+        }),
+        readiness.components.coverage,
+      ],
       readiness.components.mockAverage > 0
-        ? [l === 'sv' ? 'Övningsprov' : 'Mock average', readiness.components.mockAverage]
+        ? [
+            dtr({
+              sv: 'Övningsprov',
+              en: 'Mock average',
+              'zh-Hans': '模拟测验平均分',
+              'zh-Hant': '模擬測驗平均分',
+              ar: 'متوسط الاختبارات التجريبية',
+              ckb: 'تێکڕای تاقیکردنەوەی نمونەیی',
+              fa: 'میانگین آزمون آزمایشی',
+              pl: 'Średnia z próbnych',
+              so: 'Celceliska imtixaanka tijaabada',
+              ti: 'ማእከላይ ፈተነ ፈተና',
+              tr: 'Deneme ortalaması',
+              uk: 'Середнє пробних',
+            }),
+            readiness.components.mockAverage,
+          ]
         : null,
     ].forEach(function (item) {
       if (!item) return;
@@ -610,7 +707,20 @@
     streakCard.className = 'v11-card v11-card--streak';
     const slabel = document.createElement('span');
     slabel.className = 'v11-label';
-    slabel.textContent = l === 'sv' ? 'Streak' : 'Streak';
+    slabel.textContent = dtr({
+      sv: 'Svit',
+      en: 'Streak',
+      'zh-Hans': '连续天数',
+      'zh-Hant': '連續天數',
+      ar: 'السلسلة',
+      ckb: 'زنجیرە',
+      fa: 'روزهای پیاپی',
+      pl: 'Passa',
+      so: 'Taxane',
+      ti: 'ተኸታታሊ',
+      tr: 'Seri',
+      uk: 'Серія',
+    });
     streakCard.appendChild(slabel);
     const streakNum = document.createElement('div');
     streakNum.className = 'v11-streak-num';
@@ -623,14 +733,44 @@
     if (rescuedThisRun.length > 0) {
       const banner = document.createElement('p');
       banner.className = 'v11-freeze-banner';
-      banner.textContent =
-        l === 'sv'
-          ? 'Strecket räddades — ' + freeze.available + ' frysar kvar'
-          : 'Streak protected — ' +
-            freeze.available +
-            ' freeze' +
-            (freeze.available !== 1 ? 's' : '') +
-            ' left';
+      banner.textContent = dtr({
+        sv: function (n) {
+          return 'Sviten räddades — ' + n + ' frys' + (n !== 1 ? 'ar' : '') + ' kvar';
+        },
+        en: function (n) {
+          return 'Streak protected — ' + n + ' freeze' + (n !== 1 ? 's' : '') + ' left';
+        },
+        'zh-Hans': function (n) {
+          return '连续天数已保护——剩余 ' + n + ' 次冻结';
+        },
+        'zh-Hant': function (n) {
+          return '連續天數已保護——剩餘 ' + n + ' 次凍結';
+        },
+        ar: function (n) {
+          return 'تمّت حماية السلسلة — تبقّى ' + n + ' تجميد';
+        },
+        ckb: function (n) {
+          return 'زنجیرەکە پارێزرا — ' + n + ' بەستن ماوە';
+        },
+        fa: function (n) {
+          return 'روزهای پیاپی حفظ شد — ' + n + ' فریز باقی مانده';
+        },
+        pl: function (n) {
+          return 'Passa ochroniona — pozostało zamrożeń: ' + n;
+        },
+        so: function (n) {
+          return 'Taxanaha waa la ilaaliyay — ' + n + ' barafayn ayaa hadhay';
+        },
+        ti: function (n) {
+          return 'ተኸታታሊ ተዓቒቡ — ' + n + ' መርጊእ ተሪፉ';
+        },
+        tr: function (n) {
+          return 'Seri korundu — ' + n + ' dondurma kaldı';
+        },
+        uk: function (n) {
+          return 'Серію збережено — залишилось заморожень: ' + n;
+        },
+      })(freeze.available);
       streakCard.appendChild(banner);
     }
     const freezeBar = document.createElement('div');
@@ -642,7 +782,20 @@
     }
     const freezeLabel = document.createElement('span');
     freezeLabel.className = 'v11-freeze-label';
-    freezeLabel.textContent = l === 'sv' ? 'Frysar' : 'Freezes';
+    freezeLabel.textContent = dtr({
+      sv: 'Frysar',
+      en: 'Freezes',
+      'zh-Hans': '冻结',
+      'zh-Hant': '凍結',
+      ar: 'تجميدات',
+      ckb: 'بەستنەکان',
+      fa: 'فریزها',
+      pl: 'Zamrożenia',
+      so: 'Barafaynta',
+      ti: 'መርጊኣት',
+      tr: 'Dondurmalar',
+      uk: 'Заморожень',
+    });
     freezeBar.appendChild(freezeLabel);
     streakCard.appendChild(freezeBar);
     grid.appendChild(streakCard);
@@ -652,18 +805,96 @@
     recapCard.className = 'v11-card v11-card--recap';
     const rclabel = document.createElement('span');
     rclabel.className = 'v11-label';
-    rclabel.textContent = l === 'sv' ? 'Denna vecka' : 'This week';
+    rclabel.textContent = dtr({
+      sv: 'Denna vecka',
+      en: 'This week',
+      'zh-Hans': '本周',
+      'zh-Hant': '本週',
+      ar: 'هذا الأسبوع',
+      ckb: 'ئەم هەفتەیە',
+      fa: 'این هفته',
+      pl: 'W tym tygodniu',
+      so: 'Toddobaadkan',
+      ti: 'እዛ ሰሙን',
+      tr: 'Bu hafta',
+      uk: 'Цього тижня',
+    });
     recapCard.appendChild(rclabel);
     const statsRow = document.createElement('div');
     statsRow.className = 'v11-recap-stats';
     [
-      [recap.questionsAnswered, l === 'sv' ? 'Svar' : 'Answers'],
-      [recap.chaptersTouched, l === 'sv' ? 'Kapitel' : 'Chapters'],
+      [
+        recap.questionsAnswered,
+        dtr({
+          sv: 'Svar',
+          en: 'Answers',
+          'zh-Hans': '回答',
+          'zh-Hant': '回答',
+          ar: 'إجابات',
+          ckb: 'وەڵامەکان',
+          fa: 'پاسخ‌ها',
+          pl: 'Odpowiedzi',
+          so: 'Jawaabo',
+          ti: 'መልስታት',
+          tr: 'Yanıtlar',
+          uk: 'Відповіді',
+        }),
+      ],
+      [
+        recap.chaptersTouched,
+        dtr({
+          sv: 'Kapitel',
+          en: 'Chapters',
+          'zh-Hans': '章节',
+          'zh-Hant': '章節',
+          ar: 'فصول',
+          ckb: 'بەشەکان',
+          fa: 'فصل‌ها',
+          pl: 'Rozdziały',
+          so: 'Cutubyo',
+          ti: 'ምዕራፋት',
+          tr: 'Bölümler',
+          uk: 'Розділи',
+        }),
+      ],
       recap.bestMockScore !== null
-        ? [recap.bestMockScore + '%', l === 'sv' ? 'Bästa prov' : 'Best mock']
+        ? [
+            recap.bestMockScore + '%',
+            dtr({
+              sv: 'Bästa prov',
+              en: 'Best mock',
+              'zh-Hans': '最佳模拟',
+              'zh-Hant': '最佳模擬',
+              ar: 'أفضل اختبار',
+              ckb: 'باشترین تاقیکردنەوە',
+              fa: 'بهترین آزمون',
+              pl: 'Najlepszy próbny',
+              so: 'Imtixaanka ugu fiican',
+              ti: 'ዝበለጸ ፈተና',
+              tr: 'En iyi deneme',
+              uk: 'Найкращий пробний',
+            }),
+          ]
         : null,
       recap.unresolvedMistakes > 0
-        ? [recap.unresolvedMistakes, l === 'sv' ? 'Misstag' : 'Mistakes', true]
+        ? [
+            recap.unresolvedMistakes,
+            dtr({
+              sv: 'Misstag',
+              en: 'Mistakes',
+              'zh-Hans': '错误',
+              'zh-Hant': '錯誤',
+              ar: 'أخطاء',
+              ckb: 'هەڵەکان',
+              fa: 'اشتباهات',
+              pl: 'Błędy',
+              so: 'Khaladaad',
+              ti: 'ጌጋታት',
+              tr: 'Hatalar',
+              uk: 'Помилки',
+            }),
+            true,
+          ]
         : null,
     ].forEach(function (item) {
       if (!item) return;
@@ -685,7 +916,20 @@
     weakCard.className = 'v11-card v11-card--weak';
     const wlabel = document.createElement('span');
     wlabel.className = 'v11-label';
-    wlabel.textContent = l === 'sv' ? 'Öva mer på' : 'Needs work';
+    wlabel.textContent = dtr({
+      sv: 'Öva mer på',
+      en: 'Needs work',
+      'zh-Hans': '需加强',
+      'zh-Hant': '需加強',
+      ar: 'يحتاج إلى عمل',
+      ckb: 'پێویستی بە کارکردنە',
+      fa: 'نیاز به تمرین',
+      pl: 'Do poprawy',
+      so: 'Waxay u baahan tahay shaqo',
+      ti: 'ዝያዳ ምልምማድ የድሊ',
+      tr: 'Çalışman gerek',
+      uk: 'Потребує роботи',
+    });
     weakCard.appendChild(wlabel);
     const weakList = document.createElement('div');
     weakList.className = 'v11-weak-list';
@@ -703,14 +947,38 @@
       if (ch.accuracy !== null && ch.accuracy < 0.6) acc.style.color = '#e05b2e';
       else acc.style.color = '#888';
       acc.textContent = ch.isSparse
-        ? l === 'sv'
-          ? 'Ej testad'
-          : 'Not tried'
+        ? dtr({
+            sv: 'Ej testad',
+            en: 'Not tried',
+            'zh-Hans': '未尝试',
+            'zh-Hant': '未嘗試',
+            ar: 'لم تُجرَّب',
+            ckb: 'تاقی نەکراوەتەوە',
+            fa: 'امتحان نشده',
+            pl: 'Niesprawdzone',
+            so: 'Lama tijaabin',
+            ti: 'ኣይተፈተነን',
+            tr: 'Denenmedi',
+            uk: 'Не пройдено',
+          })
         : Math.round(ch.accuracy * 100) + '%';
       const link = document.createElement('a');
       link.className = 'v11-weak-link';
       link.href = '#/practice?ch=' + encodeURIComponent(ch.id);
-      link.textContent = l === 'sv' ? 'Öva →' : 'Practice →';
+      link.textContent = dtr({
+        sv: 'Öva →',
+        en: 'Practice →',
+        'zh-Hans': '练习 →',
+        'zh-Hant': '練習 →',
+        ar: 'تدرّب →',
+        ckb: 'مەشق →',
+        fa: 'تمرین →',
+        pl: 'Ćwicz →',
+        so: 'Tababar →',
+        ti: 'ምልምማድ →',
+        tr: 'Pratik →',
+        uk: 'Практика →',
+      });
       row.appendChild(title);
       row.appendChild(acc);
       row.appendChild(link);
@@ -741,6 +1009,8 @@
   window.addEventListener('smt:answer', renderDashboard);
   // Re-render when the user signs in/out (dashboard is login-gated).
   window.addEventListener('smt:authchange', renderDashboard);
+  // Re-render so all dashboard strings (and the eyebrow) follow the active locale.
+  window.addEventListener('smt:languagechange', renderDashboard);
 
   const _orig = window.smtRecordAnswer;
   window.smtRecordAnswer = function (chapterId, correct) {
