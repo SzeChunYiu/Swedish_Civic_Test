@@ -26,7 +26,7 @@ import type { ThemeMode } from '../lib/storage/accessibilityStore';
 import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../lib/storage/companionStore';
 import type { AppLanguage } from '../lib/storage/settingsStore';
-import { useSettingsStore } from '../lib/storage/settingsStore';
+import { supportedDailyGoalAnswerOptions, useSettingsStore } from '../lib/storage/settingsStore';
 import { colorsForThemeMode, motion, radius, shadows, space, typography } from '../lib/theme';
 import type { ThemeColors } from '../lib/theme';
 
@@ -523,7 +523,7 @@ export default function Screen() {
           accessibilityRole="radiogroup"
           style={styles.row}
         >
-          {[5, 10, 20, 40].map((goal) => {
+          {supportedDailyGoalAnswerOptions.map((goal) => {
             const selected = dailyGoalAnswers === goal;
             const focusKey = `daily-goal-${goal}`;
 

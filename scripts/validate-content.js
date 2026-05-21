@@ -8053,6 +8053,43 @@ function extractMappedNumericArraysFromTs(source, parameterName) {
   return arrays;
 }
 
+function extractNumericArrayConstantFromTs(source, constantName) {
+  const sourceFile = ts.createSourceFile(
+    'source.ts',
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  let values = null;
+
+  function unwrapArrayInitializer(node) {
+    if (ts.isArrayLiteralExpression(node)) return node;
+    if (ts.isAsExpression(node) || ts.isSatisfiesExpression?.(node)) {
+      return unwrapArrayInitializer(node.expression);
+    }
+    return null;
+  }
+
+  function visit(node) {
+    if (values) return;
+    if (
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.name.text === constantName
+    ) {
+      const arrayInitializer = node.initializer ? unwrapArrayInitializer(node.initializer) : null;
+      if (arrayInitializer) {
+        values = arrayInitializer.elements.map((element) => numericLiteralValue(element));
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(sourceFile);
+  return values;
+}
+
 function parseCsvRows(csv) {
   const rows = [];
   let row = [];
@@ -14179,18 +14216,26 @@ function validateSettingsDailyGoalParity() {
     reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
-  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
-  const goalOptions = goalOptionArrays[0] || [];
+  const goalOptions = extractNumericArrayConstantFromTs(
+    settingsStore,
+    'supportedDailyGoalAnswerOptions',
+  );
   if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
     reject(
-      `app/settings.tsx daily goal options are ${JSON.stringify(
-        goalOptionArrays,
+      `supportedDailyGoalAnswerOptions is ${JSON.stringify(
+        goalOptions,
       )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
     );
   }
+  if (extractMappedNumericArraysFromTs(settingsRoute, 'goal').length > 0) {
+    reject('app/settings.tsx must render daily goal options from supportedDailyGoalAnswerOptions');
+  }
+  if (!settingsRoute.includes('supportedDailyGoalAnswerOptions.map((goal) =>')) {
+    reject('app/settings.tsx must map supportedDailyGoalAnswerOptions for daily-goal controls');
+  }
 
   const seenGoals = new Set();
-  goalOptions.forEach((goal, index) => {
+  (goalOptions || []).forEach((goal, index) => {
     let optionIsValid = true;
     if (!Number.isInteger(goal)) {
       optionIsValid = false;

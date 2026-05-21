@@ -187,7 +187,14 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
-  assert.match(settingsStore, /const dailyGoalAnswerOptions = new Set\(\[5, 10, 20, 40\]\);/);
+  assert.match(
+    settingsStore,
+    /export const supportedDailyGoalAnswerOptions = \[5, 10, 20, 40\] as const;/,
+  );
+  assert.match(
+    settingsStore,
+    /const dailyGoalAnswerOptions = new Set<number>\(supportedDailyGoalAnswerOptions\);/,
+  );
   assert.match(settingsStore, /dailyGoalAnswerOptions\.has\(answerCount\)/);
   assert.match(settingsStore, /const safeGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/);
   assert.match(settingsStore, /function normalizeImportedDailyGoalAnswers/);
@@ -204,7 +211,8 @@ test('daily goal settings stay in parity between storage and settings controls',
     /settings\.dailyGoalAnswers = normalizeDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
   );
   assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
-  assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
+  assert.match(settingsRoute, /supportedDailyGoalAnswerOptions\.map\(\(goal\) =>/);
+  assert.doesNotMatch(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
   assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
   assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
@@ -293,18 +301,29 @@ test('settings hydration falls back when MMKV reads throw', () => {
 });
 
 test('daily goal settings parity rejects option-set drift', () => {
+  const result = runValidationWithSettingsStorePatch(
+    'export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;',
+    'export const supportedDailyGoalAnswerOptions = [5, 20, 40] as const;',
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /supportedDailyGoalAnswerOptions is \[5,20,40\], expected \[5,10,20,40\]/);
+  assert.match(output, /daily goal options must include the default 10/);
+});
+
+test('daily goal settings parity rejects inline settings option arrays', () => {
   const result = runValidationWithSettingsRoutePatch(
+    'supportedDailyGoalAnswerOptions.map((goal) =>',
     '[5, 10, 20, 40].map((goal) =>',
-    '[5, 20, 40].map((goal) =>',
   );
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
   assert.match(
     output,
-    /app\/settings\.tsx daily goal options are \[\[5,20,40\]\], expected \[5,10,20,40\]/,
+    /app\/settings\.tsx must render daily goal options from supportedDailyGoalAnswerOptions/,
   );
-  assert.match(output, /daily goal options must include the default 10/);
 });
 
 test('daily goal settings parity rejects raw runtime clamp in the setter', () => {
