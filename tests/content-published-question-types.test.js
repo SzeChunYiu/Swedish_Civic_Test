@@ -87,6 +87,25 @@ function actualStaticQuestions() {
   return context.window.SMT_QUESTIONS;
 }
 
+function parseCsvLine(line) {
+  return [...line.matchAll(/"((?:""|[^"])*)"(?:,|$)/g)].map((match) =>
+    match[1].replaceAll('""', '"'),
+  );
+}
+
+function contentQuestionBankCsvRowsById(ids) {
+  const targetIds = new Set(ids);
+  return new Map(
+    fs
+      .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .map(parseCsvLine)
+      .filter((columns) => targetIds.has(columns[0]))
+      .map((columns) => [columns[0], columns]),
+  );
+}
+
 function firstGeneratedQuestionNumber() {
   const firstGenerated = buildSiteQuestionBank().questions.find(
     (question) => question.questionProvenance !== 'uhr',
@@ -1970,6 +1989,48 @@ test('human-rights definition true/false exports use direct propositions', () =>
     csvRows.filter((line) => humanRightsDefinitionCleftPattern.test(line)),
     [],
   );
+});
+
+test('source-criticism definition true/false exports use direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedRows = [
+    {
+      id: generatedQuestionId(sourceQuestions, 'q050', 'trueStatement'),
+      sv: 'Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt.',
+      en: 'Source criticism means questioning and checking whether information is correct.',
+    },
+    {
+      id: generatedQuestionId(sourceQuestions, 'q050', 'falseStatement'),
+      sv: 'Källkritik innebär att man aldrig läser nyheter.',
+      en: 'Source criticism means never reading news.',
+    },
+  ];
+  const residualPattern = /\b(?:Att vara källkritisk betyder|To be source-critical means)\b/i;
+
+  for (const bank of [generatedSiteBank, actualSiteBank]) {
+    for (const expected of expectedRows) {
+      const question = bank.find((candidate) => candidate.id === expected.id);
+      assert.ok(question, `${expected.id} should be present in published bank`);
+      assert.equal(question.q.sv, expected.sv);
+      assert.equal(question.q.en, expected.en);
+      assert.doesNotMatch(`${question.q.sv}\n${question.q.en}`, residualPattern);
+    }
+  }
+
+  const csvRowsById = contentQuestionBankCsvRowsById(expectedRows.map((row) => row.id));
+  const csvOffenders = [];
+  for (const expected of expectedRows) {
+    const columns = csvRowsById.get(expected.id);
+    assert.ok(columns, `${expected.id} should be present in content/question-bank.csv`);
+    assert.equal(columns[3], expected.sv);
+    assert.equal(columns[4], expected.en);
+    if (residualPattern.test(`${columns[3]}\n${columns[4]}`)) csvOffenders.push(expected.id);
+  }
+  assert.deepEqual(csvOffenders, []);
 });
 
 test('political-rights generated true/false exports use direct propositions', () => {
@@ -3945,6 +4006,65 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(output, /q877 contains a generated true\/false grammar-splice stem/);
   assert.match(output, /q878 contains a generated true\/false grammar-splice stem/);
+});
+
+test('published question schema rejects source-criticism definition-cleft true/false stems', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q050TrueId = generatedQuestionId(sourceQuestions, 'q050', 'trueStatement');
+  const q050FalseId = generatedQuestionId(sourceQuestions, 'q050', 'falseStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const sourceCriticismDefinitionResiduals = {",
+        "  [generatedFixtureId('q050', 1)]: { questionSv: 'Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.', questionEn: 'To be source-critical means questioning and checking whether information is correct.' },",
+        "  [generatedFixtureId('q050', 2)]: { questionSv: 'Att vara källkritisk betyder att aldrig läsa nyheter.', questionEn: 'To be source-critical means never reading news.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  sourceCriticismDefinitionResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...sourceCriticismDefinitionResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(
+    output,
+    new RegExp(`${q050TrueId} contains a generated true/false grammar-splice stem`),
+  );
+  assert.match(
+    output,
+    new RegExp(`${q050FalseId} contains a generated true/false grammar-splice stem`),
+  );
 });
 
 test('published question schema rejects policy-goal cleft true/false stems', () => {
