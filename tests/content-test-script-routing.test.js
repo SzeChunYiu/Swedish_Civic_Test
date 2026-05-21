@@ -1210,6 +1210,7 @@ test('weekly recap runtime guard uses focused content validation routing', () =>
 });
 
 test('readiness adapter runtime guard uses focused content validation routing', () => {
+  const pkg = readPackageJson();
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
     'utf8',
@@ -1218,12 +1219,28 @@ test('readiness adapter runtime guard uses focused content validation routing', 
     path.join(repoRoot, 'scripts/learning.test.js'),
     'utf8',
   );
+  const readinessAdapterTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-readiness-adapter-runtime-parity.test.js'),
+    'utf8',
+  );
 
   assert.match(validatorSource, /--focus-readiness-adapter-rules/);
   assert.match(
     validatorSource,
     /validateReadinessAdapterRules\(\);[\s\S]*readinessAdapterRulesValidated[\s\S]*readinessAdapterRuntimeParityValidated/,
   );
+  assert.equal(
+    (
+      pkg.scripts['test:content'].match(
+        /tests\/content-readiness-adapter-runtime-parity\.test\.js/g,
+      ) ?? []
+    ).length,
+    1,
+    'test:content must include the readiness adapter runtime parity test exactly once',
+  );
+  assert.match(readinessAdapterTestSource, /--focus-readiness-adapter-rules/);
+  assert.match(readinessAdapterTestSource, /readinessAdapterRulesValidated/);
+  assert.match(readinessAdapterTestSource, /readinessAdapterRuntimeParityValidated/);
   assert.match(learningTestSource, /readiness adapter ignores malformed counters/);
   assert.match(learningTestSource, /correctCount:\s*999/);
   assert.match(learningTestSource, /totalCount:\s*999/);
