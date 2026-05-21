@@ -35,9 +35,13 @@ export const blockingModalOverlayLocator =
   '[role="dialog"][aria-modal="true"], [role="menu"][aria-modal="true"]';
 const dialogLocator = blockingModalOverlayLocator;
 type BrowserInitWindowValue = boolean | null | number | string;
+export type BrowserSpeechEvent =
+  | { type: 'cancel' }
+  | { lang: string; rate: number; text: string; type: 'speak' };
 
 type FreshSettingsSeedOptions = {
   localStorageValues?: Record<string, string>;
+  reseedOnNavigation?: boolean;
   windowValues?: Record<string, BrowserInitWindowValue>;
 };
 
@@ -102,24 +106,36 @@ export async function seedFreshSettingsLanguageAndAboutSeen(
 export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
   page: Page,
   language: AppLanguage,
-  { localStorageValues = {}, windowValues = {} }: FreshSettingsSeedOptions = {},
+  {
+    localStorageValues = {},
+    reseedOnNavigation = true,
+    windowValues = {},
+  }: FreshSettingsSeedOptions = {},
 ): Promise<void> {
   await page.addInitScript(
     ({
       language: seededLanguage,
       languageKeys,
+      reseedOnNavigation,
       seenKeys,
       storageValues,
       windowValues,
     }: {
       language: AppLanguage;
       languageKeys: readonly string[];
+      reseedOnNavigation: boolean;
       seenKeys: readonly string[];
       storageValues: Record<string, string>;
       windowValues: Record<string, BrowserInitWindowValue>;
     }) => {
+      const seedMarker = '__SMT_FRESH_SETTINGS_SEEDED__';
+      if (!reseedOnNavigation && window.sessionStorage.getItem(seedMarker) === 'true') {
+        return;
+      }
+
       window.localStorage.clear();
       window.sessionStorage.clear();
+      if (!reseedOnNavigation) window.sessionStorage.setItem(seedMarker, 'true');
       for (const languageKey of languageKeys) {
         window.localStorage.setItem(languageKey, seededLanguage);
       }
@@ -136,10 +152,107 @@ export async function seedFreshSettingsLanguageAndAboutSeenWithStorage(
     {
       language,
       languageKeys: settingsLanguageStorageKeys,
+      reseedOnNavigation,
       seenKeys: settingsSeenAboutStorageKeys,
       storageValues: localStorageValues,
       windowValues,
     },
+  );
+}
+
+export async function installSpeechSynthesisMock(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const speechEvents: BrowserSpeechEvent[] = [];
+    const speechState = {
+      paused: false,
+      pending: false,
+      speaking: false,
+    };
+
+    class MockSpeechSynthesisUtterance {
+      lang = '';
+      pitch = 1;
+      rate = 1;
+      text: string;
+      voice = null;
+      volume = 1;
+
+      constructor(text: string) {
+        this.text = String(text);
+      }
+    }
+
+    Object.defineProperty(window, '__SMT_SPEECH_EVENTS__', {
+      configurable: true,
+      value: speechEvents,
+    });
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', {
+      configurable: true,
+      value: MockSpeechSynthesisUtterance,
+    });
+    Object.defineProperty(window, 'speechSynthesis', {
+      configurable: true,
+      value: {
+        cancel() {
+          speechState.speaking = false;
+          speechState.pending = false;
+          speechEvents.push({ type: 'cancel' });
+        },
+        get paused() {
+          return speechState.paused;
+        },
+        get pending() {
+          return speechState.pending;
+        },
+        get speaking() {
+          return speechState.speaking;
+        },
+        getVoices() {
+          return [];
+        },
+        pause() {
+          speechState.paused = true;
+        },
+        resume() {
+          speechState.paused = false;
+        },
+        speak(utterance: MockSpeechSynthesisUtterance) {
+          speechState.speaking = true;
+          speechEvents.push({
+            lang: utterance.lang,
+            rate: utterance.rate,
+            text: utterance.text,
+            type: 'speak',
+          });
+        },
+      },
+    });
+  });
+}
+
+export async function speechEvents(page: Page): Promise<BrowserSpeechEvent[]> {
+  return page.evaluate(() => {
+    const typedWindow = window as typeof window & {
+      __SMT_SPEECH_EVENTS__?: BrowserSpeechEvent[];
+    };
+
+    return [...(typedWindow.__SMT_SPEECH_EVENTS__ ?? [])];
+  });
+}
+
+export async function clearSpeechEvents(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const typedWindow = window as typeof window & {
+      __SMT_SPEECH_EVENTS__?: BrowserSpeechEvent[];
+    };
+
+    typedWindow.__SMT_SPEECH_EVENTS__?.splice(0);
+  });
+}
+
+export function speakEvents(events: BrowserSpeechEvent[]) {
+  return events.filter(
+    (event): event is Extract<BrowserSpeechEvent, { type: 'speak' }> => event.type === 'speak',
   );
 }
 
