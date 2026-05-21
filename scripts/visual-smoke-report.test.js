@@ -129,12 +129,17 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.equal(route.name, expectedRoute.name);
     assert.equal(route.file, expectedRoute.file);
     assert.equal(route.route, expectedRoute.route);
+    assert.equal(typeof route.firstRunAboutDismissed, 'boolean');
+    assert.equal(typeof route.languagePickerDismissed, 'boolean');
     assert.equal(route.launchOverlayVisibleAfterDismissal, false);
     assert.ok(
       route.launchOverlayDismissed ||
         [
+          '/onboarding',
           '/practice',
           '/exam',
+          '/settings',
+          '/chapter/ch01',
           '/disclaimer',
           '/privacy',
           '/terms',
