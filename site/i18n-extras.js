@@ -150,7 +150,7 @@
       'practice.kicker': '练习回合',
       'practice.title': '一组十题。',
       'practice.subtitle': '轻松练，不紧张。',
-      'qcard.chip': '第3章 · 第47题',
+      'qcard.chip': '第5章 · q039',
       'qcard.q': '哪一项瑞典原则让每个人都可以在大多数自然土地上行走、游泳和采 berries？',
       'qcard.a': 'Jantelagen — 保持谦逊的社会准则',
       'qcard.b': 'Allemansrätten — 公众进入自然的权利',
@@ -159,7 +159,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — “每个人的权利” — 让你可以在瑞典大多数土地上散步、游泳、滑雪、露营和采集。前提是小心、体贴，不要把帐篷搭在别人花坛里。',
-      'qcard.src': '来源 · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': '来源：Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': '再试一次 →',
       'faq.1.q': '这是官方瑞典公民身份考试吗？',
       'faq.1.a':
@@ -542,7 +543,7 @@
       'practice.kicker': '練習回合',
       'practice.title': '一組十題。',
       'practice.subtitle': '輕鬆練，不緊張。',
-      'qcard.chip': '第3章 · 第47題',
+      'qcard.chip': '第5章 · q039',
       'qcard.q': '哪一項瑞典原則讓每個人都可以在大多數自然土地上行走、游泳和採莓果？',
       'qcard.a': 'Jantelagen — 保持謙遜的社會準則',
       'qcard.b': 'Allemansrätten — 公眾親近自然的權利',
@@ -551,7 +552,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — 「每個人的權利」 — 讓你可以在瑞典大多數土地上散步、游泳、滑雪、露營和採集。前提是小心、體貼，不要把帳篷搭在別人的花圃裡。',
-      'qcard.src': '資料來源 · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': '資料來源：Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': '再試一次 →',
       'faq.1.q': '這是官方瑞典公民身分考試嗎？',
       'faq.1.a':
@@ -942,7 +944,7 @@
       'practice.kicker': 'جولة تدريب',
       'practice.title': 'عشرة أسئلة.',
       'practice.subtitle': 'بلا ضغط.',
-      'qcard.chip': 'الفصل 3 · السؤال 47',
+      'qcard.chip': 'الفصل 5 · q039',
       'qcard.q': 'أي مبدأ سويدي يمنح الجميع حق المشي والسباحة وقطف التوت في معظم الطبيعة؟',
       'qcard.a': 'Jantelagen — قاعدة التواضع الاجتماعي',
       'qcard.b': 'Allemansrätten — حق الوصول العام إلى الطبيعة',
@@ -951,7 +953,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — «حق الجميع» — يتيح لك المشي والسباحة والتزلج والتخييم والقطف في معظم أراضي السويد. الشرط: كن حذراً ومراعياً، ولا تنصب خيمة في حوض زهور شخص آخر.',
-      'qcard.src': 'المصدر · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'المصدر: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'حاول مرة أخرى →',
       'faq.1.q': 'هل هذا اختبار المواطنة السويدي الرسمي؟',
       'faq.1.a':
@@ -1354,7 +1357,7 @@
       'practice.kicker': 'خولی مەشق',
       'practice.title': 'دە پرسیار.',
       'practice.subtitle': 'بێ فشار.',
-      'qcard.chip': 'بەشی 3 · پ47',
+      'qcard.chip': 'بەشی 5 · q039',
       'qcard.q':
         'کام بنەمای سویدی مافی ڕۆیشتن، مەلەکردن و چنینی تووی لە زۆربەی سروشت دەدات بە هەمووان؟',
       'qcard.a': 'Jantelagen — یاسای خۆبەکەمزانین',
@@ -1364,7 +1367,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — «مافی هەمووان» — ڕێگەت دەدات لە زۆربەی خاکی سوید بڕۆیت، مەلە بکەیت، سکی بکەیت، کەمپ بکەیت و کۆبکەیتەوە. بەڵام: وریا و ڕێزدار بە، و خێوەکەت لە گوڵزارەکەی کەسێک مەدانێ.',
-      'qcard.src': 'سەرچاوە · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'سەرچاوە: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'دووبارە هەوڵ بدە →',
       'faq.1.q': 'ئایا ئەمە تاقیکردنەوەی فەرمی هاووڵاتیبوونی سویدە؟',
       'faq.1.a':
@@ -1771,7 +1775,7 @@
       'practice.kicker': 'دور تمرین',
       'practice.title': 'ده پرسش.',
       'practice.subtitle': 'بدون فشار.',
-      'qcard.chip': 'فصل ۳ · پرسش ۴۷',
+      'qcard.chip': 'فصل ۵ · q039',
       'qcard.q':
         'کدام اصل سوئدی به همه اجازه می‌دهد در بیشتر طبیعت راه بروند، شنا کنند و توت بچینند؟',
       'qcard.a': 'Jantelagen — قانون فروتنی اجتماعی',
@@ -1781,7 +1785,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — «حق همه» — به شما اجازه می‌دهد در بیشتر زمین‌های سوئد راه بروید، شنا کنید، اسکی کنید، چادر بزنید و جمع‌آوری کنید. شرطش این است: مراقب و ملاحظه‌کار باشید و چادر را در باغچه کسی نزنید.',
-      'qcard.src': 'منبع · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'منبع: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'دوباره تلاش کنید →',
       'faq.1.q': 'آیا این آزمون رسمی شهروندی سوئد است؟',
       'faq.1.a':
@@ -2191,7 +2196,7 @@
       'practice.kicker': 'Runda ćwiczeń',
       'practice.title': 'Dziesięć pytań.',
       'practice.subtitle': 'Bez presji.',
-      'qcard.chip': 'Rozdział 3 · P47',
+      'qcard.chip': 'Rozdział 5 · q039',
       'qcard.q':
         'Która szwedzka zasada daje wszystkim prawo chodzenia, pływania i zbierania jagód w większości miejsc w naturze?',
       'qcard.a': 'Jantelagen — zasada skromności',
@@ -2201,7 +2206,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — „prawo każdego” — pozwala chodzić, pływać, jeździć na nartach, biwakować i zbierać w większości miejsc w Szwecji. Warunek: bądź ostrożny, życzliwy i nie rozbijaj namiotu w czyjejś rabacie.',
-      'qcard.src': 'Źródło · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'Źródło: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'Spróbuj ponownie →',
       'faq.1.q': 'Czy to oficjalny szwedzki test obywatelski?',
       'faq.1.a':
@@ -2616,7 +2622,7 @@
       'practice.kicker': 'Wareeg tababar',
       'practice.title': 'Toban su’aalood.',
       'practice.subtitle': 'Cadaadis ma jiro.',
-      'qcard.chip': 'Cutubka 3 · S47',
+      'qcard.chip': 'Cutubka 5 · q039',
       'qcard.q':
         'Mabda’a Iswiidhishka ah ee siinaya qof kasta xaqa inuu ku socdo, ku dabaasho, kuna gurto miraha dhulka dabiiciga ah badankiisa waa kee?',
       'qcard.a': 'Jantelagen — xeerka is-hoosaysiinta',
@@ -2626,7 +2632,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — “xaqa qof walba” — wuxuu kuu oggolaanayaa inaad socoto, dabaalato, baraf ku socoto, teendho dhigato oo wax ka gurato dhulka Iswiidhan badankiisa. Shardi: taxaddar oo ixtiraam dadka kale; ha dhigin teendho ubax qof kale.',
-      'qcard.src': 'Isha · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'Isha: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'Mar kale isku day →',
       'faq.1.q': 'Kani ma yahay imtixaanka rasmiga ah ee muwaadinnimada Iswiidhan?',
       'faq.1.a':
@@ -3034,7 +3041,7 @@
       'practice.kicker': 'ዙር ልምምድ',
       'practice.title': 'ዓሰርተ ሕቶታት።',
       'practice.subtitle': 'ጸቕጢ የለን።',
-      'qcard.chip': 'ክፍሊ 3 · ሕ47',
+      'qcard.chip': 'ክፍሊ 5 · q039',
       'qcard.q': 'ኣብ መብዛሕትኡ ተፈጥሮ ክትከይድ፣ ክትሕምብስን ፍረታት ክትእክብን መሰል ዝህብ ሽወደናዊ መትከል እንታይ እዩ?',
       'qcard.a': 'Jantelagen — ሕጊ ትሕትና',
       'qcard.b': 'Allemansrätten — ህዝባዊ መሰል ናብ ተፈጥሮ',
@@ -3043,7 +3050,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — “መሰል ኩሉ” — ኣብ መብዛሕትኡ መሬት ሽወደን ክትከይድ፣ ክትሕምብስ፣ ስኪ ክትገብር፣ ክትሰፍርን ክትእክብን ይፈቕደልካ። ግን ተጠንቀቕ፣ ኣኽብር፣ ድንኳንካ ኣብ ጎቦ ኣበባ ሰብ ኣትትከል።',
-      'qcard.src': 'ምንጪ · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'ምንጪ: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'ደጊምካ ፈትን →',
       'faq.1.q': 'እዚ ፈተና ዜግነት ሽወደን ፋዊ ድዩ?',
       'faq.1.a':
@@ -3436,7 +3444,7 @@
       'practice.kicker': 'Alıştırma turu',
       'practice.title': 'On soru.',
       'practice.subtitle': 'Baskı yok.',
-      'qcard.chip': 'Bölüm 3 · S47',
+      'qcard.chip': 'Bölüm 5 · q039',
       'qcard.q':
         'Hangi İsveç ilkesi herkese doğanın çoğu yerinde yürüme, yüzme ve böğürtlen toplama hakkı verir?',
       'qcard.a': 'Jantelagen — alçakgönüllülük kuralı',
@@ -3446,7 +3454,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — “herkesin hakkı” — İsveç’te çoğu arazide yürümenize, yüzmenize, kayak yapmanıza, kamp kurmanıza ve toplamanıza izin verir. Şart: dikkatli ve saygılı olun, çadırınızı birinin çiçekliğine kurmayın.',
-      'qcard.src': 'Kaynak · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'Kaynak: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'Tekrar dene →',
       'faq.1.q': 'Bu resmî İsveç vatandaşlık testi mi?',
       'faq.1.a':
@@ -3855,7 +3864,7 @@
       'practice.kicker': 'Раунд практики',
       'practice.title': 'Десять питань.',
       'practice.subtitle': 'Без тиску.',
-      'qcard.chip': 'Розділ 3 · П47',
+      'qcard.chip': 'Розділ 5 · q039',
       'qcard.q':
         'Який шведський принцип дає всім право ходити, плавати й збирати ягоди на більшості природних територій?',
       'qcard.a': 'Jantelagen — правило скромності',
@@ -3865,7 +3874,8 @@
       'qcard.ex.b': 'Allemansrätten',
       'qcard.ex.p':
         ' — «право кожного» — дозволяє ходити, плавати, кататися на лижах, ставити намет і збирати на більшості земель Швеції. Умова: будьте обережні й уважні, не ставте намет у чиїйсь клумбі.',
-      'qcard.src': 'Джерело · § Grundlagarna',
+      'qcard.prov': 'UHR',
+      'qcard.src': 'Джерело: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
       'qcard.again': 'Спробувати ще раз →',
       'faq.1.q': 'Це офіційний тест на громадянство Швеції?',
       'faq.1.a':

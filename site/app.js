@@ -175,7 +175,7 @@ const i18n = (window.i18n = {
     'demo.li2': '<b>Plain-language explanations</b> — no legalese, no jargon-jungle.',
     'demo.li3':
       '<b>Mock exam mode</b> with a timed practice flow, so longer sessions feel less stressful.',
-    'qcard.chip': 'Chapter 3 · Q47',
+    'qcard.chip': 'Chapter 5 · q039',
     'qcard.q':
       'Which Swedish principle gives everyone the right to walk, swim, and pick berries on most land in nature?',
     'qcard.a': 'Jantelagen — the law of staying humble',
@@ -185,7 +185,8 @@ const i18n = (window.i18n = {
     'qcard.ex.b': 'Allemansrätten',
     'qcard.ex.p':
       " — \"everyone's right\" — lets you walk, swim, ski, camp, and forage on most land in Sweden. The catch: be careful, considerate, and don't pitch a tent in someone's flowerbed.",
-    'qcard.src': 'Source · § Grundlagarna',
+    'qcard.prov': 'UHR',
+    'qcard.src': 'Source: Sverige i fokus · Lag och rätt · Allemansrätten · p. 17',
     'qcard.again': 'Try again →',
     'numbers.1': 'questions sourced from public records',
     'numbers.2': 'chapters covering history, society & rights',
@@ -592,7 +593,7 @@ const i18n = (window.i18n = {
     'demo.li1': '<b>Repetition med intervall</b> tar fram svåra frågor på rätt dag.',
     'demo.li2': '<b>Begripliga förklaringar</b> — inget juridiskt krångel, ingen byråkratdjungel.',
     'demo.li3': '<b>Provläge</b> med tidsatt övning, så längre pass känns lugnare.',
-    'qcard.chip': 'Kapitel 3 · F47',
+    'qcard.chip': 'Kapitel 5 · q039',
     'qcard.q':
       'Vilken svensk princip ger alla rätt att gå, simma och plocka bär på det mesta av Sveriges mark?',
     'qcard.a': 'Jantelagen — lagen om att vara lagom',
@@ -602,7 +603,8 @@ const i18n = (window.i18n = {
     'qcard.ex.b': 'Allemansrätten',
     'qcard.ex.p':
       ' — "allas rätt" — låter dig gå, simma, åka skidor, tälta och plocka bär på det mesta av Sveriges mark. Haken: var försiktig, hänsynsfull, och slå inte upp tältet i någons rabatt.',
-    'qcard.src': 'Källa · § Grundlagarna',
+    'qcard.prov': 'UHR',
+    'qcard.src': 'Källa: Sverige i fokus · Lag och rätt · Allemansrätten · s. 17',
     'qcard.again': 'Försök igen →',
     'numbers.1': 'frågor från offentliga källor',
     'numbers.2': 'kapitel om historia, samhälle & rättigheter',

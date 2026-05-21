@@ -404,6 +404,41 @@ test('static Home chapter 1 folkhemmet glossary keeps localized term before Swed
   expect(pageErrors).toEqual([]);
 });
 
+test('static Home demo question keeps q039 source and UHR provenance in extra languages', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await expectDictionaryText(page, locale, 'qcard.chip', '#qcard [data-i18n="qcard.chip"]');
+    await expectDictionaryText(page, locale, 'qcard.prov', '#qcard [data-i18n="qcard.prov"]');
+    await expectDictionaryText(page, locale, 'qcard.src', '#qcard [data-i18n="qcard.src"]');
+
+    const sourceText = await page.locator('#qcard [data-i18n="qcard.src"]').innerText();
+    expect(sourceText).toContain('Sverige i fokus');
+    expect(sourceText).toContain('Lag och rätt');
+    expect(sourceText).toContain('Allemansrätten');
+    expect(sourceText).toContain('17');
+    expect(sourceText).not.toContain('Grundlagarna');
+    await expect(page.locator('#qcard')).toHaveAttribute('data-source-question-id', 'q039');
+    await expect(page.locator('#qcard .quiz__provenance--uhr')).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
 test('static Home chapter 2 civic terms render localized card descriptions without kommun region regering', async ({
   page,
 }) => {
