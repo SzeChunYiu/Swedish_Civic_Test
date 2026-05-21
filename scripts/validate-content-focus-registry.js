@@ -124,6 +124,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'audioButtonAccessibility',
+    flags: ['--focus-audio-button-accessibility'],
+    summaryKeys: [
+      'audioButtonAccessibilityRulesValidated',
+      'audioButtonAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'homeSvMistakeReviewCopy',
     flags: ['--focus-home-sv-mistake-review-copy'],
     summaryKeys: [
@@ -304,6 +312,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'questionSpeechTextOptionsValidated',
       'questionSpeechTextParityValidated',
     ],
+  },
+  {
+    id: 'speechRuntimeParity',
+    flags: ['--focus-speech-runtime-parity'],
+    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
   },
   {
     id: 'weeklyRecapRuntime',

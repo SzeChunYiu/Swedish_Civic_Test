@@ -196,6 +196,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'audioButtonAccessibility',
+    flags: ['--focus-audio-button-accessibility'],
+    summaryKeys: [
+      'audioButtonAccessibilityRulesValidated',
+      'audioButtonAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'homeSvMistakeReviewCopy',
     flags: ['--focus-home-sv-mistake-review-copy'],
     summaryKeys: [
@@ -383,6 +391,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'speechRuntimeParity',
+    flags: ['--focus-speech-runtime-parity'],
+    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
+  },
+  {
     id: 'uhrSourceMetadata',
     flags: ['--focus-uhr-source-metadata'],
     summaryKeys: [
@@ -510,11 +523,13 @@ const moduleCache = new Map();
 const speechEvents = [];
 const speechMock = {
   speak(text, options) {
+    if (this.throwOnSpeak) throw this.throwOnSpeak;
     speechEvents.push({ type: 'speak', text, options });
   },
   stop() {
     speechEvents.push({ type: 'stop' });
   },
+  throwOnSpeak: null,
 };
 const QUESTION_TYPE_VALUES = ['single_choice', 'true_false', 'flashcard'];
 const REVIEW_STATUS_VALUES = ['draft', 'reviewed', 'published'];
@@ -1879,7 +1894,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 5;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -13442,6 +13457,16 @@ function validateAudioButtonAccessibilityParity() {
   }
 }
 
+if (focusedValidationRequested('audioButtonAccessibility')) {
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
@@ -17295,10 +17320,49 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
+  const syncSpeechError = new Error('speech unavailable');
+  let onErrorCallbackError = null;
+  const originalWarn = console.warn;
+  console.warn = () => {};
+  speechMock.throwOnSpeak = syncSpeechError;
+  try {
+    speakSwedish('Hej fel', {
+      onError(error) {
+        onErrorCallbackError = error;
+        speechEvents.push({ type: 'onError', error });
+      },
+    });
+  } finally {
+    speechMock.throwOnSpeak = null;
+    console.warn = originalWarn;
+  }
+  const onErrorEvent = speechEvents[0];
+  if (
+    speechEvents.length === 1 &&
+    onErrorEvent &&
+    onErrorEvent.type === 'onError' &&
+    onErrorCallbackError === syncSpeechError
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must call onError once when Speech.speak throws synchronously');
+  }
+
+  resetSpeechEvents();
 
   if (runtimeParityIsValid && speechRuntimeCasesValidated === EXPECTED_SPEECH_RUNTIME_CASES) {
     speechRuntimeParityValidated = true;
   }
+}
+
+if (focusedValidationRequested('speechRuntimeParity')) {
+  validateSpeechRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    speechRuntimeCasesValidated,
+    speechRuntimeParityValidated,
+  });
+  process.exit(0);
 }
 
 function validateChapterQuizSessionParity() {

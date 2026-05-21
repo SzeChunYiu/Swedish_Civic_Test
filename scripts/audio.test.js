@@ -142,7 +142,9 @@ test('buildAnswerFeedbackSpeechText keeps authority wording and source citations
 });
 
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
+  moduleCache.clear();
   const warnings = [];
+  const onErrorCalls = [];
   const originalWarn = console.warn;
   console.warn = (...args) => warnings.push(args.join(' '));
   try {
@@ -157,7 +159,20 @@ test('speech helpers do not crash when the platform speech engine is unavailable
       },
     });
 
-    assert.doesNotThrow(() => speakSwedish('Hej Sverige'));
+    assert.doesNotThrow(() =>
+      speakSwedish('Hej Sverige', {
+        onError(error) {
+          onErrorCalls.push(error);
+        },
+      }),
+    );
+    assert.doesNotThrow(() =>
+      speakSwedish('   ', {
+        onError(error) {
+          onErrorCalls.push(error);
+        },
+      }),
+    );
     assert.doesNotThrow(() => stopSpeech());
   } finally {
     console.warn = originalWarn;
@@ -166,6 +181,9 @@ test('speech helpers do not crash when the platform speech engine is unavailable
   assert.equal(warnings.length, 2);
   assert.match(warnings[0], /Speech unavailable/i);
   assert.match(warnings[1], /Speech stop unavailable/i);
+  assert.equal(onErrorCalls.length, 1);
+  assert.ok(onErrorCalls[0] instanceof Error);
+  assert.equal(onErrorCalls[0].message, 'speech unavailable');
 });
 
 test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
