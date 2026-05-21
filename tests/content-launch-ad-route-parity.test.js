@@ -59,6 +59,17 @@ test('launch popup ad route suppression rejects root-layout bypass drift', () =>
   assert.doesNotMatch(mutated, /shouldSuppressLaunchPopupAdForPath\(pathname\)/);
 });
 
+test('web launch popup close control keeps a mobile-safe touch target', () => {
+  const webSource = read('components/monetization/LaunchPopupAd.tsx');
+  const closeButtonBlock = webSource.match(/closeButton: \{([\s\S]*?)\n  \},/)?.[1];
+
+  assert.ok(closeButtonBlock, 'web launch popup closeButton style should be parseable');
+  assert.match(closeButtonBlock, /minHeight: space\[6\]/);
+  assert.match(closeButtonBlock, /justifyContent: 'center'/);
+  assert.match(closeButtonBlock, /borderRadius: radius\.button/);
+  assert.match(webSource, /hitSlop=\{space\[1\]\}/);
+});
+
 test('native launch popup consumes the runtime cap only after load reaches the show path', () => {
   const nativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
