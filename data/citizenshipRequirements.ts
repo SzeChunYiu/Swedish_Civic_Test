@@ -237,8 +237,8 @@ export const citizenshipRequirementAreas = [
       en: 'The first test part covers basic knowledge of Swedish society and is held for the first time on 15 August 2026 in Stockholm.',
     },
     detail: {
-      sv: 'UHR ansvarar för provet och utbildningsmaterialet. Du kan bara anmäla dig när Migrationsverket har skickat brev. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. UHR säger att anmälan öppnar i början av juni 2026.',
-      en: 'UHR is responsible for the test and study material. You can only register after Migrationsverket has sent you a letter. Seats are limited, and when the seats are filled, registration closes. UHR says registration opens in early June 2026.',
+      sv: 'UHR ansvarar för provet och utbildningsmaterialet. Du kan bara anmäla dig när Migrationsverket har skickat brev. Antalet platser är begränsat, och när platserna är fyllda går det inte längre att anmäla sig. Anmälan öppnar i början av juni 2026.',
+      en: 'UHR is responsible for the test and study material. You can only register after Migrationsverket has sent you a letter. Seats are limited, and when the seats are filled, registration closes. Registration opens in early June 2026.',
     },
     checklistPrompt: {
       sv: 'Jag vet om jag behöver samhällskunskapsprovet och har hittat UHR:s material.',
