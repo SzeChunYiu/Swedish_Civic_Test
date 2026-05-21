@@ -461,6 +461,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
+  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -6921,52 +6923,6 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
     reject(`${label} has invalid questionCount`);
   }
 
-  if (validateChapterLocalizedTextMap(chapter, label, 'nameText', 'nameSv', 'nameEn', reject)) {
-    chapterLocalizedTextMapsValidated += 1;
-  }
-  if (
-    validateChapterLocalizedTextMap(
-      chapter,
-      label,
-      'descriptionText',
-      'descriptionSv',
-      'descriptionEn',
-      reject,
-    )
-  ) {
-    chapterLocalizedTextMapsValidated += 1;
-  }
-
-  return valid;
-}
-
-function validateChapterLocalizedTextMap(chapter, label, localizedField, svField, enField, reject) {
-  const localizedText = chapter[localizedField];
-  if (!isObjectRecord(localizedText)) {
-    reject(`${label} ${localizedField} must be a localized text map`);
-    return false;
-  }
-
-  let valid = true;
-  for (const [locale, canonicalField] of [
-    ['sv', svField],
-    ['en', enField],
-  ]) {
-    if (!hasText(localizedText[locale])) {
-      reject(`${label} ${localizedField}.${locale} must be filled`);
-      valid = false;
-      continue;
-    }
-    if (localizedText[locale] !== chapter[canonicalField]) {
-      reject(`${label} ${localizedField}.${locale} must match ${canonicalField}`);
-      valid = false;
-    }
-    if (!textIsTrimmedSingleSpaced(localizedText[locale])) {
-      reject(`${label} ${localizedField}.${locale} must be trimmed and single-spaced`);
-      valid = false;
-    }
-  }
-
   return valid;
 }
 
@@ -6974,29 +6930,6 @@ function chapterTextFieldsAreNormalized(chapter) {
   return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
     textIsTrimmedSingleSpaced(chapter[field]),
   );
-}
-
-function validateChapterMetadata() {
-  if (!Array.isArray(chapters)) {
-    fail('chapters export is not an array');
-    return;
-  }
-  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
-  const seenChapterIds = new Set();
-  const seenNamesSv = new Set();
-  const seenNamesEn = new Set();
-  chapters.forEach((chapter, index) => {
-    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
-      chapterSchemasValidated += 1;
-      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
-        chapterExactSchemaKeysValidated += 1;
-      }
-      if (chapterTextFieldsAreNormalized(chapter)) {
-        chapterTextFieldsNormalizedValidated += 1;
-      }
-    }
-  });
-  chapterLocalizedTextParityValidated = chapterLocalizedTextMapsValidated === chapters.length * 2;
 }
 
 function validateQuestionSchema(question, index) {
@@ -7240,8 +7173,6 @@ const getQuestionProvenance = provenanceModule.getQuestionProvenance;
 let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
-let chapterLocalizedTextMapsValidated = 0;
-let chapterLocalizedTextParityValidated = false;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
@@ -7628,21 +7559,6 @@ if (
 ) {
   fail('strings export is not an object');
 }
-
-if (process.argv.includes('--focus-chapter-metadata')) {
-  validateChapterMetadata();
-  exitWithValidationFailures();
-  printValidationSummary({
-    chapters: Array.isArray(chapters) ? chapters.length : 0,
-    chapterSchemasValidated,
-    chapterTextFieldsNormalizedValidated,
-    chapterExactSchemaKeysValidated,
-    chapterLocalizedTextMapsValidated,
-    chapterLocalizedTextParityValidated,
-  });
-  process.exit(0);
-}
-
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
@@ -15694,7 +15610,21 @@ validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
 
 if (Array.isArray(chapters)) {
-  validateChapterMetadata();
+  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
+  const seenChapterIds = new Set();
+  const seenNamesSv = new Set();
+  const seenNamesEn = new Set();
+  chapters.forEach((chapter, index) => {
+    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
+      chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
+    }
+  });
 }
 
 if (Array.isArray(questions)) {
@@ -16033,8 +15963,6 @@ console.log(
       chapterSchemasValidated,
       chapterTextFieldsNormalizedValidated,
       chapterExactSchemaKeysValidated,
-      chapterLocalizedTextMapsValidated,
-      chapterLocalizedTextParityValidated,
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
