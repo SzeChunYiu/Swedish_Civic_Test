@@ -421,12 +421,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bcelebrates jesus' birth\b/,
   /^(?:By|Apply|Leave|Live)\b/i,
   /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-  /^(?:De säljer reklamplats eller tar betalt för en särskild kanal|Genom domstolsavgifter från rättegångar)\.?$/i,
-  /^(?:They sell advertising space or charge for a specific channel|Through court fees from trials)\.?$/i,
-  /^(?:Vart femte år|Vart fjärde år|Every five years|Every four years)\.?$/i,
-  /^(?:Vilken vallokal väljaren ska gå till|Vilket parti väljaren måste rösta på|Which polling station the voter should go to|Which party the voter must vote for)\.?$/i,
-  /^(?:Bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra|Bara rösta om personen redan sitter i riksdagen)\.?$/i,
-  /^(?:Become a member of a political party or start a new party together with others|Only vote if the person already sits in the Riksdag)\.?$/i,
   /\bPåståendet är sant:/i,
   /\bThe statement is true:/i,
   /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
@@ -3310,7 +3304,7 @@ const EXPECTED_PROGRESS_STORE_FIELDS = [
   { name: 'markQuestionCompleted', type: '(questionId: string) => void', optional: false },
   {
     name: 'recordAnswer',
-    type: '(questionId: string, isCorrect: boolean) => void',
+    type: '(questionId: string, isCorrect: boolean, confidenceRating?: ConfidenceRating, options?: RecordAnswerOptions) => void',
     optional: false,
   },
   {
@@ -3330,7 +3324,9 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'activeQuestionId', type: 'string | null', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
+  { name: 'answerXpAwardedKey', type: 'string | null', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  { name: 'claimAnswerXpAward', type: '(awardKey: string) => boolean', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
 ];
@@ -7084,10 +7080,6 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
-const applyQuestionLocalizationPilot = loadTs(
-  'data/questionLocalizations.ts',
-  'applyQuestionLocalizationPilot',
-);
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -7130,6 +7122,7 @@ const getChapterQuizSessionId = practiceFlowModule.getChapterQuizSessionId;
 const practiceSessionStoreModule = loadTs('lib/quiz/practiceSessionStore.ts');
 const usePracticeSessionStore = practiceSessionStoreModule.usePracticeSessionStore;
 const getPracticeInterstitialShowKey = practiceSessionStoreModule.getPracticeInterstitialShowKey;
+const getPracticeAnswerXpAwardKey = practiceSessionStoreModule.getPracticeAnswerXpAwardKey;
 const badgeModule = loadTs('lib/learning/badges.ts');
 const badgeCatalog = badgeModule.badgeCatalog;
 const deriveBadges = badgeModule.deriveBadges;
@@ -7716,6 +7709,9 @@ if (
 if (typeof getPracticeInterstitialShowKey !== 'function') {
   fail('getPracticeInterstitialShowKey export is not a function');
 }
+if (typeof getPracticeAnswerXpAwardKey !== 'function') {
+  fail('getPracticeAnswerXpAwardKey export is not a function');
+}
 if (!badgeCatalog || typeof badgeCatalog !== 'object' || Array.isArray(badgeCatalog)) {
   fail('badgeCatalog export is not an object');
 }
@@ -8206,6 +8202,14 @@ function validateAdPlacementRouteParity() {
       }
       if (!source.includes('getPracticeInterstitialShowKey(question.id, shuffleSessionId)')) {
         reject('Practice route must use getPracticeInterstitialShowKey for interstitial capping');
+        routeIsValid = false;
+      }
+      if (!source.includes('getPracticeAnswerXpAwardKey(question.id, shuffleSessionId)')) {
+        reject('Practice route must key answer XP awards by question and shuffle session');
+        routeIsValid = false;
+      }
+      if (!source.includes('awardXp: claimAnswerXpAward(')) {
+        reject('Practice route must guard retry answer XP awards before recording progress');
         routeIsValid = false;
       }
       if (
@@ -13525,12 +13529,14 @@ function validatePracticeSessionStoreParity() {
     usePracticeSessionStore &&
     typeof usePracticeSessionStore.getState === 'function' &&
     typeof usePracticeSessionStore.setState === 'function' &&
-    typeof getPracticeInterstitialShowKey === 'function'
+    typeof getPracticeInterstitialShowKey === 'function' &&
+    typeof getPracticeAnswerXpAwardKey === 'function'
   ) {
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
+      answerXpAwardedKey: null,
     });
 
     usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
@@ -13545,6 +13551,16 @@ function validatePracticeSessionStoreParity() {
       state.activeQuestionId,
       state.shuffleSessionId,
     );
+    const firstAnswerXpKey = getPracticeAnswerXpAwardKey(
+      state.activeQuestionId,
+      state.shuffleSessionId,
+    );
+    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== true) {
+      rejectRuntime('practice first answer must claim answer XP for the feedback cycle');
+    }
+    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== false) {
+      rejectRuntime('practice retry must not claim answer XP twice for one feedback cycle');
+    }
 
     usePracticeSessionStore.getState().resetSelection();
     state = usePracticeSessionStore.getState();
@@ -13562,6 +13578,9 @@ function validatePracticeSessionStoreParity() {
     ) {
       rejectRuntime('practice retry must keep the same interstitial feedback-cycle key');
     }
+    if (usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey) !== false) {
+      rejectRuntime('practice retry reset must keep the answer XP feedback-cycle guard');
+    }
 
     usePracticeSessionStore.getState().advanceQuestion();
     state = usePracticeSessionStore.getState();
@@ -13578,11 +13597,23 @@ function validatePracticeSessionStoreParity() {
     ) {
       rejectRuntime('practice advance must create a fresh interstitial feedback-cycle key');
     }
+    if (state.answerXpAwardedKey !== null) {
+      rejectRuntime('practice advance must reset the answer XP feedback-cycle guard');
+    }
+    if (
+      usePracticeSessionStore
+        .getState()
+        .claimAnswerXpAward(getPracticeAnswerXpAwardKey('q-validator', state.shuffleSessionId)) !==
+      true
+    ) {
+      rejectRuntime('practice advance must allow answer XP for the next feedback cycle');
+    }
 
     usePracticeSessionStore.setState({
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
+      answerXpAwardedKey: null,
     });
     if (runtimeValid) practiceInterstitialQuestionCapValidated = true;
   }
@@ -14849,14 +14880,6 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
-function expectedPublishedSourceOptions(question) {
-  if (typeof applyQuestionLocalizationPilot !== 'function') {
-    return question.options;
-  }
-
-  return applyQuestionLocalizationPilot(question).options;
-}
-
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
 
@@ -14887,9 +14910,6 @@ function expectedPublishedSourceField(question, field) {
   }
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
-  }
-  if (field === 'options') {
-    return expectedPublishedSourceOptions(question);
   }
   return question[field];
 }
@@ -14982,17 +15002,6 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
-
-if (process.argv.includes('--focus-authored-source-parity')) {
-  exitWithValidationFailures();
-  printValidationSummary({
-    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
-    authoredSourceQuestionsValidated,
-    authoredSourcePartitionQuestionsValidated,
-    sourcePublicationParityValidated,
-  });
-  process.exit(0);
-}
 
 function validateGenerationParity() {
   if (

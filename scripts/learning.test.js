@@ -594,6 +594,74 @@ test('mock exam completion XP is awarded once per stored session', () => {
   assert.equal(store.getState().totalXp, 90);
 });
 
+test('progress store can record retry attempts without awarding duplicate answer XP', () => {
+  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
+  const store = useProgressStore;
+
+  store.getState().resetProgress();
+  store.getState().recordAnswer('q-xp', true, undefined, { awardXp: true });
+  assert.equal(store.getState().totalXp, 12);
+
+  store.getState().recordAnswer('q-xp', true, undefined, { awardXp: false });
+  const retryProgress = store.getState().questionProgress['q-xp'];
+  assert.equal(store.getState().totalXp, 12);
+  assert.equal(retryProgress.seenCount, 2);
+  assert.equal(retryProgress.correctCount, 2);
+  assert.equal(retryProgress.wrongCount, 0);
+  assert.equal(store.getState().answerHistory.length, 2);
+  assert.deepEqual(
+    store.getState().answerHistory.map((entry) => entry.questionId),
+    ['q-xp', 'q-xp'],
+  );
+
+  store.getState().recordAnswer('q-next', false);
+  assert.equal(store.getState().totalXp, 16);
+});
+
+test('practice session XP claim prevents Try Again answer XP farming', () => {
+  const { getPracticeAnswerXpAwardKey, usePracticeSessionStore } = loadAllTs(
+    'lib/quiz/practiceSessionStore.ts',
+  );
+  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
+
+  useProgressStore.getState().resetProgress();
+  usePracticeSessionStore.setState({
+    activeQuestionId: null,
+    selectedOptionId: null,
+    shuffleSessionId: 'practice-session-0',
+    answerXpAwardedKey: null,
+  });
+
+  function recordPracticeAnswer(questionId, optionId, isCorrect) {
+    const awardKey = getPracticeAnswerXpAwardKey(
+      questionId,
+      usePracticeSessionStore.getState().shuffleSessionId,
+    );
+    usePracticeSessionStore.getState().selectOption(questionId, optionId);
+    useProgressStore.getState().recordAnswer(questionId, isCorrect, undefined, {
+      awardXp: usePracticeSessionStore.getState().claimAnswerXpAward(awardKey),
+    });
+  }
+
+  recordPracticeAnswer('q-xp', 'q-xp-correct', true);
+  assert.equal(useProgressStore.getState().totalXp, 12);
+
+  usePracticeSessionStore.getState().resetSelection();
+  recordPracticeAnswer('q-xp', 'q-xp-correct-again', true);
+
+  assert.equal(useProgressStore.getState().totalXp, 12);
+  assert.equal(useProgressStore.getState().questionProgress['q-xp'].seenCount, 2);
+  assert.equal(useProgressStore.getState().questionProgress['q-xp'].correctCount, 2);
+  assert.deepEqual(
+    useProgressStore.getState().answerHistory.map((entry) => entry.questionId),
+    ['q-xp', 'q-xp'],
+  );
+
+  usePracticeSessionStore.getState().advanceQuestion();
+  recordPracticeAnswer('q-next', 'q-next-wrong', false);
+  assert.equal(useProgressStore.getState().totalXp, 16);
+});
+
 test('readiness and dashboard selectors ignore invalid or future answer dates', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
   const { dashboardSummary } = loadAllTs('lib/learning/dashboardStats.ts');

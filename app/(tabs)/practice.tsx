@@ -38,6 +38,7 @@ import {
 } from '../../lib/quiz/practiceFlow';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import {
+  getPracticeAnswerXpAwardKey,
   getPracticeInterstitialShowKey,
   usePracticeSessionStore,
 } from '../../lib/quiz/practiceSessionStore';
@@ -163,6 +164,7 @@ export default function Screen() {
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
+  const claimAnswerXpAward = usePracticeSessionStore((state) => state.claimAnswerXpAward);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
@@ -309,7 +311,9 @@ export default function Screen() {
       : undefined;
 
     selectOption(question.id, optionId);
-    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
+    recordAnswer(question.id, optionIsCorrect, answerConfidenceRating, {
+      awardXp: claimAnswerXpAward(getPracticeAnswerXpAwardKey(question.id, shuffleSessionId)),
+    });
 
     if (isChallengeMode) {
       const nextChallengeAnswers = { ...challengeAnswers, [question.id]: optionIsCorrect };

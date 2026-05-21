@@ -87,14 +87,14 @@ test('practice flow ignores malformed completed-question ids', () => {
 });
 
 test('practice session separates retry from next-question advancement', () => {
-  const { getPracticeInterstitialShowKey, usePracticeSessionStore } = loadTs(
-    'lib/quiz/practiceSessionStore.ts',
-  );
+  const { getPracticeAnswerXpAwardKey, getPracticeInterstitialShowKey, usePracticeSessionStore } =
+    loadTs('lib/quiz/practiceSessionStore.ts');
 
   usePracticeSessionStore.setState({
     activeQuestionId: null,
     selectedOptionId: null,
     shuffleSessionId: 'practice-session-0',
+    answerXpAwardedKey: null,
   });
 
   usePracticeSessionStore.getState().selectOption('q1', 'q1-a');
@@ -106,12 +106,19 @@ test('practice session separates retry from next-question advancement', () => {
     usePracticeSessionStore.getState().activeQuestionId,
     usePracticeSessionStore.getState().shuffleSessionId,
   );
+  const firstAnswerXpKey = getPracticeAnswerXpAwardKey(
+    usePracticeSessionStore.getState().activeQuestionId,
+    usePracticeSessionStore.getState().shuffleSessionId,
+  );
+  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), true);
+  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), false);
 
   usePracticeSessionStore.getState().resetSelection();
 
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
+  assert.equal(usePracticeSessionStore.getState().claimAnswerXpAward(firstAnswerXpKey), false);
   assert.equal(
     getPracticeInterstitialShowKey(
       usePracticeSessionStore.getState().activeQuestionId,
@@ -125,6 +132,13 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
+  assert.equal(usePracticeSessionStore.getState().answerXpAwardedKey, null);
+  assert.equal(
+    usePracticeSessionStore
+      .getState()
+      .claimAnswerXpAward(getPracticeAnswerXpAwardKey('q1', 'practice-session-1')),
+    true,
+  );
   assert.notEqual(
     getPracticeInterstitialShowKey('q1', usePracticeSessionStore.getState().shuffleSessionId),
     firstFeedbackKey,

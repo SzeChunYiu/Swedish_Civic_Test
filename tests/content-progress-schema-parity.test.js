@@ -233,7 +233,7 @@ test('progress question schema stays in parity with persisted progress records',
   assert.doesNotMatch(progressStore, /Math\.max\(0, item\.seenCount \?\? 0\)/);
   assert.match(
     progressStore,
-    /recordAnswer\(questionId: string, isCorrect: boolean, confidenceRating\?: ConfidenceRating\): void;/,
+    /recordAnswer\(\s*questionId: string,\s*isCorrect: boolean,\s*confidenceRating\?: ConfidenceRating,\s*options\?: RecordAnswerOptions,\s*\): void;/,
   );
   assert.match(progressStore, /recordMockExamSession: \(session: MockExamProgressInput\) => void;/);
   assert.match(progressStore, /function normalizeConfidenceRating\(value: unknown\)/);
