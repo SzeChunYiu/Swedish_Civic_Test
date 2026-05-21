@@ -27,12 +27,22 @@ function uniqueSorted(values) {
   return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function fromVm(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
 function staticQuestionBank() {
   return staticQuestionBankRuntime().questions;
+}
+
+function staticQuestionById(questionId) {
+  const question = staticQuestionBank().find((candidate) => candidate.id === questionId);
+  assert.ok(question, `static question ${questionId} should exist`);
+  return question;
 }
 
 function staticQuestionBankRuntime() {
@@ -139,6 +149,14 @@ function termsContentParagraph(indexHtml) {
   const paragraphMatch = indexHtml.match(/<p data-i18n="terms\.s3\.p">([\s\S]*?)<\/p>/);
   assert.ok(paragraphMatch, 'static Terms content paragraph should be present');
   return paragraphMatch[1];
+}
+
+function homeDemoQcard(indexHtml) {
+  const qcardMatch = indexHtml.match(
+    /<div class="qcard" id="qcard"[\s\S]*?<\/div>\s*<\/div>\s*<\/section>/,
+  );
+  assert.ok(qcardMatch, 'static Home demo qcard should be present');
+  return qcardMatch[0];
 }
 
 function appTranslationValues(appSource, includeKey) {
@@ -471,6 +489,54 @@ test('static source claims match the shipped question-bank source titles', () =>
   assert.match(surface, /UHR/i);
   assert.match(surface, /current question bank|nuvarande fr[aå]gebanken/i);
   assert.match(surface, /Primary source\s+1|Prim[aä]r k[aä]lla\s+1/i);
+});
+
+test('static Home demo qcard source mirrors q039 source and UHR provenance', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+  const extraI18n = staticExtraI18n();
+  const qcardHtml = homeDemoQcard(indexHtml);
+  const q039 = staticQuestionById('q039');
+  const expectedEnglishSource = `Source: ${q039.source.title} · ${q039.source.chapter} · ${q039.source.section} · p. ${q039.source.page}`;
+  const expectedSwedishSource = `Källa: ${q039.source.title} · ${q039.source.chapter} · ${q039.source.section} · s. ${q039.source.page}`;
+
+  assert.equal(q039.questionProvenance, 'uhr');
+  assert.equal(q039.source.title, 'Sverige i fokus');
+  assert.equal(q039.source.chapter, 'Lag och rätt');
+  assert.equal(q039.source.section, 'Allemansrätten');
+  assert.equal(q039.source.page, 17);
+
+  assert.match(qcardHtml, /data-source-question-id="q039"/);
+  assert.match(qcardHtml, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(qcardHtml, /data-i18n="qcard\.prov"[\s\S]*?>UHR<\/span\s*>/);
+  assert.match(qcardHtml, new RegExp(escapeRegExp(expectedEnglishSource)));
+  assert.doesNotMatch(qcardHtml, /Grundlagarna/);
+
+  const englishTranslations = englishTranslationMap(appSource);
+  assert.equal(englishTranslations.get('qcard.chip'), 'Chapter 5 · q039');
+  assert.equal(englishTranslations.get('qcard.prov'), 'UHR');
+  assert.equal(englishTranslations.get('qcard.src'), expectedEnglishSource);
+  assert.match(appSource, /'qcard\.chip': 'Kapitel 5 · q039'/);
+  assert.match(appSource, new RegExp(`'qcard\\.src': '${escapeRegExp(expectedSwedishSource)}'`));
+  assert.doesNotMatch(appSource, /'qcard\.src': '[^']*Grundlagarna/);
+
+  for (const locale of extraSourceProvenanceLocales) {
+    const dictionary = extraI18n?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary should exist`);
+    assert.equal(dictionary['qcard.prov'], 'UHR', `${locale} qcard should expose UHR provenance`);
+    assert.match(dictionary['qcard.chip'], /5|۵|٥/, `${locale} qcard chip should name chapter 5`);
+    assert.match(dictionary['qcard.chip'], /q039/, `${locale} qcard chip should name q039`);
+    assert.match(
+      dictionary['qcard.src'],
+      /Sverige i fokus[\s\S]*Lag och rätt[\s\S]*Allemansrätten[\s\S]*17/,
+      `${locale} qcard source should mirror q039 source metadata`,
+    );
+    assert.doesNotMatch(
+      dictionary['qcard.src'],
+      /Grundlagarna/,
+      `${locale} qcard source should not keep stale Grundlagarna copy`,
+    );
+  }
 });
 
 test('static question bank exports visible question provenance', () => {

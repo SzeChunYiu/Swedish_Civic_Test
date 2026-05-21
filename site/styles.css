@@ -566,9 +566,16 @@ p.deck {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 14px;
   color: var(--ink-soft);
   font-size: 13px;
   font-family: var(--mono);
+}
+.qcard__source {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .qcard__meta button {
   background: transparent;
@@ -5265,7 +5272,6 @@ html[dir='rtl'] .lang-menu {
   margin: 20px 0 0;
 }
 
-
 /* ------------------------------------------------------------------ LIVE FIXES: consent, purchases, and narrow screens */
 :root[data-consent-visible] .dala-buddy {
   display: none !important;
@@ -5469,8 +5475,7 @@ html[dir='rtl'] .lang-menu {
 
 .hub__stats > div {
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%), var(--card-surface);
 }
 
 .hub__card {
@@ -5582,8 +5587,7 @@ html[dir='rtl'] .lang-menu {
 .list-quiet li {
   align-items: stretch;
   background:
-    linear-gradient(135deg, rgba(254, 204, 0, 0.11), rgba(254, 204, 0, 0) 42%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(254, 204, 0, 0.11), rgba(254, 204, 0, 0) 42%), var(--card-surface);
   border: 1px solid var(--card-border);
   border-radius: 20px;
   box-shadow: var(--card-shadow);
@@ -5745,7 +5749,9 @@ html[dir='rtl'] .lang-menu {
     radial-gradient(circle at 92% 0%, rgba(254, 204, 0, 0.16), rgba(254, 204, 0, 0) 34%),
     var(--card-surface);
   border: 1px solid var(--card-border);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.64) inset, var(--card-shadow-hover);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.64) inset,
+    var(--card-shadow-hover);
   isolation: isolate;
   overflow: hidden;
 }
@@ -5825,7 +5831,9 @@ html[dir='rtl'] .lang-menu {
 
 .set-palette.is-on {
   border-color: var(--blue);
-  box-shadow: 0 0 0 2px rgba(254, 204, 0, 0.44), var(--card-shadow);
+  box-shadow:
+    0 0 0 2px rgba(254, 204, 0, 0.44),
+    var(--card-shadow);
 }
 
 .set-palette__chips {
@@ -5924,8 +5932,7 @@ html[dir='rtl'] .lang-menu {
 .hero__col {
   background:
     radial-gradient(circle at 100% 0%, rgba(254, 204, 0, 0.18), rgba(254, 204, 0, 0) 34%),
-    linear-gradient(135deg, rgba(0, 106, 167, 0.045), rgba(0, 106, 167, 0) 44%),
-    var(--card-surface);
+    linear-gradient(135deg, rgba(0, 106, 167, 0.045), rgba(0, 106, 167, 0) 44%), var(--card-surface);
   border: 1px solid var(--card-border);
   border-radius: 30px;
   box-shadow: var(--card-shadow-hover);
@@ -6150,8 +6157,7 @@ html[dir='rtl'] .lang-menu {
 
 :root[data-theme='dark'] .topbar {
   background:
-    linear-gradient(180deg, rgba(13, 22, 32, 0.94), rgba(13, 22, 32, 0.82)),
-    rgba(13, 22, 32, 0.88);
+    linear-gradient(180deg, rgba(13, 22, 32, 0.94), rgba(13, 22, 32, 0.82)), rgba(13, 22, 32, 0.88);
 }
 
 :root[data-theme='dark'] .nav,

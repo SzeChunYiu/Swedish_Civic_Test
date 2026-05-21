@@ -193,6 +193,27 @@ test('static provenance badge copy avoids positive UHR authority wording', () =>
   assert.doesNotMatch(source, new RegExp(phrase(['genererats', 'från', 'en', 'UHR-fråga']), 'i'));
 });
 
+test('static Home demo qcard renders q039 UHR source metadata', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+  const qcardMatch = indexHtml.match(
+    /<div class="qcard" id="qcard"[\s\S]*?<\/div>\s*<\/div>\s*<\/section>/,
+  );
+  assert.ok(qcardMatch, 'Home demo qcard should be present');
+  const qcardHtml = qcardMatch[0];
+
+  assert.match(qcardHtml, /data-source-question-id="q039"/);
+  assert.match(qcardHtml, /class="quiz__provenance quiz__provenance--uhr"/);
+  assert.match(qcardHtml, /Source: Sverige i fokus · Lag och rätt · Allemansrätten · p\. 17/);
+  assert.doesNotMatch(qcardHtml, /Grundlagarna/);
+  assert.match(appSource, /'qcard\.chip': 'Chapter 5 · q039'/);
+  assert.match(
+    appSource,
+    /'qcard\.src': 'Source: Sverige i fokus · Lag och rätt · Allemansrätten · p\. 17'/,
+  );
+  assert.doesNotMatch(appSource, /'qcard\.src': '[^']*Grundlagarna/);
+});
+
 test('static Mock review renders citation and disclaimer for every reviewed question', () => {
   const { sandbox, element } = createRenderContext({ hash: '#/mock?run=1', language: 'sv' });
   const source = read('site/practice.js').replace(
