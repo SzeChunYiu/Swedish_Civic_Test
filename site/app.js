@@ -276,13 +276,13 @@ const i18n = (window.i18n = {
       "Yes. Toggle the EN / SV switch in the nav, or change it inside the app. Many learners use both at once — read the question in Swedish, peek at the English when you're stuck.",
     'faq.6.q': 'Is my data shared with anyone?',
     'faq.6.a':
-      'Your study progress, answers, mistakes, and settings stay local. Google AdSense on the website and Google Mobile Ads (AdMob) in the app can process ad and consent signals, but ads never receive your study answers or progress.',
+      'Your study progress, answers, mistakes, and settings stay local. The website has AdSense-ready ad slots that stay disabled until reviewed slot IDs are configured; Google Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never receive your study answers or progress.',
     'doc.back': '← Back to home',
     'privacy.kicker': 'Privacy policy',
     'privacy.h1a': 'Your data',
     'privacy.h1b': 'stays on your phone.',
     'privacy.lede':
-      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the Google AdSense web ads, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
+      "Almost Swedish is an independent study app. We don't ask for an account, and study progress stays local. This page explains the AdSense-ready web ad slots, Google Mobile Ads app ads, and optional one-time Remove Ads purchase.",
     'privacy.meta1.b': 'Effective',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -307,7 +307,7 @@ const i18n = (window.i18n = {
       'We do not run account profiles or send study answers, mistakes, progress, settings, XP, streaks, badges, bookmarks, or audio preferences to ad providers. Google ad systems may process ad and consent signals as described below.',
     'privacy.s5.t': 'Ads and purchases',
     'privacy.s5.p':
-      "This website uses Google AdSense. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
+      "This website has Google AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads. Ads help fund the free study experience, and ads never collect study answers or progress.",
     'privacy.s6.t': 'Changes & contact',
     'privacy.s6.p':
       'If this policy changes, the effective date at the top of this page will change with it. Questions, concerns, or "wait, what does this actually mean?" — head over to the <a href="#/support">support page</a>.',
@@ -450,12 +450,12 @@ const i18n = (window.i18n = {
     'practice.subtitle': 'No pressure.',
     'consent.title': 'Cookies, lagom-style.',
     'consent.body':
-      'We use Google AdSense to show a couple of ads. AdSense sets cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
+      'When reviewed web ad slots are configured, Google AdSense can set cookies and may use them for ad personalisation. Accept all, accept only what\'s needed, or read the <a href="#/privacy">privacy page</a>.',
     'consent.min': 'Necessary only',
     'consent.all': 'Accept all',
     'privacy.s5.web.t': 'Ads on this website',
     'privacy.s5.web.p':
-      'This website uses <b>Google AdSense</b>. AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
+      'This website is prepared for <b>Google AdSense</b>, but the static build does not load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and its partners may set cookies on your device and use them to personalise ads, measure performance, and detect fraud. We load AdSense according to your cookie choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads non-personalised. You can change your choice by clearing site data for this domain.',
     'privacy.s5.app.t': 'Ads in the mobile app',
     'privacy.s5.app.p':
       "The mobile app uses <b>Google Mobile Ads (AdMob)</b>. On first launch the app shows Google's official consent screen (via the <em>User Messaging Platform</em> SDK), where you can pick personalised, non-personalised, or — in regions where the choice is available — opt out. Ads keep the app free. We never use ads to collect your study answers or progress.",
@@ -671,13 +671,13 @@ const i18n = (window.i18n = {
       'Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.',
     'faq.6.q': 'Delas mina data med någon?',
     'faq.6.a':
-      'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Google AdSense på webbplatsen och Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler, men annonser får aldrig dina studiesvar eller framsteg.',
+      'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Webbplatsen har annonsytor förberedda för Google AdSense som är avstängda tills granskade annonsplats-ID:n är konfigurerade; Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler. Annonser får aldrig dina studiesvar eller framsteg.',
     'doc.back': '← Tillbaka till hem',
     'privacy.kicker': 'Integritetspolicy',
     'privacy.h1a': 'Dina data',
     'privacy.h1b': 'stannar i telefonen.',
     'privacy.lede':
-      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar Google AdSense-annonser på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
+      'Almost Swedish är en fristående studieapp. Vi ber inte om konto, och studieframsteg stannar lokalt. Den här sidan förklarar de AdSense-förberedda annonsytorna på webben, Google Mobile Ads i appen och det valfria engångsköpet Ta bort annonser.',
     'privacy.meta1.b': 'Gäller från',
     'privacy.meta1.v': '2026-05-15',
     'privacy.meta2.b': 'Version',
@@ -701,7 +701,7 @@ const i18n = (window.i18n = {
       'Vi kör inga kontoprofiler och skickar inte studiesvar, misstag, framsteg, inställningar, XP, streaks, märken, bokmärken eller ljudpreferenser till annonsleverantörer. Googles annonssystem kan behandla annons- och samtyckessignaler enligt beskrivningen nedan.',
     'privacy.s5.t': 'Annonser och köp',
     'privacy.s5.p':
-      'Den här webbplatsen använder Google AdSense. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
+      'Den här webbplatsen har annonsytor förberedda för Google AdSense, men de är avstängda tills granskade annonsplats-ID:n är konfigurerade. Mobilappen använder Google Mobile Ads (AdMob) bakom Googles samtyckesflöde. Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser. Annonser hjälper till att finansiera den kostnadsfria studieupplevelsen, och annonser samlar aldrig in dina studiesvar eller framsteg.',
     'privacy.s6.t': 'Ändringar & kontakt',
     'privacy.s6.p':
       'Om policyn ändras uppdateras datumet längst upp. Frågor, oro, eller "vad betyder det här egentligen?" — gå till <a href="#/support">supportsidan</a>.',
@@ -842,12 +842,12 @@ const i18n = (window.i18n = {
     'practice.subtitle': 'Ingen press.',
     'consent.title': 'Cookies, på lagom-vis.',
     'consent.body':
-      'Vi använder Google AdSense för att visa ett par annonser. AdSense sätter cookies och kan använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
+      'När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies och använda dem för personalisering. Godkänn allt, bara det nödvändiga, eller läs <a href="#/privacy">integritetssidan</a>.',
     'consent.min': 'Bara nödvändiga',
     'consent.all': 'Godkänn allt',
     'privacy.s5.web.t': 'Annonser på webbplatsen',
     'privacy.s5.web.p':
-      'Den här webbplatsen använder <b>Google AdSense</b>. AdSense och dess partner kan sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
+      'Den här webbplatsen är förberedd för <b>Google AdSense</b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade. När AdSense är aktiverat kan AdSense och dess partner sätta cookies på din enhet och använda dem för personalisering, mätning och bedrägeridetektering. Vi laddar AdSense enligt ditt cookieval: <em>Godkänn allt</em> tillåter personaliserade annonser, medan <em>Bara nödvändiga</em> håller annonserna icke-personaliserade. Du kan ändra valet genom att tömma platsdata för domänen.',
     'privacy.s5.app.t': 'Annonser i mobilappen',
     'privacy.s5.app.p':
       'Mobilappen använder <b>Google Mobile Ads (AdMob)</b>. Vid första start visar appen Googles officiella samtyckesskärm (via <em>User Messaging Platform</em>-SDK:n) där du kan välja personaliserat, icke-personaliserat eller — där det går — avstå. Annonser håller appen gratis. Vi använder aldrig annonser för att samla in dina studiesvar eller framsteg.',

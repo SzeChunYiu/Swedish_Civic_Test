@@ -238,6 +238,30 @@ test('live site check rejects unqualified no-tracking static copy', async () => 
   });
 });
 
+test('live site check rejects current-use AdSense copy when slots are unconfigured', async () => {
+  const staleApp = [
+    currentAssets()['/app.js'],
+    "'privacy.s5.p': 'This website uses Google AdSense.';",
+    "'privacy.s5.p': 'Den här webbplatsen använder Google AdSense.';",
+    "'consent.body': 'We use Google AdSense to show a couple of ads.';",
+    "'consent.body': 'Vi använder Google AdSense för att visa ett par annonser.';",
+  ].join('\n');
+
+  await withStaticServer({ ...currentAssets(), '/app.js': staleApp }, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find(
+      (check) => check.name === 'static AdSense slot-state copy',
+    );
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /reviewed web slot IDs are not configured/);
+    assert.match(failedCheck?.details ?? '', /Google AdSense/);
+  });
+});
+
 test('live site check rejects static team credential claims', async () => {
   const staleAssetsWithCredentialClaim = currentAssets();
   staleAssetsWithCredentialClaim['/index.html'] = [
