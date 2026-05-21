@@ -672,6 +672,10 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS = {
 };
 const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'learn route must import AppLanguage from settings'],
+  [
+    "import { selectDailyFlashcardDeck } from '../../lib/learning/flashcardDeck';",
+    'learn route must select daily flashcards through the deck helper',
+  ],
   ['type ChapterLinkCopy = {', 'learn route must define a typed chapter-link copy contract'],
   [
     'const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = {',
@@ -682,9 +686,19 @@ const EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS = [
     'learn route must read language from settings store',
   ],
   [
+    'const questionProgress = useProgressStore((state) => state.questionProgress);',
+    'learn route must read question progress for daily flashcard selection',
+  ],
+  [
     'const copy = chapterLinkCopy[language];',
     'learn route must select chapter-link copy from settings language',
   ],
+  [
+    'selectDailyFlashcardDeck({',
+    'learn route must build flashcards through the daily deck selector',
+  ],
+  ['limit: FLASHCARD_PREVIEW_LIMIT,', 'learn route must keep the visible flashcard limit explicit'],
+  ['questionProgress,', 'learn route flashcard selector must receive progress state'],
   [
     'questionCount > 0 ? copy.progressLabel(completedCount, questionCount) : copy.contentQueued',
     'learn route must choose localized progress or queued copy',
@@ -2661,8 +2675,16 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
       /type FlashcardProps = \{ front\?: string; back\?: string; language\?: AppLanguage \};/,
   },
   {
+    label: 'shared Button import',
+    pattern: /import \{ Button \} from '\.\.\/ui\/Button';/,
+  },
+  {
     label: 'settings language import',
     pattern: /useSettingsStore, type AppLanguage/,
+  },
+  {
+    label: 'per-card reveal state',
+    pattern: /const \[isRevealed, setIsRevealed\] = useState\(false\);/,
   },
   {
     label: 'localized copy map',
@@ -2683,6 +2705,15 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
       /fallbackPrompt: 'Study prompt unavailable'[\s\S]*fallbackAnswer: 'Answer unavailable'/,
   },
   {
+    label: 'localized hidden-answer prompts',
+    pattern:
+      /hiddenAnswer: 'Svara själv innan du visar svaret\.'[\s\S]*hiddenAnswer: 'Try to answer before revealing it\.'/,
+  },
+  {
+    label: 'localized reveal actions',
+    pattern: /revealButton: 'Visa svar'[\s\S]*revealButton: 'Reveal answer'/,
+  },
+  {
     label: 'trimmed text helper',
     pattern: /function cleanText\(value: string \| undefined, fallback: string\): string/,
   },
@@ -2696,11 +2727,13 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   },
   {
     label: 'localized accessibility summary helper',
-    pattern: /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+    pattern:
+      /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer, isRevealed\);/,
   },
   {
-    label: 'prompt and answer accessibility summary',
-    pattern: /<Card accessibilityLabel=\{flashcardAccessibilityLabel\} style=\{styles\.card\}>/,
+    label: 'prompt accessibility summary and stable e2e hook',
+    pattern:
+      /<Card[\s\S]*accessibilityLabel=\{flashcardAccessibilityLabel\}[\s\S]*style=\{styles\.card\}[\s\S]*testID="learn-flashcard"/,
   },
   {
     label: 'visible localized flashcard badge',
@@ -2712,14 +2745,23 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
       /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*\{copy\.promptHeader\}[\s\S]*<\/Text>/,
   },
   {
-    label: 'localized answer header text',
+    label: 'localized revealed answer header text',
     pattern:
       /<Text accessibilityRole="header" style=\{styles\.label\}>[\s\S]*\{copy\.answerHeader\}[\s\S]*<\/Text>/,
   },
   {
-    label: 'visible prompt and answer text',
+    label: 'visible prompt and reveal-gated answer text',
     pattern:
-      /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+      /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*\{isRevealed \? \([\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+  },
+  {
+    label: 'hidden answer prompt before reveal',
+    pattern: /<Text style=\{styles\.hiddenAnswer\}>\{copy\.hiddenAnswer\}<\/Text>/,
+  },
+  {
+    label: 'localized reveal button action',
+    pattern:
+      /<Button[\s\S]*accessibilityLabel=\{copy\.revealAccessibilityLabel\(prompt\)\}[\s\S]*onPress=\{\(\) => setIsRevealed\(true\)\}[\s\S]*\{copy\.revealButton\}[\s\S]*<\/Button>/,
   },
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
@@ -7335,6 +7377,7 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
@@ -7611,6 +7654,20 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-learn-flashcard-deck')) {
+  validateLearnRouteLinkCopyParity();
+  validateFlashcardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    learnRouteLinkCopyLabelsValidated,
+    learnRouteLinkCopyParityValidated,
+    flashcardAccessibilityRulesValidated,
+    flashcardAccessibilityParityValidated,
+    swedishFlashcardCopyNaturalnessValidated,
   });
   process.exit(0);
 }
@@ -9534,6 +9591,9 @@ function validateLearnRouteLinkCopyParity() {
   EXPECTED_LEARN_ROUTE_LINK_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!learnRoute.includes(snippet)) reject(message);
   });
+  if (/questions\.slice\(0,\s*FLASHCARD_PREVIEW_LIMIT\)/.test(learnRoute)) {
+    reject('learn route must not hard-code the first three flashcards');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_LEARN_ROUTE_LINK_COPY_LABELS).forEach(([language, labels]) => {
@@ -10805,6 +10865,12 @@ function validateFlashcardAccessibilityParity() {
     }
     flashcardAccessibilityRulesValidated += 1;
   });
+
+  if (/Flashkort|flashkort/.test(flashcardSource)) {
+    reject('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+  } else {
+    swedishFlashcardCopyNaturalnessValidated = true;
+  }
 
   if (
     valid &&
@@ -16253,6 +16319,7 @@ console.log(
       chapterCardAccessibilityParityValidated,
       flashcardAccessibilityRulesValidated,
       flashcardAccessibilityParityValidated,
+      swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,

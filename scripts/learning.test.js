@@ -173,6 +173,110 @@ test('daily goal prefers per-answer attempts and falls back for older progress s
   assert.equal(countAnswerAttemptsForLocalDate({ questionProgress, date: today }), 1);
 });
 
+test('daily flashcard deck prioritizes unanswered, saved, wrong, and stale questions', () => {
+  const { selectDailyFlashcardDeck } = loadAllTs('lib/learning/flashcardDeck.ts');
+  const questions = Array.from({ length: 6 }, (_, index) => ({
+    chapterId: 'ch01',
+    correctOptionId: 'a',
+    id: `q00${index + 1}`,
+    options: [],
+  }));
+
+  const deck = selectDailyFlashcardDeck({
+    date: new Date(2026, 4, 20, 12),
+    limit: 5,
+    questionProgress: {
+      q001: {
+        questionId: 'q001',
+        seenCount: 4,
+        correctCount: 4,
+        wrongCount: 0,
+        correctStreak: 4,
+        lastAnsweredAt: '2026-05-20T08:00:00.000Z',
+      },
+      q002: {
+        questionId: 'q002',
+        seenCount: 1,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 1,
+        bookmarked: true,
+      },
+      q003: {
+        questionId: 'q003',
+        seenCount: 2,
+        correctCount: 1,
+        wrongCount: 1,
+        correctStreak: 0,
+      },
+      q005: {
+        questionId: 'q005',
+        seenCount: 3,
+        correctCount: 3,
+        wrongCount: 0,
+        correctStreak: 3,
+        lastAnsweredAt: '2026-05-01T08:00:00.000Z',
+      },
+      q006: {
+        questionId: 'q006',
+        seenCount: 3,
+        correctCount: 3,
+        wrongCount: 0,
+        correctStreak: 3,
+        nextReviewAt: '2026-05-19T08:00:00.000Z',
+      },
+    },
+    questions,
+  });
+
+  assert.deepEqual(
+    deck.map((question) => question.id),
+    ['q002', 'q003', 'q004', 'q006', 'q005'],
+  );
+});
+
+test('daily flashcard deck rotates completed-only study cards by local date', () => {
+  const { selectDailyFlashcardDeck } = loadAllTs('lib/learning/flashcardDeck.ts');
+  const questions = Array.from({ length: 12 }, (_, index) => ({
+    chapterId: 'ch01',
+    correctOptionId: 'a',
+    id: `q${String(index + 1).padStart(3, '0')}`,
+    options: [],
+  }));
+  const questionProgress = Object.fromEntries(
+    questions.map((question) => [
+      question.id,
+      {
+        questionId: question.id,
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-05-20T08:00:00.000Z',
+      },
+    ]),
+  );
+
+  const today = selectDailyFlashcardDeck({
+    date: new Date(2026, 4, 20, 12),
+    questionProgress,
+    questions,
+  }).map((question) => question.id);
+  const sameDay = selectDailyFlashcardDeck({
+    date: new Date(2026, 4, 20, 20),
+    questionProgress,
+    questions,
+  }).map((question) => question.id);
+  const tomorrow = selectDailyFlashcardDeck({
+    date: new Date(2026, 4, 21, 12),
+    questionProgress,
+    questions,
+  }).map((question) => question.id);
+
+  assert.deepEqual(sameDay, today);
+  assert.notDeepEqual(tomorrow, today);
+});
+
 test('progress answer dates use the shared local calendar key', () => {
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
