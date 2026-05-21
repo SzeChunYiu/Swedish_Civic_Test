@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
@@ -53,6 +53,11 @@ export function ProvenanceBadge({
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    setSourceNoteVisible(false);
+  }, [question?.id, language]);
+
   if (!question) return null;
   const copy = provenanceBadgeCopy[language];
   const provenance = getQuestionProvenance(question);

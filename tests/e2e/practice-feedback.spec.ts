@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import { dismissBlockingModals, seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
+
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
     name: /Close launch sponsor ad|Stäng startannons/,
@@ -163,6 +165,41 @@ test('practice question source citation prefix follows the selected language', a
     ),
   ).toBeVisible();
   await expect(page.getByText(/Källa\/Source:/)).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice provenance source note collapses when advancing to a new question', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByText('Question 1')).toBeVisible();
+  const provenance = page.getByRole('button', { name: /Provenance: UHR source/ }).first();
+  const sourceNote = page.getByText(/^Source note:/);
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote).toBeVisible();
+
+  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
+  await page.getByLabel('Move to the next practice question').click();
+
+  await expect(page.getByText('Question 2')).toBeVisible();
+  await expect(page.getByText(/^Source: Sverige i fokus, /).first()).toBeVisible();
+  await expect(sourceNote).toHaveCount(0);
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
 
   expect(consoleErrors).toEqual([]);
 });

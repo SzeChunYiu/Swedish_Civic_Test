@@ -73,6 +73,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'questionCardAccessibility',
+    flags: ['--focus-question-card-accessibility'],
+    summaryKeys: [
+      'questionCardAccessibilityRulesValidated',
+      'questionCardAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'legalRouteParity',
     flags: ['--focus-legal-route-parity'],
     summaryKeys: [

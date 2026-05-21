@@ -9,9 +9,10 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-learn-flashcard-source'],
+    ['scripts/validate-content.js', '--focus-question-card-accessibility'],
     {
       encoding: 'utf8',
+      cwd: repoRoot,
     },
   );
   const match = output.match(/\{[\s\S]*\}/);
@@ -22,9 +23,13 @@ function parseValidationSummary() {
 test('quiz QuestionCard keeps question text and accessibility summary in parity', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/quiz/QuestionCard.tsx'), 'utf8');
+  const provenanceSource = fs.readFileSync(
+    path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
+    'utf8',
+  );
   const helperSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
 
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 19);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.match(source, /const questionAccessibilityLabel =/);
   assert.match(source, /language\?: AppLanguage/);
@@ -58,23 +63,23 @@ test('quiz QuestionCard keeps question text and accessibility summary in parity'
   );
   assert.match(source, /\$\{copy\.sourceCitationLabel\}: \$\{sourceCitation\}/);
   assert.match(source, /Swedish original/);
-  assert.doesNotMatch(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
-  assert.match(
-    source,
-    /<Card>\s*<Text accessibilityLabel=\{questionAccessibilityLabel\} style=\{styles\.accessibilitySummary\}>/,
-  );
-  assert.match(source, /accessibilitySummary: \{/);
+  assert.match(source, /<Card accessibilityLabel=\{questionAccessibilityLabel\}>/);
   assert.match(source, /<Text style=\{styles\.label\}>\{difficultyLabel\}<\/Text>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.question\}>/);
   assert.match(source, /\{questionText\}/);
   assert.match(source, /<Text style=\{styles\.sourceCitation\}>\{sourceCitation\}<\/Text>/);
   assert.match(source, /\{questionTranslation\}/);
+  assert.match(provenanceSource, /import \{ useEffect, useMemo, useState \} from 'react';/);
+  assert.match(
+    provenanceSource,
+    /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
+  );
   assert.match(helperSource, /const QUESTION_DISPLAY_FALLBACKS/);
   assert.match(helperSource, /sv: 'Fråga saknas'/);
   assert.match(helperSource, /en: 'Question unavailable'/);
   assert.match(
     helperSource,
-    /fallback = QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
+    /fallback = QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE\[language\] \?\?\s*QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   );
   assert.match(helperSource, /resolveLocalizedText\(question\?\.questionText, language/);
 });
@@ -95,7 +100,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -126,7 +131,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -157,7 +162,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -171,7 +176,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('QuestionCard accessibility parity rejects parent card grouping of source controls', () => {
+test('QuestionCard accessibility parity rejects dropped card accessibility summary', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -184,11 +189,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/quiz/QuestionCard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('<Card>', '<Card accessibilityLabel={questionAccessibilityLabel}>');
+      .replace('<Card accessibilityLabel={questionAccessibilityLabel}>', '<Card>');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -198,7 +203,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /QuestionCard missing parent Card must not group nested source controls/,
+    /QuestionCard missing Card receives accessibility summary for accessibility parity/,
   );
 });
 
@@ -219,7 +224,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -230,6 +235,37 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /QuestionCard missing visible source citation line for accessibility parity/,
+  );
+});
+
+test('QuestionCard accessibility parity rejects carried source note disclosure state', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/quiz/ProvenanceBadge.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(/\\n\\s*useEffect\\(\\(\\) => \\{\\n\\s*setSourceNoteVisible\\(false\\);\\n\\s*\\}, \\[question\\?\\.id, language\\]\\);\\n/, '\\n');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-question-card-accessibility');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /QuestionCard missing source note disclosure reset on question or language change for accessibility parity/,
   );
 });
 
@@ -253,7 +289,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-learn-flashcard-source');
+process.argv.push('--focus-question-card-accessibility');
 require('./scripts/validate-content.js');
 `,
     ],
