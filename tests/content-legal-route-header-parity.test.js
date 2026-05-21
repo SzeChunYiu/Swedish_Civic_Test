@@ -20,7 +20,7 @@ const expectedLegalRoutes = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.independentStudyTool\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.practiceContent\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
     ],
     title: 'Disclaimer',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -68,7 +68,7 @@ const expectedLegalRoutes = [
     sectionPatterns: [
       /<LegalSection\s+title=\{copy\.sections\.studyPurpose\.title\}>/,
       /<LegalSection\s+title=\{copy\.sections\.noGuarantee\.title\}>/,
-      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.sourceMaterial\.title\}>/,
     ],
     title: 'Terms of use',
     titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
@@ -78,17 +78,12 @@ const expectedLegalRoutes = [
     file: 'app/sources.tsx',
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
-      "from '../components/compliance/SourceMaterialLinks'",
-      'UHR_AUTHORITY_BOUNDARY_SOURCE,',
-      'UhrAuthorityBoundaryLink,',
-      'UhrEducationMaterialLink,',
-      'UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate',
+      'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+      "retrievedDate: '2026-05-20'",
+      "title: 'UHR: Om medborgarskapsprovet'",
+      "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
-      "backAccessibilityLabel: 'Tillbaka till startsidan'",
-      "backLabel: '← Tillbaka till startsidan'",
-      "backAccessibilityLabel: 'Back to Home'",
-      "backLabel: '← Back to Home'",
       'Källor',
       'Primärt studiematerial',
       'UHR inte står bakom dessa',
@@ -101,13 +96,12 @@ const expectedLegalRoutes = [
       'Every practice question shows a source line with the UHR chapter',
     ],
     sectionPatterns: [
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
-      /<LegalSection[\s\S]*?title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.primaryStudyMaterial\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.questionReferences\.title\}[\s\S]*?>/,
+      /<LegalSection\s+title=\{copy\.sections\.authorityBoundaries\.title\}[\s\S]*?>/,
     ],
     title: 'Sources',
-    titlePattern:
-      /<LegalPage[\s\S]*backAccessibilityLabel=\{copy\.backAccessibilityLabel\}[\s\S]*backHref="\/home"[\s\S]*backLabel=\{copy\.backLabel\}[\s\S]*title=\{copy\.title\}\s*>/,
+    titlePattern: /<LegalPage\s+title=\{copy\.title\}>/,
     sections: ['Primary study material', 'Question references', 'Authority boundaries'],
   },
   {
@@ -162,11 +156,10 @@ test('sources route authority boundary cites the current UHR page', () => {
   const routeSource = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
 
   for (const snippet of [
-    "from '../components/compliance/SourceMaterialLinks'",
-    'UHR_AUTHORITY_BOUNDARY_SOURCE,',
-    'UhrAuthorityBoundaryLink,',
-    'UhrEducationMaterialLink,',
-    'UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate',
+    'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+    "retrievedDate: '2026-05-20'",
+    "title: 'UHR: Om medborgarskapsprovet'",
+    "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
     'UHR inte står bakom dessa',
     'Källa hämtad ${UHR_AUTHORITY_BOUNDARY_SOURCE.retrievedDate}',
     'quality is not controlled by UHR or any other authority',
@@ -175,7 +168,7 @@ test('sources route authority boundary cites the current UHR page', () => {
     assert.match(routeSource, new RegExp(escapeRegExp(snippet)));
   }
 
-  assert.match(routeSource, /<UhrAuthorityBoundaryLink[\s\S]*language=\{language\}/);
+  assert.match(routeSource, /<LegalExternalLink[\s\S]*href=\{UHR_AUTHORITY_BOUNDARY_SOURCE\.url\}/);
   assert.doesNotMatch(routeSource, /UHR\s+varnar|UHR\s+warns/i);
   assert.doesNotMatch(
     routeSource,
@@ -193,17 +186,11 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 62);
+  assert.equal(summary.privacyRemoveAdsCopyNaturalnessValidated, true);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 59);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
-  assert.equal(summary.legalInternalMonetizationKeyGuardValidated, 7);
-  assert.equal(summary.legalInternalMonetizationKeyGuardParityValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-
-  const privacyRoute = fs.readFileSync(path.join(repoRoot, 'app/privacy.tsx'), 'utf8');
-  assert.doesNotMatch(privacyRoute, /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i);
-  assert.match(privacyRoute, /gör att annonser inte visas på den här enheten/);
-  assert.match(privacyRoute, /turns off ads on this device/);
 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
@@ -227,37 +214,23 @@ test('legal, source, and support routes stay on shared accessible header path', 
       );
     }
   }
-});
 
-test('legal route parity rejects internal monetization keys in learner-facing privacy copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/privacy.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('turns off ads on this device', 'sets adsDisabled=true on this device');
+  const privacyRouteSource = fs.readFileSync(path.join(repoRoot, 'app/privacy.tsx'), 'utf8');
+  for (const snippet of [
+    'gör att annonser inte visas på den här enheten',
+    'turns off ads on this device',
+    'Ta bort annonser är ett engångsköp utan förbrukning för 29 SEK',
+    'Remove Ads is a one-time non-consumable purchase for 29 SEK',
+    'kan återställas via appbutiken',
+    'can be restored through the app store',
+    'Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads',
+    'The free app is ad-supported on study screens through Google Mobile Ads',
+    'Tidsatta provskärmar är annonsfria',
+    'Timed mock exam screens stay ad-free',
+  ]) {
+    assert.match(privacyRouteSource, new RegExp(escapeRegExp(snippet)));
   }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /learner-facing legal\/privacy copy must not expose internal monetization implementation key "adsDisabled flag" in app\/privacy\.tsx/,
-  );
+  assert.doesNotMatch(privacyRouteSource, /\badsDisabled\b/i);
 });
 
 test('privacy route parity rejects English streaks in Swedish legal copy', () => {
@@ -277,7 +250,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -288,6 +261,41 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /Swedish privacy copy must use natural Swedish streak wording, not "streaks"/,
+  );
+});
+
+test('privacy route parity rejects Remove Ads implementation flags in learner copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/privacy.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'gör att annonser inte visas på den här enheten',
+        'sätter adsDisabled=true på den här enheten',
+      )
+      .replace('turns off ads on this device', 'sets adsDisabled=true on this device');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-legal-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /Privacy Remove Ads copy must not expose adsDisabled implementation flags/,
   );
 });
 
@@ -311,7 +319,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -345,7 +353,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
