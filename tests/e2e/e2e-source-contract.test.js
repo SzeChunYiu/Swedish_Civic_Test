@@ -286,6 +286,49 @@ test('browser specs do not define local Date browser clock stubs', () => {
   );
 });
 
+test('Home browser specs use the shared setup and error harness', () => {
+  const homeSpecNames = [
+    'home-link-targets.spec.ts',
+    'home-preparation-signal-copy.spec.ts',
+    'home-resume-cta.spec.ts',
+  ];
+
+  for (const specName of homeSpecNames) {
+    const source = readRelative(specName);
+
+    assert.match(
+      source,
+      /collectConsoleAndPageErrors/,
+      `${specName} should collect browser failures through browserLaunch`,
+    );
+    assert.match(
+      source,
+      /seedFreshSettingsLanguageAndAboutSeen/,
+      `${specName} should seed Home state through browserLaunch`,
+    );
+    assert.match(
+      source,
+      /dismissBlockingModals/,
+      `${specName} should use the shared blocking-modal dismissal helper`,
+    );
+    assert.doesNotMatch(
+      source,
+      /function\s+collectConsoleErrors|page\.on\(['"]console['"]|page\.on\(['"]pageerror['"]/,
+      `${specName} should not define a local console/page error collector`,
+    );
+    assert.doesNotMatch(
+      source,
+      /page\.addInitScript|window\.localStorage\.clear\(\)|settings\\\\language|settings\\\\hasSeenAboutTheTest/,
+      `${specName} should not duplicate browserLaunch localStorage setup`,
+    );
+    assert.doesNotMatch(
+      source,
+      /getByRole\(['"]button['"],\s*\{[^}]*name:\s*\/.*(?:Language picker|Språkväljare)/s,
+      `${specName} should not use stale LanguagePicker button selectors`,
+    );
+  }
+});
+
 test('dist-web e2e server releases the default port on SIGTERM', async () => {
   const source = readRelative('serve-dist-web.cjs');
   assert.match(
