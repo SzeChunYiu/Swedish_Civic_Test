@@ -12,6 +12,7 @@ import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_SESSION_SIZE = 10;
 
 export interface AdaptiveQuestion {
   id: string;
@@ -97,9 +98,16 @@ function adaptiveDifficultyWeight(difficulty: AdaptiveQuestion['difficulty']): n
   return DIFFICULTY_WEIGHT[difficulty as keyof typeof DIFFICULTY_WEIGHT];
 }
 
+function normalizeSessionSize(size: AdaptivePracticeInput['size'], eligibleCount: number): number {
+  const requestedSize =
+    typeof size === 'number' && Number.isFinite(size) && Number.isInteger(size) && size >= 0
+      ? size
+      : DEFAULT_SESSION_SIZE;
+  return Math.min(requestedSize, Math.max(eligibleCount, 0));
+}
+
 function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringResult {
   const now = input.now ?? new Date();
-  const size = input.size ?? 10;
   const accuracy = input.recentAccuracyOverride ?? recentAccuracy(input.progress, now);
   const seen = lastSeenMap(input.progress, now);
 
@@ -112,6 +120,7 @@ function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringRe
   const eligible = input.chapterId
     ? input.bank.filter((q) => q.chapterId === input.chapterId)
     : input.bank.slice();
+  const size = normalizeSessionSize(input.size, eligible.length);
 
   const scored: ScoredQuestion[] = eligible.map((question) => {
     const last = seen[question.id];
