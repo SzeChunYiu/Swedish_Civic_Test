@@ -274,6 +274,46 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
       reviewStatus: 'reviewed',
       tags: ['elections'],
     },
+    {
+      id: 'q146',
+      chapterId: 'ch02',
+      type: 'single_choice',
+      questionSv: 'Vilken rätt har människor, grupper och partier i en demokrati?',
+      questionEn: 'What right do people, groups, and parties have in a democracy?',
+      options: [
+        {
+          id: 'a',
+          textSv: 'Att försöka övertyga andra om sina politiska idéer',
+          textEn: 'To try to persuade others of their political ideas',
+        },
+        {
+          id: 'b',
+          textSv: 'Att hindra andra från att rösta',
+          textEn: 'To stop others from voting',
+        },
+        {
+          id: 'c',
+          textSv: 'Att bestämma domstolarnas domar',
+          textEn: 'To decide court judgments',
+        },
+        {
+          id: 'd',
+          textSv: 'Att förbjuda alla andra partier',
+          textEn: 'To ban all other parties',
+        },
+      ],
+      correctOptionId: 'a',
+      explanationSv: 'Demokrati ger politiska rättigheter.',
+      explanationEn: 'Democracy gives political rights.',
+      uhrReference: {
+        chapter: 'Sveriges demokratiska system',
+        section: 'Demokrati betyder folkstyre',
+        pageApprox: 10,
+      },
+      difficulty: 'easy',
+      reviewStatus: 'reviewed',
+      tags: ['democracy', 'freedom-of-expression'],
+    },
   ];
 
   const derived = derivePublishedQuestions(sources, 201);
@@ -301,6 +341,16 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
   assert.equal(
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assertQuestionTextPresent(
+    generatedTrueFalse,
+    'I en demokrati har människor, grupper och partier inte rätt att hindra andra från att rösta.',
+    'In a democracy, people, groups, and parties may not stop others from voting.',
   );
 });
 

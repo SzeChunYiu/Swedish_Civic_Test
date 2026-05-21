@@ -1186,6 +1186,20 @@ function referendumAdvisoryStatementSv(subject: string, answer: string): string 
   return null;
 }
 
+function democracyRightStatementSv(subject: string, answer: string, isCorrect: boolean): string {
+  const action = lowerFirst(stripLeadingPurposeSv(answer));
+  return isCorrect
+    ? `I en demokrati har ${subject} rätt att ${action}`
+    : `I en demokrati har ${subject} inte rätt att ${action}`;
+}
+
+function democracyRightStatementEn(subject: string, answer: string, isCorrect: boolean): string {
+  const action = lowerFirst(stripLeadingPurposeEn(answer));
+  return isCorrect
+    ? `In a democracy, ${subject} may ${action}`
+    : `In a democracy, ${subject} may not ${action}`;
+}
+
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1228,6 +1242,11 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Vilket är ett sätt att (.+)$/i);
   if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+
+  match = q.match(/^Vilken rätt har (.+?) i en demokrati$/i);
+  if (match) {
+    return democracyRightStatementSv(match[1], answer, option.id === source.correctOptionId);
+  }
 
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
@@ -1703,6 +1722,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which is a way to (.+)$/i);
   if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+
+  match = q.match(/^What right do (.+?) have in a democracy$/i);
+  if (match) {
+    return democracyRightStatementEn(match[1], answer, option.id === source.correctOptionId);
+  }
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
