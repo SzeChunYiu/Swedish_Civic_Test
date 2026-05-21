@@ -690,6 +690,9 @@ function replaceLeadingEnglishSubject(subject: string, value: string): string {
 }
 
 function describesStatementSv(subject: string, answer: string): string {
+  const civilDefenceStatement = civilDefenceContextStatementSv(subject, answer);
+  if (civilDefenceStatement) return civilDefenceStatement;
+
   if (/^Som\s+/i.test(answer) && /Sverige för tvåhundra år sedan/i.test(subject)) {
     return `För tvåhundra år sedan var Sverige ${lowerFirst(answer.replace(/^Som\s+/i, ''))}`;
   }
@@ -703,6 +706,9 @@ function describesStatementSv(subject: string, answer: string): string {
 }
 
 function describesStatementEn(subject: string, answer: string): string {
+  const civilDefenceStatement = civilDefenceContextStatementEn(subject, answer);
+  if (civilDefenceStatement) return civilDefenceStatement;
+
   if (/^As\s+/i.test(answer) && /Sweden two hundred years ago/i.test(subject)) {
     return `Two hundred years ago, Sweden was ${lowerFirst(answer.replace(/^As\s+/i, ''))}`;
   }
@@ -719,6 +725,62 @@ function describesStatementEn(subject: string, answer: string): string {
     return `${upperFirst(subject)} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }
   return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function civilDefenceContextStatementSv(subject: string, answer: string): string | null {
+  if (!/^det civila försvaret vid krig eller kris$/i.test(subject.trim())) return null;
+
+  const normalizedAnswer = stripFinalPunctuation(answer.trim());
+  if (
+    /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera$/i.test(
+      normalizedAnswer,
+    )
+  ) {
+    return 'Vid krig eller kris hjälper det civila försvaret viktiga verksamheter som skola, arbete och hälso- och sjukvård att fortsätta fungera';
+  }
+  if (/^Politiska val ersätts med militära beslut$/i.test(normalizedAnswer)) {
+    return 'Vid krig eller kris ersätter det civila försvaret politiska val med militära beslut';
+  }
+  if (/^Bara Försvarsmakten ansvarar för samhällets motståndskraft$/i.test(normalizedAnswer)) {
+    return 'Vid krig eller kris gör det civila försvaret bara Försvarsmakten ansvarig för samhällets motståndskraft';
+  }
+  if (/^EU bestämmer varje skolas dagliga schema$/i.test(normalizedAnswer)) {
+    return 'Vid krig eller kris låter det civila försvaret EU bestämma varje skolas dagliga schema';
+  }
+
+  return `Vid krig eller kris innebär det civila försvaret att ${lowerLeadingSwedishClauseStart(
+    normalizedAnswer,
+  )}`;
+}
+
+function civilDefenceContextStatementEn(subject: string, answer: string): string | null {
+  if (!/^civil defence during war or crisis$/i.test(subject.trim())) return null;
+
+  const normalizedAnswer = stripFinalPunctuation(answer.trim());
+  if (
+    /^Important activities such as school, work, and health care can continue to function$/i.test(
+      normalizedAnswer,
+    )
+  ) {
+    return 'During war or crisis, civil defence helps important services such as school, work, and health care continue';
+  }
+  if (/^Political elections are replaced with military decisions$/i.test(normalizedAnswer)) {
+    return 'During war or crisis, civil defence replaces political elections with military decisions';
+  }
+  if (
+    /^Only the Swedish Armed Forces are responsible for society’s resilience$/i.test(
+      normalizedAnswer,
+    )
+  ) {
+    return 'During war or crisis, civil defence makes only the Swedish Armed Forces responsible for society’s resilience';
+  }
+  if (/^The EU decides every school’s daily timetable$/i.test(normalizedAnswer)) {
+    return 'During war or crisis, civil defence lets the EU decide every school’s daily timetable';
+  }
+
+  return `During war or crisis, civil defence means ${lowerLeadingEnglishClauseStart(
+    normalizedAnswer,
+  )}`;
 }
 
 function importantRolesStatementSv(subject: string, context: string, answer: string): string {
