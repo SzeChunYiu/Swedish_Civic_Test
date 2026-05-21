@@ -4,9 +4,6 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const {
-  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
-} = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
@@ -63,54 +60,6 @@ function runPackageContentFocused(args, env) {
     encoding: 'utf8',
     env,
   });
-}
-
-function readValidateContentSource() {
-  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-}
-
-function readDerivedContentTestSource() {
-  return fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
-}
-
-function readAdaptiveResumeTestSource() {
-  return fs.readFileSync(path.join(repoRoot, 'tests/v1-1-adaptive-resume.test.js'), 'utf8');
-}
-
-function readAdaptivePracticeRuntimeFixtureSource() {
-  return fs.readFileSync(
-    path.join(repoRoot, 'tests/helpers/adaptivePracticeRuntimeFixtures.cjs'),
-    'utf8',
-  );
-}
-
-function readGeneratedTrueFalseNaturalnessPatternSource() {
-  return fs.readFileSync(
-    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
-    'utf8',
-  );
-}
-
-function readFocusedValidationRegistryModule() {
-  const modulePath = path.join(repoRoot, 'scripts/validate-content-focus-registry.js');
-  delete require.cache[require.resolve(modulePath)];
-  return require(modulePath);
-}
-
-function readFocusedValidationRegistrySource() {
-  return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content-focus-registry.js'), 'utf8');
-}
-
-function extractFocusedValidationRegistry() {
-  return readFocusedValidationRegistryModule().FOCUSED_VALIDATION_REGISTRY;
-}
-
-function focusedValidationBlock(source, id) {
-  const start = source.indexOf(`focusedValidationRequested('${id}')`);
-  assert.notEqual(start, -1, `${id} must have a focused validation route`);
-  const exitIndex = source.indexOf('process.exit(0);', start);
-  assert.notEqual(exitIndex, -1, `${id} route must exit before full validation`);
-  return source.slice(start, exitIndex + 'process.exit(0);'.length);
 }
 
 test('npm test keeps selector routing in the project dispatcher', () => {
@@ -244,9 +193,9 @@ test('answer shuffle parity uses the focused content validator path', () => {
     path.join(repoRoot, 'tests/content-answer-shuffle-parity.test.js'),
     'utf8',
   );
-  const registry = extractFocusedValidationRegistry(validator);
-  const registryEntry = registry.find((entry) => entry.id === 'answerShuffleParity');
-  const focusBlockStart = validator.indexOf("focusedValidationRequested('answerShuffleParity')");
+  const focusBlockStart = validator.indexOf(
+    "process.argv.includes('--focus-answer-shuffle-parity')",
+  );
   const focusBlockEnd =
     focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
   const focusBlock =
@@ -255,8 +204,6 @@ test('answer shuffle parity uses the focused content validator path', () => {
       : validator.slice(focusBlockStart, focusBlockEnd);
   const focusFlagMatches = parityTest.match(/--focus-answer-shuffle-parity/g) || [];
 
-  assert.ok(registryEntry, 'registry needs the answer-shuffle focus mode');
-  assert.ok(registryEntry.flags.includes('--focus-answer-shuffle-parity'));
   assert.notEqual(focusBlockStart, -1, 'validate-content needs the answer-shuffle focus flag');
   assert.match(focusBlock, /validateAnswerShuffleDistributionParity\(\);/);
   assert.match(focusBlock, /answerShuffleDistributionParityValidated/);
@@ -265,25 +212,6 @@ test('answer shuffle parity uses the focused content validator path', () => {
     focusFlagMatches.length >= 3,
     'positive and mutation answer-shuffle checks should use the focused validator',
   );
-});
-
-test('religious freedom parallelism focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused religious freedom validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.questionReligiousFreedomParallelismValidated, summary.publishedQuestions);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('answer feedback focused content validation runs only its parity summary', () => {
@@ -307,26 +235,6 @@ test('answer feedback focused content validation runs only its parity summary', 
     Object.prototype.hasOwnProperty.call(summary, 'questionCardAccessibilityParityValidated'),
     false,
   );
-});
-
-test('weekly recap focused content validation runs only its runtime summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-weekly-recap-runtime'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused weekly recap validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.weeklyRecapRuntimeCasesValidated, 7);
-  assert.equal(summary.weeklyRecapRuntimeParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('question speech text focused content validation runs only its parity summary', () => {
@@ -379,9 +287,7 @@ test('streak rules parity uses the focused content validator path', () => {
     path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
     'utf8',
   );
-  const registry = extractFocusedValidationRegistry(validator);
-  const registryEntry = registry.find((entry) => entry.id === 'streakRules');
-  const focusBlockStart = validator.indexOf("focusedValidationRequested('streakRules')");
+  const focusBlockStart = validator.indexOf("process.argv.includes('--focus-streak-rules')");
   const focusBlockEnd =
     focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
   const focusBlock =
@@ -390,8 +296,6 @@ test('streak rules parity uses the focused content validator path', () => {
       : validator.slice(focusBlockStart, focusBlockEnd);
   const focusFlagMatches = parityTest.match(/--focus-streak-rules/g) || [];
 
-  assert.ok(registryEntry, 'registry needs the streak-rules focus mode');
-  assert.ok(registryEntry.flags.includes('--focus-streak-rules'));
   assert.notEqual(focusBlockStart, -1, 'validate-content needs the streak-rules focus flag');
   assert.match(focusBlock, /validateStreakRules\(\);/);
   assert.match(focusBlock, /streakRulesValidated/);
@@ -440,76 +344,6 @@ test('readiness adapter focused content validation runs only its runtime summary
   assert.equal(summary.readinessAdapterRulesValidated, 6);
   assert.equal(summary.readinessAdapterRuntimeParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
-});
-
-test('adaptive size focused content validation runs only its runtime summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-adaptive-practice-size'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused adaptive size validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.adaptivePracticeSizeRuntimeCasesValidated, 5);
-  assert.equal(summary.adaptivePracticeSizeRuntimeParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
-    false,
-  );
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
-});
-
-test('adaptive difficulty focused content validation runs only its runtime summary', () => {
-  const validateSource = readValidateContentSource();
-  const selectorSource = readAdaptiveResumeTestSource();
-  const fixtureSource = readAdaptivePracticeRuntimeFixtureSource();
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-adaptive-practice-difficulty'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused adaptive difficulty validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.adaptivePracticeDifficultyRuntimeCasesValidated, 3);
-  assert.equal(summary.adaptivePracticeDifficultyRuntimeParityValidated, true);
-  assert.equal(MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.length, 3);
-  assert.deepEqual(
-    MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.map(({ difficulty }) => difficulty),
-    ['expert', null, { level: 'expert' }],
-  );
-  assert.match(
-    validateSource,
-    /require\('\.\.\/tests\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/,
-  );
-  assert.match(selectorSource, /require\('\.\/helpers\/adaptivePracticeRuntimeFixtures\.cjs'\)/);
-  assert.match(fixtureSource, /MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES/);
-  assert.doesNotMatch(
-    validateSource,
-    /label: 'invalid string difficulty'[\s\S]*label: 'null difficulty'[\s\S]*label: 'object difficulty'/,
-  );
-  assert.doesNotMatch(
-    selectorSource,
-    /label: 'invalid string difficulty'[\s\S]*label: 'null difficulty'[\s\S]*label: 'object difficulty'/,
-  );
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'readinessAdapterRuntimeParityValidated'),
-    false,
-  );
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
 test('exam submission finality focused validation runs only its parity summary', () => {
@@ -580,154 +414,57 @@ test('CelebrationBurst focused content validation runs only its accessibility su
   );
 });
 
-test('generated true_false naturalness patterns are shared by validate-content and derived-content', () => {
-  const validateContentSource = readValidateContentSource();
-  const derivedContentSource = readDerivedContentTestSource();
-  const patternSource = readGeneratedTrueFalseNaturalnessPatternSource();
-  const {
-    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS,
-    findGeneratedTrueFalseNaturalnessPattern,
-  } = require(path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'));
+test('learning Pro gated selector focus imports store-backed modules through shared stubs', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-learning-pro-gated-selectors'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
 
-  assert.ok(
-    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.length >= 90,
-    'shared generated true/false naturalness guard should carry the full residual policy',
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused store-stub validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.validateContentStoreStubModulesImported, 3);
+  assert.equal(summary.validateContentStoreStubHarnessParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'settingsStoreSchemaParityValidated'),
+    false,
   );
   assert.equal(
-    findGeneratedTrueFalseNaturalnessPattern(
-      'The goal of Sweden’s gender equality policy means rights differ.',
-    ),
-    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) =>
-      pattern.test('The goal of Sweden’s gender equality policy means rights differ.'),
-    ),
+    Object.prototype.hasOwnProperty.call(summary, 'questionBankCsvRowsValidated'),
+    false,
   );
-
-  assert.match(
-    validateContentSource,
-    /require\(['"]\.\/generated-true-false-naturalness-patterns['"]\)/,
-    'validate-content must import the shared generated true/false naturalness guard',
-  );
-  assert.match(
-    derivedContentSource,
-    /require\(['"]\.\/generated-true-false-naturalness-patterns['"]\)/,
-    'derived-content residual tests must import the shared generated true/false naturalness guard',
-  );
-  assert.doesNotMatch(
-    validateContentSource,
-    /const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = \[/,
-    'validate-content must not keep a private generated true/false pattern list',
-  );
-  assert.doesNotMatch(
-    derivedContentSource,
-    /Det stämmer i sak att\|It is factually true that\|describes \(\?:government agencies/,
-    'derived-content must not keep a duplicate generated true/false residual mega-regex',
-  );
-
-  for (const requiredPolicyPattern of [
-    'The goal of .+? policy means',
-    'describes\\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)',
-    '^(?:By|Apply|Leave|Live)\\b',
-    'Påståendet är sant:',
-    'Det stämmer i sak att',
-  ]) {
-    assert.match(
-      patternSource,
-      new RegExp(requiredPolicyPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
-      `shared guard must own ${requiredPolicyPattern}`,
-    );
-  }
 });
 
-test('validate-content focus registry owns every focused route and summary', () => {
-  const source = readValidateContentSource();
-  const registry = extractFocusedValidationRegistry();
-  const registrySource = readFocusedValidationRegistrySource();
-  const ids = new Set();
-  const flags = new Set();
-
-  assert.ok(registry.length >= 30, 'registry should cover all focused validation modes');
-  assert.match(
-    source,
-    /require\(['"]\.\/validate-content-focus-registry['"]\)/,
-    'validate-content should import the shared focused registry module',
+test('validate-content uses the shared storage store harness for MMKV and Zustand stubs', () => {
+  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
+  const helper = fs.readFileSync(
+    path.join(repoRoot, 'tests/helpers/storageStoreHarness.cjs'),
+    'utf8',
   );
-  assert.doesNotMatch(
-    source,
-    /focusedValidationFlagsFromRegistrySource|readFileSync\(__filename/,
-    'validate-content must not parse its own source to discover focus flags',
+  const focusBlockStart = validator.indexOf(
+    "process.argv.includes('--focus-learning-pro-gated-selectors')",
   );
-  assert.doesNotMatch(
-    source,
-    /process\.argv\.includes\(['"]--focus-/,
-    'focused routes should go through focusedValidationRequested()',
-  );
+  const focusBlockEnd =
+    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
+  const focusBlock =
+    focusBlockStart === -1 || focusBlockEnd === -1
+      ? ''
+      : validator.slice(focusBlockStart, focusBlockEnd);
 
-  for (const entry of registry) {
-    assert.match(entry.id, /^[a-z][A-Za-z0-9]*$/, `${entry.id} must be a stable registry id`);
-    assert.equal(ids.has(entry.id), false, `${entry.id} is duplicated`);
-    ids.add(entry.id);
-    assert.ok(entry.flags.length >= 1, `${entry.id} must declare at least one CLI flag`);
-    assert.ok(entry.summaryKeys.length >= 1, `${entry.id} must declare summary keys`);
-
-    for (const flag of entry.flags) {
-      assert.match(flag, /^--focus-[a-z0-9-]+$/, `${entry.id} has invalid flag ${flag}`);
-      assert.equal(flags.has(flag), false, `${flag} is duplicated`);
-      flags.add(flag);
-    }
-
-    const block = focusedValidationBlock(source, entry.id);
-    assert.match(block, /printValidationSummary\(\{/, `${entry.id} must print an isolated summary`);
-    for (const summaryKey of entry.summaryKeys) {
-      assert.match(
-        block,
-        new RegExp(`\\b${summaryKey}\\b`),
-        `${entry.id} summary must include ${summaryKey}`,
-      );
-    }
-  }
-
-  const routedIds = new Set(
-    [...source.matchAll(/focusedValidationRequested\('([^']+)'\)/g)].map((match) => match[1]),
-  );
-  assert.deepEqual(routedIds, ids);
-
-  const flagsInRegistrySource = new Set(registrySource.match(/--focus-[a-z0-9-]+/g) || []);
-  assert.deepEqual(flagsInRegistrySource, flags);
-  assert.deepEqual(new Set(source.match(/--focus-[a-z0-9-]+/g) || []), new Set());
-});
-
-test('validate-content rejects unknown focused validator flags before full validation', () => {
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-not-real'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
-  assert.match(result.stderr, /--focus-answer-feedback-parity/);
-});
-
-test('validate-content rejects unknown focus flags before loading heavy modules', () => {
-  const script = `
-    const Module = require('node:module');
-    const originalLoad = Module._load;
-    Module._load = function(request, parent, isMain) {
-      if (request === 'typescript' || request === './export-site-question-bank') {
-        throw new Error('heavy module loaded: ' + request);
-      }
-      return originalLoad.apply(this, arguments);
-    };
-    process.argv = ['node', 'scripts/validate-content.js', '--focus-not-real'];
-    require('./scripts/validate-content.js');
-  `;
-  const result = spawnSync(process.execPath, ['-e', script], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /Unsupported validate-content focus flag: --focus-not-real/);
-  assert.doesNotMatch(result.stderr, /heavy module loaded/);
+  assert.match(helper, /function createStorageModuleStubs/);
+  assert.match(helper, /createMMKV: \(\{ id \} = \{\}\) => resolveStorage\(storageById, id\)/);
+  assert.match(helper, /zustand: createZustandStub/);
+  assert.match(helper, /const stubs = createStorageModuleStubs\(storageById, moduleStubs\);/);
+  assert.match(validator, /createStorageModuleStubs\(/);
+  assert.match(validator, /validateContentModuleStubs\[request\]/);
+  assert.match(focusBlock, /validateContentStoreStubHarnessParity\(\);/);
+  assert.match(focusBlock, /validateContentStoreStubModulesImported/);
 });
 
 test('unsupported npm test selectors fail before running any suite', () => {
