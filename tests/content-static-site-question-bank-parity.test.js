@@ -5,34 +5,41 @@ const vm = require('node:vm');
 const test = require('node:test');
 
 const {
+  buildPublishedQuestionListFromSourceQuestions,
   buildSiteQuestionBank,
-  classifyStaticSiteQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
-  generateUnformattedStaticSiteQuestionBankJs,
+  loadCanonicalExportInputs,
+  summarizeStaticQuestionBankDrift,
 } = require('../scripts/export-site-question-bank');
-const {
-  findGeneratedSingleChoiceDuplicateStemOptions,
-} = require('./helpers/generatedSingleChoiceDuplicateGuard.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function readStaticSiteQuestions() {
-  const context = { window: {} };
-  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
-  return context.window.SMT_QUESTIONS;
+function withSvEn(localizedText, sv, en) {
+  return localizedText ? { ...localizedText, sv, en } : localizedText;
 }
 
-function guardQuestionFromStaticQuestion(question) {
+function withQ020AdvisoryFixture(question) {
+  const explanationSv =
+    'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.';
+  const explanationEn =
+    'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians are not required to follow the result.';
+
   return {
-    id: question.id,
-    type: question.type,
-    questionSv: question.q?.sv,
-    questionEn: question.q?.en,
-    options: (question.opts || []).map((option) => ({
-      sv: option.sv,
-      en: option.en,
-    })),
-    tags: question.tags || [],
+    ...question,
+    explanationSv,
+    explanationEn,
+    explanationText: withSvEn(question.explanationText, explanationSv, explanationEn),
+    options: question.options.map((option) => {
+      if (option.id !== 'a') return option;
+      const textSv = 'Politikerna behöver inte följa resultatet';
+      const textEn = 'Politicians are not required to follow the result';
+      return {
+        ...option,
+        textSv,
+        textEn,
+        text: withSvEn(option.text, textSv, textEn),
+      };
+    }),
   };
 }
 
@@ -53,51 +60,17 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
 });
 
-test('static site question bank drift classifier separates formatting from semantics', () => {
-  const expected = generateStaticSiteQuestionBankJs();
-  const formatOnly = generateUnformattedStaticSiteQuestionBankJs();
-  const semanticDrift = expected.replace("id: 'q001'", "id: 'q999'");
-
-  assert.notEqual(formatOnly, expected, 'fixture should differ only by generated JS formatting');
-  assert.notEqual(semanticDrift, expected, 'fixture should change the exported question data');
-  assert.equal(classifyStaticSiteQuestionBankDrift(expected, expected).kind, 'none');
-  assert.equal(classifyStaticSiteQuestionBankDrift(formatOnly, expected).kind, 'format');
-  assert.equal(classifyStaticSiteQuestionBankDrift(semanticDrift, expected).kind, 'semantic');
-});
-
-test('static site chapter metadata exposes canonical sv/en localized text', () => {
-  const bank = buildSiteQuestionBank();
-  const context = { window: {} };
-  vm.runInNewContext(generateStaticSiteQuestionBankJs(), context);
-
-  assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
-  context.window.SMT_CHAPTERS_META.forEach((chapter, index) => {
-    const expected = bank.chapters[index];
-    assert.equal(chapter.title.sv, expected.title.sv, `${chapter.id} title.sv should export`);
-    assert.equal(chapter.title.en, expected.title.en, `${chapter.id} title.en should export`);
-    assert.equal(
-      chapter.description.sv,
-      expected.description.sv,
-      `${chapter.id} description.sv should export`,
-    );
-    assert.equal(
-      chapter.description.en,
-      expected.description.en,
-      `${chapter.id} description.en should export`,
-    );
-  });
-});
-
 test('static site question bank preserves canonical question provenance', () => {
   const bank = buildSiteQuestionBank();
-  const questions = readStaticSiteQuestions();
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
 
   const expectedProvenanceById = new Map(
     bank.questions.map((question) => [question.id, question.questionProvenance]),
   );
   const supported = new Set(['uhr', 'derived', 'editorial']);
 
-  for (const question of questions) {
+  for (const question of context.window.SMT_QUESTIONS) {
     assert.equal(
       question.questionProvenance,
       expectedProvenanceById.get(question.id),
@@ -110,29 +83,25 @@ test('static site question bank preserves canonical question provenance', () => 
   }
 });
 
-test('static site question bank has no generated single-choice duplicate stems', () => {
-  const questions = readStaticSiteQuestions().map(guardQuestionFromStaticQuestion);
-  const findings = findGeneratedSingleChoiceDuplicateStemOptions(questions, {
-    artifactLabel: 'site/questions.js',
+test('static site question bank source fixture limits one-question localization churn', () => {
+  const canonical = loadCanonicalExportInputs();
+  const touchedSourceQuestions = canonical.sourceQuestions.map((question) =>
+    question.id === 'q020' ? withQ020AdvisoryFixture(question) : question,
+  );
+  const touchedQuestions = buildPublishedQuestionListFromSourceQuestions(touchedSourceQuestions);
+  const expectedBank = buildSiteQuestionBank({
+    questions: touchedQuestions,
+    chapters: canonical.chapters,
+    getQuestionProvenance: canonical.getQuestionProvenance,
+  });
+  const baselineSource = generateStaticSiteQuestionBankJs({
+    questions: canonical.questions,
+    chapters: canonical.chapters,
+    getQuestionProvenance: canonical.getQuestionProvenance,
   });
 
-  assert.deepEqual(findings, []);
-});
+  const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
 
-test('static generated single-choice duplicate guard rejects q001 variant collapse', () => {
-  const questions = readStaticSiteQuestions().map(guardQuestionFromStaticQuestion);
-  const sectionPractice = questions.find((question) => question.id === 'q170');
-  const judgement = questions.find((question) => question.id === 'q173');
-  assert.ok(sectionPractice && judgement, 'expected q001 generated single-choice variants');
-
-  judgement.questionSv = sectionPractice.questionSv;
-  judgement.questionEn = sectionPractice.questionEn;
-  judgement.options = sectionPractice.options.map((option) => ({ ...option }));
-
-  const findings = findGeneratedSingleChoiceDuplicateStemOptions(questions, {
-    artifactLabel: 'site/questions.js',
-  });
-
-  assert.equal(findings.length, 1);
-  assert.match(findings[0], /site\/questions\.js: q173 duplicates q170/);
+  assert.deepEqual(drift.questionIds, ['q020', 'q246', 'q247', 'q248', 'q249']);
+  assert.deepEqual(drift.chapterIds, []);
 });

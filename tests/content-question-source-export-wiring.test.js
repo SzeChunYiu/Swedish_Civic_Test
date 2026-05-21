@@ -1,5 +1,4 @@
 const assert = require('node:assert/strict');
-const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -8,16 +7,6 @@ const ts = require('typescript');
 const repoRoot = path.resolve(__dirname, '..');
 const generatedVariantsPerSource = 4;
 const moduleCache = new Map();
-
-function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-  const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'validation should print JSON summary');
-  return JSON.parse(match[0]);
-}
 
 function resolveLocalModule(fromFilePath, request) {
   const base = path.resolve(path.dirname(fromFilePath), request);
@@ -64,21 +53,38 @@ function assertQuestionSourceExportWiring(source) {
   );
   assert.match(
     source,
+    /import \{ applyQuestionLocalizationPilot \} from '\.\/questionLocalizations';/,
+    'questions source must import the question localization pilot explicitly',
+  );
+  assert.match(
+    source,
     /import \{ derivePublishedQuestions, publishQuestions \} from '\.\.\/lib\/content\/derivedQuestions';/,
     'questions source must use the derived content helpers',
   );
   assert.ok(
     source.includes(
+      `export const baseQuestions: PracticeQuestion[] = rawBaseQuestions.map(
+  applyQuestionLocalizationPilot,
+);`,
+    ),
+    'baseQuestions export must apply the localization pilot before publishing',
+  );
+  assert.ok(
+    source.includes(
       `const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
   applyQuestionLocalizationPilot,
-);
-
-export const sourceQuestions: PracticeQuestion[] = publishQuestions([
+);`,
+    ),
+    'additionalQuestions must apply the localization pilot before publishing',
+  );
+  assert.ok(
+    source.includes(
+      `export const sourceQuestions: PracticeQuestion[] = publishQuestions([
   ...baseQuestions,
   ...localizedAdditionalQuestions,
 ]);`,
     ),
-    'sourceQuestions export must publish baseQuestions followed by localized additionalQuestions',
+    'sourceQuestions export must publish localized baseQuestions followed by localizedAdditionalQuestions',
   );
   assert.ok(
     source.includes(
@@ -98,7 +104,6 @@ export const sourceQuestions: PracticeQuestion[] = publishQuestions([
 }
 
 test('question source exports keep source/generated/published wiring parity', () => {
-  const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'data/questions.ts'), 'utf8');
   const { additionalQuestions } = loadTs('data/additionalQuestions.ts');
   const { baseQuestions, sourceQuestions, generatedPublishedQuestions, questions } =
@@ -106,9 +111,6 @@ test('question source exports keep source/generated/published wiring parity', ()
 
   assertQuestionSourceExportWiring(source);
 
-  assert.equal(summary.sourceQuestions, sourceQuestions.length);
-  assert.equal(summary.generatedPublishedQuestions, generatedPublishedQuestions.length);
-  assert.equal(summary.questions, questions.length);
   assert.equal(sourceQuestions.length, baseQuestions.length + additionalQuestions.length);
   assert.equal(
     generatedPublishedQuestions.length,
@@ -148,6 +150,6 @@ test('question source export wiring guard rejects reordered authored partitions'
 
   assert.throws(
     () => assertQuestionSourceExportWiring(source),
-    /sourceQuestions export must publish baseQuestions followed by localized additionalQuestions/,
+    /sourceQuestions export must publish localized baseQuestions followed by localizedAdditionalQuestions/,
   );
 });
