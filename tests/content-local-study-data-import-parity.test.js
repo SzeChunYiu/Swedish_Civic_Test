@@ -14,6 +14,7 @@ function createStorageById() {
     'mistake-review': createMemoryMMKV(),
     reviews: createMemoryMMKV(),
     settings: createMemoryMMKV(),
+    highlights: createMemoryMMKV(),
   };
 }
 
@@ -27,6 +28,21 @@ function validReviewCard(questionId = 'q001') {
     state: 'review',
     lastReviewAt: null,
     dueAt: '2026-05-21T08:00:00.000Z',
+  };
+}
+
+function validHighlight(overrides = {}) {
+  return {
+    id: 'hl-safe-1',
+    chapterId: 'ch01',
+    blockId: 'intro-1',
+    startOffset: 4,
+    endOffset: 18,
+    color: 'yellow',
+    note: 'Portable margin note',
+    createdAt: '2026-05-21T08:00:00.000Z',
+    updatedAt: '2026-05-21T08:05:00.000Z',
+    ...overrides,
   };
 }
 
@@ -126,6 +142,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /other: 'repetitionsdagar'/);
   assert.match(swedishCopyMatch[0], /one: 'repetitionskort'/);
   assert.match(swedishCopyMatch[0], /other: 'repetitionskort'/);
+  assert.match(swedishCopyMatch[0], /one: 'markering i e-boken'/);
+  assert.match(swedishCopyMatch[0], /other: 'markeringar i e-boken'/);
   assert.match(swedishCopyMatch[0], /one: 'genomfört övningsprov'/);
   assert.match(swedishCopyMatch[0], /other: 'genomförda övningsprov'/);
   assert.match(swedishCopyMatch[0], /one: 'markerat kravområde'/);
@@ -147,6 +165,8 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(englishCopyMatch[0], /other: 'FSRS review days'/);
   assert.match(englishCopyMatch[0], /one: 'FSRS review card'/);
   assert.match(englishCopyMatch[0], /other: 'FSRS review cards'/);
+  assert.match(englishCopyMatch[0], /one: 'ebook highlight'/);
+  assert.match(englishCopyMatch[0], /other: 'ebook highlights'/);
   assert.match(englishCopyMatch[0], /one: 'completed mock exam'/);
   assert.match(englishCopyMatch[0], /other: 'completed mock exams'/);
   assert.match(englishCopyMatch[0], /one: 'marked requirement'/);
@@ -243,6 +263,19 @@ test('local study data import previews and applies all learner snapshot sections
     citizenshipRequirements: {
       checkedAreaIds: ['civicKnowledge', 'unknown', 'identity', 'identity'],
     },
+    highlights: {
+      byChapter: {
+        ch01: [
+          validHighlight(),
+          validHighlight({
+            id: 'hl-bad-range',
+            startOffset: 10,
+            endOffset: 10,
+          }),
+        ],
+        ['__proto__']: [validHighlight({ id: 'hl-unsafe', chapterId: '__proto__' })],
+      },
+    },
   });
 
   const previewResult = previewLocalStudyDataImport(rawPayload);
@@ -257,7 +290,13 @@ test('local study data import previews and applies all learner snapshot sections
     gradedReviewDayCount: 1,
     settingCount: 5,
     citizenshipRequirementChecklistCount: 2,
+    highlightCount: 1,
   });
+  assert.deepEqual(Object.keys(previewResult.preview.highlights.byChapter), ['ch01']);
+  assert.deepEqual(
+    previewResult.preview.highlights.byChapter.ch01.map((highlight) => highlight.id),
+    ['hl-safe-1'],
+  );
 
   const appliedSummary = applyLocalStudyDataImport(previewResult.preview);
   assert.deepEqual(appliedSummary, previewResult.preview.summary);
@@ -285,6 +324,13 @@ test('local study data import previews and applies all learner snapshot sections
     storageById['citizenship-requirements'].values.get('citizenshipRequirementsChecklistState'),
   );
   assert.deepEqual(citizenshipRequirements.checkedAreaIds, ['identity', 'civicKnowledge']);
+
+  const highlights = JSON.parse(storageById.highlights.values.get('ebook.highlights.v1'));
+  assert.deepEqual(Object.keys(highlights.byChapter), ['ch01']);
+  assert.deepEqual(
+    highlights.byChapter.ch01.map((highlight) => highlight.note),
+    ['Portable margin note'],
+  );
 });
 
 test('local study data import summary reports plural bookmark wrong-answer mock exam FSRS settings and citizenship rows', () => {
@@ -380,6 +426,26 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     citizenshipRequirements: {
       checkedAreaIds: ['conduct', 'identity', 'residenceStatus', 'identity', 'unknown'],
     },
+    highlights: {
+      byChapter: {
+        ch01: [
+          validHighlight({
+            id: 'hl-plural-1',
+            note: 'First portable note',
+          }),
+        ],
+        ch02: [
+          validHighlight({
+            id: 'hl-plural-2',
+            chapterId: 'ch02',
+            blockId: 'democracy-1',
+            startOffset: 0,
+            endOffset: 9,
+            note: 'Second portable note',
+          }),
+        ],
+      },
+    },
   });
 
   const previewResult = previewLocalStudyDataImport(rawPayload);
@@ -394,6 +460,7 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
     gradedReviewDayCount: 2,
     settingCount: 5,
     citizenshipRequirementChecklistCount: 3,
+    highlightCount: 2,
   });
   assert.deepEqual(previewResult.preview.citizenshipRequirements.checkedAreaIds, [
     'identity',
@@ -432,6 +499,11 @@ test('local study data import summary reports plural bookmark wrong-answer mock 
   );
   assert.deepEqual(checkedAreaIds, ['identity', 'residenceStatus', 'conduct']);
   assert.deepEqual(legacyChecklist.checkedAreaIds, checkedAreaIds);
+
+  const highlights = JSON.parse(storageById.highlights.values.get('ebook.highlights.v1'));
+  assert.deepEqual(Object.keys(highlights.byChapter), ['ch01', 'ch02']);
+  assert.equal(highlights.byChapter.ch01[0].note, 'First portable note');
+  assert.equal(highlights.byChapter.ch02[0].note, 'Second portable note');
 });
 
 test('local study data export round-trips citizenship requirements without purchase fields', () => {
@@ -440,6 +512,14 @@ test('local study data export round-trips citizenship requirements without purch
     'citizenshipRequirementsChecklistState',
     JSON.stringify({
       checkedAreaIds: ['selfSupport', 'identity', 'prototype', 'swedishLanguage', 'identity'],
+    }),
+  );
+  sourceStorageById.highlights.set(
+    'ebook.highlights.v1',
+    JSON.stringify({
+      byChapter: {
+        ch01: [validHighlight({ id: 'hl-exported', note: 'Exported note' })],
+      },
     }),
   );
   sourceStorageById.settings.set('language', 'en');
@@ -455,6 +535,10 @@ test('local study data export round-trips citizenship requirements without purch
     'selfSupport',
     'swedishLanguage',
   ]);
+  assert.deepEqual(
+    snapshot.highlights.byChapter.ch01.map((highlight) => highlight.id),
+    ['hl-exported'],
+  );
   assert.equal(snapshot.settings.language, 'en');
   assert.equal(snapshot.settings.dailyGoalAnswers, 20);
   assert.doesNotMatch(JSON.stringify(snapshot), /purchase|receipt|entitlement|removeAds/i);
@@ -468,6 +552,7 @@ test('local study data export round-trips citizenship requirements without purch
 
   assert.equal(previewResult.ok, true);
   assert.equal(previewResult.preview.summary.citizenshipRequirementChecklistCount, 3);
+  assert.equal(previewResult.preview.summary.highlightCount, 1);
   assert.equal(previewResult.preview.summary.settingCount, 5);
   applyLocalStudyDataImport(previewResult.preview);
 
@@ -481,6 +566,13 @@ test('local study data export round-trips citizenship requirements without purch
     'selfSupport',
     'swedishLanguage',
   ]);
+  const restoredHighlights = JSON.parse(
+    targetStorageById.highlights.values.get('ebook.highlights.v1'),
+  );
+  assert.deepEqual(
+    restoredHighlights.byChapter.ch01.map((highlight) => highlight.note),
+    ['Exported note'],
+  );
 });
 
 test('local study data import omits malformed daily-goal settings before applying', () => {
@@ -534,6 +626,7 @@ test('local study data import rejects purchase fields before any snapshot writes
   assert.equal(storageById.progress.values.size, 0);
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
+  assert.equal(storageById.highlights.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
   assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
@@ -559,6 +652,7 @@ test('local study data import rejects nested purchase fields with useful detail'
   assert.equal(storageById.progress.values.size, 0);
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
+  assert.equal(storageById.highlights.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
   assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
@@ -614,6 +708,7 @@ test('local study data import rejects deeply nested payloads without throwing or
   assert.equal(storageById.progress.values.size, 0);
   assert.equal(storageById['mistake-review'].values.size, 0);
   assert.equal(storageById.reviews.values.size, 0);
+  assert.equal(storageById.highlights.values.size, 0);
   assert.equal(storageById.settings.values.size, 0);
   assert.equal(storageById['citizenship-requirements'].values.size, 0);
 });
@@ -638,6 +733,7 @@ test('local study data import rejects oversized payloads before parsing', () => 
     assert.equal(storageById.progress.values.size, 0);
     assert.equal(storageById['mistake-review'].values.size, 0);
     assert.equal(storageById.reviews.values.size, 0);
+    assert.equal(storageById.highlights.values.size, 0);
     assert.equal(storageById.settings.values.size, 0);
     assert.equal(storageById['citizenship-requirements'].values.size, 0);
   } finally {
@@ -705,6 +801,7 @@ test('local study data import rejects multibyte payloads by UTF-8 byte size', ()
     assert.equal(storageById.progress.values.size, 0);
     assert.equal(storageById['mistake-review'].values.size, 0);
     assert.equal(storageById.reviews.values.size, 0);
+    assert.equal(storageById.highlights.values.size, 0);
     assert.equal(storageById.settings.values.size, 0);
     assert.equal(storageById['citizenship-requirements'].values.size, 0);
   } finally {
@@ -869,6 +966,7 @@ test('local study data import map-key safety is shared by all storage normalizer
     'lib/storage/mistakeReviewStore.ts',
     'lib/storage/reviewStore.ts',
     'lib/storage/citizenshipRequirementsStore.ts',
+    'lib/storage/highlightsStore.ts',
   ]) {
     const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
     assert.match(source, /isSafeImportedMapKey/);

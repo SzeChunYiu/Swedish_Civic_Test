@@ -9,6 +9,11 @@ import {
   useMistakeReviewStore,
 } from './mistakeReviewStore';
 import {
+  type PersistedHighlights,
+  normalizeHighlightsState,
+  useHighlightsStore,
+} from './highlightsStore';
+import {
   type PersistedProgress,
   normalizeImportedProgress,
   useProgressStore,
@@ -30,6 +35,7 @@ export type LocalStudyDataExportSnapshot = {
   reviews: PersistedReviews;
   settings: ImportableSettings;
   citizenshipRequirements: PersistedCitizenshipRequirementsChecklist;
+  highlights: PersistedHighlights;
 };
 
 function progressSnapshot(): PersistedProgress {
@@ -77,6 +83,12 @@ function citizenshipRequirementsSnapshot(): PersistedCitizenshipRequirementsChec
   });
 }
 
+function highlightsSnapshot(): PersistedHighlights {
+  return normalizeHighlightsState({
+    byChapter: useHighlightsStore.getState().byChapter,
+  });
+}
+
 export function buildLocalStudyDataExportSnapshot(
   exportedAt = new Date().toISOString(),
 ): LocalStudyDataExportSnapshot {
@@ -89,6 +101,7 @@ export function buildLocalStudyDataExportSnapshot(
     reviews: reviewsSnapshot(),
     settings: settingsSnapshot(),
     citizenshipRequirements: citizenshipRequirementsSnapshot(),
+    highlights: highlightsSnapshot(),
   };
 }
 
