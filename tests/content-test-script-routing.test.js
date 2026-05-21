@@ -75,6 +75,29 @@ test('QuestionCard accessibility parity uses focused content validation routing'
   );
 });
 
+test('answer feedback parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const answerFeedbackTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-answer-feedback-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-answer-feedback-parity/);
+  assert.match(
+    validatorSource,
+    /validateAnswerValidationTypeSchemaParity\(\);[\s\S]*validateAnswerFeedbackParity\(\);[\s\S]*answerFeedbackRuntimeParityValidated/,
+  );
+  assert.match(answerFeedbackTestSource, /--focus-answer-feedback-parity/);
+  assert.doesNotMatch(
+    answerFeedbackTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'answer feedback tests must not route through full content validation',
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
