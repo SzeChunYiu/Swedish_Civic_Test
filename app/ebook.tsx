@@ -239,6 +239,7 @@ export default function EbookScreen() {
         {previousArticle ? (
           <Button
             accessibilityLabel={`${copy.previousArticle}: ${getLocalizedText(previousArticle.title, language)}`}
+            accessibilityRole="link"
             onPress={() => navigateToArticle(router, previousArticle)}
             variant="ghost"
           >
@@ -250,6 +251,7 @@ export default function EbookScreen() {
         {nextArticle ? (
           <Button
             accessibilityLabel={`${copy.nextArticle}: ${getLocalizedText(nextArticle.title, language)}`}
+            accessibilityRole="link"
             onPress={() => navigateToArticle(router, nextArticle)}
             variant="ghost"
           >
