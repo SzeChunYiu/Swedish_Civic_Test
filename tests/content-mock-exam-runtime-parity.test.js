@@ -140,6 +140,49 @@ test('mock exam copy parity keeps Swedish övningsprov labels and English Mock E
   assert.doesNotMatch(`${librarySource}\n${tierSource}`, /\bprovexamen\b|\bprovexamina\b/i);
 });
 
+test('mock exam timer and auto-submit runtime guards reject malformed state', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-runtime-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  const { formatExamTime, shouldAutoSubmitExam } = loadTs('lib/quiz/examGenerator.ts');
+  const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.equal(summary.mockExamTimerParityValidated, true);
+  assert.match(examRouteSource, /examActive: examUnlocked/);
+  assert.match(examRouteSource, /formatExamTime\(remainingSeconds\)/);
+  assert.match(examRouteSource, /!Number\.isFinite\(remainingSeconds\)/);
+  assert.match(examRouteSource, /Number\.isFinite\(current\) \? Math\.max\(0, current - 1\) : 0/);
+  for (const malformedRemainingSeconds of [
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+    'abc',
+    null,
+    undefined,
+  ]) {
+    assert.equal(formatExamTime(malformedRemainingSeconds), '00:00');
+  }
+  for (const malformedState of [
+    { examActive: undefined, remainingSeconds: 0, submitted: false, questionCount: 1 },
+    { examActive: 'yes', remainingSeconds: 0, submitted: false, questionCount: 1 },
+    { examActive: true, remainingSeconds: '0', submitted: false, questionCount: 1 },
+    { examActive: true, remainingSeconds: Number.NaN, submitted: false, questionCount: 1 },
+    { examActive: true, remainingSeconds: 0, submitted: 0, questionCount: 1 },
+    { examActive: true, remainingSeconds: 0, submitted: false, questionCount: '1' },
+    { examActive: true, remainingSeconds: 0, submitted: false, questionCount: null },
+  ]) {
+    assert.equal(shouldAutoSubmitExam(malformedState), false);
+  }
+});
+
 test('web rewarded unlocks require explicit completion before credit grant path', async () => {
   const { showRewardedExtraExamAd } = loadTs('lib/monetization/rewardedAd.ts');
   const rewardedAdSource = fs.readFileSync(
