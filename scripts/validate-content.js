@@ -591,6 +591,9 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const QUESTION_RELIGIOUS_FREEDOM_1860_ENGLISH_NATURALNESS_PATTERNS = [
+  /\bchoose any religion or no religion at all completely freely\b/i,
+];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -2383,8 +2386,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -5086,6 +5088,21 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   ].join(' ');
 
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
+function findQuestionReligiousFreedom1860EnglishNaturalnessIssue(question) {
+  const tags = Array.isArray(question.tags) ? question.tags : [];
+  if (!tags.includes('religious-freedom') || !tags.includes('1860')) return null;
+
+  const text = [
+    question.questionEn,
+    question.explanationEn,
+    ...(question.options || []).map((option) => option.textEn),
+  ].join(' ');
+
+  return QUESTION_RELIGIOUS_FREEDOM_1860_ENGLISH_NATURALNESS_PATTERNS.find((pattern) =>
+    pattern.test(text),
+  );
 }
 
 function findQuestionTrueFalseStemPrefix(question) {
@@ -8088,6 +8105,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReligiousFreedom1860EnglishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -17622,6 +17640,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const religiousFreedom1860EnglishNaturalnessIssue =
+        findQuestionReligiousFreedom1860EnglishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -17657,6 +17677,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (religiousFreedom1860EnglishNaturalnessIssue) {
+        fail(`${label} uses stilted 1860 religious-freedom English wording`);
+      } else {
+        questionReligiousFreedom1860EnglishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -18148,6 +18173,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionReligiousFreedom1860EnglishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

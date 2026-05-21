@@ -2433,6 +2433,10 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What right does the accused person have during a trial$/i);
   if (match) return englishAccusedTrialRightStatement(answer);
 
+  if (source.id === 'q115' && /^To freely choose any religion or none$/i.test(answer)) {
+    return 'In 1860, Swedes were free to choose any religion or none';
+  }
+
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
     return `In ${match[2]}, ${match[1]} were permitted to ${stripLeadingPurposeEn(answer)}`;

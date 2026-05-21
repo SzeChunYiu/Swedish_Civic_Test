@@ -2216,7 +2216,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
       ],
       [
         'Att helt fritt välja vilken religion som helst eller ingen religion alls',
-        'To choose any religion or no religion at all completely freely',
+        'To freely choose any religion or none',
       ],
       [
         'Att staten och Svenska kyrkan skildes åt',
@@ -2229,7 +2229,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
-    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
     ['religious-freedom', 'church-of-sweden', '1860', 'christian-community'],
     'medium',
   ),

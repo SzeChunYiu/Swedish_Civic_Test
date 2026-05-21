@@ -11609,7 +11609,7 @@
           uk: 'Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади',
         },
         {
-          en: 'To choose any religion or no religion at all completely freely',
+          en: 'To freely choose any religion or none',
           sv: 'Att helt fritt välja vilken religion som helst eller ingen religion alls',
           'zh-Hant': '完全自由選擇任何宗教或完全不選宗教',
           'zh-Hans': '完全自由选择任何宗教或完全不选宗教',
@@ -11653,7 +11653,7 @@
       ],
       answer: 0,
       why: {
-        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
         sv: 'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
         'zh-Hant':
           '1860 年瑞典人被允許離開瑞典教會，但只有在加入另一個基督教團體時才可以。完全自由選擇宗教或不選宗教要到 1951 年宗教自由法才實現，而國家與瑞典教會的分離發生在 2000 年。',
@@ -44546,7 +44546,7 @@
           uk: 'Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади',
         },
         {
-          en: 'To choose any religion or no religion at all completely freely',
+          en: 'To freely choose any religion or none',
           sv: 'Att helt fritt välja vilken religion som helst eller ingen religion alls',
           'zh-Hant': '完全自由選擇任何宗教或完全不選宗教',
           'zh-Hans': '完全自由选择任何宗教或完全不选宗教',
@@ -44590,7 +44590,7 @@
       ],
       answer: 0,
       why: {
-        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
         sv: 'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
       },
       source: {
@@ -44631,7 +44631,7 @@
       ],
       answer: 0,
       why: {
-        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
         sv: 'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
       },
       source: {
@@ -44657,7 +44657,7 @@
       chapter: 'Ch. 12 · A secular state and a multi-religious country',
       type: 'true_false',
       q: {
-        en: 'In 1860, Swedes were permitted to choose any religion or no religion at all completely freely.',
+        en: 'In 1860, Swedes were free to choose any religion or none.',
         sv: 'År 1860 blev det tillåtet för svenskar att helt fritt välja vilken religion som helst eller ingen religion alls.',
       },
       opts: [
@@ -44672,7 +44672,7 @@
       ],
       answer: 1,
       why: {
-        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
         sv: 'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
       },
       source: {
@@ -44717,7 +44717,7 @@
           uk: 'Вийти з Церкви Швеції, але лише якщо людина приєднувалася до іншої християнської громади',
         },
         {
-          en: 'To choose any religion or no religion at all completely freely',
+          en: 'To freely choose any religion or none',
           sv: 'Att helt fritt välja vilken religion som helst eller ingen religion alls',
           'zh-Hant': '完全自由選擇任何宗教或完全不選宗教',
           'zh-Hans': '完全自由选择任何宗教或完全不选宗教',
@@ -44761,7 +44761,7 @@
       ],
       answer: 0,
       why: {
-        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose a religion or no religion came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+        en: 'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
         sv: 'År 1860 blev det tillåtet för svenskar att lämna Svenska kyrkan, men bara om de gick med i ett annat kristet samfund. Full frihet att välja religion eller ingen religion kom med religionsfrihetslagen 1951, och separationen mellan staten och Svenska kyrkan skedde år 2000.',
       },
       source: {

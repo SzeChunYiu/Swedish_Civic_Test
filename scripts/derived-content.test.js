@@ -1551,3 +1551,32 @@ test('derivePublishedQuestions rewrites definition-style true/false variants as 
     /^(?:Att (?:Sverige är (?:en konstitutionell monarki|en sekulär stat)|val i en demokrati är hemliga) betyder att|That (?:Sweden is (?:a constitutional monarchy|a secular state)|elections in a democracy are secret) means\b)/im,
   );
 });
+
+test('derivePublishedQuestions keeps q115 religious-freedom 1860 English natural', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const generatedQuestions = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
+  const sourceIndex = sourceQuestions.findIndex((question) => question.id === 'q115');
+  assert.notEqual(sourceIndex, -1, 'missing q115 source fixture');
+  const [singleChoiceVariant, , falseStatementVariant, judgementVariant] = generatedQuestions.slice(
+    sourceIndex * 4,
+    sourceIndex * 4 + 4,
+  );
+
+  assert.equal(
+    sourceQuestions[sourceIndex].options.find((option) => option.id === 'b')?.textEn,
+    'To freely choose any religion or none',
+  );
+  assert.equal(
+    singleChoiceVariant.options.find((option) => option.id === 'b')?.textEn,
+    'To freely choose any religion or none',
+  );
+  assert.equal(
+    falseStatementVariant.questionEn,
+    'In 1860, Swedes were free to choose any religion or none.',
+  );
+  assert.equal(
+    judgementVariant.options.find((option) => option.id === 'b')?.textEn,
+    'To freely choose any religion or none',
+  );
+});
