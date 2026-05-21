@@ -1998,6 +1998,10 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
     path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
     'utf8',
   );
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
   const { adBannerCopy, getAdBannerStatusLabel } = loadTs('lib/monetization/adCopy.ts');
 
   assert.match(webBannerSource, /getAdBannerStatusLabel/);
@@ -2006,6 +2010,19 @@ test('AdBanner testStatus copy stays platform-neutral while liveStatus stays liv
   assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
   assert.match(nativeBannerSource, /getAdBannerStatusLabel/);
   assert.match(nativeBannerSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
+  assert.match(practiceInterstitialSource, /getAdBannerStatusLabel/);
+  assert.match(
+    practiceInterstitialSource,
+    /const unit = getAdUnit\('quiz_completed_interstitial'\);/,
+  );
+  assert.match(
+    practiceInterstitialSource,
+    /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /unit\?\.testOnly\s*\?\s*copy\.testStatus\s*:\s*copy\.liveStatus|const adStatusLabel = copy\.liveStatus/,
+  );
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,

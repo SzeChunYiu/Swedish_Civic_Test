@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 
-import { adBannerCopy } from '../../lib/monetization/adCopy';
+import { adBannerCopy, getAdBannerStatusLabel } from '../../lib/monetization/adCopy';
 import {
   getAdUnit,
   shouldShowAd,
@@ -36,7 +36,7 @@ export function PracticeInterstitialAd({
 
   const unit = getAdUnit('quiz_completed_interstitial');
   const placementLabel = copy.placementLabels.quiz_completed_interstitial;
-  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
+  const adStatusLabel = getAdBannerStatusLabel(copy, unit);
   const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
 
   return (

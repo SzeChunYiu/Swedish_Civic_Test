@@ -51,6 +51,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
   );
+  const practiceInterstitialWebSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
   const adsSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/ads.ts'), 'utf8');
 
@@ -125,6 +129,15 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.match(
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialWebSource, /getAdBannerStatusLabel/);
+  assert.match(
+    practiceInterstitialWebSource,
+    /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialWebSource,
+    /unit\?\.testOnly\s*\?\s*copy\.testStatus\s*:\s*copy\.liveStatus|const adStatusLabel = copy\.liveStatus/,
   );
   assert.match(practiceInterstitialNativeSource, /createPracticeInterstitialAttemptState/);
   assert.match(practiceInterstitialNativeSource, /reducePracticeInterstitialAttemptState/);
@@ -437,6 +450,44 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /PracticeInterstitialAd native placement must gate quiz_completed_interstitial through consent-aware platform shouldShowAd/,
+  );
+});
+
+test('ad placement route parity rejects PracticeInterstitialAd fallback status drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        'const adStatusLabel = getAdBannerStatusLabel(copy, unit);',
+        'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-ad-placement-route-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd web fallback must derive status copy from unit\.testOnly/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /PracticeInterstitialAd web fallback must not inline live\/test status copy/,
   );
 });
 
