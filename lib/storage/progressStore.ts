@@ -485,6 +485,8 @@ export const useProgressStore = create<ProgressState>((set) => ({
     }),
   recordAnswer: (questionId, isCorrect, confidenceRating) =>
     set((state) => {
+      if (typeof isCorrect !== 'boolean') return state;
+
       const answeredAt = new Date().toISOString();
       const answerDate = getLocalDateKey(new Date(answeredAt));
       const normalizedConfidenceRating = normalizeConfidenceRating(confidenceRating);

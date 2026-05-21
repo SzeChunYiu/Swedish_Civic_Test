@@ -14881,6 +14881,10 @@ function validateProgressStoreSchemaParity() {
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [
+      "if (typeof isCorrect !== 'boolean') return state;",
+      'recordAnswer must ignore non-boolean correctness before mutating progress',
+    ],
+    [
       'const normalizedStreakFreezeState = normalizeStoredStreakFreezeState(streakFreezeState);',
       'setStreakFreezeState must normalize freeze state before persistence',
     ],
