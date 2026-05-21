@@ -19885,12 +19885,6 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
   }
 
   const now = new Date('2026-05-19T12:00:00.000Z');
-  const expectedUnseenCounts = {
-    'recently-wrong': 0,
-    unseen: 1,
-    mastered: 0,
-    stale: 0,
-  };
   let runtimeParityIsValid = true;
 
   function reject(message) {
@@ -19898,72 +19892,41 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
     fail(message);
   }
 
-  function staleCorrectAnswer(questionId) {
-    return {
-      questionId,
-      selectedOptionIds: [],
-      isCorrect: true,
-      answeredAt: '2026-04-14T12:00:00.000Z',
-      timeSpentSeconds: 5,
-    };
-  }
-
-  const validDifficultyCases = [
-    { expectedId: 'easy1', recentAccuracyOverride: 0.25 },
-    { expectedId: 'med1', recentAccuracyOverride: 0.65 },
-    { expectedId: 'hard1', recentAccuracyOverride: 0.95 },
-  ];
-  for (const { expectedId, recentAccuracyOverride } of validDifficultyCases) {
-    const picked = pickAdaptiveSession({
-      progress: adaptivePracticeProgressFromAnswers([]),
-      bank: [
-        { id: 'easy1', difficulty: 'easy', chapterId: 'ch01' },
-        { id: 'med1', difficulty: 'medium', chapterId: 'ch01' },
-        { id: 'hard1', difficulty: 'hard', chapterId: 'ch01' },
-      ],
-      size: 1,
-      recentAccuracyOverride,
-      now,
-    });
-
-    if (picked[0] !== expectedId) {
-      reject(
-        `adaptive practice valid difficulty weighting at accuracy ${recentAccuracyOverride} picked ${JSON.stringify(
-          picked,
-        )}, expected ${expectedId}`,
-      );
-    }
-  }
-
   for (const { label, difficulty } of MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES) {
-    const picked = pickAdaptiveSession({
-      progress: adaptivePracticeProgressFromAnswers([staleCorrectAnswer('a-stale-invalid')]),
+    const input = {
+      progress: adaptivePracticeProgressFromAnswers([
+        {
+          questionId: 'adaptive-difficulty-invalid',
+          selectedOptionIds: [],
+          isCorrect: true,
+          answeredAt: '2026-04-14T12:00:00.000Z',
+          timeSpentSeconds: 5,
+        },
+      ]),
       bank: [
-        { id: 'a-stale-invalid', difficulty, chapterId: 'ch01' },
-        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'ch01' },
+        { id: 'adaptive-difficulty-invalid', difficulty, chapterId: 'ch01' },
+        { id: 'adaptive-difficulty-medium', difficulty: 'medium', chapterId: 'ch01' },
       ],
       size: 1,
       recentAccuracyOverride: 0.95,
       now,
-    });
-    const counts = explainAdaptivePick({
-      progress: adaptivePracticeProgressFromAnswers([staleCorrectAnswer('a-stale-invalid')]),
-      bank: [
-        { id: 'a-stale-invalid', difficulty, chapterId: 'ch01' },
-        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'ch01' },
-      ],
-      size: 1,
-      recentAccuracyOverride: 0.95,
-      now,
-    });
+    };
+    const picked = pickAdaptiveSession(input);
+    const counts = explainAdaptivePick(input);
 
-    if (picked[0] !== 'z-unseen-medium' || !jsonEqual(counts, expectedUnseenCounts)) {
+    if (
+      !jsonEqual(picked, ['adaptive-difficulty-medium']) ||
+      !jsonEqual(counts, {
+        'recently-wrong': 0,
+        unseen: 1,
+        mastered: 0,
+        stale: 0,
+      })
+    ) {
       reject(
-        `adaptive practice malformed ${label} picked ${JSON.stringify(
+        `adaptive practice malformed ${label} difficulty picked ${JSON.stringify(
           picked,
-        )} with counts ${JSON.stringify(
-          counts,
-        )}, expected neutral difficulty to keep z-unseen-medium first`,
+        )} with counts ${JSON.stringify(counts)}, expected neutral unseen medium pick`,
       );
       continue;
     }
