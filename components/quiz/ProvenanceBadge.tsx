@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PracticeQuestion } from '../../types/content';
 
 type ProvenanceBadgeCopy = {
@@ -40,10 +41,15 @@ const provenanceBadgeCopy: Record<AppLanguage, ProvenanceBadgeCopy> = {
 export function ProvenanceBadge({
   question,
   language = 'sv',
+  themeColors: providedThemeColors,
 }: {
   question?: PracticeQuestion;
   language?: AppLanguage;
+  themeColors?: ThemeColors;
 }) {
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -102,55 +108,57 @@ export function ProvenanceBadge({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'flex-start',
-    gap: space[0.75],
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center',
-    minHeight: space[6],
-    overflow: 'hidden',
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
-  },
-  badgeFocused: {
-    borderColor: colors.focus,
-  },
-  badgePressed: {
-    transform: [{ scale: motion.pressedScale }],
-  },
-  badgeText: {
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textTransform: 'uppercase',
-  },
-  uhr: {
-    backgroundColor: colors.badgeBlueBg,
-  },
-  supplementary: {
-    backgroundColor: colors.surfaceWarm,
-  },
-  editorial: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  sourceNote: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  uhrText: {
-    color: colors.badgeBlueText,
-  },
-  supplementaryText: {
-    color: colors.text,
-  },
-  editorialText: {
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      alignItems: 'flex-start',
+      gap: space[0.75],
+    },
+    badge: {
+      alignSelf: 'flex-start',
+      borderColor: themeColors.border,
+      borderRadius: radius.pill,
+      borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[6],
+      overflow: 'hidden',
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.5],
+    },
+    badgeFocused: {
+      borderColor: themeColors.focus,
+    },
+    badgePressed: {
+      transform: [{ scale: motion.pressedScale }],
+    },
+    badgeText: {
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textTransform: 'uppercase',
+    },
+    uhr: {
+      backgroundColor: themeColors.badgeBlueBg,
+    },
+    supplementary: {
+      backgroundColor: themeColors.surfaceWarm,
+    },
+    editorial: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    sourceNote: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    uhrText: {
+      color: themeColors.badgeBlueText,
+    },
+    supplementaryText: {
+      color: themeColors.text,
+    },
+    editorialText: {
+      color: themeColors.textMuted,
+    },
+  });
+}

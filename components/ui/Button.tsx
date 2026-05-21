@@ -7,6 +7,7 @@ import { useThemeColors } from '../../lib/theme/ThemeProvider';
 export type ButtonVariant = 'primary' | 'secondary' | 'option' | 'success' | 'danger';
 export interface ButtonProps extends PropsWithChildren<Omit<PressableProps, 'style'>> {
   style?: StyleProp<ViewStyle>;
+  themeColors?: ThemeColors;
   variant?: ButtonVariant;
 }
 
@@ -21,13 +22,15 @@ export function Button({
   children,
   hitSlop,
   style,
+  themeColors: providedThemeColors,
   accessibilityRole = 'button',
   accessibilityState,
   disabled,
   variant = 'primary',
   ...pressableProps
 }: ButtonProps) {
-  const themeColors = useThemeColors();
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const mergedAccessibilityState = {
     ...accessibilityState,

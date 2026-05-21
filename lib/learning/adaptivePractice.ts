@@ -12,6 +12,7 @@ import { validAnswerTimestampMs } from './answerDates';
 import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_SESSION_SIZE = 10;
 const NEUTRAL_RECENT_ACCURACY = 0.5;
 
 export interface AdaptiveQuestion {
@@ -50,12 +51,6 @@ interface AdaptiveScoringResult {
   size: number;
 }
 
-function normalizeSessionSize(size: AdaptivePracticeInput['size'], eligibleCount: number): number {
-  const requestedSize =
-    typeof size === 'number' && Number.isInteger(size) && size >= 0 ? size : DEFAULT_SESSION_SIZE;
-  return Math.min(requestedSize, eligibleCount);
-}
-
 function recentAccuracy(progress: UserProgress, now: Date): number {
   const cutoff = now.getTime() - 30 * DAY_MS;
   let total = 0;
@@ -76,6 +71,14 @@ function normalizeRecentAccuracyOverride(value: number | undefined): number | un
   if (value === undefined) return undefined;
   if (!Number.isFinite(value) || value < 0 || value > 1) return NEUTRAL_RECENT_ACCURACY;
   return value;
+}
+
+function normalizeSessionSize(size: AdaptivePracticeInput['size'], eligibleCount: number): number {
+  const requestedSize =
+    typeof size === 'number' && Number.isFinite(size) && Number.isInteger(size) && size >= 0
+      ? size
+      : DEFAULT_SESSION_SIZE;
+  return Math.min(requestedSize, Math.max(eligibleCount, 0));
 }
 
 function lastSeenMap(
@@ -108,9 +111,14 @@ const DIFFICULTY_WEIGHT: Record<NonNullable<AdaptiveQuestion['difficulty']>, num
   hard: 2,
 };
 
+function adaptiveDifficultyWeight(difficulty: AdaptiveQuestion['difficulty']): number | null {
+  if (typeof difficulty !== 'string') return null;
+  if (!Object.prototype.hasOwnProperty.call(DIFFICULTY_WEIGHT, difficulty)) return null;
+  return DIFFICULTY_WEIGHT[difficulty as keyof typeof DIFFICULTY_WEIGHT];
+}
+
 function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringResult {
   const now = input.now ?? new Date();
-  const size = input.size ?? 10;
   const accuracy =
     normalizeRecentAccuracyOverride(input.recentAccuracyOverride) ??
     recentAccuracy(input.progress, now);
@@ -125,6 +133,7 @@ function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringRe
   const eligible = input.chapterId
     ? input.bank.filter((q) => q.chapterId === input.chapterId)
     : input.bank.slice();
+  const size = normalizeSessionSize(input.size, eligible.length);
 
   const scored: ScoredQuestion[] = eligible.map((question) => {
     const last = seen[question.id];
@@ -153,8 +162,9 @@ function scoreAdaptiveQuestions(input: AdaptivePracticeInput): AdaptiveScoringRe
     }
 
     // Difficulty proximity adjustment.
-    if (question.difficulty) {
-      const dist = Math.abs(DIFFICULTY_WEIGHT[question.difficulty] - idealDifficulty);
+    const difficultyWeight = adaptiveDifficultyWeight(question.difficulty);
+    if (difficultyWeight !== null) {
+      const dist = Math.abs(difficultyWeight - idealDifficulty);
       score -= dist * 5;
     }
 

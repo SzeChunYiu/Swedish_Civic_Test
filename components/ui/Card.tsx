@@ -6,6 +6,7 @@ import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 export interface CardProps extends PropsWithChildren<ComponentProps<typeof View>> {
   elevated?: boolean;
+  themeColors?: ThemeColors;
 }
 
 export function Card({
@@ -16,9 +17,11 @@ export function Card({
   children,
   style,
   elevated = false,
+  themeColors: providedThemeColors,
   ...viewProps
 }: CardProps) {
-  const themeColors = useThemeColors();
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const groupedForAccessibility = accessible ?? Boolean(accessibilityLabel || accessibilityRole);
   const resolvedAccessibilityRole =
