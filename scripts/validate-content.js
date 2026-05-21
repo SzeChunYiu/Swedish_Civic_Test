@@ -601,6 +601,7 @@ const EXPECTED_STREAK_RULE_COUNT = 17;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
+const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -9076,6 +9077,8 @@ const findWeakChapterIds = masteryModule.findWeakChapterIds;
 const weakChaptersModule = loadTs('lib/learning/weakChapters.ts');
 const chapterWeaknesses = weakChaptersModule.chapterWeaknesses;
 const topWeakChapters = weakChaptersModule.topWeakChapters;
+const readinessModule = loadTs('lib/learning/readiness.ts');
+const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -9385,6 +9388,8 @@ let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
 let weakChapterRulesValidated = 0;
 let weakChapterRulesParityValidated = false;
+let readinessAdapterRulesValidated = 0;
+let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -10054,6 +10059,16 @@ if (process.argv.includes('--focus-weak-chapter-rules')) {
   printValidationSummary({
     weakChapterRulesValidated,
     weakChapterRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-readiness-adapter-rules')) {
+  validateReadinessAdapterRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    readinessAdapterRulesValidated,
+    readinessAdapterRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -20049,6 +20064,203 @@ function validateWeakChapterRules() {
   }
 }
 
+function validateReadinessAdapterRules() {
+  if (typeof computeReadinessFromQuestionProgress !== 'function') return;
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const singleQuestion = [{ id: 'q1', chapterId: 'ch01' }];
+  const singleChapter = [{ id: 'ch01', questionCount: 10 }];
+  const fiveQuestionBank = Array.from({ length: 5 }, (_, index) => ({
+    id: `q${index + 1}`,
+    chapterId: 'ch01',
+  }));
+  const fiveQuestionChapter = [{ id: 'ch01', questionCount: 5 }];
+
+  const cases = [
+    {
+      label: 'valid persisted study counters feed readiness',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: 1,
+              correctCount: 1,
+              wrongCount: 0,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 1, coverage: 1, score: 100, sparse: true },
+    },
+    {
+      label: 'string study counters do not create readiness answers',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: '5',
+              correctCount: '5',
+              wrongCount: '0',
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, coverage: 0, score: 0, sparse: true },
+    },
+    {
+      label: 'non-finite study counters do not create readiness answers',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: Number.NaN,
+              correctCount: Number.POSITIVE_INFINITY,
+              wrongCount: Number.NEGATIVE_INFINITY,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: singleQuestion,
+          chapters: singleChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, coverage: 0, score: 0, sparse: true },
+    },
+    {
+      label: 'oversized persisted study counters stay bounded to the bank',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {
+            q1: {
+              seenCount: 999,
+              correctCount: 999,
+              wrongCount: 999,
+              lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+            },
+          },
+          questions: fiveQuestionBank,
+          chapters: fiveQuestionChapter,
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          coverage: result.components.coverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 1, coverage: 1, score: 100, sparse: true },
+    },
+    {
+      label: 'mock exam counts feed mock average without practice accuracy',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {},
+          questions: singleQuestion,
+          chapters: singleChapter,
+          mockExamSessions: [
+            {
+              sessionId: 'mock-with-counts',
+              score: 0.8,
+              completedAt: '2026-05-19T10:00:00.000Z',
+              correctCount: 32,
+              totalCount: 40,
+            },
+          ],
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          score: result.score,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0.8, score: 34, sparse: true },
+    },
+    {
+      label: 'oversized mock exam totals stay sparse and bounded',
+      actual: () => {
+        const result = computeReadinessFromQuestionProgress({
+          questionProgress: {},
+          questions: singleQuestion,
+          chapters: singleChapter,
+          mockExamSessions: [
+            {
+              sessionId: 'oversized-mock-counts',
+              score: 0.9,
+              completedAt: '2026-05-19T10:00:00.000Z',
+              correctCount: 999,
+              totalCount: 999,
+            },
+          ],
+          now,
+        });
+        return {
+          accuracy: result.components.accuracy,
+          mockAverage: result.components.mockAverage,
+          sparse: result.isSparse,
+        };
+      },
+      expected: { accuracy: 0, mockAverage: 0.9, sparse: true },
+    },
+  ];
+
+  let rulesAreValid = true;
+
+  cases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`readiness adapter rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `readiness adapter rule ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      readinessAdapterRulesValidated += 1;
+    }
+  });
+
+  if (rulesAreValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
+    readinessAdapterRuntimeParityValidated = true;
+  }
+}
+
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -21914,6 +22126,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateReadinessAdapterRules();
 validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
@@ -22222,6 +22435,8 @@ console.log(
       masteryRulesParityValidated,
       weakChapterRulesValidated,
       weakChapterRulesParityValidated,
+      readinessAdapterRulesValidated,
+      readinessAdapterRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,

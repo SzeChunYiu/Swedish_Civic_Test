@@ -548,6 +548,69 @@ test('readiness mock totals do not inflate rolling practice accuracy', () => {
   assert.ok(result.score > 0);
 });
 
+test('readiness adapter ignores malformed counters and bounds synthetic answers', () => {
+  const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const questions = Array.from({ length: 5 }, (_, index) => ({
+    id: `q${index + 1}`,
+    chapterId: 'ch01',
+  }));
+  const chapters = [{ id: 'ch01', questionCount: 5 }];
+
+  const malformedStudy = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      q1: {
+        seenCount: '5',
+        correctCount: Number.POSITIVE_INFINITY,
+        wrongCount: Number.NaN,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+    },
+    questions,
+    chapters,
+    now,
+  });
+  assert.equal(malformedStudy.components.accuracy, 0);
+  assert.equal(malformedStudy.components.coverage, 0);
+  assert.equal(malformedStudy.score, 0);
+
+  const oversizedStudy = computeReadinessFromQuestionProgress({
+    questionProgress: {
+      q1: {
+        seenCount: 999,
+        correctCount: 999,
+        wrongCount: 999,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+    },
+    questions,
+    chapters,
+    now,
+  });
+  assert.equal(oversizedStudy.components.accuracy, 1);
+  assert.equal(oversizedStudy.components.coverage, 1);
+  assert.equal(oversizedStudy.isSparse, true);
+
+  const oversizedMock = computeReadinessFromQuestionProgress({
+    questionProgress: {},
+    questions: [{ id: 'q1', chapterId: 'ch01' }],
+    chapters: [{ id: 'ch01', questionCount: 10 }],
+    mockExamSessions: [
+      {
+        sessionId: 'oversized-mock-counts',
+        score: 0.9,
+        completedAt: '2026-05-19T10:00:00.000Z',
+        correctCount: 999,
+        totalCount: 999,
+      },
+    ],
+    now,
+  });
+  assert.equal(oversizedMock.components.accuracy, 0);
+  assert.equal(oversizedMock.components.mockAverage, 0.9);
+  assert.equal(oversizedMock.isSparse, true);
+});
+
 test('readiness mock recency uses completion metadata without depending on synthetic answers', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
   const commonInput = {
