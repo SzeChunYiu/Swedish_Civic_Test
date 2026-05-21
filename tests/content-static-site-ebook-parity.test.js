@@ -192,6 +192,31 @@ function hasEbookCitationCoverage(value) {
   ].some((pattern) => pattern.test(value));
 }
 
+const foundationalEbookSourceKeys = new Set(['uhrStudyMaterial', 'editorialCommentary']);
+
+function readEbookExternalSourceMetadata() {
+  const source = readSiteFile('site/ebook.js');
+  const match = source.match(
+    /const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object\.freeze\((\{[\s\S]*?\n  \})\);/,
+  );
+
+  assert.ok(match, 'site/ebook.js should declare EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS');
+
+  const metadata = vm.runInNewContext(`(${match[1]})`);
+  assert.ok(metadata && typeof metadata === 'object' && !Array.isArray(metadata));
+
+  return Object.fromEntries(
+    Object.entries(metadata).map(([chapterId, sourceKeys]) => {
+      assert.ok(Array.isArray(sourceKeys), `${chapterId} external source keys must be an array`);
+      return [String(chapterId), sourceKeys.map(String)];
+    }),
+  );
+}
+
+function renderedSourceKeys(html) {
+  return new Set(Array.from(html.matchAll(/data-source-key="([^"]+)"/g), (match) => match[1]));
+}
+
 test('static ebook source contains no stale untranslated placeholder copy', () => {
   const source = `${readSiteFile('site/ebook.js')}\n${readSiteFile('site/index.html')}`;
 
@@ -235,6 +260,36 @@ test('static ebook renders per-section footnotes and chapter source mixes', () =
       assert.match(html, /class="ebook__provenance-badge"/);
       assert.match(html, /(?:Sources|Källor):/);
       assert.match(html, /(?:Editorial|Redaktionellt) \(\d+\)/);
+    }
+  }
+});
+
+test('static ebook rendered source keys match chapter external-source metadata', () => {
+  const externalSourceKeysByChapter = readEbookExternalSourceMetadata();
+  const harness = createEbookHarness();
+
+  for (const chapterId of getExpectedChapterIds()) {
+    const expectedExternalKeys = new Set(externalSourceKeysByChapter[chapterId] || []);
+
+    for (const lang of ['en', 'sv']) {
+      const sourceKeys = renderedSourceKeys(renderChapter(harness, lang, chapterId));
+      const actualExternalKeys = new Set(
+        Array.from(sourceKeys).filter((key) => !foundationalEbookSourceKeys.has(key)),
+      );
+
+      assert.ok(
+        sourceKeys.has('uhrStudyMaterial'),
+        `${chapterId} ${lang} should keep UHR source notes rendered`,
+      );
+      assert.ok(
+        sourceKeys.has('editorialCommentary'),
+        `${chapterId} ${lang} should keep editorial source notes rendered`,
+      );
+      assert.deepEqual(
+        actualExternalKeys,
+        expectedExternalKeys,
+        `${chapterId} ${lang} rendered external source keys must match EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS`,
+      );
     }
   }
 });
