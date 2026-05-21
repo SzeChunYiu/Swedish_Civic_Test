@@ -23,6 +23,10 @@ import { getLocalDateKey } from './streaks';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+// Shared persisted-state guard: reject implausible future day keys and cap
+// lifetime counters while keeping valid imported progress intact.
+const MAX_HYDRATABLE_FUTURE_DATE_MS = 10 * 366 * DAY_MS;
+const MAX_LIFETIME_FREEZE_COUNT = 10000;
 
 export interface StreakFreezeState {
   /** Number of freezes available right now. 0..MAX_STOCKPILE. */
@@ -78,37 +82,65 @@ function normalizeDayKey(value: unknown): string | null {
   return normalized === dateKey ? dateKey : null;
 }
 
-function normalizeDayKeyList(values: unknown): string[] {
+function isHydratableDayKey(dayKey: string): boolean {
+  const [year, month, day] = dayKey.split('-').map(Number);
+  const timeMs = Date.UTC(year, month - 1, day);
+  return Number.isFinite(timeMs) && timeMs <= Date.now() + MAX_HYDRATABLE_FUTURE_DATE_MS;
+}
+
+function normalizeHydratableDayKey(value: unknown): string | null {
+  const dayKey = normalizeDayKey(value);
+  return dayKey && isHydratableDayKey(dayKey) ? dayKey : null;
+}
+
+function normalizeDayKeyList(
+  values: unknown,
+  normalizeKey: (value: unknown) => string | null = normalizeDayKey,
+): string[] {
   if (!Array.isArray(values)) return [];
-  return Array.from(new Set(values.map(normalizeDayKey).filter((key): key is string => !!key)));
+  return Array.from(new Set(values.map(normalizeKey).filter((key): key is string => !!key)));
 }
 
-function normalizeNonNegativeInteger(value: unknown, fallback = 0): number {
-  return typeof value === 'number' &&
-    Number.isFinite(value) &&
-    Number.isInteger(value) &&
-    value >= 0
-    ? value
-    : fallback;
+function normalizeNonNegativeInteger(
+  value: unknown,
+  fallback = 0,
+  max = Number.MAX_SAFE_INTEGER,
+): number {
+  if (typeof value !== 'number' || !Number.isFinite(value) || !Number.isInteger(value)) {
+    return fallback;
+  }
+
+  return Math.max(0, Math.min(max, value));
 }
 
-function normalizeAvailableFreezes(value: unknown): number {
-  return Math.min(MAX_STOCKPILE, normalizeNonNegativeInteger(value));
+function normalizeAvailableFreezes(value: unknown, fallback = 0): number {
+  return normalizeNonNegativeInteger(value, fallback, MAX_STOCKPILE);
 }
 
-function normalizeFreezeState(state: StreakFreezeState): StreakFreezeState {
+function normalizeFreezeState(
+  state: unknown,
+  fallback: StreakFreezeState = createInitialFreezeState(),
+): StreakFreezeState {
   const candidate = state && typeof state === 'object' ? (state as Partial<StreakFreezeState>) : {};
   return {
-    available: normalizeAvailableFreezes(candidate.available),
-    lastEarnedAt: normalizeDayKey(candidate.lastEarnedAt) ?? '',
-    lifetimeEarned: normalizeNonNegativeInteger(candidate.lifetimeEarned),
-    lifetimeSpent: normalizeNonNegativeInteger(candidate.lifetimeSpent),
-    rescuedDayKeys: normalizeDayKeyList(candidate.rescuedDayKeys),
+    available: normalizeAvailableFreezes(candidate.available, fallback.available),
+    lastEarnedAt: normalizeHydratableDayKey(candidate.lastEarnedAt) ?? fallback.lastEarnedAt,
+    lifetimeEarned: normalizeNonNegativeInteger(
+      candidate.lifetimeEarned,
+      fallback.lifetimeEarned,
+      MAX_LIFETIME_FREEZE_COUNT,
+    ),
+    lifetimeSpent: normalizeNonNegativeInteger(
+      candidate.lifetimeSpent,
+      fallback.lifetimeSpent,
+      MAX_LIFETIME_FREEZE_COUNT,
+    ),
+    rescuedDayKeys: normalizeDayKeyList(candidate.rescuedDayKeys, normalizeHydratableDayKey),
   };
 }
 
 export function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
-  return normalizeFreezeState(value as StreakFreezeState);
+  return normalizeFreezeState(value);
 }
 
 function previousDayKey(dayKey: string): string {
@@ -121,8 +153,9 @@ function previousDayKey(dayKey: string): string {
  * earn. Pure — returns a new state, does not mutate.
  */
 export function refillFreezes(state: StreakFreezeState, now: Date = new Date()): StreakFreezeState {
-  const normalizedState = normalizeFreezeState(state);
-  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeDate(now)));
+  const safeNow = safeDate(now);
+  const normalizedState = normalizeFreezeState(state, createInitialFreezeState(safeNow));
+  const currentWeekStartKey = getLocalDateKey(startOfWeek(safeNow));
   const lastEarnedAt = normalizedState.lastEarnedAt;
 
   if (!lastEarnedAt) {
@@ -146,7 +179,7 @@ export function refillFreezes(state: StreakFreezeState, now: Date = new Date()):
     ...normalizedState,
     available: normalizedState.available + earned,
     lastEarnedAt: currentWeekStartKey,
-    lifetimeEarned: normalizedState.lifetimeEarned + earned,
+    lifetimeEarned: Math.min(MAX_LIFETIME_FREEZE_COUNT, normalizedState.lifetimeEarned + earned),
   };
 }
 
@@ -226,7 +259,7 @@ export function calculateStreakWithFreeze(input: StreakWithFreezeInput): StreakW
     freezeState: {
       ...refilled,
       available: availableFreezes,
-      lifetimeSpent,
+      lifetimeSpent: Math.min(MAX_LIFETIME_FREEZE_COUNT, lifetimeSpent),
       rescuedDayKeys: newRescuedKeys,
     },
     rescuedInCurrentStreak,
