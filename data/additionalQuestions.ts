@@ -645,7 +645,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch06',
     { chapter: 'Mediernas roll', section: 'Källkritik', pageApprox: 21 },
     'Vad betyder det att vara källkritisk?',
-    'What does it mean to be source-critical?',
+    'What does source criticism mean?',
     [
       [
         'Att ifrågasätta och kontrollera om information är korrekt',
@@ -660,7 +660,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     ],
     0,
     'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
-    'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
     ['source-criticism', 'media-literacy', 'information'],
     'easy',
   ),
