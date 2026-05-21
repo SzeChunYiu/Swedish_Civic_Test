@@ -76,14 +76,18 @@
     },
   ]);
 
+  function externalSourceLink(url, label) {
+    return `<a href="${url}" target="_blank" rel="noreferrer">${label}</a>`;
+  }
+
   function sourceLink(note) {
     if (!note.url) return `${note.label} (${note.retrievedDate})`;
-    return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
+    return `${externalSourceLink(note.url, note.label)} (${note.retrievedDate})`;
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map(
-      (source) => `<a href="${source.url}">${source.label}</a>`,
+    return OFFICIAL_TEST_SOURCE_NOTES.map((source) =>
+      externalSourceLink(source.url, source.label),
     ).join(' · ');
   }
 
