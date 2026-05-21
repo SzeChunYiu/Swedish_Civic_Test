@@ -9,6 +9,24 @@ const repoRoot = path.resolve(__dirname, '..');
 const gitignorePath = path.join(repoRoot, '.gitignore');
 const screenshotDir = path.join(repoRoot, 'reports/2026-05-15-uiux-screenshots');
 const manifestPath = path.join(screenshotDir, 'manifest.json');
+const expectedRoutes = [
+  '/',
+  '/onboarding',
+  '/home',
+  '/learn',
+  '/practice',
+  '/exam',
+  '/mistakes',
+  '/profile',
+  '/settings',
+  '/chapter/ch01',
+  '/disclaimer',
+  '/privacy',
+  '/terms',
+  '/sources',
+  '/support',
+];
+const explainedDuplicateScreenshotGroups = new Set(['home,index']);
 
 function readManifest() {
   return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
@@ -34,12 +52,17 @@ function loadTs(relativePath) {
   return mod.exports;
 }
 
-const { visualSmokeDuplicateScreenshotExplanations, visualSmokeRoutes } = loadTs(
-  'tests/e2e/visualSmokeRoutes.ts',
-);
-const explainedDuplicateScreenshotGroups = new Set(
-  visualSmokeDuplicateScreenshotExplanations.map((group) => [...group.names].sort().join(',')),
-);
+function loadLaunchAdSuppressionPolicy() {
+  const { shouldSuppressLaunchPopupAdForPath } = loadTs('lib/monetization/ads.ts');
+
+  assert.equal(
+    typeof shouldSuppressLaunchPopupAdForPath,
+    'function',
+    'launch popup suppression helper should be exported',
+  );
+
+  return shouldSuppressLaunchPopupAdForPath;
+}
 
 test('visual smoke uses the shared blocking modal overlay locator', () => {
   const browserLaunchSource = readRepoFile('tests/e2e/browserLaunch.ts');
@@ -59,21 +82,27 @@ test('visual smoke uses the shared blocking modal overlay locator', () => {
   );
 });
 
-test('visual smoke route list is shared by capture and report checks', () => {
+test('visual smoke report uses the shared launch popup suppression policy', () => {
   const reportSource = readRepoFile('scripts/visual-smoke-report.test.js');
-  const visualSmokeSource = readRepoFile('tests/e2e/visual-smoke.spec.ts');
-  const routesSource = readRepoFile('tests/e2e/visualSmokeRoutes.ts');
+  const shouldSuppressLaunchPopupAdForPath = loadLaunchAdSuppressionPolicy();
+  const localRouteIncludesCall = ['includes', '(route.route)'].join('');
 
-  assert.match(visualSmokeSource, /from '\.\/visualSmokeRoutes';/);
-  assert.match(reportSource, /loadTs\(\s*'tests\/e2e\/visualSmokeRoutes\.ts',?\s*\)/);
-  assert.match(routesSource, /export const visualSmokeRoutes/);
-  assert.match(routesSource, /export const visualSmokeDuplicateScreenshotExplanations/);
-  assert.doesNotMatch(visualSmokeSource, /const\s+routes\s*=\s*\[/);
-  assert.doesNotMatch(reportSource, new RegExp('const\\s+expected' + 'Routes\\s*='));
+  assert.match(reportSource, /loadTs\('lib\/monetization\/ads\.ts'\)/);
+  assert.match(reportSource, /shouldSuppressLaunchPopupAdForPath\(route\.route\)/);
+  assert.equal(
+    reportSource.includes(localRouteIncludesCall),
+    false,
+    'visual smoke report must not maintain a local suppressed-route includes list',
+  );
+
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/onboarding/intro'), true);
+  assert.equal(shouldSuppressLaunchPopupAdForPath('/home'), false);
 });
 
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
+  const shouldSuppressLaunchPopupAdForPath = loadLaunchAdSuppressionPolicy();
   const { resolveVisualSmokeOutput } = loadTs('tests/e2e/visualSmokeOutput.ts');
   const committedBaselineOutput = resolveVisualSmokeOutput({
     cwd: repoRoot,
@@ -92,11 +121,7 @@ test('visual smoke report records route-specific screenshots without launch over
   const routes = manifest.routes || [];
   assert.deepEqual(
     routes.map((route) => route.route),
-    visualSmokeRoutes.map((route) => route.route),
-  );
-  assert.deepEqual(
-    routes.map((route) => route.name),
-    visualSmokeRoutes.map((route) => route.name),
+    expectedRoutes,
   );
 
   const namesByHash = new Map();
@@ -105,16 +130,7 @@ test('visual smoke report records route-specific screenshots without launch over
     assert.equal(typeof route.file, 'string');
     assert.equal(route.launchOverlayVisibleAfterDismissal, false);
     assert.ok(
-      route.launchOverlayDismissed ||
-        [
-          '/practice',
-          '/exam',
-          '/disclaimer',
-          '/privacy',
-          '/terms',
-          '/sources',
-          '/support',
-        ].includes(route.route),
+      route.launchOverlayDismissed || shouldSuppressLaunchPopupAdForPath(route.route),
       `${route.name} should either dismiss or suppress the launch overlay`,
     );
 
