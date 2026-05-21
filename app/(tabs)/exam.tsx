@@ -38,6 +38,7 @@ type ExamRouteCopy = {
   accessTitle: string;
   activeHeroSubtitle: (remainingTime: string, questionCount: number) => string;
   answerAccessibilityLabel: (optionText: string, questionNumber: number) => string;
+  answerGroupAccessibilityLabel: (questionNumber: number) => string;
   answeredCount: (answeredCount: number, questionCount: number) => string;
   chapterBreakdownTitle: string;
   checkingAccess: string;
@@ -97,6 +98,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Tid kvar ${remainingTime} · ${questionCount} UHR-baserade frågor · inga annonser under provet`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Välj svaret ${optionText} för fråga ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Svarsalternativ för fråga ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} besvarade`,
     chapterBreakdownTitle: 'Kapitelöversikt',
     checkingAccess: 'Kontrollerar provåtkomst.',
@@ -161,6 +164,8 @@ const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = {
       `Time left ${remainingTime} · ${questionCount} UHR-based questions · no ads during exam`,
     answerAccessibilityLabel: (optionText, questionNumber) =>
       `Select answer ${optionText} for question ${questionNumber}`,
+    answerGroupAccessibilityLabel: (questionNumber) =>
+      `Answer options for question ${questionNumber}`,
     answeredCount: (answeredCount, questionCount) => `${answeredCount}/${questionCount} answered`,
     chapterBreakdownTitle: 'Chapter breakdown',
     checkingAccess: 'Checking mock exam access.',
@@ -748,17 +753,22 @@ export default function Screen() {
             language={language}
             question={question}
           />
-          <View style={styles.options}>
+          <View
+            aria-label={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}
+            accessibilityRole="radiogroup"
+            style={styles.options}
+          >
             {question.options.map((option) => {
               const isSelected = answers[question.id] === option.id;
               const optionText = language === 'en' ? option.textEn : option.textSv;
               return (
                 <Pressable
                   key={option.id}
-                  aria-selected={isSelected}
+                  aria-checked={isSelected}
                   accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: isSelected }}
                   onPress={() => recordQuestionAnswer(question.id, option.id)}
                   style={[styles.option, isSelected ? styles.optionSelected : null]}
                 >
@@ -888,6 +898,8 @@ function createStyles(themeColors: ThemeColors) {
       borderColor: themeColors.border,
       borderRadius: radius.small,
       borderWidth: StyleSheet.hairlineWidth,
+      justifyContent: 'center',
+      minHeight: space[6],
       padding: space[1.5],
     },
     optionSelected: {
