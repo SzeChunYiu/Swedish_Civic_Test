@@ -138,6 +138,46 @@ test('settings route shell copy follows the persisted settings language', () => 
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
   );
+  assert.match(
+    source,
+    /import \{ Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View \} from 'react-native';/,
+  );
+  assert.match(
+    source,
+    /function getRadioArrowDirection\(event: KeyboardEventLike\): -1 \| 1 \| null/,
+  );
+  assert.match(source, /key === 'ArrowRight' \|\| key === 'ArrowDown'/);
+  assert.match(source, /key === 'ArrowLeft' \|\| key === 'ArrowUp'/);
+  assert.match(source, /const handleRadioGroupKeyDown = <T extends RadioOptionValue>/);
+  assert.match(source, /event\.preventDefault\?\.\(\);/);
+  assert.match(source, /\(currentIndex \+ direction \+ options\.length\) % options\.length/);
+  assert.match(source, /selectValue\(nextValue\);/);
+  assert.match(source, /optionRefs\.current\[String\(nextValue\)\]\?\.focus\?\.\(\);/);
+  assert.match(source, /const getWebRadioKeyboardProps = <T extends RadioOptionValue>/);
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /tabIndex: selectedValue === optionValue \? 0 : -1/);
+  assert.match(
+    source,
+    /handleRadioGroupKeyDown\(event, options, selectedValue, selectValue, optionRefs\)/,
+  );
+  assert.match(source, /languageOptionRefs\.current\[value\] = node as FocusableElement \| null;/);
+  assert.match(source, /themeOptionRefs\.current\[value\] = node as FocusableElement \| null;/);
+  assert.match(
+    source,
+    /dailyGoalOptionRefs\.current\[String\(goal\)\] = node as FocusableElement \| null;/,
+  );
+  assert.match(
+    source,
+    /getWebRadioKeyboardProps\(\s*\['sv', 'en'\],\s*language,\s*value,\s*setLanguage,\s*languageOptionRefs,\s*\)/,
+  );
+  assert.match(
+    source,
+    /getWebRadioKeyboardProps\(\s*themeOptions\.map\(\(option\) => option\.value\),\s*themeMode,\s*value,\s*setThemeMode,\s*themeOptionRefs,\s*\)/,
+  );
+  assert.match(
+    source,
+    /getWebRadioKeyboardProps\(\s*supportedDailyGoalAnswerOptions,\s*dailyGoalAnswers,\s*goal,\s*setDailyGoalAnswers,\s*dailyGoalOptionRefs,\s*\)/,
+  );
 });
 
 test('settings import summary copy keeps singular and plural labels for bookmark wrong-answer mock exam FSRS and citizenship rows', () => {
