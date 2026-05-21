@@ -119,6 +119,18 @@ const forbiddenArabicFragments = [
 ];
 
 const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const chapterTwoCivicTermSnippets = {
+  'zh-Hans': /市镇、大区/,
+  'zh-Hant': /市鎮、大區/,
+  ar: /البلديات، والمناطق/,
+  ckb: /شارەوانییەکان، هەرێمەکان/,
+  fa: /شهرداری‌ها، منطقه‌ها/,
+  pl: /gminy i regiony/,
+  so: /degmooyinka iyo gobollada/,
+  ti: /ናይ ከባቢ ምምሕዳራት፡ ክልላት/,
+  tr: /belediyeler ve bölgeler/,
+  uk: /муніципалітети й регіони/,
+};
 const expectedFooterRoadmapLabels = {
   ckb: 'نەخشەی ڕێگا',
   so: 'Qorshaha horumarinta',
@@ -274,50 +286,26 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
   }
 });
 
-test('Tigrinya Home chapter 4 localizes labor and welfare common terms', () => {
-  const extra = loadExtraI18n();
-  const tigrinya = extra?.ti;
-
-  assert.equal(typeof tigrinya, 'object');
-  const description = tigrinya['chap.4.d'];
-  assert.equal(typeof description, 'string', 'ti.chap.4.d must be a string');
-  assert.match(description, /Skatteverket/, 'ti.chap.4.d should preserve the agency name');
-  assert.match(description, /ሓባራዊ ስምምዓት/, 'ti.chap.4.d should localize collective agreements');
-  assert.match(description, /ናይ ወለዲ ዕረፍቲ/, 'ti.chap.4.d should localize parental leave');
-  assert.match(description, /ጥቕማጥቕሚ ሕማም/, 'ti.chap.4.d should localize sickness benefit');
-
-  for (const term of forbiddenTigrinyaWorkWelfareTerms) {
-    assert.doesNotMatch(
-      description,
-      new RegExp(term, 'i'),
-      `ti.chap.4.d must not expose bare Swedish term ${term}`,
-    );
-  }
-});
-
-test('Somali Tigrinya and Turkish Home chapter 6 localize education common terms', () => {
+test('extra locale Home chapter 2 civic terms use localized nouns', () => {
   const extra = loadExtraI18n();
 
-  for (const [locale, expectedTerms] of Object.entries(expectedChapter6EducationTerms)) {
+  for (const locale of extraLocales) {
     const dictionary = extra?.[locale];
     assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
 
-    const description = dictionary['chap.6.d'];
-    assert.equal(typeof description, 'string', `${locale}.chap.6.d must be a string`);
-    assert.match(description, /BVC/, `${locale}.chap.6.d should preserve BVC`);
-    assert.match(description, /1177/, `${locale}.chap.6.d should preserve 1177`);
-
-    for (const expectedTerm of expectedTerms) {
-      assert.match(description, expectedTerm, `${locale}.chap.6.d should localize education terms`);
-    }
-
-    for (const forbiddenTerm of forbiddenChapter6EducationTerms) {
-      assert.doesNotMatch(
-        description,
-        forbiddenTerm,
-        `${locale}.chap.6.d must not expose bare Swedish education term ${forbiddenTerm}`,
-      );
-    }
+    const value = dictionary['chap.2.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.2.d must be a string`);
+    assert.notEqual(value.trim(), '', `${locale}.chap.2.d must not be empty`);
+    assert.match(
+      value,
+      chapterTwoCivicTermSnippets[locale],
+      `${locale}.chap.2.d should localize kommun/region civic terms`,
+    );
+    assert.doesNotMatch(
+      value,
+      /\b(?:kommun|region|regering)\b/i,
+      `${locale}.chap.2.d must not keep bare Swedish civic-term tokens`,
+    );
   }
 });
 

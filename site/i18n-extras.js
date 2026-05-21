@@ -601,7 +601,7 @@
         '維京人 → 國王 → 1809 年 → folkhemmet（人民之家）→ 加入歐盟。整趟雲霄飛車式的歷史，不必硬背王朝家譜。',
       'chap.1.m2': '約 9 分鐘',
       'chap.2.d':
-        'Riksdag（瑞典議會）、政府、kommun（市鎮）、region（區域）。誰決定什麼、你投票給誰，以及為什麼沒有人害怕國王。',
+        'Riksdag（瑞典議會）、政府、市鎮、大區。誰決定什麼、你投票給誰，以及為什麼沒有人害怕國王。',
       'chap.2.m2': '約 12 分鐘',
       'chap.3.d':
         '用白話講解 Grundlagarna（基本法）。新聞自由、言論自由，以及為什麼你的老闆不能問你的宗教信仰。',
@@ -1002,7 +1002,7 @@
         'الفايكنغ ← الملوك ← 1809 ← folkhemmet ← الاتحاد الأوروبي. الرحلة كاملة، دون حفظ شجرة العائلات الملكية.',
       'chap.1.m2': '~9 دقائق',
       'chap.2.d':
-        'Riksdag وregering وkommun وregion. مَن يقرّر ماذا، ومَن تنتخب، ولماذا لا يخشى أحد الملك.',
+        'Riksdag (البرلمان السويدي)، الحكومة، البلديات، والمناطق. مَن يقرّر ماذا، ومَن تنتخب، ولماذا لا يخشى أحد الملك.',
       'chap.2.m2': '~12 دقيقة',
       'chap.3.d':
         'Grundlagarna بلغة بسيطة. حرية الصحافة، وحرية التعبير، ولماذا لا يحقّ لمديرك أن يسألك عن دينك.',
@@ -1416,7 +1416,7 @@
         'ڤایکینگەکان ← پاشاکان ← ١٨٠٩ ← folkhemmet ← EU. هەموو ئەو سەرکەوتن و دابەزینە، بەبێ لەبەرکردنی دارەباری بنەماڵە.',
       'chap.1.m2': '~9 min',
       'chap.2.d':
-        'Riksdag، حکومەت، kommun، region. کێ بڕیاری چی دەدات، دەنگ بە کێ دەدەیت، و بۆچی کەس لە پاشا ناترسێت.',
+        'Riksdag، حکومەت، شارەوانییەکان، هەرێمەکان. کێ بڕیاری چی دەدات، دەنگ بە کێ دەدەیت، و بۆچی کەس لە پاشا ناترسێت.',
       'chap.2.m2': '~12 min',
       'chap.3.d':
         'Grundlagarna بە زمانێکی ئاسان. ئازادیی چاپ، ئازادیی دەربڕین، و بۆچی بەرپرسەکەت ناتوانێت پرسیاری ئاینەکەت لێ بکات.',
@@ -1833,7 +1833,7 @@
         'وایکینگ‌ها ← پادشاهان ← ۱۸۰۹ ← folkhemmet ← اتحادیه‌ی اروپا. کل این فرازونشیب، بدون نیاز به حفظ کردن شجره‌نامه‌ی سلسله‌ها.',
       'chap.1.m2': '~۹ دقیقه',
       'chap.2.d':
-        'Riksdag، دولت، kommun، region. چه کسی درباره‌ی چه چیزی تصمیم می‌گیرد، به چه کسی رأی می‌دهید و چرا کسی از پادشاه نمی‌ترسد.',
+        'Riksdag، دولت، شهرداری‌ها، منطقه‌ها. چه کسی درباره‌ی چه چیزی تصمیم می‌گیرد، به چه کسی رأی می‌دهید و چرا کسی از پادشاه نمی‌ترسد.',
       'chap.2.m2': '~۱۲ دقیقه',
       'chap.3.d':
         'Grundlagarna (قوانین اساسی) به زبان ساده. آزادی مطبوعات، آزادی بیان، و این‌که چرا کارفرمای شما نمی‌تواند درباره‌ی دین شما بپرسد.',
@@ -2255,7 +2255,7 @@
         'Wikingowie → królowie → 1809 → folkhemmet → UE. Cały rollercoaster, bez wkuwania drzewa genealogicznego dynastii.',
       'chap.1.m2': '~9 min',
       'chap.2.d':
-        'Riksdag, rząd, kommun, region. Kto o czym decyduje, na kogo głosujesz i dlaczego nikt nie boi się króla.',
+        'Riksdag, rząd, gminy i regiony. Kto o czym decyduje, na kogo głosujesz i dlaczego nikt nie boi się króla.',
       'chap.2.m2': '~12 min',
       'chap.3.d':
         'Grundlagarna (ustawy zasadnicze) prostym językiem. Wolność prasy, wolność słowa i dlaczego szef nie może pytać o twoją religię.',
@@ -2681,7 +2681,7 @@
         'Vikings → boqorro → 1809 → folkhemmet → EU. Roller-coaster-ka oo dhan, iyada oo aan lagu xafidin geedka qoyska boqortooyada.',
       'chap.1.m2': '~9 daqiiqo',
       'chap.2.d':
-        "Riksdag, regering, kommun, region. Yaa go'aamiya maxay, yaad u codaysaa, iyo sababta aan cidna uga baqin boqorka.",
+        "Riksdag, xukuumadda, degmooyinka iyo gobollada. Yaa go'aamiya maxay, yaad u codaysaa, iyo sababta aan cidna uga baqin boqorka.",
       'chap.2.m2': '~12 daqiiqo',
       'chap.3.d':
         'Grundlagarna oo luqad fudud ku qoran. Xorriyadda daabacaadda, xorriyadda hadalka, iyo sababta uusan madaxaagu wax kaaga weydiin karin diintaada.',
@@ -3092,7 +3092,7 @@
       'chap.1.d': 'ቫይኪንግ → ነገስታት → 1809 → folkhemmet → EU። እታ ምልእቲ ጉዕዞ፡ ብዘይ ናይ ስድራቤታዊ ሓረግ ምሕፋዝ።',
       'chap.1.m2': '~9 ደቒቕ',
       'chap.2.d':
-        'Riksdag፡ regering፡ kommun፡ region። መን እንታይ ይውስን፡ ንመን ትመርጽ፡ ስለምንታይ ድማ ሓደ እኳ ንንጉስ ዘይፈርሕ።',
+        'Riksdag፡ መንግስቲ፡ ናይ ከባቢ ምምሕዳራት፡ ክልላት። መን እንታይ ይውስን፡ ንመን ትመርጽ፡ ስለምንታይ ድማ ሓደ እኳ ንንጉስ ዘይፈርሕ።',
       'chap.2.m2': '~12 ደቒቕ',
       'chap.3.d':
         'Grundlagarna ብቐሊል ቋንቋ። ናጽነት ሕትመት፡ ናጽነት ሓሳብካ ምግላጽ፡ ስለምንታይ ድማ ሓላፊኻ ብዛዕባ ሃይማኖትካ ክሓትት ዘይክእል።',
@@ -3496,7 +3496,7 @@
         'Vikingler → krallar → 1809 → folkhemmet → AB. Tüm hız treni, hanedan soy ağacını ezberlemeden.',
       'chap.1.m2': '~9 dk',
       'chap.2.d':
-        'Riksdag, regering, kommun, region. Kim neye karar verir, kime oy verirsiniz ve neden kimse kraldan korkmaz.',
+        'Riksdag, hükümet, belediyeler ve bölgeler. Kim neye karar verir, kime oy verirsiniz ve neden kimse kraldan korkmaz.',
       'chap.2.m2': '~12 dk',
       'chap.3.d':
         'Grundlagarna sade bir dille. Basın özgürlüğü, ifade özgürlüğü ve patronunuzun dininizi neden soramayacağı.',
@@ -3916,7 +3916,7 @@
         'Вікінги → королі → 1809 → folkhemmet → ЄС. Уся ця гірка, але без зубріння династичного родоводу.',
       'chap.1.m2': '~9 хв',
       'chap.2.d':
-        'Riksdag, уряд, kommun, регіон. Хто що вирішує, за кого ви голосуєте і чому ніхто не боїться короля.',
+        'Riksdag, уряд, муніципалітети й регіони. Хто що вирішує, за кого ви голосуєте і чому ніхто не боїться короля.',
       'chap.2.m2': '~12 хв',
       'chap.3.d':
         'Grundlagarna простою мовою. Свобода преси, свобода слова і чому начальник не може питати про вашу релігію.',
