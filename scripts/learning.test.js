@@ -3,60 +3,43 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const { createMemoryMMKV, loadTsWithStorage } = require('../tests/helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function loadTs(relativePath, exportName) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-  const output = ts.transpileModule(source, {
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2020,
     },
+    fileName: filename,
   }).outputText;
-  const mod = { exports: {} };
-  function localRequire(request) {
-    if (request.startsWith('.')) {
-      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
-      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
-      return loadAllTs(normalized);
-    }
-    if (request === 'react-native-mmkv') {
-      const memory = new Map();
-      return {
-        createMMKV: () => ({
-          getString: (key) => memory.get(key),
-          set: (key, value) => memory.set(key, value),
-        }),
-      };
-    }
-    if (request === 'zustand') {
-      return {
-        create: (initializer) => {
-          let state;
-          const set = (updater) => {
-            const next = typeof updater === 'function' ? updater(state) : updater;
-            if (next === state) return;
-            state = { ...state, ...next };
-          };
-          const get = () => state;
-          const store = (selector) => (selector ? selector(state) : state);
-          store.getState = get;
-          store.setState = set;
-          state = initializer(set, get);
-          return store;
-        },
-      };
-    }
-    return require(request);
-  }
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
-  return exportName ? mod.exports[exportName] : mod.exports;
+  module._compile(transpiled, filename);
+};
+
+function createLearningStorage() {
+  return {
+    progress: createMemoryMMKV(),
+  };
 }
 
-function loadAllTs(relativePath) {
-  return loadTs(relativePath);
+function loadAllTs(relativePath, exportName) {
+  const moduleExports = loadTsWithStorage(repoRoot, relativePath, createLearningStorage());
+  return exportName ? moduleExports[exportName] : moduleExports;
 }
+
+test('storageStoreHarness loads learning store modules without local MMKV/Zustand stubs', () => {
+  const source = fs.readFileSync(__filename, 'utf8');
+  const mmkvInlineStubPattern = new RegExp('request === ' + "'react-native-mmkv'");
+  const zustandInlineStubPattern = new RegExp('request === ' + "'zustand'");
+
+  assert.match(source, /storageStoreHarness\.cjs/);
+  assert.match(source, /loadTsWithStorage/);
+  assert.doesNotMatch(source, mmkvInlineStubPattern);
+  assert.doesNotMatch(source, zustandInlineStubPattern);
+});
 
 test('XP rules follow the MVP gamification table', () => {
   const { calculateAnswerXp, calculateLevel, calculateQuizCompletionXp } =
@@ -661,6 +644,24 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
           wrongCount: '2',
           lastAnsweredAt: '2026-05-20T10:04:00.000Z',
         },
+        rolloverDate: {
+          questionId: 'rolloverDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-02-30T10:05:00.000Z',
+        },
+        localTimeDate: {
+          questionId: 'localTimeDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T10:06:00',
+        },
+        futureDate: {
+          questionId: 'futureDate',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T12:10:01.000Z',
+        },
       },
       sessions: [
         {
@@ -692,6 +693,27 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
               answeredAt: '2026-05-20T10:02:00.000Z',
               timeSpentSeconds: 5,
             },
+            {
+              questionId: 'q-rollover',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-02-30T10:03:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q-local-time',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-05-20T10:04:00',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q-future',
+              selectedOptionIds: ['a'],
+              isCorrect: true,
+              answeredAt: '2026-05-20T12:10:01.000Z',
+              timeSpentSeconds: 5,
+            },
           ],
         },
         {
@@ -702,6 +724,33 @@ test('weekly recap runtime guards reject malformed imported progress', () => {
           startedAt: '2026-05-20T11:00:00.000Z',
           completedAt: '2026-05-20T11:20:00.000Z',
           score: 1.2,
+        },
+        {
+          id: 'weekly-rollover-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-02-30T11:00:00.000Z',
+          completedAt: '2026-02-30T11:20:00.000Z',
+          score: 1,
+        },
+        {
+          id: 'weekly-local-time-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T11:30:00',
+          completedAt: '2026-05-20T11:40:00',
+          score: 1,
+        },
+        {
+          id: 'weekly-future-completed-at',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T12:06:00.000Z',
+          completedAt: '2026-05-20T12:10:01.000Z',
+          score: 1,
         },
       ],
     },

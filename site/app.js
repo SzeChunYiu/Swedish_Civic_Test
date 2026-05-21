@@ -366,7 +366,7 @@ const i18n = (window.i18n = {
       "Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.",
     'terms.s3.t': 'Content & accuracy',
     'terms.s3.p':
-      'The current question bank has ~179 questions cited directly to UHR\'s public study material <em>Sverige i fokus</em> and ~716 editorially derived from those same UHR themes. Every question carries a <strong>UHR</strong> or <strong>Derived</strong> provenance badge so you always know which is which, and Settings → Question sources lets you restrict practice + mock to UHR only. Humans miss things — if you find an error, the <a href="#/support">support page</a> is the fastest fix.',
+      'The current question bank has 179 questions cited directly to UHR\'s public study material <em>Sverige i fokus</em> and 716 editorially derived questions from those same UHR themes. Every question carries a <strong>UHR</strong> or <strong>Derived</strong> provenance badge so you always know which is which, and Settings → Question sources lets you restrict practice + mock to UHR only. Humans miss things — if you find an error, the <a href="#/support">support page</a> is the fastest fix.',
     'terms.s4.t': 'No guarantees',
     'terms.s4.p':
       "We don't guarantee you'll pass the official test. We don't guarantee the app works perfectly on every device on every day. We do guarantee we'll keep trying.",
@@ -380,7 +380,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Where the answers',
     'sources.h1b': 'actually come from.',
     'sources.lede':
-      'The current question bank has two provenance families and every question is badged: <strong>UHR</strong> (~179 questions cited directly to <em>Sverige i fokus</em>) and <strong>Derived</strong> (~716 questions written editorially from those same UHR themes for additional practice volume). You can restrict practice + mock to UHR only in Settings → Question sources.',
+      'The current question bank has two provenance families and every question is badged: <strong>UHR</strong> (179 questions cited directly to <em>Sverige i fokus</em>) and <strong>Derived</strong> (716 questions written editorially from those same UHR themes for additional practice volume). You can restrict practice + mock to UHR only in Settings → Question sources.',
     'sources.meta1.b': 'Primary source',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Last review',
@@ -407,7 +407,7 @@ const i18n = (window.i18n = {
       'This page is checked against <code>site/questions.js</code> so source copy cannot outrun the current bank.',
     'sources.s4.t': 'Current-source scope',
     'sources.s4.li1':
-      'The bank has UHR-cited (~179) and editorially-derived (~716) questions; the per-question badge tells you which family each one belongs to, and Settings → Question sources lets you opt out of derived content.',
+      'The bank has 179 UHR-cited questions and 716 editorially derived questions; the per-question badge tells you which family each one belongs to, and Settings → Question sources lets you opt out of derived content.',
     'sources.s4.li2': 'The app is independent and is not an official UHR product.',
     'sources.s5.t': 'Editorial method',
     'sources.s5.callout.b': 'House rule:',
@@ -513,7 +513,7 @@ const i18n = (window.i18n = {
     'settings.sources.all': 'All sources',
     'settings.sources.uhr': 'UHR only',
     'settings.sources.hint':
-      'All sources includes UHR-cited and derived practice questions. UHR only limits practice and mock exams to the ~179 questions traceable to Sverige i fokus citations.',
+      'All sources includes UHR-cited and derived practice questions. UHR only limits practice and mock exams to the 179 questions traceable to Sverige i fokus citations.',
     'settings.text': 'Text size',
     'settings.text.s': 'Small',
     'settings.text.m': 'Regular',
@@ -779,7 +779,7 @@ const i18n = (window.i18n = {
       'Använd appen för att plugga. Skrapa den inte, reverse-engineera den inte, bygg inte om den och kalla den din. Använd den inte för att trakassera någon. Behandla appen som du behandlar en lånad cykel: väl.',
     'terms.s3.t': 'Innehåll & korrekthet',
     'terms.s3.p':
-      'Den nuvarande frågebanken har ~179 frågor med direkt hänvisning till UHR:s offentliga studiematerial <em>Sverige i fokus</em> och ~716 redaktionellt härledda frågor som bygger på samma UHR-teman. Varje fråga är märkt med <strong>UHR</strong> eller <strong>Härledd</strong> så du alltid vet vilken familj den tillhör, och i Inställningar → Frågekällor kan du begränsa övning + provsim till enbart UHR. Människor missar saker — hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
+      'Den nuvarande frågebanken har 179 frågor med direkt hänvisning till UHR:s offentliga studiematerial <em>Sverige i fokus</em> och 716 redaktionellt härledda frågor som bygger på samma UHR-teman. Varje fråga är märkt med <strong>UHR</strong> eller <strong>Härledd</strong> så du alltid vet vilken familj den tillhör, och i Inställningar → Frågekällor kan du begränsa övning + provsim till enbart UHR. Människor missar saker — hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
     'terms.s4.t': 'Inga garantier',
     'terms.s4.p':
       'Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.',
@@ -793,7 +793,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Var svaren',
     'sources.h1b': 'faktiskt kommer ifrån.',
     'sources.lede':
-      'Den nuvarande frågebanken har två källfamiljer och varje fråga är märkt: <strong>UHR</strong> (~179 frågor med direkt hänvisning till <em>Sverige i fokus</em>) och <strong>Härledd</strong> (~716 frågor skrivna redaktionellt från samma UHR-teman för extra övningsmängd). Du kan begränsa övning + provsim till enbart UHR i Inställningar → Frågekällor.',
+      'Den nuvarande frågebanken har två källfamiljer och varje fråga är märkt: <strong>UHR</strong> (179 frågor med direkt hänvisning till <em>Sverige i fokus</em>) och <strong>Härledd</strong> (716 redaktionellt härledda frågor från samma UHR-teman för extra övningsmängd). Du kan begränsa övning + provsim till enbart UHR i Inställningar → Frågekällor.',
     'sources.meta1.b': 'Primär källa',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Senaste översyn',
@@ -819,7 +819,7 @@ const i18n = (window.i18n = {
       'Den här sidan kontrolleras mot <code>site/questions.js</code> så källcopy inte kan springa före den aktuella banken.',
     'sources.s4.t': 'Nuvarande källomfång',
     'sources.s4.li1':
-      'Frågebanken har UHR-citerade (~179) och redaktionellt härledda (~716) frågor; märkningen per fråga visar vilken familj varje fråga tillhör, och i Inställningar → Frågekällor kan du välja bort härlett innehåll.',
+      'Frågebanken har 179 UHR-citerade frågor och 716 redaktionellt härledda frågor; märkningen per fråga visar vilken familj varje fråga tillhör, och i Inställningar → Frågekällor kan du välja bort härlett innehåll.',
     'sources.s4.li2': 'Appen är fristående och är inte en officiell UHR-produkt.',
     'sources.s5.t': 'Redaktionell metod',
     'sources.s5.callout.b': 'Husregel:',
@@ -924,7 +924,7 @@ const i18n = (window.i18n = {
     'settings.sources.all': 'Alla källor',
     'settings.sources.uhr': 'Endast UHR',
     'settings.sources.hint':
-      'Alla källor visar UHR-hänvisade frågor och härledda övningsfrågor. Endast UHR begränsar övning och övningsprov till de cirka 179 frågor som kan spåras till hänvisningar i Sverige i fokus.',
+      'Alla källor visar UHR-hänvisade frågor och härledda övningsfrågor. Endast UHR begränsar övning och övningsprov till de 179 frågor som kan spåras till hänvisningar i Sverige i fokus.',
     'settings.text': 'Textstorlek',
     'settings.text.s': 'Liten',
     'settings.text.m': 'Normal',

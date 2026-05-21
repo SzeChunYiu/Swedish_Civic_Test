@@ -172,6 +172,29 @@ test('answer feedback parity uses focused content validation routing', () => {
   );
 });
 
+test('question speech text parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const speechTextTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-speech-text-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-question-speech-text-parity/);
+  assert.match(
+    validatorSource,
+    /validateQuestionSpeechTextParity\(\);[\s\S]*questionSpeechTextQuestionsValidated[\s\S]*questionSpeechTextOptionsValidated[\s\S]*questionSpeechTextParityValidated[\s\S]*publishedQuestions/,
+  );
+  assert.match(speechTextTestSource, /--focus-question-speech-text-parity/);
+  assert.doesNotMatch(
+    speechTextTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'question speech text tests must not route through full content validation',
+  );
+});
+
 test('question report link parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
