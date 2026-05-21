@@ -4121,6 +4121,22 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
       );
     },
   },
+  {
+    file: 'app/support.tsx',
+    label: 'support rejected context notice',
+    message: 'QuestionReportLink missing support rejected context notice',
+    test(source) {
+      return (
+        source.includes('Frågekontexten kunde inte användas') &&
+        source.includes('Question context could not be used') &&
+        source.includes('avvisade värden') &&
+        source.includes('rejected values are not shown') &&
+        source.includes('getQuestionReportContextResult') &&
+        source.includes('hasQuestionReportSearchParams') &&
+        source.includes('questionReportResult.rejected')
+      );
+    },
+  },
 ];
 const REQUIRED_QUESTION_DISCLAIMER_PHRASES = [
   'independent study tool',

@@ -24,6 +24,9 @@ type SupportRouteCopy = {
     missingValue: string;
     noPersonalData: string;
     questionId: string;
+    rejectedAccessibilityLabel: string;
+    rejectedBody: string;
+    rejectedTitle: string;
     screen: string;
     screenLabels: Record<QuestionReportScreen, string>;
     selectedAnswer: string;
@@ -50,6 +53,10 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       noPersonalData:
         'Lägg inte till namn, personnummer, ärendenummer eller andra personuppgifter i rapporten.',
       questionId: 'Fråge-ID',
+      rejectedAccessibilityLabel: 'Frågerapportens länk kunde inte användas',
+      rejectedBody:
+        'Länken innehöll frågeuppgifter som inte kunde kontrolleras. Av integritetsskäl visas inga avvisade värden här.',
+      rejectedTitle: 'Frågekontexten kunde inte användas',
       screen: 'Skärm',
       screenLabels: {
         chapter: 'Kapitel',
@@ -91,6 +98,10 @@ const supportCopy: Record<AppLanguage, SupportRouteCopy> = {
       noPersonalData:
         'Do not add names, personal identity numbers, case numbers, or other personal data to the report.',
       questionId: 'Question ID',
+      rejectedAccessibilityLabel: 'Question report link context could not be used',
+      rejectedBody:
+        'The link included question details that could not be verified. For privacy, rejected values are not shown here.',
+      rejectedTitle: 'Question context could not be used',
       screen: 'Screen',
       screenLabels: {
         chapter: 'Chapter',
@@ -128,10 +139,14 @@ export default function Screen() {
   const params = useLocalSearchParams<QuestionReportSearchParams>();
   const language = useSettingsStore((state) => state.language);
   const copy = supportCopy[language];
-  const questionReportContext = getQuestionReportContext(params, language);
+  const questionReportResult = getQuestionReportContextResult(params, language);
+  const questionReportContext = questionReportResult.context;
 
   return (
     <LegalPage title={copy.title}>
+      {questionReportResult.rejected ? (
+        <RejectedQuestionReportContextNotice copy={copy.questionReportContext} />
+      ) : null}
       {questionReportContext ? (
         <View
           accessibilityLabel={copy.questionReportContext.accessibilityLabel(
@@ -215,6 +230,35 @@ type QuestionReportContext = {
   source?: string;
 };
 
+type QuestionReportContextResult = {
+  context: QuestionReportContext | null;
+  rejected: boolean;
+};
+
+type SearchParamResult = {
+  rejected: boolean;
+  value?: string;
+};
+
+function RejectedQuestionReportContextNotice({
+  copy,
+}: {
+  copy: SupportRouteCopy['questionReportContext'];
+}) {
+  return (
+    <View
+      accessibilityLabel={copy.rejectedAccessibilityLabel}
+      accessibilityRole="summary"
+      style={styles.rejectedContextNotice}
+    >
+      <Text accessibilityRole="header" style={styles.rejectedContextTitle}>
+        {copy.rejectedTitle}
+      </Text>
+      <Text style={styles.rejectedContextBody}>{copy.rejectedBody}</Text>
+    </View>
+  );
+}
+
 function QuestionReportContextRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.contextRow}>
@@ -226,50 +270,95 @@ function QuestionReportContextRow({ label, value }: { label: string; value: stri
   );
 }
 
-function getQuestionReportContext(
+function getQuestionReportContextResult(
   params: QuestionReportSearchParams,
   fallbackLanguage: AppLanguage,
-): QuestionReportContext | null {
+): QuestionReportContextResult {
   const questionId = getBoundedSearchParam(params.questionId, 16);
-  if (!questionId || !validQuestionIds.has(questionId)) return null;
+  const language = getBoundedSearchParam(params.language, 8);
+  const reportScreen = getBoundedSearchParam(params.reportScreen ?? params.screen, 16);
+  const selectedAnswer = getBoundedSearchParam(params.selectedAnswer, 240);
+  const source = getBoundedSearchParam(params.source, 240);
+  const hasReportParams = hasQuestionReportSearchParams(params);
+  let rejected =
+    questionId.rejected ||
+    language.rejected ||
+    reportScreen.rejected ||
+    selectedAnswer.rejected ||
+    source.rejected;
+
+  if (!questionId.value || !validQuestionIds.has(questionId.value)) {
+    return {
+      context: null,
+      rejected: hasReportParams || rejected,
+    };
+  }
+
+  if (language.value && language.value !== 'sv' && language.value !== 'en') {
+    rejected = true;
+  }
+
+  if (reportScreen.value && !validReportScreens.has(reportScreen.value as QuestionReportScreen)) {
+    rejected = true;
+  }
 
   return {
-    language: getReportLanguage(params.language, fallbackLanguage),
-    questionId,
-    screen: getReportScreen(params.reportScreen ?? params.screen),
-    selectedAnswer: getBoundedSearchParam(params.selectedAnswer, 240),
-    source: getBoundedSearchParam(params.source, 240),
+    context: {
+      language: getReportLanguage(language, fallbackLanguage),
+      questionId: questionId.value,
+      screen: getReportScreen(reportScreen),
+      selectedAnswer: selectedAnswer.value,
+      source: source.value,
+    },
+    rejected,
   };
 }
 
 const validQuestionIds = new Set(questions.map((question) => question.id));
 const validReportScreens = new Set<QuestionReportScreen>(['chapter', 'exam', 'practice', 'quiz']);
 
+function hasSearchParam(value: string | string[] | undefined) {
+  if (Array.isArray(value)) return value.length > 0;
+  return value !== undefined;
+}
+
+function hasQuestionReportSearchParams(params: QuestionReportSearchParams) {
+  return (
+    hasSearchParam(params.questionId) ||
+    hasSearchParam(params.reportScreen) ||
+    hasSearchParam(params.screen) ||
+    hasSearchParam(params.selectedAnswer) ||
+    hasSearchParam(params.source)
+  );
+}
+
 function getSearchParam(value: string | string[] | undefined) {
   if (Array.isArray(value)) return value[0];
   return value;
 }
 
-function getBoundedSearchParam(value: string | string[] | undefined, maxLength: number) {
+function getBoundedSearchParam(
+  value: string | string[] | undefined,
+  maxLength: number,
+): SearchParamResult {
+  if (!hasSearchParam(value)) return { rejected: false };
+
   const rawValue = getSearchParam(value);
-  if (typeof rawValue !== 'string') return undefined;
+  if (typeof rawValue !== 'string') return { rejected: true };
 
   const trimmedValue = rawValue.trim();
-  if (!trimmedValue || trimmedValue.length > maxLength) return undefined;
+  if (!trimmedValue || trimmedValue.length > maxLength) return { rejected: true };
 
-  return trimmedValue;
+  return { rejected: false, value: trimmedValue };
 }
 
-function getReportLanguage(
-  value: string | string[] | undefined,
-  fallbackLanguage: AppLanguage,
-): AppLanguage {
-  const language = getBoundedSearchParam(value, 8);
+function getReportLanguage(result: SearchParamResult, fallbackLanguage: AppLanguage): AppLanguage {
+  const language = result.value;
   return language === 'sv' || language === 'en' ? language : fallbackLanguage;
 }
 
-function getReportScreen(value: string | string[] | undefined): QuestionReportScreen {
-  const screen = getBoundedSearchParam(value, 16);
+function getReportScreen(result: SearchParamResult): QuestionReportScreen {
+  const screen = result.value;
   return screen && validReportScreens.has(screen as QuestionReportScreen)
     ? (screen as QuestionReportScreen)
     : 'practice';
@@ -315,5 +404,23 @@ const styles = StyleSheet.create({
     color: colors.textDisclaimer,
     fontSize: typography.disclaimer.fontSize,
     lineHeight: typography.disclaimer.lineHeight,
+  },
+  rejectedContextBody: {
+    color: colors.textSecondary,
+    fontSize: typography.navButton.fontSize,
+    lineHeight: typography.bodyTight.lineHeight,
+  },
+  rejectedContextNotice: {
+    backgroundColor: colors.warningSoft,
+    borderColor: colors.warning,
+    borderRadius: radius.card,
+    borderWidth: space.hairline,
+    gap: space[1],
+    padding: space[2],
+  },
+  rejectedContextTitle: {
+    color: colors.text,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
   },
 });
