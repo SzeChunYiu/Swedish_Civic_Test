@@ -1652,7 +1652,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 11;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
@@ -10252,6 +10252,27 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
         normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
+    ],
+    [
+      /type\s+RemoveAdsE2ERuntime\s*=\s*typeof\s+globalThis\s*&\s*\{[\s\S]*__SMT_E2E__\?:\s*boolean;[\s\S]*__SMT_REMOVE_ADS_MOCK_OWNED__\?:\s*boolean;[\s\S]*\};/.test(
+        hookSource,
+      ) &&
+        /function\s+createE2EWebPurchaseRuntimeOptions\(\s*initialAdsDisabled:\s*boolean,?\s*\):\s*PurchaseRuntimeOptions\s*\|\s*undefined\s*\{[\s\S]*if\s*\(\s*Platform\.OS\s*===\s*'web'\s*\)\s*\{[\s\S]*const\s+runtime\s*=\s*globalThis\s+as\s+RemoveAdsE2ERuntime;[\s\S]*if\s*\(\s*!runtime\.__SMT_E2E__\s*\|\|\s*typeof\s+runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*!==\s*'boolean'\s*\)\s*\{[\s\S]*return\s+undefined;/.test(
+          hookSource,
+        ),
+      'E2E-owned web Remove Ads mock provider must require __SMT_E2E__ and a boolean mock-owned flag',
+    ],
+    [
+      /provider:\s*createMockPurchaseProvider\(\{\s*owned:\s*runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__\s*\}\),[\s\S]*storage:\s*createWebPurchaseStorage\(initialAdsDisabled\),/.test(
+        hookSource,
+      ),
+      'E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__',
+    ],
+    [
+      /const\s+e2eRuntimeOptions\s*=\s*createE2EWebPurchaseRuntimeOptions\(initialAdsDisabled\);[\s\S]*if\s*\(\s*e2eRuntimeOptions\s*\)\s*return\s+e2eRuntimeOptions;[\s\S]*defaultWebPurchaseRuntimeOptions\s*\?\?=\s*\{[\s\S]*provider:\s*createMockPurchaseProvider\(\),[\s\S]*storage:\s*createWebPurchaseStorage\(initialAdsDisabled\),/.test(
+        hookSource,
+      ),
+      'default web purchase runtime must fall back to normal mock provider when E2E mock-owned runtime is unavailable',
     ],
     [
       normalizedHookSource.includes(

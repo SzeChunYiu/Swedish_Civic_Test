@@ -29,13 +29,29 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
     'utf8',
   );
 
+  assert.equal(result.status, 0, output);
   assert.doesNotMatch(
     output,
-    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
+    /Remove Ads entitlement hook must fail closed while purchase state loads|native Remove Ads entitlement runtime must provide a native provider and secure storage|explicit ad entitlements must bypass async purchase loading as ready|unresolved purchase state must return ad-blocked pending entitlements|failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state|E2E-owned web Remove Ads mock provider must require __SMT_E2E__|E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__|default web purchase runtime must fall back to normal mock provider|Home monetization surfaces must wait for Remove Ads entitlements before rendering/,
   );
   assert.match(hookSource, /AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /RemoveAdsEntitlementStatus = 'loading' \| 'ready' \| 'read_failed'/);
   assert.match(hookSource, /adsDisabled: true/);
+  assert.match(hookSource, /__SMT_E2E__\?: boolean/);
+  assert.match(hookSource, /__SMT_REMOVE_ADS_MOCK_OWNED__\?: boolean/);
+  assert.match(
+    hookSource,
+    /if \(!runtime\.__SMT_E2E__ \|\| typeof runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean'\)/,
+  );
+  assert.match(
+    hookSource,
+    /provider: createMockPurchaseProvider\(\{ owned: runtime\.__SMT_REMOVE_ADS_MOCK_OWNED__ \}\)/,
+  );
+  assert.match(
+    hookSource,
+    /const e2eRuntimeOptions = createE2EWebPurchaseRuntimeOptions\(initialAdsDisabled\);/,
+  );
+  assert.match(hookSource, /if \(e2eRuntimeOptions\) return e2eRuntimeOptions;/);
   assert.match(hookSource, /defaultNativePurchaseRuntimeOptions/);
   assert.match(
     hookSource,
@@ -155,6 +171,68 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /native Remove Ads entitlement runtime must provide a native provider and secure storage/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects non-E2E mock-owned web spoof drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("!runtime.__SMT_E2E__ || typeof runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean'", "typeof runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ !== 'boolean'");
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /E2E-owned web Remove Ads mock provider must require __SMT_E2E__/,
+  );
+});
+
+test('Remove Ads entitlement hook parity rejects ignored E2E mock-owned state', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),', 'provider: createMockPurchaseProvider(),');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-remove-ads-hook-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /E2E-owned web Remove Ads mock provider must honor __SMT_REMOVE_ADS_MOCK_OWNED__/,
   );
 });
 
