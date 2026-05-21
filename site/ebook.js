@@ -1720,22 +1720,22 @@
           <h2>Becoming Swedish</h2>
           <p>To apply for Swedish citizenship by naturalisation, you generally need to:</p>
           <ul>
-            <li>Be at least 18 years old (children are usually included with a parent's application).</li>
+            <li>For an adult application, be at least 18 years old. From 6 June 2026, children can no longer be included on a parent's citizenship application; a child needs a separate application signed by a guardian.</li>
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
             <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
             <li>Have led an orderly life — no significant criminal record.</li>
-            <li>From 6 June 2026, meet the knowledge requirement if it applies to you (ages 16-66). Accepted certificates can count, for example Swedish school, adult education, folk high school, or SFI course D. Without certificates, the first test part is civic knowledge; Swedish-language tests come later.</li>
+            <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
           </ul>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Knowledge requirement: ages 16-66 · First test part: civic knowledge · Swedish-language tests: later · Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
         `,
         sv: svStudyBrief(
           [
             'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
             'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
             'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
-            'Från 6 juni 2026 gäller kunskapskravet i svenska och samhällskunskap för personer mellan 16 och 66 år. Kunskaper kan visas med intyg från till exempel skola, komvux, folkhögskola eller SFI kurs D. Den första provdelen gäller samhällskunskap; prov i svenska kommer senare.',
+            'Från 6 juni 2026 kan barn inte längre stå med på en förälders medborgarskapsansökan; barnet behöver en egen ansökan som en vårdnadshavare skriver under.',
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
           'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',

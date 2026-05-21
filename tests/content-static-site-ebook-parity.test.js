@@ -48,11 +48,10 @@ const unsupportedPracticalTestClaimPatterns = [
   phrasePattern('På provdagen är ', 'giltig legitimation'),
   phrasePattern('Tidsatt ', 'provträning'),
 ];
-const unsupportedKnowledgeRequirementClaimPatterns = [
-  /Pass the medborgarskapsprov\s*[—-]\s*the citizenship test on civic knowledge and Swedish/i,
-  /citizenship test on civic knowledge and Swedish/i,
-  /must pass a Swedish-language test in 2026/i,
-  /Swedish-language tests? (?:start|begin|are introduced) in August 2026/i,
+const staleChildApplicationClaimPatterns = [
+  /children are usually included with a parent's application/i,
+  /children can be included on a parent's citizenship application/i,
+  /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
 ];
 const migrationsverketCitizenshipRulesUrl =
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
@@ -179,8 +178,8 @@ function assertNoUnsupportedPracticalTestClaim(value) {
   }
 }
 
-function assertNoUnsupportedKnowledgeRequirementClaim(value) {
-  for (const pattern of unsupportedKnowledgeRequirementClaimPatterns) {
+function assertNoStaleChildApplicationClaim(value) {
+  for (const pattern of staleChildApplicationClaimPatterns) {
     assert.doesNotMatch(value, pattern);
   }
 }
@@ -432,29 +431,28 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
   });
 });
 
-test('static ebook chapter 11 keeps citizenship knowledge requirement current', () => {
+test('static ebook chapter 11 keeps child citizenship application rules current', () => {
   const source = readSiteFile('site/ebook.js');
   const harness = createEbookHarness();
   const englishHtml = renderChapter(harness, 'en', '11');
   const swedishHtml = renderChapter(harness, 'sv', '11');
 
-  assertNoUnsupportedKnowledgeRequirementClaim(source);
-  assertNoUnsupportedKnowledgeRequirementClaim(englishHtml);
-  assertNoUnsupportedKnowledgeRequirementClaim(swedishHtml);
+  assertNoStaleChildApplicationClaim(source);
+  assertNoStaleChildApplicationClaim(englishHtml);
+  assertNoStaleChildApplicationClaim(swedishHtml);
 
   assert.match(englishHtml, /From 6 June 2026/);
-  assert.match(englishHtml, /knowledge requirement if it applies to you \(ages 16-66\)/);
-  assert.match(englishHtml, /Swedish school, adult education, folk high school, or SFI course D/);
-  assert.match(englishHtml, /first test part is civic knowledge/);
-  assert.match(englishHtml, /Swedish-language tests come later/);
-  assert.match(englishHtml, /Knowledge requirement: ages 16-66/);
+  assert.match(
+    englishHtml,
+    /children can no longer be included on a parent's citizenship application/,
+  );
+  assert.match(englishHtml, /separate application signed by a guardian/);
+  assert.match(englishHtml, /Children need a separate citizenship application from 6 June 2026/);
 
   assert.match(swedishHtml, /Från 6 juni 2026/);
-  assert.match(swedishHtml, /kunskapskravet i svenska och samhällskunskap/);
-  assert.match(swedishHtml, /mellan 16 och 66 år/);
-  assert.match(swedishHtml, /skola, komvux, folkhögskola eller SFI kurs D/);
-  assert.match(swedishHtml, /första provdelen gäller samhällskunskap/);
-  assert.match(swedishHtml, /prov i svenska kommer senare/);
+  assert.match(swedishHtml, /barn inte längre stå med på en förälders medborgarskapsansökan/);
+  assert.match(swedishHtml, /barnet behöver en egen ansökan/);
+  assert.match(swedishHtml, /vårdnadshavare skriver under/);
 
   assert.match(source, /Migrationsverket citizenship rule changes from 6 June 2026/);
   assert.match(source, /retrievedDate: '2026-05-20'/);
