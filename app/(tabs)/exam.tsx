@@ -415,7 +415,7 @@ export default function Screen() {
     recordMockExamSession({
       sessionId: examSessionId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
-      completedAt: new Date().toISOString(),
+      completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
       questionTimings:
         submittedExamSession?.answers
