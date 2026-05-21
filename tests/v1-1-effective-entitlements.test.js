@@ -212,6 +212,55 @@ test('resolveEffectiveEntitlement: trial + referral both active picks the earlie
   assert.equal(r.nextExpiryIso, earlier);
 });
 
+test('resolveEffectiveEntitlement: temporary Pro expiry requires canonical UTC ISO timestamps', () => {
+  const { resolveEffectiveEntitlement, timeBoundedExpiry } = loadTs(
+    'lib/monetization/effectiveEntitlements.ts',
+  );
+  const invalidExpiries = [
+    ['rollover', '2026-06-31T00:00:00.000Z'],
+    ['date-only', '2026-06-01'],
+    ['timezone-offset', '2026-06-01T00:30:00+02:00'],
+    ['blank', ''],
+    ['malformed', 'not-a-date'],
+  ];
+
+  for (const [label, expiresAtIso] of invalidExpiries) {
+    const trial = resolveEffectiveEntitlement({
+      proTrial: { expiresAtIso },
+      now: NOW,
+    });
+    assert.equal(trial.primarySource, 'free', `${label} trial expiry should fail closed`);
+    assert.deepEqual(trial.activeSources, [], `${label} trial expiry should not be active`);
+    assert.equal(trial.entitlements.spacedRepetition, false);
+    assert.equal(trial.nextExpiryIso, null);
+
+    const referral = resolveEffectiveEntitlement({
+      referralGrant: { expiresAtIso },
+      now: NOW,
+    });
+    assert.equal(referral.primarySource, 'free', `${label} referral expiry should fail closed`);
+    assert.deepEqual(referral.activeSources, [], `${label} referral expiry should not be active`);
+    assert.equal(referral.entitlements.spacedRepetition, false);
+    assert.equal(referral.nextExpiryIso, null);
+    assert.equal(timeBoundedExpiry({ referralGrant: { expiresAtIso }, now: NOW }), null);
+  }
+});
+
+test('resolveEffectiveEntitlement: non-canonical active trial cannot outrank canonical referral', () => {
+  const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
+  const canonicalReferral = new Date(NOW.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const result = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: '2026-06-01T00:30:00+02:00' },
+    referralGrant: { expiresAtIso: canonicalReferral },
+    now: NOW,
+  });
+
+  assert.equal(result.primarySource, 'referral-grant-active');
+  assert.deepEqual(result.activeSources, ['referral-grant-active']);
+  assert.equal(result.nextExpiryIso, canonicalReferral);
+  assert.equal(result.entitlements.spacedRepetition, true);
+});
+
 test('hasProRightNow: convenience predicate matches resolver', () => {
   const { hasProRightNow } = loadTs('lib/monetization/effectiveEntitlements.ts');
   assert.equal(hasProRightNow({ now: NOW }), false);

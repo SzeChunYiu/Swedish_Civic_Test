@@ -811,6 +811,53 @@ test('adaptive size focused content validation runs only its runtime summary', (
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('monetization schema parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('monetizationSchema');
+
+  assert.ok(registryEntry, 'monetization schema focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-monetization-schema-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'monetizationTypeUnionsValidated',
+    'monetizationTypeInterfacesValidated',
+    'monetizationTypeSchemaParityValidated',
+    'effectiveEntitlementExpiryCasesValidated',
+    'effectiveEntitlementExpiryParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-monetization-schema-parity/);
+  assert.match(
+    validatorSource,
+    /validateMonetizationTypeSchemaParity\(\);[\s\S]*validateEffectiveEntitlementExpiryParity\(\);[\s\S]*effectiveEntitlementExpiryParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateMonetizationTypeSchemaParity\(\);[\s\S]*validateEffectiveEntitlementExpiryParity\(\);[\s\S]*validatePurchaseTypeSchemaParity\(\);/,
+    'full content validation must still invoke monetization schema and effective-expiry guards',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-monetization-schema-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused monetization schema validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.monetizationTypeSchemaParityValidated, true);
+  assert.equal(summary.effectiveEntitlementExpiryCasesValidated, 5);
+  assert.equal(summary.effectiveEntitlementExpiryParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('Pro Lifetime relaunch parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

@@ -72,11 +72,29 @@ const FREE_ENTITLEMENT: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
-function isUnexpired(iso: string | null | undefined, now: Date): boolean {
-  if (!iso) return false;
-  const t = new Date(iso).getTime();
-  if (Number.isNaN(t)) return false;
-  return t > now.getTime();
+interface CanonicalExpiry {
+  epochMs: number;
+  iso: string;
+}
+
+const CANONICAL_UTC_ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+function parseCanonicalUtcIsoTimestamp(iso: string | null | undefined): CanonicalExpiry | null {
+  if (typeof iso !== 'string') return null;
+  if (!CANONICAL_UTC_ISO_TIMESTAMP_PATTERN.test(iso)) return null;
+
+  const parsed = new Date(iso);
+  const epochMs = parsed.getTime();
+  if (!Number.isFinite(epochMs)) return null;
+  if (parsed.toISOString() !== iso) return null;
+
+  return { epochMs, iso };
+}
+
+function activeCanonicalExpiry(iso: string | null | undefined, now: Date): CanonicalExpiry | null {
+  const expiry = parseCanonicalUtcIsoTimestamp(iso);
+  if (!expiry) return null;
+  return expiry.epochMs > now.getTime() ? expiry : null;
 }
 
 function isProActive(snap: ProTierEntitlements | null | undefined): boolean {
@@ -98,27 +116,25 @@ export function resolveEffectiveEntitlement(
   const now = input.now ?? new Date();
   const activeSources: EffectiveSource[] = [];
   let entitlements: ProTierEntitlements = { ...FREE_ENTITLEMENT };
-  let nextExpiryIso: string | null = null;
+  let nextExpiry: CanonicalExpiry | null = null;
 
   if (isProActive(input.proLifetime)) {
     entitlements = unionEntitlements(entitlements, input.proLifetime!);
     activeSources.push('pro-lifetime');
   }
 
-  if (isUnexpired(input.proTrial?.expiresAtIso, now)) {
+  const proTrialExpiry = activeCanonicalExpiry(input.proTrial?.expiresAtIso, now);
+  if (proTrialExpiry) {
     entitlements = unionEntitlements(entitlements, PRO_LIFETIME_ENTITLEMENTS);
     activeSources.push('pro-trial-active');
-    if (input.proTrial?.expiresAtIso) {
-      nextExpiryIso = earlierIso(nextExpiryIso, input.proTrial.expiresAtIso);
-    }
+    nextExpiry = earlierExpiry(nextExpiry, proTrialExpiry);
   }
 
-  if (isUnexpired(input.referralGrant?.expiresAtIso, now)) {
+  const referralExpiry = activeCanonicalExpiry(input.referralGrant?.expiresAtIso, now);
+  if (referralExpiry) {
     entitlements = unionEntitlements(entitlements, PRO_LIFETIME_ENTITLEMENTS);
     activeSources.push('referral-grant-active');
-    if (input.referralGrant?.expiresAtIso) {
-      nextExpiryIso = earlierIso(nextExpiryIso, input.referralGrant.expiresAtIso);
-    }
+    nextExpiry = earlierExpiry(nextExpiry, referralExpiry);
   }
 
   if (isRemoveAdsActive(input.removeAds)) {
@@ -128,12 +144,12 @@ export function resolveEffectiveEntitlement(
 
   const primarySource: EffectiveSource = activeSources[0] ?? 'free';
 
-  return { entitlements, primarySource, activeSources, nextExpiryIso };
+  return { entitlements, primarySource, activeSources, nextExpiryIso: nextExpiry?.iso ?? null };
 }
 
-function earlierIso(a: string | null, b: string): string {
+function earlierExpiry(a: CanonicalExpiry | null, b: CanonicalExpiry): CanonicalExpiry {
   if (!a) return b;
-  return a < b ? a : b;
+  return a.epochMs <= b.epochMs ? a : b;
 }
 
 /**

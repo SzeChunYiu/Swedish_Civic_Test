@@ -8369,6 +8369,9 @@ const premiumConfig = premiumModule.premiumConfig;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
+const effectiveEntitlementsModule = loadTs('lib/monetization/effectiveEntitlements.ts');
+const resolveEffectiveEntitlement = effectiveEntitlementsModule.resolveEffectiveEntitlement;
+const timeBoundedExpiry = effectiveEntitlementsModule.timeBoundedExpiry;
 const releasePolicyModule = loadTs('lib/monetization/releasePolicy.ts');
 const releaseMonetizationPolicy = releasePolicyModule.releaseMonetizationPolicy;
 const isReleaseMonetizationPolicyReady = releasePolicyModule.isReleaseMonetizationPolicyReady;
@@ -8574,6 +8577,8 @@ let weeklyRecapRuntimeParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
+let effectiveEntitlementExpiryCasesValidated = 0;
+let effectiveEntitlementExpiryParityValidated = false;
 let purchaseTypeUnionsValidated = 0;
 let purchaseTypeInterfacesValidated = 0;
 let purchaseTypeSchemaParityValidated = false;
@@ -9542,6 +9547,20 @@ if (process.argv.includes('--focus-adaptive-practice-size')) {
   printValidationSummary({
     adaptivePracticeSizeRuntimeCasesValidated,
     adaptivePracticeSizeRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-monetization-schema-parity')) {
+  validateMonetizationTypeSchemaParity();
+  validateEffectiveEntitlementExpiryParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    monetizationTypeUnionsValidated,
+    monetizationTypeInterfacesValidated,
+    monetizationTypeSchemaParityValidated,
+    effectiveEntitlementExpiryCasesValidated,
+    effectiveEntitlementExpiryParityValidated,
   });
   process.exit(0);
 }
@@ -15963,6 +15982,86 @@ function validateMonetizationTypeSchemaParity() {
   }
 }
 
+function validateEffectiveEntitlementExpiryParity() {
+  let valid = true;
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const canonicalReferral = '2026-05-26T12:00:00.000Z';
+  const invalidExpiries = [
+    { label: 'rollover', value: '2026-06-31T00:00:00.000Z' },
+    { label: 'date-only', value: '2026-06-01' },
+    { label: 'timezone-offset', value: '2026-06-01T00:30:00+02:00' },
+    { label: 'blank', value: '' },
+    { label: 'malformed', value: 'not-a-date' },
+  ];
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  if (
+    typeof resolveEffectiveEntitlement !== 'function' ||
+    typeof timeBoundedExpiry !== 'function'
+  ) {
+    reject('effective entitlement expiry guard requires resolver exports');
+    return;
+  }
+
+  for (const { label, value } of invalidExpiries) {
+    const trial = resolveEffectiveEntitlement({
+      proTrial: { expiresAtIso: value },
+      now,
+    });
+    if (
+      trial.primarySource !== 'free' ||
+      trial.activeSources.length !== 0 ||
+      trial.entitlements.spacedRepetition !== false ||
+      trial.nextExpiryIso !== null
+    ) {
+      reject(`temporary Pro trial accepted non-canonical ${label} expiry ${JSON.stringify(value)}`);
+      continue;
+    }
+
+    const referral = resolveEffectiveEntitlement({
+      referralGrant: { expiresAtIso: value },
+      now,
+    });
+    if (
+      referral.primarySource !== 'free' ||
+      referral.activeSources.length !== 0 ||
+      referral.entitlements.spacedRepetition !== false ||
+      referral.nextExpiryIso !== null ||
+      timeBoundedExpiry({ referralGrant: { expiresAtIso: value }, now }) !== null
+    ) {
+      reject(
+        `temporary Pro referral accepted non-canonical ${label} expiry ${JSON.stringify(value)}`,
+      );
+      continue;
+    }
+
+    effectiveEntitlementExpiryCasesValidated += 1;
+  }
+
+  const stacked = resolveEffectiveEntitlement({
+    proTrial: { expiresAtIso: '2026-06-01T00:30:00+02:00' },
+    referralGrant: { expiresAtIso: canonicalReferral },
+    now,
+  });
+  if (
+    stacked.primarySource !== 'referral-grant-active' ||
+    stacked.activeSources.length !== 1 ||
+    stacked.activeSources[0] !== 'referral-grant-active' ||
+    stacked.nextExpiryIso !== canonicalReferral ||
+    stacked.entitlements.spacedRepetition !== true
+  ) {
+    reject('effective entitlement expiry guard did not ignore non-canonical stacked trial expiry');
+  }
+
+  if (valid && effectiveEntitlementExpiryCasesValidated === invalidExpiries.length) {
+    effectiveEntitlementExpiryParityValidated = true;
+  }
+}
+
 function validatePurchaseTypeSchemaParity() {
   let valid = true;
   let purchaseSource = '';
@@ -22010,6 +22109,7 @@ validateExamChapterBreakdownParity(defaultMockExamConfig);
 validateExamGeneratorTypeSchemaParity();
 validateContentTypeSchemaParity();
 validateMonetizationTypeSchemaParity();
+validateEffectiveEntitlementExpiryParity();
 validatePurchaseTypeSchemaParity();
 validateRemoveAdsPurchaseRuntimeParity();
 validateRemoveAdsSwedishExamCopyParity();
@@ -22240,6 +22340,8 @@ console.log(
       monetizationTypeUnionsValidated,
       monetizationTypeInterfacesValidated,
       monetizationTypeSchemaParityValidated,
+      effectiveEntitlementExpiryCasesValidated,
+      effectiveEntitlementExpiryParityValidated,
       purchaseTypeUnionsValidated,
       purchaseTypeInterfacesValidated,
       purchaseTypeSchemaParityValidated,
