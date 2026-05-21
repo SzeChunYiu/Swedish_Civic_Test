@@ -1,9 +1,6 @@
 import type { AppLanguage } from '../storage/settingsStore';
 import type { Chapter, PracticeQuestion } from '../../types/content';
-import {
-  normalizeGlossarySearchText,
-  normalizeSearchResultLimit,
-} from '../learning/glossarySearch';
+import { normalizeSearchResultLimit, normalizeSearchText } from './textNormalization';
 
 export type QuestionSearchResult = {
   chapter?: Chapter;
@@ -34,7 +31,7 @@ function scoreQuestion(
   chapter: Chapter | undefined,
   query: string,
 ): number {
-  const normalizedQuery = normalizeGlossarySearchText(query);
+  const normalizedQuery = normalizeSearchText(query);
   if (!normalizedQuery) return 0;
 
   let score = 0;
@@ -55,7 +52,7 @@ function scoreQuestion(
   ];
 
   weightedFields.forEach(({ value, weight }) => {
-    const normalizedValue = normalizeGlossarySearchText(value);
+    const normalizedValue = normalizeSearchText(value);
     if (normalizedValue === normalizedQuery) score += weight * 2;
     if (normalizedValue.startsWith(normalizedQuery)) score += weight;
     if (normalizedValue.includes(normalizedQuery)) score += weight;
@@ -63,7 +60,7 @@ function scoreQuestion(
 
   const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
   if (tokens.length > 1) {
-    const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');
+    const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');
     score += tokens.filter((token) => haystack.includes(token)).length;
   }
 
