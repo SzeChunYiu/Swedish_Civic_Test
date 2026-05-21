@@ -49,3 +49,34 @@ require('./scripts/validate-content.js');
     /practice scoring rule truthy non-boolean results returned \{"correct":5,"total":6\}, expected \{"correct":1,"total":6\}/,
   );
 });
+
+test('practice scoring parity rejects array-only TypeScript signature drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+process.argv.push('scripts/validate-content.js', '--focus-practice-scoring-parity');
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath);
+  if (normalizedPath.endsWith('/lib/quiz/scoring.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('results: unknown = []', 'results: readonly unknown[] = []');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /scoreAnswers TypeScript signature must accept unknown runtime input/,
+  );
+});
