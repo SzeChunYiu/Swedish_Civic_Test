@@ -12,6 +12,10 @@ const {
   loadCanonicalExportInputs,
   summarizeStaticQuestionBankDrift,
 } = require('../scripts/export-site-question-bank');
+const {
+  generatedQuestionId,
+  generatedQuestionIdLiteralsInSource,
+} = require('../scripts/generated-question-fixture-ids');
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
@@ -43,15 +47,6 @@ function withQ020AdvisoryFixture(question) {
       };
     }),
   };
-}
-
-function generatedQuestionId(sourceQuestions, sourceQuestionId, variantOffset) {
-  const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceQuestionId);
-  assert.notEqual(sourceIndex, -1, `expected source question ${sourceQuestionId}`);
-  return `q${String(sourceQuestions.length + 1 + sourceIndex * 4 + variantOffset).padStart(
-    3,
-    '0',
-  )}`;
 }
 
 function staticSomaliSegments(question) {
@@ -164,4 +159,13 @@ test('static site question bank source fixture limits one-question localization 
   assert.equal(drift.questionIds[0], 'q020');
   assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
+});
+
+test('static site question bank drift fixtures derive generated question ids', () => {
+  const source = fs.readFileSync(__filename, 'utf8');
+  const canonical = loadCanonicalExportInputs();
+
+  assert.deepEqual(generatedQuestionIdLiteralsInSource(source, canonical.sourceQuestions), []);
+  assert.match(source, /generatedQuestionId\(canonical\.sourceQuestions,\s*'q020'/);
+  assert.match(source, /assert\.equal\(drift\.questionIds\[0\], 'q020'\)/);
 });
