@@ -45,12 +45,33 @@ function collectConsoleErrors(page: Page): string[] {
 }
 
 async function expectMinimumTargetSize(locator: Locator, name: string): Promise<void> {
-  await locator.scrollIntoViewIfNeeded();
-  const box = await locator.boundingBox();
+  const count = await locator.count();
+  expect(count, `${name} should render at least one matching link`).toBeGreaterThan(0);
 
-  expect(box, `${name} should have a rendered target box`).not.toBeNull();
-  expect(box!.width, `${name} target width`).toBeGreaterThanOrEqual(minimumTargetSizePx);
-  expect(box!.height, `${name} target height`).toBeGreaterThanOrEqual(minimumTargetSizePx);
+  for (let index = 0; index < count; index += 1) {
+    const target = locator.nth(index);
+    await target.scrollIntoViewIfNeeded();
+    const box = await target.boundingBox();
+
+    expect(box, `${name} #${index + 1} should have a rendered target box`).not.toBeNull();
+    expect(box!.width, `${name} #${index + 1} target width`).toBeGreaterThanOrEqual(
+      minimumTargetSizePx,
+    );
+    expect(box!.height, `${name} #${index + 1} target height`).toBeGreaterThanOrEqual(
+      minimumTargetSizePx,
+    );
+  }
+}
+
+async function getInteractionStyle(locator: Locator) {
+  return locator.evaluate((node) => {
+    const style = window.getComputedStyle(node);
+
+    return {
+      backgroundColor: style.backgroundColor,
+      transform: style.transform,
+    };
+  });
 }
 
 async function seedHomeDefaults(page: Page): Promise<void> {
@@ -60,6 +81,40 @@ async function seedHomeDefaults(page: Page): Promise<void> {
     window.localStorage.setItem('settings\\language', 'sv');
     window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
   });
+}
+
+async function expectSecondaryKeyboardPressedFeedback({
+  activationKey,
+  expectedPath,
+  label,
+  page,
+}: {
+  activationKey: 'Enter' | 'Space';
+  expectedPath: RegExp;
+  label: string;
+  page: Page;
+}): Promise<void> {
+  const link = page.getByRole('link', { exact: true, name: label }).first();
+  await expectMinimumTargetSize(link, `${label} keyboard target`);
+  await link.focus();
+
+  const focusStyle = await getInteractionStyle(link);
+  expect(focusStyle.backgroundColor, `${label} should expose focus feedback`).not.toBe(
+    'rgba(0, 0, 0, 0)',
+  );
+  expect(focusStyle.transform, `${label} should expose focus transform`).not.toBe('none');
+
+  await page.keyboard.down(activationKey);
+  const pressedStyle = await getInteractionStyle(link);
+  expect(pressedStyle.backgroundColor, `${label} pressed background`).toBe(
+    focusStyle.backgroundColor,
+  );
+  expect(pressedStyle.transform, `${label} pressed transform`).not.toBe(focusStyle.transform);
+  expect(pressedStyle.transform, `${label} pressed transform`).not.toBe('none');
+  await expect(page, `${label} should not navigate before key release`).toHaveURL(/\/home$/);
+
+  await page.keyboard.up(activationKey);
+  await expect(page).toHaveURL(expectedPath);
 }
 
 test('Home action links keep mobile-safe targets', async ({ page }) => {
@@ -75,6 +130,35 @@ test('Home action links keep mobile-safe targets', async ({ page }) => {
       link.name,
     );
   }
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('Home action links expose secondary keyboard pressed feedback before navigation', async ({
+  page,
+}) => {
+  const consoleErrors = collectConsoleErrors(page);
+
+  await seedHomeDefaults(page);
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectSecondaryKeyboardPressedFeedback({
+    activationKey: 'Space',
+    expectedPath: /\/learn$/,
+    label: 'Bläddra bland alla samhällskapitel',
+    page,
+  });
+
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expectSecondaryKeyboardPressedFeedback({
+    activationKey: 'Enter',
+    expectedPath: /\/learn$/,
+    label: 'Bläddra bland alla samhällskapitel',
+    page,
+  });
 
   expect(consoleErrors).toEqual([]);
 });

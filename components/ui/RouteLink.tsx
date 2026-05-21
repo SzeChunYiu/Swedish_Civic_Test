@@ -1,7 +1,7 @@
 import type { Href } from 'expo-router';
 import { Link } from 'expo-router';
 import type { ComponentProps, ReactNode } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 
@@ -10,7 +10,21 @@ import { colors, motion, radius, space, typography } from '../../lib/theme';
 export type RouteLinkVariant = 'primary' | 'secondary' | 'text' | 'card';
 
 type ExpoLinkProps = ComponentProps<typeof Link>;
+type RouteLinkKeyboardEvent = {
+  currentTarget?: { click?: () => void };
+  defaultPrevented?: boolean;
+  key?: string;
+  preventDefault?: () => void;
+  repeat?: boolean;
+};
 type RouteLinkWebEventHandler = (event: unknown) => void;
+type RouteLinkKeyboardEventHandler = (event: RouteLinkKeyboardEvent) => void;
+
+const keyboardActivationKeys = new Set(['Enter', ' ', 'Spacebar']);
+
+function isKeyboardActivationKey(key: string | undefined) {
+  return key ? keyboardActivationKeys.has(key) : false;
+}
 
 /**
  * Defaults: `variant="text"`, `accessibilityRole="link"`, no underline,
@@ -26,6 +40,8 @@ export interface RouteLinkProps extends Omit<
   href: Href;
   onBlur?: RouteLinkWebEventHandler;
   onFocus?: RouteLinkWebEventHandler;
+  onKeyDown?: RouteLinkKeyboardEventHandler;
+  onKeyUp?: RouteLinkKeyboardEventHandler;
   onMouseEnter?: RouteLinkWebEventHandler;
   onMouseLeave?: RouteLinkWebEventHandler;
   style?: StyleProp<TextStyle | ViewStyle>;
@@ -37,6 +53,8 @@ export function RouteLink({
   children,
   onBlur,
   onFocus,
+  onKeyDown,
+  onKeyUp,
   onMouseEnter,
   onMouseLeave,
   onPressIn,
@@ -45,6 +63,7 @@ export function RouteLink({
   variant = 'text',
   ...linkProps
 }: RouteLinkProps) {
+  const keyboardPressStarted = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
@@ -53,11 +72,34 @@ export function RouteLink({
       ? {
           onBlur: (event: Parameters<NonNullable<typeof onBlur>>[0]) => {
             setIsFocused(false);
+            setIsPressed(false);
+            keyboardPressStarted.current = false;
             onBlur?.(event);
           },
           onFocus: (event: Parameters<NonNullable<typeof onFocus>>[0]) => {
             setIsFocused(true);
             onFocus?.(event);
+          },
+          onKeyDown: (event: RouteLinkKeyboardEvent) => {
+            onKeyDown?.(event);
+            if (isKeyboardActivationKey(event.key) && !event.repeat && !event.defaultPrevented) {
+              keyboardPressStarted.current = true;
+              setIsPressed(true);
+              event.preventDefault?.();
+            }
+          },
+          onKeyUp: (event: RouteLinkKeyboardEvent) => {
+            const shouldActivate =
+              keyboardPressStarted.current && isKeyboardActivationKey(event.key);
+            if (isKeyboardActivationKey(event.key)) {
+              keyboardPressStarted.current = false;
+              setIsPressed(false);
+            }
+            onKeyUp?.(event);
+            if (shouldActivate && !event.defaultPrevented) {
+              event.preventDefault?.();
+              event.currentTarget?.click?.();
+            }
           },
           onMouseEnter: (event: Parameters<NonNullable<typeof onMouseEnter>>[0]) => {
             setIsHovered(true);
@@ -65,6 +107,7 @@ export function RouteLink({
           },
           onMouseLeave: (event: Parameters<NonNullable<typeof onMouseLeave>>[0]) => {
             setIsHovered(false);
+            setIsPressed(false);
             onMouseLeave?.(event);
           },
         }
@@ -161,5 +204,6 @@ const styles = StyleSheet.create({
   primaryPressed: {
     backgroundColor: colors.accentActive,
     borderColor: colors.accentActive,
+    transform: [{ scale: motion.pressedScale }],
   },
 });
