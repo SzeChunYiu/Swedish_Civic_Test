@@ -36,7 +36,11 @@ function staleNativeIdentifierPattern() {
 
 // Test fixtures: a minimal in-memory provider + storage.
 
-function makeMockProvider({ owned = false } = {}) {
+function makeMockProvider({
+  owned = false,
+  receiptValidationStatus = 'valid',
+  restorePurchase,
+} = {}) {
   let connected = false;
   let ownsPro = owned;
   return {
@@ -49,6 +53,17 @@ function makeMockProvider({ owned = false } = {}) {
     async finishPurchase() {
       if (!connected) throw new Error('not connected');
     },
+    async validateRemoveAdsReceipt(purchase, productId) {
+      if (!connected) throw new Error('not connected');
+      if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
+      return {
+        productId,
+        purchaseToken: purchase.purchaseToken ?? null,
+        status: 'valid',
+        transactionId: purchase.transactionId ?? null,
+        validatedAt: '2026-05-21T00:00:00.000Z',
+      };
+    },
     async requestRemoveAdsPurchase(productId) {
       if (!connected) throw new Error('not connected');
       ownsPro = true;
@@ -58,7 +73,14 @@ function makeMockProvider({ owned = false } = {}) {
       if (!connected) throw new Error('not connected');
       if (!ownsPro) return [];
       const id = productIds[0];
-      return [{ productId: id, purchaseToken: 'tok', transactionId: 'tx', raw: { ids: [id] } }];
+      return [
+        restorePurchase ?? {
+          productId: id,
+          purchaseToken: 'tok',
+          transactionId: 'tx',
+          raw: { ids: [id] },
+        },
+      ];
     },
   };
 }
@@ -75,6 +97,16 @@ function makeMemoryStorage() {
     async deleteItemAsync(k) {
       store.delete(k);
     },
+  };
+}
+
+function validProReceipt({ productId, purchaseToken = 'tok', transactionId = 'tx' }) {
+  return {
+    productId,
+    purchaseToken,
+    status: 'valid',
+    transactionId,
+    validatedAt: '2026-05-21T00:00:00.000Z',
   };
 }
 
@@ -114,7 +146,7 @@ test('proLifetime: v1.1 setup docs and identity stay in Pro lane', () => {
 });
 
 test('buyProLifetime: fresh buy persists entitlement and returns purchased status', async () => {
-  const { buyProLifetime, getProLifetimeEntitlement } = loadTs(
+  const { PRO_LIFETIME_STORAGE_KEY, buyProLifetime, getProLifetimeEntitlement } = loadTs(
     'lib/monetization/proLifetimePurchase.ts',
   );
   const storage = makeMemoryStorage();
@@ -122,6 +154,10 @@ test('buyProLifetime: fresh buy persists entitlement and returns purchased statu
   assert.equal(result.status, 'purchased');
   assert.equal(result.entitlements.spacedRepetition, true);
   assert.equal(result.entitlements.unlimitedMockExams, true);
+  const storedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
+  assert.equal(storedRecord.receiptValidationStatus, 'valid');
+  assert.equal(storedRecord.schemaVersion, 1);
+  assert.equal(storedRecord.source, 'purchase');
   const post = await getProLifetimeEntitlement({ storage });
   assert.equal(post.spacedRepetition, true);
 });
@@ -137,24 +173,202 @@ test('restoreProLifetime: with no prior purchase returns not_found', async () =>
 });
 
 test('restoreProLifetime: with prior purchase persists entitlement', async () => {
-  const { restoreProLifetime } = loadTs('lib/monetization/proLifetimePurchase.ts');
-  const result = await restoreProLifetime({
-    provider: makeMockProvider({ owned: true }),
-    storage: makeMemoryStorage(),
-  });
-  assert.equal(result.status, 'restored');
-  assert.equal(result.entitlements.spacedRepetition, true);
-});
-
-test('setProLifetimeEntitlement: false clears persisted state', async () => {
-  const { setProLifetimeEntitlement, getProLifetimeEntitlement } = loadTs(
+  const { PRO_LIFETIME_STORAGE_KEY, restoreProLifetime } = loadTs(
     'lib/monetization/proLifetimePurchase.ts',
   );
   const storage = makeMemoryStorage();
-  await setProLifetimeEntitlement(true, { storage });
+  const result = await restoreProLifetime({
+    provider: makeMockProvider({ owned: true }),
+    storage,
+  });
+  assert.equal(result.status, 'restored');
+  assert.equal(result.entitlements.spacedRepetition, true);
+  const storedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
+  assert.equal(storedRecord.source, 'restore');
+});
+
+test('setProLifetimeEntitlement: rejects bare true and clears persisted state', async () => {
+  const {
+    PRO_LIFETIME_PRODUCT_ID,
+    PRO_LIFETIME_STORAGE_KEY,
+    getProLifetimeEntitlement,
+    setProLifetimeEntitlement,
+  } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const storage = makeMemoryStorage();
+  await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'true');
+  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
+
+  const rejected = await setProLifetimeEntitlement(true, { storage });
+  assert.equal(rejected.spacedRepetition, false);
+  assert.equal(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), 'true');
+
+  await setProLifetimeEntitlement(true, {
+    purchase: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'tok',
+      transactionId: 'tx',
+    },
+    receiptValidation: validProReceipt({ productId: PRO_LIFETIME_PRODUCT_ID }),
+    storage,
+  });
   assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, true);
   await setProLifetimeEntitlement(false, { storage });
   assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
+});
+
+test('buyProLifetime: invalid receipt and persistence failure fail closed before finish', async () => {
+  const { PRO_LIFETIME_PRODUCT_ID, PRO_LIFETIME_STORAGE_KEY, buyProLifetime } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+  const invalidStorage = makeMemoryStorage();
+  const invalidResult = await buyProLifetime({
+    provider: makeMockProvider({ receiptValidationStatus: 'invalid' }),
+    storage: invalidStorage,
+  });
+
+  assert.equal(invalidResult.status, 'pending');
+  assert.equal(invalidResult.entitlements.spacedRepetition, false);
+  assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
+
+  const events = [];
+  const failingStorage = {
+    async getItemAsync() {
+      return null;
+    },
+    async setItemAsync() {
+      events.push('persist-fail');
+      throw new Error('storage unavailable');
+    },
+    async deleteItemAsync() {
+      events.push('cleanup');
+    },
+  };
+  const provider = {
+    async connect() {
+      events.push('connect');
+    },
+    async disconnect() {
+      events.push('disconnect');
+    },
+    async finishPurchase() {
+      events.push('finish');
+    },
+    async requestRemoveAdsPurchase(productId) {
+      events.push('request');
+      return {
+        productId,
+        purchaseToken: 'tok-persist',
+        transactionId: 'tx-persist',
+      };
+    },
+    async restorePurchases() {
+      return [];
+    },
+    async validateRemoveAdsReceipt(purchase, productId) {
+      events.push('validate');
+      return validProReceipt({
+        productId,
+        purchaseToken: purchase.purchaseToken,
+        transactionId: purchase.transactionId,
+      });
+    },
+  };
+  const failingResult = await buyProLifetime({ provider, storage: failingStorage });
+
+  assert.equal(PRO_LIFETIME_PRODUCT_ID, 'com.billyyiu.almostswedish.prolifetime');
+  assert.equal(failingResult.status, 'persistence_failed');
+  assert.equal(failingResult.entitlements.spacedRepetition, false);
+  assert.deepEqual(events, [
+    'connect',
+    'request',
+    'validate',
+    'persist-fail',
+    'cleanup',
+    'disconnect',
+  ]);
+});
+
+test('getProLifetimeEntitlement: provider revalidates, refreshes, and clears stored records', async () => {
+  const {
+    PRO_LIFETIME_PRODUCT_ID,
+    PRO_LIFETIME_STORAGE_KEY,
+    getProLifetimeEntitlement,
+    setProLifetimeEntitlement,
+  } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const storage = makeMemoryStorage();
+
+  await setProLifetimeEntitlement(true, {
+    grantedAt: new Date('2026-05-20T00:00:00.000Z'),
+    purchase: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'old-token',
+      transactionId: 'old-tx',
+    },
+    receiptValidation: validProReceipt({
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'old-token',
+      transactionId: 'old-tx',
+    }),
+    storage,
+  });
+  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, true);
+
+  const refreshedProvider = makeMockProvider({
+    owned: true,
+    restorePurchase: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'old-token',
+      transactionId: 'new-tx',
+      raw: { ids: [PRO_LIFETIME_PRODUCT_ID] },
+    },
+  });
+  const refreshed = await getProLifetimeEntitlement({ provider: refreshedProvider, storage });
+  assert.equal(refreshed.spacedRepetition, true);
+  const refreshedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
+  assert.equal(refreshedRecord.transactionId, 'new-tx');
+  assert.equal(refreshedRecord.source, 'restore');
+
+  const staleStorage = makeMemoryStorage();
+  await setProLifetimeEntitlement(true, {
+    purchase: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'stale-token',
+      transactionId: 'stale-tx',
+    },
+    receiptValidation: validProReceipt({
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'stale-token',
+      transactionId: 'stale-tx',
+    }),
+    storage: staleStorage,
+  });
+  const missing = await getProLifetimeEntitlement({
+    provider: makeMockProvider({ owned: false }),
+    storage: staleStorage,
+  });
+  assert.equal(missing.spacedRepetition, false);
+  assert.equal(await staleStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
+
+  const invalidStorage = makeMemoryStorage();
+  await setProLifetimeEntitlement(true, {
+    purchase: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'invalid-token',
+      transactionId: 'invalid-tx',
+    },
+    receiptValidation: validProReceipt({
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'invalid-token',
+      transactionId: 'invalid-tx',
+    }),
+    storage: invalidStorage,
+  });
+  const invalid = await getProLifetimeEntitlement({
+    provider: makeMockProvider({ owned: true, receiptValidationStatus: 'pending' }),
+    storage: invalidStorage,
+  });
+  assert.equal(invalid.spacedRepetition, false);
+  assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
 });
 
 test('mergeWithRemoveAds: Pro purchase preserves all flags even if Remove-Ads is also active', () => {

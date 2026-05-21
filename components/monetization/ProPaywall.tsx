@@ -84,6 +84,8 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       idle: 'Jämför nivåerna och välj Pro bara om du vill ha de extra studiefunktionerna.',
       not_found: 'Inget tidigare Pro-köp hittades.',
       pending: 'Väntar på butikens bekräftelse innan Pro aktiveras.',
+      persistence_failed:
+        'Köpet bekräftades inte på ett säkert sätt på enheten. Försök återställa köpet.',
       purchased: 'Pro är aktiverat på den här enheten.',
       restored: 'Pro är återställt på den här enheten.',
     },
@@ -124,6 +126,8 @@ const proPaywallCopy: Record<AppLanguage, ProPaywallCopy> = {
       idle: 'Compare the tiers and choose Pro only if you want the extra study features.',
       not_found: 'No previous Pro purchase was found.',
       pending: 'Waiting for store confirmation before enabling Pro.',
+      persistence_failed:
+        'The purchase was not stored securely on this device. Try restoring the purchase.',
       purchased: 'Pro is active on this device.',
       restored: 'Pro has been restored on this device.',
     },
