@@ -352,23 +352,6 @@ export default function Screen() {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
 
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
-  );
-  const questionSpeechText = useMemo(
-    () => (question ? buildQuestionSpeechText(question) : ''),
-    [question],
-  );
-
-  useQuestionAudioAutoplay({
-    audioEnabled,
-    listenFirstAudioEnabled,
-    questionKey: question ? `practice:${question.id}` : null,
-    rate: audioPlaybackRate,
-    speechText: questionSpeechText,
-    stopSignal: hasSelectedAnswer,
-  });
-
   const startPracticeScope = (nextScope: PracticeScope) => {
     const nextQuestionBank = getQuestionsForPracticeScope(filteredQuestions, nextScope);
     startSession(nextQuestionBank[0]?.id ?? null);
