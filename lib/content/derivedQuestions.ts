@@ -1226,7 +1226,7 @@ function judgementPromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 
 function judgementPromptEn(source: PracticeQuestion): string {
@@ -1235,7 +1235,7 @@ function judgementPromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 
 function singleChoicePromptSv(source: PracticeQuestion): string {
@@ -1244,7 +1244,7 @@ function singleChoicePromptSv(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 
 function singleChoicePromptEn(source: PracticeQuestion): string {
@@ -1253,7 +1253,7 @@ function singleChoicePromptEn(source: PracticeQuestion): string {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 
 function generatedSingleChoicePromptFromSourceSv(

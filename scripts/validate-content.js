@@ -197,7 +197,6 @@ const QUESTION_BANK_CSV_HEADER = [
   'reviewStatus',
   'tags',
   'questionProvenance',
-  'uhrSourcePublisher',
 ];
 const STATIC_EBOOK_UNSUPPORTED_OUTCOME_CLAIM_PATTERNS = [
   /Most people who pass this way/i,
@@ -14952,7 +14951,6 @@ function validateQuestionBankCsvContract() {
       question.reviewStatus,
       Array.isArray(question.tags) ? question.tags.join('|') : '',
       getQuestionProvenance(question),
-      uhrSectionMap?.source?.publisher,
     ];
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
@@ -15891,6 +15889,8 @@ function validateUhrSectionMapExactSchemaKeys() {
 function validateUhrSourceMaterialLinkParity() {
   let valid = true;
   let sourcesRoute = '';
+  let sourceLinks = '';
+  const legalSourceRoutes = ['app/disclaimer.tsx', 'app/terms.tsx'];
 
   function reject(message) {
     valid = false;
@@ -15901,6 +15901,15 @@ function validateUhrSourceMaterialLinkParity() {
     sourcesRoute = fs.readFileSync(path.join(repoRoot, 'app/sources.tsx'), 'utf8');
   } catch (error) {
     reject(`app/sources.tsx could not be read: ${error.message}`);
+    return;
+  }
+  try {
+    sourceLinks = fs.readFileSync(
+      path.join(repoRoot, 'components/compliance/SourceMaterialLinks.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`components/compliance/SourceMaterialLinks.tsx could not be read: ${error.message}`);
     return;
   }
 
@@ -15946,19 +15955,40 @@ function validateUhrSourceMaterialLinkParity() {
   if (!sourcesRoute.includes('Every practice question shows a source line with the UHR chapter')) {
     reject('app/sources.tsx must explain English learner-visible source lines');
   }
-  if (!/<Link[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
-    reject('app/sources.tsx must render the UHR material URL through an Expo Link');
-  }
-  if (!sourcesRoute.includes('accessibilityLabel={copy.openEducationMaterialAccessibilityLabel}')) {
-    reject('app/sources.tsx UHR material link needs the localized accessibility label');
+  if (!/<UhrEducationMaterialLink[\s\S]*href=\{UHR_EDUCATION_MATERIAL_URL\}/.test(sourcesRoute)) {
+    reject('app/sources.tsx must render the UHR material URL through UhrEducationMaterialLink');
   }
   if (
-    !sourcesRoute.includes(
+    !sourceLinks.includes(
+      'accessibilityLabel={sourceLinkCopy[language].openEducationMaterialAccessibilityLabel}',
+    )
+  ) {
+    reject('UhrEducationMaterialLink needs the localized accessibility label');
+  }
+  if (
+    !sourceLinks.includes(
       "openEducationMaterialAccessibilityLabel: 'Öppna UHR:s utbildningsmaterial'",
     ) ||
-    !sourcesRoute.includes("openEducationMaterialAccessibilityLabel: 'Open UHR education material'")
+    !sourceLinks.includes("openEducationMaterialAccessibilityLabel: 'Open UHR education material'")
   ) {
-    reject('app/sources.tsx UHR material link needs Swedish and English accessibility labels');
+    reject('UhrEducationMaterialLink needs Swedish and English accessibility labels');
+  }
+  for (const routePath of legalSourceRoutes) {
+    let routeSource = '';
+    try {
+      routeSource = fs.readFileSync(path.join(repoRoot, routePath), 'utf8');
+    } catch (error) {
+      reject(`${routePath} could not be read: ${error.message}`);
+      continue;
+    }
+    if (
+      !routeSource.includes(
+        "import { SourceMaterialLinkList } from '../components/compliance/SourceMaterialLinks';",
+      ) ||
+      !/<SourceMaterialLinkList\s+language=\{language\}\s*\/>/.test(routeSource)
+    ) {
+      reject(`${routePath} source-material section must render shared UHR source links`);
+    }
   }
 
   if (valid) uhrSourceMaterialLinkParityValidated = true;
@@ -15966,6 +15996,23 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-source-material-link-parity')) {
+  validateUhrSectionMapExactSchemaKeys();
+  validateUhrSourceMaterialLinkParity();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        uhrMapExactSchemaKeysValidated,
+        uhrSourceMaterialLinkParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();
   if (failures.length) exitWithValidationFailures();
