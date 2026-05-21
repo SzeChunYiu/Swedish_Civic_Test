@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+import { questions } from '../../data/questions';
 import { dismissBlockingModals } from './browserLaunch';
+
+const ch01QuestionCount = questions.filter((question) => question.chapterId === 'ch01').length;
 
 function extractQuestionCount(text: string | null, pattern: RegExp) {
   const match = text?.match(pattern);
@@ -31,7 +34,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
     await firstChapter.textContent(),
     /0\/(\d+) besvarade/,
   );
-  expect(questionCount).toBeGreaterThanOrEqual(50);
+  expect(questionCount).toBe(ch01QuestionCount);
   await expect(firstChapter).toContainText(`0/${questionCount} besvarade`);
 
   await firstChapter.click();
@@ -102,7 +105,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
     await firstChapter.textContent(),
     /0\/(\d+) practiced/,
   );
-  expect(questionCount).toBeGreaterThanOrEqual(50);
+  expect(questionCount).toBe(ch01QuestionCount);
   await expect(firstChapter).toContainText(`0/${questionCount} practiced`);
 
   await firstChapter.click();
