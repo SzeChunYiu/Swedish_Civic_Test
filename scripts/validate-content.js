@@ -3,18 +3,49 @@ const { spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const {
-  focusedValidationRequested,
-  rejectUnsupportedFocusedValidationFlags,
-} = require('./validate-content-focus-registry');
+function focusedValidationFlagsFromRegistrySource() {
+  const source = fs.readFileSync(__filename, 'utf8');
+  const declaration = '\nconst FOCUSED_VALIDATION_REGISTRY = Object.freeze(';
+  const registryStart = source.indexOf(declaration);
+  const registryEnd = source.indexOf(
+    '\n]);\n\nconst FOCUSED_VALIDATION_REGISTRY_BY_ID',
+    registryStart,
+  );
+  if (registryStart === -1 || registryEnd === -1) return new Set();
 
-rejectUnsupportedFocusedValidationFlags();
+  const registrySource = source.slice(registryStart, registryEnd);
+  const flags = new Set();
+  for (const match of registrySource.matchAll(/flags:\s*\[([^\]]+)\]/g)) {
+    for (const flagMatch of match[1].matchAll(/'(--focus-[^']+)'/g)) {
+      flags.add(flagMatch[1]);
+    }
+  }
+  return flags;
+}
+
+function rejectUnsupportedFocusedValidationFlagsFromRegistrySource() {
+  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
+  if (requestedFlags.length === 0) return;
+
+  const supportedFlags = focusedValidationFlagsFromRegistrySource();
+  const unsupportedFlags = requestedFlags.filter((flag) => !supportedFlags.has(flag));
+  if (unsupportedFlags.length === 0) return;
+
+  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
+  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
+  console.error('Supported focus modes:');
+  Array.from(supportedFlags)
+    .sort()
+    .forEach((flag) => console.error(`- ${flag}`));
+  process.exit(1);
+}
+
+rejectUnsupportedFocusedValidationFlagsFromRegistrySource();
 
 const ts = require('typescript');
 const vm = require('node:vm');
 const {
   buildSiteQuestionBank,
-  classifyStaticSiteQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
 } = require('./export-site-question-bank');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
@@ -42,6 +73,422 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
+const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
+  {
+    id: 'authoredSourceParity',
+    flags: ['--focus-authored-source-parity'],
+    summaryKeys: [
+      'authoredSourceQuestionsValidated',
+      'authoredSourcePartitionQuestionsValidated',
+      'sourcePublicationParityValidated',
+      'sourceQuestions',
+    ],
+  },
+  {
+    id: 'staticV11ReadinessCopy',
+    flags: ['--focus-static-v11-readiness-copy'],
+    summaryKeys: [
+      'staticV11ReadinessUnsupportedPatternsValidated',
+      'staticV11ReadinessRequiredCopyValidated',
+      'staticV11ReadinessCopyParityValidated',
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'rewardedExamSchema',
+    flags: ['--focus-rewarded-exam-schema'],
+    summaryKeys: [
+      'rewardedAdTypeUnionsValidated',
+      'rewardedAdTypeInterfacesValidated',
+      'rewardedAdTypeSchemaParityValidated',
+      'mockExamAccessTypeUnionsValidated',
+      'mockExamAccessTypeInterfacesValidated',
+      'mockExamAccessTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'nativeQuizCopy',
+    flags: ['--focus-native-quiz-copy'],
+    summaryKeys: [
+      'quizRouteHeadersValidated',
+      'quizRouteHeaderParityValidated',
+      'quizRouteCopyLabelsValidated',
+      'quizRouteCopyParityValidated',
+      'chapterRouteHeadersValidated',
+      'chapterRouteHeaderParityValidated',
+      'chapterRouteCopyLabelsValidated',
+      'chapterRouteCopyParityValidated',
+    ],
+  },
+  {
+    id: 'legalRouteParity',
+    flags: ['--focus-legal-route-parity'],
+    summaryKeys: [
+      'legalRouteHeadersValidated',
+      'legalRouteHeaderParityValidated',
+      'swedishPrivacyStreakCopyNaturalnessValidated',
+      'privacyRemoveAdsCopyNaturalnessValidated',
+      'legalSwedishEnglishTokenGuardValidated',
+      'legalSwedishEnglishTokenGuardParityValidated',
+    ],
+  },
+  {
+    id: 'settingsRouteCopy',
+    flags: ['--focus-settings-route-copy'],
+    summaryKeys: ['settingsRouteCopyLabelsValidated', 'settingsRouteCopyParityValidated'],
+  },
+  {
+    id: 'staticHeadMetadata',
+    flags: ['--focus-static-head-metadata'],
+    summaryKeys: [
+      'staticHeadMetadataTitleValidated',
+      'staticHeadMetadataDescriptionValidated',
+      'staticHeadMetadataOutcomeClaimPatternsValidated',
+      'staticHeadMetadataParityValidated',
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+    ],
+  },
+  {
+    id: 'settingsStore',
+    flags: ['--focus-settings-store', '--focus-settings-parity'],
+    summaryKeys: [
+      'settingsRouteHeadersValidated',
+      'settingsRouteHeaderParityValidated',
+      'settingsRouteCopyLabelsValidated',
+      'settingsRouteCopyParityValidated',
+      'settingsRouteScrollRulesValidated',
+      'settingsRouteScrollParityValidated',
+      'settingsStoreFieldsValidated',
+      'settingsStoreSchemaParityValidated',
+      'settingsDailyGoalOptionsValidated',
+      'settingsDailyGoalParityValidated',
+      'settingsAudioLabelsValidated',
+      'settingsAudioParityValidated',
+    ],
+  },
+  {
+    id: 'homeRouteCopy',
+    flags: ['--focus-home-route-copy'],
+    summaryKeys: [
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+      'homeRouteHeadersValidated',
+      'homeRouteHeaderParityValidated',
+      'homeRouteCopyLabelsValidated',
+      'homeRouteCopyParityValidated',
+      'homeRouteInternalBenchmarkCopyValidated',
+      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
+      'countdownBannerHomeMountRulesValidated',
+      'countdownBannerHomeMountParityValidated',
+    ],
+  },
+  {
+    id: 'answerOptionAccessibility',
+    flags: ['--focus-answer-option-accessibility'],
+    summaryKeys: [
+      'answerOptionAccessibilityRulesValidated',
+      'answerOptionAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'homeSvMistakeReviewCopy',
+    flags: ['--focus-home-sv-mistake-review-copy'],
+    summaryKeys: [
+      'staticValidationSyntaxFilesValidated',
+      'staticValidationImportChecksValidated',
+      'staticValidationSyntaxGateValidated',
+      'homeRouteSwedishMistakeReviewCopyNaturalnessValidated',
+    ],
+  },
+  {
+    id: 'progressSchemaParity',
+    flags: ['--focus-progress-schema-parity'],
+    summaryKeys: [
+      'progressQuestionFieldsValidated',
+      'progressQuestionSchemaParityValidated',
+      'progressTypeUnionsValidated',
+      'progressTypeInterfacesValidated',
+      'progressTypeSchemaParityValidated',
+      'progressStoreFieldsValidated',
+      'progressStoreSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'xpRules',
+    flags: ['--focus-xp-rules'],
+    summaryKeys: ['xpRulesValidated', 'xpRulesParityValidated'],
+  },
+  {
+    id: 'streakRules',
+    flags: ['--focus-streak-rules'],
+    summaryKeys: ['streakRulesValidated', 'streakRulesParityValidated'],
+  },
+  {
+    id: 'readinessAdapterRules',
+    flags: ['--focus-readiness-adapter-rules'],
+    summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
+  },
+  {
+    id: 'questionReportLinkParity',
+    flags: ['--focus-question-report-link-parity'],
+    summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
+  },
+  {
+    id: 'answerFeedbackParity',
+    flags: ['--focus-answer-feedback-parity'],
+    summaryKeys: [
+      'publishedQuestions',
+      'answerValidationTypeUnionsValidated',
+      'answerValidationTypeInterfacesValidated',
+      'answerValidationTypeSchemaParityValidated',
+      'answerFeedbackQuestionsValidated',
+      'answerFeedbackOptionsValidated',
+      'answerFeedbackRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'aboutTheTestRouteCopy',
+    flags: ['--focus-about-the-test-route-copy'],
+    summaryKeys: [
+      'aboutTheTestRouteCopyLabelsValidated',
+      'aboutTheTestRouteCopyParityValidated',
+      'aboutTheTestOfficialSourceUrlsValidated',
+      'aboutTheTestOfficialSourceRetrievedDateValidated',
+      'aboutTheTestSeenEffectRulesValidated',
+      'aboutTheTestSeenEffectParityValidated',
+      'citizenshipRequirementsLimitedSeatCopyValidated',
+    ],
+  },
+  {
+    id: 'mockExamRuntimeParity',
+    flags: ['--focus-mock-exam-runtime-parity'],
+    summaryKeys: [
+      'mockExamConfigTypeFieldsValidated',
+      'mockExamConfigTypeSchemaParityValidated',
+      'mockExamConfigExactSchemaKeysValidated',
+      'mockExamConfigValidated',
+      'mockExamRuntimeParityValidated',
+      'mockExamChapterBalanceParityValidated',
+      'mockExamTimerParityValidated',
+      'examRouteHeadersValidated',
+      'examRouteHeaderParityValidated',
+      'examRouteCopyLabelsValidated',
+      'examRouteCopyParityValidated',
+    ],
+  },
+  {
+    id: 'searchRouteQueryHydration',
+    flags: ['--focus-search-route-query-hydration'],
+    summaryKeys: [
+      'searchRouteQueryHydrationRulesValidated',
+      'searchRouteQueryHydrationParityValidated',
+    ],
+  },
+  {
+    id: 'answerShuffleParity',
+    flags: ['--focus-answer-shuffle-parity'],
+    summaryKeys: [
+      'answerShuffleSingleChoiceQuestionsValidated',
+      'answerShuffleTrueFalseQuestionsValidated',
+      'answerShuffleSeedDistributionsValidated',
+      'answerShuffleSessionMovementQuestionsValidated',
+      'answerShuffleDistributionParityValidated',
+      'publishedQuestions',
+    ],
+  },
+  {
+    id: 'adPlacementRouteParity',
+    flags: ['--focus-ad-placement-route-parity'],
+    summaryKeys: [
+      'adPlacementRoutesValidated',
+      'noAdRoutesValidated',
+      'adPlacementRouteParityValidated',
+    ],
+  },
+  {
+    id: 'examSubmissionFinalityParity',
+    flags: ['--focus-exam-submission-finality-parity'],
+    summaryKeys: ['examSubmissionFinalityParityValidated'],
+  },
+  {
+    id: 'mockExamCopyParity',
+    flags: ['--focus-mock-exam-copy-parity'],
+    summaryKeys: [
+      'nativeMockExamComponentCopyLabelsValidated',
+      'nativeMockExamComponentLegalCopyValidated',
+      'nativeMockExamLibraryLabelsValidated',
+      'nativeMockExamScoreSourceCopyValidated',
+      'nativeMockExamSwedishCopyNaturalnessValidated',
+      'nativeMockExamTierCopyValidated',
+    ],
+  },
+  {
+    id: 'profileRouteCopy',
+    flags: ['--focus-profile-route-copy'],
+    summaryKeys: [
+      'profileRouteHeadersValidated',
+      'profileRouteHeaderParityValidated',
+      'profileRouteCopyLabelsValidated',
+      'profileRouteCopyParityValidated',
+      'badgesValidated',
+      'badgeMilestoneParityValidated',
+    ],
+  },
+  {
+    id: 'uhrReferenceCardAccessibility',
+    flags: ['--focus-uhr-reference-card-accessibility'],
+    summaryKeys: [
+      'uhrReferenceCardAccessibilityRulesValidated',
+      'uhrReferenceCardAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'celebrationBurstAccessibility',
+    flags: ['--focus-celebration-burst-accessibility'],
+    summaryKeys: [
+      'celebrationBurstAccessibilityRulesValidated',
+      'celebrationBurstAccessibilityParityValidated',
+    ],
+  },
+  {
+    id: 'questionSpeechTextParity',
+    flags: ['--focus-question-speech-text-parity'],
+    summaryKeys: [
+      'publishedQuestions',
+      'questionSpeechTextQuestionsValidated',
+      'questionSpeechTextOptionsValidated',
+      'questionSpeechTextParityValidated',
+    ],
+  },
+  {
+    id: 'uhrSourceMetadata',
+    flags: ['--focus-uhr-source-metadata'],
+    summaryKeys: [
+      'uhrSourceMetadataValidated',
+      'uhrSourceRetrievedDateValidated',
+      'uhrMapSourceExactSchemaKeysValidated',
+      'uhrMapTextFieldsNormalizedValidated',
+    ],
+  },
+  {
+    id: 'questionBankCsv',
+    flags: ['--focus-question-bank-csv'],
+    summaryKeys: [
+      'questions',
+      'publishedQuestions',
+      'questionBankCsvHeaderColumnsValidated',
+      'questionBankCsvUniqueHeaderNamesValidated',
+      'questionBankCsvRowsValidated',
+      'questionBankCsvProvenanceCounts',
+      'questionBankCsvUhrSourcePublisherRowsValidated',
+      'questionBankCsvUhrSourcePublisherParityValidated',
+    ],
+  },
+  {
+    id: 'examGeneratorSchema',
+    flags: ['--focus-exam-generator-schema'],
+    summaryKeys: [
+      'examGeneratorTypeAliasesValidated',
+      'examGeneratorTypeInterfacesValidated',
+      'examGeneratorTypeSchemaParityValidated',
+    ],
+  },
+  {
+    id: 'removeAdsHookParity',
+    flags: ['--focus-remove-ads-hook-parity'],
+    summaryKeys: [
+      'removeAdsEntitlementHookCasesValidated',
+      'removeAdsEntitlementHookParityValidated',
+    ],
+  },
+  {
+    id: 'removeAdsPurchaseRuntimeParity',
+    flags: ['--focus-remove-ads-purchase-runtime-parity'],
+    summaryKeys: [
+      'purchaseTypeUnionsValidated',
+      'purchaseTypeInterfacesValidated',
+      'purchaseTypeSchemaParityValidated',
+      'removeAdsPurchaseRuntimeCasesValidated',
+      'removeAdsPurchaseRuntimeParityValidated',
+    ],
+  },
+  {
+    id: 'umeaDemonym',
+    flags: ['--focus-umea-demonym'],
+    summaryKeys: ['questionUmeaDemonymSwedishNaturalnessValidated'],
+  },
+  {
+    id: 'chapterLocalizedText',
+    flags: ['--focus-chapter-localized-text'],
+    summaryKeys: [
+      'chapters',
+      'chapterSchemasValidated',
+      'chapterTextFieldsNormalizedValidated',
+      'chapterExactSchemaKeysValidated',
+      'chapterLocalizedTextMapsValidated',
+    ],
+  },
+  {
+    id: 'practiceRouteCopyParity',
+    flags: ['--focus-practice-route-copy-parity'],
+    summaryKeys: [
+      'practiceRouteCopyLabelsValidated',
+      'practiceRouteCopyParityValidated',
+      'provenanceAuthorityCopyFilesValidated',
+      'provenanceAuthorityCopyParityValidated',
+    ],
+  },
+  {
+    id: 'practiceFlowParity',
+    flags: ['--focus-practice-flow-parity'],
+    summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
+  },
+  {
+    id: 'contentExecCwd',
+    flags: ['--focus-content-exec-cwd'],
+    summaryKeys: [
+      'contentTestValidateContentExecCallsValidated',
+      'contentTestValidateContentExecCwdPinnedValidated',
+      'contentTestValidateContentExecCwdParityValidated',
+    ],
+  },
+]);
+
+const FOCUSED_VALIDATION_REGISTRY_BY_ID = new Map(
+  FOCUSED_VALIDATION_REGISTRY.map((entry) => [entry.id, entry]),
+);
+const SUPPORTED_FOCUSED_VALIDATION_FLAGS = new Set(
+  FOCUSED_VALIDATION_REGISTRY.flatMap((entry) => entry.flags),
+);
+
+function rejectUnsupportedFocusedValidationFlags() {
+  const requestedFlags = process.argv.slice(2).filter((arg) => arg.startsWith('--focus-'));
+  const unsupportedFlags = requestedFlags.filter(
+    (flag) => !SUPPORTED_FOCUSED_VALIDATION_FLAGS.has(flag),
+  );
+  if (unsupportedFlags.length === 0) return;
+
+  const plural = unsupportedFlags.length === 1 ? 'flag' : 'flags';
+  console.error(`Unsupported validate-content focus ${plural}: ${unsupportedFlags.join(', ')}`);
+  console.error('Supported focus modes:');
+  Array.from(SUPPORTED_FOCUSED_VALIDATION_FLAGS)
+    .sort()
+    .forEach((flag) => console.error(`- ${flag}`));
+  process.exit(1);
+}
+
+function focusedValidationRequested(id) {
+  const entry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get(id);
+  if (!entry) throw new Error(`Unknown focused validation registry id: ${id}`);
+  return entry.flags.some((flag) => process.argv.includes(flag));
+}
+
+rejectUnsupportedFocusedValidationFlags();
 const moduleCache = new Map();
 const speechEvents = [];
 const speechMock = {
@@ -701,8 +1148,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bgained the right to live in the country and practice\b/i,
   /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
   /\bwhen a low voter turnout affects democracy\b/i,
-  /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+/i,
-  /\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
   /^(?:De|They)\s+(?:säljer|drivs|får|finns|kan|måste|sell|are often|may|can|must)\b/i,
   /^(?:Genom|Through)\b/i,
   /\b(?:innehåll där|content there|inlägg där|posts there)\b/i,
@@ -788,7 +1233,6 @@ const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
-const EXPECTED_READINESS_SCORE_RULE_COUNT = 5;
 const EXPECTED_WEEKLY_RECAP_RUNTIME_CASES = 7;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
@@ -826,7 +1270,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Stäng om källorna',
     'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
     'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
-    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
+    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
     'Dagens utmaning',
     '${remainingSeconds} sekunder kvar',
     'Tiden är ute. Försök igen för att starta om dagens utmaning.',
@@ -983,8 +1427,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
     'svar/dag',
     'Svenska',
-    'Ljud på',
-    'Ljud av',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Låst',
@@ -993,8 +1435,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Aktivitet, kapitelframsteg och XP visas på en egen sida.',
     'Visa översikt',
     'Öppna framstegsöversikten',
-    'Ändra mål, språk och ljud',
-    'Öppna inställningar för dagligt mål, språk och ljud',
+    'Öppna inställningar',
     'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
   ],
   en: [
@@ -1012,8 +1453,6 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Small daily goals are easier to keep than long cram sessions.',
     'answers/day',
     'English support',
-    'Audio on',
-    'Audio off',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'Locked',
@@ -1022,8 +1461,7 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'Activity, chapter progress, and XP live on a dedicated page.',
     'View dashboard',
     'Open progress dashboard',
-    'Adjust goal, language, and audio',
-    'Open settings for daily goal, language, and audio',
+    'Open settings',
     'Remove Ads is highlighted. Buy and Restore controls are here.',
   ],
 };
@@ -1083,21 +1521,13 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
   ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
   ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
-  [
-    'const audioEnabled = useSettingsStore((state) => state.audioEnabled);',
-    'profile route must read audio state from settings store',
-  ],
-  [
-    'audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge',
-    'profile audio badge must reflect the selected audio setting',
-  ],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.studySetupCta}', 'profile settings link must render localized setup CTA copy'],
+  ['{copy.openSettings}', 'profile settings link must render localized copy'],
   [
     'accessibilityLabel={copy.dashboardAccessibilityLabel}',
     'profile dashboard link must expose localized accessibility copy',
@@ -1141,8 +1571,6 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Starta en 5-minutersövning',
     'Starta den rekommenderade övningen',
     'Starta övning',
-    'Gå till övningsprovet',
-    '${title}: gå till övningsprovet när steget är klart.',
     'Bläddra bland alla samhällskapitel',
     'Bläddra bland kapitel',
     'nivå',
@@ -1778,14 +2206,6 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam route must read language from settings store',
   ],
   ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
-  [
-    "import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';",
-    'exam route must import shared provenance badge',
-  ],
-  [
-    'const examQuestionById = useMemo(',
-    'exam review must keep original question records for provenance badges',
-  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -1809,18 +2229,10 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.submitLabel}', 'exam submit control must render localized copy'],
   [
-    '<ProvenanceBadge language={language} question={question} />',
-    'exam questions must render provenance badges during active attempts',
-  ],
-  [
     "language === 'en' ? chapter.chapterNameEn : chapter.chapterNameSv",
     'exam chapter breakdown must use selected-language chapter names',
   ],
   ['{copy.questionReviewTitle}', 'exam review title must render localized copy'],
-  [
-    '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
-    'exam questions must render provenance badges during review',
-  ],
   ['{copy.selectedAnswerLabel}', 'exam selected-answer label must render localized copy'],
   ['{copy.correctAnswerLabel}', 'exam correct-answer label must render localized copy'],
   ['ExplanationPanel', 'exam review must render the localized explanation panel'],
@@ -2832,202 +3244,73 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
 const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     label: 'settings language type import',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
   },
   {
     label: 'typed localized copy contract',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
     label: 'localized progress copy',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
     label: 'clamped progress source',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
     label: 'percent value derived from clamped progress',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
     label: 'language copy selection',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
     label: 'readable localized progress label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
     label: 'web aria label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-label=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'web aria max value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
     label: 'web aria min value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
     label: 'web aria current value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
     label: 'web aria localized value text',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'native accessibility label',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
   },
   {
     label: 'native progressbar role',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /accessibilityRole="progressbar"/,
   },
   {
     label: 'native clamped accessibility value',
-    file: 'components/ui/ProgressBar.tsx',
     pattern:
       /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
   },
   {
     label: 'animated fill uses clamped source',
-    file: 'components/ui/ProgressBar.tsx',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
     label: 'visual fill uses percent interpolation bounds',
-    file: 'components/ui/ProgressBar.tsx',
-    pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
-  },
-  {
-    label: 'foundation settings language type import',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/,
-  },
-  {
-    label: 'foundation typed localized copy contract',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
-  },
-  {
-    label: 'foundation localized progress copy',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
-  },
-  {
-    label: 'foundation clamped progress helper',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /function clampProgress\(progress: number\) \{\s*return Math\.max\(0, Math\.min\(1, progress\)\);\s*\}/,
-  },
-  {
-    label: 'foundation clamped progress source',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const clampedProgress = clampProgress\(progress\);/,
-  },
-  {
-    label: 'foundation percent value derived from clamped progress',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
-  },
-  {
-    label: 'foundation readable localized progress label',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /const defaultAccessibilityText = progressBarCopy\[language\]\.progressLabel\(progressPercent\);/,
-  },
-  {
-    label: 'foundation custom accessibility label support',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const resolvedAccessibilityLabel = accessibilityLabel \?\? defaultAccessibilityText;/,
-  },
-  {
-    label: 'components/ProgressBar.tsx must use the shared reduced-motion hook',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
-  },
-  {
-    label: 'foundation animation opt-out combines prop and reduced motion',
-    file: 'components/ProgressBar.tsx',
-    pattern: /const shouldAnimate = animated && !reducedMotionEnabled;/,
-  },
-  {
-    label: 'foundation reduced-motion sets progress synchronously',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /if \(!shouldAnimate\) \{\s*animatedProgress\.setValue\(clampedProgress\);\s*return undefined;\s*\}/,
-  },
-  {
-    label: 'foundation web aria label',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-label=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation web aria max value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuemax=\{100\}/,
-  },
-  {
-    label: 'foundation web aria min value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuemin=\{0\}/,
-  },
-  {
-    label: 'foundation web aria current value',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuenow=\{progressPercent\}/,
-  },
-  {
-    label: 'foundation web aria localized value text',
-    file: 'components/ProgressBar.tsx',
-    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation native accessibility label',
-    file: 'components/ProgressBar.tsx',
-    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
-  },
-  {
-    label: 'foundation native progressbar default role',
-    file: 'components/ProgressBar.tsx',
-    pattern: /accessibilityRole = 'progressbar'/,
-  },
-  {
-    label: 'foundation native clamped accessibility value',
-    file: 'components/ProgressBar.tsx',
-    pattern:
-      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
-  },
-  {
-    label: 'foundation animated fill uses clamped source',
-    file: 'components/ProgressBar.tsx',
-    pattern: /new Animated\.Value\(clampedProgress\)/,
-  },
-  {
-    label: 'foundation visual fill uses percent interpolation bounds',
-    file: 'components/ProgressBar.tsx',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
   },
 ];
@@ -6720,66 +7003,6 @@ function democracyRightStatementEn(subject, answer, isCorrect) {
     : `In a democracy, ${subject} may not ${action}`;
 }
 
-function voterTurnoutImpactStatementSv(answer) {
-  if (/^Människor kan få mindre möjlighet att påverka politiska beslut$/i.test(answer)) {
-    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
-  }
-  if (/^Alla väljare får två röster var i nästa val$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val';
-  }
-  if (/^Domstolarna tar över riksdagens uppgifter$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att domstolarna tar över riksdagens uppgifter';
-  }
-  if (/^Samhället blir automatiskt mer integrerat$/i.test(answer)) {
-    return 'Ett lågt valdeltagande gör automatiskt samhället mer integrerat';
-  }
-  return null;
-}
-
-function voterTurnoutImpactStatementEn(answer) {
-  if (/^People may have fewer opportunities to influence political decisions$/i.test(answer)) {
-    return "Low voter turnout can reduce people's ability to influence political decisions";
-  }
-  if (/^All voters get two votes each in the next election$/i.test(answer)) {
-    return 'Low voter turnout means all voters get two votes each in the next election';
-  }
-  if (/^The courts take over the Riksdag's tasks$/i.test(answer)) {
-    return "Low voter turnout means the courts take over the Riksdag's tasks";
-  }
-  if (/^Society automatically becomes more integrated$/i.test(answer)) {
-    return 'Low voter turnout automatically makes society more integrated';
-  }
-  return null;
-}
-
-function affectStatementSv(subject, target, answer) {
-  if (/^Genom att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är genom att ${lowerFirst(
-      answer.replace(/^Genom att\s+/i, ''),
-    )}`;
-  }
-  if (/^Att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är att ${lowerFirst(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-  return `En möjlig följd för ${target} är att ${lowerFirst(answer)}`;
-}
-
-function affectStatementEn(subject, target, answer) {
-  if (/^By\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is by ${lowerFirst(
-      answer.replace(/^By\s+/i, ''),
-    )}`;
-  }
-  if (/^To\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is to ${lowerFirst(
-      stripLeadingPurposeEn(answer),
-    )}`;
-  }
-  return `One possible effect on ${target} is that ${lowerFirst(answer)}`;
-}
-
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -6817,11 +7040,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementSv(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementSv(match[1], match[2], answer);
-  }
+  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
   match = q.match(/^Hur kan (.+?) få inkomster$/i);
   if (match) return commercialMediaIncomeStatementSv(match[1], answer);
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
@@ -7157,11 +7376,7 @@ function civicStatementEn(source, option) {
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementEn(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementEn(match[1], match[2], answer);
-  }
+  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
   match = q.match(/^How can (.+?) earn income$/i);
   if (match) return commercialMediaIncomeStatementEn(match[1], answer);
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
@@ -8319,6 +8534,78 @@ function validateQuestionSchema(question, index) {
   return valid;
 }
 
+if (process.argv.includes('--focus-settings-store')) {
+  let settingsDailyGoalOptionsValidatedForFocus = 0;
+  let settingsDailyGoalParityValidatedForFocus = false;
+  let settingsStoreSchemaParityValidatedForFocus = false;
+  const settingsStore = fs.readFileSync(
+    path.join(repoRoot, 'lib/storage/settingsStore.ts'),
+    'utf8',
+  );
+  const settingsRoute = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
+  const requiredSettingsStoreSnippets = [
+    "const dailyGoalKey = 'dailyGoalAnswers';",
+    'const defaultDailyGoalAnswers = 10;',
+    'function readStorageNumber(key: string): number | undefined',
+    'function normalizeDailyGoalAnswers',
+    'typeof answerCount !==',
+    'Number.isFinite(answerCount)',
+    'Number.isInteger(answerCount)',
+    'answerCount < minDailyGoalAnswers',
+    'answerCount > maxDailyGoalAnswers',
+    'const storedValue = readStorageNumber(dailyGoalKey);',
+    'return normalizeDailyGoalAnswers(storedValue);',
+    'const normalizedGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
+    'writeRecoverably( settingsStorage, settingsStorageId, dailyGoalKey, normalizedGoal, );',
+  ];
+
+  requiredSettingsStoreSnippets.forEach((snippet) => {
+    if (!normalizedSettingsStore.includes(snippet)) {
+      fail(`settings store focus missing ${snippet}`);
+    }
+  });
+  if (normalizedSettingsStore.includes('Math.round(dailyGoalAnswers)')) {
+    fail('setDailyGoalAnswers must not round unsafe runtime input directly');
+  }
+
+  const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
+  const goalOptions = goalOptionArrays[0] || [];
+  if (!arrayEquals(goalOptions, EXPECTED_DAILY_GOAL_OPTIONS)) {
+    fail(
+      `app/settings.tsx daily goal options are ${JSON.stringify(
+        goalOptionArrays,
+      )}, expected ${JSON.stringify(EXPECTED_DAILY_GOAL_OPTIONS)}`,
+    );
+  } else {
+    settingsDailyGoalOptionsValidatedForFocus = goalOptions.length;
+  }
+  if (!settingsRoute.includes('Set daily goal to ${goal} answers')) {
+    fail('app/settings.tsx daily goal buttons must expose goal-derived accessibility text');
+  }
+  if (!settingsRoute.includes('Ställ in dagligt mål till ${goal} svar')) {
+    fail('app/settings.tsx daily goal buttons must expose Swedish accessibility text');
+  }
+  if (!settingsRoute.includes('${answerCount} svar per dag')) {
+    fail('app/settings.tsx must render the Swedish persisted daily-goal count');
+  }
+  if (!settingsRoute.includes('${answerCount} answers per day')) {
+    fail('app/settings.tsx must render the persisted daily-goal count');
+  }
+
+  if (!failures.length) {
+    settingsDailyGoalParityValidatedForFocus = true;
+    settingsStoreSchemaParityValidatedForFocus = true;
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsStoreSchemaParityValidated: settingsStoreSchemaParityValidatedForFocus,
+    settingsDailyGoalOptionsValidated: settingsDailyGoalOptionsValidatedForFocus,
+    settingsDailyGoalParityValidated: settingsDailyGoalParityValidatedForFocus,
+  });
+  process.exit(0);
+}
+
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
 const baseQuestions = questionModule.baseQuestions;
@@ -8383,7 +8670,6 @@ const dashboardStatsModule = loadTs('lib/learning/dashboardStats.ts');
 const perChapterProgress = dashboardStatsModule.perChapterProgress;
 const readinessModule = loadTs('lib/learning/readiness.ts');
 const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
-const computeReadinessScore = readinessModule.computeReadinessScore;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
@@ -8481,8 +8767,6 @@ let aboutTheTestSeenEffectRulesValidated = 0;
 let aboutTheTestSeenEffectParityValidated = false;
 let aboutTheTestSwedishMockprovCopyGuardValidated = 0;
 let citizenshipRequirementsLimitedSeatCopyValidated = 0;
-let citizenshipRequirementsChecklistPersistenceRulesValidated = 0;
-let citizenshipRequirementsChecklistPersistenceParityValidated = false;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
 let examRouteCopyLabelsValidated = 0;
@@ -8520,6 +8804,7 @@ let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
+let privacyRemoveAdsCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
 let staticSiteSwedishStudyTermsValidated = 0;
@@ -8691,8 +8976,6 @@ let dashboardPerChapterInputRulesValidated = 0;
 let dashboardPerChapterInputParityValidated = false;
 let readinessAdapterRulesValidated = 0;
 let readinessAdapterRuntimeParityValidated = false;
-let readinessScoreRulesValidated = 0;
-let readinessScoreRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -9037,6 +9320,7 @@ if (focusedValidationRequested('legalRouteParity')) {
     legalRouteHeadersValidated,
     legalRouteHeaderParityValidated,
     swedishPrivacyStreakCopyNaturalnessValidated,
+    privacyRemoveAdsCopyNaturalnessValidated,
     legalSwedishEnglishTokenGuardValidated,
     legalSwedishEnglishTokenGuardParityValidated,
   });
@@ -9191,16 +9475,6 @@ if (focusedValidationRequested('readinessAdapterRules')) {
   process.exit(0);
 }
 
-if (focusedValidationRequested('readinessScoreRules')) {
-  validateReadinessScoreRules();
-  exitWithValidationFailures();
-  printValidationSummary({
-    readinessScoreRulesValidated,
-    readinessScoreRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 if (focusedValidationRequested('questionReportLinkParity')) {
   validateQuestionReportLinkParity();
   exitWithValidationFailures();
@@ -9233,7 +9507,6 @@ if (focusedValidationRequested('aboutTheTestRouteCopy')) {
   validateAboutTheTestRouteCopyParity();
   validateAboutTheTestSeenEffectParity();
   validateCitizenshipRequirementsLimitedSeatParity();
-  validateCitizenshipRequirementsChecklistPersistenceParity();
   exitWithValidationFailures();
   printValidationSummary({
     aboutTheTestRouteCopyLabelsValidated,
@@ -9244,8 +9517,6 @@ if (focusedValidationRequested('aboutTheTestRouteCopy')) {
     aboutTheTestSeenEffectParityValidated,
     aboutTheTestSwedishMockprovCopyGuardValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
-    citizenshipRequirementsChecklistPersistenceRulesValidated,
-    citizenshipRequirementsChecklistPersistenceParityValidated,
   });
   process.exit(0);
 }
@@ -9981,10 +10252,6 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
         'utf8',
       );
-      const practiceInterstitialAttemptSource = fs.readFileSync(
-        path.join(repoRoot, 'lib/monetization/practiceInterstitialAttempt.ts'),
-        'utf8',
-      );
 
       if (/showKey=\{[\s\S]{0,160}selectedOptionId/.test(source)) {
         reject(
@@ -10045,28 +10312,6 @@ function validateAdPlacementRouteParity() {
         /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/.test(nativeInterstitialSource)
       ) {
         reject('PracticeInterstitialAd must not consume the show key in the LOADED listener');
-        routeIsValid = false;
-      }
-      if (
-        !nativeInterstitialSource.includes('createPracticeInterstitialAttemptState') ||
-        !nativeInterstitialSource.includes('reducePracticeInterstitialAttemptState') ||
-        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS') ||
-        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS')
-      ) {
-        reject(
-          'PracticeInterstitialAd native placement must delegate attempt state timeout bookkeeping to the helper',
-        );
-        routeIsValid = false;
-      }
-      if (
-        !practiceInterstitialAttemptSource.includes('load_timeout') ||
-        !practiceInterstitialAttemptSource.includes('show_timeout') ||
-        !practiceInterstitialAttemptSource.includes('showKeyConsumed') ||
-        !practiceInterstitialAttemptSource.includes('if (state.settled) return state;')
-      ) {
-        reject(
-          'PracticeInterstitial attempt helper must model timeout outcomes, show-key consumption, and late-callback no-ops',
-        );
         routeIsValid = false;
       }
     }
@@ -10947,100 +11192,6 @@ function validateCitizenshipRequirementsLimitedSeatParity() {
   if (!valid) return;
 }
 
-function validateCitizenshipRequirementsChecklistPersistenceParity() {
-  let valid = true;
-  let routeSource = '';
-  let storeSource = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    routeSource = fs.readFileSync(path.join(repoRoot, 'app/citizenship-requirements.tsx'), 'utf8');
-  } catch (error) {
-    reject(`app/citizenship-requirements.tsx could not be read: ${error.message}`);
-    return;
-  }
-
-  try {
-    storeSource = fs.readFileSync(
-      path.join(repoRoot, 'lib/storage/citizenshipRequirementsStore.ts'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(`lib/storage/citizenshipRequirementsStore.ts could not be read: ${error.message}`);
-    return;
-  }
-
-  [
-    [
-      'useCitizenshipRequirementsChecklistStore',
-      routeSource,
-      'route must use persisted checklist store',
-    ],
-    ['PersistenceWarningNotice', routeSource, 'route must render recoverable persistence warnings'],
-    [
-      'const checkedAreaIds = useCitizenshipRequirementsChecklistStore',
-      routeSource,
-      'route must select checked ids from the store',
-    ],
-    [
-      'const toggleChecklistArea = useCitizenshipRequirementsChecklistStore',
-      routeSource,
-      'route must toggle through the store',
-    ],
-    [
-      'warning={persistenceWarning}',
-      routeSource,
-      'route must pass checklist persistence warnings to the notice',
-    ],
-    [
-      'onPress={() => toggleChecklistArea(area.id)}',
-      routeSource,
-      'checkbox presses must persist through the checklist store',
-    ],
-    [
-      "const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';",
-      storeSource,
-      'checklist store must use a versioned checked-area key',
-    ],
-    [
-      "const citizenshipRequirementsStorageId = 'citizenship-requirements';",
-      storeSource,
-      'checklist store must use a dedicated MMKV id',
-    ],
-    [
-      'normalizeCitizenshipRequirementAreaIds',
-      storeSource,
-      'checklist store must normalize stale imported area ids',
-    ],
-    ['readRecoverably(', storeSource, 'checklist store must recover from read failures'],
-    ['parseJsonRecoverably(', storeSource, 'checklist store must recover from corrupt JSON'],
-    ['writeRecoverably(', storeSource, 'checklist store must recover from write failures'],
-    [
-      'citizenshipRequirementAreas.map((area) => area.id)',
-      storeSource,
-      'checklist store must preserve canonical area order',
-    ],
-  ].forEach(([snippet, source, message]) => {
-    if (!source.includes(snippet)) {
-      reject(message);
-      return;
-    }
-    citizenshipRequirementsChecklistPersistenceRulesValidated += 1;
-  });
-
-  if (/useState<ReadonlySet/.test(routeSource)) {
-    reject('citizenship requirements checklist must not use component-local checked id state');
-  }
-
-  if (valid && citizenshipRequirementsChecklistPersistenceRulesValidated === 13) {
-    citizenshipRequirementsChecklistPersistenceParityValidated = true;
-  }
-}
-
 function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
@@ -11630,10 +11781,6 @@ function validatePracticeRouteCopyParity() {
     reject('source drawer copy must not contain hyphenated about-the-sources');
   }
 
-  if (SWEDISH_MOCKPROV_COPY_PATTERN.test(practiceRoute)) {
-    reject('practice route Swedish copy must use övningsprov wording, not mockprov/mock-provet');
-  }
-
   const seenLabels = new Set();
   Object.entries(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -12213,10 +12360,6 @@ function validateHomeRouteCopyParity() {
     reject('home route guided path must finish with chapters 10-13');
   }
 
-  if (SWEDISH_MOCKPROV_COPY_PATTERN.test(homeRoute)) {
-    reject('home route Swedish copy must use övningsprov wording, not mockprov/mock-provet');
-  }
-
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -12487,6 +12630,62 @@ function validateLegalRouteHeaderParity() {
         reject('Swedish privacy copy must name locally stored study streaks as studiesviter');
       } else {
         swedishPrivacyStreakCopyNaturalnessValidated = true;
+      }
+
+      const requiredRemoveAdsCopy = [
+        {
+          label: 'Swedish learner-facing ad removal effect',
+          pattern: /gör att annonser inte visas på den här enheten/,
+        },
+        {
+          label: 'English learner-facing ad removal effect',
+          pattern: /turns off ads on this device/,
+        },
+        {
+          label: 'Swedish one-time non-consumable 29 SEK purchase',
+          pattern: /Ta bort annonser är ett engångsköp utan förbrukning för 29 SEK/,
+        },
+        {
+          label: 'English one-time non-consumable 29 SEK purchase',
+          pattern: /Remove Ads is a one-time non-consumable purchase for 29 SEK/,
+        },
+        {
+          label: 'Swedish app-store restore wording',
+          pattern: /kan återställas via appbutiken/,
+        },
+        {
+          label: 'English app-store restore wording',
+          pattern: /can be restored through the app store/,
+        },
+        {
+          label: 'Swedish Google Mobile Ads study-screen disclosure',
+          pattern: /Gratisappen finansieras med annonser på studieskärmar via Google Mobile Ads/,
+        },
+        {
+          label: 'English Google Mobile Ads study-screen disclosure',
+          pattern: /The free app is ad-supported on study screens through Google Mobile Ads/,
+        },
+        {
+          label: 'Swedish timed exam ad-free disclosure',
+          pattern: /Tidsatta provskärmar är annonsfria/,
+        },
+        {
+          label: 'English timed mock exam ad-free disclosure',
+          pattern: /Timed mock exam screens stay ad-free/,
+        },
+      ];
+
+      if (/\badsDisabled\b/i.test(routeSource)) {
+        reject('Privacy Remove Ads copy must not expose adsDisabled implementation flags');
+      } else {
+        let requiredRemoveAdsCopyValidated = true;
+        for (const expectedCopy of requiredRemoveAdsCopy) {
+          if (!expectedCopy.pattern.test(routeSource)) {
+            requiredRemoveAdsCopyValidated = false;
+            reject(`Privacy Remove Ads copy missing ${expectedCopy.label}`);
+          }
+        }
+        if (requiredRemoveAdsCopyValidated) privacyRemoveAdsCopyNaturalnessValidated = true;
       }
     }
   }
@@ -13028,25 +13227,26 @@ function validateCardAccessibilityParity() {
 
 function validateProgressBarAccessibilityParity() {
   let valid = true;
-  const progressBarSources = new Map();
+  let progressBarSource = '';
 
   function reject(message) {
     valid = false;
     fail(message);
   }
 
-  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
-    let progressBarSource = progressBarSources.get(expectedRule.file);
-    if (progressBarSource === undefined) {
-      try {
-        progressBarSource = fs.readFileSync(path.join(repoRoot, expectedRule.file), 'utf8');
-        progressBarSources.set(expectedRule.file, progressBarSource);
-      } catch (error) {
-        reject(`${expectedRule.file} could not be read for accessibility parity: ${error.message}`);
-        return;
-      }
-    }
+  try {
+    progressBarSource = fs.readFileSync(
+      path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(
+      `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
 
+  EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
     if (!expectedRule.pattern.test(progressBarSource)) {
       reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
       return;
@@ -17464,7 +17664,7 @@ function validateXpRules() {
   }
 }
 
-if (focusedValidationRequested('badgeXpRuntime')) {
+if (process.argv.includes('--focus-badge-xp-runtime')) {
   validateBadgeCatalog();
   validateXpRules();
   exitWithValidationFailures();
@@ -17921,138 +18121,6 @@ function validateReadinessAdapterRules() {
   }
 }
 
-function validateReadinessScoreRules() {
-  if (typeof computeReadinessScore !== 'function') return;
-
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const chapters = [{ id: 'ch01', questionCount: 3 }];
-  const questionChapterIndex = { q1: 'ch01', q2: 'ch01', q3: 'ch01' };
-  const makeProgress = (answers, mode = 'study', score) => ({
-    totalXp: 0,
-    level: 1,
-    currentStreak: 0,
-    dailyGoalAnswers: 0,
-    questionProgress: {},
-    sessions: [
-      {
-        id: `${mode}-readiness-runtime`,
-        mode,
-        questionIds: answers.map((answer) => answer.questionId),
-        startedAt: '2026-05-19T09:00:00.000Z',
-        completedAt: mode === 'exam' ? '2026-05-19T10:00:00.000Z' : undefined,
-        score,
-        answers,
-      },
-    ],
-  });
-  const makeAnswer = (questionId, isCorrect, minute) => ({
-    questionId,
-    selectedOptionIds: ['a'],
-    isCorrect,
-    answeredAt: `2026-05-19T10:${String(minute).padStart(2, '0')}:00.000Z`,
-    timeSpentSeconds: 5,
-  });
-  const malformedReadiness = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', 'yes', 0),
-      makeAnswer('q2', 1, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const strictFalseReadiness = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', false, 0),
-      makeAnswer('q2', false, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const validBooleanReadiness = computeReadinessScore({
-    progress: makeProgress([
-      makeAnswer('q1', true, 0),
-      makeAnswer('q2', true, 1),
-      makeAnswer('q3', false, 2),
-    ]),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const examOnlyReadiness = computeReadinessScore({
-    progress: makeProgress(
-      [makeAnswer('q1', true, 0), makeAnswer('q2', true, 1), makeAnswer('q3', false, 2)],
-      'exam',
-      0.8,
-    ),
-    chapters,
-    questionChapterIndex,
-    now,
-  });
-  const readinessSource = loadText('lib/learning/readiness.ts');
-  const rollingStart = readinessSource.indexOf('function rollingAccuracy');
-  const rollingEnd = readinessSource.indexOf('\nfunction mockAverage', rollingStart);
-  const rollingBody =
-    rollingStart === -1 || rollingEnd === -1 ? '' : readinessSource.slice(rollingStart, rollingEnd);
-  const rules = [
-    {
-      label: 'truthy non-boolean study correctness matches strict false answers',
-      valid:
-        malformedReadiness.components.accuracy === 0 &&
-        malformedReadiness.components.accuracy === strictFalseReadiness.components.accuracy &&
-        malformedReadiness.score === strictFalseReadiness.score &&
-        malformedReadiness.verdict === strictFalseReadiness.verdict,
-      detail: JSON.stringify({ malformedReadiness, strictFalseReadiness }),
-    },
-    {
-      label: 'truthy non-boolean study correctness cannot raise the readiness verdict',
-      valid:
-        malformedReadiness.score < validBooleanReadiness.score &&
-        malformedReadiness.verdict === 'not_ready_yet',
-      detail: JSON.stringify({ malformedReadiness, validBooleanReadiness }),
-    },
-    {
-      label: 'valid boolean correctness still contributes to raw readiness accuracy',
-      valid:
-        validBooleanReadiness.components.accuracy > 0.6 &&
-        validBooleanReadiness.components.accuracy < 0.7,
-      detail: JSON.stringify(validBooleanReadiness),
-    },
-    {
-      label: 'exam answers feed mock average without practice accuracy',
-      valid:
-        examOnlyReadiness.components.accuracy === 0 &&
-        Math.abs(examOnlyReadiness.components.mockAverage - 0.8) < 0.0001,
-      detail: JSON.stringify(examOnlyReadiness),
-    },
-    {
-      label: 'rolling accuracy source uses strict boolean correctness',
-      valid:
-        rollingBody.length > 0 &&
-        rollingBody.includes('answer.isCorrect === true') &&
-        !/if\s*\(\s*answer\.isCorrect\s*\)/.test(rollingBody),
-      detail: 'rollingAccuracy must not count truthy non-boolean values as correct',
-    },
-  ];
-  let rulesAreValid = true;
-
-  rules.forEach(({ label, valid, detail }) => {
-    if (valid) {
-      readinessScoreRulesValidated += 1;
-      return;
-    }
-    rulesAreValid = false;
-    fail(`readiness score rule ${label} failed: ${detail}`);
-  });
-
-  if (rulesAreValid && readinessScoreRulesValidated === EXPECTED_READINESS_SCORE_RULE_COUNT) {
-    readinessScoreRuntimeParityValidated = true;
-  }
-}
-
 function validateWeeklyRecapRuntimeGuards() {
   if (typeof generateWeeklyRecap !== 'function') {
     return;
@@ -18159,7 +18227,7 @@ function validateWeeklyRecapRuntimeGuards() {
   }
 }
 
-if (focusedValidationRequested('weeklyRecapRuntime')) {
+if (process.argv.includes('--focus-weekly-recap-runtime')) {
   validateWeeklyRecapRuntimeGuards();
   exitWithValidationFailures();
   printValidationSummary({
@@ -18621,7 +18689,7 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankChaptersValidated = bank.chapters.length;
 
   if (actual !== expected) {
-    fail(classifyStaticSiteQuestionBankDrift(actual, expected).message);
+    fail('site/questions.js is out of sync; run node scripts/export-site-question-bank.js');
     return;
   }
 
@@ -19655,7 +19723,6 @@ validateExamSubmissionFinalityParity();
 validateAboutTheTestRouteCopyParity();
 validateAboutTheTestSeenEffectParity();
 validateCitizenshipRequirementsLimitedSeatParity();
-validateCitizenshipRequirementsChecklistPersistenceParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
 validateNativeMockExamComponentLegalCopy();
@@ -19737,7 +19804,6 @@ validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateDashboardPerChapterInputRules();
 validateReadinessAdapterRules();
-validateReadinessScoreRules();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -19802,8 +19868,6 @@ console.log(
       aboutTheTestSeenEffectParityValidated,
       aboutTheTestSwedishMockprovCopyGuardValidated,
       citizenshipRequirementsLimitedSeatCopyValidated,
-      citizenshipRequirementsChecklistPersistenceRulesValidated,
-      citizenshipRequirementsChecklistPersistenceParityValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
       examRouteCopyLabelsValidated,
@@ -19852,6 +19916,7 @@ console.log(
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
+      privacyRemoveAdsCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
       staticSiteSwedishStudyTermsValidated,
@@ -19888,7 +19953,6 @@ console.log(
       cardAccessibilityRulesValidated,
       cardAccessibilityParityValidated,
       progressBarAccessibilityRulesValidated,
-      progressBarAccessibilityRulesExpected: EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length,
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
       metricCardAccessibilityParityValidated,
@@ -20027,8 +20091,6 @@ console.log(
       dashboardPerChapterInputParityValidated,
       readinessAdapterRulesValidated,
       readinessAdapterRuntimeParityValidated,
-      readinessScoreRulesValidated,
-      readinessScoreRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
