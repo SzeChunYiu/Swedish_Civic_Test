@@ -99,7 +99,7 @@ function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
     }
   }
 
-  return segments;
+  return offenders;
 }
 
 test('static site question bank is semantically generated from canonical content', () => {
@@ -111,7 +111,8 @@ test('static site question bank is semantically generated from canonical content
   assert.equal(drift.hasSemanticDrift, false);
   assert.deepEqual(drift.questionIds, []);
   assert.deepEqual(drift.chapterIds, []);
-  assert.equal(drift.formatOnly || drift.sourceMatchesGenerated, true);
+  assert.equal(drift.sourceMatchesGenerated, true, formatStaticQuestionBankDrift(drift));
+  assert.equal(drift.formatOnly, false);
 });
 
 test('static site question bank exposes the canonical question and chapter counts', () => {
@@ -237,16 +238,11 @@ test('chapter localization metadata avoids parenthetical English welfare glosses
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
 
-  const offenders = [];
-  for (const question of context.window.SMT_QUESTIONS) {
-    for (const [segment, value] of staticPublicServiceSegments(question)) {
-      if (typeof value === 'string' && PUBLIC_SERVICE_LOANWORD_PATTERN.test(value)) {
-        offenders.push(segment);
-      }
-    }
-  }
-
-  assert.deepEqual(offenders, []);
+  assert.deepEqual(chapterLocalizationWelfareGlossOffenders(bank.chapters, 'canonical'), []);
+  assert.deepEqual(
+    chapterLocalizationWelfareGlossOffenders(context.window.SMT_CHAPTERS_META, 'static'),
+    [],
+  );
 });
 
 test('static site question bank drift report classifies format-only mismatches', () => {
@@ -276,13 +272,19 @@ test('static site question bank source fixture limits one-question localization 
     chapters: canonical.chapters,
     getQuestionProvenance: canonical.getQuestionProvenance,
   });
+  const touchedSource = generateStaticSiteQuestionBankJs({
+    questions: touchedQuestions,
+    chapters: canonical.chapters,
+    getQuestionProvenance: canonical.getQuestionProvenance,
+  });
 
-  const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank);
+  const drift = summarizeStaticQuestionBankDrift(baselineSource, expectedBank, touchedSource);
   const q020GeneratedVariantIds = [0, 1, 2, 3].map((variantOffset) =>
     generatedQuestionId(canonical.sourceQuestions, 'q020', variantOffset),
   );
 
   assert.equal(drift.hasSemanticDrift, true);
+  assert.equal(drift.formatOnly, false);
   assert.equal(drift.questionIds[0], 'q020');
   assert.deepEqual(drift.questionIds.slice(1), q020GeneratedVariantIds);
   assert.deepEqual(drift.chapterIds, []);
