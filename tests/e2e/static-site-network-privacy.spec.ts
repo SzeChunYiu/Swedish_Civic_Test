@@ -2,6 +2,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { setStaticSiteLanguage, startStaticSiteServer, type StaticSite } from './staticSiteServer';
 
 const googleFontHosts = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
+const internalMonetizationCopyPatterns = [
+  /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i,
+  /\bmonetization\.removeAds\.adsDisabled\.v\d+\b/i,
+  /\bremove[_-]ads[_-]entitlement\b/i,
+  /\bpurchase_fields_rejected\b/i,
+  /\bentitlement flag\b/i,
+];
 
 function isGoogleFontRequest(url: string) {
   return googleFontHosts.has(new URL(url).hostname);
@@ -52,6 +59,14 @@ async function expectNoHorizontalOverflow(page: Page) {
 
   expect(metrics.rootScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
   expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
+}
+
+async function expectNoVisibleInternalMonetizationCopy(page: Page) {
+  const visibleText = await page.locator('body').innerText();
+
+  for (const pattern of internalMonetizationCopyPatterns) {
+    expect(visibleText).not.toMatch(pattern);
+  }
 }
 
 let staticSite: StaticSite;
@@ -109,16 +124,17 @@ test('privacy route renders localized plain-language callout labels', async ({ p
   await trapExternalRequests(page, new URL(staticSite.baseUrl).origin, []);
 
   await page.goto(`${staticSite.baseUrl}/#/privacy`, { waitUntil: 'domcontentloaded' });
-  await page.locator('#consent').evaluate((node) => {
-    (node as HTMLElement).hidden = true;
-  });
 
   await expect(page.getByText('In plain English:', { exact: true })).toBeVisible();
   await expect(page.getByText('In plain Swedish:', { exact: true })).toHaveCount(0);
+  await expect(page.locator('#consent')).toBeVisible();
+  await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
 
   await setStaticSiteLanguage(page, 'sv');
   await expect(page.getByText('På klarspråk:', { exact: true })).toBeVisible();
   await expect(page.getByText('In plain English:', { exact: true })).toHaveCount(0);
+  await expect(page.locator('#consent')).toBeVisible();
+  await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
 });
