@@ -89,7 +89,7 @@ async function openExamWithLanguage(page: Page, language: AppLanguage) {
   await dismissBlockingModals(page);
 }
 
-test('mock exam requires all answers before showing Swedish score and source-backed review', async ({
+test('mock exam requires all answers before showing Swedish score and source provenance review', async ({
   page,
 }) => {
   const consoleErrors: string[] = [];
@@ -113,7 +113,6 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   await expect(activeCount).toBeVisible();
   await expect(page.getByText(/^Tid kvar/)).toBeVisible();
   await expect(page.getByText(/^Källa: Sverige i fokus/).first()).toBeVisible();
-
   const submit = page.getByRole('button', { name: 'Skicka övningsprov' });
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
@@ -162,7 +161,7 @@ test('mock exam requires all answers before showing Swedish score and source-bac
   expect(consoleErrors).toEqual([]);
 });
 
-test('mock exam review follows English support mode', async ({ page }) => {
+test('mock exam provenance review follows English support mode', async ({ page }) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
