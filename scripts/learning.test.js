@@ -126,6 +126,45 @@ test('streakWithFreeze ignores malformed date inputs without corrupting freeze s
   );
 });
 
+test('answer date parser rejects calendar rollovers and preserves canonical dates', () => {
+  const { validAnswerDate, validAnswerTimestampMs } = loadAllTs('lib/learning/answerDates.ts');
+  const now = new Date('2026-05-21T12:00:00.000Z');
+
+  assert.equal(
+    validAnswerTimestampMs('2026-05-19T10:00:00.000Z', now),
+    Date.parse('2026-05-19T10:00:00.000Z'),
+  );
+  assert.equal(
+    validAnswerTimestampMs('2026-05-19T10:00:00+02:00', now),
+    Date.parse('2026-05-19T10:00:00+02:00'),
+  );
+  assert.equal(validAnswerDate('2026-05-19', now)?.toISOString(), '2026-05-19T00:00:00.000Z');
+  assert.equal(
+    validAnswerTimestampMs('2026-05-21T12:04:59.000Z', now),
+    Date.parse('2026-05-21T12:04:59.000Z'),
+  );
+  assert.equal(validAnswerTimestampMs('2026-02-30', now), null);
+  assert.equal(validAnswerTimestampMs('2026-02-30T00:00:00.000Z', now), null);
+  assert.equal(validAnswerTimestampMs('2026-13-01', now), null);
+  assert.equal(validAnswerTimestampMs('2026-05-19 10:00:00', now), null);
+  assert.equal(validAnswerTimestampMs('2026-05-21T12:05:01.000Z', now), null);
+});
+
+test('answer date learning consumers use the shared parser instead of direct Date.parse', () => {
+  const consumerPaths = [
+    'lib/learning/adaptivePractice.ts',
+    'lib/learning/dashboardStats.ts',
+    'lib/learning/readiness.ts',
+    'lib/learning/resumeWhereLeftOff.ts',
+  ];
+
+  for (const relativePath of consumerPaths) {
+    const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    assert.match(source, /validAnswer(?:TimestampMs|Date)/, `${relativePath} must use answerDates`);
+    assert.doesNotMatch(source, /Date\.parse\(/, `${relativePath} must not parse answers directly`);
+  }
+});
+
 test('daily goal counts question answers for the requested local day only', () => {
   const { countAnswersForLocalDate } = loadAllTs('lib/learning/streaks.ts');
 
