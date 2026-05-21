@@ -574,6 +574,41 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assert.deepEqual(useProgressStore.getState().answerHistory, []);
 });
 
+test('recordAnswer ignores non-boolean correctness before state or storage writes', () => {
+  const initialProgress = {
+    completedQuestionIds: [],
+    questionProgress: {},
+    totalXp: 0,
+    answerDates: [],
+    answerHistory: [],
+    dailyChallengeCompletions: {},
+    mockExamSessions: [],
+    streakFreezeState: {
+      available: 1,
+      lastEarnedAt: '2026-05-19',
+      lifetimeEarned: 1,
+      lifetimeSpent: 0,
+      rescuedDayKeys: [],
+    },
+  };
+  const { useProgressStore, readPersistedProgress } = loadProgressStoreFromStorage(initialProgress);
+
+  const stateBefore = progressSnapshot(useProgressStore.getState());
+  const persistedBefore = readPersistedProgress();
+
+  useProgressStore.getState().recordAnswer('q-runtime-bool', 'yes');
+  useProgressStore.getState().recordAnswer('q-runtime-number', 1);
+  useProgressStore.getState().recordAnswer('q-runtime-null', null);
+
+  assert.deepEqual(progressSnapshot(useProgressStore.getState()), stateBefore);
+  assert.deepEqual(readPersistedProgress(), persistedBefore);
+  assert.equal(useProgressStore.getState().questionProgress['q-runtime-bool'], undefined);
+  assert.equal(useProgressStore.getState().answerHistory.length, 0);
+  assert.equal(useProgressStore.getState().totalXp, 0);
+  assert.deepEqual(useProgressStore.getState().completedQuestionIds, []);
+  assert.deepEqual(useProgressStore.getState().answerDates, []);
+});
+
 test('exam submission finality parity rejects losing the submitted completion timestamp', () => {
   const result = runFocusedExamSubmissionValidationWithRoutePatch(
     'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),',
@@ -694,6 +729,19 @@ test('progress store schema parity rejects raw confidence hydration', () => {
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /question progress hydration must preserve only valid 1\.\.5 confidence ratings|progress hydration must not use raw numeric expression confidenceRating: item\.confidenceRating/,
+  );
+});
+
+test('progress store schema parity rejects missing strict recordAnswer boolean guard', () => {
+  const result = runValidationWithProgressStorePatch(
+    "if (typeof isCorrect !== 'boolean') return state;",
+    '',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /recordAnswer must ignore non-boolean correctness before mutating progress/,
   );
 });
 
