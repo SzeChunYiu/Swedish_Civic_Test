@@ -15856,16 +15856,28 @@ function validateProgressStoreSchemaParity() {
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
     [
-      'function normalizeCompletedQuestionIds(value: unknown): string[] {',
-      'progress hydration must normalize completedQuestionIds through a dedicated helper',
+      'function normalizeHydratedQuestionId(value: unknown): string | undefined {',
+      'progress hydration must normalize array question ids through a dedicated helper',
     ],
     [
-      'if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) { continue; }',
-      'completedQuestionIds hydration must trim, reject unsafe keys, and dedupe ids',
+      'if (!questionId || !isSafeImportedMapKey(questionId)) return undefined;',
+      'array question-id hydration must trim and reject unsafe keys',
     ],
     [
       'const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);',
       'normalizeProgress must hydrate completedQuestionIds through the safe id normalizer',
+    ],
+    [
+      'const questionId = normalizeHydratedQuestionId(item.questionId);',
+      'mock exam timing hydration must share the safe question-id normalizer',
+    ],
+    [
+      'const questionId = normalizeHydratedQuestionId(candidate.questionId);',
+      'answer history hydration must share the safe question-id normalizer',
+    ],
+    [
+      'const questionId = normalizeHydratedQuestionId(item); if (!questionId || seenQuestionIds.has(questionId)) continue;',
+      'completedQuestionIds hydration must share the safe question-id normalizer and dedupe ids',
     ],
     [
       "if (typeof isCorrect !== 'boolean') return state;",

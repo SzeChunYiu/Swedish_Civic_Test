@@ -163,6 +163,13 @@ function normalizeLocalDateKey(value: unknown): string | undefined {
   return normalized === trimmed ? trimmed : undefined;
 }
 
+function normalizeHydratedQuestionId(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const questionId = value.trim();
+  if (!questionId || !isSafeImportedMapKey(questionId)) return undefined;
+  return questionId;
+}
+
 function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTiming[] {
   if (!Array.isArray(value)) return [];
 
@@ -172,7 +179,7 @@ function normalizeMockExamQuestionTimings(value: unknown): MockExamQuestionTimin
   for (const timing of value) {
     if (!timing || typeof timing !== 'object') continue;
     const item = timing as Partial<MockExamQuestionTiming>;
-    const questionId = typeof item.questionId === 'string' ? item.questionId.trim() : '';
+    const questionId = normalizeHydratedQuestionId(item.questionId);
     if (!questionId || seenQuestionIds.has(questionId)) continue;
     const timeSpentSeconds = normalizeNonNegativeInteger(
       item.timeSpentSeconds,
@@ -192,7 +199,7 @@ function normalizeAnswerHistoryEntry(value: unknown): AnswerHistoryEntry | null 
   if (!value || typeof value !== 'object') return null;
 
   const candidate = value as Partial<AnswerHistoryEntry>;
-  const questionId = typeof candidate.questionId === 'string' ? candidate.questionId.trim() : '';
+  const questionId = normalizeHydratedQuestionId(candidate.questionId);
   const answeredAt = normalizeIsoTimestamp(candidate.answeredAt);
   if (!questionId || typeof candidate.isCorrect !== 'boolean' || !answeredAt) return null;
 
@@ -238,10 +245,8 @@ function normalizeCompletedQuestionIds(value: unknown): string[] {
   const questionIds: string[] = [];
   const seenQuestionIds = new Set<string>();
   for (const item of value) {
-    const questionId = typeof item === 'string' ? item.trim() : '';
-    if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) {
-      continue;
-    }
+    const questionId = normalizeHydratedQuestionId(item);
+    if (!questionId || seenQuestionIds.has(questionId)) continue;
     seenQuestionIds.add(questionId);
     questionIds.push(questionId);
     if (questionIds.length >= maxHydratedQuestionAnswerCount) break;

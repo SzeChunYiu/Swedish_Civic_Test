@@ -724,6 +724,43 @@ test('local study data import ignores unsafe imported map keys with the shared g
     "version": 1,
     "progress": {
       "completedQuestionIds": ["q001"],
+      "answerHistory": [
+        {
+          "questionId": "q001",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:00:00.000Z"
+        },
+        {
+          "questionId": " __proto__ ",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:01:00.000Z"
+        },
+        {
+          "questionId": "constructor",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:02:00.000Z"
+        },
+        {
+          "questionId": "prototype",
+          "isCorrect": true,
+          "answeredAt": "2026-05-20T08:03:00.000Z"
+        }
+      ],
+      "mockExamSessions": [
+        {
+          "sessionId": "safe-session",
+          "score": 1,
+          "completedAt": "2026-05-20T08:10:00.000Z",
+          "correctCount": 1,
+          "totalCount": 1,
+          "questionTimings": [
+            { "questionId": "q001", "timeSpentSeconds": 12 },
+            { "questionId": " __proto__ ", "timeSpentSeconds": 13 },
+            { "questionId": "constructor", "timeSpentSeconds": 14 },
+            { "questionId": "prototype", "timeSpentSeconds": 15 }
+          ]
+        }
+      ],
       "questionProgress": {
         "q001": ${unsafeProgressEntry},
         "__proto__": ${unsafeProgressEntry},
@@ -760,6 +797,13 @@ test('local study data import ignores unsafe imported map keys with the shared g
   const { mistakeReview, progress, reviews, summary } = previewResult.preview;
 
   assert.deepEqual(Object.keys(progress.questionProgress), ['q001']);
+  assert.deepEqual(
+    progress.answerHistory.map((entry) => entry.questionId),
+    ['q001'],
+  );
+  assert.deepEqual(progress.mockExamSessions[0].questionTimings, [
+    { questionId: 'q001', timeSpentSeconds: 12 },
+  ]);
   assert.deepEqual(Object.keys(mistakeReview.wrongAnswerReviews), ['q001']);
   assert.deepEqual(Object.keys(reviews.byId), ['q001']);
   assert.deepEqual(reviews.gradedPerDay, { '2026-05-20': 2 });
