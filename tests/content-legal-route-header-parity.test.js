@@ -186,7 +186,7 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 59);
+  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 60);
   assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
   assert.equal(summary.legalInternalMonetizationKeyGuardValidated, 7);
   assert.equal(summary.legalInternalMonetizationKeyGuardParityValidated, true);

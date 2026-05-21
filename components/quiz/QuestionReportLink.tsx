@@ -7,7 +7,7 @@ import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { space } from '../../lib/theme';
 import { Button } from '../Button';
 
-type QuestionReportScreen = 'chapter' | 'practice' | 'quiz';
+type QuestionReportScreen = 'chapter' | 'exam' | 'practice' | 'quiz';
 
 type QuestionReportLinkCopy = {
   accessibilityLabel: (questionId: string) => string;
