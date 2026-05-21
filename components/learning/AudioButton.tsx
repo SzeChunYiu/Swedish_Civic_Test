@@ -41,14 +41,16 @@ const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = {
 export function AudioButton({
   enabled = true,
   language = 'sv',
+  rate,
   text = '',
 }: {
   enabled?: boolean;
   language?: AppLanguage;
-  text?: string | null;
+  rate?: number;
+  text?: string;
 }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const speechText = typeof text === 'string' ? text.trim() : '';
+  const speechText = text.trim();
   const hasSpeechText = speechText.length > 0;
   const canPlayAudio = enabled && hasSpeechText;
   const copy = audioButtonCopy[language];
@@ -99,6 +101,7 @@ export function AudioButton({
         stopSpeech();
         setIsSpeaking(true);
         speakSwedish(speechText, {
+          rate,
           onDone: () => setIsSpeaking(false),
           onError: () => setIsSpeaking(false),
           onStopped: () => setIsSpeaking(false),

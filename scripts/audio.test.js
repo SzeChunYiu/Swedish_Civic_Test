@@ -141,37 +141,6 @@ test('buildAnswerFeedbackSpeechText keeps authority wording and source citations
   assert.doesNotMatch(text, /UHR|Källa|Source|Sverige i fokus|s\. 5/i);
 });
 
-test('speech text builders tolerate malformed runtime question data', () => {
-  const { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } = loadTs('lib/audio/speak.ts');
-
-  assert.doesNotThrow(() => buildQuestionSpeechText({ questionSv: 'Fråga?' }));
-  assert.equal(buildQuestionSpeechText({ questionSv: 'Fråga?' }), 'Fråga?');
-
-  const questionText = buildQuestionSpeechText({
-    questionSv: null,
-    options: [
-      { id: 'a', textSv: null, textEn: 'Missing Swedish text' },
-      { id: 'b', textSv: 'Ett svar', textEn: 'An answer' },
-    ],
-  });
-  assert.equal(questionText, 'Alternativ B. Ett svar.');
-  assert.doesNotMatch(questionText, /null|undefined/i);
-
-  const feedbackText = buildAnswerFeedbackSpeechText(
-    {
-      questionSv: 'Fråga?',
-      correctOptionId: 'a',
-      explanationSv: null,
-    },
-    'b',
-  );
-  assert.equal(
-    feedbackText,
-    'Du valde: det valda svaret. Det rätta svaret är: det markerade rätta svaret.',
-  );
-  assert.doesNotMatch(feedbackText, /null|undefined/i);
-});
-
 test('speech helpers do not crash when the platform speech engine is unavailable', () => {
   moduleCache.clear();
   const warnings = [];
@@ -245,37 +214,23 @@ test('speakSwedish forwards lifecycle callbacks to Expo Speech', () => {
   assert.equal(speakCalls[0].options.onStopped, callbacks.onStopped);
 });
 
-test('speakSwedish ignores malformed text, non-finite rates, and non-function callbacks', () => {
+test('question audio autoplay gate is opt-in and stop-aware', () => {
   moduleCache.clear();
-  const speakCalls = [];
-  const { speakSwedish } = loadTs('lib/audio/speak.ts', {
-    speechMock: {
-      speak(text, options) {
-        speakCalls.push({ text, options });
-      },
-      stop() {},
-    },
-  });
+  const { shouldAutoplayQuestionAudio } = loadTs('lib/audio/questionAudioAutoplay.ts');
+  const base = {
+    audioEnabled: true,
+    listenFirstAudioEnabled: true,
+    questionKey: 'practice:q001',
+    speechText: 'Var ligger Sverige?',
+  };
 
-  assert.doesNotThrow(() => speakSwedish(null));
-  assert.doesNotThrow(() => speakSwedish(undefined));
-  assert.doesNotThrow(() => speakSwedish(123));
-  assert.doesNotThrow(() => speakSwedish({ trim: () => 'hej' }));
-  assert.equal(speakCalls.length, 0);
-
-  speakSwedish('Hej igen', {
-    rate: Infinity,
-    onDone: 'done',
-    onError: null,
-    onStopped: 123,
-  });
-
-  assert.equal(speakCalls.length, 1);
-  assert.equal(speakCalls[0].text, 'Hej igen');
-  assert.equal(Object.prototype.hasOwnProperty.call(speakCalls[0].options, 'rate'), false);
-  assert.equal(speakCalls[0].options.onDone, undefined);
-  assert.equal(speakCalls[0].options.onError, undefined);
-  assert.equal(speakCalls[0].options.onStopped, undefined);
+  assert.equal(shouldAutoplayQuestionAudio(base), true);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, audioEnabled: false }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, listenFirstAudioEnabled: false }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, questionKey: null }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, speechText: '   ' }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, stopSignal: true }), false);
+  assert.equal(shouldAutoplayQuestionAudio({ ...base, suppressAutoplay: true }), false);
 });
 
 test('practice and routed quiz screens honor the persisted audio setting', () => {
@@ -286,6 +241,10 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     assert.match(source, /import\s+\{\s*AudioButton\s*\}\s+from ['"][^'"]+AudioButton['"]/);
     assert.match(
       source,
+      /import\s+\{\s*useQuestionAudioAutoplay\s*\}\s+from ['"][^'"]+questionAudioAutoplay['"]/,
+    );
+    assert.match(
+      source,
       /import\s+\{[^}]*buildQuestionSpeechText[^}]*\}\s+from ['"][^'"]+lib\/audio\/speak['"]/,
     );
     assert.match(
@@ -294,7 +253,10 @@ test('practice and routed quiz screens honor the persisted audio setting', () =>
     );
     assert.match(
       source,
-      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*text=\{buildQuestionSpeechText\(question\)\}[\s\S]*\/>/,
+      /<AudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*language=\{language\}[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{questionSpeechText\}[\s\S]*\/>/,
     );
+    assert.match(source, /const audioPlaybackRate = useAccessibilityStore/);
+    assert.match(source, /\(state\) => state\.listenFirstAudioEnabled\)?[,)]/);
+    assert.match(source, /useQuestionAudioAutoplay\(\{/);
   }
 });

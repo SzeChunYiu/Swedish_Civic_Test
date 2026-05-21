@@ -19,7 +19,12 @@ import { PersistenceWarningNotice } from '../../components/storage/PersistenceWa
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
+import {
+  buildAnswerFeedbackSpeechText,
+  buildQuestionSpeechText,
+  stopSpeech,
+} from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import {
   buildDailyChallenge,
@@ -39,6 +44,7 @@ import {
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { PracticeQuestion } from '../../types/content';
@@ -180,6 +186,8 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -227,6 +235,23 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
+  const questionSpeechText = useMemo(
+    () => (question ? buildQuestionSpeechText(question) : ''),
+    [question],
+  );
+
+  useQuestionAudioAutoplay({
+    audioEnabled,
+    listenFirstAudioEnabled,
+    questionKey: question ? `${shuffleSessionId}:${question.id}` : null,
+    rate: audioPlaybackRate,
+    speechText: questionSpeechText,
+    stopSignal: hasSelectedAnswer || challengeTimedOut,
+  });
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
@@ -237,11 +262,6 @@ export default function Screen() {
     setChallengeAnswers({});
     setChallengeRetryActive(false);
   }, [dailyChallenge.dayKey, isChallengeMode]);
-
-  const hasSelectedAnswer = Boolean(
-    question && selectedOptionId && activeQuestionId === question.id,
-  );
-  const challengeTimedOut = isChallengeMode && remainingChallengeSeconds <= 0;
 
   useEffect(() => {
     if (!isChallengeMode || hasSelectedAnswer || challengeTimedOut) return undefined;
@@ -280,6 +300,7 @@ export default function Screen() {
     practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
   const handleSelectOption = (optionId: string) => {
     if (challengeTimedOut) return;
+    stopSpeech();
 
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
@@ -318,10 +339,12 @@ export default function Screen() {
     }
   };
   const handleAdvanceQuestion = () => {
+    stopSpeech();
     setSelectedConfidenceRating(null);
     advanceQuestion();
   };
   const handleTryAgain = () => {
+    stopSpeech();
     setSelectedConfidenceRating(null);
     if (isChallengeMode) {
       setChallengeRetryActive(true);
@@ -440,7 +463,8 @@ export default function Screen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        text={buildQuestionSpeechText(question)}
+        rate={audioPlaybackRate}
+        text={questionSpeechText}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -495,6 +519,7 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

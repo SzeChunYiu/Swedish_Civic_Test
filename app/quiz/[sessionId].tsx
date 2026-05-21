@@ -16,7 +16,12 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
+import {
+  buildAnswerFeedbackSpeechText,
+  buildQuestionSpeechText,
+  stopSpeech,
+} from '../../lib/audio/speak';
 import { useProLifetimeEntitlements } from '../../lib/monetization/useProLifetimeEntitlements';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -24,6 +29,7 @@ import { getQuestionOptionText } from '../../lib/quiz/questionText';
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { ConfidenceRating } from '../../types/progress';
@@ -104,10 +110,26 @@ export default function QuizSessionScreen() {
   const questionProgress = useProgressStore((state) => state.questionProgress);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const copy = quizSessionCopy[language];
+  const hasSelectedAnswer = Boolean(selectedOptionId);
+  const questionSpeechText = useMemo(
+    () => (question ? buildQuestionSpeechText(question) : ''),
+    [question],
+  );
+
+  useQuestionAudioAutoplay({
+    audioEnabled,
+    listenFirstAudioEnabled,
+    questionKey: question ? `${normalizedSessionId}:${question.id}` : null,
+    rate: audioPlaybackRate,
+    speechText: questionSpeechText,
+    stopSignal: hasSelectedAnswer,
+  });
 
   useEffect(() => {
     setSelectedOptionId(null);
@@ -132,7 +154,6 @@ export default function QuizSessionScreen() {
     );
   }
 
-  const hasSelectedAnswer = Boolean(selectedOptionId);
   const selectedIsCorrect = selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const score = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
   const celebrationStreak = selectedIsCorrect
@@ -140,6 +161,7 @@ export default function QuizSessionScreen() {
     : 0;
 
   const handleSelectOption = (optionId: string) => {
+    stopSpeech();
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -158,6 +180,7 @@ export default function QuizSessionScreen() {
     }
   };
   const handleTryAgain = () => {
+    stopSpeech();
     setSelectedOptionId(null);
     setSelectedConfidenceRating(null);
   };
@@ -178,7 +201,8 @@ export default function QuizSessionScreen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        text={buildQuestionSpeechText(question)}
+        rate={audioPlaybackRate}
+        text={questionSpeechText}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
@@ -234,6 +258,7 @@ export default function QuizSessionScreen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

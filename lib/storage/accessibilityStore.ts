@@ -18,6 +18,7 @@ import { readRecoverably, writeRecoverably } from './persistenceWarning';
 const easyReadFontKey = 'a11y.easyReadFont.v1';
 const fontSizeStepKey = 'a11y.fontSizeStep.v1';
 const audioPlaybackRateKey = 'a11y.audioPlaybackRate.v1';
+const listenFirstAudioKey = 'a11y.listenFirstAudio.v1';
 const themeModeKey = 'a11y.themeMode.v1';
 const accessibilityStorageId = 'accessibility';
 
@@ -50,6 +51,7 @@ type InitialAccessibilityState = {
   easyReadFont: boolean;
   fontSizeStep: FontSizeStep;
   audioPlaybackRate: AudioPlaybackRate;
+  listenFirstAudioEnabled: boolean;
   themeMode: ThemeMode;
   persistenceWarning: RecoverablePersistenceWarning | null;
 };
@@ -66,6 +68,10 @@ function normalizeAudioPlaybackRate(value: unknown): AudioPlaybackRate {
   return AUDIO_PLAYBACK_RATES.includes(value as AudioPlaybackRate)
     ? (value as AudioPlaybackRate)
     : 1.0;
+}
+
+function normalizeListenFirstAudio(value: unknown): boolean {
+  return value === true;
 }
 
 function readEasyReadFont(): {
@@ -107,20 +113,36 @@ function readAudioPlaybackRate(): {
   return { value: normalizeAudioPlaybackRate(result.value), persistenceWarning: result.warning };
 }
 
+function readListenFirstAudioEnabled(): {
+  value: boolean;
+  persistenceWarning: RecoverablePersistenceWarning | null;
+} {
+  const result = readRecoverably(
+    accessibilityStorage,
+    accessibilityStorageId,
+    listenFirstAudioKey,
+    () => accessibilityStorage?.getBoolean(listenFirstAudioKey),
+  );
+  return { value: normalizeListenFirstAudio(result.value), persistenceWarning: result.warning };
+}
+
 function readInitialAccessibilityState(): InitialAccessibilityState {
   const easyReadFont = readEasyReadFont();
   const fontSizeStep = readFontSizeStep();
   const audioPlaybackRate = readAudioPlaybackRate();
+  const listenFirstAudioEnabled = readListenFirstAudioEnabled();
   const themeMode = readThemeMode();
   return {
     easyReadFont: easyReadFont.value,
     fontSizeStep: fontSizeStep.value,
     audioPlaybackRate: audioPlaybackRate.value,
+    listenFirstAudioEnabled: listenFirstAudioEnabled.value,
     themeMode: themeMode.value,
     persistenceWarning:
       easyReadFont.persistenceWarning ??
       fontSizeStep.persistenceWarning ??
       audioPlaybackRate.persistenceWarning ??
+      listenFirstAudioEnabled.persistenceWarning ??
       themeMode.persistenceWarning,
   };
 }
@@ -146,11 +168,13 @@ type AccessibilityState = {
   easyReadFont: boolean;
   fontSizeStep: FontSizeStep;
   audioPlaybackRate: AudioPlaybackRate;
+  listenFirstAudioEnabled: boolean;
   themeMode: ThemeMode;
   persistenceWarning: RecoverablePersistenceWarning | null;
   setEasyReadFont: (enabled: boolean) => void;
   setFontSizeStep: (step: FontSizeStep) => void;
   setAudioPlaybackRate: (rate: AudioPlaybackRate) => void;
+  setListenFirstAudioEnabled: (enabled: boolean) => void;
   setThemeMode: (themeMode: ThemeMode) => void;
   clearPersistenceWarning: () => void;
 };
@@ -161,6 +185,7 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
   easyReadFont: initialAccessibilityState.easyReadFont,
   fontSizeStep: initialAccessibilityState.fontSizeStep,
   audioPlaybackRate: initialAccessibilityState.audioPlaybackRate,
+  listenFirstAudioEnabled: initialAccessibilityState.listenFirstAudioEnabled,
   themeMode: initialAccessibilityState.themeMode,
   persistenceWarning: initialAccessibilityState.persistenceWarning,
   setEasyReadFont: (enabled) => {
@@ -192,6 +217,16 @@ export const useAccessibilityStore = create<AccessibilityState>((set) => ({
       clamped,
     );
     set({ audioPlaybackRate: clamped, persistenceWarning });
+  },
+  setListenFirstAudioEnabled: (enabled) => {
+    const normalized = normalizeListenFirstAudio(enabled);
+    const persistenceWarning = writeRecoverably(
+      accessibilityStorage,
+      accessibilityStorageId,
+      listenFirstAudioKey,
+      normalized,
+    );
+    set({ listenFirstAudioEnabled: normalized, persistenceWarning });
   },
   setThemeMode: (themeMode) => {
     const clamped: ThemeMode = isThemeMode(themeMode) ? themeMode : 'system';
