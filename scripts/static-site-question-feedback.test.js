@@ -279,6 +279,48 @@ test('static active Mock question renders citation and independent-study disclai
   );
 });
 
+test('static Mock question navigation dots expose localized answer-state labels', () => {
+  function renderDotHtml(language) {
+    const questions = [
+      staticMockQuestion({ id: 'q-1' }),
+      staticMockQuestion({ id: 'q-2' }),
+      staticMockQuestion({ id: 'q-3' }),
+    ];
+    const { sandbox, element } = createRenderContext({
+      hash: '#/mock?run=1',
+      language,
+      questions,
+    });
+    const source = read('site/practice.js').replace(
+      /\}\)\(\);\s*$/,
+      [
+        'MOCK.questions = window.SMT_QUESTIONS;',
+        'MOCK.answers = [1, null, null];',
+        'MOCK.i = 1;',
+        'MOCK.startedAt = 123456;',
+        'MOCK.endsAt = Date.now() + 120000;',
+        'MOCK.submitted = false;',
+        'renderMockExam();',
+        '})();',
+      ].join('\n'),
+    );
+    vm.runInContext(source, sandbox, { timeout: 3000 });
+    return element('mock-stage').innerHTML;
+  }
+
+  const svHtml = renderDotHtml('sv');
+  assert.match(svHtml, /aria-label="Fråga 1 av 3, besvarad"/);
+  assert.match(svHtml, /aria-label="Fråga 2 av 3, aktuell" aria-current="step"/);
+  assert.match(svHtml, /aria-label="Fråga 3 av 3, obesvarad"/);
+  assert.doesNotMatch(svHtml, /aria-label="Question 1"/);
+
+  const enHtml = renderDotHtml('en');
+  assert.match(enHtml, /aria-label="Question 1 of 3, answered"/);
+  assert.match(enHtml, /aria-label="Question 2 of 3, current" aria-current="step"/);
+  assert.match(enHtml, /aria-label="Question 3 of 3, unanswered"/);
+  assert.doesNotMatch(enHtml, /aria-label="Question 1"/);
+});
+
 test('static Mock picker and landing counts use only direct UHR questions', () => {
   const questions = [
     staticMockQuestion({ id: 'q-uhr-1', chapterId: 1 }),
