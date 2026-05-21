@@ -18127,30 +18127,90 @@
     "type": "single_choice",
     "q": {
       "en": "How are roles divided among the police, prosecutor, and courts?",
-      "sv": "Hur fördelas rollerna mellan polis, åklagare och domstolar?"
+      "sv": "Hur fördelas rollerna mellan polis, åklagare och domstolar?",
+      "zh-Hant": "警方、檢察官和法院之間的角色如何分工？",
+      "zh-Hans": "警方、检察官和法院之间的角色如何分工？",
+      "ar": "كيف تُقسَّم الأدوار بين الشرطة والمدعي العام والمحاكم؟",
+      "ckb": "ڕۆڵەکان لە نێوان پۆلیس، دادستان و دادگاکاندا چۆن دابەش دەکرێن؟",
+      "fa": "نقش‌ها میان پلیس، دادستان و دادگاه‌ها چگونه تقسیم می‌شود؟",
+      "pl": "Jak podzielone są role między policję, prokuratora i sądy?",
+      "so": "Sidee ayaa doorarka loogu kala qaybiyaa booliska, xeer-ilaaliyaha iyo maxkamadaha?",
+      "ti": "ሚናታት ኣብ መንጎ ፖሊስ፣ ኣኽባር ሕጊን ፍርድቤታትን ከመይ ይከፋፈሉ?",
+      "tr": "Polis, savcı ve mahkemeler arasında roller nasıl bölünür?",
+      "uk": "Як розподілені ролі між поліцією, прокурором і судами?"
     },
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,
     "why": {
       "en": "Justice-system authorities have different roles. The police prevent and investigate crimes, the Swedish Prosecution Authority decides whether suspected people should be brought before a court, and courts review evidence and decide on a penalty or acquittal.",
-      "sv": "Rättsväsendets myndigheter har olika roller. Polisen förhindrar och utreder brott, Åklagarmyndigheten avgör om misstänkta personer ska ställas inför domstol, och domstolar granskar bevis och beslutar om påföljd eller frikännande."
+      "sv": "Rättsväsendets myndigheter har olika roller. Polisen förhindrar och utreder brott, Åklagarmyndigheten avgör om misstänkta personer ska ställas inför domstol, och domstolar granskar bevis och beslutar om påföljd eller frikännande.",
+      "zh-Hant": "司法系統的機關有不同角色。警方預防並調查犯罪，瑞典檢察機關決定嫌疑人是否應被送上法庭，法院審查證據並決定處罰或無罪釋放。 (Riksdag)",
+      "zh-Hans": "司法系统的机关有不同角色。警方预防并调查犯罪，瑞典检察机关决定嫌疑人是否应被送上法庭，法院审查证据并决定处罚或无罪释放。 (Riksdag)",
+      "ar": "لدى سلطات نظام العدالة أدوار مختلفة. فالشرطة تمنع الجرائم وتحقق فيها، وتقرر هيئة الادعاء السويدية ما إذا كان الأشخاص المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة وتقرر العقوبة أو البراءة. (Riksdag)",
+      "ckb": "دەزگاکانی سیستەمی دادوەری ڕۆڵی جیاوازیان هەیە. پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دەزگای دادستانی سوید بڕیار دەدات کە گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن و بڕیار لەسەر سزا یان بێتاوانی دەدەن. (Riksdag)",
+      "fa": "نهادهای دستگاه قضایی نقش‌های متفاوتی دارند. پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستانی سوئد تصمیم می‌گیرد آیا افراد مظنون به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند و دربارهٔ مجازات یا تبرئه تصمیم می‌گیرند. (Riksdag)",
+      "pl": "Organy wymiaru sprawiedliwości mają różne role. Policja zapobiega przestępstwom i je bada, szwedzka prokuratura decyduje, czy osoby podejrzane mają stanąć przed sądem, a sądy oceniają dowody i decydują o karze albo uniewinnieniu. (Riksdag)",
+      "so": "Hay’adaha nidaamka caddaaladdu waxay leeyihiin doorar kala duwan. Boolisku wuxuu ka hortagaa oo baaraa dembiyada, hay’adda xeer-ilaalinta Iswiidhan waxay go’aamisaa in dadka la tuhunsan yahay maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha waxayna go’aamiyaan ciqaab ama sii-dayn. (Riksdag)",
+      "ti": "ብዓላት መዚ ስርዓት ፍትሒ ዝተፈላለዩ ሚናታት ኣለዎም። ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ናይ ሽወደን ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙን ብዛዕባ መቕጻዕቲ ወይ ናጻ ምውጻእ ይውስኑን። (Riksdag)",
+      "tr": "Adalet sistemi kurumlarının farklı rolleri vardır. Polis suçları önler ve soruşturur, İsveç Savcılık Kurumu şüpheli kişilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceleyip ceza veya beraat kararı verir. (Riksdag)",
+      "uk": "Органи системи правосуддя мають різні ролі. Поліція запобігає злочинам і розслідує їх, шведська прокуратура вирішує, чи передавати підозрюваних осіб до суду, а суди розглядають докази та ухвалюють рішення про покарання або виправдання. (Riksdag)"
     },
     "source": {
       "title": "Sverige i fokus",
@@ -62149,19 +62209,59 @@
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,
@@ -62280,19 +62380,59 @@
     "opts": [
       {
         "en": "The police prevent and investigate crimes, the prosecutor decides whether suspects should be brought before a court, and courts review evidence",
-        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis"
+        "sv": "Polisen förhindrar och utreder brott, åklagaren avgör om misstänkta ska ställas inför domstol, och domstolar granskar bevis",
+        "zh-Hant": "警方預防並調查犯罪，檢察官決定嫌疑人是否應被送上法庭，法院審查證據",
+        "zh-Hans": "警方预防并调查犯罪，检察官决定嫌疑人是否应被送上法庭，法院审查证据",
+        "ar": "تمنع الشرطة الجرائم وتحقق فيها، ويقرر المدعي العام ما إذا كان المشتبه بهم سيُحالون إلى المحكمة، وتراجع المحاكم الأدلة",
+        "ckb": "پۆلیس تاوان ڕێگری و لێکۆڵینەوە دەکات، دادستان بڕیار دەدات گومانلێکراوان بخرێنە بەردەم دادگا یان نا، و دادگاکان بەڵگەکان پێداچوونەوە دەکەن",
+        "fa": "پلیس از جرم پیشگیری و آن را بررسی می‌کند، دادستان تصمیم می‌گیرد آیا مظنونان به دادگاه برده شوند، و دادگاه‌ها مدارک را بررسی می‌کنند",
+        "pl": "Policja zapobiega przestępstwom i je bada, prokurator decyduje, czy podejrzani mają stanąć przed sądem, a sądy oceniają dowody",
+        "so": "Boolisku wuxuu ka hortagaa oo baaraa dembiyada, xeer-ilaaliyuhu wuxuu go’aamiyaa in tuhmanayaasha maxkamad la geeyo, maxkamaduhuna waxay eegaan caddaymaha",
+        "ti": "ፖሊስ ገበናት ይከላኸልን ይምርምርን፣ ኣኽባር ሕጊ ተጠርጠርቲ ናብ ቤት ፍርዲ ክቐርቡ ድዮም ኣይክቐርቡን ይውስን፣ ፍርድቤታት ድማ መርትዖ ይግምግሙ",
+        "tr": "Polis suçları önler ve soruşturur, savcı şüphelilerin mahkemeye çıkarılıp çıkarılmayacağına karar verir, mahkemeler de kanıtları inceler",
+        "uk": "Поліція запобігає злочинам і розслідує їх, прокурор вирішує, чи передавати підозрюваних до суду, а суди розглядають докази"
       },
       {
         "en": "Courts investigate all crimes, municipalities prosecute cases, and the police decide sentences",
-        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff"
+        "sv": "Domstolar utreder alla brott, kommuner väcker åtal och polisen bestämmer straff",
+        "zh-Hant": "法院調查所有犯罪，市鎮提起公訴，警方決定刑罰",
+        "zh-Hans": "法院调查所有犯罪，市镇提起公诉，警方决定刑罚",
+        "ar": "تحقق المحاكم في كل الجرائم، وتلاحق البلديات القضايا، وتقرر الشرطة العقوبات",
+        "ckb": "دادگاکان هەموو تاوانەکان لێکۆڵینەوە دەکەن، شارەوانییەکان داوا دەکەن، و پۆلیس سزا دیاری دەکات",
+        "fa": "دادگاه‌ها همهٔ جرم‌ها را بررسی می‌کنند، کمون‌ها پیگرد قانونی را انجام می‌دهند و پلیس مجازات را تعیین می‌کند",
+        "pl": "Sądy badają wszystkie przestępstwa, gminy wnoszą oskarżenia, a policja ustala kary",
+        "so": "Maxkamaduhu waxay baaraan dhammaan dembiyada, degmooyinku waxay oogaan dacwado, booliskuna wuxuu go’aamiyaa ciqaabaha",
+        "ti": "ፍርድቤታት ኩሎም ገበናት ይምርምሩ፣ kommun ክስታት የቕርቡ፣ ፖሊስ ድማ መቕጻዕቲ ይውስን",
+        "tr": "Mahkemeler tüm suçları soruşturur, belediyeler dava açar ve polis cezaları belirler",
+        "uk": "Суди розслідують усі злочини, муніципалітети висувають обвинувачення, а поліція визначає покарання"
       },
       {
         "en": "The Prosecution Authority runs prisons, the Crime Victim Authority makes laws, and the Prison and Probation Service holds elections",
-        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val"
+        "sv": "Åklagarmyndigheten driver fängelser, Brottsoffermyndigheten stiftar lagar och Kriminalvården håller val",
+        "zh-Hant": "檢察機關管理監獄，犯罪受害者機關制定法律，監獄和緩刑署舉辦選舉",
+        "zh-Hans": "检察机关管理监狱，犯罪受害者机关制定法律，监狱和缓刑署举办选举",
+        "ar": "تدير هيئة الادعاء السجون، وتسن هيئة ضحايا الجريمة القوانين، وتُنظم مصلحة السجون والمراقبة الانتخابات",
+        "ckb": "دەزگای دادستانی زیندانەکان بەڕێوە دەبات، دەزگای قوربانیانی تاوان یاسا دادەنێت، و خزمەتگوزاری زیندان و چاودێری هەڵبژاردن ئەنجام دەدات",
+        "fa": "دادستانی زندان‌ها را اداره می‌کند، نهاد قربانیان جرم قانون وضع می‌کند و ادارهٔ زندان و مراقبت انتخابات برگزار می‌کند",
+        "pl": "Prokuratura prowadzi więzienia, urząd ds. ofiar przestępstw uchwala prawa, a służba więzienna i probacyjna organizuje wybory",
+        "so": "Hay’adda xeer-ilaalintu waxay maamushaa xabsiyada, hay’adda dhibbanayaasha dembigu waxay samaysaa sharciyo, adeegga xabsiyada iyo kormeerka ayaana qabta doorashooyin",
+        "ti": "ብዓል መዚ ኣኽባር ሕጊ ቤት ማእሰርቲ የካይድ፣ ብዓል መዚ ግዳያት ገበን ሕጊ ይወጽእ፣ ክሪሚናልቮርደን ድማ ምርጫታት የካይድ",
+        "tr": "Savcılık kurumu hapishaneleri işletir, Suç Mağduru Kurumu yasalar çıkarır, Cezaevi ve Denetimli Serbestlik Kurumu seçim yapar",
+        "uk": "Прокуратура керує в’язницями, орган у справах потерпілих ухвалює закони, а служба виконання покарань проводить вибори"
       },
       {
         "en": "The Riksdag judges criminal cases, the government questions witnesses, and regions decide acquittals",
-        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande"
+        "sv": "Riksdagen dömer brottmål, regeringen förhör vittnen och regionerna beslutar frikännande",
+        "zh-Hant": "Riksdag 審理刑事案件，政府詢問證人，大區決定無罪釋放",
+        "zh-Hans": "Riksdag 审理刑事案件，政府询问证人，大区决定无罪释放",
+        "ar": "يحكم البرلمان السويدي (Riksdag) في القضايا الجنائية، وتستجوب الحكومة الشهود، وتقرر الأقاليم البراءة",
+        "ckb": "Riksdag دۆسیە تاوانییەکان دادوەری دەکات، حکومەت شایەتەکان دەپرسێت، و هەرێمەکان بڕیاری بێتاوانی دەدەن",
+        "fa": "Riksdag پرونده‌های کیفری را قضاوت می‌کند، دولت از شاهدان بازجویی می‌کند و مناطق حکم تبرئه می‌دهند",
+        "pl": "Riksdag sądzi sprawy karne, rząd przesłuchuje świadków, a regiony decydują o uniewinnieniu",
+        "so": "Riksdag-gu wuxuu xukuma dacwadaha dembiyada, dowladdu waxay su’aalo waydiisaa markhaatiyaal, gobolladuna waxay go’aamiyaan sii-dayn",
+        "ti": "Riksdag ጉዳያት ገበን ይፈርድ፣ መንግስቲ ምስክራት ይሓትት፣ region ድማ ናጻ ምውጻእ ይውስን",
+        "tr": "Riksdag ceza davalarını yargılar, hükümet tanıkları sorgular, bölgeler beraate karar verir",
+        "uk": "Riksdag розглядає кримінальні справи, уряд допитує свідків, а регіони вирішують питання виправдання"
       }
     ],
     "answer": 0,

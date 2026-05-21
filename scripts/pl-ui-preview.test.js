@@ -99,6 +99,6 @@ test('Polish preview does not enable runtime release', () => {
   assert.match(locales, /code: 'pl',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.pl.appAvailable, false);
   assert.equal(readiness.locales.pl.uiStrings, 'not_started');
-  assert.equal(readiness.locales.pl.questionContent, 'pilot_q001_q173_machine_assisted');
+  assert.equal(readiness.locales.pl.questionContent, 'pilot_q001_q174_machine_assisted');
   assert.equal(readiness.locales.pl.releaseGate, 'blocked');
 });

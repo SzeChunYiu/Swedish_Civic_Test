@@ -75,12 +75,12 @@ function assertQuestionReadinessFailClosed() {
     if (
       !readinessEntry ||
       readinessEntry.appAvailable !== false ||
-      readinessEntry.questionContent !== 'pilot_q001_q173_machine_assisted' ||
+      readinessEntry.questionContent !== 'pilot_q001_q174_machine_assisted' ||
       readinessEntry.nativeReview !== 'missing' ||
       readinessEntry.releaseGate !== 'blocked'
     ) {
       throw new Error(
-        `${locale} question readiness must remain fail-closed (appAvailable=false, questionContent=pilot_q001_q173_machine_assisted, nativeReview=missing, releaseGate=blocked)`,
+        `${locale} question readiness must remain fail-closed (appAvailable=false, questionContent=pilot_q001_q174_machine_assisted, nativeReview=missing, releaseGate=blocked)`,
       );
     }
   }
@@ -128,14 +128,14 @@ function rowFor(question, locale) {
 }
 
 function buildReadme(questions) {
-  return `# Question i18n v8 native-review packets\n\nThese are machine-assisted q001-q173 question localization review packets for the UHR-published question bank.\n\nDo not use these packets to enable a locale. They exist so native reviewers can check semantic accuracy, answer/distractor logic, civic terminology, tone, script/layout issues, and any culture-specific ambiguity before release gates move.\n\n## Scope\n\n- Source: generated \`site/questions.js\` from \`data/questions.ts\`, \`data/additionalQuestions.ts\`, and \`data/questionLocalizations.ts\`.\n- Questions: ${questions.length} UHR-published rows, q001-q173.\n- Review locales: ${targetLocales.map((locale) => `\`${locale}\``).join(', ')}.\n- Source/bridge columns: Swedish and English.\n\n## Reviewer instructions\n\nFor each row, check that:\n\n1. the target question asks the same thing as the Swedish source,\n2. the correct answer remains correct and no distractor becomes accidentally correct,\n3. explanations do not overclaim official authority,\n4. civic/legal terms match local-language public-service usage,\n5. wording is natural for the target locale and avoids literal translation,\n6. script direction, punctuation, numbers, and names render correctly, and\n7. reviewer notes are added before any readiness ledger is moved from blocked to allowed.\n\nKeep \`native_review_status\` as \`pending_native_review\` until a native reviewer changes it in a reviewed copy.\n`;
+  return `# Question i18n v8 native-review packets\n\nThese are machine-assisted q001-q174 question localization review packets for the UHR-published question bank.\n\nDo not use these packets to enable a locale. They exist so native reviewers can check semantic accuracy, answer/distractor logic, civic terminology, tone, script/layout issues, and any culture-specific ambiguity before release gates move.\n\n## Scope\n\n- Source: generated \`site/questions.js\` from \`data/questions.ts\`, \`data/additionalQuestions.ts\`, and \`data/questionLocalizations.ts\`.\n- Questions: ${questions.length} UHR-published rows, q001-q174.\n- Review locales: ${targetLocales.map((locale) => `\`${locale}\``).join(', ')}.\n- Source/bridge columns: Swedish and English.\n\n## Reviewer instructions\n\nFor each row, check that:\n\n1. the target question asks the same thing as the Swedish source,\n2. the correct answer remains correct and no distractor becomes accidentally correct,\n3. explanations do not overclaim official authority,\n4. civic/legal terms match local-language public-service usage,\n5. wording is natural for the target locale and avoids literal translation,\n6. script direction, punctuation, numbers, and names render correctly, and\n7. reviewer notes are added before any readiness ledger is moved from blocked to allowed.\n\nKeep \`native_review_status\` as \`pending_native_review\` until a native reviewer changes it in a reviewed copy.\n`;
 }
 
 function buildPackets() {
   assertQuestionReadinessFailClosed();
 
   const expectedIds = Array.from(
-    { length: 173 },
+    { length: 174 },
     (_, index) => `q${String(index + 1).padStart(3, '0')}`,
   );
   const questions = loadSiteQuestions()
@@ -145,7 +145,7 @@ function buildPackets() {
     .sort((a, b) => a.id.localeCompare(b.id));
   const ids = questions.map((question) => question.id);
   if (ids.join('\n') !== expectedIds.join('\n')) {
-    throw new Error(`Expected q001-q173 UHR questions, found ${ids.length}: ${ids.join(', ')}`);
+    throw new Error(`Expected q001-q174 UHR questions, found ${ids.length}: ${ids.join(', ')}`);
   }
 
   for (const question of questions) {
@@ -194,7 +194,7 @@ function main() {
   }
 
   console.log(
-    `Question localization review packets ${checkMode ? 'OK' : 'exported'} (${targetLocales.length} locales, 173 questions)`,
+    `Question localization review packets ${checkMode ? 'OK' : 'exported'} (${targetLocales.length} locales, 174 questions)`,
   );
 }
 
