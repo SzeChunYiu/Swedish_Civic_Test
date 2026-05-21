@@ -19,11 +19,16 @@ test('exam submission finality stays aligned with the result route', () => {
 
   assert.equal(summary.examSubmissionFinalityParityValidated, true);
   assert.match(examRoute, /Submitted results are final/);
-  assert.match(examRoute, /disabled:\s*!nextExamCompletionAccessConfirmed/);
-  assert.match(examRoute, /completionWriteFailed/);
-  assert.match(examRoute, /handleRetryCompletionWrite/);
-  assert.match(examRoute, /retryCompletionLabel/);
-  assert.doesNotMatch(examRoute, /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\)/);
+  assert.match(
+    examRoute,
+    /disabled:\s*!completionRecorded \|\| !canStartAccessibleExam \|\| startingAccessibleExam/,
+  );
+  assert.match(examRoute, /completionStoreFailure/);
+  assert.match(examRoute, /setAccessStatusMessage\(copy\.completionStoreFailure\)/);
+  assert.match(
+    examRoute,
+    /\.catch\(\(\) => \{[\s\S]*?setCompletionRecorded\(true\);[\s\S]*?setAccessStatusMessage\(copy\.completionStoreFailure\);[\s\S]*?\}\);/,
+  );
   assert.doesNotMatch(examRoute, /Back to exam answers|Back to answers/);
   assert.doesNotMatch(examRoute, /onPress=\{\(\) => setSubmitted\(false\)\}/);
 });
