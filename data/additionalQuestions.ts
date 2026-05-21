@@ -965,8 +965,8 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'What is the public sector in Sweden?',
     [
       [
-        'Verksamheter som staten, regionerna och kommunerna ansvarar för',
-        'Services and activities that the state, regions, and municipalities are responsible for',
+        'Tjänster och verksamheter som staten, regionerna och kommunerna ansvarar för och finansierar med skatter',
+        'Services and activities that the state, regions, and municipalities are responsible for and fund through taxes',
       ],
       ['Alla privatägda företag', 'All privately owned companies'],
       ['Endast banker och försäkringsbolag', 'Only banks and insurance companies'],

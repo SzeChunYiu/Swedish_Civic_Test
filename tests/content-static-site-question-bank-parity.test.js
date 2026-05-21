@@ -16,10 +16,16 @@ const {
   generatedQuestionId,
   generatedQuestionIdLiteralFindingsForSource,
 } = require('../scripts/generated-question-fixture-ids');
+const {
+  Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  summarizeQ062PublicSectorNaturalness,
+} = require('../scripts/check-question-i18n-v8');
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
 const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
+const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
+  /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
 const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
@@ -57,6 +63,23 @@ function staticSomaliSegments(question) {
     [`${question.id}.why.so`, question.why?.so],
     ...(question.opts || []).map((option, index) => [`${question.id}.opts.${index}.so`, option.so]),
   ];
+}
+
+function staticQuestionToI18nQuestion(question) {
+  return {
+    id: question.id,
+    questionText: question.q,
+    explanationText: question.why,
+    options: (question.opts || []).map((option, index) => ({
+      id: String(index),
+      text: option,
+    })),
+    correctOptionId: String(question.answer),
+  };
+}
+
+function staticQuestionVisibleText(question) {
+  return JSON.stringify([question.q, question.why, question.opts]);
 }
 
 function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
@@ -141,6 +164,71 @@ test('static site question bank avoids English geography common terms in Somali 
   }
 
   assert.deepEqual(offenders, []);
+});
+
+test('static site question bank keeps q062 public-sector i18n and generated variants direct', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const publicSectorIds = [
+    'q062',
+    generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+  ];
+  const localizedOptionIds = [
+    'q062',
+    generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+  ];
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q062 = questionsById.get('q062');
+
+  assert.ok(q062, 'q062 should be present in static question bank');
+  assert.deepEqual(
+    summarizeQ062PublicSectorNaturalness(
+      [staticQuestionToI18nQuestion(q062)],
+      Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+    ).errors,
+    [],
+  );
+
+  for (const id of publicSectorIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(staticQuestionVisibleText(question), PUBLIC_SECTOR_STALE_STATIC_PATTERN);
+  }
+
+  const localizedCorrectOptionTerms = {
+    en: 'fund through taxes',
+    'zh-Hant': '稅收',
+    'zh-Hans': '税收',
+    ar: 'الضرائب',
+    ckb: 'باج',
+    fa: 'مالیات',
+    pl: 'podatków',
+    so: 'canshuur',
+    ti: 'ግብሪ',
+    tr: 'vergiler',
+    uk: 'податків',
+  };
+
+  for (const id of localizedOptionIds) {
+    const question = questionsById.get(id);
+    const correctOption = question.opts[question.answer];
+    for (const [locale, term] of Object.entries(localizedCorrectOptionTerms)) {
+      assert.ok(
+        String(correctOption[locale] || '').includes(term),
+        `${id}.opts.${question.answer}.${locale} should include ${term}`,
+      );
+    }
+  }
 });
 
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {
