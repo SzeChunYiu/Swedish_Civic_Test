@@ -6,10 +6,12 @@ import {
   citizenshipRequirementAreas,
   type CitizenshipRequirementAreaId,
 } from '../../data/citizenshipRequirements';
+import { isSafeImportedMapKey } from './importKeySafety';
 import type { RecoverablePersistenceWarning } from './persistenceWarning';
 import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
 
 const checkedAreaIdsKey = 'citizenshipRequirements.checkedAreaIds.v1';
+const legacyChecklistStateKey = 'citizenshipRequirementsChecklistState';
 const citizenshipRequirementsStorageId = 'citizenship-requirements';
 const citizenshipRequirementAreaIdSet = new Set<CitizenshipRequirementAreaId>(
   citizenshipRequirementAreas.map((area) => area.id),
@@ -54,27 +56,37 @@ export function normalizeImportedCitizenshipRequirementsChecklist(
     return { ...emptyCitizenshipRequirementsChecklist };
   }
 
-  return {
-    checkedAreaIds: normalizeCitizenshipRequirementAreaIds(
-      (value as Partial<PersistedCitizenshipRequirementsChecklist>).checkedAreaIds,
-    ),
-  };
-}
+  const candidate = value as Record<string, unknown>;
+  const checkedAreaIdsEntry = Object.entries(candidate).find(
+    ([key]) => key === 'checkedAreaIds' && isSafeImportedMapKey(key),
+  );
 
-function parseCheckedAreaIds(rawValue: string): CitizenshipRequirementAreaId[] {
-  return normalizeCitizenshipRequirementAreaIds(JSON.parse(rawValue));
+  return {
+    checkedAreaIds: normalizeCitizenshipRequirementAreaIds(checkedAreaIdsEntry?.[1]),
+  };
 }
 
 function readCheckedAreaIds(): {
   checkedAreaIds: CitizenshipRequirementAreaId[];
   persistenceWarning: RecoverablePersistenceWarning | null;
 } {
-  const readResult = readRecoverably(
+  let readKey = checkedAreaIdsKey;
+  let readResult = readRecoverably(
     citizenshipRequirementsStorage,
     citizenshipRequirementsStorageId,
     checkedAreaIdsKey,
     () => citizenshipRequirementsStorage?.getString(checkedAreaIdsKey),
   );
+
+  if (!readResult.value) {
+    readKey = legacyChecklistStateKey;
+    readResult = readRecoverably(
+      citizenshipRequirementsStorage,
+      citizenshipRequirementsStorageId,
+      legacyChecklistStateKey,
+      () => citizenshipRequirementsStorage?.getString(legacyChecklistStateKey),
+    );
+  }
 
   if (!readResult.value) {
     return { checkedAreaIds: [], persistenceWarning: readResult.warning };
@@ -83,8 +95,13 @@ function readCheckedAreaIds(): {
   const parseResult = parseJsonRecoverably(
     readResult.value,
     citizenshipRequirementsStorageId,
-    checkedAreaIdsKey,
-    parseCheckedAreaIds,
+    readKey,
+    (rawValue) => {
+      const parsed = JSON.parse(rawValue);
+      return Array.isArray(parsed)
+        ? normalizeCitizenshipRequirementAreaIds(parsed)
+        : normalizeImportedCitizenshipRequirementsChecklist(parsed).checkedAreaIds;
+    },
     [],
   );
 
@@ -105,8 +122,17 @@ function persistCheckedAreaIds(checkedAreaIds: readonly CitizenshipRequirementAr
     checkedAreaIdsKey,
     JSON.stringify(normalizedCheckedAreaIds),
   );
+  const legacyPersistenceWarning = writeRecoverably(
+    citizenshipRequirementsStorage,
+    citizenshipRequirementsStorageId,
+    legacyChecklistStateKey,
+    JSON.stringify({ checkedAreaIds: normalizedCheckedAreaIds }),
+  );
 
-  return { checkedAreaIds: normalizedCheckedAreaIds, persistenceWarning };
+  return {
+    checkedAreaIds: normalizedCheckedAreaIds,
+    persistenceWarning: persistenceWarning ?? legacyPersistenceWarning,
+  };
 }
 
 type CitizenshipRequirementsChecklistState = {
