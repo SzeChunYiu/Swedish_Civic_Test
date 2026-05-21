@@ -43,6 +43,7 @@ const {
 } = require('./content-exec-cwd-guards');
 
 const repoRoot = path.resolve(__dirname, '..');
+const focusPublishedQuestionSchema = process.argv.includes('--focus-published-question-schema');
 const failures = [];
 const moduleCache = new Map();
 const speechEvents = [];
@@ -18934,7 +18935,7 @@ if (focusedValidationRequested('removeAdsPurchaseRuntimeParity')) {
   process.exit(0);
 }
 
-validateCriminalResponsibilityCurrentness();
+if (!focusPublishedQuestionSchema) validateCriminalResponsibilityCurrentness();
 
 if (focusedValidationRequested('umeaDemonym')) {
   validateStaticValidationSyntaxGate();
@@ -18980,7 +18981,7 @@ function validateStaticSiteQuestionBankParity() {
   staticSiteQuestionBankParityValidated = true;
 }
 
-validateAuthoredSourceParity();
+if (!focusPublishedQuestionSchema) validateAuthoredSourceParity();
 
 function validateGenerationParity() {
   if (
@@ -19089,8 +19090,10 @@ if (focusedValidationRequested('practiceFlowParity')) {
   process.exit(0);
 }
 
-validateAuthoredSourceParity();
-validateGenerationParity();
+if (!focusPublishedQuestionSchema) {
+  validateAuthoredSourceParity();
+  validateGenerationParity();
+}
 
 function validateChapterGenerationParity() {
   if (
