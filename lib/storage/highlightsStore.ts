@@ -177,6 +177,18 @@ function write(state: PersistedHighlights): RecoverablePersistenceWarning | null
   );
 }
 
+function withoutEmptyChapterBuckets(
+  byChapter: Record<string, Highlight[]>,
+): Record<string, Highlight[]> {
+  const next: Record<string, Highlight[]> = {};
+  for (const [chapterId, list] of Object.entries(byChapter)) {
+    if (Array.isArray(list) && list.length > 0) {
+      next[chapterId] = list;
+    }
+  }
+  return next;
+}
+
 function genId(): string {
   return `hl_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -306,19 +318,30 @@ export const useHighlightsStore = create<HighlightsState>((set, get) => ({
     });
   },
   removeHighlight: (id) => {
+    if (!isNonEmptyString(id)) return;
     set((state) => {
       const byChapter: Record<string, Highlight[]> = {};
+      let removed = false;
       for (const [chapterId, list] of Object.entries(state.byChapter)) {
-        byChapter[chapterId] = list.filter((h) => h.id !== id);
+        const nextList = list.filter((h) => h.id !== id);
+        if (nextList.length !== list.length) removed = true;
+        if (nextList.length > 0) byChapter[chapterId] = nextList;
       }
+      if (!removed) return state;
       const next = { byChapter };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
   },
   clearChapter: (chapterId) => {
+    if (!isNonEmptyString(chapterId)) return;
     set((state) => {
-      const next = { byChapter: { ...state.byChapter, [chapterId]: [] } };
+      if (!Object.prototype.hasOwnProperty.call(state.byChapter, chapterId)) {
+        return state;
+      }
+      const byChapter = { ...state.byChapter };
+      delete byChapter[chapterId];
+      const next = { byChapter: withoutEmptyChapterBuckets(byChapter) };
       const persistenceWarning = write(next);
       return { ...next, persistenceWarning };
     });
