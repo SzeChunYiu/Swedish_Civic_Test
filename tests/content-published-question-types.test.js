@@ -59,6 +59,7 @@ const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
+const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -153,6 +154,10 @@ test('published question types stay answerable by quiz runtime', () => {
   assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
     summary.questionReferendumAdvisorySwedishNaturalnessValidated,
+    summary.publishedQuestions,
+  );
+  assert.equal(
+    summary.questionSourceCriticismEnglishNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
@@ -1525,6 +1530,98 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
+  );
+});
+
+test('source-criticism source and single-choice exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q050Ids = [
+    'q050',
+    generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
+  ];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q050Ids.includes(question.id))
+    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q050Ids.includes(question.id))
+    .filter((question) => sourceCriticismStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q050Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => sourceCriticismStiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q050 = generatedSiteBank.find((question) => question.id === 'q050');
+  const q050SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'singleChoice'),
+  );
+  const q050Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q050', 'judgement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q050, 'q050 should be published in the site bank');
+  assert.equal(q050.q.en, 'What does source criticism mean?');
+  assert.equal(
+    q050.why.en,
+    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+  );
+  assert.ok(q050SingleChoice, 'q050 generated single-choice variant should be published');
+  assert.equal(
+    q050SingleChoice.q.en,
+    'Which answer best matches? What does source criticism mean?',
+  );
+  assert.ok(q050Judgement, 'q050 generated judgement variant should be published');
+  assert.equal(q050Judgement.q.en, 'Choose the correct option: What does source criticism mean?');
+});
+
+test('source-criticism English naturalness guard rejects source-critical wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'What does source criticism mean?',
+        'What does it mean to be source-critical?',
+      )
+      .replace(
+        'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
+        'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct.',
+      );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q050 uses stilted source-criticism English wording/,
   );
 });
 

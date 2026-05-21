@@ -4906,7 +4906,7 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'What does it mean to be source-critical?',
+        en: 'What does source criticism mean?',
         sv: 'Vad betyder det att vara källkritisk?',
         'zh-Hant': '具有來源批判意識是什麼意思？',
         'zh-Hans': '具有来源批判意识是什么意思？',
@@ -4979,7 +4979,7 @@
       ],
       answer: 0,
       why: {
-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
         'zh-Hant':
           '具有來源批判意識表示透過質疑自己讀到、看到或聽到的內容是否正確，來檢查和審查資訊。這很重要，因為資訊可能來自許多不同來源，錯誤資訊可能快速傳播；從不閱讀新聞、只相信社交媒體或散布未經檢查的說法，都是相反做法。',
@@ -28917,7 +28917,7 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Which answer best matches? What does it mean to be source-critical?',
+        en: 'Which answer best matches? What does source criticism mean?',
         sv: 'Vilket svar stämmer bäst? Vad betyder det att vara källkritisk?',
       },
       opts: [
@@ -28980,7 +28980,7 @@
       ],
       answer: 0,
       why: {
-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
       },
       source: {
@@ -29005,7 +29005,7 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'To be source-critical means questioning and checking whether information is correct.',
+        en: 'Source criticism means questioning and checking whether information is correct.',
         sv: 'Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.',
       },
       opts: [
@@ -29020,7 +29020,7 @@
       ],
       answer: 0,
       why: {
-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
       },
       source: {
@@ -29045,7 +29045,7 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'To be source-critical means never reading news.',
+        en: 'Source criticism means never reading news.',
         sv: 'Att vara källkritisk betyder att aldrig läsa nyheter.',
       },
       opts: [
@@ -29060,7 +29060,7 @@
       ],
       answer: 1,
       why: {
-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
       },
       source: {
@@ -29085,7 +29085,7 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'single_choice',
       q: {
-        en: 'Choose the correct option: What does it mean to be source-critical?',
+        en: 'Choose the correct option: What does source criticism mean?',
         sv: 'Välj rätt alternativ: Vad betyder det att vara källkritisk?',
       },
       opts: [
@@ -29148,7 +29148,7 @@
       ],
       answer: 0,
       why: {
-        en: 'Being source-critical means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+        en: 'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
         sv: 'Att vara källkritisk betyder att kontrollera och granska information genom att ifrågasätta om det man läser, ser eller hör är korrekt. Det behövs eftersom information kan komma från många slags källor och falska uppgifter kan spridas snabbt; att aldrig läsa nyheter, bara lita på sociala medier eller sprida okontrollerade uppgifter är motsatsen.',
       },
       source: {

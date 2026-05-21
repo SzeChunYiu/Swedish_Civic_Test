@@ -1551,3 +1551,32 @@ test('derivePublishedQuestions rewrites definition-style true/false variants as 
     /^(?:Att (?:Sverige är (?:en konstitutionell monarki|en sekulär stat)|val i en demokrati är hemliga) betyder att|That (?:Sweden is (?:a constitutional monarchy|a secular state)|elections in a democracy are secret) means\b)/im,
   );
 });
+
+test('derivePublishedQuestions keeps q050 source criticism single-choice English natural', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const source = sourceQuestions.find((question) => question.id === 'q050');
+  assert.ok(source, 'q050 source question should exist');
+
+  const generatedQuestions = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
+  const sourceIndex = sourceQuestions.findIndex((question) => question.id === 'q050');
+  const singleChoice = generatedQuestions[sourceIndex * 4];
+  const judgement = generatedQuestions[sourceIndex * 4 + 3];
+
+  assert.equal(source.questionEn, 'What does source criticism mean?');
+  assert.equal(
+    source.explanationEn,
+    'Source criticism means checking and reviewing information by questioning whether what one reads, sees, or hears is correct. This matters because information can come from many kinds of sources and false information can spread quickly; never reading news, trusting only social media, or spreading unchecked claims does the opposite.',
+  );
+  assert.equal(
+    singleChoice.questionEn,
+    'Which answer best matches? What does source criticism mean?',
+  );
+  assert.equal(judgement.questionEn, 'Choose the correct option: What does source criticism mean?');
+  assert.doesNotMatch(
+    [source.questionEn, source.explanationEn, singleChoice.questionEn, judgement.questionEn].join(
+      ' ',
+    ),
+    /\bsource-critical\b/i,
+  );
+});
