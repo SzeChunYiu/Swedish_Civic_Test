@@ -3269,6 +3269,42 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('published question schema rejects generated true/false English stems that drop Sweden scope', () => {
+  const sourceQuestions = buildSiteQuestionBank().questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q055TrueId = generatedQuestionId(sourceQuestions, 'q055', 'trueStatement');
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'What applies to buying sex in Sweden?',
+      'What applies to buying sex?',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    new RegExp(`${q055TrueId} contains a generated true/false grammar-splice stem`),
+  );
+});
+
 test('published question schema rejects generated how-can-affect when-splices', () => {
   const result = spawnSync(
     process.execPath,
