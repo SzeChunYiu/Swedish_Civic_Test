@@ -30920,7 +30920,7 @@
     "type": "true_false",
     "q": {
       "en": "Source criticism means questioning and checking whether information is correct.",
-      "sv": "Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt."
+      "sv": "Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt."
     },
     "opts": [
       {
@@ -30960,7 +30960,7 @@
     "type": "true_false",
     "q": {
       "en": "Source criticism means never reading news.",
-      "sv": "Att vara källkritisk betyder att aldrig läsa nyheter."
+      "sv": "Källkritik innebär att man aldrig läser nyheter."
     },
     "opts": [
       {
