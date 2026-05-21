@@ -114,6 +114,13 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(practiceInterstitialNativeSource, /createPracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialNativeSource, /reducePracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialNativeSource, /PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS/);
+  assert.match(practiceInterstitialNativeSource, /PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS/);
+  assert.match(practiceInterstitialNativeSource, /dispatchAttemptEvent\('load_timeout'\)/);
+  assert.match(practiceInterstitialNativeSource, /dispatchAttemptEvent\('show_timeout'\)/);
+  assert.doesNotMatch(practiceInterstitialNativeSource, /let attemptSettled|let showStarted/);
   assert.match(adBannerNativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(
     adBannerNativeSource,
@@ -161,8 +168,8 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
 
-  assert.match(adCopySource, /testStatus: 'AdMob test unit active - preview'/);
-  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - förhandsvisning'/);
+  assert.match(adCopySource, /testStatus: 'AdMob test unit active - test placement'/);
+  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - testplacering'/);
   assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/);
   assert.match(
     webBannerSource,
@@ -175,8 +182,9 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   assert.match(
     nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
   );
+  assert.match(nativeBannerSource, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,

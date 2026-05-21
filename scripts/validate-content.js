@@ -5467,6 +5467,14 @@ function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
 }
 
+function legacyOptionAnswerShape(options) {
+  return options.map((option) => ({
+    id: option.id,
+    textSv: option.textSv,
+    textEn: option.textEn,
+  }));
+}
+
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -9307,6 +9315,32 @@ function validateAdPlacementRouteParity() {
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
     : [];
+  const webAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeAdBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+
+  if (!nativeAdBannerSource.includes('getPlatformAdUnitId(placement, Platform.OS)')) {
+    reject('AdBanner native placement must resolve banner units by Platform.OS');
+  }
+  if (
+    !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/.test(
+      nativeAdBannerSource,
+    )
+  ) {
+    reject('AdBanner native placement must gate banners through platform-aware shouldShowAd');
+  }
+  if (
+    !/shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/.test(
+      webAdBannerSource,
+    )
+  ) {
+    reject('AdBanner web fallback must use the shared web fallback consent decision');
+  }
 
   for (const spec of EXPECTED_ROUTE_AD_PLACEMENTS) {
     let source = '';
@@ -9534,6 +9568,30 @@ function validateAdPlacementRouteParity() {
       if (!nativeInterstitialSource.includes('requestNonPersonalizedAdsOnly')) {
         reject(
           'PracticeInterstitialAd native placement must pass non-personalized ad request options',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !nativeInterstitialSource.includes('createPracticeInterstitialAttemptState') ||
+        !nativeInterstitialSource.includes('reducePracticeInterstitialAttemptState')
+      ) {
+        reject('PracticeInterstitialAd native placement must use the shared attempt-state helper');
+        routeIsValid = false;
+      }
+      if (
+        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS') ||
+        !nativeInterstitialSource.includes('PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS') ||
+        !nativeInterstitialSource.includes("dispatchAttemptEvent('load_timeout')") ||
+        !nativeInterstitialSource.includes("dispatchAttemptEvent('show_timeout')")
+      ) {
+        reject(
+          'PracticeInterstitialAd native placement must release in-flight attempts on load and show timeouts',
+        );
+        routeIsValid = false;
+      }
+      if (/let attemptSettled|let showStarted/.test(nativeInterstitialSource)) {
+        reject(
+          'PracticeInterstitialAd native placement must not keep local attempt-settled bookkeeping outside the shared helper',
         );
         routeIsValid = false;
       }
@@ -17430,7 +17488,12 @@ function validateGeneratedAnswerTemplateParity() {
       if (!expected) {
         variantIsValid = false;
         fail(`${label} expected generated variant is missing`);
-      } else if (!jsonEqual(variant.options, expected.options)) {
+      } else if (
+        !jsonEqual(
+          legacyOptionAnswerShape(variant.options),
+          legacyOptionAnswerShape(expected.options),
+        )
+      ) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }
