@@ -210,6 +210,8 @@ test('mock exam provenance review follows English support mode', async ({ page }
   const activeReportHref = await activeReportLink.getAttribute('href');
   expect(activeReportHref).toContain('reportScreen=exam');
   expect(activeReportHref).not.toContain('selectedAnswer=');
+  await expect(activeReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(activeReportLink).not.toHaveAttribute('href', /selectedAnswer=/);
 
   const submit = page.getByRole('button', { name: 'Submit mock exam' });
   await expect(submit).toBeDisabled();
@@ -275,6 +277,8 @@ test('mock exam provenance review follows English support mode', async ({ page }
   const reviewReportHref = await reviewReportLink.getAttribute('href');
   expect(reviewReportHref).toContain('reportScreen=exam');
   expect(reviewReportHref).toContain('selectedAnswer=');
+  await expect(reviewReportLink).toHaveAttribute('href', /reportScreen=exam/);
+  await expect(reviewReportLink).toHaveAttribute('href', /selectedAnswer=/);
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,

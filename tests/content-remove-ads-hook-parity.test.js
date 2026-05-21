@@ -158,6 +158,7 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
   assert.match(focusedHarnessSource, /monetizationRuntimeHarness\.cjs/);
   assert.match(focusedHarnessSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
+  assert.match(monetizationSuiteSource, /createMemoryLocalStorage,\s*[\s\S]*withGlobalProperties,/);
   assert.match(runtimeHarnessSource, /function createTsLoader/);
   assert.match(runtimeHarnessSource, /function createReactHookStub/);
   assert.match(runtimeHarnessSource, /function createReactNativeWebStub/);
@@ -168,6 +169,16 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.doesNotMatch(focusedHarnessSource, /function withGlobalProperties/);
   assert.doesNotMatch(focusedHarnessSource, /Object\.getOwnPropertyDescriptor\(globalThis/);
   assert.doesNotMatch(focusedHarnessSource, /Object\.defineProperty\(globalThis/);
+  assert.doesNotMatch(monetizationSuiteSource, /function createMemoryLocalStorage/);
+  assert.doesNotMatch(monetizationSuiteSource, /function withGlobalProperties/);
+  assert.doesNotMatch(
+    monetizationSuiteSource,
+    /Object\.getOwnPropertyDescriptor\(globalThis,\s*'localStorage'\)/,
+  );
+  assert.doesNotMatch(
+    monetizationSuiteSource,
+    /Object\.defineProperty\(globalThis,\s*'localStorage'/,
+  );
   assert.doesNotMatch(monetizationTestFileSources, /function createReactHookStub/);
   assert.doesNotMatch(monetizationTestFileSources, /Platform:\s*\{\s*OS:\s*'web'\s*\}/);
   assert.match(

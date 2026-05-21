@@ -3,9 +3,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const {
+  createMemoryLocalStorage,
   createReactHookStub,
   createReactNativeWebStub,
   createTsLoader,
+  withGlobalProperties,
 } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -32,51 +34,6 @@ function withEnv(overrides, fn) {
         delete process.env[key];
       } else {
         process.env[key] = value;
-      }
-    }
-  }
-}
-
-function createMemoryLocalStorage() {
-  const values = new Map();
-  return {
-    getItem(key) {
-      return values.get(String(key)) ?? null;
-    },
-    removeItem(key) {
-      values.delete(String(key));
-    },
-    setItem(key, value) {
-      values.set(String(key), String(value));
-    },
-    values,
-  };
-}
-
-async function withGlobalProperties(overrides, fn) {
-  const previous = new Map();
-
-  for (const [key, value] of Object.entries(overrides)) {
-    previous.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
-    if (value === undefined) {
-      delete globalThis[key];
-    } else {
-      Object.defineProperty(globalThis, key, {
-        configurable: true,
-        value,
-        writable: true,
-      });
-    }
-  }
-
-  try {
-    return await fn();
-  } finally {
-    for (const [key, descriptor] of previous) {
-      if (descriptor) {
-        Object.defineProperty(globalThis, key, descriptor);
-      } else {
-        delete globalThis[key];
       }
     }
   }
@@ -1127,25 +1084,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
 
   assert.equal(typeof createSecureStoreMockExamAccessStorage().getItemAsync, 'function');
 
-  const previousLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  const localStorageValues = new Map();
-
-  Object.defineProperty(globalThis, 'localStorage', {
-    configurable: true,
-    value: {
-      getItem(key) {
-        return localStorageValues.get(key) ?? null;
-      },
-      removeItem(key) {
-        localStorageValues.delete(key);
-      },
-      setItem(key, value) {
-        localStorageValues.set(key, String(value));
-      },
-    },
-  });
-
-  try {
+  await withGlobalProperties({ localStorage: createMemoryLocalStorage() }, async () => {
     const webStorage = createWebMockExamAccessStorage();
 
     await recordStoredMockExamCompletion({
@@ -1165,13 +1104,7 @@ test('mock exam access persistence stores daily completions and rewarded credits
       ).completedMockExamsToday,
       1,
     );
-  } finally {
-    if (previousLocalStorage) {
-      Object.defineProperty(globalThis, 'localStorage', previousLocalStorage);
-    } else {
-      delete globalThis.localStorage;
-    }
-  }
+  });
 
   assert.deepEqual(
     await clearStoredMockExamAccess({
@@ -1577,25 +1510,8 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
   assert.equal(missingRestore.status, 'not_found');
   assert.equal(missingRestore.entitlements.adsDisabled, false);
 
-  const previousLocalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
-  const localStorageValues = new Map();
-
-  Object.defineProperty(globalThis, 'localStorage', {
-    configurable: true,
-    value: {
-      getItem(key) {
-        return localStorageValues.get(key) ?? null;
-      },
-      removeItem(key) {
-        localStorageValues.delete(key);
-      },
-      setItem(key, value) {
-        localStorageValues.set(key, String(value));
-      },
-    },
-  });
-
-  try {
+  const localStorage = createMemoryLocalStorage();
+  await withGlobalProperties({ localStorage }, async () => {
     const webProvider = createMockPurchaseProvider();
     const webStorage = createWebPurchaseStorage();
     await buyRemoveAds({
@@ -1611,14 +1527,8 @@ test('remove-ads IAP wrapper buys, restores, and persists adsDisabled', async ()
     );
 
     await purchaseExports.setRemoveAdsEntitlement(false, { storage: webStorageAfterReload });
-    assert.equal(localStorageValues.has(REMOVE_ADS_STORAGE_KEY), false);
-  } finally {
-    if (previousLocalStorage) {
-      Object.defineProperty(globalThis, 'localStorage', previousLocalStorage);
-    } else {
-      delete globalThis.localStorage;
-    }
-  }
+    assert.equal(localStorage.getItem(REMOVE_ADS_STORAGE_KEY), null);
+  });
 });
 
 test('remove-ads buy persists before native finish and leaves failed persistence unfinished', async () => {
