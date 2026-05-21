@@ -28,6 +28,10 @@ const answerOptionFeedbackCopy: Record<
   },
 };
 
+function normalizeAnswerOptionFeedbackLanguage(language: unknown): AnswerOptionFeedbackLanguage {
+  return language === 'sv' || language === 'en' ? language : 'sv';
+}
+
 export function isCorrectAnswer(question: PracticeQuestion, optionId: string): boolean {
   return question.correctOptionId === optionId;
 }
@@ -36,11 +40,11 @@ export function getAnswerOptionFeedback(
   question: PracticeQuestion,
   optionId: string,
   selectedOptionId: string | null | undefined,
-  language: AnswerOptionFeedbackLanguage = 'sv',
+  language: unknown = 'sv',
 ): AnswerOptionFeedback {
   if (!selectedOptionId) return { tone: 'idle' };
 
-  const copy = answerOptionFeedbackCopy[language];
+  const copy = answerOptionFeedbackCopy[normalizeAnswerOptionFeedbackLanguage(language)];
   const optionIsCorrect = isCorrectAnswer(question, optionId);
   const optionIsSelected = selectedOptionId === optionId;
 

@@ -76,3 +76,26 @@ test('answer option feedback labels follow the selected question language', () =
     tone: 'correct',
   });
 });
+
+test('answer option feedback falls back for malformed runtime languages', () => {
+  const { getAnswerOptionFeedback } = loadTs('lib/quiz/answerValidation.ts');
+  const question = {
+    id: 'q1',
+    correctOptionId: 'option-b',
+  };
+
+  ['fr', '', null, undefined, { language: 'en' }].forEach((language) => {
+    assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-b', language), {
+      resultLabel: 'Rätt',
+      tone: 'correct',
+    });
+    assert.deepEqual(getAnswerOptionFeedback(question, 'option-a', 'option-a', language), {
+      resultLabel: 'Fel',
+      tone: 'incorrect',
+    });
+    assert.deepEqual(getAnswerOptionFeedback(question, 'option-b', 'option-a', language), {
+      resultLabel: 'Rätt svar',
+      tone: 'correct',
+    });
+  });
+});
