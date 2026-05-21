@@ -395,6 +395,62 @@ function englishProtectedReligionStatement(subject: string, answer: string): str
   return `${upperFirst(subject)} protects ${lowerFirst(answer)}`;
 }
 
+function swedishProtectionStatement(subject: string, answer: string): string {
+  const trimmed = answer.trim();
+  const stateRight = trimmed.match(/^Rätten för staten att (.+)$/i);
+  if (stateRight) {
+    return `${upperFirst(subject)} ger staten rätt att ${lowerLeadingSwedishClauseStart(
+      stateRight[1],
+    )}`;
+  }
+  return `${upperFirst(subject)} skyddar ${lowerFirst(answer)}`;
+}
+
+function englishProtectionStatement(subject: string, answer: string): string {
+  const trimmed = answer
+    .trim()
+    .replace(/\bpreview all private letters\b/i, 'pre-screen all private letters');
+  const stateRight = trimmed.match(/^The right of the state to (.+)$/i);
+  if (stateRight) {
+    return `${upperFirst(subject)} gives the state the right to ${lowerFirst(stateRight[1])}`;
+  }
+  return `${upperFirst(subject)} protects ${lowerFirst(trimmed)}`;
+}
+
+function swedishEveryoneRightStatement(subject: string, answer: string): string {
+  if (/^Att\s+/i.test(answer)) {
+    return `${upperFirst(subject)} ger alla rätt att ${lowerLeadingSwedishClauseStart(
+      stripLeadingPurposeSv(answer),
+    )}`;
+  }
+  return replaceLeadingSwedishSubject(subject, answer);
+}
+
+function englishEveryoneRightStatement(subject: string, answer: string): string {
+  if (/^To\s+/i.test(answer)) {
+    return `${upperFirst(subject)} gives everyone the right to ${lowerFirst(
+      stripLeadingPurposeEn(answer),
+    )}`;
+  }
+  return replaceLeadingEnglishSubject(subject, answer);
+}
+
+function swedishAccusedTrialRightStatement(answer: string): string {
+  if (/^Rätt\s+/i.test(answer)) {
+    return `Under en rättegång har en åtalad person ${lowerFirst(answer)}`;
+  }
+  return replaceLeadingSwedishSubject('den åtalade', answer);
+}
+
+function englishAccusedTrialRightStatement(answer: string): string {
+  if (/^The right to\s+/i.test(answer)) {
+    return `During a trial, the accused person has the right to ${lowerFirst(
+      answer.replace(/^The right to\s+/i, ''),
+    )}`;
+  }
+  return replaceLeadingEnglishSubject('the accused person', answer);
+}
+
 function swedishChristianHolidayStatement(
   subject: string,
   condition: string,
@@ -1715,6 +1771,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad skyddar (.+?) när det gäller (.+)$/i);
   if (match) return swedishProtectedReligionStatement(match[1], answer);
 
+  match = q.match(/^Vad skyddar ((?!.*\bnär det gäller\b).+)$/i);
+  if (match) return swedishProtectionStatement(match[1], answer);
+
+  match = q.match(/^Vad ger (.+?) alla rätt att göra$/i);
+  if (match) return swedishEveryoneRightStatement(match[1], answer);
+
+  match = q.match(/^Vilken rätt har den åtalade under en rättegång$/i);
+  if (match) return swedishAccusedTrialRightStatement(answer);
+
   match = q.match(/^Vad blev tillåtet för (.+?) år (.+)$/i);
   if (match)
     return `År ${match[2]} blev det tillåtet för ${match[1]} ${swedishPurposeClause(answer)}`;
@@ -2246,6 +2311,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What does (.+?) protect regarding (.+)$/i);
   if (match) return englishProtectedReligionStatement(match[1], answer);
+
+  match = q.match(/^What does (.+?) protect$/i);
+  if (match) return englishProtectionStatement(match[1], answer);
+
+  match = q.match(/^What does (.+?) give everyone the right to do$/i);
+  if (match) return englishEveryoneRightStatement(match[1], answer);
+
+  match = q.match(/^What right does the accused person have during a trial$/i);
+  if (match) return englishAccusedTrialRightStatement(answer);
 
   match = q.match(/^What became permitted for (.+?) in (.+)$/i);
   if (match)
