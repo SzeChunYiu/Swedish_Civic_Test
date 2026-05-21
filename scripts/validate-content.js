@@ -7415,6 +7415,8 @@ let mobileAdsConsentTypeInterfacesValidated = 0;
 let mobileAdsConsentTypeSchemaParityValidated = false;
 let mobileAdsConsentHookCasesValidated = 0;
 let mobileAdsConsentHookParityValidated = false;
+let mobileAdsConsentRuntimeCasesValidated = 0;
+let mobileAdsConsentRuntimeParityValidated = false;
 let rewardedAdTypeUnionsValidated = 0;
 let rewardedAdTypeInterfacesValidated = 0;
 let rewardedAdTypeSchemaParityValidated = false;
@@ -12893,6 +12895,98 @@ function validateMobileAdsConsentHookParity() {
   }
 }
 
+function validateMobileAdsConsentRuntimeParity() {
+  let valid = true;
+  let mobileConsentSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    mobileConsentSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/mobileAdsConsent.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`lib/monetization/mobileAdsConsent.ts could not be read: ${error.message}`);
+    return;
+  }
+
+  const currentAttIndex = mobileConsentSource.indexOf(
+    'const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus(',
+  );
+  const umpIndex = mobileConsentSource.indexOf(
+    'const umpConsentStatus = await resolveUmpConsentStatus(',
+  );
+  const requestAttIndex = mobileConsentSource.indexOf(
+    'const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded(',
+  );
+  const decisionIndex = mobileConsentSource.indexOf(
+    'const decision = getAdSdkInitializationDecision(state);',
+  );
+  const initializeIndex = mobileConsentSource.indexOf(
+    'await options.runtime.initializeGoogleMobileAds?.();',
+  );
+
+  const runtimeCases = [
+    [
+      currentAttIndex >= 0 &&
+        umpIndex >= 0 &&
+        requestAttIndex >= 0 &&
+        currentAttIndex < umpIndex &&
+        umpIndex < requestAttIndex,
+      'Mobile Ads consent runtime must resolve UMP consent before requesting ATT',
+    ],
+    [
+      !/Promise\.all\s*\(/.test(mobileConsentSource),
+      'Mobile Ads consent runtime must not collect ATT and UMP through Promise.all',
+    ],
+    [
+      decisionIndex >= 0 && initializeIndex >= 0 && decisionIndex < initializeIndex,
+      'Mobile Ads consent runtime must decide consent before initializing Google Mobile Ads',
+    ],
+    [
+      /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';/.test(
+        mobileConsentSource,
+      ) &&
+        /if\s*\(\s*platform\s*!==\s*'ios'\s*\|\|\s*!realAdsEnabled\s*\)\s*return\s*'unavailable';[\s\S]*?if\s*\(\s*currentStatus\s*!==\s*'not_determined'\s*\)\s*return\s+currentStatus;/.test(
+          mobileConsentSource,
+        ),
+      'Mobile Ads consent runtime must request ATT only on iOS when status is not determined',
+    ],
+  ];
+
+  runtimeCases.forEach(([caseIsValid, message]) => {
+    if (!caseIsValid) {
+      reject(message);
+      return;
+    }
+    mobileAdsConsentRuntimeCasesValidated += 1;
+  });
+
+  if (valid && mobileAdsConsentRuntimeCasesValidated === runtimeCases.length) {
+    mobileAdsConsentRuntimeParityValidated = true;
+  }
+}
+
+if (process.argv.includes('--focus-mobile-ads-consent-parity')) {
+  validateMobileAdsConsentTypeSchemaParity();
+  validateMobileAdsConsentHookParity();
+  validateMobileAdsConsentRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentTypeInterfacesValidated,
+    mobileAdsConsentTypeSchemaParityValidated,
+    mobileAdsConsentHookCasesValidated,
+    mobileAdsConsentHookParityValidated,
+    mobileAdsConsentRuntimeCasesValidated,
+    mobileAdsConsentRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
 function validateRewardedAdTypeSchemaParity() {
   let valid = true;
   let rewardedAdSource = '';
@@ -16141,6 +16235,7 @@ validateRemoveAdsSwedishExamCopyParity();
 validateAdConsentTypeSchemaParity();
 validateMobileAdsConsentTypeSchemaParity();
 validateMobileAdsConsentHookParity();
+validateMobileAdsConsentRuntimeParity();
 validateRewardedAdTypeSchemaParity();
 validateMockExamAccessTypeSchemaParity();
 validateThemeTokenSchema();
@@ -16342,6 +16437,8 @@ console.log(
       mobileAdsConsentTypeSchemaParityValidated,
       mobileAdsConsentHookCasesValidated,
       mobileAdsConsentHookParityValidated,
+      mobileAdsConsentRuntimeCasesValidated,
+      mobileAdsConsentRuntimeParityValidated,
       rewardedAdTypeUnionsValidated,
       rewardedAdTypeInterfacesValidated,
       rewardedAdTypeSchemaParityValidated,
