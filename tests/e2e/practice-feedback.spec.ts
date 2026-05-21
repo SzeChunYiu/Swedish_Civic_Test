@@ -17,7 +17,7 @@ async function enableEnglishSupport(page: Page) {
     .getByLabel(/Byt studiespråk till Engelskt stöd|Set study language to English support/)
     .click();
   await expect(page.getByLabel('Set study language to English support')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
 }
@@ -27,7 +27,7 @@ async function enableSwedish(page: Page) {
   await closeLaunchAdIfPresent(page);
   await page.getByLabel(/Byt studiespråk till Svenska|Set study language to Swedish/).click();
   await expect(page.getByLabel('Byt studiespråk till Svenska')).toHaveAttribute(
-    'aria-selected',
+    'aria-checked',
     'true',
   );
 }
@@ -188,7 +188,7 @@ test('practice flow answers a question, shows source feedback, and advances', as
   await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
   await expect(page.getByText('Score: 1/1')).toBeVisible();
   await expect(page.getByText('Completed questions: 1')).toBeVisible();
-  await expect(page.getByText('Explanation')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Explanation' })).toBeVisible();
   await expect(page.getByText(/Sweden is in the Nordic region/)).toBeVisible();
   await expect(page.getByText('UHR reference')).toBeVisible();
   await expect(page.getByText('Landet Sverige · Geografi, klimat och natur')).toBeVisible();

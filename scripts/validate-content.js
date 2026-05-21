@@ -3090,6 +3090,10 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /import \{ speakSwedish, stopSpeech \} from '\.\.\/\.\.\/lib\/audio\/speak';/,
   },
   {
+    label: 'speaking state import',
+    pattern: /import \{ useEffect, useState \} from 'react';/,
+  },
+  {
     label: 'optional text, enabled, and language prop contract',
     pattern:
       /enabled = true,[\s\S]*language = 'sv'[\s\S]*text = ''[\s\S]*enabled\?: boolean;[\s\S]*language\?: AppLanguage;[\s\S]*text\?: string/,
@@ -3109,7 +3113,12 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'localized state-specific visible labels',
     pattern:
-      /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+      /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*stopLabel: 'Stoppa frågeljud'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*stopLabel: 'Stop question audio'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+  },
+  {
+    label: 'speaking state controls localized visible label',
+    pattern:
+      /const \[isSpeaking, setIsSpeaking\] = useState\(false\);[\s\S]*const label = !enabled[\s\S]*\? copy\.disabledLabel[\s\S]*\? copy\.unavailableLabel[\s\S]*\? copy\.stopLabel[\s\S]*: copy\.enabledLabel;/,
   },
   {
     label: 'accessibility label follows localized visible label',
@@ -3118,7 +3127,7 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   {
     label: 'localized state-specific accessibility hint',
     pattern:
-      /disabledHint: 'Aktivera ljud i Inställningar för att höra svensk text\.'[\s\S]*enabledHint: 'Spelar upp den svenska frågan och svarsalternativen\.'[\s\S]*unavailableHint: 'Ljud behöver svensk frågetext före uppspelning\.'[\s\S]*disabledHint: 'Enable audio in Settings to hear Swedish text\.'[\s\S]*enabledHint: 'Plays the Swedish question and answer options aloud\.'[\s\S]*unavailableHint: 'Audio needs Swedish question text before playback\.'/,
+      /disabledHint: 'Aktivera ljud i Inställningar för att höra svensk text\.'[\s\S]*enabledHint: 'Spelar upp den svenska frågan och svarsalternativen\.'[\s\S]*stopHint: 'Stoppar uppläsningen av frågan och svarsalternativen\.'[\s\S]*unavailableHint: 'Ljud behöver svensk frågetext före uppspelning\.'[\s\S]*disabledHint: 'Enable audio in Settings to hear Swedish text\.'[\s\S]*enabledHint: 'Plays the Swedish question and answer options aloud\.'[\s\S]*stopHint: 'Stops the question audio playback\.'[\s\S]*unavailableHint: 'Audio needs Swedish question text before playback\.'/,
   },
   {
     label: 'native button accessibility wiring',
@@ -3126,16 +3135,27 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
       /<Button[\s\S]*accessibilityHint=\{accessibilityHint\}[\s\S]*accessibilityLabel=\{accessibilityLabel\}[\s\S]*accessibilityRole="button"/,
   },
   {
-    label: 'disabled accessibility state follows playback guard',
-    pattern: /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/,
+    label: 'busy and disabled accessibility state follows playback lifecycle',
+    pattern: /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/,
   },
   {
     label: 'disabled interaction follows playback guard',
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
-    label: 'trimmed speech playback',
-    pattern: /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText\);/,
+    label: 'second press stops active question audio',
+    pattern:
+      /if \(!canPlayAudio\) return;[\s\S]*if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'trimmed speech playback with lifecycle cleanup',
+    pattern:
+      /stopSpeech\(\);[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText, \{[\s\S]*onDone: \(\) => setIsSpeaking\(false\),[\s\S]*onError: \(\) => setIsSpeaking\(false\),[\s\S]*onStopped: \(\) => setIsSpeaking\(false\),[\s\S]*\}\);/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
