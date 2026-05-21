@@ -158,6 +158,8 @@ test('Simplified Chinese remaining route preview covers onboarding, about, suppo
   ]) {
     assert.match(source, new RegExp(phrase));
   }
+
+  assert.doesNotMatch(source, /\bmyndighet\b/i);
 });
 
 test('Simplified Chinese preview does not enable zh-Hans runtime release', () => {

@@ -115,6 +115,39 @@ require('./scripts/export-ui-preview-review-packets.js');
   );
 });
 
+test('UI preview v8 review export rejects unlocalized civic terms in preview copy', () => {
+  const result = cp.spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/localization/soUiPreview.ts')) {
+    return String(contents).replace(
+      'Raadi dimoqraadiyad, degmo, daryeel bulsho…',
+      'Raadi dimoqraadiyad, kommun, välfärd…',
+    );
+  }
+  return contents;
+};
+process.argv.push('--check');
+require('./scripts/export-ui-preview-review-packets.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /unlocalized civic term.*so.*searchPlaceholder/i,
+  );
+});
+
 test('UI preview v8 review export rejects unblocked preview readiness gates', () => {
   const result = cp.spawnSync(
     process.execPath,

@@ -102,6 +102,10 @@ test('Somali preview covers compliance, onboarding, about, support, sources, and
   for (const forbidden of ['Hel baasaboorka', 'Imtixaanka uga gud', 'muwaadinimo ayaad helaysaa']) {
     assert.doesNotMatch(source, new RegExp(forbidden));
   }
+
+  for (const untranslatedCivicTerm of [/\bkommun\b/i, /\bvälfärd\b/i, /\bmyndighet\b/i]) {
+    assert.doesNotMatch(source, untranslatedCivicTerm);
+  }
 });
 
 test('Somali preview does not enable runtime release', () => {
