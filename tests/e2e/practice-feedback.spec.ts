@@ -1,13 +1,10 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import { dismissBlockingModals } from './browserLaunch';
+
 async function closeLaunchAdIfPresent(page: Page) {
-  const closeLaunchAd = page.getByRole('button', {
-    name: /Close launch sponsor ad|Stäng startannons/,
-  });
-  if (await closeLaunchAd.isVisible()) {
-    await closeLaunchAd.click();
-  }
+  await dismissBlockingModals(page);
 }
 
 async function enableEnglishSupport(page: Page) {

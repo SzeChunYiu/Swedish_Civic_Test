@@ -33,6 +33,8 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /import type \{ AppLanguage \}/);
   assert.match(source, /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy>/);
   assert.match(source, /language = 'sv'/);
+  assert.match(source, /rate,/);
+  assert.match(source, /rate\?: number;/);
   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
   assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
@@ -55,7 +57,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /if \(isSpeaking\)[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);/);
   assert.match(source, /stopSpeech\(\);/);
   assert.match(source, /setIsSpeaking\(true\);/);
-  assert.match(source, /speakSwedish\(speechText, \{[\s\S]*onDone:[\s\S]*onStopped:/);
+  assert.match(source, /speakSwedish\(speechText, \{[\s\S]*rate,[\s\S]*onDone:[\s\S]*onStopped:/);
   assert.match(
     source,
     /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
@@ -92,6 +94,58 @@ test('learning FeedbackAudioButton exposes localized play and stop states', () =
     /<FeedbackAudioButton[\s\S]*text=\{buildAnswerFeedbackSpeechText\(question, selectedOptionId\)\}[\s\S]*\/>/,
   );
   assert.doesNotMatch(examSource, /FeedbackAudioButton|buildAnswerFeedbackSpeechText/);
+});
+
+test('listen-first question audio is opt-in, rate-aware, and excluded from timed exams', () => {
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/audio/questionAudioAutoplay.ts'),
+    'utf8',
+  );
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+
+  assert.match(hookSource, /export function shouldAutoplayQuestionAudio/);
+  assert.match(hookSource, /audioEnabled[\s\S]*listenFirstAudioEnabled[\s\S]*!stopSignal/);
+  assert.match(hookSource, /speechText\.trim\(\)\.length > 0/);
+  assert.match(hookSource, /const lastPlayedQuestionKeyRef = useRef<string \| null>\(null\);/);
+  assert.match(
+    hookSource,
+    /if \(lastPlayedQuestionKeyRef\.current === questionKey\) return undefined;/,
+  );
+  assert.match(
+    hookSource,
+    /stopSpeech\(\);[\s\S]*speakSwedish\(normalizedSpeechText, \{ rate \}\);/,
+  );
+  assert.match(hookSource, /return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};/);
+
+  for (const routeSource of [practiceSource, quizSource]) {
+    assert.match(routeSource, /useQuestionAudioAutoplay/);
+    assert.match(
+      routeSource,
+      /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+    );
+    assert.match(routeSource, /\(state\) => state\.listenFirstAudioEnabled\)?[,)]/);
+    assert.match(routeSource, /const questionSpeechText = useMemo\(/);
+    assert.match(routeSource, /speechText: questionSpeechText/);
+    assert.match(routeSource, /rate: audioPlaybackRate/);
+    assert.match(routeSource, /stopSignal: hasSelectedAnswer/);
+    assert.match(routeSource, /stopSpeech\(\);[\s\S]*recordAnswer/);
+    assert.match(
+      routeSource,
+      /<AudioButton[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*text=\{questionSpeechText\}/,
+    );
+    assert.match(routeSource, /<FeedbackAudioButton[\s\S]*rate=\{audioPlaybackRate\}/);
+  }
+
+  assert.doesNotMatch(examSource, /useQuestionAudioAutoplay|listenFirstAudioEnabled|AudioButton/);
+  assert.match(settingsSource, /audioListenFirstTitle: 'Lyssna först'/);
+  assert.match(settingsSource, /audioListenFirstTitle: 'Listen first'/);
+  assert.match(
+    settingsSource,
+    /onPress=\{\(\) => setListenFirstAudioEnabled\(!listenFirstAudioEnabled\)\}/,
+  );
 });
 
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {

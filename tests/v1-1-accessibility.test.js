@@ -100,6 +100,11 @@ test('accessibilityStore: throwing MMKV writes keep in-memory state and record w
   );
 
   state.clearPersistenceWarning();
+  useAccessibilityStore.getState().setListenFirstAudioEnabled(true);
+  assert.equal(useAccessibilityStore.getState().listenFirstAudioEnabled, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.listenFirstAudio.v1');
+
+  state.clearPersistenceWarning();
   useAccessibilityStore.getState().setThemeMode('dark');
   assert.equal(useAccessibilityStore.getState().themeMode, 'dark');
   assert.equal(useAccessibilityStore.getState().persistenceWarning.key, 'a11y.themeMode.v1');
@@ -124,6 +129,11 @@ test('accessibilityStore: successful writes persist values and clear warning', (
   assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 1.25);
   assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
   assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 1.25);
+
+  useAccessibilityStore.getState().setListenFirstAudioEnabled(true);
+  assert.equal(useAccessibilityStore.getState().listenFirstAudioEnabled, true);
+  assert.equal(useAccessibilityStore.getState().persistenceWarning, null);
+  assert.equal(storage.values.get('a11y.listenFirstAudio.v1'), true);
 
   useAccessibilityStore.getState().setThemeMode('dark');
   assert.equal(useAccessibilityStore.getState().themeMode, 'dark');
@@ -164,6 +174,14 @@ test('accessibilityStore: runtime writes and font scale reads normalize invalid 
   useAccessibilityStore.getState().setAudioPlaybackRate(0.75);
   assert.equal(useAccessibilityStore.getState().audioPlaybackRate, 0.75);
   assert.equal(storage.values.get('a11y.audioPlaybackRate.v1'), 0.75);
+
+  useAccessibilityStore.getState().setListenFirstAudioEnabled('yes');
+  assert.equal(useAccessibilityStore.getState().listenFirstAudioEnabled, false);
+  assert.equal(storage.values.get('a11y.listenFirstAudio.v1'), false);
+
+  useAccessibilityStore.getState().setListenFirstAudioEnabled(true);
+  assert.equal(useAccessibilityStore.getState().listenFirstAudioEnabled, true);
+  assert.equal(storage.values.get('a11y.listenFirstAudio.v1'), true);
 
   assert.equal(fontScaleFor(0), 0.9);
   assert.equal(fontScaleFor(2), 1.15);
