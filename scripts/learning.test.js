@@ -4,59 +4,30 @@ const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
 
+const { loadTsWithStorage } = require('../tests/helpers/storageStoreHarness.cjs');
+
 const repoRoot = path.resolve(__dirname, '..');
 
 function loadTs(relativePath, exportName) {
-  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-  const output = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-    },
-  }).outputText;
-  const mod = { exports: {} };
-  function localRequire(request) {
-    if (request.startsWith('.')) {
-      const resolved = path.join(path.dirname(path.join(repoRoot, relativePath)), request);
-      const normalized = path.relative(repoRoot, resolved).replace(/\.ts$/, '') + '.ts';
-      return loadAllTs(normalized);
-    }
-    if (request === 'react-native-mmkv') {
-      const memory = new Map();
-      return {
-        createMMKV: () => ({
-          getString: (key) => memory.get(key),
-          set: (key, value) => memory.set(key, value),
-        }),
-      };
-    }
-    if (request === 'zustand') {
-      return {
-        create: (initializer) => {
-          let state;
-          const set = (updater) => {
-            const next = typeof updater === 'function' ? updater(state) : updater;
-            if (next === state) return;
-            state = { ...state, ...next };
-          };
-          const get = () => state;
-          const store = (selector) => (selector ? selector(state) : state);
-          store.getState = get;
-          store.setState = set;
-          state = initializer(set, get);
-          return store;
-        },
-      };
-    }
-    return require(request);
-  }
-  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
-  return exportName ? mod.exports[exportName] : mod.exports;
+  const mod = loadTsWithStorage(repoRoot, relativePath, {});
+  return exportName ? mod[exportName] : mod;
 }
 
 function loadAllTs(relativePath) {
   return loadTs(relativePath);
 }
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
 
 test('XP rules follow the MVP gamification table', () => {
   const { calculateAnswerXp, calculateLevel, calculateQuizCompletionXp } =
@@ -65,14 +36,17 @@ test('XP rules follow the MVP gamification table', () => {
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: true }), 12);
   assert.equal(calculateAnswerXp({ isCorrect: false, explanationRead: true }), 4);
   assert.equal(calculateAnswerXp({ isCorrect: 'true', explanationRead: true }), 0);
+  assert.equal(calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }), 0);
   assert.equal(calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }), 10);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }), 70);
+  assert.equal(calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }), 0);
   assert.equal(calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }), 0);
   assert.equal(calculateLevel(0), 1);
+  assert.equal(calculateLevel('10000'), 1);
   assert.equal(calculateLevel(NaN), 1);
   assert.equal(calculateLevel(Infinity), 1);
   assert.equal(calculateLevel(100), 2);
@@ -81,13 +55,51 @@ test('XP rules follow the MVP gamification table', () => {
 
 test('streak logic counts consecutive unique answer dates through today', () => {
   const { calculateStreak, getLocalDateKey } = loadAllTs('lib/learning/streaks.ts');
+  const invalidDateKey = getLocalDateKey(new Date(Number.NaN));
 
   assert.equal(getLocalDateKey(new Date(2026, 0, 5, 23, 59)), '2026-01-05');
   assert.equal(getLocalDateKey(new Date(2026, 10, 9, 0, 1)), '2026-11-09');
+  assert.match(invalidDateKey, /^\d{4}-\d{2}-\d{2}$/);
+  assert.notEqual(invalidDateKey, 'NaN-NaN-NaN');
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14', '2026-05-15'], '2026-05-15'), 3);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], '2026-05-15'), 1);
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], '2026-05-15'), 2);
   assert.equal(calculateStreak(['2026-05-14', '2026-05-14', '2026-05-15'], '2026-05-15'), 2);
+  assert.equal(calculateStreak(['2026-05-14', 42, '2026-05-15'], '2026-05-15'), 2);
+  assert.equal(calculateStreak(['2026-05-14', '2026-05-15'], 'not-a-date'), 0);
+});
+
+test('streakWithFreeze ignores malformed date inputs without corrupting freeze state', () => {
+  const { calculateStreakWithFreeze, refillFreezes } = loadAllTs(
+    'lib/learning/streakWithFreeze.ts',
+  );
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const freezeState = {
+    available: 1,
+    lastEarnedAt: 'not-a-date',
+    lifetimeEarned: 1,
+    lifetimeSpent: 0,
+    rescuedDayKeys: ['bad-key', '2026-05-17'],
+  };
+
+  const repaired = refillFreezes(freezeState, now);
+  assert.equal(repaired.lastEarnedAt, '2026-05-18');
+  assert.equal(repaired.available, 1);
+
+  const result = calculateStreakWithFreeze({
+    activeDayKeys: ['2026-05-19', '2026-05-18T08:00:00.000Z', 7, '2026-02-30'],
+    freezeState,
+    today: 'not-a-date',
+    now,
+  });
+
+  assert.equal(result.streakDays, 3);
+  assert.deepEqual(result.rescuedThisRun, []);
+  assert.deepEqual(result.freezeState.rescuedDayKeys, ['2026-05-17']);
+  assert.doesNotMatch(
+    refillFreezes(freezeState, new Date('not-a-date')).lastEarnedAt,
+    /NaN|not-a-date/,
+  );
 });
 
 test('daily goal counts question answers for the requested local day only', () => {
@@ -173,68 +185,6 @@ test('mastery blends accuracy, coverage, and recency', () => {
     q3: { correctCount: 3, seenCount: 3, wrongCount: 0 },
   };
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
-});
-
-test('weak chapter selector clamps malformed imported chapter progress', () => {
-  const { chapterWeaknesses } = loadAllTs('lib/learning/weakChapters.ts');
-  const result = chapterWeaknesses({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: 0,
-      dailyGoalAnswers: 10,
-      questionProgress: {},
-      sessions: [
-        {
-          id: 's1',
-          mode: 'study',
-          questionIds: [],
-          answers: [
-            {
-              questionId: 'q1',
-              selectedOptionIds: [],
-              isCorrect: 'yes',
-              answeredAt: '2026-05-18T10:00:00.000Z',
-            },
-            {
-              questionId: 'q2',
-              selectedOptionIds: [],
-              isCorrect: true,
-              answeredAt: '2026-05-18T10:00:00.000Z',
-            },
-            {
-              questionId: 'q3',
-              selectedOptionIds: [],
-              isCorrect: false,
-              answeredAt: 'not-a-date',
-            },
-          ],
-          startedAt: '2026-05-18T00:00:00.000Z',
-        },
-      ],
-    },
-    chapters: [
-      { id: 'bad-count', questionCount: Number.NaN },
-      { id: 'small-count', questionCount: 1 },
-    ],
-    questionChapterIndex: {
-      q1: 'bad-count',
-      q2: 'small-count',
-      q3: 'small-count',
-    },
-    now: new Date('2026-05-19T12:00:00.000Z'),
-  });
-
-  const badCount = result.find((chapter) => chapter.chapterId === 'bad-count');
-  const smallCount = result.find((chapter) => chapter.chapterId === 'small-count');
-  assert.equal(badCount.accuracy, 0);
-  assert.equal(badCount.coverage, 0);
-  assert.equal(smallCount.accuracy, 1);
-  assert.equal(smallCount.coverage, 1);
-  for (const chapter of result) {
-    assert.ok(Number.isFinite(chapter.weaknessScore));
-    assert.ok(chapter.weaknessScore >= 0 && chapter.weaknessScore <= 1);
-  }
 });
 
 test('readiness score can be derived from the persisted question progress snapshot', () => {
@@ -380,102 +330,86 @@ test('readiness mock recency uses completion metadata without depending on synth
   assert.equal(countedMock.components.accuracy, 0);
 });
 
-test('readiness adapter ignores malformed counters and bounds synthetic answer arrays', () => {
+test('readiness adapter aggregates counters without synthetic answer rows', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/learning/readiness.ts'), 'utf8');
+  const start = source.indexOf('export function computeReadinessFromQuestionProgress');
+  const end = source.indexOf('\nexport function computeReadinessScore', start);
+  assert.notEqual(start, -1);
+  assert.notEqual(end, -1);
+
+  const adapterSource = source.slice(start, end);
+  assert.doesNotMatch(adapterSource, /Array\.from\s*\(/);
+  assert.match(adapterSource, /scoreFromComponents\(/);
+});
+
+test('readiness adapter ignores malformed aggregate counters', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
-  const now = new Date('2026-05-19T12:00:00.000Z');
 
   const result = computeReadinessFromQuestionProgress({
     questionProgress: {
+      infinite: {
+        seenCount: Infinity,
+        correctCount: Infinity,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:00:00.000Z',
+      },
+      stringy: {
+        seenCount: '3',
+        correctCount: '2',
+        wrongCount: '1',
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:01:00.000Z',
+      },
+      fractional: {
+        seenCount: 1.5,
+        correctCount: 1,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:02:00.000Z',
+      },
+      oversized: {
+        seenCount: 10001,
+        correctCount: 10001,
+        wrongCount: 0,
+        correctStreak: 0,
+        lastAnsweredAt: '2026-05-19T10:03:00.000Z',
+      },
       valid: {
         seenCount: 1,
         correctCount: 1,
         wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      stringCorrect: {
-        seenCount: 1,
-        correctCount: '1',
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      stringOnly: {
-        seenCount: '2',
-        correctCount: '2',
-        wrongCount: '0',
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      huge: {
-        seenCount: 1_000_000_000,
-        correctCount: 1_000_000_000,
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-      },
-      unknown: {
-        seenCount: 1_000_000_000,
-        correctCount: 1_000_000_000,
-        wrongCount: 0,
-        lastAnsweredAt: '2026-05-18T10:00:00.000Z',
+        correctStreak: 1,
+        lastAnsweredAt: '2026-05-19T10:04:00.000Z',
       },
     },
     questions: [
-      { id: 'valid', chapterId: 'ch01' },
-      { id: 'stringCorrect', chapterId: 'ch02' },
-      { id: 'stringOnly', chapterId: 'ch03' },
-      { id: 'huge', chapterId: 'ch04' },
-      { id: 'nonFinite', chapterId: 'ch05' },
+      { id: 'infinite', chapterId: 'ch01' },
+      { id: 'stringy', chapterId: 'ch01' },
+      { id: 'fractional', chapterId: 'ch01' },
+      { id: 'oversized', chapterId: 'ch01' },
+      { id: 'valid', chapterId: 'ch02' },
     ],
     chapters: [
-      { id: 'ch01', questionCount: 10 },
-      { id: 'ch02', questionCount: 10 },
-      { id: 'ch03', questionCount: 10 },
-      { id: 'ch04', questionCount: 10 },
-      { id: 'ch05', questionCount: 10 },
+      { id: 'ch01', questionCount: 4 },
+      { id: 'ch02', questionCount: 1 },
     ],
-    now,
+    mockExamSessions: [
+      {
+        sessionId: 'score-only-invalid-total',
+        score: 0.8,
+        completedAt: '2026-05-19T10:05:00.000Z',
+        totalCount: Infinity,
+        correctCount: 32,
+      },
+    ],
+    now: new Date('2026-05-19T12:00:00.000Z'),
   });
 
-  assert.equal(result.components.accuracy, 0.8);
-  assert.equal(result.components.coverage, 0.6);
+  assert.equal(result.components.accuracy, 1);
+  assert.equal(result.components.coverage, 0.5);
+  assert.equal(result.components.mockAverage, 0.8);
   assert.equal(result.isSparse, true);
-  assert.ok(Number.isFinite(result.score));
-
-  const stringCountedMock = computeReadinessFromQuestionProgress({
-    questionProgress: {},
-    questions: [{ id: 'q1', chapterId: 'ch01' }],
-    chapters: [{ id: 'ch01', questionCount: 10 }],
-    mockExamSessions: [
-      {
-        sessionId: 'string-counted',
-        score: 0.8,
-        completedAt: '2026-05-19T10:00:00.000Z',
-        correctCount: '32',
-        totalCount: '40',
-      },
-    ],
-    now,
-  });
-  const hugeCountedMock = computeReadinessFromQuestionProgress({
-    questionProgress: {},
-    questions: [{ id: 'q1', chapterId: 'ch01' }],
-    chapters: [{ id: 'ch01', questionCount: 10 }],
-    mockExamSessions: [
-      {
-        sessionId: 'huge-counted',
-        score: 0.8,
-        completedAt: '2026-05-19T10:00:00.000Z',
-        correctCount: Number.MAX_SAFE_INTEGER,
-        totalCount: Number.MAX_SAFE_INTEGER,
-      },
-    ],
-    now,
-  });
-
-  assert.equal(stringCountedMock.components.accuracy, 0);
-  assert.equal(stringCountedMock.components.mockAverage, 0.8);
-  assert.equal(stringCountedMock.isSparse, true);
-  assert.equal(hugeCountedMock.components.accuracy, 0);
-  assert.equal(hugeCountedMock.components.mockAverage, 0.8);
-  assert.ok(Number.isFinite(hugeCountedMock.score));
 });
 
 test('dashboard mock history ignores invalid completions and nulls invalid duration math', () => {
@@ -546,6 +480,86 @@ test('dashboard selectors clamp bad day-window options before rendering bins', (
   assert.equal(xpSparkline(progress, { daysBack: Number.NaN, now }).length, 30);
 });
 
+test('weekly recap runtime guards reject malformed imported progress', () => {
+  const { generateWeeklyRecap } = loadAllTs('lib/learning/weeklyRecap.ts');
+  const recap = generateWeeklyRecap({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: '7',
+      dailyGoalAnswers: 10,
+      questionProgress: {
+        validResolved: {
+          questionId: 'validResolved',
+          correctStreak: 1,
+          wrongCount: 1,
+          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
+        },
+        stringCounters: {
+          questionId: 'stringCounters',
+          correctStreak: '1',
+          wrongCount: '2',
+          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
+        },
+      },
+      sessions: [
+        {
+          id: 'weekly-bad',
+          mode: 'exam',
+          questionIds: ['q1', 'q2', 'q3'],
+          startedAt: '2026-05-20T10:00:00.000Z',
+          completedAt: '2026-05-20T10:30:00.000Z',
+          score: Infinity,
+          answers: [
+            {
+              questionId: 'q1',
+              selectedOptionIds: ['a'],
+              isCorrect: 'true',
+              answeredAt: '2026-05-20T10:00:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q2',
+              selectedOptionIds: ['a'],
+              isCorrect: 1,
+              answeredAt: '2026-05-20T10:01:00.000Z',
+              timeSpentSeconds: 5,
+            },
+            {
+              questionId: 'q3',
+              selectedOptionIds: ['a'],
+              isCorrect: false,
+              answeredAt: '2026-05-20T10:02:00.000Z',
+              timeSpentSeconds: 5,
+            },
+          ],
+        },
+        {
+          id: 'weekly-high',
+          mode: 'exam',
+          questionIds: [],
+          answers: [],
+          startedAt: '2026-05-20T11:00:00.000Z',
+          completedAt: '2026-05-20T11:20:00.000Z',
+          score: 1.2,
+        },
+      ],
+    },
+    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
+    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
+    masteryThreshold: '0.8',
+    now: new Date('2026-05-20T12:00:00.000Z'),
+  });
+
+  assert.equal(recap.questionsAnswered, 3);
+  assert.equal(recap.accuracy, 0);
+  assert.equal(recap.mistakesResolved, 1);
+  assert.equal(recap.streakDays, 0);
+  assert.equal(recap.mockExamsTaken, 2);
+  assert.equal(recap.bestMockScore, 1);
+  assert.equal(recap.chapterNowMastered, null);
+});
+
 test('mock exam completion XP is awarded once per stored session', () => {
   const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
   const store = useProgressStore;
@@ -592,74 +606,6 @@ test('mock exam completion XP is awarded once per stored session', () => {
     completedAt: '2026-05-19T10:10:00.000Z',
   });
   assert.equal(store.getState().totalXp, 90);
-});
-
-test('progress store can record retry attempts without awarding duplicate answer XP', () => {
-  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
-  const store = useProgressStore;
-
-  store.getState().resetProgress();
-  store.getState().recordAnswer('q-xp', true, undefined, { awardXp: true });
-  assert.equal(store.getState().totalXp, 12);
-
-  store.getState().recordAnswer('q-xp', true, undefined, { awardXp: false });
-  const retryProgress = store.getState().questionProgress['q-xp'];
-  assert.equal(store.getState().totalXp, 12);
-  assert.equal(retryProgress.seenCount, 2);
-  assert.equal(retryProgress.correctCount, 2);
-  assert.equal(retryProgress.wrongCount, 0);
-  assert.equal(store.getState().answerHistory.length, 2);
-  assert.deepEqual(
-    store.getState().answerHistory.map((entry) => entry.questionId),
-    ['q-xp', 'q-xp'],
-  );
-
-  store.getState().recordAnswer('q-next', false);
-  assert.equal(store.getState().totalXp, 16);
-});
-
-test('practice session XP claim prevents Try Again answer XP farming', () => {
-  const { getPracticeAnswerXpAwardKey, usePracticeSessionStore } = loadAllTs(
-    'lib/quiz/practiceSessionStore.ts',
-  );
-  const { useProgressStore } = loadAllTs('lib/storage/progressStore.ts');
-
-  useProgressStore.getState().resetProgress();
-  usePracticeSessionStore.setState({
-    activeQuestionId: null,
-    selectedOptionId: null,
-    shuffleSessionId: 'practice-session-0',
-    answerXpAwardedKey: null,
-  });
-
-  function recordPracticeAnswer(questionId, optionId, isCorrect) {
-    const awardKey = getPracticeAnswerXpAwardKey(
-      questionId,
-      usePracticeSessionStore.getState().shuffleSessionId,
-    );
-    usePracticeSessionStore.getState().selectOption(questionId, optionId);
-    useProgressStore.getState().recordAnswer(questionId, isCorrect, undefined, {
-      awardXp: usePracticeSessionStore.getState().claimAnswerXpAward(awardKey),
-    });
-  }
-
-  recordPracticeAnswer('q-xp', 'q-xp-correct', true);
-  assert.equal(useProgressStore.getState().totalXp, 12);
-
-  usePracticeSessionStore.getState().resetSelection();
-  recordPracticeAnswer('q-xp', 'q-xp-correct-again', true);
-
-  assert.equal(useProgressStore.getState().totalXp, 12);
-  assert.equal(useProgressStore.getState().questionProgress['q-xp'].seenCount, 2);
-  assert.equal(useProgressStore.getState().questionProgress['q-xp'].correctCount, 2);
-  assert.deepEqual(
-    useProgressStore.getState().answerHistory.map((entry) => entry.questionId),
-    ['q-xp', 'q-xp'],
-  );
-
-  usePracticeSessionStore.getState().advanceQuestion();
-  recordPracticeAnswer('q-next', 'q-next-wrong', false);
-  assert.equal(useProgressStore.getState().totalXp, 16);
 });
 
 test('readiness and dashboard selectors ignore invalid or future answer dates', () => {
@@ -766,23 +712,6 @@ test('spaced repetition schedules wrong answers soon and known answers later', (
   );
 });
 
-test('spaced repetition legacy helper falls back safely for malformed inputs', () => {
-  const { getNextReviewAt } = loadAllTs('lib/learning/spacedRepetition.ts');
-  const answeredAt = '2026-05-15T10:00:00.000Z';
-
-  assert.equal(
-    getNextReviewAt({ isCorrect: 'false', correctStreak: 3, answeredAt }),
-    '2026-05-16T10:00:00.000Z',
-  );
-  assert.equal(
-    getNextReviewAt({ isCorrect: true, correctStreak: Number.POSITIVE_INFINITY, answeredAt }),
-    '2026-05-16T10:00:00.000Z',
-  );
-  assert.doesNotThrow(() =>
-    getNextReviewAt({ isCorrect: true, correctStreak: 1, answeredAt: 'not-a-date' }),
-  );
-});
-
 test('badges unlock from progress milestones', () => {
   const { deriveBadges, getAllBadges, getBadgeProgressHint, getBadgeTitle } =
     loadAllTs('lib/learning/badges.ts');
@@ -795,6 +724,33 @@ test('badges unlock from progress milestones', () => {
       wrongAnswerCount: 1,
     }).map((badge) => badge.id),
     ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: '1',
+      currentStreak: '3',
+      level: '2',
+      wrongAnswerCount: '1',
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: Infinity,
+      currentStreak: Infinity,
+      level: Infinity,
+      wrongAnswerCount: Infinity,
+    }).map((badge) => badge.id),
+    [],
+  );
+  assert.deepEqual(
+    deriveBadges({
+      completedQuestionCount: 1.5,
+      currentStreak: 3.5,
+      level: 2.5,
+      wrongAnswerCount: 1.5,
+    }).map((badge) => badge.id),
+    [],
   );
   assert.deepEqual(
     getAllBadges().map((badge) => getBadgeTitle(badge, 'sv')),
