@@ -10,6 +10,13 @@ const selectors = new Map([
       description: 'focused ads and Remove Ads monetization gate',
     },
   ],
+  [
+    'correct-display-position',
+    {
+      script: 'test:correct-display-position',
+      description: 'P0 answer-shuffle distribution, stability, and static scoring gate',
+    },
+  ],
 ]);
 
 function supportedSelectorText() {
