@@ -28,6 +28,7 @@ const swedishEbookQuizLoanwordPatterns = [
   phrasePattern('quiz', 'et'),
 ];
 const swedishEbookMockExamUnnaturalPatterns = [/provexempel/i];
+const staticEbookMayDayEnglishCalquePattern = /\bFirst of May\b/i;
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
   /three weeks,\s*not three days/i,
@@ -181,6 +182,10 @@ function assertNoSwedishEbookMockExamUnnaturalness(value) {
   }
 }
 
+function assertNoStaticEbookMayDayEnglishCalque(value) {
+  assert.doesNotMatch(value, staticEbookMayDayEnglishCalquePattern);
+}
+
 function assertNoUnsupportedEbookOutcomeClaim(value) {
   for (const pattern of unsupportedEbookOutcomeClaimPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -219,6 +224,7 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoStaleEbookCopy(source);
   assertNoSwedishEbookQuizLoanwords(source);
   assertNoSwedishEbookMockExamUnnaturalness(source);
+  assertNoStaticEbookMayDayEnglishCalque(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
   assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
@@ -318,6 +324,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assertNoStaleEbookCopy(swedishHtml);
     assertNoSwedishEbookQuizLoanwords(swedishHtml);
     assertNoSwedishEbookMockExamUnnaturalness(swedishHtml);
+    assertNoStaticEbookMayDayEnglishCalque(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(englishHtml);
     assertNoUnsupportedEbookOutcomeClaim(swedishHtml);
     assertNoUnsupportedPracticalTestClaim(englishHtml);
@@ -371,6 +378,7 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     if (chapterId === '13') {
       assert.match(englishHtml, /Traditions,.+holidays, and change/s);
       assert.match(englishHtml, /National Day and civic ceremonies/);
+      assert.match(englishHtml, /<b>May Day<\/b>, 1 May, is International Workers' Day/);
       assert.match(swedishHtml, /Traditioner,.+h[oö]gtider och f[oö]r[aä]ndring/s);
       assert.match(englishHtml, /href="#\/practice\?c=13"/);
       assert.match(swedishHtml, /href="#\/practice\?c=13"/);

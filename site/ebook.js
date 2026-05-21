@@ -27,16 +27,6 @@
       url: 'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
       retrievedDate: '2026-05-19',
     },
-    migrationsverketCitizenshipRules2026: {
-      label: 'Migrationsverket: new citizenship rules from 6 June 2026',
-      url: 'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-      retrievedDate: '2026-05-20',
-    },
-    governmentIncomeBaseAmount2026: {
-      label: 'Regeringen: 2026 income base amount',
-      url: 'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
-      retrievedDate: '2026-05-20',
-    },
   });
 
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
@@ -60,10 +50,8 @@
       label: 'UHR: Anmälan',
       url: 'https://www.uhr.se/medborgarskapsprovet/anmalan/',
       retrievedDate: '2026-05-19',
-      claimEn:
-        'registration opens in early June 2026; only people who receive a letter from Migrationsverket can sign up',
-      claimSv:
-        'anmälan öppnar i början av juni 2026; bara personer med brev från Migrationsverket kan anmäla sig',
+      claimEn: 'only people who receive a letter from Migrationsverket can sign up',
+      claimSv: 'anmälan kräver brev från Migrationsverket',
     },
     {
       label: 'UHR: Utbildningsmaterial',
@@ -136,13 +124,7 @@
     return '<p class="ebook__provenance-badge" aria-label="Provenance: Editorial. Original study guide; verify facts through the Sources page and UHR material."><span>Editorial</span> · Original study guide; verify facts through the <a href="#/sources">Sources page</a> and UHR material.</p>';
   }
 
-  function svStudyBrief(
-    points,
-    facts,
-    practiceHint,
-    afterPracticeHtml = '',
-    sourceKeys = ['uhrStudyMaterial'],
-  ) {
+  function svStudyBrief(points, facts, practiceHint, afterPracticeHtml = '') {
     const items = points.map((point) => `<li>${point}</li>`).join('');
     return `
       <h2>Det viktigaste</h2>
@@ -150,7 +132,7 @@
       <h2>Plugga smart</h2>
       <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
-      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts)}
     `;
   }
 
@@ -1737,26 +1719,21 @@
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
             <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
             <li>Have led an orderly life — no significant criminal record.</li>
-            <li>From 6 June 2026, adult applicants normally need their own long-term income from work or self-employment: about SEK 20,000/month before tax, or three 2026 income base amounts per year. Partner income, assets, and temporary work without long-term duration do not count.</li>
             <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
           </ul>
-          <p>This ebook is an independent study aid; Migrationsverket decides eligibility in each case.</p>
           <h2>Dual citizenship</h2>
           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. Adult applicants normally need self-support through own long-term income: about SEK 20,000/month before tax, or three 2026 income base amounts per year. Partner income, assets, and temporary work without long-term duration do not count. Decision authority: Migrationsverket.', ['migrationsverketCitizenshipRules2026', 'governmentIncomeBaseAmount2026'])}
+          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.')}
         `,
         sv: svStudyBrief(
           [
             'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
             'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
             'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
-            'Från 6 juni 2026 behöver vuxna sökande normalt egen varaktig inkomst från arbete eller näringsverksamhet: cirka 20 000 kronor per månad före skatt, eller tre inkomstbasbelopp per år. Inkomster från partner, tillgångar och tillfälliga jobb utan varaktighet räknas inte.',
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
-          'Nya regler från 6 juni 2026 · Egen försörjning för vuxna: cirka 20 000 kr/mån eller tre inkomstbasbelopp per år · Migrationsverket avgör ansökan.',
+          'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
-          '',
-          ['migrationsverketCitizenshipRules2026', 'governmentIncomeBaseAmount2026'],
         ),
       },
     },
@@ -1772,7 +1749,7 @@
       body: {
         en: `
           <h2>Current official status</h2>
-          <p>UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. Registration opens in early June 2026, and a Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
+          <p>UHR says the first civic-knowledge sitting will be held on 15 August 2026 in Stockholm. A Migrationsverket letter is required: only people who receive a letter from Migrationsverket can sign up.</p>
           <p>Seats are limited. The August sitting is free of charge, and UHR says participants will have generous time.</p>
           <h2>Practical details pending from UHR</h2>
           <p>UHR has not yet published the exact time and place. Use this app for unofficial practice, and use UHR and Migrationsverket for instructions that affect your own case.</p>
@@ -1787,7 +1764,7 @@
         `,
         sv: `
           <h2>Aktuell officiell status</h2>
-          <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan öppnar i början av juni 2026, och bara personer som har fått brev från Migrationsverket kan anmäla sig.</p>
+          <p>Det första samhällskunskapsprovet inom medborgarskapsprovet hålls den 15 augusti 2026 i Stockholm. Anmälan kräver brev från Migrationsverket.</p>
           <p>Antalet platser är begränsat. Augustiprovet är kostnadsfritt, och UHR beskriver att deltagarna får generöst med tid.</p>
           <h2>Praktiska detaljer väntar hos UHR</h2>
           <p>UHR har ännu inte publicerat exakt tid och plats. Använd appen som inofficiell övning, och använd UHR och Migrationsverket för instruktioner som påverkar ditt eget ärende.</p>
@@ -1822,7 +1799,7 @@
           <ul>
             <li><b>Easter</b> falls in March or April and has Christian roots, though many people celebrate it as a family and spring holiday.</li>
             <li><b>Walpurgis Night</b>, 30 April, often means bonfires and songs welcoming spring.</li>
-            <li><b>First of May</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
+            <li><b>May Day</b>, 1 May, is International Workers' Day, marked by demonstrations and political speeches.</li>
             <li><b>Midsummer Eve</b> is always a Friday between 19 and 25 June, with outdoor gatherings, flower wreaths, a midsummer pole, herring, new potatoes, and strawberries.</li>
           </ul>
           <h2>Autumn and winter</h2>
