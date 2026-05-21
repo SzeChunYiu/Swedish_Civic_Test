@@ -342,7 +342,11 @@ export default function SearchScreen() {
                       </SearchRouteLink>
                     </View>
                     <Text style={styles.explanation}>{excerpt}</Text>
-                    <ProvenanceBadge language={language} question={result.question} />
+                    <ProvenanceBadge
+                      language={language}
+                      question={result.question}
+                      themeColors={themeColors}
+                    />
                     {sourceReference ? (
                       <Text style={styles.questionSource}>
                         {copy.sourceLabel}: {sourceReference}
