@@ -67,6 +67,35 @@ test('Home Remove Ads surfaces wait for entitlement readiness before rendering',
   );
 });
 
+test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => {
+  const focusedHarnessSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/remove-ads-web-e2e-mock-runtime.test.js'),
+    'utf8',
+  );
+  const monetizationSuiteSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/monetization.test.js'),
+    'utf8',
+  );
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+
+  assert.match(
+    packageJson.scripts['test:monetization'],
+    /tests\/remove-ads-web-e2e-mock-runtime\.test\.js/,
+  );
+  assert.match(focusedHarnessSource, /__SMT_E2E__/);
+  assert.match(focusedHarnessSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
+  assert.match(focusedHarnessSource, /createDefaultPurchaseRuntimeOptions/);
+  assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
+  assert.match(
+    focusedHarnessSource,
+    /non-E2E web runtime must revalidate and clear copied Remove Ads records/,
+  );
+  assert.doesNotMatch(
+    monetizationSuiteSource,
+    /web Remove Ads E2E mock-owned runtime cannot spoof outside E2E/,
+  );
+});
+
 test('Remove Ads entitlement hook parity rejects pending ad enablement', () => {
   const result = spawnSync(
     process.execPath,
