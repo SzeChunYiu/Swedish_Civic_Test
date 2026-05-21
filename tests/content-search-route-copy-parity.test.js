@@ -7,6 +7,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
 const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-hydration.spec.ts');
+const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
 const validateContentPath = path.join(repoRoot, 'scripts/validate-content.js');
@@ -25,6 +26,10 @@ function readQuestionSearchSource() {
 
 function readSearchQueryHydrationE2eSource() {
   return fs.readFileSync(searchQueryHydrationE2ePath, 'utf8');
+}
+
+function readThemeModeUtilityE2eSource() {
+  return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
 }
 
 function getExpectedSearchRouteFocusedRuleCount() {
@@ -281,6 +286,25 @@ test('Search route e2e covers mounted query-param navigation without reload', ()
   assert.match(source, /await expectSearchState\(page, 'kommun'\)/);
   assert.match(source, /await expect\(page\)\.toHaveURL\(\/\\\/search\$\/\)/);
   assert.match(source, /await input\.fill\('lokal text'\)/);
+});
+
+test('Search dark source-affordance e2e covers Swedish and English locale names', () => {
+  const source = readThemeModeUtilityE2eSource();
+
+  assert.match(source, /const searchSourceAffordanceCases = \[/);
+  assert.match(source, /for \(const testCase of searchSourceAffordanceCases\)/);
+  assert.match(
+    source,
+    /language: 'sv'[\s\S]*inputName: 'Sök samhällsbegrepp och övningsfrågor'[\s\S]*provenanceBadgeName: \/Källtyp: UHR-källa\/[\s\S]*provenanceLabel: 'UHR-källa'[\s\S]*sourceNoteName: \/\^Källanteckning:\//,
+  );
+  assert.match(
+    source,
+    /language: 'en'[\s\S]*inputName: 'Search civic terms and practice questions'[\s\S]*provenanceBadgeName: \/Provenance: UHR source\/[\s\S]*provenanceLabel: 'UHR source'[\s\S]*sourceNoteName: \/\^Source note:\//,
+  );
+  assert.match(source, /darkColors\.badgeBlueBg/);
+  assert.match(source, /darkColors\.badgeBlueText/);
+  assert.match(source, /darkColors\.surfaceWarm/);
+  assert.match(source, /await expectNoHorizontalOverflow\(page\);/);
 });
 
 test('validate-content reports Search route query hydration parity', () => {

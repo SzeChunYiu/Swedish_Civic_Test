@@ -5,6 +5,7 @@ const test = require('node:test');
 const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
 
 const expectedAreaIds = [
   'identity',
@@ -38,6 +39,10 @@ const expectedOfficialUrls = [
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function readThemeModeUtilityE2eSource() {
+  return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
 }
 
 function loadTs(relativePath) {
@@ -206,6 +211,25 @@ test('citizenship requirements cards surface precise source titles and currentne
     /areaSources\.map\(\(source\) => source\.publisher\)\.join\(' · '\)/,
     'area cards must not collapse source provenance to publisher-only labels',
   );
+});
+
+test('citizenship dark source-affordance e2e covers Swedish and English locale names', () => {
+  const source = readThemeModeUtilityE2eSource();
+
+  assert.match(source, /const citizenshipSourceAffordanceCases = \[/);
+  assert.match(source, /for \(const testCase of citizenshipSourceAffordanceCases\)/);
+  assert.match(
+    source,
+    /checkboxName: \/Ej markerad:\/[\s\S]*disclaimerLabel: \/Studieinformation: Oberoende studieverktyg\/[\s\S]*language: 'sv'[\s\S]*practiceLinkName: 'Öppna övningsläget för samhällskunskap'[\s\S]*sourceLinkName: \/Migrationsverket: Ansök om svenskt medborgarskap\//,
+  );
+  assert.match(
+    source,
+    /checkboxName: \/Not marked:\/[\s\S]*disclaimerLabel: \/Study disclaimer: Independent study tool\/[\s\S]*language: 'en'[\s\S]*practiceLinkName: 'Open civic knowledge practice mode'[\s\S]*sourceLinkName: \/Migrationsverket: Apply for Swedish citizenship\//,
+  );
+  assert.match(source, /darkColors\.surfaceWarm/);
+  assert.match(source, /darkColors\.textDisclaimer/);
+  assert.match(source, /darkColors\.accent/);
+  assert.match(source, /await expectNoHorizontalOverflow\(page\);/);
 });
 
 test('citizenship requirements route is discoverable from about-the-test copy', () => {
