@@ -113,7 +113,7 @@ type HomeCopy = {
   rewardedExamUnlockAccessibilityLabel: string;
   rewardedExamUnlockButton: string;
   rewardedExamUnlockFailure: string;
-  rewardedExamUnlockedAccessibilityLabel: string;
+  rewardedExamUnlockedCtaAccessibilityLabel: string;
   rewardedExamUnlockedCta: string;
   rewardedExamUnlockedStatus: string;
   reviewWeakChapters: string;
@@ -243,12 +243,12 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
       'När dagens kostnadsfria övningsprov är använt kan du låsa upp ett extra från startsidan. Krediten sparas först när den sponsrade förhandsvisningen är slutförd.',
     rewardedExamHeading: 'Lås upp ett extra övningsprov',
     rewardedExamPreviewAccessibilityLabel:
-      'Slutför den sponsrade förhandsvisningen för ett extra övningsprov',
+      'Slutför sponsrad förhandsvisning för ett extra övningsprov',
     rewardedExamPreviewButton: 'Slutför förhandsvisning',
     rewardedExamUnlockAccessibilityLabel: 'Lås upp ett extra övningsprov efter förhandsvisningen',
     rewardedExamUnlockButton: 'Lås upp extra övningsprov',
     rewardedExamUnlockFailure: 'Extra övningsprov kunde inte låsas upp just nu.',
-    rewardedExamUnlockedAccessibilityLabel: 'Starta det upplåsta extra övningsprovet',
+    rewardedExamUnlockedCtaAccessibilityLabel: 'Starta det upplåsta extra övningsprovet',
     rewardedExamUnlockedCta: 'Starta upplåst övningsprov',
     rewardedExamUnlockedStatus: 'Extra övningsprov upplåst.',
     reviewWeakChapters: 'Repetera svaga kapitel',
@@ -403,7 +403,7 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
     rewardedExamUnlockAccessibilityLabel: 'Unlock an extra mock exam after the preview',
     rewardedExamUnlockButton: 'Unlock extra mock exam',
     rewardedExamUnlockFailure: 'Extra mock exam could not be unlocked right now.',
-    rewardedExamUnlockedAccessibilityLabel: 'Start the unlocked extra mock exam',
+    rewardedExamUnlockedCtaAccessibilityLabel: 'Start the unlocked extra mock exam',
     rewardedExamUnlockedCta: 'Start unlocked mock exam',
     rewardedExamUnlockedStatus: 'Extra mock exam unlocked.',
     reviewWeakChapters: 'Review weak chapters',
@@ -645,8 +645,7 @@ export default function Screen() {
           ) : null}
           {rewardedExamUnlocked ? (
             <Link
-              aria-label={copy.rewardedExamUnlockedAccessibilityLabel}
-              accessibilityLabel={copy.rewardedExamUnlockedAccessibilityLabel}
+              accessibilityLabel={copy.rewardedExamUnlockedCtaAccessibilityLabel}
               accessibilityRole="link"
               href="/exam"
               style={styles.rewardedExamLink}
