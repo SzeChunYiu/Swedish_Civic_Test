@@ -16368,6 +16368,39 @@ function validateEffectiveEntitlementExpiryParity() {
     return;
   }
 
+  try {
+    const effectiveSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/monetization/effectiveEntitlements.ts'),
+      'utf8',
+    );
+    const helperSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/time/canonicalTimestamp.ts'),
+      'utf8',
+    );
+    if (!/from '\.\.\/time\/canonicalTimestamp'/.test(effectiveSource)) {
+      reject('temporary Pro expiry parsing must import the shared canonical timestamp helper');
+    }
+    if (!/parseCanonicalUtcIsoTimestamp\(iso\)/.test(effectiveSource)) {
+      reject('temporary Pro expiry parsing must call parseCanonicalUtcIsoTimestamp(iso)');
+    }
+    if (
+      /CANONICAL_UTC_ISO_TIMESTAMP_PATTERN/.test(effectiveSource) ||
+      /function\s+parseCanonicalUtcIsoTimestamp/.test(effectiveSource) ||
+      /new Date\(iso\)/.test(effectiveSource) ||
+      /Date\.parse\(/.test(effectiveSource)
+    ) {
+      reject('temporary Pro expiry parsing must not carry local Date parsing logic');
+    }
+    if (
+      !/export function parseCanonicalUtcIsoTimestamp/.test(helperSource) ||
+      !/parsed\.toISOString\(\) !== value/.test(helperSource)
+    ) {
+      reject('shared canonical timestamp helper must preserve Date#toISOString equality checks');
+    }
+  } catch (error) {
+    reject(`shared canonical timestamp helper could not be validated: ${error.message}`);
+  }
+
   for (const { label, value } of invalidExpiries) {
     const trial = resolveEffectiveEntitlement({
       proTrial: { expiresAtIso: value },

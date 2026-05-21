@@ -249,6 +249,33 @@ test('resolveEffectiveEntitlement: temporary Pro expiry requires canonical UTC I
   }
 });
 
+test('parseCanonicalUtcIsoTimestamp rejects non-canonical UTC timestamps', () => {
+  const { isCanonicalUtcIsoTimestamp, parseCanonicalUtcIsoTimestamp } = loadTs(
+    'lib/time/canonicalTimestamp.ts',
+  );
+  const canonical = '2026-05-26T12:00:00.000Z';
+  const parsed = parseCanonicalUtcIsoTimestamp(canonical);
+
+  assert.deepEqual(parsed, {
+    epochMs: Date.parse(canonical),
+    iso: canonical,
+  });
+  assert.equal(isCanonicalUtcIsoTimestamp(canonical), true);
+
+  for (const value of [
+    '2026-06-31T00:00:00.000Z',
+    '2026-06-01',
+    '2026-06-01T00:30:00+02:00',
+    '2026-06-01T00:30:00Z',
+    '',
+    null,
+    undefined,
+  ]) {
+    assert.equal(parseCanonicalUtcIsoTimestamp(value), null);
+    assert.equal(isCanonicalUtcIsoTimestamp(value), false);
+  }
+});
+
 test('resolveEffectiveEntitlement: non-canonical active trial cannot outrank canonical referral', () => {
   const { resolveEffectiveEntitlement } = loadTs('lib/monetization/effectiveEntitlements.ts');
   const canonicalReferral = new Date(NOW.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();

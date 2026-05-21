@@ -13,6 +13,10 @@
 // passes it in.
 
 import { PRO_LIFETIME_ENTITLEMENTS, unionEntitlements } from './premium';
+import {
+  parseCanonicalUtcIsoTimestamp,
+  type CanonicalUtcTimestamp,
+} from '../time/canonicalTimestamp';
 import type { PremiumEntitlements, ProTierEntitlements } from '../../types/monetization';
 
 /** v1.0 entitlements (adsDisabled / unlimitedMockExams / fullMistakeReview). */
@@ -72,24 +76,7 @@ const FREE_ENTITLEMENT: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
-interface CanonicalExpiry {
-  epochMs: number;
-  iso: string;
-}
-
-const CANONICAL_UTC_ISO_TIMESTAMP_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
-
-function parseCanonicalUtcIsoTimestamp(iso: string | null | undefined): CanonicalExpiry | null {
-  if (typeof iso !== 'string') return null;
-  if (!CANONICAL_UTC_ISO_TIMESTAMP_PATTERN.test(iso)) return null;
-
-  const parsed = new Date(iso);
-  const epochMs = parsed.getTime();
-  if (!Number.isFinite(epochMs)) return null;
-  if (parsed.toISOString() !== iso) return null;
-
-  return { epochMs, iso };
-}
+type CanonicalExpiry = CanonicalUtcTimestamp;
 
 function activeCanonicalExpiry(iso: string | null | undefined, now: Date): CanonicalExpiry | null {
   const expiry = parseCanonicalUtcIsoTimestamp(iso);
