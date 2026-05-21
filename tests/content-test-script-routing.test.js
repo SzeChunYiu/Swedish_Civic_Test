@@ -1098,6 +1098,48 @@ test('streak freeze normalizer parity uses focused content validation routing', 
   assert.match(progressSchemaTestSource, /--focus-streak-freeze-normalizer-parity/);
 });
 
+test('exam submission finality parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const progressSchemaTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-progress-schema-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('examSubmissionFinalityParity');
+
+  assert.ok(registryEntry, 'exam submission finality focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-exam-submission-finality-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, ['examSubmissionFinalityParityValidated']);
+  assert.match(progressSchemaTestSource, /--focus-exam-submission-finality-parity/);
+  assert.match(
+    progressSchemaTestSource,
+    /Object\.keys\(summary\)[\s\S]*\['examSubmissionFinalityParityValidated'\]/,
+    'progress schema parity must assert the focused summary stays isolated',
+  );
+
+  const focusBlockMatch = validatorSource.match(
+    /if \(process\.argv\.includes\('--focus-exam-submission-finality-parity'\)\) \{([\s\S]*?)\n\}/,
+  );
+  assert.ok(focusBlockMatch, 'exam submission focus block must exist');
+  const focusBlock = focusBlockMatch[1];
+  const focusedValidatorCalls = Array.from(focusBlock.matchAll(/\bvalidate[A-Z]\w+\(/g)).map(
+    ([call]) => call,
+  );
+
+  assert.deepEqual(focusedValidatorCalls, ['validateExamSubmissionFinalityParity(']);
+  assert.match(
+    focusBlock,
+    /printValidationSummary\(\{\s*examSubmissionFinalityParityValidated,\s*\}\);/,
+  );
+  assert.match(
+    validatorSource,
+    /validateExamSubmissionFinalityParity\(\);[\s\S]*validateExamRouteHeaderParity\(\);/,
+    'full content validation must still invoke the exam submission finality guard',
+  );
+});
+
 test('static ebook footnote hash parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
