@@ -924,11 +924,14 @@ const STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS = [
 ];
 const STATIC_EBOOK_FACTBOX_REQUIRED_COPY = [
   'EBOOK_FACTBOX_SOURCE_NOTES',
+  'EBOOK_BLOCK_EXTERNAL_SOURCE_RULES',
   "retrievedDate: '2026-05-19'",
   'Facts to review',
   'Fakta att repetera',
   'Sources accessed',
   'Källor hämtade',
+  'data-source-keys',
+  'data-source-counts',
 ];
 
 const CRIMINAL_RESPONSIBILITY_CURRENTNESS = {
@@ -5377,6 +5380,12 @@ function validateStaticEbookFactboxProvenance() {
   let unsupportedFactboxClaimsValidated = 0;
   let sourceUrlsValidated = 0;
   let requiredCopyValidated = 0;
+
+  if (/chooseEbookFootnoteKey/.test(source)) {
+    fail(
+      'static ebook footnotes must use explicit source metadata, not index-based source selection',
+    );
+  }
 
   STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.forEach((pattern) => {
     if (pattern.test(source)) {

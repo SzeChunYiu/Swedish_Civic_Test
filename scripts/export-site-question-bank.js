@@ -2,6 +2,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const ts = require('typescript');
 const vm = require('node:vm');
 
@@ -148,7 +149,7 @@ function buildSiteQuestionBank() {
 
 function generateUnformattedStaticSiteQuestionBankJs() {
   const bank = buildSiteQuestionBank();
-  return `/* Almost Swedish - generated static question bank.
+  const source = `/* Almost Swedish - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
    Run: node scripts/export-site-question-bank.js
 */
@@ -161,6 +162,30 @@ function generateUnformattedStaticSiteQuestionBankJs() {
   window.SMT_CHAPTERS_META = ${JSON.stringify(bank.chapters, null, 2)};
 })();
 `;
+  return formatGeneratedStaticSiteQuestionBankJs(source);
+}
+
+function formatGeneratedStaticSiteQuestionBankJs(source) {
+  const prettierBin = path.join(
+    repoRoot,
+    'node_modules',
+    '.bin',
+    process.platform === 'win32' ? 'prettier.cmd' : 'prettier',
+  );
+  if (!fs.existsSync(prettierBin)) return source;
+
+  const result = spawnSync(prettierBin, ['--stdin-filepath', 'site/questions.js'], {
+    cwd: repoRoot,
+    input: source,
+    encoding: 'utf8',
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  if (result.status !== 0) {
+    throw new Error(
+      `Failed to format generated site/questions.js:\n${result.stderr || result.stdout}`,
+    );
+  }
+  return result.stdout;
 }
 
 function formatStaticSiteQuestionBankJs(source) {
