@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 
-import { adBannerCopy, getAdBannerStatusLabel } from '../../lib/monetization/adCopy';
+import { adBannerCopy } from '../../lib/monetization/adCopy';
 import {
   getAdUnit,
   shouldShowAd,
@@ -31,7 +31,7 @@ export function AdBanner({
 
   const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
-  const adStatusLabel = getAdBannerStatusLabel(copy, unit);
+  const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
   const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
 
   return (
