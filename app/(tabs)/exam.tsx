@@ -718,9 +718,8 @@ export default function Screen() {
             onSelectQuestion={jumpToReviewQuestion}
           />
         ) : null}
-        {filteredReviewItems.map((item) => {
+        {reviewItems.map((item, index) => {
           const reviewQuestion = examQuestionById.get(item.questionId);
-          const questionNumber = examQuestionNumberById.get(item.questionId) ?? 0;
 
           return (
             <View
@@ -735,7 +734,7 @@ export default function Screen() {
               ]}
             >
               <View style={styles.reviewHeader}>
-                <Text style={styles.questionMeta}>{copy.questionNumber(questionNumber)}</Text>
+                <Text style={styles.questionMeta}>{copy.questionNumber(index + 1)}</Text>
                 <Badge tone={item.isCorrect ? 'green' : 'orange'}>
                   {item.isCorrect ? copy.correctBadge : copy.reviewBadge}
                 </Badge>
@@ -751,14 +750,6 @@ export default function Screen() {
                 language={language}
                 question={item}
               />
-              {reviewQuestion ? (
-                <QuestionReportLink
-                  language={language}
-                  question={reviewQuestion}
-                  screen="exam"
-                  selectedOptionId={answers[item.questionId]}
-                />
-              ) : null}
               <View style={styles.answerGrid}>
                 <View style={styles.answerCard}>
                   <Text style={styles.answerLabel}>{copy.selectedAnswerLabel}</Text>
@@ -779,6 +770,14 @@ export default function Screen() {
                 language={language}
               />
               <UHRReferenceCard language={language} reference={item.uhrReference} />
+              {reviewQuestion ? (
+                <QuestionReportLink
+                  language={language}
+                  question={reviewQuestion}
+                  screen="exam"
+                  selectedOptionId={answers[item.questionId]}
+                />
+              ) : null}
             </View>
           );
         })}

@@ -124,7 +124,7 @@ test('exam route shell and review copy follows the persisted settings language',
   );
   assert.match(
     source,
-    /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
+    /const reviewQuestion = examQuestionById\.get\(item\.questionId\);[\s\S]*<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   );
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
   assert.match(

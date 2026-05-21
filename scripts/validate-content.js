@@ -4132,17 +4132,17 @@ const EXPECTED_QUESTION_REPORT_LINK_RULES = [
   },
   {
     file: 'app/(tabs)/exam.tsx',
-    label: 'active exam source context',
+    label: 'active exam source report context',
     message: 'QuestionReportLink missing active exam source context',
     pattern:
       /<QuestionReportLink\s+language=\{language\}\s+question=\{question\}\s+screen="exam"\s+\/>/,
   },
   {
     file: 'app/(tabs)/exam.tsx',
-    label: 'submitted exam selected answer context',
-    message: 'QuestionReportLink missing submitted exam selected answer context',
+    label: 'exam review selected answer context',
+    message: 'QuestionReportLink missing exam review selected answer context',
     pattern:
-      /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
+      /const reviewQuestion = examQuestionById\.get\(item\.questionId\);[\s\S]*<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   },
   {
     file: 'app/chapter/[chapterId].tsx',

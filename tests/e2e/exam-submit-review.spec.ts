@@ -205,6 +205,11 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(page.getByText(/^Time left/)).toBeVisible();
   await expect(page.getByText(/^Source: Sverige i fokus/).first()).toBeVisible();
   await expect(page.getByText('Övningsprov')).toHaveCount(0);
+  const activeReportLink = page.getByRole('link', { name: /^Report question q/ }).first();
+  await expect(activeReportLink).toBeVisible();
+  const activeReportHref = await activeReportLink.getAttribute('href');
+  expect(activeReportHref).toContain('reportScreen=exam');
+  expect(activeReportHref).not.toContain('selectedAnswer=');
 
   const submit = page.getByRole('button', { name: 'Submit mock exam' });
   await expect(submit).toBeDisabled();
@@ -269,6 +274,11 @@ test('mock exam provenance review follows English support mode', async ({ page }
   await expect(page.getByText('Correct answer').first()).toBeVisible();
   await expect(page.getByText('Explanation', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('UHR reference', { exact: true }).first()).toBeVisible();
+  const reviewReportLink = page.getByRole('link', { name: /^Report question q/ }).first();
+  await expect(reviewReportLink).toBeVisible();
+  const reviewReportHref = await reviewReportLink.getAttribute('href');
+  expect(reviewReportHref).toContain('reportScreen=exam');
+  expect(reviewReportHref).toContain('selectedAnswer=');
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Provenance: UHR source/,
     sourceNoteLabel: /^Source note:/,

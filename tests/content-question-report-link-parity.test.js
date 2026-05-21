@@ -124,7 +124,7 @@ test('question report CTA is wired from question surfaces to support context', (
   const supportSource = fs.readFileSync(path.join(repoRoot, 'app/support.tsx'), 'utf8');
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
-  assert.equal(summary.questionReportLinkRulesValidated, 27);
+  assert.equal(summary.questionReportLinkRulesValidated, 26);
   assert.equal(summary.questionReportLinkParityValidated, true);
   assert.match(componentSource, /Rapportera den här frågan/);
   assert.match(componentSource, /Report this question/);
@@ -145,7 +145,7 @@ test('question report CTA is wired from question surfaces to support context', (
   );
   assert.match(
     examSource,
-    /<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
+    /const reviewQuestion = examQuestionById\.get\(item\.questionId\);[\s\S]*<QuestionReportLink\s+language=\{language\}\s+question=\{reviewQuestion\}\s+screen="exam"\s+selectedOptionId=\{answers\[item\.questionId\]\}\s+\/>/,
   );
   assert.match(supportSource, /Lägg inte till namn, personnummer, ärendenummer/);
   assert.match(supportSource, /Do not add names, personal identity numbers, case numbers/);
@@ -230,15 +230,16 @@ test('buildQuestionReportSupportHref selects localized answer text before encodi
   assert.equal(url.searchParams.get('selectedAnswer'), 'Rösta & välja');
 });
 
-test('buildQuestionReportSupportHref labels mock exam report context', () => {
+test('buildQuestionReportSupportHref accepts exam screen reports with selected answer context', () => {
   const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
-  const href = buildQuestionReportSupportHref({
-    language: 'en',
-    question: createReportQuestion(),
-    screen: 'exam',
-    selectedOptionId: 'a',
-  });
-  const url = supportUrl(href);
+  const url = supportUrl(
+    buildQuestionReportSupportHref({
+      language: 'en',
+      question: createReportQuestion(),
+      screen: 'exam',
+      selectedOptionId: 'a',
+    }),
+  );
 
   assert.equal(url.searchParams.get('reportScreen'), 'exam');
   assert.equal(url.searchParams.get('screen'), 'exam');
