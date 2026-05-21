@@ -527,6 +527,27 @@ test('weekly recap runtime guard uses focused content validation routing', () =>
     'full content validation must still invoke the weekly recap runtime guard',
   );
 });
+
+test('readiness adapter runtime guard uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const learningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/learning.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-readiness-adapter-rules/);
+  assert.match(
+    validatorSource,
+    /validateReadinessAdapterRules\(\);[\s\S]*readinessAdapterRulesValidated[\s\S]*readinessAdapterRuntimeParityValidated/,
+  );
+  assert.match(learningTestSource, /readiness adapter ignores malformed counters/);
+  assert.match(learningTestSource, /correctCount:\s*999/);
+  assert.match(learningTestSource, /totalCount:\s*999/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
