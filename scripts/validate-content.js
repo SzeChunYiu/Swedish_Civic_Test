@@ -5395,16 +5395,13 @@ function validateCitizenshipTimeline() {
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
     'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
-    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
-    'getCitizenshipTimelineCountdown',
+    'daysUntil',
     'Nya medborgarskapsregler gäller från',
-    'Samhällskunskapsprovet väntas starta i augusti 2026',
-    'De nya medborgarskapsreglerna gäller nu sedan',
-    'till första provet',
+    'UHR har bekräftat att den första provomgången i samhällskunskap genomförs',
+    'tills nya reglerna',
     'New citizenship rules apply from',
-    'The civic-knowledge test is expected in August 2026',
-    'The new citizenship rules now apply from',
-    'until first test',
+    'UHR has confirmed that the first civic-knowledge sitting will be held on',
+    'until new rules',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -5412,6 +5409,12 @@ function validateCitizenshipTimeline() {
   });
 
   [
+    /Samhällskunskapsprovet väntas starta i augusti 2026/,
+    /The civic-knowledge test is expected in August 2026/,
+    /Regeringens tidsgräns för första steget/,
+    /government deadline for the first step/,
+    /sourceKey: 'civicKnowledgeTestDeadline'/,
+    /label: 'Regeringen'/,
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
     /until new exam/,
