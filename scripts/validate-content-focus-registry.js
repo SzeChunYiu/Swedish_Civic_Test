@@ -66,8 +66,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'swedishPrivacyStreakCopyNaturalnessValidated',
       'legalSwedishEnglishTokenGuardValidated',
       'legalSwedishEnglishTokenGuardParityValidated',
-      'legalInternalMonetizationKeyGuardValidated',
-      'legalInternalMonetizationKeyGuardParityValidated',
     ],
   },
   {
@@ -95,15 +93,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'staticValidationSyntaxFilesValidated',
       'staticValidationImportChecksValidated',
       'staticValidationSyntaxGateValidated',
-    ],
-  },
-  {
-    id: 'staticEbookProvenance',
-    flags: ['--focus-static-ebook-provenance'],
-    summaryKeys: [
-      'staticEbookExternalSourceUrlsValidated',
-      'staticEbookExternalSourceLinkRulesValidated',
-      'staticEbookExternalSourceLinkSafetyValidated',
     ],
   },
   {
@@ -158,14 +147,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
-    id: 'audioButtonAccessibility',
-    flags: ['--focus-audio-button-accessibility'],
-    summaryKeys: [
-      'audioButtonAccessibilityRulesValidated',
-      'audioButtonAccessibilityParityValidated',
-    ],
-  },
-  {
     id: 'homeSvMistakeReviewCopy',
     flags: ['--focus-home-sv-mistake-review-copy'],
     summaryKeys: [
@@ -216,30 +197,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     summaryKeys: ['readinessAdapterRulesValidated', 'readinessAdapterRuntimeParityValidated'],
   },
   {
-    id: 'adaptivePracticeSize',
-    flags: ['--focus-adaptive-practice-size'],
-    summaryKeys: [
-      'adaptivePracticeSizeRuntimeCasesValidated',
-      'adaptivePracticeSizeRuntimeParityValidated',
-    ],
-  },
-  {
-    id: 'adaptivePracticeDifficulty',
-    flags: ['--focus-adaptive-practice-difficulty'],
-    summaryKeys: [
-      'adaptivePracticeDifficultyRuntimeCasesValidated',
-      'adaptivePracticeDifficultyRuntimeParityValidated',
-    ],
+    id: 'readinessScoreRules',
+    flags: ['--focus-readiness-score-rules'],
+    summaryKeys: ['readinessScoreRulesValidated', 'readinessScoreRuntimeParityValidated'],
   },
   {
     id: 'questionReportLinkParity',
     flags: ['--focus-question-report-link-parity'],
     summaryKeys: ['questionReportLinkRulesValidated', 'questionReportLinkParityValidated'],
-  },
-  {
-    id: 'religiousFreedomParallelism',
-    flags: ['--focus-religious-freedom-parallelism'],
-    summaryKeys: ['publishedQuestions', 'questionReligiousFreedomParallelismValidated'],
   },
   {
     id: 'answerFeedbackParity',
@@ -265,18 +230,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'aboutTheTestSeenEffectRulesValidated',
       'aboutTheTestSeenEffectParityValidated',
       'citizenshipRequirementsLimitedSeatCopyValidated',
-    ],
-  },
-  {
-    id: 'onboardingRouteCopy',
-    flags: ['--focus-onboarding-route-copy'],
-    summaryKeys: [
-      'onboardingRouteHeadersValidated',
-      'onboardingRouteHeaderParityValidated',
-      'onboardingRouteCopyLabelsValidated',
-      'onboardingRouteCopyParityValidated',
-      'firstRunAboutModalSuppressedRoutesValidated',
-      'firstRunAboutModalSuppressionParityValidated',
     ],
   },
   {
@@ -379,11 +332,6 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
       'questionSpeechTextOptionsValidated',
       'questionSpeechTextParityValidated',
     ],
-  },
-  {
-    id: 'speechRuntimeParity',
-    flags: ['--focus-speech-runtime-parity'],
-    summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
   },
   {
     id: 'weeklyRecapRuntime',
