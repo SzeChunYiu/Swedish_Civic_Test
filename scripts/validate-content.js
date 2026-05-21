@@ -8639,6 +8639,31 @@ if (process.argv.includes('--focus-settings-route')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-settings-parity')) {
+  validateSettingsRouteHeaderParity();
+  validateSettingsRouteCopyParity();
+  validateSettingsRouteScrollParity();
+  validateSettingsStoreSchemaParity();
+  validateSettingsDailyGoalParity();
+  validateSettingsAudioParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    settingsRouteHeadersValidated,
+    settingsRouteHeaderParityValidated,
+    settingsRouteCopyLabelsValidated,
+    settingsRouteCopyParityValidated,
+    settingsRouteScrollRulesValidated,
+    settingsRouteScrollParityValidated,
+    settingsStoreFieldsValidated,
+    settingsStoreSchemaParityValidated,
+    settingsDailyGoalOptionsValidated,
+    settingsDailyGoalParityValidated,
+    settingsAudioLabelsValidated,
+    settingsAudioParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-content-exec-cwd')) {
   validateContentTestValidateContentExecCwdGuard();
   exitWithValidationFailures();
