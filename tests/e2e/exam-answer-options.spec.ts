@@ -3,7 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { dismissBlockingModals, selectQuestionLanguageInSettings } from './browserLaunch';
 
-const totalQuestions = 20;
+const totalQuestions = 25;
 const minimumTargetSizePx = 44;
 
 function collectConsoleErrors(page: Page): string[] {
@@ -54,7 +54,7 @@ test('mock exam English answer options expose radio state through submit and rev
   await expect(page.getByText(`0/${totalQuestions} answered`)).toBeVisible();
   await expect(page.getByText(/^Time left/)).toBeVisible();
 
-  const submit = page.getByLabel('Submit mock exam');
+  const submit = page.getByLabel('Submit the mock exam');
   await expect(submit).toBeDisabled();
 
   for (let questionNumber = 1; questionNumber <= totalQuestions; questionNumber += 1) {
