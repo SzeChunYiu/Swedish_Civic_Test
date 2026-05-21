@@ -3,57 +3,15 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const {
+  createMemoryLocalStorage,
   createReactHookStub,
   createReactNativeWebStub,
   createTsLoader,
+  withGlobalProperties,
 } = require('./helpers/monetizationRuntimeHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const loadTs = createTsLoader(repoRoot);
-
-function createMemoryLocalStorage() {
-  const values = new Map();
-  return {
-    getItem(key) {
-      return values.get(String(key)) ?? null;
-    },
-    removeItem(key) {
-      values.delete(String(key));
-    },
-    setItem(key, value) {
-      values.set(String(key), String(value));
-    },
-  };
-}
-
-async function withGlobalProperties(overrides, fn) {
-  const previous = new Map();
-
-  for (const [key, value] of Object.entries(overrides)) {
-    previous.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
-    if (value === undefined) {
-      delete globalThis[key];
-    } else {
-      Object.defineProperty(globalThis, key, {
-        configurable: true,
-        value,
-        writable: true,
-      });
-    }
-  }
-
-  try {
-    return await fn();
-  } finally {
-    for (const [key, descriptor] of previous) {
-      if (descriptor) {
-        Object.defineProperty(globalThis, key, descriptor);
-      } else {
-        delete globalThis[key];
-      }
-    }
-  }
-}
 
 function loadRemoveAdsWebRuntime() {
   const moduleCache = new Map();
