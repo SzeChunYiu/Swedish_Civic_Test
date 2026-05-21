@@ -7916,6 +7916,7 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
@@ -12119,6 +12120,58 @@ function validateFlashcardAccessibilityParity() {
   ) {
     flashcardAccessibilityParityValidated = true;
   }
+}
+
+function validateSwedishFlashcardCopyNaturalness() {
+  let valid = true;
+  let flashcardSource = '';
+
+  function reject() {
+    valid = false;
+    fail('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+  }
+
+  try {
+    flashcardSource = fs.readFileSync(
+      path.join(repoRoot, 'components/learning/Flashcard.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    fail(
+      `components/learning/Flashcard.tsx could not be read for Swedish flashcard copy naturalness: ${error.message}`,
+    );
+    return;
+  }
+
+  if (/Flashkort|flashkort/.test(flashcardSource)) {
+    reject();
+    return;
+  }
+
+  [
+    /accessibilityLabel: \(prompt, answer\) => `Övningskort\. Fråga: \$\{prompt\}\. Svar: \$\{answer\}\.`/,
+    /badgeLabel: 'Övningskort'/,
+  ].forEach((expectedPattern) => {
+    if (!expectedPattern.test(flashcardSource)) {
+      reject();
+    }
+  });
+
+  if (valid) {
+    swedishFlashcardCopyNaturalnessValidated = true;
+  }
+}
+
+if (process.argv.includes('--focus-flashcard-accessibility')) {
+  validateFlashcardAccessibilityParity();
+  validateSwedishFlashcardCopyNaturalness();
+  exitWithValidationFailures();
+  printValidationSummary({
+    flashcardAccessibilityRulesValidated,
+    flashcardAccessibilityParityValidated,
+    swedishFlashcardCopyNaturalnessValidated,
+  });
+  process.exit(0);
 }
 
 function validateAudioButtonAccessibilityParity() {
@@ -18008,6 +18061,7 @@ validateMetricCardAccessibilityParity();
 validateBadgeAccessibilityParity();
 validateChapterCardAccessibilityParity();
 validateFlashcardAccessibilityParity();
+validateSwedishFlashcardCopyNaturalness();
 validateAudioButtonAccessibilityParity();
 validateQuestionCardAccessibilityParity();
 validateAnswerOptionAccessibilityParity();
@@ -18201,6 +18255,7 @@ console.log(
       chapterCardAccessibilityParityValidated,
       flashcardAccessibilityRulesValidated,
       flashcardAccessibilityParityValidated,
+      swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
