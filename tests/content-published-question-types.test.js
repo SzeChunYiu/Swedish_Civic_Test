@@ -3896,7 +3896,48 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 4);
 });
 
+test('q146 political-rights generated true/false exports direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const trueStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'));
+  const falseStatement = byId.get(generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'));
+
+  assert.equal(
+    trueStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+  );
+  assert.equal(
+    trueStatement?.q.en,
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assert.equal(
+    falseStatement?.q.sv,
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  );
+  assert.equal(
+    falseStatement?.q.en,
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+});
+
 test('published question schema rejects generated true/false bare answer phrases', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const expectedOffenderIds = [
+    generatedQuestionId(sourceQuestions, 'q146', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q146', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q157', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q158', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q159', 'falseStatement'),
+  ];
   const result = spawnSync(
     process.execPath,
     [
@@ -3914,14 +3955,14 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const bareAnswerPhraseResiduals = {",
-        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll A.', questionEn: 'Incomplete answer fragment for naturalness guard A.' },",
-        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll B.', questionEn: 'Incomplete answer fragment for naturalness guard B.' },",
-        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll C.', questionEn: 'Incomplete answer fragment for naturalness guard C.' },",
-        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll D.', questionEn: 'Incomplete answer fragment for naturalness guard D.' },",
-        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll E.', questionEn: 'Incomplete answer fragment for naturalness guard E.' },",
-        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll F.', questionEn: 'Incomplete answer fragment for naturalness guard F.' },",
-        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll G.', questionEn: 'Incomplete answer fragment for naturalness guard G.' },",
-        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Ofullständig svarsfras för naturlighetskontroll H.', questionEn: 'Incomplete answer fragment for naturalness guard H.' },",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Försöka övertyga andra om sina politiska idéer.', questionEn: 'Try to persuade others of their political ideas.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Hindra andra från att rösta.', questionEn: 'Stop others from voting.' },",
+        "  [generatedFixtureId('q157', 1)]: { questionSv: 'Vårdcentraler, barnavårdscentraler och mödravårdscentraler.', questionEn: 'Health centres, child health centres, and maternity clinics.' },",
+        "  [generatedFixtureId('q157', 2)]: { questionSv: 'Domstolar, åklagare och kriminalvård.', questionEn: 'Courts, prosecutors, and prison and probation services.' },",
+        "  [generatedFixtureId('q158', 1)]: { questionSv: 'Ordna förskolor, fritidshem, grundskolor och gymnasieskolor.', questionEn: 'Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools.' },",
+        "  [generatedFixtureId('q158', 2)]: { questionSv: 'Betala sjukförsäkring och statliga pensioner.', questionEn: 'Pay sickness insurance and state pensions.' },",
+        "  [generatedFixtureId('q159', 1)]: { questionSv: 'Vård och service hemma eller boende som är anpassat för äldre personer.', questionEn: 'Care and services at home or housing adapted for older people.' },",
+        "  [generatedFixtureId('q159', 2)]: { questionSv: 'Automatiskt studiestöd och plats på universitet.', questionEn: 'Automatic study support and a university place.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  bareAnswerPhraseResiduals[question.id]",
@@ -3936,6 +3977,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-generated-true-false-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -3944,6 +3986,9 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
+  for (const id of expectedOffenderIds) {
+    assert.match(output, new RegExp(`${id} contains a generated true/false grammar-splice stem`));
+  }
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
