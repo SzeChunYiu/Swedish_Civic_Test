@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import type { Locator } from '@playwright/test';
-import { dismissBlockingModals } from './browserLaunch';
+import { dismissBlockingModals, mockBrowserDate } from './browserLaunch';
 
 import { CITIZENSHIP_TIMELINE_SOURCE_URLS } from '../../lib/learning/examDate';
 
@@ -47,6 +47,7 @@ test('home countdown banner exposes official source links as mobile-safe targets
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
+  await mockBrowserDate(page, '2026-05-21T12:00:00.000Z');
   await page.goto('/home', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 
