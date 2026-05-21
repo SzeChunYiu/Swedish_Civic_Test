@@ -374,6 +374,7 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
+  /\bbetyder att politikerna (?:måste inte|behöver inte|måste alltid) följa resultatet\b/i,
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
   /\bbelongs to\s+[a-zåäö][^.,"]*/i,
@@ -466,6 +467,7 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
+const QUESTION_REFERENDUM_ADVISORY_SV_NATURALNESS_PATTERNS = [/\bmåste inte följa resultatet\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -490,10 +492,6 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
-  /^\s*Vilket svar stämmer bäst\?/i,
-  /^\s*Välj rätt alternativ:/i,
-  /^\s*Which answer best matches\?/i,
-  /^\s*Choose the correct option:/i,
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
   /^\s*Vilket påstående är korrekt/i,
@@ -4648,6 +4646,16 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
+function findQuestionReferendumAdvisorySvNaturalnessIssue(question) {
+  const text = [
+    question.questionSv,
+    question.explanationSv,
+    ...(question.options || []).map((option) => option.textSv),
+  ].join(' ');
+
+  return QUESTION_REFERENDUM_ADVISORY_SV_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+}
+
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4857,6 +4865,17 @@ function englishAgePhrase(value) {
 }
 function stripLeadingPurposeSv(value) {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
+}
+function swedishMeaningClause(value) {
+  return lowerFirst(stripLeadingPurposeSv(value).trim())
+    .replace(
+      /\b(politikerna|politiker)\s+(?:måste|behöver)\s+inte\s+följa resultatet\b/i,
+      '$1 inte behöver följa resultatet',
+    )
+    .replace(
+      /\b(politikerna|politiker)\s+måste\s+alltid\s+följa resultatet\b/i,
+      '$1 alltid måste följa resultatet',
+    );
 }
 function stripLeadingPurposeEn(value) {
   return value
@@ -5622,7 +5641,7 @@ function judgementPromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5630,7 +5649,7 @@ function judgementPromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
@@ -5638,7 +5657,7 @@ function singleChoicePromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5646,7 +5665,7 @@ function singleChoicePromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 function generatedSingleChoicePromptFromSourceSv(source, variant) {
   const q = stripFinalPunctuation(source.questionSv);
@@ -5723,7 +5742,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
+  if (match) return `Att ${match[1]} betyder att ${swedishMeaningClause(answer)}`;
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
     return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(
@@ -7082,8 +7101,6 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
-const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
-const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -7414,6 +7431,7 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
+let questionReferendumAdvisorySvNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -14844,18 +14862,6 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'difficulty',
   'tags',
 ];
-const LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS = new Set([
-  'q160',
-  'q161',
-  'q162',
-  'q163',
-  'q164',
-  'q165',
-  'q166',
-  'q167',
-  'q168',
-  'q169',
-]);
 
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
@@ -14882,20 +14888,13 @@ function validateAuthoredSourcePartition(questionsToValidate, label, startQuesti
 }
 
 function expectedPublishedSourceField(question, field) {
-  const comparableQuestion =
-    field === 'options' &&
-    LOCALIZED_ADDITIONAL_SOURCE_OPTION_PARITY_IDS.has(question.id) &&
-    typeof applyQuestionLocalizationPilot === 'function'
-      ? applyQuestionLocalizationPilot(question)
-      : question;
-
   if (question.type === 'true_false' && field === 'questionSv') {
-    return ensureSentence(stripTrueFalsePromptSv(comparableQuestion.questionSv));
+    return ensureSentence(stripTrueFalsePromptSv(question.questionSv));
   }
   if (question.type === 'true_false' && field === 'questionEn') {
-    return ensureSentence(stripTrueFalsePromptEn(comparableQuestion.questionEn));
+    return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
   }
-  return comparableQuestion[field];
+  return question[field];
 }
 
 function validateAuthoredSourceParity() {
@@ -15754,6 +15753,8 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
+      const referendumAdvisorySvNaturalnessIssue =
+        findQuestionReferendumAdvisorySvNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -15789,6 +15790,11 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
+      }
+      if (referendumAdvisorySvNaturalnessIssue) {
+        fail(`${label} uses unnatural Swedish referendum advisory wording`);
+      } else {
+        questionReferendumAdvisorySvNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16254,6 +16260,7 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
+      questionReferendumAdvisorySvNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,

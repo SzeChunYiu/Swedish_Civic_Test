@@ -200,6 +200,18 @@ function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
 
+function swedishMeaningClause(value: string): string {
+  return lowerFirst(stripLeadingPurposeSv(value).trim())
+    .replace(
+      /\b(politikerna|politiker)\s+(?:måste|behöver)\s+inte\s+följa resultatet\b/i,
+      '$1 inte behöver följa resultatet',
+    )
+    .replace(
+      /\b(politikerna|politiker)\s+måste\s+alltid\s+följa resultatet\b/i,
+      '$1 alltid måste följa resultatet',
+    );
+}
+
 function stripLeadingPurposeEn(value: string): string {
   return value
     .replace(/^to\s+/i, '')
@@ -553,9 +565,7 @@ function whyTargetStatementEn(target: string): string {
     return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3].toLowerCase()}${match[4]}`;
   }
 
-  match = cleaned.match(
-    /^(is|are|was|were)\s+(.+)\s+((?:needed|required|important|allowed|permitted|called|responsible|common|legal|illegal|true|false)\b.*)$/i,
-  );
+  match = cleaned.match(/^(is|are|was|were)\s+(.+?)\s+((?:needed|required|allowed|called)\b.*)$/i);
   if (match) {
     return `${lowerLeadingEnglishClauseStart(match[2])} ${match[1].toLowerCase()} ${match[3]}`;
   }
@@ -589,14 +599,32 @@ function reasonAnswerClauseEn(answer: string): string {
   return lowerFirst(stripped);
 }
 
-function reasonStatementSv(answer: string, target: string): string {
-  return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
-    answer,
-  )}`.replace(/\beU\b/g, 'EU');
+function reasonStatementSv(answer: string, target?: string): string {
+  if (target) {
+    return `En anledning till att ${whyTargetStatementSv(target)} är ${reasonAnswerClauseSv(
+      answer,
+    )}`.replace(/\beU\b/g, 'EU');
+  }
+
+  const stripped = stripLeadingPurposeSv(answer);
+  if (/^för att|^att\s+/i.test(answer.trim())) return `En anledning är att ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:hade|saknade|var|är|kan|ska|måste)\b/i.test(stripped)) {
+    return `En anledning är att ${lowerLeadingSwedishClauseStart(stripped)}`;
+  }
+  return `En anledning är ${lowerFirst(stripped)}`.replace(/\beU\b/g, 'EU');
 }
 
-function reasonStatementEn(answer: string, target: string): string {
-  return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+function reasonStatementEn(answer: string, target?: string): string {
+  if (target) {
+    return `One reason ${whyTargetStatementEn(target)} is ${reasonAnswerClauseEn(answer)}`;
+  }
+
+  const stripped = stripLeadingPurposeEn(answer);
+  if (/^to\b/i.test(answer.trim())) return `One reason is to ${lowerFirst(stripped)}`;
+  if (/^[A-ZÅÄÖ]/.test(stripped) && /\b(?:had|was|were|is|are|can|must|should)\b/i.test(stripped)) {
+    return `One reason is that ${lowerLeadingEnglishClauseStart(stripped)}`;
+  }
+  return `One reason is ${lowerFirst(stripped)}`;
 }
 
 function frontedManyActionSv(answer: string): string {
@@ -737,34 +765,9 @@ function meaningStatementSv(subject: string, answer: string): string {
 }
 
 function meaningStatementEn(subject: string, answer: string): string {
-  const policyGoalStatement = policyGoalStatementEn(subject, answer);
-  if (policyGoalStatement) return policyGoalStatement;
   const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
   if (subjectStatement !== answer) return subjectStatement;
   return `${upperFirst(subject)} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-}
-
-function policyGoalStatementEn(subject: string, answer: string): string | null {
-  const subjectMatch = subject.trim().match(/^the goal of (.+?\bpolicy)$/i);
-  if (!subjectMatch) return null;
-  const policyName = upperFirst(subjectMatch[1]);
-  const normalizedAnswer = stripLeadingThatEn(answer).trim();
-  const shouldMatch = normalizedAnswer.match(/^(.+?) should (.+)$/i);
-
-  if (shouldMatch) {
-    const aimClause = `${lowerFirst(shouldMatch[1])} to ${shouldMatch[2]}`.replace(
-      /\bthe same rights and duties and equal power\b/i,
-      'the same rights, duties, and power',
-    );
-    return `${policyName} aims for ${aimClause}`;
-  }
-
-  const onlyAboutMatch = normalizedAnswer.match(/^(.+?) is only about (.+)$/i);
-  if (onlyAboutMatch) {
-    return `${policyName} is only about ${onlyAboutMatch[2]}`;
-  }
-
-  return `${policyName} aims for ${lowerFirst(normalizedAnswer)}`;
 }
 
 function appliesStatementEn(subject: string, answer: string): string {
@@ -825,72 +828,6 @@ function conditionalPartyOutcomeEn(context: string, condition: string, answer: s
   }
 
   return `In ${context}, ${lowerFirst(answer)} if ${condition}`;
-}
-
-function commercialMediaIncomeStatementSv(subject: string, answer: string): string {
-  if (/^De\s+säljer\b/i.test(answer)) {
-    const method = answer
-      .replace(/^De\s+/i, '')
-      .replace(/^säljer\b/i, 'sälja')
-      .replace(/\btar\s+betalt\b/i, 'ta betalt');
-    return `${upperFirst(subject)} kan få inkomster genom att ${lowerFirst(method)}`;
-  }
-  if (/^Genom\b/i.test(answer)) {
-    return `${upperFirst(subject)} kan få inkomster ${lowerFirst(answer)}`;
-  }
-  return replaceLeadingSwedishSubject(subject, answer);
-}
-
-function commercialMediaIncomeStatementEn(subject: string, answer: string): string {
-  if (/^They\s+sell\b/i.test(answer)) {
-    const method = answer
-      .replace(/^They\s+/i, '')
-      .replace(/^sell\b/i, 'selling')
-      .replace(/\bcharge\b/i, 'charging');
-    return `${upperFirst(subject)} can earn income by ${lowerFirst(method)}`;
-  }
-  if (/^(?:Through|By)\b/i.test(answer)) {
-    return `${upperFirst(subject)} can earn income ${lowerFirst(answer)}`;
-  }
-  return replaceLeadingEnglishSubject(subject, answer);
-}
-
-function webSocialMediaStatementSv(answer: string): string {
-  if (/^Vem som helst kan skapa innehåll där\b/i.test(answer)) {
-    return answer.replace(
-      /^Vem som helst kan skapa innehåll där/i,
-      'På webben och i sociala medier kan vem som helst skapa innehåll',
-    );
-  }
-  if (/^Bara ansvariga utgivare får skriva inlägg där$/i.test(answer)) {
-    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
-  }
-  if (/^Allt innehåll godkänns först av staten$/i.test(answer)) {
-    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
-  }
-  if (/^Innehållet är alltid mer pålitligt än nyheter i tidningar$/i.test(answer)) {
-    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
-  }
-  return answer;
-}
-
-function webSocialMediaStatementEn(answer: string): string {
-  if (/^Anyone can create content there\b/i.test(answer)) {
-    return answer.replace(
-      /^Anyone can create content there/i,
-      'On the web and in social media, anyone can create content',
-    );
-  }
-  if (/^Only responsible publishers may write posts there$/i.test(answer)) {
-    return 'On the web and in social media, only responsible publishers may write posts';
-  }
-  if (/^All content is first approved by the state$/i.test(answer)) {
-    return 'On the web and in social media, all content is first approved by the state';
-  }
-  if (/^The content is always more reliable than news in newspapers$/i.test(answer)) {
-    return 'Content on the web and in social media is always more reliable than news in newspapers';
-  }
-  return answer;
 }
 
 function stripTrueFalsePromptSv(value: string): string {
@@ -1296,130 +1233,6 @@ function generatedSingleChoicePromptFromSourceEn(
     : `What is correct about ${match[1]}?`;
 }
 
-function referendumAdvisoryStatementSv(subject: string, answer: string): string | null {
-  if (/^politikerna?\s+(?:måste|behöver)\s+inte\s+följa\s+resultatet$/i.test(answer)) {
-    return `Att ${subject} betyder att politikerna inte behöver följa resultatet`;
-  }
-  if (/^politikerna?\s+måste\s+alltid\s+följa\s+resultatet$/i.test(answer)) {
-    return `Att ${subject} betyder att politikerna alltid måste följa resultatet`;
-  }
-  return null;
-}
-
-function humanRightsApplicabilityStatementSv(subject: string, answer: string): string | null {
-  if (!/^mänskliga rättigheter gäller alla$/i.test(subject)) return null;
-  const normalizedAnswer = stripLeadingPurposeSv(answer);
-  if (
-    /^varje människa har rättigheter oavsett bakgrund eller livssituation$/i.test(normalizedAnswer)
-  ) {
-    return 'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation';
-  }
-  if (/^bara svenska medborgare har mänskliga rättigheter$/i.test(normalizedAnswer)) {
-    return 'Mänskliga rättigheter gäller bara svenska medborgare';
-  }
-  if (/^rättigheterna gäller bara personer som arbetar$/i.test(normalizedAnswer)) {
-    return 'Mänskliga rättigheter gäller bara personer som arbetar';
-  }
-  if (/^varje kommun väljer själv vilka människor som har rättigheter$/i.test(normalizedAnswer)) {
-    return 'Varje kommun väljer själv vilka människor som har mänskliga rättigheter';
-  }
-  return null;
-}
-
-function humanRightsApplicabilityStatementEn(subject: string, answer: string): string | null {
-  if (!/^human rights apply to everyone$/i.test(subject)) return null;
-  const normalizedAnswer = stripLeadingPurposeEn(answer);
-  if (
-    /^every person has rights regardless of background or life situation$/i.test(normalizedAnswer)
-  ) {
-    return 'Human rights apply to every person regardless of background or life situation';
-  }
-  if (/^only Swedish citizens have human rights$/i.test(normalizedAnswer)) {
-    return 'Human rights apply only to Swedish citizens';
-  }
-  if (/^the rights apply only to people who work$/i.test(normalizedAnswer)) {
-    return 'Human rights apply only to people who work';
-  }
-  if (/^each municipality chooses which people have rights$/i.test(normalizedAnswer)) {
-    return 'Each municipality chooses which people have human rights';
-  }
-  return null;
-}
-
-function democracyRightStatementSv(subject: string, answer: string, isCorrect: boolean): string {
-  const action = lowerFirst(stripLeadingPurposeSv(answer));
-  return isCorrect
-    ? `I en demokrati har ${subject} rätt att ${action}`
-    : `I en demokrati har ${subject} inte rätt att ${action}`;
-}
-
-function democracyRightStatementEn(subject: string, answer: string, isCorrect: boolean): string {
-  const action = lowerFirst(stripLeadingPurposeEn(answer));
-  return isCorrect
-    ? `In a democracy, ${subject} may ${action}`
-    : `In a democracy, ${subject} may not ${action}`;
-}
-
-function voterTurnoutImpactStatementSv(answer: string): string | null {
-  if (/^Människor kan få mindre möjlighet att påverka politiska beslut$/i.test(answer)) {
-    return 'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut';
-  }
-  if (/^Alla väljare får två röster var i nästa val$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val';
-  }
-  if (/^Domstolarna tar över riksdagens uppgifter$/i.test(answer)) {
-    return 'Ett lågt valdeltagande innebär att domstolarna tar över riksdagens uppgifter';
-  }
-  if (/^Samhället blir automatiskt mer integrerat$/i.test(answer)) {
-    return 'Ett lågt valdeltagande gör automatiskt samhället mer integrerat';
-  }
-  return null;
-}
-
-function voterTurnoutImpactStatementEn(answer: string): string | null {
-  if (/^People may have fewer opportunities to influence political decisions$/i.test(answer)) {
-    return "Low voter turnout can reduce people's ability to influence political decisions";
-  }
-  if (/^All voters get two votes each in the next election$/i.test(answer)) {
-    return 'Low voter turnout means all voters get two votes each in the next election';
-  }
-  if (/^The courts take over the Riksdag's tasks$/i.test(answer)) {
-    return "Low voter turnout means the courts take over the Riksdag's tasks";
-  }
-  if (/^Society automatically becomes more integrated$/i.test(answer)) {
-    return 'Low voter turnout automatically makes society more integrated';
-  }
-  return null;
-}
-
-function affectStatementSv(subject: string, target: string, answer: string): string {
-  if (/^Genom att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är genom att ${lowerFirst(
-      answer.replace(/^Genom att\s+/i, ''),
-    )}`;
-  }
-  if (/^Att\s+/i.test(answer)) {
-    return `Ett sätt ${subject} kan påverka ${target} är att ${lowerFirst(
-      stripLeadingPurposeSv(answer),
-    )}`;
-  }
-  return `En möjlig följd för ${target} är att ${lowerFirst(answer)}`;
-}
-
-function affectStatementEn(subject: string, target: string, answer: string): string {
-  if (/^By\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is by ${lowerFirst(
-      answer.replace(/^By\s+/i, ''),
-    )}`;
-  }
-  if (/^To\s+/i.test(answer)) {
-    return `One way ${subject} can affect ${target} is to ${lowerFirst(
-      stripLeadingPurposeEn(answer),
-    )}`;
-  }
-  return `One possible effect on ${target} is that ${lowerFirst(answer)}`;
-}
-
 function civicStatementSv(source: PracticeQuestion, option: QuestionOption): string {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
@@ -1473,23 +1286,11 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket är ett sätt att (.+)$/i);
   if (match) return `Ett sätt att ${match[1]} är att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
 
-  match = q.match(/^Vilken rätt har (.+?) i en demokrati$/i);
-  if (match) {
-    return democracyRightStatementSv(match[1], answer, option.id === source.correctOptionId);
-  }
-
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
 
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementSv(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementSv(match[1], match[2], answer);
-  }
-
-  match = q.match(/^Hur kan (.+?) få inkomster$/i);
-  if (match) return commercialMediaIncomeStatementSv(match[1], answer);
+  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
@@ -1518,13 +1319,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) {
-    const referendumStatement = referendumAdvisoryStatementSv(match[1], answer);
-    if (referendumStatement) return referendumStatement;
-    const humanRightsStatement = humanRightsApplicabilityStatementSv(match[1], answer);
-    if (humanRightsStatement) return humanRightsStatement;
-    return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
-  }
+  if (match) return `Att ${match[1]} betyder att ${swedishMeaningClause(answer)}`;
 
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
@@ -1549,19 +1344,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vilket påstående beskriver (.+)$/i);
   if (match) return describesStatementSv(match[1], answer);
 
-  match = q.match(/^Vad kännetecknar (.+)$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
-
-  match = q.match(/^Hur publiceras många tidningar i dag$/i);
-  if (match) return replaceLeadingSwedishSubject('många tidningar', answer);
-
-  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
-  if (match) return webSocialMediaStatementSv(answer);
-
   match = q.match(/^Vilket påstående stämmer om (.+)$/i);
-  if (match) return replaceLeadingSwedishSubject(match[1], answer);
-
-  match = q.match(/^Vilket påstående om (.+?) är korrekt$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
   match = q.match(/^Vilken är (.+)$/i);
@@ -1987,23 +1770,11 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Which is a way to (.+)$/i);
   if (match) return `One way to ${match[1]} is to ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
-  match = q.match(/^What right do (.+?) have in a democracy$/i);
-  if (match) {
-    return democracyRightStatementEn(match[1], answer, option.id === source.correctOptionId);
-  }
-
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) {
-    const voterTurnoutStatement = voterTurnoutImpactStatementEn(answer);
-    if (voterTurnoutStatement) return voterTurnoutStatement;
-    return affectStatementEn(match[1], match[2], answer);
-  }
-
-  match = q.match(/^How can (.+?) earn income$/i);
-  if (match) return commercialMediaIncomeStatementEn(match[1], answer);
+  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
 
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
@@ -2037,11 +1808,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^What does it mean that (.+)$/i);
-  if (match) {
-    const humanRightsStatement = humanRightsApplicabilityStatementEn(match[1], answer);
-    if (humanRightsStatement) return humanRightsStatement;
-    return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
-  }
+  if (match) return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 
   match = q.match(/^What does it mean to (.+)$/i);
   if (match) return `To ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
@@ -2066,15 +1833,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^Which statement describes (.+)$/i);
   if (match) return describesStatementEn(match[1], answer);
-
-  match = q.match(/^What characterizes (.+)$/i);
-  if (match) return replaceLeadingEnglishSubject(match[1], answer);
-
-  match = q.match(/^How are many newspapers published today$/i);
-  if (match) return replaceLeadingEnglishSubject('many newspapers', answer);
-
-  match = q.match(/^What is important to remember about the web and social media$/i);
-  if (match) return webSocialMediaStatementEn(answer);
 
   match = q.match(/^Which statement is correct about (.+)$/i);
   if (match) return replaceLeadingEnglishSubject(match[1], answer);

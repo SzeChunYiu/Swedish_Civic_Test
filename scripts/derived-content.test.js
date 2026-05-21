@@ -440,7 +440,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       options: [
         {
           id: 'a',
-          textSv: 'politikerna måste inte följa resultatet',
+          textSv: 'politikerna behöver inte följa resultatet',
           textEn: 'Politicians do not have to follow the result',
         },
         {
