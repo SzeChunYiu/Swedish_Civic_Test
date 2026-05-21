@@ -1388,6 +1388,39 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
 
+  if (source.id === 'q151') {
+    if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
+      return 'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam';
+    }
+    if (/^De får aldrig sälja reklamplats$/i.test(answer)) {
+      return 'Reklamfinansierade medier får aldrig sälja reklamplats';
+    }
+  }
+
+  if (source.id === 'q152') {
+    if (
+      /^De finns också på internet och uppdateras med nyheter flera gånger per dag$/i.test(answer)
+    ) {
+      return 'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag';
+    }
+    if (/^De får bara säljas som ett exemplar per år$/i.test(answer)) {
+      return 'Många tidningar får bara säljas som ett exemplar per år';
+    }
+  }
+
+  if (source.id === 'q153') {
+    if (
+      /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier$/i.test(
+        answer,
+      )
+    ) {
+      return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
+    }
+    if (/^Bara ansvariga utgivare får skriva inlägg där$/i.test(answer)) {
+      return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
+    }
+  }
+
   if (
     source.id === 'q166' &&
     /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp$/i.test(
@@ -1883,6 +1916,41 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+
+  if (source.id === 'q151') {
+    if (
+      /^They are often run by private companies and earn income from advertising$/i.test(answer)
+    ) {
+      return 'Advertising-funded media are often run by private companies and earn income from advertising';
+    }
+    if (/^They may never sell advertising space$/i.test(answer)) {
+      return 'Advertising-funded media may never sell advertising space';
+    }
+  }
+
+  if (source.id === 'q152') {
+    if (
+      /^They are also available online and updated with news several times per day$/i.test(answer)
+    ) {
+      return 'Many newspapers are also available online and updated with news several times per day';
+    }
+    if (/^They may be sold only as one copy per year$/i.test(answer)) {
+      return 'Many newspapers may be sold only as one copy per year';
+    }
+  }
+
+  if (source.id === 'q153') {
+    if (
+      /^Anyone can create content there, and it is not always checked the same way as in other media$/i.test(
+        answer,
+      )
+    ) {
+      return 'On the web and in social media, anyone can create content, and it is not always checked the same way as in other media';
+    }
+    if (/^Only responsible publishers may write posts there$/i.test(answer)) {
+      return 'On the web and in social media, only responsible publishers may write posts';
+    }
+  }
 
   if (
     source.id === 'q166' &&
