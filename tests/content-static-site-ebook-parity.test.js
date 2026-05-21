@@ -238,6 +238,14 @@ function renderedSourceCounts(html) {
   return JSON.parse(match[1]);
 }
 
+function renderedFootnoteSourceCounts(html) {
+  const counts = {};
+  for (const [, key] of html.matchAll(/<li data-source-key="([^"]+)">/g)) {
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  return counts;
+}
+
 function sourceBlockContaining(blocks, pattern, label) {
   const block = blocks.find((candidate) => pattern.test(candidate));
   assert.ok(block, `missing source block for ${label}`);
@@ -480,6 +488,16 @@ test('static ebook chapters render source footnotes for every prose paragraph an
     );
     assert.match(englishHtml, /class="ebook__footnotes"/);
     assert.match(swedishHtml, /class="ebook__footnotes"/);
+    assert.match(englishHtml, /class="ebook__footnote-list"/);
+    assert.match(swedishHtml, /class="ebook__footnote-list"/);
+    assert.deepEqual(
+      renderedFootnoteSourceCounts(englishHtml),
+      sourceCountsFromBlocks(englishBlocks),
+    );
+    assert.deepEqual(
+      renderedFootnoteSourceCounts(swedishHtml),
+      sourceCountsFromBlocks(swedishBlocks),
+    );
     assert.match(englishHtml, /UHR public study material/);
     assert.match(swedishHtml, /UHR public study material/);
     assert.doesNotMatch(englishHtml, />Editorial<\/span>/);

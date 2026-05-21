@@ -258,11 +258,19 @@
     const heading = lang === 'sv' ? 'Källor i kapitlet' : 'Chapter sources';
     const items = footnotes
       .map((footnote) => {
-        const sources = ebookSourceNotes(footnote.sourceKeys).map(sourceLink).join(' · ');
-        return `<li id="${footnote.id}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}</li>`;
+        const notes = ebookSourceNotes(footnote.sourceKeys);
+        const sources = notes.map(sourceLink).join(' · ');
+        const sourceMetadata = Array.from(new Set(footnote.sourceKeys))
+          .map((key) => {
+            const note = EBOOK_SOURCE_NOTES[key];
+            return note ? `<li data-source-key="${key}">${sourceLink(note)}</li>` : '';
+          })
+          .filter(Boolean)
+          .join('');
+        return `<li id="${footnote.id}"><a href="${ebookRouteHash(chapterId, 'fnref', footnote.id)}"><span>${footnote.index}</span></a> ${sources}<ul class="ebook__footnote-source-list" hidden aria-hidden="true">${sourceMetadata}</ul></li>`;
       })
       .join('');
-    return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol>${items}</ol></section>`;
+    return `<section class="ebook__footnotes" aria-label="${heading}"><h2>${heading}</h2><ol class="ebook__footnote-list">${items}</ol></section>`;
   }
 
   function renderEbookProvenanceBadge(lang, footnotes) {

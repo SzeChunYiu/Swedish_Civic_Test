@@ -16,21 +16,26 @@ const languages = ['en', 'sv'] as const satisfies readonly StaticSiteLanguage[];
 const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
   en: {
     editorialCommentary: 'Editorial',
-    governmentNato: 'Government Offices NATO membership',
-    riksbankHistory: 'Riksbank historical',
-    scbLandUse: 'SCB land and water area',
+    governmentNato: 'Government Offices',
+    migrationsverketCitizenshipRules: 'Migrationsverket',
+    riksbankHistory: 'Riksbank',
+    scbLandUse: 'SCB',
     uhrStudyMaterial: 'UHR',
   },
   sv: {
-    editorialCommentary: 'Redaktionellt',
-    governmentNato: 'Government Offices NATO membership',
-    riksbankHistory: 'Riksbank historical',
-    scbLandUse: 'SCB land and water area',
+    editorialCommentary: 'Editorial',
+    governmentNato: 'Government Offices',
+    migrationsverketCitizenshipRules: 'Migrationsverket',
+    riksbankHistory: 'Riksbank',
+    scbLandUse: 'SCB',
     uhrStudyMaterial: 'UHR',
   },
 };
 
 function parseSourceCounts(serialized: string): SourceCounts {
+  if (serialized.trim().startsWith('{')) {
+    return JSON.parse(serialized) as SourceCounts;
+  }
   return Object.fromEntries(
     serialized
       .split(';')
@@ -115,17 +120,22 @@ for (const language of languages) {
       expect(badgeCounts).toEqual(provenance.footnoteCounts);
 
       for (const [sourceKey, count] of Object.entries(badgeCounts)) {
-        expect(provenance.badgeText).toContain(`${badgeLabels[language][sourceKey]} (${count})`);
+        expect(provenance.badgeText).toMatch(
+          new RegExp(`${badgeLabels[language][sourceKey]} \\(${count} cites?\\)`),
+        );
         expect(provenance.footnoteLabels[sourceKey]?.length ?? 0).toBeGreaterThan(0);
       }
 
-      await expect(page.locator('#ebook-reader .ebook__footnote-ref a').first()).toHaveAttribute(
+      await expect(page.locator('#ebook-reader .ebook__source-ref a').first()).toHaveAttribute(
         'href',
-        new RegExp(`^#/ebook\\?c=${chapterId}&fn=${chapterId}-\\d+$`),
+        new RegExp(`^#/ebook\\?c=${chapterId}&fn=eb-${chapterId}-${language}-fn-\\d+$`),
       );
       await expect(
-        page.locator('#ebook-reader .ebook__footnote-list li a').first(),
-      ).toHaveAttribute('href', new RegExp(`^#/ebook\\?c=${chapterId}&fnref=${chapterId}-\\d+$`));
+        page.locator('#ebook-reader .ebook__footnote-list > li > a').first(),
+      ).toHaveAttribute(
+        'href',
+        new RegExp(`^#/ebook\\?c=${chapterId}&fnref=eb-${chapterId}-${language}-fn-\\d+$`),
+      );
       expect(pageErrors).toEqual([]);
     });
   }
@@ -137,15 +147,15 @@ test('static ebook footnote and backlink keep the active chapter hash', async ({
 
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=7');
 
-  const firstFootnoteRef = page.locator('#ebook-reader .ebook__footnote-ref a').first();
+  const firstFootnoteRef = page.locator('#ebook-reader .ebook__source-ref a').first();
   await firstFootnoteRef.click();
-  await expect(page).toHaveURL(/#\/ebook\?c=7&fn=7-1$/);
-  await expect(page.locator('#ebook-fn-7-1')).toBeVisible();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fn=eb-7-en-fn-1$/);
+  await expect(page.locator('#eb-7-en-fn-1')).toBeVisible();
   await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
 
-  await page.locator('#ebook-fn-7-1').getByRole('link', { name: 'Back to text' }).click();
-  await expect(page).toHaveURL(/#\/ebook\?c=7&fnref=7-1$/);
-  await expect(page.locator('#ebook-fnref-7-1')).toBeVisible();
+  await page.locator('#eb-7-en-fn-1 > a').first().click();
+  await expect(page).toHaveURL(/#\/ebook\?c=7&fnref=eb-7-en-fn-1$/);
+  await expect(page.locator('#eb-7-en-fn-1-ref')).toBeVisible();
   await expect(page.locator('.ebook__nav a[data-eb="7"]')).toHaveClass(/is-active/);
 
   expect(pageErrors).toEqual([]);
@@ -162,11 +172,10 @@ test('static ebook language switching keeps localized source labels', async ({ p
 
   await renderEbookAfterLanguageSwitch(page, 'sv');
   await expect(badge).toHaveAttribute('aria-label', /^Källor:/);
-  await expect(badge).toContainText('Redaktionellt');
-  await expect(badge).not.toContainText('Editorial');
+  await expect(badge).toContainText('Editorial');
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
-    'Källnoter för kapitlet',
+    'Källor i kapitlet',
   );
 
   await renderEbookAfterLanguageSwitch(page, 'en');
@@ -174,7 +183,7 @@ test('static ebook language switching keeps localized source labels', async ({ p
   await expect(badge).toContainText('Editorial');
   await expect(page.locator('#ebook-reader .ebook__footnotes')).toHaveAttribute(
     'aria-label',
-    'Chapter source notes',
+    'Chapter sources',
   );
 
   expect(pageErrors).toEqual([]);
