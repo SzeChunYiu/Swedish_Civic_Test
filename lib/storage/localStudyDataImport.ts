@@ -113,24 +113,41 @@ function normalizeKey(value: string): string {
   return value.replace(/[\s_-]/g, '').toLowerCase();
 }
 
-function findForbiddenPurchaseField(value: unknown, path: string[] = []): string | null {
-  if (Array.isArray(value)) {
-    for (let index = 0; index < value.length; index += 1) {
-      const nestedPath = findForbiddenPurchaseField(value[index], [...path, String(index)]);
-      if (nestedPath) return nestedPath;
-    }
-    return null;
-  }
-  if (!isRecord(value)) return null;
+function nestedPath(parentPath: string, key: string): string {
+  return parentPath ? `${parentPath}.${key}` : key;
+}
 
-  for (const [key, nestedValue] of Object.entries(value)) {
-    const normalizedKey = normalizeKey(key);
-    if (forbiddenPurchaseKeyFragments.some((fragment) => normalizedKey.includes(fragment))) {
-      return [...path, key].join('.');
+function findForbiddenPurchaseField(value: unknown): string | null {
+  const stack: { path: string; value: unknown }[] = [{ path: '', value }];
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) continue;
+
+    if (Array.isArray(current.value)) {
+      for (let index = current.value.length - 1; index >= 0; index -= 1) {
+        stack.push({
+          path: nestedPath(current.path, String(index)),
+          value: current.value[index],
+        });
+      }
+      continue;
     }
 
-    const nestedPath = findForbiddenPurchaseField(nestedValue, [...path, key]);
-    if (nestedPath) return nestedPath;
+    if (!isRecord(current.value)) continue;
+
+    const entries = Object.entries(current.value);
+    for (const [key] of entries) {
+      const normalizedKey = normalizeKey(key);
+      if (forbiddenPurchaseKeyFragments.some((fragment) => normalizedKey.includes(fragment))) {
+        return nestedPath(current.path, key);
+      }
+    }
+
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+      const [key, nestedValue] = entries[index];
+      stack.push({ path: nestedPath(current.path, key), value: nestedValue });
+    }
   }
 
   return null;
