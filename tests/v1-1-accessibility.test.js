@@ -410,7 +410,7 @@ test('main native surfaces consume app-wide theme colors instead of static token
 test('speak.ts: speakSwedish accepts a rate option', () => {
   const source = loadSource('lib/audio/speak.ts');
   assert.match(source, /SpeakSwedishOptions/);
-  assert.match(source, /rate\?: number/);
+  assert.match(source, /rate\?: unknown/);
   assert.match(source, /Speech\.speak\([\s\S]*rate/);
 });
 
@@ -419,6 +419,65 @@ test('speak.ts: rate is clamped to a safe range', () => {
   // The bounds [0.1, 2.0] match expo-speech's documented support envelope.
   assert.match(source, /0\.1/);
   assert.match(source, /2\.0/);
+});
+
+test('native ebook study article audio uses Swedish read-aloud controls and playback rate', () => {
+  const routeSource = loadSource('app/ebook.tsx');
+  const articleAudioSource = loadSource('components/learning/ArticleAudioButton.tsx');
+  const narrationSource = loadSource('lib/audio/ebookNarration.ts');
+
+  assert.match(routeSource, /import \{ ArticleAudioButton \}/);
+  assert.match(routeSource, /buildEbookArticleNarrationText/);
+  assert.match(routeSource, /buildEbookSectionNarrationText/);
+  assert.match(
+    routeSource,
+    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+  );
+  assert.match(
+    routeSource,
+    /const audioPlaybackRate = useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\);/,
+  );
+  assert.match(
+    routeSource,
+    /<ArticleAudioButton[\s\S]*enabled=\{audioEnabled\}[\s\S]*rate=\{audioPlaybackRate\}[\s\S]*scope="article"[\s\S]*text=\{buildEbookArticleNarrationText\(article\)\}/,
+  );
+  assert.match(
+    routeSource,
+    /<ArticleAudioButton[\s\S]*scope="section"[\s\S]*text=\{buildEbookSectionNarrationText\(section\)\}/,
+  );
+  assert.match(articleAudioSource, /chunkArticleNarrationText/);
+  assert.match(articleAudioSource, /speakSwedish\(chunk, \{[\s\S]*rate,[\s\S]*onDone:/);
+  assert.match(articleAudioSource, /stopSpeech\(\);[\s\S]*setIsSpeaking\(false\)/);
+  assert.match(articleAudioSource, /Lyssna på artikeln/);
+  assert.match(articleAudioSource, /Lyssna på avsnittet/);
+  assert.match(narrationSource, /EBOOK_NARRATION_MAX_CHUNK_LENGTH = 260/);
+  assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
+});
+
+test('native ebook study article narration chunks long text and skips source cards', () => {
+  const {
+    buildEbookArticleNarrationText,
+    buildEbookSectionNarrationText,
+    chunkArticleNarrationText,
+  } = require(path.join(repoRoot, 'lib/audio/ebookNarration.ts'));
+  const { EBOOK_ARTICLES } = require(path.join(repoRoot, 'lib/content/ebookContent.ts'));
+  const introArticle = EBOOK_ARTICLES.find((article) => article.staticChapterId === 'intro');
+
+  const chunks = chunkArticleNarrationText('En kort mening. '.repeat(30), 120);
+  assert.ok(chunks.length > 1);
+  assert.ok(chunks.every((chunk) => chunk.length <= 120));
+
+  const articleText = buildEbookArticleNarrationText(introArticle);
+  const sectionText = buildEbookSectionNarrationText(introArticle.sections[0]);
+
+  assert.match(articleText, /Sakta in/);
+  assert.match(articleText, /Vad den här boken är/);
+  assert.match(sectionText, /Vad den här boken är/);
+  assert.doesNotMatch(sectionText, /Sakta in/);
+  assert.doesNotMatch(
+    articleText,
+    /Redaktionell|Källor hämtade|UHR:s offentliga utbildningsmaterial/,
+  );
 });
 
 test('settings route scopes persistence warning copy to accessibility preferences', () => {
