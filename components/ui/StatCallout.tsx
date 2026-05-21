@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
 type Tone = 'default' | 'accent' | 'success' | 'warning';
 
@@ -10,37 +12,10 @@ type StatCalloutProps = {
   tone?: Tone;
 };
 
-const toneStyles: Record<
-  Tone,
-  { background: string; valueColor: string; labelColor: string; borderColor: string }
-> = {
-  default: {
-    background: colors.surface,
-    valueColor: colors.text,
-    labelColor: colors.textMuted,
-    borderColor: colors.border,
-  },
-  accent: {
-    background: colors.badgeBlueBg,
-    valueColor: colors.badgeBlueText,
-    labelColor: colors.badgeBlueText,
-    borderColor: colors.focusSoft,
-  },
-  success: {
-    background: colors.successSoft,
-    valueColor: colors.success,
-    labelColor: colors.success,
-    borderColor: colors.success,
-  },
-  warning: {
-    background: colors.warningSoft,
-    valueColor: colors.warning,
-    labelColor: colors.warning,
-    borderColor: colors.warning,
-  },
-};
-
 export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const toneStyles = useMemo(() => createToneStyles(themeColors), [themeColors]);
   const t = toneStyles[tone];
   return (
     <View style={[styles.card, { backgroundColor: t.background, borderColor: t.borderColor }]}>
@@ -50,27 +25,63 @@ export function StatCallout({ value, label, tone = 'default' }: StatCalloutProps
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: radius.card,
-    borderWidth: space.hairline,
-    flex: 1,
-    gap: space[0.5],
-    padding: space[1.5],
-  },
-  value: {
-    fontFamily: typography.subHeading.fontFamily,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.subHeading.fontWeight,
-    letterSpacing: typography.subHeading.letterSpacing,
-    lineHeight: typography.subHeading.lineHeight,
-  },
-  label: {
-    fontFamily: typography.badge.fontFamily,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    lineHeight: typography.badge.lineHeight,
-    textTransform: 'uppercase',
-  },
-});
+function createToneStyles(
+  themeColors: ThemeColors,
+): Record<
+  Tone,
+  { background: string; valueColor: string; labelColor: string; borderColor: string }
+> {
+  return {
+    default: {
+      background: themeColors.surface,
+      valueColor: themeColors.text,
+      labelColor: themeColors.textMuted,
+      borderColor: themeColors.border,
+    },
+    accent: {
+      background: themeColors.badgeBlueBg,
+      valueColor: themeColors.badgeBlueText,
+      labelColor: themeColors.badgeBlueText,
+      borderColor: themeColors.focusSoft,
+    },
+    success: {
+      background: themeColors.successSoft,
+      valueColor: themeColors.success,
+      labelColor: themeColors.success,
+      borderColor: themeColors.success,
+    },
+    warning: {
+      background: themeColors.warningSoft,
+      valueColor: themeColors.warning,
+      labelColor: themeColors.warning,
+      borderColor: themeColors.warning,
+    },
+  };
+}
+
+function createStyles(_themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      borderRadius: radius.card,
+      borderWidth: space.hairline,
+      flex: 1,
+      gap: space[0.5],
+      padding: space[1.5],
+    },
+    value: {
+      fontFamily: typography.subHeading.fontFamily,
+      fontSize: typography.subHeading.fontSize,
+      fontWeight: typography.subHeading.fontWeight,
+      letterSpacing: typography.subHeading.letterSpacing,
+      lineHeight: typography.subHeading.lineHeight,
+    },
+    label: {
+      fontFamily: typography.badge.fontFamily,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      lineHeight: typography.badge.lineHeight,
+      textTransform: 'uppercase',
+    },
+  });
+}

@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { DailyActivityBin } from '../../lib/learning/dashboardStats';
-import { colors, radius, space, typography } from '../../lib/theme';
+import { radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import { Card } from '../ui/Card';
 
 export type ActivityHeatmapCopy = {
@@ -35,6 +37,8 @@ function heatLevel(count: number, maxCount: number): HeatStyle {
 }
 
 export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const totalAnswers = bins.reduce((sum, bin) => sum + bin.count, 0);
   const activeDays = bins.filter((bin) => bin.count > 0).length;
   const maxDayCount = Math.max(0, ...bins.map((bin) => bin.count));
@@ -95,91 +99,93 @@ export function ActivityHeatmap({ bins, copy }: ActivityHeatmapProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  accessibilitySummary: {
-    height: 1,
-    left: -10000,
-    overflow: 'hidden',
-    position: 'absolute',
-    width: 1,
-  },
-  card: {
-    gap: space[1.5],
-  },
-  header: {
-    gap: space[0.5],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  emptyState: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  legend: {
-    gap: space[0.75],
-  },
-  legendTitle: {
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.caption.lineHeight,
-  },
-  legendItems: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-  },
-  legendItem: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: space[0.5],
-  },
-  legendSwatch: {
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    height: space[1.5],
-    width: space[1.5],
-  },
-  legendText: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-  heatmap: {
-    alignContent: 'flex-start',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    gap: space[0.5],
-    height: space[10],
-  },
-  cell: {
-    borderColor: colors.border,
-    borderRadius: radius.micro,
-    borderWidth: space.hairline,
-    height: space[1],
-    width: space[1],
-  },
-  heatZero: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  heatSoft: {
-    backgroundColor: colors.badgeBlueBg,
-  },
-  heatMedium: {
-    backgroundColor: colors.focusSoft,
-  },
-  heatStrong: {
-    backgroundColor: colors.accent,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    accessibilitySummary: {
+      height: 1,
+      left: -10000,
+      overflow: 'hidden',
+      position: 'absolute',
+      width: 1,
+    },
+    card: {
+      gap: space[1.5],
+    },
+    header: {
+      gap: space[0.5],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    emptyState: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    legend: {
+      gap: space[0.75],
+    },
+    legendTitle: {
+      color: themeColors.text,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
+    },
+    legendItems: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+    },
+    legendItem: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: space[0.5],
+    },
+    legendSwatch: {
+      borderColor: themeColors.border,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      height: space[1.5],
+      width: space[1.5],
+    },
+    legendText: {
+      color: themeColors.textSecondary,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+    heatmap: {
+      alignContent: 'flex-start',
+      flexDirection: 'column',
+      flexWrap: 'wrap',
+      gap: space[0.5],
+      height: space[10],
+    },
+    cell: {
+      borderColor: themeColors.border,
+      borderRadius: radius.micro,
+      borderWidth: space.hairline,
+      height: space[1],
+      width: space[1],
+    },
+    heatZero: {
+      backgroundColor: themeColors.surfaceMuted,
+    },
+    heatSoft: {
+      backgroundColor: themeColors.badgeBlueBg,
+    },
+    heatMedium: {
+      backgroundColor: themeColors.focusSoft,
+    },
+    heatStrong: {
+      backgroundColor: themeColors.accent,
+    },
+  });
+}
