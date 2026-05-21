@@ -3,8 +3,19 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
+
+function loadTs(relativePath) {
+  const source = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  }).outputText;
+  const mod = { exports: {} };
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, require);
+  return mod.exports;
+}
 
 function validateContentSummary() {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
@@ -20,6 +31,7 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   const summary = validateContentSummary();
 
   assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
+  assert.equal(summary.civicKnowledgeTestFirstSittingDateValidated, '2026-08-15');
   assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
   assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
@@ -35,8 +47,12 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.doesNotMatch(countdownBanner, /Det nya samhällskunskapstestet träder i kraft/i);
   assert.match(countdownBanner, /New citizenship rules apply from/);
   assert.match(countdownBanner, /The civic-knowledge test is expected in August 2026/);
+  assert.match(countdownBanner, /The new citizenship rules now apply from/);
+  assert.match(countdownBanner, /until first test/);
   assert.match(countdownBanner, /Nya medborgarskapsregler gäller från/);
   assert.match(countdownBanner, /Samhällskunskapsprovet väntas starta i augusti 2026/);
+  assert.match(countdownBanner, /De nya medborgarskapsreglerna gäller nu sedan/);
+  assert.match(countdownBanner, /till första provet/);
   assert.match(countdownBanner, /CITIZENSHIP_TIMELINE_SOURCE_URLS/);
   assert.doesNotMatch(
     countdownBanner,
@@ -56,6 +72,22 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   const homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   assert.match(homeRoute, /import \{ CountdownBanner \}/);
   assert.match(homeRoute, /<CountdownBanner language=\{language\} \/>/);
+});
+
+test('countdown banner switches from rules phase to civic-test phase after 6 June', () => {
+  const { getCitizenshipTimelineCountdown } = loadTs('lib/learning/examDate.ts');
+
+  assert.deepEqual(getCitizenshipTimelineCountdown(new Date('2026-06-05T00:00:00.000Z')), {
+    daysRemaining: 1,
+    phase: 'rules',
+    targetDate: new Date('2026-06-06T00:00:00.000Z'),
+  });
+  assert.deepEqual(getCitizenshipTimelineCountdown(new Date('2026-06-07T00:00:00.000Z')), {
+    daysRemaining: 69,
+    phase: 'civicKnowledgeTest',
+    targetDate: new Date('2026-08-15T00:00:00.000Z'),
+  });
+  assert.equal(getCitizenshipTimelineCountdown(new Date('2026-08-16T00:00:00.000Z')), null);
 });
 
 test('validate:content rejects removing the Home countdown banner mount', () => {

@@ -7,8 +7,8 @@ import {
   CITIZENSHIP_TIMELINE_SOURCE_URLS,
   CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE,
   CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE,
-  daysUntil,
   formatExamDate,
+  getCitizenshipTimelineCountdown,
 } from '../../lib/learning/examDate';
 import { colors, radius, space, typography } from '../../lib/theme';
 
@@ -21,8 +21,18 @@ type TimelineSourceLink = {
 const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
-    body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026; första provomgången är ${firstSittingDate} i Stockholm. Regeringens tidsgräns för första steget är ${deadlineDate}.`,
+    phases: {
+      rules: {
+        body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+          `Nya medborgarskapsregler gäller från ${rulesDate}. Samhällskunskapsprovet väntas starta i augusti 2026; första provomgången är ${firstSittingDate} i Stockholm. Regeringens tidsgräns för första steget är ${deadlineDate}.`,
+        untilLabel: 'tills nya reglerna',
+      },
+      civicKnowledgeTest: {
+        body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+          `De nya medborgarskapsreglerna gäller nu sedan ${rulesDate}. Nästa viktiga fas är samhällskunskapsprovet: första provomgången är ${firstSittingDate} i Stockholm och regeringens tidsgräns för första steget är ${deadlineDate}.`,
+        untilLabel: 'till första provet',
+      },
+    },
     sourceLabel: 'Officiella datumkällor:',
     sources: [
       {
@@ -41,12 +51,21 @@ const copy = {
         sourceKey: 'civicKnowledgeTestDeadline',
       },
     ] satisfies TimelineSourceLink[],
-    untilLabel: 'tills nya reglerna',
   },
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
-    body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
-      `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026; the first sitting is ${firstSittingDate} in Stockholm. The government deadline for the first step is ${deadlineDate}.`,
+    phases: {
+      rules: {
+        body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+          `New citizenship rules apply from ${rulesDate}. The civic-knowledge test is expected in August 2026; the first sitting is ${firstSittingDate} in Stockholm. The government deadline for the first step is ${deadlineDate}.`,
+        untilLabel: 'until new rules',
+      },
+      civicKnowledgeTest: {
+        body: (rulesDate: string, firstSittingDate: string, deadlineDate: string) =>
+          `The new citizenship rules now apply from ${rulesDate}. The next important phase is the civic-knowledge test: the first sitting is ${firstSittingDate} in Stockholm, and the government deadline for the first step is ${deadlineDate}.`,
+        untilLabel: 'until first test',
+      },
+    },
     sourceLabel: 'Official date sources:',
     sources: [
       {
@@ -65,7 +84,6 @@ const copy = {
         sourceKey: 'civicKnowledgeTestDeadline',
       },
     ] satisfies TimelineSourceLink[],
-    untilLabel: 'until new rules',
   },
 } as const;
 
@@ -80,23 +98,24 @@ export interface CountdownBannerProps {
 }
 
 export function CountdownBanner({ accessibilityLabel, language }: CountdownBannerProps) {
-  const [days, setDays] = useState<number>(() => daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE));
+  const [countdown, setCountdown] = useState(() => getCitizenshipTimelineCountdown());
 
   useEffect(() => {
     const interval = setInterval(
-      () => setDays(daysUntil(CITIZENSHIP_RULES_EFFECTIVE_DATE)),
+      () => setCountdown(getCitizenshipTimelineCountdown()),
       60 * 60 * 1000,
     );
     return () => clearInterval(interval);
   }, []);
 
-  if (days <= 0) return null;
+  if (!countdown) return null;
 
   const t = copy[language];
+  const phaseCopy = t.phases[countdown.phase];
   const rulesDateString = formatExamDate(CITIZENSHIP_RULES_EFFECTIVE_DATE, language);
   const firstSittingDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE, language);
   const deadlineDateString = formatExamDate(CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE, language);
-  const accessibilitySummary = `${t.label(days)} ${t.untilLabel}. ${t.body(
+  const accessibilitySummary = `${t.label(countdown.daysRemaining)} ${phaseCopy.untilLabel}. ${phaseCopy.body(
     rulesDateString,
     firstSittingDateString,
     deadlineDateString,
@@ -109,12 +128,12 @@ export function CountdownBanner({ accessibilityLabel, language }: CountdownBanne
       style={styles.banner}
     >
       <View style={styles.daysBlock}>
-        <Text style={styles.daysNumber}>{days}</Text>
-        <Text style={styles.daysLabel}>{t.untilLabel}</Text>
+        <Text style={styles.daysNumber}>{countdown.daysRemaining}</Text>
+        <Text style={styles.daysLabel}>{phaseCopy.untilLabel}</Text>
       </View>
       <View style={styles.contentBlock}>
         <Text style={styles.body}>
-          {t.body(rulesDateString, firstSittingDateString, deadlineDateString)}
+          {phaseCopy.body(rulesDateString, firstSittingDateString, deadlineDateString)}
         </Text>
         <View style={styles.sourceRow}>
           <Text style={styles.sourceLabel}>{t.sourceLabel}</Text>
