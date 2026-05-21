@@ -81,7 +81,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/lib/monetization/mobileAdsConsent.ts')) {
     return String(contents).replace(
-      /const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\([\\s\\S]*?\\);\\n  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded\\([\\s\\S]*?\\);/,
+      /const currentTrackingTransparencyStatus = await getCurrentTrackingTransparencyStatus\\([\\s\\S]*?\\);\\n  const trackingTransparencyStatus = await requestTrackingTransparencyStatusIfNeeded\\([\\s\\S]*?\\);\\n  const umpConsentStatus = await resolveUmpConsentStatus\\([\\s\\S]*?\\);/,
       "const currentTrackingTransparencyStatus = 'not_determined';\\n  const [trackingTransparencyStatus, umpConsentStatus] = await Promise.all([\\n    requestTrackingTransparencyStatusIfNeeded(runtime, platform, shouldCollectConsent, currentTrackingTransparencyStatus),\\n    resolveUmpConsentStatus(runtime, shouldCollectConsent, normalizedRegion),\\n  ]);",
     );
   }
