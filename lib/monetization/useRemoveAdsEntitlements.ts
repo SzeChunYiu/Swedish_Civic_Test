@@ -10,6 +10,7 @@ import {
   createWebPurchaseStorage,
   getPurchaseEntitlements,
   type PurchaseRuntimeOptions,
+  type RemoveAdsPurchaseProvider,
   type RemoveAdsStorePlatform,
 } from './purchases';
 import { createInstrumentedE2EPurchaseRuntimeOptions } from './e2ePurchaseRuntime';
@@ -94,6 +95,22 @@ function createE2EWebPurchaseRuntimeOptions(
   return undefined;
 }
 
+function createUnavailableWebPurchaseProvider(): RemoveAdsPurchaseProvider {
+  return {
+    async connect() {},
+    async disconnect() {},
+    async validateRemoveAdsReceipt() {
+      return { status: 'invalid' };
+    },
+    async requestRemoveAdsPurchase() {
+      return null;
+    },
+    async restorePurchases() {
+      return [];
+    },
+  };
+}
+
 export function createDefaultPurchaseRuntimeOptions(
   initialAdsDisabled = false,
 ): PurchaseRuntimeOptions {
@@ -102,8 +119,9 @@ export function createDefaultPurchaseRuntimeOptions(
     if (e2eRuntimeOptions) return e2eRuntimeOptions;
 
     defaultWebPurchaseRuntimeOptions ??= {
-      provider: createMockPurchaseProvider(),
-      storage: createWebPurchaseStorage(initialAdsDisabled),
+      provider: createUnavailableWebPurchaseProvider(),
+      purchaseUnavailableReason: 'web_store_unavailable',
+      storage: createWebPurchaseStorage(false),
     };
 
     return defaultWebPurchaseRuntimeOptions;

@@ -104,17 +104,24 @@ test('createDefaultPurchaseRuntimeOptions fails closed and clears stored entitle
     async () => {
       const {
         REMOVE_ADS_STORAGE_KEY,
+        buyRemoveAds,
         createDefaultPurchaseRuntimeOptions,
         getPurchaseEntitlements,
         restoreRemoveAdsPurchase,
       } = loadRemoveAdsWebRuntime();
       const runtimeOptions = createDefaultPurchaseRuntimeOptions(true);
 
+      assert.equal(runtimeOptions.purchaseUnavailableReason, 'web_store_unavailable');
       assert.equal(
         (await getPurchaseEntitlements(runtimeOptions)).adsDisabled,
         false,
         'non-E2E web runtime must revalidate and clear copied Remove Ads records',
       );
+      assert.equal(globalThis.localStorage.getItem(REMOVE_ADS_STORAGE_KEY), null);
+
+      const buyResult = await buyRemoveAds(runtimeOptions);
+      assert.equal(buyResult.status, 'pending');
+      assert.equal(buyResult.entitlements.adsDisabled, false);
       assert.equal(globalThis.localStorage.getItem(REMOVE_ADS_STORAGE_KEY), null);
 
       const restoreResult = await restoreRemoveAdsPurchase(runtimeOptions);
