@@ -5,19 +5,30 @@ import { Badge } from './Badge';
 import { radius, shadows, space, typography, type ThemeColors } from '../../lib/theme';
 import { useThemeColors } from '../../lib/theme/ThemeProvider';
 
+type ScreenShellProps = PropsWithChildren<{
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+  rightSlot?: ReactNode;
+  themeColors?: ThemeColors;
+}>;
+
+type SectionHeaderProps = {
+  title: string;
+  subtitle?: string;
+  themeColors?: ThemeColors;
+};
+
 export function ScreenShell({
   title,
   subtitle,
   eyebrow,
   children,
   rightSlot,
-}: PropsWithChildren<{
-  title: string;
-  subtitle?: string;
-  eyebrow?: string;
-  rightSlot?: ReactNode;
-}>) {
-  const themeColors = useThemeColors();
+  themeColors: providedThemeColors,
+}: ScreenShellProps) {
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
@@ -37,8 +48,13 @@ export function ScreenShell({
   );
 }
 
-export function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
-  const themeColors = useThemeColors();
+export function SectionHeader({
+  title,
+  subtitle,
+  themeColors: providedThemeColors,
+}: SectionHeaderProps) {
+  const fallbackThemeColors = useThemeColors();
+  const themeColors = providedThemeColors ?? fallbackThemeColors;
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
 
   return (
