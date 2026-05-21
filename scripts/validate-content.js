@@ -1554,6 +1554,18 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = [
   { label: 'clear search state reset', pattern: /setQuery\(''\);/ },
   { label: 'clear search URL replacement', pattern: /router\.replace\('\/search'\);/ },
   { label: 'clear search uses URL-aware handler', pattern: /onPress=\{handleClearSearch\}/ },
+  { label: 'submit search handler', pattern: /const handleSubmitSearch = \(\) => \{/ },
+  { label: 'submit trims typed query', pattern: /const submittedQuery = query\.trim\(\);/ },
+  {
+    label: 'empty submit clears URL state',
+    pattern: /if \(submittedQuery\.length === 0\) \{[\s\S]*handleClearSearch\(\);/,
+  },
+  { label: 'submitted query normalizes visible input', pattern: /setQuery\(submittedQuery\);/ },
+  {
+    label: 'non-empty submit writes q URL param',
+    pattern: /router\.replace\(`\/search\?q=\$\{encodeURIComponent\(submittedQuery\)\}`\);/,
+  },
+  { label: 'search return key submits query', pattern: /onSubmitEditing=\{handleSubmitSearch\}/ },
   { label: 'hydrated query reaches visible input', pattern: /value=\{query\}/ },
   { label: 'hydrated query feeds filtering', pattern: /const trimmedQuery = query\.trim\(\);/ },
 ];
