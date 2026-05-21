@@ -1038,7 +1038,9 @@ function applyLang(lang) {
   smtApplyA11yLabels(lang);
   smtApplyDocumentMetadata(lang);
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
-    b.classList.toggle('is-on', b.dataset.lang === lang);
+    const on = b.dataset.lang === lang;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   try {
     localStorage.setItem('smt_lang', lang);
@@ -2257,7 +2259,9 @@ function smtInitLangPicker() {
       }
     })();
     menu.querySelectorAll('button[data-lang]').forEach(function (b) {
-      b.classList.toggle('is-on', b.dataset.lang === cur);
+      const on = b.dataset.lang === cur;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
   btn.addEventListener('click', function (e) {
