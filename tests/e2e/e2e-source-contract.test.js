@@ -14,6 +14,10 @@ function readRelative(relativePath) {
   return fs.readFileSync(path.join(e2eDir, relativePath), 'utf8');
 }
 
+function readProject(relativePath) {
+  return fs.readFileSync(path.join(e2eDir, '..', '..', relativePath), 'utf8');
+}
+
 function collectMatches({ pattern, source, filePath }) {
   return Array.from(source.matchAll(pattern), (match) => ({
     file: path.relative(process.cwd(), filePath),
@@ -73,6 +77,41 @@ test('learn chapter navigation derives the rendered chapter total from questions
     source,
     /questions\.filter\(\s*\(?question\)?\s*=>\s*question\.chapterId\s*===\s*['"]ch01['"]\s*\)\.length/,
     'learn chapter navigation spec should calculate the ch01 total from data/questions',
+  );
+});
+
+test('learn chapter return flow does not hide duplicate chapter links behind locator fallbacks', () => {
+  const chapterRouteSource = readProject('app/chapter/[chapterId].tsx');
+  const navigationSpecSource = readRelative('learn-chapter-navigation.spec.ts');
+  const dismissingBackLinks =
+    chapterRouteSource.match(
+      /accessibilityLabel=\{copy\.backToListAccessibilityLabel\}[\s\S]*?dismissTo[\s\S]*?href="\/learn"/g,
+    ) ?? [];
+
+  assert.equal(
+    dismissingBackLinks.length,
+    2,
+    'chapter route back links should dismiss to the existing Learn route instead of pushing a retained duplicate route',
+  );
+  assert.doesNotMatch(
+    navigationSpecSource,
+    /getByRole\('link', \{ name: \/Open chapter The country of Sweden[\s\S]*?\.last\(\)/,
+    'English Learn return assertions should not need .last() to dodge retained hidden route content',
+  );
+  assert.match(
+    navigationSpecSource,
+    /getByRole\('link', \{\s*name: \/Open chapter The country of Sweden\\\. Swedish name: Landet Sverige\\\.\//,
+    'English Learn return assertions should use the strict role/name chapter-link contract',
+  );
+  assert.match(
+    navigationSpecSource,
+    /await expect\(returnedFirstChapter\)\.toHaveCount\(1\);/,
+    'Learn return assertions should prove the returned chapter link has no accessible duplicate',
+  );
+  assert.match(
+    navigationSpecSource,
+    /deep-linked chapter can return to the chapter list/,
+    'Learn return coverage should include direct chapter deep links with no existing Learn stack entry',
   );
 });
 

@@ -63,6 +63,37 @@ test('learning path opens a source-backed chapter detail screen and returns to t
 
   await expect(page).toHaveURL(/\/learn$/);
   await expect(page.locator('body')).toContainText('13 samhällsområden');
+  const returnedFirstChapter = page.getByRole('link', {
+    name: /Öppna kapitel Landet Sverige\. Engelskt namn: The country of Sweden\./,
+  });
+  await expect(returnedFirstChapter).toHaveCount(1);
+  await expect(returnedFirstChapter).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('deep-linked chapter can return to the chapter list', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/chapter/ch01', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page).toHaveURL(/\/chapter\/ch01$/);
+  await expect(page.getByLabel('Starta frågepass för Landet Sverige')).toBeVisible();
+
+  await page.getByLabel('Tillbaka till kapitellistan').click();
+
+  await expect(page).toHaveURL(/\/learn$/);
+  const returnedFirstChapter = page.getByRole('link', {
+    name: /Öppna kapitel Landet Sverige\. Engelskt namn: The country of Sweden\./,
+  });
+  await expect(returnedFirstChapter).toHaveCount(1);
+  await expect(returnedFirstChapter).toBeVisible();
 
   expect(consoleErrors).toEqual([]);
 });
@@ -115,6 +146,16 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(page.locator('body')).toContainText('The country of Sweden');
   await expect(page.locator('body')).toContainText('Geography, climate, nature');
   await expect(page.locator('body')).toContainText(`Practice questions (${questionCount})`);
+
+  await page.getByLabel('Back to chapter list').click();
+
+  await expect(page).toHaveURL(/\/learn$/);
+  const returnedFirstChapter = page.getByRole('link', {
+    name: /Open chapter The country of Sweden\. Swedish name: Landet Sverige\./,
+  });
+  await expect(returnedFirstChapter).toHaveCount(1);
+  await expect(returnedFirstChapter).toBeVisible();
+  await expect(returnedFirstChapter).toContainText('The country of Sweden');
 
   expect(consoleErrors).toEqual([]);
 });
