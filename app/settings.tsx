@@ -97,7 +97,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
       if (code === 'invalid_schema') return 'Importen har fel format eller okända toppnivåfält.';
       if (code === 'unsupported_version') return 'Importversionen stöds inte.';
       if (code === 'purchase_fields_rejected') {
-        return 'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.';
+        return 'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.';
       }
       return 'Importen innehåller inga stödda studiedata.';
     },
@@ -106,7 +106,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importPreview: 'Förhandsgranska import',
     importPreviewAccessibilityLabel: 'Förhandsgranska lokal studiedataimport',
     importPurchasesNote:
-      'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+      'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
     importReset: 'Återställ importfält',
     importSectionSubtitle:
       'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',

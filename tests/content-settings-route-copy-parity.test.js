@@ -42,9 +42,14 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /\$\{count\} repetitionsdagar/);
   assert.match(source, /\$\{count\} repetitionskort/);
   assert.match(source, /Studiesvit och svitskydd ingår/);
+  assert.match(source, /fält för köp i appen eller kvitton/);
+  assert.match(source, /data om köp i appen importeras inte/);
   assert.match(source, /\$\{count\} FSRS review days/);
   assert.match(source, /\$\{count\} FSRS review cards/);
-  assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
+  assert.doesNotMatch(
+    source,
+    /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus|IAP-fält|IAP-data/,
+  );
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
   assert.match(source, /accessibilityLabel=\{copy\.setThemeModeAccessibilityLabel\(label\)\}/);
@@ -179,6 +184,38 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /settings route Swedish import summary copy must hide scheduler jargon/,
+  );
+});
+
+test('settings route copy parity rejects Swedish IAP import jargon', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/settings.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('fält för köp i appen eller kvitton', 'köp-, kvitto- eller IAP-fält')
+      .replace('data om köp i appen importeras inte', 'IAP-data importeras inte');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-settings-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /settings route Swedish import copy must describe purchases in appen without IAP acronym/,
   );
 });
 

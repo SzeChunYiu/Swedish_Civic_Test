@@ -53,9 +53,13 @@ test('local study data import summary keeps Swedish copy learner-facing', () => 
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionsdagar/);
   assert.match(swedishCopyMatch[0], /\$\{count\} repetitionskort/);
   assert.match(swedishCopyMatch[0], /Studiesvit och svitskydd ingår/);
-  assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus/);
+  assert.match(swedishCopyMatch[0], /fält för köp i appen eller kvitton/);
+  assert.match(swedishCopyMatch[0], /data om köp i appen importeras inte/);
+  assert.doesNotMatch(swedishCopyMatch[0], /\bFSRS\b|frysstatus|\bIAP\b/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review days/);
   assert.match(englishCopyMatch[0], /\$\{count\} FSRS review cards/);
+  assert.match(englishCopyMatch[0], /\bIAP fields\b/);
+  assert.match(englishCopyMatch[0], /\bIAP data\b/);
 });
 
 test('local study data import previews and applies all learner snapshot sections', () => {
@@ -121,7 +125,7 @@ test('local study data import previews and applies all learner snapshot sections
     settings: {
       language: 'en',
       audioEnabled: false,
-      dailyGoalAnswers: 18.4,
+      dailyGoalAnswers: 20,
       includeSupplementaryQuestions: true,
       hasSeenAboutTheTest: true,
       ignoredSetting: 'skip',
@@ -159,7 +163,7 @@ test('local study data import previews and applies all learner snapshot sections
 
   assert.equal(storageById.settings.values.get('language'), 'en');
   assert.equal(storageById.settings.values.get('audioEnabled'), false);
-  assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 18);
+  assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 20);
   assert.equal(storageById.settings.values.get('includeSupplementaryQuestions'), true);
   assert.equal(storageById.settings.values.get('hasSeenAboutTheTest'), true);
 });
