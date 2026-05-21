@@ -121,6 +121,34 @@ test('ChapterCard accessibility parity uses focused content validation routing',
   );
 });
 
+test('Flashcard accessibility parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const flashcardTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-flashcard-accessibility-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-flashcard-accessibility/);
+  assert.match(
+    validatorSource,
+    /validateFlashcardAccessibilityParity\(\);[\s\S]*flashcardAccessibilityRulesValidated[\s\S]*flashcardAccessibilityParityValidated[\s\S]*swedishFlashcardCopyNaturalnessValidated/,
+  );
+  assert.match(flashcardTestSource, /--focus-flashcard-accessibility/);
+  assert.doesNotMatch(
+    flashcardTestSource,
+    /--focus-learn-flashcard-source/,
+    'Flashcard accessibility tests must not use the stale unsupported focus flag',
+  );
+  assert.doesNotMatch(
+    flashcardTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'Flashcard accessibility tests must not route through full content validation',
+  );
+});
+
 test('answer feedback parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

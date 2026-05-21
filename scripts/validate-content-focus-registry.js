@@ -402,6 +402,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'flashcardAccessibility',
+    flags: ['--focus-flashcard-accessibility'],
+    summaryKeys: [
+      'flashcardAccessibilityRulesValidated',
+      'flashcardAccessibilityParityValidated',
+      'swedishFlashcardCopyNaturalnessValidated',
+    ],
+  },
+  {
     id: 'audioButtonAccessibility',
     flags: ['--focus-audio-button-accessibility'],
     summaryKeys: [

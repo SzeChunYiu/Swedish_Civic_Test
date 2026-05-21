@@ -3177,8 +3177,20 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
     pattern: /useSettingsStore, type AppLanguage/,
   },
   {
+    label: 'question source citation helper import',
+    pattern: /import \{ getQuestionSourceCitation \}/,
+  },
+  {
+    label: 'typed question source prop import',
+    pattern: /import type \{ PracticeQuestion \}/,
+  },
+  {
     label: 'localized copy map',
     pattern: /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/,
+  },
+  {
+    label: 'localized source citation accessibility copy',
+    pattern: /Källhänvisning: \$\{sourceCitation\}[\s\S]*Source citation: \$\{sourceCitation\}/,
   },
   {
     label: 'selected settings language fallback',
@@ -3205,6 +3217,10 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
   {
     label: 'answer derived through fallback helper',
     pattern: /const answer = cleanText\(back, copy\.fallbackAnswer\);/,
+  },
+  {
+    label: 'question source citation derived through helper',
+    pattern: /const sourceCitation = getQuestionSourceCitation\(question, resolvedLanguage\);/,
   },
   {
     label: 'localized accessibility summary helper',
@@ -3234,6 +3250,11 @@ const EXPECTED_FLASHCARD_ACCESSIBILITY_RULES = [
     label: 'visible prompt and answer text',
     pattern:
       /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>[\s\S]*<Text style=\{styles\.answer\}>\{answer\}<\/Text>/,
+  },
+  {
+    label: 'visible source citation component wiring',
+    pattern:
+      /import \{ QuestionSourceCitation \}[\s\S]*<QuestionSourceCitation[\s\S]*citationText=\{sourceCitation\}[\s\S]*language=\{resolvedLanguage\}[\s\S]*question=\{question\}/,
   },
 ];
 const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
@@ -8588,6 +8609,7 @@ let chapterCardAccessibilityRulesValidated = 0;
 let chapterCardAccessibilityParityValidated = false;
 let flashcardAccessibilityRulesValidated = 0;
 let flashcardAccessibilityParityValidated = false;
+let swedishFlashcardCopyNaturalnessValidated = false;
 let audioButtonAccessibilityRulesValidated = 0;
 let audioButtonAccessibilityParityValidated = false;
 let questionCardAccessibilityRulesValidated = 0;
@@ -8895,6 +8917,17 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   printValidationSummary({
     chapterCardAccessibilityRulesValidated,
     chapterCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-flashcard-accessibility')) {
+  validateFlashcardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    flashcardAccessibilityRulesValidated,
+    flashcardAccessibilityParityValidated,
+    swedishFlashcardCopyNaturalnessValidated,
   });
   process.exit(0);
 }
@@ -12903,6 +12936,16 @@ function validateFlashcardAccessibilityParity() {
     }
     flashcardAccessibilityRulesValidated += 1;
   });
+
+  if (
+    /Flashkort|flashkort/.test(flashcardSource) ||
+    !/badgeLabel: 'Övningskort'/.test(flashcardSource) ||
+    !/`Övningskort\. Fråga:/.test(flashcardSource)
+  ) {
+    reject('Swedish learner-facing flashcard copy must use natural Swedish study-card wording');
+  } else {
+    swedishFlashcardCopyNaturalnessValidated = true;
+  }
 
   if (
     valid &&
@@ -19463,6 +19506,7 @@ console.log(
       chapterCardAccessibilityParityValidated,
       flashcardAccessibilityRulesValidated,
       flashcardAccessibilityParityValidated,
+      swedishFlashcardCopyNaturalnessValidated,
       audioButtonAccessibilityRulesValidated,
       audioButtonAccessibilityParityValidated,
       questionCardAccessibilityRulesValidated,
