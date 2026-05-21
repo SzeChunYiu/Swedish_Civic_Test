@@ -961,6 +961,49 @@ test('adaptive difficulty focused content validation runs only its runtime summa
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('daily challenge runtime focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('dailyChallengeRuntime');
+
+  assert.ok(registryEntry, 'daily challenge runtime focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-daily-challenge-runtime']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'dailyChallengeRuntimeCasesValidated',
+    'dailyChallengeRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-daily-challenge-runtime/);
+  assert.match(
+    validatorSource,
+    /validateDailyChallengeRuntimeGuards\(\);[\s\S]*dailyChallengeRuntimeCasesValidated[\s\S]*dailyChallengeRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*validateDailyChallengeRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the daily challenge runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-daily-challenge-runtime'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused daily challenge validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.dailyChallengeRuntimeCasesValidated, 9);
+  assert.equal(summary.dailyChallengeRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('monetization schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

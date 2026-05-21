@@ -8903,6 +8903,8 @@ const gradeCard = spacedRepetitionModule.gradeCard;
 const retrievability = spacedRepetitionModule.retrievability;
 const isDue = spacedRepetitionModule.isDue;
 const sortByDueAscending = spacedRepetitionModule.sortByDueAscending;
+const dailyChallengeModule = loadTs('lib/learning/dailyChallenge.ts');
+const isDailyChallengeCompleted = dailyChallengeModule.isDailyChallengeCompleted;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const getLocalDateKey = streakModule.getLocalDateKey;
@@ -9263,6 +9265,8 @@ let adaptivePracticeSizeRuntimeCasesValidated = 0;
 let adaptivePracticeSizeRuntimeParityValidated = false;
 let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
 let adaptivePracticeDifficultyRuntimeParityValidated = false;
+let dailyChallengeRuntimeCasesValidated = 0;
+let dailyChallengeRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -10199,6 +10203,16 @@ if (process.argv.includes('--focus-adaptive-practice-difficulty')) {
   printValidationSummary({
     adaptivePracticeDifficultyRuntimeCasesValidated,
     adaptivePracticeDifficultyRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-daily-challenge-runtime')) {
+  validateDailyChallengeRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    dailyChallengeRuntimeCasesValidated,
+    dailyChallengeRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -20286,6 +20300,97 @@ function validateAdaptivePracticeDifficultyRuntimeGuards() {
   }
 }
 
+function validateDailyChallengeRuntimeGuards() {
+  if (typeof isDailyChallengeCompleted !== 'function') {
+    fail('isDailyChallengeCompleted export is not a function');
+    return;
+  }
+
+  const today = new Date('2026-05-19T12:00:00.000Z');
+  const rolloverTarget = new Date('2026-03-02T12:00:00.000Z');
+  const cases = [
+    {
+      label: 'exact current day key matches',
+      completedDayKeys: ['2026-05-19'],
+      now: today,
+      expected: true,
+    },
+    {
+      label: 'neighboring day keys do not match',
+      completedDayKeys: ['2026-05-18', '2026-05-20'],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'suffix strings do not match',
+      completedDayKeys: ['2026-05-19junk'],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'prefix strings do not match',
+      completedDayKeys: ['x2026-05-19'],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'timestamp strings do not match',
+      completedDayKeys: ['2026-05-19T00:00:00.000Z'],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'rollover day keys do not match normalized dates',
+      completedDayKeys: ['2026-02-30'],
+      now: rolloverTarget,
+      expected: false,
+    },
+    {
+      label: 'blank day keys do not match',
+      completedDayKeys: ['', '   '],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'non-string entries do not throw or match',
+      completedDayKeys: [42, null, {}],
+      now: today,
+      expected: false,
+    },
+    {
+      label: 'malformed completed day collection does not throw or match',
+      completedDayKeys: 42,
+      now: today,
+      expected: false,
+    },
+  ];
+
+  let runtimeParityIsValid = true;
+
+  cases.forEach(({ label, completedDayKeys, now, expected }) => {
+    let actual;
+    try {
+      actual = isDailyChallengeCompleted(completedDayKeys, now);
+    } catch (error) {
+      runtimeParityIsValid = false;
+      fail(`daily challenge runtime ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual !== expected) {
+      runtimeParityIsValid = false;
+      fail(`daily challenge runtime ${label} returned ${actual}, expected ${expected}`);
+      return;
+    }
+
+    dailyChallengeRuntimeCasesValidated += 1;
+  });
+
+  if (runtimeParityIsValid && dailyChallengeRuntimeCasesValidated === cases.length) {
+    dailyChallengeRuntimeParityValidated = true;
+  }
+}
+
 function validateWeeklyRecapRuntimeGuard() {
   if (typeof generateWeeklyRecap !== 'function') {
     fail('generateWeeklyRecap export is not a function');
@@ -23297,6 +23402,7 @@ validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateAdaptivePracticeSizeRuntimeGuards();
 validateAdaptivePracticeDifficultyRuntimeGuards();
+validateDailyChallengeRuntimeGuards();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -23624,6 +23730,8 @@ console.log(
       adaptivePracticeSizeRuntimeParityValidated,
       adaptivePracticeDifficultyRuntimeCasesValidated,
       adaptivePracticeDifficultyRuntimeParityValidated,
+      dailyChallengeRuntimeCasesValidated,
+      dailyChallengeRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
