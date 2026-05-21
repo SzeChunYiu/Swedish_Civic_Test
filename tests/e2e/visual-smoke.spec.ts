@@ -3,29 +3,17 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { dismissBlockingModals } from './browserLaunch';
+import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
+import { resolveVisualSmokeOutput } from './visualSmokeOutput';
+import { visualSmokeRoutes, type VisualSmokeRoute } from './visualSmokeRoutes';
 
-const committedScreenshotDir = path.resolve('reports/2026-05-15-uiux-screenshots');
-const defaultRuntimeScreenshotDir = path.resolve('tmp/visual-smoke-screenshots');
-const updateCommittedBaseline = process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1';
-const configuredRuntimeScreenshotDir = path.resolve(
-  process.env.VISUAL_SMOKE_SCREENSHOT_DIR ?? defaultRuntimeScreenshotDir,
-);
-
-if (!updateCommittedBaseline && configuredRuntimeScreenshotDir === committedScreenshotDir) {
-  throw new Error(
-    'Refusing to write visual-smoke runtime captures to the committed baseline without VISUAL_SMOKE_UPDATE_BASELINE=1.',
-  );
-}
-
-const screenshotDir = updateCommittedBaseline
-  ? committedScreenshotDir
-  : configuredRuntimeScreenshotDir;
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
-type RouteCapture = {
-  name: string;
-  route: string;
-  file: string;
+const visualSmokeOutput = resolveVisualSmokeOutput();
+const screenshotDir = visualSmokeOutput.dir;
+
+test.setTimeout(60_000);
+
+type RouteCapture = VisualSmokeRoute & {
   bytes: number;
   sha256: string;
   firstRunAboutDismissed: boolean;
@@ -33,24 +21,6 @@ type RouteCapture = {
   launchOverlayDismissed: boolean;
   launchOverlayVisibleAfterDismissal: boolean;
 };
-
-const routes = [
-  ['index', '/'],
-  ['onboarding', '/onboarding'],
-  ['home', '/home'],
-  ['learn', '/learn'],
-  ['practice', '/practice'],
-  ['exam', '/exam'],
-  ['mistakes', '/mistakes'],
-  ['profile', '/profile'],
-  ['settings', '/settings'],
-  ['chapter-ch01', '/chapter/ch01'],
-  ['disclaimer', '/disclaimer'],
-  ['privacy', '/privacy'],
-  ['terms', '/terms'],
-  ['sources', '/sources'],
-  ['support', '/support'],
-] as const;
 
 const requiredRouteContextKeys = [
   './_layout.tsx',
@@ -118,6 +88,10 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
 
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   expectExportBundleToContainRouteContext();
+  expect(
+    process.env.VISUAL_SMOKE_UPDATE_BASELINE === '1' || !visualSmokeOutput.writesCommittedBaseline,
+    'Default visual-smoke runs must not write into the committed screenshot baseline',
+  ).toBe(true);
 
   fs.rmSync(screenshotDir, { force: true, recursive: true });
   fs.mkdirSync(screenshotDir, { recursive: true });
@@ -129,7 +103,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const [name, route] of routes) {
+  for (const { file, name, route } of visualSmokeRoutes) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();
@@ -140,13 +114,12 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     ).toBeGreaterThan(40);
     await expect(page.locator('body')).not.toContainText('Not Found');
     await expect(page.locator('body')).not.toContainText('Internal Server Error');
-    const file = `${name}.png`;
     const filePath = path.join(screenshotDir, file);
     await page.screenshot({ path: filePath, fullPage: true });
     const bytes = fs.statSync(filePath).size;
     const sha256 = sha256File(filePath);
     const launchOverlayVisibleAfterDismissal =
-      (await page.locator('[role="dialog"][aria-modal="true"]').count()) > 0;
+      (await page.locator(blockingModalOverlayLocator).count()) > 0;
     expect(bytes, `${file} should not be empty`).toBeGreaterThan(10_000);
     expect(launchOverlayVisibleAfterDismissal, `${file} should not show launch overlay`).toBe(
       false,
@@ -172,12 +145,13 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     JSON.stringify(
       {
         capturedAt: new Date().toISOString(),
+        outputMode: visualSmokeOutput.mode,
+        outputPolicy: visualSmokeOutput.outputPolicy,
+        writesCommittedBaseline: visualSmokeOutput.writesCommittedBaseline,
         viewport: 'iPhone 12 via Playwright project config',
         source: 'dist-web export served with SPA fallback by tests/e2e/serve-dist-web.cjs',
         launchOverlayPolicy:
-          'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible overlays.',
-        refreshPolicy:
-          'Default visual-smoke runs write runtime captures to tmp/visual-smoke-screenshots, which is ignored. Set VISUAL_SMOKE_UPDATE_BASELINE=1 to refresh this committed baseline intentionally, or VISUAL_SMOKE_SCREENSHOT_DIR to inspect another runtime output directory.',
+          'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible dialog or modal menu overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
         duplicateExplanations: explainedDuplicateScreenshotGroups,

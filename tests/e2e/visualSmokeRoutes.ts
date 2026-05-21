@@ -1,91 +1,23 @@
-export const visualSmokeRoutes = [
-  ['index', '/'],
-  ['onboarding', '/onboarding'],
-  ['home', '/home'],
-  ['learn', '/learn'],
-  ['practice', '/practice'],
-  ['exam', '/exam'],
-  ['mistakes', '/mistakes'],
-  ['profile', '/profile'],
-  ['settings', '/settings'],
-  ['chapter-ch01', '/chapter/ch01'],
-  ['disclaimer', '/disclaimer'],
-  ['privacy', '/privacy'],
-  ['terms', '/terms'],
-  ['sources', '/sources'],
-  ['support', '/support'],
-] as const;
-
-export const requiredVisualSmokeRouteContextKeys = [
-  './_layout.tsx',
-  './(tabs)/home.tsx',
-  './(tabs)/practice.tsx',
-  './about-the-test.tsx',
-  './chapter/[chapterId].tsx',
-] as const;
-
-export type VisualSmokeRouteName = (typeof visualSmokeRoutes)[number][0];
-
-export interface VisualSmokeDuplicateExplanationGroup {
-  names: readonly VisualSmokeRouteName[];
-  reason: string;
-}
-
-export const explainedVisualSmokeDuplicateScreenshotGroups = [
-  {
-    names: ['home', 'index'],
-    reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
-  },
-] as const satisfies readonly VisualSmokeDuplicateExplanationGroup[];
-
-export interface VisualSmokeDuplicateCandidate {
+export type VisualSmokeRoute = {
+  file: string;
   name: string;
-  sha256: string;
-}
+  route: string;
+};
 
-export function visualSmokeRouteNamesKey(names: readonly string[]): string {
-  return [...names].sort().join(',');
-}
-
-const visualSmokeRouteNameSet = new Set<string>(visualSmokeRoutes.map(([name]) => name));
-
-function hasKnownVisualSmokeRouteNames(names: readonly string[]): boolean {
-  return names.every((name) => visualSmokeRouteNameSet.has(name));
-}
-
-function hasHumanDuplicateExplanation(reason: string): boolean {
-  return reason.trim().length > 0;
-}
-
-export function isExplainedVisualSmokeDuplicate(
-  names: readonly string[],
-  explanationGroups: readonly VisualSmokeDuplicateExplanationGroup[] = explainedVisualSmokeDuplicateScreenshotGroups,
-): boolean {
-  if (!hasKnownVisualSmokeRouteNames(names)) return false;
-
-  const namesKey = visualSmokeRouteNamesKey(names);
-
-  return explanationGroups.some(
-    (group) =>
-      hasHumanDuplicateExplanation(group.reason) &&
-      hasKnownVisualSmokeRouteNames(group.names) &&
-      visualSmokeRouteNamesKey(group.names) === namesKey,
-  );
-}
-
-export function findUnexplainedVisualSmokeDuplicateScreenshots(
-  captures: readonly VisualSmokeDuplicateCandidate[],
-): string[] {
-  const namesByHash = new Map<string, string[]>();
-
-  for (const capture of captures) {
-    const names = namesByHash.get(capture.sha256) ?? [];
-    names.push(capture.name);
-    namesByHash.set(capture.sha256, names);
-  }
-
-  return [...namesByHash.entries()]
-    .filter(([, names]) => names.length > 1)
-    .filter(([, names]) => !isExplainedVisualSmokeDuplicate(names))
-    .map(([hash, names]) => `${hash}: ${visualSmokeRouteNamesKey(names)}`);
-}
+export const visualSmokeRoutes = [
+  { name: 'index', route: '/', file: 'index.png' },
+  { name: 'onboarding', route: '/onboarding', file: 'onboarding.png' },
+  { name: 'home', route: '/home', file: 'home.png' },
+  { name: 'learn', route: '/learn', file: 'learn.png' },
+  { name: 'practice', route: '/practice', file: 'practice.png' },
+  { name: 'exam', route: '/exam', file: 'exam.png' },
+  { name: 'mistakes', route: '/mistakes', file: 'mistakes.png' },
+  { name: 'profile', route: '/profile', file: 'profile.png' },
+  { name: 'settings', route: '/settings', file: 'settings.png' },
+  { name: 'chapter-ch01', route: '/chapter/ch01', file: 'chapter-ch01.png' },
+  { name: 'disclaimer', route: '/disclaimer', file: 'disclaimer.png' },
+  { name: 'privacy', route: '/privacy', file: 'privacy.png' },
+  { name: 'terms', route: '/terms', file: 'terms.png' },
+  { name: 'sources', route: '/sources', file: 'sources.png' },
+  { name: 'support', route: '/support', file: 'support.png' },
+] as const satisfies readonly VisualSmokeRoute[];
