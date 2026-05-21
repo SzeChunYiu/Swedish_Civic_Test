@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -65,6 +66,8 @@ type SettingsCopy = {
   importTitle: string;
   languageAccessibilityLabel: (label: string) => string;
   studyLanguageTitle: string;
+  studyControlsFocusLabel: string;
+  studyControlsTitle: string;
   setDailyGoalAccessibilityLabel: (goal: number) => string;
   setThemeModeAccessibilityLabel: (label: string) => string;
   subtitle: string;
@@ -160,6 +163,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importTitle: 'Importera studiedata',
     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
     studyLanguageTitle: 'Studiespråk',
+    studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här.',
+    studyControlsTitle: 'Dagligt mål, språk och ljud',
     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
     subtitle: 'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
@@ -246,6 +251,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     importTitle: 'Import study data',
     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
     studyLanguageTitle: 'Study language',
+    studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here.',
+    studyControlsTitle: 'Daily goal, language, and audio',
     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
     subtitle: 'Control study language, audio, theme, study companion, and your daily goal.',
@@ -282,6 +289,7 @@ function buildImportSummaryLines(
 }
 
 export default function Screen() {
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
   const language = useSettingsStore((state) => state.language);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
@@ -312,6 +320,7 @@ export default function Screen() {
   const reduceMotion = useReducedMotion();
   const { colors: themeColors } = useTheme();
   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
+  const studyFocusActive = focus === 'study';
   const [importText, setImportText] = useState('');
   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
@@ -443,7 +452,70 @@ export default function Screen() {
         warningScope="accessibilityPreferences"
       />
 
-      <View style={styles.section}>
+      <View
+        accessibilityLabel={copy.studyControlsTitle}
+        nativeID="study-settings-controls"
+        style={[
+          styles.studyControlsGroup,
+          studyFocusActive ? styles.studyControlsGroupFocused : null,
+        ]}
+        testID="study-settings-controls"
+      >
+        {studyFocusActive ? (
+          <Text style={styles.studyFocusText}>{copy.studyControlsFocusLabel}</Text>
+        ) : null}
+
+        <View style={styles.section}>
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {copy.dailyGoalTitle}
+        </Text>
+        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
+        <View
+          aria-label={copy.dailyGoalTitle}
+          accessibilityLabel={copy.dailyGoalTitle}
+          accessibilityRole="radiogroup"
+          style={styles.row}
+        >
+          {supportedDailyGoalAnswerOptions.map((goal) => {
+            const selected = dailyGoalAnswers === goal;
+            const focusKey = `daily-goal-${goal}`;
+
+            return (
+              <Pressable
+                key={goal}
+                aria-checked={dailyGoalAnswers === goal}
+                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: dailyGoalAnswers === goal }}
+                hitSlop={space[1]}
+                onBlur={() => setFocusedControl(null)}
+                onFocus={() => setFocusedControl(focusKey)}
+                onPress={() => setDailyGoalAnswers(goal)}
+                style={({ pressed }) => [
+                  styles.pill,
+                  styles.goalPill,
+                  selected ? styles.pillActive : null,
+                  focusedControl === focusKey ? styles.controlFocused : null,
+                  pressed
+                    ? reduceMotion
+                      ? styles.controlPressedReducedMotion
+                      : styles.controlPressed
+                    : null,
+                ]}
+              >
+                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
+                  {goal}
+                </Text>
+                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
+                  {copy.dailyGoalPresetLabel(goal)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+        <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.studyLanguageTitle}
         </Text>
@@ -521,6 +593,8 @@ export default function Screen() {
         </Pressable>
       </View>
 
+      </View>
+
       <View style={styles.section}>
         <Text accessibilityRole="header" style={styles.sectionTitle}>
           {copy.themeModeTitle}
@@ -557,56 +631,6 @@ export default function Screen() {
           onSelect={setSelectedCompanion}
           selectedId={selectedCompanionId}
         />
-      </View>
-
-      <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.dailyGoalTitle}
-        </Text>
-        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
-        <View
-          aria-label={copy.dailyGoalTitle}
-          accessibilityLabel={copy.dailyGoalTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
-          {supportedDailyGoalAnswerOptions.map((goal) => {
-            const selected = dailyGoalAnswers === goal;
-            const focusKey = `daily-goal-${goal}`;
-
-            return (
-              <Pressable
-                key={goal}
-                aria-checked={dailyGoalAnswers === goal}
-                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
-                hitSlop={space[1]}
-                onBlur={() => setFocusedControl(null)}
-                onFocus={() => setFocusedControl(focusKey)}
-                onPress={() => setDailyGoalAnswers(goal)}
-                style={({ pressed }) => [
-                  styles.pill,
-                  styles.goalPill,
-                  selected ? styles.pillActive : null,
-                  focusedControl === focusKey ? styles.controlFocused : null,
-                  pressed
-                    ? reduceMotion
-                      ? styles.controlPressedReducedMotion
-                      : styles.controlPressed
-                    : null,
-                ]}
-              >
-                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
-                  {goal}
-                </Text>
-                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
-                  {copy.dailyGoalPresetLabel(goal)}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
       </View>
 
       <View style={styles.section}>
@@ -734,6 +758,24 @@ function createStyles(themeColors: ThemeColors) {
       color: themeColors.textMuted,
       fontSize: typography.body.fontSize,
       lineHeight: typography.body.lineHeight,
+    },
+    studyControlsGroup: {
+      borderColor: themeColors.canvas,
+      borderRadius: radius.card,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[1.5],
+      marginHorizontal: -space[0.5],
+      padding: space[0.5],
+    },
+    studyControlsGroupFocused: {
+      backgroundColor: themeColors.focusSoft,
+      borderColor: themeColors.focus,
+    },
+    studyFocusText: {
+      color: themeColors.focus,
+      fontSize: typography.caption.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      lineHeight: typography.caption.lineHeight,
     },
     section: {
       backgroundColor: themeColors.surface,

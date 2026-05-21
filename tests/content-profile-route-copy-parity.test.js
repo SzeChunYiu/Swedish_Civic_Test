@@ -146,20 +146,20 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   assert.match(bannerSource, /purchased: 'Annonser är avstängda på den här enheten\.'/);
   assert.match(
     bannerSource,
-    /<Text style=\{styles\.meta\}>\{copy\.body\(REMOVE_ADS_PRICE_LABEL\)\}<\/Text>/,
+    /purchaseUnavailable[\s\S]*copy\.webUnavailableBody\(REMOVE_ADS_PRICE_LABEL\)[\s\S]*copy\.body\(REMOVE_ADS_PRICE_LABEL\)/,
   );
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: activeAction !== null \|\| adsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: actionsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
   );
   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'restore'[\s\S]*disabled: activeAction !== null[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+    /accessibilityState=\{\{ busy: activeAction === 'restore', disabled: actionsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled \|\| purchaseUnavailable\}[\s\S]*copy\.restoreIdle/,
   );
   assert.match(
     bannerSource,
-    /const statusMessage = getStatusMessage\(adsDisabled \? 'purchased' : status, copy\)/,
+    /const statusMessage = getStatusMessage\([\s\S]*adsDisabled \? 'purchased' : purchaseUnavailable \? 'unavailable' : status[\s\S]*copy/,
   );
   assert.match(bannerSource, /aria-live="polite"/);
   assert.doesNotMatch(bannerSource, /bodyActive:/);
@@ -172,12 +172,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
 
 test('profile study setup card owns the localized settings shortcut', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
-  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
+  const settingsLinks = source.match(/pathname: '\/settings'/g) ?? [];
   const studySetupStart = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
   const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
   const studySetupCard = source.slice(studySetupStart, badgesStart);
   const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
-  const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
+  const settingsLinkIndex = studySetupCard.indexOf("pathname: '/settings'");
 
   assert.equal(settingsLinks.length, 1);
   assert.notEqual(studySetupStart, -1);
@@ -186,16 +186,16 @@ test('profile study setup card owns the localized settings shortcut', () => {
   assert.ok(pillRowIndex >= 0, 'study setup card should render daily-goal/language badges');
   assert.ok(settingsLinkIndex > pillRowIndex, 'settings shortcut should render after setup badges');
   assert.match(source, /const dailyGoalAnswers = useSettingsStore/);
-  assert.match(studySetupCard, /\{dailyGoalAnswers\} \{copy\.answersPerDay\}/);
-  assert.match(studySetupCard, /<Badge tone="warm">\{copy\.languageBadge\}<\/Badge>/);
-  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
+  assert.match(studySetupCard, /\{copy\.dailyGoalBadgeLabel\}: \{dailyGoalAnswers\} \{copy\.answersPerDay\}/);
+  assert.match(studySetupCard, /\{copy\.languageBadgeLabel\}: \{copy\.languageBadge\}/);
+  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/);
   assert.match(
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
-  assert.doesNotMatch(studySetupCard, /audioEnabled|audioEnabledBadge|audioDisabledBadge/);
+  assert.match(studySetupCard, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
   assert.doesNotMatch(studySetupCard, /\{copy\.openSettings\}/);
-  assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
+  assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });
 
