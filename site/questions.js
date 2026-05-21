@@ -17913,30 +17913,90 @@
     "type": "single_choice",
     "q": {
       "en": "What happens during a preliminary investigation in a criminal investigation?",
-      "sv": "Vad händer under en förundersökning i en brottsutredning?"
+      "sv": "Vad händer under en förundersökning i en brottsutredning?",
+      "zh-Hant": "在刑事調查的初步調查中會發生什麼？",
+      "zh-Hans": "在刑事调查的初步调查中会发生什么？",
+      "ar": "ماذا يحدث أثناء التحقيق التمهيدي في تحقيق جنائي؟",
+      "ckb": "لە کاتی لێکۆڵینەوەی سەرەتایی لە لێکۆڵینەوەی تاوانیدا چی ڕوودەدات؟",
+      "fa": "در مرحلهٔ تحقیقات مقدماتی یک تحقیق کیفری چه اتفاقی می‌افتد؟",
+      "pl": "Co dzieje się podczas postępowania przygotowawczego w dochodzeniu karnym?",
+      "so": "Maxaa dhaca inta lagu jiro baaritaanka hordhaca ah ee baaritaan dembi?",
+      "ti": "ኣብ ምርመራ ገበን፣ ኣብ ቅድመ-ምርመራ እንታይ ይኸውን?",
+      "tr": "Bir ceza soruşturmasında ön soruşturma sırasında ne olur?",
+      "uk": "Що відбувається під час попереднього розслідування у кримінальній справі?"
     },
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,
     "why": {
       "en": "A criminal investigation includes several steps. During the preliminary investigation, the police gather evidence and speak with witnesses to investigate what happened.",
-      "sv": "I en brottsutredning ingår flera steg. Under förundersökningen samlar polisen bevis och pratar med vittnen för att utreda vad som har hänt."
+      "sv": "I en brottsutredning ingår flera steg. Under förundersökningen samlar polisen bevis och pratar med vittnen för att utreda vad som har hänt.",
+      "zh-Hant": "刑事調查包括多個步驟。在初步調查中，警方收集證據並與證人談話，以查明發生了什麼。",
+      "zh-Hans": "刑事调查包括多个步骤。在初步调查中，警方收集证据并与证人谈话，以查明发生了什么。",
+      "ar": "يتضمن التحقيق الجنائي عدة خطوات. أثناء التحقيق التمهيدي تجمع الشرطة الأدلة وتتحدث مع الشهود للتحقق مما حدث.",
+      "ckb": "لێکۆڵینەوەی تاوانی چەند هەنگاوێک لەخۆ دەگرێت. لە کاتی لێکۆڵینەوەی سەرەتاییدا، پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات بۆ ئەوەی بزانێت چی ڕوویداوە.",
+      "fa": "یک تحقیق کیفری چند مرحله دارد. در تحقیقات مقدماتی، پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند تا روشن کند چه اتفاقی افتاده است.",
+      "pl": "Dochodzenie karne obejmuje kilka etapów. Podczas postępowania przygotowawczego policja zbiera dowody i rozmawia ze świadkami, aby ustalić, co się wydarzyło.",
+      "so": "Baaritaanka dembigu wuxuu leeyahay dhowr tallaabo. Inta lagu jiro baaritaanka hordhaca ah, boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal si loo baaro waxa dhacay.",
+      "ti": "ምርመራ ገበን ብዙሓት ደረጃታት የጠቓልል። ኣብ ቅድመ-ምርመራ፣ ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን፣ እንታይ ከም ዝተፈጸመ ንምርመራ።",
+      "tr": "Bir ceza soruşturması birkaç aşamadan oluşur. Ön soruşturma sırasında polis, ne olduğunu araştırmak için kanıt toplar ve tanıklarla konuşur.",
+      "uk": "Кримінальне розслідування має кілька етапів. Під час попереднього розслідування поліція збирає докази та розмовляє зі свідками, щоб з’ясувати, що сталося."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -61509,19 +61569,59 @@
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,
@@ -61640,19 +61740,59 @@
     "opts": [
       {
         "en": "The police gather evidence and speak with witnesses",
-        "sv": "Polisen samlar bevis och pratar med vittnen"
+        "sv": "Polisen samlar bevis och pratar med vittnen",
+        "zh-Hant": "警方收集證據並與證人談話",
+        "zh-Hans": "警方收集证据并与证人谈话",
+        "ar": "تجمع الشرطة الأدلة وتتحدث مع الشهود",
+        "ckb": "پۆلیس بەڵگە کۆدەکاتەوە و لەگەڵ شایەتەکان قسە دەکات",
+        "fa": "پلیس مدارک را جمع‌آوری می‌کند و با شاهدان صحبت می‌کند",
+        "pl": "Policja zbiera dowody i rozmawia ze świadkami",
+        "so": "Boolisku wuxuu ururiyaa caddaymo wuxuuna la hadlaa markhaatiyaal",
+        "ti": "ፖሊስ መርትዖ ይእክብን ምስ ምስክራት ይዛረብን",
+        "tr": "Polis kanıt toplar ve tanıklarla konuşur",
+        "uk": "Поліція збирає докази та розмовляє зі свідками"
       },
       {
         "en": "The judge decides the sentence before the trial begins",
-        "sv": "Domaren bestämmer straffet innan rättegången börjar"
+        "sv": "Domaren bestämmer straffet innan rättegången börjar",
+        "zh-Hant": "法官在審判開始前決定刑罰",
+        "zh-Hans": "法官在审判开始前决定刑罚",
+        "ar": "يقرر القاضي العقوبة قبل بدء المحاكمة",
+        "ckb": "دادوەر پێش دەستپێکردنی دادگایی سزاکە دیاری دەکات",
+        "fa": "قاضی پیش از آغاز دادگاه مجازات را تعیین می‌کند",
+        "pl": "Sędzia ustala karę przed rozpoczęciem rozprawy",
+        "so": "Garsooruhu wuxuu go’aamiyaa ciqaabta ka hor inta maxkamaddu bilaaban",
+        "ti": "ፈራዲ ቅድሚ ፍርዲ ምጅማሩ መቕጻዕቲ ይውስን",
+        "tr": "Yargıç, dava başlamadan önce cezayı belirler",
+        "uk": "Суддя визначає покарання до початку судового розгляду"
       },
       {
         "en": "The crime victim alone chooses whether the suspect will be convicted",
-        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas"
+        "sv": "Brottsoffret väljer ensam om den misstänkte ska dömas",
+        "zh-Hant": "受害者單獨決定嫌疑人是否應被定罪",
+        "zh-Hans": "受害者单独决定嫌疑人是否应被定罪",
+        "ar": "يختار الضحية وحده ما إذا كان ينبغي إدانة المشتبه به",
+        "ckb": "قوربانی بە تەنها هەڵدەبژێرێت کە گومانلێکراوەکە سزا بدرێت یان نا",
+        "fa": "قربانی به‌تنهایی تصمیم می‌گیرد که مظنون محکوم شود یا نه",
+        "pl": "Ofiara przestępstwa sama decyduje, czy podejrzany zostanie skazany",
+        "so": "Dhibbanaha dembiga ayaa keligiis dooranaya in eedaysanaha la xukumo iyo in kale",
+        "ti": "ግዳይ ገበን በይኑ እቲ ተጠርጣሪ ክፍረድ ድዩ ኣይክፍረድን ይውስን",
+        "tr": "Suç mağduru, şüphelinin mahkûm edilip edilmeyeceğine tek başına karar verir",
+        "uk": "Потерпілий сам вирішує, чи має підозрюваного бути засуджено"
       },
       {
         "en": "The municipal council votes on whether the suspect is guilty",
-        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig"
+        "sv": "Kommunfullmäktige röstar om den misstänkte är skyldig",
+        "zh-Hant": "市議會投票決定嫌疑人是否有罪",
+        "zh-Hans": "市议会投票决定嫌疑人是否有罪",
+        "ar": "يصوّت المجلس البلدي على ما إذا كان المشتبه به مذنبًا",
+        "ckb": "ئەنجومەنی شارەوانی دەنگ دەدات کە گومانلێکراوەکە تاوانبارە یان نا",
+        "fa": "شورای کمون رأی می‌دهد که مظنون گناهکار است یا نه",
+        "pl": "Rada gminy głosuje nad tym, czy podejrzany jest winny",
+        "so": "Golaha degmada ayaa u codeeya in eedaysanuhu dambiile yahay iyo in kale",
+        "ti": "ቤት ምኽሪ kommun እቲ ተጠርጣሪ ገበነኛ ድዩ ኣይኮነን ድምጺ ይህብ",
+        "tr": "Belediye meclisi, şüphelinin suçlu olup olmadığına oy verir",
+        "uk": "Муніципальна рада голосує, чи є підозрюваний винним"
       }
     ],
     "answer": 0,

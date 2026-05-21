@@ -103,6 +103,6 @@ test('Sorani preview does not enable runtime release', () => {
   assert.match(locales, /code: 'ckb',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.ckb.appAvailable, false);
   assert.equal(readiness.locales.ckb.uiStrings, 'not_started');
-  assert.equal(readiness.locales.ckb.questionContent, 'pilot_q001_q171_machine_assisted');
+  assert.equal(readiness.locales.ckb.questionContent, 'pilot_q001_q172_machine_assisted');
   assert.equal(readiness.locales.ckb.releaseGate, 'blocked');
 });
