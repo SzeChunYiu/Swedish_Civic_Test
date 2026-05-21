@@ -1251,6 +1251,71 @@ test('religious-freedom option parallelism uses focused content validation routi
   assert.match(publishedQuestionTestSource, /--focus-religious-freedom-parallelism/);
 });
 
+test('question-bank CSV focus registry matches focused validator output', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const csvContractTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-question-bank-csv-contract.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('questionBankCsv');
+
+  assert.ok(registryEntry, 'question-bank CSV focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-question-bank-csv']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'questions',
+    'publishedQuestions',
+    'questionBankCsvHeaderColumnsValidated',
+    'questionBankCsvUniqueHeaderNamesValidated',
+    'questionBankCsvRowsValidated',
+    'questionBankCsvProvenanceCounts',
+    'questionBankCsvUhrSourcePublisherRowsValidated',
+    'questionBankCsvUhrSourcePublisherParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-question-bank-csv/);
+  assert.match(
+    validatorSource,
+    /validateQuestionBankCsvContract\(\);[\s\S]*questionBankCsvHeaderColumnsValidated[\s\S]*questionBankCsvUhrSourcePublisherParityValidated[\s\S]*questionBankCsvProvenanceCounts/,
+  );
+  assert.match(csvContractTestSource, /--focus-question-bank-csv/);
+  assert.doesNotMatch(
+    csvContractTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'question-bank CSV contract tests must not route through full content validation',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-question-bank-csv'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused question-bank CSV validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.ok(summary.questions >= summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvHeaderColumnsValidated, 21);
+  assert.equal(summary.questionBankCsvUniqueHeaderNamesValidated, true);
+  assert.equal(summary.questionBankCsvRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrSourcePublisherRowsValidated, summary.publishedQuestions);
+  assert.equal(summary.questionBankCsvUhrSourcePublisherParityValidated, true);
+  assert.deepEqual(Object.keys(summary.questionBankCsvProvenanceCounts).sort(), [
+    'derived',
+    'editorial',
+    'uhr',
+  ]);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('content-focused npm script forwards test-name pattern before file list', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
   const nodeLog = path.join(tmpDir, 'node.log');
