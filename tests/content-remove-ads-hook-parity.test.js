@@ -28,6 +28,9 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
     path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
     'utf8',
   );
+  const resolvedHookSource = hookSource.slice(
+    hookSource.indexOf('export function useResolvedAdEntitlements'),
+  );
 
   assert.equal(result.status, 0, output);
   assert.doesNotMatch(
@@ -68,8 +71,13 @@ test('Remove Ads entitlement hook fails closed until purchase state resolves', (
   assert.match(hookSource, /publishRemoveAdsEntitlements\(storedEntitlements\)/);
   assert.match(hookSource, /setCurrentEntitlements\(AD_BLOCKED_PENDING_ENTITLEMENTS\)/);
   assert.match(hookSource, /setEntitlementStatus\('read_failed'\)/);
+  assert.match(hookSource, /function useRemoveAdsEntitlementsRuntime/);
+  assert.match(hookSource, /purchaseRuntimeEnabled:\s*!skipPurchaseRuntime/);
   assert.match(hookSource, /entitlements: explicitEntitlements/);
-  assert.match(hookSource, /skipPurchaseRuntime:\s*hasExplicitEntitlements/);
+  assert.match(hookSource, /purchaseRuntimeEnabled:\s*!hasExplicitEntitlements/);
+  assert.match(resolvedHookSource, /useRemoveAdsEntitlementsRuntime\(/);
+  assert.doesNotMatch(resolvedHookSource, /useRemoveAdsEntitlements\(/);
+  assert.doesNotMatch(resolvedHookSource, /skipPurchaseRuntime/);
   assert.match(hookSource, /entitlements: AD_BLOCKED_PENDING_ENTITLEMENTS/);
   assert.match(hookSource, /entitlementStatus:\s*'ready'\s+as\s+const/);
   assert.match(hookSource, /entitlementStatus,\s*\n\s*\};/);
@@ -421,7 +429,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/lib/monetization/useRemoveAdsEntitlements.ts')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('skipPurchaseRuntime: hasExplicitEntitlements,', 'skipPurchaseRuntime: false,');
+      .replace('purchaseRuntimeEnabled: !hasExplicitEntitlements,', 'purchaseRuntimeEnabled: true,');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

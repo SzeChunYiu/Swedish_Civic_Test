@@ -144,15 +144,31 @@ export function useRemoveAdsEntitlements({
   runtimeOptions?: PurchaseRuntimeOptions;
   skipPurchaseRuntime?: boolean;
 } = {}) {
+  return useRemoveAdsEntitlementsRuntime({
+    initialEntitlements,
+    purchaseRuntimeEnabled: !skipPurchaseRuntime,
+    runtimeOptions,
+  });
+}
+
+function useRemoveAdsEntitlementsRuntime({
+  initialEntitlements,
+  purchaseRuntimeEnabled,
+  runtimeOptions,
+}: {
+  initialEntitlements: PremiumEntitlements;
+  purchaseRuntimeEnabled: boolean;
+  runtimeOptions?: PurchaseRuntimeOptions;
+}) {
   const [entitlements, setCurrentEntitlements] = useState(initialEntitlements);
   const [entitlementsReady, setEntitlementsReady] = useState(false);
   const [entitlementStatus, setEntitlementStatus] = useState<RemoveAdsEntitlementStatus>('loading');
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(
     () =>
-      skipPurchaseRuntime
-        ? undefined
-        : (runtimeOptions ?? createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled)),
-    [initialEntitlements.adsDisabled, runtimeOptions, skipPurchaseRuntime],
+      purchaseRuntimeEnabled
+        ? (runtimeOptions ?? createDefaultPurchaseRuntimeOptions(initialEntitlements.adsDisabled))
+        : undefined,
+    [initialEntitlements.adsDisabled, purchaseRuntimeEnabled, runtimeOptions],
   );
   const applyEntitlements = useCallback((nextEntitlements: PremiumEntitlements) => {
     setCurrentEntitlements(nextEntitlements);
@@ -166,7 +182,7 @@ export function useRemoveAdsEntitlements({
   useEffect(() => {
     let isMounted = true;
 
-    if (skipPurchaseRuntime || !purchaseRuntime) {
+    if (!purchaseRuntimeEnabled || !purchaseRuntime) {
       applyEntitlements(initialEntitlements);
       return () => {
         isMounted = false;
@@ -219,7 +235,7 @@ export function useRemoveAdsEntitlements({
       isMounted = false;
       unsubscribe();
     };
-  }, [applyEntitlements, initialEntitlements, purchaseRuntime, skipPurchaseRuntime]);
+  }, [applyEntitlements, initialEntitlements, purchaseRuntime, purchaseRuntimeEnabled]);
 
   return {
     entitlements,
@@ -241,9 +257,9 @@ export function useResolvedAdEntitlements(
     }),
     [explicitEntitlements?.adsDisabled],
   );
-  const { entitlements, entitlementsReady, entitlementStatus } = useRemoveAdsEntitlements({
+  const { entitlements, entitlementsReady, entitlementStatus } = useRemoveAdsEntitlementsRuntime({
     initialEntitlements,
-    skipPurchaseRuntime: hasExplicitEntitlements,
+    purchaseRuntimeEnabled: !hasExplicitEntitlements,
   });
 
   if (hasExplicitEntitlements) {
