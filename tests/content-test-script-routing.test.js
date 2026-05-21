@@ -167,6 +167,29 @@ test('Mistakes route copy parity uses focused content validation routing', () =>
   );
 });
 
+test('spaced repetition schema parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const spacedRepetitionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-spaced-repetition-schema.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-spaced-repetition-schema/);
+  assert.match(
+    validatorSource,
+    /validateSpacedRepetitionSchedule\(\);[\s\S]*spacedRepetitionIntervalsValidated[\s\S]*spacedRepetitionRuntimeInputParityValidated/,
+  );
+  assert.match(spacedRepetitionTestSource, /--focus-spaced-repetition-schema/);
+  assert.doesNotMatch(
+    spacedRepetitionTestSource,
+    /\['scripts\/validate-content\.js'\]/,
+    'spaced repetition tests must not route through full content validation',
+  );
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
