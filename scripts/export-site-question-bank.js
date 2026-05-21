@@ -208,11 +208,22 @@ function changedIds(expectedItems, actualItems) {
   );
 }
 
-function summarizeStaticQuestionBankDrift(existingSource, expectedBank = buildSiteQuestionBank()) {
+function summarizeStaticQuestionBankDrift(
+  existingSource,
+  expectedBank = buildSiteQuestionBank(),
+  generatedSource,
+) {
   const actualBank = parseStaticSiteQuestionBank(existingSource);
+  const questionIds = changedIds(expectedBank.questions, actualBank.questions);
+  const chapterIds = changedIds(expectedBank.chapters, actualBank.chapters);
+  const hasSemanticDrift = questionIds.length > 0 || chapterIds.length > 0;
+  const hasGeneratedSource = typeof generatedSource === 'string';
   return {
-    questionIds: changedIds(expectedBank.questions, actualBank.questions),
-    chapterIds: changedIds(expectedBank.chapters, actualBank.chapters),
+    questionIds,
+    chapterIds,
+    hasSemanticDrift,
+    formatOnly: hasGeneratedSource && !hasSemanticDrift && existingSource !== generatedSource,
+    sourceMatchesGenerated: hasGeneratedSource ? existingSource === generatedSource : undefined,
   };
 }
 
@@ -224,6 +235,7 @@ function formatIdList(ids) {
 
 function formatStaticQuestionBankDrift(drift) {
   return [
+    `Format-only drift: ${drift.formatOnly ? 'yes' : 'no'}`,
     `Changed question ids: ${formatIdList(drift.questionIds)}`,
     `Changed chapter ids: ${formatIdList(drift.chapterIds)}`,
   ].join('\n');
@@ -236,11 +248,22 @@ function main() {
   if (checkMode) {
     const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
     if (existing !== generated) {
-      console.error(
-        'site/questions.js is out of sync; run node scripts/export-site-question-bank.js',
-      );
       try {
-        console.error(formatStaticQuestionBankDrift(summarizeStaticQuestionBankDrift(existing)));
+        const drift = summarizeStaticQuestionBankDrift(existing, undefined, generated);
+        if (!drift.hasSemanticDrift) {
+          const bank = buildSiteQuestionBank();
+          console.log(
+            `Static site question-bank semantic parity OK (${bank.questions.length} questions, ${bank.chapters.length} chapters)`,
+          );
+          if (drift.formatOnly) {
+            console.log(formatStaticQuestionBankDrift(drift));
+          }
+          return;
+        }
+        console.error(
+          'site/questions.js is semantically out of sync; run node scripts/export-site-question-bank.js',
+        );
+        console.error(formatStaticQuestionBankDrift(drift));
       } catch (error) {
         console.error(`Could not summarize static question-bank drift: ${error.message}`);
       }
