@@ -38,6 +38,8 @@ export const explainedVisualSmokeDuplicateScreenshotGroups = [
   },
 ] as const satisfies readonly VisualSmokeDuplicateExplanationGroup[];
 
+const visualSmokeRouteNameSet = new Set<string>(visualSmokeRoutes.map(([name]) => name));
+
 export interface VisualSmokeDuplicateCandidate {
   name: string;
   sha256: string;
@@ -47,16 +49,38 @@ export function visualSmokeRouteNamesKey(names: readonly string[]): string {
   return [...names].sort().join(',');
 }
 
-export function isExplainedVisualSmokeDuplicate(names: readonly string[]): boolean {
-  const namesKey = visualSmokeRouteNamesKey(names);
+function isKnownVisualSmokeRouteName(name: string): boolean {
+  return visualSmokeRouteNameSet.has(name);
+}
 
-  return explainedVisualSmokeDuplicateScreenshotGroups.some(
-    (group) => visualSmokeRouteNamesKey(group.names) === namesKey,
-  );
+function hasVisualSmokeDuplicateExplanationReason(
+  group: VisualSmokeDuplicateExplanationGroup,
+): boolean {
+  return group.reason.trim().length > 0;
+}
+
+export function visualSmokeDuplicateExplanationMatches(
+  names: readonly string[],
+  group: VisualSmokeDuplicateExplanationGroup,
+): boolean {
+  if (!hasVisualSmokeDuplicateExplanationReason(group)) return false;
+  if (!names.every(isKnownVisualSmokeRouteName)) return false;
+  if (!group.names.every(isKnownVisualSmokeRouteName)) return false;
+
+  const namesKey = visualSmokeRouteNamesKey(names);
+  return visualSmokeRouteNamesKey(group.names) === namesKey;
+}
+
+export function isExplainedVisualSmokeDuplicate(
+  names: readonly string[],
+  groups: readonly VisualSmokeDuplicateExplanationGroup[] = explainedVisualSmokeDuplicateScreenshotGroups,
+): boolean {
+  return groups.some((group) => visualSmokeDuplicateExplanationMatches(names, group));
 }
 
 export function findUnexplainedVisualSmokeDuplicateScreenshots(
   captures: readonly VisualSmokeDuplicateCandidate[],
+  groups: readonly VisualSmokeDuplicateExplanationGroup[] = explainedVisualSmokeDuplicateScreenshotGroups,
 ): string[] {
   const namesByHash = new Map<string, string[]>();
 
@@ -68,6 +92,6 @@ export function findUnexplainedVisualSmokeDuplicateScreenshots(
 
   return [...namesByHash.entries()]
     .filter(([, names]) => names.length > 1)
-    .filter(([, names]) => !isExplainedVisualSmokeDuplicate(names))
+    .filter(([, names]) => !isExplainedVisualSmokeDuplicate(names, groups))
     .map(([hash, names]) => `${hash}: ${visualSmokeRouteNamesKey(names)}`);
 }

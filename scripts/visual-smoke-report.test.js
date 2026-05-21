@@ -52,6 +52,105 @@ test('visual smoke uses the shared blocking modal overlay locator', () => {
   );
 });
 
+test('visual smoke duplicate explanation helper requires exact route groups and reasons', () => {
+  const {
+    findUnexplainedVisualSmokeDuplicateScreenshots,
+    isExplainedVisualSmokeDuplicate,
+    visualSmokeDuplicateExplanationMatches,
+    visualSmokeRouteNamesKey,
+  } = loadTs('tests/e2e/visualSmokeRoutes.ts');
+  const validGroup = {
+    names: ['home', 'index'],
+    reason: 'The root route redirects to the Home tab, so these screenshots may match.',
+  };
+
+  const duplicateCapturesFor = (names) =>
+    names.map((name) => ({
+      name,
+      sha256: 'same-screenshot-hash',
+    }));
+  const expectedDuplicateReportFor = (names) => [
+    `same-screenshot-hash: ${visualSmokeRouteNamesKey(names)}`,
+  ];
+
+  assert.equal(
+    visualSmokeDuplicateExplanationMatches(['index', 'home'], validGroup),
+    true,
+    'route order should not matter for the exact explained pair',
+  );
+  assert.equal(isExplainedVisualSmokeDuplicate(['index', 'home'], [validGroup]), true);
+  assert.deepEqual(
+    findUnexplainedVisualSmokeDuplicateScreenshots(duplicateCapturesFor(['index', 'home']), [
+      validGroup,
+    ]),
+    [],
+  );
+
+  const rejectionCases = [
+    {
+      label: 'subset route group',
+      names: ['home'],
+      groups: [validGroup],
+    },
+    {
+      label: 'superset route group',
+      names: ['home', 'index', 'learn'],
+      groups: [validGroup],
+    },
+    {
+      label: 'unknown duplicate route',
+      names: ['home', 'unknown-route'],
+      groups: [validGroup],
+    },
+    {
+      label: 'unknown configured route',
+      names: ['home', 'legacy-route'],
+      groups: [
+        {
+          names: ['home', 'legacy-route'],
+          reason: validGroup.reason,
+        },
+      ],
+    },
+    {
+      label: 'empty explanation reason',
+      names: ['home', 'index'],
+      groups: [
+        {
+          names: ['home', 'index'],
+          reason: '',
+        },
+      ],
+    },
+    {
+      label: 'whitespace explanation reason',
+      names: ['home', 'index'],
+      groups: [
+        {
+          names: ['home', 'index'],
+          reason: '   ',
+        },
+      ],
+    },
+  ];
+
+  for (const { label, names, groups } of rejectionCases) {
+    assert.equal(
+      isExplainedVisualSmokeDuplicate(names, groups),
+      false,
+      `${label} should not explain a duplicate screenshot`,
+    );
+
+    if (names.length > 1) {
+      assert.deepEqual(
+        findUnexplainedVisualSmokeDuplicateScreenshots(duplicateCapturesFor(names), groups),
+        expectedDuplicateReportFor(names),
+        `${label} should stay in the unexplained duplicate report`,
+      );
+    }
+  }
+});
+
 test('visual smoke report records route-specific screenshots without launch overlays', () => {
   const manifest = readManifest();
   const {
@@ -78,6 +177,11 @@ test('visual smoke report records route-specific screenshots without launch over
   for (const explanation of explainedVisualSmokeDuplicateScreenshotGroups) {
     assert.ok(explanation.names.length > 1, 'duplicate explanations should name a route group');
     assert.ok(explanation.reason.trim().length > 20, 'duplicate explanations should include why');
+    assert.equal(
+      isExplainedVisualSmokeDuplicate(explanation.names),
+      true,
+      `${explanation.names.join(', ')} should be accepted by the duplicate helper`,
+    );
   }
 
   const routes = manifest.routes || [];
