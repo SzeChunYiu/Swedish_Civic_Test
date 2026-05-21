@@ -18,10 +18,14 @@ function loadTs(relativePath) {
 }
 
 test('streak runtime parity validates daily habit rules', () => {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-streak-rules'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
 
@@ -40,6 +44,7 @@ test('streak runtime parity validates daily habit rules', () => {
   assert.equal(calculateStreak(['2026-05-13', '2026-05-14'], today), 2);
   assert.equal(calculateStreak(['2026-05-12', '2026-05-13', '2026-05-15'], today), 1);
   assert.equal(calculateStreak(['2026-05-16'], today), 0);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
 });
 
 test('streak runtime parity rejects timestamp date-key normalization drift', () => {
@@ -61,6 +66,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('--focus-streak-rules');
 require('./scripts/validate-content.js');
 `,
     ],
