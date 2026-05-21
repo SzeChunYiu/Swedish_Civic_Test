@@ -2743,13 +2743,13 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'JSON kunde inte läsas.',
     'Importen har fel format eller okända toppnivåfält.',
     'Importversionen stöds inte.',
-    'Importen innehåller köp-, kvitto- eller IAP-fält. Ta bort dem och återställ köp via appbutiken.',
+    'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.',
     'Importen innehåller inga stödda studiedata.',
     'Klistra in JSON-export',
     'Klistra in exporten här',
     'Förhandsgranska import',
     'Förhandsgranska lokal studiedataimport',
-    'Köp, kvitton och IAP-data importeras inte. Använd appbutikens återställning för köp.',
+    'Köp, kvitton och data om köp i appen importeras inte. Använd appbutikens återställning för köp.',
     'Återställ importfält',
     'Klistra in en lokal studiedataexport i JSON-format. Du får en sammanfattning innan något skrivs.',
     'Importen är klar.',
@@ -12804,6 +12804,10 @@ function validateSettingsRouteCopyParity() {
     reject('settings route must expose a Swedish copy block before English copy');
   } else if (/\bFSRS\b|frysstatus/.test(swedishSettingsCopyMatch[0])) {
     reject('settings route Swedish import summary copy must hide scheduler jargon');
+  } else if (/\bIAP\b/.test(swedishSettingsCopyMatch[0])) {
+    reject(
+      'settings route Swedish import copy must describe purchases in appen without IAP acronym',
+    );
   }
   if (
     /aria-selected=\{(?:language === value|dailyGoalAnswers === goal)\}/.test(settingsRoute) ||
