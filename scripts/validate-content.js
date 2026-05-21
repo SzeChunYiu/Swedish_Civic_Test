@@ -11567,6 +11567,11 @@ function validateRemoveAdsEntitlementHookParity() {
   const normalizedHookSource = hookSource.replace(/\s+/g, ' ');
   const normalizedHomeSource = homeSource.replace(/\s+/g, ' ');
   const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
+  const resolvedAdEntitlementsHookStart = hookSource.indexOf(
+    'export function useResolvedAdEntitlements',
+  );
+  const resolvedAdEntitlementsHookSource =
+    resolvedAdEntitlementsHookStart === -1 ? '' : hookSource.slice(resolvedAdEntitlementsHookStart);
   const hookCases = [
     [
       /const\s+AD_BLOCKED_PENDING_ENTITLEMENTS:\s*PremiumEntitlements\s*=\s*\{[\s\S]*\.\.\.FREE_ENTITLEMENTS,[\s\S]*adsDisabled:\s*true,[\s\S]*\};/.test(
@@ -11638,16 +11643,22 @@ function validateRemoveAdsEntitlementHookParity() {
     ],
     [
       /skipPurchaseRuntime\s*=\s*false/.test(hookSource) &&
-        /skipPurchaseRuntime\s*\?\s*undefined\s*:\s*\(?runtimeOptions\s*\?\?\s*createDefaultPurchaseRuntimeOptions\(initialEntitlements\.adsDisabled\)\)?/.test(
+        /function\s+useRemoveAdsEntitlementsRuntime\(/.test(hookSource) &&
+        /purchaseRuntimeEnabled\s*\?\s*\(?runtimeOptions\s*\?\?\s*createDefaultPurchaseRuntimeOptions\(initialEntitlements\.adsDisabled\)\)?\s*:\s*undefined/.test(
           hookSource,
         ) &&
-        /if\s*\(\s*skipPurchaseRuntime\s*\|\|\s*!purchaseRuntime\s*\)\s*\{[\s\S]*applyEntitlements\(initialEntitlements\);[\s\S]*return\s*\(\)\s*=>\s*\{[\s\S]*isMounted\s*=\s*false;[\s\S]*\};[\s\S]*\}/.test(
+        /if\s*\(\s*!purchaseRuntimeEnabled\s*\|\|\s*!purchaseRuntime\s*\)\s*\{[\s\S]*applyEntitlements\(initialEntitlements\);[\s\S]*return\s*\(\)\s*=>\s*\{[\s\S]*isMounted\s*=\s*false;[\s\S]*\};[\s\S]*\}/.test(
           hookSource,
         ) &&
+        /purchaseRuntimeEnabled:\s*!skipPurchaseRuntime/.test(hookSource) &&
         /const\s+hasExplicitEntitlements\s*=\s*explicitEntitlements\s*!==\s*undefined;/.test(
           hookSource,
         ) &&
-        /skipPurchaseRuntime:\s*hasExplicitEntitlements/.test(hookSource),
+        /useRemoveAdsEntitlementsRuntime\(\{[\s\S]*purchaseRuntimeEnabled:\s*!hasExplicitEntitlements/.test(
+          resolvedAdEntitlementsHookSource,
+        ) &&
+        !/useRemoveAdsEntitlements\(\{/.test(resolvedAdEntitlementsHookSource) &&
+        !/skipPurchaseRuntime/.test(resolvedAdEntitlementsHookSource),
       'explicit ad entitlements must skip purchase runtime creation and storage reads',
     ],
     [

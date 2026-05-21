@@ -2339,6 +2339,21 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
 });
 
 test('explicit ad entitlements skip default purchase runtime side effects', async () => {
+  const entitlementHookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useRemoveAdsEntitlements.ts'),
+    'utf8',
+  );
+  const resolvedHookSource = entitlementHookSource.slice(
+    entitlementHookSource.indexOf('export function useResolvedAdEntitlements'),
+  );
+
+  assert.match(entitlementHookSource, /function useRemoveAdsEntitlementsRuntime/);
+  assert.match(entitlementHookSource, /purchaseRuntimeEnabled:\s*!skipPurchaseRuntime/);
+  assert.match(resolvedHookSource, /useRemoveAdsEntitlementsRuntime\(/);
+  assert.match(resolvedHookSource, /purchaseRuntimeEnabled:\s*!hasExplicitEntitlements/);
+  assert.doesNotMatch(resolvedHookSource, /useRemoveAdsEntitlements\(/);
+  assert.doesNotMatch(resolvedHookSource, /skipPurchaseRuntime/);
+
   const localStorage = createMemoryLocalStorage();
 
   await withGlobalProperties(
