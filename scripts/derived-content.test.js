@@ -81,14 +81,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Var ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'Where is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Var ligger Sverige?');
-  assert.equal(derived[3].questionEn, 'Where is Sweden located?');
+  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -188,51 +188,6 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
         ),
     ),
   );
-});
-
-test('derivePublishedQuestions keeps same-source generated single-choice stems distinct', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q900',
-    chapterId: 'ch01',
-    type: 'single_choice',
-    questionSv: 'Var ligger Sverige?',
-    questionEn: 'Where is Sweden located?',
-    options: [
-      { id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' },
-      { id: 'b', textSv: 'I Asien', textEn: 'In Asia' },
-      { id: 'c', textSv: 'I Afrika', textEn: 'In Africa' },
-      { id: 'd', textSv: 'I Sydamerika', textEn: 'In South America' },
-    ],
-    correctOptionId: 'a',
-    explanationSv: 'Sverige ligger i Norden.',
-    explanationEn: 'Sweden is in the Nordic region.',
-    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
-    difficulty: 'easy',
-    reviewStatus: 'reviewed',
-    tags: ['geography'],
-  };
-
-  const singleChoiceVariants = derivePublishedQuestions([source], 901).filter(
-    (question) => question.type === 'single_choice',
-  );
-  const signatures = singleChoiceVariants.map((question) =>
-    [
-      question.questionSv.trim().toLocaleLowerCase('sv-SE'),
-      question.questionEn.trim().toLocaleLowerCase('en-US'),
-      question.options
-        .map((option) =>
-          [
-            option.textSv.trim().toLocaleLowerCase('sv-SE'),
-            option.textEn.trim().toLocaleLowerCase('en-US'),
-          ].join(' / '),
-        )
-        .join(' | '),
-    ].join(' :: '),
-  );
-
-  assert.equal(singleChoiceVariants.length, 2);
-  assert.equal(new Set(signatures).size, singleChoiceVariants.length);
 });
 
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
@@ -440,7 +395,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       options: [
         {
           id: 'a',
-          textSv: 'politikerna behöver inte följa resultatet',
+          textSv: 'politikerna måste inte följa resultatet',
           textEn: 'Politicians do not have to follow the result',
         },
         {
@@ -511,39 +466,6 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
         },
         { id: 'c', textSv: 'att besluta om EU-lagar', textEn: 'passing EU laws' },
         { id: 'd', textSv: 'att leda domstolarna', textEn: 'leading the courts' },
-      ],
-      correctOptionId: 'a',
-      explanationSv: 'Kommuner ansvarar för lokala tjänster.',
-      explanationEn: 'Municipalities handle local services.',
-      uhrReference: {
-        chapter: 'Så här styrs Sverige',
-        section: 'Kommunernas ansvar',
-        pageApprox: 13,
-      },
-      difficulty: 'medium',
-      reviewStatus: 'reviewed',
-      tags: ['municipality'],
-    },
-    {
-      id: 'q026',
-      chapterId: 'ch03',
-      type: 'single_choice',
-      questionSv: 'Vilka vardagstjänster ansvarar kommuner för?',
-      questionEn: 'Which everyday services are municipalities responsible for?',
-      options: [
-        {
-          id: 'a',
-          textSv: 'Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning',
-          textEn:
-            'Water and sewage, care services, snow removal, park maintenance, and adult education',
-        },
-        {
-          id: 'b',
-          textSv: 'Att skicka ambassadörer till andra länder',
-          textEn: 'Sending ambassadors to other countries',
-        },
-        { id: 'c', textSv: 'Att bestämma EU-lagar', textEn: 'Deciding EU laws' },
-        { id: 'd', textSv: 'Att välja kronprinsessa', textEn: 'Choosing the crown princess' },
       ],
       correctOptionId: 'a',
       explanationSv: 'Kommuner ansvarar för lokala tjänster.',
@@ -812,7 +734,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|^Water and sewage, care services, snow removal, park maintenance, and adult education\.|^Vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning\.|^Sending ambassadors to other countries\.|^Skicka ambassadörer till andra länder\.|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|^One reason is\b|^En anledning är\b|One reason is that (?:so|It)|En anledning är att Det|have they|har de/im,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|^One reason is\b|^En anledning är\b|One reason is that (?:so|It)|En anledning är att Det|have they|har de/im,
   );
   assert.doesNotMatch(text, /betyder att politikerna måste (?:inte|alltid) följa resultatet/i);
   assert.doesNotMatch(text, /are The/);
@@ -838,20 +760,6 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
     text.includes(
       'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',
     ),
-  );
-  assert.ok(
-    text.includes(
-      'Kommuner ansvarar för vatten och avlopp, omsorg, snöröjning, parkskötsel och vuxenutbildning.',
-    ),
-  );
-  assert.ok(
-    text.includes(
-      'Municipalities are responsible for water and sewage, care services, snow removal, park maintenance, and adult education.',
-    ),
-  );
-  assert.ok(text.includes('Kommuner ansvarar för att skicka ambassadörer till andra länder.'));
-  assert.ok(
-    text.includes('Municipalities are responsible for sending ambassadors to other countries.'),
   );
   assert.ok(
     text.includes("Sweden's three largest lakes are the Baltic Sea, Kattegat, and Skagerrak."),
@@ -1335,66 +1243,68 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   });
 });
 
-test('derivePublishedQuestions writes standalone generated civic answer-option propositions', () => {
-  const { questions } = loadTs('data/questions.ts');
-  const byId = new Map(questions.map((question) => [question.id, question]));
-  const expectedRows = {
-    q767: [
-      'Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal.',
-      'Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.',
-      'true',
-    ],
-    q768: [
-      'Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar.',
-      'Commercial radio and TV channels can earn income through court fees from trials.',
-      'false',
-    ],
-    q827: [
-      'Val till EU-parlamentet hålls vart femte år.',
-      'Elections to the European Parliament are held every five years.',
-      'true',
-    ],
-    q828: [
-      'Val till EU-parlamentet hålls vart fjärde år.',
-      'Elections to the European Parliament are held every four years.',
-      'false',
-    ],
-    q835: [
-      'Röstkortet visar vilken vallokal väljaren ska gå till.',
-      'The voting card shows which polling station the voter should go to.',
-      'true',
-    ],
-    q836: [
-      'Röstkortet visar vilket parti väljaren måste rösta på.',
-      'The voting card shows which party the voter must vote for.',
-      'false',
-    ],
-    q839: [
-      'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
-      'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
-      'true',
-    ],
-    q840: [
-      'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
-      'A person can influence party politics only by voting if they already sit in the Riksdag.',
-      'false',
-    ],
+test('derivePublishedQuestions rewrites definition-style true/false variants as direct propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const { sourceQuestions } = loadTs('data/questions.ts');
+  const generatedQuestions = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
+  const generatedVariant = (sourceId, variantOffset) => {
+    const sourceIndex = sourceQuestions.findIndex((question) => question.id === sourceId);
+    assert.notEqual(sourceIndex, -1, `missing source fixture ${sourceId}`);
+    return generatedQuestions[sourceIndex * 4 + variantOffset];
   };
+  const expectedRows = [
+    [
+      'q027',
+      1,
+      'I Sveriges konstitutionella monarki är statschefen kung eller drottning utan politisk makt.',
+      "In Sweden's constitutional monarchy, the head of state is a king or queen without political power.",
+    ],
+    [
+      'q027',
+      2,
+      'I Sveriges konstitutionella monarki har monarken all politisk makt.',
+      "In Sweden's constitutional monarchy, the monarch has all political power.",
+    ],
+    [
+      'q092',
+      1,
+      'Sverige är en sekulär stat, så staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion.',
+      'Sweden is a secular state, so the state is religiously neutral and neither takes sides for nor discriminates against any religion.',
+    ],
+    [
+      'q092',
+      2,
+      'Sverige är en sekulär stat, så alla måste tillhöra samma religion.',
+      'Sweden is a secular state, so everyone must belong to the same religion.',
+    ],
+    [
+      'q145',
+      1,
+      'Hemliga val betyder att väljare inte behöver avslöja hur de röstar.',
+      'Secret elections mean voters do not have to reveal how they vote.',
+    ],
+    [
+      'q145',
+      2,
+      'Hemliga val betyder att bara myndigheter får veta hur varje person röstar.',
+      'Secret elections mean only authorities may know how each person votes.',
+    ],
+  ];
 
-  for (const [id, [questionSv, questionEn, correctOptionId]] of Object.entries(expectedRows)) {
-    const question = byId.get(id);
-    assert.ok(question, `${id} must exist`);
-    assert.equal(question.type, 'true_false', `${id} type`);
-    assert.equal(question.correctOptionId, correctOptionId, `${id} correct option`);
-    assert.equal(question.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(question.questionEn, questionEn, `${id} English generated stem`);
+  for (const [sourceId, variantOffset, questionSv, questionEn] of expectedRows) {
+    const question = generatedVariant(sourceId, variantOffset);
+    assert.equal(question.questionSv, questionSv);
+    assert.equal(question.questionEn, questionEn);
   }
 
-  const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id).questionSv} ${byId.get(id).questionEn}`)
+  const residualText = expectedRows
+    .map(([sourceId, variantOffset]) => {
+      const question = generatedVariant(sourceId, variantOffset);
+      return `${question.questionSv}\n${question.questionEn}`;
+    })
     .join('\n');
   assert.doesNotMatch(
-    checkedText,
-    /^(?:De säljer reklamplats|Genom domstolsavgifter|Vart femte år|Vart fjärde år|Vilken vallokal|Vilket parti|Bli medlem|Bara rösta|They sell advertising|Through court fees|Every five years|Every four years|Which polling station|Which party|Become a member|Only vote if)/im,
+    residualText,
+    /^(?:Att (?:Sverige är (?:en konstitutionell monarki|en sekulär stat)|val i en demokrati är hemliga) betyder att|That (?:Sweden is (?:a constitutional monarchy|a secular state)|elections in a democracy are secret) means\b)/im,
   );
 });

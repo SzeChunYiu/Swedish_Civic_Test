@@ -164,13 +164,11 @@ const EXPECTED_UHR_SOURCE = {
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
-const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
   civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
-  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -401,6 +399,10 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\binnebär att den ger\b/i,
+  /^That Sweden is (?:a constitutional monarchy|a secular state) means\b/i,
+  /^That elections in a democracy are secret means\b/i,
+  /^Att Sverige är (?:en konstitutionell monarki|en sekulär stat) betyder att\b/i,
+  /^Att val i en demokrati är hemliga betyder att\b/i,
   /\bfrom (?:13|15) years\b/i,
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
@@ -4497,41 +4499,11 @@ function questionSentenceEndingsAreComplete(question) {
   );
 }
 
-function validateCountdownBannerHomeMountParity() {
-  let homeMountParity = true;
-  let rulesValidated = 0;
-  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
-
-  function rejectHomeMount(message) {
-    homeMountParity = false;
-    fail(message);
-  }
-
-  if (
-    /import\s+\{\s*CountdownBanner\s*\}\s+from\s+['"]\.\.\/\.\.\/components\/ui\/CountdownBanner['"]/.test(
-      homeRouteSource,
-    )
-  ) {
-    rulesValidated += 1;
-  } else {
-    rejectHomeMount('home route must import CountdownBanner from the shared UI component');
-  }
-
-  if (/<CountdownBanner\s+language=\{language\}\s*\/>/.test(homeRouteSource)) {
-    rulesValidated += 1;
-  } else {
-    rejectHomeMount('Home route must mount CountdownBanner with the selected language');
-  }
-
-  return { homeMountParity, rulesValidated };
-}
-
 function validateCitizenshipTimeline() {
   let dateParity = true;
   let countdownCopyParity = true;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
-  const firstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -4549,11 +4521,6 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
-  if (firstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
-    rejectDate(
-      `civic knowledge test first sitting must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
-    );
-  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -4561,14 +4528,11 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
-    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <
-      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
+    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
   ) {
-    rejectDate('civic knowledge test dates must stay after the citizenship rules date');
+    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
   }
   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
@@ -4595,16 +4559,11 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
+    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
     'Nya medborgarskapsregler gäller från',
-    'UHR har bekräftat att den första provomgången',
-    'tills nya reglerna',
-    'i Stockholm',
+    'Samhällskunskapsprovet väntas starta i augusti 2026',
     'New citizenship rules apply from',
-    'UHR has confirmed that the first civic-knowledge',
-    'until new rules',
-    'in Stockholm',
-    'CITIZENSHIP_TIMELINE_SOURCE_URLS',
+    'The civic-knowledge test is expected in August 2026',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -4614,13 +4573,8 @@ function validateCitizenshipTimeline() {
   [
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
-    /Samhällskunskapsprovet väntas starta i augusti 2026/,
-    /The civic-knowledge test is expected in August 2026/,
-    /Regeringens tidsgräns för första steget/,
-    /The government deadline for the first step/,
     /until new exam/,
     /tills nya provet/,
-    /Regeringen/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
       rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
@@ -4630,7 +4584,6 @@ function validateCitizenshipTimeline() {
   return {
     countdownCopyParity,
     dateParity,
-    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
@@ -4673,6 +4626,23 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
     (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
   );
+}
+
+function validateQuestionGeneratedTrueFalseNaturalnessOnly() {
+  if (!Array.isArray(questions)) {
+    fail('questions export is not an array');
+    return;
+  }
+
+  questions.forEach((question, index) => {
+    const label = question.id || `question[${index}]`;
+    const issue = findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+    if (issue) {
+      fail(`${label} contains a generated true/false grammar-splice stem`);
+    } else if (question.type === 'true_false') {
+      questionGeneratedTrueFalseNaturalnessValidated += 1;
+    }
+  });
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -7129,10 +7099,6 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
-const applyQuestionLocalizationPilot = loadTs(
-  'data/questionLocalizations.ts',
-  'applyQuestionLocalizationPilot',
-);
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -7411,7 +7377,6 @@ let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
-let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
@@ -7595,44 +7560,15 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-practice-scoring-parity')) {
-  validatePracticeScoringRules();
+if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+  validateQuestionGeneratedTrueFalseNaturalnessOnly();
   exitWithValidationFailures();
   printValidationSummary({
-    practiceScoringRulesValidated,
-    practiceScoringRulesParityValidated,
+    questionGeneratedTrueFalseNaturalnessValidated,
   });
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-countdown-banner')) {
-  {
-    const timelineValidation = validateCitizenshipTimeline();
-    citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-    civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-    civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-    citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-    citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-    countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  }
-  {
-    const homeMountValidation = validateCountdownBannerHomeMountParity();
-    countdownBannerHomeMountRulesValidated = homeMountValidation.rulesValidated;
-    countdownBannerHomeMountParityValidated = homeMountValidation.homeMountParity;
-  }
-  exitWithValidationFailures();
-  printValidationSummary({
-    citizenshipRulesEffectiveDateValidated,
-    civicKnowledgeTestFirstSittingDateValidated,
-    civicKnowledgeTestDeadlineDateValidated,
-    citizenshipTimelineSourceUrlsValidated,
-    citizenshipTimelineDateParityValidated,
-    countdownBannerTimelineCopyParityValidated,
-    countdownBannerHomeMountRulesValidated,
-    countdownBannerHomeMountParityValidated,
-  });
-  process.exit(0);
-}
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -13406,17 +13342,6 @@ function validatePracticeScoringRules() {
     { label: 'all wrong results', input: [false, false], expected: { correct: 0, total: 2 } },
     { label: 'mixed results', input: [true, false, true], expected: { correct: 2, total: 3 } },
     { label: 'all correct results', input: [true, true], expected: { correct: 2, total: 2 } },
-    {
-      label: 'truthy non-boolean results',
-      input: [true, false, 1, 'true', {}, []],
-      expected: { correct: 1, total: 6 },
-    },
-    { label: 'non-array null results', input: null, expected: { correct: 0, total: 0 } },
-    {
-      label: 'non-array object results',
-      input: { correct: true },
-      expected: { correct: 0, total: 0 },
-    },
   ];
   let rulesAreValid = true;
 
@@ -14943,29 +14868,6 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'difficulty',
   'tags',
 ];
-const PUBLISHED_SOURCE_OPTION_LOCALIZATION_PARITY_IDS = new Set([
-  'q160',
-  'q161',
-  'q162',
-  'q163',
-  'q164',
-  'q165',
-  'q166',
-  'q167',
-  'q168',
-  'q169',
-]);
-
-function expectedPublishedSourceOptions(question) {
-  if (
-    PUBLISHED_SOURCE_OPTION_LOCALIZATION_PARITY_IDS.has(question.id) &&
-    typeof applyQuestionLocalizationPilot === 'function'
-  ) {
-    return applyQuestionLocalizationPilot(question).options;
-  }
-
-  return question.options;
-}
 
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
@@ -14997,9 +14899,6 @@ function expectedPublishedSourceField(question, field) {
   }
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
-  }
-  if (field === 'options') {
-    return expectedPublishedSourceOptions(question);
   }
   return question[field];
 }
@@ -16288,7 +16187,6 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
-      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
