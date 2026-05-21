@@ -20,8 +20,8 @@
       "sha256": "96e3353615e2bb0ed2d49a6c8d5daf61b58938081ccdc7f6860bebe3339be1c8"
     },
     "ebook.js": {
-      "bytes": 476506,
-      "sha256": "4aa1998d56acf251bf3039b7783a1d8b765c48ee6c6768e641fdac43bed9b9c5"
+      "bytes": 476414,
+      "sha256": "9289a52dbff87f994f851508a3700d2713240fbbaa06f36a7e3b6db16c4bdcbc"
     },
     "extras.js": {
       "bytes": 14766,
@@ -48,8 +48,8 @@
       "sha256": "78451992ecdd855d5f2106da8d59ea0f7f2b58696beaa6bdfa1a8788e3de2d8d"
     },
     "questions.js": {
-      "bytes": 3624759,
-      "sha256": "f9dd846b5bb422e902372a23f0a0a3a7d955c58859c7cfaf7b6d257424cf649c"
+      "bytes": 3624824,
+      "sha256": "9d1569da9549602b61414bf7ff9ade207d7dfc9948bee8e67d95e95484270362"
     },
     "settings.js": {
       "bytes": 12779,
