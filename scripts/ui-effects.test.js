@@ -1192,17 +1192,10 @@ test('launch popup ad has native app-open implementation and safe web preview', 
     webSource,
     /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
   );
-  assert.match(
-    nativeSource,
-    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
-  );
+  assert.match(nativeSource, /deferFirstRunAboutModalForLaunchSession,/);
   assert.match(
     nativeSource,
     /const nativeLaunchPopupUnitId = getPlatformAdUnitId\('app_open_launch', Platform\.OS\);/,
-  );
-  assert.match(
-    nativeSource,
-    /const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
   );
   assert.match(
     nativeSource,
@@ -1211,7 +1204,11 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   assert.match(nativeSource, /platform: Platform\.OS,/);
   assert.match(
     nativeSource,
-    /if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+    /if \(launchPopupAdUnitId\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+  );
+  assert.match(
+    nativeSource,
+    /clearFirstRunAboutModalDeferralForLaunchSession,[\s\S]*deferFirstRunAboutModalForLaunchSession,/,
   );
   assert.match(
     nativeSource,
@@ -1223,7 +1220,7 @@ test('launch popup ad has native app-open implementation and safe web preview', 
   );
   assert.match(
     nativeSource,
-    /try \{[\s\S]*AppOpenAd\.createForAdRequest\(launchPopupAdUnitId,[\s\S]*launchPopupLoadInFlight = true;[\s\S]*addAdEventListener\(AdEventType\.LOADED,[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*finishLoadAttempt\(\);[\s\S]*didReachShowPath = true;[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)[\s\S]*addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);[\s\S]*loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*appOpenAd\.load\(\);[\s\S]*return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\} catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*return undefined;/,
+    /try \{[\s\S]*AppOpenAd\.createForAdRequest\(launchPopupAdUnitId,[\s\S]*launchPopupLoadInFlight = true;[\s\S]*addAdEventListener\(AdEventType\.LOADED,[\s\S]*launchPopupShownThisRuntime = true;[\s\S]*finishLoadAttempt\(\);[\s\S]*didReachShowPath = true;[\s\S]*Promise\.resolve\(appOpenAd\.show\(\)\)\.catch\(\(\) => undefined\)[\s\S]*addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*appOpenAd\.load\(\);[\s\S]*return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*\} catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*return undefined;/,
   );
 });
 

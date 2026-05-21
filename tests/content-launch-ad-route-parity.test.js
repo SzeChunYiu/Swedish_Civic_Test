@@ -60,7 +60,9 @@ test('launch popup ad route suppression stays aligned with release-safe routes',
   );
   assert.match(webLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
   assert.match(nativeLaunchPopupAd, /deferFirstRunAboutModalForLaunchSession\(\);/);
-  assert.match(nativeLaunchPopupAd, /if \(nativeLaunchPopupMayShow\) \{/);
+  assert.match(nativeLaunchPopupAd, /clearFirstRunAboutModalDeferralForLaunchSession/);
+  assert.match(nativeLaunchPopupAd, /if \(launchPopupAdUnitId\) \{/);
+  assert.doesNotMatch(nativeLaunchPopupAd, /nativeLaunchPopupMayShow/);
 });
 
 test('launch popup ad route suppression rejects missing compliance routes', () => {
@@ -123,10 +125,6 @@ test('native launch popup load failures clear only the in-flight attempt', () =>
   assert.match(nativeSource, /let launchPopupLoadInFlight = false;/);
   assert.match(
     nativeSource,
-    /const nativeLaunchPopupMayShow =[\s\S]*!launchPopupLoadInFlight[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
-  );
-  assert.match(
-    nativeSource,
     /const launchPopupAdUnitId =[\s\S]*mobileAdsConsent\.initialized[\s\S]*shouldShowLaunchPopupAd/,
   );
   assert.match(
@@ -136,15 +134,15 @@ test('native launch popup load failures clear only the in-flight attempt', () =>
   assert.match(nativeSource, /launchPopupLoadInFlight = true;[\s\S]*appOpenAd\.load\(\);/);
   assert.match(
     nativeSource,
-    /addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);/,
+    /addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);/,
   );
   assert.match(
     nativeSource,
-    /catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*return undefined;/,
+    /catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*return undefined;/,
   );
   assert.match(
     nativeSource,
-    /return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*if \(!didReachShowPath && !attemptSettled\) \{[\s\S]*finishLoadAttempt\(\);[\s\S]*\}/,
+    /return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*if \(!didReachShowPath && !attemptSettled\) \{[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*\}/,
   );
 });
 
@@ -163,7 +161,7 @@ test('native launch popup load timeout clears in-flight without consuming runtim
   assert.match(nativeSource, /clearTimeout\(loadTimeout\);/);
   assert.match(
     nativeSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
+    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
   );
   assert.ok(timeoutIndex > loadedListenerIndex, 'timeout should be armed after listeners register');
   assert.ok(loadIndex > timeoutIndex, 'timeout should be armed before requesting the load');
@@ -183,6 +181,7 @@ test('launch popup parity rejects missing native load timeout cleanup', () => {
       `
 const fs = require('node:fs');
 const originalReadFileSync = fs.readFileSync;
+process.argv.push('--focus-launch-ad-deferral');
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/components/monetization/LaunchPopupAd.native.tsx')) {
@@ -207,28 +206,46 @@ require('./scripts/validate-content.js');
 
 test('native first-run deferral stays wired to the eligible app-open path', () => {
   const nativeSource = read('components/monetization/LaunchPopupAd.native.tsx');
+  const sessionSource = read('components/monetization/launchPopupSession.ts');
+  const firstRunModalSource = read('components/onboarding/FirstRunAboutTheTestModal.tsx');
   const validatorSource = read('scripts/validate-content.js');
 
   assert.match(
     nativeSource,
-    /import \{ deferFirstRunAboutModalForLaunchSession \} from '\.\/launchPopupSession';/,
+    /clearFirstRunAboutModalDeferralForLaunchSession,[\s\S]*deferFirstRunAboutModalForLaunchSession,/,
   );
   assert.match(
     nativeSource,
-    /const nativeLaunchPopupMayShow =[\s\S]*adsConfig\.googleMobileAdsEnabled[\s\S]*!launchPopupShownThisRuntime[\s\S]*!launchPopupLoadInFlight[\s\S]*!entitlements\.adsDisabled[\s\S]*Boolean\(nativeLaunchPopupUnitId\);/,
+    /const launchPopupAdUnitId =[\s\S]*mobileAdsConsent\.initialized[\s\S]*shouldShowLaunchPopupAd[\s\S]*\? nativeLaunchPopupUnitId/,
   );
   assert.match(
     nativeSource,
-    /if \(nativeLaunchPopupMayShow\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+    /if \(launchPopupAdUnitId\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+  );
+  assert.doesNotMatch(nativeSource, /if \(nativeLaunchPopupMayShow\)/);
+  assert.match(
+    nativeSource,
+    /const clearTentativeFirstRunDeferral = \(\) => \{[\s\S]*if \(didReachShowPath\) return;[\s\S]*clearFirstRunAboutModalDeferralForLaunchSession\(\);[\s\S]*\};/,
+  );
+  assert.match(sessionSource, /removeItem\?: \(key: string\) => void;/);
+  assert.match(sessionSource, /export function clearFirstRunAboutModalDeferralForLaunchSession/);
+  assert.match(sessionSource, /storage\.removeItem\(firstRunDeferralKey\);/);
+  assert.match(sessionSource, /const firstRunDeferralListeners = new Set<\(\) => void>\(\);/);
+  assert.match(
+    sessionSource,
+    /export function subscribeToFirstRunAboutModalDeferralForLaunchSession/,
   );
   assert.match(
-    validatorSource,
-    /native launch ad must defer the first-run About modal when eligible/,
+    firstRunModalSource,
+    /useState\(\(\) =>\s*shouldDeferFirstRunAboutModalForLaunchSession\(\),\s*\)/,
   );
+  assert.match(firstRunModalSource, /subscribeToFirstRunAboutModalDeferralForLaunchSession/);
+  assert.match(firstRunModalSource, /deferWhenLaunchPopupAdShown && launchPopupAdDeferred/);
   assert.match(
     validatorSource,
-    /native launch ad must set first-run deferral during the eligible render pass/,
+    /native launch ad must defer the first-run About modal only after consent yields a launch ad unit/,
   );
   assert.match(validatorSource, /--focus-launch-ad-deferral/);
+  assert.match(validatorSource, /launchAdFirstRunDeferralRulesValidated/);
   assert.match(validatorSource, /launchAdFirstRunDeferralParityValidated/);
 });

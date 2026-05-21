@@ -8978,6 +8978,8 @@ let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
 let launchAdSuppressedRoutesValidated = 0;
 let launchAdRouteSuppressionParityValidated = false;
+let launchAdFirstRunDeferralRulesValidated = 0;
+let launchAdFirstRunDeferralParityValidated = false;
 let tabNavigationRulesValidated = 0;
 let tabNavigationRoutesValidated = 0;
 let tabNavigationParityValidated = false;
@@ -10240,6 +10242,19 @@ if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-launch-ad-deferral')) {
+  validateLaunchAdRouteSuppressionParity();
+  validateLaunchAdFirstRunDeferralParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    launchAdSuppressedRoutesValidated,
+    launchAdRouteSuppressionParityValidated,
+    launchAdFirstRunDeferralRulesValidated,
+    launchAdFirstRunDeferralParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-remove-ads-hook-parity')) {
   validateRemoveAdsEntitlementHookParity();
   exitWithValidationFailures();
@@ -10951,6 +10966,122 @@ function validateLaunchAdRouteSuppressionParity() {
     launchAdSuppressedRoutesValidated === EXPECTED_LAUNCH_POPUP_SUPPRESSED_ROUTES.length
   ) {
     launchAdRouteSuppressionParityValidated = true;
+  }
+}
+
+function validateLaunchAdFirstRunDeferralParity() {
+  let valid = true;
+  let nativeLaunchPopupAd = '';
+  let firstRunModal = '';
+  let launchPopupSession = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    nativeLaunchPopupAd = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+      'utf8',
+    );
+    firstRunModal = fs.readFileSync(
+      path.join(repoRoot, 'components/onboarding/FirstRunAboutTheTestModal.tsx'),
+      'utf8',
+    );
+    launchPopupSession = fs.readFileSync(
+      path.join(repoRoot, 'components/monetization/launchPopupSession.ts'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`launch ad first-run deferral source could not be read: ${error.message}`);
+    return;
+  }
+
+  const expectedRules = [
+    {
+      label:
+        'native launch ad must defer the first-run About modal only after consent yields a launch ad unit',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /const launchPopupAdUnitId =[\s\S]*mobileAdsConsent\.initialized[\s\S]*shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision: mobileAdsConsent\.decision\.consentDecision,[\s\S]*platform: Platform\.OS,[\s\S]*\}\)[\s\S]*\? nativeLaunchPopupUnitId[\s\S]*: undefined;[\s\S]*if \(launchPopupAdUnitId\) \{[\s\S]*deferFirstRunAboutModalForLaunchSession\(\);[\s\S]*\}/,
+    },
+    {
+      label:
+        'native launch ad must not use the pre-consent may-show predicate for first-run deferral',
+      rejectPattern: /nativeLaunchPopupMayShow|if \(nativeLaunchPopupMayShow\)/,
+      source: nativeLaunchPopupAd,
+    },
+    {
+      label: 'native launch ad must import the reversible first-run deferral helpers',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /clearFirstRunAboutModalDeferralForLaunchSession,[\s\S]*deferFirstRunAboutModalForLaunchSession,/,
+    },
+    {
+      label: 'native launch ad must clear tentative first-run deferral after load errors',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /addAdEventListener\(AdEventType\.ERROR,[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);/,
+    },
+    {
+      label: 'native LaunchPopupAd must clear the in-flight flag when load callbacks stall',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
+    },
+    {
+      label: 'native launch ad must clear tentative first-run deferral on pre-show cleanup',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /return \(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*if \(!didReachShowPath && !attemptSettled\) \{[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);/,
+    },
+    {
+      label: 'native launch ad must clear tentative first-run deferral when ad creation throws',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /catch \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*clearTentativeFirstRunDeferral\(\);[\s\S]*return undefined;/,
+    },
+    {
+      label: 'shown native app-open ads must keep the first-run deferral for the launch session',
+      source: nativeLaunchPopupAd,
+      pattern:
+        /const clearTentativeFirstRunDeferral = \(\) => \{[\s\S]*if \(didReachShowPath\) return;[\s\S]*clearFirstRunAboutModalDeferralForLaunchSession\(\);[\s\S]*\};/,
+    },
+    {
+      label: 'launch popup session must expose a clear helper for stale first-run deferrals',
+      source: launchPopupSession,
+      pattern:
+        /export function clearFirstRunAboutModalDeferralForLaunchSession\(\)[\s\S]*__sctLaunchPopupFirstRunDeferred = false;[\s\S]*storage\.removeItem\(firstRunDeferralKey\);/,
+    },
+    {
+      label: 'launch popup session must notify first-run modal subscribers after deferral changes',
+      source: launchPopupSession,
+      pattern:
+        /const firstRunDeferralListeners = new Set<\(\) => void>\(\);[\s\S]*notifyFirstRunDeferralListeners\(\);[\s\S]*export function subscribeToFirstRunAboutModalDeferralForLaunchSession/,
+    },
+    {
+      label: 'first-run About modal must subscribe to launch-deferral changes',
+      source: firstRunModal,
+      pattern:
+        /useState\(\(\) =>[\s\S]*shouldDeferFirstRunAboutModalForLaunchSession\(\),[\s\S]*subscribeToFirstRunAboutModalDeferralForLaunchSession[\s\S]*deferWhenLaunchPopupAdShown && launchPopupAdDeferred/,
+    },
+  ];
+
+  for (const expectedRule of expectedRules) {
+    if (expectedRule.rejectPattern?.test(expectedRule.source)) {
+      reject(expectedRule.label);
+      continue;
+    }
+    if (expectedRule.pattern && !expectedRule.pattern.test(expectedRule.source)) {
+      reject(expectedRule.label);
+      continue;
+    }
+    launchAdFirstRunDeferralRulesValidated += 1;
+  }
+
+  if (valid && launchAdFirstRunDeferralRulesValidated === expectedRules.length) {
+    launchAdFirstRunDeferralParityValidated = true;
   }
 }
 
@@ -23194,6 +23325,7 @@ validateMockExamConfig(
 validateValidationScriptSyntax();
 validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
+validateLaunchAdFirstRunDeferralParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
 validateReleaseMonetizationPolicyParity();
@@ -23330,6 +23462,8 @@ console.log(
       appConfigSchemaValidated,
       launchAdSuppressedRoutesValidated,
       launchAdRouteSuppressionParityValidated,
+      launchAdFirstRunDeferralRulesValidated,
+      launchAdFirstRunDeferralParityValidated,
       tabNavigationRulesValidated,
       tabNavigationRoutesValidated,
       tabNavigationParityValidated,

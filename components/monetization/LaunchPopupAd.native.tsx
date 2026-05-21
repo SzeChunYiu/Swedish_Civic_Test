@@ -2,15 +2,14 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { AdEventType, AppOpenAd } from 'react-native-google-mobile-ads';
 
-import {
-  adsConfig,
-  getPlatformAdUnitId,
-  shouldShowLaunchPopupAd,
-} from '../../lib/monetization/ads';
+import { getPlatformAdUnitId, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
-import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';
+import {
+  clearFirstRunAboutModalDeferralForLaunchSession,
+  deferFirstRunAboutModalForLaunchSession,
+} from './launchPopupSession';
 
 const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;
 
@@ -24,12 +23,6 @@ export function LaunchPopupAd({
 }) {
   const mobileAdsConsent = useMobileAdsConsent(entitlements);
   const nativeLaunchPopupUnitId = getPlatformAdUnitId('app_open_launch', Platform.OS);
-  const nativeLaunchPopupMayShow =
-    adsConfig.googleMobileAdsEnabled &&
-    !launchPopupShownThisRuntime &&
-    !launchPopupLoadInFlight &&
-    !entitlements.adsDisabled &&
-    Boolean(nativeLaunchPopupUnitId);
   const launchPopupAdUnitId =
     mobileAdsConsent.initialized &&
     shouldShowLaunchPopupAd({
@@ -41,7 +34,7 @@ export function LaunchPopupAd({
       ? nativeLaunchPopupUnitId
       : undefined;
 
-  if (nativeLaunchPopupMayShow) {
+  if (launchPopupAdUnitId) {
     deferFirstRunAboutModalForLaunchSession();
   }
 
@@ -73,6 +66,11 @@ export function LaunchPopupAd({
       attemptSettled = true;
     };
 
+    const clearTentativeFirstRunDeferral = () => {
+      if (didReachShowPath) return;
+      clearFirstRunAboutModalDeferralForLaunchSession();
+    };
+
     try {
       const appOpenAd = AppOpenAd.createForAdRequest(launchPopupAdUnitId, {
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
@@ -95,12 +93,14 @@ export function LaunchPopupAd({
 
       unsubscribeError = appOpenAd.addAdEventListener(AdEventType.ERROR, () => {
         finishLoadAttempt();
+        clearTentativeFirstRunDeferral();
       });
 
       loadTimeout = setTimeout(() => {
         if (didReachShowPath || attemptSettled) return;
         unsubscribeLoadListeners();
         finishLoadAttempt();
+        clearTentativeFirstRunDeferral();
       }, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS);
 
       appOpenAd.load();
@@ -108,6 +108,7 @@ export function LaunchPopupAd({
         unsubscribeLoadListeners();
         if (!didReachShowPath && !attemptSettled) {
           finishLoadAttempt();
+          clearTentativeFirstRunDeferral();
         } else {
           clearLoadTimeout();
         }
@@ -115,6 +116,7 @@ export function LaunchPopupAd({
     } catch {
       unsubscribeLoadListeners();
       finishLoadAttempt();
+      clearTentativeFirstRunDeferral();
       return undefined;
     }
   }, [launchPopupAdUnitId, mobileAdsConsent.decision.requestNonPersonalizedAdsOnly]);

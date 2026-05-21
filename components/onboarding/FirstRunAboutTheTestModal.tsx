@@ -1,4 +1,5 @@
 import { usePathname, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
@@ -8,7 +9,10 @@ import {
 } from '../../lib/onboarding/firstRunAboutModalRoutes';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
-import { shouldDeferFirstRunAboutModalForLaunchSession } from '../monetization/launchPopupSession';
+import {
+  shouldDeferFirstRunAboutModalForLaunchSession,
+  subscribeToFirstRunAboutModalDeferralForLaunchSession,
+} from '../monetization/launchPopupSession';
 
 const firstRunAboutDialogTitleId = 'first-run-about-dialog-title';
 const firstRunAboutDialogBodyId = 'first-run-about-dialog-body';
@@ -67,10 +71,21 @@ export function FirstRunAboutTheTestModal({
   const hasSeen = useSettingsStore((state) => state.hasSeenAboutTheTest);
   const markSeen = useSettingsStore((state) => state.markAboutTheTestSeen);
   const reduceMotion = useReducedMotion();
+  const [launchPopupAdDeferred, setLaunchPopupAdDeferred] = useState(() =>
+    shouldDeferFirstRunAboutModalForLaunchSession(),
+  );
+
+  useEffect(
+    () =>
+      subscribeToFirstRunAboutModalDeferralForLaunchSession(() => {
+        setLaunchPopupAdDeferred(shouldDeferFirstRunAboutModalForLaunchSession());
+      }),
+    [],
+  );
 
   if (hasSeen) return null;
   if (shouldSuppressFirstRunAboutModalForPath(pathname, suppressedPathPrefixes)) return null;
-  if (deferWhenLaunchPopupAdShown && shouldDeferFirstRunAboutModalForLaunchSession()) return null;
+  if (deferWhenLaunchPopupAdShown && launchPopupAdDeferred) return null;
 
   const language = languageOverride ?? settingsLanguage;
   const copy = firstRunCopy[language];
