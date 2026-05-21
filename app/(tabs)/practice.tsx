@@ -331,6 +331,22 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const questionSpeechText = useMemo(
+    () => (question ? buildQuestionSpeechText(question) : ''),
+    [question],
+  );
+
+  useQuestionAudioAutoplay({
+    audioEnabled,
+    listenFirstAudioEnabled,
+    questionKey: question ? `practice:${question.id}:${shuffleSessionId}` : null,
+    rate: audioPlaybackRate,
+    speechText: questionSpeechText,
+    stopSignal: hasSelectedAnswer,
+  });
 
   useEffect(() => {
     setSelectedConfidenceRating(null);

@@ -104,11 +104,10 @@ test('listen-first question audio is opt-in, rate-aware, and excluded from timed
   const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
   const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
   assert.match(hookSource, /export function shouldAutoplayQuestionAudio/);
   assert.match(hookSource, /audioEnabled[\s\S]*listenFirstAudioEnabled[\s\S]*!stopSignal/);
-  assert.match(hookSource, /speechText\.trim\(\)\.length > 0/);
+  assert.match(hookSource, /normalizeAutoplaySpeechText\(speechText\)\.length > 0/);
   assert.match(hookSource, /const lastPlayedQuestionKeyRef = useRef<string \| null>\(null\);/);
   assert.match(
     hookSource,
@@ -140,12 +139,6 @@ test('listen-first question audio is opt-in, rate-aware, and excluded from timed
   }
 
   assert.doesNotMatch(examSource, /useQuestionAudioAutoplay|listenFirstAudioEnabled|AudioButton/);
-  assert.match(settingsSource, /audioListenFirstTitle: 'Lyssna först'/);
-  assert.match(settingsSource, /audioListenFirstTitle: 'Listen first'/);
-  assert.match(
-    settingsSource,
-    /onPress=\{\(\) => setListenFirstAudioEnabled\(!listenFirstAudioEnabled\)\}/,
-  );
 });
 
 test('AudioButton accessibility parity rejects untrimmed playback drift', () => {

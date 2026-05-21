@@ -299,7 +299,7 @@ test('full content production validates published UHR-referenced questions', () 
     summary.questionSpeechTextOptionsValidated > summary.questionSpeechTextQuestionsValidated,
   );
   assert.equal(summary.questionSpeechTextParityValidated, true);
-  assert.equal(summary.speechRuntimeCasesValidated, 4);
+  assert.equal(summary.speechRuntimeCasesValidated, 10);
   assert.equal(summary.speechRuntimeParityValidated, true);
   assert.equal(summary.chapterQuizSessionParityValidated, 13);
   assert.equal(summary.spacedRepetitionIntervalsValidated, 5);
