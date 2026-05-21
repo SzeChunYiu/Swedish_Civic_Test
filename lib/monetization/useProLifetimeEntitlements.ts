@@ -2,8 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 
 import type { ProTierEntitlements } from '../../types/monetization';
-import { createWebPurchaseStorage, type PurchaseStorage } from './purchases';
-import { getProLifetimeEntitlement } from './proLifetimePurchase';
+import {
+  createNativePurchaseProvider,
+  createSecureStorePurchaseStorage,
+  createWebPurchaseStorage,
+} from './purchases';
+import { getProLifetimeEntitlement, type ProLifetimeRuntimeOptions } from './proLifetimePurchase';
 
 const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   adsDisabled: false,
@@ -18,8 +22,17 @@ const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
-export function createDefaultProLifetimeRuntimeOptions(): { storage: PurchaseStorage } | undefined {
-  if (Platform.OS !== 'web') return undefined;
+function getNativePurchasePlatform() {
+  return Platform.OS === 'android' ? 'android' : 'ios';
+}
+
+export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOptions {
+  if (Platform.OS !== 'web') {
+    return {
+      provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),
+      storage: createSecureStorePurchaseStorage(),
+    };
+  }
 
   return {
     storage: createWebPurchaseStorage(),
@@ -31,7 +44,7 @@ export function useProLifetimeEntitlements({
   runtimeOptions,
 }: {
   initialEntitlements?: ProTierEntitlements;
-  runtimeOptions?: { storage?: PurchaseStorage };
+  runtimeOptions?: ProLifetimeRuntimeOptions;
 } = {}) {
   const [entitlements, setEntitlements] = useState(initialEntitlements);
   const [entitlementsReady, setEntitlementsReady] = useState(false);

@@ -1477,6 +1477,111 @@ test('native purchase provider matches requested product ids instead of Remove A
   );
 });
 
+test('Pro Lifetime stored records are receipt-backed and revalidated on relaunch', async () => {
+  const {
+    PRO_LIFETIME_PRODUCT_ID,
+    PRO_LIFETIME_RECORD_SCHEMA_VERSION,
+    PRO_LIFETIME_STORAGE_KEY,
+    getProLifetimeEntitlement,
+    setProLifetimeEntitlement,
+  } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const { createMemoryPurchaseStorage } = loadTs('lib/monetization/purchases.ts');
+  const proLifetimeSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/proLifetimePurchase.ts'),
+    'utf8',
+  );
+  const hookSource = fs.readFileSync(
+    path.join(repoRoot, 'lib/monetization/useProLifetimeEntitlements.ts'),
+    'utf8',
+  );
+  const normalizedProLifetimeSource = proLifetimeSource.replace(/\s+/g, ' ');
+  const storage = createMemoryPurchaseStorage();
+  const initialPurchase = {
+    productId: PRO_LIFETIME_PRODUCT_ID,
+    purchaseToken: 'pro-token-old',
+    transactionId: 'pro-tx-old',
+  };
+
+  await storage.setItemAsync(PRO_LIFETIME_STORAGE_KEY, 'true');
+  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
+
+  await setProLifetimeEntitlement(true, {
+    purchase: initialPurchase,
+    receiptValidation: {
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: initialPurchase.purchaseToken,
+      status: 'valid',
+      transactionId: initialPurchase.transactionId,
+      validatedAt: '2026-05-20T12:00:00.000Z',
+    },
+    storage,
+  });
+
+  const storedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
+  assert.equal(storedRecord.productId, PRO_LIFETIME_PRODUCT_ID);
+  assert.equal(storedRecord.receiptValidationStatus, 'valid');
+  assert.equal(storedRecord.schemaVersion, PRO_LIFETIME_RECORD_SCHEMA_VERSION);
+
+  const events = [];
+  const provider = {
+    async connect() {
+      events.push('connect');
+    },
+    async disconnect() {
+      events.push('disconnect');
+    },
+    async requestRemoveAdsPurchase() {
+      return null;
+    },
+    async restorePurchases(productIds) {
+      events.push(`restore:${productIds.join(',')}`);
+      return [
+        {
+          productId: PRO_LIFETIME_PRODUCT_ID,
+          purchaseToken: 'pro-token-old',
+          transactionId: 'pro-tx-new',
+          raw: { ids: [PRO_LIFETIME_PRODUCT_ID] },
+        },
+      ];
+    },
+    async validateRemoveAdsReceipt(purchase, productId) {
+      events.push(`validate:${productId}`);
+      return {
+        productId,
+        purchaseToken: purchase.purchaseToken,
+        status: 'valid',
+        transactionId: purchase.transactionId,
+        validatedAt: '2026-05-21T00:00:00.000Z',
+      };
+    },
+  };
+
+  const revalidated = await getProLifetimeEntitlement({ provider, storage });
+  const refreshedRecord = JSON.parse(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY));
+
+  assert.equal(revalidated.spacedRepetition, true);
+  assert.equal(refreshedRecord.transactionId, 'pro-tx-new');
+  assert.deepEqual(events, [
+    'connect',
+    `restore:${PRO_LIFETIME_PRODUCT_ID}`,
+    `validate:${PRO_LIFETIME_PRODUCT_ID}`,
+    'disconnect',
+  ]);
+  assert.match(proLifetimeSource, /parseStoredProLifetimeEntitlementRecord/);
+  assert.match(proLifetimeSource, /revalidateStoredProLifetimeEntitlementRecord/);
+  assert.match(proLifetimeSource, /provider\.restorePurchases\(\[PRO_LIFETIME_PRODUCT_ID\]\)/);
+  assert.match(
+    proLifetimeSource,
+    /provider\.validateRemoveAdsReceipt\(purchase, PRO_LIFETIME_PRODUCT_ID as ReceiptProductId\)/,
+  );
+  assert.doesNotMatch(proLifetimeSource, /STORED_TRUE|storedValue === STORED_TRUE/);
+  assert.match(hookSource, /provider:\s*createNativePurchaseProvider/);
+  assert.match(
+    normalizedProLifetimeSource,
+    /if \(!provider\) \{ return proLifetimeEntitlements\(true\); \}/,
+  );
+});
+
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
