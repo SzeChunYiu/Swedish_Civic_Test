@@ -2487,7 +2487,7 @@
         `,
         so: `<h2>Afarta waaweyn</h2>
           <ul>
-            <li><b>Midsommar</b> (badhtanka xagaaga) — Jimcaha saddexaad ee Juun. Tiir Maajo, herring, schnapps, iyo qoob-ka-cayaar sida rahyada. Maalinta nasashada dhabta ah ee Iswiidhan sannadka oo dhan filaynayso.</li>
+            <li><b>Midsommar</b> (badhtanka xagaaga) — Jimcaha saddexaad ee Juun. Tiir Maajo, kalluun la dhanaaniyey, cabitaan dhaqameed, iyo qoob-ka-cayaar sida rahyada. Maalinta nasashada dhabta ah ee Iswiidhan sannadka oo dhan filaynayso.</li>
             <li><b>Påsk</b> (Iistarka) — ukun iyo qurxin baal ah, carruur u labbisan sida sixiroolayaasha Iistarka (<em>påskkärringar</em>) oo sawirro ku beddelaya nacnac.</li>
             <li><b>Lucia</b> (13 Diseembar) — carruur khamiis cad gashan, shumacyo, iyo heesta "Sankta Lucia". Iftiin ka hor mugdiga.</li>
             <li><b>Jul</b> (Habeenka Kirismaska) — cuntada waxay tahay 24-ka, ma aha 25-ka. Kartoonnada Donald Duck oo TV-ga lagu daawado 3-ta galab, sannad walba. Ha weydiin.</li>
@@ -3768,7 +3768,7 @@
             <li><b>Iidda Faasiga (Easter)</b> waxay ku dhacdaa Maarso ama Abriil waxayna leedahay xididdo Masiixi ah, inkastoo dad badani u xuso sidii fasax qoys iyo gu'.</li>
             <li><b>Habeenka Walpurgis (Walpurgis Night)</b>, 30 Abriil, badanaa wuxuu macnaheedu yahay dab-shidan iyo heeso lagu soo dhoweynayo gu'ga.</li>
             <li><b>Kowda Maajo (First of May)</b> waa Maalinta Caalamiga ah ee Shaqaalaha, oo lagu calaamadiyo bannaanbaxyo iyo khudbado siyaasadeed.</li>
-            <li><b>Habeenka Bartamaha Xagaaga (Midsummer Eve)</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluunka herring, baradho cusub iyo farawle.</li>
+            <li><b>Habeenka Bartamaha Xagaaga (Midsummer Eve)</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluun la dhanaaniyey, baradho cusub iyo farawle.</li>
           </ul>
           <h2>Dayr iyo jiilaal</h2>
           <ul>
