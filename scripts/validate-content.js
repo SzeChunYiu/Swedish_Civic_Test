@@ -1126,6 +1126,27 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'lib/learning/glossarySearch.ts',
+    pattern:
+      /export function normalizeSearchResultLimit\(\s*limit: unknown,\s*defaultLimit: number,\s*\): number \| undefined/,
+    message: 'shared search limit normalizer must be exported for helper parity',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /limit === Number\.POSITIVE_INFINITY/,
+    message: 'shared search limit normalizer must support explicit unlimited caps',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /typeof limit === 'number' && Number\.isInteger\(limit\) && limit >= 0/,
+    message: 'shared search limit normalizer must accept only finite non-negative integer caps',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    rejectPattern: /\.slice\(0, limit\)/,
+    message: 'glossary search must not pass runtime limits directly to Array.slice',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
     pattern: /\.replace\(\/\[\^a-z0-9\\s-\]\/g, ' '\)/,
     message: 'shared glossary normalizer must replace punctuation with spaces',
   },
@@ -12897,7 +12918,15 @@ function validateSearchQuestionPunctuationParity() {
   const punctuationRules = [
     {
       label: 'shared glossary normalizer import',
-      pattern: /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
+      pattern: /normalizeGlossarySearchText,/,
+    },
+    {
+      label: 'shared search limit normalizer import',
+      pattern: /normalizeSearchResultLimit,/,
+    },
+    {
+      label: 'normalized limit',
+      pattern: /const normalizedLimit = normalizeSearchResultLimit\(limit, 12\);/,
     },
     {
       label: 'normalized query',
@@ -12921,6 +12950,9 @@ function validateSearchQuestionPunctuationParity() {
   );
   if (/function normalizeSearchText/.test(questionSearch)) {
     reject('private punctuation-preserving normalizeSearchText function must stay removed');
+  }
+  if (/\.slice\(0, limit\)/.test(questionSearch)) {
+    reject('question search must not pass runtime limits directly to Array.slice');
   }
   if (/\.normalize\('NFD'\)[\s\S]*?\.trim\(\);/.test(questionSearch)) {
     reject('question search must not fork accent-only normalization away from glossary search');

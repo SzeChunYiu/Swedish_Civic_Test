@@ -3,6 +3,7 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 const searchRoutePath = path.join(repoRoot, 'app/search.tsx');
@@ -11,6 +12,7 @@ const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utilit
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
 const validateContentPath = path.join(repoRoot, 'scripts/validate-content.js');
+const moduleCache = new Map();
 
 function readSearchRouteSource() {
   return fs.readFileSync(searchRoutePath, 'utf8');
@@ -30,6 +32,43 @@ function readSearchQueryHydrationE2eSource() {
 
 function readThemeModeUtilityE2eSource() {
   return fs.readFileSync(themeModeUtilityE2ePath, 'utf8');
+}
+
+function resolveLocalModule(fromFilePath, request) {
+  const base = path.resolve(path.dirname(fromFilePath), request);
+  const candidates = [base, `${base}.ts`, `${base}.tsx`, `${base}.js`, path.join(base, 'index.ts')];
+  const found = candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile(),
+  );
+  if (!found) throw new Error(`Cannot resolve ${request} from ${fromFilePath}`);
+  return found;
+}
+
+function loadTs(relativePath) {
+  const filePath = path.join(repoRoot, relativePath);
+  if (moduleCache.has(filePath)) return moduleCache.get(filePath).exports;
+
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+    fileName: filePath,
+  }).outputText;
+  const mod = { exports: {} };
+  moduleCache.set(filePath, mod);
+
+  function localRequire(request) {
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
 }
 
 function getExpectedSearchRouteFocusedRuleCount() {
@@ -169,6 +208,21 @@ function assertSearchRouteGlossarySearchParity(source) {
 function assertSharedGlossaryPunctuationNormalizer(source) {
   assert.match(
     source,
+    /export function normalizeSearchResultLimit\(\s*limit: unknown,\s*defaultLimit: number,\s*\): number \| undefined/,
+    'shared search limit normalizer must be exported',
+  );
+  assert.match(
+    source,
+    /limit === Number\.POSITIVE_INFINITY/,
+    'shared search limit normalizer must support explicit unlimited caps',
+  );
+  assert.match(
+    source,
+    /typeof limit === 'number' && Number\.isInteger\(limit\) && limit >= 0/,
+    'shared search limit normalizer must accept only non-negative integer caps',
+  );
+  assert.match(
+    source,
     /export function normalizeGlossarySearchText\(value: string\)/,
     'shared glossary normalizer must be exported for route parity',
   );
@@ -184,10 +238,9 @@ function assertSharedGlossaryPunctuationNormalizer(source) {
 
 function assertQuestionSearchPunctuationNormalizer(source) {
   const requiredRules = [
-    [
-      /import \{ normalizeGlossarySearchText \} from '\.\.\/learning\/glossarySearch';/,
-      'shared glossary normalizer import',
-    ],
+    [/normalizeGlossarySearchText,/, 'shared glossary normalizer import'],
+    [/normalizeSearchResultLimit,/, 'shared search limit normalizer import'],
+    [/const normalizedLimit = normalizeSearchResultLimit\(limit, 12\);/, 'normalized limit'],
     [/const normalizedQuery = normalizeGlossarySearchText\(query\);/, 'normalized query'],
     [/const normalizedValue = normalizeGlossarySearchText\(value\);/, 'normalized weighted field'],
     [
@@ -204,6 +257,11 @@ function assertQuestionSearchPunctuationNormalizer(source) {
     source,
     /function normalizeSearchText/,
     'Question search must not keep a private punctuation-preserving normalizer',
+  );
+  assert.doesNotMatch(
+    source,
+    /\.slice\(0, limit\)/,
+    'Question search must not pass runtime limits directly to Array.slice',
   );
   assert.doesNotMatch(
     source,
@@ -281,6 +339,65 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
   assertSearchRouteGlossarySearchParity(source);
   assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
   assertQuestionSearchPunctuationNormalizer(readQuestionSearchSource());
+});
+
+test('Search helpers normalize malformed runtime result limits', () => {
+  const { chapters } = loadTs('data/chapters.ts');
+  const { questions } = loadTs('data/questions.ts');
+  const { searchGlossary } = loadTs('lib/learning/glossarySearch.ts');
+  const { searchQuestions } = loadTs('lib/search/questionSearch.ts');
+
+  const questionSearchInput = { chapters, query: 'riksdag', questions };
+  const defaultQuestionResults = searchQuestions(questionSearchInput);
+  const defaultQuestionIds = defaultQuestionResults.map((result) => result.question.id);
+
+  assert.equal(defaultQuestionResults.length, 12);
+  assert.deepEqual(
+    searchQuestions({ ...questionSearchInput, limit: 0 }).map((result) => result.question.id),
+    [],
+  );
+  assert.deepEqual(
+    searchQuestions({ ...questionSearchInput, limit: 1 }).map((result) => result.question.id),
+    defaultQuestionIds.slice(0, 1),
+  );
+  assert.ok(
+    searchQuestions({ ...questionSearchInput, limit: Number.POSITIVE_INFINITY }).length >
+      defaultQuestionResults.length,
+  );
+
+  for (const malformedLimit of [-1, 1.5, Number.NaN, Number.NEGATIVE_INFINITY, '3', null]) {
+    assert.deepEqual(
+      searchQuestions({ ...questionSearchInput, limit: malformedLimit }).map(
+        (result) => result.question.id,
+      ),
+      defaultQuestionIds,
+      `question limit ${String(malformedLimit)} should fall back to default`,
+    );
+  }
+
+  const defaultGlossaryResults = searchGlossary('', 'en');
+  const defaultGlossaryIds = defaultGlossaryResults.map((term) => term.id);
+
+  assert.equal(defaultGlossaryResults.length, 10);
+  assert.deepEqual(
+    searchGlossary('', 'en', 0).map((term) => term.id),
+    [],
+  );
+  assert.deepEqual(
+    searchGlossary('', 'en', 1).map((term) => term.id),
+    defaultGlossaryIds.slice(0, 1),
+  );
+  assert.ok(
+    searchGlossary('', 'en', Number.POSITIVE_INFINITY).length > defaultGlossaryResults.length,
+  );
+
+  for (const malformedLimit of [-1, 1.5, Number.NaN, Number.NEGATIVE_INFINITY, '3', null]) {
+    assert.deepEqual(
+      searchGlossary('', 'en', malformedLimit).map((term) => term.id),
+      defaultGlossaryIds,
+      `glossary limit ${String(malformedLimit)} should fall back to default`,
+    );
+  }
 });
 
 test('Search route e2e covers mounted query-param navigation without reload', () => {
@@ -439,7 +556,7 @@ test('Shared glossary normalizer rejects dropping punctuation stripping', () => 
 
 test('Question search rejects route-local punctuation-preserving normalization drift', () => {
   const mutatedSource = readQuestionSearchSource()
-    .replace("import { normalizeGlossarySearchText } from '../learning/glossarySearch';\n", '')
+    .replace('  normalizeGlossarySearchText,\n', '')
     .replace(
       'const normalizedQuery = normalizeGlossarySearchText(query);',
       'const normalizedQuery = normalizeSearchText(query);',
@@ -461,6 +578,17 @@ test('Question search rejects route-local punctuation-preserving normalization d
     () => assertQuestionSearchPunctuationNormalizer(mutatedSource),
     /shared glossary normalizer/,
   );
+});
+
+test('Question search rejects direct runtime limit slices', () => {
+  const mutatedSource = readQuestionSearchSource()
+    .replace('const normalizedLimit = normalizeSearchResultLimit(limit, 12);\n', '')
+    .replace(
+      'return normalizedLimit === undefined ? results : results.slice(0, normalizedLimit);',
+      'return results.slice(0, limit);',
+    );
+
+  assert.throws(() => assertQuestionSearchPunctuationNormalizer(mutatedSource), /normalized limit/);
 });
 
 test('Search route question results reject dropping routed quiz links', () => {
