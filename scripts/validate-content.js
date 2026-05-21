@@ -650,7 +650,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 6;
+const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -7720,6 +7720,8 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
+const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -15582,6 +15584,10 @@ function validateSpacedRepetitionSchedule() {
 
 function validateStreakRules() {
   if (typeof calculateStreak !== 'function') return;
+  if (typeof freezeBannerCopy !== 'function') {
+    fail('freezeBannerCopy export is not a function');
+    return;
+  }
 
   const today = '2026-05-15';
   const cases = [
@@ -15640,6 +15646,71 @@ function validateStreakRules() {
     } else {
       streakRulesValidated += 1;
     }
+  });
+
+  const withRescue = {
+    freezeState: { available: 1 },
+    rescuedInCurrentStreak: [],
+    rescuedThisRun: ['2026-05-17'],
+  };
+  const persistedRescue = {
+    freezeState: { available: 2 },
+    rescuedInCurrentStreak: ['2026-05-17'],
+    rescuedThisRun: [],
+  };
+  const noRescue = {
+    freezeState: { available: 1 },
+    rescuedInCurrentStreak: [],
+    rescuedThisRun: [],
+  };
+  const copyCases = [
+    {
+      label: 'Swedish streak-freeze rescue copy uses svit terminology',
+      actual: () => freezeBannerCopy(withRescue, 'sv'),
+      expected: 'Sviten är räddad — du har 1 svitskydd kvar.',
+      forbidden: /Strecket|fryser|\bstreak\b|\bfreeze\b/i,
+    },
+    {
+      label: 'English streak-freeze rescue copy keeps singular freeze wording',
+      actual: () => freezeBannerCopy(withRescue, 'en'),
+      expected: 'Streak protected — 1 freeze left.',
+    },
+    {
+      label: 'persisted streak-freeze rescue copy remains visible',
+      actual: () => freezeBannerCopy(persistedRescue, 'sv'),
+      expected: 'Sviten är räddad — du har 2 svitskydd kvar.',
+      forbidden: /Strecket|fryser|\bstreak\b|\bfreeze\b/i,
+    },
+    {
+      label: 'streak-freeze rescue copy stays hidden without rescue',
+      actual: () => freezeBannerCopy(noRescue, 'sv'),
+      expected: null,
+    },
+  ];
+
+  copyCases.forEach(({ label, actual, expected, forbidden }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actualValue !== expected) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} returned ${actualValue}, expected ${expected}`);
+      return;
+    }
+
+    if (forbidden && forbidden.test(actualValue)) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} contains forbidden Swedish streak-freeze wording`);
+      return;
+    }
+
+    streakRulesValidated += 1;
   });
 
   if (rulesAreValid && streakRulesValidated === EXPECTED_STREAK_RULE_COUNT) {
