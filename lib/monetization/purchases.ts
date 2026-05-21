@@ -424,7 +424,31 @@ async function revalidateStoredRemoveAdsEntitlementRecord({
   try {
     await provider.connect();
     connected = true;
+    return await revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider({
+      provider,
+      record,
+      storage,
+    });
+  } catch {
+    await clearStoredRemoveAdsEntitlement(storage);
+    return false;
+  } finally {
+    if (connected) {
+      await provider.disconnect?.();
+    }
+  }
+}
 
+async function revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider({
+  provider,
+  record,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  record: StoredRemoveAdsEntitlementRecord;
+  storage: PurchaseStorage;
+}): Promise<boolean> {
+  try {
     const availablePurchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
     const restoredPurchase =
       availablePurchases.find((purchase) => purchaseMatchesStoredRecord(purchase, record)) ??
@@ -455,10 +479,6 @@ async function revalidateStoredRemoveAdsEntitlementRecord({
   } catch {
     await clearStoredRemoveAdsEntitlement(storage);
     return false;
-  } finally {
-    if (connected) {
-      await provider.disconnect?.();
-    }
   }
 }
 
@@ -656,9 +676,25 @@ export async function getPurchaseEntitlements({
   );
 }
 
-async function getFailClosedPurchaseEntitlements(storage: PurchaseStorage) {
+async function getFailClosedPurchaseEntitlements({
+  provider,
+  storage,
+}: {
+  provider: RemoveAdsPurchaseProvider;
+  storage: PurchaseStorage;
+}) {
   try {
-    return await getPurchaseEntitlements({ storage });
+    const storedValue = await storage.getItemAsync(REMOVE_ADS_STORAGE_KEY);
+    const record = parseStoredRemoveAdsEntitlementRecord(storedValue);
+    if (!record) return removeAdsEntitlements(false);
+
+    return removeAdsEntitlements(
+      await revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider({
+        provider,
+        record,
+        storage,
+      }),
+    );
   } catch {
     return removeAdsEntitlements(false);
   }
@@ -846,12 +882,19 @@ export async function buyRemoveAds({
   try {
     const purchase = await provider.requestRemoveAdsPurchase(REMOVE_ADS_PRODUCT_ID);
     if (!purchase || !isRemoveAdsPurchase(purchase)) {
-      return createResult('pending', await getPurchaseEntitlements({ storage }));
+      return createResult(
+        'pending',
+        await getFailClosedPurchaseEntitlements({ provider, storage }),
+      );
     }
 
     const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);
     if (!receiptValidation) {
-      return createResult('pending', await getPurchaseEntitlements({ storage }), purchase);
+      return createResult(
+        'pending',
+        await getFailClosedPurchaseEntitlements({ provider, storage }),
+        purchase,
+      );
     }
 
     const persistenceResult = await persistValidatedRemoveAdsEntitlement({
@@ -881,12 +924,19 @@ export async function restoreRemoveAdsPurchase({
     const purchases = await provider.restorePurchases([REMOVE_ADS_PRODUCT_ID]);
     const purchase = purchases.find(isRemoveAdsPurchase);
     if (!purchase) {
-      return createResult('not_found', await getPurchaseEntitlements({ storage }));
+      return createResult(
+        'not_found',
+        await getFailClosedPurchaseEntitlements({ provider, storage }),
+      );
     }
 
     const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);
     if (!receiptValidation) {
-      return createResult('not_found', await getPurchaseEntitlements({ storage }), purchase);
+      return createResult(
+        'not_found',
+        await getFailClosedPurchaseEntitlements({ provider, storage }),
+        purchase,
+      );
     }
 
     const persistenceResult = await persistValidatedRemoveAdsEntitlement({

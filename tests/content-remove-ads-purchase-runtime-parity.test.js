@@ -40,7 +40,7 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
       /async validateRemoveAdsReceipt\(purchase, productId\) \{([\s\S]*?)\n    \},\n    async requestRemoveAdsPurchase/,
     )?.[1] ?? '';
 
-  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 25);
+  assert.equal(summary.removeAdsPurchaseRuntimeCasesValidated, 26);
   assert.equal(summary.removeAdsPurchaseRuntimeParityValidated, true);
   assert.match(purchaseSource, /REMOVE_ADS_RECORD_SCHEMA_VERSION = 1/);
   assert.match(purchaseSource, /interface StoredRemoveAdsEntitlementRecord/);
@@ -64,6 +64,20 @@ test('Remove Ads purchase runtime uses the canonical non-consumable product cont
   assert.match(
     purchaseSource,
     /:\s*\(\{ status: 'pending' \} satisfies RemoveAdsReceiptValidationResult\)/,
+  );
+  assert.match(purchaseSource, /function getFailClosedPurchaseEntitlements\(\{/);
+  assert.match(purchaseSource, /revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider/);
+  assert.match(
+    purchaseSource,
+    /createResult\(\s*'pending',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/,
+  );
+  assert.match(
+    purchaseSource,
+    /createResult\(\s*'not_found',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/,
+  );
+  assert.doesNotMatch(
+    purchaseSource,
+    /createResult\(\s*'(?:pending|not_found)',\s*await getPurchaseEntitlements\(\{\s*storage\s*\}\)/,
   );
   assert.match(purchaseSource, /if \(!provider\) \{[\s\S]*return removeAdsEntitlements\(true\);/);
   assert.match(purchaseSource, /source: 'purchase'/);

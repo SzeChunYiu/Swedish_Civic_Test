@@ -41,6 +41,7 @@ function loadTs(relativePath, moduleCache = new Map()) {
 test('native Remove Ads provider fails closed unless a platform verifier validates the receipt', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_RECORD_SCHEMA_VERSION,
     REMOVE_ADS_STORAGE_KEY,
     buyRemoveAds,
     createMemoryPurchaseStorage,
@@ -54,7 +55,20 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
     transactionId: 'fake-transaction-from-probe',
   };
 
-  function createProvider(validateRemoveAdsReceipt) {
+  function storedFakeRecord() {
+    return JSON.stringify({
+      grantedAt: '2026-05-19T00:00:00.000Z',
+      productId: REMOVE_ADS_PRODUCT_ID,
+      purchaseToken: fakePurchase.purchaseToken,
+      receiptValidatedAt: '2026-05-19T00:00:00.000Z',
+      receiptValidationStatus: 'valid',
+      schemaVersion: REMOVE_ADS_RECORD_SCHEMA_VERSION,
+      source: 'purchase',
+      transactionId: fakePurchase.transactionId,
+    });
+  }
+
+  function createProvider(validateRemoveAdsReceipt, overrides = {}) {
     let finishCalls = 0;
     return {
       get finishCalls() {
@@ -67,9 +81,11 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
           finishCalls += 1;
         },
         async requestRemoveAdsPurchase() {
+          if (overrides.requestRemoveAdsPurchase) return overrides.requestRemoveAdsPurchase();
           return fakePurchase;
         },
         async restorePurchases() {
+          if (overrides.restorePurchases) return overrides.restorePurchases();
           return [fakePurchase];
         },
         validateRemoveAdsReceipt,
@@ -109,6 +125,34 @@ test('native Remove Ads provider fails closed unless a platform verifier validat
 
   assert.equal(pendingRestore.status, 'not_found');
   assert.equal(pendingRestore.entitlements.adsDisabled, false);
+
+  const pendingStoredStorage = createMemoryPurchaseStorage();
+  await pendingStoredStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedFakeRecord());
+  const pendingStoredProvider = createProvider(unverifiedNativeProvider.validateRemoveAdsReceipt, {
+    requestRemoveAdsPurchase: async () => null,
+  });
+  const pendingStoredPurchase = await buyRemoveAds({
+    provider: pendingStoredProvider.provider,
+    storage: pendingStoredStorage,
+  });
+
+  assert.equal(pendingStoredPurchase.status, 'pending');
+  assert.equal(pendingStoredPurchase.entitlements.adsDisabled, false);
+  assert.equal(pendingStoredProvider.finishCalls, 0);
+  assert.equal(await pendingStoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
+
+  const notFoundStoredStorage = createMemoryPurchaseStorage();
+  await notFoundStoredStorage.setItemAsync(REMOVE_ADS_STORAGE_KEY, storedFakeRecord());
+  const notFoundStoredRestore = await restoreRemoveAdsPurchase({
+    provider: createProvider(unverifiedNativeProvider.validateRemoveAdsReceipt, {
+      restorePurchases: async () => [],
+    }).provider,
+    storage: notFoundStoredStorage,
+  });
+
+  assert.equal(notFoundStoredRestore.status, 'not_found');
+  assert.equal(notFoundStoredRestore.entitlements.adsDisabled, false);
+  assert.equal(await notFoundStoredStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY), null);
 
   for (const [label, validatedAt] of [
     ['date-only validator timestamp', '2026-05-20'],

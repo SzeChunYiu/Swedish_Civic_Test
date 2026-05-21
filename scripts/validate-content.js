@@ -1830,7 +1830,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 25;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 26;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -17199,9 +17199,30 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes(
         'const receiptValidation = await validateRemoveAdsReceipt(provider, purchase);',
       ) &&
-        normalizedPurchaseSource.includes("return createResult('pending'") &&
-        normalizedPurchaseSource.includes("return createResult('not_found'"),
+        /return createResult\(\s*'pending'/.test(purchaseSource) &&
+        /return createResult\(\s*'not_found'/.test(purchaseSource),
       'Remove Ads buy and restore flows must validate receipts before granting entitlements',
+    ],
+    [
+      /async function getFailClosedPurchaseEntitlements\(\{[\s\S]*provider,[\s\S]*storage,[\s\S]*parseStoredRemoveAdsEntitlementRecord\(storedValue\)[\s\S]*revalidateStoredRemoveAdsEntitlementRecordWithConnectedProvider\(\{[\s\S]*provider,[\s\S]*record,[\s\S]*storage,[\s\S]*\}\)/.test(
+        purchaseSource,
+      ) &&
+        /return createResult\(\s*'pending',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/.test(
+          purchaseSource,
+        ) &&
+        /return createResult\(\s*'pending',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\),\s*purchase/.test(
+          purchaseSource,
+        ) &&
+        /return createResult\(\s*'not_found',\s*await getFailClosedPurchaseEntitlements\(\{\s*provider,\s*storage\s*\}\)/.test(
+          purchaseSource,
+        ) &&
+        !normalizedPurchaseSource.includes(
+          "return createResult('pending', await getPurchaseEntitlements({ storage }))",
+        ) &&
+        !normalizedPurchaseSource.includes(
+          "return createResult('not_found', await getPurchaseEntitlements({ storage }))",
+        ),
+      'Remove Ads failed buy and restore paths must revalidate stored entitlements with the active provider before trusting storage',
     ],
     [
       normalizedPurchaseSource.includes('receiptValidationStatus =') &&
