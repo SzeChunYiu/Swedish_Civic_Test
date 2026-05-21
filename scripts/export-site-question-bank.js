@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
 const ts = require('typescript');
 const vm = require('node:vm');
 
@@ -81,10 +79,33 @@ function parseChapterNumber(chapterId) {
   return Number.parseInt(match[1], 10);
 }
 
-function buildSiteQuestionBank() {
-  const questions = loadTs('data/questions.ts', 'questions');
-  const chapters = loadTs('data/chapters.ts', 'chapters');
-  const getQuestionProvenance = loadTs('lib/content/provenance.ts', 'getQuestionProvenance');
+function loadCanonicalExportInputs() {
+  const questionModule = loadTs('data/questions.ts');
+  return {
+    questions: questionModule.questions,
+    sourceQuestions: questionModule.sourceQuestions,
+    chapters: loadTs('data/chapters.ts', 'chapters'),
+    getQuestionProvenance: loadTs('lib/content/provenance.ts', 'getQuestionProvenance'),
+  };
+}
+
+function buildPublishedQuestionListFromSourceQuestions(sourceQuestions) {
+  const derivePublishedQuestions = loadTs(
+    'lib/content/derivedQuestions.ts',
+    'derivePublishedQuestions',
+  );
+  return [
+    ...sourceQuestions,
+    ...derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1),
+  ];
+}
+
+function buildSiteQuestionBank(inputs = {}) {
+  const needsCanonical = !inputs.questions || !inputs.chapters || !inputs.getQuestionProvenance;
+  const canonical = needsCanonical ? loadCanonicalExportInputs() : {};
+  const questions = inputs.questions || canonical.questions;
+  const chapters = inputs.chapters || canonical.chapters;
+  const getQuestionProvenance = inputs.getQuestionProvenance || canonical.getQuestionProvenance;
   const chapterById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
   const chapterEmoji = new Map([
     ['ch01', '🌍'],
@@ -147,9 +168,9 @@ function buildSiteQuestionBank() {
   return { questions: siteQuestions, chapters: chapterMeta };
 }
 
-function generateUnformattedStaticSiteQuestionBankJs() {
-  const bank = buildSiteQuestionBank();
-  const source = `/* Almost Swedish - generated static question bank.
+function generateStaticSiteQuestionBankJs(inputs = {}) {
+  const bank = buildSiteQuestionBank(inputs);
+  return `/* Sveriges Medborgartest - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
    Run: node scripts/export-site-question-bank.js
 */
@@ -162,99 +183,50 @@ function generateUnformattedStaticSiteQuestionBankJs() {
   window.SMT_CHAPTERS_META = ${JSON.stringify(bank.chapters, null, 2)};
 })();
 `;
-  return formatGeneratedStaticSiteQuestionBankJs(source);
 }
 
-function formatGeneratedStaticSiteQuestionBankJs(source) {
-  const prettierBin = path.join(
-    repoRoot,
-    'node_modules',
-    '.bin',
-    process.platform === 'win32' ? 'prettier.cmd' : 'prettier',
-  );
-  if (!fs.existsSync(prettierBin)) return source;
-
-  const result = spawnSync(prettierBin, ['--stdin-filepath', 'site/questions.js'], {
-    cwd: repoRoot,
-    input: source,
-    encoding: 'utf8',
-    maxBuffer: 32 * 1024 * 1024,
-  });
-  if (result.status !== 0) {
-    throw new Error(
-      `Failed to format generated site/questions.js:\n${result.stderr || result.stdout}`,
-    );
-  }
-  return result.stdout;
-}
-
-function formatStaticSiteQuestionBankJs(source) {
-  const prettierBinPath = require.resolve('prettier/bin/prettier.cjs');
-  return execFileSync(
-    process.execPath,
-    [
-      prettierBinPath,
-      '--stdin-filepath',
-      path.join(repoRoot, 'site', 'questions.js'),
-      '--config',
-      path.join(repoRoot, '.prettierrc.json'),
-    ],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      input: source,
-      maxBuffer: 16 * 1024 * 1024,
-    },
-  );
-}
-
-function generateStaticSiteQuestionBankJs() {
-  return formatStaticSiteQuestionBankJs(generateUnformattedStaticSiteQuestionBankJs());
-}
-
-function readStaticSiteQuestionBankFromSource(source) {
+function parseStaticSiteQuestionBank(source, filename = 'site/questions.js') {
   const context = { window: {} };
-  vm.runInNewContext(source, context, { timeout: 3000 });
-  const { SMT_QUESTIONS: questions, SMT_CHAPTERS_META: chapters } = context.window;
-  if (!Array.isArray(questions) || !Array.isArray(chapters)) {
-    throw new Error('source does not define SMT_QUESTIONS and SMT_CHAPTERS_META arrays');
+  vm.runInNewContext(source, context, { filename, timeout: 3000 });
+  const questions = context.window.SMT_QUESTIONS;
+  const chapters = context.window.SMT_CHAPTERS_META;
+  if (!Array.isArray(questions)) {
+    throw new Error(`${filename} did not expose window.SMT_QUESTIONS`);
+  }
+  if (!Array.isArray(chapters)) {
+    throw new Error(`${filename} did not expose window.SMT_CHAPTERS_META`);
   }
   return { questions, chapters };
 }
 
-function comparableStaticSiteQuestionBank(source) {
-  const bank = readStaticSiteQuestionBankFromSource(source);
-  return JSON.stringify(bank);
+function changedIds(expectedItems, actualItems) {
+  const expectedById = new Map(expectedItems.map((item) => [String(item.id), item]));
+  const actualById = new Map(actualItems.map((item) => [String(item.id), item]));
+  const ids = [...new Set([...expectedById.keys(), ...actualById.keys()])].sort();
+  return ids.filter(
+    (id) => JSON.stringify(expectedById.get(id)) !== JSON.stringify(actualById.get(id)),
+  );
 }
 
-function classifyStaticSiteQuestionBankDrift(actual, expected) {
-  if (actual === expected) {
-    return {
-      kind: 'none',
-      message: 'site/questions.js matches the generated static question bank',
-    };
-  }
-
-  try {
-    if (comparableStaticSiteQuestionBank(actual) === comparableStaticSiteQuestionBank(expected)) {
-      return {
-        kind: 'format',
-        message:
-          'site/questions.js has format-only exporter drift; run node scripts/export-site-question-bank.js',
-      };
-    }
-  } catch (error) {
-    return {
-      kind: 'semantic',
-      message: `site/questions.js could not be compared semantically: ${error.message}`,
-    };
-  }
-
+function summarizeStaticQuestionBankDrift(existingSource, expectedBank = buildSiteQuestionBank()) {
+  const actualBank = parseStaticSiteQuestionBank(existingSource);
   return {
-    kind: 'semantic',
-    message:
-      'site/questions.js semantic content is out of sync; run node scripts/export-site-question-bank.js and inspect the question-bank changes',
+    questionIds: changedIds(expectedBank.questions, actualBank.questions),
+    chapterIds: changedIds(expectedBank.chapters, actualBank.chapters),
   };
+}
+
+function formatIdList(ids) {
+  const visible = ids.slice(0, 24).join(', ');
+  const suffix = ids.length > 24 ? `, ... +${ids.length - 24} more` : '';
+  return visible ? `${visible}${suffix}` : 'none';
+}
+
+function formatStaticQuestionBankDrift(drift) {
+  return [
+    `Changed question ids: ${formatIdList(drift.questionIds)}`,
+    `Changed chapter ids: ${formatIdList(drift.chapterIds)}`,
+  ].join('\n');
 }
 
 function main() {
@@ -264,7 +236,14 @@ function main() {
   if (checkMode) {
     const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
     if (existing !== generated) {
-      console.error(classifyStaticSiteQuestionBankDrift(existing, generated).message);
+      console.error(
+        'site/questions.js is out of sync; run node scripts/export-site-question-bank.js',
+      );
+      try {
+        console.error(formatStaticQuestionBankDrift(summarizeStaticQuestionBankDrift(existing)));
+      } catch (error) {
+        console.error(`Could not summarize static question-bank drift: ${error.message}`);
+      }
       process.exit(1);
     }
     const bank = buildSiteQuestionBank();
@@ -290,10 +269,11 @@ if (require.main === module) {
 }
 
 module.exports = {
+  buildPublishedQuestionListFromSourceQuestions,
   buildSiteQuestionBank,
-  classifyStaticSiteQuestionBankDrift,
-  formatStaticSiteQuestionBankJs,
+  formatStaticQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
-  generateUnformattedStaticSiteQuestionBankJs,
-  readStaticSiteQuestionBankFromSource,
+  loadCanonicalExportInputs,
+  parseStaticSiteQuestionBank,
+  summarizeStaticQuestionBankDrift,
 };
