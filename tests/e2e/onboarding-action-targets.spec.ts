@@ -76,6 +76,27 @@ const decideLaterDefaultGoalCases = [
   },
 ] as const;
 
+const startStudyingDefaultGoalCases = [
+  {
+    expectedHomeMetric: '0/10',
+    homeGoalTitle: 'Dagens mål',
+    language: 'sv',
+    settingsGoalLabel: 'Ställ in dagligt mål till 10 svar',
+    settingsGoalSummary: '10 svar per dag',
+    startStudyingLabel: 'Börja studera',
+    startStudyingVisibleText: 'Börja studera',
+  },
+  {
+    expectedHomeMetric: '0/10',
+    homeGoalTitle: "Today's goal",
+    language: 'en',
+    settingsGoalLabel: 'Set daily goal to 10 answers',
+    settingsGoalSummary: '10 answers per day',
+    startStudyingLabel: 'Start studying',
+    startStudyingVisibleText: 'Start studying',
+  },
+] as const;
+
 function collectConsoleErrors(page: Page): string[] {
   const consoleErrors: string[] = [];
 
@@ -228,6 +249,59 @@ for (const fixture of dailyGoalPersistenceCases) {
     await dismissBlockingModals(page);
     await expect(page.getByRole('heading', { name: fixture.homeGoalTitle })).toBeVisible();
     await expect(page.getByText(fixture.expectedHomeMetric)).toBeVisible();
+
+    expect(consoleErrors).toEqual([]);
+  });
+}
+
+for (const fixture of startStudyingDefaultGoalCases) {
+  test(`Onboarding Start studying keeps the default daily goal implicit in ${fixture.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
+
+    await seedFreshSettingsLanguageAndAboutSeenOnce(page, fixture.language);
+    await page.goto('/onboarding', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
+      .toBeNull();
+
+    const startStudying = page.getByRole('link', {
+      exact: true,
+      name: fixture.startStudyingLabel,
+    });
+    await expect(startStudying).toContainText(fixture.startStudyingVisibleText);
+    await expectMinimumTargetSize(startStudying, fixture.startStudyingVisibleText);
+    await startStudying.click();
+
+    await expect(page).toHaveURL(/\/home$/);
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: fixture.homeGoalTitle })).toBeVisible();
+    await expect(page.getByText(fixture.expectedHomeMetric)).toBeVisible();
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
+      .toBeNull();
+
+    await page.reload({ waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expect(page.getByRole('heading', { name: fixture.homeGoalTitle })).toBeVisible();
+    await expect(page.getByText(fixture.expectedHomeMetric)).toBeVisible();
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
+      .toBeNull();
+
+    await page.goto('/settings', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expect(page.getByText(fixture.settingsGoalSummary)).toBeVisible();
+    await expect(page.getByRole('radio', { name: fixture.settingsGoalLabel })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await expect
+      .poll(() => page.evaluate((key) => window.localStorage.getItem(key), settingsDailyGoalKey))
+      .toBeNull();
 
     expect(consoleErrors).toEqual([]);
   });
