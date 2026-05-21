@@ -115,8 +115,10 @@ test('question bank CSV has no generated single-choice duplicate stems', () => {
 
 test('CSV generated single-choice duplicate guard rejects q001 variant collapse', () => {
   const rows = readQuestionBankCsvRows();
-  const sectionPractice = rows.find((row) => row.id === 'q170');
-  const judgement = rows.find((row) => row.id === 'q173');
+  const firstGeneratedIndex = rows.findIndex((row) => row.tags.includes('published-variant'));
+  assert.notEqual(firstGeneratedIndex, -1, 'expected generated published variants');
+  const sectionPractice = rows[firstGeneratedIndex];
+  const judgement = rows[firstGeneratedIndex + 3];
   assert.ok(sectionPractice && judgement, 'expected q001 generated single-choice variants');
 
   judgement.questionSv = sectionPractice.questionSv;
@@ -132,5 +134,9 @@ test('CSV generated single-choice duplicate guard rejects q001 variant collapse'
   );
 
   assert.equal(findings.length, 1);
-  assert.match(findings[0], /content\/question-bank\.csv: q173 duplicates q170/);
+  assert.ok(
+    findings[0].includes(
+      `content/question-bank.csv: ${judgement.id} duplicates ${sectionPractice.id}`,
+    ),
+  );
 });
