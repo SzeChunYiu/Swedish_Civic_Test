@@ -397,6 +397,27 @@ test('generated true/false naturalness guards share one pattern source', () => {
   );
 });
 
+test('religious-freedom option parallelism uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const publishedQuestionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-religious-freedom-parallelism/);
+  assert.match(
+    validatorSource,
+    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated/,
+  );
+  assert.match(
+    publishedQuestionTestSource,
+    /religious-freedom option parallelism guard rejects the old wording[\s\S]*--focus-religious-freedom-parallelism/,
+  );
+});
+
 test('Mistakes route copy parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
