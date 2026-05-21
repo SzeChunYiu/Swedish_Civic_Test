@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',
@@ -8097,6 +8096,13 @@ let trueFalseQuestions = 0;
 let trueFalseOptionLabelsValidated = 0;
 let questionTagsValidated = 0;
 let questionBankCsvRowsValidated = 0;
+let questionBankCsvHeaderColumnsValidated = 0;
+let questionBankCsvUniqueHeaderNamesValidated = false;
+let questionBankCsvUhrSourcePublisherRowsValidated = 0;
+let questionBankCsvUhrSourcePublisherParityValidated = false;
+let questionBankCsvProvenanceCounts = { uhr: 0, derived: 0, editorial: 0 };
+let questionProvenanceRuntimeCasesValidated = 0;
+let questionProvenanceRuntimeParityValidated = false;
 let criminalResponsibilityCurrentnessOfficialSourcesValidated = 0;
 let criminalResponsibilityCurrentnessSourceMetadataValidated = false;
 let criminalResponsibilityCurrentnessSourceRetrievedAt = null;
@@ -16299,6 +16305,21 @@ function validateQuestionBankCsvContract() {
   }
 
   const [header, ...dataRows] = rows;
+  const duplicateHeaderNames = [
+    ...new Set(header.filter((field, index) => header.indexOf(field) !== index)),
+  ];
+  if (header.length === QUESTION_BANK_CSV_HEADER.length) {
+    questionBankCsvHeaderColumnsValidated = header.length;
+  }
+  if (duplicateHeaderNames.length) {
+    fail(
+      `content/question-bank.csv header has duplicate column name(s): ${duplicateHeaderNames.join(
+        ', ',
+      )}`,
+    );
+  } else {
+    questionBankCsvUniqueHeaderNamesValidated = true;
+  }
   if (!jsonEqual(header, QUESTION_BANK_CSV_HEADER)) {
     fail(
       `content/question-bank.csv header is ${JSON.stringify(header)}, expected ${JSON.stringify(
@@ -16312,6 +16333,25 @@ function validateQuestionBankCsvContract() {
       `content/question-bank.csv has ${dataRows.length} data rows, expected ${questions.length}`,
     );
   }
+
+  const metadataDriftCounts = {
+    uhrSourceTitle: 0,
+    uhrSourcePublisher: 0,
+    uhrSourceUrl: 0,
+    uhrSourceRetrievedAt: 0,
+  };
+  const metadataDriftFindings = {
+    uhrSourceTitle: [],
+    uhrSourcePublisher: [],
+    uhrSourceUrl: [],
+    uhrSourceRetrievedAt: [],
+  };
+  const metadataSourceFields = {
+    uhrSourceTitle: 'title',
+    uhrSourcePublisher: 'publisher',
+    uhrSourceUrl: 'url',
+    uhrSourceRetrievedAt: 'retrievedDate',
+  };
 
   dataRows.forEach((row, index) => {
     const question = questions[index];
@@ -16360,16 +16400,105 @@ function validateQuestionBankCsvContract() {
 
     QUESTION_BANK_CSV_HEADER.forEach((field, fieldIndex) => {
       if (row[fieldIndex] !== expectedRow[fieldIndex]) {
-        reject(
-          `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
-            row[fieldIndex],
-          )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
-        );
+        if (Object.prototype.hasOwnProperty.call(metadataDriftCounts, field)) {
+          rowIsValid = false;
+          metadataDriftCounts[field] += 1;
+          metadataDriftFindings[field].push(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        } else {
+          reject(
+            `content/question-bank.csv row ${rowNumber} ${label} ${field} is ${JSON.stringify(
+              row[fieldIndex],
+            )}, expected ${JSON.stringify(expectedRow[fieldIndex])}`,
+          );
+        }
       }
     });
 
+    const publisherIndex = QUESTION_BANK_CSV_HEADER.indexOf('uhrSourcePublisher');
+    if (
+      publisherIndex >= 0 &&
+      row[publisherIndex] === uhrSectionMap?.source?.publisher &&
+      hasText(row[publisherIndex])
+    ) {
+      questionBankCsvUhrSourcePublisherRowsValidated += 1;
+    }
+
+    const provenanceIndex = QUESTION_BANK_CSV_HEADER.indexOf('questionProvenance');
+    const provenance = row[provenanceIndex];
+    if (Object.prototype.hasOwnProperty.call(questionBankCsvProvenanceCounts, provenance)) {
+      questionBankCsvProvenanceCounts[provenance] += 1;
+    }
+
     if (rowIsValid) questionBankCsvRowsValidated += 1;
   });
+
+  Object.entries(metadataDriftCounts).forEach(([field, count]) => {
+    if (count <= 0) return;
+    if (count === dataRows.length && count > 1) {
+      fail(
+        `content/question-bank.csv ${field} metadata drift: ${count} rows disagree with content/uhr-section-map.json source.${metadataSourceFields[field]}`,
+      );
+      return;
+    }
+    metadataDriftFindings[field].forEach(fail);
+  });
+
+  questionBankCsvUhrSourcePublisherParityValidated =
+    questionBankCsvUhrSourcePublisherRowsValidated === questions.length;
+}
+
+function validateQuestionProvenanceRuntime() {
+  if (typeof getQuestionProvenance !== 'function') {
+    fail('question provenance runtime guard cannot load getQuestionProvenance');
+    return;
+  }
+
+  const cases = [
+    ['undefined question', undefined, 'uhr'],
+    ['null question', null, 'uhr'],
+    ['empty object', {}, 'uhr'],
+    ['array question object', [], 'uhr'],
+    ['null tags', { tags: null }, 'uhr'],
+    ['string tags', { tags: 'published-variant' }, 'uhr'],
+    ['object tags with includes', { tags: { includes: () => true } }, 'uhr'],
+    ['mixed non-string tags', { tags: ['published-variant', 123] }, 'uhr'],
+    ['plain UHR tag', { tags: ['uhr'] }, 'uhr'],
+    ['published variant tag', { tags: ['published-variant'] }, 'derived'],
+    ['editorial tag', { tags: ['editorial'] }, 'editorial'],
+    ['editorial wins over derived', { tags: ['published-variant', 'editorial'] }, 'editorial'],
+    ['unknown string tag falls back', { tags: ['supplementary'] }, 'uhr'],
+  ];
+
+  let valid = true;
+  cases.forEach(([label, question, expected]) => {
+    let actual;
+    try {
+      actual = getQuestionProvenance(question);
+    } catch (error) {
+      valid = false;
+      fail(`question provenance runtime guard ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (actual !== expected) {
+      valid = false;
+      fail(
+        `question provenance runtime guard ${label} tags returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+      return;
+    }
+
+    questionProvenanceRuntimeCasesValidated += 1;
+  });
+
+  questionProvenanceRuntimeParityValidated =
+    valid && questionProvenanceRuntimeCasesValidated === cases.length;
 }
 
 function criminalResponsibilityCurrentnessQuestionIds() {
@@ -17402,6 +17531,50 @@ function validateUhrSourceMaterialLinkParity() {
 
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
+if (process.argv.includes('--focus-question-provenance-runtime')) {
+  validateQuestionProvenanceRuntime();
+  if (failures.length) exitWithValidationFailures();
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        questionProvenanceRuntimeCasesValidated,
+        questionProvenanceRuntimeParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
+if (process.argv.includes('--focus-question-bank-csv')) {
+  validateUhrSectionMapExactSchemaKeys();
+  validateUhrSourceMaterialLinkParity();
+  validateQuestionBankCsvContract();
+  if (failures.length) exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        publishedQuestions,
+        questionBankCsvRowsValidated,
+        questionBankCsvHeaderColumnsValidated,
+        questionBankCsvUniqueHeaderNamesValidated,
+        questionBankCsvUhrSourcePublisherRowsValidated,
+        questionBankCsvUhrSourcePublisherParityValidated,
+        questionBankCsvProvenanceCounts,
+        uhrMapExactSchemaKeysValidated,
+        uhrSourceMaterialLinkParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 if (process.argv.includes('--focus-legal-route-parity')) {
   validateLegalRouteHeaderParity();
   validateLegalSectionRenderingParity();
@@ -17839,6 +18012,7 @@ validateStreakRules();
 validateXpRules();
 validateMasteryRules();
 validateWeakChapterRules();
+validateQuestionProvenanceRuntime();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -18157,6 +18331,13 @@ console.log(
       trueFalseOptionLabelsValidated,
       questionTagsValidated,
       questionBankCsvRowsValidated,
+      questionBankCsvHeaderColumnsValidated,
+      questionBankCsvUniqueHeaderNamesValidated,
+      questionBankCsvUhrSourcePublisherRowsValidated,
+      questionBankCsvUhrSourcePublisherParityValidated,
+      questionBankCsvProvenanceCounts,
+      questionProvenanceRuntimeCasesValidated,
+      questionProvenanceRuntimeParityValidated,
       criminalResponsibilityCurrentnessOfficialSourcesValidated,
       criminalResponsibilityCurrentnessSourceMetadataValidated,
       criminalResponsibilityCurrentnessSourceRetrievedAt,
