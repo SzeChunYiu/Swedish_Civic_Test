@@ -83,8 +83,38 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /Inga begrepp matchar din sökning/);
 }
 
+function assertSearchRouteLinkTargetParity(source) {
+  const requiredTargetRules = [
+    [
+      /chapterLink:\s*\{[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingVertical:\s*space\[1\]/,
+      'glossary chapter link target',
+    ],
+    [
+      /questionLink:\s*\{[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingVertical:\s*space\[1\]/,
+      'practice question link target',
+    ],
+    [
+      /backLink:\s*\{[\s\S]*borderRadius:\s*radius\.pill[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingHorizontal:\s*space\[1\.5\][\s\S]*paddingVertical:\s*space\[1\]/,
+      'bottom Browse chapters link target',
+    ],
+  ];
+
+  for (const [pattern, label] of requiredTargetRules) {
+    assert.match(source, pattern, `Search route missing ${label}`);
+  }
+
+  assert.doesNotMatch(
+    source,
+    /(chapterLink|questionLink|backLink):\s*\{[\s\S]*minHeight:\s*space\[5\]/,
+    'Search route links must not keep 40px target sizing',
+  );
+}
+
 test('search route keeps grouped Cards away from interactive descendants', () => {
-  assertSearchRouteAccessibilityParity(readSearchRoute());
+  const source = readSearchRoute();
+
+  assertSearchRouteAccessibilityParity(source);
+  assertSearchRouteLinkTargetParity(source);
 });
 
 test('search route accessibility parity rejects a grouped search form Card', () => {
@@ -132,5 +162,29 @@ test('search route accessibility parity rejects dropped term summary text', () =
   assert.throws(
     () => assertSearchRouteAccessibilityParity(mutatedSource),
     /termAccessibilityLabel/,
+  );
+});
+
+test('search route accessibility parity rejects undersized result links', () => {
+  const mutatedSource = readSearchRoute().replace(
+    '      minHeight: space[6],\n      paddingHorizontal: space[1.25],\n      paddingVertical: space[1],',
+    '      minHeight: space[5],\n      paddingHorizontal: space[1.25],\n      paddingVertical: space[0.75],',
+  );
+
+  assert.throws(
+    () => assertSearchRouteLinkTargetParity(mutatedSource),
+    /Search route links must not keep 40px target sizing/,
+  );
+});
+
+test('search route accessibility parity rejects an unstyled Browse chapters link target', () => {
+  const mutatedSource = readSearchRoute().replace(
+    /backLink:\s*\{[\s\S]*?textDecorationLine:\s*'none',\n    \},/,
+    "backLink: {\n      alignSelf: 'flex-start',\n      color: themeColors.accent,\n      fontFamily: typography.navButton.fontFamily,\n      fontSize: typography.navButton.fontSize,\n      fontWeight: typography.navButton.fontWeight,\n      textDecorationLine: 'none',\n    },",
+  );
+
+  assert.throws(
+    () => assertSearchRouteLinkTargetParity(mutatedSource),
+    /Search route missing bottom Browse chapters link target/,
   );
 });

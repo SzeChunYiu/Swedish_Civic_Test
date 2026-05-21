@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 
@@ -7,6 +7,7 @@ type Language = 'sv' | 'en';
 
 const copy = {
   sv: {
+    browseChapters: 'Gå till alla kapitel',
     clear: 'Rensa sökfältet',
     filteredSummary: /\d+ av \d+ begrepp och \d+ övningsfrågor matchar/,
     initialSummary: /\d+ samhällsbegrepp i referensen/,
@@ -18,6 +19,7 @@ const copy = {
     termName: 'Kommun',
   },
   en: {
+    browseChapters: 'Go to all chapters',
     clear: 'Clear the search field',
     filteredSummary: /\d+ of \d+ terms and \d+ practice questions match/,
     initialSummary: /\d+ civic reference terms/,
@@ -41,6 +43,16 @@ function collectConsoleErrors(page: Page) {
   return consoleErrors;
 }
 
+async function expectStableTouchTarget(locator: Locator, label: string) {
+  await expect(locator).toBeVisible();
+
+  const box = await locator.boundingBox();
+
+  expect(box, `${label} should have a rendered box`).not.toBeNull();
+  expect(box?.width ?? 0, `${label} width should be at least 44px`).toBeGreaterThanOrEqual(44);
+  expect(box?.height ?? 0, `${label} height should be at least 44px`).toBeGreaterThanOrEqual(44);
+}
+
 test.use({ viewport: { width: 390, height: 844 } });
 
 for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
@@ -61,10 +73,13 @@ for (const language of ['sv', 'en'] as const satisfies readonly Language[]) {
 
     await page.getByRole('textbox', { name: t.inputName }).fill(t.query);
     await expect(liveSummary).toHaveText(t.filteredSummary);
-    await expect(
-      page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first(),
-    ).toBeVisible();
-    await expect(page.getByRole('link', { name: t.questionLink }).first()).toBeVisible();
+    const chapterLink = page.getByRole('link', { name: /Öppna kapitlet|Open the chapter/ }).first();
+    const questionLink = page.getByRole('link', { name: t.questionLink }).first();
+    const browseLink = page.getByRole('link', { name: t.browseChapters });
+
+    await expectStableTouchTarget(chapterLink, `${language} chapter result link`);
+    await expectStableTouchTarget(questionLink, `${language} question result link`);
+    await expectStableTouchTarget(browseLink, `${language} Browse chapters link`);
     await expect(page.getByRole('button', { name: t.provenanceBadge }).first()).toBeVisible();
 
     await page.getByRole('button', { name: t.clear }).click();
