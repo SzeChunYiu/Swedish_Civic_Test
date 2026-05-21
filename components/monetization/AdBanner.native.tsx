@@ -35,7 +35,6 @@ export function AdBanner({
 
   if (!visible || !unitId) return null;
 
-  const unit = getAdUnit(placement);
   const placementLabel = copy.placementLabels[placement];
   const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;
   const accessibilityLabel = copy.accessibilityLabel(placementLabel, adStatusLabel);
