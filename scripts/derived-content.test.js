@@ -603,7 +603,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       chapterId: 'ch03',
       type: 'single_choice',
       questionSv: 'Vilken är regionernas främsta uppgift i Sverige?',
-      questionEn: "What is the foremost task of Sweden's regions?",
+      questionEn: "What is the main responsibility of Sweden's regions?",
       options: [
         {
           id: 'a',
@@ -933,9 +933,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       'That referendums in Sweden are advisory means politicians do not have to follow the result.',
     ),
   );
-  assert.ok(
-    text.includes("The foremost task of Sweden's regions is to be responsible for health care."),
-  );
+  assert.ok(text.includes("The main responsibility of Sweden's regions is health care."));
   assert.ok(
     text.includes(
       'Water and sewage, care services, snow removal, park maintenance, and adult education belong among municipal responsibilities.',

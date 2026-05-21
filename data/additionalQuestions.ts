@@ -140,7 +140,7 @@ const rawAdditionalQuestions: PracticeQuestion[] = [
     'ch03',
     { chapter: 'Så här styrs Sverige', section: 'Regioner och kommuner', pageApprox: 13 },
     'Vilken är regionernas främsta uppgift i Sverige?',
-    "What is the foremost task of Sweden's regions?",
+    "What is the main responsibility of Sweden's regions?",
     [
       ['Att ansvara för hälso- och sjukvården', 'To be responsible for health care'],
       ['Att döma i brottmål', 'To judge criminal cases'],
