@@ -2,18 +2,17 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import {
+  clearSpeechEvents,
   dismissBlockingModals,
+  installSpeechSynthesisMock,
   seedFreshSettingsLanguageAndAboutSeen,
   seedFreshSettingsLanguageAndAboutSeenWithStorage,
+  speakEvents,
+  speechEvents,
 } from './browserLaunch';
 import { startAllVisiblePractice, type PracticeHubLanguage } from './practiceHub';
 
 const accessibilityAudioPlaybackRateKey = 'accessibility\\a11y.audioPlaybackRate.v1';
-const accessibilityListenFirstAudioKey = 'accessibility\\a11y.listenFirstAudio.v1';
-
-type BrowserSpeechEvent =
-  | { type: 'cancel' }
-  | { lang: string; rate: number; text: string; type: 'speak' };
 
 async function closeLaunchAdIfPresent(page: Page) {
   const closeLaunchAd = page.getByRole('button', {
@@ -70,92 +69,6 @@ async function openPracticeQuestion(page: Page, language: PracticeHubLanguage) {
   await startAllVisiblePractice(page, language);
 }
 
-async function installSpeechSynthesisMock(page: Page) {
-  await page.addInitScript(() => {
-    const speechEvents: BrowserSpeechEvent[] = [];
-    const speechState = {
-      paused: false,
-      pending: false,
-      speaking: false,
-    };
-
-    class MockSpeechSynthesisUtterance {
-      lang = '';
-      pitch = 1;
-      rate = 1;
-      text: string;
-      voice = null;
-      volume = 1;
-
-      constructor(text: string) {
-        this.text = String(text);
-      }
-    }
-
-    Object.defineProperty(window, '__SMT_SPEECH_EVENTS__', {
-      configurable: true,
-      value: speechEvents,
-    });
-    Object.defineProperty(window, 'SpeechSynthesisUtterance', {
-      configurable: true,
-      value: MockSpeechSynthesisUtterance,
-    });
-    Object.defineProperty(window, 'speechSynthesis', {
-      configurable: true,
-      value: {
-        cancel() {
-          speechState.speaking = false;
-          speechState.pending = false;
-          speechEvents.push({ type: 'cancel' });
-        },
-        get paused() {
-          return speechState.paused;
-        },
-        get pending() {
-          return speechState.pending;
-        },
-        get speaking() {
-          return speechState.speaking;
-        },
-        getVoices() {
-          return [];
-        },
-        pause() {
-          speechState.paused = true;
-        },
-        resume() {
-          speechState.paused = false;
-        },
-        speak(utterance: MockSpeechSynthesisUtterance) {
-          speechState.speaking = true;
-          speechEvents.push({
-            lang: utterance.lang,
-            rate: utterance.rate,
-            text: utterance.text,
-            type: 'speak',
-          });
-        },
-      },
-    });
-  });
-}
-
-async function speechEvents(page: Page): Promise<BrowserSpeechEvent[]> {
-  return page.evaluate(() => {
-    const typedWindow = window as typeof window & {
-      __SMT_SPEECH_EVENTS__?: BrowserSpeechEvent[];
-    };
-
-    return [...(typedWindow.__SMT_SPEECH_EVENTS__ ?? [])];
-  });
-}
-
-function speakEvents(events: BrowserSpeechEvent[]) {
-  return events.filter(
-    (event): event is Extract<BrowserSpeechEvent, { type: 'speak' }> => event.type === 'speak',
-  );
-}
-
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -190,7 +103,9 @@ test('practice audio control follows the selected question language', async ({ p
   expect(consoleErrors).toEqual([]);
 });
 
-test('listen-first audio autoplays questions and stops on answer boundaries', async ({ page }) => {
+test('listen-first speech synthesis autoplay starts from Settings and stays out of exam', async ({
+  page,
+}) => {
   const consoleErrors: string[] = [];
 
   page.on('console', (message) => {
@@ -202,15 +117,32 @@ test('listen-first audio autoplays questions and stops on answer boundaries', as
   await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, 'en', {
     localStorageValues: {
       [accessibilityAudioPlaybackRateKey]: '1.25',
-      [accessibilityListenFirstAudioKey]: 'true',
     },
+    reseedOnNavigation: false,
   });
 
   await openPracticeQuestion(page, 'en');
+  await expect(page.getByText('Question 1', { exact: true })).toBeVisible();
+  expect(speakEvents(await speechEvents(page))).toHaveLength(0);
 
-  await expect
-    .poll(async () => speakEvents(await speechEvents(page)).length)
-    .toBeGreaterThanOrEqual(1);
+  await page.goto('/settings', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+  const enableListenFirst = page.getByRole('switch', {
+    name: 'Enable automatic playback for new questions',
+  });
+  await expect(enableListenFirst).toHaveAttribute('aria-checked', 'false');
+  await enableListenFirst.click();
+  await expect(
+    page.getByRole('switch', { name: 'Disable automatic playback for new questions' }),
+  ).toHaveAttribute('aria-checked', 'true');
+  await clearSpeechEvents(page);
+
+  await openPracticeQuestion(page, 'en');
+
+  await expect.poll(async () => speakEvents(await speechEvents(page)).length).toBe(1);
+  await page.waitForTimeout(250);
+  expect(speakEvents(await speechEvents(page))).toHaveLength(1);
 
   const practiceSpeaks = speakEvents(await speechEvents(page));
   const practiceQuestionAudio = practiceSpeaks[0];
@@ -228,6 +160,34 @@ test('listen-first audio autoplays questions and stops on answer boundaries', as
     .poll(async () => (await speechEvents(page)).filter((event) => event.type === 'cancel').length)
     .toBeGreaterThan(cancelCountBeforeAnswer);
 
+  const cancelCountBeforeNext = (await speechEvents(page)).filter(
+    (event) => event.type === 'cancel',
+  ).length;
+  await page.getByRole('button', { name: 'Move to the next practice question' }).click();
+  await expect
+    .poll(async () => (await speechEvents(page)).filter((event) => event.type === 'cancel').length)
+    .toBeGreaterThan(cancelCountBeforeNext);
+  await expect
+    .poll(async () => speakEvents(await speechEvents(page)).length)
+    .toBe(practiceSpeaks.length + 1);
+  await page.waitForTimeout(250);
+  expect(speakEvents(await speechEvents(page))).toHaveLength(practiceSpeaks.length + 1);
+
+  await clearSpeechEvents(page);
+  await page.goto('/exam', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+  await dismissBlockingModals(page);
+  await expect(page.getByRole('heading', { name: 'Mock exam' }).first()).toBeVisible();
+  const startMockExam = page.getByRole('button', { name: 'Start mock exam' });
+  if (await startMockExam.isVisible()) {
+    await expect(startMockExam).toBeEnabled();
+    await startMockExam.click();
+  }
+  await expect(page.getByText('0/20 answered')).toBeVisible();
+  await page.waitForTimeout(250);
+  expect(speakEvents(await speechEvents(page))).toHaveLength(0);
+
+  await clearSpeechEvents(page);
   await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
   await dismissBlockingModals(page);
@@ -236,7 +196,8 @@ test('listen-first audio autoplays questions and stops on answer boundaries', as
     .poll(async () => speakEvents(await speechEvents(page)).length)
     .toBeGreaterThanOrEqual(1);
 
-  const quizQuestionAudio = speakEvents(await speechEvents(page))[0];
+  const quizSpeaks = speakEvents(await speechEvents(page));
+  const quizQuestionAudio = quizSpeaks[0];
   expect(quizQuestionAudio.lang).toBe('sv-SE');
   expect(quizQuestionAudio.rate).toBe(1.25);
   expect(quizQuestionAudio.text).toContain('Alternativ A.');
