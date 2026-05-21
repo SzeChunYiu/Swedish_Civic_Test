@@ -1171,6 +1171,37 @@ test('derivePublishedQuestions renders q877/q878 human-rights true/false as dire
   );
 });
 
+test('derivePublishedQuestions renders q050 source-criticism true/false as direct propositions', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q050', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q050', 'falseStatement');
+
+  assert.equal(
+    byId.get(trueStatementId)?.questionSv,
+    'Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt.',
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionEn,
+    'Source criticism means questioning and checking whether information is correct.',
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(
+    byId.get(falseStatementId)?.questionSv,
+    'Källkritik innebär att man aldrig läser nyheter.',
+  );
+  assert.equal(
+    byId.get(falseStatementId)?.questionEn,
+    'Source criticism means never reading news.',
+  );
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+
+  const text = [byId.get(trueStatementId), byId.get(falseStatementId)]
+    .map((question) => `${question?.questionSv} ${question?.questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(text, /^(?:Att vara källkritisk betyder|To be source-critical means)\b/im);
+});
+
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions, sourceQuestions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));

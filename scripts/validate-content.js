@@ -502,6 +502,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bom offentlig makt i Sverige\b/i,
   /\bmeans it gives\b/i,
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
+  /^Att vara källkritisk betyder\b/i,
+  /^To be source-critical means\b/i,
   /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
   /\binnebär att den ger\b/i,
   /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
@@ -2383,8 +2385,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   },
   {
     label: 'primary onboarding link 48px flex target',
-    pattern:
-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
   },
   {
     label: 'secondary onboarding link 48px flex target',

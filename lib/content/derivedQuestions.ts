@@ -1410,6 +1410,21 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
 
+  if (source.id === 'q050') {
+    if (/^Att ifrågasätta och kontrollera om information är korrekt$/i.test(answer)) {
+      return 'Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt';
+    }
+    if (/^Att aldrig läsa nyheter$/i.test(answer)) {
+      return 'Källkritik innebär att man aldrig läser nyheter';
+    }
+    if (/^Att bara lita på sociala medier$/i.test(answer)) {
+      return 'Källkritik innebär att man bara litar på sociala medier';
+    }
+    if (/^Att sprida uppgifter innan man kontrollerar dem$/i.test(answer)) {
+      return 'Källkritik innebär att man sprider uppgifter innan man kontrollerar dem';
+    }
+  }
+
   if (source.id === 'q151') {
     if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
       return 'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam';
@@ -1940,6 +1955,21 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+
+  if (source.id === 'q050') {
+    if (/^Questioning and checking whether information is correct$/i.test(answer)) {
+      return 'Source criticism means questioning and checking whether information is correct';
+    }
+    if (/^Never reading news$/i.test(answer)) {
+      return 'Source criticism means never reading news';
+    }
+    if (/^Only trusting social media$/i.test(answer)) {
+      return 'Source criticism means only trusting social media';
+    }
+    if (/^Spreading information before checking it$/i.test(answer)) {
+      return 'Source criticism means spreading information before checking it';
+    }
+  }
 
   if (source.id === 'q151') {
     if (

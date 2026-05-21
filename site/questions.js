@@ -29005,8 +29005,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'To be source-critical means questioning and checking whether information is correct.',
-        sv: 'Att vara källkritisk betyder att ifrågasätta och kontrollera om information är korrekt.',
+        en: 'Source criticism means questioning and checking whether information is correct.',
+        sv: 'Källkritik innebär att man ifrågasätter och kontrollerar om information är korrekt.',
       },
       opts: [
         {
@@ -29045,8 +29045,8 @@
       chapter: 'Ch. 06 · The role of the media',
       type: 'true_false',
       q: {
-        en: 'To be source-critical means never reading news.',
-        sv: 'Att vara källkritisk betyder att aldrig läsa nyheter.',
+        en: 'Source criticism means never reading news.',
+        sv: 'Källkritik innebär att man aldrig läser nyheter.',
       },
       opts: [
         {
