@@ -937,7 +937,7 @@
       title.className = 'v11-weak-title';
       title.textContent =
         ch.title && typeof ch.title === 'object'
-          ? ch.title[l] || ch.title.en || 'Chapter ' + ch.id
+          ? ch.title[lang()] || ch.title.en || 'Chapter ' + ch.id
           : ch.title;
       const acc = document.createElement('span');
       acc.className = 'v11-weak-acc';

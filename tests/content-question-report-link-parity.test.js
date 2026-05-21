@@ -3,8 +3,101 @@ const { execFileSync, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const ts = require('typescript');
+
+const { createTsLoader } = require('./helpers/monetizationRuntimeHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
+const loadTs = createTsLoader(repoRoot);
+
+const questionReportLinkModuleMocks = {
+  '../Button': {
+    Button() {
+      return null;
+    },
+  },
+  'expo-router': {
+    Link() {
+      return null;
+    },
+  },
+  'react-native': {
+    StyleSheet: {
+      create(styles) {
+        return styles;
+      },
+    },
+    View() {
+      return null;
+    },
+  },
+  'react/jsx-runtime': {
+    Fragment: Symbol('Fragment'),
+    jsx() {
+      return null;
+    },
+    jsxs() {
+      return null;
+    },
+  },
+};
+
+function loadQuestionReportLinkExports() {
+  const filePath = path.join(repoRoot, 'components/quiz/QuestionReportLink.tsx');
+  const output = ts.transpileModule(fs.readFileSync(filePath, 'utf8'), {
+    compilerOptions: {
+      jsx: ts.JsxEmit.ReactJSX,
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+    },
+  }).outputText;
+  const mod = { exports: {} };
+
+  function localRequire(specifier) {
+    if (Object.hasOwn(questionReportLinkModuleMocks, specifier)) {
+      return questionReportLinkModuleMocks[specifier];
+    }
+    if (specifier === '../../lib/quiz/questionText') {
+      return loadTs('lib/quiz/questionText.ts');
+    }
+    if (specifier === '../../lib/theme') {
+      return { space: { 6: 48 } };
+    }
+    return require(specifier);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
+}
+
+function createReportQuestion() {
+  return {
+    chapterId: 'ch02',
+    correctOptionId: 'a',
+    difficulty: 'easy',
+    explanationEn: 'Explanation',
+    explanationSv: 'Förklaring',
+    id: 'q id/å?',
+    options: [
+      { id: 'a', textEn: 'Vote & choose', textSv: 'Rösta & välja' },
+      { id: 'b', textEn: 'Pay a fee', textSv: 'Betala en avgift' },
+    ],
+    questionEn: 'What can citizens do?',
+    questionSv: 'Vad kan medborgare göra?',
+    reviewStatus: 'published',
+    tags: [],
+    type: 'single_choice',
+    uhrReference: {
+      chapter: 'Demokrati & värden',
+      pageApprox: 12,
+      section: 'Riksdagens uppgifter',
+    },
+  };
+}
+
+function supportUrl(href) {
+  return new URL(href, 'https://example.test');
+}
 
 function parseValidationSummary() {
   const output = execFileSync(
@@ -51,6 +144,72 @@ test('question report CTA is wired from question surfaces to support context', (
     packageJson.scripts['test:content'],
     /tests\/content-question-report-link-parity\.test\.js/,
   );
+});
+
+test('buildQuestionReportSupportHref encodes selected-answer support context deterministically', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const href = buildQuestionReportSupportHref({
+    language: 'en',
+    question: createReportQuestion(),
+    screen: 'practice',
+    selectedOptionId: 'a',
+  });
+  const url = supportUrl(href);
+
+  assert.equal(
+    href,
+    '/support?questionId=q%20id%2F%C3%A5%3F&source=Source%3A%20Sverige%20i%20fokus%2C%20Demokrati%20%26%20v%C3%A4rden%2C%20Riksdagens%20uppgifter%2C%20p.%2012&language=en&reportScreen=practice&screen=practice&selectedAnswer=Vote%20%26%20choose',
+  );
+  assert.equal(url.pathname, '/support');
+  assert.equal(url.searchParams.get('questionId'), 'q id/å?');
+  assert.equal(
+    url.searchParams.get('source'),
+    'Source: Sverige i fokus, Demokrati & värden, Riksdagens uppgifter, p. 12',
+  );
+  assert.equal(url.searchParams.get('language'), 'en');
+  assert.equal(url.searchParams.get('reportScreen'), 'practice');
+  assert.equal(url.searchParams.get('screen'), 'practice');
+  assert.equal(url.searchParams.get('selectedAnswer'), 'Vote & choose');
+});
+
+test('buildQuestionReportSupportHref omits missing or unknown selected answers', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const question = createReportQuestion();
+
+  for (const selectedOptionId of [undefined, null, 'missing']) {
+    const url = supportUrl(
+      buildQuestionReportSupportHref({
+        language: 'sv',
+        question,
+        screen: 'chapter',
+        selectedOptionId,
+      }),
+    );
+
+    assert.equal(url.searchParams.get('questionId'), 'q id/å?');
+    assert.equal(
+      url.searchParams.get('source'),
+      'Källa: Sverige i fokus, Demokrati & värden, Riksdagens uppgifter, s. 12',
+    );
+    assert.equal(url.searchParams.get('language'), 'sv');
+    assert.equal(url.searchParams.get('reportScreen'), 'chapter');
+    assert.equal(url.searchParams.get('screen'), 'chapter');
+    assert.equal(url.searchParams.has('selectedAnswer'), false);
+  }
+});
+
+test('buildQuestionReportSupportHref selects localized answer text before encoding', () => {
+  const { buildQuestionReportSupportHref } = loadQuestionReportLinkExports();
+  const url = supportUrl(
+    buildQuestionReportSupportHref({
+      language: 'sv',
+      question: createReportQuestion(),
+      screen: 'quiz',
+      selectedOptionId: 'a',
+    }),
+  );
+
+  assert.equal(url.searchParams.get('selectedAnswer'), 'Rösta & välja');
 });
 
 test('question report parity rejects dropping the practice feedback CTA', () => {

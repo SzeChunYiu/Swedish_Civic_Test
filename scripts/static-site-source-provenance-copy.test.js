@@ -397,6 +397,50 @@ function sourceProvenanceSurface() {
     .replace(/<[^>]+>/g, ' ');
 }
 
+function staticExtraI18n() {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(read('site/i18n-extras.js'), context, { timeout: 3000 });
+  return context.window.__i18n_extra;
+}
+
+const extraSourceProvenanceLocales = [
+  'zh-Hans',
+  'zh-Hant',
+  'ar',
+  'ckb',
+  'fa',
+  'pl',
+  'so',
+  'ti',
+  'tr',
+  'uk',
+];
+
+const extraSourceProvenanceKeys = [
+  'terms.s3.p',
+  'sources.lede',
+  'sources.meta3.v',
+  'sources.s1.li1',
+  'sources.s1.li2',
+  'sources.s1.li3',
+  'sources.s4.li1',
+  'settings.sources.hint',
+];
+
+const staleExtraSourceFragments = {
+  'zh-Hans': ['今天的题库仅来自 UHR', '不会列出其他来源系列'],
+  'zh-Hant': ['目前題庫僅採用 UHR', '不會列出其他來源類別'],
+  ar: ['يعتمد البنك اليوم على UHR فقط', 'ولا ندرج عائلات مصادر أخرى'],
+  ckb: ['بانکەکە ئەمڕۆ تەنها UHRـە', 'خێزانە سەرچاوەکانی تر ناخەینە لیستەوە'],
+  fa: ['بانک امروز تنها UHR است', 'خانواده‌های منبع دیگر را فهرست نمی‌کنیم'],
+  pl: ['Baza opiera się dziś wyłącznie na UHR', 'Nie wymieniamy innych rodzin źródeł'],
+  so: ['Bangigu maanta waa UHR-kaliya', 'Ma liiseyno qoysaska kale ee ilaha'],
+  ti: ['እታ ባንኪ ሎሚ UHR-only እያ', 'ካልኦት ስድራቤታት ምንጪ ኣይንዝርዝርን'],
+  tr: ["Banka bugün yalnızca UHR'ye dayanıyor", 'başka kaynak ailelerini listelemeyiz'],
+  uk: ['Сьогодні банк лише на основі UHR', 'Ми не перелічуємо інші родини джерел'],
+};
+
 test('static source claims match the shipped question-bank source titles', () => {
   const indexHtml = read('site/index.html');
   const questionSourceTitles = staticQuestionSourceTitles();
@@ -563,6 +607,67 @@ test('static Sources no-JS fallback rejects stale UHR-only provenance copy', () 
       ),
     /terms\.s3\.p no-JS fallback should match/,
   );
+});
+
+test('static source provenance copy covers extra locale UHR and Derived counts', () => {
+  const extraI18n = staticExtraI18n();
+
+  for (const locale of extraSourceProvenanceLocales) {
+    const dictionary = extraI18n?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary should exist`);
+
+    const guardedValues = extraSourceProvenanceKeys.map((key) => {
+      const value = dictionary[key];
+      assert.equal(typeof value, 'string', `${locale}.${key} should be translated`);
+      assert.notEqual(value.trim(), '', `${locale}.${key} should not be empty`);
+      return value;
+    });
+    const sourceAndTermsSurface = [
+      dictionary['terms.s3.p'],
+      dictionary['sources.lede'],
+      dictionary['sources.meta3.v'],
+      dictionary['sources.s1.li1'],
+      dictionary['sources.s1.li2'],
+      dictionary['sources.s1.li3'],
+      dictionary['sources.s4.li1'],
+    ].join('\n');
+
+    assert.notEqual(
+      dictionary['sources.meta3.v'],
+      'Sverige i fokus',
+      `${locale} Sources current-bank value should expose UHR + Derived, not only the title`,
+    );
+    assert.match(sourceAndTermsSurface, /179/, `${locale} source copy should include UHR count`);
+    assert.match(
+      sourceAndTermsSurface,
+      /716/,
+      `${locale} source copy should include Derived count`,
+    );
+    assert.match(sourceAndTermsSurface, /\bUHR\b/, `${locale} source copy should name UHR`);
+    assert.match(
+      `${dictionary['terms.s3.p']}\n${dictionary['sources.lede']}`,
+      /<strong>[\s\S]*?<\/strong>/,
+      `${locale} source copy should mention visible per-question provenance badges`,
+    );
+    assert.match(
+      dictionary['settings.sources.hint'],
+      /179/,
+      `${locale} UHR-only setting hint should use the current direct-UHR count`,
+    );
+    assert.doesNotMatch(
+      guardedValues.join('\n'),
+      /169|۱۶۹/,
+      `${locale} extra source copy should not keep the stale direct-UHR count`,
+    );
+
+    for (const staleFragment of staleExtraSourceFragments[locale]) {
+      assert.doesNotMatch(
+        sourceAndTermsSurface,
+        new RegExp(staleFragment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+        `${locale} source copy should not keep stale UHR-only/future-source wording`,
+      );
+    }
+  }
 });
 
 test('static ebook prose provenance is footnoted from concrete source metadata', () => {
