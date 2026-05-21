@@ -3,6 +3,13 @@ import { Platform } from 'react-native';
 import { AdEventType, InterstitialAd } from 'react-native-google-mobile-ads';
 
 import { getPlatformAdUnitId, shouldShowAd } from '../../lib/monetization/ads';
+import {
+  createPracticeInterstitialAttemptState,
+  PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS,
+  PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS,
+  reducePracticeInterstitialAttemptState,
+  type PracticeInterstitialAttemptEvent,
+} from '../../lib/monetization/practiceInterstitialAttempt';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type { PremiumEntitlements } from '../../types/monetization';
@@ -45,15 +52,45 @@ export function PracticeInterstitialAd({
     let unsubscribeError: (() => void) | undefined;
     let unsubscribeOpened: (() => void) | undefined;
     let unsubscribeClosed: (() => void) | undefined;
-    let attemptSettled = false;
-    let showStarted = false;
+    let loadTimeout: ReturnType<typeof setTimeout> | undefined;
+    let showTimeout: ReturnType<typeof setTimeout> | undefined;
+    let attemptState = createPracticeInterstitialAttemptState();
 
-    const finishAttempt = () => {
-      interstitialLoadInFlight = false;
-      attemptSettled = true;
+    const clearAttemptTimers = () => {
+      if (loadTimeout) {
+        clearTimeout(loadTimeout);
+        loadTimeout = undefined;
+      }
+      if (showTimeout) {
+        clearTimeout(showTimeout);
+        showTimeout = undefined;
+      }
     };
     const consumeShowKey = () => {
       lastInterstitialShowKey = showKey;
+    };
+    const applyAttemptEvent = (event: PracticeInterstitialAttemptEvent) => {
+      const previousState = attemptState;
+      attemptState = reducePracticeInterstitialAttemptState(attemptState, event);
+      if (attemptState === previousState) return;
+
+      interstitialLoadInFlight = attemptState.inFlight;
+      if (!previousState.showKeyConsumed && attemptState.showKeyConsumed) {
+        consumeShowKey();
+      }
+      if (previousState.phase === 'loading' && attemptState.phase === 'showing') {
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+          loadTimeout = undefined;
+        }
+        showTimeout = setTimeout(
+          () => applyAttemptEvent('show_timeout'),
+          PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS,
+        );
+      }
+      if (!previousState.settled && attemptState.settled) {
+        clearAttemptTimers();
+      }
     };
 
     try {
@@ -61,37 +98,38 @@ export function PracticeInterstitialAd({
         requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly,
       });
 
-      interstitialLoadInFlight = true;
+      interstitialLoadInFlight = attemptState.inFlight;
+      loadTimeout = setTimeout(
+        () => applyAttemptEvent('load_timeout'),
+        PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS,
+      );
 
       unsubscribeLoaded = interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
-        showStarted = true;
+        applyAttemptEvent('loaded');
 
         try {
           void Promise.resolve(interstitialAd.show())
             .then(() => {
-              consumeShowKey();
-              finishAttempt();
+              applyAttemptEvent('show_resolved');
             })
             .catch(() => {
-              finishAttempt();
+              applyAttemptEvent('show_rejected');
             });
         } catch {
-          finishAttempt();
+          applyAttemptEvent('show_rejected');
         }
       });
 
       unsubscribeError = interstitialAd.addAdEventListener(AdEventType.ERROR, () => {
-        finishAttempt();
+        applyAttemptEvent('error');
       });
 
       unsubscribeOpened = interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
-        consumeShowKey();
-        finishAttempt();
+        applyAttemptEvent('opened');
       });
 
       unsubscribeClosed = interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
-        consumeShowKey();
-        finishAttempt();
+        applyAttemptEvent('closed');
       });
 
       interstitialAd.load();
@@ -100,16 +138,15 @@ export function PracticeInterstitialAd({
         unsubscribeError?.();
         unsubscribeOpened?.();
         unsubscribeClosed?.();
-        if (!showStarted && !attemptSettled) {
-          finishAttempt();
-        }
+        applyAttemptEvent('cleanup');
       };
     } catch {
       unsubscribeLoaded?.();
       unsubscribeError?.();
       unsubscribeOpened?.();
       unsubscribeClosed?.();
-      finishAttempt();
+      clearAttemptTimers();
+      applyAttemptEvent('error');
       return undefined;
     }
   }, [entitlementsReady, mobileAdsConsent, resolvedEntitlements, showKey]);
