@@ -119,7 +119,6 @@ function listInlineStyleAssetReferences(indexHtml) {
   );
 }
 
-
 function listSrcSetReferences(value) {
   return value
     .replace(/\bdata:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
@@ -131,7 +130,8 @@ function listSrcSetReferences(value) {
 
 function listHtmlDirectAssetReferences(indexHtml) {
   const references = [];
-  const attributePattern = /\b(src|href|poster|srcset|imagesrcset|style)\s*=\s*([\"'])([\s\S]*?)\2/gi;
+  const attributePattern =
+    /\b(src|href|poster|srcset|imagesrcset|style)\s*=\s*([\"'])([\s\S]*?)\2/gi;
 
   for (const match of indexHtml.matchAll(attributePattern)) {
     const attributeName = match[1].toLowerCase();
