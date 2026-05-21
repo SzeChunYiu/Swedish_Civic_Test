@@ -60,6 +60,10 @@ function runPackageTest(args, env) {
   });
 }
 
+function countSourceOccurrences(source, token) {
+  return source.match(new RegExp(`\\b${token}\\b`, 'g'))?.length ?? 0;
+}
+
 test('npm test keeps selector routing in the project dispatcher', () => {
   const pkg = readPackageJson();
   const testContentScript = pkg.scripts['test:content'];
@@ -557,6 +561,36 @@ test('generated civic statement parity uses the production generator only', () =
   );
   assert.doesNotMatch(validatorSource, /folkomröstningar i Sverige är rådgivande/);
   assert.doesNotMatch(validatorSource, /Some people who are not Swedish citizens may vote/);
+});
+
+test('dead generated helper mirror code stays out of validate-content', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  for (const helperName of [
+    'firstSentence',
+    'normalizeStatementForComparison',
+    'isTrueFalseSource',
+  ]) {
+    assert.equal(
+      countSourceOccurrences(validatorSource, helperName),
+      0,
+      `${helperName} must not remain as dead generated-statement mirror code`,
+    );
+  }
+
+  assert.match(validatorSource, /function stripTrueFalsePromptSv\(/);
+  assert.match(validatorSource, /function stripTrueFalsePromptEn\(/);
+  assert.ok(
+    countSourceOccurrences(validatorSource, 'stripTrueFalsePromptSv') > 1,
+    'stripTrueFalsePromptSv should remain used by source-citation cleanup',
+  );
+  assert.ok(
+    countSourceOccurrences(validatorSource, 'stripTrueFalsePromptEn') > 1,
+    'stripTrueFalsePromptEn should remain used by source-citation cleanup',
+  );
 });
 
 test('religious-freedom option parallelism uses focused content validation routing', () => {

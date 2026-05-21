@@ -7495,17 +7495,6 @@ function stripTrueFalsePromptSv(value) {
 function stripTrueFalsePromptEn(value) {
   return stripFinalPunctuation(value.replace(/^True or false:\s*/i, ''));
 }
-function firstSentence(value) {
-  const trimmed = value.trim();
-  const match = trimmed.match(/^(.+?[.!?])(?:\s|$)/);
-  return stripFinalPunctuation(match?.[1] ?? trimmed);
-}
-function normalizeStatementForComparison(value) {
-  return stripFinalPunctuation(value).replace(/\s+/g, ' ').trim().toLowerCase();
-}
-function isTrueFalseSource(source) {
-  return source.type === 'true_false' && source.options.length === 2;
-}
 function isIsoDate(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const parsed = new Date(`${value}T00:00:00Z`);
