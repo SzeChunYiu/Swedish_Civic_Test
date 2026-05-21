@@ -2154,6 +2154,25 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
 
+  if (source.id === 'q062') {
+    if (
+      /^Services and activities that the state, regions, and municipalities are responsible for$/i.test(
+        answer,
+      )
+    ) {
+      return 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for';
+    }
+    if (/^All privately owned companies$/i.test(answer)) {
+      return 'The public sector in Sweden consists only of privately owned companies';
+    }
+    if (/^Only banks and insurance companies$/i.test(answer)) {
+      return 'The public sector in Sweden consists only of banks and insurance companies';
+    }
+    if (/^Only non-profit associations$/i.test(answer)) {
+      return 'The public sector in Sweden consists only of non-profit associations';
+    }
+  }
+
   if (source.id === 'q146') {
     if (/^To try to persuade others of their political ideas$/i.test(answer)) {
       return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
