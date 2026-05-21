@@ -96,6 +96,6 @@ test('Traditional Chinese preview does not enable zh-Hant runtime release', () =
   assert.match(locales, /code: 'zh-Hant',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales['zh-Hant'].appAvailable, false);
   assert.equal(readiness.locales['zh-Hant'].uiStrings, 'not_started');
-  assert.equal(readiness.locales['zh-Hant'].questionContent, 'pilot_q001_q180_machine_assisted');
+  assert.equal(readiness.locales['zh-Hant'].questionContent, 'pilot_q001_q181_machine_assisted');
   assert.equal(readiness.locales['zh-Hant'].releaseGate, 'blocked');
 });

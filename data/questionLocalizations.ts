@@ -213,6 +213,7 @@ export const QUESTION_LOCALIZATION_PILOT_IDS = [
   'q178',
   'q179',
   'q180',
+  'q181',
 ] as const;
 
 export const questionLocalizationPilot: Record<
@@ -13968,6 +13969,61 @@ export const questionLocalizationPilot: Record<
         ti: 'ኣብ ሰሜን ኣመሪካ',
         tr: 'Kuzey Amerika’da',
         uk: 'У Північній Америці',
+      },
+    },
+    explanationText: {
+      'zh-Hant':
+        '瑞典位於北歐的北歐地區。北歐地區包括丹麥、芬蘭、冰島、挪威和瑞典，屬於北歐的一部分。',
+      'zh-Hans':
+        '瑞典位于北欧的北欧地区。北欧地区包括丹麦、芬兰、冰岛、挪威和瑞典，属于北欧的一部分。',
+      ar: 'تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا. وتشمل هذه المنطقة الدنمارك وفنلندا وآيسلندا والنرويج والسويد، وهي جزء من شمال أوروبا.',
+      ckb: 'سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت. ناوچەی نۆردیک دانمارک، فینلاند، ئایسلاند، نەرویج و سوید دەگرێتەوە و بەشێکە لە باکووری ئەوروپا.',
+      fa: 'سوئد در منطقه نوردیک در شمال اروپا قرار دارد. منطقه نوردیک شامل دانمارک، فنلاند، ایسلند، نروژ و سوئد است و بخشی از شمال اروپا به شمار می‌آید.',
+      pl: 'Szwecja leży w regionie nordyckim w północnej Europie. Region nordycki obejmuje Danię, Finlandię, Islandię, Norwegię i Szwecję oraz jest częścią północnej Europy.',
+      so: 'Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub. Gobolka Nordic waxaa ka mid ah Denmark, Finland, Iceland, Norway iyo Iswiidhan, waana qayb ka mid ah Waqooyiga Yurub.',
+      ti: 'ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ። ናይ ኖርዲክ ክልል ዴንማርክ፣ ፊንላንድ፣ ኣይስላንድ፣ ኖርወይን ሽወደንን የጠቓልል፣ እዚ ድማ ክፋል ሰሜን ኤውሮጳ እዩ።',
+      tr: 'İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır. Nordik bölge Danimarka, Finlandiya, İzlanda, Norveç ve İsveç’i kapsar ve Kuzey Avrupa’nın bir parçasıdır.',
+      uk: 'Швеція розташована в Північній Європі, у скандинавському регіоні. Скандинавський регіон охоплює Данію, Фінляндію, Ісландію, Норвегію та Швецію і є частиною Північної Європи.',
+    },
+  },
+
+  q181: {
+    questionText: {
+      'zh-Hant': '瑞典位於北歐的北歐地區。',
+      'zh-Hans': '瑞典位于北欧的北欧地区。',
+      ar: 'تقع السويد في منطقة الشمال الأوروبي في شمال أوروبا.',
+      ckb: 'سوید لە ناوچەی نۆردیک لە باکووری ئەوروپا دەکەوێت.',
+      fa: 'سوئد در منطقه نوردیک در شمال اروپا قرار دارد.',
+      pl: 'Szwecja leży w regionie nordyckim w północnej Europie.',
+      so: 'Iswiidhan waxay ku taallaa gobolka Nordic ee Waqooyiga Yurub.',
+      ti: 'ሽወደን ኣብ ናይ ኖርዲክ ክልል ኣብ ሰሜን ኤውሮጳ ትርከብ።',
+      tr: 'İsveç, Kuzey Avrupa’daki Nordik bölgede yer alır.',
+      uk: 'Швеція розташована в Північній Європі, у скандинавському регіоні.',
+    },
+    options: {
+      true: {
+        'zh-Hant': '正確',
+        'zh-Hans': '正确',
+        ar: 'صحيح',
+        ckb: 'ڕاستە',
+        fa: 'درست',
+        pl: 'Prawda',
+        so: 'Sax',
+        ti: 'ትኽክል',
+        tr: 'Doğru',
+        uk: 'Правда',
+      },
+      false: {
+        'zh-Hant': '錯誤',
+        'zh-Hans': '错误',
+        ar: 'خطأ',
+        ckb: 'هەڵەیە',
+        fa: 'نادرست',
+        pl: 'Fałsz',
+        so: 'Khalad',
+        ti: 'ጌጋ',
+        tr: 'Yanlış',
+        uk: 'Неправда',
       },
     },
     explanationText: {
