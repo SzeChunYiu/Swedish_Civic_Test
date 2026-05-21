@@ -76,8 +76,8 @@ test('home route title and dashboard card headings stay accessible as headers', 
   assert.doesNotMatch(source, /svenska samhällskunskaper|samhällskunskaper/i);
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
-  assert.match(source, /Gå till övningsprovet/);
-  assert.match(source, /gå till övningsprovet när steget är klart/);
+  assert.match(source, /Gå till övningsprov/);
+  assert.match(source, /gå till övningsprov när steget är klart/);
   assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.doesNotMatch(source, /Redoindikator|Readiness indicator|Provredo|Exam readiness/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
@@ -331,16 +331,16 @@ test('home route copy parity rejects Swedish mockprov wording', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
+process.argv.push('--focus-sv-native-mock-exam-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replaceAll('Gå till övningsprovet', 'Gå till mockprov')
+      .replace('Gå till övningsprov', 'Gå till mockprov')
       .replaceAll(
-        'gå till övningsprovet när steget är klart',
+        'gå till övningsprov när steget är klart',
         'gå till mockprov när steget är klart',
       );
   }
@@ -355,7 +355,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /home route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
+    /home route Swedish native copy must use övningsprov/,
   );
 });
 

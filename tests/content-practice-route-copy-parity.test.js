@@ -24,6 +24,36 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function parseFocusedNativeMockExamCopySummary() {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-sv-native-mock-exam-copy'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused native mock-exam copy validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
+test('native Swedish övningsprov copy guard preserves English mock exam copy', () => {
+  const summary = parseFocusedNativeMockExamCopySummary();
+  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+
+  assert.equal(summary.nativeSwedishMockExamCopyLabelsValidated, 8);
+  assert.equal(summary.nativeSwedishMockExamCopyParityValidated, true);
+  assert.match(homeSource, /Gå till övningsprov/);
+  assert.match(homeSource, /\$\{title\}: gå till övningsprov när steget är klart\./);
+  assert.match(practiceSource, /Aldrig en del av övningsprovet\./);
+  assert.match(homeSource, /Go to mock exam/);
+  assert.match(practiceSource, /Never part of the mock exam\./);
+  assert.doesNotMatch(homeSource, /mockprov|mock-provet/i);
+  assert.doesNotMatch(practiceSource, /mockprov|mock-provet/i);
+});
+
 test('practice route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
@@ -223,7 +253,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
+process.argv.push('--focus-sv-native-mock-exam-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -233,7 +263,7 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /practice route Swedish copy must use övningsprov wording, not mockprov\/mock-provet/,
+    /practice route Swedish native copy must use övningsprov/,
   );
 });
 
