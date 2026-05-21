@@ -7084,6 +7084,10 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const applyQuestionLocalizationPilot = loadTs(
+  'data/questionLocalizations.ts',
+  'applyQuestionLocalizationPilot',
+);
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -14845,6 +14849,14 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
+function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
+}
+
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
 
@@ -14875,6 +14887,9 @@ function expectedPublishedSourceField(question, field) {
   }
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+  }
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
   }
   return question[field];
 }
@@ -14967,6 +14982,17 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+    authoredSourceQuestionsValidated,
+    authoredSourcePartitionQuestionsValidated,
+    sourcePublicationParityValidated,
+  });
+  process.exit(0);
+}
 
 function validateGenerationParity() {
   if (
