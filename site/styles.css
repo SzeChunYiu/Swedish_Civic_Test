@@ -7698,3 +7698,116 @@ html[dir='rtl'] .lang-menu {
     margin-right: 48px;
   }
 }
+
+/* ------------------------------------------------------------------
+   LANGUAGE PICKER BOX OPTIMIZATION ROUND
+   Turns the language list into a compact tactile card with clearer
+   current-language state and safer narrow-screen bounds.
+------------------------------------------------------------------ */
+
+.lang-menu {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(254, 204, 0, 0.16), transparent 120px),
+    var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  box-shadow: var(--card-shadow-hover);
+  gap: 5px;
+  min-width: 210px;
+  overflow: hidden auto;
+  padding: 12px;
+}
+
+.lang-menu::before {
+  background: var(--card-rail);
+  content: '';
+  height: 5px;
+  inset: 0 0 auto;
+  position: absolute;
+}
+
+.lang-menu button {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(0, 106, 167, 0.1);
+  border-radius: 12px;
+  display: flex;
+  font-weight: 700;
+  justify-content: flex-start;
+  min-height: 42px;
+  padding: 10px 12px;
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease,
+    box-shadow 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+
+.lang-menu button:hover,
+.lang-menu button:focus-visible {
+  background: rgba(254, 204, 0, 0.14);
+  border-color: rgba(0, 106, 167, 0.28);
+  box-shadow: 0 10px 22px -18px rgba(0, 58, 92, 0.5);
+  color: var(--blue);
+  transform: translateX(2px);
+}
+
+.lang-menu button.is-on {
+  background:
+    linear-gradient(90deg, rgba(254, 204, 0, 0.2), rgba(254, 204, 0, 0.08)),
+    var(--ink, #0b1f33);
+  border-color: rgba(254, 204, 0, 0.4);
+  color: var(--gold, #fecc00);
+}
+
+.lang-menu button.is-on::after {
+  content: '✓';
+  font-family: var(--mono);
+  margin-left: auto;
+}
+
+:root[data-theme='dark'] .lang-menu {
+  background:
+    radial-gradient(circle at 90% 0%, rgba(254, 204, 0, 0.08), transparent 120px),
+    var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .lang-menu button {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.07);
+  color: #d4d8de;
+}
+
+:root[data-theme='dark'] .lang-menu button:hover,
+:root[data-theme='dark'] .lang-menu button:focus-visible {
+  background: rgba(0, 106, 167, 0.16);
+  color: var(--gold, #fecc00);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-menu button {
+    transition: none;
+  }
+  .lang-menu button:hover,
+  .lang-menu button:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .lang-menu {
+    max-height: min(58vh, 420px);
+    max-width: calc(100vw - 28px);
+    min-width: min(230px, calc(100vw - 28px));
+    right: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .lang-menu {
+    left: 0;
+    right: auto;
+  }
+}
