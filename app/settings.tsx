@@ -434,7 +434,6 @@ export default function Screen() {
         onDismiss={clearAccessibilityPersistenceWarning}
         warningScope="accessibilityPreferences"
         warning={accessibilityPersistenceWarning}
-        warningScope="accessibilityPreferences"
       />
 
       <View style={styles.section}>
