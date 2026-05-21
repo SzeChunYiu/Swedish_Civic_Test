@@ -118,6 +118,13 @@ const forbiddenArabicFragments = [
   'بناها أشخاص اجتازوا الاختبار',
 ];
 
+const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const expectedFooterRoadmapLabels = {
+  ckb: 'نەخشەی ڕێگا',
+  so: 'Qorshaha horumarinta',
+  ti: 'መደብ ምዕባለ',
+};
+
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
   'consent.body': 'We use Google AdSense',
@@ -133,6 +140,7 @@ const englishFallbacksByKey = {
   'settings.savedHint': 'Changes save automatically',
   'settings.done': 'Done',
   'footer.about.p': 'built by people',
+  'footer.app.5': 'Roadmap',
   'footer.fika': 'Fika-tested',
   'nav.ebook': 'Ebook',
 };
@@ -218,6 +226,28 @@ test('Chinese static-site labels use script-native sentence punctuation', () => 
   }
 
   assert.ok(checkedValues > 0, 'Chinese punctuation guard must inspect learner-facing text');
+});
+
+test('extra locale footer.app.5 Roadmap English fallback guard covers Central Kurdish Somali and Tigrinya', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of extraLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const value = dictionary['footer.app.5'];
+    assert.equal(typeof value, 'string', `${locale}.footer.app.5 must be a string`);
+    assert.notEqual(value.trim(), '', `${locale}.footer.app.5 must not be empty`);
+    assert.doesNotMatch(
+      value,
+      /Roadmap/i,
+      `${locale}.footer.app.5 must not use the English Roadmap fallback`,
+    );
+  }
+
+  for (const [locale, expected] of Object.entries(expectedFooterRoadmapLabels)) {
+    assert.equal(extra[locale]['footer.app.5'], expected, `${locale}.footer.app.5`);
+  }
 });
 
 test('Arabic static-site high-frequency labels use reviewed local copy', () => {

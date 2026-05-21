@@ -230,7 +230,7 @@ test.afterAll(async () => {
   await staticSite.close();
 });
 
-test('static Settings selects extra languages without overflow or outcome slogans', async ({
+test('static Settings selects extra languages with localized footer Roadmap without overflow or outcome slogans', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -264,6 +264,7 @@ test('static Settings selects extra languages without overflow or outcome slogan
     await expectDictionaryText(page, locale, 'consent.title');
     await expectDictionaryText(page, locale, 'consent.min');
     await expectDictionaryText(page, locale, 'footer.t1');
+    expect(await dictionaryText(page, locale, 'footer.app.5')).not.toMatch(/Roadmap/i);
     await expectDictionaryText(page, locale, 'footer.honest.p');
     await assertLongFormRouteCopy(page, locale);
     await expectRootLocale(page, locale);

@@ -1613,7 +1613,7 @@
       'footer.app.1': 'بۆچی هەیە',
       'footer.app.2': 'پرسیارێک تاقی بکەرەوە',
       'footer.app.3': 'بەشەکان',
-      'footer.app.5': 'Roadmap',
+      'footer.app.5': 'نەخشەی ڕێگا',
       'footer.h.honest': 'ڕایگەیاندنی ڕاستگۆیانە',
       'privacy.s5.web.t': 'ڕێکلامەکان لەسەر ئەم وێبسایتە',
       'privacy.s5.web.p':
@@ -2879,7 +2879,7 @@
       'footer.app.1': 'Sababta ay u jirto',
       'footer.app.2': "Tijaabi su'aal",
       'footer.app.3': 'Cutubyo',
-      'footer.app.5': 'Roadmap',
+      'footer.app.5': 'Qorshaha horumarinta',
       'footer.h.honest': 'Iftiimin daacad ah',
       'privacy.s5.web.t': 'Xayaysiisyada bogga internetka',
       'privacy.s5.web.p':
@@ -3275,7 +3275,7 @@
       'footer.app.1': 'ስለምንታይ ኣሎ',
       'footer.app.2': 'ሕቶ ፈትን',
       'footer.app.3': 'ምዕራፋት',
-      'footer.app.5': 'Roadmap',
+      'footer.app.5': 'መደብ ምዕባለ',
       'footer.h.honest': 'ሓቀኛ ምግላጽ ሓላፍነት',
       'privacy.s5.web.t': 'ምልክታታት ኣብዛ ወብ ሳይት',
       'privacy.s5.web.p':
