@@ -8903,6 +8903,8 @@ const gradeCard = spacedRepetitionModule.gradeCard;
 const retrievability = spacedRepetitionModule.retrievability;
 const isDue = spacedRepetitionModule.isDue;
 const sortByDueAscending = spacedRepetitionModule.sortByDueAscending;
+const flashcardDeckModule = loadTs('lib/learning/flashcardDeck.ts');
+const selectDailyFlashcardDeck = flashcardDeckModule.selectDailyFlashcardDeck;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const getLocalDateKey = streakModule.getLocalDateKey;
@@ -9259,6 +9261,8 @@ let spacedRepetitionRuntimeInputCasesValidated = 0;
 let spacedRepetitionRuntimeInputParityValidated = false;
 let spacedRepetitionDueTimestampCasesValidated = 0;
 let spacedRepetitionDueTimestampParityValidated = false;
+let flashcardDeckStrictDateRuntimeCasesValidated = 0;
+let flashcardDeckStrictDateRuntimeParityValidated = false;
 let adaptivePracticeSizeRuntimeCasesValidated = 0;
 let adaptivePracticeSizeRuntimeParityValidated = false;
 let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
@@ -20116,6 +20120,119 @@ function validateSpacedRepetitionSchedule() {
   }
 }
 
+function validateFlashcardDeckStrictDateRuntimeGuard() {
+  if (typeof selectDailyFlashcardDeck !== 'function') {
+    fail('selectDailyFlashcardDeck export is not a function');
+    return;
+  }
+
+  const questions = Array.from({ length: 10 }, (_, index) => ({
+    chapterId: 'ch01',
+    correctOptionId: 'a',
+    id: `q${String(index + 1).padStart(3, '0')}`,
+    options: [],
+  }));
+  let deck;
+
+  try {
+    deck = selectDailyFlashcardDeck({
+      date: new Date('2026-03-10T12:00:00.000Z'),
+      limit: 3,
+      questionProgress: {
+        q001: {
+          questionId: 'q001',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: '2026-02-30T08:00:00.000Z',
+        },
+        q002: {
+          questionId: 'q002',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: '2026-02-20',
+        },
+        q003: {
+          questionId: 'q003',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: 1773133200000,
+        },
+        q004: {
+          questionId: 'q004',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          nextReviewAt: '2026-02-30T08:00:00.000Z',
+        },
+        q005: {
+          questionId: 'q005',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          nextReviewAt: '2026-03-09T08:00:00.000Z',
+        },
+        q006: {
+          questionId: 'q006',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: '2026-02-20T08:00:00.000Z',
+        },
+        q008: {
+          questionId: 'q008',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: 'prefix-2026-02-20T08:00:00.000Z',
+        },
+        q009: {
+          questionId: 'q009',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          nextReviewAt: '2099-01-01T00:00:00.000Z',
+        },
+        q010: {
+          questionId: 'q010',
+          seenCount: 2,
+          correctCount: 2,
+          wrongCount: 0,
+          correctStreak: 2,
+          lastAnsweredAt: '2026-03-10T08:00:00.000Z',
+        },
+      },
+      questions,
+    });
+  } catch (error) {
+    fail(`selectDailyFlashcardDeck strict-date runtime guard threw ${error.message}`);
+    return;
+  }
+
+  const picked = deck.map((question) => question.id);
+  if (!jsonEqual(picked, ['q007', 'q005', 'q006'])) {
+    fail(
+      `selectDailyFlashcardDeck picked ${JSON.stringify(
+        picked,
+      )}, expected unanswered, canonical due, and canonical stale cards before malformed timestamps`,
+    );
+    return;
+  }
+
+  flashcardDeckStrictDateRuntimeCasesValidated = 8;
+  flashcardDeckStrictDateRuntimeParityValidated = true;
+}
+
 function adaptivePracticeProgressFromAnswers(answers) {
   return {
     totalXp: 0,
@@ -23295,6 +23412,7 @@ validateQuestionSpeechTextParity();
 validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
+validateFlashcardDeckStrictDateRuntimeGuard();
 validateAdaptivePracticeSizeRuntimeGuards();
 validateAdaptivePracticeDifficultyRuntimeGuards();
 validateStreakRules();
@@ -23620,6 +23738,8 @@ console.log(
       spacedRepetitionRuntimeInputParityValidated,
       spacedRepetitionDueTimestampCasesValidated,
       spacedRepetitionDueTimestampParityValidated,
+      flashcardDeckStrictDateRuntimeCasesValidated,
+      flashcardDeckStrictDateRuntimeParityValidated,
       adaptivePracticeSizeRuntimeCasesValidated,
       adaptivePracticeSizeRuntimeParityValidated,
       adaptivePracticeDifficultyRuntimeCasesValidated,

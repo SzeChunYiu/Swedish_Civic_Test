@@ -291,6 +291,101 @@ test('daily flashcard deck rotates completed-only study cards by local date', ()
   assert.notDeepEqual(tomorrow, today);
 });
 
+test('daily flashcard deck ignores noncanonical progress timestamps for stale and due priority', () => {
+  const { selectDailyFlashcardDeck } = loadAllTs('lib/learning/flashcardDeck.ts');
+  const questions = Array.from({ length: 10 }, (_, index) => ({
+    chapterId: 'ch01',
+    correctOptionId: 'a',
+    id: `q${String(index + 1).padStart(3, '0')}`,
+    options: [],
+  }));
+
+  const deck = selectDailyFlashcardDeck({
+    date: new Date('2026-03-10T12:00:00.000Z'),
+    limit: 3,
+    questionProgress: {
+      q001: {
+        questionId: 'q001',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-02-30T08:00:00.000Z',
+      },
+      q002: {
+        questionId: 'q002',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-02-20',
+      },
+      q003: {
+        questionId: 'q003',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: 1773133200000,
+      },
+      q004: {
+        questionId: 'q004',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        nextReviewAt: '2026-02-30T08:00:00.000Z',
+      },
+      q005: {
+        questionId: 'q005',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        nextReviewAt: '2026-03-09T08:00:00.000Z',
+      },
+      q006: {
+        questionId: 'q006',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-02-20T08:00:00.000Z',
+      },
+      q008: {
+        questionId: 'q008',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: 'prefix-2026-02-20T08:00:00.000Z',
+      },
+      q009: {
+        questionId: 'q009',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        nextReviewAt: '2099-01-01T00:00:00.000Z',
+      },
+      q010: {
+        questionId: 'q010',
+        seenCount: 2,
+        correctCount: 2,
+        wrongCount: 0,
+        correctStreak: 2,
+        lastAnsweredAt: '2026-03-10T08:00:00.000Z',
+      },
+    },
+    questions,
+  });
+
+  assert.deepEqual(
+    deck.map((question) => question.id),
+    ['q007', 'q005', 'q006'],
+  );
+});
+
 test('progress answer dates use the shared local calendar key', () => {
   const progressStore = fs.readFileSync(
     path.join(repoRoot, 'lib/storage/progressStore.ts'),
