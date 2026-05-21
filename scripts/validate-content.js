@@ -374,7 +374,6 @@ const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bWhich option gives the correct judgment of the statement\?/i,
 ];
 const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /\bbetyder att politikerna (?:måste inte|behöver inte|måste alltid) följa resultatet\b/i,
   /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
   /\bIt is true that\s+(?:The|In|Approximately)\b/i,
   /\bbelongs to\s+[a-zåäö][^.,"]*/i,
@@ -467,7 +466,6 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
-const QUESTION_REFERENDUM_ADVISORY_SV_NATURALNESS_PATTERNS = [/\bmåste inte följa resultatet\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -1260,10 +1258,6 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const OBSOLETE_INTERSTITIAL_COMPONENT_FILES = [
-  'components/monetization/AdInterstitial.tsx',
-  'components/monetization/AdInterstitial.native.tsx',
-];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
@@ -2125,6 +2119,135 @@ const EXPECTED_ONBOARDING_ROUTE_COPY_SNIPPETS = [
     'onboarding settings link must expose localized accessibility copy',
   ],
   ['{copy.adjustSettings}', 'onboarding settings link must render localized copy'],
+];
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS = {
+  sv: [
+    'Om provet',
+    'Vad är medborgarskapsprovet i samhällskunskap?',
+    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
+    'Vad är det?',
+    'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
+    'Vem ska göra det?',
+    'Migrationsverket avgör vem som får skriva provet. Du kan bara anmäla dig efter ett brev från Migrationsverket, och du kan uppfylla kunskapskravet på andra sätt än genom provet.',
+    'Vad är känt om första provet?',
+    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
+    'Vilket material bygger appen på?',
+    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
+    'Är appen officiell?',
+    'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
+    'Källäge kontrollerat',
+    'Tillbaka till start',
+    'Börja öva',
+    'Öppna övningsläget',
+    'Se kravguiden',
+    'Öppna guiden för medborgarskapskrav',
+  ],
+  en: [
+    'About the test',
+    'What is the Swedish civic test?',
+    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
+    'What is it?',
+    'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
+    'Who takes it?',
+    'Migrationsverket decides who may take the test. You can only sign up after receiving a letter from Migrationsverket, and you may be able to meet the knowledge requirement in other ways.',
+    'What is known about the first test?',
+    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
+    'What material does this app use?',
+    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
+    'Is this app official?',
+    'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
+    'Source status checked',
+    'Back to home',
+    'Start practising',
+    'Open practice mode',
+    'View requirements guide',
+    'Open the citizenship requirements guide',
+  ],
+};
+const EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS = [
+  ['useSettingsStore, type AppLanguage', 'about-the-test route must import AppLanguage'],
+  ['type AboutTheTestCopy = {', 'about-the-test route must define a typed copy contract'],
+  ['const officialTestSourceNotes = [', 'about-the-test route must define source notes'],
+  [
+    'const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {',
+    'about-the-test route copy must cover every AppLanguage value',
+  ],
+  [
+    'const language = useSettingsStore((state) => state.language);',
+    'about-the-test route must read language from settings store',
+  ],
+  [
+    'const copy = aboutTheTestCopy[language];',
+    'about-the-test route must select copy from settings language',
+  ],
+  [
+    'const sections: readonly { title: string; body: string }[] = [',
+    'about-the-test route must render section copy from one typed list',
+  ],
+  [
+    'accessibilityLabel={copy.openRequirementsAccessibilityLabel}',
+    'about-the-test route requirements link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.openPracticeAccessibilityLabel}',
+    'about-the-test route practice link must expose localized accessibility copy',
+  ],
+  [
+    'accessibilityLabel={copy.backHomeAccessibilityLabel}',
+    'about-the-test route home link must expose localized accessibility copy',
+  ],
+];
+const EXPECTED_ABOUT_THE_TEST_REQUIRED_COPY = [
+  [
+    '15 augusti 2026 i Stockholm',
+    'about-the-test route Swedish copy must keep the confirmed first sitting date and city',
+  ],
+  [
+    '15 August 2026 in Stockholm',
+    'about-the-test route English copy must keep the confirmed first sitting date and city',
+  ],
+  [
+    'brev från Migrationsverket',
+    'about-the-test route Swedish copy must say sign-up depends on a Migrationsverket letter',
+  ],
+  [
+    'letter from Migrationsverket',
+    'about-the-test route English copy must say sign-up depends on a Migrationsverket letter',
+  ],
+  [
+    'kostnadsfritt och ges som ett utprövningsprov med generös tid',
+    'about-the-test route Swedish copy must keep the free trial-sitting wording',
+  ],
+  [
+    'free of charge and is a trial sitting with generous time',
+    'about-the-test route English copy must keep the free trial-sitting wording',
+  ],
+  [
+    'Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate}',
+    'about-the-test route Swedish source status must be tied to source metadata',
+  ],
+  [
+    'This status was checked on ${officialTestSourceNotes[0].retrievedDate}',
+    'about-the-test route English source status must be tied to source metadata',
+  ],
+];
+const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
+  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
+  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
+  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+];
+const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-19';
+const UNSUPPORTED_ABOUT_THE_TEST_LOGISTICS_PATTERNS = [
+  /Ett\s+kort\s+prov/i,
+  /short\s+test/i,
+  /digitalt\s+prov/i,
+  /digital\s+exam/i,
+  /Flervalsfr[aå]gor/i,
+  /Multiple-choice\s+questions/i,
+  /dator\s+i\s+en\s+provlokal/i,
+  /computer\s+at\s+a\s+test\s+centre/i,
 ];
 const EXPECTED_SCREEN_SHELL_LAYOUT_RULES = [
   {
@@ -4329,10 +4452,6 @@ const STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED = [
   'Starta övningsprov',
   'gör ett övningsprov',
 ];
-const STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN = [/\bFirst of May\b/i];
-const STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED = [
-  /<b>May Day<\/b>,\s*1 May,\s*is International Workers['’] Day/i,
-];
 const STATIC_I18N_CHINESE_LOCALES = ['zh-Hans', 'zh-Hant'];
 const STATIC_I18N_CHINESE_TEXT_PATTERN = /[\u3400-\u9fff]/;
 const STATIC_I18N_ASCII_SENTENCE_PUNCTUATION_NEAR_CHINESE =
@@ -4434,33 +4553,6 @@ function validateStaticEbookSwedishStudyTerms() {
   return {
     forbiddenTermsValidated,
     requiredTermsValidated,
-  };
-}
-
-function validateStaticEbookMayDayEnglishNaturalness() {
-  const source = loadText('site/ebook.js');
-  let forbiddenPatternsValidated = 0;
-  let requiredCopyValidated = 0;
-
-  STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN.forEach((pattern) => {
-    if (pattern.test(source)) {
-      fail(`static ebook English copy contains literal May Day calque: ${pattern}`);
-      return;
-    }
-    forbiddenPatternsValidated += 1;
-  });
-
-  STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED.forEach((pattern) => {
-    if (!pattern.test(source)) {
-      fail(`static ebook English copy missing natural May Day wording: ${pattern}`);
-      return;
-    }
-    requiredCopyValidated += 1;
-  });
-
-  return {
-    forbiddenPatternsValidated,
-    requiredCopyValidated,
   };
 }
 
@@ -4681,16 +4773,6 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
-function findQuestionReferendumAdvisorySvNaturalnessIssue(question) {
-  const text = [
-    question.questionSv,
-    question.explanationSv,
-    ...(question.options || []).map((option) => option.textSv),
-  ].join(' ');
-
-  return QUESTION_REFERENDUM_ADVISORY_SV_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
-}
-
 function findQuestionTrueFalseStemPrefix(question) {
   if (question.type !== 'true_false') return null;
 
@@ -4900,17 +4982,6 @@ function englishAgePhrase(value) {
 }
 function stripLeadingPurposeSv(value) {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
-}
-function swedishMeaningClause(value) {
-  return lowerFirst(stripLeadingPurposeSv(value).trim())
-    .replace(
-      /\b(politikerna|politiker)\s+(?:måste|behöver)\s+inte\s+följa resultatet\b/i,
-      '$1 inte behöver följa resultatet',
-    )
-    .replace(
-      /\b(politikerna|politiker)\s+måste\s+alltid\s+följa resultatet\b/i,
-      '$1 alltid måste följa resultatet',
-    );
 }
 function stripLeadingPurposeEn(value) {
   return value
@@ -5777,7 +5848,7 @@ function civicStatementSv(source, option) {
   match = q.match(/^Från vilken ålder är (.+)$/i);
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${swedishMeaningClause(answer)}`;
+  if (match) return `Att ${match[1]} betyder att ${lowerFirst(stripLeadingPurposeSv(answer))}`;
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
     return `${upperFirst(match[1])} blir ${match[2]} när ${lowerFirst(
@@ -7296,9 +7367,6 @@ let staticSiteSwedishGrammarToneValidated = 0;
 let staticSiteSwedishGrammarToneNaturalnessValidated = false;
 let staticEbookSwedishStudyTermsValidated = 0;
 let staticEbookSwedishStudyTermNaturalnessValidated = false;
-let staticEbookMayDayEnglishForbiddenPatternsValidated = 0;
-let staticEbookMayDayEnglishRequiredCopyValidated = 0;
-let staticEbookMayDayEnglishNaturalnessValidated = false;
 let staticI18nChinesePunctuationLocalesValidated = 0;
 let staticI18nChinesePunctuationValuesValidated = 0;
 let staticI18nChinesePunctuationParityValidated = false;
@@ -7310,6 +7378,10 @@ let onboardingRouteHeadersValidated = 0;
 let onboardingRouteHeaderParityValidated = false;
 let onboardingRouteCopyLabelsValidated = 0;
 let onboardingRouteCopyParityValidated = false;
+let aboutTheTestRouteCopyLabelsValidated = 0;
+let aboutTheTestRouteCopyParityValidated = false;
+let aboutTheTestOfficialSourceUrlsValidated = 0;
+let aboutTheTestOfficialSourceRetrievedDateValidated = null;
 let screenShellLayoutRulesValidated = 0;
 let screenShellLayoutParityValidated = false;
 let settingsRouteScrollRulesValidated = 0;
@@ -7469,7 +7541,6 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
-let questionReferendumAdvisorySvNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -7585,6 +7656,18 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-about-the-test-route-copy')) {
+  validateAboutTheTestRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    aboutTheTestRouteCopyLabelsValidated,
+    aboutTheTestRouteCopyParityValidated,
+    aboutTheTestOfficialSourceUrlsValidated,
+    aboutTheTestOfficialSourceRetrievedDateValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-static-head-metadata')) {
   validateStaticValidationSyntaxGate();
   validateStaticHeadMetadataParity();
@@ -7673,16 +7756,6 @@ staticEbookOutcomeClaimParityValidated =
       STATIC_EBOOK_SWEDISH_STUDY_TERM_FORBIDDEN.length &&
     ebookStudyTermValidation.requiredTermsValidated ===
       STATIC_EBOOK_SWEDISH_STUDY_TERM_REQUIRED.length;
-}
-{
-  const ebookMayDayValidation = validateStaticEbookMayDayEnglishNaturalness();
-  staticEbookMayDayEnglishForbiddenPatternsValidated =
-    ebookMayDayValidation.forbiddenPatternsValidated;
-  staticEbookMayDayEnglishRequiredCopyValidated = ebookMayDayValidation.requiredCopyValidated;
-  staticEbookMayDayEnglishNaturalnessValidated =
-    staticEbookMayDayEnglishForbiddenPatternsValidated ===
-      STATIC_EBOOK_MAY_DAY_ENGLISH_FORBIDDEN.length &&
-    staticEbookMayDayEnglishRequiredCopyValidated === STATIC_EBOOK_MAY_DAY_ENGLISH_REQUIRED.length;
 }
 {
   const i18nPunctuationValidation = validateStaticI18nChinesePunctuation();
@@ -8072,8 +8145,6 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
-  validateObsoleteInterstitialComponentsRemoved();
-
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
@@ -8363,14 +8434,6 @@ function validateAdPlacementRouteParity() {
     noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
   ) {
     adPlacementRouteParityValidated = true;
-  }
-}
-
-function validateObsoleteInterstitialComponentsRemoved() {
-  for (const file of OBSOLETE_INTERSTITIAL_COMPONENT_FILES) {
-    if (fs.existsSync(path.join(repoRoot, file))) {
-      fail(`${file} must stay removed; PracticeInterstitialAd owns quiz_completed_interstitial`);
-    }
   }
 }
 
@@ -10347,6 +10410,98 @@ function validateOnboardingRouteCopyParity() {
   );
   if (valid && onboardingRouteCopyLabelsValidated === expectedLabelCount) {
     onboardingRouteCopyParityValidated = true;
+  }
+}
+
+function validateAboutTheTestRouteCopyParity() {
+  let valid = true;
+  let aboutTheTestRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    aboutTheTestRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
+  } catch (error) {
+    reject(`about-the-test route copy source could not be read: ${error.message}`);
+    return;
+  }
+
+  EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+    if (!aboutTheTestRoute.includes(snippet)) reject(message);
+  });
+
+  EXPECTED_ABOUT_THE_TEST_REQUIRED_COPY.forEach(([snippet, message]) => {
+    if (!aboutTheTestRoute.includes(snippet)) reject(message);
+  });
+
+  for (const pattern of UNSUPPORTED_ABOUT_THE_TEST_LOGISTICS_PATTERNS) {
+    if (pattern.test(aboutTheTestRoute)) {
+      reject('about-the-test route must not make unsupported logistics claim');
+      break;
+    }
+  }
+
+  const seenLabels = new Set();
+  Object.entries(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+    labels.forEach((label) => {
+      let labelIsValid = true;
+      if (!textIsTrimmedSingleSpaced(label)) {
+        labelIsValid = false;
+        reject(`about-the-test route ${language} copy ${JSON.stringify(label)} must be normalized`);
+      }
+      if (!aboutTheTestRoute.includes(label)) {
+        labelIsValid = false;
+        reject(`about-the-test route is missing ${language} copy ${JSON.stringify(label)}`);
+      }
+
+      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
+      if (seenLabels.has(normalizedLabel)) {
+        labelIsValid = false;
+        reject(`about-the-test route duplicates ${language} copy ${JSON.stringify(label)}`);
+      }
+      if (normalizedLabel) seenLabels.add(normalizedLabel);
+      if (labelIsValid) aboutTheTestRouteCopyLabelsValidated += 1;
+    });
+  });
+
+  EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.forEach((url) => {
+    if (aboutTheTestRoute.includes(url)) {
+      aboutTheTestOfficialSourceUrlsValidated += 1;
+    } else {
+      reject(`about-the-test route official source metadata missing ${url}`);
+    }
+  });
+
+  const retrievedDatePattern = new RegExp(
+    `retrievedDate: '${escapeRegExp(EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE)}'`,
+    'g',
+  );
+  const retrievedDateOccurrences = (aboutTheTestRoute.match(retrievedDatePattern) || []).length;
+  if (retrievedDateOccurrences === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length) {
+    aboutTheTestOfficialSourceRetrievedDateValidated =
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE;
+  } else {
+    reject(
+      `about-the-test route official source metadata must use retrievedDate ${EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE} for every source`,
+    );
+  }
+
+  const expectedLabelCount = Object.values(EXPECTED_ABOUT_THE_TEST_ROUTE_COPY_LABELS).reduce(
+    (count, labels) => count + labels.length,
+    0,
+  );
+  if (
+    valid &&
+    aboutTheTestRouteCopyLabelsValidated === expectedLabelCount &&
+    aboutTheTestOfficialSourceUrlsValidated ===
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
+    aboutTheTestOfficialSourceRetrievedDateValidated ===
+      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE
+  ) {
+    aboutTheTestRouteCopyParityValidated = true;
   }
 }
 
@@ -15668,7 +15823,6 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
-validateObsoleteInterstitialComponentsRemoved();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
@@ -15812,8 +15966,6 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
-      const referendumAdvisorySvNaturalnessIssue =
-        findQuestionReferendumAdvisorySvNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -15849,11 +16001,6 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
-      }
-      if (referendumAdvisorySvNaturalnessIssue) {
-        fail(`${label} uses unnatural Swedish referendum advisory wording`);
-      } else {
-        questionReferendumAdvisorySvNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -15977,6 +16124,7 @@ validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
+validateAboutTheTestRouteCopyParity();
 validateScreenShellLayoutParity();
 validateSettingsRouteScrollParity();
 validateOnboardingRouteScrollParity();
@@ -16129,9 +16277,6 @@ console.log(
       staticSiteSwedishGrammarToneNaturalnessValidated,
       staticEbookSwedishStudyTermsValidated,
       staticEbookSwedishStudyTermNaturalnessValidated,
-      staticEbookMayDayEnglishForbiddenPatternsValidated,
-      staticEbookMayDayEnglishRequiredCopyValidated,
-      staticEbookMayDayEnglishNaturalnessValidated,
       staticI18nChinesePunctuationLocalesValidated,
       staticI18nChinesePunctuationValuesValidated,
       staticI18nChinesePunctuationParityValidated,
@@ -16147,6 +16292,10 @@ console.log(
       onboardingRouteHeaderParityValidated,
       onboardingRouteCopyLabelsValidated,
       onboardingRouteCopyParityValidated,
+      aboutTheTestRouteCopyLabelsValidated,
+      aboutTheTestRouteCopyParityValidated,
+      aboutTheTestOfficialSourceUrlsValidated,
+      aboutTheTestOfficialSourceRetrievedDateValidated,
       screenShellLayoutRulesValidated,
       screenShellLayoutParityValidated,
       settingsRouteScrollRulesValidated,
@@ -16322,7 +16471,6 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
-      questionReferendumAdvisorySvNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
