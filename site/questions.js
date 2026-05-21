@@ -33002,8 +33002,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'true_false',
       q: {
-        en: 'Gustav Vasa was elected king of Sweden.',
-        sv: 'Gustav Vasa valdes till svensk kung.',
+        en: 'The event on 6 June 1523 was that Gustav Vasa was elected king of Sweden.',
+        sv: 'Händelsen den 6 juni 1523 var att Gustav Vasa valdes till svensk kung.',
       },
       opts: [
         {
@@ -33043,8 +33043,8 @@
       chapter: 'Ch. 13 · Traditions and holidays',
       type: 'true_false',
       q: {
-        en: 'Sweden joined the EU.',
-        sv: 'Sverige gick med i EU.',
+        en: 'The event on 6 June 1523 was that Sweden joined the EU.',
+        sv: 'Händelsen den 6 juni 1523 var att Sverige gick med i EU.',
       },
       opts: [
         {

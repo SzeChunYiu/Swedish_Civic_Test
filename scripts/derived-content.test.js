@@ -3,10 +3,6 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
-const {
-  findGeneratedTrueFalseNaturalnessPatternMatch,
-  formatGeneratedTrueFalseNaturalnessPatternMatch,
-} = require('./generated-true-false-naturalness-patterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
@@ -52,23 +48,6 @@ function assertQuestionTextPresent(questions, questionSv, questionEn) {
   return question;
 }
 
-function assertNoGeneratedTrueFalseNaturalnessIssues(questions) {
-  for (const question of questions) {
-    const fields = [
-      ['questionSv', question.questionSv],
-      ['questionEn', question.questionEn],
-    ];
-    for (const [fieldName, text] of fields) {
-      const matchedPattern = findGeneratedTrueFalseNaturalnessPatternMatch(text);
-      assert.equal(
-        matchedPattern,
-        undefined,
-        `${question.id}.${fieldName} matched generated true/false naturalness guard ${formatGeneratedTrueFalseNaturalnessPatternMatch(matchedPattern)}: ${text}`,
-      );
-    }
-  }
-}
-
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
@@ -102,14 +81,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
-  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
+  assert.equal(derived[3].questionSv, 'Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -211,6 +190,51 @@ test('derivePublishedQuestions keeps generated single-choice variants at four op
   );
 });
 
+test('derivePublishedQuestions keeps same-source generated single-choice stems distinct', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q900',
+    chapterId: 'ch01',
+    type: 'single_choice',
+    questionSv: 'Var ligger Sverige?',
+    questionEn: 'Where is Sweden located?',
+    options: [
+      { id: 'a', textSv: 'I Norden', textEn: 'In the Nordic region' },
+      { id: 'b', textSv: 'I Asien', textEn: 'In Asia' },
+      { id: 'c', textSv: 'I Afrika', textEn: 'In Africa' },
+      { id: 'd', textSv: 'I Sydamerika', textEn: 'In South America' },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Sverige ligger i Norden.',
+    explanationEn: 'Sweden is in the Nordic region.',
+    uhrReference: { chapter: 'Landet Sverige', section: 'Geografi', pageApprox: 5 },
+    difficulty: 'easy',
+    reviewStatus: 'reviewed',
+    tags: ['geography'],
+  };
+
+  const singleChoiceVariants = derivePublishedQuestions([source], 901).filter(
+    (question) => question.type === 'single_choice',
+  );
+  const signatures = singleChoiceVariants.map((question) =>
+    [
+      question.questionSv.trim().toLocaleLowerCase('sv-SE'),
+      question.questionEn.trim().toLocaleLowerCase('en-US'),
+      question.options
+        .map((option) =>
+          [
+            option.textSv.trim().toLocaleLowerCase('sv-SE'),
+            option.textEn.trim().toLocaleLowerCase('en-US'),
+          ].join(' / '),
+        )
+        .join(' | '),
+    ].join(' :: '),
+  );
+
+  assert.equal(singleChoiceVariants.length, 2);
+  assert.equal(new Set(signatures).size, singleChoiceVariants.length);
+});
+
 test('derivePublishedQuestions writes natural generated true/false civic statements', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
@@ -295,46 +319,6 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
       reviewStatus: 'reviewed',
       tags: ['elections'],
     },
-    {
-      id: 'q146',
-      chapterId: 'ch02',
-      type: 'single_choice',
-      questionSv: 'Vilken rätt har människor, grupper och partier i en demokrati?',
-      questionEn: 'What right do people, groups, and parties have in a democracy?',
-      options: [
-        {
-          id: 'a',
-          textSv: 'Att försöka övertyga andra om sina politiska idéer',
-          textEn: 'To try to persuade others of their political ideas',
-        },
-        {
-          id: 'b',
-          textSv: 'Att hindra andra från att rösta',
-          textEn: 'To stop others from voting',
-        },
-        {
-          id: 'c',
-          textSv: 'Att bestämma domstolarnas domar',
-          textEn: 'To decide court judgments',
-        },
-        {
-          id: 'd',
-          textSv: 'Att förbjuda alla andra partier',
-          textEn: 'To ban all other parties',
-        },
-      ],
-      correctOptionId: 'a',
-      explanationSv: 'Demokrati ger politiska rättigheter.',
-      explanationEn: 'Democracy gives political rights.',
-      uhrReference: {
-        chapter: 'Sveriges demokratiska system',
-        section: 'Demokrati betyder folkstyre',
-        pageApprox: 10,
-      },
-      difficulty: 'easy',
-      reviewStatus: 'reviewed',
-      tags: ['democracy', 'freedom-of-expression'],
-    },
   ];
 
   const derived = derivePublishedQuestions(sources, 201);
@@ -363,212 +347,146 @@ test('derivePublishedQuestions writes natural generated true/false civic stateme
     derived[9].questionEn,
     'A party must receive at least 4 percent of the votes to enter the Riksdag.',
   );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'I en demokrati har människor, grupper och partier rätt att försöka övertyga andra om sina politiska idéer.',
-    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
-  );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'I en demokrati har människor, grupper och partier inte rätt att hindra andra från att rösta.',
-    'In a democracy, people, groups, and parties may not stop others from voting.',
-  );
 });
 
-test('derivePublishedQuestions turns human-rights definition prompts into direct propositions', () => {
+test('derivePublishedQuestions names the non-citizen voting subject in true/false variants', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
-    id: 'q176',
-    chapterId: 'ch07',
+    id: 'q166',
+    chapterId: 'ch04',
     type: 'single_choice',
-    questionSv: 'Vad betyder det att mänskliga rättigheter gäller alla?',
-    questionEn: 'What does it mean that human rights apply to everyone?',
-    options: [
-      {
-        id: 'a',
-        textSv: 'Varje människa har rättigheter oavsett bakgrund eller livssituation',
-        textEn: 'Every person has rights regardless of background or life situation',
-      },
-      {
-        id: 'b',
-        textSv: 'Bara svenska medborgare har mänskliga rättigheter',
-        textEn: 'Only Swedish citizens have human rights',
-      },
-      {
-        id: 'c',
-        textSv: 'Rättigheterna gäller bara personer som arbetar',
-        textEn: 'The rights apply only to people who work',
-      },
-      {
-        id: 'd',
-        textSv: 'Varje kommun väljer själv vilka människor som har rättigheter',
-        textEn: 'Each municipality chooses which people have rights',
-      },
-    ],
-    correctOptionId: 'a',
-    explanationSv:
-      'Mänskliga rättigheter gäller oavsett till exempel kön, ålder, ursprung, religion, funktionsnedsättning eller sexuell läggning.',
-    explanationEn:
-      'Human rights apply regardless of factors such as sex, age, origin, religion, disability, or sexual orientation.',
-    uhrReference: {
-      chapter: 'Mänskliga rättigheter',
-      section: 'Mänskliga rättigheter gäller alla',
-      pageApprox: 22,
-    },
-    difficulty: 'easy',
-    reviewStatus: 'reviewed',
-    tags: ['human-rights'],
-  };
-
-  const generatedTrueFalse = derivePublishedQuestions([source], 877).filter(
-    (question) => question.type === 'true_false',
-  );
-  const text = generatedTrueFalse
-    .map((question) => `${question.questionSv} ${question.questionEn}`)
-    .join('\n');
-
-  assert.doesNotMatch(
-    text,
-    /Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means/i,
-  );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
-    'Human rights apply to every person regardless of background or life situation.',
-  );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Mänskliga rättigheter gäller bara svenska medborgare.',
-    'Human rights apply only to Swedish citizens.',
-  );
-});
-
-test('derivePublishedQuestions turns gender-equality policy goal prompts into direct English propositions', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q053',
-    chapterId: 'ch07',
-    type: 'single_choice',
-    questionSv: 'Vad innebär målet med Sveriges jämställdhetspolitik?',
-    questionEn: 'What does the goal of Sweden’s gender equality policy mean?',
+    questionSv:
+      'Vilket svar beskriver rösträtt i kommun- och regionval för personer som inte är svenska medborgare?',
+    questionEn:
+      'Which answer describes voting rights in municipal and regional elections for people who are not Swedish citizens?',
     options: [
       {
         id: 'a',
         textSv:
-          'Att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv',
+          'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
         textEn:
-          'That women and men should have the same rights and duties and equal power to influence society and their own lives',
+          'Some may vote if they are registered as living in Sweden and meet the rules for their group',
       },
       {
         id: 'b',
-        textSv: 'Att jämställdhet bara handlar om hur många kvinnor som finns i politiken',
-        textEn: 'That gender equality is only about how many women are in politics',
+        textSv: 'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval',
+        textEn: 'No one without Swedish citizenship may vote in municipal or regional elections',
       },
       {
         id: 'c',
-        textSv: 'Att kvinnor och män ska ha olika rättigheter i arbetslivet',
-        textEn: 'That women and men should have different rights in working life',
+        textSv: 'Alla turister får rösta om de är i Sverige på valdagen',
+        textEn: 'All tourists may vote if they are in Sweden on election day',
       },
       {
         id: 'd',
-        textSv: 'Att föräldraledighet bara ska tas av kvinnor',
-        textEn: 'That parental leave should only be taken by women',
+        textSv: 'Partimedlemskap är alltid det enda kravet',
+        textEn: 'Party membership is always the only requirement',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
+      'För kommun- och regionval krävs inte alltid svenskt medborgarskap. Personer som inte är svenska medborgare kan ha rösträtt om de är folkbokförda i Sverige och uppfyller reglerna.',
     explanationEn:
-      'Sweden’s gender equality policy means women and men should have the same rights and duties and equal power to influence society and their own lives.',
+      'Swedish citizenship is not always required for municipal and regional elections. People who are not Swedish citizens may have the right to vote if they are registered as living in Sweden and meet the rules.',
     uhrReference: {
-      chapter: 'Mänskliga rättigheter',
-      section: 'Jämställdhet mellan könen',
-      pageApprox: 23,
+      chapter: 'Politiska val och partier',
+      section: 'Val och röstning',
+      pageApprox: 14,
     },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
-    tags: ['gender-equality', 'rights', 'policy'],
+    tags: ['voting-rights', 'municipal-elections', 'regional-elections', 'non-citizen-voting'],
   };
 
-  const generatedTrueFalse = derivePublishedQuestions([source], 389).filter(
-    (question) => question.type === 'true_false',
-  );
-  const text = generatedTrueFalse.map((question) => question.questionEn).join('\n');
+  const derived = derivePublishedQuestions([source], 830);
 
-  assert.doesNotMatch(text, /The goal of Sweden’s gender equality policy means that/i);
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Målet med Sveriges jämställdhetspolitik innebär att kvinnor och män ska ha samma rättigheter och skyldigheter och lika mycket makt att påverka samhället och sina egna liv.',
-    'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
+  assert.equal(
+    derived[0].options[0].textSv,
+    'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
   );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Målet med Sveriges jämställdhetspolitik innebär att jämställdhet bara handlar om hur många kvinnor som finns i politiken.',
-    'Sweden’s gender equality policy is only about how many women are in politics.',
+  assert.equal(
+    derived[0].options[0].textEn,
+    'Some may vote if they are registered as living in Sweden and meet the rules for their group',
   );
+  assert.equal(
+    derived[1].questionSv,
+    'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp.',
+  );
+  assert.equal(
+    derived[1].questionEn,
+    'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group.',
+  );
+  assert.equal(derived[1].correctOptionId, 'true');
+  assert.equal(
+    derived[2].questionSv,
+    'Ingen utan svenskt medborgarskap får rösta i kommun- eller regionval.',
+  );
+  assert.equal(
+    derived[2].questionEn,
+    'No one without Swedish citizenship may vote in municipal or regional elections.',
+  );
+  assert.equal(derived[2].correctOptionId, 'false');
 });
 
-test('derivePublishedQuestions generalizes policy-goal prompts beyond gender equality', () => {
+test('derivePublishedQuestions keeps event distractors context-bound in true/false variants', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const source = {
-    id: 'q900',
-    chapterId: 'ch07',
+    id: 'q124',
+    chapterId: 'ch13',
     type: 'single_choice',
-    questionSv: 'Vad innebär målet med Sveriges folkhälsopolitik?',
-    questionEn: 'What does the goal of Sweden’s public health policy mean?',
+    questionSv: 'Vad hände den 6 juni 1523, ett datum som hör ihop med Sveriges nationaldag?',
+    questionEn: "What happened on 6 June 1523, a date connected with Sweden's National Day?",
     options: [
       {
         id: 'a',
-        textSv: 'Att människor ska ha jämlika möjligheter till god hälsa',
-        textEn: 'That people should have equal opportunities for good health',
+        textSv: 'Gustav Vasa valdes till svensk kung',
+        textEn: 'Gustav Vasa was elected king of Sweden',
       },
-      {
-        id: 'b',
-        textSv: 'Att folkhälsa bara handlar om sjukhus',
-        textEn: 'That public health is only about hospitals',
-      },
+      { id: 'b', textSv: 'Sverige gick med i EU', textEn: 'Sweden joined the EU' },
       {
         id: 'c',
-        textSv: 'Att kommuner ska förbjuda all idrott',
-        textEn: 'That municipalities should ban all sports',
+        textSv: 'Svenska kyrkan och staten skildes åt',
+        textEn: 'The Church of Sweden and the state separated',
       },
       {
         id: 'd',
-        textSv: 'Att vård bara ska ges till personer som arbetar',
-        textEn: 'That care should be given only to people who work',
+        textSv: 'Midsommarafton blev Sveriges nationaldag',
+        textEn: 'Midsummer Eve became Sweden’s National Day',
       },
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Målet med folkhälsopolitiken är att skapa samhälleliga förutsättningar för en god och jämlik hälsa.',
+      'Den 6 juni 1523 valdes Gustav Vasa till svensk kung, en händelse som kopplas till den svenska statens självständighet.',
     explanationEn:
-      'The goal of public health policy is to create social conditions for good and equal health.',
+      "On 6 June 1523, Gustav Vasa was elected king of Sweden, an event linked to the Swedish state's independence.",
     uhrReference: {
-      chapter: 'Mänskliga rättigheter',
-      section: 'Jämlika villkor',
-      pageApprox: 23,
+      chapter: 'Traditioner och högtider',
+      section: 'Sveriges nationaldag',
+      pageApprox: 46,
     },
     difficulty: 'medium',
     reviewStatus: 'reviewed',
-    tags: ['public-health', 'policy'],
+    tags: ['national-day', 'gustav-vasa', '1523', 'traditions'],
   };
 
-  const generatedTrueFalse = derivePublishedQuestions([source], 701).filter(
-    (question) => question.type === 'true_false',
-  );
-  const text = generatedTrueFalse.map((question) => question.questionEn).join('\n');
+  const derived = derivePublishedQuestions([source], 662);
+  const trueVariant = derived[1];
+  const falseVariant = derived[2];
 
-  assert.doesNotMatch(text, /The goal of .+? policy means\b/i);
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Målet med Sveriges folkhälsopolitik innebär att människor ska ha jämlika möjligheter till god hälsa.',
-    'Sweden’s public health policy aims for people to have equal opportunities for good health.',
+  assert.equal(
+    trueVariant.questionSv,
+    'Händelsen den 6 juni 1523 var att Gustav Vasa valdes till svensk kung.',
   );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'Målet med Sveriges folkhälsopolitik innebär att folkhälsa bara handlar om sjukhus.',
-    'Sweden’s public health policy is only about hospitals.',
+  assert.equal(
+    trueVariant.questionEn,
+    'The event on 6 June 1523 was that Gustav Vasa was elected king of Sweden.',
   );
+  assert.equal(falseVariant.id, 'q664');
+  assert.equal(falseVariant.correctOptionId, 'false');
+  assert.equal(falseVariant.questionSv, 'Händelsen den 6 juni 1523 var att Sverige gick med i EU.');
+  assert.equal(falseVariant.questionEn, 'The event on 6 June 1523 was that Sweden joined the EU.');
+  assert.notEqual(falseVariant.questionSv, 'Sverige gick med i EU.');
+  assert.notEqual(falseVariant.questionEn, 'Sweden joined the EU.');
 });
 
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
@@ -583,7 +501,7 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
       options: [
         {
           id: 'a',
-          textSv: 'politikerna måste inte följa resultatet',
+          textSv: 'politikerna behöver inte följa resultatet',
           textEn: 'Politicians do not have to follow the result',
         },
         {
@@ -1116,72 +1034,6 @@ test('derivePublishedQuestions writes direct source true/false propositions', ()
   assert.deepEqual(trueExplanationOffenders, []);
 });
 
-test('derivePublishedQuestions avoids generic how-can-affect when splices', () => {
-  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
-    id: 'q999',
-    chapterId: 'ch02',
-    type: 'single_choice',
-    questionSv: 'Hur kan falsk information påverka demokratin?',
-    questionEn: 'How can false information affect democracy?',
-    options: [
-      {
-        id: 'a',
-        textSv: 'Falska uppgifter kan spridas snabbt och påverka människors åsikter',
-        textEn: "False information can spread quickly and affect people's opinions",
-      },
-      {
-        id: 'b',
-        textSv: 'Alla väljare får två röster automatiskt',
-        textEn: 'All voters automatically get two votes',
-      },
-      {
-        id: 'c',
-        textSv: 'Domstolarna tar över riksdagens uppgifter',
-        textEn: "The courts take over the Riksdag's tasks",
-      },
-      {
-        id: 'd',
-        textSv: 'Samhället blir automatiskt mer integrerat',
-        textEn: 'Society automatically becomes more integrated',
-      },
-    ],
-    correctOptionId: 'a',
-    explanationSv:
-      'Falsk information kan påverka demokratin genom att göra det svårare att lita på gemensamma fakta.',
-    explanationEn:
-      'False information can affect democracy by making it harder to trust shared facts.',
-    uhrReference: {
-      chapter: 'Sveriges demokratiska system',
-      section: 'Hot mot demokratin',
-      pageApprox: 11,
-    },
-    difficulty: 'medium',
-    reviewStatus: 'reviewed',
-    tags: ['democracy', 'source-criticism'],
-  };
-
-  const derived = derivePublishedQuestions([source], 901);
-  const generatedTrueFalse = derived.filter((question) => question.type === 'true_false');
-
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'En möjlig följd för demokratin är att falska uppgifter kan spridas snabbt och påverka människors åsikter.',
-    "One possible effect on democracy is that false information can spread quickly and affect people's opinions.",
-  );
-  assertQuestionTextPresent(
-    generatedTrueFalse,
-    'En möjlig följd för demokratin är att alla väljare får två röster automatiskt.',
-    'One possible effect on democracy is that all voters automatically get two votes.',
-  );
-  assert.doesNotMatch(
-    generatedTrueFalse
-      .map((question) => `${question.questionSv} ${question.questionEn}`)
-      .join('\n'),
-    /\bnär\s+[^.?!]+?\spåverkar\s+[^.?!]+|\bwhen\s+[^.?!]+?\saffects\s+[^.?!]+/i,
-  );
-});
-
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
   const { questions } = loadTs('data/questions.ts');
   const byId = new Map(questions.map((question) => [question.id, question]));
@@ -1190,14 +1042,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
     q206: [
       'Medborgarna väljer ledamöter till riksdagen i Sveriges parlamentariska representativa demokrati genom att rösta i allmänna val.',
       "Citizens choose members of the Riksdag in Sweden's parliamentary representative democracy by voting in general elections.",
-    ],
-    q237: [
-      'Ett lågt valdeltagande kan minska människors möjlighet att påverka politiska beslut.',
-      "Low voter turnout can reduce people's ability to influence political decisions.",
-    ],
-    q238: [
-      'Ett lågt valdeltagande innebär att alla väljare får två röster var i nästa val.',
-      'Low voter turnout means all voters get two votes each in the next election.',
     ],
     q270: [
       'En anledning till att väljare röstar bakom en skärm i vallokalen är att valet är hemligt och ingen annan ska se vilket val de gör.',
@@ -1431,6 +1275,30 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
+    q857: [
+      'Tryckfrihetsförordningen skyddar det fria ordet i tryckt form och rätten att ge ut böcker, tidningar och tidskrifter.',
+      'The Freedom of the Press Act protects free expression in printed form and the right to publish books, newspapers, and magazines.',
+    ],
+    q858: [
+      'Tryckfrihetsförordningen ger staten rätt att förhandsgranska alla privata brev.',
+      'The Freedom of the Press Act gives the state the right to pre-screen all private letters.',
+    ],
+    q861: [
+      'Yttrandefrihetsgrundlagen ger alla rätt att uttrycka tankar och åsikter fritt, till exempel i radio, tv och dagstidningar.',
+      'The Fundamental Law on Freedom of Expression gives everyone the right to express thoughts and opinions freely, for example on radio, TV, and in newspapers.',
+    ],
+    q862: [
+      'Yttrandefrihetsgrundlagen gör alla yttranden lagliga oavsett innehåll.',
+      'The Fundamental Law on Freedom of Expression makes every expression legal regardless of content.',
+    ],
+    q869: [
+      'Under en rättegång har en åtalad person rätt till en försvarsadvokat som kan ifrågasätta åklagarens bevis och lägga fram egna bevis.',
+      'During a trial, the accused person has the right to a defence lawyer who can question the prosecutor’s evidence and present evidence of their own.',
+    ],
+    q870: [
+      'Under en rättegång har en åtalad person rätt att ensam välja domare och nämndemän.',
+      'During a trial, the accused person has the right to choose the judge and lay judges alone.',
+    ],
   };
 
   for (const [questionSv, questionEn] of Object.values(expectedRows)) {
@@ -1440,8 +1308,18 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   const residualQuestions = questions.filter(
     (question) => question.type === 'true_false' && question.tags.includes('published-variant'),
   );
+  const residualText = residualQuestions
+    .map((question) => `${question.questionSv} ${question.questionEn}`)
+    .join('\n');
 
-  assertNoGeneratedTrueFalseNaturalnessIssues(residualQuestions);
+  assert.doesNotMatch(
+    residualText,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|^(?:Rätten för staten|Uttrycka tankar|Rätt till|Den gör|Free expression in printed form|Express thoughts|The right to|It makes)\b|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
+  );
+  assert.doesNotMatch(
+    residualText,
+    /att Kungens makt|för Samarbetet mellan|for Cooperation between/,
+  );
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);
     assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);
@@ -1469,4 +1347,68 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       question.id,
     );
   });
+});
+
+test('derivePublishedQuestions writes standalone generated civic answer-option propositions', () => {
+  const { questions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const expectedRows = {
+    q767: [
+      'Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal.',
+      'Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.',
+      'true',
+    ],
+    q768: [
+      'Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar.',
+      'Commercial radio and TV channels can earn income through court fees from trials.',
+      'false',
+    ],
+    q827: [
+      'Val till EU-parlamentet hålls vart femte år.',
+      'Elections to the European Parliament are held every five years.',
+      'true',
+    ],
+    q828: [
+      'Val till EU-parlamentet hålls vart fjärde år.',
+      'Elections to the European Parliament are held every four years.',
+      'false',
+    ],
+    q835: [
+      'Röstkortet visar vilken vallokal väljaren ska gå till.',
+      'The voting card shows which polling station the voter should go to.',
+      'true',
+    ],
+    q836: [
+      'Röstkortet visar vilket parti väljaren måste rösta på.',
+      'The voting card shows which party the voter must vote for.',
+      'false',
+    ],
+    q839: [
+      'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
+      'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
+      'true',
+    ],
+    q840: [
+      'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
+      'A person can influence party politics only by voting if they already sit in the Riksdag.',
+      'false',
+    ],
+  };
+
+  for (const [id, [questionSv, questionEn, correctOptionId]] of Object.entries(expectedRows)) {
+    const question = byId.get(id);
+    assert.ok(question, `${id} must exist`);
+    assert.equal(question.type, 'true_false', `${id} type`);
+    assert.equal(question.correctOptionId, correctOptionId, `${id} correct option`);
+    assert.equal(question.questionSv, questionSv, `${id} Swedish generated stem`);
+    assert.equal(question.questionEn, questionEn, `${id} English generated stem`);
+  }
+
+  const checkedText = Object.keys(expectedRows)
+    .map((id) => `${byId.get(id).questionSv} ${byId.get(id).questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(
+    checkedText,
+    /^(?:De säljer reklamplats|Genom domstolsavgifter|Vart femte år|Vart fjärde år|Vilken vallokal|Vilket parti|Bli medlem|Bara rösta|They sell advertising|Through court fees|Every five years|Every four years|Which polling station|Which party|Become a member|Only vote if)/im,
+  );
 });

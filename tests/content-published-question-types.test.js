@@ -1942,6 +1942,88 @@ test('secret-ballot Swedish copy uses plural voter wording across published bank
   assert.deepEqual(bankFindings(actualSiteBank), []);
 });
 
+test('National Day generated false statement keeps the 1523 event context', () => {
+  const expectedSv = 'Händelsen den 6 juni 1523 var att Sverige gick med i EU.';
+  const expectedEn = 'The event on 6 June 1523 was that Sweden joined the EU.';
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const csv = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
+  const staticSource = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
+
+  function assertQ664(bank, label) {
+    const question = Array.from(bank).find((candidate) => candidate.id === 'q664');
+    assert.ok(question, `${label} should include q664`);
+    assert.equal(question.type, 'true_false');
+    assert.equal(question.q.sv, expectedSv);
+    assert.equal(question.q.en, expectedEn);
+    assert.equal(question.answer, 1);
+  }
+
+  assertQ664(generatedSiteBank, 'generated static bank');
+  assertQ664(actualSiteBank, 'checked-in static bank');
+  assert.match(csv, new RegExp(`^"q664","ch13","true_false","${expectedSv}","${expectedEn}"`, 'm'));
+  const focusedOutput = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-true-false-event-context'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  const focusedSummary = JSON.parse(focusedOutput.match(/\{[\s\S]*\}/)[0]);
+  assert.equal(focusedSummary.generatedTrueFalseEventContextValidated, true);
+  assert.doesNotMatch(
+    csv,
+    /^"q664","ch13","true_false","Sverige gick med i EU\.","Sweden joined the EU\."/m,
+  );
+  assert.doesNotMatch(
+    staticSource,
+    /"id":\s*"q664"[\s\S]{0,220}"en":\s*"Sweden joined the EU\."[\s\S]{0,120}"sv":\s*"Sverige gick med i EU\."/,
+  );
+});
+
+test('published question schema rejects q124 generated false statements without event context', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const q124Residuals = {",
+        "  [generatedFixtureId('q124', 2)]: { questionSv: 'Sverige gick med i EU.', questionEn: 'Sweden joined the EU.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  q124Residuals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...q124Residuals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-event-context');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /q664 contains a generated true\/false grammar-splice stem/);
+});
+
 test('secret-ballot Swedish copy rejects singular den voting wording', () => {
   const result = spawnSync(
     process.execPath,
