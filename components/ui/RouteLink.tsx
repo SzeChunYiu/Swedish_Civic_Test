@@ -28,10 +28,15 @@ type RouteLinkHandledProps =
   | 'onTouchEnd'
   | 'onTouchStart'
   | 'style';
-type RouteLinkKeyboardEventHandler = (event: { key?: string }) => void;
+type RouteLinkKeyboardEvent = {
+  currentTarget?: { click?: () => void };
+  key?: string;
+  preventDefault?: () => void;
+};
+type RouteLinkKeyboardEventHandler = (event: RouteLinkKeyboardEvent) => void;
 type RouteLinkWebEventHandler = (event: unknown) => void;
 
-const keyboardActivationKeys = new Set(['Enter', ' ', 'Spacebar']);
+const keyboardActivationKeys = new Set(['Enter', ' ', 'Space', 'Spacebar']);
 
 function isKeyboardActivationKey(key: string | undefined) {
   return key ? keyboardActivationKeys.has(key) : false;
@@ -100,11 +105,18 @@ export function RouteLink({
             onFocus?.(event);
           },
           onKeyDown: (event: Parameters<NonNullable<typeof onKeyDown>>[0]) => {
-            if (isKeyboardActivationKey(event.key)) setIsPressed(true);
+            if (isKeyboardActivationKey(event.key)) {
+              setIsPressed(true);
+              event.preventDefault?.();
+            }
             onKeyDown?.(event);
           },
           onKeyUp: (event: Parameters<NonNullable<typeof onKeyUp>>[0]) => {
-            if (isKeyboardActivationKey(event.key)) setIsPressed(false);
+            if (isKeyboardActivationKey(event.key)) {
+              setIsPressed(false);
+              event.preventDefault?.();
+              event.currentTarget?.click?.();
+            }
             onKeyUp?.(event);
           },
           onMouseDown: (event: Parameters<NonNullable<typeof onMouseDown>>[0]) => {
@@ -143,6 +155,7 @@ export function RouteLink({
     <Link
       {...linkProps}
       {...webInteractionHandlers}
+      aria-label={accessibilityLabel}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="link"
       onPressIn={(event) => {
