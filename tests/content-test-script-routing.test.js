@@ -510,6 +510,23 @@ test('static ebook footnote hash parity uses focused content validation routing'
   );
 });
 
+test('weekly recap runtime guard uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-weekly-recap-runtime/);
+  assert.match(
+    validatorSource,
+    /validateWeeklyRecapRuntimeGuard\(\);[\s\S]*weeklyRecapRuntimeCasesValidated[\s\S]*weeklyRecapRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateDashboardProgressSnapshotParity\(\);[\s\S]*validateWeeklyRecapRuntimeGuard\(\);[\s\S]*validateBadgeCatalog\(\);/,
+    'full content validation must still invoke the weekly recap runtime guard',
+  );
+});
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
