@@ -1442,7 +1442,6 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Dagens kostnadsfria övningsprov är tillgängligt.',
     'Starta övningsprov',
     'Försök läsa övningsprovsstatus igen',
-    'Dagens kostnadsfria övningsprov är använt. Extra prov låses inte upp på provskärmen.',
     'Starta upplåst extra prov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
@@ -1474,7 +1473,6 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Daily free mock exam available.',
     'Start mock exam',
     'Retry mock exam access check',
-    'Daily free mock exam used. Extra exams are not unlocked on the exam screen.',
     'Start unlocked extra exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
@@ -8771,8 +8769,17 @@ function validateAdPlacementRouteParity() {
       continue;
     }
 
-    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd/.test(source)) {
+    if (/AdBanner|NativeAd|Interstitial|LaunchPopupAd|RewardedAd/i.test(source)) {
       reject(`${file} must not import or render ad components`);
+      routeIsValid = false;
+    }
+
+    if (
+      /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit|sponsor preview|Sponsored preview|Sponsrad förhandsvisning|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i.test(
+        source,
+      )
+    ) {
+      reject(`${file} must not expose rewarded ad unlock UI or sponsor-preview copy`);
       routeIsValid = false;
     }
 

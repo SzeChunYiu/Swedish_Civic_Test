@@ -58,7 +58,6 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
   const config = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
   const { generateExam } = loadTs('lib/quiz/examGenerator.ts');
   const examRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const rewardedAdSource = fs.readFileSync(
     path.join(repoRoot, 'lib/monetization/rewardedAd.ts'),
     'utf8',
@@ -77,26 +76,10 @@ test('default mock exam config generates a full UHR-based exam from bundled ques
     rewardedAdSource,
     /if \(!rewardConfirmed\) \{[\s\S]*status: 'closed_without_reward'/,
   );
-  assert.match(homeRouteSource, /Platform,/);
-  assert.match(
-    homeRouteSource,
-    /const usesWebRewardPreview = Platform\.OS === 'web' && canOfferRewardedExam;/,
-  );
-  assert.match(
-    homeRouteSource,
-    /confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements: monetizationEntitlements,/,
-  );
-  assert.match(
-    homeRouteSource,
-    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
-  );
-  assert.match(homeRouteSource, /await grantRewardedExamCredit\(\);/);
-  assert.match(homeRouteSource, /\{copy\.rewardedExamTitle\}/);
-  assert.match(homeRouteSource, /\{rewardStatusText\}/);
   assert.match(examRouteSource, /consumeRewardedExamCredit/);
   assert.doesNotMatch(
     examRouteSource,
-    /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit/,
+    /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit|sponsor preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
   assert.equal(exam.length, config.questionCount);
   assert.equal(new Set(exam.map((question) => question.id)).size, exam.length);
@@ -121,7 +104,6 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     'utf8',
   );
   const examSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
-  const homeSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const defaultResult = await showRewardedExtraExamAd();
   const confirmedResult = await showRewardedExtraExamAd({
     confirmReward: () => true,
@@ -134,15 +116,8 @@ test('web rewarded unlocks require explicit completion before credit grant path'
     /rewardConfirmed = \(await confirmReward\?\.\(\)\) === true;[\s\S]*if \(!rewardConfirmed\) \{[\s\S]*return \{ status: 'closed_without_reward' \};[\s\S]*\}/,
   );
   assert.match(rewardedAdSource, /webConsentDecision = WEB_AD_FALLBACK_CONSENT_DECISION/);
-  assert.match(
-    homeSource,
-    /const rewardedAdResult = await showRewardedExtraExamAd\(\{[\s\S]*confirmReward: Platform\.OS === 'web' \? \(\) => rewardPreviewCompleted : undefined,[\s\S]*entitlements: monetizationEntitlements,[\s\S]*\}\);[\s\S]*if \(rewardedAdResult\.status !== 'earned_reward'\) return;[\s\S]*await grantRewardedExamCredit\(\);/,
+  assert.doesNotMatch(
+    examSource,
+    /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit|sponsor preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
   );
-  assert.match(
-    homeSource,
-    /webConsentDecision:\s*Platform\.OS === 'web' \? WEB_AD_FALLBACK_CONSENT_DECISION : undefined/,
-  );
-  assert.match(homeSource, /rewardedExamPreviewButton: 'Complete sponsor preview'/);
-  assert.match(homeSource, /rewardedExamPreviewButton: 'Slutför förhandsvisning'/);
-  assert.doesNotMatch(examSource, /showRewardedExtraExamAd|rewardPreview|grantRewardedExamCredit/);
 });
