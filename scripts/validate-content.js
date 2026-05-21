@@ -1583,6 +1583,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Starta upplåst extra prov',
     'Framsteg',
     '${answeredCount}/${questionCount} besvarade',
+    'Svarsalternativ för fråga ${questionNumber}',
     'Välj svaret ${optionText} för fråga ${questionNumber}',
     'Skicka övningsprov',
     'Skicka prov',
@@ -1614,6 +1615,7 @@ const EXPECTED_EXAM_ROUTE_COPY_LABELS = {
     'Start unlocked extra exam',
     'Progress',
     '${answeredCount}/${questionCount} answered',
+    'Answer options for question ${questionNumber}',
     'Select answer ${optionText} for question ${questionNumber}',
     'Submit mock exam',
     'Submit exam',
@@ -1676,8 +1678,27 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam progress count must render localized copy',
   ],
   [
+    'answerGroupAccessibilityLabel: (questionNumber: number) => string;',
+    'exam route must type localized answer group labels',
+  ],
+  [
+    'aria-label={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized web radiogroup labels',
+  ],
+  [
+    'accessibilityLabel={copy.answerGroupAccessibilityLabel(index + 1)}',
+    'exam answer groups must expose localized native radiogroup labels',
+  ],
+  ['accessibilityRole="radiogroup"', 'exam answer groups must expose radiogroup semantics'],
+  [
     'accessibilityLabel={copy.answerAccessibilityLabel(optionText, index + 1)}',
     'exam answers must expose localized accessibility labels',
+  ],
+  ['aria-checked={isSelected}', 'exam answer radios must expose checked state on web'],
+  ['accessibilityRole="radio"', 'exam answer options must expose radio semantics'],
+  [
+    'accessibilityState={{ checked: isSelected }}',
+    'exam answer radios must mirror checked state natively',
   ],
   [
     'accessibilityLabel={copy.submitAccessibilityLabel}',
@@ -9334,6 +9355,35 @@ if (process.argv.includes('--focus-rewarded-exam-schema')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-mock-exam-runtime-parity')) {
+  validateMockExamConfig(
+    defaultMockExamConfig,
+    Array.isArray(questions)
+      ? questions.filter((question) => question.reviewStatus === 'published').length
+      : 0,
+  );
+  validateMockExamConfigTypeSchemaParity();
+  validateMockExamRuntimeParity(defaultMockExamConfig);
+  validateMockExamTimerParity(defaultMockExamConfig);
+  validateExamRouteHeaderParity();
+  validateExamRouteCopyParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mockExamConfigTypeFieldsValidated,
+    mockExamConfigTypeSchemaParityValidated,
+    mockExamConfigExactSchemaKeysValidated,
+    mockExamConfigValidated,
+    mockExamRuntimeParityValidated,
+    mockExamChapterBalanceParityValidated,
+    mockExamTimerParityValidated,
+    examRouteHeadersValidated,
+    examRouteHeaderParityValidated,
+    examRouteCopyLabelsValidated,
+    examRouteCopyParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-mock-exam-copy-parity')) {
   validateNativeMockExamComponentLegalCopy();
   validateNativeMockExamLibraryAndTierCopy();
@@ -11093,6 +11143,13 @@ function validateExamRouteCopyParity() {
   EXPECTED_EXAM_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!examRoute.includes(snippet)) reject(message);
   });
+
+  if (
+    /aria-selected=\{isSelected\}/.test(examRoute) ||
+    /accessibilityState=\{\{\s*selected:\s*isSelected\s*\}\}/.test(examRoute)
+  ) {
+    reject('active exam answer options must use checked radio semantics, not selected buttons');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_EXAM_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
