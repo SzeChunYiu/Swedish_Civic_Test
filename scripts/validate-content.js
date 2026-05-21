@@ -7184,6 +7184,8 @@ let releaseMonetizationPolicyParityValidated = false;
 let adPlacementRoutesValidated = 0;
 let noAdRoutesValidated = 0;
 let adPlacementRouteParityValidated = false;
+let dashboardRobustnessRulesValidated = 0;
+let dashboardRobustnessParityValidated = false;
 let removeAdsEntitlementHookCasesValidated = 0;
 let removeAdsEntitlementHookParityValidated = false;
 let premiumEntitlementStatesValidated = 0;
@@ -7535,16 +7537,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
   });
   process.exit(0);
 }
@@ -15596,6 +15588,70 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+function validateDashboardRobustnessParity() {
+  let valid = true;
+  let dashboardStatsSource = '';
+  let perChapterBarsSource = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    dashboardStatsSource = fs.readFileSync(
+      path.join(repoRoot, 'lib/learning/dashboardStats.ts'),
+      'utf8',
+    );
+    perChapterBarsSource = fs.readFileSync(
+      path.join(repoRoot, 'components/dashboard/PerChapterProgressBars.tsx'),
+      'utf8',
+    );
+  } catch (error) {
+    reject(`Dashboard robustness sources could not be read: ${error.message}`);
+    return;
+  }
+
+  const dashboardRobustnessChecks = [
+    [
+      /function normalizedChapterQuestionCount\(questionCount: number\): number \{[\s\S]*Number\.isInteger\(questionCount\)[\s\S]*questionCount >= 0/.test(
+        dashboardStatsSource,
+      ),
+      'Dashboard per-chapter stats must require finite non-negative integer question counts',
+    ],
+    [
+      /coverage:\s*safeRatio\(bucket\.questionIds\.size, questionCount\)/.test(
+        dashboardStatsSource,
+      ),
+      'Dashboard per-chapter coverage must clamp malformed or undersized totals',
+    ],
+    [
+      dashboardStatsSource.includes('answer.isCorrect === true') &&
+        dashboardStatsSource.includes('answer.isCorrect === false'),
+      'Dashboard selectors must use strict boolean answer correctness checks',
+    ],
+    [
+      perChapterBarsSource.includes('const coverageGap = 1 - ratio(bar.coverage);') &&
+        perChapterBarsSource.includes(
+          'const accuracyGap = bar.accuracy === null ? 1 : 1 - ratio(bar.accuracy);',
+        ),
+      'PerChapterProgressBars weakness sorting must sanitize accuracy and coverage ratios',
+    ],
+  ];
+
+  for (const [caseIsValid, message] of dashboardRobustnessChecks) {
+    if (!caseIsValid) {
+      reject(message);
+      continue;
+    }
+    dashboardRobustnessRulesValidated += 1;
+  }
+
+  if (valid && dashboardRobustnessRulesValidated === dashboardRobustnessChecks.length) {
+    dashboardRobustnessParityValidated = true;
+  }
+}
+
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
@@ -15864,6 +15920,7 @@ validateAppConfigSchema();
 validateLaunchAdRouteSuppressionParity();
 validateTabNavigationParity();
 validateAdPlacementRouteParity();
+validateDashboardRobustnessParity();
 validateReleaseMonetizationPolicyParity();
 validateRemoveAdsEntitlementHookParity();
 validatePremiumEntitlementParity();
@@ -15982,6 +16039,8 @@ console.log(
       adPlacementRoutesValidated,
       noAdRoutesValidated,
       adPlacementRouteParityValidated,
+      dashboardRobustnessRulesValidated,
+      dashboardRobustnessParityValidated,
       releaseMonetizationPolicyFieldsValidated,
       releaseMonetizationPolicyParityValidated,
       removeAdsEntitlementHookCasesValidated,
