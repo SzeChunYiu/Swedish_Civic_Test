@@ -410,15 +410,22 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   );
 
   assert.match(practiceInterstitialSource, /InterstitialAd\.createForAdRequest/);
+  assert.match(practiceInterstitialSource, /createPracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialSource, /reducePracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS/);
+  assert.match(practiceInterstitialSource, /PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS/);
   assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
-  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*consumeShowKey\(\)/);
+  assert.match(practiceInterstitialSource, /\.then\(\(\) => \{[\s\S]*show_resolved/);
+  assert.match(practiceInterstitialSource, /dispatchAttemptEvent\('show_timeout'\)/);
+  assert.match(practiceInterstitialSource, /dispatchAttemptEvent\('load_timeout'\)/);
   assert.doesNotMatch(
     practiceInterstitialSource,
     /AdEventType\.LOADED[\s\S]{0,260}lastInterstitialShowKey\s*=/,
   );
+  assert.doesNotMatch(practiceInterstitialSource, /let attemptSettled|let showStarted/);
   assert.match(
     practiceInterstitialSource,
     /getPlatformAdUnitId\('quiz_completed_interstitial', Platform\.OS\)/,
@@ -431,6 +438,86 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
     practiceInterstitialSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
+});
+
+test('PracticeInterstitial attempt state settles timeout, cleanup, success, and late callbacks', () => {
+  const {
+    PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS,
+    PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS,
+    createPracticeInterstitialAttemptState,
+    reducePracticeInterstitialAttemptState,
+  } = loadTs('lib/monetization/practiceInterstitialAttempt.ts');
+
+  function reduceEvents(events) {
+    return events.reduce(
+      (state, event) => reducePracticeInterstitialAttemptState(state, event),
+      createPracticeInterstitialAttemptState(),
+    );
+  }
+
+  assert.equal(PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS, 10_000);
+  assert.equal(PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS, 8_000);
+
+  assert.deepEqual(reduceEvents(['load_timeout']), {
+    inFlight: false,
+    outcome: 'load_timeout',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+  assert.deepEqual(reduceEvents(['error']), {
+    inFlight: false,
+    outcome: 'error',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+  assert.deepEqual(reduceEvents(['cleanup']), {
+    inFlight: false,
+    outcome: 'cleanup',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+
+  const loadedState = reduceEvents(['loaded']);
+  assert.deepEqual(loadedState, {
+    inFlight: true,
+    phase: 'showing',
+    settled: false,
+    showKeyConsumed: false,
+  });
+
+  const stalledShowState = reduceEvents(['loaded', 'show_timeout']);
+  assert.deepEqual(stalledShowState, {
+    inFlight: false,
+    outcome: 'show_timeout',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
+  assert.strictEqual(
+    reducePracticeInterstitialAttemptState(stalledShowState, 'opened'),
+    stalledShowState,
+  );
+
+  for (const event of ['opened', 'closed', 'show_resolved']) {
+    assert.deepEqual(reduceEvents(['loaded', event]), {
+      inFlight: false,
+      outcome: event,
+      phase: 'settled',
+      settled: true,
+      showKeyConsumed: true,
+    });
+  }
+
+  assert.deepEqual(reduceEvents(['loaded', 'show_rejected']), {
+    inFlight: false,
+    outcome: 'show_rejected',
+    phase: 'settled',
+    settled: true,
+    showKeyConsumed: false,
+  });
 });
 
 test('native AdBanner uses platform-aware unit lookup and shouldShowAd gate', () => {

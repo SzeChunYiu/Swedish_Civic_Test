@@ -114,6 +114,13 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(practiceInterstitialNativeSource, /createPracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialNativeSource, /reducePracticeInterstitialAttemptState/);
+  assert.match(practiceInterstitialNativeSource, /PRACTICE_INTERSTITIAL_LOAD_TIMEOUT_MS/);
+  assert.match(practiceInterstitialNativeSource, /PRACTICE_INTERSTITIAL_SHOW_TIMEOUT_MS/);
+  assert.match(practiceInterstitialNativeSource, /dispatchAttemptEvent\('load_timeout'\)/);
+  assert.match(practiceInterstitialNativeSource, /dispatchAttemptEvent\('show_timeout'\)/);
+  assert.doesNotMatch(practiceInterstitialNativeSource, /let attemptSettled|let showStarted/);
   assert.match(adBannerNativeSource, /const unit = getAdUnit\(placement\);/);
   assert.match(
     adBannerNativeSource,
