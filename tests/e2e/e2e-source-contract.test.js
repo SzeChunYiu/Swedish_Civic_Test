@@ -218,6 +218,16 @@ test('learn chapter navigation covers localized back-link round trips', () => {
     /const returnedFirstChapter = page\.getByLabel\(englishFirstChapterLabel\)\.last\(\);/,
     'English chapter navigation should verify the returned Learn card after using the back link',
   );
+  assert.match(
+    source,
+    /await expect\(page\)\.toHaveURL\(\/\\\/learn\$\/\);\s+const returnedFirstChapter = page\.getByLabel\(englishFirstChapterLabel\)\.last\(\);/s,
+    'English chapter navigation should verify the route returns to /learn before checking the returned card',
+  );
+  assert.match(
+    source,
+    /await expect\(returnedFirstChapter\)\.toContainText\(['"]The country of Sweden['"]\);[\s\S]*await expect\(returnedFirstChapter\)\.toContainText\(['"]Landet Sverige['"]\);[\s\S]*await expect\(returnedFirstChapter\)\.toContainText\(`0\/\$\{questionCount\} practiced`\);/,
+    'English chapter navigation should verify language-specific chapter card copy after returning to Learn',
+  );
 });
 
 test('practice feedback specs target answer option accessibility result labels', () => {
