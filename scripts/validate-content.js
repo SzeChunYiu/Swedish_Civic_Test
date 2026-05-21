@@ -168,7 +168,7 @@ const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
-  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -4555,11 +4555,13 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
+    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
     'Nya medborgarskapsregler gäller från',
-    'Samhällskunskapsprovet väntas starta i augusti 2026',
+    'UHR har bekräftat att den första provomgången i samhällskunskap är',
+    'i Stockholm',
     'New citizenship rules apply from',
-    'The civic-knowledge test is expected in August 2026',
+    'UHR has confirmed that the first civic-knowledge test sitting is',
+    'in Stockholm',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -4569,6 +4571,10 @@ function validateCitizenshipTimeline() {
   [
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
+    /Samhällskunskapsprovet väntas starta i augusti 2026/,
+    /The civic-knowledge test is expected in August 2026/,
+    /Regeringens tidsgräns för första steget/,
+    /The government deadline for the first step/,
     /until new exam/,
     /tills nya provet/,
   ].forEach((forbiddenPattern) => {
@@ -7539,12 +7545,20 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
+if (process.argv.includes('--focus-countdown-banner')) {
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
   exitWithValidationFailures();
   printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
   });
   process.exit(0);
 }

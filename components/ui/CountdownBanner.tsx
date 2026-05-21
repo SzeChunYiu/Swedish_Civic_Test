@@ -21,7 +21,7 @@ const copy = {
   sv: {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
     body: (rulesDate: string, firstSittingDate: string) =>
-      `Nya medborgarskapsregler gäller från ${rulesDate}. UHR har bekräftat att den första provomgången i samhällskunskap genomförs ${firstSittingDate} i Stockholm.`,
+      `Nya medborgarskapsregler gäller från ${rulesDate}. UHR har bekräftat att den första provomgången i samhällskunskap är ${firstSittingDate} i Stockholm.`,
     sourceLabel: 'Officiella datumkällor:',
     sources: [
       {
@@ -40,7 +40,7 @@ const copy = {
   en: {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
     body: (rulesDate: string, firstSittingDate: string) =>
-      `New citizenship rules apply from ${rulesDate}. UHR has confirmed that the first civic-knowledge sitting will be held on ${firstSittingDate} in Stockholm.`,
+      `New citizenship rules apply from ${rulesDate}. UHR has confirmed that the first civic-knowledge test sitting is ${firstSittingDate} in Stockholm.`,
     sourceLabel: 'Official date sources:',
     sources: [
       {
