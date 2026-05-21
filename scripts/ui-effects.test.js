@@ -868,10 +868,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    webSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webSource, /getAdBannerStatusLabel/);
+  assert.match(webSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     webSource,
@@ -883,10 +881,8 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(nativeSource, /accessible/);
   assert.match(nativeSource, /const copy = adBannerCopy\[language\]/);
   assert.match(nativeSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    nativeSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(nativeSource, /getAdBannerStatusLabel/);
+  assert.match(nativeSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(nativeSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     nativeSource,
@@ -912,7 +908,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
-  assert.match(copySource, /AdMob test unit active - test placement/);
+  assert.match(copySource, /AdMob test unit active - preview/);
   assert.doesNotMatch(copySource, /web preview|webbförhandsvisning/);
 });
 
