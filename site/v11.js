@@ -998,8 +998,8 @@
 
   function onRouteChange() {
     const h = location.hash;
-    // Dashboard now lives on the Practice page — only render when on /practice.
-    if (h.startsWith('#/practice')) requestAnimationFrame(renderDashboard);
+    // Dashboard now has its own login-walled page.
+    if (h.startsWith('#/dashboard')) requestAnimationFrame(renderDashboard);
   }
 
   window.addEventListener('hashchange', onRouteChange);
