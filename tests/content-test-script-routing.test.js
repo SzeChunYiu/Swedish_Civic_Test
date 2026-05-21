@@ -694,6 +694,35 @@ test('religious-freedom option parallelism uses focused content validation routi
   );
 });
 
+test('religious-freedom 1951 naturalness uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const publishedQuestionTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('religiousFreedom1951Naturalness');
+
+  assert.ok(registryEntry, 'religious-freedom 1951 focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-religious-freedom-1951-naturalness']);
+  assert.deepEqual(registryEntry.summaryKeys, ['questionReligiousFreedom1951NaturalnessValidated']);
+  assert.match(validatorSource, /--focus-religious-freedom-1951-naturalness/);
+  assert.match(
+    validatorSource,
+    /validateQuestionReligiousFreedom1951Naturalness\(\);[\s\S]*questionReligiousFreedom1951NaturalnessValidated/,
+  );
+  assert.match(
+    publishedQuestionTestSource,
+    /religious-freedom 1951 English naturalness guard rejects stale CSV wording[\s\S]*--focus-religious-freedom-1951-naturalness/,
+  );
+  assert.match(
+    publishedQuestionTestSource,
+    /religious-freedom 1951 English naturalness guard rejects stale static wording[\s\S]*--focus-religious-freedom-1951-naturalness/,
+  );
+});
+
 test('Mistakes route copy parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

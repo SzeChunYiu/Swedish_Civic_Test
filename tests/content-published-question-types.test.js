@@ -109,6 +109,20 @@ function contentQuestionBankCsvRowsById(ids) {
   );
 }
 
+function religiousFreedom1951QuestionIds() {
+  const sourceQuestions = buildSiteQuestionBank().questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+
+  return [
+    'q093',
+    generatedQuestionId(sourceQuestions, 'q093', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q093', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q093', 'judgement'),
+  ];
+}
+
 function firstGeneratedQuestionNumber() {
   const firstGenerated = buildSiteQuestionBank().questions.find(
     (question) => question.questionProvenance !== 'uhr',
@@ -1619,6 +1633,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-1951-naturalness');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -1629,6 +1644,87 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
+  );
+});
+
+test('religious-freedom 1951 English naturalness reports focused validator coverage', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-religious-freedom-1951-naturalness'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+  const summary = JSON.parse(result.stdout.match(/\{[\s\S]*\}/)?.[0] || '{}');
+  assert.equal(
+    summary.questionReligiousFreedom1951NaturalnessValidated,
+    religiousFreedom1951QuestionIds().length * 3,
+  );
+});
+
+test('religious-freedom 1951 English naturalness guard rejects stale CSV wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/content/question-bank.csv')) {
+    return String(contents).replace(
+      'The law made it possible to choose any religion freely, or not belong to a religion at all',
+      'The law made it possible to choose a religion completely freely or not belong to any religion at all',
+    );
+  }
+  return contents;
+};
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-1951-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q093 uses stilted 1951 religious-freedom English wording in content\/question-bank\.csv/,
+  );
+});
+
+test('religious-freedom 1951 English naturalness guard rejects stale static wording', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/site/questions.js')) {
+    return String(contents).replace(
+      'The law made it possible to choose any religion freely, or not belong to a religion at all',
+      'The law made it possible to choose a religion completely freely or not belong to any religion at all',
+    );
+  }
+  return contents;
+};
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-1951-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /site\/questions\.js q093 uses stilted 1951 religious-freedom English wording/,
   );
 });
 
