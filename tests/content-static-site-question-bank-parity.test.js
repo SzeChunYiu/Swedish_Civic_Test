@@ -279,6 +279,27 @@ test('static site question bank keeps q050 source-criticism i18n noun-based', ()
   assert.doesNotMatch(staticQuestionVisibleText(q050), SOURCE_CRITICISM_STALE_STATIC_PATTERN);
 });
 
+test('static site question bank preserves q050 source-criticism canonical copy and source metadata', () => {
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q050 = questionsById.get('q050');
+
+  assert.ok(q050, 'q050 should be present in static question bank');
+  assert.equal(q050.q.sv, 'Vad betyder det att vara källkritisk?');
+  assert.equal(q050.q.en, 'What does source criticism mean?');
+  assert.equal(q050.answer, 0);
+  assert.equal(q050.opts[0].sv, 'Att ifrågasätta och kontrollera om information är korrekt');
+  assert.equal(q050.opts[0].en, 'Questioning and checking whether information is correct');
+  assert.equal(q050.source.title, 'Sverige i fokus');
+  assert.equal(q050.source.chapter, 'Mediernas roll');
+  assert.equal(q050.source.section, 'Källkritik');
+  assert.equal(q050.source.page, 21);
+  assert.equal(q050.questionProvenance, 'uhr');
+});
+
 test('chapter localization metadata avoids parenthetical English welfare glosses', () => {
   const bank = buildSiteQuestionBank();
   const context = { window: {} };

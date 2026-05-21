@@ -583,6 +583,55 @@ test('static Home chapter 2 civic-term e2e keeps a focused grep target', () => {
   );
 });
 
+test('static q050 source-criticism rendered e2e keeps a focused grep target', () => {
+  const source = readRelative('static-i18n-extras-language-selector.spec.ts');
+  const paritySource = fs.readFileSync(
+    path.join(repoRoot, 'tests', 'content-static-site-question-bank-parity.test.js'),
+    'utf8',
+  );
+
+  assert.match(
+    source,
+    /static q050 source criticism extra languages render noun-based question and explanation/,
+    'static q050 e2e should have a focused grep title',
+  );
+  assert.match(
+    source,
+    /q050RenderedSourceCriticismLocales = \['zh-Hans', 'ar', 'pl', 'so', 'tr', 'uk'\]/,
+    'static q050 e2e should switch through the required rendered extra locales',
+  );
+  assert.match(
+    source,
+    /window\.SMT_QUESTIONS/,
+    'static q050 e2e should drive the static question bank rather than hardcoded demo copy',
+  );
+  assert.match(
+    source,
+    /#quiz-stage \.quiz__q/,
+    'static q050 e2e should inspect the rendered practice question element',
+  );
+  assert.match(
+    source,
+    /#quiz-stage \.quiz__feedback/,
+    'static q050 e2e should inspect the rendered answer explanation element',
+  );
+  assert.match(
+    source,
+    /localizedQ050SourceCriticismTerms/,
+    'static q050 e2e should assert noun-based localized source-criticism terms',
+  );
+  assert.match(
+    source,
+    /forbiddenQ050SourceCriticismStaleTerms/,
+    'static q050 e2e should reject stale adjective/person source-criticism wording',
+  );
+  assert.match(
+    paritySource,
+    /static site question bank preserves q050 source-criticism canonical copy and source metadata/,
+    'static q050 data contract should preserve canonical copy and UHR source metadata',
+  );
+});
+
 test('static site network specs share one external request trap helper', () => {
   const helperSource = readRelative('staticSiteNetworkGuards.ts');
   const privacySource = readRelative('static-site-network-privacy.spec.ts');
