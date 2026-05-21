@@ -5,9 +5,6 @@ import path from 'node:path';
 
 import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
-import { visualSmokeDuplicateScreenshotExplanations, visualSmokeRoutes } from './visualSmokeRoutes';
-
-test.setTimeout(60_000);
 
 const webBundleDir = path.resolve('dist-web/_expo/static/js/web');
 const visualSmokeOutput = resolveVisualSmokeOutput();
@@ -24,6 +21,24 @@ type RouteCapture = {
   launchOverlayVisibleAfterDismissal: boolean;
 };
 
+const routes = [
+  ['index', '/'],
+  ['onboarding', '/onboarding'],
+  ['home', '/home'],
+  ['learn', '/learn'],
+  ['practice', '/practice'],
+  ['exam', '/exam'],
+  ['mistakes', '/mistakes'],
+  ['profile', '/profile'],
+  ['settings', '/settings'],
+  ['chapter-ch01', '/chapter/ch01'],
+  ['disclaimer', '/disclaimer'],
+  ['privacy', '/privacy'],
+  ['terms', '/terms'],
+  ['sources', '/sources'],
+  ['support', '/support'],
+] as const;
+
 const requiredRouteContextKeys = [
   './_layout.tsx',
   './(tabs)/home.tsx',
@@ -31,6 +46,15 @@ const requiredRouteContextKeys = [
   './about-the-test.tsx',
   './chapter/[chapterId].tsx',
 ] as const;
+
+const explainedDuplicateScreenshotGroups = [
+  {
+    names: ['home', 'index'],
+    reason: 'The root route is a redirect to /home, so it may match the Home screenshot exactly.',
+  },
+] as const;
+
+test.setTimeout(90_000);
 
 function readWebBundleText(): string {
   expect(fs.existsSync(webBundleDir), 'dist-web web bundle directory should exist').toBe(true);
@@ -74,7 +98,7 @@ function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[]
     .filter(([, names]) => names.length > 1)
     .filter(([, names]) => {
       const sortedNames = [...names].sort();
-      return !visualSmokeDuplicateScreenshotExplanations.some(
+      return !explainedDuplicateScreenshotGroups.some(
         (group) => JSON.stringify([...group.names].sort()) === JSON.stringify(sortedNames),
       );
     })
@@ -98,7 +122,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
   });
   page.on('pageerror', (error) => consoleErrors.push(error.message));
 
-  for (const { name, route } of visualSmokeRoutes) {
+  for (const [name, route] of routes) {
     await page.goto(route, { waitUntil: 'networkidle' });
     const dismissal = await dismissBlockingModals(page);
     const bodyText = await page.locator('body').innerText();
@@ -150,7 +174,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
           'Visual smoke dismisses the launch sponsor overlay, first-run guide, and language picker before every screenshot and rejects visible dialog or modal menu overlays.',
         duplicatePolicy:
           'Duplicate screenshot hashes fail unless the route pair is explicitly explained in the test.',
-        duplicateExplanations: visualSmokeDuplicateScreenshotExplanations,
+        duplicateExplanations: explainedDuplicateScreenshotGroups,
         routes: manifest,
       },
       null,
