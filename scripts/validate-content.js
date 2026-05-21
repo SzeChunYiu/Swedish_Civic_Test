@@ -2545,7 +2545,7 @@ const EXPECTED_SETTINGS_ROUTE_SCROLL_RULES = [
 const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
   {
     label: 'ScrollView import',
-    pattern: /import \{ Pressable, ScrollView, StyleSheet, Text, View \} from 'react-native';/,
+    pattern: /import\s+\{[\s\S]*\bScrollView\b[\s\S]*\}\s+from 'react-native';/,
   },
   {
     label: 'scroll root container',
@@ -9047,6 +9047,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-onboarding-route-scroll')) {
+  validateOnboardingRouteScrollParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    onboardingRouteScrollRulesValidated,
+    onboardingRouteScrollParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-badge-accessibility')) {
   validateBadgeAccessibilityParity();
   exitWithValidationFailures();
@@ -9056,7 +9066,6 @@ if (process.argv.includes('--focus-badge-accessibility')) {
   });
   process.exit(0);
 }
-
 if (process.argv.includes('--focus-flashcard-accessibility')) {
   validateFlashcardAccessibilityParity();
   exitWithValidationFailures();
