@@ -10,11 +10,12 @@ function read(relativePath) {
 }
 
 test('progress bar uses tokenized animated motion and exposes progress to assistive tech', () => {
-  const source = read('components/ui/ProgressBar.tsx');
+  const source = read('components/ProgressBar.tsx');
+  const adapterSource = read('components/ui/ProgressBar.tsx');
 
   assert.match(source, /Animated\.timing/);
   assert.match(source, /motion\.duration\.slow/);
-  assert.match(source, /import type \{ AppLanguage \}/);
+  assert.match(source, /type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/);
   assert.match(source, /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{/);
   assert.match(source, /`\$\{progressPercent\} procent klart`/);
   assert.match(source, /`\$\{progressPercent\} percent complete`/);
@@ -24,17 +25,20 @@ test('progress bar uses tokenized animated motion and exposes progress to assist
     source,
     /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   );
-  assert.match(source, /aria-label=\{progressAccessibilityLabel\}/);
+  assert.match(source, /aria-label=\{resolvedAccessibilityLabel\}/);
   assert.match(source, /aria-valuemax=\{100\}/);
   assert.match(source, /aria-valuemin=\{0\}/);
   assert.match(source, /aria-valuenow=\{progressPercent\}/);
-  assert.match(source, /aria-valuetext=\{progressAccessibilityLabel\}/);
-  assert.match(source, /accessibilityLabel=\{progressAccessibilityLabel\}/);
-  assert.match(source, /accessibilityRole="progressbar"/);
+  assert.match(source, /aria-valuetext=\{resolvedAccessibilityLabel\}/);
+  assert.match(source, /accessibilityLabel=\{resolvedAccessibilityLabel\}/);
+  assert.match(source, /accessibilityRole=\{accessibilityRole\}/);
   assert.match(
     source,
-    /accessibilityValue=\{\{\s*min: 0,\s*max: 100,\s*now: progressPercent,\s*text: progressAccessibilityLabel,\s*\}\}/,
+    /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
   );
+  assert.match(adapterSource, /ProgressBar as RootProgressBar/);
+  assert.match(adapterSource, /languageOverride=\{language\}/);
+  assert.doesNotMatch(adapterSource, /Animated\.timing|new Animated\.Value|useReducedMotion/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
