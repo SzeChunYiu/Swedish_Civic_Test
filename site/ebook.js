@@ -144,11 +144,27 @@
     return ` data-ebook-source-keys="${normalizedEbookSourceKeys(sourceKeys, 'ebook source metadata').join(' ')}"`;
   }
 
-  const EBOOK_DEFAULT_PROSE_SOURCE_KEYS = Object.freeze(['uhrStudyMaterial']);
+  const EBOOK_EDITORIAL_ONLY_SOURCE_KEYS = Object.freeze(['editorialCommentary']);
   const EBOOK_EDITORIAL_PROSE_SOURCE_KEYS = Object.freeze([
     'uhrStudyMaterial',
     'editorialCommentary',
   ]);
+  const EBOOK_BODY_SOURCE_KEYS = Object.freeze({
+    intro: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    1: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    2: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    3: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    4: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    5: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    6: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    7: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    8: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    9: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    10: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    11: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    12: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    13: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+  });
   const EBOOK_LEDE_SOURCE_KEYS = Object.freeze({
     intro: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
     1: Object.freeze(['uhrStudyMaterial', 'governmentNato', 'editorialCommentary']),
@@ -159,6 +175,12 @@
 
   function ebookLedeSourceKeys(chapterId) {
     return EBOOK_LEDE_SOURCE_KEYS[chapterId] || EBOOK_EDITORIAL_PROSE_SOURCE_KEYS;
+  }
+
+  function ebookBodySourceKeys(chapterId) {
+    const sourceKeys = EBOOK_BODY_SOURCE_KEYS[chapterId];
+    assertEbookSourceKeys(sourceKeys, `ebook body chapter ${chapterId}`);
+    return sourceKeys;
   }
 
   function parseEbookSourceKeyMetadata(attrs) {
@@ -231,22 +253,30 @@
     const footnotes = [];
     return {
       footnotes,
-      annotate(html, fallbackSourceKeys = EBOOK_DEFAULT_PROSE_SOURCE_KEYS) {
-        normalizedEbookSourceKeys(fallbackSourceKeys, `ebook prose chapter ${chapterId}`);
+      annotate(html, typedSourceKeys) {
+        const normalizedTypedSourceKeys = typedSourceKeys
+          ? normalizedEbookSourceKeys(typedSourceKeys, `ebook prose chapter ${chapterId}`)
+          : null;
         return html.replace(
           /<(p|li)(?![^>]*class="ebook__source-note")([^>]*)>([\s\S]*?)<\/\1>/g,
           (match, tagName, attrs, content) => {
             const explicitSourceKeys = parseEbookSourceKeyMetadata(attrs);
             const cleanAttrs = stripEbookSourceKeyMetadata(attrs);
+            if (!explicitSourceKeys && !normalizedTypedSourceKeys) {
+              throw new Error(
+                `ebook ${tagName} chapter ${chapterId} must pass inline or typed source metadata`,
+              );
+            }
             const sourceKeys = normalizedEbookSourceKeys(
-              explicitSourceKeys || fallbackSourceKeys,
+              explicitSourceKeys || normalizedTypedSourceKeys,
               `ebook ${tagName} chapter ${chapterId}`,
             );
+            const metadataKind = explicitSourceKeys ? 'inline' : 'typed';
             const footnoteIndex = footnotes.length + 1;
             const id = `eb-${chapterId}-${lang}-fn-${footnoteIndex}`;
             footnotes.push({ id, index: footnoteIndex, sourceKeys });
             const keys = Array.from(new Set(sourceKeys)).join(' ');
-            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
+            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}" data-source-metadata="${metadataKind}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
           },
         );
       },
@@ -277,11 +307,15 @@
   }
 
   function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
-    assertEbookSourceKeys(sourceKeys, 'svStudyBrief fact box');
+    const normalizedBriefSourceKeys = normalizedEbookSourceKeys(
+      sourceKeys,
+      'svStudyBrief body source metadata',
+    );
     const items = points
       .map((point) => {
         const text = typeof point === 'string' ? point : point.text;
-        const pointSourceKeys = typeof point === 'string' ? null : point.sourceKeys;
+        const pointSourceKeys =
+          typeof point === 'string' ? normalizedBriefSourceKeys : point.sourceKeys;
         return `<li${ebookSourceKeyDataAttr(pointSourceKeys)}>${text}</li>`;
       })
       .join('');
@@ -289,9 +323,9 @@
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
-      <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
+      <p${ebookSourceKeyDataAttr(EBOOK_EDITORIAL_ONLY_SOURCE_KEYS)}>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
-      ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
+      ${ebookFactBox('sv', 'Fakta att repetera', facts, normalizedBriefSourceKeys)}
     `;
   }
 
@@ -4238,6 +4272,7 @@
     const ledeHtml = ch.lede
       ? footnoteCollector.annotate(
           `<p class="ebook__lede"${ebookSourceKeyDataAttr(ebookLedeSourceKeys(id))}>${ebookLocalizedField(id, ch, 'lede', lang)}</p>`,
+          ebookLedeSourceKeys(id),
         )
       : '';
 
@@ -4260,7 +4295,9 @@
             uk: 'Виберіть розділ зі списку або поверніться до вступу.',
           })}</p>
         </div>`;
-    const bodyHtml = footnoteCollector.annotate(rawBodyHtml);
+    const bodyHtml = ch.body
+      ? footnoteCollector.annotate(rawBodyHtml, ebookBodySourceKeys(id))
+      : rawBodyHtml;
     const footnotesHtml = renderEbookFootnotes(lang, id, footnoteCollector.footnotes);
 
     const idx = ORDER.indexOf(id);
