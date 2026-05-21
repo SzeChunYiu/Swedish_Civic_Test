@@ -489,6 +489,11 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'practiceScoringParity',
+    flags: ['--focus-practice-scoring-parity'],
+    summaryKeys: ['practiceScoringRulesValidated', 'practiceScoringRulesParityValidated'],
+  },
+  {
     id: 'practiceFlowParity',
     flags: ['--focus-practice-flow-parity'],
     summaryKeys: ['practiceFlowCasesValidated', 'practiceFlowParityValidated'],
