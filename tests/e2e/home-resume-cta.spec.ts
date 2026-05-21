@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { dismissBlockingModals, type AppLanguage } from './browserLaunch';
+import {
+  collectConsoleAndPageErrors,
+  dismissBlockingModals,
+  seedFreshSettingsLanguageAndAboutSeenWithStorage,
+  type AppLanguage,
+} from './browserLaunch';
 
 test.use({ viewport: { width: 390, height: 844 } });
 
@@ -35,17 +40,6 @@ const resumeCases: ResumeCase[] = [
     visibleCta: 'Resume The country of Sweden',
   },
 ];
-
-function collectConsoleErrors(page: Page) {
-  const consoleErrors: string[] = [];
-
-  page.on('console', (message) => {
-    if (message.type() === 'error') consoleErrors.push(message.text());
-  });
-  page.on('pageerror', (error) => consoleErrors.push(error.message));
-
-  return consoleErrors;
-}
 
 async function expectNoHorizontalOverflow(page: Page, label: string) {
   await expect
@@ -94,23 +88,18 @@ function recentProgressState() {
 }
 
 async function seedHomeState(page: Page, language: AppLanguage, progressState?: unknown) {
-  await page.addInitScript(
-    ({ seededLanguage, state }) => {
-      window.localStorage.clear();
-      window.sessionStorage.clear();
-      window.localStorage.setItem('settings\\language', seededLanguage);
-      window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
-      if (state) {
-        window.localStorage.setItem('progress\\progressState', JSON.stringify(state));
-      }
-    },
-    { seededLanguage: language, state: progressState },
-  );
+  await seedFreshSettingsLanguageAndAboutSeenWithStorage(page, language, {
+    localStorageValues: progressState
+      ? {
+          'progress\\progressState': JSON.stringify(progressState),
+        }
+      : {},
+  });
 }
 
 for (const scenario of resumeCases) {
   test(`home resume CTA opens latest chapter in ${scenario.language}`, async ({ page }) => {
-    const consoleErrors = collectConsoleErrors(page);
+    const consoleErrors = collectConsoleAndPageErrors(page);
 
     await seedHomeState(page, scenario.language, recentProgressState());
     await page.goto('/home', { waitUntil: 'networkidle' });
@@ -137,12 +126,12 @@ for (const scenario of resumeCases) {
     await expect(page).toHaveURL(/\/chapter\/ch01$/);
     await expect(page.getByLabel(scenario.chapterCtaLabel)).toBeVisible();
 
-    expect(consoleErrors).toEqual([]);
+    expect(consoleErrors.get()).toEqual([]);
   });
 }
 
 test('home hides resume CTA when no progress exists', async ({ page }) => {
-  const consoleErrors = collectConsoleErrors(page);
+  const consoleErrors = collectConsoleAndPageErrors(page);
 
   await seedHomeState(page, 'sv');
   await page.goto('/home', { waitUntil: 'networkidle' });
@@ -153,5 +142,5 @@ test('home hides resume CTA when no progress exists', async ({ page }) => {
   await expect(body).not.toContainText('Senaste övning');
   await expectNoHorizontalOverflow(page, 'empty Swedish home resume card');
 
-  expect(consoleErrors).toEqual([]);
+  expect(consoleErrors.get()).toEqual([]);
 });

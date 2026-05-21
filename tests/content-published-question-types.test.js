@@ -41,7 +41,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const policyGoalCleftPattern = /\bThe goal of .+?\bpolicy means(?: that)?\b/i;
+const policyGoalCleftPattern =
+  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i;
 const civilDefenceContextlessPattern =
   /\b(?:Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera|Important activities such as school, work, and health care can continue to function|Politiska val ersätts med militära beslut|Political elections are replaced with military decisions)\b/i;
 const luciaExplanationRoleScaffoldPattern =
@@ -1666,6 +1667,65 @@ test('human-rights definition true/false exports use direct propositions', () =>
   );
   assert.deepEqual(
     csvRows.filter((line) => humanRightsDefinitionCleftPattern.test(line)),
+    [],
+  );
+});
+
+test('political-rights generated true/false exports use direct propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q146TrueId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const q146FalseId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+  const expectedSv = [
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  ];
+  const expectedEn = [
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  ];
+  const generatedRows = [q146TrueId, q146FalseId].map((id) =>
+    generatedSiteBank.find((question) => question.id === id),
+  );
+  const actualRows = [q146TrueId, q146FalseId].map((id) =>
+    Array.from(actualSiteBank).find((question) => question.id === id),
+  );
+  const csvRows = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => [q146TrueId, q146FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
+  const barePhrasePattern = /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/i;
+
+  assert.ok(generatedRows.every(Boolean), 'generated q146 true/false rows should exist');
+  assert.ok(actualRows.every(Boolean), 'static q146 true/false rows should exist');
+  assert.equal(csvRows.length, 2);
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    generatedRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.sv),
+    expectedSv,
+  );
+  assert.deepEqual(
+    actualRows.map((question) => question.q.en),
+    expectedEn,
+  );
+  assert.deepEqual(
+    [...generatedRows, ...actualRows]
+      .filter((question) => barePhrasePattern.test(`${question.q.sv}\n${question.q.en}`))
+      .map((question) => question.id),
+    [],
+  );
+  assert.deepEqual(
+    csvRows.filter((line) => barePhrasePattern.test(line)),
     [],
   );
 });
@@ -3574,8 +3634,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const genderEqualityPolicyGoalResiduals = {",
-        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
-        "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
+        "  [generatedFixtureId('q053', 1)]: { questionSv: 'Målet med Sveriges folkhälsopolitik betyder att människor ska ha lika möjligheter till en god hälsa.', questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
+        "  [generatedFixtureId('q053', 2)]: { questionSv: 'Målet med Sveriges jämställdhetspolitik betyder att jämställdhet bara handlar om hur många kvinnor som finns i politiken.', questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  genderEqualityPolicyGoalResiduals[question.id]",
@@ -3836,6 +3896,62 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
+});
+
+test('published question schema uses the shared generated true/false naturalness pattern source', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  assert.match(validatorSource, /require\('\.\/generated-true-false-naturalness-patterns'\)/);
+  assert.doesNotMatch(
+    validatorSource,
+    /const\s+QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS\s*=\s*\[/,
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
+    return String(contents).replace(
+      marker,
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "const sharedPatternOnlyResiduals = {",
+        "  [generatedFixtureId('q146', 1)]: { questionSv: 'Det stämmer i sak att människor får övertyga andra.', questionEn: 'It is factually true that people may persuade others.' },",
+        "  [generatedFixtureId('q146', 2)]: { questionSv: 'Det stämmer i sak att partier får hindra röster.', questionEn: 'It is factually true that parties may stop votes.' },",
+        "};",
+        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
+        "  sharedPatternOnlyResiduals[question.id]",
+        "    ? {",
+        "        ...question,",
+        "        ...sharedPatternOnlyResiduals[question.id],",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-generated-true-false-naturalness');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.notEqual(result.status, 0);
+  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects All Saints generated true/false English action fragments', () => {
@@ -4204,13 +4320,13 @@ require('./scripts/validate-content.js');
 });
 
 test('published question schema guards capitalized generated reason clauses', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
+  const patternSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
     'utf8',
   );
 
-  assert.match(validatorSource, /\/\^En anledning är att Det\\b\//);
-  assert.match(validatorSource, /\/\^One reason is that It\\b\//);
+  assert.match(patternSource, /\/\^En anledning är att Det\\b\//);
+  assert.match(patternSource, /\/\^One reason is that It\\b\//);
 });
 
 test('published question schema guards targetless generated why-reason stems', () => {

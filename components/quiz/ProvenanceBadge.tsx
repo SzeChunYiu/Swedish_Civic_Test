@@ -154,9 +154,17 @@ function createStyles(themeColors: ThemeColors) {
       backgroundColor: themeColors.surfaceMuted,
     },
     sourceNote: {
+      alignSelf: 'flex-start',
+      backgroundColor: themeColors.surfaceWarm,
+      borderColor: themeColors.border,
+      borderRadius: radius.small,
+      borderWidth: StyleSheet.hairlineWidth,
       color: themeColors.textSecondary,
       fontSize: typography.caption.fontSize,
       lineHeight: typography.caption.lineHeight,
+      maxWidth: '100%',
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.75],
     },
     uhrText: {
       color: themeColors.badgeBlueText,

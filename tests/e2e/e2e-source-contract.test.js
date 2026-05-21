@@ -140,6 +140,46 @@ test('browser specs do not assert obsolete dash-style answer feedback text', () 
   );
 });
 
+test('about Swedish copy browser spec covers route, first-run guide, and English preservation', () => {
+  const source = readRelative('about-test-sv-copy.spec.ts');
+
+  assert.match(
+    source,
+    /about-the-test route uses Swedish settings copy without mockprov wording/,
+    'about Swedish copy e2e should cover the route-level Swedish copy',
+  );
+  assert.match(
+    source,
+    /first-run about guide follows Swedish settings copy without mockprov wording/,
+    'about Swedish copy e2e should cover the first-run guide modal',
+  );
+  assert.match(
+    source,
+    /about route keeps intentional English guide copy available/,
+    'about Swedish copy e2e should preserve intentional English wording',
+  );
+  assert.match(
+    source,
+    /forbiddenSwedishMockprovCopy\s*=\s*\/mockprov\|mock-provet\/i/,
+    'about Swedish copy e2e should reject stale Swedish mockprov wording',
+  );
+  assert.match(
+    source,
+    /getByText\('övningsprov från andra aktörer'\)/,
+    'about Swedish copy e2e should assert app-standard övningsprov wording',
+  );
+  assert.match(
+    source,
+    /getByRole\('link', \{ name: 'Öppna guiden om medborgarskapsprovet' \}\)/,
+    'about Swedish copy e2e should assert the medborgarskapsprovet guide action',
+  );
+  assert.match(
+    source,
+    /getByText\('practice tests from other actors'\)/,
+    'about Swedish copy e2e should keep intentional English practice-test copy available',
+  );
+});
+
 test('learn chapter navigation derives the rendered chapter total from questions data', () => {
   const source = readRelative('learn-chapter-navigation.spec.ts');
 
@@ -284,6 +324,49 @@ test('browser specs do not define local Date browser clock stubs', () => {
     [],
     'use mockBrowserDate from tests/e2e/browserLaunch.ts instead of local Date constructor or Date.now stubs',
   );
+});
+
+test('Home browser specs use the shared setup and error harness', () => {
+  const homeSpecNames = [
+    'home-link-targets.spec.ts',
+    'home-preparation-signal-copy.spec.ts',
+    'home-resume-cta.spec.ts',
+  ];
+
+  for (const specName of homeSpecNames) {
+    const source = readRelative(specName);
+
+    assert.match(
+      source,
+      /collectConsoleAndPageErrors/,
+      `${specName} should collect browser failures through browserLaunch`,
+    );
+    assert.match(
+      source,
+      /seedFreshSettingsLanguageAndAboutSeen/,
+      `${specName} should seed Home state through browserLaunch`,
+    );
+    assert.match(
+      source,
+      /dismissBlockingModals/,
+      `${specName} should use the shared blocking-modal dismissal helper`,
+    );
+    assert.doesNotMatch(
+      source,
+      /function\s+collectConsoleErrors|page\.on\(['"]console['"]|page\.on\(['"]pageerror['"]/,
+      `${specName} should not define a local console/page error collector`,
+    );
+    assert.doesNotMatch(
+      source,
+      /page\.addInitScript|window\.localStorage\.clear\(\)|settings\\\\language|settings\\\\hasSeenAboutTheTest/,
+      `${specName} should not duplicate browserLaunch localStorage setup`,
+    );
+    assert.doesNotMatch(
+      source,
+      /getByRole\(['"]button['"],\s*\{[^}]*name:\s*\/.*(?:Language picker|Språkväljare)/s,
+      `${specName} should not use stale LanguagePicker button selectors`,
+    );
+  }
 });
 
 test('dist-web e2e server releases the default port on SIGTERM', async () => {
