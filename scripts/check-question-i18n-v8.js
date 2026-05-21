@@ -102,18 +102,78 @@ const TRUE_FALSE_LABELS = {
 
 const SOMALI_GEOGRAPHY_NATURALNESS_IDS = ['q004', 'q006', 'q008'];
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
-const PUBLIC_SERVICE_LOANWORD_IDS = [
-  'q048',
-  'q049',
-  'q067',
-  'q068',
-  'q081',
-  'q089',
-  'q151',
-  'q157',
-];
-const PUBLIC_SERVICE_LOANWORD_LOCALES = ['pl', 'so', 'tr', 'uk'];
-const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b/i;
+const Q062_PUBLIC_SECTOR_NATURALNESS_IDS = ['q062'];
+const Q062_PUBLIC_SECTOR_REQUIREMENTS = {
+  en: {
+    question: ['public sector'],
+    option: ['services and activities', 'state', 'regions', 'municipalities', 'fund through taxes'],
+    explanation: [
+      'services and activities',
+      'state',
+      'regions',
+      'municipalities',
+      'fund through taxes',
+    ],
+  },
+  'zh-Hant': {
+    question: ['服務', '活動'],
+    option: ['服務', '活動', '稅收'],
+    explanation: ['服務', '活動', '稅收'],
+  },
+  'zh-Hans': {
+    question: ['服务', '活动'],
+    option: ['服务', '活动', '税收'],
+    explanation: ['服务', '活动', '税收'],
+  },
+  ar: {
+    question: ['الخدمات', 'الأنشطة'],
+    option: ['الخدمات', 'الأنشطة', 'الضرائب'],
+    explanation: ['الخدمات', 'الأنشطة', 'الضرائب'],
+  },
+  ckb: {
+    question: ['خزمەتگوزاری', 'چالاکی'],
+    option: ['خزمەتگوزاری', 'چالاکی', 'باج'],
+    explanation: ['خزمەتگوزاری', 'چالاکی', 'باج'],
+  },
+  fa: {
+    question: ['خدمات', 'فعالیت'],
+    option: ['خدمات', 'فعالیت', 'مالیات'],
+    explanation: ['خدمات', 'فعالیت', 'مالیات'],
+  },
+  pl: {
+    question: ['usługi', 'działania'],
+    option: ['usługi', 'działania', 'podatków'],
+    explanation: ['usługi', 'działania', 'podatków'],
+  },
+  so: {
+    question: ['adeegyo', 'hawlo'],
+    option: ['adeegyo', 'hawlo', 'canshuur'],
+    explanation: ['adeegyo', 'hawlo', 'canshuur'],
+  },
+  ti: {
+    question: ['ኣገልግሎታት', 'ንጥፈታት'],
+    option: ['ኣገልግሎታት', 'ንጥፈታት', 'ግብሪ'],
+    explanation: ['ኣገልግሎታት', 'ንጥፈታት', 'ግብሪ'],
+  },
+  tr: {
+    question: ['hizmet', 'faaliyet'],
+    option: ['hizmet', 'faaliyet', 'vergiler'],
+    explanation: ['hizmet', 'faaliyet', 'vergiler'],
+  },
+  uk: {
+    question: ['послуги', 'діяльності'],
+    option: ['послуги', 'діяльності', 'податків'],
+    explanation: ['послуги', 'діяльності', 'податків'],
+  },
+};
+const Q062_PUBLIC_SECTOR_STALE_PATTERNS = {
+  question:
+    /\bWhat is meant by the public sector in Sweden\b|公共部[門门][」”]?是什麼意思|ما المقصود بالقطاع العام|مەبەست لە کەرتی گشتی|منظور از بخش عمومی|Co oznacza sektor publiczny|Maxaa loola jeedaa qaybta dadweynaha|ህዝባዊ ዘፈር ማለት|kamu sektörü ne anlama gelir|Що означає державний сектор/i,
+  option:
+    /\bActivities for which the state, regions, and municipalities are responsible\b|由[國国]家、[區区]域和市[鎮镇]負責的活動|أنشطة تكون الدولة|ئەو چالاکیانەی دەوڵەت|^فعالیت‌هایی که دولت، مناطق و شهرداری‌ها مسئول آن‌ها هستند$|^Działania, za które odpowiadają państwo, regiony i gminy$|^Hawlo ay dowladda, gobollada iyo degmooyinku masuul ka yihiin$|ሓላፍነት ዘለዎም ንጥፈታት|^Devletin, bölgelerin ve belediyelerin sorumlu olduğu faaliyetler$|^Діяльність, за яку відповідають держава, регіони та муніципалітети$/i,
+  explanation:
+    /\bThe public sector means activities for which\b|公共部[門门]是指|القطاع العام هو الأنشطة|کەرتی گشتی بریتییە|بخش عمومی به فعالیت|Sektor publiczny to działania|Qaybta dadweynuhu waa hawlo|ህዝባዊ ዘፈር ማለት|^Kamu sektörü, devletin|Державний сектор — це діяльність/i,
+};
 
 function checkLocalizedMap(map, path, errors) {
   for (const locale of REQUIRED_LOCALES) {
@@ -427,11 +487,78 @@ function checkSomaliGeographyNaturalness(questions, ids = SOMALI_GEOGRAPHY_NATUR
   return errors;
 }
 
-function isSomaliGeographyNaturalnessId(id) {
-  return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
+function localizedQuestionMap(question) {
+  return Object.assign(
+    { sv: question.questionSv, en: question.questionEn },
+    question.questionText || {},
+  );
 }
 
-function summarizePublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVICE_LOANWORD_IDS) {
+function localizedExplanationMap(question) {
+  return Object.assign(
+    { sv: question.explanationSv, en: question.explanationEn },
+    question.explanationText || {},
+  );
+}
+
+function localizedOptionMap(option) {
+  return Object.assign({ sv: option?.textSv, en: option?.textEn }, option?.text || {});
+}
+
+function includesTerm(value, term) {
+  return String(value || '')
+    .toLocaleLowerCase('sv')
+    .includes(String(term).toLocaleLowerCase('sv'));
+}
+
+function q062PublicSectorErrorsForQuestion(question) {
+  const errors = [];
+  const questionMap = localizedQuestionMap(question);
+  const explanationMap = localizedExplanationMap(question);
+  const correctOption = (question.options || []).find(
+    (option) => option.id === question.correctOptionId,
+  );
+  const optionMap = localizedOptionMap(correctOption);
+
+  if (!correctOption) {
+    return [`${question.id}.publicSectorNaturalness correct option missing`];
+  }
+
+  const segments = [
+    ['questionText', questionMap, Q062_PUBLIC_SECTOR_STALE_PATTERNS.question],
+    ['correctOption.text', optionMap, Q062_PUBLIC_SECTOR_STALE_PATTERNS.option],
+    ['explanationText', explanationMap, Q062_PUBLIC_SECTOR_STALE_PATTERNS.explanation],
+  ];
+
+  for (const [path, map, stalePattern] of segments) {
+    for (const [locale, value] of Object.entries(map || {})) {
+      if (typeof value === 'string' && stalePattern.test(value)) {
+        errors.push(`${question.id}.${path}.${locale} uses stale public-sector wording`);
+      }
+    }
+  }
+
+  for (const [locale, requirements] of Object.entries(Q062_PUBLIC_SECTOR_REQUIREMENTS)) {
+    const requirementSegments = [
+      ['questionText', questionMap[locale], requirements.question],
+      ['correctOption.text', optionMap[locale], requirements.option],
+      ['explanationText', explanationMap[locale], requirements.explanation],
+    ];
+
+    for (const [path, value, requiredTerms] of requirementSegments) {
+      const missingTerms = requiredTerms.filter((term) => !includesTerm(value, term));
+      if (missingTerms.length > 0) {
+        errors.push(
+          `${question.id}.${path}.${locale} missing public-sector concept term(s): ${missingTerms.join(', ')}`,
+        );
+      }
+    }
+  }
+
+  return errors;
+}
+
+function summarizeQ062PublicSectorNaturalness(questions, ids = Q062_PUBLIC_SECTOR_NATURALNESS_IDS) {
   const errors = [];
   const questionById = new Map(questions.map((question) => [question.id, question]));
   let casesValidated = 0;
@@ -441,15 +568,11 @@ function summarizePublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVI
     const errorCountBefore = errors.length;
 
     if (!question) {
-      errors.push(`${id}.publicServiceLoanwordNaturalness missing`);
+      errors.push(`${id}.publicSectorNaturalness missing`);
       continue;
     }
 
-    for (const [path, value] of publicServiceLoanwordSegments(question)) {
-      if (typeof value === 'string' && PUBLIC_SERVICE_LOANWORD_PATTERN.test(value)) {
-        errors.push(`${id}.${path} contains English public service loanword`);
-      }
-    }
+    errors.push(...q062PublicSectorErrorsForQuestion(question));
 
     if (errors.length === errorCountBefore) {
       casesValidated += 1;
@@ -464,13 +587,17 @@ function summarizePublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVI
   };
 }
 
-function checkPublicServiceLoanwordNaturalness(questions, ids = PUBLIC_SERVICE_LOANWORD_IDS) {
-  const { errors } = summarizePublicServiceLoanwordNaturalness(questions, ids);
+function checkQ062PublicSectorNaturalness(questions, ids = Q062_PUBLIC_SECTOR_NATURALNESS_IDS) {
+  const { errors } = summarizeQ062PublicSectorNaturalness(questions, ids);
   return errors;
 }
 
-function isPublicServiceLoanwordNaturalnessId(id) {
-  return PUBLIC_SERVICE_LOANWORD_IDS.includes(id);
+function isSomaliGeographyNaturalnessId(id) {
+  return SOMALI_GEOGRAPHY_NATURALNESS_IDS.includes(id);
+}
+
+function isQ062PublicSectorNaturalnessId(id) {
+  return Q062_PUBLIC_SECTOR_NATURALNESS_IDS.includes(id);
 }
 
 function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
@@ -516,9 +643,9 @@ function checkQuestions(questions, ids = QUESTION_LOCALIZATION_PILOT_IDS) {
     errors.push(...checkSomaliGeographyNaturalness(questions, somaliGeographyIds));
   }
 
-  const publicServiceLoanwordIds = ids.filter(isPublicServiceLoanwordNaturalnessId);
-  if (publicServiceLoanwordIds.length > 0) {
-    errors.push(...checkPublicServiceLoanwordNaturalness(questions, publicServiceLoanwordIds));
+  const q062PublicSectorIds = ids.filter(isQ062PublicSectorNaturalnessId);
+  if (q062PublicSectorIds.length > 0) {
+    errors.push(...checkQ062PublicSectorNaturalness(questions, q062PublicSectorIds));
   }
 
   return errors;
@@ -641,15 +768,15 @@ if (require.main === module) {
 }
 
 module.exports = {
-  PUBLIC_SERVICE_LOANWORD_IDS,
+  Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
-  checkPublicServiceLoanwordNaturalness,
+  checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   REQUIRED_LOCALES,
   REQUIRED_REVIEW_LOCALES,
-  summarizePublicServiceLoanwordNaturalness,
+  summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
 };

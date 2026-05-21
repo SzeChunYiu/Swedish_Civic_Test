@@ -1223,7 +1223,7 @@ test('derivePublishedQuestions renders q062 public-sector true/false as direct p
   assert.equal(falseVariant.id, 'q426');
   assert.equal(
     trueVariant.questionEn,
-    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for.',
+    'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
   );
   assert.equal(
     falseVariant.questionEn,
@@ -1231,7 +1231,7 @@ test('derivePublishedQuestions renders q062 public-sector true/false as direct p
   );
   assert.doesNotMatch(
     `${trueVariant.questionEn}\n${falseVariant.questionEn}`,
-    /\bpublic sector in Sweden means\b/i,
+    /\bpublic sector in Sweden means\b|\bActivities for which\b/i,
   );
 });
 

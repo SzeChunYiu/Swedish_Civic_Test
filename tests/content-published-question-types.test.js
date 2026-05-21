@@ -2174,7 +2174,7 @@ test('public-sector source and generated exports use direct English propositions
     },
     {
       id: generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'),
-      q: 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for.',
+      q: 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
       why: expectedExplanation,
     },
     {
@@ -2208,7 +2208,7 @@ test('public-sector source and generated exports use direct English propositions
     sourceQuestion.opts.some(
       (option) =>
         option.en ===
-        'Services and activities that the state, regions, and municipalities are responsible for',
+        'Services and activities that the state, regions, and municipalities are responsible for and fund through taxes',
     ),
   );
 
@@ -2244,7 +2244,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
         'What is meant by the public sector in Sweden?',
       )
       .replace(
-        'Services and activities that the state, regions, and municipalities are responsible for',
+        'Services and activities that the state, regions, and municipalities are responsible for and fund through taxes',
         'Activities for which the state, regions, and municipalities are responsible',
       )
       .replace(

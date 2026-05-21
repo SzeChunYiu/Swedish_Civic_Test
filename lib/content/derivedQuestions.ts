@@ -2156,11 +2156,11 @@ export function deriveCivicStatementEn(source: PracticeQuestion, option: Questio
 
   if (source.id === 'q062') {
     if (
-      /^Services and activities that the state, regions, and municipalities are responsible for$/i.test(
+      /^Services and activities that the state, regions, and municipalities are responsible for and fund through taxes$/i.test(
         answer,
       )
     ) {
-      return 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for';
+      return 'The public sector in Sweden consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes';
     }
     if (/^All privately owned companies$/i.test(answer)) {
       return 'The public sector in Sweden consists only of privately owned companies';

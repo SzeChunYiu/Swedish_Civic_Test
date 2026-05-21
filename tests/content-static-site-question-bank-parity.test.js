@@ -16,11 +16,17 @@ const {
   generatedQuestionId,
   generatedQuestionIdLiteralFindingsForSource,
 } = require('../scripts/generated-question-fixture-ids');
+const {
+  Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+  summarizeQ062PublicSectorNaturalness,
+} = require('../scripts/check-question-i18n-v8');
 
 const repoRoot = path.resolve(__dirname, '..');
 const SOMALI_ENGLISH_GEOGRAPHY_TERM_PATTERN = /\b(?:Mediterranean|Baltic|Atlantic|Gulf Stream)\b/;
-const PUBLIC_SERVICE_LOANWORD_LOCALES = ['pl', 'so', 'tr', 'uk'];
-const PUBLIC_SERVICE_LOANWORD_PATTERN = /\bpublic service\b/i;
+const CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN = /\(welfare\)/i;
+const PUBLIC_SECTOR_STALE_STATIC_PATTERN =
+  /\bWhat is meant by the public sector in Sweden\b|\bActivities for which the state, regions, and municipalities are responsible\b|\bThe public sector(?: in Sweden)? means\b/i;
+const BASE_LOCALES = new Set(['sv', 'en']);
 
 function withSvEn(localizedText, sv, en) {
   return localizedText ? { ...localizedText, sv, en } : localizedText;
@@ -59,15 +65,37 @@ function staticSomaliSegments(question) {
   ];
 }
 
-function staticPublicServiceSegments(question) {
-  const segments = [];
+function staticQuestionToI18nQuestion(question) {
+  return {
+    id: question.id,
+    questionText: question.q,
+    explanationText: question.why,
+    options: (question.opts || []).map((option, index) => ({
+      id: String(index),
+      text: option,
+    })),
+    correctOptionId: String(question.answer),
+  };
+}
 
-  for (const locale of PUBLIC_SERVICE_LOANWORD_LOCALES) {
-    segments.push([`${question.id}.q.${locale}`, question.q?.[locale]]);
-    segments.push([`${question.id}.why.${locale}`, question.why?.[locale]]);
+function staticQuestionVisibleText(question) {
+  return JSON.stringify([question.q, question.why, question.opts]);
+}
 
-    for (const [index, option] of (question.opts || []).entries()) {
-      segments.push([`${question.id}.opts.${index}.${locale}`, option[locale]]);
+function chapterLocalizationWelfareGlossOffenders(chapters, scope) {
+  const offenders = [];
+  for (const chapter of chapters) {
+    for (const field of ['title', 'description']) {
+      const localized = chapter[field] || {};
+      for (const [locale, value] of Object.entries(localized)) {
+        if (BASE_LOCALES.has(locale)) continue;
+        if (
+          typeof value === 'string' &&
+          CHAPTER_LOCALIZATION_ENGLISH_WELFARE_GLOSS_PATTERN.test(value)
+        ) {
+          offenders.push(`${scope}.chapter${chapter.id}.${field}.${locale}`);
+        }
+      }
     }
   }
 
@@ -139,7 +167,73 @@ test('static site question bank avoids English geography common terms in Somali 
   assert.deepEqual(offenders, []);
 });
 
-test('static site question bank avoids English public service loanwords in target-language media text', () => {
+test('static site question bank keeps q062 public-sector i18n and generated variants direct', () => {
+  const expectedBank = buildSiteQuestionBank();
+  const sourceQuestions = expectedBank.questions.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const publicSectorIds = [
+    'q062',
+    generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q062', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+  ];
+  const localizedOptionIds = [
+    'q062',
+    generatedQuestionId(sourceQuestions, 'q062', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q062', 'judgement'),
+  ];
+  const context = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
+  const questionsById = new Map(
+    context.window.SMT_QUESTIONS.map((question) => [question.id, question]),
+  );
+  const q062 = questionsById.get('q062');
+
+  assert.ok(q062, 'q062 should be present in static question bank');
+  assert.deepEqual(
+    summarizeQ062PublicSectorNaturalness(
+      [staticQuestionToI18nQuestion(q062)],
+      Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
+    ).errors,
+    [],
+  );
+
+  for (const id of publicSectorIds) {
+    const question = questionsById.get(id);
+    assert.ok(question, `${id} should be present in static question bank`);
+    assert.doesNotMatch(staticQuestionVisibleText(question), PUBLIC_SECTOR_STALE_STATIC_PATTERN);
+  }
+
+  const localizedCorrectOptionTerms = {
+    en: 'fund through taxes',
+    'zh-Hant': '稅收',
+    'zh-Hans': '税收',
+    ar: 'الضرائب',
+    ckb: 'باج',
+    fa: 'مالیات',
+    pl: 'podatków',
+    so: 'canshuur',
+    ti: 'ግብሪ',
+    tr: 'vergiler',
+    uk: 'податків',
+  };
+
+  for (const id of localizedOptionIds) {
+    const question = questionsById.get(id);
+    const correctOption = question.opts[question.answer];
+    for (const [locale, term] of Object.entries(localizedCorrectOptionTerms)) {
+      assert.ok(
+        String(correctOption[locale] || '').includes(term),
+        `${id}.opts.${question.answer}.${locale} should include ${term}`,
+      );
+    }
+  }
+});
+
+test('chapter localization metadata avoids parenthetical English welfare glosses', () => {
+  const bank = buildSiteQuestionBank();
   const context = { window: {} };
   vm.runInNewContext(fs.readFileSync(path.join(repoRoot, 'site', 'questions.js'), 'utf8'), context);
 

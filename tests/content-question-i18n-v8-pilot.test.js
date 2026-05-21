@@ -3,15 +3,16 @@ const { execFileSync } = require('node:child_process');
 const test = require('node:test');
 
 const {
+  Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   checkQuestions,
   checkLocalizationSourceShape,
-  checkPublicServiceLoanwordNaturalness,
+  checkQ062PublicSectorNaturalness,
   checkSomaliGeographyNaturalness,
   checkReviewMetadata,
   PUBLIC_SERVICE_LOANWORD_IDS,
   REQUIRED_LOCALES,
   SOMALI_GEOGRAPHY_NATURALNESS_IDS,
-  summarizePublicServiceLoanwordNaturalness,
+  summarizeQ062PublicSectorNaturalness,
   summarizeSomaliGeographyNaturalness,
 } = require('../scripts/check-question-i18n-v8');
 
@@ -223,69 +224,119 @@ test('question localization v8 summarizes Somali geography naturalness cases', (
   assert.equal(summary.parityValidated, true);
 });
 
-test('question localization v8 rejects English public service loanwords in target media text', () => {
-  const errors = checkPublicServiceLoanwordNaturalness(
-    [
+function q062PublicSectorFixture({ stale = false } = {}) {
+  if (stale) {
+    const staleQuestion = completeMap('What is meant by the public sector in Sweden?');
+    const staleOption = completeMap(
+      'Activities for which the state, regions, and municipalities are responsible',
+    );
+    const staleExplanation = completeMap(
+      'The public sector means activities for which the state, regions, and municipalities are responsible and that are financed by taxes.',
+    );
+
+    return {
+      id: 'q062',
+      questionSv: 'Vad menas med offentlig sektor i Sverige?',
+      questionEn: staleQuestion.en,
+      questionText: staleQuestion,
+      explanationSv: 'Offentlig sektor är verksamheter som staten ansvarar för.',
+      explanationEn: staleExplanation.en,
+      explanationText: staleExplanation,
+      options: [
+        {
+          id: 'a',
+          textSv: 'Verksamheter som staten ansvarar för',
+          textEn: staleOption.en,
+          text: staleOption,
+        },
+      ],
+      correctOptionId: 'a',
+    };
+  }
+
+  return {
+    id: 'q062',
+    questionSv: 'Vad menas med offentlig sektor i Sverige?',
+    questionEn: 'What is the public sector in Sweden?',
+    questionText: {
+      sv: 'Vad menas med offentlig sektor i Sverige?',
+      en: 'What is the public sector in Sweden?',
+      'zh-Hant': '服務和活動',
+      'zh-Hans': '服务和活动',
+      ar: 'الخدمات والأنشطة',
+      ckb: 'خزمەتگوزاری و چالاکی',
+      fa: 'خدمات و فعالیت',
+      pl: 'usługi i działania',
+      so: 'adeegyo iyo hawlo',
+      ti: 'ኣገልግሎታትን ንጥፈታትን',
+      tr: 'hizmet ve faaliyet',
+      uk: 'послуги й види діяльності',
+    },
+    explanationSv: 'Offentlig sektor är verksamheter som finansieras med skatter.',
+    explanationEn:
+      'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+    explanationText: {
+      sv: 'Offentlig sektor är verksamheter som finansieras med skatter.',
+      en: 'The public sector consists of services and activities that the state, regions, and municipalities are responsible for and fund through taxes.',
+      'zh-Hant': '服務、活動、稅收',
+      'zh-Hans': '服务、活动、税收',
+      ar: 'الخدمات والأنشطة والضرائب',
+      ckb: 'خزمەتگوزاری و چالاکی و باج',
+      fa: 'خدمات و فعالیت و مالیات',
+      pl: 'usługi, działania i podatków',
+      so: 'adeegyo, hawlo iyo canshuur',
+      ti: 'ኣገልግሎታት፣ ንጥፈታትን ግብሪን',
+      tr: 'hizmet, faaliyet ve vergiler',
+      uk: 'послуги, діяльності та податків',
+    },
+    options: [
       {
-        id: 'q048',
-        questionText: {
-          pl: 'Firmy public service w Szwecji',
-          so: 'Shirkadaha public service ee Iswiidhan',
-          tr: 'Kamu hizmeti yayıncıları',
-          uk: 'Компанії суспільного мовлення',
+        id: 'a',
+        textSv: 'Tjänster och verksamheter som finansieras med skatter',
+        textEn:
+          'Services and activities that the state, regions, and municipalities are responsible for and fund through taxes',
+        text: {
+          sv: 'Tjänster och verksamheter som finansieras med skatter',
+          en: 'Services and activities that the state, regions, and municipalities are responsible for and fund through taxes',
+          'zh-Hant': '服務、活動、稅收',
+          'zh-Hans': '服务、活动、税收',
+          ar: 'الخدمات والأنشطة والضرائب',
+          ckb: 'خزمەتگوزاری و چالاکی و باج',
+          fa: 'خدمات و فعالیت و مالیات',
+          pl: 'usługi, działania i podatków',
+          so: 'adeegyo, hawlo iyo canshuur',
+          ti: 'ኣገልግሎታት፣ ንጥፈታትን ግብሪን',
+          tr: 'hizmet, faaliyet ve vergiler',
+          uk: 'послуги, діяльності та податків',
         },
-        explanationText: {
-          pl: 'Media publiczne',
-          so: 'Warbaahinta adeegga dadweynaha',
-          tr: 'Public service şirketleri',
-          uk: 'Компанії public service',
-        },
-        options: [
-          {
-            id: 'a',
-            text: {
-              pl: 'Sveriges Radio',
-              so: 'Sveriges Radio',
-              tr: 'Sveriges Radio',
-              uk: 'Sveriges Radio',
-            },
-          },
-        ],
       },
     ],
-    ['q048'],
-  );
+    correctOptionId: 'a',
+  };
+}
 
-  assert.deepEqual(errors, [
-    'q048.questionText.pl contains English public service loanword',
-    'q048.questionText.so contains English public service loanword',
-    'q048.explanationText.tr contains English public service loanword',
-    'q048.explanationText.uk contains English public service loanword',
-  ]);
+test('question localization v8 rejects literal public-sector calques for q062', () => {
+  const errors = checkQ062PublicSectorNaturalness([q062PublicSectorFixture({ stale: true })]);
+
+  assert.ok(errors.includes('q062.questionText.en uses stale public-sector wording'));
+  assert.ok(errors.includes('q062.correctOption.text.en uses stale public-sector wording'));
+  assert.ok(errors.includes('q062.explanationText.en uses stale public-sector wording'));
+  assert.ok(
+    errors.some((error) =>
+      error.startsWith('q062.correctOption.text.en missing public-sector concept term(s):'),
+    ),
+  );
 });
 
-test('question localization v8 summarizes public service loanword naturalness cases', () => {
-  const cleanMediaMaps = {
-    pl: 'Media publiczne powinny być niezależne.',
-    so: 'Warbaahinta adeegga dadweynaha waa inay madax-bannaanaataa.',
-    tr: 'Kamu hizmeti yayıncılığı bağımsız olmalıdır.',
-    uk: 'Суспільне мовлення має бути незалежним.',
-  };
-  const questions = PUBLIC_SERVICE_LOANWORD_IDS.map((id) => ({
-    id,
-    questionText: cleanMediaMaps,
-    explanationText: cleanMediaMaps,
-    options: [{ id: 'a', text: cleanMediaMaps }],
-  }));
-
-  const summary = summarizePublicServiceLoanwordNaturalness(
-    questions,
-    PUBLIC_SERVICE_LOANWORD_IDS,
+test('question localization v8 summarizes q062 public-sector naturalness cases', () => {
+  const summary = summarizeQ062PublicSectorNaturalness(
+    [q062PublicSectorFixture()],
+    Q062_PUBLIC_SECTOR_NATURALNESS_IDS,
   );
 
   assert.deepEqual(summary.errors, []);
-  assert.equal(summary.casesValidated, 8);
-  assert.equal(summary.expectedCases, 8);
+  assert.equal(summary.casesValidated, 1);
+  assert.equal(summary.expectedCases, 1);
   assert.equal(summary.parityValidated, true);
 });
 
