@@ -443,6 +443,49 @@ test('Profile route copy parity uses focused content validation routing', () => 
   );
 });
 
+test('countdown banner parity uses focused countdown and study-plan validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const countdownTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-countdown-banner-parity.test.js'),
+    'utf8',
+  );
+  const registrySource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content-focus-registry.js'),
+    'utf8',
+  );
+
+  assert.match(registrySource, /--focus-countdown-banner-parity/);
+  assert.match(validatorSource, /--focus-countdown-banner-parity/);
+  assert.match(validatorSource, /validateCountdownBannerFocusedParity\(\);/);
+  assert.match(validatorSource, /studyPlanRuntimeCasesValidated/);
+  assert.match(countdownTestSource, /--focus-countdown-banner-parity/);
+  assert.doesNotMatch(
+    countdownTestSource,
+    /--focus-countdown-banner['"]/,
+    'countdown banner parity tests must use the explicit parity focus flag',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-countdown-banner-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused countdown validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
+  assert.equal(summary.studyPlanRuntimeCasesValidated, 6);
+  assert.equal(summary.studyPlanRuntimeParityValidated, true);
+  assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
+  assert.equal(Object.hasOwn(summary, 'chapters'), false);
+
+
+});
+
 test('spaced repetition schema parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
