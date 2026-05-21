@@ -1518,6 +1518,23 @@ const EXPECTED_EXAM_ROUTE_COPY_SNIPPETS = [
     'exam route must read language from settings store',
   ],
   ['const copy = examRouteCopy[language];', 'exam route must select copy from settings language'],
+  [
+    "import { ProvenanceBadge } from '../../components/quiz/ProvenanceBadge';",
+    'exam route must import provenance badges',
+  ],
+  ['const examQuestionById = useMemo(', 'exam route review must map submitted items to questions'],
+  [
+    'new Map(examQuestions.map((question) => [question.id, question] as const))',
+    'exam route review question map must preserve full question metadata',
+  ],
+  [
+    '<ProvenanceBadge language={language} question={question} />',
+    'active exam questions must render provenance badges',
+  ],
+  [
+    '<ProvenanceBadge language={language} question={examQuestionById.get(item.questionId)} />',
+    'exam review questions must render provenance badges',
+  ],
   ['{copy.mockExamTitle}', 'exam route title must render localized copy'],
   [
     '{copy.heroSubtitle(defaultMockExamConfig.durationMinutes, examQuestions.length)}',
@@ -9845,7 +9862,9 @@ function validateExamSubmissionFinalityParity() {
     !examRoute.includes(
       'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
     ) ||
-    !examRoute.includes('completedAt: new Date().toISOString()')
+    !examRoute.includes(
+      'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString()',
+    )
   ) {
     reject('exam result submission must persist a completed mock-exam score for readiness');
   }

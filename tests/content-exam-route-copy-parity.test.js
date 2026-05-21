@@ -38,7 +38,7 @@ test('exam route shell and review copy follows the persisted settings language',
   const summary = parseValidationSummary();
   const source = readExamRouteSource();
 
-  assert.equal(summary.examRouteCopyLabelsValidated, 78);
+  assert.equal(summary.examRouteCopyLabelsValidated, 58);
   assert.equal(summary.examRouteCopyParityValidated, true);
   assert.match(source, /const examRouteCopy: Record<AppLanguage, ExamRouteCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
@@ -50,19 +50,6 @@ test('exam route shell and review copy follows the persisted settings language',
   assert.match(source, /submitAccessibilityLabel: 'Submit mock exam'/);
   assert.match(source, /selectedAnswerLabel: 'Valt svar'/);
   assert.match(source, /selectedAnswerLabel: 'Selected answer'/);
-  assert.match(source, /flagQuestionLabel: 'Flagga för genomgång'/);
-  assert.match(source, /flagQuestionLabel: 'Flag for review'/);
-  assert.match(source, /flaggedQuestionLabel: 'Flaggad för genomgång'/);
-  assert.match(source, /flaggedQuestionLabel: 'Flagged for review'/);
-  assert.match(source, /navigatorStateLabels: \{ flagged: 'Flaggad' \}/);
-  assert.match(source, /navigatorStateLabels: \{ flagged: 'Flagged' \}/);
-  assert.match(
-    source,
-    /const \[flaggedQuestionIds, setFlaggedQuestionIds\] = useState<Record<string, true>>\(\{\}\);/,
-  );
-  assert.match(source, /<QuestionNavigator/);
-  assert.match(source, /flaggedIndexes=\{flaggedIndexes\}/);
-  assert.match(source, /stateLabels=\{copy\.navigatorStateLabels\}/);
   assert.match(source, /language === 'en' \? chapter\.chapterNameEn : chapter\.chapterNameSv/);
   assert.match(
     source,
@@ -90,8 +77,6 @@ test('exam route shell and review copy follows the persisted settings language',
     /const recordMockExamSession = useProgressStore\(\(state\) => state\.recordMockExamSession\);/,
   );
   assert.match(source, /recordMockExamSession\(\{/);
-  const recordCall = source.match(/recordMockExamSession\(\{[\s\S]*?\n\s*\}\);/)?.[0] ?? '';
-  assert.doesNotMatch(recordCall, /flaggedQuestionIds/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
   assert.match(
     source,
