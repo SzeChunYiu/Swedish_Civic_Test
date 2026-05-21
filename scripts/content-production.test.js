@@ -64,6 +64,22 @@ test('chapter questionCount metadata matches the published question distribution
   );
 });
 
+test('practiceFlowCasesValidated production summary contract stays at 12', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-practice-flow-parity'],
+    {
+      encoding: 'utf8',
+    },
+  );
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+
+  const summary = JSON.parse(match[0]);
+  assert.equal(summary.practiceFlowCasesValidated, 12);
+  assert.equal(summary.practiceFlowParityValidated, true);
+});
+
 test('full content production validates published UHR-referenced questions', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     encoding: 'utf8',
