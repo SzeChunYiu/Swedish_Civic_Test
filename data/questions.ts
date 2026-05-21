@@ -612,7 +612,7 @@ const rawBaseQuestions: PracticeQuestion[] = [
     ],
     correctOptionId: 'a',
     explanationSv:
-      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna behöver inte följa resultatet.',
+      'Folkomröstningar kan hållas om en särskild fråga nationellt, i en region eller i en kommun. De är rådgivande, så politikerna inte behöver följa resultatet.',
     explanationEn:
       'Referendums can be held on a specific issue nationally, in a region, or in a municipality. They are advisory, so politicians do not have to follow the result.',
     uhrReference: {
@@ -630,7 +630,7 @@ export const baseQuestions: PracticeQuestion[] = rawBaseQuestions.map(
   applyQuestionLocalizationPilot,
 );
 
-export const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
+const localizedAdditionalQuestions: PracticeQuestion[] = additionalQuestions.map(
   applyQuestionLocalizationPilot,
 );
 

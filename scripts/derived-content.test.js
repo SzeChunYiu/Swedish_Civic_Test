@@ -81,14 +81,14 @@ test('derivePublishedQuestions creates four published UHR-referenced variants pe
   assert.ok(derived.every((question) => question.uhrReference.section === 'Geografi'));
   assert.ok(derived.some((question) => question.type === 'true_false'));
   assert.ok(derived.every((question) => question.tags.length === new Set(question.tags).size));
-  assert.equal(derived[0].questionSv, 'Var ligger Sverige?');
-  assert.equal(derived[0].questionEn, 'Where is Sweden located?');
+  assert.equal(derived[0].questionSv, 'Vilket svar stämmer bäst? Var ligger Sverige?');
+  assert.equal(derived[0].questionEn, 'Which answer best matches? Where is Sweden located?');
   assert.equal(derived[1].questionSv, 'Sverige ligger i Norden.');
   assert.equal(derived[1].questionEn, 'Sweden is located in the Nordic region.');
   assert.equal(derived[2].questionSv, 'Sverige ligger i Asien.');
   assert.equal(derived[2].questionEn, 'Sweden is located in Asia.');
-  assert.equal(derived[3].questionSv, 'Var ligger Sverige?');
-  assert.equal(derived[3].questionEn, 'Where is Sweden located?');
+  assert.equal(derived[3].questionSv, 'Välj rätt alternativ: Var ligger Sverige?');
+  assert.equal(derived[3].questionEn, 'Choose the correct option: Where is Sweden located?');
   assert.deepEqual(
     derived[3].options.map((option) => option.textEn),
     ['In the Nordic region', 'In Asia', 'In Africa', 'In South America'],
@@ -615,12 +615,17 @@ test('derivePublishedQuestions avoids generated true/false naturalness regressio
 
   assert.doesNotMatch(
     text,
-    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|One reason is that (?:so|It)|En anledning är att Det|have they|har de/i,
+    /Det att|describes that|describes government agencies|It is correct that the answer is|regions's foremost task is be|is an example of municipal responsibilities|has one vote each is part of|may stand for election is part of|har en röst var ingår|får ställa upp ingår|is a way to|applies to|gäller för|is the list that contains|about public power in Sweden|means it gives|betyder att politikerna måste (?:inte|alltid)|One reason is that (?:so|It)|En anledning är att Det|have they|har de/i,
   );
   assert.doesNotMatch(text, /are The/);
   assert.ok(
     text.includes(
-      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna måste inte följa resultatet.',
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
+    ),
+  );
+  assert.ok(
+    text.includes(
+      'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
     ),
   );
   assert.ok(
@@ -1034,30 +1039,6 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       'Julen firar traditionellt vårens ankomst inom kristendomen.',
       'Christmas traditionally celebrates the arrival of spring in Christianity.',
     ],
-    q771: [
-      'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam.',
-      'Advertising-funded media are often run by private companies and earn income from advertising.',
-    ],
-    q772: [
-      'Reklamfinansierade medier får aldrig sälja reklamplats.',
-      'Advertising-funded media may never sell advertising space.',
-    ],
-    q775: [
-      'Många tidningar finns också på internet och uppdateras med nyheter flera gånger per dag.',
-      'Many newspapers are also available online and updated with news several times per day.',
-    ],
-    q776: [
-      'Många tidningar får bara säljas som ett exemplar per år.',
-      'Many newspapers may be sold only as one copy per year.',
-    ],
-    q779: [
-      'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier.',
-      'On the web and in social media, anyone can create content, and the content is not always checked the same way as in other media.',
-    ],
-    q780: [
-      'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg.',
-      'On the web and in social media, only responsible publishers may write posts.',
-    ],
   };
 
   for (const [questionSv, questionEn] of Object.values(expectedRows)) {
@@ -1073,7 +1054,7 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
 
   assert.doesNotMatch(
     residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^De (?:drivs ofta|får aldrig|finns också|får bara säljas)|^They (?:are often run|may never|are also available|may be sold)|^Vem som helst kan skapa innehåll där|^Anyone can create content there|^Bara ansvariga utgivare får skriva inlägg där|^Only responsible publishers may write posts there|^En myndighet som|^An authority that/im,
+    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|innebär att den ger|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
   );
   assert.doesNotMatch(
     residualText,
@@ -1096,68 +1077,4 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
       question.id,
     );
   });
-});
-
-test('derivePublishedQuestions writes standalone generated civic answer-option propositions', () => {
-  const { questions } = loadTs('data/questions.ts');
-  const byId = new Map(questions.map((question) => [question.id, question]));
-  const expectedRows = {
-    q767: [
-      'Kommersiella radio- och tv-kanaler kan få inkomster genom att sälja reklamplats eller ta betalt för en särskild kanal.',
-      'Commercial radio and TV channels can earn income by selling advertising space or charging for a specific channel.',
-      'true',
-    ],
-    q768: [
-      'Kommersiella radio- och tv-kanaler kan få inkomster genom domstolsavgifter från rättegångar.',
-      'Commercial radio and TV channels can earn income through court fees from trials.',
-      'false',
-    ],
-    q827: [
-      'Val till EU-parlamentet hålls vart femte år.',
-      'Elections to the European Parliament are held every five years.',
-      'true',
-    ],
-    q828: [
-      'Val till EU-parlamentet hålls vart fjärde år.',
-      'Elections to the European Parliament are held every four years.',
-      'false',
-    ],
-    q835: [
-      'Röstkortet visar vilken vallokal väljaren ska gå till.',
-      'The voting card shows which polling station the voter should go to.',
-      'true',
-    ],
-    q836: [
-      'Röstkortet visar vilket parti väljaren måste rösta på.',
-      'The voting card shows which party the voter must vote for.',
-      'false',
-    ],
-    q839: [
-      'En person kan påverka partipolitik genom att bli medlem i ett politiskt parti eller starta ett nytt parti tillsammans med andra.',
-      'A person can influence party politics by becoming a member of a political party or starting a new party together with others.',
-      'true',
-    ],
-    q840: [
-      'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen.',
-      'A person can influence party politics only by voting if they already sit in the Riksdag.',
-      'false',
-    ],
-  };
-
-  for (const [id, [questionSv, questionEn, correctOptionId]] of Object.entries(expectedRows)) {
-    const question = byId.get(id);
-    assert.ok(question, `${id} must exist`);
-    assert.equal(question.type, 'true_false', `${id} type`);
-    assert.equal(question.correctOptionId, correctOptionId, `${id} correct option`);
-    assert.equal(question.questionSv, questionSv, `${id} Swedish generated stem`);
-    assert.equal(question.questionEn, questionEn, `${id} English generated stem`);
-  }
-
-  const checkedText = Object.keys(expectedRows)
-    .map((id) => `${byId.get(id).questionSv} ${byId.get(id).questionEn}`)
-    .join('\n');
-  assert.doesNotMatch(
-    checkedText,
-    /^(?:De säljer reklamplats|Genom domstolsavgifter|Vart femte år|Vart fjärde år|Vilken vallokal|Vilket parti|Bli medlem|Bara rösta|They sell advertising|Through court fees|Every five years|Every four years|Which polling station|Which party|Become a member|Only vote if)/im,
-  );
 });

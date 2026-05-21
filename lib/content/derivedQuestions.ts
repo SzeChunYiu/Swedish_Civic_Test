@@ -200,18 +200,6 @@ function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
 
-function swedishMeaningClause(value: string): string {
-  return lowerFirst(stripLeadingPurposeSv(value).trim())
-    .replace(
-      /\b(politikerna|politiker)\s+(?:måste|behöver)\s+inte\s+följa resultatet\b/i,
-      '$1 inte behöver följa resultatet',
-    )
-    .replace(
-      /\b(politikerna|politiker)\s+måste\s+alltid\s+följa resultatet\b/i,
-      '$1 alltid måste följa resultatet',
-    );
-}
-
 function stripLeadingPurposeEn(value: string): string {
   return value
     .replace(/^to\s+/i, '')
@@ -645,7 +633,11 @@ function embeddedSwedishClause(value: string): string {
   return lowerFirst(stripLeadingPurposeSv(value))
     .replace(/^sverige\b/i, 'Sverige')
     .replace(/^det är alltid\s+/i, 'det alltid är ')
-    .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ');
+    .replace(/^domstolarna avgör bara\s+/i, 'domstolarna bara avgör ')
+    .replace(
+      /^(.+?)\s+(måste|behöver|ska|kan|får)\s+(inte|alltid)\s+/i,
+      (_match, subject, modal, adverb) => `${subject} ${adverb.toLowerCase()} ${modal} `,
+    );
 }
 
 function embeddedEnglishClause(value: string): string {
@@ -679,46 +671,6 @@ function replaceLeadingEnglishSubject(subject: string, value: string): string {
     .replace(/^It was\s+/i, `${normalizedSubject} was `)
     .replace(/^It says\s+/i, `${normalizedSubject} says `)
     .replace(/^It (gives|lets|applies)\b/i, `${normalizedSubject} $1`);
-}
-
-function webSocialMediaStatementSv(answer: string): string {
-  if (
-    /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier$/i.test(
-      answer,
-    )
-  ) {
-    return 'På webben och i sociala medier kan vem som helst skapa innehåll, och innehållet kontrolleras inte alltid som i andra medier';
-  }
-  if (/^Bara ansvariga utgivare får skriva inlägg där$/i.test(answer)) {
-    return 'På webben och i sociala medier får bara ansvariga utgivare skriva inlägg';
-  }
-  if (/^Allt innehåll godkänns först av staten$/i.test(answer)) {
-    return 'På webben och i sociala medier godkänns allt innehåll först av staten';
-  }
-  if (/^Innehållet är alltid mer pålitligt än nyheter i tidningar$/i.test(answer)) {
-    return 'Innehåll på webben och i sociala medier är alltid mer pålitligt än nyheter i tidningar';
-  }
-  return answer;
-}
-
-function webSocialMediaStatementEn(answer: string): string {
-  if (
-    /^Anyone can create content there, and it is not always checked the same way as in other media$/i.test(
-      answer,
-    )
-  ) {
-    return 'On the web and in social media, anyone can create content, and the content is not always checked the same way as in other media';
-  }
-  if (/^Only responsible publishers may write posts there$/i.test(answer)) {
-    return 'On the web and in social media, only responsible publishers may write posts';
-  }
-  if (/^All content is first approved by the state$/i.test(answer)) {
-    return 'On the web and in social media, all content is first approved by the state';
-  }
-  if (/^The content is always more reliable than news in newspapers$/i.test(answer)) {
-    return 'Content on the web and in social media is always more reliable than news in newspapers';
-  }
-  return answer;
 }
 
 function describesStatementSv(subject: string, answer: string): string {
@@ -1329,15 +1281,6 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
 
-  match = q.match(/^Vad kännetecknar medier som finansieras med reklam$/i);
-  if (match) return replaceLeadingSwedishSubject('reklamfinansierade medier', answer);
-
-  match = q.match(/^Hur publiceras många tidningar i dag$/i);
-  if (match) return replaceLeadingSwedishSubject('många tidningar', answer);
-
-  match = q.match(/^Vad är viktigt att komma ihåg om webben och sociala medier$/i);
-  if (match) return webSocialMediaStatementSv(answer);
-
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
 
@@ -1368,7 +1311,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return `Från ${lowerFirst(answer)} är ${match[1]}`;
 
   match = q.match(/^Vad betyder det att (.+)$/i);
-  if (match) return `Att ${match[1]} betyder att ${swedishMeaningClause(answer)}`;
+  if (match) return `Att ${match[1]} betyder att ${embeddedSwedishClause(answer)}`;
 
   match = q.match(/^Vad kan göra (.+?) (starkare)$/i);
   if (match) {
@@ -1821,15 +1764,6 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
-
-  match = q.match(/^What characterizes media financed by advertising$/i);
-  if (match) return replaceLeadingEnglishSubject('advertising-funded media', answer);
-
-  match = q.match(/^How are many newspapers published today$/i);
-  if (match) return replaceLeadingEnglishSubject('many newspapers', answer);
-
-  match = q.match(/^What is important to remember about the web and social media$/i);
-  if (match) return webSocialMediaStatementEn(answer);
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
