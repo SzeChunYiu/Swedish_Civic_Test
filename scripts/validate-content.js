@@ -3986,6 +3986,101 @@ const EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES = [
     pattern: /<Text style=\{styles\.body\}>\{explanation\}<\/Text>/,
   },
 ];
+const EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES = [
+  {
+    label: 'explicit props interface',
+    pattern:
+      /export interface SourceCitationProps extends Omit<[\s\S]*ComponentProps<typeof View>[\s\S]*'children' \| 'style'/,
+  },
+  {
+    label: 'localized copy contract',
+    pattern:
+      /type SourceCitationCopy = \{[\s\S]*label: string;[\s\S]*pagePrefix: string;[\s\S]*unavailable: string;/,
+  },
+  {
+    label: 'localized copy map',
+    pattern: /const sourceCitationCopy: Record<AppLanguage, SourceCitationCopy> = \{/,
+  },
+  {
+    label: 'Swedish citation defaults',
+    pattern:
+      /label: 'Källhänvisning'[\s\S]*pagePrefix: 's\.'[\s\S]*unavailable: 'Källhänvisning saknas'/,
+  },
+  {
+    label: 'English citation defaults',
+    pattern:
+      /label: 'Source citation'[\s\S]*pagePrefix: 'p\.'[\s\S]*unavailable: 'Source citation unavailable'/,
+  },
+  {
+    label: 'UHR reference body composition',
+    pattern:
+      /function getCitationText[\s\S]*if \(!reference\) return unavailableLabel \?\? copy\.unavailable;[\s\S]*return `\$\{sourceTitle\}, \$\{reference\.chapter\}, \$\{reference\.section\}`;/,
+  },
+  {
+    label: 'page metadata composition',
+    pattern:
+      /function getPageText\(copy: SourceCitationCopy, reference\?: UHRReference\) \{[\s\S]*return reference\?\.pageApprox \? `\$\{copy\.pagePrefix\} \$\{reference\.pageApprox\}` : undefined;/,
+  },
+  {
+    label: 'text role default',
+    pattern: /accessibilityRole = 'text'/,
+  },
+  {
+    label: 'label visibility default',
+    pattern: /showLabel = true/,
+  },
+  {
+    label: 'Sverige i fokus source title default',
+    pattern: /sourceTitle = 'Sverige i fokus'/,
+  },
+  {
+    label: 'selected language copy lookup',
+    pattern: /const copy = sourceCitationCopy\[language\];/,
+  },
+  {
+    label: 'resolved localized label',
+    pattern: /const resolvedLabel = label \?\? copy\.label;/,
+  },
+  {
+    label: 'body text uses citation helper',
+    pattern:
+      /const citationText = getCitationText\(\{ copy, reference, sourceTitle, unavailableLabel \}\);/,
+  },
+  {
+    label: 'custom body detection',
+    pattern: /const hasCustomBody = children !== undefined && children !== null;/,
+  },
+  {
+    label: 'page metadata lookup',
+    pattern: /const pageText = getPageText\(copy, reference\);/,
+  },
+  {
+    label: 'composite accessibility label includes page metadata',
+    pattern:
+      /const defaultAccessibilityLabel = \[resolvedLabel, citationText, pageText\][\s\S]*\.filter\(Boolean\)[\s\S]*\.join\('\. '\);/,
+  },
+  {
+    label: 'role-none accessibility label suppression',
+    pattern:
+      /const resolvedAccessibilityLabel =[\s\S]*accessibilityRole === 'none' \? undefined : \(accessibilityLabel \?\? defaultAccessibilityLabel\);/,
+  },
+  {
+    label: 'View receives resolved accessibility props',
+    pattern:
+      /<View[\s\S]*accessibilityLabel=\{resolvedAccessibilityLabel\}[\s\S]*accessibilityRole=\{accessibilityRole\}/,
+  },
+  {
+    label: 'visible label respects showLabel',
+    pattern:
+      /\{showLabel \? \([\s\S]*<NativeText style=\{\[styles\.label, labelStyle\]\}>\{resolvedLabel\}<\/NativeText>[\s\S]*\) : null\}/,
+  },
+  {
+    label: 'custom body and page metadata rendering',
+    pattern:
+      /\{hasCustomBody \? \([\s\S]*children[\s\S]*\) : \([\s\S]*<NativeText style=\{\[styles\.body, bodyStyle\]\}>\{citationText\}<\/NativeText>[\s\S]*\)\}[\s\S]*\{!hasCustomBody && pageText \? \(/,
+  },
+];
+
 const EXPECTED_UHR_REFERENCE_CARD_ACCESSIBILITY_RULES = [
   {
     label: 'optional UHRReference prop contract',
@@ -9108,6 +9203,8 @@ let answerOptionAccessibilityRulesValidated = 0;
 let answerOptionAccessibilityParityValidated = false;
 let explanationPanelAccessibilityRulesValidated = 0;
 let explanationPanelAccessibilityParityValidated = false;
+let sourceCitationAccessibilityRulesValidated = 0;
+let sourceCitationAccessibilityParityValidated = false;
 let uhrReferenceCardAccessibilityRulesValidated = 0;
 let uhrReferenceCardAccessibilityParityValidated = false;
 let celebrationBurstAccessibilityRulesValidated = 0;
@@ -9551,6 +9648,16 @@ if (process.argv.includes('--focus-celebration-burst-accessibility')) {
   printValidationSummary({
     celebrationBurstAccessibilityRulesValidated,
     celebrationBurstAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-source-citation-accessibility')) {
+  validateSourceCitationAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceCitationAccessibilityRulesValidated,
+    sourceCitationAccessibilityParityValidated,
   });
   process.exit(0);
 }
@@ -14961,6 +15068,41 @@ function validateExplanationPanelAccessibilityParity() {
       EXPECTED_EXPLANATION_PANEL_ACCESSIBILITY_RULES.length
   ) {
     explanationPanelAccessibilityParityValidated = true;
+  }
+}
+
+function validateSourceCitationAccessibilityParity() {
+  let valid = true;
+  let source = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  try {
+    source = fs.readFileSync(path.join(repoRoot, 'components/quiz/SourceCitation.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/quiz/SourceCitation.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(source)) {
+      reject(`SourceCitation missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    sourceCitationAccessibilityRulesValidated += 1;
+  });
+
+  if (
+    valid &&
+    sourceCitationAccessibilityRulesValidated ===
+      EXPECTED_SOURCE_CITATION_ACCESSIBILITY_RULES.length
+  ) {
+    sourceCitationAccessibilityParityValidated = true;
   }
 }
 
@@ -23253,6 +23395,7 @@ validateQuestionCardAccessibilityParity();
 validateQuestionReportLinkParity();
 validateAnswerOptionAccessibilityParity();
 validateExplanationPanelAccessibilityParity();
+validateSourceCitationAccessibilityParity();
 validateUhrReferenceCardAccessibilityParity();
 validateCelebrationBurstAccessibilityParity();
 validateExamReviewSourceParity(defaultMockExamConfig);
@@ -23479,6 +23622,8 @@ console.log(
       answerOptionAccessibilityParityValidated,
       explanationPanelAccessibilityRulesValidated,
       explanationPanelAccessibilityParityValidated,
+      sourceCitationAccessibilityRulesValidated,
+      sourceCitationAccessibilityParityValidated,
       uhrReferenceCardAccessibilityRulesValidated,
       uhrReferenceCardAccessibilityParityValidated,
       celebrationBurstAccessibilityRulesValidated,

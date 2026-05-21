@@ -524,6 +524,14 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'sourceCitationAccessibility',
+    flags: ['--focus-source-citation-accessibility'],
+    summaryKeys: [
+      'sourceCitationAccessibilityRulesValidated',
+      'sourceCitationAccessibilityParityValidated',
+    ],
+  },
+  {
     id: 'themeTokenSchema',
     flags: ['--focus-theme-token-schema'],
     summaryKeys: [
