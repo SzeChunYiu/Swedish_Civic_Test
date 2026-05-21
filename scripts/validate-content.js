@@ -8650,6 +8650,20 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-legal-section-rendering')) {
+  validateLegalSectionRenderingParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    legalSectionRenderingTestsRoutedValidated,
+    legalSectionRenderingCasesValidated,
+    legalSectionWhitespaceTextValidated,
+    legalSectionFragmentChildrenValidated,
+    legalSectionRawTextUnderViewValidated,
+    legalSectionRenderingParityValidated,
+  });
+  process.exit(0);
+}
+
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -17881,26 +17895,6 @@ if (process.argv.includes('--focus-legal-route-parity')) {
         swedishPrivacyStreakCopyNaturalnessValidated,
         legalSwedishEnglishTokenGuardValidated,
         legalSwedishEnglishTokenGuardParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
-  process.exit(0);
-}
-if (process.argv.includes('--focus-legal-section-rendering')) {
-  validateLegalSectionRenderingParity();
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        legalSectionRenderingTestsRoutedValidated,
-        legalSectionRenderingCasesValidated,
-        legalSectionWhitespaceTextValidated,
-        legalSectionFragmentChildrenValidated,
-        legalSectionRawTextUnderViewValidated,
-        legalSectionRenderingParityValidated,
       },
       null,
       2,
