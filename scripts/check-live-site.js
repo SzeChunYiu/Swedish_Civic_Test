@@ -278,6 +278,46 @@ function findStaticReleaseCopyIssues(indexSource, appSource) {
   return findUnsupportedStaticReleaseCopyInSource(`${indexSource}\n${appSource}`, 'live static');
 }
 
+function indexReferencesSigninScript(indexSource) {
+  return /\bsrc=["']signin\.js["']/.test(String(indexSource || ''));
+}
+
+function findStaticSigninAssetIssues(indexSource, manifestSource, signinSource) {
+  const index = String(indexSource || '');
+  if (!indexReferencesSigninScript(index)) return [];
+
+  const issues = [];
+  if (!/\bid=["']signin-open["']/.test(index)) {
+    issues.push('index.html references signin.js but does not expose #signin-open');
+  }
+  if (!/\bid=["']signin-modal["']/.test(index)) {
+    issues.push('index.html references signin.js but does not expose #signin-modal');
+  }
+
+  try {
+    const manifest = JSON.parse(String(manifestSource || ''));
+    if (!manifest.assets?.['signin.js']) {
+      issues.push('signin.js is referenced by index.html but missing from asset-manifest.json');
+    }
+  } catch (error) {
+    issues.push(`asset-manifest.json could not be parsed for signin.js: ${error.message}`);
+  }
+
+  if (!/closest\(["']#signin-open["']\)/.test(String(signinSource || ''))) {
+    issues.push('signin.js does not wire the #signin-open trigger');
+  }
+
+  return issues;
+}
+
+async function fetchTextForCheck(baseUrl, assetPath) {
+  try {
+    return await fetchText(baseUrl, assetPath);
+  } catch (error) {
+    return `__FETCH_ERROR__ ${error.message}`;
+  }
+}
+
 function normalizeHeaderValue(value) {
   return String(value ?? '')
     .trim()
@@ -430,6 +470,21 @@ async function checkLiveSite(inputUrl, options = {}) {
       : fail('static release copy', formatUnsupportedStaticReleaseCopy(staticReleaseCopyIssues)),
   );
 
+  if (indexReferencesSigninScript(index)) {
+    const [assetManifest, signin] = await Promise.all([
+      fetchTextForCheck(baseUrl, 'asset-manifest.json'),
+      fetchTextForCheck(baseUrl, 'signin.js'),
+    ]);
+    const staticSigninAssetIssues = findStaticSigninAssetIssues(index, assetManifest, signin);
+    checks.push(
+      staticSigninAssetIssues.length === 0
+        ? pass('static sign-in assets')
+        : fail('static sign-in assets', staticSigninAssetIssues.join('; ')),
+    );
+  } else {
+    checks.push(pass('static sign-in assets', 'signin.js not referenced'));
+  }
+
   checks.push(
     containsAll(styles, [
       '.practice__inner--wide',
@@ -492,7 +547,9 @@ module.exports = {
   findStaticAdSenseSlotConfigIssues,
   findStaticAdSenseSlotStateCopyIssues,
   findStaticNoTrackingClaimIssues,
+  findStaticSigninAssetIssues,
   hashStaticQuestionBank,
+  indexReferencesSigninScript,
   normalizeBaseUrl,
   readStaticQuestionCount,
   REQUIRED_SECURITY_HEADERS,

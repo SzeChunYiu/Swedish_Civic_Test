@@ -50,12 +50,15 @@ function currentAssets() {
   return {
     '/index.html': [
       headMarkup(),
+      '<button id="signin-open" type="button">Sign in</button>',
+      '<section id="signin-modal" hidden></section>',
       '<main data-page="/practice"><div class="practice__inner practice__inner--wide"><div id="quiz-stage"></div></div></main>',
       '<main data-page="/mock"><div id="mock-stage"></div></main>',
       '<script src="questions.js"></script>',
       '<script src="practice.js"></script>',
       '<script src="ebook-tools.js"></script>',
       '<script src="ebook.js"></script>',
+      '<script src="signin.js"></script>',
     ].join('\n'),
     '/styles.css': [
       '.practice__inner--wide { max-width: 1080px; }',
@@ -74,6 +77,13 @@ function currentAssets() {
     ].join('\n'),
     '/ebook.js': 'const PRACTICE_LINKS = {}; window.smtEbookRender = function render() {};',
     '/questions.js': currentQuestionBank(),
+    '/signin.js': "document.addEventListener('click', (e) => e.target.closest('#signin-open'));",
+    '/asset-manifest.json': JSON.stringify({
+      version: 1,
+      assets: {
+        'signin.js': { bytes: 76, sha256: 'fixture' },
+      },
+    }),
   };
 }
 
@@ -213,6 +223,49 @@ test('live site check passes current static assets', async () => {
       result.checks.every((check) => check.ok),
       true,
     );
+  });
+});
+
+test('live site check rejects signin.js missing from the static asset manifest', async () => {
+  const assets = {
+    ...currentAssets(),
+    '/asset-manifest.json': JSON.stringify({ version: 1, assets: {} }),
+  };
+
+  await withStaticServer(assets, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find((check) => check.name === 'static sign-in assets');
+
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /signin\.js.*missing from asset-manifest\.json/);
+  });
+});
+
+test('live site check rejects signin.js without the visible sign-in trigger contract', async () => {
+  const assets = {
+    ...currentAssets(),
+    '/index.html': currentAssets()['/index.html'].replace(
+      '<button id="signin-open" type="button">Sign in</button>',
+      '<button id="account-open" type="button">Sign in</button>',
+    ),
+    '/signin.js': "document.addEventListener('click', (e) => e.target.closest('#account-open'));",
+  };
+
+  await withStaticServer(assets, async (baseUrl) => {
+    const result = await checkLiveSite(baseUrl, {
+      requiredQuestionBankHash: hashStaticQuestionBank(currentQuestionBank()),
+      requiredQuestionCount: 715,
+    });
+    const failedCheck = result.checks.find((check) => check.name === 'static sign-in assets');
+
+    assert.equal(result.ok, false);
+    assert.equal(failedCheck?.ok, false);
+    assert.match(failedCheck?.details ?? '', /does not expose #signin-open/);
+    assert.match(failedCheck?.details ?? '', /does not wire the #signin-open trigger/);
   });
 });
 
