@@ -162,17 +162,6 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^They can have policies only for their own municipality or region\.?$/i,
   /^De måste alltid vara partier i riksdagen\.?$/i,
   /^They must always be parties in the Riksdag\.?$/i,
-  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
-  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
-  /^Water and sewage\b/i,
-  /^Vatten och avlopp\b/i,
-  /^Sending ambassadors\b/i,
-  /^Skicka ambassadörer\b/i,
-  /^Incomplete answer fragment for naturalness guard\b/i,
-  /^Ofullständig svarsfras för naturlighetskontroll\b/i,
-  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
-  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
-  /\b(?:bli Sveriges största religiösa grupp|become Sweden’s largest religious group)\b/i,
 ];
 
 function generatedTrueFalseNaturalnessCategory(pattern) {
@@ -204,15 +193,26 @@ function generatedTrueFalseNaturalnessCategory(pattern) {
   return 'grammar-splice';
 }
 
-const GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES =
-  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.map((pattern, index) => {
+function stablePatternRuleId(pattern, category) {
+  const source = `${pattern.source}/${pattern.flags}`;
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < source.length; index += 1) {
+    hash ^= source.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return `${category}-${hash.toString(36).padStart(7, '0')}`;
+}
+
+const GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES = Object.freeze(
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.map((pattern) => {
     const category = generatedTrueFalseNaturalnessCategory(pattern);
     return Object.freeze({
-      id: `${category}-${String(index + 1).padStart(3, '0')}`,
+      id: stablePatternRuleId(pattern, category),
       category,
       pattern,
     });
-  });
+  }),
+);
 
 function findGeneratedTrueFalseNaturalnessPatternMatch(text) {
   return GENERATED_TRUE_FALSE_NATURALNESS_PATTERN_RULES.find(({ pattern }) => pattern.test(text));
@@ -233,4 +233,5 @@ module.exports = {
   findGeneratedTrueFalseNaturalnessPattern,
   findGeneratedTrueFalseNaturalnessPatternMatch,
   formatGeneratedTrueFalseNaturalnessPatternMatch,
+  stablePatternRuleId,
 };

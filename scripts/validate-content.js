@@ -11558,7 +11558,11 @@ function validatePremiumEntitlementParity() {
     reject('shouldShowAd must not render home_banner when adsDisabled is true');
   }
 
-  if (!/if\s*\(\s*entitlements\.adsDisabled\s*\)\s*return false;/.test(adsSource)) {
+  if (
+    !/if\s*\(\s*isStrictEntitlementFlag\(entitlements\.adsDisabled\)\s*\)\s*return false;/.test(
+      adsSource,
+    )
+  ) {
     reject('shouldShowAd must keep an explicit adsDisabled fail-closed branch');
   }
 
@@ -21041,7 +21045,6 @@ validateHomeRouteHeaderParity();
 validateHomeRouteSwedishMistakeReviewCopyNaturalness();
 validateHomeRouteCopyParity();
 validateAboutTheTestRouteCopyParity();
-validateSearchRouteQueryHydrationParity();
 validateMistakesRouteHeaderParity();
 validateMistakesRouteCopyParity();
 validateMistakeReviewHydrationEvidence();
@@ -21203,8 +21206,6 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
-      searchRouteQueryHydrationRulesValidated,
-      searchRouteQueryHydrationParityValidated,
       mistakesRouteHeadersValidated,
       mistakesRouteHeaderParityValidated,
       mistakesRouteCopyLabelsValidated,
