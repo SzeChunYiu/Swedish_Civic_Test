@@ -8,6 +8,8 @@ const repoRoot = path.resolve(__dirname, '..');
 const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
+const scalarAssetReferenceAttributes = new Set(['href', 'poster', 'src']);
+const srcsetAssetReferenceAttributes = new Set(['imagesrcset', 'srcset']);
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -38,6 +40,81 @@ function listSiteAssetFiles(siteDir) {
 
 function hashFile(absolutePath) {
   return crypto.createHash('sha256').update(fs.readFileSync(absolutePath)).digest('hex');
+}
+
+function isExternalAssetReference(value) {
+  return /^(?:https?:|data:|mailto:|tel:|#|javascript:|\/\/)/i.test(value);
+}
+
+function normalizeAssetReference(value) {
+  return value
+    .trim()
+    .replace(/[?#].*$/, '')
+    .replace(/^\.?\//, '');
+}
+
+function normalizeLocalAssetReference(value) {
+  if (!value || isExternalAssetReference(value.trim())) return null;
+  const normalized = normalizeAssetReference(value);
+  return normalized || null;
+}
+
+function parseSrcsetAssetCandidates(value) {
+  const candidates = [];
+  let index = 0;
+
+  while (index < value.length) {
+    while (index < value.length && /[\s,]/.test(value[index])) index += 1;
+    const start = index;
+
+    while (index < value.length) {
+      const char = value[index];
+      const currentUrl = value.slice(start, index).toLowerCase();
+      if (/\s/.test(char)) break;
+      if (char === ',' && !currentUrl.startsWith('data:')) break;
+      index += 1;
+    }
+
+    const candidate = value.slice(start, index).trim();
+    if (candidate) candidates.push(candidate);
+
+    while (index < value.length && value[index] !== ',') index += 1;
+    if (value[index] === ',') index += 1;
+  }
+
+  return candidates;
+}
+
+function extractLocalAssetReferences(indexHtml) {
+  const references = [];
+  const attributePattern = /\b([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+
+  for (const match of indexHtml.matchAll(attributePattern)) {
+    const attributeName = match[1].toLowerCase();
+    const attributeValue = match[2] ?? match[3] ?? match[4] ?? '';
+
+    if (scalarAssetReferenceAttributes.has(attributeName)) {
+      const reference = normalizeLocalAssetReference(attributeValue);
+      if (reference) references.push(reference);
+      continue;
+    }
+
+    if (srcsetAssetReferenceAttributes.has(attributeName)) {
+      for (const candidate of parseSrcsetAssetCandidates(attributeValue)) {
+        const reference = normalizeLocalAssetReference(candidate);
+        if (reference) references.push(reference);
+      }
+    }
+  }
+
+  return [...new Set(references)];
+}
+
+function findAssetReferencesMissingFromManifest(indexHtml, manifest) {
+  const manifestAssets = new Set(Object.keys(manifest.assets || {}));
+  return extractLocalAssetReferences(indexHtml).filter(
+    (assetPath) => !manifestAssets.has(assetPath),
+  );
 }
 
 function buildAssetManifest(options = {}) {
@@ -180,8 +257,13 @@ if (require.main === module) {
 module.exports = {
   buildAssetManifest,
   checkAssetManifest,
+  extractLocalAssetReferences,
+  findAssetReferencesMissingFromManifest,
   findManifestMismatches,
   formatAssetManifest,
+  isExternalAssetReference,
   listSiteAssetFiles,
+  normalizeAssetReference,
+  parseSrcsetAssetCandidates,
   writeAssetManifest,
 };
