@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { dismissBlockingModals, markAboutTheTestSeen } from './browserLaunch';
+import { dismissBlockingModals, markAboutTheTestSeen, seedSettingsLanguage } from './browserLaunch';
 
 async function expectSearchState(page: Page, expectedQuery: string) {
   const input = page.getByRole('textbox', { name: 'Sök samhällsbegrepp och övningsfrågor' });
@@ -26,6 +26,84 @@ async function expectHydratedSearch(page: Page, url: string, expectedQuery: stri
   await dismissBlockingModals(page);
 
   return expectSearchState(page, expectedQuery);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function expectQuestionResultNavigation({
+  inputName,
+  language,
+  linkName,
+  linkPrefix,
+  page,
+  sourceSummaryLabel,
+  sourceCitationLabel,
+  url,
+}: {
+  inputName: string;
+  language: 'sv' | 'en';
+  linkName: RegExp;
+  linkPrefix: string;
+  page: Page;
+  sourceSummaryLabel: 'Källa' | 'Source';
+  sourceCitationLabel: 'Källhänvisning' | 'Source citation';
+  url: string;
+}) {
+  await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+  await page.goto(url, { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByRole('textbox', { name: inputName })).toBeVisible();
+
+  const questionLink = page.getByRole('link', { name: linkName }).first();
+  await expect(questionLink).toBeVisible();
+
+  const href = await questionLink.getAttribute('href');
+  expect(href).toMatch(/\/quiz\/q\d+/);
+  if (!href) throw new Error('Question result link is missing an href');
+
+  const questionId = href.match(/\/quiz\/(q\d+)/)?.[1];
+  if (!questionId) throw new Error(`Question result href did not include a question id: ${href}`);
+
+  const linkLabel = await questionLink.getAttribute('aria-label');
+  const questionTitle = linkLabel?.startsWith(linkPrefix) ? linkLabel.slice(linkPrefix.length) : '';
+  expect(questionTitle).toMatch(/\S/);
+
+  const summaryId = await questionLink.getAttribute('aria-describedby');
+  expect(summaryId).toMatch(/^search-question-summary-/);
+  if (!summaryId) throw new Error(`Question result ${questionId} is missing its summary id`);
+
+  const summaryText = (await page.locator(`#${summaryId}`).textContent()) ?? '';
+  expect(summaryText).toContain(questionTitle);
+
+  const sourceReference = summaryText.match(
+    new RegExp(`${sourceSummaryLabel}: ([^.]+?)(?:\\.|$)`),
+  )?.[1];
+  expect(sourceReference).toMatch(/\S/);
+  if (!sourceReference) throw new Error(`Question result ${questionId} is missing source context`);
+
+  const [sourceChapter, sourceSection] = sourceReference.split(' · ');
+  expect(sourceChapter).toMatch(/\S/);
+  expect(sourceSection).toMatch(/\S/);
+  if (!sourceChapter || !sourceSection) {
+    throw new Error(`Question result ${questionId} has incomplete source context`);
+  }
+
+  await questionLink.click();
+  await expect(page).toHaveURL(new RegExp(`/quiz/${questionId}$`));
+  await expect(page.getByRole('heading', { name: questionTitle }).first()).toBeVisible();
+  await expect(
+    page
+      .getByLabel(
+        new RegExp(
+          `${sourceCitationLabel}: .*${escapeRegExp(sourceChapter)}.*${escapeRegExp(sourceSection)}`,
+        ),
+      )
+      .first(),
+  ).toBeVisible();
 }
 
 test('search route hydrates q and query URL parameters before typing', async ({ page }) => {
@@ -92,6 +170,39 @@ test('search route resyncs when URL query params change after mount', async ({ p
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
   await expect(input).toHaveValue('lokal text');
+
+  expect(consoleErrors).toEqual([]);
+});
+
+test('search question result links open the exact routed quiz question', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await expectQuestionResultNavigation({
+    inputName: 'Sök samhällsbegrepp och övningsfrågor',
+    language: 'sv',
+    linkName: /Öppna övningsfrågan:/,
+    linkPrefix: 'Öppna övningsfrågan: ',
+    page,
+    sourceSummaryLabel: 'Källa',
+    sourceCitationLabel: 'Källhänvisning',
+    url: '/search?q=riksdag',
+  });
+
+  await expectQuestionResultNavigation({
+    inputName: 'Search civic terms and practice questions',
+    language: 'en',
+    linkName: /Open practice question:/,
+    linkPrefix: 'Open practice question: ',
+    page,
+    sourceSummaryLabel: 'Source',
+    sourceCitationLabel: 'Source citation',
+    url: '/search?query=kommun',
+  });
 
   expect(consoleErrors).toEqual([]);
 });
