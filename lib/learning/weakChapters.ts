@@ -25,6 +25,14 @@ function normalizeQuestionCount(value: unknown): number {
   return isFiniteNonNegativeInteger(value) ? value : 0;
 }
 
+function normalizeNonNegativeInteger(value: unknown, fallback: number): number {
+  return isFiniteNonNegativeInteger(value) ? value : fallback;
+}
+
+function normalizeDate(value: unknown): Date {
+  return value instanceof Date && Number.isFinite(value.getTime()) ? value : new Date();
+}
+
 function clampUnitInterval(value: number): number {
   if (!Number.isFinite(value)) return 0;
   return Math.max(0, Math.min(1, value));
@@ -66,16 +74,21 @@ export interface WeakChaptersInput {
  * flag lets the UI render them differently ("you haven't tried this yet").
  */
 export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
-  const now = input.now ?? new Date();
-  const minAnswers = input.minAnswers ?? 5;
-  const recencyDays = input.recencyDays ?? 30;
-  const recencyCutoff = new Date(now.getTime() - recencyDays * DAY_MS);
+  const now = normalizeDate(input.now);
+  const minAnswers = normalizeNonNegativeInteger(input.minAnswers, 5);
+  const recencyDays = normalizeNonNegativeInteger(input.recencyDays, 30);
+  const recencyCutoffMs = now.getTime() - recencyDays * DAY_MS;
+  const chapters = Array.isArray(input.chapters) ? input.chapters : [];
+  const questionChapterIndex =
+    input.questionChapterIndex && typeof input.questionChapterIndex === 'object'
+      ? input.questionChapterIndex
+      : {};
 
   const buckets = new Map<
     string,
     { correct: number; total: number; questionIds: Set<string>; lastAnsweredAtMs: number | null }
   >();
-  for (const chapter of input.chapters) {
+  for (const chapter of chapters) {
     buckets.set(chapter.id, {
       correct: 0,
       total: 0,
@@ -84,7 +97,7 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
     });
   }
 
-  const sessions = Array.isArray(input.progress.sessions) ? input.progress.sessions : [];
+  const sessions = Array.isArray(input.progress?.sessions) ? input.progress.sessions : [];
   for (const session of sessions) {
     if (!Array.isArray(session.answers)) continue;
     for (const answer of session.answers) {
@@ -97,7 +110,7 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
       if (typeof candidate.questionId !== 'string') continue;
       const answeredAtMs = validAnswerTimestampMs(candidate.answeredAt, now);
       if (answeredAtMs === null) continue;
-      const chapterId = input.questionChapterIndex[candidate.questionId];
+      const chapterId = questionChapterIndex[candidate.questionId];
       if (!chapterId) continue;
       const bucket = buckets.get(chapterId);
       if (!bucket) continue;
@@ -110,7 +123,7 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
     }
   }
 
-  return input.chapters.map((chapter): ChapterWeakness => {
+  return chapters.map((chapter): ChapterWeakness => {
     const bucket = buckets.get(chapter.id)!;
     const questionCount = normalizeQuestionCount(chapter.questionCount);
     const accuracy = bucket.total === 0 ? null : bucket.correct / bucket.total;
@@ -124,9 +137,8 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
     // Staleness: 0 when last answered within recency window, ramps to 1 by 90d idle.
     let stalenessBoost = 0;
     if (bucket.lastAnsweredAtMs !== null) {
-      const last = new Date(bucket.lastAnsweredAtMs);
-      if (last < recencyCutoff) {
-        const daysIdle = (now.getTime() - last.getTime()) / DAY_MS;
+      if (bucket.lastAnsweredAtMs < recencyCutoffMs) {
+        const daysIdle = (now.getTime() - bucket.lastAnsweredAtMs) / DAY_MS;
         stalenessBoost = Math.min(1, (daysIdle - recencyDays) / 60);
       }
     } else {

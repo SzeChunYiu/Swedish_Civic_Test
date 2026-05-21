@@ -420,6 +420,53 @@ test('chapterWeaknesses: malformed counts and truthy correctness do not poison s
   );
 });
 
+test('chapterWeaknesses: malformed runtime options fall back safely', () => {
+  const { chapterWeaknesses } = loadTs('lib/learning/weakChapters.ts');
+
+  assert.deepEqual(
+    chapterWeaknesses({
+      progress: null,
+      chapters: null,
+      questionChapterIndex: null,
+      now: new Date('not-a-date'),
+      minAnswers: Number.NaN,
+      recencyDays: Infinity,
+    }),
+    [],
+  );
+
+  const result = chapterWeaknesses({
+    progress: progressWithSessions([
+      {
+        id: 's1',
+        mode: 'study',
+        questionIds: [],
+        answers: [
+          {
+            questionId: 'q1',
+            selectedOptionIds: [],
+            isCorrect: true,
+            answeredAt: '2026-05-18T10:00:00.000Z',
+          },
+        ],
+        startedAt: '2026-05-18T00:00:00.000Z',
+      },
+    ]),
+    chapters: [{ id: 'ch01', questionCount: 2 }],
+    questionChapterIndex: { q1: 'ch01' },
+    now: new Date('not-a-date'),
+    minAnswers: Number.NaN,
+    recencyDays: -1,
+  });
+
+  assert.equal(result.length, 1);
+  assert.equal(result[0].answers, 1);
+  assert.equal(result[0].accuracy, 1);
+  assert.equal(result[0].coverage, 0.5);
+  assert.equal(result[0].isSparse, true);
+  assert.ok(Number.isFinite(result[0].weaknessScore));
+});
+
 // ---------------------------------------------------------------- mock exam library
 
 test('mockExamLibrary: library contains the canonical 7 mocks', () => {
