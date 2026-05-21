@@ -13,8 +13,6 @@ type PersistenceWarningNoticeCopy = {
 
 export type PersistenceWarningNoticeScope = 'accessibilityPreferences' | 'studyData';
 
-const defaultPersistenceWarningNoticeScope: PersistenceWarningNoticeScope = 'studyData';
-
 const persistenceWarningNoticeCopy: Record<
   AppLanguage,
   Record<
@@ -27,16 +25,16 @@ const persistenceWarningNoticeCopy: Record<
       read: {
         accessibilityLabel:
           'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar i den här sessionen.',
-        body: 'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar i den här sessionen tills lagringen fungerar igen.',
+        body: 'Tillgänglighetsinställningar kunde inte läsas. Appen använder standardinställningar för tema, text och ljud i den här sessionen tills lagringen fungerar igen.',
         dismiss: 'Jag förstår',
         title: 'Tillgänglighetsinställningar kunde inte läsas',
       },
       write: {
         accessibilityLabel:
-          'Tillgänglighetsinställningen kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
-        body: 'Ändringen fungerar nu, men tillgänglighetsinställningen kunde inte sparas på enheten. Prova igen när lagringen fungerar.',
+          'Tillgänglighetsinställningar kunde inte sparas. Ändringen fungerar tillfälligt i den här sessionen.',
+        body: 'Ändringen för tema, text eller ljud fungerar nu, men kunde inte sparas på enheten. Prova samma ändring igen när lagringen fungerar.',
         dismiss: 'Jag förstår',
-        title: 'Sparades bara tillfälligt',
+        title: 'Inställningen sparades bara tillfälligt',
       },
     },
     studyData: {
@@ -60,17 +58,17 @@ const persistenceWarningNoticeCopy: Record<
     accessibilityPreferences: {
       read: {
         accessibilityLabel:
-          'Accessibility preferences could not be loaded. The app is using default settings for this session.',
-        body: 'Accessibility preferences could not be loaded. The app is using default accessibility settings for this session until storage is available again.',
+          'Accessibility preferences could not be loaded. The app is using default preferences for this session.',
+        body: 'Accessibility preferences could not be loaded. The app is using default theme, text, and audio preferences for this session until storage is available again.',
         dismiss: 'Got it',
         title: 'Accessibility preferences could not be loaded',
       },
       write: {
         accessibilityLabel:
-          'Accessibility preference saving failed. The change is available temporarily in this session.',
-        body: 'The change works now, but the accessibility preference could not be saved on this device. Try again when storage is available.',
+          'Accessibility preferences could not be saved. The change is available temporarily in this session.',
+        body: 'The theme, text, or audio change works now, but could not be saved on this device. Try the same change again when storage is available.',
         dismiss: 'Got it',
-        title: 'Saved only for this session',
+        title: 'Preference saved only for this session',
       },
     },
     studyData: {
@@ -91,30 +89,22 @@ const persistenceWarningNoticeCopy: Record<
   },
 };
 
-export function getPersistenceWarningNoticeCopy(
-  language: AppLanguage,
-  operation: RecoverablePersistenceWarning['operation'],
-  warningScope: PersistenceWarningNoticeScope = defaultPersistenceWarningNoticeScope,
-): PersistenceWarningNoticeCopy {
-  return persistenceWarningNoticeCopy[language][warningScope][operation];
-}
-
 type PersistenceWarningNoticeProps = {
   language: AppLanguage;
   onDismiss: () => void;
-  warning: RecoverablePersistenceWarning | null;
   warningScope?: PersistenceWarningNoticeScope;
+  warning: RecoverablePersistenceWarning | null;
 };
 
 export function PersistenceWarningNotice({
   language,
   onDismiss,
+  warningScope = 'studyData',
   warning,
-  warningScope = defaultPersistenceWarningNoticeScope,
 }: PersistenceWarningNoticeProps) {
   if (!warning) return null;
 
-  const copy = getPersistenceWarningNoticeCopy(language, warning.operation, warningScope);
+  const copy = persistenceWarningNoticeCopy[language][warningScope][warning.operation];
 
   return (
     <View
@@ -143,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.warningSoft,
     borderColor: colors.warning,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     gap: space[0.75],
     padding: space[1.5],
   },
@@ -162,7 +152,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     borderColor: colors.warning,
     borderRadius: radius.pill,
-    borderWidth: space.hairline,
+    borderWidth: StyleSheet.hairlineWidth,
     minHeight: space[6],
     paddingHorizontal: space[1.5],
     paddingVertical: space[0.75],

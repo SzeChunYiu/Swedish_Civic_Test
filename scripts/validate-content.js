@@ -2508,6 +2508,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'settings route must render accessibility persistence warnings',
   ],
   [
+    'warningScope="accessibilityPreferences"',
+    'settings route must scope accessibility warnings to accessibility preferences',
+  ],
+  [
     'onDismiss={clearAccessibilityPersistenceWarning}',
     'settings route must dismiss accessibility persistence warnings through the accessibility store',
   ],

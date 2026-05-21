@@ -432,6 +432,7 @@ export default function Screen() {
       <PersistenceWarningNotice
         language={language}
         onDismiss={clearAccessibilityPersistenceWarning}
+        warningScope="accessibilityPreferences"
         warning={accessibilityPersistenceWarning}
         warningScope="accessibilityPreferences"
       />

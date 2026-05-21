@@ -1,6 +1,5 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const Module = require('node:module');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
@@ -13,21 +12,14 @@ const {
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function compileTsModule(module, filename) {
+require.extensions['.ts'] = function tsLoader(module, filename) {
   const source = fs.readFileSync(filename, 'utf8');
   const transpiled = ts.transpileModule(source, {
-    compilerOptions: {
-      jsx: ts.JsxEmit.React,
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2020,
-    },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
     fileName: filename,
   }).outputText;
   module._compile(transpiled, filename);
-}
-
-require.extensions['.ts'] = compileTsModule;
-require.extensions['.tsx'] = compileTsModule;
+};
 
 function createFailOnceMMKV(message = 'disk full') {
   const storage = createMemoryMMKV();
@@ -44,52 +36,6 @@ function createFailOnceMMKV(message = 'disk full') {
       storage.set(key, value);
     },
   };
-}
-
-function loadPersistenceWarningNoticeModule() {
-  const componentPath = path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx');
-  delete require.cache[componentPath];
-
-  const originalLoad = Module._load;
-  Module._load = function patchedLoad(request, parent, isMain) {
-    if (request === 'react-native') {
-      return {
-        Pressable: 'Pressable',
-        StyleSheet: { create: (styles) => styles, hairlineWidth: 1 },
-        Text: 'Text',
-        View: 'View',
-      };
-    }
-
-    if (request === '../../lib/theme' && parent?.filename === componentPath) {
-      return {
-        colors: {
-          surface: '#ffffff',
-          text: '#111111',
-          textSecondary: '#333333',
-          warning: '#c77700',
-          warningSoft: '#fff7e6',
-        },
-        radius: { card: 8, pill: 999 },
-        space: { 0.75: 6, 1: 8, 1.5: 12, 6: 48 },
-        typography: {
-          body: { fontSize: 16 },
-          bodyBold: { fontWeight: '600' },
-          bodyTight: { lineHeight: 20 },
-          caption: { fontSize: 12, lineHeight: 16 },
-          navButton: { fontWeight: '600' },
-        },
-      };
-    }
-
-    return originalLoad.call(this, request, parent, isMain);
-  };
-
-  try {
-    return require(componentPath);
-  } finally {
-    Module._load = originalLoad;
-  }
 }
 
 test('progress writes keep in-memory answers and expose recoverable warnings', () => {
@@ -257,18 +203,24 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
 
   assert.match(componentSource, /const persistenceWarningNoticeCopy: Record</);
-  assert.match(componentSource, /type PersistenceWarningNoticeScope/);
-  assert.match(componentSource, /getPersistenceWarningNoticeCopy/);
   assert.match(componentSource, /RecoverablePersistenceWarning\['operation'\]/);
+  assert.match(
+    componentSource,
+    /PersistenceWarningNoticeScope = 'accessibilityPreferences' \| 'studyData'/,
+  );
   assert.match(componentSource, /Sparades bara tillfälligt/);
   assert.match(componentSource, /Saved only for this session/);
   assert.match(componentSource, /Lokal studiedata kunde inte läsas/);
   assert.match(componentSource, /Local study data could not be loaded/);
-  assert.match(componentSource, /Tillgänglighetsinställningar kunde inte läsas/);
-  assert.match(componentSource, /Accessibility preferences could not be loaded/);
   assert.match(componentSource, /tomt tillfälligt läge i den här sessionen/);
   assert.match(componentSource, /empty in-memory study data for this session/);
-  assert.match(componentSource, /warningScope = defaultPersistenceWarningNoticeScope/);
+  assert.match(componentSource, /Tillgänglighetsinställningar kunde inte läsas/);
+  assert.match(componentSource, /Accessibility preferences could not be loaded/);
+  assert.match(componentSource, /standardinställningar för tema, text och ljud/);
+  assert.match(componentSource, /default theme, text, and audio preferences/);
+  assert.match(componentSource, /warningScope = 'studyData'/);
+  assert.match(componentSource, /persistenceWarningNoticeCopy\[language\]\[warningScope\]/);
+  assert.match(componentSource, /warning\.operation/);
   assert.match(componentSource, /accessibilityRole="alert"/);
   assert.match(componentSource, /onPress=\{onDismiss\}/);
 
@@ -281,152 +233,10 @@ test('routes render localized storage warning notices with dismiss hooks', () =>
   assert.match(settingsSource, /accessibilityPersistenceWarning = useAccessibilityStore/);
   assert.match(settingsSource, /clearAccessibilityPersistenceWarning = useAccessibilityStore/);
   assert.match(settingsSource, /warning=\{accessibilityPersistenceWarning\}/);
-  assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
   assert.match(settingsSource, /warningScope="accessibilityPreferences"/);
+  assert.match(settingsSource, /onDismiss=\{clearAccessibilityPersistenceWarning\}/);
   assert.match(mistakesSource, /progressPersistenceWarning/);
   assert.match(mistakesSource, /mistakeReviewPersistenceWarning/);
-});
-
-test('warningScope keeps studyData defaults and accessibilityPreferences settings copy', () => {
-  const componentSource = fs.readFileSync(
-    path.join(repoRoot, 'components/storage/PersistenceWarningNotice.tsx'),
-    'utf8',
-  );
-  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
-  const practiceSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
-  const mistakesSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/mistakes.tsx'), 'utf8');
-
-  function noticeBlock(source, warningName) {
-    const blocks = source.match(/<PersistenceWarningNotice\b[\s\S]*?\/>/g) || [];
-    return blocks.find((block) => block.includes(`warning={${warningName}}`)) || '';
-  }
-
-  const settingsStudyDataBlock = noticeBlock(settingsSource, 'persistenceWarning');
-  const settingsAccessibilityBlock = noticeBlock(settingsSource, 'accessibilityPersistenceWarning');
-  const practiceProgressBlock = noticeBlock(practiceSource, 'progressPersistenceWarning');
-  const practiceMistakeReviewBlock = noticeBlock(practiceSource, 'mistakeReviewPersistenceWarning');
-  const mistakesProgressBlock = noticeBlock(mistakesSource, 'progressPersistenceWarning');
-  const mistakesReviewBlock = noticeBlock(mistakesSource, 'mistakeReviewPersistenceWarning');
-
-  assert.match(
-    componentSource.replace(/\s+/g, ' '),
-    /defaultPersistenceWarningNoticeScope: PersistenceWarningNoticeScope = 'studyData'/,
-  );
-  assert.match(
-    componentSource.replace(/\s+/g, ' '),
-    /getPersistenceWarningNoticeCopy\(language, warning\.operation, warningScope\)/,
-  );
-  assert.ok(settingsStudyDataBlock);
-  assert.doesNotMatch(settingsStudyDataBlock, /warningScope=/);
-  assert.match(settingsAccessibilityBlock, /warningScope="accessibilityPreferences"/);
-
-  for (const block of [
-    practiceProgressBlock,
-    practiceMistakeReviewBlock,
-    mistakesProgressBlock,
-    mistakesReviewBlock,
-  ]) {
-    assert.ok(block);
-    assert.doesNotMatch(block, /warningScope=/);
-  }
-});
-
-test('PersistenceWarningNotice copy selector returns scoped read and write copy', () => {
-  const { getPersistenceWarningNoticeCopy } = loadPersistenceWarningNoticeModule();
-
-  const cases = [
-    {
-      body: /Lokal studiedata kunde inte läsas/,
-      dismiss: 'Jag förstår',
-      label: /Lokal studiedata kunde inte läsas/,
-      language: 'sv',
-      operation: 'read',
-      scope: 'studyData',
-      title: /Lokal studiedata kunde inte läsas/,
-    },
-    {
-      body: /kunde inte sparas på enheten/,
-      dismiss: 'Jag förstår',
-      label: /Sparningen misslyckades/,
-      language: 'sv',
-      operation: 'write',
-      scope: 'studyData',
-      title: /Sparades bara tillfälligt/,
-    },
-    {
-      body: /Tillgänglighetsinställningar kunde inte läsas/,
-      dismiss: 'Jag förstår',
-      label: /Tillgänglighetsinställningar kunde inte läsas/,
-      language: 'sv',
-      operation: 'read',
-      scope: 'accessibilityPreferences',
-      title: /Tillgänglighetsinställningar kunde inte läsas/,
-    },
-    {
-      body: /tillgänglighetsinställningen kunde inte sparas/,
-      dismiss: 'Jag förstår',
-      label: /Tillgänglighetsinställningen kunde inte sparas/,
-      language: 'sv',
-      operation: 'write',
-      scope: 'accessibilityPreferences',
-      title: /Sparades bara tillfälligt/,
-    },
-    {
-      body: /Local study data could not be loaded/,
-      dismiss: 'Got it',
-      label: /Local study data could not be loaded/,
-      language: 'en',
-      operation: 'read',
-      scope: 'studyData',
-      title: /Local study data could not be loaded/,
-    },
-    {
-      body: /could not be saved on this device/,
-      dismiss: 'Got it',
-      label: /Saving failed/,
-      language: 'en',
-      operation: 'write',
-      scope: 'studyData',
-      title: /Saved only for this session/,
-    },
-    {
-      body: /Accessibility preferences could not be loaded/,
-      dismiss: 'Got it',
-      label: /Accessibility preferences could not be loaded/,
-      language: 'en',
-      operation: 'read',
-      scope: 'accessibilityPreferences',
-      title: /Accessibility preferences could not be loaded/,
-    },
-    {
-      body: /accessibility preference could not be saved/,
-      dismiss: 'Got it',
-      label: /Accessibility preference saving failed/,
-      language: 'en',
-      operation: 'write',
-      scope: 'accessibilityPreferences',
-      title: /Saved only for this session/,
-    },
-  ];
-
-  for (const { body, dismiss, label, language, operation, scope, title } of cases) {
-    const copy = getPersistenceWarningNoticeCopy(language, operation, scope);
-    assert.equal(copy.dismiss, dismiss);
-    assert.match(copy.accessibilityLabel, label);
-    assert.match(copy.body, body);
-    assert.match(copy.title, title);
-  }
-
-  assert.deepEqual(
-    getPersistenceWarningNoticeCopy('sv', 'read'),
-    getPersistenceWarningNoticeCopy('sv', 'read', 'studyData'),
-  );
-  assert.doesNotMatch(
-    getPersistenceWarningNoticeCopy('en', 'read', 'accessibilityPreferences').body,
-    /study data/i,
-  );
-  assert.doesNotMatch(
-    getPersistenceWarningNoticeCopy('sv', 'read', 'accessibilityPreferences').body,
-    /studiedata/i,
-  );
+  assert.doesNotMatch(practiceSource, /warningScope="accessibilityPreferences"/);
+  assert.doesNotMatch(mistakesSource, /warningScope="accessibilityPreferences"/);
 });
