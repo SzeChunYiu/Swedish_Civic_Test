@@ -642,35 +642,34 @@ function meaningStatementSv(subject: string, answer: string): string {
 }
 
 function meaningStatementEn(subject: string, answer: string): string {
-  const genderEqualityPolicyGoalStatement = genderEqualityPolicyGoalStatementEn(subject, answer);
-  if (genderEqualityPolicyGoalStatement) return genderEqualityPolicyGoalStatement;
+  const policyGoalStatement = policyGoalStatementEn(subject, answer);
+  if (policyGoalStatement) return policyGoalStatement;
   const subjectStatement = replaceLeadingEnglishSubject(subject, answer);
   if (subjectStatement !== answer) return subjectStatement;
   return `${upperFirst(subject)} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
 }
 
-function genderEqualityPolicyGoalStatementEn(subject: string, answer: string): string | null {
-  if (!/^the goal of Sweden’s gender equality policy$/i.test(subject.trim())) return null;
-
+function policyGoalStatementEn(subject: string, answer: string): string | null {
+  const subjectMatch = subject.trim().match(/^the goal of (.+?\bpolicy)$/i);
+  if (!subjectMatch) return null;
+  const policyName = upperFirst(subjectMatch[1]);
   const normalizedAnswer = stripLeadingThatEn(answer).trim();
-  if (
-    /^women and men should have the same rights and duties and equal power to influence society and their own lives$/i.test(
-      normalizedAnswer,
-    )
-  ) {
-    return 'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives';
-  }
-  if (/^gender equality is only about how many women are in politics$/i.test(normalizedAnswer)) {
-    return 'Sweden’s gender equality policy is only about how many women are in politics';
-  }
-  if (/^women and men should have different rights in working life$/i.test(normalizedAnswer)) {
-    return 'Sweden’s gender equality policy says women and men should have different rights in working life';
-  }
-  if (/^parental leave should only be taken by women$/i.test(normalizedAnswer)) {
-    return 'Sweden’s gender equality policy says parental leave should only be taken by women';
+  const shouldMatch = normalizedAnswer.match(/^(.+?) should (.+)$/i);
+
+  if (shouldMatch) {
+    const aimClause = `${lowerFirst(shouldMatch[1])} to ${shouldMatch[2]}`.replace(
+      /\bthe same rights and duties and equal power\b/i,
+      'the same rights, duties, and power',
+    );
+    return `${policyName} aims for ${aimClause}`;
   }
 
-  return null;
+  const onlyAboutMatch = normalizedAnswer.match(/^(.+?) is only about (.+)$/i);
+  if (onlyAboutMatch) {
+    return `${policyName} is only about ${onlyAboutMatch[2]}`;
+  }
+
+  return `${policyName} aims for ${lowerFirst(normalizedAnswer)}`;
 }
 
 function appliesStatementEn(subject: string, answer: string): string {
