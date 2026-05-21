@@ -17214,6 +17214,8 @@ function validateProLifetimeRelaunchParity() {
     normalizedProLifetimeSource.includes('interface StoredProLifetimeEntitlementRecord') &&
     normalizedProLifetimeSource.includes('receiptValidationStatus:') &&
     normalizedProLifetimeSource.includes('receiptValidatedAt:') &&
+    normalizedProLifetimeSource.includes('isCanonicalUtcIsoTimestamp') &&
+    !normalizedProLifetimeSource.includes('isValidIsoDate') &&
     normalizedProLifetimeSource.includes('function parseStoredProLifetimeEntitlementRecord(') &&
     normalizedProLifetimeSource.includes(
       'if (record.schemaVersion !== PRO_LIFETIME_RECORD_SCHEMA_VERSION) return null;',
@@ -17224,7 +17226,16 @@ function validateProLifetimeRelaunchParity() {
     normalizedProLifetimeSource.includes(
       "if (record.source !== 'purchase' && record.source !== 'restore') return null;",
     ) &&
-    normalizedProLifetimeSource.includes('if (!hasStoreConfirmation(record)) return null;');
+    normalizedProLifetimeSource.includes('if (!hasStoreConfirmation(record)) return null;') &&
+    normalizedProLifetimeSource.includes(
+      'if (!isCanonicalUtcIsoTimestamp(record.grantedAt)) return null;',
+    ) &&
+    normalizedProIapTestSource.includes(
+      "test('proLifetime: stored entitlement timestamps must be canonical UTC ISO strings'",
+    ) &&
+    normalizedProIapTestSource.includes('date-only grantedAt') &&
+    normalizedProIapTestSource.includes('rollover receiptValidatedAt') &&
+    normalizedProIapTestSource.includes('timezone-offset validator timestamp');
   const providerRevalidationCaseIsValid =
     normalizedProLifetimeSource.includes(
       'return proLifetimeEntitlements( await revalidateStoredProLifetimeEntitlementRecord({ provider, record, storage, }), );',

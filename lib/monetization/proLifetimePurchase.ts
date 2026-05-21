@@ -15,7 +15,11 @@ import type {
   RemoveAdsReceiptValidationResult,
 } from './purchases';
 import { appStoreProductIds } from './appStoreIdentity';
-import { createNativePurchaseProvider, createSecureStorePurchaseStorage } from './purchases';
+import {
+  createNativePurchaseProvider,
+  createSecureStorePurchaseStorage,
+  isCanonicalUtcIsoTimestamp,
+} from './purchases';
 import { PRO_LIFETIME_ENTITLEMENTS, unionEntitlements } from './premium';
 import type { PremiumEntitlements, ProTierEntitlements } from '../../types/monetization';
 
@@ -76,10 +80,6 @@ function optionalStoredString(value: unknown): string | null | undefined {
   return typeof value === 'string' ? value : undefined;
 }
 
-function isValidIsoDate(value: unknown): value is string {
-  return typeof value === 'string' && !Number.isNaN(new Date(value).getTime());
-}
-
 function isProLifetimePurchase(purchase: RemoveAdsPurchaseRecord): boolean {
   if (purchase.productId === PRO_LIFETIME_PRODUCT_ID) return true;
   if (!purchase.raw || typeof purchase.raw !== 'object') return false;
@@ -93,7 +93,7 @@ function hasStoreConfirmation(record: StoredProLifetimeEntitlementRecord): boole
   return Boolean(
     (record.purchaseToken || record.transactionId) &&
     record.receiptValidationStatus === 'valid' &&
-    isValidIsoDate(record.receiptValidatedAt),
+    isCanonicalUtcIsoTimestamp(record.receiptValidatedAt),
   );
 }
 
@@ -108,7 +108,7 @@ function isValidatedProLifetimeReceipt(
     result &&
     result.status === 'valid' &&
     result.productId === PRO_LIFETIME_PRODUCT_ID &&
-    isValidIsoDate(result.validatedAt) &&
+    isCanonicalUtcIsoTimestamp(result.validatedAt) &&
     (result.purchaseToken || result.transactionId),
   );
 }
@@ -161,7 +161,7 @@ function parseStoredProLifetimeEntitlementRecord(
     if (record.schemaVersion !== PRO_LIFETIME_RECORD_SCHEMA_VERSION) return null;
     if (record.productId !== PRO_LIFETIME_PRODUCT_ID) return null;
     if (record.source !== 'purchase' && record.source !== 'restore') return null;
-    if (!isValidIsoDate(record.grantedAt)) return null;
+    if (!isCanonicalUtcIsoTimestamp(record.grantedAt)) return null;
     if (!hasStoreConfirmation(record)) return null;
 
     return record;

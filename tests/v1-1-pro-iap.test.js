@@ -218,6 +218,89 @@ test('setProLifetimeEntitlement: rejects bare true and clears persisted state', 
   assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false);
 });
 
+test('proLifetime: stored entitlement timestamps must be canonical UTC ISO strings', async () => {
+  const { PRO_LIFETIME_PRODUCT_ID, PRO_LIFETIME_STORAGE_KEY, getProLifetimeEntitlement } = loadTs(
+    'lib/monetization/proLifetimePurchase.ts',
+  );
+  const storage = makeMemoryStorage();
+  const canonicalTimestamp = '2026-05-20T12:34:56.789Z';
+
+  for (const { grantedAt, label, receiptValidatedAt } of [
+    {
+      grantedAt: '2026-05-20',
+      label: 'date-only grantedAt',
+      receiptValidatedAt: canonicalTimestamp,
+    },
+    {
+      grantedAt: '2026-02-30T00:00:00.000Z',
+      label: 'rollover grantedAt',
+      receiptValidatedAt: canonicalTimestamp,
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'blank receiptValidatedAt',
+      receiptValidatedAt: '',
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'date-only receiptValidatedAt',
+      receiptValidatedAt: '2026-05-20',
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'timezone-offset receiptValidatedAt',
+      receiptValidatedAt: '2026-05-20T12:34:56.789+00:00',
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'rollover receiptValidatedAt',
+      receiptValidatedAt: '2026-02-30T00:00:00.000Z',
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'missing-milliseconds receiptValidatedAt',
+      receiptValidatedAt: '2026-05-20T12:34:56Z',
+    },
+    {
+      grantedAt: canonicalTimestamp,
+      label: 'malformed receiptValidatedAt',
+      receiptValidatedAt: 'not-a-date',
+    },
+  ]) {
+    await storage.setItemAsync(
+      PRO_LIFETIME_STORAGE_KEY,
+      JSON.stringify({
+        grantedAt,
+        productId: PRO_LIFETIME_PRODUCT_ID,
+        purchaseToken: 'tok-pro-lifetime',
+        receiptValidatedAt,
+        receiptValidationStatus: 'valid',
+        schemaVersion: 1,
+        source: 'purchase',
+        transactionId: 'tx-pro-lifetime',
+      }),
+    );
+    assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, false, label);
+  }
+
+  await storage.setItemAsync(
+    PRO_LIFETIME_STORAGE_KEY,
+    JSON.stringify({
+      grantedAt: canonicalTimestamp,
+      productId: PRO_LIFETIME_PRODUCT_ID,
+      purchaseToken: 'tok-pro-lifetime',
+      receiptValidatedAt: canonicalTimestamp,
+      receiptValidationStatus: 'valid',
+      schemaVersion: 1,
+      source: 'purchase',
+      transactionId: 'tx-pro-lifetime',
+    }),
+  );
+  const validPersistedRecord = await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY);
+  assert.equal((await getProLifetimeEntitlement({ storage })).spacedRepetition, true);
+  assert.equal(await storage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), validPersistedRecord);
+});
+
 test('buyProLifetime: invalid receipt and persistence failure fail closed before finish', async () => {
   const { PRO_LIFETIME_PRODUCT_ID, PRO_LIFETIME_STORAGE_KEY, buyProLifetime } = loadTs(
     'lib/monetization/proLifetimePurchase.ts',
@@ -231,6 +314,37 @@ test('buyProLifetime: invalid receipt and persistence failure fail closed before
   assert.equal(invalidResult.status, 'pending');
   assert.equal(invalidResult.entitlements.spacedRepetition, false);
   assert.equal(await invalidStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null);
+
+  for (const [label, validatedAt] of [
+    ['blank validator timestamp', ''],
+    ['date-only validator timestamp', '2026-05-20'],
+    ['timezone-offset validator timestamp', '2026-05-20T12:34:56.789+00:00'],
+    ['rollover validator timestamp', '2026-02-30T00:00:00.000Z'],
+    ['missing-milliseconds validator timestamp', '2026-05-20T12:34:56Z'],
+    ['malformed validator timestamp', 'not-a-date'],
+  ]) {
+    const invalidTimestampStorage = makeMemoryStorage();
+    const invalidTimestampProvider = {
+      ...makeMockProvider(),
+      async validateRemoveAdsReceipt(purchase, productId) {
+        return {
+          productId,
+          purchaseToken: purchase.purchaseToken ?? null,
+          status: 'valid',
+          transactionId: purchase.transactionId ?? null,
+          validatedAt,
+        };
+      },
+    };
+    const invalidTimestampResult = await buyProLifetime({
+      provider: invalidTimestampProvider,
+      storage: invalidTimestampStorage,
+    });
+
+    assert.equal(invalidTimestampResult.status, 'pending', label);
+    assert.equal(invalidTimestampResult.entitlements.spacedRepetition, false, label);
+    assert.equal(await invalidTimestampStorage.getItemAsync(PRO_LIFETIME_STORAGE_KEY), null, label);
+  }
 
   const events = [];
   const failingStorage = {
