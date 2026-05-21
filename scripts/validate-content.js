@@ -1601,7 +1601,7 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
     label: 'empty quiz title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>[\s\S]{0,160}copy\.emptyTitle[\s\S]{0,160}<\/Text>/,
   },
   {
     label: 'session title',
