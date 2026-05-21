@@ -564,7 +564,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_LABELS = {
     'Stäng om källorna',
     'Frågor skrivna utifrån UHR:s studiematerial Sverige i fokus. Övningsprovet använder bara UHR-hänvisade frågor.',
     'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
-    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+    'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   ],
   en: [
     '5-minute practice',
@@ -814,6 +814,8 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
     'Starta övning',
     'Bläddra bland alla samhällskapitel',
     'Bläddra bland kapitel',
+    'Gå till övningsprov',
+    '${title}: gå till övningsprov när steget är klart.',
     'nivå',
     'XP-baserad',
     'dagars svit',
@@ -909,6 +911,7 @@ const FORBIDDEN_HOME_ROUTE_SWEDISH_MISTAKE_REVIEW_COPY = [
   /repetition av misstag/i,
   /upprepning av misstag/i,
 ];
+const FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY = [/\bmockprov(?:et)?\b/i, /\bmock-provet\b/i];
 const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   'Redoindikator',
   'redoindikator',
@@ -7227,6 +7230,8 @@ let homeRouteCopyLabelsValidated = 0;
 let homeRouteCopyParityValidated = false;
 let homeRouteInternalBenchmarkCopyValidated = false;
 let homeRouteSwedishMistakeReviewCopyNaturalnessValidated = false;
+let nativeSwedishMockExamCopyLabelsValidated = 0;
+let nativeSwedishMockExamCopyParityValidated = false;
 let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
@@ -7535,16 +7540,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
-  validateMobileAdsConsentHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    mobileAdsConsentHookCasesValidated,
-    mobileAdsConsentHookParityValidated,
   });
   process.exit(0);
 }
@@ -9304,6 +9299,19 @@ function validatePracticeRouteCopyParity() {
     });
   });
 
+  const swedishCopyStart = practiceRoute.indexOf('  sv: {');
+  const englishCopyStart = practiceRoute.indexOf('  en: {', swedishCopyStart);
+  if (swedishCopyStart < 0 || englishCopyStart < 0) {
+    reject('practice route Swedish copy block could not be read');
+  } else {
+    const swedishCopy = practiceRoute.slice(swedishCopyStart, englishCopyStart);
+    FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY.forEach((pattern) => {
+      if (pattern.test(swedishCopy)) {
+        reject('practice route Swedish native copy must use övningsprov, not mockprov/mock-provet');
+      }
+    });
+  }
+
   const expectedLabelCount = Object.values(EXPECTED_PRACTICE_ROUTE_COPY_LABELS).reduce(
     (count, labels) => count + labels.length,
     0,
@@ -9795,6 +9803,19 @@ function validateHomeRouteCopyParity() {
     }
   });
 
+  const swedishCopyStart = homeRoute.indexOf('  sv: {');
+  const englishCopyStart = homeRoute.indexOf('  en: {', swedishCopyStart);
+  if (swedishCopyStart < 0 || englishCopyStart < 0) {
+    reject('home route Swedish copy block could not be read');
+  } else {
+    const swedishCopy = homeRoute.slice(swedishCopyStart, englishCopyStart);
+    FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY.forEach((pattern) => {
+      if (pattern.test(swedishCopy)) {
+        reject('home route Swedish native copy must use övningsprov, not mockprov/mock-provet');
+      }
+    });
+  }
+
   const seenLabels = new Set();
   Object.entries(EXPECTED_HOME_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
     labels.forEach((label) => {
@@ -9825,6 +9846,85 @@ function validateHomeRouteCopyParity() {
   if (valid && homeRouteCopyLabelsValidated === expectedLabelCount) {
     homeRouteCopyParityValidated = true;
     homeRouteInternalBenchmarkCopyValidated = true;
+  }
+}
+
+function validateFocusedNativeMockExamCopy() {
+  let valid = true;
+  let homeRoute = '';
+  let practiceRoute = '';
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  function requireCopy(label, source, copy) {
+    if (!source.includes(copy)) {
+      reject(`${label} native mock exam copy is missing ${JSON.stringify(copy)}`);
+      return;
+    }
+    nativeSwedishMockExamCopyLabelsValidated += 1;
+  }
+
+  function rejectSwedishLoanword(label, source) {
+    const swedishCopyStart = source.indexOf('  sv: {');
+    const englishCopyStart = source.indexOf('  en: {', swedishCopyStart);
+    if (swedishCopyStart < 0 || englishCopyStart < 0) {
+      reject(`${label} route Swedish copy block could not be read`);
+      return;
+    }
+
+    const swedishCopy = source.slice(swedishCopyStart, englishCopyStart);
+    FORBIDDEN_SWEDISH_NATIVE_MOCK_EXAM_COPY.forEach((pattern) => {
+      if (pattern.test(swedishCopy)) {
+        reject(`${label} route Swedish native copy must use övningsprov, not mockprov/mock-provet`);
+      }
+    });
+  }
+
+  try {
+    homeRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  } catch (error) {
+    reject(`home route native mock exam copy source could not be read: ${error.message}`);
+  }
+
+  try {
+    practiceRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
+  } catch (error) {
+    reject(`practice route native mock exam copy source could not be read: ${error.message}`);
+  }
+
+  if (homeRoute) {
+    rejectSwedishLoanword('home', homeRoute);
+    requireCopy('home route', homeRoute, 'Gå till övningsprov');
+    requireCopy('home route', homeRoute, '${title}: gå till övningsprov när steget är klart.');
+    requireCopy('home route', homeRoute, 'Go to mock exam');
+    requireCopy(
+      'home route',
+      homeRoute,
+      '${title}: go to the mock exam after completing this stage.',
+    );
+  }
+
+  if (practiceRoute) {
+    rejectSwedishLoanword('practice', practiceRoute);
+    requireCopy(
+      'practice route',
+      practiceRoute,
+      'Övningsprovet använder bara UHR-hänvisade frågor.',
+    );
+    requireCopy('practice route', practiceRoute, 'Aldrig en del av övningsprovet.');
+    requireCopy(
+      'practice route',
+      practiceRoute,
+      'The mock exam uses only UHR-referenced questions.',
+    );
+    requireCopy('practice route', practiceRoute, 'Never part of the mock exam.');
+  }
+
+  if (valid && nativeSwedishMockExamCopyLabelsValidated === 8) {
+    nativeSwedishMockExamCopyParityValidated = true;
   }
 }
 
@@ -15597,6 +15697,28 @@ function validateUhrSourceMaterialLinkParity() {
 }
 
 validateStaticValidationSyntaxGate();
+if (process.argv.includes('--focus-sv-native-mock-exam-copy')) {
+  const focusFailureStart = failures.length;
+  validateFocusedNativeMockExamCopy();
+  const focusFailures = failures.slice(focusFailureStart);
+  if (focusFailures.length > 0) {
+    console.error('Content validation failed:');
+    for (const failure of focusFailures) console.error(`- ${failure}`);
+    process.exit(1);
+  }
+  console.log('Content validation OK');
+  console.log(
+    JSON.stringify(
+      {
+        nativeSwedishMockExamCopyLabelsValidated,
+        nativeSwedishMockExamCopyParityValidated,
+      },
+      null,
+      2,
+    ),
+  );
+  process.exit(0);
+}
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
   validateHomeRouteSwedishMistakeReviewCopyNaturalness();

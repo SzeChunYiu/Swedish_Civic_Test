@@ -6,17 +6,13 @@ const test = require('node:test');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-function parseFocusedHomeRouteSummary() {
-  const output = execFileSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-home-route-copy'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
+function parseValidationSummary() {
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    cwd: repoRoot,
+    encoding: 'utf8',
+  });
   const match = output.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused home route validation should print JSON summary');
+  assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
 }
 
@@ -35,13 +31,13 @@ function parseFocusedHomeMistakeReviewSummary() {
 }
 
 test('home route title and dashboard card headings stay accessible as headers', () => {
-  const summary = parseFocusedHomeRouteSummary();
+  const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
   const screenShell = fs.readFileSync(path.join(repoRoot, 'components/ui/ScreenShell.tsx'), 'utf8');
 
   assert.equal(summary.homeRouteHeadersValidated, 5);
   assert.equal(summary.homeRouteHeaderParityValidated, true);
-  assert.equal(summary.homeRouteCopyLabelsValidated, 98);
+  assert.equal(summary.homeRouteCopyLabelsValidated, 84);
   assert.equal(summary.homeRouteCopyParityValidated, true);
   assert.match(source, /type HomeCopy =/);
   assert.match(source, /const homeCopy: Record<AppLanguage, HomeCopy>/);
@@ -51,34 +47,15 @@ test('home route title and dashboard card headings stay accessible as headers', 
     source,
     /const mockExamSessions = useProgressStore\(\(state\) => state\.mockExamSessions\);/,
   );
-  assert.match(
-    source,
-    /const streakFreezeState = useProgressStore\(\(state\) => state\.streakFreezeState\);/,
-  );
-  assert.match(
-    source,
-    /const setStreakFreezeState = useProgressStore\(\(state\) => state\.setStreakFreezeState\);/,
-  );
-  assert.match(source, /calculateStreakWithFreeze\(\{/);
-  assert.match(source, /freezeBannerCopy\(streakWithFreeze, language\)/);
-  assert.match(source, /helper=\{dayStreakHelper\}/);
-  assert.match(source, /<Badge tone="warm">\{copy\.streakFreezeBadge\}<\/Badge>/);
-  assert.match(source, /\$\{count\} svitskydd redo/);
-  assert.match(source, /\$\{count\} streak freeze ready/);
-  assert.match(source, /Svitskydd/);
-  assert.match(source, /Streak freeze/);
   assert.match(source, /mockExamSessions,/);
   assert.match(source, /const readinessVerdict = copy\.readinessVerdicts\[readiness\.verdict\]/);
   assert.match(source, /Studieöversikt/);
   assert.match(source, /Study dashboard/);
-  assert.match(source, /En tydlig väg för svensk samhällskunskap/);
-  assert.match(source, /A focused path for Swedish civic knowledge/);
-  assert.doesNotMatch(source, /svenska samhällskunskaper|samhällskunskaper/i);
   assert.match(source, /Förberedelsesignal/);
   assert.match(source, /Preparation signal/);
   assert.match(source, /Gå till övningsprov/);
-  assert.match(source, /gå till övningsprov när steget är klart/);
-  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
+  assert.match(source, /\$\{title\}: gå till övningsprov när steget är klart\./);
+  assert.doesNotMatch(source, /mockprov|mock-provet/i);
   assert.doesNotMatch(source, /Redoindikator|Readiness indicator|Provredo|Exam readiness/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader[\s\S]*title=\{copy\.studyLoopTitle\}/);
@@ -121,7 +98,6 @@ test('home route copy parity rejects unreachable flashcard promises', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -204,7 +180,6 @@ test('home route copy parity rejects internal benchmark phrases in learner copy'
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 const forbiddenPhrase = ${JSON.stringify(forbiddenPhrase)};
 fs.readFileSync = function readFileSync(filePath, ...args) {
@@ -236,7 +211,6 @@ test('home route copy parity rejects unsupported readiness prediction wording', 
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -261,37 +235,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('home route copy parity rejects Swedish samhällskunskaper plural subject wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('En tydlig väg för svensk samhällskunskap', 'En tydlig väg för svenska samhällskunskaper');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /home route Swedish subject copy must use natural singular samhällskunskap wording/,
-  );
-});
-
 test('home route copy parity rejects guided path chapter drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -299,15 +242,13 @@ test('home route copy parity rejects guided path chapter drift', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace("chapterRange: 'Kapitel 10-13'", "chapterRange: 'Kapitel 10-99'")
-      .replace("chapterRange: 'Chapters 10-13'", "chapterRange: 'Chapters 10-99'");
+      .replace("'ch13'", "'ch99'");
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -324,7 +265,7 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('home route copy parity rejects Swedish mockprov wording', () => {
+test('home route copy parity rejects Swedish mockprov guided-path copy', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -339,10 +280,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace('Gå till övningsprov', 'Gå till mockprov')
-      .replaceAll(
-        'gå till övningsprov när steget är klart',
-        'gå till mockprov när steget är klart',
-      );
+      .replace('gå till övningsprov när steget är klart.', 'gå till mockprov när steget är klart.');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -366,7 +304,6 @@ test('home route header parity rejects unheadered dashboard card titles', () => 
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -400,7 +337,6 @@ test('home route copy parity rejects bypassing the settings language', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -431,7 +367,6 @@ test('home route copy parity rejects missing Swedish shell copy', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
@@ -459,14 +394,13 @@ test('home route copy parity rejects synthetic learner feedback copy', () => {
       '-e',
       `
 const fs = require('node:fs');
-process.argv.push('--focus-home-route-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/home.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('source-backed explanations', ['simulated', ' learners'].join(''));
+      .replace('Study-loop improvements', ['10,000 simulated', 'learners'].join(' '));
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };

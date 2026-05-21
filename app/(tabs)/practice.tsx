@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AudioButton } from '../../components/learning/AudioButton';
@@ -20,10 +19,6 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
-import {
-  buildDailyChallenge,
-  DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-} from '../../lib/learning/dailyChallenge';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
 import {
@@ -44,19 +39,11 @@ import type { ConfidenceRating } from '../../types/progress';
 
 type PracticeHeaderControl = 'bookmark' | 'supplementary' | 'sources';
 
-type ChallengeAnswer = {
-  questionId: string;
-  isCorrect: boolean;
-};
-
 type PracticeCopy = {
   badge: string;
   bookmark: string;
   bookmarked: string;
   bookmarkAccessibilityLabel: (isBookmarked: boolean) => string;
-  challengeBadge: string;
-  challengeSubtitle: string;
-  challengeTimer: (seconds: number) => string;
   completedQuestions: (count: number) => string;
   emptyTitle: string;
   nextQuestion: string;
@@ -88,10 +75,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bokmärkt',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Ta bort bokmärket från den här frågan' : 'Bokmärk den här frågan',
-    challengeBadge: 'Dagens utmaning',
-    challengeSubtitle:
-      'Fem frågor från dagens urval. Timern är lokal och försöket sparas som klart för dagen.',
-    challengeTimer: (seconds) => `${seconds} sekunder kvar`,
     completedQuestions: (count) => `Besvarade frågor: ${count}`,
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
     nextQuestion: 'Nästa fråga',
@@ -116,7 +99,7 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
       'Variant av en appskriven, UHR-hänvisad övningsfråga för att öva samma kunskap från en annan vinkel. Visas bara om du slår på tilläggsfrågor.',
     aboutSourcesEditorialTitle: 'Redaktionell',
     aboutSourcesEditorialBody:
-      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av mock-provet.',
+      'Skriven av oss för att förklara sammanhang som inte täcks direkt av UHR-materialet. Aldrig en del av övningsprovet.',
   },
   en: {
     badge: '5-minute practice',
@@ -124,10 +107,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
     bookmarked: 'Bookmarked',
     bookmarkAccessibilityLabel: (isBookmarked) =>
       isBookmarked ? 'Remove this question bookmark' : 'Bookmark this question',
-    challengeBadge: 'Daily challenge',
-    challengeSubtitle:
-      "Five questions from today's set. The timer is local and completion is saved for the day.",
-    challengeTimer: (seconds) => `${seconds} seconds left`,
     completedQuestions: (count) => `Completed questions: ${count}`,
     emptyTitle: 'No practice questions are available yet.',
     nextQuestion: 'Next question',
@@ -157,8 +136,6 @@ const practiceCopy: Record<AppLanguage, PracticeCopy> = {
 };
 
 export default function Screen() {
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const isChallengeMode = mode === 'challenge';
   const activeQuestionId = usePracticeSessionStore((state) => state.activeQuestionId);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
@@ -167,10 +144,6 @@ export default function Screen() {
   const shuffleSessionId = usePracticeSessionStore((state) => state.shuffleSessionId);
   const completedQuestionIds = useProgressStore((state) => state.completedQuestionIds);
   const recordAnswer = useProgressStore((state) => state.recordAnswer);
-  const recordDailyChallengeCompletion = useProgressStore(
-    (state) => state.recordDailyChallengeCompletion,
-  );
-  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const progressPersistenceWarning = useProgressStore((state) => state.persistenceWarning);
   const clearProgressPersistenceWarning = useProgressStore(
     (state) => state.clearPersistenceWarning,
@@ -197,36 +170,19 @@ export default function Screen() {
   const [selectedConfidenceRating, setSelectedConfidenceRating] = useState<ConfidenceRating | null>(
     null,
   );
-  const [challengeAnswers, setChallengeAnswers] = useState<ChallengeAnswer[]>([]);
-  const [remainingChallengeSeconds, setRemainingChallengeSeconds] = useState(
-    DAILY_CHALLENGE_TIME_LIMIT_SECONDS,
-  );
-  const [challengeRetryActive, setChallengeRetryActive] = useState(false);
   const { entitlements: proEntitlements, entitlementsReady: proEntitlementsReady } =
     useProLifetimeEntitlements();
   const copy = practiceCopy[language];
-  const dailyChallenge = useMemo(() => buildDailyChallenge({ bank: questions }), []);
-  const challengeQuestions = useMemo(
-    () =>
-      dailyChallenge.questionIds
-        .map((questionId) => questions.find((candidate) => candidate.id === questionId))
-        .filter((candidate): candidate is (typeof questions)[number] => Boolean(candidate)),
-    [dailyChallenge.questionIds],
-  );
   const filteredQuestions = useMemo(
     () => filterQuestionsByProvenance(questions, { includeSupplementary }),
     [includeSupplementary],
   );
-  const practiceQuestionBank = isChallengeMode ? challengeQuestions : filteredQuestions;
   const visibleCompletedQuestionIds = useMemo(
-    () =>
-      isChallengeMode
-        ? challengeAnswers.map((answer) => answer.questionId)
-        : getCompletedQuestionIdsForQuestionBank(practiceQuestionBank, completedQuestionIds),
-    [challengeAnswers, completedQuestionIds, isChallengeMode, practiceQuestionBank],
+    () => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds),
+    [completedQuestionIds, filteredQuestions],
   );
   const rawQuestion = getPracticeQuestionForSession(
-    practiceQuestionBank,
+    filteredQuestions,
     visibleCompletedQuestionIds,
     activeQuestionId,
   );
@@ -236,67 +192,10 @@ export default function Screen() {
     [rawQuestion, shuffleSessionId],
   );
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
-  const challengeQuestionTotal = challengeQuestions.length;
-  const challengeCompletedToday = Boolean(dailyChallengeCompletions[dailyChallenge.dayKey]);
-  const challengeInactive =
-    isChallengeMode &&
-    (challengeRetryActive || remainingChallengeSeconds <= 0 || challengeQuestionTotal === 0);
 
   useEffect(() => {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
-
-  useEffect(() => {
-    if (!isChallengeMode) return;
-
-    resetSelection();
-    setChallengeAnswers([]);
-    setChallengeRetryActive(false);
-    setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
-  }, [dailyChallenge.dayKey, dailyChallenge.timeLimitSeconds, isChallengeMode, resetSelection]);
-
-  useEffect(() => {
-    if (!isChallengeMode || challengeInactive || challengeCompletedToday) return;
-
-    const timerId = setInterval(() => {
-      setRemainingChallengeSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
-
-    return () => clearInterval(timerId);
-  }, [challengeCompletedToday, challengeInactive, isChallengeMode]);
-
-  useEffect(() => {
-    if (
-      !isChallengeMode ||
-      remainingChallengeSeconds > 0 ||
-      challengeRetryActive ||
-      challengeQuestionTotal === 0
-    ) {
-      return;
-    }
-
-    const correctCount = challengeAnswers.filter((answer) => answer.isCorrect).length;
-    recordDailyChallengeCompletion({
-      dayKey: dailyChallenge.dayKey,
-      questionIds: dailyChallenge.questionIds,
-      correctCount,
-      totalCount: challengeQuestionTotal,
-      score: challengeQuestionTotal > 0 ? correctCount / challengeQuestionTotal : 0,
-      timeSpentSeconds: dailyChallenge.timeLimitSeconds,
-      completedAt: new Date().toISOString(),
-    });
-    setChallengeRetryActive(true);
-  }, [
-    challengeAnswers,
-    challengeQuestionTotal,
-    challengeRetryActive,
-    dailyChallenge.dayKey,
-    dailyChallenge.questionIds,
-    dailyChallenge.timeLimitSeconds,
-    isChallengeMode,
-    recordDailyChallengeCompletion,
-    remainingChallengeSeconds,
-  ]);
 
   if (!question) {
     return (
@@ -314,20 +213,10 @@ export default function Screen() {
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
-  const questionIndex = practiceQuestionBank.findIndex((candidate) => candidate.id === question.id);
+  const questionIndex = filteredQuestions.findIndex((candidate) => candidate.id === question.id);
   const questionNumber = questionIndex >= 0 ? questionIndex + 1 : 0;
-  const bankProgress =
-    isChallengeMode && challengeQuestionTotal > 0
-      ? challengeAnswers.length / challengeQuestionTotal
-      : practiceQuestionBank.length > 0
-        ? questionNumber / practiceQuestionBank.length
-        : 0;
-  const completedQuestionCount = isChallengeMode
-    ? challengeAnswers.length
-    : visibleCompletedQuestionIds.length;
+  const bankProgress = filteredQuestions.length > 0 ? questionNumber / filteredQuestions.length : 0;
   const handleSelectOption = (optionId: string) => {
-    if (challengeInactive) return;
-
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -336,32 +225,6 @@ export default function Screen() {
 
     selectOption(question.id, optionId);
     recordAnswer(question.id, optionIsCorrect, answerConfidenceRating);
-
-    if (isChallengeMode && !challengeAnswers.some((answer) => answer.questionId === question.id)) {
-      const nextChallengeAnswers = [
-        ...challengeAnswers,
-        { questionId: question.id, isCorrect: optionIsCorrect },
-      ];
-      setChallengeAnswers(nextChallengeAnswers);
-
-      if (nextChallengeAnswers.length >= challengeQuestionTotal) {
-        const correctCount = nextChallengeAnswers.filter((answer) => answer.isCorrect).length;
-        const timeSpentSeconds = Math.max(
-          0,
-          dailyChallenge.timeLimitSeconds - remainingChallengeSeconds,
-        );
-        recordDailyChallengeCompletion({
-          dayKey: dailyChallenge.dayKey,
-          questionIds: dailyChallenge.questionIds,
-          correctCount,
-          totalCount: challengeQuestionTotal,
-          score: challengeQuestionTotal > 0 ? correctCount / challengeQuestionTotal : 0,
-          timeSpentSeconds,
-          completedAt: new Date().toISOString(),
-        });
-        setChallengeRetryActive(true);
-      }
-    }
 
     if (!optionIsCorrect && selectedOption) {
       recordWrongAnswerReview({
@@ -373,38 +236,25 @@ export default function Screen() {
   };
   const handleAdvanceQuestion = () => {
     setSelectedConfidenceRating(null);
-    if (isChallengeMode && challengeRetryActive) return;
     advanceQuestion();
   };
   const handleTryAgain = () => {
     setSelectedConfidenceRating(null);
-    if (isChallengeMode && challengeRetryActive) {
-      resetSelection();
-      setChallengeAnswers([]);
-      setRemainingChallengeSeconds(dailyChallenge.timeLimitSeconds);
-      setChallengeRetryActive(false);
-      return;
-    }
     resetSelection();
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
-        <Badge>{isChallengeMode ? copy.challengeBadge : copy.badge}</Badge>
+        <Badge>{copy.badge}</Badge>
         <Text accessibilityRole="header" style={styles.title}>
           {copy.questionTitle(questionNumber)}
         </Text>
-        <Text style={styles.subtitle}>
-          {isChallengeMode ? copy.challengeSubtitle : copy.subtitle}
-        </Text>
-        {isChallengeMode ? (
-          <Text accessibilityRole="timer" style={styles.challengeTimer}>
-            {copy.challengeTimer(remainingChallengeSeconds)}
-          </Text>
-        ) : null}
+        <Text style={styles.subtitle}>{copy.subtitle}</Text>
         <ProgressBar language={language} progress={bankProgress} />
-        <Text style={styles.meta}>{copy.completedQuestions(completedQuestionCount)}</Text>
+        <Text style={styles.meta}>
+          {copy.completedQuestions(visibleCompletedQuestionIds.length)}
+        </Text>
         <View style={styles.headerControls}>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
@@ -427,36 +277,31 @@ export default function Screen() {
               {isBookmarked ? copy.bookmarked : copy.bookmark}
             </Text>
           </Pressable>
-          {isChallengeMode ? null : (
-            <Pressable
-              android_ripple={{ color: colors.focusSoft }}
-              aria-checked={includeSupplementary}
-              accessibilityRole="switch"
-              accessibilityState={{ checked: includeSupplementary }}
-              accessibilityLabel={
-                includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
-              }
-              hitSlop={space[1]}
-              onBlur={() => setFocusedHeaderControl(null)}
-              onFocus={() => setFocusedHeaderControl('supplementary')}
-              onPress={() => setIncludeSupplementary(!includeSupplementary)}
-              style={({ pressed }) => [
-                styles.bookmarkButton,
-                includeSupplementary ? styles.bookmarkButtonActive : null,
-                focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
-                pressed ? styles.headerControlPressed : null,
-              ]}
+          <Pressable
+            android_ripple={{ color: colors.focusSoft }}
+            aria-checked={includeSupplementary}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: includeSupplementary }}
+            accessibilityLabel={
+              includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff
+            }
+            hitSlop={space[1]}
+            onBlur={() => setFocusedHeaderControl(null)}
+            onFocus={() => setFocusedHeaderControl('supplementary')}
+            onPress={() => setIncludeSupplementary(!includeSupplementary)}
+            style={({ pressed }) => [
+              styles.bookmarkButton,
+              includeSupplementary ? styles.bookmarkButtonActive : null,
+              focusedHeaderControl === 'supplementary' ? styles.headerControlFocused : null,
+              pressed ? styles.headerControlPressed : null,
+            ]}
+          >
+            <Text
+              style={[styles.bookmarkText, includeSupplementary ? styles.bookmarkTextActive : null]}
             >
-              <Text
-                style={[
-                  styles.bookmarkText,
-                  includeSupplementary ? styles.bookmarkTextActive : null,
-                ]}
-              >
-                {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
-              </Text>
-            </Pressable>
-          )}
+              {includeSupplementary ? copy.supplementaryToggleOn : copy.supplementaryToggleOff}
+            </Text>
+          </Pressable>
           <Pressable
             android_ripple={{ color: colors.focusSoft }}
             aria-expanded={aboutSourcesOpen}
@@ -527,7 +372,7 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
-              disabled={hasSelectedAnswer || challengeInactive}
+              disabled={hasSelectedAnswer}
               language={language}
               option={option}
               onPress={() => handleSelectOption(option.id)}
@@ -623,16 +468,6 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
-  },
-  challengeTimer: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.caption.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
   },
   meta: {
     color: colors.textMuted,

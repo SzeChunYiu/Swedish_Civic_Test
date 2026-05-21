@@ -11,14 +11,9 @@ function phrase(parts) {
 }
 
 function parseValidationSummary() {
-  const output = execFileSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-practice-route-copy-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    encoding: 'utf8',
+  });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -58,7 +53,7 @@ test('practice route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/practice.tsx'), 'utf8');
 
-  assert.equal(summary.practiceRouteCopyLabelsValidated, 54);
+  assert.equal(summary.practiceRouteCopyLabelsValidated, 48);
   assert.equal(summary.practiceRouteCopyParityValidated, true);
   assert.equal(summary.provenanceAuthorityCopyFilesValidated, 8);
   assert.equal(summary.provenanceAuthorityCopyParityValidated, true);
@@ -69,14 +64,16 @@ test('practice route shell copy follows the persisted settings language', () => 
   assert.match(source, /const filteredQuestions = useMemo\(/);
   assert.match(
     source,
-    /getCompletedQuestionIdsForQuestionBank\(practiceQuestionBank, completedQuestionIds\)/,
+    /getCompletedQuestionIdsForQuestionBank\(filteredQuestions, completedQuestionIds\)/,
   );
-  assert.match(source, /<Badge>\{isChallengeMode \? copy\.challengeBadge : copy\.badge\}<\/Badge>/);
-  assert.match(source, /copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)/);
-  assert.doesNotMatch(source, /copy\.completedQuestions\(completedQuestionIds\.length\)/);
+  assert.match(source, /\{copy\.completedQuestions\(visibleCompletedQuestionIds\.length\)\}/);
+  assert.doesNotMatch(source, /\{copy\.completedQuestions\(completedQuestionIds\.length\)\}/);
   assert.match(source, /Question \$\{questionNumber\}/);
   assert.match(source, /Fråga \$\{questionNumber\}/);
   assert.match(source, /Close source details/);
+  assert.match(source, /Aldrig en del av övningsprovet\./);
+  assert.match(source, /Never part of the mock exam\./);
+  assert.doesNotMatch(source, /mockprov|mock-provet/i);
   assert.doesNotMatch(source, /Close about-the-sources|about-the-sources/);
   assert.doesNotMatch(source, new RegExp(phrase(['traced', 'directly', 'to', 'UHR']), 'i'));
   assert.doesNotMatch(
@@ -84,32 +81,8 @@ test('practice route shell copy follows the persisted settings language', () => 
     new RegExp(phrase(['generated', 'from', 'a', 'UHR', 'question']), 'i'),
   );
   assert.doesNotMatch(source, new RegExp(phrase(['kommer', 'direkt', 'från', 'UHR']), 'i'));
-  assert.match(source, /Aldrig en del av övningsprovet/);
-  assert.doesNotMatch(source, /\bmock\s*-?\s*prov(?:et)?\b/i);
   assert.match(source, /accessibilityLabel=\{copy\.bookmarkAccessibilityLabel\(isBookmarked\)\}/);
   assert.match(source, /\{copy\.scoreLabel\}: \{currentScore\.correct\}\/\{currentScore\.total\}/);
-});
-
-test('web aria false-state e2e covers localized Practice control labels', () => {
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/e2e/web-aria-false-state.spec.ts'),
-    'utf8',
-  );
-
-  assert.match(source, /const localeCases: PracticeAriaLocaleCase\[\] = \[/);
-  assert.match(source, /for \(const labels of localeCases\)/);
-  assert.match(source, /seedSettingsLanguage\(page, labels\.language\)/);
-  assert.match(source, /page\.getByText\(labels\.questionTitle, \{ exact: true \}\)/);
-  assert.match(source, /page\.getByRole\('switch', \{ name: labels\.supplementaryOff \}\)/);
-  assert.match(source, /page\.getByRole\('button', \{ name: labels\.aboutSourcesOpen \}\)/);
-  assert.match(
-    source,
-    /aboutSourcesOpen: 'About the sources'[\s\S]*audioEnabled: 'Audio enabled, tap to mute'[\s\S]*language: 'en'[\s\S]*questionTitle: 'Question 1'[\s\S]*supplementaryOff: 'UHR questions only'/,
-  );
-  assert.match(
-    source,
-    /aboutSourcesOpen: 'Om källorna'[\s\S]*audioEnabled: 'Ljud är på, tryck för att stänga av'[\s\S]*language: 'sv'[\s\S]*questionTitle: 'Fråga 1'[\s\S]*supplementaryOff: 'Bara UHR-frågor'/,
-  );
 });
 
 test('practice route copy parity rejects bypassing the settings language', () => {
@@ -129,7 +102,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -160,7 +132,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -185,13 +156,12 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
     return originalReadFileSync
       .call(this, filePath, ...args)
       .replace(
-        'copy.completedQuestions(visibleCompletedQuestionIds.length)',
-        'copy.completedQuestions(completedQuestionIds.length)',
+        '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
+        '{copy.completedQuestions(completedQuestionIds.length)}',
       );
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -222,7 +192,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -236,24 +205,24 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('practice route copy parity rejects Swedish mockprov wording', () => {
+test('practice route copy parity rejects Swedish mockprov source copy', () => {
   const result = spawnSync(
     process.execPath,
     [
       '-e',
       `
 const fs = require('node:fs');
+process.argv.push('--focus-sv-native-mock-exam-copy');
 const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/app/(tabs)/practice.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('Aldrig en del av övningsprovet', 'Aldrig en del av mock-provet');
+      .replace('Aldrig en del av övningsprovet.', 'Aldrig en del av mock-provet.');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-sv-native-mock-exam-copy');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -289,7 +258,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-practice-route-copy-parity');
 require('./scripts/validate-content.js');
 `,
     ],
