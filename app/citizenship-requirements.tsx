@@ -1,8 +1,7 @@
-import { Link } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { PersistenceWarningNotice } from '../components/storage/PersistenceWarningNotice';
+import { ComplianceActionLink } from '../components/compliance/ComplianceActionLink';
 import { QuestionDisclaimer } from '../components/quiz/QuestionDisclaimer';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
@@ -12,10 +11,10 @@ import {
   CITIZENSHIP_REQUIREMENTS_SELF_SUPPORT_YEARLY_SEK_2026,
   citizenshipRequirementAreas,
   citizenshipRequirementSources,
+  type CitizenshipRequirementAreaId,
   type CitizenshipRequirementLanguage,
   type CitizenshipRequirementSourceId,
 } from '../data/citizenshipRequirements';
-import { useCitizenshipRequirementsChecklistStore } from '../lib/storage/citizenshipRequirementsStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -169,16 +168,10 @@ function buildSummary(
 
 export default function CitizenshipRequirementsScreen() {
   const language = useSettingsStore((state) => state.language);
-  const checkedAreaIds = useCitizenshipRequirementsChecklistStore((state) => state.checkedAreaIds);
-  const toggleChecklistArea = useCitizenshipRequirementsChecklistStore((state) => state.toggleArea);
-  const persistenceWarning = useCitizenshipRequirementsChecklistStore(
-    (state) => state.persistenceWarning,
-  );
-  const clearPersistenceWarning = useCitizenshipRequirementsChecklistStore(
-    (state) => state.clearPersistenceWarning,
-  );
   const copy = copyByLanguage[language];
-  const checkedIds = useMemo(() => new Set(checkedAreaIds), [checkedAreaIds]);
+  const [checkedIds, setCheckedIds] = useState<ReadonlySet<CitizenshipRequirementAreaId>>(
+    () => new Set(),
+  );
 
   const missingAreas = useMemo(
     () => citizenshipRequirementAreas.filter((area) => !checkedIds.has(area.id)),
@@ -190,6 +183,20 @@ export default function CitizenshipRequirementsScreen() {
     checkedCount,
     missingAreas.map((area) => area.title[language]),
   );
+
+  function toggleArea(areaId: CitizenshipRequirementAreaId) {
+    setCheckedIds((current) => {
+      const next = new Set(current);
+
+      if (next.has(areaId)) {
+        next.delete(areaId);
+      } else {
+        next.add(areaId);
+      }
+
+      return next;
+    });
+  }
 
   return (
     <ScreenShell
@@ -209,12 +216,6 @@ export default function CitizenshipRequirementsScreen() {
         </Text>
         <Text style={styles.summaryBody}>{summary}</Text>
       </Card>
-
-      <PersistenceWarningNotice
-        language={language}
-        onDismiss={clearPersistenceWarning}
-        warning={persistenceWarning}
-      />
 
       <SectionHeader title={copy.checklistTitle} subtitle={copy.checklistSubtitle} />
 
@@ -248,7 +249,7 @@ export default function CitizenshipRequirementsScreen() {
                 accessibilityState={{ checked }}
                 aria-checked={checked}
                 hitSlop={space[0.5]}
-                onPress={() => toggleChecklistArea(area.id)}
+                onPress={() => toggleArea(area.id)}
                 style={({ pressed }) => [
                   styles.checkboxRow,
                   checked ? styles.checkboxRowChecked : null,
@@ -298,22 +299,17 @@ export default function CitizenshipRequirementsScreen() {
       </Card>
 
       <View style={styles.actions}>
-        <Link
+        <ComplianceActionLink
           accessibilityLabel={copy.openPracticeAccessibilityLabel}
-          accessibilityRole="link"
           href="/practice"
-          style={styles.primaryLink}
-        >
-          {copy.openPractice}
-        </Link>
-        <Link
+          label={copy.openPractice}
+          variant="primary"
+        />
+        <ComplianceActionLink
           accessibilityLabel={copy.backAboutAccessibilityLabel}
-          accessibilityRole="link"
           href="/about-the-test"
-          style={styles.secondaryLink}
-        >
-          {copy.backAbout}
-        </Link>
+          label={copy.backAbout}
+        />
       </View>
     </ScreenShell>
   );
@@ -476,25 +472,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  primaryLink: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.micro,
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
-  },
-  secondaryLink: {
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radius.micro,
-    color: colors.text,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-    textDecorationLine: 'none',
   },
 });
