@@ -25,7 +25,9 @@ const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
-const dailyGoalAnswerOptions = new Set([5, 10, 20, 40]);
+export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;
+
+const dailyGoalAnswerOptions = new Set<number>(supportedDailyGoalAnswerOptions);
 
 let settingsStorage: MMKV | null = null;
 
