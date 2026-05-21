@@ -22,6 +22,7 @@ test('mastery runtime parity validates scoring and weak-chapter rules', () => {
     process.execPath,
     ['scripts/validate-content.js', '--focus-mastery-rules'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

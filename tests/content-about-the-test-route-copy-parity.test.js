@@ -19,6 +19,7 @@ function parseValidationSummary() {
     process.execPath,
     ['scripts/validate-content.js', '--focus-about-the-test-route-copy'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

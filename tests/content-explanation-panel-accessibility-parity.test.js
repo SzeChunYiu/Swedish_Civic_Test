@@ -11,6 +11,7 @@ function parseValidationSummary() {
     process.execPath,
     ['scripts/validate-content.js', '--focus-explanation-panel-accessibility'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );

@@ -1,6 +1,6 @@
 const PINNED_REPO_ROOT_CWD_PATTERN = /\bcwd\s*:\s*repoRoot\b/;
 const VALIDATE_CONTENT_EXEC_PATTERN =
-  /execFileSync\(\s*process\.execPath,\s*\[\s*(['"])scripts\/validate-content\.js\1\s*\],\s*\{(?<options>[\s\S]*?)\}\s*\)/g;
+  /execFileSync\(\s*process\.execPath\s*,\s*\[\s*(['"])scripts\/validate-content\.js\1[\s\S]*?\]\s*,\s*\{(?<options>[\s\S]*?)\}\s*\)/g;
 const EXPORT_QUESTION_BANK_EXEC_PATTERN =
   /execFileSync\(\s*process\.execPath\s*,\s*\[[\s\S]*?['"]scripts\/export-question-bank\.js['"][\s\S]*?\]\s*,\s*\{(?<options>[\s\S]*?)\}\s*\)/g;
 

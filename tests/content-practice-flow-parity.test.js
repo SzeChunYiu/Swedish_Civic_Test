@@ -1,12 +1,16 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
+
+const repoRoot = path.resolve(__dirname, '..');
 
 test('practice flow runtime selection stays in parity with the published question bank', () => {
   const output = execFileSync(
     process.execPath,
     ['scripts/validate-content.js', '--focus-practice-flow-parity'],
     {
+      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
