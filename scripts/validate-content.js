@@ -490,10 +490,6 @@ const GENERATED_SINGLE_CHOICE_FILLER_OPTION_TEXTS = new Set([
   'Only sometimes',
 ]);
 const GENERATED_SINGLE_CHOICE_META_STEM_PATTERNS = [
-  /^\s*Vilket svar stämmer bäst\?/i,
-  /^\s*Välj rätt alternativ:/i,
-  /^\s*Which answer best matches\?/i,
-  /^\s*Choose the correct option:/i,
   /^\s*Vilket svar är korrekt\?/i,
   /^\s*Which answer is correct\?/i,
   /^\s*Vilket påstående är korrekt/i,
@@ -1262,6 +1258,10 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
+const OBSOLETE_INTERSTITIAL_COMPONENT_FILES = [
+  'components/monetization/AdInterstitial.tsx',
+  'components/monetization/AdInterstitial.native.tsx',
+];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
@@ -5622,7 +5622,7 @@ function judgementPromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Välj rätt alternativ: ${source.questionSv}`;
 }
 function judgementPromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5630,7 +5630,7 @@ function judgementPromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'judgement');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Choose the correct option: ${source.questionEn}`;
 }
 function singleChoicePromptSv(source) {
   if (isTrueFalseSource(source)) {
@@ -5638,7 +5638,7 @@ function singleChoicePromptSv(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceSv(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionSv;
+  return `Vilket svar stämmer bäst? ${source.questionSv}`;
 }
 function singleChoicePromptEn(source) {
   if (isTrueFalseSource(source)) {
@@ -5646,7 +5646,7 @@ function singleChoicePromptEn(source) {
   }
   const prompt = generatedSingleChoicePromptFromSourceEn(source, 'section-practice');
   if (prompt) return prompt;
-  return source.questionEn;
+  return `Which answer best matches? ${source.questionEn}`;
 }
 function generatedSingleChoicePromptFromSourceSv(source, variant) {
   const q = stripFinalPunctuation(source.questionSv);
@@ -8006,6 +8006,8 @@ function validateAdPlacementRouteParity() {
     fail(message);
   }
 
+  validateObsoleteInterstitialComponentsRemoved();
+
   const safePlacements = Array.isArray(adsConfig?.safePlacements) ? adsConfig.safePlacements : [];
   const blockedPlacements = Array.isArray(adsConfig?.blockedPlacements)
     ? adsConfig.blockedPlacements
@@ -8295,6 +8297,14 @@ function validateAdPlacementRouteParity() {
     noAdRoutesValidated === EXPECTED_NO_AD_ROUTE_FILES.length
   ) {
     adPlacementRouteParityValidated = true;
+  }
+}
+
+function validateObsoleteInterstitialComponentsRemoved() {
+  for (const file of OBSOLETE_INTERSTITIAL_COMPONENT_FILES) {
+    if (fs.existsSync(path.join(repoRoot, file))) {
+      fail(`${file} must stay removed; PracticeInterstitialAd owns quiz_completed_interstitial`);
+    }
   }
 }
 
@@ -15611,6 +15621,7 @@ function validateUhrSourceMaterialLinkParity() {
   if (valid) uhrSourceMaterialLinkParityValidated = true;
 }
 
+validateObsoleteInterstitialComponentsRemoved();
 validateStaticValidationSyntaxGate();
 exitWithValidationFailures();
 if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
