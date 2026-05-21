@@ -49,9 +49,100 @@
 
   /* ----------------------------------------------- storage helpers */
 
+  const STORAGE_COUNTER_MAX = 100000;
+  const STORAGE_DAY_LIST_MAX = 366;
+  function isPlainObject(value) {
+    return Object.prototype.toString.call(value) === '[object Object]';
+  }
+  function isFiniteNumber(value) {
+    return typeof value === 'number' && isFinite(value);
+  }
+  function clampInteger(value, min, max, fallback) {
+    if (!isFiniteNumber(value)) return fallback;
+    return Math.max(min, Math.min(max, Math.floor(value)));
+  }
+  function clampStorageCounter(value) {
+    return clampInteger(value, 0, STORAGE_COUNTER_MAX, 0);
+  }
+  function isDateKey(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+    const d = new Date(value + 'T00:00:00Z');
+    return isFinite(d.getTime()) && d.toISOString().slice(0, 10) === value;
+  }
+  function normalizeDateList(value) {
+    if (!Array.isArray(value)) return [];
+    const seen = new Set();
+    return value.reduce(function (days, day) {
+      if (!isDateKey(day) || seen.has(day) || days.length >= STORAGE_DAY_LIST_MAX) return days;
+      seen.add(day);
+      days.push(day);
+      return days;
+    }, []);
+  }
+  function normalizeProgressEntry(entry) {
+    if (!isPlainObject(entry)) return null;
+    const answered = clampStorageCounter(entry.answered);
+    const correct = Math.min(answered, clampStorageCounter(entry.correct));
+    return { answered: answered, correct: correct };
+  }
+  function normalizeProgress(value) {
+    if (!isPlainObject(value)) return {};
+    return Object.keys(value).reduce(function (out, key) {
+      if (!/^ch\d+$/.test(key)) return out;
+      const entry = normalizeProgressEntry(value[key]);
+      if (entry) out[key] = entry;
+      return out;
+    }, {});
+  }
+  function normalizeMockEntry(entry) {
+    if (!isPlainObject(entry) || !isFiniteNumber(entry.t) || !isFiniteNumber(entry.total)) {
+      return null;
+    }
+    const t = clampInteger(entry.t, 0, Number.MAX_SAFE_INTEGER, 0);
+    const total = clampStorageCounter(entry.total);
+    const correct = Math.min(total, clampStorageCounter(entry.correct));
+    const fallbackPct = total ? Math.round((correct / total) * 100) : 0;
+    const pct = clampInteger(entry.pct, 0, 100, fallbackPct);
+    const duration = clampInteger(entry.duration, 0, Number.MAX_SAFE_INTEGER, 0);
+    return { t: t, total: total, correct: correct, pct: pct, duration: duration };
+  }
+  function normalizeMocks(value) {
+    if (!Array.isArray(value)) return [];
+    return value.map(normalizeMockEntry).filter(Boolean).slice(0, 8);
+  }
+  function normalizeStreak(value) {
+    if (!isPlainObject(value)) return null;
+    return {
+      days: clampStorageCounter(value.days),
+      lastDate: isDateKey(value.lastDate) ? value.lastDate : '',
+      activeDays: normalizeDateList(value.activeDays),
+      answeredThisWeek: clampStorageCounter(value.answeredThisWeek),
+    };
+  }
+  function defaultFreeze() {
+    return {
+      available: 1,
+      lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
+      lifetimeSpent: 0,
+      rescuedDays: [],
+    };
+  }
+  function normalizeFreeze(value) {
+    const defaults = defaultFreeze();
+    if (!isPlainObject(value)) return defaults;
+    return {
+      available: clampInteger(value.available, 0, 4, defaults.available),
+      lastEarnedWeek: isDateKey(value.lastEarnedWeek)
+        ? value.lastEarnedWeek
+        : defaults.lastEarnedWeek,
+      lifetimeSpent: clampStorageCounter(value.lifetimeSpent),
+      rescuedDays: normalizeDateList(value.rescuedDays),
+    };
+  }
+
   function getProgress() {
     try {
-      return JSON.parse(localStorage.getItem('smt_progress') || '{}');
+      return normalizeProgress(JSON.parse(localStorage.getItem('smt_progress') || '{}'));
     } catch {
       return {};
     }
@@ -59,7 +150,7 @@
 
   function getMocks() {
     try {
-      return JSON.parse(localStorage.getItem('smt_mocks') || '[]');
+      return normalizeMocks(JSON.parse(localStorage.getItem('smt_mocks') || '[]'));
     } catch {
       return [];
     }
@@ -67,7 +158,7 @@
 
   function getStreak() {
     try {
-      return JSON.parse(localStorage.getItem('smt_streak') || 'null');
+      return normalizeStreak(JSON.parse(localStorage.getItem('smt_streak') || 'null'));
     } catch {
       return null;
     }
@@ -75,27 +166,15 @@
 
   function getFreeze() {
     try {
-      return (
-        JSON.parse(localStorage.getItem('smt_freeze') || 'null') || {
-          available: 1,
-          lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
-          lifetimeSpent: 0,
-          rescuedDays: [],
-        }
-      );
+      return normalizeFreeze(JSON.parse(localStorage.getItem('smt_freeze') || 'null'));
     } catch {
-      return {
-        available: 1,
-        lastEarnedWeek: localDateKey(mondayOfWeek(new Date())),
-        lifetimeSpent: 0,
-        rescuedDays: [],
-      };
+      return defaultFreeze();
     }
   }
 
   function saveFreeze(f) {
     try {
-      localStorage.setItem('smt_freeze', JSON.stringify(f));
+      localStorage.setItem('smt_freeze', JSON.stringify(normalizeFreeze(f)));
     } catch {}
   }
 
