@@ -597,7 +597,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 13;
+const EXPECTED_STREAK_RULE_COUNT = 17;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
@@ -9055,9 +9055,11 @@ const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const getLocalDateKey = streakModule.getLocalDateKey;
 const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+const calculateStreakWithFreeze = streakWithFreezeModule.calculateStreakWithFreeze;
 const createInitialFreezeState = streakWithFreezeModule.createInitialFreezeState;
 const freezeBannerCopy = streakWithFreezeModule.freezeBannerCopy;
 const normalizeStreakFreezeState = streakWithFreezeModule.normalizeStreakFreezeState;
+const refillFreezes = streakWithFreezeModule.refillFreezes;
 const xpModule = loadTs('lib/learning/xp.ts');
 const calculateAnswerXp = xpModule.calculateAnswerXp;
 const calculateQuizCompletionXp = xpModule.calculateQuizCompletionXp;
@@ -18968,8 +18970,16 @@ function validateStreakRules() {
     fail('getLocalDateKey export is not a function');
     return;
   }
+  if (typeof calculateStreakWithFreeze !== 'function') {
+    fail('calculateStreakWithFreeze export is not a function');
+    return;
+  }
   if (typeof freezeBannerCopy !== 'function') {
     fail('freezeBannerCopy export is not a function');
+    return;
+  }
+  if (typeof refillFreezes !== 'function') {
+    fail('refillFreezes export is not a function');
     return;
   }
 
@@ -19107,6 +19117,123 @@ function validateStreakRules() {
     if (forbidden && forbidden.test(actualValue)) {
       rulesAreValid = false;
       fail(`streak rule ${label} contains forbidden Swedish streak-freeze wording`);
+      return;
+    }
+
+    streakRulesValidated += 1;
+  });
+
+  const now = new Date('2026-05-19T08:00:00.000Z');
+  const runtimeCounterCases = [
+    {
+      label: 'refillFreezes rejects NaN, negative, and string counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: Number.NaN,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: '2',
+            lifetimeSpent: -1,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 0, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'refillFreezes clamps overstocked available and rejects fractional counters',
+      actual: () => {
+        const result = refillFreezes(
+          {
+            available: 99,
+            lastEarnedAt: '2026-05-11',
+            lifetimeEarned: 3.5,
+            lifetimeSpent: Infinity,
+            rescuedDayKeys: [],
+          },
+          now,
+        );
+        return {
+          available: result.available,
+          lifetimeEarned: result.lifetimeEarned,
+          lifetimeSpent: result.lifetimeSpent,
+        };
+      },
+      expected: { available: 4, lifetimeEarned: 0, lifetimeSpent: 0 },
+    },
+    {
+      label: 'calculateStreakWithFreeze refuses string available freezes',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: '1',
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 1,
+            lifetimeSpent: 0,
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 0, lifetimeSpent: 0, rescuedThisRun: [], streakDays: 1 },
+    },
+    {
+      label: 'calculateStreakWithFreeze resets string lifetimeSpent before spending',
+      actual: () => {
+        const result = calculateStreakWithFreeze({
+          activeDayKeys: ['2026-05-17', '2026-05-19'],
+          freezeState: {
+            available: 4,
+            lastEarnedAt: '2026-05-18',
+            lifetimeEarned: 4,
+            lifetimeSpent: '2',
+            rescuedDayKeys: [],
+          },
+          today: '2026-05-19',
+          now,
+        });
+        return {
+          available: result.freezeState.available,
+          lifetimeSpent: result.freezeState.lifetimeSpent,
+          rescuedThisRun: result.rescuedThisRun,
+          streakDays: result.streakDays,
+        };
+      },
+      expected: { available: 3, lifetimeSpent: 1, rescuedThisRun: ['2026-05-18'], streakDays: 3 },
+    },
+  ];
+
+  runtimeCounterCases.forEach(({ label, actual, expected }) => {
+    let actualValue;
+    try {
+      actualValue = actual();
+    } catch (error) {
+      rulesAreValid = false;
+      fail(`streak rule ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (!jsonEqual(actualValue, expected)) {
+      rulesAreValid = false;
+      fail(
+        `streak rule ${label} returned ${JSON.stringify(
+          actualValue,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
       return;
     }
 
