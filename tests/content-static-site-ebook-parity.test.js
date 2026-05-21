@@ -203,10 +203,10 @@ function hasEbookCitationCoverage(value) {
   ].some((pattern) => pattern.test(value));
 }
 
-function annotatedProseParagraphs(html) {
+function annotatedSourceClaimBlocks(html) {
   return Array.from(
     html.matchAll(
-      /<p\b(?=[^>]*\bdata-source-claims="ebook")(?=[^>]*\bdata-source-scope="ebook")(?=[^>]*\bdata-source-keys="[^"]+")[^>]*>[\s\S]*?<\/p>/g,
+      /<(?:p|li)\b(?=[^>]*\bdata-source-claims="ebook")(?=[^>]*\bdata-source-scope="ebook")(?=[^>]*\bdata-source-keys="[^"]+")[^>]*>[\s\S]*?<\/(?:p|li)>/g,
     ),
     (match) => match[0],
   );
@@ -214,6 +214,34 @@ function annotatedProseParagraphs(html) {
 
 function renderedFootnoteItems(html) {
   return Array.from(html.matchAll(/<li id="eb-[^"]+-fn-\d+">[\s\S]*?<\/li>/g), (match) => match[0]);
+}
+
+function dataSourceKeys(block) {
+  const match = block.match(/\bdata-source-keys="([^"]+)"/);
+  assert.ok(match, `source block missing data-source-keys: ${block}`);
+  return match[1].split(/\s+/).filter(Boolean);
+}
+
+function sourceCountsFromBlocks(blocks) {
+  const counts = {};
+  blocks.forEach((block) => {
+    Array.from(new Set(dataSourceKeys(block))).forEach((key) => {
+      counts[key] = (counts[key] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function renderedSourceCounts(html) {
+  const match = html.match(/\bdata-source-counts='([^']+)'/);
+  assert.ok(match, 'ebook provenance badge should expose data-source-counts');
+  return JSON.parse(match[1]);
+}
+
+function sourceBlockContaining(blocks, pattern, label) {
+  const block = blocks.find((candidate) => pattern.test(candidate));
+  assert.ok(block, `missing source block for ${label}`);
+  return block;
 }
 
 function findFunctionCallArguments(source, functionName) {
@@ -427,28 +455,28 @@ test('static ebook renders every chapter with Swedish and English body parity', 
   }
 });
 
-test('static ebook chapters render source footnotes for every prose paragraph', () => {
+test('static ebook chapters render source footnotes for every prose paragraph and list item', () => {
   const harness = createEbookHarness();
 
   for (const chapterId of getExpectedChapterIds().filter((id) => id !== 'intro')) {
     const englishHtml = renderChapter(harness, 'en', chapterId);
     const swedishHtml = renderChapter(harness, 'sv', chapterId);
-    const englishParagraphs = annotatedProseParagraphs(englishHtml);
-    const swedishParagraphs = annotatedProseParagraphs(swedishHtml);
+    const englishBlocks = annotatedSourceClaimBlocks(englishHtml);
+    const swedishBlocks = annotatedSourceClaimBlocks(swedishHtml);
     const englishFootnotes = renderedFootnoteItems(englishHtml);
     const swedishFootnotes = renderedFootnoteItems(swedishHtml);
 
-    assert.ok(englishParagraphs.length > 0, `chapter ${chapterId} should annotate English prose`);
-    assert.ok(swedishParagraphs.length > 0, `chapter ${chapterId} should annotate Swedish prose`);
+    assert.ok(englishBlocks.length > 0, `chapter ${chapterId} should annotate English prose`);
+    assert.ok(swedishBlocks.length > 0, `chapter ${chapterId} should annotate Swedish prose`);
     assert.equal(
       englishFootnotes.length,
-      englishParagraphs.length,
-      `chapter ${chapterId} should render one English footnote per prose paragraph`,
+      englishBlocks.length,
+      `chapter ${chapterId} should render one English footnote per prose block`,
     );
     assert.equal(
       swedishFootnotes.length,
-      swedishParagraphs.length,
-      `chapter ${chapterId} should render one Swedish footnote per prose paragraph`,
+      swedishBlocks.length,
+      `chapter ${chapterId} should render one Swedish footnote per prose block`,
     );
     assert.match(englishHtml, /class="ebook__footnotes"/);
     assert.match(swedishHtml, /class="ebook__footnotes"/);
@@ -457,6 +485,62 @@ test('static ebook chapters render source footnotes for every prose paragraph', 
     assert.doesNotMatch(englishHtml, />Editorial<\/span>/);
     assert.doesNotMatch(swedishHtml, />Redaktionell<\/span>/);
   }
+});
+
+test('static ebook source metadata keeps Vikings prose off governmentNato and source counts explicit', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+
+  assert.match(source, /data-ebook-source-keys/);
+  assert.match(source, /function ebookLedeSourceKeys\(chapterId\)/);
+  assert.doesNotMatch(source, /function ebookChapterSourceKeys/);
+  assert.doesNotMatch(source, /chooseEbookFootnoteKey/);
+
+  const chapter1English = renderChapter(harness, 'en', '1');
+  const chapter1Blocks = annotatedSourceClaimBlocks(chapter1English);
+  const vikingsBlock = sourceBlockContaining(chapter1Blocks, /Norse-speaking traders/, 'Vikings');
+  const kalmarBlock = sourceBlockContaining(
+    chapter1Blocks,
+    /Union of Kalmar|Hanseatic League/,
+    'Kalmar',
+  );
+  const vasaBlock = sourceBlockContaining(chapter1Blocks, /Gustav Eriksson Vasa/, 'Gustav Vasa');
+  const folkhemBlock = sourceBlockContaining(chapter1Blocks, /people's home/, 'folkhem');
+  const natoBlock = sourceBlockContaining(chapter1Blocks, /joins NATO/, 'NATO');
+
+  [vikingsBlock, kalmarBlock, vasaBlock, folkhemBlock].forEach((block) => {
+    assert.doesNotMatch(block, /\bgovernmentNato\b/);
+  });
+  assert.match(natoBlock, /\bgovernmentNato\b/);
+  assert.deepEqual(renderedSourceCounts(chapter1English), sourceCountsFromBlocks(chapter1Blocks));
+
+  const chapter7Blocks = annotatedSourceClaimBlocks(renderChapter(harness, 'en', '7'));
+  assert.match(
+    sourceBlockContaining(chapter7Blocks, /fifth-largest country in Europe/, 'SCB geography'),
+    /\bscbLandUse\b/,
+  );
+
+  const chapter9Blocks = annotatedSourceClaimBlocks(renderChapter(harness, 'en', '9'));
+  assert.match(
+    sourceBlockContaining(chapter9Blocks, /Riksbank.+founded in 1668/, 'Riksbank history'),
+    /\briksbankHistory\b/,
+  );
+
+  const chapter10Blocks = annotatedSourceClaimBlocks(renderChapter(harness, 'en', '10'));
+  assert.match(
+    sourceBlockContaining(chapter10Blocks, /formally joined on 7 March 2024/, 'NATO membership'),
+    /\bgovernmentNato\b/,
+  );
+
+  const chapter11Blocks = annotatedSourceClaimBlocks(renderChapter(harness, 'en', '11'));
+  assert.match(
+    sourceBlockContaining(
+      chapter11Blocks,
+      /children can no longer be included on a parent's citizenship application/,
+      'child citizenship application rule',
+    ),
+    /\bmigrationsverketCitizenshipRules\b/,
+  );
 });
 
 test('static ebook chapter 12 keeps practical test claims current and sourced', () => {

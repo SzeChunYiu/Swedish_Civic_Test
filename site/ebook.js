@@ -127,8 +127,45 @@
     }
   }
 
+  function normalizedEbookSourceKeys(sourceKeys, label) {
+    assertEbookSourceKeys(sourceKeys, label);
+    return Array.from(new Set(sourceKeys));
+  }
+
+  function ebookSourceKeyDataAttr(sourceKeys) {
+    if (!sourceKeys) return '';
+    return ` data-ebook-source-keys="${normalizedEbookSourceKeys(sourceKeys, 'ebook source metadata').join(' ')}"`;
+  }
+
+  const EBOOK_DEFAULT_PROSE_SOURCE_KEYS = Object.freeze(['uhrStudyMaterial']);
+  const EBOOK_EDITORIAL_PROSE_SOURCE_KEYS = Object.freeze([
+    'uhrStudyMaterial',
+    'editorialCommentary',
+  ]);
+  const EBOOK_LEDE_SOURCE_KEYS = Object.freeze({
+    intro: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+    1: Object.freeze(['uhrStudyMaterial', 'governmentNato', 'editorialCommentary']),
+    7: Object.freeze(['uhrStudyMaterial', 'scbLandUse', 'editorialCommentary']),
+    10: Object.freeze(['uhrStudyMaterial', 'governmentNato', 'editorialCommentary']),
+    12: EBOOK_EDITORIAL_PROSE_SOURCE_KEYS,
+  });
+
+  function ebookLedeSourceKeys(chapterId) {
+    return EBOOK_LEDE_SOURCE_KEYS[chapterId] || EBOOK_EDITORIAL_PROSE_SOURCE_KEYS;
+  }
+
+  function parseEbookSourceKeyMetadata(attrs) {
+    const match = attrs.match(/\sdata-ebook-source-keys="([^"]+)"/);
+    if (!match) return null;
+    return match[1].split(/\s+/).filter(Boolean);
+  }
+
+  function stripEbookSourceKeyMetadata(attrs) {
+    return attrs.replace(/\sdata-ebook-source-keys="[^"]*"/, '');
+  }
+
   function ebookFactBox(lang, heading, facts, sourceKeys) {
-    assertEbookSourceKeys(sourceKeys, 'ebookFactBox');
+    const normalizedSourceKeys = normalizedEbookSourceKeys(sourceKeys, 'ebookFactBox');
     const resolvedHeading =
       heading ||
       tr({
@@ -148,21 +185,10 @@
     return `
       <div class="ebook__factbox">
         <h4>${resolvedHeading}</h4>
-        <p>${facts}</p>
-        ${ebookSourceNote(lang, sourceKeys)}
+        <p${ebookSourceKeyDataAttr(normalizedSourceKeys)}>${facts}</p>
+        ${ebookSourceNote(lang, normalizedSourceKeys)}
       </div>
     `;
-  }
-
-  function ebookChapterSourceKeys(chapterId) {
-    const chapterSpecificKeys = {
-      1: ['governmentNato'],
-      7: ['scbLandUse'],
-      9: ['riksbankHistory'],
-      10: ['governmentNato'],
-      12: ['migrationsverketCitizenshipRules'],
-    };
-    return ['uhrStudyMaterial', ...(chapterSpecificKeys[chapterId] || []), 'editorialCommentary'];
   }
 
   function ebookRouteHash(chapterId, targetParam, targetId) {
@@ -195,16 +221,22 @@
     const footnotes = [];
     return {
       footnotes,
-      annotate(html, sourceKeys) {
-        assertEbookSourceKeys(sourceKeys, `ebook prose chapter ${chapterId}`);
+      annotate(html, fallbackSourceKeys = EBOOK_DEFAULT_PROSE_SOURCE_KEYS) {
+        normalizedEbookSourceKeys(fallbackSourceKeys, `ebook prose chapter ${chapterId}`);
         return html.replace(
-          /<p(?![^>]*class="ebook__source-note")([^>]*)>([\s\S]*?)<\/p>/g,
-          (match, attrs, content) => {
+          /<(p|li)(?![^>]*class="ebook__source-note")([^>]*)>([\s\S]*?)<\/\1>/g,
+          (match, tagName, attrs, content) => {
+            const explicitSourceKeys = parseEbookSourceKeyMetadata(attrs);
+            const cleanAttrs = stripEbookSourceKeyMetadata(attrs);
+            const sourceKeys = normalizedEbookSourceKeys(
+              explicitSourceKeys || fallbackSourceKeys,
+              `ebook ${tagName} chapter ${chapterId}`,
+            );
             const footnoteIndex = footnotes.length + 1;
             const id = `eb-${chapterId}-${lang}-fn-${footnoteIndex}`;
             footnotes.push({ id, index: footnoteIndex, sourceKeys });
             const keys = Array.from(new Set(sourceKeys)).join(' ');
-            return `<p${attrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></p>`;
+            return `<${tagName}${cleanAttrs} data-source-claims="ebook" data-source-scope="ebook" data-source-keys="${keys}">${content}<sup id="${id}-ref" class="ebook__source-ref"><a href="${ebookRouteHash(chapterId, 'fn', id)}" aria-label="${lang === 'sv' ? 'Källa' : 'Source'} ${footnoteIndex}">[${footnoteIndex}]</a></sup></${tagName}>`;
           },
         );
       },
@@ -235,7 +267,13 @@
 
   function svStudyBrief(points, facts, sourceKeys, practiceHint, afterPracticeHtml = '') {
     assertEbookSourceKeys(sourceKeys, 'svStudyBrief fact box');
-    const items = points.map((point) => `<li>${point}</li>`).join('');
+    const items = points
+      .map((point) => {
+        const text = typeof point === 'string' ? point : point.text;
+        const pointSourceKeys = typeof point === 'string' ? null : point.sourceKeys;
+        return `<li${ebookSourceKeyDataAttr(pointSourceKeys)}>${text}</li>`;
+      })
+      .join('');
     return `
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
@@ -548,7 +586,7 @@
           <ul>
             <li>1995 — joins the European Union.</li>
             <li>2003 — votes against adopting the euro.</li>
-            <li>2024 — joins NATO, ending more than 200 years of military non-alignment.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — joins NATO, ending more than 200 years of military non-alignment.</li>
           </ul>
           ${ebookFactBox('en', 'Facts to review', 'National day: June 6 · Joined EU: 1995 · Joined NATO: 2024 · Long peace period: commonly described as continuous since 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -557,7 +595,10 @@
             'Sveriges historia handlar om hur ett äldre kungarike blev en modern demokrati med riksdag, grundlagar och offentlig välfärd.',
             'Nationaldagen den 6 juni kopplas till Gustav Vasas val till kung 1523 och till 1809 års regeringsform.',
             'Under 1900-talet byggdes folkhemmet ut med skola, vård, pensioner och socialförsäkringar finansierade med skatter.',
-            'I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.',
+            {
+              text: 'I modern tid är EU-medlemskapet 1995, euroomröstningen 2003 och NATO-medlemskapet 2024 centrala hållpunkter.',
+              sourceKeys: ['uhrStudyMaterial', 'governmentNato'],
+            },
           ],
           'Nationaldag: 6 juni · EU: 1995 · Euroomröstning: 2003 · NATO: 2024.',
           ['uhrStudyMaterial', 'governmentNato'],
@@ -579,7 +620,7 @@
           <ul>
             <li>1995 年——加入欧洲联盟（EU）。</li>
             <li>2003 年——公投反对采用欧元。</li>
-            <li>2024 年——加入 NATO，结束了 200 多年的军事不结盟立场。</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 年——加入 NATO，结束了 200 多年的军事不结盟立场。</li>
           </ul>
           ${ebookFactBox('zh-Hans', null, '国庆日：6 月 6 日 · 加入 EU：1995 · 加入 NATO：2024 · 长期和平：通常被描述为自 1814 年起从未中断。', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -600,7 +641,7 @@
           <ul>
             <li>1995 年——加入歐洲聯盟（EU）。</li>
             <li>2003 年——公投反對採用歐元。</li>
-            <li>2024 年——加入 NATO，結束了 200 多年的軍事不結盟立場。</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 年——加入 NATO，結束了 200 多年的軍事不結盟立場。</li>
           </ul>
           ${ebookFactBox('zh-Hant', null, '國慶日：6 月 6 日 · 加入 EU：1995 · 加入 NATO：2024 · 長期和平：通常被描述為自 1814 年起從未中斷。', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -621,7 +662,7 @@
           <ul>
             <li>1995 — الانضمام إلى الاتحاد الأوروبي.</li>
             <li>2003 — التصويت ضد اعتماد اليورو.</li>
-            <li>2024 — الانضمام إلى NATO، منهيةً أكثر من 200 عام من عدم الانحياز العسكري.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — الانضمام إلى NATO، منهيةً أكثر من 200 عام من عدم الانحياز العسكري.</li>
           </ul>
           ${ebookFactBox('ar', null, 'اليوم الوطني: 6 يونيو · الانضمام إلى EU: 1995 · الانضمام إلى NATO: 2024 · فترة السلام الطويلة: تُوصَف عادةً بأنها متواصلة منذ 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -642,7 +683,7 @@
           <ul>
             <li>1995 — چوونە ناو یەکێتیی ئەورووپا.</li>
             <li>2003 — دەنگدانی نەرێنی بۆ پەسەندکردنی یۆرۆ.</li>
-            <li>2024 — چوونە ناو NATO، کۆتایی هێنان بە زیاتر لە 200 ساڵ نابەستراویی سەربازی.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — چوونە ناو NATO، کۆتایی هێنان بە زیاتر لە 200 ساڵ نابەستراویی سەربازی.</li>
           </ul>
           ${ebookFactBox('ckb', null, 'ڕۆژی نیشتمانی: 6ی ژوئن · چوونە ناو EU: 1995 · چوونە ناو NATO: 2024 · ماوەی ئاشتیی درێژ: زۆرتر وەک بەردەوام لە 1814ەوە باس دەکرێت.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -663,7 +704,7 @@
           <ul>
             <li>1995 — پیوستن به اتحادیهٔ اروپا.</li>
             <li>2003 — رأی منفی به پذیرش یورو.</li>
-            <li>2024 — پیوستن به NATO و پایان‌دادن به بیش از 200 سال عدم تعهد نظامی.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — پیوستن به NATO و پایان‌دادن به بیش از 200 سال عدم تعهد نظامی.</li>
           </ul>
           ${ebookFactBox('fa', null, 'روز ملی: 6 ژوئن · پیوستن به EU: 1995 · پیوستن به NATO: 2024 · دورهٔ صلح طولانی: معمولاً پیوسته از 1814 توصیف می‌شود.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -684,7 +725,7 @@
           <ul>
             <li>1995 — przystąpienie do Unii Europejskiej.</li>
             <li>2003 — głosowanie przeciw przyjęciu euro.</li>
-            <li>2024 — przystąpienie do NATO, kończące ponad 200 lat braku przynależności wojskowej.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — przystąpienie do NATO, kończące ponad 200 lat braku przynależności wojskowej.</li>
           </ul>
           ${ebookFactBox('pl', null, 'Święto narodowe: 6 czerwca · Przystąpienie do EU: 1995 · Przystąpienie do NATO: 2024 · Długi okres pokoju: zwykle opisywany jako nieprzerwany od 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -705,7 +746,7 @@
           <ul>
             <li>1995 — waxay ku biirtay Midowga Yurub.</li>
             <li>2003 — waxay u codaysay ka soo horjeedka qaadashada euro.</li>
-            <li>2024 — waxay ku biirtay NATO, taas oo soo afjartay in ka badan 200 sano oo aan militari isbahaysi lahayn.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — waxay ku biirtay NATO, taas oo soo afjartay in ka badan 200 sano oo aan militari isbahaysi lahayn.</li>
           </ul>
           ${ebookFactBox('so', null, 'Maalinta qaranka: 6 Juun · Ku biiristii EU: 1995 · Ku biiristii NATO: 2024 · Muddo nabadeed dheer: badanaa lagu tilmaamo mid joogto ah tan iyo 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -726,7 +767,7 @@
           <ul>
             <li>1995 — ናብ ኤውሮጳዊ ሕብረት ኣተወት።</li>
             <li>2003 — ኣንጻር ምቕባል euro ድምጺ ሃበት።</li>
-            <li>2024 — ናብ NATO ኣተወት፣ ካብ 200 ዓመት ንላዕሊ ዝጸንሐ ወተሃደራዊ ዘይምሕባር ኣብቂዓ።</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — ናብ NATO ኣተወት፣ ካብ 200 ዓመት ንላዕሊ ዝጸንሐ ወተሃደራዊ ዘይምሕባር ኣብቂዓ።</li>
           </ul>
           ${ebookFactBox('ti', null, 'ሃገራዊ መዓልቲ፦ 6 ሰነ · ናብ EU ምእታው፦ 1995 · ናብ NATO ምእታው፦ 2024 · ነዊሕ ናይ ሰላም እዋን፦ መብዛሕትኡ ግዜ ካብ 1814 ጀሚሩ ከም ቀጻሊ ይግለጽ።', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -747,7 +788,7 @@
           <ul>
             <li>1995 — Avrupa Birliği'ne katılır.</li>
             <li>2003 — euroyu benimsemeye karşı oy verir.</li>
-            <li>2024 — 200 yılı aşkın askeri tarafsızlığı sona erdirerek NATO'ya katılır.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — 200 yılı aşkın askeri tarafsızlığı sona erdirerek NATO'ya katılır.</li>
           </ul>
           ${ebookFactBox('tr', null, "Ulusal gün: 6 Haziran · EU'ya katılım: 1995 · NATO'ya katılım: 2024 · Uzun barış dönemi: genellikle 1814'ten beri kesintisiz olarak tanımlanır.", ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -768,7 +809,7 @@
           <ul>
             <li>1995 — вступає до Європейського Союзу.</li>
             <li>2003 — голосує проти запровадження євро.</li>
-            <li>2024 — вступає до NATO, завершуючи понад 200 років військового нейтралітету.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>2024 — вступає до NATO, завершуючи понад 200 років військового нейтралітету.</li>
           </ul>
           ${ebookFactBox('uk', null, 'Національне свято: 6 червня · Вступ до EU: 1995 · Вступ до NATO: 2024 · Тривалий період миру: зазвичай описується як безперервний від 1814.', ['uhrStudyMaterial', 'governmentNato'])}
         `,
@@ -1686,7 +1727,7 @@
           <p>Almost any land in Sweden — forest, field, shore — is open to walking, picking berries, swimming, foraging, camping (one night), and quiet enjoyment. It is a custom, not a written law, but it is taken seriously.</p>
           <p>The catch: <em>"Inte störa, inte förstöra"</em> — do not disturb, do not destroy. You may not enter private gardens or pitch a tent in someone's view. You may not light fires when there's a fire ban. You may not take downed wood for sale, or pick protected species.</p>
           <h2>Geography</h2>
-          <p>Sweden is the fifth-largest country in Europe. Its geography mixes forest, lakes, mountains, agricultural land, and a long coastline. The longest river is Klarälven–Göta älv (about 720 km). The largest lake is Vänern.</p>
+          <p${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'scbLandUse'])}>Sweden is the fifth-largest country in Europe. Its geography mixes forest, lakes, mountains, agricultural land, and a long coastline. The longest river is Klarälven–Göta älv (about 720 km). The largest lake is Vänern.</p>
           <h2>Climate and seasons</h2>
           <p>Four full seasons, dramatic in the north. Winter is dark; summer has midnight sun above the Arctic Circle. Climate change is making winters warmer and summers wetter; the government has committed to net-zero emissions by 2045.</p>
           <h2>Recycling and the everyday environment</h2>
@@ -1697,7 +1738,10 @@
           [
             'Allemansrätten gör det möjligt att röra sig i naturen, plocka bär och svamp och vistas ute med hänsyn.',
             'Huvudregeln är enkel: inte störa och inte förstöra. Du får inte skada mark, djur, växter eller gå in på privat tomt.',
-            'Sverige har stora skogar, många sjöar, fjäll i norr och lång kust. Klimatet varierar mycket mellan norr och söder.',
+            {
+              text: 'Sverige har stora skogar, många sjöar, fjäll i norr och lång kust. Klimatet varierar mycket mellan norr och söder.',
+              sourceKeys: ['uhrStudyMaterial', 'scbLandUse'],
+            },
             'Miljöarbete märks i vardagen genom återvinning, pant, naturvård och mål för minskade utsläpp.',
           ],
           'Allemansrätten · Inte störa, inte förstöra · Vänern är största sjön · Miljömål och återvinning.',
@@ -1755,7 +1799,7 @@
       body: {
         en: `
           <h2>The Swedish krona (SEK)</h2>
-          <p>Sweden voted against adopting the euro in 2003 and uses the krona (kr). The Riksbank — Sweden's central bank, founded in 1668 — sets monetary policy and prints the cash that almost nobody uses.</p>
+          <p${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'riksbankHistory'])}>Sweden voted against adopting the euro in 2003 and uses the krona (kr). The Riksbank — Sweden's central bank, founded in 1668 — sets monetary policy and prints the cash that almost nobody uses.</p>
           <h2>Cards and apps</h2>
           <p>Cash is rare. Most shops accept only card. Person-to-person payment runs through <em>Swish</em> — a mobile payment app built jointly by the banks. You enter a phone number, the amount, a note, and tap.</p>
           <h2>BankID</h2>
@@ -1769,7 +1813,10 @@
         sv: svStudyBrief(
           [
             'Sverige använder svenska kronor, SEK. Sverige röstade nej till euron i folkomröstningen 2003.',
-            'Riksbanken är Sveriges centralbank och ansvarar för penningpolitiken.',
+            {
+              text: 'Riksbanken är Sveriges centralbank och ansvarar för penningpolitiken.',
+              sourceKeys: ['uhrStudyMaterial', 'riksbankHistory'],
+            },
             'BankID och Swish är vanliga i vardagen, men de är bankanknutna tjänster och inte samma sak som medborgarskap.',
             'Pensionen består ofta av allmän pension, tjänstepension och eventuellt privat sparande.',
           ],
@@ -1794,7 +1841,7 @@
           <h2>Schengen</h2>
           <p>Sweden is part of the Schengen Area — open internal borders with most of the EU, plus Norway, Iceland, Switzerland, and Liechtenstein. You can travel without passport checks; you may still be asked for ID.</p>
           <h2>NATO</h2>
-          <p>Sweden was militarily non-aligned for over 200 years, neutral through both World Wars and the Cold War. After Russia's invasion of Ukraine, Sweden applied to join NATO in May 2022 and formally joined on 7 March 2024.</p>
+          <p${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'governmentNato'])}>Sweden was militarily non-aligned for over 200 years, neutral through both World Wars and the Cold War. After Russia's invasion of Ukraine, Sweden applied to join NATO in May 2022 and formally joined on 7 March 2024.</p>
           <h2>The United Nations and aid</h2>
           <p>Sweden joined the UN in 1946. It has a long record of international assistance and peace diplomacy. Dag Hammarskjöld, UN Secretary-General 1953–1961, was Swedish.</p>
           <h2>Defence</h2>
@@ -1805,7 +1852,10 @@
           [
             'Sverige är medlem i EU sedan 1995 och deltar i europeiskt samarbete om bland annat handel, miljö och fri rörlighet.',
             'Sverige använder fortfarande kronan efter folkomröstningen om euron 2003.',
-            'Sverige blev medlem i NATO 2024 efter en lång period av militär alliansfrihet.',
+            {
+              text: 'Sverige blev medlem i NATO 2024 efter en lång period av militär alliansfrihet.',
+              sourceKeys: ['uhrStudyMaterial', 'governmentNato'],
+            },
             'Sverige är också medlem i FN och deltar i internationellt samarbete, bistånd och säkerhetspolitik.',
           ],
           'EU: 1995 · Euroomröstning: 2003 · NATO: 2024 · FN-medlem: 1946.',
@@ -1835,7 +1885,7 @@
           <h2>Becoming Swedish</h2>
           <p>To apply for Swedish citizenship by naturalisation, you generally need to:</p>
           <ul>
-            <li>For an adult application, be at least 18 years old. From 6 June 2026, children can no longer be included on a parent's citizenship application; a child needs a separate application signed by a guardian.</li>
+            <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>For an adult application, be at least 18 years old. From 6 June 2026, children can no longer be included on a parent's citizenship application; a child needs a separate application signed by a guardian.</li>
             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
             <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
             <li>Have led an orderly life — no significant criminal record.</li>
@@ -1850,7 +1900,10 @@
             'Migrationsverket handlägger många frågor om uppehållstillstånd, asyl, familjeanknytning, arbetstillstånd och medborgarskap.',
             'Skatteverket folkbokför personer som bor i Sverige och hanterar personnummer.',
             'Medborgarskap kräver normalt stadigvarande anknytning till Sverige, skötsamhet och att övriga krav är uppfyllda.',
-            'Från 6 juni 2026 kan barn inte längre stå med på en förälders medborgarskapsansökan; barnet behöver en egen ansökan som en vårdnadshavare skriver under.',
+            {
+              text: 'Från 6 juni 2026 kan barn inte längre stå med på en förälders medborgarskapsansökan; barnet behöver en egen ansökan som en vårdnadshavare skriver under.',
+              sourceKeys: ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'],
+            },
             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
           ],
           'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
@@ -2020,12 +2073,10 @@
       ? `<h1 class="ebook__h1"><span>${ch.title[lang] || ch.title.en}</span> <em>${ch.title_em[lang] || ch.title_em.en}</em></h1>`
       : `<h1 class="ebook__h1"><em>${(ch.kicker[lang] || ch.kicker.en).split('·')[1]?.trim() || ch.kicker[lang] || ch.kicker.en}</em></h1>`;
 
-    const sourceKeys = ebookChapterSourceKeys(id);
     const footnoteCollector = createEbookFootnoteCollector(id, lang);
     const ledeHtml = ch.lede
       ? footnoteCollector.annotate(
-          `<p class="ebook__lede">${ch.lede[lang] || ch.lede.en}</p>`,
-          sourceKeys,
+          `<p class="ebook__lede"${ebookSourceKeyDataAttr(ebookLedeSourceKeys(id))}>${ch.lede[lang] || ch.lede.en}</p>`,
         )
       : '';
 
@@ -2048,7 +2099,7 @@
             uk: 'Виберіть розділ зі списку або поверніться до вступу.',
           })}</p>
         </div>`;
-    const bodyHtml = footnoteCollector.annotate(rawBodyHtml, sourceKeys);
+    const bodyHtml = footnoteCollector.annotate(rawBodyHtml);
     const footnotesHtml = renderEbookFootnotes(lang, id, footnoteCollector.footnotes);
 
     const idx = ORDER.indexOf(id);
