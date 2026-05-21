@@ -16,13 +16,15 @@ export type BlockingModalDismissal = {
 const settingsStorageId = 'settings';
 const settingsLanguageKey = 'language';
 const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+export const currentSettingsLanguageStorageKey = `${settingsStorageId}\\${settingsLanguageKey}`;
+export const currentSettingsSeenAboutStorageKey = `${settingsStorageId}\\${settingsSeenAboutKey}`;
 const settingsLanguageStorageKeys = [
   settingsLanguageKey,
-  `${settingsStorageId}\\${settingsLanguageKey}`,
+  currentSettingsLanguageStorageKey,
 ] as const;
 const settingsSeenAboutStorageKeys = [
   settingsSeenAboutKey,
-  `${settingsStorageId}\\${settingsSeenAboutKey}`,
+  currentSettingsSeenAboutStorageKey,
 ] as const;
 
 // Selector for blocking dialog/menu overlays in the rendered app.
@@ -78,6 +80,37 @@ export async function markAboutTheTestSeen(page: Page): Promise<void> {
       }
     },
     { seenKeys: settingsSeenAboutStorageKeys },
+  );
+}
+
+export async function seedFreshSettingsLanguageAndAboutSeen(
+  page: Page,
+  language: AppLanguage,
+): Promise<void> {
+  await page.addInitScript(
+    ({
+      language: seededLanguage,
+      languageKeys,
+      seenKeys,
+    }: {
+      language: AppLanguage;
+      languageKeys: readonly string[];
+      seenKeys: readonly string[];
+    }) => {
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+      for (const languageKey of languageKeys) {
+        window.localStorage.setItem(languageKey, seededLanguage);
+      }
+      for (const seenKey of seenKeys) {
+        window.localStorage.setItem(seenKey, 'true');
+      }
+    },
+    {
+      language,
+      languageKeys: settingsLanguageStorageKeys,
+      seenKeys: settingsSeenAboutStorageKeys,
+    },
   );
 }
 
@@ -216,4 +249,36 @@ export async function selectQuestionLanguageInSettings(
     },
     { language, languageKeys: settingsLanguageStorageKeys },
   );
+}
+
+export async function setupHomeCopyRoute(page: Page, language: AppLanguage): Promise<void> {
+  await seedFreshSettingsLanguageAndAboutSeen(page, language);
+  await page.goto('/home', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+}
+
+export async function mockBrowserDate(page: Page, fixedDate: string | Date): Promise<void> {
+  const mockedNow = fixedDate instanceof Date ? fixedDate.getTime() : new Date(fixedDate).getTime();
+
+  await page.addInitScript((mockedNow: number) => {
+    const RealDate = Date;
+
+    function MockDate(this: Date, ...args: unknown[]) {
+      if (!new.target) {
+        return new RealDate(mockedNow).toString();
+      }
+      if (args.length === 0) {
+        return new RealDate(mockedNow);
+      }
+      return new RealDate(...(args as [number | string | Date]));
+    }
+
+    MockDate.now = () => mockedNow;
+    MockDate.parse = RealDate.parse;
+    MockDate.UTC = RealDate.UTC;
+    MockDate.prototype = RealDate.prototype;
+
+    // Keep Date constructor semantics predictable for app code loaded after init.
+    window.Date = MockDate as DateConstructor;
+  }, mockedNow);
 }

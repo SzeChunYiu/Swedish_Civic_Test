@@ -105,7 +105,6 @@ test('topbar language picker supports keyboard menu navigation', async ({ page }
   const swedishRow = page.getByRole('menuitem', { name: 'Swedish' });
   const englishRow = page.getByRole('menuitem', { name: 'English' });
   const arabicRow = page.getByRole('menuitem', { name: 'Arabic, kommer snart' });
-  const closeButton = page.getByRole('button', { name: 'Stäng språkväljaren' });
 
   await expect(menu).toBeVisible();
   await expect(swedishRow).toBeFocused();

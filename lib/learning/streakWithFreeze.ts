@@ -107,6 +107,10 @@ function normalizeFreezeState(state: StreakFreezeState): StreakFreezeState {
   };
 }
 
+export function normalizeStreakFreezeState(value: unknown): StreakFreezeState {
+  return normalizeFreezeState(value as StreakFreezeState);
+}
+
 function previousDayKey(dayKey: string): string {
   const d = new Date(`${dayKey}T00:00:00.000Z`);
   return new Date(d.getTime() - DAY_MS).toISOString().slice(0, 10);

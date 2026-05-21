@@ -118,6 +118,10 @@ export function LegalExternalLink({
   );
 }
 
+export function LegalLinkList({ children }: PropsWithChildren) {
+  return <View style={styles.linkList}>{children}</View>;
+}
+
 function getBackAccessibilityLabel(label: string) {
   return label.replace(/^[←\s]+/, '').trim();
 }
@@ -186,6 +190,9 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.navButton.fontSize,
     lineHeight: typography.bodyTight.lineHeight,
+  },
+  linkList: {
+    gap: space[1],
   },
   externalLink: {
     backgroundColor: colors.surface,

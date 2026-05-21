@@ -14,6 +14,9 @@ const citizenshipRequirementsStorageId = 'citizenship-requirements';
 const citizenshipRequirementAreaIdSet = new Set<CitizenshipRequirementAreaId>(
   citizenshipRequirementAreas.map((area) => area.id),
 );
+const emptyCitizenshipRequirementsChecklist = {
+  checkedAreaIds: [],
+} as const satisfies PersistedCitizenshipRequirementsChecklist;
 
 let citizenshipRequirementsStorage: MMKV | null = null;
 
@@ -38,6 +41,24 @@ export function normalizeCitizenshipRequirementAreaIds(
   return citizenshipRequirementAreas
     .map((area) => area.id)
     .filter((areaId) => selectedIds.has(areaId));
+}
+
+export type PersistedCitizenshipRequirementsChecklist = {
+  checkedAreaIds: CitizenshipRequirementAreaId[];
+};
+
+export function normalizeImportedCitizenshipRequirementsChecklist(
+  value: unknown,
+): PersistedCitizenshipRequirementsChecklist {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { ...emptyCitizenshipRequirementsChecklist };
+  }
+
+  return {
+    checkedAreaIds: normalizeCitizenshipRequirementAreaIds(
+      (value as Partial<PersistedCitizenshipRequirementsChecklist>).checkedAreaIds,
+    ),
+  };
 }
 
 function parseCheckedAreaIds(rawValue: string): CitizenshipRequirementAreaId[] {
@@ -120,3 +141,15 @@ export const useCitizenshipRequirementsChecklistStore =
         return persistCheckedAreaIds([...checkedIds]);
       }),
   }));
+
+export const useCitizenshipRequirementsStore = useCitizenshipRequirementsChecklistStore;
+
+export function importCitizenshipRequirementsChecklistSnapshot(
+  value: unknown,
+): PersistedCitizenshipRequirementsChecklist {
+  const normalized = normalizeImportedCitizenshipRequirementsChecklist(value);
+  useCitizenshipRequirementsChecklistStore.setState(
+    persistCheckedAreaIds(normalized.checkedAreaIds),
+  );
+  return normalized;
+}
