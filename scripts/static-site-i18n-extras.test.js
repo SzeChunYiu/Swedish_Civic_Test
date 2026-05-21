@@ -128,6 +128,7 @@ const expectedCentralKurdishLegalReadingTimes = {
   'privacy.meta3.v': '~3 خولەک',
   'terms.meta3.v': '~2 خولەک خوێندنەوە',
 };
+const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
@@ -264,6 +265,27 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
     assert.equal(value, expected, `ckb.${key}`);
     assert.match(value, /خولەک/, `ckb.${key} should use the Central Kurdish minute unit`);
     assert.doesNotMatch(value, /\bmin\b/i, `ckb.${key} must not contain English min`);
+  }
+});
+
+test('Tigrinya Home chapter 4 localizes labor and welfare common terms', () => {
+  const extra = loadExtraI18n();
+  const tigrinya = extra?.ti;
+
+  assert.equal(typeof tigrinya, 'object');
+  const description = tigrinya['chap.4.d'];
+  assert.equal(typeof description, 'string', 'ti.chap.4.d must be a string');
+  assert.match(description, /Skatteverket/, 'ti.chap.4.d should preserve the agency name');
+  assert.match(description, /ሓባራዊ ስምምዓት/, 'ti.chap.4.d should localize collective agreements');
+  assert.match(description, /ናይ ወለዲ ዕረፍቲ/, 'ti.chap.4.d should localize parental leave');
+  assert.match(description, /ጥቕማጥቕሚ ሕማም/, 'ti.chap.4.d should localize sickness benefit');
+
+  for (const term of forbiddenTigrinyaWorkWelfareTerms) {
+    assert.doesNotMatch(
+      description,
+      new RegExp(term, 'i'),
+      `ti.chap.4.d must not expose bare Swedish term ${term}`,
+    );
   }
 });
 
