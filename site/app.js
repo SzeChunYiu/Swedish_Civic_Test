@@ -2283,8 +2283,8 @@ function smtInitLangPicker() {
   });
   document.addEventListener('click', function (e) {
     if (menu.hidden) return;
-    if (e.target === btn || btn.contains(e.target)) return;
-    if (menu.contains(e.target)) return;
+    if (e.target === btn || (typeof btn.contains === 'function' && btn.contains(e.target))) return;
+    if (typeof menu.contains === 'function' && menu.contains(e.target)) return;
     close();
   });
   document.addEventListener('keydown', function (e) {
