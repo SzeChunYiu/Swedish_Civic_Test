@@ -557,9 +557,8 @@ function progressWithSessions(sessions) {
 
 test('dashboard progress snapshot adapts local store progress for free dashboard selectors', () => {
   const { buildDashboardProgressSnapshot } = loadTs('lib/learning/dashboardProgressSnapshot.ts');
-  const { dailyActivityHistogram, perChapterProgress, xpSparkline, dashboardSummary } = loadTs(
-    'lib/learning/dashboardStats.ts',
-  );
+  const { dailyActivityHistogram, perChapterProgress, xpSparkline, dashboardSummary, mockHistory } =
+    loadTs('lib/learning/dashboardStats.ts');
   const questionProgress = {
     q1: {
       questionId: 'q1',
@@ -592,6 +591,10 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
         score: 0.8,
         completedAt: '2026-05-19T12:00:00.000Z',
         correctCount: 16,
+        questionTimings: [
+          { questionId: 'q1', timeSpentSeconds: 12 },
+          { questionId: 'q2', timeSpentSeconds: 18 },
+        ],
         totalCount: 20,
       },
     ],
@@ -630,6 +633,7 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
     }).bestMockScore,
     0.8,
   );
+  assert.equal(mockHistory(progress)[0].durationMs, 30 * 1000);
 });
 
 test('dashboard progress snapshot prefers dated answer history over synthetic attempts', () => {

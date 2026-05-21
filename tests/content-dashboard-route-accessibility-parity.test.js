@@ -9,6 +9,7 @@ const sourcePaths = {
   activity: 'components/dashboard/ActivityHeatmap.tsx',
   dashboard: 'app/dashboard.tsx',
   chapters: 'components/dashboard/PerChapterProgressBars.tsx',
+  history: 'components/dashboard/MockExamHistoryCard.tsx',
   sparkline: 'components/dashboard/StreakXpSparkline.tsx',
 };
 
@@ -220,9 +221,41 @@ function assertDashboardAccessibilitySeparation(sources) {
   assert.match(sources.sparkline, /copy\.emptyState/);
   assert.match(sources.sparkline, /aria-label=\{accessibilityLabel\}/);
 
+  assert.match(
+    sources.dashboard,
+    /<MockExamHistoryCard[\s\S]*?bestScore=\{summary\.bestMockScore\}[\s\S]*?copy=\{copy\.mockHistory\}[\s\S]*?entries=\{mockHistoryEntries\}/,
+    'Dashboard must render mock history from selector output and summary best score',
+  );
+  assert.match(
+    sources.history,
+    /<Text accessibilityRole="summary" style=\{styles\.accessibilitySummary\}>\s*\{accessibilityLabel\}\s*<\/Text>/,
+    'MockExamHistoryCard must expose a standalone section summary',
+  );
+  assert.match(
+    sources.history,
+    /<Card style=\{styles\.card\}>/,
+    'MockExamHistoryCard visual card must not group the Exam link',
+  );
+  assert.match(
+    sources.history,
+    /<Link[\s\S]*?accessibilityLabel=\{copy\.examLinkAccessibilityLabel\}[\s\S]*?accessibilityRole="link"[\s\S]*?href="\/exam"/,
+    'MockExamHistoryCard must keep an independent labelled Exam link',
+  );
+  assert.doesNotMatch(
+    sources.history,
+    /<Card[\s\S]{0,120}accessibilityLabel=\{accessibilityLabel\}[\s\S]{0,1200}<Link/,
+    'MockExamHistoryCard Card must not group the Exam link',
+  );
+  assert.match(sources.history, /formatDuration\(entry\.durationMs\)/);
+  assert.match(sources.dashboard, /title: 'Övningsprov över tid'/);
+  assert.match(sources.dashboard, /title: 'Mock exam history'/);
+  assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Öppna övningsprovet'/);
+  assert.match(sources.dashboard, /examLinkAccessibilityLabel: 'Open the mock exam'/);
+
   assert.match(sources.dashboard, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.chapters, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
   assert.match(sources.activity, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
+  assert.match(sources.history, /accessibilitySummary:\s*\{[\s\S]*?position: 'absolute'/);
 }
 
 test('dashboard accessibility summaries do not group interactive descendants', () => {
@@ -290,6 +323,22 @@ test('dashboard accessibility parity rejects an unlabelled heatmap ScrollView', 
         ),
       }),
     /ActivityHeatmap ScrollView must keep its localized chart summary/,
+  );
+});
+
+test('dashboard accessibility parity rejects grouped mock history links', () => {
+  const sources = loadSources();
+
+  assert.throws(
+    () =>
+      assertDashboardAccessibilitySeparation({
+        ...sources,
+        history: sources.history.replace(
+          '<Card style={styles.card}>',
+          '<Card accessibilityLabel={accessibilityLabel} accessibilityRole="summary" style={styles.card}>',
+        ),
+      }),
+    /MockExamHistoryCard visual card must not group the Exam link/,
   );
 });
 
