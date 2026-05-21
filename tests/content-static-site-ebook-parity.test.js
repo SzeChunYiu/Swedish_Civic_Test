@@ -67,6 +67,7 @@ const staticEbookSourceAuthorityPhrasingPatterns = [
   /UHR\s+повідомляє/i,
   /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
 ];
+const staticEbookSomaliHolidayFoodTokenPatterns = [/\bherring\b/i];
 const staleChildApplicationClaimPatterns = [
   /children are usually included with a parent's application/i,
   /children can be included on a parent's citizenship application/i,
@@ -627,6 +628,22 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.doesNotMatch(swedishHtml, /Practice chapter/);
     assert.doesNotMatch(swedishHtml, /Chapter highlights/);
     assert.doesNotMatch(swedishHtml, /Next study steps/);
+  }
+});
+
+test('static ebook Somali chapter 13 uses localized holiday food wording', () => {
+  const harness = createEbookHarness();
+  const somaliChapter13Html = renderChapter(harness, 'so', '13');
+
+  assert.match(somaliChapter13Html, /Habeenka Bartamaha Xagaaga/);
+  assert.match(somaliChapter13Html, /kalluun la dhanaaniyey/);
+  assert.match(somaliChapter13Html, /baradho cusub iyo farawle/);
+  for (const pattern of staticEbookSomaliHolidayFoodTokenPatterns) {
+    assert.doesNotMatch(
+      somaliChapter13Html,
+      pattern,
+      `Somali chapter 13 should not render English food token ${pattern}`,
+    );
   }
 });
 
