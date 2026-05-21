@@ -43,6 +43,8 @@ type Scenario = {
   inputLabel: string;
   previewName: string;
   confirmName: string;
+  resetName: string;
+  invalidJsonText: string;
   successText: string;
 };
 
@@ -53,6 +55,8 @@ const scenarios: Scenario[] = [
     inputLabel: 'Klistra in JSON-export',
     previewName: 'Förhandsgranska lokal studiedataimport',
     confirmName: 'Bekräfta lokal studiedataimport',
+    resetName: 'Återställ importfält',
+    invalidJsonText: 'JSON kunde inte läsas.',
     successText: 'Importen är klar.',
   },
   {
@@ -61,6 +65,8 @@ const scenarios: Scenario[] = [
     inputLabel: 'Paste JSON export',
     previewName: 'Preview local study data import',
     confirmName: 'Confirm local study data import',
+    resetName: 'Reset import field',
+    invalidJsonText: 'JSON could not be read.',
     successText: 'Import complete.',
   },
 ];
@@ -380,6 +386,19 @@ async function expectNoImportApplied(page: Page, language: AppLanguage) {
     });
 }
 
+async function expectImportFormCleared(
+  page: Page,
+  scenario: Scenario,
+  clearedTexts: readonly string[],
+) {
+  await expect(page.getByLabel(scenario.inputLabel)).toHaveValue('');
+  await expect(page.getByRole('button', { name: scenario.confirmName })).toHaveCount(0);
+
+  for (const text of clearedTexts) {
+    await expect(page.getByText(text)).toHaveCount(0);
+  }
+}
+
 async function expectImportApplied(
   page: Page,
   importedLanguage: AppLanguage,
@@ -464,4 +483,47 @@ for (const scenario of scenarios) {
       expect(errors.get()).toEqual([]);
     });
   }
+}
+
+for (const scenario of scenarios) {
+  test(`settings import reset clears preview and feedback without writes in ${scenario.language}`, async ({
+    page,
+  }) => {
+    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    const errors = collectConsoleAndPageErrors(page);
+
+    await page.goto('/settings', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectNoImportApplied(page, scenario.language);
+
+    const input = page.getByLabel(scenario.inputLabel);
+    const resetButton = page.getByRole('button', { name: scenario.resetName });
+
+    await input.fill('{');
+    await page.getByRole('button', { name: scenario.previewName }).click();
+    await expect(page.getByText(scenario.invalidJsonText)).toBeVisible();
+    await expectNoImportApplied(page, scenario.language);
+
+    await resetButton.click();
+    await expectImportFormCleared(page, scenario, [scenario.invalidJsonText]);
+    await expectNoImportApplied(page, scenario.language);
+
+    const payloadCase = importPayloadCases.find((candidate) => candidate.name === 'plural');
+    expect(payloadCase).toBeDefined();
+    const summaryTexts = payloadCase!.summaryTexts[scenario.language];
+
+    await input.fill(payloadCase!.buildPayload(scenario.importedLanguage));
+    await page.getByRole('button', { name: scenario.previewName }).click();
+
+    for (const summaryText of summaryTexts) {
+      await expect(page.getByText(summaryText)).toBeVisible();
+    }
+    await expect(page.getByRole('button', { name: scenario.confirmName })).toBeVisible();
+    await expectNoImportApplied(page, scenario.language);
+
+    await resetButton.click();
+    await expectImportFormCleared(page, scenario, [...summaryTexts, scenario.successText]);
+    await expectNoImportApplied(page, scenario.language);
+    expect(errors.get()).toEqual([]);
+  });
 }
