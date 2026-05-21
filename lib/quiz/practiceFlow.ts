@@ -1,37 +1,56 @@
 import type { PracticeQuestion } from '../../types/content';
 
 export function getPracticeQuestionForSession<TQuestion extends Pick<PracticeQuestion, 'id'>>(
-  questions: TQuestion[],
-  completedQuestionIds: string[],
+  questions: readonly TQuestion[],
+  completedQuestionIds: readonly unknown[],
   activeQuestionId: string | null,
 ): TQuestion | undefined {
+  const questionBank = Array.isArray(questions) ? questions : [];
   const activeQuestion = activeQuestionId
-    ? questions.find((question) => question.id === activeQuestionId)
+    ? questionBank.find((question) => question.id === activeQuestionId)
     : undefined;
 
   if (activeQuestion) return activeQuestion;
-  if (questions.length === 0) return undefined;
+  if (questionBank.length === 0) return undefined;
 
   const visibleCompletedQuestionIds = getCompletedQuestionIdsForQuestionBank(
-    questions,
+    questionBank,
     completedQuestionIds,
   );
-  if (visibleCompletedQuestionIds.length >= questions.length) return questions[0];
+  if (visibleCompletedQuestionIds.length >= questionBank.length) return questionBank[0];
 
   const completedInVisibleBank = new Set(visibleCompletedQuestionIds);
-  return questions.find((question) => !completedInVisibleBank.has(question.id)) ?? questions[0];
+  return (
+    questionBank.find((question) => !completedInVisibleBank.has(question.id)) ?? questionBank[0]
+  );
 }
 
 export function getCompletedQuestionIdsForQuestionBank<
   TQuestion extends Pick<PracticeQuestion, 'id'>,
->(questions: TQuestion[], completedQuestionIds: string[]): string[] {
-  const questionIds = new Set(questions.map((question) => question.id));
-  return [...new Set(completedQuestionIds.filter((id) => questionIds.has(id)))];
+>(questions: readonly TQuestion[], completedQuestionIds: readonly unknown[]): string[] {
+  const questionBank = Array.isArray(questions) ? questions : [];
+  const questionIds = new Set(
+    questionBank
+      .map((question) => question.id)
+      .filter((id): id is string => typeof id === 'string' && id.trim().length > 0),
+  );
+  if (!Array.isArray(completedQuestionIds)) return [];
+
+  const completedIds: string[] = [];
+  const seen = new Set<string>();
+  for (const id of completedQuestionIds) {
+    if (typeof id !== 'string' || id.trim().length === 0) continue;
+    if (!questionIds.has(id) || seen.has(id)) continue;
+    seen.add(id);
+    completedIds.push(id);
+  }
+
+  return completedIds;
 }
 
 export function getFirstQuestionForChapter<
   TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
->(questions: TQuestion[], chapterId: string | null | undefined): TQuestion | undefined {
+>(questions: readonly TQuestion[], chapterId: string | null | undefined): TQuestion | undefined {
   if (!chapterId) return undefined;
 
   return questions.find((question) => question.chapterId === chapterId);
@@ -39,6 +58,6 @@ export function getFirstQuestionForChapter<
 
 export function getChapterQuizSessionId<
   TQuestion extends Pick<PracticeQuestion, 'id' | 'chapterId'>,
->(questions: TQuestion[], chapterId: string | null | undefined): string | null {
+>(questions: readonly TQuestion[], chapterId: string | null | undefined): string | null {
   return getFirstQuestionForChapter(questions, chapterId)?.id ?? null;
 }

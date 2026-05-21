@@ -56,6 +56,36 @@ test('practice flow scopes completed progress to the visible question bank', () 
   );
 });
 
+test('practice flow ignores malformed completed-question ids', () => {
+  const { getCompletedQuestionIdsForQuestionBank, getPracticeQuestionForSession } = loadTs(
+    'lib/quiz/practiceFlow.ts',
+  );
+  const visibleQuestions = [{ id: 'q1' }, { id: 'q2' }, { id: 'q3' }];
+
+  assert.deepEqual(getCompletedQuestionIdsForQuestionBank(visibleQuestions, null), []);
+  assert.deepEqual(getCompletedQuestionIdsForQuestionBank(visibleQuestions, { q1: true }), []);
+  assert.deepEqual(
+    getCompletedQuestionIdsForQuestionBank(visibleQuestions, [
+      'q1',
+      'q1',
+      '',
+      '   ',
+      7,
+      true,
+      {},
+      null,
+      'missing',
+      'q2',
+    ]),
+    ['q1', 'q2'],
+  );
+  assert.equal(getPracticeQuestionForSession(visibleQuestions, null, null)?.id, 'q1');
+  assert.equal(
+    getPracticeQuestionForSession(visibleQuestions, ['q1', '', 7, 'missing', 'q1'], null)?.id,
+    'q2',
+  );
+});
+
 test('practice session separates retry from next-question advancement', () => {
   const { getPracticeInterstitialShowKey, usePracticeSessionStore } = loadTs(
     'lib/quiz/practiceSessionStore.ts',

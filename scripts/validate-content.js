@@ -7792,8 +7792,20 @@ if (typeof stopSpeech !== 'function') fail('stopSpeech export is not a function'
 if (typeof getPracticeQuestionForSession !== 'function') {
   fail('getPracticeQuestionForSession export is not a function');
 }
+if (typeof getCompletedQuestionIdsForQuestionBank !== 'function') {
+  fail('getCompletedQuestionIdsForQuestionBank export is not a function');
+}
 if (typeof getChapterQuizSessionId !== 'function') {
   fail('getChapterQuizSessionId export is not a function');
+}
+if (process.argv.includes('--focus-practice-flow-parity')) {
+  validatePracticeFlowParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    practiceFlowCasesValidated,
+    practiceFlowParityValidated,
+  });
+  process.exit(0);
 }
 if (
   !usePracticeSessionStore ||
@@ -13644,6 +13656,54 @@ function validatePracticeFlowParity() {
       activeQuestionId: null,
       expectedId: firstQuestion.id,
     },
+    {
+      label: 'completion outside visible bank is ignored',
+      questions: [firstQuestion, secondQuestion],
+      completedQuestionIds: [thirdQuestion.id],
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+      expectedCompletedIds: [],
+    },
+    {
+      label: 'duplicate completed question ids are de-duplicated',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id, firstQuestion.id],
+      activeQuestionId: null,
+      expectedId: secondQuestion.id,
+      expectedCompletedIds: [firstQuestion.id],
+    },
+    {
+      label: 'non-string completed question ids are ignored',
+      questions: publishedQuestions,
+      completedQuestionIds: [firstQuestion.id, 7, true, {}, null, secondQuestion.id],
+      activeQuestionId: null,
+      expectedId: thirdQuestion.id,
+      expectedCompletedIds: [firstQuestion.id, secondQuestion.id],
+    },
+    {
+      label: 'blank completed question ids are ignored',
+      questions: publishedQuestions,
+      completedQuestionIds: ['', '   ', firstQuestion.id],
+      activeQuestionId: null,
+      expectedId: secondQuestion.id,
+      expectedCompletedIds: [firstQuestion.id],
+    },
+    {
+      label: 'null completed question ids behave as empty progress',
+      questions: publishedQuestions,
+      completedQuestionIds: null,
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+      expectedCompletedIds: [],
+    },
+    {
+      label: 'object completed question ids behave as empty progress',
+      questions: publishedQuestions,
+      completedQuestionIds: { [firstQuestion.id]: true },
+      activeQuestionId: null,
+      expectedId: firstQuestion.id,
+      expectedCompletedIds: [],
+    },
   ];
 
   let valid = true;
@@ -13655,9 +13715,17 @@ function validatePracticeFlowParity() {
       completedQuestionIds,
       activeQuestionId,
       expectedId,
+      expectedCompletedIds,
     } = testCase;
     let actualQuestion;
+    let actualCompletedIds;
     try {
+      if (expectedCompletedIds) {
+        actualCompletedIds = getCompletedQuestionIdsForQuestionBank(
+          caseQuestions,
+          completedQuestionIds,
+        );
+      }
       actualQuestion = getPracticeQuestionForSession(
         caseQuestions,
         completedQuestionIds,
@@ -13666,6 +13734,16 @@ function validatePracticeFlowParity() {
     } catch (error) {
       valid = false;
       fail(`practice flow ${label} threw ${error.message}`);
+      return;
+    }
+
+    if (expectedCompletedIds && !jsonEqual(actualCompletedIds, expectedCompletedIds)) {
+      valid = false;
+      fail(
+        `practice flow ${label} scoped completed ids returned ${JSON.stringify(
+          actualCompletedIds,
+        )}, expected ${JSON.stringify(expectedCompletedIds)}`,
+      );
       return;
     }
 
