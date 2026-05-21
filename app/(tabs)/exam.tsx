@@ -212,20 +212,26 @@ function getAccessStatusText(reason: MockExamAccessReason, language: AppLanguage
   return examRouteCopy[language].accessStatus[reason];
 }
 
+function createMockExamAttemptId(now = Date.now(), random = Math.random()): string {
+  const randomPart = Math.floor(random * Number.MAX_SAFE_INTEGER).toString(36) || '0';
+  return `mock-exam-${now.toString(36)}-${randomPart}`;
+}
+
 export default function Screen() {
   const scrollViewRef = useRef<ScrollView | null>(null);
   const reviewCardRefs = useRef<Record<string, View | null>>({});
   const examStartedAtIsoRef = useRef(new Date().toISOString());
   const timingCheckpointMsRef = useRef(Date.now());
-  const [examAttemptIndex, setExamAttemptIndex] = useState(0);
-  const examSessionId = `mock-exam-${examAttemptIndex}`;
+  const [examAttemptId, setExamAttemptId] = useState(createMockExamAttemptId);
+  const [examShuffleSeedIndex, setExamShuffleSeedIndex] = useState(0);
+  const examShuffleSeed = `mock-exam-shuffle-${examShuffleSeedIndex}`;
   const examQuestions = useMemo(
     () =>
       generateExam(questions, {
         questionCount: defaultMockExamConfig.questionCount,
-        sessionId: examSessionId,
+        sessionId: examShuffleSeed,
       }),
-    [examSessionId],
+    [examShuffleSeed],
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [flaggedQuestionIds, setFlaggedQuestionIds] = useState<Record<string, true>>({});
@@ -316,11 +322,11 @@ export default function Screen() {
             completedAt: submittedAt,
             questionTimings: answerTimings,
             questions: examQuestions,
-            sessionId: examSessionId,
+            sessionId: examAttemptId,
             startedAt: examStartedAtIsoRef.current,
           })
         : null,
-    [answerTimings, answers, examQuestions, examSessionId, submitted, submittedAt],
+    [answerTimings, answers, examAttemptId, examQuestions, submitted, submittedAt],
   );
   const questionChapterIndex = useMemo(
     () =>
@@ -362,7 +368,8 @@ export default function Screen() {
     const now = Date.now();
     examStartedAtIsoRef.current = new Date(now).toISOString();
     timingCheckpointMsRef.current = now;
-    setExamAttemptIndex((current) => current + 1);
+    setExamAttemptId(createMockExamAttemptId());
+    setExamShuffleSeedIndex((current) => current + 1);
     setAnswers({});
     setFlaggedQuestionIds({});
     setAnswerTimings({});
@@ -462,7 +469,7 @@ export default function Screen() {
 
     let isMounted = true;
     recordMockExamSession({
-      sessionId: examSessionId,
+      sessionId: examAttemptId,
       score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0,
       completedAt: submittedExamSession?.completedAt ?? new Date().toISOString(),
       correctCount: resultCorrectCount,
@@ -476,7 +483,7 @@ export default function Screen() {
       totalCount: resultTotalCount,
     });
 
-    void recordExamCompletion(examSessionId)
+    void recordExamCompletion(examAttemptId)
       .then(() => {
         if (isMounted) setCompletionRecorded(true);
       })
@@ -492,7 +499,7 @@ export default function Screen() {
   }, [
     completionRecorded,
     copy.completionStoreFailure,
-    examSessionId,
+    examAttemptId,
     recordExamCompletion,
     recordMockExamSession,
     resultCorrectCount,
