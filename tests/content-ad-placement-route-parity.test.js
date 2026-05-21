@@ -35,6 +35,10 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
+  const adBannerNativeSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
   const practiceInterstitialNativeSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
     'utf8',
@@ -91,7 +95,22 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     practiceInterstitialNativeSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(adBannerNativeSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(
+    adBannerNativeSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.doesNotMatch(
+    adBannerNativeSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
+  assert.match(adCopySource, /testStatus:\s*'AdMob-testannons aktiv - testplacering'/);
+  assert.match(adCopySource, /testStatus:\s*'AdMob test unit active - test placement'/);
+  assert.doesNotMatch(
+    adCopySource,
+    /testStatus:\s*'[^']*(?:web preview|webbförhandsvisning)[^']*'/,
+  );
   assert.match(adCopySource, /getNativeAdCardCopy/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
   assert.match(adCopySource, /test:\s*\{[\s\S]*?accessibilityLabel:\s*'Test native ad:/);

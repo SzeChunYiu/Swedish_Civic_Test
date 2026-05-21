@@ -1667,6 +1667,56 @@ test('home remove-ads pricing copy uses the canonical purchase price label', () 
   );
 });
 
+test('AdBanner testStatus copy stays platform-neutral while liveStatus stays live-only', () => {
+  const webBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
+    'utf8',
+  );
+  const nativeBannerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+    'utf8',
+  );
+  const { adBannerCopy } = loadTs('lib/monetization/adCopy.ts');
+
+  assert.match(
+    webBannerSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.match(nativeBannerSource, /const unit = getAdUnit\(placement\);/);
+  assert.match(
+    nativeBannerSource,
+    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
+  );
+  assert.doesNotMatch(
+    nativeBannerSource,
+    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
+  );
+  assert.equal(adBannerCopy.en.testStatus, 'AdMob test unit active - test placement');
+  assert.equal(adBannerCopy.sv.testStatus, 'AdMob-testannons aktiv - testplacering');
+  assert.equal(adBannerCopy.en.liveStatus, 'AdMob placement active');
+  assert.equal(adBannerCopy.sv.liveStatus, 'AdMob-placering aktiv');
+
+  for (const copy of Object.values(adBannerCopy)) {
+    assert.doesNotMatch(copy.testStatus, /web preview|webbförhandsvisning/);
+    assert.doesNotMatch(copy.liveStatus, /test unit|testannons|testplacering|preview/i);
+  }
+
+  assert.equal(
+    adBannerCopy.en.accessibilityLabel(
+      adBannerCopy.en.placementLabels.home_banner,
+      adBannerCopy.en.testStatus,
+    ),
+    'Google AdMob: Home banner. AdMob test unit active - test placement. Hidden after Remove Ads is active.',
+  );
+  assert.equal(
+    adBannerCopy.sv.accessibilityLabel(
+      adBannerCopy.sv.placementLabels.chapter_list_banner,
+      adBannerCopy.sv.testStatus,
+    ),
+    'Google AdMob: Annons i kapitellistan. AdMob-testannons aktiv - testplacering. Döljs när Ta bort annonser är aktivt.',
+  );
+});
+
 test('ad placements hydrate persisted remove-ads entitlements by default', () => {
   const webBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),

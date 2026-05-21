@@ -9729,6 +9729,10 @@ function validateAdPlacementRouteParity() {
         path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
         'utf8',
       );
+      const nativeAdBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
       const nativeAdCardSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/NativeAdCard.tsx'),
         'utf8',
@@ -9747,6 +9751,26 @@ function validateAdPlacementRouteParity() {
       }
       if (!adBannerSource.includes('WEB_AD_FALLBACK_CONSENT_DECISION')) {
         reject('AdBanner web fallback must use the shared web fallback consent decision');
+        routeIsValid = false;
+      }
+      if (
+        !adBannerSource.includes(
+          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        ) ||
+        !nativeAdBannerSource.includes(
+          'const adStatusLabel = unit?.testOnly ? copy.testStatus : copy.liveStatus;',
+        )
+      ) {
+        reject('AdBanner web and native placements must choose live/test status from the ad unit');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdBannerSource.includes('const unit = getAdUnit(placement);') ||
+        nativeAdBannerSource.includes(
+          'accessibilityLabel={copy.accessibilityLabel(placementLabel, copy.liveStatus)}',
+        )
+      ) {
+        reject('AdBanner native test units must not be announced with live-status copy');
         routeIsValid = false;
       }
       if (!webFallbackShouldShowPattern.test(nativeAdCardSource)) {
@@ -9819,6 +9843,28 @@ function validateAdPlacementRouteParity() {
       }
       if (!nativeAdCopySource.includes('getNativeAdCardCopy')) {
         reject('NativeAdCard copy must expose a live/test selector');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdCopySource.includes("testStatus: 'AdMob-testannons aktiv - testplacering'") ||
+        !nativeAdCopySource.includes("testStatus: 'AdMob test unit active - test placement'")
+      ) {
+        reject(
+          'AdBanner shared test-status copy must stay platform-neutral in Swedish and English',
+        );
+        routeIsValid = false;
+      }
+      if (
+        /testStatus:\s*'[^']*(?:web preview|webbförhandsvisning)[^']*'/.test(nativeAdCopySource)
+      ) {
+        reject('AdBanner shared test-status copy must not use web-only preview wording');
+        routeIsValid = false;
+      }
+      if (
+        !nativeAdCopySource.includes("liveStatus: 'AdMob-placering aktiv'") ||
+        !nativeAdCopySource.includes("liveStatus: 'AdMob placement active'")
+      ) {
+        reject('AdBanner live-status copy must preserve live-placement wording');
         routeIsValid = false;
       }
       if (!/live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/.test(nativeAdCopySource)) {
