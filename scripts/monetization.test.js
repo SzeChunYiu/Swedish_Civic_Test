@@ -2,7 +2,11 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const { createTsLoader } = require('../tests/helpers/monetizationRuntimeHarness.cjs');
+const {
+  createReactHookStub,
+  createReactNativeWebStub,
+  createTsLoader,
+} = require('../tests/helpers/monetizationRuntimeHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 const loadTs = createTsLoader(repoRoot);
@@ -28,6 +32,51 @@ function withEnv(overrides, fn) {
         delete process.env[key];
       } else {
         process.env[key] = value;
+      }
+    }
+  }
+}
+
+function createMemoryLocalStorage() {
+  const values = new Map();
+  return {
+    getItem(key) {
+      return values.get(String(key)) ?? null;
+    },
+    removeItem(key) {
+      values.delete(String(key));
+    },
+    setItem(key, value) {
+      values.set(String(key), String(value));
+    },
+    values,
+  };
+}
+
+async function withGlobalProperties(overrides, fn) {
+  const previous = new Map();
+
+  for (const [key, value] of Object.entries(overrides)) {
+    previous.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
+    if (value === undefined) {
+      delete globalThis[key];
+    } else {
+      Object.defineProperty(globalThis, key, {
+        configurable: true,
+        value,
+        writable: true,
+      });
+    }
+  }
+
+  try {
+    return await fn();
+  } finally {
+    for (const [key, descriptor] of previous) {
+      if (descriptor) {
+        Object.defineProperty(globalThis, key, descriptor);
+      } else {
+        delete globalThis[key];
       }
     }
   }
@@ -2190,6 +2239,48 @@ test('ad placements hydrate persisted remove-ads entitlements by default', () =>
   assert.match(nativeBannerSource, /entitlementsReady\s+&&[\s\S]*mobileAdsConsent\.initialized/);
   assert.match(nativeAdCardSource, /useResolvedAdEntitlements\(entitlements\)/);
   assert.match(nativeAdCardSource, /!entitlementsReady/);
+});
+
+test('explicit ad entitlements skip default purchase runtime side effects', async () => {
+  const localStorage = createMemoryLocalStorage();
+
+  await withGlobalProperties(
+    {
+      __SMT_E2E__: true,
+      __SMT_REMOVE_ADS_MOCK_OWNED__: false,
+      localStorage,
+    },
+    async () => {
+      const moduleCache = new Map();
+      const moduleMocks = {
+        react: createReactHookStub(),
+        'react-native': createReactNativeWebStub(),
+      };
+      const { REMOVE_ADS_STORAGE_KEY } = loadTs(
+        'lib/monetization/purchases.ts',
+        undefined,
+        moduleCache,
+        moduleMocks,
+      );
+      const { useResolvedAdEntitlements } = loadTs(
+        'lib/monetization/useRemoveAdsEntitlements.ts',
+        undefined,
+        moduleCache,
+        moduleMocks,
+      );
+
+      const resolved = useResolvedAdEntitlements({ adsDisabled: true });
+
+      assert.equal(resolved.entitlements.adsDisabled, true);
+      assert.equal(resolved.entitlementsReady, true);
+      assert.equal(resolved.entitlementStatus, 'ready');
+      assert.equal(
+        localStorage.getItem(REMOVE_ADS_STORAGE_KEY),
+        null,
+        'explicit entitlements must not seed web purchase storage',
+      );
+    },
+  );
 });
 
 test('release monetization policy requires ad-supported free tier and Remove Ads IAP', () => {

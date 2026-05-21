@@ -1704,7 +1704,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 14;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
 const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 25;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
@@ -11185,10 +11185,24 @@ function validateRemoveAdsEntitlementHookParity() {
       'failed Remove Ads entitlement reads must stay ad-blocked and expose read_failed state',
     ],
     [
-      /if\s*\(\s*explicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*explicitEntitlements,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,?[\s\S]*\};\s*\}/.test(
+      /if\s*\(\s*hasExplicitEntitlements\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*explicitEntitlements,[\s\S]*entitlementsReady:\s*true,[\s\S]*entitlementStatus:\s*'ready'\s+as\s+const,?[\s\S]*\};\s*\}/.test(
         hookSource,
       ),
       'explicit ad entitlements must bypass async purchase loading as ready',
+    ],
+    [
+      /skipPurchaseRuntime\s*=\s*false/.test(hookSource) &&
+        /skipPurchaseRuntime\s*\?\s*undefined\s*:\s*\(?runtimeOptions\s*\?\?\s*createDefaultPurchaseRuntimeOptions\(initialEntitlements\.adsDisabled\)\)?/.test(
+          hookSource,
+        ) &&
+        /if\s*\(\s*skipPurchaseRuntime\s*\|\|\s*!purchaseRuntime\s*\)\s*\{[\s\S]*applyEntitlements\(initialEntitlements\);[\s\S]*return\s*\(\)\s*=>\s*\{[\s\S]*isMounted\s*=\s*false;[\s\S]*\};[\s\S]*\}/.test(
+          hookSource,
+        ) &&
+        /const\s+hasExplicitEntitlements\s*=\s*explicitEntitlements\s*!==\s*undefined;/.test(
+          hookSource,
+        ) &&
+        /skipPurchaseRuntime:\s*hasExplicitEntitlements/.test(hookSource),
+      'explicit ad entitlements must skip purchase runtime creation and storage reads',
     ],
     [
       /if\s*\(\s*!entitlementsReady\s*\)\s*\{\s*return\s*\{[\s\S]*entitlements:\s*AD_BLOCKED_PENDING_ENTITLEMENTS,[\s\S]*entitlementsReady:\s*false,[\s\S]*entitlementStatus,?[\s\S]*\};\s*\}/.test(
