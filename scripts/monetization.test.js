@@ -1568,6 +1568,21 @@ test('remove-ads paywall is surfaced near an ad placement and wired to purchase 
   assert.match(profileSource, /runtimeOptions=\{purchaseRuntime\}/);
 });
 
+test('ProPaywall buy and restore actions use a ref-backed in-flight guard', () => {
+  const proPaywallSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/ProPaywall.tsx'),
+    'utf8',
+  );
+
+  assert.match(proPaywallSource, /import \{ useCallback, useRef, useState \} from 'react';/);
+  assert.match(proPaywallSource, /const proActionInFlightRef = useRef\(false\);/);
+  assert.match(proPaywallSource, /if \(proActionInFlightRef\.current\) return;/);
+  assert.match(proPaywallSource, /proActionInFlightRef\.current = true;/);
+  assert.match(proPaywallSource, /await buyProLifetime\(runtimeOptions\)/);
+  assert.match(proPaywallSource, /await restoreProLifetime\(runtimeOptions\)/);
+  assert.match(proPaywallSource, /finally \{[\s\S]*proActionInFlightRef\.current = false;/);
+});
+
 test('home remove-ads pricing copy uses the canonical purchase price label', () => {
   const { REMOVE_ADS_PRICE_LABEL } = loadTs('lib/monetization/purchases.ts');
   const pricingWedgeSource = fs.readFileSync(
