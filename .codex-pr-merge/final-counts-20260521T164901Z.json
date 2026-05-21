@@ -1,0 +1,49 @@
+{
+  "blockers": {
+    "ci_failed": 85,
+    "ci_pending": 1,
+    "merge_conflicts": 84,
+    "mergeability_unknown_or_stale": 4,
+    "no_checks": 2
+  },
+  "checks": {
+    "FAIL": 85,
+    "NO_CHECKS": 2,
+    "PENDING": 1
+  },
+  "draft": {
+    "False": 88
+  },
+  "eligible_left": [],
+  "mergeState": {
+    "DIRTY": 84,
+    "UNKNOWN": 4
+  },
+  "nonfail_open": [
+    {
+      "blockers": ["no_checks", "merge_conflicts"],
+      "checkStatus": "NO_CHECKS",
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 2504,
+      "title": "Fix provenance badge pointer focus disclosure"
+    },
+    {
+      "blockers": ["no_checks", "merge_conflicts"],
+      "checkStatus": "NO_CHECKS",
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 2422,
+      "title": "content: guard generated Sweden scope parity"
+    },
+    {
+      "blockers": ["ci_pending", "merge_conflicts"],
+      "checkStatus": "PENDING",
+      "mergeStateStatus": "DIRTY",
+      "mergeable": "CONFLICTING",
+      "number": 2339,
+      "title": "test: harden question provenance validation"
+    }
+  ],
+  "open": 88
+}

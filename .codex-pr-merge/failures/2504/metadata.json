@@ -1,0 +1,34 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Preserve keyboard focus reveal for provenance source notes while preventing first pointer clicks from being toggled closed by focus ordering.\n- Extend the shared web aria-state spec to assert focus reveal plus Enter collapse/expand behavior.\n- Update the UI-effects guard for the pointer-activation contract.\n\n## Validation\n- NODE_OPTIONS='--v8-pool-size=1' npm run test:ui-effects -- --test-name-pattern 'ProvenanceBadge|source note'\n- npm run typecheck -- --pretty false\n- CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS='--v8-pool-size=1' npm run build:web:export -- --max-workers 2\n- CI=1 E2E_PORT=4174 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/web-aria-false-state.spec.ts --workers=1\n- CI=1 NODE_OPTIONS='--v8-pool-size=1' npm run test:e2e -- tests/e2e/exam-submit-review.spec.ts --workers=1 -g 'provenance|source note|mock exam'\n- git diff --check",
+  "files": [
+    {
+      "path": "components/quiz/ProvenanceBadge.tsx",
+      "additions": 24,
+      "deletions": 4,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/ui-effects.test.js",
+      "additions": 15,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/web-aria-false-state.spec.ts",
+      "additions": 5,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/provenance-badge-unfocused-pointer-e2e-1779381753-3366984",
+  "headRefOid": "7c890ca63cab5c5de49c6c8b833a6d5e68c181c1",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2504,
+  "state": "OPEN",
+  "statusCheckRollup": [],
+  "title": "Fix provenance badge pointer focus disclosure",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2504"
+}

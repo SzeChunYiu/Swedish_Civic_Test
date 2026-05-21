@@ -1,0 +1,359 @@
+diff --git a/scripts/static-site-source-provenance-copy.test.js b/scripts/static-site-source-provenance-copy.test.js
+index ea3b6559e..08b901171 100644
+--- a/scripts/static-site-source-provenance-copy.test.js
++++ b/scripts/static-site-source-provenance-copy.test.js
+@@ -274,6 +274,20 @@ const staleChildApplicationClaimPatterns = [
+   /children can be included on a parent's citizenship application/i,
+   /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
+ ];
++const staleCitizenshipConductClaimPatterns = [
++  /Have led an orderly life\s*[—-]\s*no significant criminal record/i,
++  /Standard residence requirement:\s*5 years/i,
++  /Standardowy wymóg pobytu:\s*5 lat/i,
++  /Standart ikamet şartı:\s*5 yıl/i,
++  /Стандартна вимога щодо проживання:\s*5 років/i,
++  /شرط الإقامة المعتاد:\s*5 سنوات/i,
++  /شرط اقامت استاندارد:\s*5 سال/i,
++  /标准居留要求：5 年/i,
++  /標準居留要求：5 年/i,
++  /Shuruudda deganaanshaha caadiga ah:\s*5 sano/i,
++  /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
++  /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
++];
+ 
+ const homeHeroFooterFallbackKeys = [
+   'hero.eyebrow',
+@@ -662,6 +676,27 @@ test('static ebook citizenship child-application copy is backed by current Migra
+   );
+ });
+ 
++test('static ebook citizenship conduct copy is backed by current Migrationsverket source metadata', () => {
++  const ebookSource = read('site/ebook.js');
++
++  staleCitizenshipConductClaimPatterns.forEach((pattern) =>
++    assert.doesNotMatch(ebookSource, pattern),
++  );
++  assert.match(ebookSource, /From 6 June 2026, the adult main rule is eight years/i);
++  assert.match(ebookSource, /Meet the stricter conduct requirement/i);
++  assert.match(ebookSource, /Offences can mean a longer waiting period/i);
++  assert.match(ebookSource, /Migrationsverket decides individual cases/i);
++  assert.match(ebookSource, /Från 6 juni 2026 skärps skötsamhetskravet/i);
++  assert.match(ebookSource, /brott kan innebära längre karenstid/i);
++  assert.match(ebookSource, /Migrationsverket avgör det enskilda ärendet/i);
++  assert.match(ebookSource, /Adult main residence rule: 8 years/i);
++  assert.match(ebookSource, /Huvudregel för vuxnas hemvist: 8 år/i);
++  assert.match(
++    ebookSource,
++    /https:\/\/www\.migrationsverket\.se\/nyheter\/nyhetsarkiv\/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026\.html/,
++  );
++});
++
+ test('static ebook factbox and current prose claims use retrieved source metadata', () => {
+   const ebookSource = read('site/ebook.js');
+ 
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 00a55bc1f..b96360223 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -8059,13 +8059,17 @@ const sourceQuestions = questionModule.sourceQuestions;
+ const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+ const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
+ const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
++const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
++const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+ const expectedGeneratedPublishedQuestions =
+   Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
+-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
++    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map((question) =>
++        typeof applyQuestionLocalizationPilot === 'function'
++          ? applyQuestionLocalizationPilot(question)
++          : question,
++      )
+     : [];
+ const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
+-const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
+-const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+ const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
+ const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
+ const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
+diff --git a/site/ebook.js b/site/ebook.js
+index 99b11d91b..64e269a88 100644
+--- a/site/ebook.js
++++ b/site/ebook.js
+@@ -2904,13 +2904,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>For an adult application, be at least 18 years old. From 6 June 2026, children can no longer be included on a parent's citizenship application; a child needs a separate application signed by a guardian.</li>
+             <li>Have a permanent residence permit, right of residence, or right of permanent residence.</li>
+-            <li>Have lived in Sweden for a qualifying period — typically five years (shorter for stateless persons, refugees, and Nordic citizens).</li>
+-            <li>Have led an orderly life — no significant criminal record.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Have lived in Sweden for a qualifying period. From 6 June 2026, the adult main rule is eight years, with shorter periods for some groups.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Meet the stricter conduct requirement. Offences can mean a longer waiting period before citizenship can be granted, and Migrationsverket decides individual cases.</li>
+             <li>(From 2026) Pass the medborgarskapsprov — the citizenship test on civic knowledge and Swedish — and meet a Swedish-language requirement.</li>
+           </ul>
+           <h2>Dual citizenship</h2>
+           <p>Sweden has accepted dual citizenship since 2001. You do not lose your original citizenship by becoming Swedish (subject to your origin country's rules).</p>
+-          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Standard residence requirement: 5 years · Dual citizenship: allowed (since 2001) · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('en', 'Current citizenship notes', 'New citizenship rules apply from 6 June 2026. UHR says the first civic-knowledge sitting is 15 August 2026 in Stockholm. Children need a separate citizenship application from 6 June 2026 · Adult main residence rule: 8 years · Stricter conduct requirement with longer waiting periods after offences · Decision authority: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         sv: svStudyBrief(
+           [
+@@ -2921,9 +2921,13 @@
+               text: 'Från 6 juni 2026 kan barn inte längre stå med på en förälders medborgarskapsansökan; barnet behöver en egen ansökan som en vårdnadshavare skriver under.',
+               sourceKeys: ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'],
+             },
++            {
++              text: 'Från 6 juni 2026 skärps skötsamhetskravet, och brott kan innebära längre karenstid innan medborgarskap kan beviljas. Migrationsverket avgör det enskilda ärendet.',
++              sourceKeys: ['migrationsverketCitizenshipRules'],
++            },
+             'Dubbelt medborgarskap är tillåtet enligt svensk rätt, men andra länders regler kan påverka.',
+           ],
+-          'Migrationsverket · Skatteverket · Permanent uppehållstillstånd/rätt · Dubbelt medborgarskap tillåts sedan 2001.',
++          'Migrationsverket · Skatteverket · Huvudregel för vuxnas hemvist: 8 år · Skärpt skötsamhetskrav med längre karenstider efter brott · Dubbelt medborgarskap tillåts sedan 2001.',
+           ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'],
+           'Kontrollera alltid aktuella krav hos Migrationsverket och UHR. Regler kan ändras, och den här boken är bara ett studiehjälpmedel.',
+           ebookSourceNote('sv', ['migrationsverketCitizenshipRules']),
+@@ -2941,13 +2945,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>就成年人的申请而言，年满 18 周岁。自 2026 年 6 月 6 日起，子女不能再被列入父母一方的公民身份申请之中；子女需要一份由监护人签署的单独申请。</li>
+             <li>持有永久居留许可、居留权，或永久居留权。</li>
+-            <li>已在瑞典居住满符合条件的期限——通常为五年（无国籍人士、难民和北欧公民所需时间更短）。</li>
+-            <li>过着有序的生活——没有严重的犯罪记录。</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>已在瑞典居住满符合条件的期限。自 2026 年 6 月 6 日起，成年人的主要规则为八年，部分群体期限较短。</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>满足更严格的行为要求。违法行为可能意味着在获准公民身份前有更长的等待期，Migrationsverket 会逐案决定。</li>
+             <li>（自 2026 年起）通过 medborgarskapsprov——关于公民知识和瑞典语的公民身份考试——并满足瑞典语语言要求。</li>
+           </ul>
+           <h2>双重国籍</h2>
+           <p>瑞典自 2001 年起接受双重国籍。成为瑞典人并不会让你失去原有国籍（须视你原籍国的规定而定）。</p>
+-          ${ebookFactBox('zh-Hans', '当前公民身份须知', '新的公民身份规则自 2026 年 6 月 6 日起适用。UHR 表示首场公民知识考试于 2026 年 8 月 15 日在斯德哥尔摩举行。自 2026 年 6 月 6 日起子女需要单独的公民身份申请 · 标准居留要求：5 年 · 双重国籍：允许（自 2001 年起） · 裁定机关：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('zh-Hans', '当前公民身份须知', '新的公民身份规则自 2026 年 6 月 6 日起适用。UHR 表示首场公民知识考试于 2026 年 8 月 15 日在斯德哥尔摩举行。自 2026 年 6 月 6 日起子女需要单独的公民身份申请 · 成年人主要居留规则：8 年 · 更严格的行为要求，违法后等待期更长 · 裁定机关：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         'zh-Hant': `<h2>誰是誰</h2>
+           <ul>
+@@ -2962,13 +2966,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>就成年人的申請而言，年滿 18 周歲。自 2026 年 6 月 6 日起，子女不能再被列入父母一方的公民身分申請之中；子女需要一份由監護人簽署的單獨申請。</li>
+             <li>持有永久居留許可、居留權，或永久居留權。</li>
+-            <li>已在瑞典居住滿符合條件的期限——通常為五年（無國籍人士、難民和北歐公民所需時間更短）。</li>
+-            <li>過著有序的生活——沒有嚴重的犯罪記錄。</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>已在瑞典居住滿符合條件的期限。自 2026 年 6 月 6 日起，成年人的主要規則為八年，部分群體期限較短。</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>滿足更嚴格的行為要求。違法行為可能意味著在獲准公民身分前有更長的等待期，Migrationsverket 會逐案決定。</li>
+             <li>（自 2026 年起）通過 medborgarskapsprov——關於公民知識和瑞典語的公民身分考試——並滿足瑞典語語言要求。</li>
+           </ul>
+           <h2>雙重國籍</h2>
+           <p>瑞典自 2001 年起接受雙重國籍。成為瑞典人並不會讓你失去原有國籍（須視你原籍國的規定而定）。</p>
+-          ${ebookFactBox('zh-Hant', '當前公民身分須知', '新的公民身分規則自 2026 年 6 月 6 日起適用。UHR 表示首場公民知識考試於 2026 年 8 月 15 日在斯德哥爾摩舉行。自 2026 年 6 月 6 日起子女需要單獨的公民身分申請 · 標準居留要求：5 年 · 雙重國籍：允許（自 2001 年起） · 裁定機關：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('zh-Hant', '當前公民身分須知', '新的公民身分規則自 2026 年 6 月 6 日起適用。UHR 表示首場公民知識考試於 2026 年 8 月 15 日在斯德哥爾摩舉行。自 2026 年 6 月 6 日起子女需要單獨的公民身分申請 · 成年人主要居留規則：8 年 · 更嚴格的行為要求，違法後等待期更長 · 裁定機關：Migrationsverket。', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         ar: `<h2>مَن هو مَن</h2>
+           <ul>
+@@ -2983,13 +2987,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>بالنسبة لطلب البالغ، أن تكون قد بلغت 18 عامًا على الأقل. اعتبارًا من 6 يونيو 2026، لم يَعُد بالإمكان إدراج الأطفال في طلب جنسية أحد الوالدين؛ يحتاج الطفل إلى طلب منفصل يوقّعه وليّ أمر.</li>
+             <li>أن يكون لديك تصريح إقامة دائمة أو حقّ إقامة أو حقّ إقامة دائمة.</li>
+-            <li>أن تكون قد عشت في السويد مدةً مؤهِّلة — عادةً خمس سنوات (أقصر لعديمي الجنسية واللاجئين ومواطني دول الشمال).</li>
+-            <li>أن تكون قد عشت حياة منضبطة — دون سجلّ جنائي ذي شأن.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>أن تكون قد عشت في السويد مدةً مؤهِّلة. اعتبارًا من 6 يونيو 2026، القاعدة الرئيسية للبالغين هي ثماني سنوات، مع مدد أقصر لبعض الفئات.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>أن تستوفي شرط السلوك الأكثر صرامة. قد تعني المخالفات فترة انتظار أطول قبل منح الجنسية، وتبتّ Migrationsverket في كل حالة على حدة.</li>
+             <li>(اعتبارًا من 2026) أن تجتاز medborgarskapsprov — اختبار الجنسية في المعرفة المدنية واللغة السويدية — وأن تستوفي شرط اللغة السويدية.</li>
+           </ul>
+           <h2>ازدواج الجنسية</h2>
+           <p>تقبل السويد ازدواج الجنسية منذ 2001. لا تفقد جنسيتك الأصلية بصيرورتك سويديًا (رهنًا بقواعد بلدك الأصلي).</p>
+-          ${ebookFactBox('ar', 'ملاحظات الجنسية الحالية', 'تُطبَّق قواعد الجنسية الجديدة اعتبارًا من 6 يونيو 2026. تقول UHR إنّ أول جلسة للمعرفة المدنية ستُعقَد في 15 أغسطس 2026 في ستوكهولم. يحتاج الأطفال إلى طلب جنسية منفصل اعتبارًا من 6 يونيو 2026 · شرط الإقامة المعتاد: 5 سنوات · ازدواج الجنسية: مسموح (منذ 2001) · الجهة صاحبة القرار: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('ar', 'ملاحظات الجنسية الحالية', 'تُطبَّق قواعد الجنسية الجديدة اعتبارًا من 6 يونيو 2026. تقول UHR إنّ أول جلسة للمعرفة المدنية ستُعقَد في 15 أغسطس 2026 في ستوكهولم. يحتاج الأطفال إلى طلب جنسية منفصل اعتبارًا من 6 يونيو 2026 · قاعدة الإقامة الرئيسية للبالغين: 8 سنوات · شرط سلوك أكثر صرامة وفترات انتظار أطول بعد المخالفات · الجهة صاحبة القرار: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         ckb: `<h2>کێ کێیە</h2>
+           <ul>
+@@ -3004,13 +3008,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>بۆ داواکارییەکی گەورەسالان، دەبێت لانیکەم تەمەنت 18 ساڵ بێت. لە 6ی حوزەیرانی 2026ەوە، منداڵان ناتوانن چیتر لە داواکاریی هاووڵاتیبوونی دایک یان باوکدا بخرێنە ناو؛ منداڵ پێویستی بە داواکارییەکی جیاوازە کە سەرپەرشتیارێک واژووی دەکات.</li>
+             <li>مۆڵەتی نیشتەجێبوونی هەمیشەیی، مافی نیشتەجێبوون، یان مافی نیشتەجێبوونی هەمیشەییت هەبێت.</li>
+-            <li>بۆ ماوەیەکی شیاو لە سوید ژیابیت — بە شێوەی ئاسایی پێنج ساڵ (بۆ بێ‌نەتەوەکان، پەنابەران، و هاووڵاتیانی نۆردیک کورتترە).</li>
+-            <li>ژیانێکی ڕێکوپێکت بردبێتەسەر — بێ هیچ تۆمارێکی تاوانیی گرنگ.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>بۆ ماوەیەکی شیاو لە سوید ژیابیت. لە 6ی حوزەیرانی 2026ەوە، یاسای سەرەکی بۆ گەورەسالان هەشت ساڵە، و بۆ هەندێک گرووپ ماوەکان کورتترن.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>مەرجی ڕەفتاری توندتر جێبەجێ بکەیت. تاوانەکان دەتوانن پێویستی بە ماوەی چاوەڕوانیی درێژتر بکەن پێش ئەوەی هاووڵاتیبوون بدرێت، و Migrationsverket بڕیار لەسەر هەر دۆسیەیەک دەدات.</li>
+             <li>(لە 2026ەوە) لە medborgarskapsprovدا سەرکەوتوو بیت — تاقیکردنەوەی هاووڵاتیبوون لەسەر زانیاریی شارستانی و زمانی سویدی — و مەرجی زمانی سویدی جێبەجێ بکەیت.</li>
+           </ul>
+           <h2>هاووڵاتیبوونی دووانە</h2>
+           <p>سوید لە 2001ەوە هاووڵاتیبوونی دووانەی پەسەند کردووە. بە سویدیبوون هاووڵاتیبوونی ڕەسەنی خۆت لەدەست نادەیت (بەپێی یاساکانی وڵاتی ڕەسەنت).</p>
+-          ${ebookFactBox('ckb', 'تێبینییەکانی هاووڵاتیبوونی ئێستا', 'یاسا نوێیەکانی هاووڵاتیبوون لە 6ی حوزەیرانی 2026ەوە جێبەجێ دەکرێن. UHR دەڵێت یەکەم دانیشتنی زانیاریی شارستانی لە 15ی ئابی 2026 لە ستۆکهۆڵم دەبێت. منداڵان لە 6ی حوزەیرانی 2026ەوە پێویستیان بە داواکارییەکی هاووڵاتیبوونی جیاوازە · مەرجی نیشتەجێبوونی ستاندارد: 5 ساڵ · هاووڵاتیبوونی دووانە: ڕێگەپێدراوە (لە 2001ەوە) · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('ckb', 'تێبینییەکانی هاووڵاتیبوونی ئێستا', 'یاسا نوێیەکانی هاووڵاتیبوون لە 6ی حوزەیرانی 2026ەوە جێبەجێ دەکرێن. UHR دەڵێت یەکەم دانیشتنی زانیاریی شارستانی لە 15ی ئابی 2026 لە ستۆکهۆڵم دەبێت. منداڵان لە 6ی حوزەیرانی 2026ەوە پێویستیان بە داواکارییەکی هاووڵاتیبوونی جیاوازە · یاسای سەرەکی نیشتەجێبوونی گەورەسالان: 8 ساڵ · مەرجی ڕەفتاری توندتر و چاوەڕوانیی درێژتر دوای تاوانەکان · دەسەڵاتی بڕیاردان: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         fa: `<h2>چه کسی چه کسی است</h2>
+           <ul>
+@@ -3025,13 +3029,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>برای درخواست بزرگ‌سال، دست‌کم 18 سال داشته باشید. از 6 ژوئن 2026، دیگر نمی‌توان فرزندان را در درخواست شهروندی یکی از والدین گنجاند؛ فرزند به یک درخواست جداگانه نیاز دارد که سرپرستی آن را امضا کند.</li>
+             <li>مجوز اقامت دائم، حق اقامت یا حق اقامت دائم داشته باشید.</li>
+-            <li>برای یک دورهٔ واجد شرایط در سوئد زندگی کرده باشید — معمولاً پنج سال (برای افراد بی‌تابعیت، پناهندگان و شهروندان کشورهای نوردیک کوتاه‌تر).</li>
+-            <li>زندگی منظمی داشته باشید — بدون سابقهٔ کیفری قابل‌توجه.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>برای یک دورهٔ واجد شرایط در سوئد زندگی کرده باشید. از 6 ژوئن 2026، قاعدهٔ اصلی برای بزرگ‌سالان هشت سال است؛ برای برخی گروه‌ها دوره‌های کوتاه‌تری وجود دارد.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>شرط سخت‌گیرانه‌تر مربوط به رفتار را برآورده کنید. تخلف‌ها می‌توانند به معنای دورهٔ انتظار طولانی‌تر پیش از اعطای شهروندی باشند و Migrationsverket دربارهٔ هر پرونده تصمیم می‌گیرد.</li>
+             <li>(از 2026) در medborgarskapsprov — آزمون شهروندی در زمینهٔ دانش مدنی و زبان سوئدی — قبول شوید و شرط زبان سوئدی را برآورده کنید.</li>
+           </ul>
+           <h2>شهروندی دوگانه</h2>
+           <p>سوئد از 2001 شهروندی دوگانه را پذیرفته است. با سوئدی شدن، شهروندی اصلی خود را از دست نمی‌دهید (مشروط به قواعد کشور مبدأ شما).</p>
+-          ${ebookFactBox('fa', 'نکات شهروندی فعلی', 'قواعد جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. UHR می‌گوید نخستین جلسهٔ دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. فرزندان از 6 ژوئن 2026 به یک درخواست شهروندی جداگانه نیاز دارند · شرط اقامت استاندارد: 5 سال · شهروندی دوگانه: مجاز (از 2001) · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('fa', 'نکات شهروندی فعلی', 'قواعد جدید شهروندی از 6 ژوئن 2026 اعمال می‌شود. UHR می‌گوید نخستین جلسهٔ دانش مدنی در 15 اوت 2026 در استکهلم برگزار می‌شود. فرزندان از 6 ژوئن 2026 به یک درخواست شهروندی جداگانه نیاز دارند · قاعدهٔ اصلی اقامت بزرگ‌سالان: 8 سال · شرط رفتار سخت‌گیرانه‌تر و دوره‌های انتظار طولانی‌تر پس از تخلف · مرجع تصمیم‌گیری: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         pl: `<h2>Kto jest kim</h2>
+           <ul>
+@@ -3046,13 +3050,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>W przypadku wniosku osoby dorosłej mieć co najmniej 18 lat. Od 6 czerwca 2026 dzieci nie mogą już być uwzględniane we wniosku o obywatelstwo rodzica; dziecko potrzebuje osobnego wniosku podpisanego przez opiekuna.</li>
+             <li>Mieć pozwolenie na pobyt stały, prawo pobytu lub prawo stałego pobytu.</li>
+-            <li>Mieszkać w Szwecji przez wymagany okres — zwykle pięć lat (krócej w przypadku bezpaństwowców, uchodźców i obywateli krajów nordyckich).</li>
+-            <li>Prowadzić uporządkowane życie — bez znaczącej karalności.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Mieszkać w Szwecji przez wymagany okres. Od 6 czerwca 2026 główna zasada dla dorosłych to osiem lat, z krótszymi okresami dla niektórych grup.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Spełnić surowszy wymóg dotyczący prowadzenia się. Przestępstwa mogą oznaczać dłuższy okres oczekiwania przed przyznaniem obywatelstwa, a Migrationsverket rozstrzyga indywidualne sprawy.</li>
+             <li>(Od 2026) Zdać medborgarskapsprov — test na obywatelstwo z wiedzy obywatelskiej i języka szwedzkiego — oraz spełnić wymóg dotyczący języka szwedzkiego.</li>
+           </ul>
+           <h2>Podwójne obywatelstwo</h2>
+           <p>Szwecja akceptuje podwójne obywatelstwo od 2001 roku. Stając się Szwedem, nie tracisz swojego pierwotnego obywatelstwa (z zastrzeżeniem przepisów twojego kraju pochodzenia).</p>
+-          ${ebookFactBox('pl', 'Bieżące informacje o obywatelstwie', 'Nowe przepisy o obywatelstwie obowiązują od 6 czerwca 2026. UHR podaje, że pierwsza sesja z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 w Sztokholmie. Od 6 czerwca 2026 dzieci potrzebują osobnego wniosku o obywatelstwo · Standardowy wymóg pobytu: 5 lat · Podwójne obywatelstwo: dozwolone (od 2001) · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('pl', 'Bieżące informacje o obywatelstwie', 'Nowe przepisy o obywatelstwie obowiązują od 6 czerwca 2026. UHR podaje, że pierwsza sesja z wiedzy obywatelskiej odbędzie się 15 sierpnia 2026 w Sztokholmie. Od 6 czerwca 2026 dzieci potrzebują osobnego wniosku o obywatelstwo · Główna zasada pobytu dorosłych: 8 lat · Surowszy wymóg prowadzenia się i dłuższe okresy oczekiwania po przestępstwach · Organ decyzyjny: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         so: `<h2>Yaa yaa ah</h2>
+           <ul>
+@@ -3067,13 +3071,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>Codsiga qof weyn, ugu yaraan 18 sano jir tahay. Laga bilaabo 6 Juun 2026, carruurta lama dari karo codsiga muwaadinimada waalidkood; ilmuhu wuxuu u baahan yahay codsi gooni ah oo uu saxiixo masuul.</li>
+             <li>Haysato ruqsad deganaansho joogto ah, xaq deganaansho, ama xaq deganaansho joogto ah.</li>
+-            <li>Iswiidhan ku noolaan jirtay muddo u qalanta — caadi ahaan shan sano (ka gaaban dadka aan dhalasho lahayn, qaxootiga, iyo muwaadiniinta Nordic).</li>
+-            <li>Nolol hagaagsan ku noolaan jirtay — diiwaan dembi oo muhiim ah la'aan.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Iswiidhan ku noolaan jirtay muddo u qalanta. Laga bilaabo 6 Juun 2026, xeerka guud ee dadka waaweyn waa siddeed sano; kooxo qaar waxay leeyihiin muddooyin ka gaaban.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Buuxiso shuruudda dhaqanka oo la adkeeyay. Dembiyadu waxay keeni karaan muddo sugitaan oo dheer ka hor inta muwaadinimo la siin, Migrationsverket-na wuxuu go'aamiyaa kiis kasta.</li>
+             <li>(Laga bilaabo 2026) Inaad gudubto medborgarskapsprov — imtixaanka muwaadinimada ee aqoonta bulshada iyo Iswiidhishka — oo aad buuxiso shuruudda luqadda Iswiidhishka.</li>
+           </ul>
+           <h2>Labanlaab muwaadinimo</h2>
+           <p>Iswiidhan waxay aqbashay labanlaab muwaadinimo tan iyo 2001. Ma lumiso muwaadinimadaada asalka ah markaad noqoto Iswiidhan (iyada oo ku xiran xeerarka dalkaaga asalka).</p>
+-          ${ebookFactBox('so', 'Qoraallada muwaadinimada hadda', "Xeerarka cusub ee muwaadinimadu waxay khusayaan laga bilaabo 6 Juun 2026. UHR waxay sheegtay in fadhiga ugu horreeya ee aqoonta bulshada uu dhici doono 15 Ogosto 2026 ee Stockholm. Carruurtu waxay u baahan yihiin codsi muwaadinimo oo gooni ah laga bilaabo 6 Juun 2026 · Shuruudda deganaanshaha caadiga ah: 5 sano · Labanlaab muwaadinimo: la oggol yahay (tan iyo 2001) · Maamulka go'aaminta: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('so', 'Qoraallada muwaadinimada hadda', "Xeerarka cusub ee muwaadinimadu waxay khusayaan laga bilaabo 6 Juun 2026. UHR waxay sheegtay in fadhiga ugu horreeya ee aqoonta bulshada uu dhici doono 15 Ogosto 2026 ee Stockholm. Carruurtu waxay u baahan yihiin codsi muwaadinimo oo gooni ah laga bilaabo 6 Juun 2026 · Xeerka guud ee deganaanshaha dadka waaweyn: 8 sano · Shuruud dhaqan oo la adkeeyay iyo sugitaan dheer ka dib dembiyo · Maamulka go'aaminta: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         ti: `<h2>መን መን ምዃኑ</h2>
+           <ul>
+@@ -3088,13 +3092,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>ንሕቶ ዓቢ ሰብ፣ እንተ ወሓደ 18 ዓመት ክትከውን። ካብ 6 ሰነ 2026 ጀሚሩ፣ ቆልዑ ኣብ ሕቶ ዜግነት ሓደ ወላዲ ክካተቱ ኣይክእሉን፤ ቆልዓ ሓደ ኣላዪ ዝፍርሞ ናይ በይኑ ሕቶ የድልዮ።</li>
+             <li>ቀዋሚ ፍቓድ መንበሪ፣ መሰል መንበሪ፣ ወይ መሰል ቀዋሚ መንበሪ ክህልወካ።</li>
+-            <li>ኣብ ሽወደን ንዘፍቅድ ግዜ ነቢርካ ክትከውን — ብልሙድ ሓሙሽተ ዓመት (ንዜጋ ኣልቦ ሰባት፣ ስደተኛታትን ዜጋታት ኖርዲክን ዝሓጸረ)።</li>
+-            <li>ስሩዕ ህይወት ኣሕሊፍካ ክትከውን — ኣገዳሲ ገበናዊ መዝገብ ዘይብልካ።</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>ኣብ ሽወደን ንዘፍቅድ ግዜ ነቢርካ ክትከውን። ካብ 6 ሰነ 2026 ጀሚሩ፣ ንዓበይቲ ሰባት ዋና ሕጊ ሸሞንተ ዓመት እዩ፤ ንገለ ጉጅለታት ግዜታት ይሓጽር።</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>እቲ ዝተጠናኸረ ናይ ጠባይ ረቛሒ ከተማልእ። ገበናት ቅድሚ ዜግነት ምሃብ ዝነውሐ ግዜ ምጽባይ ከም ዘድሊ ክገብሩ ይኽእሉ፣ Migrationsverket ድማ ነፍሲ ወከፍ ጉዳይ ይውስን።</li>
+             <li>(ካብ 2026 ጀሚሩ) medborgarskapsprov ክትሓልፍ — እቲ ናይ ዜግነት ፈተና ኣብ ሲቪካዊ ፍልጠትን ሽወደንኛን — ከምኡ’ውን ናይ ሽወደንኛ ቋንቋ ረቛሒ ከተማልእ።</li>
+           </ul>
+           <h2>ድርብ ዜግነት</h2>
+           <p>ሽወደን ካብ 2001 ጀሚራ ድርብ ዜግነት ተቐቢላ። ሽወደናዊ ብምዃንካ ናይ መበቆልካ ዜግነት ኣይተጥፍእን (ብመሰረት ሕግታት ሃገር መበቆልካ)።</p>
+-          ${ebookFactBox('ti', 'ናይ ሕጂ ሓበሬታ ዜግነት', 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይሰርሑ። UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይብል። ቆልዑ ካብ 6 ሰነ 2026 ጀሚሮም ናይ በይኖም ሕቶ ዜግነት የድልዮም · ስሩዕ ረቛሒ መንበሪ፦ 5 ዓመት · ድርብ ዜግነት፦ ይፍቀድ (ካብ 2001) · ወሳኒ ኣካል፦ Migrationsverket።', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('ti', 'ናይ ሕጂ ሓበሬታ ዜግነት', 'ሓደስቲ ሕግታት ዜግነት ካብ 6 ሰነ 2026 ጀሚሮም ይሰርሑ። UHR እቲ ቀዳማይ ናይ ሲቪካዊ ፍልጠት ፈተና ኣብ 15 ነሓሰ 2026 ኣብ ስቶክሆልም ከም ዝካየድ ይብል። ቆልዑ ካብ 6 ሰነ 2026 ጀሚሮም ናይ በይኖም ሕቶ ዜግነት የድልዮም · ዋና ሕጊ መንበሪ ዓበይቲ፦ 8 ዓመት · ዝተጠናኸረ ናይ ጠባይ ረቛሒን ድሕሪ ገበናት ዝነውሐ ምጽባይን · ወሳኒ ኣካል፦ Migrationsverket።', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         tr: `<h2>Kim kimdir</h2>
+           <ul>
+@@ -3109,13 +3113,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>Yetişkin başvurusu için en az 18 yaşında olmak. 6 Haziran 2026'dan itibaren çocuklar artık bir ebeveynin vatandaşlık başvurusuna dahil edilemez; bir çocuğun bir veli tarafından imzalanan ayrı bir başvuruya ihtiyacı vardır.</li>
+             <li>Daimi oturum izni, ikamet hakkı veya daimi ikamet hakkına sahip olmak.</li>
+-            <li>İsveç'te uygun bir süre yaşamış olmak — genellikle beş yıl (vatansızlar, mülteciler ve İskandinav vatandaşları için daha kısa).</li>
+-            <li>Düzenli bir hayat sürmüş olmak — kayda değer bir sabıka kaydı olmaması.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>İsveç'te uygun bir süre yaşamış olmak. 6 Haziran 2026'dan itibaren yetişkinler için ana kural sekiz yıldır; bazı gruplar için daha kısa süreler vardır.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Daha sıkı davranış şartını karşılamak. Suçlar, vatandaşlık verilmeden önce daha uzun bekleme süresi anlamına gelebilir ve Migrationsverket her dosyayı ayrı değerlendirir.</li>
+             <li>(2026'dan itibaren) medborgarskapsprov'u — yurttaşlık bilgisi ve İsveççe üzerine vatandaşlık sınavını — geçmek ve İsveççe dil şartını karşılamak.</li>
+           </ul>
+           <h2>Çifte vatandaşlık</h2>
+           <p>İsveç, 2001'den beri çifte vatandaşlığı kabul ediyor. İsveçli olmakla asıl vatandaşlığınızı kaybetmezsiniz (köken ülkenizin kurallarına tabi olarak).</p>
+-          ${ebookFactBox('tr', 'Güncel vatandaşlık notları', "Yeni vatandaşlık kuralları 6 Haziran 2026'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Çocuklar 6 Haziran 2026'dan itibaren ayrı bir vatandaşlık başvurusuna ihtiyaç duyar · Standart ikamet şartı: 5 yıl · Çifte vatandaşlık: izinli (2001'den beri) · Karar makamı: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('tr', 'Güncel vatandaşlık notları', "Yeni vatandaşlık kuralları 6 Haziran 2026'dan itibaren geçerlidir. UHR, ilk yurttaşlık bilgisi oturumunun 15 Ağustos 2026'da Stockholm'de yapılacağını söylüyor. Çocuklar 6 Haziran 2026'dan itibaren ayrı bir vatandaşlık başvurusuna ihtiyaç duyar · Yetişkinler için ana ikamet kuralı: 8 yıl · Daha sıkı davranış şartı ve suçlardan sonra daha uzun bekleme süreleri · Karar makamı: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+         uk: `<h2>Хто є хто</h2>
+           <ul>
+@@ -3130,13 +3134,13 @@
+           <ul>
+             <li${ebookSourceKeyDataAttr(['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}>Для заяви дорослої особи бути щонайменше 18 років. Від 6 червня 2026 року дітей більше не можна включати до заяви на громадянство одного з батьків; дитині потрібна окрема заява, підписана опікуном.</li>
+             <li>Мати дозвіл на постійне проживання, право проживання або право постійного проживання.</li>
+-            <li>Прожити у Швеції кваліфікаційний період — зазвичай п'ять років (коротший для осіб без громадянства, біженців і громадян країн Північної Європи).</li>
+-            <li>Вести впорядковане життя — без значної судимості.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Прожити у Швеції кваліфікаційний період. Від 6 червня 2026 року головне правило для дорослих становить вісім років; для деяких груп діють коротші строки.</li>
++            <li${ebookSourceKeyDataAttr(['migrationsverketCitizenshipRules'])}>Відповідати суворішій вимозі щодо поведінки. Правопорушення можуть означати довший період очікування перед наданням громадянства, а Migrationsverket вирішує кожну справу окремо.</li>
+             <li>(Від 2026) Скласти medborgarskapsprov — тест на громадянство з громадянознавства та шведської мови — і відповідати вимозі щодо шведської мови.</li>
+           </ul>
+           <h2>Подвійне громадянство</h2>
+           <p>Швеція приймає подвійне громадянство з 2001 року. Ставши шведом, ви не втрачаєте свого початкового громадянства (за умови дотримання правил вашої країни походження).</p>
+-          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', "Нові правила громадянства діють від 6 червня 2026 року. UHR повідомляє, що перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Стандартна вимога щодо проживання: 5 років · Подвійне громадянство: дозволено (з 2001 року) · Орган, що ухвалює рішення: Migrationsverket.", ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
++          ${ebookFactBox('uk', 'Поточні нотатки про громадянство', 'Нові правила громадянства діють від 6 червня 2026 року. UHR повідомляє, що перша сесія з громадянознавства відбудеться 15 серпня 2026 року у Стокгольмі. Дітям від 6 червня 2026 року потрібна окрема заява на громадянство · Головне правило проживання для дорослих: 8 років · Суворіша вимога щодо поведінки й довші строки очікування після правопорушень · Орган, що ухвалює рішення: Migrationsverket.', ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'])}
+         `,
+       },
+     },
+diff --git a/tests/content-static-site-ebook-parity.test.js b/tests/content-static-site-ebook-parity.test.js
+index 1689453bc..dd4c11fd9 100644
+--- a/tests/content-static-site-ebook-parity.test.js
++++ b/tests/content-static-site-ebook-parity.test.js
+@@ -53,6 +53,20 @@ const staleChildApplicationClaimPatterns = [
+   /children can be included on a parent's citizenship application/i,
+   /barn (?:kan|brukar|ska)[^.?!]{0,80}(?:stå med|ingå)[^.?!]{0,80}förälders/i,
+ ];
++const staleCitizenshipConductClaimPatterns = [
++  /Have led an orderly life\s*[—-]\s*no significant criminal record/i,
++  /Standard residence requirement:\s*5 years/i,
++  /Standardowy wymóg pobytu:\s*5 lat/i,
++  /Standart ikamet şartı:\s*5 yıl/i,
++  /Стандартна вимога щодо проживання:\s*5 років/i,
++  /شرط الإقامة المعتاد:\s*5 سنوات/i,
++  /شرط اقامت استاندارد:\s*5 سال/i,
++  /标准居留要求：5 年/i,
++  /標準居留要求：5 年/i,
++  /Shuruudda deganaanshaha caadiga ah:\s*5 sano/i,
++  /مەرجی نیشتەجێبوونی ستاندارد:\s*5 ساڵ/i,
++  /ስሩዕ ረቛሒ መንበሪ፦\s*5 ዓመት/i,
++];
+ const migrationsverketCitizenshipRulesUrl =
+   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html';
+ const officialPracticalTestSourceUrls = [
+@@ -184,6 +198,12 @@ function assertNoStaleChildApplicationClaim(value) {
+   }
+ }
+ 
++function assertNoStaleCitizenshipConductClaim(value) {
++  for (const pattern of staleCitizenshipConductClaimPatterns) {
++    assert.doesNotMatch(value, pattern);
++  }
++}
++
+ function hasUnsupportedEbookSourcePromise(value) {
+   return [
+     /source-backed\s+chapters/i,
+@@ -607,6 +627,36 @@ test('static ebook chapter 11 keeps child citizenship application rules current'
+   assert.match(source, new RegExp(migrationsverketCitizenshipRulesUrl));
+ });
+ 
++test('static ebook chapter 11 keeps conduct requirement current and decision-safe', () => {
++  const source = readSiteFile('site/ebook.js');
++  const harness = createEbookHarness();
++  const englishHtml = renderChapter(harness, 'en', '11');
++  const swedishHtml = renderChapter(harness, 'sv', '11');
++
++  assertNoStaleCitizenshipConductClaim(source);
++  assertNoStaleCitizenshipConductClaim(englishHtml);
++  assertNoStaleCitizenshipConductClaim(swedishHtml);
++
++  assert.match(englishHtml, /From 6 June 2026, the adult main rule is eight years/);
++  assert.match(englishHtml, /Meet the stricter conduct requirement/);
++  assert.match(englishHtml, /Offences can mean a longer waiting period/);
++  assert.match(englishHtml, /Migrationsverket decides individual cases/);
++  assert.match(
++    englishHtml,
++    /Stricter conduct requirement with longer waiting periods after offences/,
++  );
++  assert.match(englishHtml, /Adult main residence rule: 8 years/);
++
++  assert.match(swedishHtml, /Från 6 juni 2026 skärps skötsamhetskravet/);
++  assert.match(swedishHtml, /brott kan innebära längre karenstid/);
++  assert.match(swedishHtml, /Migrationsverket avgör det enskilda ärendet/);
++  assert.match(swedishHtml, /Huvudregel för vuxnas hemvist: 8 år/);
++  assert.match(swedishHtml, /Skärpt skötsamhetskrav med längre karenstider efter brott/);
++
++  assert.match(englishHtml, /data-source-keys="migrationsverketCitizenshipRules"/);
++  assert.match(swedishHtml, /migrationsverketCitizenshipRules/);
++});
++
+ test('native ebook study article audio narrates article prose with persisted rate', () => {
+   const routeSource = readSiteFile('app/ebook.tsx');
+   const articleAudioSource = readSiteFile('components/learning/ArticleAudioButton.tsx');

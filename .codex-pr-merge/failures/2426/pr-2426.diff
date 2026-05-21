@@ -1,0 +1,340 @@
+diff --git a/docs/parallel-sessions/journals/setup.md b/docs/parallel-sessions/journals/setup.md
+index dbc2bf978..d09bba8eb 100644
+--- a/docs/parallel-sessions/journals/setup.md
++++ b/docs/parallel-sessions/journals/setup.md
+@@ -1390,3 +1390,11 @@ Artifacts changed: `components/ui/TopBarActions.tsx`, `tests/e2e/topbar-language
+ Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:a11y-labels` exit 0 with 7/7 passing; `npm run test:theme-discipline` exit 0 with 5/5 passing; `npm run test:router-shell` exit 0 with 11/11 passing; `node --test tests/content-topbar-actions-accessibility-parity.test.js` exit 0 with 1/1 passing; `npm run test:ownership` exit 0; targeted Prettier check exit 0; `git diff --check` exit 0; `npm run build:web:export -- --max-workers 2` exit 0; `CI=1 npx --no-install playwright test tests/e2e/topbar-language-picker-target.spec.ts --workers=1` exit 0 with 1/1 passing.
+ Blocked? no for this top-bar link target and interaction-feedback atom; no Vercel CLI was run.
+ Next suggested validator action: inspect `TopBarActionLink` web styling and rerun the focused top-bar browser smoke plus typecheck, lint, a11y labels, theme discipline, router shell, ownership, and web export before accepting `TOPBAR-LINK-PRESSED-FEEDBACK-1`.
++
++## Iteration 277 - 2026-05-21
++
++Task completed: SPACED-REPETITION-DUE-TIMESTAMP-CANONICAL-GUARD-1 - made `isDue()` and `sortByDueAscending()` use the canonical UTC review timestamp parser, demoting date-only, timezone-offset, rollover, and malformed timestamps instead of relying on loose `Date.parse`.
++Artifacts changed: `lib/learning/spacedRepetition.ts`, `scripts/validate-content.js`, `tests/content-spaced-repetition-schema.test.js`, `tests/v1-1-pro-foundations.test.js`, `tests/v1-1-review-store.test.js`, `docs/parallel-sessions/journals/setup.md`.
++Verification: clean SETUP worktree from current `origin/main` after claim commit; linked shared ignored `node_modules`; `node --test tests/content-spaced-repetition-schema.test.js` exit 0 with 3/3 passing; focused spaced/due command without unrelated `canonical` selector exit 0 with 10/10 passing; `node scripts/validate-content.js --focus-spaced-repetition-schema` exit 0 with `spacedRepetitionDueTimestampCasesValidated:7` and parity true; `npm run validate:content` exit 0; `npm run typecheck -- --pretty false` exit 0; `npm run lint` exit 0; `npm run test:ownership` exit 0; targeted Prettier check and `git diff --check` exit 0. The queue's broader example selector containing `canonical` still selects unrelated Pro pricing/paywall tests already red on current main; the spaced-repetition-targeted selector passes.
++Blocked? no for this spaced-repetition due timestamp guard; no Vercel CLI was run.
++Next suggested validator action: inspect the canonical timestamp helper reuse and rerun the focused spaced-repetition schema/due-card commands plus `validate:content`, typecheck, lint, ownership, and diff checks.
+diff --git a/lib/learning/spacedRepetition.ts b/lib/learning/spacedRepetition.ts
+index 43e7bd7b7..27a8b0afb 100644
+--- a/lib/learning/spacedRepetition.ts
++++ b/lib/learning/spacedRepetition.ts
+@@ -54,9 +54,14 @@ export function isReviewGrade(value: unknown): value is ReviewGrade {
+ }
+ 
+ export function isCanonicalReviewTimestamp(value: unknown): value is string {
+-  if (typeof value !== 'string') return false;
++  return getCanonicalReviewTimestampMs(value) !== null;
++}
++
++function getCanonicalReviewTimestampMs(value: unknown): number | null {
++  if (typeof value !== 'string') return null;
+   const timestamp = Date.parse(value);
+-  return Number.isFinite(timestamp) && new Date(timestamp).toISOString() === value;
++  if (!Number.isFinite(timestamp)) return null;
++  return new Date(timestamp).toISOString() === value ? timestamp : null;
+ }
+ 
+ function safeReviewTimestamp(value: unknown): string {
+@@ -208,16 +213,16 @@ export function getNextReviewAt({
+ // ---- Queue selection helpers -------------------------------------------------
+ 
+ export function isDue(card: ReviewCard, now: string = new Date().toISOString()): boolean {
+-  const dueAt = Date.parse(card.dueAt);
+-  const current = Date.parse(now);
+-  if (!Number.isFinite(dueAt) || !Number.isFinite(current)) return false;
++  const dueAt = getCanonicalReviewTimestampMs(card?.dueAt);
++  const current = getCanonicalReviewTimestampMs(now);
++  if (dueAt === null || current === null) return false;
+   return dueAt <= current;
+ }
+ 
+ export function sortByDueAscending(a: ReviewCard, b: ReviewCard): number {
+-  const aTime = Date.parse(a.dueAt);
+-  const bTime = Date.parse(b.dueAt);
+-  const safeATime = Number.isFinite(aTime) ? aTime : Number.POSITIVE_INFINITY;
+-  const safeBTime = Number.isFinite(bTime) ? bTime : Number.POSITIVE_INFINITY;
++  const aTime = getCanonicalReviewTimestampMs(a?.dueAt);
++  const bTime = getCanonicalReviewTimestampMs(b?.dueAt);
++  const safeATime = aTime ?? Number.POSITIVE_INFINITY;
++  const safeBTime = bTime ?? Number.POSITIVE_INFINITY;
+   return safeATime - safeBTime;
+ }
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..a496b5345 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -7779,6 +7779,8 @@ const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule
+ const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
+ const createNewCard = spacedRepetitionModule.createNewCard;
+ const gradeCard = spacedRepetitionModule.gradeCard;
++const isDue = spacedRepetitionModule.isDue;
++const sortByDueAscending = spacedRepetitionModule.sortByDueAscending;
+ const streakModule = loadTs('lib/learning/streaks.ts');
+ const calculateStreak = streakModule.calculateStreak;
+ const streakWithFreezeModule = loadTs('lib/learning/streakWithFreeze.ts');
+@@ -8065,6 +8067,8 @@ let spacedRepetitionIntervalsValidated = 0;
+ let spacedRepetitionRuntimeParityValidated = false;
+ let spacedRepetitionRuntimeInputCasesValidated = 0;
+ let spacedRepetitionRuntimeInputParityValidated = false;
++let spacedRepetitionDueTimestampCasesValidated = 0;
++let spacedRepetitionDueTimestampParityValidated = false;
+ let streakRulesValidated = 0;
+ let streakRulesParityValidated = false;
+ let xpRulesValidated = 0;
+@@ -8392,6 +8396,8 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
+     spacedRepetitionRuntimeParityValidated,
+     spacedRepetitionRuntimeInputCasesValidated,
+     spacedRepetitionRuntimeInputParityValidated,
++    spacedRepetitionDueTimestampCasesValidated,
++    spacedRepetitionDueTimestampParityValidated,
+   });
+   process.exit(0);
+ }
+@@ -15756,6 +15762,88 @@ function validateSpacedRepetitionSchedule() {
+   ) {
+     spacedRepetitionRuntimeInputParityValidated = true;
+   }
++
++  const dueTimestampCases = [];
++  if (typeof isDue === 'function') {
++    const now = '2026-03-02T12:00:00.000Z';
++    dueTimestampCases.push(
++      {
++        label: 'canonical past dueAt',
++        actual: () => isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, now),
++        expected: true,
++      },
++      {
++        label: 'canonical future dueAt',
++        actual: () => isDue({ dueAt: '2026-03-03T00:00:00.000Z' }, now),
++        expected: false,
++      },
++      {
++        label: 'rollover dueAt',
++        actual: () => isDue({ dueAt: '2026-02-30T00:00:00.000Z' }, now),
++        expected: false,
++      },
++      {
++        label: 'date-only dueAt',
++        actual: () => isDue({ dueAt: '2026-03-02' }, now),
++        expected: false,
++      },
++      {
++        label: 'timezone-offset dueAt',
++        actual: () => isDue({ dueAt: '2026-03-02T12:00:00+00:00' }, now),
++        expected: false,
++      },
++      {
++        label: 'rollover now',
++        actual: () => isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-02-30T12:00:00.000Z'),
++        expected: false,
++      },
++    );
++  }
++  if (typeof sortByDueAscending === 'function') {
++    dueTimestampCases.push({
++      label: 'sort demotes malformed dueAt values',
++      actual: () =>
++        [
++          { questionId: 'date-only', dueAt: '2026-03-01' },
++          { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
++          { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
++          { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
++        ]
++          .sort(sortByDueAscending)
++          .map((card) => card.questionId),
++      expected: ['past', 'future', 'date-only', 'rollover'],
++    });
++  }
++
++  let dueTimestampParityIsValid = true;
++  dueTimestampCases.forEach(({ actual, expected, label }) => {
++    let actualValue;
++    try {
++      actualValue = actual();
++    } catch (error) {
++      dueTimestampParityIsValid = false;
++      fail(`spaced repetition due timestamp ${label} threw ${error.message}`);
++      return;
++    }
++
++    if (!jsonEqual(actualValue, expected)) {
++      dueTimestampParityIsValid = false;
++      fail(
++        `spaced repetition due timestamp ${label} returned ${JSON.stringify(
++          actualValue,
++        )}, expected ${JSON.stringify(expected)}`,
++      );
++    } else {
++      spacedRepetitionDueTimestampCasesValidated += 1;
++    }
++  });
++
++  if (
++    dueTimestampParityIsValid &&
++    spacedRepetitionDueTimestampCasesValidated === dueTimestampCases.length
++  ) {
++    spacedRepetitionDueTimestampParityValidated = true;
++  }
+ }
+ 
+ function validateStreakRules() {
+@@ -18118,6 +18206,8 @@ console.log(
+       spacedRepetitionRuntimeParityValidated,
+       spacedRepetitionRuntimeInputCasesValidated,
+       spacedRepetitionRuntimeInputParityValidated,
++      spacedRepetitionDueTimestampCasesValidated,
++      spacedRepetitionDueTimestampParityValidated,
+       streakRulesValidated,
+       streakRulesParityValidated,
+       xpRulesValidated,
+diff --git a/tests/content-spaced-repetition-schema.test.js b/tests/content-spaced-repetition-schema.test.js
+index 3e5e73321..c558c33cd 100644
+--- a/tests/content-spaced-repetition-schema.test.js
++++ b/tests/content-spaced-repetition-schema.test.js
+@@ -36,7 +36,9 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
+   assert.ok(match, 'validation should print JSON summary');
+ 
+   const summary = JSON.parse(match[0]);
+-  const { spacedRepetitionSchedule, getNextReviewAt } = loadTs('lib/learning/spacedRepetition.ts');
++  const { spacedRepetitionSchedule, getNextReviewAt, isDue, sortByDueAscending } = loadTs(
++    'lib/learning/spacedRepetition.ts',
++  );
+   const answeredAt = '2026-05-15T10:00:00.000Z';
+ 
+   assert.deepEqual(spacedRepetitionSchedule, expectedSchedule);
+@@ -44,6 +46,8 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
+   assert.equal(summary.spacedRepetitionRuntimeParityValidated, true);
+   assert.equal(summary.spacedRepetitionRuntimeInputCasesValidated, 5);
+   assert.equal(summary.spacedRepetitionRuntimeInputParityValidated, true);
++  assert.equal(summary.spacedRepetitionDueTimestampCasesValidated, 7);
++  assert.equal(summary.spacedRepetitionDueTimestampParityValidated, true);
+   assert.equal(
+     getNextReviewAt({ isCorrect: false, correctStreak: 99, answeredAt }),
+     daysAfter(answeredAt, 1),
+@@ -52,6 +56,21 @@ test('spaced repetition schema validates schedule intervals and runtime parity',
+     getNextReviewAt({ isCorrect: true, correctStreak: 50, answeredAt }),
+     daysAfter(answeredAt, expectedSchedule.at(-1)),
+   );
++  assert.equal(isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-03-02T12:00:00.000Z'), true);
++  assert.equal(isDue({ dueAt: '2026-02-30T00:00:00.000Z' }, '2026-03-02T12:00:00.000Z'), false);
++  assert.equal(isDue({ dueAt: '2026-03-02' }, '2026-03-02T12:00:00.000Z'), false);
++  assert.equal(isDue({ dueAt: '2026-03-02T12:00:00+00:00' }, '2026-03-02T12:00:00.000Z'), false);
++  assert.deepEqual(
++    [
++      { questionId: 'date-only', dueAt: '2026-03-01' },
++      { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
++      { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
++      { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
++    ]
++      .sort(sortByDueAscending)
++      .map((card) => card.questionId),
++    ['past', 'future', 'date-only', 'rollover'],
++  );
+ });
+ 
+ test('spaced repetition schema rejects schedule drift and non-increasing intervals', () => {
+@@ -85,3 +104,35 @@ require('./scripts/validate-content.js');
+   assert.match(output, /spacedRepetitionSchedule is \[1,3,3,15,30\]/);
+   assert.match(output, /spacedRepetitionSchedule\[2\] must be greater than the previous interval/);
+ });
++
++test('spaced repetition schema rejects loose due timestamp parsing', () => {
++  const result = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++const fs = require('node:fs');
++const originalReadFileSync = fs.readFileSync;
++fs.readFileSync = function readFileSync(filePath, ...args) {
++  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
++  const contents = originalReadFileSync.call(this, filePath, ...args);
++  if (normalizedPath.endsWith('/lib/learning/spacedRepetition.ts')) {
++    return String(contents).replace(
++      "if (typeof value !== 'string') return null;\\n  const timestamp = Date.parse(value);\\n  if (!Number.isFinite(timestamp)) return null;\\n  return new Date(timestamp).toISOString() === value ? timestamp : null;",
++      "if (typeof value !== 'string') return null;\\n  const timestamp = Date.parse(value);\\n  return Number.isFinite(timestamp) ? timestamp : null;",
++    );
++  }
++  return contents;
++};
++process.argv.push('--focus-spaced-repetition-schema');
++require('./scripts/validate-content.js');
++`,
++    ],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  const output = `${result.stdout}\n${result.stderr}`;
++  assert.match(output, /spaced repetition due timestamp rollover dueAt returned true/);
++  assert.match(output, /spaced repetition due timestamp date-only dueAt returned true/);
++});
+diff --git a/tests/v1-1-pro-foundations.test.js b/tests/v1-1-pro-foundations.test.js
+index c56a66f9e..75b89e495 100644
+--- a/tests/v1-1-pro-foundations.test.js
++++ b/tests/v1-1-pro-foundations.test.js
+@@ -95,6 +95,33 @@ test('FSRS-lite: isDue compares dueAt against now', () => {
+   assert.equal(isDue({ dueAt: '2026-05-25T00:00:00.000Z' }, now), false);
+ });
+ 
++test('FSRS-lite: sortByDueAscending demotes malformed review timestamps', () => {
++  const { isDue, sortByDueAscending } = loadTs('lib/learning/spacedRepetition.ts');
++  const now = '2026-03-02T12:00:00.000Z';
++
++  for (const dueAt of [
++    '2026-02-30T00:00:00.000Z',
++    '2026-03-02',
++    '2026-03-02T12:00:00+00:00',
++    'not-a-date',
++  ]) {
++    assert.equal(isDue({ dueAt }, now), false);
++  }
++
++  assert.equal(isDue({ dueAt: '2026-03-02T00:00:00.000Z' }, '2026-02-30T12:00:00.000Z'), false);
++  assert.deepEqual(
++    [
++      { questionId: 'date-only', dueAt: '2026-03-01' },
++      { questionId: 'future', dueAt: '2026-03-03T00:00:00.000Z' },
++      { questionId: 'rollover', dueAt: '2026-02-30T00:00:00.000Z' },
++      { questionId: 'past', dueAt: '2026-03-01T00:00:00.000Z' },
++    ]
++      .sort(sortByDueAscending)
++      .map((card) => card.questionId),
++    ['past', 'future', 'date-only', 'rollover'],
++  );
++});
++
+ // ----------------------------------------------------------- Study plan algo
+ 
+ test('generateStudyPlan: 27 days out, regular intensity → reasonable target', () => {
+diff --git a/tests/v1-1-review-store.test.js b/tests/v1-1-review-store.test.js
+index b7528f889..b778bf317 100644
+--- a/tests/v1-1-review-store.test.js
++++ b/tests/v1-1-review-store.test.js
+@@ -96,6 +96,25 @@ test('dueCount: counts due cards', () => {
+   assert.equal(dueCount(makeState(cards), now), 1);
+ });
+ 
++test('dueCards: ignores malformed due timestamps even when imported state bypasses normalization', () => {
++  const { dueCards, dueCount } = loadTs('lib/storage/reviewStore.ts');
++  const now = '2026-03-02T12:00:00.000Z';
++  const state = makeState([
++    fakeCard('q-valid-past', '2026-03-01T00:00:00.000Z'),
++    fakeCard('q-valid-future', '2026-03-03T00:00:00.000Z'),
++    fakeCard('q-rollover', '2026-02-30T00:00:00.000Z'),
++    fakeCard('q-date-only', '2026-03-02'),
++    fakeCard('q-timezone-offset', '2026-03-02T12:00:00+00:00'),
++  ]);
++
++  assert.deepEqual(
++    dueCards(state, { now }).map((card) => card.questionId),
++    ['q-valid-past'],
++  );
++  assert.equal(dueCount(state, now), 1);
++  assert.deepEqual(dueCards(state, { now: '2026-02-30T12:00:00.000Z' }), []);
++});
++
+ test('remainingDailyReviews: Pro = unlimited', () => {
+   const { remainingDailyReviews } = loadTs('lib/storage/reviewStore.ts');
+   const state = makeState([], {});

@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- add retention and learning tests for malformed streak-freeze counters\n- mirror the counter normalization contract in `validate:content` with 14 streak-rule checks\n- prove invalid `available`, `lifetimeEarned`, and `lifetimeSpent` values normalize before refill/spend math\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/v1-1-retention-selectors.test.js scripts/learning.test.js --test-name-pattern 'streakWithFreeze|refillFreezes|available|lifetimeEarned|lifetimeSpent|finite|NaN|negative|fractional|string'`\n- `NODE_OPTIONS='--v8-pool-size=1' npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `git diff --check`",
+  "files": [
+    {
+      "path": "scripts/learning.test.js",
+      "additions": 40,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 128,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/v1-1-retention-selectors.test.js",
+      "additions": 77,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/streak-freeze-runtime-count-input-guard-1",
+  "headRefOid": "de30fc58e50ceac2d38b9152ad923b5fc03adc8f",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2368,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T11:54:24Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223864934/job/77165616415",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T11:44:37Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "test: guard streak freeze counter normalization",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2368"
+}
