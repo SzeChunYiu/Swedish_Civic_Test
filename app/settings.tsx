@@ -95,12 +95,16 @@ function formatImportByteCount(byteCount: number, language: AppLanguage): string
   return new Intl.NumberFormat(language === 'sv' ? 'sv-SE' : 'en-US').format(byteCount);
 }
 
-const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
-
-function appendImportErrorDetail(message: string, detail: string | undefined, fieldLabel: string) {
+function appendImportErrorDetail(
+  message: string,
+  detail: string | undefined,
+  fieldLabel: string,
+): string {
   const formattedDetail = formatLocalStudyDataImportErrorDetail(detail);
-  return formattedDetail ? `${message} ${fieldLabel}: ${formattedDetail}` : message;
+  return formattedDetail ? `${message}\n${fieldLabel}: ${formattedDetail}` : message;
 }
+
+const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
