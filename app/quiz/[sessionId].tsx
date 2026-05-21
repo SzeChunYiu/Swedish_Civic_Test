@@ -213,6 +213,7 @@ export default function QuizSessionScreen() {
             <Link
               accessibilityLabel={copy.backToPracticeAccessibilityLabel}
               accessibilityRole="link"
+              dismissTo
               href="/practice"
               style={styles.linkButton}
             >
@@ -241,6 +242,7 @@ export default function QuizSessionScreen() {
           <Link
             accessibilityLabel={copy.backToPracticeAccessibilityLabel}
             accessibilityRole="link"
+            dismissTo
             href="/practice"
             style={styles.linkButton}
           >
@@ -397,6 +399,7 @@ export default function QuizSessionScreen() {
             <Link
               accessibilityLabel={copy.backToPracticeAccessibilityLabel}
               accessibilityRole="link"
+              dismissTo
               href="/practice"
               style={styles.linkButton}
             >

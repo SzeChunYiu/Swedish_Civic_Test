@@ -24,6 +24,10 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
   const searchSource = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  const backToPracticeLinks =
+    source.match(
+      /<Link\b[\s\S]*?accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}[\s\S]*?<\/Link>/g,
+    ) ?? [];
 
   assert.equal(summary.quizRouteCopyLabelsValidated, 20);
   assert.equal(summary.quizRouteCopyParityValidated, true);
@@ -45,7 +49,13 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /const backToSearchHref = getBackToSearchHref\(returnSearchQuery\);/);
   assert.match(source, /href=\{backToSearchHref\}/);
   assert.match(source, /return `\/search\?q=\$\{encodeURIComponent\(searchQuery\)\}` as Href;/);
+  assert.equal(backToPracticeLinks.length, 3);
+  for (const backToPracticeLink of backToPracticeLinks) {
+    assert.match(backToPracticeLink, /href="\/practice"/);
+    assert.match(backToPracticeLink, /\bdismissTo\b|\breplace\b/);
+  }
   assert.match(source, /Tillbaka till övning/);
+  assert.match(source, /Back to Practice/);
   assert.match(source, /Session \$\{currentSessionId\}/);
   assert.match(source, /Frågepass \$\{currentSessionId\}/);
   assert.match(source, /Quiz session: \$\{chapterTitle\}/);
