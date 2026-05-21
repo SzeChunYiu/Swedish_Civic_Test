@@ -38,6 +38,10 @@ function loadExportModule(storageById) {
   return loadTsWithStorage(repoRoot, 'lib/storage/localStudyDataExport.ts', storageById);
 }
 
+function loadSettingsModule(storageById) {
+  return loadTsWithStorage(repoRoot, 'lib/storage/settingsStore.ts', storageById);
+}
+
 test('storage-backed tests share the storage harness TypeScript loader and native stubs', () => {
   const storageHarnessConsumers = [
     'tests/v1-1-review-store.test.js',
@@ -226,6 +230,61 @@ test('local study data import previews and applies all learner snapshot sections
     storageById['citizenship-requirements'].values.get('citizenshipRequirementsChecklistState'),
   );
   assert.deepEqual(citizenshipRequirements.checkedAreaIds, ['identity', 'civicKnowledge']);
+});
+
+test('local study data import accepts only exact persisted daily-goal options', () => {
+  const storageById = createStorageById();
+  storageById.settings.set('dailyGoalAnswers', 40);
+  const { importSettingsSnapshot, normalizeImportedSettings } = loadSettingsModule(storageById);
+  const unsafeValues = [
+    19.6,
+    39.6,
+    5.2,
+    Number.NaN,
+    Infinity,
+    -Infinity,
+    '20',
+    null,
+    0,
+    3,
+    11,
+    41,
+    50,
+  ];
+
+  for (const unsafeValue of unsafeValues) {
+    assert.deepEqual(
+      normalizeImportedSettings({ language: 'en', dailyGoalAnswers: unsafeValue }),
+      { language: 'en' },
+      `unsafe imported daily goal ${String(unsafeValue)} must be omitted`,
+    );
+  }
+
+  for (const validGoal of [5, 10, 20, 40]) {
+    assert.deepEqual(normalizeImportedSettings({ dailyGoalAnswers: validGoal }), {
+      dailyGoalAnswers: validGoal,
+    });
+  }
+
+  importSettingsSnapshot({ language: 'en', dailyGoalAnswers: 19.6 });
+  assert.equal(storageById.settings.values.get('language'), 'en');
+  assert.equal(storageById.settings.values.get('dailyGoalAnswers'), 40);
+});
+
+test('local study data import treats unsafe daily-goal-only settings as empty import', () => {
+  const storageById = createStorageById();
+  const { previewLocalStudyDataImport } = loadImportModule(storageById);
+  const result = previewLocalStudyDataImport(
+    JSON.stringify({
+      version: 1,
+      settings: {
+        dailyGoalAnswers: 19.6,
+      },
+    }),
+  );
+
+  assert.deepEqual(result, { ok: false, code: 'empty_import' });
+  assert.equal(storageById.settings.values.size, 0);
 });
 
 test('local study data export round-trips citizenship requirements without purchase fields', () => {

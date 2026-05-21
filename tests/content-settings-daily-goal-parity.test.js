@@ -172,6 +172,7 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.match(settingsStore, /const dailyGoalKey = 'dailyGoalAnswers';/);
   assert.match(settingsStore, /const defaultDailyGoalAnswers = 10;/);
   assert.match(settingsStore, /function normalizeDailyGoalAnswers/);
+  assert.match(settingsStore, /function normalizeImportableDailyGoalAnswers/);
   assert.match(settingsStore, /const storedValue = readStorageNumber\(dailyGoalKey\);/);
   assert.match(settingsStore, /return normalizeDailyGoalAnswers\(storedValue\);/);
   assert.match(
@@ -186,7 +187,12 @@ test('daily goal settings stay in parity between storage and settings controls',
     settingsStore,
     /const normalizedGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/,
   );
+  assert.match(
+    settingsStore,
+    /const normalizedGoal = normalizeImportableDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
+  );
   assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
+  assert.doesNotMatch(settingsStore, /Math\.round\(candidate\.dailyGoalAnswers\)/);
   assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
   assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
@@ -294,6 +300,21 @@ test('daily goal settings parity rejects raw positive-number hydration', () => {
   assert.match(
     output,
     /readDailyGoalAnswers must normalize the raw persisted value|settings store focus missing return normalizeDailyGoalAnswers\(storedValue\);/,
+  );
+  assert.doesNotMatch(output, /Content validation OK/);
+});
+
+test('daily goal settings parity rejects rounded imported values', () => {
+  const result = runValidationWithSettingsStorePatch(
+    'const normalizedGoal = normalizeImportableDailyGoalAnswers(candidate.dailyGoalAnswers);',
+    'const normalizedGoal = normalizeDailyGoalAnswers(Math.round(candidate.dailyGoalAnswers));',
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(
+    output,
+    /normalizeImportedSettings must validate imported daily goals without rounding|normalizeImportedSettings must not round unsafe imported daily-goal values/,
   );
   assert.doesNotMatch(output, /Content validation OK/);
 });

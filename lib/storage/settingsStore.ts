@@ -108,6 +108,19 @@ function normalizeDailyGoalAnswers(answerCount: unknown): number {
   return storedDailyGoalOptions.includes(answerCount) ? answerCount : defaultDailyGoalAnswers;
 }
 
+function normalizeImportableDailyGoalAnswers(answerCount: unknown): number | undefined {
+  if (
+    typeof answerCount !== 'number' ||
+    !Number.isFinite(answerCount) ||
+    !Number.isInteger(answerCount) ||
+    !storedDailyGoalOptions.includes(answerCount)
+  ) {
+    return undefined;
+  }
+
+  return answerCount;
+}
+
 type SettingsState = {
   language: AppLanguage;
   audioEnabled: boolean;
@@ -146,7 +159,10 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
     settings.audioEnabled = candidate.audioEnabled;
   }
   if (typeof candidate.dailyGoalAnswers === 'number') {
-    settings.dailyGoalAnswers = normalizeDailyGoalAnswers(Math.round(candidate.dailyGoalAnswers));
+    const normalizedGoal = normalizeImportableDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (normalizedGoal !== undefined) {
+      settings.dailyGoalAnswers = normalizedGoal;
+    }
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;

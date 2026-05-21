@@ -14475,6 +14475,10 @@ function validateSettingsDailyGoalParity() {
       'settings store must centralize daily-goal normalization',
     ],
     [
+      'function normalizeImportableDailyGoalAnswers',
+      'settings store must centralize imported daily-goal validation',
+    ],
+    [
       'const storedValue = readStorageNumber(dailyGoalKey);',
       'readDailyGoalAnswers must read the raw persisted daily goal safely',
     ],
@@ -14503,6 +14507,14 @@ function validateSettingsDailyGoalParity() {
       'const normalizedGoal = normalizeDailyGoalAnswers(dailyGoalAnswers);',
       'setDailyGoalAnswers must normalize runtime input before persisting',
     ],
+    [
+      'const normalizedGoal = normalizeImportableDailyGoalAnswers(candidate.dailyGoalAnswers);',
+      'normalizeImportedSettings must validate imported daily goals without rounding',
+    ],
+    [
+      'if (normalizedGoal !== undefined) { settings.dailyGoalAnswers = normalizedGoal; }',
+      'normalizeImportedSettings must omit unsafe imported daily goals',
+    ],
   ];
 
   requiredStoreSnippets.forEach(([snippet, message]) => {
@@ -14510,6 +14522,9 @@ function validateSettingsDailyGoalParity() {
   });
   if (normalizedSettingsStore.includes('Math.round(dailyGoalAnswers)')) {
     reject('setDailyGoalAnswers must not round unsafe runtime input directly');
+  }
+  if (normalizedSettingsStore.includes('Math.round(candidate.dailyGoalAnswers)')) {
+    reject('normalizeImportedSettings must not round unsafe imported daily-goal values');
   }
   if (!normalizedSettingsStore.includes('const storedValue = readStorageNumber(dailyGoalKey);')) {
     reject('readDailyGoalAnswers must read the persisted value through readStorageNumber');
