@@ -13,3 +13,4 @@ gap:swedish society/work/everyday-life coverage vs official expectations
 enrich:propose 20 original sourced SV+EN question candidates (history)
 enrich:propose 20 original sourced SV+EN question candidates (law/rights)
 # Ramp: per gap found, queue CONTENT atoms; deepen Nordic comparisons.
+gap:language-support boundary — distinguish Swedish civic knowledge prep from official Swedish-language proof
