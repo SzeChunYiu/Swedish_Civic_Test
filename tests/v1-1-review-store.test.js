@@ -2,58 +2,21 @@
 // Run with: node --test tests/v1-1-review-store.test.js
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
-const ts = require('typescript');
 
 const {
   createMemoryMMKV,
   createThrowingReadMMKV: createThrowingGetMMKV,
   createThrowingSetMMKV,
+  loadTsModule,
   loadTsWithStorage,
 } = require('./helpers/storageStoreHarness.cjs');
 
 const repoRoot = path.resolve(__dirname, '..');
 
-// Stub react-native-mmkv and zustand so we can load store modules in Node
-// without their native / RN-specific deps. The store under test is exercised
-// via its pure selectors only — the stubs are sufficient for that surface.
-const Module = require('node:module');
-const origResolve = Module._resolveFilename;
-const stubs = {
-  'react-native-mmkv': () => ({ createMMKV: () => null }),
-  zustand: () => ({
-    create: (factory) => {
-      const setFn = (partial) =>
-        Object.assign(state, typeof partial === 'function' ? partial(state) : partial);
-      const getFn = () => state;
-      const state = factory(setFn, getFn);
-      return () => state;
-    },
-  }),
-};
-Module._resolveFilename = function patchedResolve(request, ...args) {
-  if (stubs[request]) return `__stub__:${request}`;
-  return origResolve.call(this, request, ...args);
-};
-const origLoad = Module._load;
-Module._load = function patchedLoad(request, ...args) {
-  if (stubs[request]) return stubs[request]();
-  return origLoad.call(this, request, ...args);
-};
-
-require.extensions['.ts'] = function tsLoader(module, filename) {
-  const source = fs.readFileSync(filename, 'utf8');
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-    fileName: filename,
-  }).outputText;
-  module._compile(transpiled, filename);
-};
-
 function loadTs(rel) {
-  return require(path.join(repoRoot, rel));
+  return loadTsModule(repoRoot, rel);
 }
 
 // Selector tests use a hand-built state shape directly (no zustand/MMKV).
