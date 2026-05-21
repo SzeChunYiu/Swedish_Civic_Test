@@ -8013,3 +8013,157 @@ html[dir='rtl'] .lang-menu {
     flex: 1 1 auto;
   }
 }
+
+/* ------------------------------------------------------------------
+   SIGN-IN BOX OPTIMIZATION ROUND
+   Makes optional account controls feel trustworthy and tactile while
+   preserving the no-pressure account message.
+------------------------------------------------------------------ */
+
+.signin__login,
+.signin__account {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(254, 204, 0, 0.14), transparent 120px),
+    var(--card-surface);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  box-shadow: var(--card-shadow);
+  isolation: isolate;
+  overflow: hidden;
+  padding: 20px 18px 18px 24px;
+  position: relative;
+}
+
+.signin__login::before,
+.signin__account::before {
+  background: var(--card-rail);
+  content: '';
+  inset: 0 auto 0 0;
+  opacity: 0.82;
+  position: absolute;
+  width: 5px;
+}
+
+.signin__lede {
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  padding: 12px 13px;
+}
+
+.signin__btn {
+  background: rgba(255, 255, 255, 0.56);
+  border: 1px solid rgba(0, 106, 167, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px -22px rgba(0, 58, 92, 0.5);
+  margin-bottom: 10px;
+  min-height: 48px;
+  padding: 12px 14px;
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease,
+    box-shadow 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease;
+}
+
+.signin__btn:hover,
+.signin__btn:focus-visible {
+  background: rgba(254, 204, 0, 0.12);
+  border-color: rgba(0, 106, 167, 0.32);
+  box-shadow: var(--card-shadow);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.signin__btn:active {
+  transform: translateY(0);
+}
+
+.signin__btn-icon {
+  background: rgba(254, 204, 0, 0.2);
+  border: 1px solid rgba(254, 204, 0, 0.36);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: var(--blue);
+}
+
+.signin__divider span {
+  background: rgba(254, 204, 0, 0.16);
+  border: 1px solid rgba(254, 204, 0, 0.32);
+  border-radius: 999px;
+  color: var(--blue);
+  font-family: var(--mono);
+  font-weight: 800;
+  padding: 4px 9px;
+  text-transform: uppercase;
+}
+
+.signin__input {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 106, 167, 0.18);
+  border-radius: 14px;
+  min-height: 48px;
+}
+
+.signin__input:focus {
+  border-color: rgba(0, 106, 167, 0.72);
+  box-shadow:
+    0 0 0 3px rgba(0, 106, 167, 0.12),
+    var(--card-shadow);
+}
+
+.signin__magic,
+.signin__signout {
+  min-height: 48px;
+}
+
+.signin__fineprint,
+.signin__signedin {
+  background: rgba(0, 106, 167, 0.07);
+  border: 1px solid rgba(0, 106, 167, 0.12);
+  border-radius: 14px;
+  padding: 11px 12px;
+}
+
+.signin__fineprint {
+  text-align: left;
+}
+
+:root[data-theme='dark'] .signin__login,
+:root[data-theme='dark'] .signin__account {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .signin__lede,
+:root[data-theme='dark'] .signin__fineprint,
+:root[data-theme='dark'] .signin__signedin,
+:root[data-theme='dark'] .signin__btn,
+:root[data-theme='dark'] .signin__input {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='dark'] .signin__btn:hover,
+:root[data-theme='dark'] .signin__btn:focus-visible {
+  background: rgba(0, 106, 167, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signin__btn {
+    transition: none;
+  }
+  .signin__btn:hover,
+  .signin__btn:focus-visible {
+    transform: none;
+  }
+}
+
+@media (max-width: 460px) {
+  .signin__login,
+  .signin__account {
+    border-radius: 18px;
+    padding: 18px 14px 16px 19px;
+  }
+}
