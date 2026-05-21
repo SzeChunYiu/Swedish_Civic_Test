@@ -15,11 +15,6 @@ import { SwedishFlagBand } from '../../components/ui/SwedishFlagBand';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
 import { uxBenchmarks } from '../../data/uxBenchmarks';
-import {
-  buildDailyChallenge,
-  dailyChallengeBannerCopy,
-  isDailyChallengeCompleted,
-} from '../../lib/learning/dailyChallenge';
 import { findWeakChapterIds } from '../../lib/learning/mastery';
 import {
   computeReadinessFromQuestionProgress,
@@ -56,10 +51,6 @@ type GuidedPathStageCopy = {
 type HomeCopy = {
   browseChapters: string;
   browseChaptersAccessibilityLabel: string;
-  dailyChallengeAccessibilityLabel: (title: string, subtitle: string) => string;
-  dailyChallengeCta: string;
-  dailyChallengeDoneCta: string;
-  dailyChallengeMeta: (questionCount: number) => string;
   dailyGoalTitle: string;
   dayStreakHelper: string;
   dayStreakMetric: string;
@@ -115,16 +106,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   sv: {
     browseChapters: 'Bläddra bland kapitel',
     browseChaptersAccessibilityLabel: 'Bläddra bland alla samhällskapitel',
-    dailyChallengeAccessibilityLabel: (title, subtitle) =>
-      `${title}. ${subtitle}. Öppna dagens utmaning.`,
-    dailyChallengeCta: 'Starta utmaning',
-    dailyChallengeDoneCta: 'Visa dagens utmaning',
-    dailyChallengeMeta: (questionCount) => `${questionCount} frågor · 60 sekunder`,
     dailyGoalTitle: 'Dagens mål',
     dayStreakHelper: 'daglig vana',
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Studieöversikt',
-    feedbackBadge: '10 000 elevers återkoppling',
+    feedbackBadge: 'Fokuserad repetition',
     feedbackLink: 'Repetera sparade frågor',
     feedbackLinkAccessibilityLabel: 'Granska bokmärkta eller missade frågor',
     feedbackText:
@@ -147,10 +133,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 1-4',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Börja med landet, demokratin, styret och valen.',
         levelLabel: 'Nybörjare',
@@ -162,10 +148,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 5-9',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description: 'Bygg vidare med lag, medier, rättigheter, arbetsliv och välfärd.',
         levelLabel: 'Fortsättning',
@@ -177,10 +163,10 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
         accessibilityLabel: (title, chapterRange, progressLabel, status) =>
           `${title}. ${chapterRange}. ${progressLabel}. ${status}.`,
         chapterRange: 'Kapitel 10-13',
-        cta: (isCompleted) => (isCompleted ? 'Gå till mockprov' : 'Öppna nästa kapitel'),
+        cta: (isCompleted) => (isCompleted ? 'Gå till övningsprov' : 'Öppna nästa kapitel'),
         ctaAccessibilityLabel: (title, isCompleted) =>
           isCompleted
-            ? `${title}: gå till mockprov när steget är klart.`
+            ? `${title}: gå till övningsprov när steget är klart.`
             : `${title}: öppna nästa kapitel i steget.`,
         description:
           'Avsluta med moderna Sverige, internationella frågor, religionsfrihet och högtider.',
@@ -253,16 +239,11 @@ const homeCopy: Record<AppLanguage, HomeCopy> = {
   en: {
     browseChapters: 'Browse chapters',
     browseChaptersAccessibilityLabel: 'Browse all civic chapters',
-    dailyChallengeAccessibilityLabel: (title, subtitle) =>
-      `${title}. ${subtitle}. Open today's challenge.`,
-    dailyChallengeCta: 'Start challenge',
-    dailyChallengeDoneCta: "View today's challenge",
-    dailyChallengeMeta: (questionCount) => `${questionCount} questions · 60 seconds`,
     dailyGoalTitle: "Today's goal",
     dayStreakHelper: 'daily habit',
     dayStreakMetric: 'day streak',
     eyebrow: 'Study dashboard',
-    feedbackBadge: '10,000-learner feedback pass',
+    feedbackBadge: 'Focused review',
     feedbackLink: 'Review saved questions',
     feedbackLinkAccessibilityLabel: 'Review bookmarked or missed questions',
     feedbackText:
@@ -403,13 +384,9 @@ export default function Screen() {
   const mockExamSessions = useProgressStore((state) => state.mockExamSessions);
   const totalXp = useProgressStore((state) => state.totalXp);
   const answerDates = useProgressStore((state) => state.answerDates);
-  const dailyChallengeCompletions = useProgressStore((state) => state.dailyChallengeCompletions);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = homeCopy[language];
-  const dailyChallenge = buildDailyChallenge({ bank: questions });
-  const dailyChallengeCompleted = isDailyChallengeCompleted(Object.keys(dailyChallengeCompletions));
-  const dailyChallengeCopy = dailyChallengeBannerCopy(dailyChallengeCompleted, language);
   const completedToday = Math.min(countAnswersForLocalDate(questionProgress), dailyGoalAnswers);
   const progress = dailyGoalAnswers > 0 ? completedToday / dailyGoalAnswers : 0;
   const currentStreak = calculateStreak(answerDates);
@@ -502,35 +479,6 @@ export default function Screen() {
           language={language}
         />
       ) : null}
-      <Card style={styles.dailyChallengeCard}>
-        <View
-          accessible
-          accessibilityLabel={copy.dailyChallengeAccessibilityLabel(
-            dailyChallengeCopy.title,
-            dailyChallengeCopy.subtitle,
-          )}
-          aria-label={copy.dailyChallengeAccessibilityLabel(
-            dailyChallengeCopy.title,
-            dailyChallengeCopy.subtitle,
-          )}
-          style={styles.dailyChallengeText}
-        >
-          <Badge tone={dailyChallengeCompleted ? 'green' : 'orange'}>
-            {copy.dailyChallengeMeta(dailyChallenge.questionIds.length)}
-          </Badge>
-          <Text accessibilityRole="header" style={styles.dailyChallengeTitle}>
-            {dailyChallengeCopy.title}
-          </Text>
-          <Text style={styles.dailyChallengeSubtitle}>{dailyChallengeCopy.subtitle}</Text>
-        </View>
-        <Link
-          accessibilityRole="link"
-          href="/practice?mode=challenge"
-          style={dailyChallengeCompleted ? styles.secondaryLink : styles.primaryLink}
-        >
-          {dailyChallengeCompleted ? copy.dailyChallengeDoneCta : copy.dailyChallengeCta}
-        </Link>
-      </Card>
       <View style={styles.actions}>
         <Link
           accessibilityLabel={copy.startPracticeAccessibilityLabel}
@@ -729,23 +677,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: space[1.5],
-  },
-  dailyChallengeCard: {
-    gap: space[1.5],
-  },
-  dailyChallengeText: {
-    gap: space[0.75],
-  },
-  dailyChallengeTitle: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  dailyChallengeSubtitle: {
-    color: colors.textSecondary,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
   },
   primaryLink: {
     backgroundColor: colors.accent,
