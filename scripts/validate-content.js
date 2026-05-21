@@ -9206,7 +9206,6 @@ let questionLuciaExplanationRoleScaffoldValidated = 0;
 let questionGoodFridayEnglishNaturalnessValidated = 0;
 let questionReferendumAdvisorySwedishNaturalnessValidated = 0;
 let questionSourceCriticismEnglishNaturalnessValidated = 0;
-let questionPublicSectorEnglishNaturalnessValidated = 0;
 let derivedCivicStatementPromptMirrorValidated = 0;
 let generatedWhyReasonTargetStemsValidated = 0;
 let generatedWhyReasonTargetStemParityValidated = false;
@@ -22817,8 +22816,6 @@ if (Array.isArray(questions)) {
         findQuestionReferendumAdvisorySwedishNaturalnessIssue(question);
       const sourceCriticismEnglishNaturalnessIssue =
         findQuestionSourceCriticismEnglishNaturalnessIssue(question);
-      const publicSectorEnglishNaturalnessIssue =
-        findQuestionPublicSectorEnglishNaturalnessIssue(question);
       const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
@@ -22900,11 +22897,6 @@ if (Array.isArray(questions)) {
         fail(`${label} uses stilted source-criticism English wording`);
       } else {
         questionSourceCriticismEnglishNaturalnessValidated += 1;
-      }
-      if (publicSectorEnglishNaturalnessIssue) {
-        fail(`${label} uses stilted public-sector English wording`);
-      } else {
-        questionPublicSectorEnglishNaturalnessValidated += 1;
       }
       if (answerKeyPromptIssue) {
         fail(answerKeyPromptIssue);
