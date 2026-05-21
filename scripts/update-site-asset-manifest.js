@@ -17,6 +17,49 @@ const cssImportReferencePattern =
 const cssUrlReferencePattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)/gi;
 const maxStylesheetImportDepth = 20;
 
+function stripCssBlockComments(cssText) {
+  let output = '';
+  let index = 0;
+  let quotedString = null;
+
+  while (index < cssText.length) {
+    const char = cssText[index];
+    const nextChar = cssText[index + 1];
+
+    if (quotedString) {
+      output += char;
+      if (char === '\\' && index + 1 < cssText.length) {
+        output += nextChar;
+        index += 2;
+        continue;
+      }
+      if (char === quotedString) {
+        quotedString = null;
+      }
+      index += 1;
+      continue;
+    }
+
+    if (char === '"' || char === "'") {
+      quotedString = char;
+      output += char;
+      index += 1;
+      continue;
+    }
+
+    if (char === '/' && nextChar === '*') {
+      const commentEnd = cssText.indexOf('*/', index + 2);
+      index = commentEnd === -1 ? cssText.length : commentEnd + 2;
+      continue;
+    }
+
+    output += char;
+    index += 1;
+  }
+
+  return output;
+}
+
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
 }
@@ -110,13 +153,15 @@ function parseHtmlAttributes(html) {
 }
 
 function parseCssUrlAssetCandidates(cssText) {
-  return Array.from(cssText.matchAll(cssUrlReferencePattern), (match) =>
+  const uncommentedCssText = stripCssBlockComments(cssText);
+  return Array.from(uncommentedCssText.matchAll(cssUrlReferencePattern), (match) =>
     (match[1] ?? match[2] ?? match[3] ?? '').trim(),
   ).filter(Boolean);
 }
 
 function parseCssImportAssetCandidates(cssText) {
-  return Array.from(cssText.matchAll(cssImportReferencePattern), (match) =>
+  const uncommentedCssText = stripCssBlockComments(cssText);
+  return Array.from(uncommentedCssText.matchAll(cssImportReferencePattern), (match) =>
     (match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '').trim(),
   ).filter(Boolean);
 }
@@ -379,5 +424,6 @@ module.exports = {
   parseCssUrlAssetCandidates,
   parseCssImportAssetCandidates,
   parseSrcsetAssetCandidates,
+  stripCssBlockComments,
   writeAssetManifest,
 };

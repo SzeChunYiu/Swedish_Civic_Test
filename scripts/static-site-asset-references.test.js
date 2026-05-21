@@ -132,6 +132,38 @@ test('static site asset extractor follows local stylesheet imports recursively',
   ]);
 });
 
+test('static site asset extractor ignores commented stylesheet imports and urls', () => {
+  const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-css-comments-'));
+  fs.mkdirSync(path.join(tmpDir, 'css'), { recursive: true });
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'site.css'),
+    [
+      '/* @import "./legacy.css"; */',
+      '/* .old-hero { background-image: url("../img/old-hero.webp"); } */',
+      '@import "./theme.css";',
+      '.hero { background-image: url("../img/current-hero.webp"); }',
+      '.quoted { content: "not a comment: /* keep quoted text */"; }',
+    ].join('\n'),
+  );
+  fs.writeFileSync(
+    path.join(tmpDir, 'css', 'theme.css'),
+    [
+      '/* @import "./old-theme.css"; */',
+      '/* .old-theme { cursor: url("../cursors/old.cur"), pointer; } */',
+      '.theme { cursor: url("../cursors/current.cur"), pointer; }',
+    ].join('\n'),
+  );
+
+  const indexHtml = '<link rel="stylesheet" href="./css/site.css" />';
+
+  assert.deepEqual(localAssetReferences(indexHtml, { siteDir: tmpDir }), [
+    'css/site.css',
+    'img/current-hero.webp',
+    'css/theme.css',
+    'cursors/current.cur',
+  ]);
+});
+
 test('static site asset extractor fails responsive and poster references when files are not shipped', () => {
   const tmpDir = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'static-assets-'));
   const indexHtml = `
