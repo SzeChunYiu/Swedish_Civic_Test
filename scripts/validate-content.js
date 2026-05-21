@@ -15414,6 +15414,9 @@ function validateSettingsAudioParity() {
   if (!normalizedSettingsStore.includes('settingsStorageId, audioEnabledKey, audioEnabled,')) {
     reject('setAudioEnabled must persist audioEnabled through audioEnabledKey');
   }
+  if (!normalizedSettingsStore.includes('if (!audioEnabled) { stopSpeech(); }')) {
+    reject('setAudioEnabled(false) must stop any in-flight speech before muting');
+  }
 
   if (
     !settingsRoute.includes('const audioEnabled = useSettingsStore((state) => state.audioEnabled);')
