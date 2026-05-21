@@ -491,6 +491,76 @@ test('derivePublishedQuestions renders q015 voter-turnout true/false without whe
   );
 });
 
+test('derivePublishedQuestions renders how-can-affect true/false as standalone propositions', () => {
+  const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
+  const source = {
+    id: 'q999',
+    chapterId: 'ch02',
+    type: 'single_choice',
+    questionSv: 'Hur kan falsk information påverka demokratin?',
+    questionEn: 'How can false information affect democracy?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Det kan skapa konflikter och skrämma människor från debatt',
+        textEn: 'It can create conflicts and scare people away from debate',
+      },
+      {
+        id: 'b',
+        textSv: 'Genom att göra alla källor mer pålitliga',
+        textEn: 'By making all sources more reliable',
+      },
+      {
+        id: 'c',
+        textSv: 'Genom att förbjuda all kritik',
+        textEn: 'By banning all criticism',
+      },
+      {
+        id: 'd',
+        textSv: 'Genom att stoppa alla nyheter',
+        textEn: 'By stopping all news',
+      },
+    ],
+    correctOptionId: 'a',
+    explanationSv: 'Falsk information kan skada den demokratiska debatten.',
+    explanationEn: 'False information can harm democratic debate.',
+    uhrReference: {
+      chapter: 'Sveriges demokratiska system',
+      section: 'Hot mot demokratin',
+      pageApprox: 11,
+    },
+    difficulty: 'medium',
+    reviewStatus: 'reviewed',
+    tags: ['democracy', 'false-information'],
+  };
+
+  const derived = derivePublishedQuestions([source], 901);
+  const trueStatement = derived.find((question) => question.id === 'q902');
+  const falseStatement = derived.find((question) => question.id === 'q903');
+  const staleSplicePattern = /\b(?:när\s+[^.?!]+?\spåverkar|when\s+[^.?!]+?\saffects)\b/i;
+
+  assert.equal(
+    trueStatement?.questionSv,
+    'Falsk information kan påverka demokratin genom att skapa konflikter och skrämma människor från debatt.',
+  );
+  assert.equal(
+    trueStatement?.questionEn,
+    'False information can affect democracy by creating conflicts and scaring people away from debate.',
+  );
+  assert.equal(
+    falseStatement?.questionSv,
+    'Falsk information kan påverka demokratin genom att göra alla källor mer pålitliga.',
+  );
+  assert.equal(
+    falseStatement?.questionEn,
+    'False information can affect democracy by making all sources more reliable.',
+  );
+  assert.doesNotMatch(
+    `${trueStatement?.questionSv} ${trueStatement?.questionEn} ${falseStatement?.questionSv} ${falseStatement?.questionEn}`,
+    staleSplicePattern,
+  );
+});
+
 test('derivePublishedQuestions avoids generated true/false naturalness regressions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
   const sources = [
@@ -952,7 +1022,7 @@ test('generated true/false naturalness patterns allow direct media and web propo
 
 test('derivePublishedQuestions turns policy-goal meanings into direct English propositions', () => {
   const { derivePublishedQuestions } = loadTs('lib/content/derivedQuestions.ts');
-  const source = {
+  const genderEqualitySource = {
     id: 'q900',
     chapterId: 'ch07',
     type: 'single_choice',
@@ -996,10 +1066,46 @@ test('derivePublishedQuestions turns policy-goal meanings into direct English pr
     reviewStatus: 'reviewed',
     tags: ['gender-equality', 'rights', 'policy'],
   };
+  const publicHealthSource = {
+    ...genderEqualitySource,
+    id: 'q901',
+    questionSv: 'Vad innebär målet med Sveriges folkhälsopolitik?',
+    questionEn: 'What does the goal of Sweden’s public health policy mean?',
+    options: [
+      {
+        id: 'a',
+        textSv: 'Att människor ska ha lika möjligheter till en god hälsa',
+        textEn: 'That people should have equal opportunities for good health',
+      },
+      {
+        id: 'b',
+        textSv: 'Att folkhälsa bara handlar om årliga motionskampanjer',
+        textEn: 'That public health is only about annual exercise campaigns',
+      },
+      {
+        id: 'c',
+        textSv: 'Att vård bara ska ges i stora städer',
+        textEn: 'That health care should only be provided in large cities',
+      },
+      {
+        id: 'd',
+        textSv: 'Att arbetsmiljö aldrig påverkar hälsa',
+        textEn: 'That working conditions never affect health',
+      },
+    ],
+    explanationSv:
+      'Folkhälsopolitik handlar om att människor ska ha lika möjligheter till en god hälsa.',
+    explanationEn:
+      'Public health policy is about people having equal opportunities for good health.',
+    tags: ['public-health', 'policy'],
+  };
 
-  const derived = derivePublishedQuestions([source], 901);
-  const trueVariant = derived[1];
-  const falseVariant = derived[2];
+  const genderEqualityDerived = derivePublishedQuestions([genderEqualitySource], 901);
+  const publicHealthDerived = derivePublishedQuestions([publicHealthSource], 905);
+  const trueVariant = genderEqualityDerived[1];
+  const falseVariant = genderEqualityDerived[2];
+  const publicHealthTrueVariant = publicHealthDerived[1];
+  const publicHealthFalseVariant = publicHealthDerived[2];
 
   assert.equal(
     trueVariant.questionEn,
@@ -1009,9 +1115,34 @@ test('derivePublishedQuestions turns policy-goal meanings into direct English pr
     falseVariant.questionEn,
     'Sweden’s gender equality policy is only about how many women are in politics.',
   );
+  assert.equal(
+    publicHealthTrueVariant.questionEn,
+    'Sweden’s public health policy aims for people to have equal opportunities for good health.',
+  );
+  assert.equal(
+    publicHealthFalseVariant.questionEn,
+    'Sweden’s public health policy is only about annual exercise campaigns.',
+  );
   assert.doesNotMatch(
-    `${trueVariant.questionEn}\n${falseVariant.questionEn}`,
+    [
+      trueVariant.questionEn,
+      falseVariant.questionEn,
+      publicHealthTrueVariant.questionEn,
+      publicHealthFalseVariant.questionEn,
+    ].join('\n'),
     /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
+  );
+  assert.match(
+    findGeneratedTrueFalseNaturalnessPatternMatch(
+      'The goal of public health policy means that people should have equal opportunities for good health.',
+    )?.pattern.source ?? '',
+    /The goal of/,
+  );
+  assert.match(
+    findGeneratedTrueFalseNaturalnessPatternMatch(
+      'Målet med Sveriges folkhälsopolitik betyder att människor ska ha lika möjligheter till en god hälsa.',
+    )?.pattern.source ?? '',
+    /Målet med/,
   );
 });
 
@@ -1185,6 +1316,37 @@ test('derivePublishedQuestions renders q877/q878 human-rights true/false as dire
     text,
     /Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means/i,
   );
+});
+
+test('derivePublishedQuestions renders q146 political-rights true/false as direct propositions', () => {
+  const { questions, sourceQuestions } = loadTs('data/questions.ts');
+  const byId = new Map(questions.map((question) => [question.id, question]));
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q146', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q146', 'falseStatement');
+
+  assert.equal(
+    byId.get(trueStatementId)?.questionSv,
+    'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer.',
+  );
+  assert.equal(
+    byId.get(trueStatementId)?.questionEn,
+    'In a democracy, people, groups, and parties may try to persuade others of their political ideas.',
+  );
+  assert.equal(byId.get(trueStatementId)?.correctOptionId, 'true');
+  assert.equal(
+    byId.get(falseStatementId)?.questionSv,
+    'I en demokrati får människor, grupper och partier inte hindra andra från att rösta.',
+  );
+  assert.equal(
+    byId.get(falseStatementId)?.questionEn,
+    'In a democracy, people, groups, and parties may not stop others from voting.',
+  );
+  assert.equal(byId.get(falseStatementId)?.correctOptionId, 'false');
+
+  const text = [byId.get(trueStatementId), byId.get(falseStatementId)]
+    .map((question) => `${question?.questionSv} ${question?.questionEn}`)
+    .join('\n');
+  assert.doesNotMatch(text, /^(?:Försöka övertyga|Hindra andra|Try to persuade|Stop others)/im);
 });
 
 test('derivePublishedQuestions cleans residual generated true/false splice rows', () => {
