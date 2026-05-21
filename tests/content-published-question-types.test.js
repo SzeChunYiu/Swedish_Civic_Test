@@ -1912,7 +1912,7 @@ test('religious-freedom option parallelism stays natural in exports', () => {
       question.why?.en,
       ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
     ].join(' ');
-  const q116Ids = new Set(['q116', 'q630', 'q633']);
+  const q116Ids = new Set(['q116', 'q640', 'q641', 'q643']);
   const generatedOffenders = generatedSiteBank
     .filter((question) => q116Ids.has(question.id))
     .filter((question) => religiousFreedomOptionParallelismPattern.test(textForQuestion(question)))
@@ -1946,7 +1946,7 @@ test('religious-freedom option parallelism stays natural in exports', () => {
 test('religious-freedom option parallelism reports focused validator coverage', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
+    ['scripts/validate-content.js', '--focus-religious-freedom-option-parallelism'],
     { cwd: repoRoot, encoding: 'utf8' },
   );
 
@@ -1956,6 +1956,7 @@ test('religious-freedom option parallelism reports focused validator coverage', 
   const summary = JSON.parse(match[0]);
   assert.equal(summary.publishedQuestions, buildSiteQuestionBank().questions.length);
   assert.equal(summary.questionReligiousFreedomParallelismValidated, summary.publishedQuestions);
+  assert.equal(summary.questionReligiousFreedomParallelismTargetRowsValidated, 4);
 });
 
 test('religious-freedom option parallelism guard rejects the old wording', () => {
@@ -1982,7 +1983,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-option-parallelism');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -2020,7 +2021,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-option-parallelism');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -2058,7 +2059,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-option-parallelism');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -2075,7 +2076,7 @@ require('./scripts/validate-content.js');
 test('religious-freedom option parallelism reports focused validator coverage', () => {
   const result = spawnSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
+    ['scripts/validate-content.js', '--focus-religious-freedom-option-parallelism'],
     { cwd: repoRoot, encoding: 'utf8' },
   );
   const summary = JSON.parse(result.stdout.match(/\{[\s\S]*\}/)?.[0] || '{}');
@@ -2086,6 +2087,7 @@ test('religious-freedom option parallelism reports focused validator coverage', 
     summary.questionReligiousFreedomParallelismValidated,
     buildSiteQuestionBank().questions.length,
   );
+  assert.equal(summary.questionReligiousFreedomParallelismTargetRowsValidated, 4);
 });
 
 test('human-rights definition true/false exports use direct propositions', () => {
