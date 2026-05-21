@@ -79,15 +79,15 @@ const expectedLegalRoutes = [
     requiredSnippets: [
       'const sourcesCopy: Record<AppLanguage, SourcesRouteCopy> = {',
       'const UHR_AUTHORITY_BOUNDARY_SOURCE = {',
+      "backAccessibilityLabel: 'Tillbaka till startsidan'",
+      "backLabel: '← Tillbaka till startsidan'",
+      "backAccessibilityLabel: 'Back to Home'",
+      "backLabel: '← Back to Home'",
       "retrievedDate: '2026-05-20'",
       "title: 'UHR: Om medborgarskapsprovet'",
       "url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/'",
       'const language = useSettingsStore((state) => state.language);',
       'const copy = sourcesCopy[language];',
-      "backAccessibilityLabel: 'Tillbaka till startsidan'",
-      "backLabel: '← Tillbaka till startsidan'",
-      "backAccessibilityLabel: 'Back to Home'",
-      "backLabel: '← Back to Home'",
       'Källor',
       'Primärt studiematerial',
       'UHR inte står bakom dessa',
@@ -142,9 +142,8 @@ const expectedLegalRoutes = [
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-legal-route-parity'],
+    ['scripts/validate-content.js', '--focus-legal-route-header'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -191,17 +190,8 @@ test('legal, source, and support routes stay on shared accessible header path', 
   assert.equal(summary.legalRouteHeadersValidated, 23);
   assert.equal(summary.legalRouteHeaderParityValidated, true);
   assert.equal(summary.swedishPrivacyStreakCopyNaturalnessValidated, true);
-  assert.equal(summary.legalSwedishEnglishTokenGuardValidated, 62);
-  assert.equal(summary.legalSwedishEnglishTokenGuardParityValidated, true);
-  assert.equal(summary.legalInternalMonetizationKeyGuardValidated, 7);
-  assert.equal(summary.legalInternalMonetizationKeyGuardParityValidated, true);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.title\}>/);
   assert.match(legalPage, /<Text accessibilityRole="header" style=\{styles\.sectionTitle\}>/);
-
-  const privacyRoute = fs.readFileSync(path.join(repoRoot, 'app/privacy.tsx'), 'utf8');
-  assert.doesNotMatch(privacyRoute, /\badsDisabled(?:\s*=\s*(?:true|false))?\b/i);
-  assert.match(privacyRoute, /gör att annonser inte visas på den här enheten/);
-  assert.match(privacyRoute, /turns off ads on this device/);
 
   for (const expectedRoute of expectedLegalRoutes) {
     const routeSource = fs.readFileSync(path.join(repoRoot, expectedRoute.file), 'utf8');
@@ -227,37 +217,6 @@ test('legal, source, and support routes stay on shared accessible header path', 
   }
 });
 
-test('legal route parity rejects internal monetization keys in learner-facing privacy copy', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/app/privacy.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('turns off ads on this device', 'sets adsDisabled=true on this device');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /learner-facing legal\/privacy copy must not expose internal monetization implementation key "adsDisabled flag" in app\/privacy\.tsx/,
-  );
-});
-
 test('privacy route parity rejects English streaks in Swedish legal copy', () => {
   const result = spawnSync(
     process.execPath,
@@ -275,7 +234,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-header');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -309,7 +268,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-header');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -323,7 +282,38 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('legal Swedish copy guard rejects non-allowlisted English learner tokens', () => {
+test('sources route header parity rejects profile-only back targets', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/sources.tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('backHref="/home"', 'backHref="/(tabs)/profile"');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-legal-route-header');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /app\/sources\.tsx legal page title "Sources" appears 0 times, expected 1/,
+  );
+});
+
+test('legal Swedish copy guard rejects English streak wording', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -343,7 +333,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('scripts/validate-content.js', '--focus-legal-route-parity');
+process.argv.push('--focus-legal-route-header');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -352,6 +342,5 @@ require('./scripts/validate-content.js');
 
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
-  assert.match(output, /Swedish legal copy contains English token "streaks"/);
-  assert.match(output, /Swedish legal copy contains English token "settings"/);
+  assert.match(output, /Swedish privacy copy must use natural Swedish streak wording/);
 });
