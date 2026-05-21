@@ -54,12 +54,12 @@ function assertPortCanBind(port) {
   });
 }
 
-function waitForServerReady(child) {
+function waitForServerReady(child, readyText = 'Serving dist-web on http://127.0.0.1:4173') {
   return new Promise((resolve, reject) => {
     let output = '';
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error(`dist-web server did not become ready:\n${output}`));
+      reject(new Error(`server did not become ready (${readyText}):\n${output}`));
     }, 5000);
 
     const cleanup = () => {
@@ -70,7 +70,7 @@ function waitForServerReady(child) {
     };
     const onData = (data) => {
       output += data.toString();
-      if (output.includes('Serving dist-web on http://127.0.0.1:4173')) {
+      if (output.includes(readyText)) {
         cleanup();
         resolve(output);
       }
@@ -631,5 +631,51 @@ test('dist-web e2e server releases the default port on SIGTERM', async () => {
       child.kill('SIGKILL');
     }
     fs.rmSync(outputDir, { force: true, recursive: true });
+  }
+});
+
+test('static-site e2e server releases the default port on SIGTERM', async () => {
+  const source = readRelative('serve-static-site.cjs');
+  assert.match(
+    source,
+    /process\.once\('SIGTERM', shutdown\);/,
+    'serve-static-site should install a SIGTERM handler',
+  );
+  assert.match(
+    source,
+    /process\.once\('SIGINT', shutdown\);/,
+    'serve-static-site should install a SIGINT handler',
+  );
+  assert.match(source, /server\.close\(/, 'serve-static-site should close the HTTP server');
+
+  const port = 4173;
+  await assertPortCanBind(port);
+
+  const child = spawn(process.execPath, [path.join(e2eDir, 'serve-static-site.cjs')], {
+    cwd: path.resolve(e2eDir, '../..'),
+    env: {
+      ...process.env,
+      PORT: String(port),
+    },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+
+  try {
+    await waitForServerReady(child, `Serving static site on http://127.0.0.1:${port}`);
+    const exited = waitForExit(child);
+    child.kill('SIGTERM');
+    const result = await exited;
+
+    assert.equal(result.code, 0, 'SIGTERM shutdown should exit cleanly');
+    assert.equal(
+      result.signal,
+      null,
+      'SIGTERM should be handled instead of surfacing as a signal exit',
+    );
+    await assertPortCanBind(port);
+  } finally {
+    if (child.exitCode === null && child.signalCode === null) {
+      child.kill('SIGKILL');
+    }
   }
 });
