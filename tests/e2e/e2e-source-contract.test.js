@@ -129,6 +129,35 @@ test('countdown browser date coverage uses the shared clock helper', () => {
   );
 });
 
+test('static site privacy grep focus stays isolated to privacy assertions', () => {
+  const privacySource = readRelative('static-site-network-privacy.spec.ts');
+  const networkSource = readRelative('static-site-network-fonts.spec.ts');
+  const privacyTitles = Array.from(privacySource.matchAll(/test\('([^']+)'/g), (match) => match[1]);
+
+  assert.deepEqual(privacyTitles, [
+    'privacy route renders localized plain-language callout labels',
+  ]);
+  assert.ok(
+    privacyTitles.every((title) => /privacy|consent/i.test(title)),
+    'the documented --grep "privacy" command should select only privacy or consent assertions',
+  );
+  assert.doesNotMatch(
+    privacySource,
+    /Google Fonts|font fallback|primary routes inside/i,
+    'static-site-network-privacy.spec.ts must not contain broad font or route-overflow smokes',
+  );
+  assert.match(
+    networkSource,
+    /static site first load and necessary-only consent do not request Google Fonts/,
+    'Google Fonts request trapping should stay covered in the neutral network spec',
+  );
+  assert.match(
+    networkSource,
+    /static system font fallback keeps primary routes inside mobile and desktop viewports/,
+    'primary route overflow coverage should stay covered in the neutral network spec',
+  );
+});
+
 test('browser specs do not define local Date browser clock stubs', () => {
   const forbiddenClockStubPatterns = [
     /\b(?:window|globalThis)\.Date\s*=/g,
