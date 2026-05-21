@@ -9,9 +9,8 @@ const repoRoot = path.resolve(__dirname, '..');
 function parseValidationSummary() {
   const output = execFileSync(
     process.execPath,
-    ['scripts/validate-content.js', '--focus-flashcard-accessibility'],
+    ['scripts/validate-content.js', '--focus-learn-flashcard-deck'],
     {
-      cwd: repoRoot,
       encoding: 'utf8',
     },
   );
@@ -24,9 +23,10 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'components/learning/Flashcard.tsx'), 'utf8');
 
-  assert.equal(summary.flashcardAccessibilityRulesValidated, 15);
+  assert.equal(summary.flashcardAccessibilityRulesValidated, 21);
   assert.equal(summary.flashcardAccessibilityParityValidated, true);
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
+  assert.match(source, /import \{ Button \} from '\.\.\/ui\/Button';/);
   assert.match(source, /useSettingsStore, type AppLanguage/);
   assert.match(
     source,
@@ -35,11 +35,16 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   assert.match(source, /const flashcardCopy: Record<AppLanguage, FlashcardCopy> = \{/);
   assert.match(source, /fallbackPrompt: 'Studiefråga saknas'/);
   assert.match(source, /fallbackAnswer: 'Svar saknas'/);
-  assert.match(source, /accessibilityLabel: \(prompt, answer\) => `Övningskort\. Fråga:/);
+  assert.match(source, /hiddenAnswer: 'Svara själv innan du visar svaret\.'/);
+  assert.match(source, /revealButton: 'Visa svar'/);
+  assert.match(source, /accessibilityLabel: \(prompt, answer, isRevealed\) =>/);
   assert.match(source, /badgeLabel: 'Övningskort'/);
   assert.doesNotMatch(source, /Flashkort|flashkort/);
   assert.match(source, /fallbackPrompt: 'Study prompt unavailable'/);
   assert.match(source, /fallbackAnswer: 'Answer unavailable'/);
+  assert.match(source, /hiddenAnswer: 'Try to answer before revealing it\.'/);
+  assert.match(source, /revealButton: 'Reveal answer'/);
+  assert.match(source, /const \[isRevealed, setIsRevealed\] = useState\(false\);/);
   assert.match(
     source,
     /const settingsLanguage = useSettingsStore\(\(state\) => state\.language\);/,
@@ -49,15 +54,20 @@ test('learning Flashcard keeps prompt and answer accessibility in parity', () =>
   assert.match(source, /const answer = cleanText\(back, copy\.fallbackAnswer\);/);
   assert.match(
     source,
-    /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer\);/,
+    /const flashcardAccessibilityLabel = copy\.accessibilityLabel\(prompt, answer, isRevealed\);/,
   );
   assert.match(source, /accessibilityLabel=\{flashcardAccessibilityLabel\}/);
+  assert.match(source, /testID="learn-flashcard"/);
   assert.match(source, /<Badge tone="warm">\{copy\.badgeLabel\}<\/Badge>/);
   assert.match(source, /<Text accessibilityRole="header" style=\{styles\.label\}>/);
   assert.match(source, /\{copy\.promptHeader\}/);
   assert.match(source, /\{copy\.answerHeader\}/);
   assert.match(source, /<Text style=\{styles\.prompt\}>\{prompt\}<\/Text>/);
+  assert.match(source, /\{isRevealed \? \(/);
   assert.match(source, /<Text style=\{styles\.answer\}>\{answer\}<\/Text>/);
+  assert.match(source, /<Text style=\{styles\.hiddenAnswer\}>\{copy\.hiddenAnswer\}<\/Text>/);
+  assert.match(source, /onPress=\{\(\) => setIsRevealed\(true\)\}/);
+  assert.match(source, /\{copy\.revealButton\}/);
 });
 
 test('Flashcard Swedish copy naturalness rejects loan-word drift', () => {
@@ -77,7 +87,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-flashcard-accessibility');
+process.argv.push('--focus-learn-flashcard-deck');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -104,11 +114,11 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   if (normalizedPath.endsWith('/components/learning/Flashcard.tsx')) {
     return originalReadFileSync
       .call(this, filePath, ...args)
-      .replace('const flashcardAccessibilityLabel = copy.accessibilityLabel(prompt, answer);', 'const flashcardAccessibilityLabel = prompt;');
+      .replace('const flashcardAccessibilityLabel = copy.accessibilityLabel(prompt, answer, isRevealed);', 'const flashcardAccessibilityLabel = prompt;');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-flashcard-accessibility');
+process.argv.push('--focus-learn-flashcard-deck');
 require('./scripts/validate-content.js');
 `,
     ],

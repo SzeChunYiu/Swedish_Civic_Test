@@ -7,10 +7,13 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-learn-flashcard-deck'],
+    {
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -22,9 +25,21 @@ test('learn route chapter-link copy follows the persisted settings language', ()
 
   assert.equal(summary.learnRouteLinkCopyLabelsValidated, 6);
   assert.equal(summary.learnRouteLinkCopyParityValidated, true);
+  assert.match(
+    source,
+    /import \{ selectDailyFlashcardDeck \} from '\.\.\/\.\.\/lib\/learning\/flashcardDeck';/,
+  );
   assert.match(source, /const chapterLinkCopy: Record<AppLanguage, ChapterLinkCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+  assert.match(
+    source,
+    /const questionProgress = useProgressStore\(\(state\) => state\.questionProgress\);/,
+  );
   assert.match(source, /const copy = chapterLinkCopy\[language\];/);
+  assert.match(source, /selectDailyFlashcardDeck\(\{/);
+  assert.match(source, /limit: FLASHCARD_PREVIEW_LIMIT,/);
+  assert.match(source, /questionProgress,/);
+  assert.doesNotMatch(source, /questions\.slice\(0,\s*FLASHCARD_PREVIEW_LIMIT\)/);
   assert.match(source, /innehåll planerat/);
   assert.match(source, /content queued/);
   assert.match(source, /\$\{completedCount\} av \$\{questionCount\} frågor besvarade/);
@@ -55,6 +70,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-learn-flashcard-deck');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -85,6 +101,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('--focus-learn-flashcard-deck');
 require('./scripts/validate-content.js');
 `,
     ],
