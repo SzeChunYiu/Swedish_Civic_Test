@@ -44,6 +44,32 @@ function loadTs(relativePath, exportName) {
   return exportName ? mod.exports[exportName] : mod.exports;
 }
 
+function loadTsWithExternalModules(relativePath, externalModules) {
+  const filePath = path.resolve(repoRoot, relativePath);
+  const source = fs.readFileSync(filePath, 'utf8');
+  const output = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filePath,
+  }).outputText;
+  const mod = { exports: {} };
+
+  function localRequire(request) {
+    if (Object.prototype.hasOwnProperty.call(externalModules, request)) {
+      const value = externalModules[request];
+      if (typeof value === 'function') return value();
+      if (value instanceof Error) throw value;
+      return value;
+    }
+    if (request.startsWith('.')) {
+      return loadTs(path.relative(repoRoot, resolveLocalModule(filePath, request)));
+    }
+    return require(request);
+  }
+
+  new Function('module', 'exports', 'require', output)(mod, mod.exports, localRequire);
+  return mod.exports;
+}
+
 function createCurrentStudyReminderState(overrides = {}) {
   return {
     studyReminderEnabled: false,
@@ -177,4 +203,94 @@ test('enableStudyReminder falls back to the preset when current reminder time is
     minute: 0,
     channelId: 'study-reminders',
   });
+});
+
+test('createExpoStudyReminderRuntime returns null when native notifications are unavailable', async () => {
+  const { createExpoStudyReminderRuntime } = loadTsWithExternalModules(
+    'lib/notifications/studyReminder.ts',
+    {
+      'expo-notifications': new Error('Cannot find module expo-notifications'),
+      'react-native': { Platform: { OS: 'ios' } },
+    },
+  );
+
+  assert.equal(await createExpoStudyReminderRuntime(), null);
+});
+
+test('createExpoStudyReminderRuntime skips expo-notifications on web', async () => {
+  let notificationsRequested = false;
+  const { createExpoStudyReminderRuntime } = loadTsWithExternalModules(
+    'lib/notifications/studyReminder.ts',
+    {
+      'expo-notifications': () => {
+        notificationsRequested = true;
+        throw new Error('web should not import native notifications');
+      },
+      'react-native': { Platform: { OS: 'web' } },
+    },
+  );
+
+  assert.equal(await createExpoStudyReminderRuntime(), null);
+  assert.equal(notificationsRequested, false);
+});
+
+test('createExpoStudyReminderRuntime exposes native notification APIs when configured', async () => {
+  const notifications = {
+    AndroidImportance: { DEFAULT: 3 },
+    SchedulableTriggerInputTypes: { DAILY: 'daily' },
+    cancelScheduledNotificationAsync: async () => undefined,
+    getPermissionsAsync: async () => ({ status: 'granted' }),
+    requestPermissionsAsync: async () => ({ status: 'granted' }),
+    scheduleNotificationAsync: async () => 'native-reminder',
+    setNotificationChannelAsync: async () => undefined,
+  };
+  const { createExpoStudyReminderRuntime } = loadTsWithExternalModules(
+    'lib/notifications/studyReminder.ts',
+    {
+      'expo-notifications': notifications,
+      'react-native': { Platform: { OS: 'android' } },
+    },
+  );
+
+  const runtime = await createExpoStudyReminderRuntime();
+
+  assert.equal(runtime.platformOS, 'android');
+  assert.equal(runtime.androidImportanceDefault, 3);
+  assert.equal(runtime.dailyTriggerType, 'daily');
+  assert.equal(runtime.getPermissionsAsync, notifications.getPermissionsAsync);
+  assert.equal(runtime.requestPermissionsAsync, notifications.requestPermissionsAsync);
+  assert.equal(runtime.scheduleNotificationAsync, notifications.scheduleNotificationAsync);
+  assert.equal(
+    runtime.cancelScheduledNotificationAsync,
+    notifications.cancelScheduledNotificationAsync,
+  );
+  assert.equal(runtime.setNotificationChannelAsync, notifications.setNotificationChannelAsync);
+});
+
+test('study reminder notification dependency is declared or fail-closed', () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
+  const appJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'app.json'), 'utf8'));
+  const source = fs.readFileSync(path.join(repoRoot, 'lib/notifications/studyReminder.ts'), 'utf8');
+  const declaresDependency = Boolean(
+    packageJson.dependencies?.['expo-notifications'] ||
+    packageJson.devDependencies?.['expo-notifications'],
+  );
+  const plugins = appJson.expo?.plugins ?? [];
+  const declaresPlugin = plugins.some((plugin) =>
+    Array.isArray(plugin) ? plugin[0] === 'expo-notifications' : plugin === 'expo-notifications',
+  );
+  const failClosed =
+    /try\s*\{[\s\S]*import\('expo-notifications'\)[\s\S]*catch\s*\{[\s\S]*return null;\s*\}/.test(
+      source,
+    );
+
+  assert.ok(
+    (declaresDependency && declaresPlugin) || failClosed,
+    'study reminder runtime must either declare expo-notifications or fail closed when it is missing',
+  );
+  assert.doesNotMatch(
+    source,
+    /Promise\.all\(\[[\s\S]*import\('expo-notifications'\)/,
+    'web and missing-module paths must not eagerly import expo-notifications before platform checks',
+  );
 });

@@ -64,6 +64,20 @@ type StudyReminderTime = {
   minute: number;
 };
 
+type ExpoNotificationsModule = {
+  AndroidImportance?: {
+    DEFAULT?: NonNullable<NotificationChannelInput['importance']>;
+  };
+  SchedulableTriggerInputTypes?: {
+    DAILY?: string;
+  };
+  cancelScheduledNotificationAsync?: StudyReminderRuntime['cancelScheduledNotificationAsync'];
+  getPermissionsAsync?: StudyReminderRuntime['getPermissionsAsync'];
+  requestPermissionsAsync?: StudyReminderRuntime['requestPermissionsAsync'];
+  scheduleNotificationAsync?: StudyReminderRuntime['scheduleNotificationAsync'];
+  setNotificationChannelAsync?: StudyReminderRuntime['setNotificationChannelAsync'];
+};
+
 function normalizeStudyReminderPermissionStatus(status: unknown): StudyReminderPermissionStatus {
   if (status === 'granted') return 'granted';
   if (status === 'denied') return 'denied';
@@ -232,21 +246,32 @@ export async function disableStudyReminder({
 }
 
 export async function createExpoStudyReminderRuntime(): Promise<StudyReminderRuntime | null> {
-  const [{ Platform }, Notifications] = await Promise.all([
-    import('react-native'),
-    import('expo-notifications'),
-  ]);
+  try {
+    const { Platform } = await import('react-native');
 
-  if (String(Platform.OS) === 'web') return null;
+    if (String(Platform.OS) === 'web') return null;
 
-  return {
-    getPermissionsAsync: Notifications.getPermissionsAsync,
-    requestPermissionsAsync: Notifications.requestPermissionsAsync,
-    scheduleNotificationAsync: Notifications.scheduleNotificationAsync,
-    cancelScheduledNotificationAsync: Notifications.cancelScheduledNotificationAsync,
-    setNotificationChannelAsync: Notifications.setNotificationChannelAsync,
-    androidImportanceDefault: Notifications.AndroidImportance.DEFAULT,
-    dailyTriggerType: Notifications.SchedulableTriggerInputTypes.DAILY,
-    platformOS: Platform.OS,
-  };
+    const notifications = (await import('expo-notifications')) as ExpoNotificationsModule;
+
+    if (
+      !notifications.requestPermissionsAsync ||
+      !notifications.scheduleNotificationAsync ||
+      !notifications.cancelScheduledNotificationAsync
+    ) {
+      return null;
+    }
+
+    return {
+      getPermissionsAsync: notifications.getPermissionsAsync,
+      requestPermissionsAsync: notifications.requestPermissionsAsync,
+      scheduleNotificationAsync: notifications.scheduleNotificationAsync,
+      cancelScheduledNotificationAsync: notifications.cancelScheduledNotificationAsync,
+      setNotificationChannelAsync: notifications.setNotificationChannelAsync,
+      androidImportanceDefault: notifications.AndroidImportance?.DEFAULT,
+      dailyTriggerType: notifications.SchedulableTriggerInputTypes?.DAILY,
+      platformOS: Platform.OS,
+    };
+  } catch {
+    return null;
+  }
 }
