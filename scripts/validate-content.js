@@ -2196,6 +2196,25 @@ const EXPECTED_LEGAL_ROUTE_HEADERS = [
 ];
 const EXPECTED_LEGAL_SWEDISH_COPY_STRINGS = 59;
 const FORBIDDEN_SWEDISH_LEGAL_ENGLISH_TOKENS = ['streaks', 'settings'];
+const EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES = [
+  {
+    label: 'flattened LegalSection children',
+    pattern: /Children\.toArray\(children\)/,
+  },
+  {
+    label: 'buffered LegalSection text fragments',
+    pattern: /const textFragments:\s*string\[\]\s*=\s*\[\];/,
+  },
+  {
+    label: 'LegalSection text fragment paragraph block',
+    pattern:
+      /<Text\s+key=\{`section-text-\$\{renderedChildren\.length\}`\}\s+style=\{styles\.paragraph\}>/,
+  },
+  {
+    label: 'LegalSection interactive children after text flush',
+    pattern: /flushTextFragments\(\);\s*renderedChildren\.push\(child\);/,
+  },
+];
 const EXPECTED_SETTINGS_ROUTE_HEADERS = [
   {
     label: 'settings route title',
@@ -8232,6 +8251,8 @@ let mistakesRouteHeadersValidated = 0;
 let mistakesRouteHeaderParityValidated = false;
 let legalRouteHeadersValidated = 0;
 let legalRouteHeaderParityValidated = false;
+let legalSectionMixedChildrenRulesValidated = 0;
+let legalSectionMixedChildrenLayoutValidated = false;
 let swedishPrivacyStreakCopyNaturalnessValidated = false;
 let legalSwedishEnglishTokenGuardValidated = 0;
 let legalSwedishEnglishTokenGuardParityValidated = false;
@@ -8745,6 +8766,8 @@ if (process.argv.includes('--focus-legal-route-parity')) {
   printValidationSummary({
     legalRouteHeadersValidated,
     legalRouteHeaderParityValidated,
+    legalSectionMixedChildrenRulesValidated,
+    legalSectionMixedChildrenLayoutValidated,
     swedishPrivacyStreakCopyNaturalnessValidated,
     legalSwedishEnglishTokenGuardValidated,
     legalSwedishEnglishTokenGuardParityValidated,
@@ -11948,6 +11971,22 @@ function validateLegalRouteHeaderParity() {
     !/<Text\s+accessibilityRole="header"\s+style=\{styles\.sectionTitle\}>/.test(legalPage)
   ) {
     reject('legal route shared heading components must expose accessibilityRole="header"');
+  }
+
+  for (const expectedRule of EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES) {
+    if (!expectedRule.pattern.test(legalPage)) {
+      reject(
+        `LegalSection must split mixed text and interactive children into separate layout boxes: missing ${expectedRule.label}`,
+      );
+    } else {
+      legalSectionMixedChildrenRulesValidated += 1;
+    }
+  }
+  if (
+    legalSectionMixedChildrenRulesValidated ===
+    EXPECTED_LEGAL_SECTION_MIXED_CHILDREN_LAYOUT_RULES.length
+  ) {
+    legalSectionMixedChildrenLayoutValidated = true;
   }
 
   for (const expectedRoute of EXPECTED_LEGAL_ROUTE_HEADERS) {
@@ -19095,6 +19134,8 @@ console.log(
       mistakeReviewHydrationValidated,
       legalRouteHeadersValidated,
       legalRouteHeaderParityValidated,
+      legalSectionMixedChildrenRulesValidated,
+      legalSectionMixedChildrenLayoutValidated,
       swedishPrivacyStreakCopyNaturalnessValidated,
       legalSwedishEnglishTokenGuardValidated,
       legalSwedishEnglishTokenGuardParityValidated,
