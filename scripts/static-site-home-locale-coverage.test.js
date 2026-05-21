@@ -9,6 +9,18 @@ const locales = ['en', 'sv', 'zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so'
 const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
 const allowedSharedValues = new Set(['brand']);
 const dynamicMetadataKeys = [/^chap\.\d+\.m1$/];
+const localizedChapterOneFolkhemmetTerms = {
+  'zh-Hans': /人民之家/,
+  'zh-Hant': /人民之家/,
+  ar: /بيت الشعب/,
+  ckb: /ماڵی گەل/,
+  fa: /خانه‌ی مردم/,
+  pl: /dom ludu/i,
+  so: /guriga dadka/i,
+  ti: /ቤት ህዝቢ/,
+  tr: /halkın evi/i,
+  uk: /народний дім/i,
+};
 const localizedChapterTwoCivicTerms = {
   'zh-Hans': /市镇、大区/,
   'zh-Hant': /市鎮、大區/,
@@ -149,6 +161,29 @@ test('extra locales translate every displayed home, nav, footer, settings, and c
         `${locale}.${key} falls back to English: ${value}`,
       );
     }
+  }
+});
+
+test('extra locale Home chapter 1 cards render folkhemmet as localized gloss first', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const locale of extraLocales) {
+    const value = dictionaries[locale]['chap.1.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.1.d is translated`);
+
+    const localizedIndex = value.search(localizedChapterOneFolkhemmetTerms[locale]);
+    const glossaryIndex = value.toLowerCase().indexOf('folkhemmet');
+    assert.notEqual(localizedIndex, -1, `${locale}.chap.1.d should localize folkhemmet`);
+    assert.notEqual(glossaryIndex, -1, `${locale}.chap.1.d should keep folkhemmet as glossary`);
+    assert.ok(
+      localizedIndex < glossaryIndex,
+      `${locale}.chap.1.d should show the localized term before folkhemmet`,
+    );
+    assert.doesNotMatch(
+      value,
+      /[←→]\s*folkhemmet\s*(?:[←→.]|$)/i,
+      `${locale}.chap.1.d must not render bare folkhemmet in the timeline`,
+    );
   }
 });
 

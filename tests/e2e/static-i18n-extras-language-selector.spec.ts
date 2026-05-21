@@ -66,6 +66,19 @@ const forbiddenOutcomeSlogans = [
 ];
 const forbiddenHomeChapterTwoCivicTerms =
   /(^|[^\p{L}\p{N}_-])(kommun|region|regering)(?=$|[^\p{L}\p{N}_-])/iu;
+const forbiddenBareHomeChapterOneFolkhemmet = /[←→]\s*folkhemmet\s*(?:[←→.]|$)/i;
+const localizedHomeChapterOneFolkhemmetTerms: Record<ExtraLocale, RegExp> = {
+  'zh-Hans': /人民之家/,
+  'zh-Hant': /人民之家/,
+  ar: /بيت الشعب/,
+  ckb: /ماڵی گەل/,
+  fa: /خانه‌ی مردم/,
+  pl: /dom ludu/i,
+  so: /guriga dadka/i,
+  ti: /ቤት ህዝቢ/,
+  tr: /halkın evi/i,
+  uk: /народний дім/i,
+};
 const localizedHomeChapterTwoCivicTermSnippets: Record<ExtraLocale, RegExp> = {
   'zh-Hans': /市镇、大区/,
   'zh-Hant': /市鎮、大區/,
@@ -258,6 +271,19 @@ async function assertLongFormRouteCopy(page: Page, locale: ExtraLocale) {
   await switchToHomeRoute(page);
 }
 
+async function assertHomeChapterOneFolkhemmetGlossary(page: Page, locale: ExtraLocale) {
+  const dictionaryDescription = await dictionaryText(page, locale, 'chap.1.d');
+  const localizedIndex = dictionaryDescription.search(
+    localizedHomeChapterOneFolkhemmetTerms[locale],
+  );
+  const glossaryIndex = dictionaryDescription.toLowerCase().indexOf('folkhemmet');
+
+  expect(localizedIndex).toBeGreaterThanOrEqual(0);
+  expect(glossaryIndex).toBeGreaterThanOrEqual(0);
+  expect(localizedIndex).toBeLessThan(glossaryIndex);
+  expect(dictionaryDescription).not.toMatch(forbiddenBareHomeChapterOneFolkhemmet);
+}
+
 async function assertHomeChapterTwoCivicTerms(page: Page, locale: ExtraLocale) {
   const expectedDescription = await dictionaryText(page, locale, 'chap.2.d');
   const chapterDescription = page.locator(i18nSelector('chap.2.d'));
@@ -320,6 +346,30 @@ test('static Settings selects extra languages with localized legal metadata with
     await expectRootLocale(page, locale);
     await expectNoOutcomeSlogans(page);
     await expectNoHorizontalOverflow(page);
+  }
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static Home chapter 1 folkhemmet glossary keeps localized term before Swedish glossary', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+  await openStaticHome(page, staticSite.baseUrl);
+
+  for (const locale of extraLocales) {
+    await page.locator('#settings-open').click();
+    await expect(page.locator('#settings-modal')).toBeVisible();
+    await page
+      .locator(`#settings-modal [data-set="language"] button[data-val="${locale}"]`)
+      .click();
+    await page.locator('#settings-modal button[data-close="settings"]').last().click();
+    await expect(page.locator('#settings-modal')).toBeHidden();
+
+    await expectRootLocale(page, locale);
+    await assertHomeChapterOneFolkhemmetGlossary(page, locale);
+    await expect(page.locator('.list-quiet > li')).toHaveCount(13);
   }
 
   expect(pageErrors).toEqual([]);

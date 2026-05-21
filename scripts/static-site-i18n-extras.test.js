@@ -119,6 +119,18 @@ const forbiddenArabicFragments = [
 ];
 
 const extraLocales = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const chapterOneFolkhemmetSnippets = {
+  'zh-Hans': /人民之家/,
+  'zh-Hant': /人民之家/,
+  ar: /بيت الشعب/,
+  ckb: /ماڵی گەل/,
+  fa: /خانه‌ی مردم/,
+  pl: /dom ludu/i,
+  so: /guriga dadka/i,
+  ti: /ቤት ህዝቢ/,
+  tr: /halkın evi/i,
+  uk: /народний дім/i,
+};
 const chapterTwoCivicTermSnippets = {
   'zh-Hans': /市镇、大区/,
   'zh-Hant': /市鎮、大區/,
@@ -284,6 +296,33 @@ test('Central Kurdish legal reading-time metadata uses localized minutes', () =>
     assert.equal(value, expected, `ckb.${key}`);
     assert.match(value, /خولەک/, `ckb.${key} should use the Central Kurdish minute unit`);
     assert.doesNotMatch(value, /\bmin\b/i, `ckb.${key} must not contain English min`);
+  }
+});
+
+test('extra locale Home chapter 1 folkhemmet glossary terms use localized wording first', () => {
+  const extra = loadExtraI18n();
+
+  for (const locale of extraLocales) {
+    const dictionary = extra?.[locale];
+    assert.equal(typeof dictionary, 'object', `${locale} dictionary must exist`);
+
+    const value = dictionary['chap.1.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.1.d must be a string`);
+    assert.notEqual(value.trim(), '', `${locale}.chap.1.d must not be empty`);
+
+    const localizedIndex = value.search(chapterOneFolkhemmetSnippets[locale]);
+    const glossaryIndex = value.toLowerCase().indexOf('folkhemmet');
+    assert.notEqual(localizedIndex, -1, `${locale}.chap.1.d should explain folkhemmet locally`);
+    assert.notEqual(glossaryIndex, -1, `${locale}.chap.1.d should retain folkhemmet as glossary`);
+    assert.ok(
+      localizedIndex < glossaryIndex,
+      `${locale}.chap.1.d should put localized wording before folkhemmet`,
+    );
+    assert.doesNotMatch(
+      value,
+      /[←→]\s*folkhemmet\s*(?:[←→.]|$)/i,
+      `${locale}.chap.1.d must not render bare folkhemmet in the timeline`,
+    );
   }
 });
 

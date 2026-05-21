@@ -598,7 +598,7 @@
       'numbers.3': '每日——一段如同 fika（咖啡時光）般短暫的學習習慣',
       'numbers.4': '即可開始。免登入。學習進度只留在本機。',
       'chap.1.d':
-        '維京人 → 國王 → 1809 年 → folkhemmet（人民之家）→ 加入歐盟。整趟雲霄飛車式的歷史，不必硬背王朝家譜。',
+        '維京人 → 國王 → 1809 年 → 人民之家（folkhemmet）→ 加入歐盟。整趟雲霄飛車式的歷史，不必硬背王朝家譜。',
       'chap.1.m2': '約 9 分鐘',
       'chap.2.d':
         'Riksdag（瑞典議會）、政府、市鎮、大區。誰決定什麼、你投票給誰，以及為什麼沒有人害怕國王。',
@@ -999,7 +999,7 @@
       'numbers.3': 'يوميًا — عادة دراسة قصيرة بحجم استراحة fika',
       'numbers.4': 'للبدء. دون تسجيل دخول. يبقى تقدّمك في الدراسة على جهازك.',
       'chap.1.d':
-        'الفايكنغ ← الملوك ← 1809 ← folkhemmet ← الاتحاد الأوروبي. الرحلة كاملة، دون حفظ شجرة العائلات الملكية.',
+        'الفايكنغ ← الملوك ← 1809 ← بيت الشعب (folkhemmet) ← الاتحاد الأوروبي. الرحلة كاملة، دون حفظ شجرة العائلات الملكية.',
       'chap.1.m2': '~9 دقائق',
       'chap.2.d':
         'Riksdag (البرلمان السويدي)، الحكومة، البلديات، والمناطق. مَن يقرّر ماذا، ومَن تنتخب، ولماذا لا يخشى أحد الملك.',
@@ -1413,7 +1413,7 @@
       'numbers.3': 'ڕۆژانە — خووی خوێندنێکی کورت بە قەبارەی fika',
       'numbers.4': 'بۆ دەستپێکردن. بێ چوونەژوورەوە. پێشکەوتنت لەسەر ئەم ئامێرە دەمێنێتەوە.',
       'chap.1.d':
-        'ڤایکینگەکان ← پاشاکان ← ١٨٠٩ ← folkhemmet ← EU. هەموو ئەو سەرکەوتن و دابەزینە، بەبێ لەبەرکردنی دارەباری بنەماڵە.',
+        'ڤایکینگەکان ← پاشاکان ← ١٨٠٩ ← ماڵی گەل (folkhemmet) ← EU. هەموو ئەو سەرکەوتن و دابەزینە، بەبێ لەبەرکردنی دارەباری بنەماڵە.',
       'chap.1.m2': '~9 min',
       'chap.2.d':
         'Riksdag، حکومەت، شارەوانییەکان، هەرێمەکان. کێ بڕیاری چی دەدات، دەنگ بە کێ دەدەیت، و بۆچی کەس لە پاشا ناترسێت.',
@@ -1830,7 +1830,7 @@
       'numbers.3': 'در روز — یک عادت مطالعه‌ی کوتاه به اندازه‌ی یک fika',
       'numbers.4': 'تا شروع کنید. بدون ورود به حساب. پیشرفت مطالعه‌ی شما روی همین دستگاه می‌ماند.',
       'chap.1.d':
-        'وایکینگ‌ها ← پادشاهان ← ۱۸۰۹ ← folkhemmet ← اتحادیه‌ی اروپا. کل این فرازونشیب، بدون نیاز به حفظ کردن شجره‌نامه‌ی سلسله‌ها.',
+        'وایکینگ‌ها ← پادشاهان ← ۱۸۰۹ ← خانه‌ی مردم (folkhemmet) ← اتحادیه‌ی اروپا. کل این فرازونشیب، بدون نیاز به حفظ کردن شجره‌نامه‌ی سلسله‌ها.',
       'chap.1.m2': '~۹ دقیقه',
       'chap.2.d':
         'Riksdag، دولت، شهرداری‌ها، منطقه‌ها. چه کسی درباره‌ی چه چیزی تصمیم می‌گیرد، به چه کسی رأی می‌دهید و چرا کسی از پادشاه نمی‌ترسد.',
@@ -2252,7 +2252,7 @@
       'numbers.3': 'dziennie — nawyk nauki wielkości jednej fiki',
       'numbers.4': 'by zacząć. Bez logowania. Postępy w nauce zostają na urządzeniu.',
       'chap.1.d':
-        'Wikingowie → królowie → 1809 → folkhemmet → UE. Cały rollercoaster, bez wkuwania drzewa genealogicznego dynastii.',
+        'Wikingowie → królowie → 1809 → dom ludu (folkhemmet) → UE. Cały rollercoaster, bez wkuwania drzewa genealogicznego dynastii.',
       'chap.1.m2': '~9 min',
       'chap.2.d':
         'Riksdag, rząd, gminy i regiony. Kto o czym decyduje, na kogo głosujesz i dlaczego nikt nie boi się króla.',
@@ -2678,7 +2678,7 @@
       'numbers.4':
         'si aad u bilowdo. Soo gelid ma jirto. Horumarkaaga waxbarasho wuxuu ku hadhayaa qalabkaaga.',
       'chap.1.d':
-        'Vikings → boqorro → 1809 → folkhemmet → EU. Roller-coaster-ka oo dhan, iyada oo aan lagu xafidin geedka qoyska boqortooyada.',
+        'Vikings → boqorro → 1809 → guriga dadka (folkhemmet) → EU. Roller-coaster-ka oo dhan, iyada oo aan lagu xafidin geedka qoyska boqortooyada.',
       'chap.1.m2': '~9 daqiiqo',
       'chap.2.d':
         "Riksdag, xukuumadda, degmooyinka iyo gobollada. Yaa go'aamiya maxay, yaad u codaysaa, iyo sababta aan cidna uga baqin boqorka.",
@@ -3089,7 +3089,8 @@
       'numbers.2': 'ምዕራፋት ብዛዕባ ታሪኽ፡ ሕብረተሰብን መሰላትን',
       'numbers.3': 'ኣብ መዓልቲ — ብመጠን fika ዝኾነ ናይ ምጽናዕ ልምዲ',
       'numbers.4': 'ንምጅማር። ምእታው የብሉን። ምዕባለኻ ኣብዚ መሳርሒ ጥራይ ይቕመጥ።',
-      'chap.1.d': 'ቫይኪንግ → ነገስታት → 1809 → folkhemmet → EU። እታ ምልእቲ ጉዕዞ፡ ብዘይ ናይ ስድራቤታዊ ሓረግ ምሕፋዝ።',
+      'chap.1.d':
+        'ቫይኪንግ → ነገስታት → 1809 → ቤት ህዝቢ (folkhemmet) → EU። እታ ምልእቲ ጉዕዞ፡ ብዘይ ናይ ስድራቤታዊ ሓረግ ምሕፋዝ።',
       'chap.1.m2': '~9 ደቒቕ',
       'chap.2.d':
         'Riksdag፡ መንግስቲ፡ ናይ ከባቢ ምምሕዳራት፡ ክልላት። መን እንታይ ይውስን፡ ንመን ትመርጽ፡ ስለምንታይ ድማ ሓደ እኳ ንንጉስ ዘይፈርሕ።',
@@ -3493,7 +3494,7 @@
       'numbers.3': 'günde — fika ölçüsünde bir çalışma alışkanlığı',
       'numbers.4': 'başlamak için. Giriş yok. Çalışma ilerlemeniz cihazda kalır.',
       'chap.1.d':
-        'Vikingler → krallar → 1809 → folkhemmet → AB. Tüm hız treni, hanedan soy ağacını ezberlemeden.',
+        'Vikingler → krallar → 1809 → halkın evi (folkhemmet) → AB. Tüm hız treni, hanedan soy ağacını ezberlemeden.',
       'chap.1.m2': '~9 dk',
       'chap.2.d':
         'Riksdag, hükümet, belediyeler ve bölgeler. Kim neye karar verir, kime oy verirsiniz ve neden kimse kraldan korkmaz.',
@@ -3913,7 +3914,7 @@
       'numbers.3': 'на день — звичка вчитися завбільшки з fika',
       'numbers.4': 'щоб почати. Без входу. Прогрес навчання залишається на пристрої.',
       'chap.1.d':
-        'Вікінги → королі → 1809 → folkhemmet → ЄС. Уся ця гірка, але без зубріння династичного родоводу.',
+        'Вікінги → королі → 1809 → народний дім (folkhemmet) → ЄС. Уся ця гірка, але без зубріння династичного родоводу.',
       'chap.1.m2': '~9 хв',
       'chap.2.d':
         'Riksdag, уряд, муніципалітети й регіони. Хто що вирішує, за кого ви голосуєте і чому ніхто не боїться короля.',
