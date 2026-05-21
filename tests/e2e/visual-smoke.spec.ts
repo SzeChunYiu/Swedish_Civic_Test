@@ -6,7 +6,7 @@ import path from 'node:path';
 import { blockingModalOverlayLocator, dismissBlockingModals } from './browserLaunch';
 import { resolveVisualSmokeOutput } from './visualSmokeOutput';
 import {
-  isExplainedVisualSmokeDuplicate,
+  findUnexplainedVisualSmokeDuplicateReports,
   visualSmokeDuplicateExplanations,
   visualSmokeRouteManifestEntries,
   type VisualSmokeRoute,
@@ -64,21 +64,6 @@ function sha256File(filePath: string): string {
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
 }
 
-function findUnexplainedDuplicateScreenshots(captures: RouteCapture[]): string[] {
-  const namesByHash = new Map<string, string[]>();
-
-  for (const capture of captures) {
-    const names = namesByHash.get(capture.sha256) ?? [];
-    names.push(capture.name);
-    namesByHash.set(capture.sha256, names);
-  }
-
-  return [...namesByHash.entries()]
-    .filter(([, names]) => names.length > 1)
-    .filter(([, names]) => !isExplainedVisualSmokeDuplicate(names))
-    .map(([hash, names]) => `${hash}: ${names.sort().join(', ')}`);
-}
-
 test('primary routes render and capture UI/UX screenshots', async ({ page }) => {
   expectExportBundleToContainRouteContext();
   expect(
@@ -130,7 +115,7 @@ test('primary routes render and capture UI/UX screenshots', async ({ page }) => 
     });
   }
 
-  const unexplainedDuplicateScreenshots = findUnexplainedDuplicateScreenshots(manifest);
+  const unexplainedDuplicateScreenshots = findUnexplainedVisualSmokeDuplicateReports(manifest);
   expect(unexplainedDuplicateScreenshots).toEqual([]);
 
   fs.writeFileSync(

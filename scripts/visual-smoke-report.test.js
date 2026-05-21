@@ -63,6 +63,7 @@ function expectedVisualSmokeRoutes() {
 
 function visualSmokeDuplicateContract() {
   const {
+    findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     validateVisualSmokeDuplicateExplanations,
@@ -71,6 +72,7 @@ function visualSmokeDuplicateContract() {
   } = loadTs('tests/e2e/visualSmokeRoutes.ts');
 
   return {
+    findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
     isExplainedVisualSmokeDuplicate,
     validateVisualSmokeDuplicateExplanations,
@@ -98,7 +100,7 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   );
   assert.match(visualSmokeSource, /visualSmokeRouteManifestEntries\(\)/);
   assert.match(visualSmokeSource, /visualSmokeDuplicateExplanations/);
-  assert.match(visualSmokeSource, /isExplainedVisualSmokeDuplicate/);
+  assert.match(visualSmokeSource, /findUnexplainedVisualSmokeDuplicateReports/);
   assert.doesNotMatch(visualSmokeSource, /const routes = \[/);
   assert.doesNotMatch(visualSmokeSource, /\bvisualSmokeRoutes\b,/);
   assert.doesNotMatch(visualSmokeSource, /explainedDuplicateScreenshotGroups/);
@@ -110,6 +112,10 @@ test('visual smoke uses the shared route filename contract and blocking modal ov
   assert.match(visualSmokeRoutesSource, /export function hasValidVisualSmokeDuplicateExplanation/);
   assert.match(visualSmokeRoutesSource, /export function validateVisualSmokeDuplicateExplanations/);
   assert.match(visualSmokeRoutesSource, /export function isExplainedVisualSmokeDuplicate/);
+  assert.match(
+    visualSmokeRoutesSource,
+    /export function findUnexplainedVisualSmokeDuplicateReports/,
+  );
   assert.match(
     visualSmokeSource,
     /import \{ blockingModalOverlayLocator, dismissBlockingModals \} from '\.\/browserLaunch';/,
@@ -239,14 +245,52 @@ test('visual smoke duplicate helper requires exact groups and nonempty reasons',
   }
 });
 
+test('visual smoke duplicate failure reports include route paths and screenshot files', () => {
+  const { findUnexplainedVisualSmokeDuplicateReports } = visualSmokeDuplicateContract();
+  const captures = [
+    {
+      file: 'learn.png',
+      name: 'learn',
+      route: '/learn',
+      sha256: 'duplicate-hash',
+    },
+    {
+      file: 'practice.png',
+      name: 'practice',
+      route: '/practice',
+      sha256: 'duplicate-hash',
+    },
+    {
+      file: 'home.png',
+      name: 'home',
+      route: '/home',
+      sha256: 'explained-home-index-hash',
+    },
+    {
+      file: 'index.png',
+      name: 'index',
+      route: '/',
+      sha256: 'explained-home-index-hash',
+    },
+    {
+      file: 'profile.png',
+      name: 'profile',
+      route: '/profile',
+      sha256: 'unique-hash',
+    },
+  ];
+
+  assert.deepEqual(findUnexplainedVisualSmokeDuplicateReports(captures), [
+    'duplicate-hash: learn (/learn -> learn.png), practice (/practice -> practice.png)',
+  ]);
+});
+
 test('visual smoke manifest matches the shared route list and screenshot filenames without launch overlays', () => {
   const manifest = readManifest();
   const expectedRoutes = expectedVisualSmokeRoutes();
   const {
+    findUnexplainedVisualSmokeDuplicateReports,
     hasValidVisualSmokeDuplicateExplanation,
-    isExplainedVisualSmokeDuplicate,
-    validateVisualSmokeDuplicateExplanations,
-    visualSmokeDuplicateExplanationKey,
     visualSmokeDuplicateExplanations,
   } = visualSmokeDuplicateContract();
   const { shouldSuppressLaunchPopupAdForPath } = loadLaunchAdSuppressionPolicy();
@@ -279,7 +323,6 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     expectedRoutes,
   );
 
-  const namesByHash = new Map();
   for (const [index, route] of routes.entries()) {
     const expectedRoute = expectedRoutes[index];
     assert.equal(typeof route.name, 'string');
@@ -300,16 +343,9 @@ test('visual smoke manifest matches the shared route list and screenshot filenam
     assert.ok(fs.existsSync(screenshotPath), `${route.file} should exist`);
     assert.ok(fs.statSync(screenshotPath).size > 10_000, `${route.file} should not be empty`);
     assert.equal(route.sha256, sha256File(screenshotPath), `${route.file} hash should match`);
-
-    const names = namesByHash.get(route.sha256) || [];
-    names.push(route.name);
-    namesByHash.set(route.sha256, names);
   }
 
-  const unexplainedDuplicates = [...namesByHash.values()]
-    .filter((names) => names.length > 1)
-    .filter((names) => !isExplainedVisualSmokeDuplicate(names))
-    .map((names) => visualSmokeDuplicateExplanationKey(names));
+  const unexplainedDuplicates = findUnexplainedVisualSmokeDuplicateReports(routes);
 
   assert.deepEqual(unexplainedDuplicates, []);
 });

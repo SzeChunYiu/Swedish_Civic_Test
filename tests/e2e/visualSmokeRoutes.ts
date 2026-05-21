@@ -6,6 +6,10 @@ export type VisualSmokeRoute = {
 
 export type VisualSmokeRouteManifestEntry = Pick<VisualSmokeRoute, 'file' | 'name' | 'route'>;
 
+export type VisualSmokeDuplicateCapture = VisualSmokeRouteManifestEntry & {
+  sha256: string;
+};
+
 export type VisualSmokeDuplicateExplanation = {
   names: readonly string[];
   reason: string;
@@ -126,4 +130,35 @@ export function isExplainedVisualSmokeDuplicate(
       hasValidVisualSmokeDuplicateExplanation(explanation) &&
       visualSmokeDuplicateExplanationKey(explanation.names) === duplicateKey,
   );
+}
+
+function formatVisualSmokeDuplicateCapture(capture: VisualSmokeDuplicateCapture): string {
+  return `${capture.name} (${capture.route} -> ${capture.file})`;
+}
+
+export function findUnexplainedVisualSmokeDuplicateReports(
+  captures: readonly VisualSmokeDuplicateCapture[],
+  explanations: readonly VisualSmokeDuplicateExplanation[] = visualSmokeDuplicateExplanations,
+): string[] {
+  const capturesByHash = new Map<string, VisualSmokeDuplicateCapture[]>();
+
+  for (const capture of captures) {
+    const hashCaptures = capturesByHash.get(capture.sha256) ?? [];
+    hashCaptures.push(capture);
+    capturesByHash.set(capture.sha256, hashCaptures);
+  }
+
+  return [...capturesByHash.entries()]
+    .filter(([, hashCaptures]) => hashCaptures.length > 1)
+    .filter(([, hashCaptures]) => {
+      const names = hashCaptures.map((capture) => capture.name);
+      return !isExplainedVisualSmokeDuplicate(names, explanations);
+    })
+    .map(([hash, hashCaptures]) => {
+      const captureDetails = [...hashCaptures]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(formatVisualSmokeDuplicateCapture)
+        .join(', ');
+      return `${hash}: ${captureDetails}`;
+    });
 }
