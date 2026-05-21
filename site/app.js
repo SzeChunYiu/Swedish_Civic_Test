@@ -1534,6 +1534,21 @@ function smtQuizEscapeHtml(value) {
   );
 }
 
+const SMT_QUIZ_SOURCE_CITATION_COPY = {
+  en: { source: 'Source', page: 'p.' },
+  sv: { source: 'Källa', page: 's.' },
+  'zh-Hans': { source: '来源', page: '页' },
+  'zh-Hant': { source: '來源', page: '頁' },
+  ar: { source: 'المصدر', page: 'ص.' },
+  ckb: { source: 'سەرچاوە', page: 'ل.' },
+  fa: { source: 'منبع', page: 'ص.' },
+  pl: { source: 'Źródło', page: 's.' },
+  so: { source: 'Ilaha', page: 'b.' },
+  ti: { source: 'ምንጪ', page: 'ገጽ' },
+  tr: { source: 'Kaynak', page: 's.' },
+  uk: { source: 'Джерело', page: 'с.' },
+};
+
 function smtQuizSourceCitation(question, lang) {
   const source = question && question.source;
   if (!source)
@@ -1568,9 +1583,8 @@ function smtQuizSourceCitation(question, lang) {
       uk: 'Джерело недоступне',
     });
   }
-  return lang === 'sv'
-    ? `Källa: ${title}, ${source.chapter}, ${source.section}, s. ${source.page}`
-    : `Source: ${title}, ${source.chapter}, ${source.section}, p. ${source.page}`;
+  const copy = SMT_QUIZ_SOURCE_CITATION_COPY[lang] || SMT_QUIZ_SOURCE_CITATION_COPY.en;
+  return `${copy.source}: ${title}, ${source.chapter}, ${source.section}, ${copy.page} ${source.page}`;
 }
 
 function smtQuizQuestionDisclaimer(lang) {
@@ -1603,6 +1617,22 @@ const SMT_QUIZ_PROVENANCE_COPY = {
   uhr: {
     en: { label: 'UHR', description: "Based on UHR's study material Sverige i fokus." },
     sv: { label: 'UHR', description: 'Baserad på UHR:s studiematerial Sverige i fokus.' },
+    'zh-Hans': { label: 'UHR', description: '基于 UHR 的学习材料《Sverige i fokus》。' },
+    'zh-Hant': { label: 'UHR', description: '基於 UHR 的學習材料《Sverige i fokus》。' },
+    ar: { label: 'UHR', description: 'مبني على مادة UHR الدراسية Sverige i fokus.' },
+    ckb: {
+      label: 'UHR',
+      description: 'پشت بە ماددەی خوێندنی UHR بە ناوی Sverige i fokus دەبەستێت.',
+    },
+    fa: { label: 'UHR', description: 'بر پایه ماده آموزشی UHR با نام Sverige i fokus.' },
+    pl: { label: 'UHR', description: 'Na podstawie materiału UHR Sverige i fokus.' },
+    so: {
+      label: 'UHR',
+      description: 'Waxay ku salaysan tahay agabka waxbarasho ee UHR, Sverige i fokus.',
+    },
+    ti: { label: 'UHR', description: 'ኣብ ናይ UHR መጽናዕቲ ንብረት Sverige i fokus ዝተመርኮሰ።' },
+    tr: { label: 'UHR', description: 'UHR’nin Sverige i fokus çalışma materyaline dayanır.' },
+    uk: { label: 'UHR', description: 'На основі навчального матеріалу UHR Sverige i fokus.' },
   },
   derived: {
     en: {
@@ -1613,17 +1643,58 @@ const SMT_QUIZ_PROVENANCE_COPY = {
       label: 'Tillägg',
       description: 'Variant av en appskriven, UHR-hänvisad övningsfråga.',
     },
+    'zh-Hans': { label: '补充', description: '由应用编写、带 UHR 引用的练习题变体。' },
+    'zh-Hant': { label: '補充', description: '由應用程式撰寫、附 UHR 引用的練習題變體。' },
+    ar: { label: 'تكميلي', description: 'صيغة من سؤال تدريبي كتبه التطبيق مع إحالة إلى UHR.' },
+    ckb: {
+      label: 'تەواوکەر',
+      description: 'جۆرێک لە پرسیاری مەشقە کە ئەپەکە نووسیویەتی و ئاماژەی UHRی هەیە.',
+    },
+    fa: {
+      label: 'تکمیلی',
+      description: 'گونه‌ای از سؤال تمرینی نوشته‌شده در برنامه با ارجاع به UHR.',
+    },
+    pl: {
+      label: 'Dodatkowe',
+      description: 'Wariant pytania ćwiczeniowego napisanego w aplikacji z odwołaniem do UHR.',
+    },
+    so: {
+      label: 'Dheeraad',
+      description: "Nooc ka mid ah su'aal tababar oo app-ku qoray, oo leh tixraac UHR.",
+    },
+    ti: { label: 'ተወሳኺ', description: 'ብመተግበሪ ዝተጻሕፈ፣ ናብ UHR ዝምልከት ናይ ልምምድ ሕቶ ቅያር።' },
+    tr: {
+      label: 'Ek',
+      description: 'UHR atıflı, uygulama tarafından yazılmış alıştırma sorusunun varyantı.',
+    },
+    uk: {
+      label: 'Додаткове',
+      description: 'Варіант тренувального питання, написаного в застосунку, з посиланням на UHR.',
+    },
   },
   editorial: {
     en: { label: 'Editorial', description: 'Hand-written editorial context.' },
     sv: { label: 'Redaktionell', description: 'Redaktionellt skrivet sammanhang.' },
+    'zh-Hans': { label: '编辑', description: '手写的编辑背景说明。' },
+    'zh-Hant': { label: '編輯', description: '手寫的編輯背景說明。' },
+    ar: { label: 'تحريري', description: 'سياق تحريري مكتوب يدويًا.' },
+    ckb: {
+      label: 'دەستنووسی دەستکاریکراو',
+      description: 'دەقێکی ڕوونکردنەوەی دەستکاری بە دەست نووسراو.',
+    },
+    fa: { label: 'تحریریه', description: 'زمینه تحریریه‌ای که دستی نوشته شده است.' },
+    pl: { label: 'Redakcyjne', description: 'Ręcznie napisany kontekst redakcyjny.' },
+    so: { label: 'Tifaftir', description: 'Sharaxaad tifaftir oo gacanta lagu qoray.' },
+    ti: { label: 'ኤዲቶርያል', description: 'ብኢድ ዝተጻሕፈ ኤዲቶርያላዊ ኩነታት።' },
+    tr: { label: 'Editoryal', description: 'Elle yazılmış editoryal bağlam.' },
+    uk: { label: 'Редакційне', description: 'Вручну написаний редакційний контекст.' },
   },
 };
 
 function smtQuizProvenanceBadge(question, lang) {
   const provenance = smtQuizQuestionProvenance(question);
-  const language = lang === 'sv' ? 'sv' : 'en';
-  const copy = SMT_QUIZ_PROVENANCE_COPY[provenance][language];
+  const copy =
+    SMT_QUIZ_PROVENANCE_COPY[provenance][lang] || SMT_QUIZ_PROVENANCE_COPY[provenance].en;
   const ariaPrefix = smtTr({
     sv: 'Källtyp',
     en: 'Provenance',
