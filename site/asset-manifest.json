@@ -76,8 +76,8 @@
       "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
     },
     "ebook.js": {
-      "bytes": 520578,
-      "sha256": "bf876bfa1ef3e867931da426c8de88293753e79fe35f9f23d8722b7db33c86b4"
+      "bytes": 520566,
+      "sha256": "b8d76eb9924e63ba68e035602c5daedd31b4bba66762b4e9b328a0de2a3f4c34"
     },
     "extras.js": {
       "bytes": 31378,
@@ -88,16 +88,16 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 345997,
-      "sha256": "6e7c4eef621d0af4cb6c0964712bfef4f821c6e45d5a012589c7efa8d40f444e"
+      "bytes": 346114,
+      "sha256": "18e698dc0f28e4e3466894daafbf3e9bd5f1022a06fb41f5a9e70f3adc1a0cc2"
     },
     "icon.png": {
       "bytes": 362794,
       "sha256": "401ff142bcdf5c40570f8eb7673fc979d7f2ba8d646d26d34b27feb4f4115054"
     },
     "index.html": {
-      "bytes": 71634,
-      "sha256": "d4275cdca3e01ea3edd27fa63b01b48ae42a8d47701c36eac0c5f0b93f693bc9"
+      "bytes": 71881,
+      "sha256": "56802de2884ed91346bfbfb6dc8ec769b34ccb78293008a00fd38546a488d03a"
     },
     "practice.js": {
       "bytes": 68033,
@@ -108,8 +108,8 @@
       "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
     },
     "questions.js": {
-      "bytes": 3771039,
-      "sha256": "4c76cdb5cb1cc122f9eded930c17727e2daa5bf52addc4a9494218794fabc528"
+      "bytes": 3770665,
+      "sha256": "c8554cce9b21430e7af8b5a5ca103c5b923cdb7e5072380f6dd4288bf13610e5"
     },
     "settings.js": {
       "bytes": 12903,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 135976,
-      "sha256": "3ef9a5774319a1ed51fea74a6f35d68d83a2d2e6bc9c0bfc192bc19ff833347a"
+      "bytes": 141102,
+      "sha256": "b9fb3906976647a8779c1290867a498bfc00674ea82c9ca7288e09ecce86a2fd"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,
