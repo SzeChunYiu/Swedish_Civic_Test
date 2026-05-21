@@ -280,6 +280,57 @@ test('practice and routed quiz answer option labels follow the selected language
   expect(consoleErrors).toEqual([]);
 });
 
+test('routed quiz Back to Practice and Tillbaka till övning return without retained quiz content', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  const scenarios = [
+    {
+      answerLabel: 'Select answer In southern Europe',
+      backLabel: 'Back to practice',
+      hubHeading: 'Choose how to practise',
+      language: 'en',
+      sessionHeading: 'Session q001',
+      tryAgainLabel: 'Try this quiz question again',
+    },
+    {
+      answerLabel: 'Välj svaret I södra Europa',
+      backLabel: 'Tillbaka till övning',
+      hubHeading: 'Välj hur du vill öva',
+      language: 'sv',
+      sessionHeading: 'Frågepass q001',
+      tryAgainLabel: 'Försök igen med den här frågan',
+    },
+  ] as const;
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  for (const scenario of scenarios) {
+    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+    await closeLaunchAdIfPresent(page);
+    await dismissBlockingModals(page);
+
+    await expect(page.getByRole('heading', { name: scenario.sessionHeading })).toBeVisible();
+    await page.getByLabel(scenario.answerLabel).click();
+
+    const backToPractice = page.getByRole('link', { name: scenario.backLabel });
+    await expect(backToPractice).toBeVisible();
+    await backToPractice.click();
+
+    await expect(page).toHaveURL(/\/practice\/?$/);
+    await expect(page.getByRole('heading', { name: scenario.hubHeading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: scenario.sessionHeading })).toHaveCount(0);
+    await expect(page.getByRole('link', { name: scenario.backLabel })).toHaveCount(0);
+    await expect(page.getByLabel(scenario.tryAgainLabel)).toHaveCount(0);
+  }
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('practice answer choices can be eliminated and restored before submission', async ({
   page,
 }) => {
@@ -293,6 +344,7 @@ test('practice answer choices can be eliminated and restored before submission',
   await enableEnglishSupport(page);
   await page.goto('/practice', { waitUntil: 'networkidle' });
   await closeLaunchAdIfPresent(page);
+  await startAllVisiblePractice(page, 'en');
 
   const eliminatedAnswer = page.getByLabel('In North America, Eliminated');
   const eliminateWrongAnswer = page.getByRole('button', {

@@ -333,6 +333,53 @@ test('learn chapter navigation covers localized back-link round trips', () => {
   );
 });
 
+test('routed quiz Back to Practice links use stack-aware route dismissal', () => {
+  const source = readRelative('practice-feedback.spec.ts');
+  const quizSource = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
+  const backToPracticeLinks =
+    quizSource.match(
+      /<Link\b[\s\S]*?accessibilityLabel=\{copy\.backToPracticeAccessibilityLabel\}[\s\S]*?<\/Link>/g,
+    ) ?? [];
+
+  assert.equal(
+    backToPracticeLinks.length,
+    3,
+    'routed quiz should keep every Back to Practice link under the same navigation contract',
+  );
+  for (const backToPracticeLink of backToPracticeLinks) {
+    assert.match(
+      backToPracticeLink,
+      /href="\/practice"/,
+      'Back to Practice links should keep their /practice destination',
+    );
+    assert.match(
+      backToPracticeLink,
+      /\bdismissTo\b|\breplace\b/,
+      'Back to Practice links should dismiss to or replace /practice instead of pushing a duplicate route',
+    );
+  }
+  assert.match(
+    source,
+    /routed quiz Back to Practice and Tillbaka till övning return without retained quiz content/,
+    'practice feedback e2e should cover localized routed quiz return links',
+  );
+  assert.match(
+    source,
+    /await expect\(page\)\.toHaveURL\(\/\\\/practice\\\/\?\$\/\);/,
+    'routed quiz return e2e should verify the route lands on /practice',
+  );
+  assert.match(
+    source,
+    /await expect\(page\.getByRole\('heading', \{ name: scenario\.sessionHeading \}\)\)\.toHaveCount\(0\);/,
+    'routed quiz return e2e should verify the old quiz heading is no longer role-queryable',
+  );
+  assert.doesNotMatch(
+    source,
+    /getByRole\('link', \{ name: scenario\.backLabel \}\)\.(?:first|last)\(\)/,
+    'routed quiz return e2e should not select around retained hidden Back to Practice links',
+  );
+});
+
 test('practice feedback specs target answer option accessibility result labels', () => {
   const source = readRelative('practice-feedback.spec.ts');
 
