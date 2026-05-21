@@ -2571,75 +2571,149 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
 ];
 const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'settings language type import',
     pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'typed localized copy contract',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'localized progress copy',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'clamped progress source',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'percent value derived from clamped progress',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'language copy selection',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'readable localized progress label',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'web aria label',
     pattern: /aria-label=\{progressAccessibilityLabel\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'web aria max value',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'web aria min value',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'web aria current value',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'web aria localized value text',
     pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'native accessibility label',
     pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'native progressbar role',
     pattern: /accessibilityRole="progressbar"/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'native clamped accessibility value',
     pattern:
       /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'animated fill uses clamped source',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
+    filePath: 'components/ui/ProgressBar.tsx',
     label: 'visual fill uses percent interpolation bounds',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx settings language import',
+    pattern:
+      /import \{ useSettingsStore, type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx language override resolution',
+    pattern: /const language = languageOverride \?\? settingsLanguage;/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx custom accessibility label fallback',
+    pattern: /const resolvedAccessibilityLabel = accessibilityLabel \?\? defaultAccessibilityText;/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx must use the shared reduced-motion hook',
+    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx animation opt-out combines prop and reduced motion',
+    pattern: /const shouldAnimate = animated && !reducedMotionEnabled;/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx non-animated path sets clamped value',
+    pattern: /if \(!shouldAnimate\) \{[\s\S]*animatedProgress\.setValue\(clampedProgress\);/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx web aria current value',
+    pattern: /aria-valuenow=\{progressPercent\}/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx web aria localized value text',
+    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx native clamped accessibility value',
+    pattern:
+      /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx custom track style passthrough',
+    pattern: /style=\{\[styles\.track, style\]\}/,
+  },
+  {
+    filePath: 'components/ProgressBar.tsx',
+    label: 'components/ProgressBar.tsx custom fill style passthrough',
+    pattern: /style=\{\[styles\.fill, \{ width: fillWidth \}, fillStyle\]\}/,
   },
 ];
 const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
@@ -7933,6 +8007,7 @@ let buttonAccessibilityRulesValidated = 0;
 let buttonAccessibilityParityValidated = false;
 let cardAccessibilityRulesValidated = 0;
 let cardAccessibilityParityValidated = false;
+let progressBarAccessibilityRulesExpected = EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length;
 let progressBarAccessibilityRulesValidated = 0;
 let progressBarAccessibilityParityValidated = false;
 let metricCardAccessibilityRulesValidated = 0;
@@ -11601,26 +11676,28 @@ function validateCardAccessibilityParity() {
 
 function validateProgressBarAccessibilityParity() {
   let valid = true;
-  let progressBarSource = '';
+  const progressBarSources = new Map();
+  const progressBarFiles = [
+    ...new Set(EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.map((rule) => rule.filePath)),
+  ];
 
   function reject(message) {
     valid = false;
     fail(message);
   }
 
-  try {
-    progressBarSource = fs.readFileSync(
-      path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
-      'utf8',
-    );
-  } catch (error) {
-    reject(
-      `components/ui/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
-    );
-    return;
+  for (const filePath of progressBarFiles) {
+    try {
+      progressBarSources.set(filePath, fs.readFileSync(path.join(repoRoot, filePath), 'utf8'));
+    } catch (error) {
+      reject(`${filePath} could not be read for accessibility parity: ${error.message}`);
+      return;
+    }
   }
 
   EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
+    const progressBarSource = progressBarSources.get(expectedRule.filePath) ?? '';
+
     if (!expectedRule.pattern.test(progressBarSource)) {
       reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
       return;
@@ -17990,6 +18067,7 @@ console.log(
       buttonAccessibilityParityValidated,
       cardAccessibilityRulesValidated,
       cardAccessibilityParityValidated,
+      progressBarAccessibilityRulesExpected,
       progressBarAccessibilityRulesValidated,
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
