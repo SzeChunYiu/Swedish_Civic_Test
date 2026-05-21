@@ -4442,3 +4442,96 @@ html[dir="rtl"] .lang-menu { right: auto; left: 0; }
 @media (prefers-reduced-motion: reduce) {
   #dala-figure .buddy-img { animation: none !important; }
 }
+
+/* ============================ SIGN IN (optional account) */
+.signin-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.signin-trigger.is-signed {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.modal__panel--signin {
+  max-width: 380px;
+}
+.signin__lede {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.signin__btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.05s;
+}
+.signin__btn:hover {
+  border-color: var(--ink-soft);
+  background: rgba(0, 0, 0, 0.015);
+}
+.signin__btn:active { transform: translateY(1px); }
+.signin__btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.signin__divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.signin__divider::before,
+.signin__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.signin__input {
+  width: 100%;
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--white);
+}
+.signin__input:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0, 117, 222, 0.12);
+}
+.signin__magic { width: 100%; }
+.signin__fineprint {
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
