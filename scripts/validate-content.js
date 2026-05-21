@@ -5455,6 +5455,32 @@ function optionBilingualTextPairsAreValid(question) {
   return question.options.every(optionTextPairIsTranslatedOrInvariant);
 }
 
+function translationCompletenessParityIsValidated() {
+  return (
+    publishedQuestions > 0 &&
+    questionBilingualTextPairsValidated === publishedQuestions &&
+    questionOptionBilingualTextPairsValidated === publishedQuestions
+  );
+}
+
+function translationNaturalnessGuardParityIsValidated() {
+  return (
+    publishedQuestions > 0 &&
+    questionGeneratedTrueFalseNaturalnessValidated === publishedQuestions &&
+    questionLuciaRoleEnglishNaturalnessValidated === publishedQuestions &&
+    questionEuCooperationEnglishNaturalnessValidated === publishedQuestions &&
+    questionCouncilOfEuropeWorkForEnglishNaturalnessValidated === publishedQuestions &&
+    questionMayDayEnglishNaturalnessValidated === publishedQuestions &&
+    questionPublicSectorEnglishNaturalnessValidated === publishedQuestions &&
+    questionLuciaExplanationRoleScaffoldValidated === publishedQuestions &&
+    questionGoodFridayEnglishNaturalnessValidated === publishedQuestions &&
+    questionReferendumAdvisorySwedishNaturalnessValidated === publishedQuestions &&
+    questionSourceCriticismEnglishNaturalnessValidated === publishedQuestions &&
+    questionReligiousFreedomParallelismValidated === publishedQuestions * 2 &&
+    somaliGeographyNaturalnessParityValidated === true
+  );
+}
+
 function questionTextFieldsAreNormalized(question) {
   const fields = [
     question.questionSv,
@@ -23563,6 +23589,7 @@ console.log(
       questionIdSequencesValidated,
       questionBilingualTextPairsValidated,
       questionOptionBilingualTextPairsValidated,
+      translationCompletenessParityValidated: translationCompletenessParityIsValidated(),
       questionExactSchemaKeysValidated,
       questionTextFieldsNormalizedValidated,
       questionSentenceEndingsValidated,
@@ -23570,6 +23597,7 @@ console.log(
       questionNestedMetaStemsValidated,
       questionJudgementMetaStemsValidated,
       questionGeneratedTrueFalseNaturalnessValidated,
+      translationNaturalnessGuardParityValidated: translationNaturalnessGuardParityIsValidated(),
       generatedSwedenScopeParityValidated,
       somaliGeographyNaturalnessCasesValidated,
       somaliGeographyNaturalnessStaticRowsValidated,
