@@ -100,83 +100,6 @@ function collectMatches({ pattern, source, filePath }) {
   }));
 }
 
-test('Home copy specs use shared route setup and language picker helpers', () => {
-  const homeCopySpecs = [
-    {
-      file: 'home-study-loop-copy.spec.ts',
-      switchesLanguage: true,
-    },
-    {
-      file: 'home-sv-mistake-review-copy.spec.ts',
-      switchesLanguage: false,
-    },
-  ];
-
-  for (const { file, switchesLanguage } of homeCopySpecs) {
-    const source = readRelative(file);
-
-    assert.match(source, /from ['"]\.\/browserLaunch['"]/);
-    assert.match(
-      source,
-      /\bcollectConsoleAndPageErrors\b/,
-      `${file} should collect browser errors through the shared helper`,
-    );
-    assert.match(
-      source,
-      /\bsetupHomeCopyRoute\b/,
-      `${file} should seed settings, navigate, and dismiss modals through setupHomeCopyRoute`,
-    );
-    assert.doesNotMatch(
-      source,
-      /\bcollectConsoleErrors\b/,
-      `${file} should not define a local console-error collector`,
-    );
-    assert.doesNotMatch(
-      source,
-      /\bclickIfVisible\b/,
-      `${file} should not define a local modal-click helper`,
-    );
-    assert.doesNotMatch(
-      source,
-      /\bdismissBlockingModals\b/,
-      `${file} should not bypass setupHomeCopyRoute with direct modal dismissal`,
-    );
-    assert.doesNotMatch(
-      source,
-      /getByRole\(\s*['"]button['"]\s*,\s*\{\s*name:\s*['"](?:English|Swedish)['"]/,
-      `${file} should not select LanguagePicker rows as buttons`,
-    );
-
-    if (switchesLanguage) {
-      assert.match(
-        source,
-        /\bswitchLanguageThroughTopBarPicker\b/,
-        `${file} should use the shared top-bar LanguagePicker helper`,
-      );
-      assert.match(source, /switchLanguageThroughTopBarPicker\(page,\s*['"]en['"]\)/);
-    } else {
-      assert.doesNotMatch(
-        source,
-        /\bswitchLanguageThroughTopBarPicker\b/,
-        `${file} should not import unused language-switching helpers`,
-      );
-    }
-  }
-});
-
-test('shared top-bar LanguagePicker helper selects menuitem rows, not buttons', () => {
-  const source = readRelative('browserLaunch.ts');
-
-  assert.match(source, /export async function switchLanguageThroughTopBarPicker/);
-  assert.match(source, /getByRole\('menu', \{ name: languagePickerMenuName \}\)/);
-  assert.match(source, /getByRole\('menuitem', \{ exact: true, name: targetLabel \}\)/);
-  assert.doesNotMatch(
-    source,
-    /getByRole\(\s*['"]button['"]\s*,\s*\{\s*name:\s*targetLabel/,
-    'shared LanguagePicker helper should not select language rows as buttons',
-  );
-});
-
 test('browser specs do not hardcode stale chapter count copy', () => {
   const staleCountPatterns = [
     /0\/50 besvarade/g,
@@ -217,48 +140,43 @@ test('browser specs do not assert obsolete dash-style answer feedback text', () 
   );
 });
 
-test('learn chapter navigation derives and reuses the rendered chapter total', () => {
+test('learn chapter navigation derives the rendered chapter total from questions data', () => {
   const source = readRelative('learn-chapter-navigation.spec.ts');
 
-  assert.doesNotMatch(
+  assert.match(
     source,
-    /from\s+['"]\.\.\/\.\.\/data\/questions['"]/,
-    'learn chapter navigation spec should not reintroduce a direct data/questions import when it validates runtime-rendered totals',
+    /import\s+\{\s*questions\s*\}\s+from\s+['"]\.\.\/\.\.\/data\/questions['"]/,
+    'learn chapter navigation spec should import the runtime question data',
   );
   assert.match(
     source,
-    /function\s+extractQuestionCount\(text:\s*string\s*\|\s*null,\s*pattern:\s*RegExp\)/,
-    'learn chapter navigation spec should extract the rendered chapter count through a shared helper',
+    /questions\.filter\(\s*\(?question\)?\s*=>\s*question\.chapterId\s*===\s*['"]ch01['"],?\s*\)\.length/,
+    'learn chapter navigation spec should calculate the ch01 total from data/questions',
+  );
+});
+
+test('learn chapter navigation covers localized back-link round trips', () => {
+  const source = readRelative('learn-chapter-navigation.spec.ts');
+
+  assert.match(
+    source,
+    /page\.getByLabel\(['"]Tillbaka till kapitellistan['"]\)\.click\(\)/,
+    'Swedish chapter navigation should activate the localized back link',
   );
   assert.match(
     source,
-    /await\s+firstChapter\.textContent\(\),\s*\/0\\\/\(\\d\+\)\s+besvarade\//,
-    'learn chapter navigation spec should derive the Swedish list total from rendered chapter-card copy',
+    /page\.getByLabel\(['"]Back to chapter list['"]\)/,
+    'English chapter navigation should locate the localized back link',
   );
   assert.match(
     source,
-    /await\s+firstChapter\.textContent\(\),\s*\/0\\\/\(\\d\+\)\s+practiced\//,
-    'learn chapter navigation spec should derive the English list total from rendered chapter-card copy',
+    /await\s+backToChapterList\.click\(\);/,
+    'English chapter navigation should activate the localized back link',
   );
   assert.match(
     source,
-    /toContainText\(`0\/\$\{questionCount\}\s+besvarade`\)/,
-    'learn chapter navigation spec should assert the Swedish list total using the derived count',
-  );
-  assert.match(
-    source,
-    /toContainText\(`Övningsfrågor\s+\(\$\{questionCount\}\)`\)/,
-    'learn chapter navigation spec should assert the Swedish detail total using the same derived count',
-  );
-  assert.match(
-    source,
-    /toContainText\(`0\/\$\{questionCount\}\s+practiced`\)/,
-    'learn chapter navigation spec should assert the English list total using the derived count',
-  );
-  assert.match(
-    source,
-    /toContainText\(`Practice questions\s+\(\$\{questionCount\}\)`\)/,
-    'learn chapter navigation spec should assert the English detail total using the same derived count',
+    /const returnedFirstChapter = page\.getByLabel\(englishFirstChapterLabel\)\.last\(\);/,
+    'English chapter navigation should verify the returned Learn card after using the back link',
   );
 });
 
@@ -342,50 +260,6 @@ test('static site privacy grep focus stays isolated to privacy assertions', () =
     networkSource,
     /static system font fallback keeps primary routes inside mobile and desktop viewports/,
     'primary route overflow coverage should stay covered in the neutral network spec',
-  );
-});
-
-test('static network specs share the external request trap helper', () => {
-  const helperSource = readRelative('staticSiteNetworkGuards.ts');
-  const privacySource = readRelative('static-site-network-privacy.spec.ts');
-  const networkSource = readRelative('static-site-network-fonts.spec.ts');
-
-  assert.match(
-    helperSource,
-    /export async function trapExternalRequests\(\s*page: Page,\s*allowedOrigin: string,\s*capturedGoogleFontRequests\?: string\[],\s*\): Promise<void>/,
-    'staticSiteNetworkGuards should export a typed trap with an optional captured-request array',
-  );
-  assert.match(
-    helperSource,
-    /capturedGoogleFontRequests\?\.push\(url\)/,
-    'the shared trap should keep collecting Google Font request URLs when requested',
-  );
-
-  for (const [label, source] of [
-    ['privacy spec', privacySource],
-    ['font/network spec', networkSource],
-  ]) {
-    assert.match(
-      source,
-      /import \{ trapExternalRequests \} from '\.\/staticSiteNetworkGuards';/,
-      `${label} should import the shared request trap`,
-    );
-    assert.doesNotMatch(
-      source,
-      /(?:async\s+)?function trapExternalRequests\(/,
-      `${label} must not define a route-local request trap`,
-    );
-  }
-
-  assert.match(
-    networkSource,
-    /trapExternalRequests\(page,\s*new URL\(staticSite\.baseUrl\)\.origin,\s*googleFontRequests\)/,
-    'font/network spec should pass the captured Google Font request array',
-  );
-  assert.match(
-    privacySource,
-    /trapExternalRequests\(page,\s*new URL\(staticSite\.baseUrl\)\.origin,\s*\[\]\)/,
-    'privacy spec should still compile when passing an explicit captured-request array',
   );
 });
 

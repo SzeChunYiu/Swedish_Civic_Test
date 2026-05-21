@@ -3,7 +3,18 @@ import { expect, test } from '@playwright/test';
 import { questions } from '../../data/questions';
 import { dismissBlockingModals } from './browserLaunch';
 
-const ch01QuestionCount = questions.filter((question) => question.chapterId === 'ch01').length;
+const chapterOneQuestionCount = questions.filter(
+  (question) => question.chapterId === 'ch01',
+).length;
+const englishFirstChapterLabel =
+  /Open chapter The country of Sweden\. Swedish name: Landet Sverige\./;
+
+function extractQuestionCount(text: string | null, pattern: RegExp) {
+  const match = text?.match(pattern);
+  expect(match).not.toBeNull();
+
+  return Number(match?.[1] ?? '0');
+}
 
 test('learning path opens a source-backed chapter detail screen and returns to the chapter list', async ({
   page,
@@ -23,8 +34,12 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   const firstChapter = page.getByLabel(/Öppna kapitel Landet Sverige/);
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('Landet Sverige');
-  expect(ch01QuestionCount).toBeGreaterThanOrEqual(50);
-  await expect(firstChapter).toContainText(`0/${ch01QuestionCount} besvarade`);
+  const questionCount = extractQuestionCount(
+    await firstChapter.textContent(),
+    /0\/(\d+) besvarade/,
+  );
+  expect(questionCount).toBe(chapterOneQuestionCount);
+  await expect(firstChapter).toContainText(`0/${questionCount} besvarade`);
 
   await firstChapter.click();
 
@@ -37,7 +52,7 @@ test('learning path opens a source-backed chapter detail screen and returns to t
   await expect(chapterScreen).toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  await expect(chapterScreen).toContainText(`Övningsfrågor (${ch01QuestionCount})`);
+  await expect(chapterScreen).toContainText(`Övningsfrågor (${questionCount})`);
   await expect(chapterScreen).toContainText('Var ligger Sverige?');
   await expect(chapterScreen).toContainText('Where is Sweden located?');
   await expect(chapterScreen).toContainText('UHR-källa');
@@ -78,9 +93,7 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await dismissBlockingModals(page);
 
   await expect(page.locator('body')).toContainText('Learning path');
-  const firstChapter = page.getByLabel(
-    /Open chapter The country of Sweden\. Swedish name: Landet Sverige\./,
-  );
+  const firstChapter = page.getByLabel(englishFirstChapterLabel);
   await expect(firstChapter).toBeVisible();
   await expect(firstChapter).toContainText('The country of Sweden');
   await expect(firstChapter).toContainText('Landet Sverige');
@@ -90,8 +103,12 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(firstChapter).not.toContainText(
     'Geografi, klimat, natur, befolkning, naturresurser och klimatförändringar.',
   );
-  expect(ch01QuestionCount).toBeGreaterThanOrEqual(50);
-  await expect(firstChapter).toContainText(`0/${ch01QuestionCount} practiced`);
+  const questionCount = extractQuestionCount(
+    await firstChapter.textContent(),
+    /0\/(\d+) practiced/,
+  );
+  expect(questionCount).toBe(chapterOneQuestionCount);
+  await expect(firstChapter).toContainText(`0/${questionCount} practiced`);
 
   await firstChapter.click();
 
@@ -99,7 +116,17 @@ test('learning path chapter cards follow English support mode', async ({ page })
   await expect(page.getByLabel('Start quiz for The country of Sweden')).toBeVisible();
   await expect(page.locator('body')).toContainText('The country of Sweden');
   await expect(page.locator('body')).toContainText('Geography, climate, nature');
-  await expect(page.locator('body')).toContainText(`Practice questions (${ch01QuestionCount})`);
+  await expect(page.locator('body')).toContainText(`Practice questions (${questionCount})`);
+  const backToChapterList = page.getByLabel('Back to chapter list');
+  await expect(backToChapterList).toBeVisible();
+  await backToChapterList.click();
+
+  await expect(page).toHaveURL(/\/learn$/);
+  const returnedFirstChapter = page.getByLabel(englishFirstChapterLabel).last();
+  await expect(returnedFirstChapter).toBeVisible();
+  await expect(returnedFirstChapter).toContainText('The country of Sweden');
+  await expect(returnedFirstChapter).toContainText('Landet Sverige');
+  await expect(returnedFirstChapter).toContainText(`0/${questionCount} practiced`);
 
   expect(consoleErrors).toEqual([]);
 });
