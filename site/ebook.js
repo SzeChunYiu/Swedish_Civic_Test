@@ -2123,6 +2123,449 @@
     },
   };
 
+  const EBOOK_READER_I18N_FALLBACKS = Object.freeze({
+    5: {
+      title: {
+        'zh-Hans': '平等',
+        'zh-Hant': '平等',
+        ar: 'المساواة',
+        ckb: 'یەکسانی',
+        fa: 'برابری',
+        pl: 'Równość',
+        so: 'Sinnaan',
+        ti: 'ማዕርነት',
+        tr: 'Eşitlik',
+        uk: 'Рівність',
+      },
+      title_em: {
+        'zh-Hans': '与现代家庭。',
+        'zh-Hant': '與現代家庭。',
+        ar: 'والأسرة الحديثة.',
+        ckb: 'و ماڵی هاوچەرخ.',
+        fa: 'و خانوادهٔ مدرن.',
+        pl: 'i nowoczesne gospodarstwo domowe.',
+        so: 'iyo guriga casriga ah.',
+        ti: 'እና ዘመናዊ ስድራቤት።',
+        tr: 've modern hane.',
+        uk: 'і сучасне домогосподарство.',
+      },
+      lede: {
+        'zh-Hans': '瑞典是一个安静的女权主义项目。法律比餐桌谈话更清楚，但两者都值得了解。',
+        'zh-Hant': '瑞典是一個安靜的女性主義計畫。法律比餐桌談話更清楚，但兩者都值得了解。',
+        ar: 'السويد مشروع نسوي هادئ. القوانين أوضح من أحاديث مائدة العشاء، لكن كليهما يستحق المعرفة.',
+        ckb: 'سوید پڕۆژەیەکی فێمینیستی ئارامە. یاساکان لە گفتوگۆی سەر خوان ڕوونترن، بەڵام هەردووکیان گرنگن.',
+        fa: 'سوئد یک پروژهٔ آرام فمینیستی است. قانون‌ها از گفت‌وگوهای سر میز شام روشن‌ترند، اما هر دو ارزش دانستن دارند.',
+        pl: 'Szwecja jest cichym projektem feministycznym. Prawo jest jaśniejsze niż rozmowy przy stole, ale jedno i drugie warto znać.',
+        so: 'Iswiidhan waa mashruuc dumarnimo oo deggan. Shuruucdu way ka caddahay sheekada miiska cashada, laakiin labaduba waa muhiim in la ogaado.',
+        ti: 'ሽወደን ጸጥ ዝበለ ፕሮጀክት ማዕርነት ደቂ ኣንስትዮ እያ። ሕግታት ካብ ዘተ መኣዲ ዝበለጸ ንጹር እዮም፣ ግን ክልቲኦም ምፍላጦም ይጠቅም።',
+        tr: 'İsveç sessiz bir feminist projedir. Yasalar yemek masası sohbetlerinden daha nettir ama ikisini de bilmek gerekir.',
+        uk: 'Швеція — тихий феміністичний проєкт. Закони чіткіші за розмови за вечерею, але варто знати і те, й інше.',
+      },
+    },
+    6: {
+      title: {
+        'zh-Hans': '社会、学校',
+        'zh-Hant': '社會、學校',
+        ar: 'المجتمع والمدرسة',
+        ckb: 'کۆمەڵگا و قوتابخانە',
+        fa: 'جامعه، مدرسه',
+        pl: 'Społeczeństwo, szkoła',
+        so: 'Bulshada, dugsiga',
+        ti: 'ሕብረተሰብ፣ ቤት ትምህርቲ',
+        tr: 'Toplum, okul',
+        uk: 'Суспільство, школа',
+      },
+      title_em: {
+        'zh-Hans': '与医疗。',
+        'zh-Hant': '與醫療。',
+        ar: 'والرعاية الصحية.',
+        ckb: 'و چاودێری تەندروستی.',
+        fa: 'و بهداشت و درمان.',
+        pl: 'i opieka zdrowotna.',
+        so: 'iyo daryeelka caafimaadka.',
+        ti: 'እና ክንክን ጥዕና።',
+        tr: 've sağlık hizmetleri.',
+        uk: 'і охорона здоровʼя.',
+      },
+      lede: {
+        'zh-Hans':
+          '瑞典通过公共部门处理生活中许多琐碎但重要的部分——学校、医疗、老人照护——并且与官僚机构保持相当日常的关系。',
+        'zh-Hant':
+          '瑞典透過公共部門處理生活中許多瑣碎但重要的部分——學校、醫療、老人照護——並且與官僚機構保持相當日常的關係。',
+        ar: 'تدير السويد الأجزاء المملة والمهمة من الحياة — المدرسة والرعاية الصحية ورعاية المسنين — عبر القطاع العام، وتتعامل مع البيروقراطية كجزء يومي من الحياة.',
+        ckb: 'سوید بەشی بێزارکەر بەڵام گرنگی ژیان — قوتابخانە، تەندروستی و چاودێری پیران — لە ڕێی کەرتی گشتیەوە بەڕێوە دەبات.',
+        fa: 'سوئد بخش‌های عادی اما مهم زندگی — مدرسه، درمان و مراقبت از سالمندان — را از راه بخش عمومی اداره می‌کند.',
+        pl: 'Szwecja prowadzi nudne, ale ważne części życia — szkołę, ochronę zdrowia i opiekę nad seniorami — przez sektor publiczny.',
+        so: 'Iswiidhan waxay qaybaha muhiimka ah ee nolosha — dugsiga, caafimaadka iyo daryeelka waayeelka — ku maamushaa adeegyada guud.',
+        ti: 'ሽወደን ናይ ዕለታዊ ህይወት ኣገዳሲ ክፋላት — ቤት ትምህርቲ፣ ጥዕና፣ ክንክን ኣረጋውያን — ብመንግስታዊ ኣገልግሎት ትመሓድር።',
+        tr: 'İsveç hayatın sıkıcı ama önemli kısımlarını — okul, sağlık ve yaşlı bakımı — kamu sektörü üzerinden yürütür.',
+        uk: 'Швеція організовує буденні, але важливі частини життя — школу, медицину й догляд за літніми людьми — через публічний сектор.',
+      },
+    },
+    7: {
+      title: {
+        'zh-Hans': '自然、气候',
+        'zh-Hant': '自然、氣候',
+        ar: 'الطبيعة والمناخ',
+        ckb: 'سروشت و کەشوهەوا',
+        fa: 'طبیعت، اقلیم',
+        pl: 'Przyroda, klimat',
+        so: 'Dabeecadda, cimilada',
+        ti: 'ተፈጥሮ፣ ክሊማ',
+        tr: 'Doğa, iklim',
+        uk: 'Природа, клімат',
+      },
+      title_em: {
+        'zh-Hans': '与 allemansrätten。',
+        'zh-Hant': '與 allemansrätten。',
+        ar: 'وحق الوصول العام.',
+        ckb: 'و مافی گەیشتنی گشتی.',
+        fa: 'و حق دسترسی عمومی.',
+        pl: 'i allemansrätten.',
+        so: 'iyo xaqa gelitaanka guud.',
+        ti: 'እና allemansrätten።',
+        tr: 've allemansrätten.',
+        uk: 'і allemansrätten.',
+      },
+      lede: {
+        'zh-Hans': '瑞典大部分是森林，而森林在很大程度上向你开放。规则很简单：不要打扰，不要破坏。',
+        'zh-Hant': '瑞典大部分是森林，而森林在很大程度上向你開放。規則很簡單：不要打擾，不要破壞。',
+        ar: 'السويد في معظمها غابات، والغابة مفتوحة لك إلى حد كبير. القاعدة بسيطة: لا تزعج ولا تدمّر.',
+        ckb: 'زۆربەی سوید دارستانە، و دارستانەکە زۆرجار بۆ تۆ کراوەیە. یاساکە سادەیە: مزاحم مەبە، وێران مەکە.',
+        fa: 'بخش بزرگی از سوئد جنگل است و جنگل تا حد زیادی برای شما باز است. قاعده ساده است: مزاحم نشوید و تخریب نکنید.',
+        pl: 'Szwecja to w dużej mierze las, a las jest w dużym stopniu otwarty dla ciebie. Zasada jest prosta: nie przeszkadzaj i nie niszcz.',
+        so: 'Iswiidhan badankeeda waa kayn, kayntuna inta badan way kuu furan tahay. Xeerku waa fudud yahay: ha dhibin, hana burburin.',
+        ti: 'ሽወደን መብዛሕትኣ ዱር እያ፣ እቲ ዱር ድማ ብዙሕ ግዜ ክፉት እዩ። ሕጊ ቀሊል እዩ፦ ኣይትረብሽ፣ ኣይትብላሽ።',
+        tr: 'İsveç çoğunlukla ormandır ve orman çoğunlukla size açıktır. Kural basittir: rahatsız etme, zarar verme.',
+        uk: 'Швеція переважно вкрита лісами, і ліс здебільшого відкритий для вас. Правило просте: не заважай і не руйнуй.',
+      },
+    },
+    8: {
+      title: {
+        'zh-Hans': '文化、传统',
+        'zh-Hant': '文化、傳統',
+        ar: 'الثقافة والتقاليد',
+        ckb: 'کلتوور و نەریت',
+        fa: 'فرهنگ، سنت‌ها',
+        pl: 'Kultura, tradycje',
+        so: 'Dhaqan, caadooyin',
+        ti: 'ባህሊ፣ ልምድታት',
+        tr: 'Kültür, gelenekler',
+        uk: 'Культура, традиції',
+      },
+      title_em: {
+        'zh-Hans': '与瑞典日历。',
+        'zh-Hant': '與瑞典日曆。',
+        ar: 'والتقويم السويدي.',
+        ckb: 'و ساڵنامەی سویدی.',
+        fa: 'و تقویم سوئدی.',
+        pl: 'i szwedzki kalendarz.',
+        so: 'iyo kalandarka Iswiidhan.',
+        ti: 'እና ዓውደ-ኣዋርሕ ሽወደን።',
+        tr: 've İsveç takvimi.',
+        uk: 'і шведський календар.',
+      },
+      lede: {
+        'zh-Hans':
+          '如果你不知道仲夏节是什么时候，人们会礼貌地解释。若你不知道 fika 是什么，你无论愿不愿意都会得到解释。',
+        'zh-Hant':
+          '如果你不知道仲夏節是什麼時候，人們會禮貌地解釋。若你不知道 fika 是什麼，你無論願不願意都會得到解釋。',
+        ar: 'إن لم تعرف موعد منتصف الصيف فستحصل على شرح مهذب. وإن لم تعرف معنى fika فستحصل على شرح، سواء أردت أم لا.',
+        ckb: 'ئەگەر نازانیت midsommar کەیە، بە ڕێزەوە بۆت ڕوون دەکەنەوە. ئەگەر نازانیت fika چییە، حەتمەن ڕوونکردنەوەیەک وەردەگریت.',
+        fa: 'اگر ندانید نیمهٔ تابستان چه زمانی است، مؤدبانه توضیح می‌دهند. اگر ندانید fika چیست، چه بخواهید چه نخواهید برایتان توضیح می‌دهند.',
+        pl: 'Jeśli nie wiesz, kiedy jest midsommar, dostaniesz uprzejme wyjaśnienie. Jeśli nie wiesz, czym jest fika, też je dostaniesz — czy chcesz, czy nie.',
+        so: 'Haddii aadan garanayn goorta midsommar tahay, sharaxaad edeb leh ayaa laguu siinayaa. Haddii aadan garanayn fika, sharaxaad ayaad heli doontaa — xitaa haddii aadan rabin.',
+        ti: 'midsommar መዓስ ከም ዝኾነ እንተዘይፈሊጥካ ብኽብሪ ይገልጹልካ። fika እንታይ ከም ዝኾነ እንተዘይፈሊጥካ ድማ ትደሊ ወይ ኣትደሊ መግለጺ ትረክብ።',
+        tr: 'Midsommarın ne zaman olduğunu bilmiyorsanız kibarca anlatırlar. Fikanın ne olduğunu bilmiyorsanız, isteseniz de istemeseniz de anlatılır.',
+        uk: 'Якщо ви не знаєте, коли midsommar, вам чемно пояснять. Якщо не знаєте, що таке fika, пояснення отримаєте — хочете ви цього чи ні.',
+      },
+    },
+    9: {
+      title: {
+        'zh-Hans': '金钱、银行',
+        'zh-Hant': '金錢、銀行',
+        ar: 'المال والبنوك',
+        ckb: 'پارە و بانکەکان',
+        fa: 'پول، بانک‌ها',
+        pl: 'Pieniądze, banki',
+        so: 'Lacag, bangiyo',
+        ti: 'ገንዘብ፣ ባንክታት',
+        tr: 'Para, bankalar',
+        uk: 'Гроші, банки',
+      },
+      title_em: {
+        'zh-Hans': '与 BankID。',
+        'zh-Hant': '與 BankID。',
+        ar: 'وBankID.',
+        ckb: 'و BankID.',
+        fa: 'و BankID.',
+        pl: 'i BankID.',
+        so: 'iyo BankID.',
+        ti: 'እና BankID።',
+        tr: 've BankID.',
+        uk: 'і BankID.',
+      },
+      lede: {
+        'zh-Hans':
+          '瑞典是世界上最少依赖现金的国家之一。如今几乎每一笔交易都会经过一个小小的应用程序。',
+        'zh-Hant':
+          '瑞典是世界上最少依賴現金的國家之一。如今幾乎每一筆交易都會經過一個小小的應用程式。',
+        ar: 'السويد من أقل دول العالم اعتمادًا على النقد. تكاد كل معاملة تمر اليوم عبر تطبيق صغير.',
+        ckb: 'سوید یەکێکە لە وڵاتە کەمترین پشتبەستوو بە کاش لە جیهاندا. نزیکەی هەموو مامەڵەیەک ئەمڕۆ بە ئەپێکی بچووکدا تێدەپەڕێت.',
+        fa: 'سوئد یکی از کم‌وابسته‌ترین کشورهای جهان به پول نقد است. امروز تقریباً هر تراکنشی از یک اپ کوچک عبور می‌کند.',
+        pl: 'Szwecja jest jednym z krajów najmniej zależnych od gotówki. Prawie każda transakcja przechodzi dziś przez małą aplikację.',
+        so: 'Iswiidhan waa mid ka mid ah dalalka ugu yar ee lacag caddaan ah ku tiirsan. Ku dhowaad macaamil kasta maanta wuxuu maraa app yar.',
+        ti: 'ሽወደን ኣብ ዓለም ብብዙሕ ገንዘብ ካሽ ዘይትጥቀም ሃገር እያ። ሎሚ ኣብዛኛው ክፍሊት ብንእሽቶ መተግበሪ ይሓልፍ።',
+        tr: 'İsveç dünyada nakde en az bağımlı ülkelerden biridir. Neredeyse her işlem artık küçük bir uygulamadan geçer.',
+        uk: 'Швеція — одна з найменш залежних від готівки країн світу. Майже кожна операція нині проходить через маленький застосунок.',
+      },
+    },
+    10: {
+      title: {
+        'zh-Hans': '瑞典、',
+        'zh-Hant': '瑞典、',
+        ar: 'السويد،',
+        ckb: 'سوید،',
+        fa: 'سوئد،',
+        pl: 'Szwecja,',
+        so: 'Iswiidhan,',
+        ti: 'ሽወደን፣',
+        tr: 'İsveç,',
+        uk: 'Швеція,',
+      },
+      title_em: {
+        'zh-Hans': '欧盟与世界。',
+        'zh-Hant': '歐盟與世界。',
+        ar: 'الاتحاد الأوروبي والعالم.',
+        ckb: 'یەکێتیی ئەورووپا و جیهان.',
+        fa: 'اتحادیهٔ اروپا و جهان.',
+        pl: 'UE i świat.',
+        so: 'Midowga Yurub iyo adduunka.',
+        ti: 'ኤውሮጳዊ ሕብረትን ዓለምን።',
+        tr: 'AB ve dünya.',
+        uk: 'ЄС і світ.',
+      },
+      lede: {
+        'zh-Hans':
+          '瑞典花了两个世纪避免战争，又在一个十年里迅速加入联盟。模式相同——发挥作用，避免麻烦。',
+        'zh-Hant':
+          '瑞典花了兩個世紀避免戰爭，又在一個十年裡迅速加入聯盟。模式相同——發揮作用，避免麻煩。',
+        ar: 'أمضت السويد قرنين في تجنب الحرب، ثم عقدًا واحدًا في الانضمام السريع إلى التحالفات. النمط نفسه: كن مفيدًا وتجنب المشكلات.',
+        ckb: 'سوید دوو سەدەی بە دوورکەوتنەوە لە جەنگ بەسەر برد و یەک دەیە بە خێرایی چووە ناو هاوپەیمانێتییەکان. شێوازەکە هەمانە: سوودبەخش بە، ناکۆکی کەم بکە.',
+        fa: 'سوئد دو قرن را صرف دوری از جنگ کرد و یک دهه را صرف پیوستن سریع به اتحادها. الگو همان است: مفید باش و از دردسر دور بمان.',
+        pl: 'Szwecja przez dwa stulecia unikała wojny, a w jednej dekadzie szybko weszła do sojuszy. Wzór jest ten sam: bądź użyteczna i unikaj kłopotów.',
+        so: 'Iswiidhan laba qarni ayay dagaal ka fogaaday, tobannaankii sano ee dambe si degdeg ah ayay isbahaysiyo ugu biirtay. Qaabku waa isla kii: waxtar yeelo, khilaafkana ka fogow.',
+        ti: 'ሽወደን ክልተ ዘመን ካብ ኲናት ተርሒቓ፣ ኣብ ሓደ ዓሰርተ ዓመት ግን ብቕልጡፍ ናብ ስምምዓት ተኣትያ። እቲ ቅዲ ሓደ እዩ፦ ጠቓሚ ኩን፣ ጸገም ርሓቕ።',
+        tr: 'İsveç iki yüzyılı savaştan kaçınarak, bir on yılı ise hızla ittifaklara katılarak geçirdi. Örüntü aynı: yararlı ol, sorunlardan uzak dur.',
+        uk: 'Швеція два століття уникала війни, а за одне десятиліття швидко приєдналася до союзів. Шаблон той самий: бути корисною й уникати сварок.',
+      },
+    },
+    11: {
+      title: {
+        'zh-Hans': '移民、居留',
+        'zh-Hant': '移民、居留',
+        ar: 'الهجرة والإقامة',
+        ckb: 'کۆچ و مانەوە',
+        fa: 'مهاجرت، اقامت',
+        pl: 'Migracja, pobyt',
+        so: 'Socdaal, deggenaansho',
+        ti: 'ስደት፣ መንበሪ',
+        tr: 'Göç, oturum',
+        uk: 'Міграція, проживання',
+      },
+      title_em: {
+        'zh-Hans': '与公民身份。',
+        'zh-Hant': '與公民身分。',
+        ar: 'والجنسية.',
+        ckb: 'و هاووڵاتیبوون.',
+        fa: 'و شهروندی.',
+        pl: 'i obywatelstwo.',
+        so: 'iyo muwaadinnimo.',
+        ti: 'እና ዜግነት።',
+        tr: 've vatandaşlık.',
+        uk: 'і громадянство.',
+      },
+      lede: {
+        'zh-Hans': '成为瑞典公民更像一个过程，而不是一个瞬间。文书工作很长，但规则相当清楚。',
+        'zh-Hant': '成為瑞典公民更像一個過程，而不是一個瞬間。文書工作很長，但規則相當清楚。',
+        ar: 'أن تصبح مواطنًا سويديًا عملية أكثر من كونها لحظة واحدة. الأوراق كثيرة، لكن القواعد واضحة على نحو غير معتاد.',
+        ckb: 'بوون بە هاووڵاتی سویدی زیاتر پرۆسەیەکە نەک ساتێک. کارە کاغەزییەکان درێژن، بەڵام یاساکان بە شێوەیەکی باش ڕوونن.',
+        fa: 'سوئدی شدن بیشتر یک فرایند است تا یک لحظه. کاغذبازی طولانی است، اما قواعد به‌طور غیرمعمولی روشن‌اند.',
+        pl: 'Zostanie obywatelem Szwecji to bardziej proces niż chwila. Dokumentów jest dużo, ale zasady są wyjątkowo jasne.',
+        so: 'Noqoshada muwaadin Iswiidhish ah waa hannaan ka badan daqiiqad keliya. Waraaqaha waa badan yihiin, laakiin xeerarku si aan caadi ahayn ayay u cad yihiin.',
+        ti: 'ሽወደናዊ ዜጋ ምዃን ካብ ሓደ ኩነት ብዝያዳ ሂደት እዩ። ወረቓቕቲ ብዙሕ እዩ፣ ሕግታት ግን ኣዝዮም ንጹራት እዮም።',
+        tr: 'İsveç vatandaşı olmak tek bir andan çok bir süreçtir. Evrak işi uzundur ama kurallar alışılmadık derecede nettir.',
+        uk: 'Стати громадянином Швеції — це радше процес, ніж один момент. Документів багато, але правила незвично чіткі.',
+      },
+    },
+    12: {
+      title: {
+        'zh-Hans': '模拟考试',
+        'zh-Hant': '模擬考試',
+        ar: 'اختبار تجريبي',
+        ckb: 'تاقیکردنەوەی ئەزموونی',
+        fa: 'آزمون آزمایشی',
+        pl: 'Egzamin próbny',
+        so: 'Imtixaan tijaabo ah',
+        ti: 'ናይ ልምምድ ፈተና',
+        tr: 'Deneme sınavı',
+        uk: 'Пробний іспит',
+      },
+      title_em: {
+        'zh-Hans': '与当前考试状态。',
+        'zh-Hant': '與目前考試狀態。',
+        ar: 'وحالة الاختبار الحالية.',
+        ckb: 'و دۆخی ئێستای تاقیکردنەوە.',
+        fa: 'و وضعیت کنونی آزمون.',
+        pl: 'i aktualny status testu.',
+        so: 'iyo xaaladda imtixaanka hadda.',
+        ti: 'እና ናይ ሕጂ ኩነታት ፈተና።',
+        tr: 've güncel sınav durumu.',
+        uk: 'і поточний статус тесту.',
+      },
+      lede: {
+        'zh-Hans': '用模拟考试来练习，但把实际考试细节同 UHR 和 Migrationsverket 的信息对应起来。',
+        'zh-Hant': '用模擬考試來練習，但把實際考試細節同 UHR 和 Migrationsverket 的資訊對應起來。',
+        ar: 'استخدم الاختبار التجريبي للتدريب، لكن اربط تفاصيل الاختبار العملية بمعلومات UHR وMigrationsverket.',
+        ckb: 'تاقیکردنەوەی ئەزموونی بۆ مەشق بەکاربهێنە، بەڵام وردەکارییە کردارییەکان بە زانیاری UHR و Migrationsverket ببەستەوە.',
+        fa: 'از آزمون آزمایشی برای تمرین استفاده کنید، اما جزئیات عملی آزمون را به اطلاعات UHR و Migrationsverket گره بزنید.',
+        pl: 'Używaj egzaminu próbnego do ćwiczeń, ale praktyczne szczegóły testu wiąż z informacjami UHR i Migrationsverket.',
+        so: 'Isticmaal imtixaanka tijaabada ah tababar ahaan, laakiin faahfaahinta rasmiga ah ku xidh UHR iyo Migrationsverket.',
+        ti: 'ናይ ልምምድ ፈተና ንልምምድ ተጠቐመሉ፣ ግን ተግባራዊ ዝርዝራት ምስ UHR እና Migrationsverket ኣተሓሕዞም።',
+        tr: 'Deneme sınavını alıştırma için kullanın, ama pratik sınav ayrıntılarını UHR ve Migrationsverket bilgilerine bağlayın.',
+        uk: 'Використовуйте пробний іспит для тренування, але практичні деталі тесту звіряйте з UHR та Migrationsverket.',
+      },
+    },
+    13: {
+      title: {
+        'zh-Hans': '传统、',
+        'zh-Hant': '傳統、',
+        ar: 'التقاليد،',
+        ckb: 'نەریتەکان،',
+        fa: 'سنت‌ها،',
+        pl: 'Tradycje,',
+        so: 'Caadooyin,',
+        ti: 'ልምድታት፣',
+        tr: 'Gelenekler,',
+        uk: 'Традиції,',
+      },
+      title_em: {
+        'zh-Hans': '节日与变化。',
+        'zh-Hant': '節日與變化。',
+        ar: 'الأعياد والتغير.',
+        ckb: 'جەژنەکان و گۆڕان.',
+        fa: 'تعطیلات و تغییر.',
+        pl: 'święta i zmiana.',
+        so: 'ciidaha iyo isbeddelka.',
+        ti: 'በዓላትን ለውጥን።',
+        tr: 'bayramlar ve değişim.',
+        uk: 'свята і зміни.',
+      },
+      lede: {
+        'zh-Hans':
+          '瑞典传统不是博物馆展品。有些很古老，有些是后来传入的，大多数只是人们一起标记一年节奏的方式。',
+        'zh-Hant':
+          '瑞典傳統不是博物館展品。有些很古老，有些是後來傳入的，大多數只是人們一起標記一年節奏的方式。',
+        ar: 'التقاليد السويدية ليست قطعًا في متحف. بعضها قديم، وبعضها جاء لاحقًا، ومعظمها طرق يتعرّف بها الناس على السنة معًا.',
+        ckb: 'نەریتە سویدییەکان شتی مۆزەخانە نین. هەندێکیان کۆنن، هەندێکیان دواتر هاتوون، و زۆربەیان ڕێگایەکن بۆ ئەوەی خەڵک ساڵەکە پێکەوە بناسن.',
+        fa: 'سنت‌های سوئدی اشیای موزه‌ای نیستند. بعضی قدیمی‌اند، بعضی بعداً آمده‌اند و بیشترشان راه‌هایی هستند برای اینکه مردم سال را با هم بشناسند.',
+        pl: 'Szwedzkie tradycje nie są eksponatami muzealnymi. Część jest stara, część przyszła później, a większość pomaga ludziom wspólnie rozpoznawać rytm roku.',
+        so: 'Caadooyinka Iswiidhan ma aha waxyaabo madxaf ku jira. Qaar waa duug, qaar dambe ayay yimaadeen, badankooduna waa siyaabo dadku sannadka wadajir ugu calaamadeeyaan.',
+        ti: 'ልምድታት ሽወደን ናይ ሙዚየም ነገራት ኣይኮኑን። ገሊኦም ኣረጋውያን እዮም፣ ገሊኦም ድማ ድሒሮም መጺኦም፣ መብዛሕትኦም ግን ሰባት ዓመት ብሓባር ክፈልጡ ዝሕግዙ እዮም።',
+        tr: 'İsveç gelenekleri müze parçası değildir. Bazıları eski, bazıları sonradan gelmiştir; çoğu insanların yılı birlikte işaretleme yoludur.',
+        uk: 'Шведські традиції — не музейні експонати. Деякі старі, деякі прийшли пізніше, а більшість просто допомагає людям разом відмічати рік.',
+      },
+    },
+  });
+
+  const EBOOK_FALLBACK_COPY = Object.freeze({
+    heading: {
+      'zh-Hans': '聚焦阅读',
+      'zh-Hant': '聚焦閱讀',
+      ar: 'اقرأ بتركيز',
+      ckb: 'بە سەرنجەوە بخوێنەوە',
+      fa: 'با تمرکز بخوانید',
+      pl: 'Czytaj z uwagą',
+      so: 'Si diirran u akhri',
+      ti: 'ብትኹረት ኣንብብ',
+      tr: 'Odaklanarak oku',
+      uk: 'Читайте з фокусом',
+    },
+    reviewHeading: {
+      'zh-Hans': '贴近来源复习',
+      'zh-Hant': '貼近來源複習',
+      ar: 'راجع قريبًا من المصدر',
+      ckb: 'نزیک لە سەرچاوە پێداچوونەوە بکە',
+      fa: 'نزدیک به منبع مرور کنید',
+      pl: 'Powtarzaj blisko źródła',
+      so: 'Ku celceli agagaarka isha',
+      ti: 'ኣብ ጥቓ ምንጪ ድገም',
+      tr: 'Kaynağa yakın tekrar et',
+      uk: 'Повторюйте близько до джерела',
+    },
+    reviewBody: {
+      'zh-Hans':
+        '本章的术语、日期和制度应同 UHR 学习材料、来源页和练习题一起复习。不要把本应用视为官方说明。',
+      'zh-Hant':
+        '本章的術語、日期和制度應同 UHR 學習材料、來源頁和練習題一起複習。不要把本應用視為官方說明。',
+      ar: 'راجع مصطلحات هذا الفصل وتواريخه ومؤسساته مع مواد UHR وصفحة المصادر وأسئلة التدريب. لا تعتبر هذا التطبيق تعليمات رسمية.',
+      ckb: 'زاراوەکان، بەروارەکان و دامەزراوەکانی ئەم بەشە لەگەڵ ماددەکانی UHR، لاپەڕەی سەرچاوەکان و پرسیارەکانی مەشق پێداچوونەوە بکە. ئەم ئەپە وەک ڕێنمایی فەرمی وەرنەگرە.',
+      fa: 'اصطلاحات، تاریخ‌ها و نهادهای این فصل را همراه با مواد UHR، صفحهٔ منابع و پرسش‌های تمرینی مرور کنید. این برنامه را دستورالعمل رسمی ندانید.',
+      pl: 'Terminy, daty i instytucje z tego rozdziału powtarzaj razem z materiałem UHR, stroną źródeł i pytaniami ćwiczeniowymi. Nie traktuj aplikacji jako instrukcji urzędowej.',
+      so: 'Ereyada, taariikhaha iyo hayʼadaha cutubkan ku celi adigoo la eegaya agabka UHR, bogga ilaha iyo suʼaalaha tababarka. App-kan ha u qaadan tilmaamo rasmi ah.',
+      ti: 'ቃላት፣ ዕለታትን ትካላትን ናይዚ ምዕራፍ ምስ UHR መምሃሪ ንብረት፣ ገጽ ምንጪታትን ናይ ልምምድ ሕቶታትን ድገሞም። ነዚ መተግበሪ ከም ሕጋዊ መመርሒ ኣይትውሰዶ።',
+      tr: 'Bu bölümdeki terimleri, tarihleri ve kurumları UHR materyali, Kaynaklar sayfası ve alıştırma sorularıyla birlikte tekrar edin. Bu uygulamayı resmi talimat saymayın.',
+      uk: 'Терміни, дати й установи з цього розділу повторюйте разом із матеріалом UHR, сторінкою джерел і тренувальними питаннями. Не сприймайте застосунок як офіційні інструкції.',
+    },
+    facts: {
+      'zh-Hans': '要复习的重点',
+      'zh-Hant': '要複習的重點',
+      ar: 'نقاط للمراجعة',
+      ckb: 'خاڵەکان بۆ پێداچوونەوە',
+      fa: 'نکته‌هایی برای مرور',
+      pl: 'Punkty do powtórzenia',
+      so: 'Qodobbada dib loo eegayo',
+      ti: 'ነጥብታት ንምድጋም',
+      tr: 'Tekrar noktaları',
+      uk: 'Пункти для повторення',
+    },
+  });
+
+  function ebookLocalizedField(chapterId, chapter, fieldName, lang) {
+    return (
+      (chapter[fieldName] && chapter[fieldName][lang]) ||
+      (EBOOK_READER_I18N_FALLBACKS[chapterId] &&
+        EBOOK_READER_I18N_FALLBACKS[chapterId][fieldName] &&
+        EBOOK_READER_I18N_FALLBACKS[chapterId][fieldName][lang]) ||
+      (chapter[fieldName] && chapter[fieldName].en) ||
+      ''
+    );
+  }
+
+  function ebookTranslatedBodyFallback(chapterId, chapter, lang) {
+    const chapterFallback = EBOOK_READER_I18N_FALLBACKS[chapterId];
+    if (!chapterFallback || !chapterFallback.lede || !chapterFallback.lede[lang]) return '';
+    const copy = EBOOK_FALLBACK_COPY;
+    const title =
+      `${ebookLocalizedField(chapterId, chapter, 'title', lang)} ${ebookLocalizedField(chapterId, chapter, 'title_em', lang)}`.trim();
+    return `
+      <h2>${copy.heading[lang]}</h2>
+      <p>${chapterFallback.lede[lang]}</p>
+      <h2>${copy.reviewHeading[lang]}</h2>
+      <p>${copy.reviewBody[lang]}</p>
+      ${ebookFactBox(lang, copy.facts[lang], title, chapterId === '10' ? ['uhrStudyMaterial', 'governmentNato'] : chapterId === '11' ? ['uhrStudyMaterial', 'migrationsverketCitizenshipRules'] : ['uhrStudyMaterial'])}
+    `;
+  }
+
+  function ebookLocalizedBody(chapterId, chapter, lang) {
+    return (
+      (chapter.body && chapter.body[lang]) ||
+      ebookTranslatedBodyFallback(chapterId, chapter, lang) ||
+      (chapter.body && chapter.body.en) ||
+      ''
+    );
+  }
+
   const ORDER = ['intro', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
 
   function getLang() {
@@ -2187,18 +2630,18 @@
     const sv = lang === 'sv';
 
     const titleHtml = ch.title
-      ? `<h1 class="ebook__h1"><span>${ch.title[lang] || ch.title.en}</span> <em>${ch.title_em[lang] || ch.title_em.en}</em></h1>`
+      ? `<h1 class="ebook__h1"><span>${ebookLocalizedField(id, ch, 'title', lang)}</span> <em>${ebookLocalizedField(id, ch, 'title_em', lang)}</em></h1>`
       : `<h1 class="ebook__h1"><em>${(ch.kicker[lang] || ch.kicker.en).split('·')[1]?.trim() || ch.kicker[lang] || ch.kicker.en}</em></h1>`;
 
     const footnoteCollector = createEbookFootnoteCollector(id, lang);
     const ledeHtml = ch.lede
       ? footnoteCollector.annotate(
-          `<p class="ebook__lede"${ebookSourceKeyDataAttr(ebookLedeSourceKeys(id))}>${ch.lede[lang] || ch.lede.en}</p>`,
+          `<p class="ebook__lede"${ebookSourceKeyDataAttr(ebookLedeSourceKeys(id))}>${ebookLocalizedField(id, ch, 'lede', lang)}</p>`,
         )
       : '';
 
     const rawBodyHtml = ch.body
-      ? ch.body[lang] || ch.body.en
+      ? ebookLocalizedBody(id, ch, lang)
       : `<div class="ebook__stub">
           <h3>${tr({ sv: 'Kapitlet kunde inte öppnas', en: 'Chapter could not be opened', 'zh-Hans': '无法打开该章节', 'zh-Hant': '無法開啟該章節', ar: 'تعذّر فتح الفصل', ckb: 'بەشەکە نەکرایەوە', fa: 'فصل باز نشد', pl: 'Nie udało się otworzyć rozdziału', so: 'Cutubka lama furi karin', ti: 'እቲ ምዕራፍ ክኽፈት ኣይከኣለን', tr: 'Bölüm açılamadı', uk: 'Не вдалося відкрити розділ' })}</h3>
           <p>${tr({
