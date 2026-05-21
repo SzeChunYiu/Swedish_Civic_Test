@@ -598,7 +598,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 17;
-const EXPECTED_XP_RULE_COUNT = 11;
+const EXPECTED_XP_RULE_COUNT = 24;
 const EXPECTED_MASTERY_RULE_COUNT = 17;
 const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
@@ -9336,6 +9336,8 @@ let themeMotionTokensValidated = 0;
 let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
+let badgeRuntimeInputCasesValidated = 0;
+let badgeRuntimeInputParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
 let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
@@ -10163,6 +10165,31 @@ if (process.argv.includes('--focus-streak-freeze-normalizer-parity')) {
     streakFreezeNormalizerCasesValidated,
     streakFreezeNormalizerSourceChecksValidated,
     streakFreezeNormalizerParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-xp-rules')) {
+  validateXpRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    xpRulesValidated,
+    xpRulesParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-badge-xp-runtime')) {
+  validateBadgeCatalog();
+  validateXpRules();
+  exitWithValidationFailures();
+  printValidationSummary({
+    badgesValidated,
+    badgeMilestoneParityValidated,
+    badgeRuntimeInputCasesValidated,
+    badgeRuntimeInputParityValidated,
+    xpRulesValidated,
+    xpRulesParityValidated,
   });
   process.exit(0);
 }
@@ -15703,11 +15730,19 @@ function validateProgressStoreSchemaParity() {
       'empty progress must initialize streak-freeze state',
     ],
     ['recordMockExamSession: (session) =>', 'ProgressState must persist completed mock exams'],
-    ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [
       "if (typeof isCorrect !== 'boolean') return state;",
       'recordAnswer must ignore non-boolean correctness before mutating progress',
     ],
+    [
+      'const totalCount = normalizeNonNegativeInteger( session.totalCount, 0, maxHydratedMockQuestionCount, );',
+      'recordMockExamSession must normalize runtime totalCount without string coercion',
+    ],
+    [
+      'const correctCount = Math.min( normalizeNonNegativeInteger(session.correctCount, 0, maxHydratedMockQuestionCount), totalCount, );',
+      'recordMockExamSession must normalize runtime correctCount without string coercion',
+    ],
+    ['setStreakFreezeState: (streakFreezeState) =>', 'ProgressState must persist freeze state'],
     [
       'const seenCount = normalizeNonNegativeInteger( item.seenCount, rawCorrectCount + rawWrongCount, maxHydratedQuestionAnswerCount, );',
       'progress hydration must normalize seenCount with capped numeric helper',
@@ -17579,6 +17614,33 @@ function validateBadgeCatalog() {
           reject(`${label} ${field} must be trimmed and single-spaced`);
         }
       }
+      for (const field of [
+        'titleSv',
+        'titleEn',
+        'descriptionSv',
+        'descriptionEn',
+        'lockedHintSv',
+        'lockedHintEn',
+      ]) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+      for (const [svField, enField] of [
+        ['titleSv', 'titleEn'],
+        ['descriptionSv', 'descriptionEn'],
+        ['lockedHintSv', 'lockedHintEn'],
+      ]) {
+        if (
+          hasText(badge[svField]) &&
+          hasText(badge[enField]) &&
+          normalizeComparableText(badge[svField]) === normalizeComparableText(badge[enField])
+        ) {
+          reject(`${label} ${svField} must be localized separately from ${enField}`);
+        }
+      }
 
       const normalizedTitle = normalizeComparableText(badge.title);
       if (normalizedTitle && seenTitles.has(normalizedTitle)) {
@@ -17592,20 +17654,6 @@ function validateBadgeCatalog() {
       }
       if (normalizedDescription) seenDescriptions.add(normalizedDescription);
 
-      for (const field of [
-        'titleSv',
-        'titleEn',
-        'descriptionSv',
-        'descriptionEn',
-        'lockedHintSv',
-        'lockedHintEn',
-      ]) {
-        if (!hasText(badge[field])) {
-          reject(`${label} missing localized ${field}`);
-        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
-          reject(`${label} ${field} must be trimmed and single-spaced`);
-        }
-      }
 
       if (
         label === 'first_practice' &&
@@ -17642,6 +17690,76 @@ function validateBadgeCatalog() {
       );
     } else {
       badgeMilestoneParityValidated = true;
+    }
+
+    const runtimeCases = [
+      {
+        label: 'string counters',
+        input: {
+          completedQuestionCount: '1',
+          currentStreak: '3',
+          level: '2',
+          wrongAnswerCount: '1',
+        },
+        expected: [],
+      },
+      {
+        label: 'non-finite counters',
+        input: {
+          completedQuestionCount: Infinity,
+          currentStreak: Infinity,
+          level: Infinity,
+          wrongAnswerCount: Infinity,
+        },
+        expected: [],
+      },
+      {
+        label: 'fractional counters',
+        input: {
+          completedQuestionCount: 1.5,
+          currentStreak: 3.5,
+          level: 2.5,
+          wrongAnswerCount: 1.5,
+        },
+        expected: [],
+      },
+      {
+        label: 'negative counters',
+        input: {
+          completedQuestionCount: -1,
+          currentStreak: -3,
+          level: -2,
+          wrongAnswerCount: -1,
+        },
+        expected: [],
+      },
+    ];
+    let runtimeInputsAreValid = true;
+
+    runtimeCases.forEach(({ label, input, expected }) => {
+      let actual;
+      try {
+        actual = deriveBadges(input).map((badge) => badge.id);
+      } catch (error) {
+        runtimeInputsAreValid = false;
+        fail(`deriveBadges runtime input ${label} threw ${error.message}`);
+        return;
+      }
+
+      if (!jsonEqual(actual, expected)) {
+        runtimeInputsAreValid = false;
+        fail(
+          `deriveBadges runtime input ${label} returned ${JSON.stringify(
+            actual,
+          )}, expected ${JSON.stringify(expected)}`,
+        );
+      } else {
+        badgeRuntimeInputCasesValidated += 1;
+      }
+    });
+
+    if (runtimeInputsAreValid && badgeRuntimeInputCasesValidated === runtimeCases.length) {
+      badgeRuntimeInputParityValidated = true;
     }
   }
 }
@@ -19480,6 +19598,21 @@ function validateXpRules() {
       expected: 2,
     },
     {
+      label: 'string correctness earns no answer XP',
+      actual: () => calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }),
+      expected: 0,
+    },
+    {
+      label: 'numeric correctness earns no answer XP',
+      actual: () => calculateAnswerXp({ isCorrect: 1, explanationRead: true }),
+      expected: 0,
+    },
+    {
+      label: 'string explanation flag earns no explanation XP',
+      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }),
+      expected: 10,
+    },
+    {
       label: 'empty quiz completion',
       actual: () => calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }),
       expected: 0,
@@ -19494,10 +19627,56 @@ function validateXpRules() {
       actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }),
       expected: 70,
     },
+    {
+      label: 'string quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }),
+      expected: 0,
+    },
+    {
+      label: 'non-finite quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: Infinity, correctCount: Infinity }),
+      expected: 0,
+    },
+    {
+      label: 'NaN quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: NaN, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'fractional quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }),
+      expected: 0,
+    },
+    {
+      label: 'negative quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }),
+      expected: 0,
+    },
+    {
+      label: 'over-correct quiz counts earn no completion XP',
+      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }),
+      expected: 0,
+    },
     { label: 'level at 0 XP', actual: () => calculateLevel(0), expected: 1 },
     { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
     { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
     { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
+    {
+      label: 'string total XP stays at level 1',
+      actual: () => calculateLevel('10000'),
+      expected: 1,
+    },
+    {
+      label: 'non-finite total XP stays at level 1',
+      actual: () => calculateLevel(Infinity),
+      expected: 1,
+    },
+    { label: 'NaN total XP stays at level 1', actual: () => calculateLevel(NaN), expected: 1 },
+    {
+      label: 'negative total XP stays at level 1',
+      actual: () => calculateLevel(-100),
+      expected: 1,
+    },
   ];
 
   let rulesAreValid = true;
@@ -21973,6 +22152,8 @@ console.log(
       weeklyRecapRuntimeParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
+      badgeRuntimeInputCasesValidated,
+      badgeRuntimeInputParityValidated,
       citizenshipRulesEffectiveDateValidated,
       civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
