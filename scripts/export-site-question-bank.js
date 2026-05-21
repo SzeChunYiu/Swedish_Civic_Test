@@ -253,9 +253,18 @@ function buildPublishedQuestionListFromSourceQuestions(sourceQuestions) {
     'lib/content/derivedQuestions.ts',
     'derivePublishedQuestions',
   );
+  const applyQuestionLocalizationPilot = loadTs(
+    'data/questionLocalizations.ts',
+    'applyQuestionLocalizationPilot',
+  );
+  const generatedQuestions = derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1);
   return [
     ...sourceQuestions,
-    ...derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1),
+    ...generatedQuestions.map((question) =>
+      typeof applyQuestionLocalizationPilot === 'function'
+        ? applyQuestionLocalizationPilot(question)
+        : question,
+    ),
   ];
 }
 

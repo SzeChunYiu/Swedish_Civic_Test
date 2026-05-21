@@ -854,7 +854,7 @@ const EXPECTED_PRACTICE_ROUTE_COPY_SNIPPETS = [
     '() => getCompletedQuestionIdsForQuestionBank(filteredQuestions, completedQuestionIds)',
     'completed-question metadata must scope persisted progress to the visible question bank',
   ],
-  ['visibleCompletedQuestionIds,', 'practice selection must use visible completed-question ids'],
+  ['sessionCompletedQuestionIds,', 'practice selection must use scoped completed-question ids'],
   [
     '{copy.completedQuestions(visibleCompletedQuestionIds.length)}',
     'completed-question metadata must render localized copy',
@@ -4111,6 +4111,7 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'shuffleSessionId', type: 'string', optional: false },
   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  { name: 'startSession', type: '(questionId?: string | null) => void', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
 ];
@@ -14644,11 +14645,11 @@ function validateProgressStoreSchemaParity() {
       'progress storage must use the stable progress MMKV id',
     ],
     [
-      'rawProgress = progressStorage?.getString(progressStateKey);',
+      'readRecoverably(progressStorage, progressStorageId, progressStateKey, () => progressStorage?.getString(progressStateKey),',
       'readProgress must read persisted JSON through progressStateKey',
     ],
     [
-      'return normalizeProgress(JSON.parse(rawProgress));',
+      '(rawValue) => normalizeProgress(JSON.parse(rawValue)),',
       'readProgress must normalize parsed persisted JSON',
     ],
     [
@@ -17479,8 +17480,7 @@ function validateStreakRules() {
     },
     {
       label: 'invalid local date fallback',
-      actual: () =>
-        /^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0,
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
       expected: 1,
     },
   ];
