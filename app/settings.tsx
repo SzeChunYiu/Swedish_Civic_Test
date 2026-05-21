@@ -466,133 +466,134 @@ export default function Screen() {
         ) : null}
 
         <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.dailyGoalTitle}
-        </Text>
-        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
-        <View
-          aria-label={copy.dailyGoalTitle}
-          accessibilityLabel={copy.dailyGoalTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
-          {supportedDailyGoalAnswerOptions.map((goal) => {
-            const selected = dailyGoalAnswers === goal;
-            const focusKey = `daily-goal-${goal}`;
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.dailyGoalTitle}
+          </Text>
+          <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
+          <View
+            aria-label={copy.dailyGoalTitle}
+            accessibilityLabel={copy.dailyGoalTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {supportedDailyGoalAnswerOptions.map((goal) => {
+              const selected = dailyGoalAnswers === goal;
+              const focusKey = `daily-goal-${goal}`;
 
-            return (
-              <Pressable
-                key={goal}
-                aria-checked={dailyGoalAnswers === goal}
-                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
-                hitSlop={space[1]}
-                onBlur={() => setFocusedControl(null)}
-                onFocus={() => setFocusedControl(focusKey)}
-                onPress={() => setDailyGoalAnswers(goal)}
-                style={({ pressed }) => [
-                  styles.pill,
-                  styles.goalPill,
-                  selected ? styles.pillActive : null,
-                  focusedControl === focusKey ? styles.controlFocused : null,
-                  pressed
-                    ? reduceMotion
-                      ? styles.controlPressedReducedMotion
-                      : styles.controlPressed
-                    : null,
-                ]}
-              >
-                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
-                  {goal}
-                </Text>
-                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
-                  {copy.dailyGoalPresetLabel(goal)}
-                </Text>
-              </Pressable>
-            );
-          })}
+              return (
+                <Pressable
+                  key={goal}
+                  aria-checked={dailyGoalAnswers === goal}
+                  accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: dailyGoalAnswers === goal }}
+                  hitSlop={space[1]}
+                  onBlur={() => setFocusedControl(null)}
+                  onFocus={() => setFocusedControl(focusKey)}
+                  onPress={() => setDailyGoalAnswers(goal)}
+                  style={({ pressed }) => [
+                    styles.pill,
+                    styles.goalPill,
+                    selected ? styles.pillActive : null,
+                    focusedControl === focusKey ? styles.controlFocused : null,
+                    pressed
+                      ? reduceMotion
+                        ? styles.controlPressedReducedMotion
+                        : styles.controlPressed
+                      : null,
+                  ]}
+                >
+                  <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
+                    {goal}
+                  </Text>
+                  <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
+                    {copy.dailyGoalPresetLabel(goal)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-      </View>
 
         <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.studyLanguageTitle}
-        </Text>
-        <View
-          aria-label={copy.studyLanguageTitle}
-          accessibilityLabel={copy.studyLanguageTitle}
-          accessibilityRole="radiogroup"
-          style={styles.row}
-        >
-          {[
-            renderLanguageButton('sv', 'Swedish', 'Svenska'),
-            renderLanguageButton('en', 'English support', 'Engelskt stöd'),
-          ]}
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.studyLanguageTitle}
+          </Text>
+          <View
+            aria-label={copy.studyLanguageTitle}
+            accessibilityLabel={copy.studyLanguageTitle}
+            accessibilityRole="radiogroup"
+            style={styles.row}
+          >
+            {[
+              renderLanguageButton('sv', 'Swedish', 'Svenska'),
+              renderLanguageButton('en', 'English support', 'Engelskt stöd'),
+            ]}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text accessibilityRole="header" style={styles.sectionTitle}>
-          {copy.audioTitle}
-        </Text>
-        <Pressable
-          aria-checked={audioEnabled}
-          accessibilityLabel={
-            audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: audioEnabled }}
-          hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('audio')}
-          onPress={() => setAudioEnabled(!audioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
-            pressed
-              ? reduceMotion
-                ? styles.secondaryButtonPressedReducedMotion
-                : styles.secondaryButtonPressed
-              : null,
-          ]}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+        <View style={styles.section}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {copy.audioTitle}
           </Text>
-        </Pressable>
-        <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
-        <Pressable
-          aria-checked={listenFirstAudioEnabled}
-          accessibilityLabel={
-            listenFirstAudioEnabled
-              ? copy.disableListenFirstAudioAccessibilityLabel
-              : copy.enableListenFirstAudioAccessibilityLabel
-          }
-          accessibilityRole="switch"
-          accessibilityState={{ checked: listenFirstAudioEnabled }}
-          hitSlop={space[1]}
-          onBlur={() => setFocusedControl(null)}
-          onFocus={() => setFocusedControl('listen-first-audio')}
-          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
-            pressed
-              ? reduceMotion
-                ? styles.secondaryButtonPressedReducedMotion
-                : styles.secondaryButtonPressed
-              : null,
-          ]}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {listenFirstAudioEnabled
-              ? copy.audioListenFirstEnabledLabel
-              : copy.audioListenFirstDisabledLabel}
-          </Text>
-        </Pressable>
-      </View>
-
+          <Pressable
+            aria-checked={audioEnabled}
+            accessibilityLabel={
+              audioEnabled
+                ? copy.disableAudioAccessibilityLabel
+                : copy.enableAudioAccessibilityLabel
+            }
+            accessibilityRole="switch"
+            accessibilityState={{ checked: audioEnabled }}
+            hitSlop={space[1]}
+            onBlur={() => setFocusedControl(null)}
+            onFocus={() => setFocusedControl('audio')}
+            onPress={() => setAudioEnabled(!audioEnabled)}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
+              pressed
+                ? reduceMotion
+                  ? styles.secondaryButtonPressedReducedMotion
+                  : styles.secondaryButtonPressed
+                : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+            </Text>
+          </Pressable>
+          <Text style={styles.subtitle}>{copy.audioListenFirstTitle}</Text>
+          <Pressable
+            aria-checked={listenFirstAudioEnabled}
+            accessibilityLabel={
+              listenFirstAudioEnabled
+                ? copy.disableListenFirstAudioAccessibilityLabel
+                : copy.enableListenFirstAudioAccessibilityLabel
+            }
+            accessibilityRole="switch"
+            accessibilityState={{ checked: listenFirstAudioEnabled }}
+            hitSlop={space[1]}
+            onBlur={() => setFocusedControl(null)}
+            onFocus={() => setFocusedControl('listen-first-audio')}
+            onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
+            style={({ pressed }) => [
+              styles.secondaryButton,
+              focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
+              pressed
+                ? reduceMotion
+                  ? styles.secondaryButtonPressedReducedMotion
+                  : styles.secondaryButtonPressed
+                : null,
+            ]}
+          >
+            <Text style={styles.secondaryButtonText}>
+              {listenFirstAudioEnabled
+                ? copy.audioListenFirstEnabledLabel
+                : copy.audioListenFirstDisabledLabel}
+            </Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -831,7 +832,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     goalPill: {
       alignItems: 'flex-start',
-      gap: space.hairline,
+      gap: space.divider,
       minWidth: space[12],
     },
     goalNumberText: {

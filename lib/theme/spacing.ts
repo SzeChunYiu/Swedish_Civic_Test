@@ -1,5 +1,6 @@
 type SpacePx =
   | 0
+  | 1
   | 2
   | 3
   | 4
@@ -28,8 +29,10 @@ type SpaceScale = Record<string, SpacePx>;
 
 /** DESIGN.md lines 182-185: 8px base spacing with organic micro-adjustment steps. */
 export const space = {
-  /** DESIGN.md lines 184-185: extra-fine divider/hairline spacing. */
-  hairline: 2,
+  /** DESIGN.md lines 184-185: semantic 1px border hairline. */
+  hairline: 1,
+  /** DESIGN.md lines 184-185: extra-fine divider/layout spacing. */
+  divider: 2,
   /** DESIGN.md lines 184-185: organic micro-adjustment spacing. */
   micro: 3,
   0: 0,

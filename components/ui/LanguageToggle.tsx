@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     borderWidth: space.hairline,
     flexDirection: 'row',
     overflow: 'hidden',
-    padding: space.hairline,
+    padding: space.divider,
   },
   button: {
     borderRadius: radius.pill,
