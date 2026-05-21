@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getAdUnit, shouldShowLaunchPopupAd } from '../../lib/monetization/ads';
 import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useReducedMotion } from '../../lib/motion/useReducedMotion';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, motion, radius, space, typography } from '../../lib/theme';
+import { motion, radius, space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { deferFirstRunAboutModalForLaunchSession } from './launchPopupSession';
 
@@ -63,6 +64,8 @@ function getInitialVisibility(entitlements: Pick<PremiumEntitlements, 'adsDisabl
 export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupAdProps) {
   const language = useSettingsStore((state) => state.language);
   const copy = launchPopupAdCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const [visible, setVisible] = useState(() => getInitialVisibility(entitlements));
   const reduceMotion = useReducedMotion();
 
@@ -143,63 +146,65 @@ export function LaunchPopupAd({ entitlements = FREE_ENTITLEMENTS }: LaunchPopupA
   );
 }
 
-const styles = StyleSheet.create({
-  backdrop: {
-    alignItems: 'center',
-    backgroundColor: colors.textDisclaimer,
-    flex: 1,
-    justifyContent: 'center',
-    padding: space[3],
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: space.hairline,
-    gap: space[1],
-    maxWidth: 360,
-    padding: space[3],
-    width: '100%',
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.cardTitle.fontSize,
-    fontWeight: typography.cardTitle.fontWeight,
-    letterSpacing: typography.cardTitle.letterSpacing,
-    lineHeight: typography.cardTitle.lineHeight,
-  },
-  body: {
-    color: colors.textSecondary,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  closeButton: {
-    alignItems: 'center',
-    backgroundColor: colors.accent,
-    borderRadius: radius.button,
-    justifyContent: 'center',
-    marginTop: space[1],
-    minHeight: space[6],
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-  },
-  closeButtonPressed: {
-    backgroundColor: colors.accentActive,
-    transform: [{ scale: motion.pressedScale }],
-  },
-  closeButtonPressedReducedMotion: {
-    backgroundColor: colors.accentActive,
-  },
-  closeText: {
-    color: colors.surface,
-    fontSize: typography.navButton.fontSize,
-    fontWeight: typography.navButton.fontWeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    backdrop: {
+      alignItems: 'center',
+      backgroundColor: themeColors.surfaceMuted,
+      flex: 1,
+      justifyContent: 'center',
+      padding: space[3],
+    },
+    card: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: space.hairline,
+      gap: space[1],
+      maxWidth: 360,
+      padding: space[3],
+      width: '100%',
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.cardTitle.fontSize,
+      fontWeight: typography.cardTitle.fontWeight,
+      letterSpacing: typography.cardTitle.letterSpacing,
+      lineHeight: typography.cardTitle.lineHeight,
+    },
+    body: {
+      color: themeColors.textSecondary,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    closeButton: {
+      alignItems: 'center',
+      backgroundColor: themeColors.accent,
+      borderRadius: radius.button,
+      justifyContent: 'center',
+      marginTop: space[1],
+      minHeight: space[6],
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+    },
+    closeButtonPressed: {
+      backgroundColor: themeColors.accentActive,
+      transform: [{ scale: motion.pressedScale }],
+    },
+    closeButtonPressedReducedMotion: {
+      backgroundColor: themeColors.accentActive,
+    },
+    closeText: {
+      color: themeColors.surface,
+      fontSize: typography.navButton.fontSize,
+      fontWeight: typography.navButton.fontWeight,
+    },
+  });
+}

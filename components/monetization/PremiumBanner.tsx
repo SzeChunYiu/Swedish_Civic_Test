@@ -12,10 +12,11 @@ import type {
   RemoveAdsPurchaseStatus,
 } from '../../lib/monetization/purchases';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { PremiumEntitlements } from '../../types/monetization';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { colors, space, typography } from '../../lib/theme';
 
 type PurchaseAction = 'buy' | 'restore';
 type PurchaseUiStatus = RemoveAdsPurchaseStatus | 'idle' | 'error' | 'unavailable';
@@ -132,6 +133,8 @@ export function PremiumBanner({
   runtimeOptions?: PurchaseRuntimeOptions;
 }) {
   const copy = premiumBannerCopy[language];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const purchaseRuntime = useMemo<PurchaseRuntimeOptions | undefined>(() => {
     if (runtimeOptions) return runtimeOptions;
     return createDefaultPurchaseRuntimeOptions(entitlements.adsDisabled);
@@ -252,40 +255,42 @@ export function PremiumBanner({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1],
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    marginTop: space[0.5],
-  },
-  meta: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[0.5],
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    marginTop: space[0.5],
-  },
-  actionButton: {
-    minWidth: 128,
-  },
-  status: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1],
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      marginTop: space[0.5],
+    },
+    meta: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginTop: space[0.5],
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      marginTop: space[0.5],
+    },
+    actionButton: {
+      minWidth: 128,
+    },
+    status: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+  });
+}

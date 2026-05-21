@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
@@ -10,7 +10,8 @@ import {
 } from '../../lib/monetization/purchases';
 import { useRemoveAdsEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
-import { colors, space, typography } from '../../lib/theme';
+import { space, typography, type ThemeColors } from '../../lib/theme';
+import { useThemeColors } from '../../lib/theme/ThemeProvider';
 import type { AdPlacement } from '../../types/monetization';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -81,6 +82,8 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   const language = useSettingsStore((state) => state.language);
   const copy = removeAdsPlacementCtaCopy[language];
   const placementLabel = adBannerCopy[language].placementLabels[placement];
+  const themeColors = useThemeColors();
+  const styles = useMemo(() => createStyles(themeColors), [themeColors]);
   const { entitlements, entitlementsReady, purchaseRuntime, setEntitlements } =
     useRemoveAdsEntitlements();
   const [activeAction, setActiveAction] = useState<ActivePurchaseAction | null>(null);
@@ -159,50 +162,52 @@ export function RemoveAdsPlacementCta({ placement }: { placement: AdPlacement })
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    gap: space[1],
-  },
-  content: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1.5],
-  },
-  copy: {
-    flex: 1,
-    minWidth: 180,
-  },
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: space[1],
-    justifyContent: 'flex-end',
-  },
-  eyebrow: {
-    color: colors.badgeBlueText,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.body.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    marginTop: space[0.5],
-  },
-  body: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.caption.lineHeight,
-    marginTop: space[0.5],
-  },
-  button: {
-    minWidth: 128,
-  },
-  status: {
-    color: colors.textMuted,
-    fontSize: typography.finePrint.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      gap: space[1],
+    },
+    content: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1.5],
+    },
+    copy: {
+      flex: 1,
+      minWidth: 180,
+    },
+    actions: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[1],
+      justifyContent: 'flex-end',
+    },
+    eyebrow: {
+      color: themeColors.badgeBlueText,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      textTransform: 'uppercase',
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.body.fontSize,
+      fontWeight: typography.bodyBold.fontWeight,
+      marginTop: space[0.5],
+    },
+    body: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.caption.lineHeight,
+      marginTop: space[0.5],
+    },
+    button: {
+      minWidth: 128,
+    },
+    status: {
+      color: themeColors.textMuted,
+      fontSize: typography.finePrint.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+  });
+}

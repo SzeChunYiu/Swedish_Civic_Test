@@ -96,6 +96,57 @@ const REAL_AD_UNIT_ENV_KEYS = {
     ios: 'EXPO_PUBLIC_ADMOB_IOS_REWARDED_EXTRA_EXAM_UNIT_ID',
   },
 };
+const MONETIZATION_THEME_SURFACE_CONTRACTS = {
+  'components/monetization/AdBanner.tsx': [
+    'color: themeColors.badgeBlueText',
+    'color: themeColors.text',
+    'color: themeColors.textMuted',
+  ],
+  'components/monetization/AdBanner.native.tsx': [
+    'backgroundColor: themeColors.surfaceWarm',
+    'borderColor: themeColors.border',
+  ],
+  'components/monetization/LaunchPopupAd.tsx': [
+    'backgroundColor: themeColors.surfaceMuted',
+    'backgroundColor: themeColors.surface',
+    'backgroundColor: themeColors.accent',
+  ],
+  'components/monetization/NativeAdCard.tsx': [
+    'color: themeColors.badgeBlueText',
+    'color: themeColors.text',
+    'color: themeColors.textMuted',
+  ],
+  'components/monetization/NativeAdCard.native.tsx': [
+    'backgroundColor: themeColors.surfaceWarm',
+    'backgroundColor: themeColors.accent',
+    'color: themeColors.surface',
+  ],
+  'components/monetization/PracticeInterstitialAd.tsx': [
+    'color: themeColors.badgeBlueText',
+    'color: themeColors.text',
+    'color: themeColors.textMuted',
+  ],
+  'components/monetization/PremiumBanner.tsx': [
+    'color: themeColors.badgeBlueText',
+    'color: themeColors.text',
+    'color: themeColors.textMuted',
+  ],
+  'components/monetization/PricingWedge.tsx': [
+    'backgroundColor: themeColors.successSoft',
+    'borderColor: themeColors.success',
+    'color: themeColors.text',
+  ],
+  'components/monetization/ProPaywall.tsx': [
+    'borderColor: themeColors.border',
+    'backgroundColor: themeColors.surfaceMuted',
+    'color: themeColors.textPlaceholder',
+  ],
+  'components/monetization/RemoveAdsPlacementCta.tsx': [
+    'color: themeColors.badgeBlueText',
+    'color: themeColors.text',
+    'color: themeColors.textMuted',
+  ],
+};
 
 function clearRealAdUnitEnv() {
   return Object.values(REAL_AD_UNIT_ENV_KEYS).reduce((overrides, envKeys) => {
@@ -147,6 +198,39 @@ test('ad rendering is enabled by default with test units and env-driven real swi
       assert.match(getPlatformAdUnitId('rewarded_extra_exam', 'ios'), /1712485313$/);
     },
   );
+});
+
+test('monetization ad and paywall surfaces use active theme colors', () => {
+  for (const [componentPath, requiredSnippets] of Object.entries(
+    MONETIZATION_THEME_SURFACE_CONTRACTS,
+  )) {
+    const source = fs.readFileSync(path.join(repoRoot, componentPath), 'utf8');
+
+    assert.match(
+      source,
+      /useThemeColors\(\)/,
+      `${componentPath} should subscribe to the active theme`,
+    );
+    assert.match(
+      source,
+      /function createStyles\(themeColors: ThemeColors\)/,
+      `${componentPath} should create styles from ThemeColors`,
+    );
+    assert.doesNotMatch(
+      source,
+      /import \{[^}]*\bcolors\b[^}]*\} from ['"]\.\.\/\.\.\/lib\/theme['"]/,
+      `${componentPath} should not import the static light colors singleton`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcolors\./,
+      `${componentPath} should not read colors.* when rendered in dark mode`,
+    );
+
+    for (const snippet of requiredSnippets) {
+      assert.ok(source.includes(snippet), `${componentPath} should include ${snippet}`);
+    }
+  }
 });
 
 test('real ad availability is platform-specific for every placement', () => {
