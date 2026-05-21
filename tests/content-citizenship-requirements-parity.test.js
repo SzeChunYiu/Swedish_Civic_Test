@@ -107,9 +107,14 @@ test('citizenship requirements data covers seven sourced bilingual planning area
     /anmälan öppnar i början av juni 2026/,
   );
   assert.match(
+    areas.find((area) => area.id === 'civicKnowledge').detail.sv,
+    /Antalet platser är begränsat/,
+  );
+  assert.match(
     areas.find((area) => area.id === 'civicKnowledge').detail.en,
     /registration opens in early June 2026/,
   );
+  assert.match(areas.find((area) => area.id === 'civicKnowledge').detail.en, /Seats are limited/);
   assert.match(areas.find((area) => area.id === 'swedishLanguage').detail.en, /1 October 2027/);
 });
 
