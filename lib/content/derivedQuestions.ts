@@ -1497,7 +1497,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad kallas det när (.+)$/i);
   if (match) return `När ${match[1]} kallas det ${lowerFirst(answer)}`;
 
-  if (source.id === 'q015') return swedishLowVoterTurnoutStatement(answer);
+  if (source.id === 'q015' && !/^Varför behövs källkritik när man använder medier$/i.test(q)) {
+    return swedishLowVoterTurnoutStatement(answer);
+  }
 
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
   if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
@@ -1534,6 +1536,49 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
       const statement = universalHumanRightsStatementSv(answer);
       if (statement) return statement;
     }
+    if (/^folkomröstningar i Sverige är rådgivande$/i.test(match[1])) {
+      return `Att ${match[1]} betyder att ${answer
+        .replace(
+          /^politikerna måste inte följa resultatet$/i,
+          'politikerna inte behöver följa resultatet',
+        )
+        .replace(
+          /^politikerna måste alltid följa resultatet$/i,
+          'politikerna alltid måste följa resultatet',
+        )}`;
+    }
+    if (/^val i en demokrati är hemliga$/i.test(match[1])) {
+      if (/^(?:Att\s+)?väljare inte behöver avslöja hur de röstar$/i.test(answer)) {
+        return 'Hemliga val betyder att väljare inte behöver avslöja hur de röstar';
+      }
+      if (/^(?:Att\s+)?bara myndigheter får veta hur varje person röstar$/i.test(answer)) {
+        return 'Hemliga val betyder att bara myndigheter får veta hur varje person röstar';
+      }
+    }
+    if (/^Sverige är en konstitutionell monarki$/i.test(match[1])) {
+      if (
+        /^(?:Att\s+)?statschefen är (?:en )?kung eller drottning (?:men saknar|utan) politisk makt$/i.test(
+          answer,
+        )
+      ) {
+        return 'I Sveriges konstitutionella monarki är statschefen kung eller drottning utan politisk makt';
+      }
+      if (/^(?:Att\s+)?monarken har all politisk makt$/i.test(answer)) {
+        return 'I Sveriges konstitutionella monarki har monarken all politisk makt';
+      }
+    }
+    if (/^Sverige är en sekulär stat$/i.test(match[1])) {
+      if (
+        /^(?:Att\s+)?staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion$/i.test(
+          answer,
+        )
+      ) {
+        return 'Sverige är en sekulär stat, så staten är religiöst neutral och varken tar ställning för eller diskriminerar någon religion';
+      }
+      if (/^(?:Att\s+)?alla måste tillhöra samma religion$/i.test(answer)) {
+        return 'Sverige är en sekulär stat, så alla måste tillhöra samma religion';
+      }
+    }
     return `Att ${match[1]} betyder att ${embeddedSwedishClause(answer)}`;
   }
 
@@ -1561,6 +1606,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   if (match) return describesStatementSv(match[1], answer);
 
   match = q.match(/^Vilket påstående stämmer om (.+)$/i);
+  if (match) return replaceLeadingSwedishSubject(match[1], answer);
+
+  match = q.match(/^Vilket påstående om (.+?) är korrekt$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
   match = q.match(/^Vilken är (.+)$/i);
@@ -1599,6 +1647,13 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Varför kallas (.+?) ofta (.+)$/i);
   if (match)
     return `${upperFirst(match[1])} kallas ofta ${match[2]} eftersom ${embeddedSwedishClause(answer)}`;
+
+  match = q.match(/^Varför behövs källkritik när man använder medier$/i);
+  if (match) {
+    return `En anledning till att källkritik behövs när man använder medier är ${reasonAnswerClauseSv(
+      answer,
+    )}`;
+  }
 
   match = q.match(/^Varför (.+)$/i);
   if (match) return reasonStatementSv(answer, match[1]);
@@ -2038,7 +2093,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^What is it called when (.+)$/i);
   if (match) return `When ${match[1]}, it is called ${lowerFirst(answer)}`;
 
-  if (source.id === 'q015') return englishLowVoterTurnoutStatement(answer);
+  if (source.id === 'q015' && !/^Why is source criticism needed when using media$/i.test(q)) {
+    return englishLowVoterTurnoutStatement(answer);
+  }
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
   if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
@@ -2079,6 +2136,45 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     if (/^human rights apply to everyone$/i.test(match[1])) {
       const statement = universalHumanRightsStatementEn(answer);
       if (statement) return statement;
+    }
+    if (/^referendums in Sweden are advisory$/i.test(match[1])) {
+      return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
+    }
+    if (/^elections in a democracy are secret$/i.test(match[1])) {
+      if (
+        /^(?:That\s+)?(?:(?:voters|no one) (?:do|does) not have to reveal how they vote|no one has to reveal how they vote)$/i.test(
+          answer,
+        )
+      ) {
+        return 'Secret elections mean voters do not have to reveal how they vote';
+      }
+      if (/^(?:That\s+)?only authorities may know how each person votes$/i.test(answer)) {
+        return 'Secret elections mean only authorities may know how each person votes';
+      }
+    }
+    if (/^Sweden is a constitutional monarchy$/i.test(match[1])) {
+      if (
+        /^(?:That\s+)?the head of state is a king or queen (?:but lacks|without) political power$/i.test(
+          answer,
+        )
+      ) {
+        return "In Sweden's constitutional monarchy, the head of state is a king or queen without political power";
+      }
+      if (/^(?:That\s+)?the monarch has all political power$/i.test(answer)) {
+        return "In Sweden's constitutional monarchy, the monarch has all political power";
+      }
+    }
+    if (/^Sweden is a secular state$/i.test(match[1])) {
+      if (
+        /^(?:That\s+)?the state is religiously neutral and neither takes sides for nor discriminates against any religion$/i.test(
+          answer,
+        )
+      ) {
+        return 'Sweden is a secular state, so the state is religiously neutral and neither takes sides for nor discriminates against any religion';
+      }
+      if (/^(?:That\s+)?everyone must belong to the same religion$/i.test(answer)) {
+        return 'Sweden is a secular state, so everyone must belong to the same religion';
+      }
     }
     return `That ${match[1]} means ${lowerFirst(stripLeadingPurposeEn(answer))}`;
   }
@@ -2154,6 +2250,13 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
     return `${upperFirst(match[1])} is often called ${match[2]} because ${embeddedEnglishClause(
       answer,
     )}`;
+
+  match = q.match(/^Why is source criticism needed when using media$/i);
+  if (match) {
+    return `One reason source criticism is needed when using media is ${reasonAnswerClauseEn(
+      answer,
+    )}`;
+  }
 
   match = q.match(/^Why (.+)$/i);
   if (match) return reasonStatementEn(answer, match[1]);

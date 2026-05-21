@@ -221,7 +221,7 @@ export default function Screen() {
   useQuestionAudioAutoplay({
     audioEnabled,
     listenFirstAudioEnabled,
-    questionKey: question ? question.id : null,
+    questionKey: question ? `practice:${question.id}` : null,
     rate: audioPlaybackRate,
     speechText: questionSpeechText,
     stopSignal: hasSelectedAnswer,
