@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Adds a machine-readable `ebook__footnote-list` to static ebook chapter footnotes.\n- Adds hidden per-source `data-source-key` rows so browser checks can verify chapter source-mix badge counts from rendered DOM.\n- Updates static ebook parity and Playwright provenance checks to assert the shipped footnote IDs, source labels, and backlink hashes.\n\n## Validation\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules node --test tests/content-static-site-ebook-parity.test.js`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules npm run validate:content -- --focus-static-ebook-provenance`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules node --test scripts/static-site-source-provenance-copy.test.js`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules npm run build:web:export -- --max-workers 2`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules npx playwright test tests/e2e/static-ebook-provenance.spec.ts --reporter=line`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules npm run typecheck -- --pretty false`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules npm run test:ownership`\n- `node --check site/ebook.js && git diff --check`",
+  "files": [
+    { "path": "site/ebook.js", "additions": 11, "deletions": 3, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-static-site-ebook-parity.test.js",
+      "additions": 18,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/static-ebook-provenance.spec.ts",
+      "additions": 31,
+      "deletions": 22,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/ebook-footnote-source-list-1779369000",
+  "headRefOid": "f9508fdcad20945810feba52cdf06cc410aa0aac",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2408,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:11:59Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227605322/job/77178759577",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T13:02:23Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "ebook: expose footnote source count metadata",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2408"
+}

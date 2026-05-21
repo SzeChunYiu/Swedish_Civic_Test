@@ -1,0 +1,1202 @@
+[
+  {
+    "mergedAt": "2026-05-21T16:44:23Z",
+    "number": 2502,
+    "title": "Share daily goal option source",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2502"
+  },
+  {
+    "mergedAt": "2026-05-21T16:42:28Z",
+    "number": 2501,
+    "title": "test: cover non-empty dashboard progress route",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2501"
+  },
+  {
+    "mergedAt": "2026-05-21T16:42:44Z",
+    "number": 2500,
+    "title": "Improve native ebook article nav semantics",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2500"
+  },
+  {
+    "mergedAt": "2026-05-21T16:36:53Z",
+    "number": 2499,
+    "title": "source: show requirement source titles inline",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2499"
+  },
+  {
+    "mergedAt": "2026-05-21T16:37:48Z",
+    "number": 2498,
+    "title": "Guard imported daily goals against unsupported values",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2498"
+  },
+  {
+    "mergedAt": "2026-05-21T16:37:51Z",
+    "number": 2497,
+    "title": "test: keep e2e source contract green",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2497"
+  },
+  {
+    "mergedAt": "2026-05-21T16:31:56Z",
+    "number": 2496,
+    "title": "Expose exam answer options as radios",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2496"
+  },
+  {
+    "mergedAt": "2026-05-21T16:38:36Z",
+    "number": 2495,
+    "title": "ads: share banner live-test status copy guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2495"
+  },
+  {
+    "mergedAt": "2026-05-21T16:39:00Z",
+    "number": 2494,
+    "title": "Share storage harness TS loader",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2494"
+  },
+  {
+    "mergedAt": "2026-05-21T16:39:40Z",
+    "number": 2493,
+    "title": "static ebook: require explicit prose source metadata",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2493"
+  },
+  {
+    "mergedAt": "2026-05-21T16:22:51Z",
+    "number": 2492,
+    "title": "test: share generated true-false naturalness patterns",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2492"
+  },
+  {
+    "mergedAt": "2026-05-21T16:41:50Z",
+    "number": 2490,
+    "title": "[codex] Align Remove Ads focused validation gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2490"
+  },
+  {
+    "mergedAt": "2026-05-21T16:42:36Z",
+    "number": 2488,
+    "title": "Add question report href unit coverage",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2488"
+  },
+  {
+    "mergedAt": "2026-05-21T16:37:07Z",
+    "number": 2487,
+    "title": "Add focused Badge accessibility gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2487"
+  },
+  {
+    "mergedAt": "2026-05-21T16:06:23Z",
+    "number": 2486,
+    "title": "test: focus remove ads e2e mock harness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2486"
+  },
+  {
+    "mergedAt": "2026-05-21T16:37:55Z",
+    "number": 2485,
+    "title": "Fix profile paywall parity focus gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2485"
+  },
+  {
+    "mergedAt": "2026-05-21T16:02:46Z",
+    "number": 2484,
+    "title": "test: cover legal source material link wrapping",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2484"
+  },
+  {
+    "mergedAt": "2026-05-21T16:38:50Z",
+    "number": 2483,
+    "title": "data-integrity: guard mobile ads consent regions",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2483"
+  },
+  {
+    "mergedAt": "2026-05-21T15:56:21Z",
+    "number": 2482,
+    "title": "fix: share weekly recap date parsing",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2482"
+  },
+  {
+    "mergedAt": "2026-05-21T16:40:46Z",
+    "number": 2481,
+    "title": "test: align native banner status copy guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2481"
+  },
+  {
+    "mergedAt": "2026-05-21T16:44:44Z",
+    "number": 2480,
+    "title": "[codex] Fix UI effects release gate drift",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2480"
+  },
+  {
+    "mergedAt": "2026-05-21T15:50:03Z",
+    "number": 2479,
+    "title": "fix: theme provenance source notes",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2479"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:34Z",
+    "number": 2478,
+    "title": "static: align extra locale source provenance copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2478"
+  },
+  {
+    "mergedAt": "2026-05-21T16:46:11Z",
+    "number": 2477,
+    "title": "fix: reject off-menu imported daily goals",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2477"
+  },
+  {
+    "mergedAt": "2026-05-21T15:46:52Z",
+    "number": 2476,
+    "title": "queue exam submit review source e2e",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2476"
+  },
+  {
+    "mergedAt": "2026-05-21T15:47:00Z",
+    "number": 2475,
+    "title": "fix: keep mock exam attempt ids unique",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2475"
+  },
+  {
+    "mergedAt": "2026-05-21T16:37:40Z",
+    "number": 2471,
+    "title": "fix q160 source option parity guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2471"
+  },
+  {
+    "mergedAt": "2026-05-21T16:39:35Z",
+    "number": 2470,
+    "title": "Share ProgressBar source of truth",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2470"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:31Z",
+    "number": 2469,
+    "title": "setup: mirror streak freeze normalizer in validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2469"
+  },
+  {
+    "mergedAt": "2026-05-21T16:40:15Z",
+    "number": 2468,
+    "title": "fix q001 generated answer template parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2468"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:14Z",
+    "number": 2465,
+    "title": "[codex] Route nested surfaces through theme colors",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2465"
+  },
+  {
+    "mergedAt": "2026-05-21T16:45:10Z",
+    "number": 2464,
+    "title": "[codex] audio: harden speech runtime parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2464"
+  },
+  {
+    "mergedAt": "2026-05-21T16:45:49Z",
+    "number": 2463,
+    "title": "[codex] content: share generated true-false naturalness guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2463"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:53Z",
+    "number": 2462,
+    "title": "data-integrity: guard recordAnswer correctness type",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2462"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:47Z",
+    "number": 2459,
+    "title": "data-integrity: add practice chapter hub",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2459"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:54Z",
+    "number": 2458,
+    "title": "storage: expose persistence warning copy selector",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2458"
+  },
+  {
+    "mergedAt": "2026-05-21T16:39:53Z",
+    "number": 2456,
+    "title": "[codex] Guard CelebrationBurst web aria-hidden",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2456"
+  },
+  {
+    "mergedAt": "2026-05-21T16:41:09Z",
+    "number": 2455,
+    "title": "Route legal-section focused validation before broad content checks",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2455"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:33Z",
+    "number": 2452,
+    "title": "Guard malformed due review limits",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2452"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:08Z",
+    "number": 2450,
+    "title": "test: cover privacy Remove Ads legal copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2450"
+  },
+  {
+    "mergedAt": "2026-05-21T16:46:03Z",
+    "number": 2448,
+    "title": "[codex] cover exam provenance source-note toggles",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2448"
+  },
+  {
+    "mergedAt": "2026-05-21T15:39:16Z",
+    "number": 2446,
+    "title": "test: align architecture scaffold with citizenship route",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2446"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:43Z",
+    "number": 2445,
+    "title": "[codex] Add mobile ads consent runtime harness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2445"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:26Z",
+    "number": 2444,
+    "title": "[codex] guard practice interstitial attempt state",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2444"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:18Z",
+    "number": 2442,
+    "title": "Guard static CSS URL asset references",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2442"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:15Z",
+    "number": 2441,
+    "title": "test: migrate learning store stubs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2441"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:12Z",
+    "number": 2439,
+    "title": "test: centralize Home e2e setup harness",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2439"
+  },
+  {
+    "mergedAt": "2026-05-21T13:48:34Z",
+    "number": 2438,
+    "title": "i18n: add q181 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2438"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:07Z",
+    "number": 2437,
+    "title": "test: share visual smoke manifest route entries",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2437"
+  },
+  {
+    "mergedAt": "2026-05-21T13:46:25Z",
+    "number": 2436,
+    "title": "i18n: add q180 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2436"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:29Z",
+    "number": 2435,
+    "title": "a11y: include native ad assets in summary label",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2435"
+  },
+  {
+    "mergedAt": "2026-05-21T13:40:59Z",
+    "number": 2434,
+    "title": "i18n: add q179 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2434"
+  },
+  {
+    "mergedAt": "2026-05-21T13:37:49Z",
+    "number": 2430,
+    "title": "i18n: add q178 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2430"
+  },
+  {
+    "mergedAt": "2026-05-21T13:35:04Z",
+    "number": 2427,
+    "title": "i18n: add q177 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2427"
+  },
+  {
+    "mergedAt": "2026-05-21T13:32:16Z",
+    "number": 2425,
+    "title": "i18n: add q176 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2425"
+  },
+  {
+    "mergedAt": "2026-05-21T13:29:32Z",
+    "number": 2423,
+    "title": "i18n: add q175 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2423"
+  },
+  {
+    "mergedAt": "2026-05-21T13:26:26Z",
+    "number": 2421,
+    "title": "i18n: add q174 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2421"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:41Z",
+    "number": 2420,
+    "title": "feat(site): activate ad slots on practice + ebook pages",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2420"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:33Z",
+    "number": 2419,
+    "title": "setup: preserve chapter quiz route context",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2419"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:24Z",
+    "number": 2418,
+    "title": "test: cover purchase in-flight guard runtime",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2418"
+  },
+  {
+    "mergedAt": "2026-05-21T13:19:00Z",
+    "number": 2417,
+    "title": "i18n: add q173 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2417"
+  },
+  {
+    "mergedAt": "2026-05-21T13:16:22Z",
+    "number": 2415,
+    "title": "i18n: add q172 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2415"
+  },
+  {
+    "mergedAt": "2026-05-21T13:13:03Z",
+    "number": 2413,
+    "title": "i18n: add q171 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2413"
+  },
+  {
+    "mergedAt": "2026-05-21T13:09:41Z",
+    "number": 2412,
+    "title": "i18n: add q170 question translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2412"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:53Z",
+    "number": 2411,
+    "title": "[codex] Localize Swedish ebook source-count units",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2411"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:56Z",
+    "number": 2409,
+    "title": "Guard native ad banner request options",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2409"
+  },
+  {
+    "mergedAt": "2026-05-21T13:02:06Z",
+    "number": 2407,
+    "title": "i18n: filter untranslated static questions",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2407"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:50Z",
+    "number": 2405,
+    "title": "content: preserve Sweden scope in generated legal true-false",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2405"
+  },
+  {
+    "mergedAt": "2026-05-21T12:54:19Z",
+    "number": 2403,
+    "title": "fix: guard language aria pressed writes",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2403"
+  },
+  {
+    "mergedAt": "2026-05-21T12:52:43Z",
+    "number": 2402,
+    "title": "fix: sync settings pressed states",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2402"
+  },
+  {
+    "mergedAt": "2026-05-21T12:50:33Z",
+    "number": 2400,
+    "title": "fix: guard static language picker aria writes",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2400"
+  },
+  {
+    "mergedAt": "2026-05-21T12:49:11Z",
+    "number": 2398,
+    "title": "copy: use natural Swedish mock wording",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2398"
+  },
+  {
+    "mergedAt": "2026-05-21T13:54:35Z",
+    "number": 2397,
+    "title": "Fix naturalness mutation fixtures",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2397"
+  },
+  {
+    "mergedAt": "2026-05-21T12:47:25Z",
+    "number": 2396,
+    "title": "test: align privacy copy guard with localized FAQ",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2396"
+  },
+  {
+    "mergedAt": "2026-05-21T12:45:58Z",
+    "number": 2394,
+    "title": "fix: harden static language menu outside click",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2394"
+  },
+  {
+    "mergedAt": "2026-05-21T12:44:13Z",
+    "number": 2393,
+    "title": "i18n: localize static buddy runtime messages",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2393"
+  },
+  {
+    "mergedAt": "2026-05-21T12:41:42Z",
+    "number": 2392,
+    "title": "i18n: localize static extras copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2392"
+  },
+  {
+    "mergedAt": "2026-05-21T12:37:34Z",
+    "number": 2390,
+    "title": "i18n: localize mock submit confirmation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2390"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:50Z",
+    "number": 2388,
+    "title": "derive static provenance counts from exported bank",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2388"
+  },
+  {
+    "mergedAt": "2026-05-21T12:34:42Z",
+    "number": 2387,
+    "title": "i18n: localize static source badges",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2387"
+  },
+  {
+    "mergedAt": "2026-05-21T12:29:41Z",
+    "number": 2386,
+    "title": "i18n: localize static buddy chrome",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2386"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:56Z",
+    "number": 2385,
+    "title": "fix legal support mixed link layout",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2385"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:55Z",
+    "number": 2384,
+    "title": "[codex] test button style override parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2384"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:11Z",
+    "number": 2383,
+    "title": "[codex] test badge style override parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2383"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:47Z",
+    "number": 2380,
+    "title": "data-integrity: guard how-can-affect generated stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2380"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:12Z",
+    "number": 2379,
+    "title": "uiux: validate both progress bar contracts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2379"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:10Z",
+    "number": 2377,
+    "title": "Fix generated political-rights true/false prompts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2377"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:32Z",
+    "number": 2370,
+    "title": "test: refresh visual smoke baselines",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2370"
+  },
+  {
+    "mergedAt": "2026-05-21T15:42:04Z",
+    "number": 2360,
+    "title": "test: guard ebook footnote source counts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2360"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:36Z",
+    "number": 2358,
+    "title": "test: focus question speech parity validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2358"
+  },
+  {
+    "mergedAt": "2026-05-21T11:16:36Z",
+    "number": 2352,
+    "title": "Complete ebook chapters 4-13 translations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2352"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:39Z",
+    "number": 2351,
+    "title": "test: guard countdown banner home mount",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2351"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:41Z",
+    "number": 2346,
+    "title": "setup: naturalize Home samhällskunskap copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2346"
+  },
+  {
+    "mergedAt": "2026-05-21T12:26:13Z",
+    "number": 2345,
+    "title": "i18n: localize static purchase gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2345"
+  },
+  {
+    "mergedAt": "2026-05-21T11:37:08Z",
+    "number": 2344,
+    "title": "Gate web purchase handoff by signed-in account",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2344"
+  },
+  {
+    "mergedAt": "2026-05-21T15:38:34Z",
+    "number": 2343,
+    "title": "test: require about Swedish runtime copy guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2343"
+  },
+  {
+    "mergedAt": "2026-05-21T10:54:03Z",
+    "number": 2342,
+    "title": "[codex] complete dashboard release guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2342"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:16Z",
+    "number": 2341,
+    "title": "test: guard Home ad hydration entitlement gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2341"
+  },
+  {
+    "mergedAt": "2026-05-21T10:49:31Z",
+    "number": 2340,
+    "title": "i18n: localize ebook chapters 5-13",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2340"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:05Z",
+    "number": 2333,
+    "title": "test: cover mounted search query param sync",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2333"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:17Z",
+    "number": 2332,
+    "title": "test: add content-focused npm route",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2332"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:22Z",
+    "number": 2331,
+    "title": "test: add focused onboarding scroll validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2331"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:45Z",
+    "number": 2327,
+    "title": "test: add focused flashcard accessibility validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2327"
+  },
+  {
+    "mergedAt": "2026-05-21T10:17:11Z",
+    "number": 2326,
+    "title": "feat(site): dashboard on its own login-walled page",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2326"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:07Z",
+    "number": 2325,
+    "title": "Guard Swedish mock exam copy parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2325"
+  },
+  {
+    "mergedAt": "2026-05-21T10:09:32Z",
+    "number": 2324,
+    "title": "fix(site): footer full-width + dashboard stays after login",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2324"
+  },
+  {
+    "mergedAt": "2026-05-21T09:57:24Z",
+    "number": 2319,
+    "title": "i18n(dashboard): localize all dashboard strings (12 langs) + re-render on switch",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2319"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:03Z",
+    "number": 2318,
+    "title": "e2e: centralize mock exam language seeding",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2318"
+  },
+  {
+    "mergedAt": "2026-05-21T09:53:21Z",
+    "number": 2316,
+    "title": "fix(site): footer + ebook lang refresh + account view",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2316"
+  },
+  {
+    "mergedAt": "2026-05-21T15:34:59Z",
+    "number": 2313,
+    "title": "content: guard streak runtime date inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2313"
+  },
+  {
+    "mergedAt": "2026-05-21T09:41:35Z",
+    "number": 2311,
+    "title": "i18n(faq): account optional + language button (12 langs)",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2311"
+  },
+  {
+    "mergedAt": "2026-05-21T09:41:21Z",
+    "number": 2310,
+    "title": "feat(site): supabase creds + dashboard blur-gate + logo transparency",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2310"
+  },
+  {
+    "mergedAt": "2026-05-21T16:46:33Z",
+    "number": 2309,
+    "title": "[codex] Harden Swedish speech runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2309"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:02Z",
+    "number": 2308,
+    "title": "settings: expose theme mode as radio group",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2308"
+  },
+  {
+    "mergedAt": "2026-05-21T09:34:02Z",
+    "number": 2304,
+    "title": "feat(auth): real Supabase Google/Apple OAuth (safe fallback)",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2304"
+  },
+  {
+    "mergedAt": "2026-05-21T09:22:04Z",
+    "number": 2301,
+    "title": "i18n(ebook): localize highlights empty-state + chapter labels",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2301"
+  },
+  {
+    "mergedAt": "2026-05-21T09:22:01Z",
+    "number": 2300,
+    "title": "feat(site): skip practice question without answering",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2300"
+  },
+  {
+    "mergedAt": "2026-05-21T09:22:08Z",
+    "number": 2298,
+    "title": "feat(site): sign-in l10n + dashboard gate/polish + header wordmark",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2298"
+  },
+  {
+    "mergedAt": "2026-05-21T15:35:09Z",
+    "number": 2296,
+    "title": "Repair ad placement route parity tests",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2296"
+  },
+  {
+    "mergedAt": "2026-05-21T15:37:05Z",
+    "number": 2294,
+    "title": "Guard generated policy-goal true/false wording",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2294"
+  },
+  {
+    "mergedAt": "2026-05-21T16:44:00Z",
+    "number": 2293,
+    "title": "test: cover release preflight v1.1 text evidence",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2293"
+  },
+  {
+    "mergedAt": "2026-05-21T16:42:23Z",
+    "number": 2292,
+    "title": "[codex] about: surface limited-seat registration warning",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2292"
+  },
+  {
+    "mergedAt": "2026-05-21T16:43:12Z",
+    "number": 2289,
+    "title": "[codex] Restore question bank CSV contract gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2289"
+  },
+  {
+    "mergedAt": "2026-05-21T08:59:20Z",
+    "number": 2287,
+    "title": "feat(site): wire in sign-in modal",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2287"
+  },
+  {
+    "mergedAt": "2026-05-21T15:36:14Z",
+    "number": 2285,
+    "title": "test: focus app config metadata parity gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2285"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:48Z",
+    "number": 2283,
+    "title": "[codex] static site: align source provenance fallback",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2283"
+  },
+  {
+    "mergedAt": "2026-05-21T08:48:17Z",
+    "number": 2282,
+    "title": "feat(site): Claude-design UI refresh (visual + graphics only)",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2282"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:44Z",
+    "number": 2281,
+    "title": "settings: naturalize import summary copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2281"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:40Z",
+    "number": 2280,
+    "title": "Fix onboarding action link target sizing",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2280"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:36Z",
+    "number": 2279,
+    "title": "[codex] setup: respect reduced motion for token feedback",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2279"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:33Z",
+    "number": 2278,
+    "title": "test: cover question report link context flows",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2278"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:29Z",
+    "number": 2277,
+    "title": "static ebook: sanitize highlight id lookups",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2277"
+  },
+  {
+    "mergedAt": "2026-05-21T08:49:25Z",
+    "number": 2276,
+    "title": "uiux: enforce compliance footer tap targets",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2276"
+  },
+  {
+    "mergedAt": "2026-05-21T08:34:19Z",
+    "number": 2275,
+    "title": "operator: activate v1.1 (GOAL.md scope flip + CEO directive)",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2275"
+  },
+  {
+    "mergedAt": "2026-05-21T08:35:17Z",
+    "number": 2274,
+    "title": "Guard exam question provenance badges",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2274"
+  },
+  {
+    "mergedAt": "2026-05-21T08:31:22Z",
+    "number": 2273,
+    "title": "operator: activate v1.1 final version (auth + Pro tier in scope)",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2273"
+  },
+  {
+    "mergedAt": "2026-05-21T08:28:27Z",
+    "number": 2272,
+    "title": "i18n(zh) natural rewrite + quiz back-nav + disclaimer dedupe",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2272"
+  },
+  {
+    "mergedAt": "2026-05-21T08:25:49Z",
+    "number": 2271,
+    "title": "learning: naturalize Swedish streak freeze copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2271"
+  },
+  {
+    "mergedAt": "2026-05-21T08:22:57Z",
+    "number": 2270,
+    "title": "[codex] Focus ChapterCard accessibility validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2270"
+  },
+  {
+    "mergedAt": "2026-05-21T08:23:17Z",
+    "number": 2269,
+    "title": "fix: guard answer feedback language fallback",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2269"
+  },
+  {
+    "mergedAt": "2026-05-21T08:23:38Z",
+    "number": 2268,
+    "title": "learning: harden weak chapter runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2268"
+  },
+  {
+    "mergedAt": "2026-05-21T08:24:00Z",
+    "number": 2267,
+    "title": "test: align mistakes route copy validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2267"
+  },
+  {
+    "mergedAt": "2026-05-21T08:25:27Z",
+    "number": 2266,
+    "title": "fix: guard spaced repetition runtime inputs",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2266"
+  },
+  {
+    "mergedAt": "2026-05-21T08:06:18Z",
+    "number": 2265,
+    "title": "test: derive generated fixture ids from source rows",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2265"
+  },
+  {
+    "mergedAt": "2026-05-21T08:02:53Z",
+    "number": 2264,
+    "title": "test: focus practice scoring validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2264"
+  },
+  {
+    "mergedAt": "2026-05-21T08:03:13Z",
+    "number": 2263,
+    "title": "test: wire LegalSection rendering validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2263"
+  },
+  {
+    "mergedAt": "2026-05-21T08:04:56Z",
+    "number": 2262,
+    "title": "content: restore validation parity for legal and copy gates",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2262"
+  },
+  {
+    "mergedAt": "2026-05-21T08:05:18Z",
+    "number": 2261,
+    "title": "Guard daily goal settings against non-finite input",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2261"
+  },
+  {
+    "mergedAt": "2026-05-21T08:05:39Z",
+    "number": 2260,
+    "title": "setup: wire focused question report link parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2260"
+  },
+  {
+    "mergedAt": "2026-05-21T07:46:47Z",
+    "number": 2259,
+    "title": "Add focused answer feedback parity validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2259"
+  },
+  {
+    "mergedAt": "2026-05-21T07:46:11Z",
+    "number": 2258,
+    "title": "content: guard validate-content exec cwd parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2258"
+  },
+  {
+    "mergedAt": "2026-05-21T07:45:37Z",
+    "number": 2257,
+    "title": "fix static language aria labels",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2257"
+  },
+  {
+    "mergedAt": "2026-05-21T07:44:55Z",
+    "number": 2256,
+    "title": "data-integrity: wire study reminder runtime guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2256"
+  },
+  {
+    "mergedAt": "2026-05-21T07:41:34Z",
+    "number": 2255,
+    "title": "Centralize e2e MMKV settings seeds",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2255"
+  },
+  {
+    "mergedAt": "2026-05-21T07:41:54Z",
+    "number": 2254,
+    "title": "fix settings subtitle parity validator",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2254"
+  },
+  {
+    "mergedAt": "2026-05-21T07:38:01Z",
+    "number": 2253,
+    "title": "setup: tolerate static question bank format drift",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2253"
+  },
+  {
+    "mergedAt": "2026-05-21T07:38:22Z",
+    "number": 2252,
+    "title": "Guard media generated true-false direct propositions",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2252"
+  },
+  {
+    "mergedAt": "2026-05-21T07:38:43Z",
+    "number": 2251,
+    "title": "Align bookmarked review answer guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2251"
+  },
+  {
+    "mergedAt": "2026-05-21T07:39:04Z",
+    "number": 2250,
+    "title": "Render quiz empty title as a header",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2250"
+  },
+  {
+    "mergedAt": "2026-05-21T07:39:25Z",
+    "number": 2249,
+    "title": "Fix static ebook source metadata",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2249"
+  },
+  {
+    "mergedAt": "2026-05-21T07:39:45Z",
+    "number": 2248,
+    "title": "feat(practice): surface selected study companion",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2248"
+  },
+  {
+    "mergedAt": "2026-05-21T07:40:06Z",
+    "number": 2247,
+    "title": "test: allow localized quiz empty title header",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2247"
+  },
+  {
+    "mergedAt": "2026-05-21T07:40:27Z",
+    "number": 2246,
+    "title": "Guard exam route against rewarded ad unlocks",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2246"
+  },
+  {
+    "mergedAt": "2026-05-21T07:24:20Z",
+    "number": 2245,
+    "title": "test: align exam no-ad-unlock copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2245"
+  },
+  {
+    "mergedAt": "2026-05-21T07:40:49Z",
+    "number": 2244,
+    "title": "Fix voter-turnout generated true/false stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2244"
+  },
+  {
+    "mergedAt": "2026-05-21T07:21:42Z",
+    "number": 2243,
+    "title": "test: align native interstitial consent gate",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2243"
+  },
+  {
+    "mergedAt": "2026-05-21T07:20:01Z",
+    "number": 2242,
+    "title": "setup: add topbar link pressed feedback",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2242"
+  },
+  {
+    "mergedAt": "2026-05-21T07:18:24Z",
+    "number": 2241,
+    "title": "test: align launch popup suppressed routes",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2241"
+  },
+  {
+    "mergedAt": "2026-05-21T07:15:49Z",
+    "number": 2240,
+    "title": "test: align schema validator release contracts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2240"
+  },
+  {
+    "mergedAt": "2026-05-21T07:20:23Z",
+    "number": 2239,
+    "title": "Fix All Saints generated true/false English stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2239"
+  },
+  {
+    "mergedAt": "2026-05-21T07:20:44Z",
+    "number": 2238,
+    "title": "test: guard human-rights generated definition clefts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2238"
+  },
+  {
+    "mergedAt": "2026-05-21T07:21:04Z",
+    "number": 2237,
+    "title": "fix: reset provenance source note on question change",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2237"
+  },
+  {
+    "mergedAt": "2026-05-21T07:06:18Z",
+    "number": 2236,
+    "title": "content: rewrite generated media true-false stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2236"
+  },
+  {
+    "mergedAt": "2026-05-21T07:06:54Z",
+    "number": 2235,
+    "title": "test: guard mobile ads consent retry cache",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2235"
+  },
+  {
+    "mergedAt": "2026-05-21T07:02:58Z",
+    "number": 2234,
+    "title": "[codex] Fix civil defence generated true/false context",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2234"
+  },
+  {
+    "mergedAt": "2026-05-21T06:56:32Z",
+    "number": 2233,
+    "title": "fix: pass monetization release gate tests",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2233"
+  },
+  {
+    "mergedAt": "2026-05-21T06:56:42Z",
+    "number": 2232,
+    "title": "learn: add native study article audio narration",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2232"
+  },
+  {
+    "mergedAt": "2026-05-21T06:56:00Z",
+    "number": 2231,
+    "title": "data-integrity: restore generated content parity",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2231"
+  },
+  {
+    "mergedAt": "2026-05-21T06:57:04Z",
+    "number": 2230,
+    "title": "test: share visual smoke duplicate explanations",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2230"
+  },
+  {
+    "mergedAt": "2026-05-21T06:53:55Z",
+    "number": 2229,
+    "title": "content: show ebook source mix counts",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2229"
+  },
+  {
+    "mergedAt": "2026-05-21T06:56:21Z",
+    "number": 2228,
+    "title": "currentness: expose About official source links",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2228"
+  },
+  {
+    "mergedAt": "2026-05-21T06:51:34Z",
+    "number": 2227,
+    "title": "content: require ebook provenance source keys",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2227"
+  },
+  {
+    "mergedAt": "2026-05-21T06:50:33Z",
+    "number": 2226,
+    "title": "Fix generated gender-equality policy true/false stems",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2226"
+  },
+  {
+    "mergedAt": "2026-05-21T06:46:47Z",
+    "number": 2225,
+    "title": "build: restore current main chapter typecheck",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2225"
+  },
+  {
+    "mergedAt": "2026-05-21T06:49:39Z",
+    "number": 2224,
+    "title": "content: fix human-rights generated true-false wording",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2224"
+  },
+  {
+    "mergedAt": "2026-05-21T06:45:41Z",
+    "number": 2223,
+    "title": "notifications: fail closed when reminder runtime is unavailable",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2223"
+  },
+  {
+    "mergedAt": "2026-05-21T06:41:50Z",
+    "number": 2222,
+    "title": "test: route release preflight filters through wrapper",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2222"
+  },
+  {
+    "mergedAt": "2026-05-21T06:39:09Z",
+    "number": 2221,
+    "title": "build: restore current main validation and typecheck",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2221"
+  },
+  {
+    "mergedAt": "2026-05-21T06:42:02Z",
+    "number": 2220,
+    "title": "content: register countdown focus validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2220"
+  },
+  {
+    "mergedAt": "2026-05-21T06:34:16Z",
+    "number": 2219,
+    "title": "[codex] Harden citizenship checklist import",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2219"
+  },
+  {
+    "mergedAt": "2026-05-21T06:25:08Z",
+    "number": 2218,
+    "title": "build: restore current main typecheck helpers",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2218"
+  },
+  {
+    "mergedAt": "2026-05-21T06:25:46Z",
+    "number": 2217,
+    "title": "ads: skip UMP collection for non-UMP regions",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2217"
+  },
+  {
+    "mergedAt": "2026-05-21T06:13:34Z",
+    "number": 2216,
+    "title": "test: align countdown validator with confirmed UHR copy",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2216"
+  },
+  {
+    "mergedAt": "2026-05-21T06:34:27Z",
+    "number": 2215,
+    "title": "content: focus countdown banner validation",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2215"
+  },
+  {
+    "mergedAt": "2026-05-21T06:26:00Z",
+    "number": 2214,
+    "title": "uiux: surface Pro paywall comparison by default",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2214"
+  },
+  {
+    "mergedAt": "2026-05-21T06:26:07Z",
+    "number": 2213,
+    "title": "[codex] Guard highlight chapter keys",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2213"
+  },
+  {
+    "mergedAt": "2026-05-21T06:37:13Z",
+    "number": 2212,
+    "title": "test: label generated true-false naturalness guards",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2212"
+  },
+  {
+    "mergedAt": "2026-05-21T06:01:22Z",
+    "number": 2211,
+    "title": "[codex] Align mascot expression ids with catalog",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2211"
+  },
+  {
+    "mergedAt": "2026-05-21T06:00:31Z",
+    "number": 2210,
+    "title": "test: scope release monetization policy checks",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2210"
+  },
+  {
+    "mergedAt": "2026-05-21T05:56:11Z",
+    "number": 2209,
+    "title": "test: refresh authority-boundary mutation guard",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2209"
+  }
+]

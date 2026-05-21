@@ -366,7 +366,7 @@ const i18n = (window.i18n = {
       "Use the app to study. Don't scrape it, reverse-engineer it, or rebrand it as your own product. Don't use it to harass anyone. Treat the app the way you'd treat a borrowed bicycle: well.",
     'terms.s3.t': 'Content & accuracy',
     'terms.s3.p':
-      'The current question bank has ~179 questions cited directly to UHR\'s public study material <em>Sverige i fokus</em> and ~716 editorially derived from those same UHR themes. Every question carries a <strong>UHR</strong> or <strong>Derived</strong> provenance badge so you always know which is which, and Settings → Question sources lets you restrict practice + mock to UHR only. Humans miss things — if you find an error, the <a href="#/support">support page</a> is the fastest fix.',
+      'The current question bank has 179 questions cited directly to UHR\'s public study material <em>Sverige i fokus</em> and 716 editorially derived questions from those same UHR themes. Every question carries a <strong>UHR</strong> or <strong>Derived</strong> provenance badge so you always know which is which, and Settings → Question sources lets you restrict practice + mock to UHR only. Humans miss things — if you find an error, the <a href="#/support">support page</a> is the fastest fix.',
     'terms.s4.t': 'No guarantees',
     'terms.s4.p':
       "We don't guarantee you'll pass the official test. We don't guarantee the app works perfectly on every device on every day. We do guarantee we'll keep trying.",
@@ -380,7 +380,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Where the answers',
     'sources.h1b': 'actually come from.',
     'sources.lede':
-      'The current question bank has two provenance families and every question is badged: <strong>UHR</strong> (~179 questions cited directly to <em>Sverige i fokus</em>) and <strong>Derived</strong> (~716 questions written editorially from those same UHR themes for additional practice volume). You can restrict practice + mock to UHR only in Settings → Question sources.',
+      'The current question bank has two provenance families and every question is badged: <strong>UHR</strong> (179 questions cited directly to <em>Sverige i fokus</em>) and <strong>Derived</strong> (716 questions written editorially from those same UHR themes for additional practice volume). You can restrict practice + mock to UHR only in Settings → Question sources.',
     'sources.meta1.b': 'Primary source',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Last review',
@@ -407,7 +407,7 @@ const i18n = (window.i18n = {
       'This page is checked against <code>site/questions.js</code> so source copy cannot outrun the current bank.',
     'sources.s4.t': 'Current-source scope',
     'sources.s4.li1':
-      'The bank has UHR-cited (~179) and editorially-derived (~716) questions; the per-question badge tells you which family each one belongs to, and Settings → Question sources lets you opt out of derived content.',
+      'The bank has 179 UHR-cited questions and 716 editorially derived questions; the per-question badge tells you which family each one belongs to, and Settings → Question sources lets you opt out of derived content.',
     'sources.s4.li2': 'The app is independent and is not an official UHR product.',
     'sources.s5.t': 'Editorial method',
     'sources.s5.callout.b': 'House rule:',
@@ -459,7 +459,7 @@ const i18n = (window.i18n = {
     'purchase.premium.eyebrow': 'Premium',
     'purchase.premium.title': 'Premium Lifetime',
     'purchase.premium.body':
-      'Unlocks premium study tools for the account you sign in with. Remove Ads remains separate.',
+      'Includes everything in Ad-free, plus premium study tools — ebook highlighting, notes, and more — for the account you sign in with.',
     'purchase.premium.locked': 'Sign in to buy Premium',
     'purchase.premium.ready': 'Continue with Google Play — 59 kr',
     'purchase.price.once': 'one-time',
@@ -513,7 +513,7 @@ const i18n = (window.i18n = {
     'settings.sources.all': 'All sources',
     'settings.sources.uhr': 'UHR only',
     'settings.sources.hint':
-      'All sources includes UHR-cited and derived practice questions. UHR only limits practice and mock exams to the ~179 questions traceable to Sverige i fokus citations.',
+      'All sources includes UHR-cited and derived practice questions. UHR only limits practice and mock exams to the 179 questions traceable to Sverige i fokus citations.',
     'settings.text': 'Text size',
     'settings.text.s': 'Small',
     'settings.text.m': 'Regular',
@@ -779,7 +779,7 @@ const i18n = (window.i18n = {
       'Använd appen för att plugga. Skrapa den inte, reverse-engineera den inte, bygg inte om den och kalla den din. Använd den inte för att trakassera någon. Behandla appen som du behandlar en lånad cykel: väl.',
     'terms.s3.t': 'Innehåll & korrekthet',
     'terms.s3.p':
-      'Den nuvarande frågebanken har ~179 frågor med direkt hänvisning till UHR:s offentliga studiematerial <em>Sverige i fokus</em> och ~716 redaktionellt härledda frågor som bygger på samma UHR-teman. Varje fråga är märkt med <strong>UHR</strong> eller <strong>Härledd</strong> så du alltid vet vilken familj den tillhör, och i Inställningar → Frågekällor kan du begränsa övning + provsim till enbart UHR. Människor missar saker — hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
+      'Den nuvarande frågebanken har 179 frågor med direkt hänvisning till UHR:s offentliga studiematerial <em>Sverige i fokus</em> och 716 redaktionellt härledda frågor som bygger på samma UHR-teman. Varje fråga är märkt med <strong>UHR</strong> eller <strong>Härledd</strong> så du alltid vet vilken familj den tillhör, och i Inställningar → Frågekällor kan du begränsa övning + provsim till enbart UHR. Människor missar saker — hittar du fel är <a href="#/support">supportsidan</a> snabbaste vägen.',
     'terms.s4.t': 'Inga garantier',
     'terms.s4.p':
       'Vi garanterar inte att du klarar det officiella provet. Vi garanterar inte att appen funkar perfekt på varje enhet varje dag. Vi garanterar att vi fortsätter försöka.',
@@ -793,7 +793,7 @@ const i18n = (window.i18n = {
     'sources.h1a': 'Var svaren',
     'sources.h1b': 'faktiskt kommer ifrån.',
     'sources.lede':
-      'Den nuvarande frågebanken har två källfamiljer och varje fråga är märkt: <strong>UHR</strong> (~179 frågor med direkt hänvisning till <em>Sverige i fokus</em>) och <strong>Härledd</strong> (~716 frågor skrivna redaktionellt från samma UHR-teman för extra övningsmängd). Du kan begränsa övning + provsim till enbart UHR i Inställningar → Frågekällor.',
+      'Den nuvarande frågebanken har två källfamiljer och varje fråga är märkt: <strong>UHR</strong> (179 frågor med direkt hänvisning till <em>Sverige i fokus</em>) och <strong>Härledd</strong> (716 redaktionellt härledda frågor från samma UHR-teman för extra övningsmängd). Du kan begränsa övning + provsim till enbart UHR i Inställningar → Frågekällor.',
     'sources.meta1.b': 'Primär källa',
     'sources.meta1.v': '1',
     'sources.meta2.b': 'Senaste översyn',
@@ -819,7 +819,7 @@ const i18n = (window.i18n = {
       'Den här sidan kontrolleras mot <code>site/questions.js</code> så källcopy inte kan springa före den aktuella banken.',
     'sources.s4.t': 'Nuvarande källomfång',
     'sources.s4.li1':
-      'Frågebanken har UHR-citerade (~179) och redaktionellt härledda (~716) frågor; märkningen per fråga visar vilken familj varje fråga tillhör, och i Inställningar → Frågekällor kan du välja bort härlett innehåll.',
+      'Frågebanken har 179 UHR-citerade frågor och 716 redaktionellt härledda frågor; märkningen per fråga visar vilken familj varje fråga tillhör, och i Inställningar → Frågekällor kan du välja bort härlett innehåll.',
     'sources.s4.li2': 'Appen är fristående och är inte en officiell UHR-produkt.',
     'sources.s5.t': 'Redaktionell metod',
     'sources.s5.callout.b': 'Husregel:',
@@ -871,7 +871,7 @@ const i18n = (window.i18n = {
     'purchase.premium.eyebrow': 'Premium',
     'purchase.premium.title': 'Premium livstid',
     'purchase.premium.body':
-      'Låser upp premiumverktyg för kontot du loggar in med. Ta bort annonser är separat.',
+      'Innehåller allt i Annonsfritt, plus premiumverktyg för studier — markeringar och anteckningar i e-boken med mera — för kontot du loggar in med.',
     'purchase.premium.locked': 'Logga in för att köpa Premium',
     'purchase.premium.ready': 'Fortsätt med Google Play — 59 kr',
     'purchase.price.once': 'engångsköp',
@@ -924,7 +924,7 @@ const i18n = (window.i18n = {
     'settings.sources.all': 'Alla källor',
     'settings.sources.uhr': 'Endast UHR',
     'settings.sources.hint':
-      'Alla källor visar UHR-hänvisade frågor och härledda övningsfrågor. Endast UHR begränsar övning och övningsprov till de cirka 179 frågor som kan spåras till hänvisningar i Sverige i fokus.',
+      'Alla källor visar UHR-hänvisade frågor och härledda övningsfrågor. Endast UHR begränsar övning och övningsprov till de 179 frågor som kan spåras till hänvisningar i Sverige i fokus.',
     'settings.text': 'Textstorlek',
     'settings.text.s': 'Liten',
     'settings.text.m': 'Normal',
@@ -1038,7 +1038,9 @@ function applyLang(lang) {
   smtApplyA11yLabels(lang);
   smtApplyDocumentMetadata(lang);
   document.querySelectorAll('.lang button[data-lang]').forEach((b) => {
-    b.classList.toggle('is-on', b.dataset.lang === lang);
+    const on = b.dataset.lang === lang;
+    b.classList.toggle('is-on', on);
+    if (typeof b.setAttribute === 'function') b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   try {
     localStorage.setItem('smt_lang', lang);
@@ -1117,6 +1119,8 @@ const SMT_ADS = {
   slots: {
     inline: '',
     anchor: '',
+    practice: '',
+    ebook: '',
   },
   scriptLoaded: false,
 };
@@ -1192,9 +1196,10 @@ function smtLoadAdSense() {
   s.src =
     'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + SMT_ADS.publisherId;
   document.head.appendChild(s);
-  document.querySelectorAll('ins.adsbygoogle').forEach(() => {
+  document.querySelectorAll('ins.adsbygoogle:not([data-smt-pushed])').forEach((el) => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
+      el.setAttribute('data-smt-pushed', '1');
     } catch (e) {}
   });
 }
@@ -1242,13 +1247,19 @@ function smtShowAds(mode) {
   try {
     anchorDismissed = sessionStorage.getItem('smt_anchor_closed') === '1';
   } catch {}
-  const inline = document.querySelector('[data-ad-slot="inline"]');
+  // In-content rectangle slots: the static landing "inline" slot plus any
+  // SPA-injected slots (practice, ebook). Use querySelectorAll so every slot
+  // toggles, not just the first match. Per-route visibility is handled by the
+  // [data-page] is-active CSS, so off-route slots stay hidden regardless.
+  const inContent = document.querySelectorAll('[data-ad-slot]:not([data-ad-slot="anchor"])');
   const anchor = document.querySelector('[data-ad-slot="anchor"]');
   const native = document.querySelectorAll('.list-quiet__ad');
   const showInline = canShowAds && (mode === 'inline' || mode === 'both');
   const showAnchor = canShowAds && !anchorDismissed && (mode === 'anchor' || mode === 'both');
   const showNative = canShowAds && (mode === 'inline' || mode === 'both');
-  if (inline) inline.hidden = !showInline;
+  inContent.forEach((el) => {
+    el.hidden = !showInline;
+  });
   if (anchor) anchor.hidden = !showAnchor;
   native.forEach((el) => {
     el.hidden = !showNative;
@@ -1268,6 +1279,47 @@ window.smtGetAdsMode = () => {
   }
 };
 window.smtRefreshAds = () => smtShowAds(window.smtGetAdsMode());
+
+// Markup for an in-content ad slot, used by SPA-rendered pages (practice, ebook).
+// Mirrors the static landing "inline" slot in index.html. Starts hidden; smtShowAds
+// reveals it only when consent is given AND a real slot ID is configured for `placement`.
+window.smtAdSlotMarkup = (placement) => {
+  const p = placement || 'inline';
+  return (
+    '<aside class="ad-slot ad-slot--inline" data-ad-slot="' +
+    p +
+    '" hidden>' +
+    '<div class="ad-slot__inner">' +
+    '<span class="ad-slot__label" data-i18n="ad.label">Sponsored</span>' +
+    '<div class="ad-slot__frame">' +
+    '<ins class="adsbygoogle" style="display: block; width: 100%; min-height: 120px" ' +
+    'data-smt-ad-placement="' +
+    p +
+    '" data-ad-format="auto" data-full-width-responsive="true"></ins>' +
+    '<div class="ad-slot__placeholder" data-i18n="ad.placeholder">' +
+    'Ad space reserved while reviewed AdSense slots are configured.</div>' +
+    '</div></div></aside>'
+  );
+};
+
+// Call after injecting smtAdSlotMarkup() into a freshly rendered SPA view.
+// Localizes the slot's data-i18n labels, wires real slot IDs (if configured),
+// fills any not-yet-pushed <ins> when AdSense is already loaded, and applies visibility.
+window.smtMountAds = () => {
+  try {
+    if (window.applyLang) window.applyLang(localStorage.getItem('smt_lang') || 'en');
+  } catch (e) {}
+  if (typeof smtConfigureAdSenseSlots === 'function') smtConfigureAdSenseSlots();
+  if (SMT_ADS.scriptLoaded) {
+    document.querySelectorAll('ins.adsbygoogle:not([data-smt-pushed])').forEach((el) => {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        el.setAttribute('data-smt-pushed', '1');
+      } catch (e) {}
+    });
+  }
+  if (window.smtRefreshAds) window.smtRefreshAds();
+};
 
 document.addEventListener('click', (e) => {
   if (e.target.closest('#consent-all')) {
@@ -1584,6 +1636,16 @@ function smtQuizCurrentLang() {
   } catch {
     return 'en';
   }
+}
+
+function smtQuizChapterLabel(question, lang) {
+  const chapterId = Number(question && question.chapterId);
+  const meta = Array.isArray(window.SMT_CHAPTERS_META)
+    ? window.SMT_CHAPTERS_META.find((chapter) => chapter.id === chapterId)
+    : null;
+  const title = meta && meta.title && (meta.title[lang] || meta.title.en);
+  if (title) return `${meta.emoji || ''} ${title}`.trim();
+  return question && question.chapter ? question.chapter : '';
 }
 
 function smtQuizEscapeHtml(value) {
@@ -1926,7 +1988,7 @@ function smtQuizShouldRender() {
 function smtQuizQuestionSet() {
   const filtered =
     typeof window.smtPracticeFilterFor === 'function' ? window.smtPracticeFilterFor() : null;
-  if (filtered && filtered.length) return filtered;
+  if (Array.isArray(filtered)) return filtered;
   if (window.SMT_QUESTIONS && window.SMT_QUESTIONS.length) return window.SMT_QUESTIONS;
   return SMT_FALLBACK_QUESTIONS;
 }
@@ -2108,7 +2170,7 @@ function smtQuizRender() {
     <p class="quiz__screen-disclaimer">${screenDisclaimer}</p>
     <div class="quiz__progress">${dots}</div>
     <div class="quiz__card">
-      <div class="quiz__crumb">${q.chapter}</div>
+      <div class="quiz__crumb">${smtQuizEscapeHtml(smtQuizChapterLabel(q, lang))}</div>
       <h2 class="quiz__q">${q.q[lang] || q.q.en}</h2>
       ${sourceRow}
       <div class="quiz__opts">${opts}</div>
@@ -2257,7 +2319,10 @@ function smtInitLangPicker() {
       }
     })();
     menu.querySelectorAll('button[data-lang]').forEach(function (b) {
-      b.classList.toggle('is-on', b.dataset.lang === cur);
+      const on = b.dataset.lang === cur;
+      b.classList.toggle('is-on', on);
+      if (typeof b.setAttribute === 'function')
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
   btn.addEventListener('click', function (e) {

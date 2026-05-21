@@ -1,0 +1,195 @@
+From 8a35a8ca3037ef361b7c1776e4669ed17104e86c Mon Sep 17 00:00:00 2001
+From: billy <billy10384@gmail.com>
+Date: Thu, 21 May 2026 12:20:01 +0200
+Subject: [PATCH] tests: add focused XP rules validation gate
+
+---
+ scripts/validate-content.js               | 77 ++++++++++++++++++++++-
+ tests/content-test-script-routing.test.js | 23 +++++++
+ tests/content-xp-rules-parity.test.js     |  5 +-
+ 3 files changed, 100 insertions(+), 5 deletions(-)
+
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..148253bd8 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -651,7 +651,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
+ const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
+ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
+ const EXPECTED_STREAK_RULE_COUNT = 10;
+-const EXPECTED_XP_RULE_COUNT = 11;
++const EXPECTED_XP_RULE_COUNT = 24;
+ const EXPECTED_MASTERY_RULE_COUNT = 17;
+ const EXPECTED_WEAK_CHAPTER_RULE_COUNT = 5;
+ const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
+@@ -2383,8 +2383,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -8396,6 +8395,16 @@ if (process.argv.includes('--focus-spaced-repetition-schema')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-xp-rules')) {
++  validateXpRules();
++  exitWithValidationFailures();
++  printValidationSummary({
++    xpRulesValidated,
++    xpRulesParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+   validateMobileAdsConsentHookParity();
+   exitWithValidationFailures();
+@@ -15911,6 +15920,16 @@ function validateXpRules() {
+       actual: () => calculateAnswerXp({ isCorrect: false, explanationRead: false }),
+       expected: 2,
+     },
++    {
++      label: 'non-boolean correctness awards no answer XP',
++      actual: () => calculateAnswerXp({ isCorrect: 'false', explanationRead: 'yes' }),
++      expected: 0,
++    },
++    {
++      label: 'non-boolean explanation flag awards no reading bonus',
++      actual: () => calculateAnswerXp({ isCorrect: true, explanationRead: 'yes' }),
++      expected: 10,
++    },
+     {
+       label: 'empty quiz completion',
+       actual: () => calculateQuizCompletionXp({ answeredCount: 0, correctCount: 0 }),
+@@ -15926,10 +15945,62 @@ function validateXpRules() {
+       actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 10 }),
+       expected: 70,
+     },
++    {
++      label: 'string quiz counts award no completion XP',
++      actual: () => calculateQuizCompletionXp({ answeredCount: '10', correctCount: '10' }),
++      expected: 0,
++    },
++    {
++      label: 'NaN quiz count awards no completion XP',
++      actual: () => calculateQuizCompletionXp({ answeredCount: Number.NaN, correctCount: 0 }),
++      expected: 0,
++    },
++    {
++      label: 'infinite quiz counts award no completion XP',
++      actual: () =>
++        calculateQuizCompletionXp({ answeredCount: Number.POSITIVE_INFINITY, correctCount: 10 }),
++      expected: 0,
++    },
++    {
++      label: 'fractional quiz count awards no completion XP',
++      actual: () => calculateQuizCompletionXp({ answeredCount: 10.5, correctCount: 10 }),
++      expected: 0,
++    },
++    {
++      label: 'negative quiz count awards no completion XP',
++      actual: () => calculateQuizCompletionXp({ answeredCount: -1, correctCount: 0 }),
++      expected: 0,
++    },
++    {
++      label: 'over-correct quiz count awards no completion XP',
++      actual: () => calculateQuizCompletionXp({ answeredCount: 10, correctCount: 11 }),
++      expected: 0,
++    },
+     { label: 'level at 0 XP', actual: () => calculateLevel(0), expected: 1 },
+     { label: 'level below first threshold', actual: () => calculateLevel(99), expected: 1 },
+     { label: 'level at 100 XP', actual: () => calculateLevel(100), expected: 2 },
+     { label: 'level at 400 XP', actual: () => calculateLevel(400), expected: 3 },
++    { label: 'level at 10000 XP', actual: () => calculateLevel(10000), expected: 11 },
++    {
++      label: 'string total XP falls back to level 1',
++      actual: () => calculateLevel('10000'),
++      expected: 1,
++    },
++    {
++      label: 'NaN total XP falls back to level 1',
++      actual: () => calculateLevel(Number.NaN),
++      expected: 1,
++    },
++    {
++      label: 'infinite total XP falls back to level 1',
++      actual: () => calculateLevel(Number.POSITIVE_INFINITY),
++      expected: 1,
++    },
++    {
++      label: 'negative total XP clamps to level 1',
++      actual: () => calculateLevel(-100),
++      expected: 1,
++    },
+   ];
+ 
+   let rulesAreValid = true;
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..d2833283c 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -190,6 +190,29 @@ test('spaced repetition schema parity uses focused content validation routing',
+   );
+ });
+ 
++test('XP rules parity uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const xpRulesTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-xp-rules-parity.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-xp-rules/);
++  assert.match(
++    validatorSource,
++    /validateXpRules\(\);[\s\S]*xpRulesValidated[\s\S]*xpRulesParityValidated/,
++  );
++  assert.match(xpRulesTestSource, /--focus-xp-rules/);
++  assert.doesNotMatch(
++    xpRulesTestSource,
++    /--focus-badge-xp-runtime/,
++    'XP rules tests must not route through the broader badge XP runtime focus',
++  );
++});
++
+ test('monetization selector runs only the focused monetization suite', () => {
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
+   const npmLog = path.join(tmpDir, 'npm.log');
+diff --git a/tests/content-xp-rules-parity.test.js b/tests/content-xp-rules-parity.test.js
+index d908b578b..e32965509 100644
+--- a/tests/content-xp-rules-parity.test.js
++++ b/tests/content-xp-rules-parity.test.js
+@@ -20,7 +20,7 @@ function loadTs(relativePath) {
+ function runFocusedXpRulesValidation() {
+   const output = execFileSync(
+     process.execPath,
+-    ['scripts/validate-content.js', '--focus-badge-xp-runtime'],
++    ['scripts/validate-content.js', '--focus-xp-rules'],
+     {
+       cwd: repoRoot,
+       encoding: 'utf8',
+@@ -55,6 +55,7 @@ test('XP progression parity validates answer, completion, and level rules', () =
+   assert.equal(calculateLevel(99), 1);
+   assert.equal(calculateLevel(100), 2);
+   assert.equal(calculateLevel(400), 3);
++  assert.equal(calculateLevel(10000), 11);
+   assert.equal(calculateLevel('10000'), 1);
+   assert.equal(calculateLevel(Infinity), 1);
+   assert.equal(calculateLevel(-100), 1);
+@@ -76,7 +77,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   }
+   return contents;
+ };
+-process.argv.push('--focus-badge-xp-runtime');
++process.argv.push('--focus-xp-rules');
+ require('./scripts/validate-content.js');
+ `,
+     ],

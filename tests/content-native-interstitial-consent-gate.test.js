@@ -17,12 +17,16 @@ test('native practice interstitial uses platform-aware consent gating', () => {
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
 
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-ad-placement-route-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
 
-  assert.notEqual(result.status, 0, 'unrelated content gates should still keep validation red');
+  assert.equal(result.status, 0);
   assert.doesNotMatch(
     `${result.stdout}\n${result.stderr}`,
     /PracticeInterstitialAd native placement must gate quiz_completed_interstitial through consent-aware/,

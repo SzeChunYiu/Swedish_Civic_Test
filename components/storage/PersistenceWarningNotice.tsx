@@ -4,7 +4,7 @@ import type { RecoverablePersistenceWarning } from '../../lib/storage/persistenc
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 
-type PersistenceWarningNoticeCopy = {
+export type PersistenceWarningNoticeCopy = {
   accessibilityLabel: string;
   body: string;
   dismiss: string;
@@ -89,6 +89,18 @@ const persistenceWarningNoticeCopy: Record<
   },
 };
 
+export function getPersistenceWarningNoticeCopy({
+  language,
+  operation,
+  warningScope = 'studyData',
+}: {
+  language: AppLanguage;
+  operation: RecoverablePersistenceWarning['operation'];
+  warningScope?: PersistenceWarningNoticeScope;
+}): PersistenceWarningNoticeCopy {
+  return persistenceWarningNoticeCopy[language][warningScope][operation];
+}
+
 type PersistenceWarningNoticeProps = {
   language: AppLanguage;
   onDismiss: () => void;
@@ -104,7 +116,11 @@ export function PersistenceWarningNotice({
 }: PersistenceWarningNoticeProps) {
   if (!warning) return null;
 
-  const copy = persistenceWarningNoticeCopy[language][warningScope][warning.operation];
+  const copy = getPersistenceWarningNoticeCopy({
+    language,
+    operation: warning.operation,
+    warningScope,
+  });
 
   return (
     <View

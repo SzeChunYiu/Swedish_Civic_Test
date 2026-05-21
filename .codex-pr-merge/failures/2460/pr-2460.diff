@@ -1,0 +1,24 @@
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 82576e18e..f48f45fb9 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -619,6 +619,7 @@ export default function Screen() {
+         <Text style={styles.disclaimerText}>{copy.importPurchasesNote}</Text>
+         <TextInput
+           accessibilityLabel={copy.importPasteLabel}
++          maxLength={LOCAL_STUDY_DATA_IMPORT_MAX_BYTES}
+           multiline
+           onChangeText={handleImportTextChange}
+           placeholder={copy.importPastePlaceholder}
+diff --git a/tests/content-local-study-data-import-parity.test.js b/tests/content-local-study-data-import-parity.test.js
+index c62dd0e41..da9110958 100644
+--- a/tests/content-local-study-data-import-parity.test.js
++++ b/tests/content-local-study-data-import-parity.test.js
+@@ -125,6 +125,7 @@ test('local study data import summary keeps Swedish copy learner-facing', () =>
+   );
+   assert.match(englishCopyMatch[0], /\bIAP fields\b/);
+   assert.match(englishCopyMatch[0], /\bIAP data\b/);
++  assert.match(source, /maxLength=\{LOCAL_STUDY_DATA_IMPORT_MAX_BYTES\}/);
+ });
+ 
+ test('local study data import previews and applies all learner snapshot sections', () => {

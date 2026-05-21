@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Add visible focus styling to inline citizenship requirement source rows.\n- Add source guards for localized `Källa för` / `Source for` source-row labels, 48px source-row targets, and focus styling.\n- Add mobile Swedish and desktop English browser checks for source-row labels, target size, wrapping/no overflow, and focus paint.\n\n## Validation\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/content-citizenship-requirements-parity.test.js --test-name-pattern \"citizenship requirements|area source|sourceRefRow|target|localized\"`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run typecheck -- --pretty false`\n- `CI=1 EXPO_NO_TELEMETRY=1 NODE_OPTIONS=\"--v8-pool-size=1\" npm run build:web:export -- --max-workers 2`\n- `CI=1 E2E_PORT=4189 NODE_OPTIONS=\"--v8-pool-size=1\" npm run test:e2e -- tests/e2e/citizenship-requirements-checklist.spec.ts --workers=1 --grep \"area source|Source for|Källa för|focus|44px|overflow\"`\n- `prettier --check app/citizenship-requirements.tsx tests/content-citizenship-requirements-parity.test.js tests/e2e/citizenship-requirements-checklist.spec.ts`\n- `git diff --check HEAD~1..HEAD`\n\nNote: after the final rebase, I repeated the focused source test, typecheck, and diff check on commit `e3b0185e70e805856c53962f94e3e42b8e488e1c`.",
+  "files": [
+    {
+      "path": "app/citizenship-requirements.tsx",
+      "additions": 38,
+      "deletions": 25,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-citizenship-requirements-parity.test.js",
+      "additions": 16,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/e2e/citizenship-requirements-checklist.spec.ts",
+      "additions": 102,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/citizenship-source-layout-a11y-1779382040",
+  "headRefOid": "e3b0185e70e805856c53962f94e3e42b8e488e1c",
+  "isDraft": true,
+  "mergeStateStatus": "UNSTABLE",
+  "mergeable": "MERGEABLE",
+  "number": 2506,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26240322440/job/77224593680",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:52:40Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "Guard citizenship source row layout",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2506"
+}

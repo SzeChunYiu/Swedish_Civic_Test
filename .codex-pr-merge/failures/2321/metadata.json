@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Refresh `site/asset-manifest.json` from the current `site/` directory.\n- Wire `node scripts/update-site-asset-manifest.js --check` into `test:static-site-asset-references` so stale committed fingerprints fail the normal static-site gate.\n- Update the static reference test to match the current shipped `signin.js` asset contract: local references must exist and be present in the manifest.\n\n## Verification\n- `node scripts/update-site-asset-manifest.js --check`\n- `npm run test:static-site-asset-references`\n- `node --test scripts/check-live-site.test.js --test-name-pattern \"asset manifest\"`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' npm run test:build-config`\n- `/home/billy/Swedish_Civic_Test/node_modules/.bin/prettier --check package.json scripts/static-site-asset-references.test.js site/asset-manifest.json`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules NODE_OPTIONS='--v8-pool-size=1' npm run typecheck -- --pretty false`\n- `git diff --check`",
+  "files": [
+    { "path": "package.json", "additions": 1, "deletions": 1, "changeType": "MODIFIED" },
+    {
+      "path": "scripts/static-site-asset-references.test.js",
+      "additions": 0,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "site/asset-manifest.json",
+      "additions": 86,
+      "deletions": 26,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/static-site-asset-manifest-staleness-1779355891-4198955",
+  "headRefOid": "900e3e6e76beda5d904c87e38504b63b1aef2c9a",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2321,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:04:04Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219271670/job/77149723129",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:03:01Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "release: gate static site asset manifest freshness",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2321"
+}

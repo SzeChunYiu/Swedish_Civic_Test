@@ -1,0 +1,39 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Route Progress store startup reads through the shared recoverable read/JSON parse helpers so malformed `progressState` hydrates empty state with a read warning instead of silently clearing the warning.\n- Route Review store JSON parsing through `parseJsonRecoverably` so malformed `learning.reviews.cards.v1` produces the same recoverable read warning shape while preserving valid persisted data and write behavior.\n\n## Verification\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern \"corrupt JSON reads\" tests/content-storage-write-fail-soft.test.js`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern \"successful writes persist JSON and corrupt reads|throwing MMKV reads\" tests/v1-1-review-store.test.js`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS='--v8-pool-size=1' node --test --test-name-pattern \"progress hydration falls back when MMKV reads throw|progress corrupt JSON\" tests/content-progress-schema-parity.test.js tests/content-storage-write-fail-soft.test.js`\n- `npm run typecheck -- --pretty false`\n- `git diff --check`\n\nNote: the broader queue-provided pattern also selects unrelated current-main/open-task tests such as Settings route warning-source assertions, Review finite cap/runtime-id guards, and Highlight runtime input guards. The corrupt JSON/read-warning coverage above is the task-specific slice.",
+  "files": [
+    {
+      "path": "lib/storage/progressStore.ts",
+      "additions": 21,
+      "deletions": 15,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "lib/storage/reviewStore.ts",
+      "additions": 7,
+      "deletions": 6,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/local-study-corrupt-json-warning-1779359529-2800168",
+  "headRefOid": "341586deaf2669c3615893dae6899ac2ac8ca8ca",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2335,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:35:12Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220702610/job/77154631707",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:34:06Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "storage: warn on corrupt local study JSON",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2335"
+}
