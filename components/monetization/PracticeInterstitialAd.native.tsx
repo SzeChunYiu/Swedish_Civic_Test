@@ -7,11 +7,10 @@ import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent'
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import type { PremiumEntitlements } from '../../types/monetization';
 
+const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;
+
 let lastInterstitialShowKey: string | undefined;
 let interstitialLoadInFlight = false;
-
-const INTERSTITIAL_LOAD_TIMEOUT_MS = 15_000;
-const INTERSTITIAL_SHOW_TIMEOUT_MS = 10_000;
 
 export function PracticeInterstitialAd({
   entitlements,
@@ -48,35 +47,32 @@ export function PracticeInterstitialAd({
     let unsubscribeError: (() => void) | undefined;
     let unsubscribeOpened: (() => void) | undefined;
     let unsubscribeClosed: (() => void) | undefined;
-    let attemptTimeout: ReturnType<typeof setTimeout> | undefined;
+    let loadTimeout: ReturnType<typeof setTimeout> | undefined;
     let attemptSettled = false;
+    let showStarted = false;
 
-    const clearAttemptTimeout = () => {
-      if (attemptTimeout) {
-        clearTimeout(attemptTimeout);
-        attemptTimeout = undefined;
-      }
+    const clearLoadTimeout = () => {
+      if (loadTimeout == null) return;
+      clearTimeout(loadTimeout);
+      loadTimeout = undefined;
     };
-
+    const unsubscribeLoadListeners = () => {
+      unsubscribeLoaded?.();
+      unsubscribeError?.();
+      unsubscribeOpened?.();
+      unsubscribeClosed?.();
+      unsubscribeLoaded = undefined;
+      unsubscribeError = undefined;
+      unsubscribeOpened = undefined;
+      unsubscribeClosed = undefined;
+    };
     const finishAttempt = () => {
-      if (attemptSettled) return;
-      clearAttemptTimeout();
+      clearLoadTimeout();
       interstitialLoadInFlight = false;
       attemptSettled = true;
     };
     const consumeShowKey = () => {
       lastInterstitialShowKey = showKey;
-    };
-    const finishSuccessfulShow = () => {
-      if (attemptSettled) return;
-      consumeShowKey();
-      finishAttempt();
-    };
-    const startAttemptTimeout = (timeoutMs: number) => {
-      clearAttemptTimeout();
-      attemptTimeout = setTimeout(() => {
-        finishAttempt();
-      }, timeoutMs);
     };
 
     try {
@@ -85,16 +81,17 @@ export function PracticeInterstitialAd({
       });
 
       interstitialLoadInFlight = true;
-      startAttemptTimeout(INTERSTITIAL_LOAD_TIMEOUT_MS);
 
       unsubscribeLoaded = interstitialAd.addAdEventListener(AdEventType.LOADED, () => {
         if (attemptSettled) return;
-        startAttemptTimeout(INTERSTITIAL_SHOW_TIMEOUT_MS);
+        clearLoadTimeout();
+        showStarted = true;
 
         try {
           void Promise.resolve(interstitialAd.show())
             .then(() => {
-              finishSuccessfulShow();
+              consumeShowKey();
+              finishAttempt();
             })
             .catch(() => {
               finishAttempt();
@@ -105,30 +102,39 @@ export function PracticeInterstitialAd({
       });
 
       unsubscribeError = interstitialAd.addAdEventListener(AdEventType.ERROR, () => {
+        if (attemptSettled) return;
         finishAttempt();
       });
 
       unsubscribeOpened = interstitialAd.addAdEventListener(AdEventType.OPENED, () => {
-        finishSuccessfulShow();
+        if (attemptSettled) return;
+        consumeShowKey();
+        finishAttempt();
       });
 
       unsubscribeClosed = interstitialAd.addAdEventListener(AdEventType.CLOSED, () => {
-        finishSuccessfulShow();
+        if (attemptSettled) return;
+        consumeShowKey();
+        finishAttempt();
       });
+
+      loadTimeout = setTimeout(() => {
+        if (showStarted || attemptSettled) return;
+        unsubscribeLoadListeners();
+        finishAttempt();
+      }, INTERSTITIAL_AD_LOAD_TIMEOUT_MS);
 
       interstitialAd.load();
       return () => {
-        unsubscribeLoaded?.();
-        unsubscribeError?.();
-        unsubscribeOpened?.();
-        unsubscribeClosed?.();
-        finishAttempt();
+        unsubscribeLoadListeners();
+        if (!showStarted && !attemptSettled) {
+          finishAttempt();
+        } else {
+          clearLoadTimeout();
+        }
       };
     } catch {
-      unsubscribeLoaded?.();
-      unsubscribeError?.();
-      unsubscribeOpened?.();
-      unsubscribeClosed?.();
+      unsubscribeLoadListeners();
       finishAttempt();
       return undefined;
     }

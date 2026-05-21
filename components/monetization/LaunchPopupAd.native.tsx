@@ -7,6 +7,8 @@ import { FREE_ENTITLEMENTS } from '../../lib/monetization/premium';
 import { useMobileAdsConsent } from '../../lib/monetization/useMobileAdsConsent';
 import type { PremiumEntitlements } from '../../types/monetization';
 
+const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;
+
 let launchPopupShownThisRuntime = false;
 let launchPopupLoadInFlight = false;
 
@@ -36,7 +38,28 @@ export function LaunchPopupAd({
 
     let unsubscribe: (() => void) | undefined;
     let unsubscribeError: (() => void) | undefined;
+    let loadTimeout: ReturnType<typeof setTimeout> | undefined;
     let didReachShowPath = false;
+    let attemptSettled = false;
+
+    const clearLoadTimeout = () => {
+      if (loadTimeout == null) return;
+      clearTimeout(loadTimeout);
+      loadTimeout = undefined;
+    };
+
+    const unsubscribeLoadListeners = () => {
+      unsubscribe?.();
+      unsubscribeError?.();
+      unsubscribe = undefined;
+      unsubscribeError = undefined;
+    };
+
+    const finishLoadAttempt = () => {
+      clearLoadTimeout();
+      launchPopupLoadInFlight = false;
+      attemptSettled = true;
+    };
 
     try {
       const appOpenAd = AppOpenAd.createForAdRequest(unitId, {
@@ -46,8 +69,9 @@ export function LaunchPopupAd({
       launchPopupLoadInFlight = true;
 
       unsubscribe = appOpenAd.addAdEventListener(AdEventType.LOADED, () => {
+        if (attemptSettled) return;
         launchPopupShownThisRuntime = true;
-        launchPopupLoadInFlight = false;
+        finishLoadAttempt();
         didReachShowPath = true;
 
         try {
@@ -58,21 +82,27 @@ export function LaunchPopupAd({
       });
 
       unsubscribeError = appOpenAd.addAdEventListener(AdEventType.ERROR, () => {
-        launchPopupLoadInFlight = false;
+        finishLoadAttempt();
       });
+
+      loadTimeout = setTimeout(() => {
+        if (didReachShowPath || attemptSettled) return;
+        unsubscribeLoadListeners();
+        finishLoadAttempt();
+      }, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS);
 
       appOpenAd.load();
       return () => {
-        unsubscribe?.();
-        unsubscribeError?.();
-        if (!didReachShowPath) {
-          launchPopupLoadInFlight = false;
+        unsubscribeLoadListeners();
+        if (!didReachShowPath && !attemptSettled) {
+          finishLoadAttempt();
+        } else {
+          clearLoadTimeout();
         }
       };
     } catch {
-      unsubscribe?.();
-      unsubscribeError?.();
-      launchPopupLoadInFlight = false;
+      unsubscribeLoadListeners();
+      finishLoadAttempt();
       return undefined;
     }
   }, [entitlements, mobileAdsConsent]);

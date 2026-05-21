@@ -413,6 +413,12 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
   assert.match(practiceInterstitialSource, /requestNonPersonalizedAdsOnly/);
   assert.match(practiceInterstitialSource, /AdEventType\.OPENED/);
   assert.match(practiceInterstitialSource, /AdEventType\.CLOSED/);
+  assert.match(practiceInterstitialSource, /const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;/);
+  assert.match(practiceInterstitialSource, /clearTimeout\(loadTimeout\);/);
+  assert.match(
+    practiceInterstitialSource,
+    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/,
+  );
   assert.match(practiceInterstitialSource, /Promise\.resolve\(interstitialAd\.show\(\)\)/);
   assert.match(
     practiceInterstitialSource,
@@ -449,6 +455,29 @@ test('native practice interstitial uses consent-aware ad gate and platform unit 
     practiceInterstitialSource,
     /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,?\s*\)/,
   );
+});
+
+test('native launch popup load timeout releases the in-flight attempt only', () => {
+  const launchSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/LaunchPopupAd.native.tsx'),
+    'utf8',
+  );
+
+  const timeoutIndex = launchSource.indexOf('loadTimeout = setTimeout(() => {');
+  const loadIndex = launchSource.indexOf('appOpenAd.load();');
+  const loadedListenerIndex = launchSource.indexOf('AdEventType.LOADED');
+  const capIndex = launchSource.indexOf('launchPopupShownThisRuntime = true;', loadedListenerIndex);
+
+  assert.match(launchSource, /const LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS = 15_000;/);
+  assert.match(launchSource, /clearTimeout\(loadTimeout\);/);
+  assert.match(
+    launchSource,
+    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishLoadAttempt\(\);[\s\S]*\}, LAUNCH_POPUP_AD_LOAD_TIMEOUT_MS\);/,
+  );
+  assert.ok(timeoutIndex > loadedListenerIndex);
+  assert.ok(loadIndex > timeoutIndex);
+  assert.ok(capIndex > loadedListenerIndex);
+  assert.doesNotMatch(launchSource.slice(timeoutIndex, loadIndex), /launchPopupShownThisRuntime/);
 });
 
 test('rewarded extra exam access uses free limits before offering ads', () => {
