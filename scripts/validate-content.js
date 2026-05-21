@@ -7064,6 +7064,14 @@ function civicStatementSv(source, option) {
   }
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+  if (source.id === 'q146') {
+    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+    }
+    if (/^Att hindra andra från att rösta$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+    }
+  }
   let match = q.match(/^Var ligger (.+)$/i);
   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
   match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
@@ -7419,6 +7427,14 @@ function civicStatementEn(source, option) {
   }
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+  if (source.id === 'q146') {
+    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+    }
+    if (/^To stop others from voting$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may not stop others from voting';
+    }
+  }
   let match = q.match(/^Where is (.+) located$/i);
   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
