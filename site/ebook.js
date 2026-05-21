@@ -13,6 +13,12 @@
       url: 'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
       retrievedDate: '2026-05-19',
     },
+    uhrOfficialTestSources: {
+      label: 'UHR current medborgarskapsprovet source pages',
+      mixLabel: 'UHR test status',
+      url: 'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
+      retrievedDate: '2026-05-19',
+    },
     scbLandUse: {
       label: 'SCB land and water area statistics',
       mixLabel: 'SCB',
@@ -48,6 +54,8 @@
       retrievedDate: 'editorial',
     },
   });
+
+  const OFFICIAL_TEST_SOURCE_KEYS = Object.freeze(['uhrOfficialTestSources']);
 
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
@@ -413,7 +421,7 @@
             <li>If you forget something, that's normal. The practice quiz brings it back.</li>
           </ul>
           <blockquote><p>You don't need to remember everything. You need to remember the right things. That's what we're here for.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tip</h4><p>Read on your phone in 10-minute windows. Short, repeated sessions make it easier to notice what needs review before you open the practice questions.</p></div>
+          <div class="ebook__factbox"><h4>Tip</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Read on your phone in 10-minute windows. Short, repeated sessions make it easier to notice what needs review before you open the practice questions.</p></div>
         `,
         sv: `
           <h2>Vad den här boken är</h2>
@@ -428,7 +436,7 @@
             <li>Avsluta veckan med ett <a href="#/mock">övningsprov</a> så att tidskänslan sitter.</li>
           </ul>
           <blockquote><p>Du behöver inte kunna allt på en gång. Du behöver veta vad som är värt att repetera.</p></blockquote>
-          <div class="ebook__factbox"><h4>Tips</h4><p>Växla mellan svenska och engelska om ett begrepp känns tungt. Provet kräver svenska, men förståelsen kan byggas på båda språken.</p></div>
+          <div class="ebook__factbox"><h4>Tips</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Växla mellan svenska och engelska om ett begrepp känns tungt. Provet kräver svenska, men förståelsen kan byggas på båda språken.</p></div>
         `,
         'zh-Hans': `<h2>这本书是什么</h2>
           <p>这是一本面向瑞典公民身份考试（medborgarskapsprovet）的平实读物。它把公开的学习材料，转化为平和、非官方的练习读物，供那些从零开始构建瑞典公民知识词汇与背景的成年人使用。</p>
@@ -442,7 +450,7 @@
             <li>如果你忘了某些东西，那很正常。练习测验会帮你把它找回来。</li>
           </ul>
           <blockquote><p>你不需要记住所有东西。你需要记住对的东西。这正是我们存在的意义。</p></blockquote>
-          <div class="ebook__factbox"><h4>提示</h4><p>用手机在 10 分钟的零碎时段里阅读。短而反复的学习，会让你在打开练习题之前更容易察觉到哪些内容需要复习。</p></div>`,
+          <div class="ebook__factbox"><h4>提示</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>用手机在 10 分钟的零碎时段里阅读。短而反复的学习，会让你在打开练习题之前更容易察觉到哪些内容需要复习。</p></div>`,
         'zh-Hant': `<h2>這本書是什麼</h2>
           <p>這是一本面向瑞典公民身分考試（medborgarskapsprovet）的平實讀物。它把公開的學習材料，轉化為平和、非官方的練習讀物，供那些從零開始建立瑞典公民知識詞彙與背景的成年人使用。</p>
           <h2>它<em>不是</em>什麼</h2>
@@ -455,7 +463,7 @@
             <li>如果你忘了某些東西，那很正常。練習測驗會幫你把它找回來。</li>
           </ul>
           <blockquote><p>你不需要記住所有東西。你需要記住對的東西。這正是我們存在的意義。</p></blockquote>
-          <div class="ebook__factbox"><h4>提示</h4><p>用手機在 10 分鐘的零碎時段裡閱讀。短而反覆的學習，會讓你在打開練習題之前更容易察覺到哪些內容需要複習。</p></div>`,
+          <div class="ebook__factbox"><h4>提示</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>用手機在 10 分鐘的零碎時段裡閱讀。短而反覆的學習，會讓你在打開練習題之前更容易察覺到哪些內容需要複習。</p></div>`,
         ar: `<h2>ما هذا الكتاب</h2>
           <p>قارئٌ بلغة مبسّطة لاختبار الجنسية السويدية (medborgarskapsprovet). يحوّل المواد الدراسية العامة إلى قراءة تدريبية هادئة وغير رسمية للبالغين الذين يبنون مفرداتهم وسياقهم المدني السويدي من الصفر.</p>
           <h2>ما <em>ليس</em> هو</h2>
@@ -468,7 +476,7 @@
             <li>إن نسيت شيئًا، فهذا طبيعي. اختبار التدريب يعيده إليك.</li>
           </ul>
           <blockquote><p>لست بحاجة إلى تذكّر كل شيء. أنت بحاجة إلى تذكّر الأشياء الصحيحة. ولهذا نحن هنا.</p></blockquote>
-          <div class="ebook__factbox"><h4>نصيحة</h4><p>اقرأ على هاتفك في نوافذ من 10 دقائق. الجلسات القصيرة المتكرّرة تجعل من الأسهل أن تلاحظ ما يحتاج إلى مراجعة قبل أن تفتح أسئلة التدريب.</p></div>`,
+          <div class="ebook__factbox"><h4>نصيحة</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>اقرأ على هاتفك في نوافذ من 10 دقائق. الجلسات القصيرة المتكرّرة تجعل من الأسهل أن تلاحظ ما يحتاج إلى مراجعة قبل أن تفتح أسئلة التدريب.</p></div>`,
         ckb: `<h2>ئەم کتێبە چییە</h2>
           <p>دەقێکی خوێندنەوەی زمانساکار بۆ تاقیکردنەوەی هاووڵاتیبوونی سوید (medborgarskapsprovet). کەرەستەی خوێندنی گشتی دەگۆڕێت بۆ خوێندنەوەیەکی مەشقیی هێمن و نافەرمی بۆ گەورەسالان کە وشەسازی و ناوەڕۆکی شارستانیی سویدی لە سفرەوە دروست دەکەن.</p>
           <h2>چی <em>نییە</em></h2>
@@ -481,7 +489,7 @@
             <li>ئەگەر شتێک لەبیر بکەیت، ئەوە ئاساییە. تاقیکردنەوەی مەشق دەیگەڕێنێتەوە.</li>
           </ul>
           <blockquote><p>پێویست نییە هەموو شتێک لەبیر بکەیت. پێویستە شتە ڕاستەکان لەبیر بکەیت. ئێمە لەبەر ئەوە لێرەین.</p></blockquote>
-          <div class="ebook__factbox"><h4>ئامۆژگاری</h4><p>لەسەر مۆبایلەکەت لە ماوەی 10 خولەکیدا بیخوێنەوە. دانیشتنی کورت و دووبارە وادەکات ئاسانتر تێبگەیت کە پێش کردنەوەی پرسیارەکانی مەشق چی پێویستی بە پێداچوونەوە هەیە.</p></div>`,
+          <div class="ebook__factbox"><h4>ئامۆژگاری</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>لەسەر مۆبایلەکەت لە ماوەی 10 خولەکیدا بیخوێنەوە. دانیشتنی کورت و دووبارە وادەکات ئاسانتر تێبگەیت کە پێش کردنەوەی پرسیارەکانی مەشق چی پێویستی بە پێداچوونەوە هەیە.</p></div>`,
         fa: `<h2>این کتاب چیست</h2>
           <p>یک متن خواندنی به زبان ساده برای آزمون شهروندی سوئد (medborgarskapsprovet). مواد آموزشی عمومی را به مطالعهٔ تمرینیِ آرام و غیررسمی برای بزرگ‌سالانی بدل می‌کند که واژگان و زمینهٔ مدنی سوئد را از صفر می‌سازند.</p>
           <h2>چه <em>نیست</em></h2>
@@ -494,7 +502,7 @@
             <li>اگر چیزی را فراموش کنید، طبیعی است. آزمون تمرینی آن را بازمی‌گرداند.</li>
           </ul>
           <blockquote><p>لازم نیست همه‌چیز را به خاطر بسپارید. باید چیزهای درست را به خاطر بسپارید. ما برای همین اینجاییم.</p></blockquote>
-          <div class="ebook__factbox"><h4>نکته</h4><p>روی گوشی خود در بازه‌های 10 دقیقه‌ای بخوانید. جلسه‌های کوتاه و مکرر باعث می‌شود راحت‌تر متوجه شوید پیش از باز کردن سؤال‌های تمرین چه چیزی نیاز به مرور دارد.</p></div>`,
+          <div class="ebook__factbox"><h4>نکته</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>روی گوشی خود در بازه‌های 10 دقیقه‌ای بخوانید. جلسه‌های کوتاه و مکرر باعث می‌شود راحت‌تر متوجه شوید پیش از باز کردن سؤال‌های تمرین چه چیزی نیاز به مرور دارد.</p></div>`,
         pl: `<h2>Czym jest ta książka</h2>
           <p>Przystępny czytnik do szwedzkiego testu na obywatelstwo (medborgarskapsprovet — egzamin na obywatelstwo). Zamienia publiczne materiały do nauki w spokojną, nieoficjalną lekturę ćwiczeniową dla dorosłych, którzy budują szwedzkie słownictwo i kontekst obywatelski od podstaw.</p>
           <h2>Czym <em>nie jest</em></h2>
@@ -507,7 +515,7 @@
             <li>Jeśli czegoś zapomnisz, to normalne. Quiz ćwiczeniowy przywróci to do pamięci.</li>
           </ul>
           <blockquote><p>Nie musisz pamiętać wszystkiego. Musisz pamiętać właściwe rzeczy. Po to tu jesteśmy.</p></blockquote>
-          <div class="ebook__factbox"><h4>Wskazówka</h4><p>Czytaj na telefonie w 10-minutowych okienkach. Krótkie, powtarzane sesje ułatwiają zauważenie, co wymaga powtórki, zanim otworzysz pytania ćwiczeniowe.</p></div>`,
+          <div class="ebook__factbox"><h4>Wskazówka</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Czytaj na telefonie w 10-minutowych okienkach. Krótkie, powtarzane sesje ułatwiają zauważenie, co wymaga powtórki, zanim otworzysz pytania ćwiczeniowe.</p></div>`,
         so: `<h2>Buugani waa maxay</h2>
           <p>Akhriste luqad fudud ah oo loogu talagalay imtixaanka muwaadinimada Iswiidhan (medborgarskapsprovet — imtixaanka muwaadinimada). Wuxuu agabka waxbarasho ee dadweynaha u beddelaa akhris tababar oo deggan, oo aan rasmi ahayn, oo loogu talagalay dadka waaweyn ee ka dhisaya erey-bixinta iyo macnaha bulshada Iswiidhan ee marka hore.</p>
           <h2>Waxa aanu <em>ahayn</em></h2>
@@ -520,7 +528,7 @@
             <li>Haddii aad wax ilowdo, taasi waa caadi. Imtixaanka tababarku wuu soo celiyaa.</li>
           </ul>
           <blockquote><p>Uma baahnid inaad wax walba xasuusato. Waxaad u baahan tahay inaad xasuusato waxyaabaha saxda ah. Taasi waa waxa aannu halkan u joognaa.</p></blockquote>
-          <div class="ebook__factbox"><h4>Talo</h4><p>Ku akhri telefoonkaaga muddooyin 10 daqiiqo ah. Fadhiyo gaagaaban oo soo noqnoqda ayaa fududeeya in la ogaado waxa u baahan dib-u-eegis ka hor inta aadan furin su'aalaha tababarka.</p></div>`,
+          <div class="ebook__factbox"><h4>Talo</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Ku akhri telefoonkaaga muddooyin 10 daqiiqo ah. Fadhiyo gaagaaban oo soo noqnoqda ayaa fududeeya in la ogaado waxa u baahan dib-u-eegis ka hor inta aadan furin su'aalaha tababarka.</p></div>`,
         ti: `<h2>እዚ መጽሓፍ እንታይ እዩ</h2>
           <p>ንፈተና ዜግነት ሽወደን (medborgarskapsprovet — ፈተና ዜግነት) ብቐሊል ቋንቋ ዝቐረበ መንበቢ። ንህዝባዊ ናይ ትምህርቲ ጽሑፋት ናብ ህዱእ፣ ዘይወግዓዊ ናይ ልምምድ ንባብ ይቕይሮ፣ ንዓበይቲ ሰባት ሽወደናዊ ሲቪካዊ መዝገበ-ቃላትን ኣገባብን ካብ መሰረት ንዝሃንጹ።</p>
           <h2>እንታይ <em>ከም ዘይኮነ</em></h2>
@@ -533,7 +541,7 @@
             <li>ገለ ነገር እንተ ረሲዕካ፣ ንቡር እዩ። እቲ ናይ ልምምድ ፈተና ይመልሶ።</li>
           </ul>
           <blockquote><p>ኩሉ ክትዝክር ኣየድልየካን። እቲ ቅኑዕ ነገራት ክትዝክር የድልየካ። ንሕና ድማ ስለዚ ኢና ኣብዚ ዘሎና።</p></blockquote>
-          <div class="ebook__factbox"><h4>ምኽሪ</h4><p>ኣብ ተሌፎንካ ብ10-ደቓይቕ መስኮታት ኣንብብ። ሓጸርቲ፣ ዝድገሙ ክፍለ ግዜታት ነቲ ናይ ልምምድ ሕቶታት ቅድሚ ምኽፋትካ እንታይ ምድጋም ከም ዘድልዮ ንምልላይ የቕልሉ።</p></div>`,
+          <div class="ebook__factbox"><h4>ምኽሪ</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>ኣብ ተሌፎንካ ብ10-ደቓይቕ መስኮታት ኣንብብ። ሓጸርቲ፣ ዝድገሙ ክፍለ ግዜታት ነቲ ናይ ልምምድ ሕቶታት ቅድሚ ምኽፋትካ እንታይ ምድጋም ከም ዘድልዮ ንምልላይ የቕልሉ።</p></div>`,
         tr: `<h2>Bu kitap nedir</h2>
           <p>İsveç vatandaşlık sınavı (medborgarskapsprovet — vatandaşlık sınavı) için sade dilde bir okuma kitabı. Kamuya açık çalışma materyallerini, sıfırdan İsveç yurttaşlık kelime dağarcığı ve bağlamı oluşturan yetişkinler için sakin, gayriresmî bir alıştırma okumasına dönüştürür.</p>
           <h2>Ne <em>değildir</em></h2>
@@ -546,7 +554,7 @@
             <li>Bir şeyi unutursanız bu normaldir. Alıştırma testi onu geri getirir.</li>
           </ul>
           <blockquote><p>Her şeyi hatırlamanız gerekmez. Doğru şeyleri hatırlamanız gerekir. Biz bunun için buradayız.</p></blockquote>
-          <div class="ebook__factbox"><h4>İpucu</h4><p>Telefonunuzda 10 dakikalık aralıklarla okuyun. Kısa, tekrarlanan oturumlar, alıştırma sorularını açmadan önce neyin tekrar gerektirdiğini fark etmeyi kolaylaştırır.</p></div>`,
+          <div class="ebook__factbox"><h4>İpucu</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Telefonunuzda 10 dakikalık aralıklarla okuyun. Kısa, tekrarlanan oturumlar, alıştırma sorularını açmadan önce neyin tekrar gerektirdiğini fark etmeyi kolaylaştırır.</p></div>`,
         uk: `<h2>Чим є ця книжка</h2>
           <p>Читанка простою мовою для шведського тесту на громадянство (medborgarskapsprovet — іспит на громадянство). Вона перетворює публічні навчальні матеріали на спокійне, неофіційне тренувальне читання для дорослих, які з нуля будують шведський громадянський словник і контекст.</p>
           <h2>Чим вона <em>не є</em></h2>
@@ -559,7 +567,7 @@
             <li>Якщо ви щось забуваєте — це нормально. Тренувальний тест це повертає.</li>
           </ul>
           <blockquote><p>Вам не потрібно пам'ятати все. Вам потрібно пам'ятати правильні речі. Саме для цього ми тут.</p></blockquote>
-          <div class="ebook__factbox"><h4>Підказка</h4><p>Читайте з телефона у 10-хвилинні проміжки. Короткі, повторювані сесії полегшують помічати, що потребує повторення, перш ніж відкриєте тренувальні питання.</p></div>`,
+          <div class="ebook__factbox"><h4>Підказка</h4><p${ebookSourceKeyDataAttr(['editorialCommentary'])}>Читайте з телефона у 10-хвилинні проміжки. Короткі, повторювані сесії полегшують помічати, що потребує повторення, перш ніж відкриєте тренувальні питання.</p></div>`,
       },
     },
 
@@ -3340,7 +3348,7 @@
             <li>Skim the official <em>Sverige i fokus</em> PDF (free download from UHR) the week before the test. Don't try to memorise it.</li>
             <li>Use the mock exam here as a rehearsal for mixed-topic recall, then revisit the chapters where you missed points.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Current source notes</h4><p>Sources accessed 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Current source notes</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Sources accessed 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         sv: `
           <h2>Aktuell officiell status</h2>
@@ -3355,7 +3363,7 @@
             <li>Använd UHR:s utbildningsmaterial som kontrollpunkt innan provet.</li>
             <li>Använd övningsprovet här för blandad repetition och gå tillbaka till kapitlen där du tappade poäng.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Aktuella källnoter</h4><p>Källor hämtade 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Aktuella källnoter</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Källor hämtade 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         'zh-Hans': `
           <h2>当前的官方状态</h2>
@@ -3370,7 +3378,7 @@
             <li>在考试前一周，快速浏览官方的 <em>Sverige i fokus</em> PDF（可从 UHR 免费下载）。不要试图把它背下来。</li>
             <li>把这里的模拟考试当作混合题型回忆的彩排，然后回到你失分的那些章节重新复习。</li>
           </ol>
-          <div class="ebook__factbox"><h4>当前来源说明</h4><p>来源访问于 2026-05-19：${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>当前来源说明</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>来源访问于 2026-05-19：${officialTestSourceLinks()}</p></div>
         `,
         'zh-Hant': `
           <h2>當前的官方狀態</h2>
@@ -3385,7 +3393,7 @@
             <li>在考試前一週，快速瀏覽官方的 <em>Sverige i fokus</em> PDF（可從 UHR 免費下載）。不要試圖把它背下來。</li>
             <li>把這裡的模擬考試當作混合題型回憶的彩排，然後回到你失分的那些章節重新複習。</li>
           </ol>
-          <div class="ebook__factbox"><h4>當前來源說明</h4><p>來源存取於 2026-05-19：${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>當前來源說明</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>來源存取於 2026-05-19：${officialTestSourceLinks()}</p></div>
         `,
         ar: `
           <h2>الوضع الرسمي الراهن</h2>
@@ -3400,7 +3408,7 @@
             <li>تصفّح ملف <em>Sverige i fokus</em> الرسمي بصيغة PDF (تنزيل مجاني من UHR) في الأسبوع الذي يسبق الاختبار. لا تحاول حفظه عن ظهر قلب.</li>
             <li>استخدم الاختبار التجريبي هنا كبروفة لاستذكار مواضيع متنوّعة، ثم عد إلى الفصول التي خسرت فيها نقاطًا.</li>
           </ol>
-          <div class="ebook__factbox"><h4>ملاحظات المصادر الحالية</h4><p>المصادر تمّ الاطلاع عليها 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>ملاحظات المصادر الحالية</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>المصادر تمّ الاطلاع عليها 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         ckb: `
           <h2>دۆخی فەرمیی ئێستا</h2>
@@ -3415,7 +3423,7 @@
             <li>هەفتەی پێش تاقیکردنەوەکە بە خێرایی PDFی فەرمیی <em>Sverige i fokus</em> (داگرتنی بێبەرامبەر لە UHR) بخوێنەوە. هەوڵ مەدە لەبەری بکەیت.</li>
             <li>تاقیکردنەوەی ئەزموونیی ئێرە وەک ڕاهێنانێک بۆ بیرهێنانەوەی بابەتی تێکەڵ بەکاربهێنە، پاشان بگەڕێرەوە بۆ ئەو بەشانەی کە خاڵت تێدا لەدەستدا.</li>
           </ol>
-          <div class="ebook__factbox"><h4>تێبینییەکانی سەرچاوەی ئێستا</h4><p>سەرچاوەکان سەردانیان کراوە 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>تێبینییەکانی سەرچاوەی ئێستا</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>سەرچاوەکان سەردانیان کراوە 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         fa: `
           <h2>وضعیت رسمی کنونی</h2>
@@ -3430,7 +3438,7 @@
             <li>هفتهٔ پیش از آزمون، فایل PDF رسمی <em>Sverige i fokus</em> (دانلود رایگان از UHR) را مرور کنید. سعی نکنید آن را حفظ کنید.</li>
             <li>از آزمون آزمایشی اینجا به‌عنوان تمرینی برای یادآوری موضوعات درهم استفاده کنید، سپس به فصل‌هایی که در آن‌ها امتیاز از دست داده‌اید بازگردید.</li>
           </ol>
-          <div class="ebook__factbox"><h4>یادداشت‌های منابع کنونی</h4><p>منابع در 2026-05-19 بازدید شده‌اند: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>یادداشت‌های منابع کنونی</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>منابع در 2026-05-19 بازدید شده‌اند: ${officialTestSourceLinks()}</p></div>
         `,
         pl: `
           <h2>Aktualny status oficjalny</h2>
@@ -3445,7 +3453,7 @@
             <li>W tygodniu przed egzaminem przejrzyj oficjalny plik PDF <em>Sverige i fokus</em> (bezpłatne pobranie z UHR). Nie próbuj uczyć się go na pamięć.</li>
             <li>Egzamin próbny tutaj potraktuj jako próbę przypominania mieszanych tematów, a potem wróć do rozdziałów, w których straciłeś punkty.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Bieżące uwagi o źródłach</h4><p>Źródła otwarte 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Bieżące uwagi o źródłach</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Źródła otwarte 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         so: `
           <h2>Xaaladda rasmiga ah ee hadda</h2>
@@ -3460,7 +3468,7 @@
             <li>Toddobaadka ka horreeya imtixaanka, si degdeg ah u eeg faylka rasmiga ah ee <em>Sverige i fokus</em> ee PDF (lacag la'aan kala soo deg UHR). Ha isku dayin inaad xafiddo.</li>
             <li>U isticmaal imtixaanka tijaabada ah ee halkan tababar xusuus mowduucyo isku dhafan, kadibna ku noqo cutubyada aad dhibcaha ka lumisay.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Xusuusyada ilaha ee hadda</h4><p>Ilaha la galay 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Xusuusyada ilaha ee hadda</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Ilaha la galay 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         ti: `
           <h2>ህሉው ወግዓዊ ኩነታት</h2>
@@ -3475,7 +3483,7 @@
             <li>ቅድሚ ፈተና ሰሙን፣ ነቲ ወግዓዊ <em>Sverige i fokus</em> PDF (ካብ UHR ብናጻ ዝውረድ) ብቕልጡፍ ኣንብቦ። ብቓል ክትሕዞ ኣይትፈትን።</li>
             <li>ነቲ ኣብዚ ዘሎ ናይ ልምምድ ፈተና ከም ልምምድ ናይ ዝተሓዋወሰ ኣርእስቲ ምዝካር ተጠቐመሉ፣ ድሕሪኡ ነቶም ነጥቢ ዝሰኣንካሎም ምዕራፋት ተመለሰሎም።</li>
           </ol>
-          <div class="ebook__factbox"><h4>ህሉዋት ናይ ምንጪ መግለጺታት</h4><p>ምንጪታት ዝተበጽሑ 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>ህሉዋት ናይ ምንጪ መግለጺታት</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>ምንጪታት ዝተበጽሑ 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         tr: `
           <h2>Güncel resmî durum</h2>
@@ -3490,7 +3498,7 @@
             <li>Sınavdan önceki hafta resmî <em>Sverige i fokus</em> PDF'ini (UHR'den ücretsiz indirilir) göz gezdirin. Ezberlemeye çalışmayın.</li>
             <li>Buradaki deneme sınavını karışık konuları hatırlama provası olarak kullanın, ardından puan kaybettiğiniz bölümlere geri dönün.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Güncel kaynak notları</h4><p>Kaynaklara erişim 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Güncel kaynak notları</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Kaynaklara erişim 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
         uk: `
           <h2>Поточний офіційний статус</h2>
@@ -3505,7 +3513,7 @@
             <li>За тиждень до іспиту перегляньте офіційний PDF <em>Sverige i fokus</em> (безкоштовне завантаження від UHR). Не намагайтеся вивчити його напам'ять.</li>
             <li>Використайте пробний іспит тут як репетицію пригадування змішаних тем, а потім поверніться до розділів, де ви втратили бали.</li>
           </ol>
-          <div class="ebook__factbox"><h4>Поточні примітки до джерел</h4><p>Джерела відкрито 2026-05-19: ${officialTestSourceLinks()}</p></div>
+          <div class="ebook__factbox"><h4>Поточні примітки до джерел</h4><p${ebookSourceKeyDataAttr(OFFICIAL_TEST_SOURCE_KEYS)}>Джерела відкрито 2026-05-19: ${officialTestSourceLinks()}</p></div>
         `,
       },
     },
