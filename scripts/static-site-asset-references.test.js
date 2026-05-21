@@ -24,6 +24,16 @@ test('static site index references only shipped local assets', () => {
   assert.deepEqual(missingAssets, []);
 });
 
+test('static sign-in script is an intentional local manifest-backed asset', () => {
+  const indexHtml = readSiteIndex();
+  const manifest = JSON.parse(fs.readFileSync(path.join(siteRoot, 'asset-manifest.json'), 'utf8'));
+
+  assert.match(indexHtml, /\bsrc=["']signin\.js["']/);
+  assert.match(indexHtml, /\bid=["']signin-open["']/);
+  assert.equal(fs.existsSync(path.join(siteRoot, 'signin.js')), true);
+  assert.ok(manifest.assets?.['signin.js']);
+});
+
 test('committed static site asset manifest matches shipped assets', () => {
   const result = checkAssetManifest();
 
@@ -71,6 +81,74 @@ test('asset manifest check rejects referenced assets omitted by manifest scope',
       result.mismatches.join('\n'),
       /app\.js: referenced by index\.html but missing from committed manifest/,
     );
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
+test('asset manifest check rejects local CSS url references omitted by manifest scope', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-asset-reference-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+  const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
+  const omittedReferences = new Set([
+    'hero.png',
+    'icons/mask.svg',
+    'images/pattern.png',
+    'inline-badge.svg',
+  ]);
+  const omitCssReferences = (assetPath) => !omittedReferences.has(assetPath);
+
+  try {
+    fs.mkdirSync(path.join(tempSiteDir, 'css'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'icons'), { recursive: true });
+    fs.mkdirSync(path.join(tempSiteDir, 'images'), { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      [
+        '<!doctype html>',
+        '<link rel="stylesheet" href="css/styles.css">',
+        '<main style="background-image: url(./hero.png); mask-image: url(\'/inline-badge.svg#badge\')">Practice</main>',
+      ].join('\n'),
+    );
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'css', 'styles.css'),
+      [
+        '.hero { background-image: url("../images/pattern.png?v=1#hero"); }',
+        '.mask { mask-image: url("/icons/mask.svg#shape"); }',
+        '.fragment { clip-path: url(#clip); }',
+        '.external { background-image: url("https://example.com/hero.png"); }',
+        '.data { cursor: url(data:image/png;base64,AAAA), pointer; }',
+        '.variable { background-image: url(var(--hero-image)); }',
+        '.gradient { background-image: linear-gradient(#fff, #111); }',
+      ].join('\n'),
+    );
+    fs.writeFileSync(path.join(tempSiteDir, 'hero.png'), 'hero');
+    fs.writeFileSync(path.join(tempSiteDir, 'inline-badge.svg'), '<svg />');
+    fs.writeFileSync(path.join(tempSiteDir, 'icons', 'mask.svg'), '<svg />');
+    fs.writeFileSync(path.join(tempSiteDir, 'images', 'pattern.png'), 'pattern');
+    writeAssetManifest({
+      includeAsset: omitCssReferences,
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+
+    const result = checkAssetManifest({
+      includeAsset: omitCssReferences,
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+    const mismatchText = result.mismatches.join('\n');
+
+    assert.equal(result.ok, false);
+    for (const assetPath of omittedReferences) {
+      assert.match(
+        mismatchText,
+        new RegExp(
+          `${assetPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}: referenced by index\\.html but missing from committed manifest`,
+        ),
+      );
+    }
+    assert.doesNotMatch(mismatchText, /example\.com|data:image|--hero-image|#clip|linear-gradient/);
   } finally {
     fs.rmSync(tempDir, { force: true, recursive: true });
   }

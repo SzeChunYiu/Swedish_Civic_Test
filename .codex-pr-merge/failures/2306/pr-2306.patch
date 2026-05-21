@@ -1,0 +1,293 @@
+From 4117f18db92dbd013c37d7ae9fa4aded197b9a71 Mon Sep 17 00:00:00 2001
+From: billy <billy10384@gmail.com>
+Date: Thu, 21 May 2026 11:37:56 +0200
+Subject: [PATCH] test(content): add focused q116 religious-freedom guard
+
+---
+ scripts/validate-content.js                   | 76 ++++++++++++++-
+ .../content-published-question-types.test.js  | 92 +++++++++++++++++++
+ tests/content-test-script-routing.test.js     | 18 ++++
+ 3 files changed, 184 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 28c4313aa..b813ea3e1 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -591,6 +591,11 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
+ const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
+   /\bThe EU is political and economic cooperation between European countries\b/i,
+ ];
++const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS = new Set(['q116', 'q630', 'q633']);
++const QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS = [
++  /\bRätten att utöva sin religion och skydd mot diskriminering på grund av tro\b/i,
++  /\bThe right to practice (?:one’s|one's) religion and protection from discrimination because of belief\b/i,
++];
+ const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
+   /^\s*Sant eller falskt\s*:/i,
+   /^\s*True or false\s*:/i,
+@@ -2383,8 +2388,7 @@ const EXPECTED_ONBOARDING_ROUTE_SCROLL_RULES = [
+   },
+   {
+     label: 'primary onboarding link 48px flex target',
+-    pattern:
+-      /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
++    pattern: /primaryLink:\s*\{[\s\S]*?display:\s*'flex',[ \t\r\n]+[\s\S]*?minHeight:\s*space\[6\]/,
+   },
+   {
+     label: 'secondary onboarding link 48px flex target',
+@@ -5088,6 +5092,55 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
+   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
+ }
+ 
++function findQuestionReligiousFreedomParallelismIssue(question) {
++  const text = [
++    question.questionSv,
++    question.questionEn,
++    question.explanationSv,
++    question.explanationEn,
++    ...(question.options || []).flatMap((option) => [option.textSv, option.textEn]),
++  ].join(' ');
++
++  return QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS.find((pattern) => pattern.test(text));
++}
++
++function validateQuestionReligiousFreedomParallelismArtifactText() {
++  const csvText = fs.readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8');
++  const csvOffenders = csvText
++    .split(/\r?\n/)
++    .filter((line) => QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_IDS.has(line.match(/^"([^"]+)"/)?.[1]))
++    .filter((line) =>
++      QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS.some((pattern) => pattern.test(line)),
++    )
++    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
++
++  csvOffenders.forEach((id) => {
++    fail(`${id} uses nonparallel religious-freedom option wording in content/question-bank.csv`);
++  });
++
++  const staticText = fs.readFileSync(path.join(repoRoot, 'site/questions.js'), 'utf8');
++  QUESTION_RELIGIOUS_FREEDOM_PARALLELISM_PATTERNS.forEach((pattern) => {
++    if (pattern.test(staticText)) {
++      fail('site/questions.js contains nonparallel religious-freedom option wording');
++    }
++  });
++}
++
++function validateQuestionReligiousFreedomParallelism(questionsToValidate = questions) {
++  if (!Array.isArray(questionsToValidate)) return;
++
++  questionsToValidate.forEach((question) => {
++    const issue = findQuestionReligiousFreedomParallelismIssue(question);
++    if (issue) {
++      fail(`${question.id} uses nonparallel religious-freedom option wording`);
++    } else {
++      questionReligiousFreedomParallelismValidated += 1;
++    }
++  });
++
++  validateQuestionReligiousFreedomParallelismArtifactText();
++}
++
+ function findQuestionTrueFalseStemPrefix(question) {
+   if (question.type !== 'true_false') return null;
+ 
+@@ -8088,6 +8141,7 @@ let questionJudgementMetaStemsValidated = 0;
+ let questionGeneratedTrueFalseNaturalnessValidated = 0;
+ let questionLuciaRoleEnglishNaturalnessValidated = 0;
+ let questionEuCooperationEnglishNaturalnessValidated = 0;
++let questionReligiousFreedomParallelismValidated = 0;
+ let questionFalseAnswerExplanationsValidated = 0;
+ let questionPromptTextUniquenessValidated = 0;
+ let questionOptionTextLabelsValidated = 0;
+@@ -8330,6 +8384,15 @@ if (
+   fail('strings export is not an object');
+ }
+ 
++if (process.argv.includes('--focus-religious-freedom-parallelism')) {
++  validateQuestionReligiousFreedomParallelism();
++  exitWithValidationFailures();
++  printValidationSummary({
++    questionReligiousFreedomParallelismValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+   if (Array.isArray(questions)) {
+     questions
+@@ -17622,6 +17685,8 @@ if (Array.isArray(questions)) {
+         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
+       const euCooperationEnglishNaturalnessIssue =
+         findQuestionEuCooperationEnglishNaturalnessIssue(question);
++      const religiousFreedomParallelismIssue =
++        findQuestionReligiousFreedomParallelismIssue(question);
+       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
+       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
+       const generatedTrueFalseExplanationMetaIssue =
+@@ -17658,6 +17723,11 @@ if (Array.isArray(questions)) {
+       } else {
+         questionEuCooperationEnglishNaturalnessValidated += 1;
+       }
++      if (religiousFreedomParallelismIssue) {
++        fail(`${label} uses nonparallel religious-freedom option wording`);
++      } else {
++        questionReligiousFreedomParallelismValidated += 1;
++      }
+       if (trueFalseStemPrefix) {
+         fail(`${label} contains a redundant true/false prefix in the stem`);
+       }
+@@ -17735,6 +17805,7 @@ if (Array.isArray(questions)) {
+       fail(`${label} reviewStatus is ${question.reviewStatus}`);
+   });
+ }
++validateQuestionReligiousFreedomParallelismArtifactText();
+ 
+ validateMockExamConfig(
+   defaultMockExamConfig,
+@@ -18148,6 +18219,7 @@ console.log(
+       questionGeneratedTrueFalseNaturalnessValidated,
+       questionLuciaRoleEnglishNaturalnessValidated,
+       questionEuCooperationEnglishNaturalnessValidated,
++      questionReligiousFreedomParallelismValidated,
+       questionFalseAnswerExplanationsValidated,
+       questionPromptTextUniquenessValidated,
+       questionOptionTextLabelsValidated,
+diff --git a/tests/content-published-question-types.test.js b/tests/content-published-question-types.test.js
+index 010ec1ece..b120bce57 100644
+--- a/tests/content-published-question-types.test.js
++++ b/tests/content-published-question-types.test.js
+@@ -1594,6 +1594,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
+   }
+   return contents;
+ };
++process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
+ require('./scripts/validate-content.js');
+ `,
+     ],
+@@ -1607,6 +1608,97 @@ require('./scripts/validate-content.js');
+   );
+ });
+ 
++test('religious-freedom option parallelism guard rejects stale CSV wording', () => {
++  const result = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++const fs = require('node:fs');
++const originalReadFileSync = fs.readFileSync;
++fs.readFileSync = function readFileSync(filePath, ...args) {
++  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
++  const contents = originalReadFileSync.call(this, filePath, ...args);
++  if (normalizedPath.endsWith('/content/question-bank.csv')) {
++    return String(contents)
++      .replace(
++        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
++        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
++      )
++      .replace(
++        'The right to practice one’s religion and to be protected from discrimination because of belief',
++        'The right to practice one’s religion and protection from discrimination because of belief',
++      );
++  }
++  return contents;
++};
++process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
++require('./scripts/validate-content.js');
++`,
++    ],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  assert.match(
++    `${result.stdout}\n${result.stderr}`,
++    /q116 uses nonparallel religious-freedom option wording in content\/question-bank\.csv/,
++  );
++});
++
++test('religious-freedom option parallelism guard rejects stale static wording', () => {
++  const result = spawnSync(
++    process.execPath,
++    [
++      '-e',
++      `
++const fs = require('node:fs');
++const originalReadFileSync = fs.readFileSync;
++fs.readFileSync = function readFileSync(filePath, ...args) {
++  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
++  const contents = originalReadFileSync.call(this, filePath, ...args);
++  if (normalizedPath.endsWith('/site/questions.js')) {
++    return String(contents)
++      .replace(
++        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
++        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
++      )
++      .replace(
++        'The right to practice one’s religion and to be protected from discrimination because of belief',
++        'The right to practice one’s religion and protection from discrimination because of belief',
++      );
++  }
++  return contents;
++};
++process.argv.push('scripts/validate-content.js', '--focus-religious-freedom-parallelism');
++require('./scripts/validate-content.js');
++`,
++    ],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++
++  assert.notEqual(result.status, 0);
++  assert.match(
++    `${result.stdout}\n${result.stderr}`,
++    /site\/questions\.js contains nonparallel religious-freedom option wording/,
++  );
++});
++
++test('religious-freedom option parallelism reports focused validator coverage', () => {
++  const result = spawnSync(
++    process.execPath,
++    ['scripts/validate-content.js', '--focus-religious-freedom-parallelism'],
++    { cwd: repoRoot, encoding: 'utf8' },
++  );
++  const summary = JSON.parse(result.stdout.match(/\{[\s\S]*\}/)?.[0] || '{}');
++
++  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
++  assert.equal(
++    summary.questionReligiousFreedomParallelismValidated,
++    buildSiteQuestionBank().questions.length,
++  );
++});
++
+ test('human-rights definition true/false exports use direct propositions', () => {
+   const generatedSiteBank = buildSiteQuestionBank().questions;
+   const actualSiteBank = actualStaticQuestions();
+diff --git a/tests/content-test-script-routing.test.js b/tests/content-test-script-routing.test.js
+index 3c1687a62..399a2e032 100644
+--- a/tests/content-test-script-routing.test.js
++++ b/tests/content-test-script-routing.test.js
+@@ -190,6 +190,24 @@ test('spaced repetition schema parity uses focused content validation routing',
+   );
+ });
+ 
++test('religious-freedom option parallelism uses focused content validation routing', () => {
++  const validatorSource = fs.readFileSync(
++    path.join(repoRoot, 'scripts/validate-content.js'),
++    'utf8',
++  );
++  const publishedQuestionTestSource = fs.readFileSync(
++    path.join(repoRoot, 'tests/content-published-question-types.test.js'),
++    'utf8',
++  );
++
++  assert.match(validatorSource, /--focus-religious-freedom-parallelism/);
++  assert.match(
++    validatorSource,
++    /validateQuestionReligiousFreedomParallelism\(\);[\s\S]*questionReligiousFreedomParallelismValidated/,
++  );
++  assert.match(publishedQuestionTestSource, /--focus-religious-freedom-parallelism/);
++});
++
+ test('monetization selector runs only the focused monetization suite', () => {
+   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
+   const npmLog = path.join(tmpDir, 'npm.log');

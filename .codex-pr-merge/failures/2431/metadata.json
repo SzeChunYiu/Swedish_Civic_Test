@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- Wire Settings to `useAccessibilityStore.persistenceWarning` and render accessibility-scoped warning copy for theme, text, and audio preference storage failures.\n- Preserve study-data warning behavior for progress/mistake stores and surface corrupt progress JSON reads as recoverable warnings again.\n- Loosen validator source checks so Prettier's compact Settings import and the read-warning progress hydration shape remain accepted.\n\n## Validation\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run validate:content`\n- `npm run typecheck -- --pretty false`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/content-storage-write-fail-soft.test.js tests/content-settings-route-copy-parity.test.js --test-name-pattern \"PersistenceWarningNotice|local study data|persistence warning|settings route shell copy\"`\n- `git diff --check origin/main..HEAD`\n\nNote: the full queue-provided broad `tests/v1-1-accessibility.test.js` pattern still trips the pre-existing app-wide dark-theme migration guard for `app/(tabs)/practice.tsx`, which is outside this PR's scope.",
+  "files": [
+    { "path": "app/settings.tsx", "additions": 16, "deletions": 12, "changeType": "MODIFIED" },
+    {
+      "path": "lib/storage/progressStore.ts",
+      "additions": 26,
+      "deletions": 9,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 2,
+      "deletions": 2,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/accessibility-warning-scope-1779370435-1874617",
+  "headRefOid": "a837d74742e61afaebad27c824fbad737b4bfaf3",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2431,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T13:48:43Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229592730/job/77185917152",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T13:39:20Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] settings: scope accessibility persistence warnings",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2431"
+}

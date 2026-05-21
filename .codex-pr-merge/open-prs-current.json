@@ -1,0 +1,2728 @@
+[
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-ebook-prose-source-keys-1779379931-3132089",
+    "isDraft": false,
+    "mergeStateStatus": "UNSTABLE",
+    "number": 2493,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T16:35:53Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26238902322/job/77219737702",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T16:26:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "static ebook: require explicit prose source metadata",
+    "updatedAt": "2026-05-21T16:25:50Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2493"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/progress-bar-focused-parity-gate-1779380151",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2491,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T16:27:00Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26238498763/job/77218228256",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T16:18:13Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Add focused ProgressBar accessibility gate",
+    "updatedAt": "2026-05-21T16:18:05Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2491"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/remove-ads-e2e-harness-focused-3022373",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2490,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T16:36:51Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239002245/job/77219999390",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T16:27:41Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Align Remove Ads focused validation gates",
+    "updatedAt": "2026-05-21T16:27:59Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2490"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/data-integrity/practice-progress-validator-drift-1779379633-3081999",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2489,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T16:24:26Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26238318330/job/77217579793",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T16:15:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Repair practice progress validator drift",
+    "updatedAt": "2026-05-21T16:14:44Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2489"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-report-link-href-unit-parity-1779384000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2488,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T16:23:05Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26238292069/job/77217489967",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T16:14:24Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Add question report href unit coverage",
+    "updatedAt": "2026-05-21T16:14:14Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2488"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/native-banner-test-status",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2481,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:54:26Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26237151729/job/77213378080",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:53:22Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: align native banner status copy guard",
+    "updatedAt": "2026-05-21T15:53:13Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2481"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/ui-effects-release-gate-1779380400",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2480,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:54:10Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26237134695/job/77213322928",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:53:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Fix UI effects release gate drift",
+    "updatedAt": "2026-05-21T15:52:55Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2480"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-sources-extra-locale-provenance-copy-1-1779377836",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2478,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:54:24Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26237144328/job/77213354884",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:53:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "static: align extra locale source provenance copy",
+    "updatedAt": "2026-05-21T15:53:07Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2478"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/settings-import-daily-goal-strict",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2477,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:57:54Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26236888953/job/77212439050",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:48:41Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix: reject off-menu imported daily goals",
+    "updatedAt": "2026-05-21T15:48:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2477"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-q001-answer-template-redo-1779377572-2817778",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2474,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:53:15Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26236601859/job/77211437409",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:43:38Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "data-integrity: align generated answer template localization",
+    "updatedAt": "2026-05-21T15:44:11Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2474"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/validate-progress-store-shape",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2473,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:44:02Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26236576900/job/77211310011",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:42:59Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: restore progress validator schema mirrors",
+    "updatedAt": "2026-05-21T15:42:49Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2473"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "meta/reviewer-android-iap-product-1779385000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2472,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:43:05Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26236518552/job/77211098568",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:41:55Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Queue Android Remove Ads product-id parity finding",
+    "updatedAt": "2026-05-21T15:41:46Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2472"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/progress-bar-shared-source-1779383000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2470,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:41:55Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235976881/job/77209134676",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:32:12Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Share ProgressBar source of truth",
+    "updatedAt": "2026-05-21T15:32:04Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2470"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/q001-generated-answer-template-parity",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2468,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:40:47Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235907540/job/77208887566",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:31:01Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix q001 generated answer template parity",
+    "updatedAt": "2026-05-21T15:30:46Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2468"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-site-css-import-asset-reference-guard-1-1779378000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2467,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:27:23Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235636991/job/77207910923",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:26:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "static-site: follow CSS imports in asset guard",
+    "updatedAt": "2026-05-21T15:26:04Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2467"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/storage-harness-ts-loader-1779376164-2636797",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2466,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:30:31Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26235402302/job/77207215287",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:22:54Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Centralize storage test TypeScript loader",
+    "updatedAt": "2026-05-21T15:21:55Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2466"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/native-dark-theme-nested-components-1779377000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2465,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:18:43Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26234798615/job/77204863275",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:11:34Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Route nested surfaces through theme colors",
+    "updatedAt": "2026-05-21T15:11:26Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2465"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/speak-swedish-sync-error-callback-1779374554-2439768",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2464,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:16:40Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26234546060/job/77203923790",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:07:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] audio: harden speech runtime parity",
+    "updatedAt": "2026-05-21T15:06:43Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2464"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/naturalness-pattern-shared-1779375615-2575721",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2463,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:20:59Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26234743987/job/77204728125",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T15:10:57Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] content: share generated true-false naturalness guard",
+    "updatedAt": "2026-05-21T15:10:27Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2463"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-ebook-conduct-currentness-1779374408",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2461,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:04:09Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26233811012/job/77201242470",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:54:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "static ebook: current conduct requirement copy",
+    "updatedAt": "2026-05-21T14:53:56Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2461"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/local-study-import-payload-size-1779374951-2493390",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2460,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T15:02:00Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26233703804/job/77200853758",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:52:11Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Cap local study import input",
+    "updatedAt": "2026-05-21T14:51:57Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2460"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/onboarding-first-run-modal-suppression-1779375",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2457,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:48:22Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26233418370/job/77199837203",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:47:13Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] suppress first-run guide on onboarding",
+    "updatedAt": "2026-05-21T14:47:01Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2457"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/celebration-burst-aria-hidden-1779374455-2426276",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2456,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:56:15Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26233404068/job/77199779648",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:46:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Guard CelebrationBurst web aria-hidden",
+    "updatedAt": "2026-05-21T14:46:47Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2456"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/legal-section-fragment-children-native-guard-1779373994",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2455,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:43:39Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26232828540/job/77197684651",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:36:45Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Route legal-section focused validation before broad content checks",
+    "updatedAt": "2026-05-21T14:36:36Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2455"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-tf-political-rights-current-1779375000",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2454,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:37:28Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26232808112/job/77197613000",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:36:24Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] fix political-rights generated true/false prompts",
+    "updatedAt": "2026-05-21T14:36:13Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2454"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/practice-answer-strikeout-1779373073-2257921",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2453,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:46:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26232804798/job/77197598791",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:36:21Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "practice: add answer choice strikeout control",
+    "updatedAt": "2026-05-21T14:36:12Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2453"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-localization-template-parity-1779373200",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2451,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:30:50Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26232422262/job/77196203833",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:29:42Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Guard generated localization template parity",
+    "updatedAt": "2026-05-21T14:29:33Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2451"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/exam-provenance-source-note-toggle-1779372644",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2448,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:26:51Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26231841158/job/77194180446",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:19:52Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] cover exam provenance source-note toggles",
+    "updatedAt": "2026-05-21T14:19:22Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2448"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/content-barephrase-focus-current-1779372000",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2447,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:24:20Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26231561425/job/77193117001",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:14:40Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] fix generated bare phrase naturalness guard",
+    "updatedAt": "2026-05-21T14:14:31Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2447"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/mobile-ads-consent-runtime-harness-1779372148-2143324",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2445,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:18:54Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26231374709/job/77192573029",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:11:59Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Add mobile ads consent runtime harness",
+    "updatedAt": "2026-05-21T14:11:11Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2445"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/remove-ads-e2e-mock-runtime-1779372130",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2443,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:18:39Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26231240262/job/77192067286",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T14:09:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Wire Remove Ads E2E mock runtime tests",
+    "updatedAt": "2026-05-21T14:08:51Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2443"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/exam-provenance-source-note-toggle-1779371373-2027684",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2440,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T14:03:11Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26230484686/job/77189147285",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:55:19Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] test exam provenance source-note toggles",
+    "updatedAt": "2026-05-21T13:55:09Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2440"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/visual-smoke-route-list-shared-1779370435-1976000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2437,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:56:54Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26230061415/job/77187627523",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:47:47Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: share visual smoke manifest route entries",
+    "updatedAt": "2026-05-21T13:47:39Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2437"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/native-dark-utility-routes-1779369984",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2433,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:49:27Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229643559/job/77186104262",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:40:16Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Theme utility routes use active color tokens",
+    "updatedAt": "2026-05-21T13:40:08Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2433"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/manager-content-focus-registry-1779369413",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2432,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:51:44Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229646123/job/77186344224",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:41:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: centralize validate-content focus registry",
+    "updatedAt": "2026-05-21T13:40:09Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2432"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/accessibility-warning-scope-1779370435-1874617",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2431,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:48:43Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229592730/job/77185917152",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:39:20Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] settings: scope accessibility persistence warnings",
+    "updatedAt": "2026-05-21T13:39:11Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2431"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/remove-ads-e2e-mock-owned-contract-1851220",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2428,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:46:27Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229474793/job/77185556407",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:37:29Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: guard Remove Ads E2E mock ownership",
+    "updatedAt": "2026-05-21T13:36:59Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2428"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/setup/spaced-due-canonical-1779370000",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2426,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:43:32Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229304953/job/77184955491",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:34:29Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] setup: require canonical spaced repetition due timestamps",
+    "updatedAt": "2026-05-21T13:33:55Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2426"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/practice-interstitial-show-timeout-1779369756-1767123",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2424,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:39:06Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26229054249/job/77183988046",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:29:36Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix: release stalled practice interstitial shows",
+    "updatedAt": "2026-05-21T13:29:27Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2424"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/manager-content-1779369413-3222523",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2422,
+    "reviewDecision": "",
+    "statusCheckRollup": [],
+    "title": "content: guard generated Sweden scope parity",
+    "updatedAt": "2026-05-21T13:30:55Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2422"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/chapter-quiz-route-context-title-1779368846",
+    "isDraft": true,
+    "mergeStateStatus": "UNSTABLE",
+    "number": 2419,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:28:04Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26228501765/job/77181991658",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:19:27Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "setup: preserve chapter quiz route context",
+    "updatedAt": "2026-05-21T13:19:18Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2419"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/purchase-inflight-guard-1779368816-1628578",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2416,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:28:07Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26228451709/job/77181808047",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:18:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: cover purchase in-flight runtime guards",
+    "updatedAt": "2026-05-21T13:18:20Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2416"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/pro-lifetime-validator-relaunch-parity-1779369000",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2414,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:25:01Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26228289966/job/77181347975",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:16:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: focus Pro Lifetime relaunch validation",
+    "updatedAt": "2026-05-21T13:15:18Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2414"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "codex-p0-content-1779368583",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2411,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:22:11Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26228152927/job/77180821889",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:13:20Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Localize Swedish ebook source-count units",
+    "updatedAt": "2026-05-21T13:12:44Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2411"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/home-e2e-setup-source-contract-1779367865-v2",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2410,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:18:15Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227933599/job/77179972135",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:08:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: centralize Home e2e setup",
+    "updatedAt": "2026-05-21T13:08:35Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2410"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/ebook-footnote-source-list-1779369000",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2408,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:11:59Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227605322/job/77178759577",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:02:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "ebook: expose footnote source count metadata",
+    "updatedAt": "2026-05-21T13:02:16Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2408"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/countdown-banner-phase-browser-clock-1779368070",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2406,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:08:36Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227535663/job/77178505734",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:01:00Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "setup: render countdown civic-test phase",
+    "updatedAt": "2026-05-21T13:00:50Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2406"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/legal-tf-en-sweden-scope-1779367650-3150932",
+    "isDraft": true,
+    "mergeStateStatus": "UNSTABLE",
+    "number": 2405,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:10:26Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227500020/job/77178451971",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T13:00:44Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "content: preserve Sweden scope in generated legal true-false",
+    "updatedAt": "2026-05-21T13:00:13Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2405"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/streak-freeze-normalizer-1779367736-1453831",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2404,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:07:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227356329/job/77177975612",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:58:12Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Share streak freeze state normalization",
+    "updatedAt": "2026-05-21T12:57:26Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2404"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/search-submit-url-state-1779367396",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2401,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:02:23Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227105200/job/77177020956",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:52:55Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "setup: validate search route query hydration",
+    "updatedAt": "2026-05-21T12:52:29Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2401"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-audio-stop-e2e-1779368130",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2399,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T13:01:06Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26227047937/job/77176772845",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:51:34Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "uiux: add question audio stop e2e",
+    "updatedAt": "2026-05-21T12:49:25Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2399"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/visual-smoke-launch-suppression-1779367231-1379379",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2395,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:56:18Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26226814871/job/77175961208",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:46:50Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Share launch suppression policy in visual smoke report",
+    "updatedAt": "2026-05-21T12:46:41Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2395"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/settings-accessibility-warning-3114765",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2391,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:49:21Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26226468061/job/77174742479",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:39:46Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Surface accessibility persistence warnings in Settings",
+    "updatedAt": "2026-05-21T12:39:38Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2391"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-ebook-footnote-hash-1779366723-1294722",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2389,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:44:57Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26226352856/job/77174336929",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:37:23Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Add focused static ebook footnote hash validator",
+    "updatedAt": "2026-05-21T12:37:14Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2389"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/button-style-override-parity-1779369000",
+    "isDraft": true,
+    "mergeStateStatus": "UNSTABLE",
+    "number": 2384,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:37:07Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26225864199/job/77172609579",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:27:25Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] test button style override parity",
+    "updatedAt": "2026-05-21T12:27:16Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2384"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/badge-style-override-parity-1779367500",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2383,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:32:48Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26225688116/job/77172037063",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:24:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] test badge style override parity",
+    "updatedAt": "2026-05-21T12:23:58Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2383"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/content-barephrase-focus-1779365649-3067560",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2382,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:27:08Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26225560484/job/77171531326",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:21:02Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix generated bare phrase naturalness guard",
+    "updatedAt": "2026-05-21T12:20:55Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2382"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/content-focus-registry-1779365600-024973",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2381,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:29:10Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26225557933/job/77171520977",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:20:59Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Centralize validate-content focus routes",
+    "updatedAt": "2026-05-21T12:20:51Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2381"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-asset-media-attr-1779365400-021264",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2378,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:20:29Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26225129784/job/77170005750",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:11:51Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Cover static media asset references",
+    "updatedAt": "2026-05-21T12:11:43Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2378"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-tf-political-rights-takeover-1779364952",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2376,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:18:20Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224996501/job/77169584225",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:09:18Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Rewrite political-rights generated true/false prompts",
+    "updatedAt": "2026-05-21T12:08:51Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2376"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/learning-pro-gates-validator-1779364704-998715",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2375,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:17:28Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224944895/job/77169395217",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:08:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Validate Pro-gated learning selectors",
+    "updatedAt": "2026-05-21T12:07:44Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2375"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/search-provenance-source-note-toggle-1779369000",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2374,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:09:49Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224611434/job/77168188741",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T12:00:48Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test search provenance source note disclosure",
+    "updatedAt": "2026-05-21T12:00:39Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2374"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/ad-banner-native-platform-parity-1779364324",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2373,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:06:11Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224434374/job/77167591007",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:57:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: guard native AdBanner platform gates",
+    "updatedAt": "2026-05-21T11:56:58Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2373"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/p0-translate-complete-1779364016-2987261",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2372,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T12:04:57Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224361465/job/77167342405",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:55:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "content: guard rights-work English naturalness",
+    "updatedAt": "2026-05-21T11:55:24Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2372"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/purchase-inflight-shared-contract-1779364250",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2371,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:57:23Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26224382053/job/77167457604",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:56:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: enforce shared purchase in-flight guards",
+    "updatedAt": "2026-05-21T11:55:51Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2371"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/countdown-banner-post-rules-civic-phase-1779364300",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2369,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:55:40Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223932364/job/77165852692",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:46:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Keep countdown banner through civic test phase",
+    "updatedAt": "2026-05-21T11:46:01Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2369"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/streak-freeze-runtime-count-input-guard-1",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2368,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:54:24Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223864934/job/77165616415",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:44:37Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: guard streak freeze counter normalization",
+    "updatedAt": "2026-05-21T11:44:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2368"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/profile-settings-focus-1779362916-759002",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2367,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:52:21Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223817397/job/77165450002",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:43:31Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "uiux: focus profile settings shortcut",
+    "updatedAt": "2026-05-21T11:43:25Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2367"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-provenance-focus-routing-1779363233-803553",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2366,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:48:35Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223653292/job/77164869004",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:39:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: focus question provenance validation",
+    "updatedAt": "2026-05-21T11:39:49Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2366"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/persistence-warning-read-copy-1779363328-813709",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2365,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:52:06Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223758323/job/77165287270",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:42:31Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "storage: preserve recoverable read warnings",
+    "updatedAt": "2026-05-21T11:42:07Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2365"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/search-clear-url-state-parity-1",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2364,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:48:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223610286/job/77164719728",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:38:58Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: guard search clear URL state",
+    "updatedAt": "2026-05-21T11:38:49Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2364"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/citizenship-requirements-source-anchor-1779363700",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2363,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:36:41Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223461867/job/77164201829",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:35:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] render citizenship requirement sources as anchors",
+    "updatedAt": "2026-05-21T11:35:26Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2363"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/monetization-consumer-strict-booleans-1779362707-731186",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2362,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:32:58Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223290414/job/77163600665",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:31:43Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "monetization: require strict entitlement booleans",
+    "updatedAt": "2026-05-21T11:31:35Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2362"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/monetization-consumer-strict-boolean-1779362686-727387",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2361,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:34:53Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223377823/job/77163909712",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:33:40Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "monetization: require strict boolean entitlement gates",
+    "updatedAt": "2026-05-21T11:33:34Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2361"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/streak-rules-focused-parity-1779363300",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2359,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:28:13Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26223081721/job/77162861054",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:27:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] focus streak rules validation",
+    "updatedAt": "2026-05-21T11:26:56Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2359"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-asset-manifest-reference-1779362156-649673",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2357,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:22:31Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222824099/job/77161964777",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:21:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "static-site: bind manifest to index references",
+    "updatedAt": "2026-05-21T11:21:10Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2357"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/about-the-test-seen-effect-1779361804",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2356,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:20:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222725453/job/77161617633",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:19:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "onboarding: mark about guide seen after mount",
+    "updatedAt": "2026-05-21T11:18:57Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2356"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/native-ad-banner-test-status-platform-copy-1779362500",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2355,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:19:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222695765/job/77161555572",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:18:40Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] make ad banner test copy platform-neutral",
+    "updatedAt": "2026-05-21T11:18:15Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2355"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/search-question-punctuation-normalization-1",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2354,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:18:55Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222667082/job/77161413640",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:17:46Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "search: normalize punctuated question queries",
+    "updatedAt": "2026-05-21T11:17:36Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2354"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/pro-gated-learning-helpers-1779361986-625113",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2353,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:16:22Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222548100/job/77160998874",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:15:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Harden pro-gated learning review limits",
+    "updatedAt": "2026-05-21T11:14:58Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2353"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/countdown-banner-home-mount-1779361245-528626",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2350,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:07:34Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222161967/job/77159652195",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:06:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: guard countdown banner home mount",
+    "updatedAt": "2026-05-21T11:06:25Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2350"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/celebration-reduced-motion-e2e-1779360810",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2349,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:07:43Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26222160378/job/77159646230",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:06:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "uiux: prove reduced-motion celebration cue behavior",
+    "updatedAt": "2026-05-21T11:06:23Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2349"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/q115-religious-freedom-naturalness-1779360507-2843261",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2348,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:00:20Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26221817149/job/77158464858",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:59:07Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix: naturalize q115 religious freedom English",
+    "updatedAt": "2026-05-21T10:59:00Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2348"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/q050-source-criticism-naturalness-1779360800",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2347,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T11:02:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26221893606/job/77158756825",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T11:00:55Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Naturalize q050 source criticism English",
+    "updatedAt": "2026-05-21T11:00:35Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2347"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-provenance-runtime-guard-177936",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2339,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:42:34Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26221034919/job/77155768488",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:41:37Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: harden question provenance validation",
+    "updatedAt": "2026-05-21T10:41:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2339"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/1779360000-visual-smoke-route-dismissal",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2338,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:43:22Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26221066355/job/77155878580",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:42:21Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "visual-smoke: refresh route dismissal metadata",
+    "updatedAt": "2026-05-21T10:42:14Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2338"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/about-test-mockprov-copy-1779359744-2809127",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2337,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:39:56Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220918193/job/77155367127",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:38:59Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "copy: guard Swedish about-test mock wording",
+    "updatedAt": "2026-05-21T10:38:52Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2337"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-provenance-runtime-input-guard-2-1779359630",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2336,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:38:01Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220820589/job/77155037156",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:36:46Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "data-integrity: guard question provenance runtime inputs",
+    "updatedAt": "2026-05-21T10:36:39Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2336"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/local-study-corrupt-json-warning-1779359529-2800168",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2335,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:35:12Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220702610/job/77154631707",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:34:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "storage: warn on corrupt local study JSON",
+    "updatedAt": "2026-05-21T10:33:59Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2335"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/1779358954-182158-generated-tf-referendum",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2334,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:35:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220725519/job/77154711219",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:34:37Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "data-integrity: rewrite q020 referendum true-false variants",
+    "updatedAt": "2026-05-21T10:34:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2334"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/node-test-content-focused-routing-1779359020",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2332,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:27:33Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220361716/job/77153472692",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:26:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: add content-focused npm route",
+    "updatedAt": "2026-05-21T10:26:25Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2332"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/onboarding-scroll-focus-1779362800",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2331,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:25:03Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220249206/job/77153085686",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:24:05Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: add focused onboarding scroll validator",
+    "updatedAt": "2026-05-21T10:23:59Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2331"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-ebook-factbox-sourcekeys-1779358461",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2330,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:22:37Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220139295/job/77152703250",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:21:39Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "uiux: require ebook factbox provenance keys",
+    "updatedAt": "2026-05-21T10:21:31Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2330"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/audio-speech-focused-parity-177936",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2329,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:22:37Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220134347/job/77152687282",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:21:33Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: focus audio speech parity gates",
+    "updatedAt": "2026-05-21T10:21:27Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2329"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/xp-rules-focused-parity-1779358679-2768007",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2328,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:21:28Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220084470/job/77152516321",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:20:30Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "tests: add focused XP rules validation gate",
+    "updatedAt": "2026-05-21T10:20:22Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2328"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/rewarded-extra-exam-home-credit-177935",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2323,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:04:59Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219321607/job/77149864965",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:03:53Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "feat: surface rewarded mock exam unlock on Home",
+    "updatedAt": "2026-05-21T10:03:45Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2323"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/ui-effects-release-gate-1779356862-4115758",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2322,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:04:06Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219287070/job/77149744172",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:03:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "uiux: restore ui effects accessibility gate",
+    "updatedAt": "2026-05-21T10:03:02Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2322"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/static-site-asset-manifest-staleness-1779355891-4198955",
+    "isDraft": false,
+    "mergeStateStatus": "DIRTY",
+    "number": 2321,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:04:04Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219271670/job/77149723129",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:03:01Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "release: gate static site asset manifest freshness",
+    "updatedAt": "2026-05-21T10:02:42Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2321"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/exam-timer-runtime-1779361450",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2320,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T10:01:28Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26219153372/job/77149278394",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T10:00:24Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Guard exam timer runtime inputs",
+    "updatedAt": "2026-05-21T10:00:17Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2320"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-tf-source-criticism-q377-q378-1779361000-4110000",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2317,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:56:25Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218917883/job/77148465601",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:55:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Fix generated source-criticism true/false stems",
+    "updatedAt": "2026-05-21T09:55:20Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2317"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/celebration-burst-a11y-1779360650",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2315,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:52:25Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218725021/job/77147802693",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:51:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Focus CelebrationBurst accessibility validation",
+    "updatedAt": "2026-05-21T09:51:21Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2315"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/search-question-result-navigation-177935",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2314,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:51:49Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218684112/job/77147661737",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:50:36Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: cover search result quiz navigation",
+    "updatedAt": "2026-05-21T09:50:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2314"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/uhr-reference-card-a11y-1779359560",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2312,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:48:16Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218526519/job/77147116655",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:47:21Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Focus UHR reference card accessibility validation",
+    "updatedAt": "2026-05-21T09:47:14Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2312"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/speech-runtime-input-1779357600",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2309,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:41:57Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218217641/job/77146030105",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:40:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Harden Swedish speech runtime inputs",
+    "updatedAt": "2026-05-21T09:40:48Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2309"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/web-remove-ads-mock-guard-1779355711b",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2307,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:40:18Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218133345/job/77145741802",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:39:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] setup: fail closed web Remove Ads purchases",
+    "updatedAt": "2026-05-21T09:39:02Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2307"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/q116-religious-freedom-focus-1779355891-2649535",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2306,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:44:22Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218333288/job/77146441978",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:43:20Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test(content): add focused q116 religious-freedom guard",
+    "updatedAt": "2026-05-21T09:43:14Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2306"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/q116-religious-focus-1779355607-3949309",
+    "isDraft": true,
+    "mergeStateStatus": "DIRTY",
+    "number": 2305,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:36:03Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217942154/job/77145081497",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:35:08Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: add q116 religious freedom focused validator",
+    "updatedAt": "2026-05-21T09:34:58Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2305"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/countdown-focus-routing-1779355450-3887032",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2303,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:29:27Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217621009/job/77143968910",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:28:32Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Countdown: add focused study-plan validator routing",
+    "updatedAt": "2026-05-21T09:28:25Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2303"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/generated-tf-political-rights-fragments-1779355263-2623968",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2302,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:27:46Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217537169/job/77143686163",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:26:50Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Rewrite political-rights generated true/false prompts",
+    "updatedAt": "2026-05-21T09:26:42Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2302"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/readiness-adapter-focus-1779354920-3866914",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2299,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:23:34Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217316235/job/77142981317",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:22:37Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Add readiness adapter focused validator gate",
+    "updatedAt": "2026-05-21T09:22:11Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2299"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/exam-result-readiness-1779354807-3860101",
+    "isDraft": false,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2297,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:20:46Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217183437/job/77142473592",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:19:36Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "setup: focus exam readiness persistence guard",
+    "updatedAt": "2026-05-21T09:19:30Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2297"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/review-store-question-id-1779354759-3855342",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2295,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:16:58Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26217006732/job/77141871788",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:15:58Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "Review store: guard runtime question ids",
+    "updatedAt": "2026-05-21T09:15:51Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2295"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/release-scope-v11-text-render-1779354556",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2293,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:13:16Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216829467/job/77141256711",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:12:17Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test: cover release preflight v1.1 text evidence",
+    "updatedAt": "2026-05-21T09:12:10Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2293"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/about-limited-seats-1779354326-3810189",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2292,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:10:52Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216712085/job/77140844510",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:09:52Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] about: surface limited-seat registration warning",
+    "updatedAt": "2026-05-21T09:09:46Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2292"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/badge-xp-runtime-input-guard-1779354300",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2291,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:08:47Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216612254/job/77140498543",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:07:50Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "fix: guard badge and XP runtime inputs",
+    "updatedAt": "2026-05-21T09:07:43Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2291"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/weekly-recap-focused-gate-1779354300",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2290,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:07:55Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216569378/job/77140349342",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:06:56Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] add weekly recap focused validator",
+    "updatedAt": "2026-05-21T09:06:50Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2290"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/question-bank-csv-contract-1779353735-3734137",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2289,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:12:30Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216795416/job/77141138959",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:11:34Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] Restore question bank CSV contract gate",
+    "updatedAt": "2026-05-21T09:11:39Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2289"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/profile-study-setup-cta-1779353475-3708404",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2288,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T09:01:24Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26216247972/job/77139232085",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T09:00:25Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "[codex] profile: complete study setup shortcut",
+    "updatedAt": "2026-05-21T09:00:15Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2288"
+  },
+  {
+    "baseRefName": "main",
+    "headRefName": "task/exam-question-provenance-badge-1779353055",
+    "isDraft": true,
+    "mergeStateStatus": "UNKNOWN",
+    "number": 2286,
+    "reviewDecision": "",
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-05-21T08:56:01Z",
+        "conclusion": "FAILURE",
+        "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26215982020/job/77138329304",
+        "name": "Validate release-safe candidate",
+        "startedAt": "2026-05-21T08:55:03Z",
+        "status": "COMPLETED",
+        "workflowName": "Release validation"
+      }
+    ],
+    "title": "test(exam): cover provenance badges in mock exam flow",
+    "updatedAt": "2026-05-21T08:54:57Z",
+    "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2286"
+  }
+]

@@ -1,0 +1,126 @@
+From 919f0a13b398d70f222f1ba19c61792d98e420e8 Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 13:38:23 +0200
+Subject: [PATCH] storage: preserve recoverable read warnings
+
+---
+ app/settings.tsx             | 12 ++++++++++++
+ lib/storage/progressStore.ts | 35 ++++++++++++++++++++---------------
+ scripts/validate-content.js  | 10 +++++++++-
+ 3 files changed, 41 insertions(+), 16 deletions(-)
+
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 9a78bd0bd..d8004734e 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -285,6 +285,12 @@ export default function Screen() {
+   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
+   const themeMode = useAccessibilityStore((state) => state.themeMode);
+   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
++  const accessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.persistenceWarning,
++  );
++  const clearAccessibilityPersistenceWarning = useAccessibilityStore(
++    (state) => state.clearPersistenceWarning,
++  );
+   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
+   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
+   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
+@@ -419,6 +425,12 @@ export default function Screen() {
+         onDismiss={clearPersistenceWarning}
+         warning={persistenceWarning}
+       />
++      <PersistenceWarningNotice
++        language={language}
++        onDismiss={clearAccessibilityPersistenceWarning}
++        warning={accessibilityPersistenceWarning}
++        warningScope="accessibilityPreferences"
++      />
+ 
+       <View style={styles.section}>
+         <Text accessibilityRole="header" style={styles.sectionTitle}>
+diff --git a/lib/storage/progressStore.ts b/lib/storage/progressStore.ts
+index 19464124f..d2dbf5422 100644
+--- a/lib/storage/progressStore.ts
++++ b/lib/storage/progressStore.ts
+@@ -9,7 +9,7 @@ import { createInitialFreezeState, type StreakFreezeState } from '../learning/st
+ import { getLocalDateKey } from '../learning/streaks';
+ import { calculateAnswerXp, calculateQuizCompletionXp } from '../learning/xp';
+ import type { RecoverablePersistenceWarning } from './persistenceWarning';
+-import { writeRecoverably } from './persistenceWarning';
++import { parseJsonRecoverably, readRecoverably, writeRecoverably } from './persistenceWarning';
+ 
+ export type QuestionProgress = {
+   questionId: string;
+@@ -429,21 +429,26 @@ export function normalizeImportedProgress(value: unknown): PersistedProgress {
+   return normalizeProgress(value);
+ }
+ 
+-function readProgress(): PersistedProgress {
+-  let rawProgress: string | undefined;
+-  try {
+-    rawProgress = progressStorage?.getString(progressStateKey);
+-  } catch {
+-    return emptyProgress;
+-  }
++function parseProgress(rawProgress: string): PersistedProgress {
++  return normalizeProgress(JSON.parse(rawProgress));
++}
+ 
+-  if (!rawProgress) return emptyProgress;
++function readProgress(): PersistedProgress & {
++  persistenceWarning: RecoverablePersistenceWarning | null;
++} {
++  const readResult = readRecoverably(progressStorage, progressStorageId, progressStateKey, () =>
++    progressStorage?.getString(progressStateKey),
++  );
++  if (!readResult.value) return { ...emptyProgress, persistenceWarning: readResult.warning };
+ 
+-  try {
+-    return normalizeProgress(JSON.parse(rawProgress));
+-  } catch {
+-    return emptyProgress;
+-  }
++  const parseResult = parseJsonRecoverably(
++    readResult.value,
++    progressStorageId,
++    progressStateKey,
++    parseProgress,
++    emptyProgress,
++  );
++  return { ...parseResult.value, persistenceWarning: parseResult.warning ?? readResult.warning };
+ }
+ 
+ function writeProgress(
+@@ -480,7 +485,7 @@ const initialProgress = readProgress();
+ 
+ export const useProgressStore = create<ProgressState>((set) => ({
+   ...initialProgress,
+-  persistenceWarning: null,
++  persistenceWarning: initialProgress.persistenceWarning,
+   markQuestionCompleted: (questionId) =>
+     set((state) => {
+       if (state.completedQuestionIds.includes(questionId)) return state;
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..f64563cd2 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -13169,9 +13169,17 @@ function validateProgressStoreSchemaParity() {
+       'progress storage must use the stable progress MMKV id',
+     ],
+     [
+-      'rawProgress = progressStorage?.getString(progressStateKey);',
++      'readRecoverably(progressStorage, progressStorageId, progressStateKey',
++      'readProgress must read persisted JSON recoverably through progressStateKey',
++    ],
++    [
++      'progressStorage?.getString(progressStateKey)',
+       'readProgress must read persisted JSON through progressStateKey',
+     ],
++    [
++      'parseJsonRecoverably( readResult.value, progressStorageId, progressStateKey',
++      'readProgress must preserve parse failures as recoverable read warnings',
++    ],
+     [
+       'return normalizeProgress(JSON.parse(rawProgress));',
+       'readProgress must normalize parsed persisted JSON',
