@@ -14158,12 +14158,25 @@ function validateSettingsDailyGoalParity() {
   if (settingsStore.includes('Math.round(dailyGoalAnswers)')) {
     reject('setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp');
   }
+  if (!normalizedSettingsStore.includes('function normalizeImportedDailyGoalAnswers(')) {
+    reject('normalizeImportedSettings must use an import-specific daily-goal normalizer');
+  }
   if (
-    !normalizedSettingsStore.includes(
+    normalizedSettingsStore.includes(
       'settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);',
     )
   ) {
-    reject('normalizeImportedSettings must normalize imported daily-goal input');
+    reject('normalizeImportedSettings must not persist fallback daily-goal values for imports');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'const dailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);',
+    ) ||
+    !normalizedSettingsStore.includes(
+      'if (dailyGoalAnswers !== undefined) settings.dailyGoalAnswers = dailyGoalAnswers;',
+    )
+  ) {
+    reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
   const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
