@@ -984,20 +984,32 @@ test('profile shell copy follows Swedish and English settings language', () => {
   assert.match(source, /const copy = profileCopy\[language\]/);
   assert.match(source, /<ScreenShell[\s\S]*title=\{copy\.title\}/);
   assert.match(source, /<SectionHeader title=\{copy\.studySetupTitle\}/);
+  assert.match(
+    source,
+    /const audioEnabled = useSettingsStore\(\(state\) => state\.audioEnabled\);/,
+  );
+  assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+  assert.match(source, /copy\.studySetupCta/);
   assert.match(source, /<SectionHeader title=\{copy\.badgesTitle\}/);
   assert.match(source, /accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}/);
   assert.match(source, /Lokal profil/);
   assert.match(source, /Framsteg utan konto/);
   assert.match(source, /Studieinställningar/);
+  assert.match(source, /Ljud på/);
+  assert.match(source, /Ljud av/);
   assert.match(source, /Aktivitet, kapitelframsteg och XP visas på en egen sida/);
   assert.match(source, /Märken/);
   assert.match(source, /badgeLocked: 'Låst'/);
-  assert.match(source, /Öppna inställningar/);
+  assert.match(source, /Ändra mål, språk och ljud/);
+  assert.match(source, /Öppna inställningar för dagligt mål, språk och ljud/);
   assert.match(source, /Första övningen|badgeUnlocked: 'Upplåst'/);
   assert.match(source, /Progress without an account/);
   assert.match(source, /Study setup/);
+  assert.match(source, /Audio on/);
+  assert.match(source, /Audio off/);
   assert.match(source, /badgeLocked: 'Locked'/);
-  assert.match(source, /Open settings/);
+  assert.match(source, /Adjust goal, language, and audio/);
+  assert.match(source, /Open settings for daily goal, language, and audio/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
 
@@ -1046,10 +1058,10 @@ test('audio button disables playback when speech text is unavailable', () => {
   assert.match(source, /Audio is unavailable/);
   assert.match(source, /const accessibilityLabel = label;/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
-  assert.match(source, /accessibilityState=\{\{ disabled: !canPlayAudio \}\}/);
+  assert.match(source, /accessibilityState=\{\{ busy: isSpeaking, disabled: !canPlayAudio \}\}/);
   assert.match(source, /disabled=\{!canPlayAudio\}/);
   assert.match(source, /if \(!canPlayAudio\) return;/);
-  assert.match(source, /speakSwedish\(speechText\)/);
+  assert.match(source, /speakSwedish\(speechText,/);
   assert.doesNotMatch(source, /speakSwedish\(text\)/);
 });
 
