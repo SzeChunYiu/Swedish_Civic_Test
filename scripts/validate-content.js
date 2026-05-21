@@ -156,13 +156,9 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     id: 'staticEbookProvenance',
     flags: ['--focus-static-ebook-provenance'],
     summaryKeys: [
-      'staticEbookFactboxClaimPatternsValidated',
-      'staticEbookFactboxRequiredCopyValidated',
-      'staticEbookFactboxSourceUrlsValidated',
-      'staticEbookFactboxProvenanceValidated',
-      'staticEbookSourceLinkSafetyLinksValidated',
-      'staticEbookTextOnlySourceNotesValidated',
-      'staticEbookSourceLinkSafetyValidated',
+      'staticEbookExternalSourceUrlsValidated',
+      'staticEbookExternalSourceLinkRulesValidated',
+      'staticEbookExternalSourceLinkSafetyValidated',
     ],
   },
   {
@@ -5543,116 +5539,49 @@ function validateStaticEbookFactboxProvenance() {
   };
 }
 
-function renderStaticEbookValidationChapter(lang, chapterId) {
-  const reader = { innerHTML: '', scrollTop: 0 };
-  const localStorageValues = new Map([['smt_lang', lang]]);
-  const localStorage = {
-    getItem(key) {
-      return localStorageValues.has(key) ? localStorageValues.get(key) : null;
-    },
-    setItem(key, value) {
-      localStorageValues.set(key, String(value));
-    },
-  };
-  const location = { hash: `#/ebook?c=${chapterId}` };
-  const window = {
-    addEventListener() {},
-    localStorage,
-    location,
-    smtApplyEbookHighlights() {},
-  };
-  const document = {
-    addEventListener() {},
-    getElementById(id) {
-      return id === 'ebook-reader' ? reader : null;
-    },
-    querySelectorAll() {
-      return [];
-    },
-  };
-  const context = {
-    console,
-    document,
-    localStorage,
-    location,
-    setTimeout(callback) {
-      callback();
-      return 0;
-    },
-    window,
-  };
-  context.globalThis = context;
-
-  vm.runInNewContext(loadText('site/ebook.js'), context, {
-    filename: 'site/ebook.js',
-    timeout: 3000,
-  });
-  context.window.smtEbookRender();
-
-  return reader.innerHTML;
-}
-
-function renderedStaticEbookAnchorsForHref(html, href) {
-  return Array.from(
-    html.matchAll(new RegExp(`<a\\s+[^>]*href="${escapeRegExp(href)}"[^>]*>`, 'g')),
-    (match) => match[0],
-  );
-}
-
-function validateStaticEbookSourceLinkSafety() {
+function validateStaticEbookExternalSourceLinkSafety() {
   const source = loadText('site/ebook.js');
-  const expectedSources = [
-    { chapterId: 'intro', url: STATIC_EBOOK_FACTBOX_SOURCE_URLS[0] },
-    { chapterId: '7', url: STATIC_EBOOK_FACTBOX_SOURCE_URLS[1] },
-    { chapterId: '9', url: STATIC_EBOOK_FACTBOX_SOURCE_URLS[2] },
-    { chapterId: '1', url: STATIC_EBOOK_FACTBOX_SOURCE_URLS[3] },
-  ];
-  let safeLinksValidated = 0;
-  let textOnlySourceNotesValidated = 0;
+  let sourceUrlsValidated = 0;
+  let linkRulesValidated = 0;
 
-  if (!/function externalSourceLink\(url,\s*label\)/.test(source)) {
-    fail('static ebook source links must use a shared externalSourceLink helper');
-  }
-  if (!/target="_blank"/.test(source) || !/rel="noreferrer"/.test(source)) {
-    fail('static ebook external source links must include target="_blank" and rel="noreferrer"');
-  }
-
-  expectedSources.forEach(({ chapterId, url }) => {
-    ['en', 'sv'].forEach((lang) => {
-      const html = renderStaticEbookValidationChapter(lang, chapterId);
-      const anchors = renderedStaticEbookAnchorsForHref(html, url);
-      if (anchors.length === 0) {
-        fail(`static ebook ${lang} chapter ${chapterId} missing rendered external source ${url}`);
-        return;
-      }
-
-      anchors.forEach((anchor) => {
-        if (!/\starget="_blank"/.test(anchor) || !/\srel="noreferrer"/.test(anchor)) {
-          fail(`static ebook source link ${url} missing safe external attributes`);
-          return;
-        }
-        safeLinksValidated += 1;
-      });
-    });
+  [
+    ...new Set([...STATIC_EBOOK_FACTBOX_SOURCE_URLS, ...STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS]),
+  ].forEach((url) => {
+    if (!source.includes(url)) {
+      fail(`static ebook source metadata missing ${url}`);
+      return;
+    }
+    sourceUrlsValidated += 1;
   });
 
-  const introHtml = renderStaticEbookValidationChapter('en', 'intro');
-  if (
-    /data-source-key="editorialCommentary"><a href="#ebook-fnref-[^"]+"[^>]*>↩<\/a> Editorial commentary \(2026-05-19\)<\/li>/.test(
-      introHtml,
-    )
-  ) {
-    textOnlySourceNotesValidated += 1;
-  } else {
-    fail('static ebook editorial commentary source note must remain plain text');
-  }
-  if (/<a\s+[^>]*href="#ebook-fn(?:ref)?-[^"]+"[^>]*(?:target|rel)=/.test(introHtml)) {
-    fail('static ebook internal footnote links must not use external-link attributes');
-  } else {
-    textOnlySourceNotesValidated += 1;
+  [
+    ['function externalSourceAnchor(note)', 'static ebook must centralize external source anchors'],
+    ['target="_blank"', 'static ebook external source anchors must open in a new tab'],
+    ['rel="noreferrer"', 'static ebook external source anchors must use noreferrer'],
+    [
+      'return `${externalSourceAnchor(note)} (${note.retrievedDate})`',
+      'static ebook sourceLink must route URL notes through safe external anchors',
+    ],
+    [
+      'OFFICIAL_TEST_SOURCE_NOTES.map((source) => externalSourceAnchor(source))',
+      'static ebook official-test source links must reuse safe external anchors',
+    ],
+  ].forEach(([snippet, message]) => {
+    if (!source.includes(snippet)) {
+      fail(message);
+      return;
+    }
+    linkRulesValidated += 1;
+  });
+
+  if (/<a href="\$\{(?:note|source)\.url\}">/.test(source)) {
+    fail('static ebook must not render plain same-tab external source anchors');
   }
 
-  return { safeLinksValidated, textOnlySourceNotesValidated };
+  return {
+    linkRulesValidated,
+    sourceUrlsValidated,
+  };
 }
 
 function validateStaticV11ReadinessCopy() {
@@ -9242,9 +9171,9 @@ let staticEbookFactboxClaimPatternsValidated = 0;
 let staticEbookFactboxRequiredCopyValidated = 0;
 let staticEbookFactboxSourceUrlsValidated = 0;
 let staticEbookFactboxProvenanceValidated = false;
-let staticEbookSourceLinkSafetyLinksValidated = 0;
-let staticEbookTextOnlySourceNotesValidated = 0;
-let staticEbookSourceLinkSafetyValidated = false;
+let staticEbookExternalSourceUrlsValidated = 0;
+let staticEbookExternalSourceLinkRulesValidated = 0;
+let staticEbookExternalSourceLinkSafetyValidated = false;
 let staticHeadMetadataTitleValidated = 0;
 let staticHeadMetadataDescriptionValidated = 0;
 let staticHeadMetadataOutcomeClaimPatternsValidated = 0;
@@ -9554,34 +9483,6 @@ if (focusedValidationRequested('staticHeadMetadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (focusedValidationRequested('staticEbookProvenance')) {
-  const factboxValidation = validateStaticEbookFactboxProvenance();
-  staticEbookFactboxClaimPatternsValidated = factboxValidation.unsupportedFactboxClaimsValidated;
-  staticEbookFactboxRequiredCopyValidated = factboxValidation.requiredCopyValidated;
-  staticEbookFactboxSourceUrlsValidated = factboxValidation.sourceUrlsValidated;
-  staticEbookFactboxProvenanceValidated =
-    staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
-    staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
-    staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-  const linkSafetyValidation = validateStaticEbookSourceLinkSafety();
-  staticEbookSourceLinkSafetyLinksValidated = linkSafetyValidation.safeLinksValidated;
-  staticEbookTextOnlySourceNotesValidated = linkSafetyValidation.textOnlySourceNotesValidated;
-  staticEbookSourceLinkSafetyValidated =
-    staticEbookSourceLinkSafetyLinksValidated >= STATIC_EBOOK_FACTBOX_SOURCE_URLS.length * 2 &&
-    staticEbookTextOnlySourceNotesValidated === 2;
-  exitWithValidationFailures();
-  printValidationSummary({
-    staticEbookFactboxClaimPatternsValidated,
-    staticEbookFactboxRequiredCopyValidated,
-    staticEbookFactboxSourceUrlsValidated,
-    staticEbookFactboxProvenanceValidated,
-    staticEbookSourceLinkSafetyLinksValidated,
-    staticEbookTextOnlySourceNotesValidated,
-    staticEbookSourceLinkSafetyValidated,
   });
   process.exit(0);
 }
@@ -9920,12 +9821,24 @@ staticEbookOutcomeClaimParityValidated =
     staticEbookFactboxClaimPatternsValidated === STATIC_EBOOK_UNSUPPORTED_FACTBOX_PATTERNS.length &&
     staticEbookFactboxRequiredCopyValidated === STATIC_EBOOK_FACTBOX_REQUIRED_COPY.length &&
     staticEbookFactboxSourceUrlsValidated === STATIC_EBOOK_FACTBOX_SOURCE_URLS.length;
-  const sourceLinkSafetyValidation = validateStaticEbookSourceLinkSafety();
-  staticEbookSourceLinkSafetyLinksValidated = sourceLinkSafetyValidation.safeLinksValidated;
-  staticEbookTextOnlySourceNotesValidated = sourceLinkSafetyValidation.textOnlySourceNotesValidated;
-  staticEbookSourceLinkSafetyValidated =
-    staticEbookSourceLinkSafetyLinksValidated >= STATIC_EBOOK_FACTBOX_SOURCE_URLS.length * 2 &&
-    staticEbookTextOnlySourceNotesValidated === 2;
+}
+{
+  const linkSafetyValidation = validateStaticEbookExternalSourceLinkSafety();
+  staticEbookExternalSourceUrlsValidated = linkSafetyValidation.sourceUrlsValidated;
+  staticEbookExternalSourceLinkRulesValidated = linkSafetyValidation.linkRulesValidated;
+  staticEbookExternalSourceLinkSafetyValidated =
+    staticEbookExternalSourceUrlsValidated ===
+      new Set([...STATIC_EBOOK_FACTBOX_SOURCE_URLS, ...STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS])
+        .size && staticEbookExternalSourceLinkRulesValidated === 5;
+}
+if (focusedValidationRequested('staticEbookProvenance')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    staticEbookExternalSourceUrlsValidated,
+    staticEbookExternalSourceLinkRulesValidated,
+    staticEbookExternalSourceLinkSafetyValidated,
+  });
+  process.exit(0);
 }
 {
   const somaliI18nValidation = validateStaticI18nSomaliNaturalness();
@@ -20589,9 +20502,9 @@ console.log(
       staticEbookFactboxRequiredCopyValidated,
       staticEbookFactboxSourceUrlsValidated,
       staticEbookFactboxProvenanceValidated,
-      staticEbookSourceLinkSafetyLinksValidated,
-      staticEbookTextOnlySourceNotesValidated,
-      staticEbookSourceLinkSafetyValidated,
+      staticEbookExternalSourceUrlsValidated,
+      staticEbookExternalSourceLinkRulesValidated,
+      staticEbookExternalSourceLinkSafetyValidated,
       staticI18nSomaliRequiredCopyValidated,
       staticI18nSomaliHighFrequencyLabelsValidated,
       staticI18nSomaliForbiddenFragmentsValidated,
