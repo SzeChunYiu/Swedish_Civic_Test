@@ -19,6 +19,7 @@ import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
+import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
 import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
@@ -37,6 +38,7 @@ import {
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useAccessibilityStore } from '../../lib/storage/accessibilityStore';
 import { useCompanionStore } from '../../lib/storage/companionStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
@@ -167,6 +169,8 @@ export default function Screen() {
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const includeSupplementary = useSettingsStore((state) => state.includeSupplementaryQuestions);
   const setIncludeSupplementary = useSettingsStore(
     (state) => state.setIncludeSupplementaryQuestions,
@@ -206,6 +210,23 @@ export default function Screen() {
     setSelectedConfidenceRating(null);
   }, [question?.id]);
 
+  const hasSelectedAnswer = Boolean(
+    question && selectedOptionId && activeQuestionId === question.id,
+  );
+  const questionSpeechText = useMemo(
+    () => (question ? buildQuestionSpeechText(question) : ''),
+    [question],
+  );
+
+  useQuestionAudioAutoplay({
+    audioEnabled,
+    listenFirstAudioEnabled,
+    questionKey: question ? question.id : null,
+    rate: audioPlaybackRate,
+    speechText: questionSpeechText,
+    stopSignal: hasSelectedAnswer,
+  });
+
   if (!question) {
     return (
       <View style={styles.emptyContainer}>
@@ -214,7 +235,6 @@ export default function Screen() {
     );
   }
 
-  const hasSelectedAnswer = Boolean(selectedOptionId && activeQuestionId === question.id);
   const selectedIsCorrect =
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
@@ -385,7 +405,8 @@ export default function Screen() {
       <AudioButton
         enabled={audioEnabled}
         language={language}
-        text={buildQuestionSpeechText(question)}
+        rate={audioPlaybackRate}
+        text={questionSpeechText}
       />
       {confidenceRatingEnabled ? (
         <ConfidenceRatingPicker
