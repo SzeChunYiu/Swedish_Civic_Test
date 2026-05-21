@@ -20,7 +20,11 @@ import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
 import { useQuestionAudioAutoplay } from '../../lib/audio/questionAudioAutoplay';
-import { buildAnswerFeedbackSpeechText, buildQuestionSpeechText } from '../../lib/audio/speak';
+import {
+  buildAnswerFeedbackSpeechText,
+  buildQuestionSpeechText,
+  stopSpeech,
+} from '../../lib/audio/speak';
 import { filterQuestionsByProvenance } from '../../lib/content/provenance';
 import { getAnswerOptionFeedback, isCorrectAnswer } from '../../lib/quiz/answerValidation';
 import { shuffleQuestionOptionsForSession } from '../../lib/quiz/answerOptionShuffle';
@@ -257,6 +261,7 @@ export default function Screen() {
       ? (selectedConfidenceRating ?? undefined)
       : undefined;
 
+    stopSpeech();
     selectOption(question.id, optionId);
     const answerXpAwardKey = getPracticeAnswerXpAwardKey(question.id, shuffleSessionId);
     const shouldAwardXp = answerXpAwardedKey !== answerXpAwardKey;
@@ -461,6 +466,7 @@ export default function Screen() {
           <FeedbackAudioButton
             enabled={audioEnabled}
             language={language}
+            rate={audioPlaybackRate}
             text={buildAnswerFeedbackSpeechText(question, selectedOptionId)}
           />
           <UHRReferenceCard language={language} reference={question.uhrReference} />

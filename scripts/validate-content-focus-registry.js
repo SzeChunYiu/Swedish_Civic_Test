@@ -429,7 +429,7 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
   },
   {
     id: 'speechRuntimeParity',
-    flags: ['--focus-speech-runtime-parity'],
+    flags: ['--focus-speech-runtime-parity', '--focus-speech-runtime'],
     summaryKeys: ['speechRuntimeCasesValidated', 'speechRuntimeParityValidated'],
   },
   {

@@ -1299,7 +1299,7 @@ const EXPECTED_DAILY_GOAL_MAX = 50;
 const EXPECTED_AUDIO_SETTING_KEY = 'audioEnabled';
 const EXPECTED_AUDIO_LABELS = ['Audio enabled', 'Audio disabled'];
 const EXPECTED_AUDIO_ACCESSIBILITY_LABELS = ['Disable audio', 'Enable audio'];
-const EXPECTED_SPEECH_RUNTIME_CASES = 4;
+const EXPECTED_SPEECH_RUNTIME_CASES = 10;
 const EXPECTED_SWEDISH_SPEECH_LANGUAGE = 'sv-SE';
 const EXPECTED_SETTINGS_STORE_FIELDS = [
   { name: 'language', type: 'AppLanguage', optional: false },
@@ -3022,7 +3022,7 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
   },
   {
     label: 'trimmed speech text source',
-    pattern: /const speechText = text\.trim\(\);/,
+    pattern: /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/,
   },
   {
     label: 'nonblank speech text guard',
@@ -3033,9 +3033,22 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /const canPlayAudio = enabled && hasSpeechText;/,
   },
   {
+    label: 'speaking state hook',
+    pattern: /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/,
+  },
+  {
     label: 'localized state-specific visible labels',
     pattern:
       /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+  },
+  {
+    label: 'localized stop labels',
+    pattern: /stopLabel: 'Stoppa frågeljud'[\s\S]*stopLabel: 'Stop question audio'/,
+  },
+  {
+    label: 'localized stop state selection',
+    pattern:
+      /const label = !enabled[\s\S]*\? copy\.disabledLabel[\s\S]*\? copy\.unavailableLabel[\s\S]*\? copy\.stopLabel[\s\S]*: copy\.enabledLabel;/,
   },
   {
     label: 'accessibility label follows localized visible label',
@@ -3060,9 +3073,24 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
-    label: 'trimmed speech playback',
+    label: 'trimmed speech playback with lifecycle cleanup',
     pattern:
       /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+  },
+  {
+    label: 'second press stops active question audio',
+    pattern:
+      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'speech lifecycle callbacks clear speaking state',
+    pattern:
+      /speakSwedish\(speechText,\s*\{[\s\S]*onDone:\s*\(\) => setIsSpeaking\(false\),[\s\S]*onError:\s*\(\) => setIsSpeaking\(false\),[\s\S]*onStopped:\s*\(\) => setIsSpeaking\(false\),[\s\S]*\}\);/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [
@@ -8646,6 +8674,29 @@ if (process.argv.includes('--focus-content-exec-cwd')) {
     contentTestValidateContentExecCallsValidated,
     contentTestValidateContentExecCwdPinnedValidated,
     contentTestValidateContentExecCwdParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-audio-button-accessibility')) {
+  validateAudioButtonAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    audioButtonAccessibilityRulesValidated,
+    audioButtonAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (
+  process.argv.includes('--focus-speech-runtime-parity') ||
+  process.argv.includes('--focus-speech-runtime')
+) {
+  validateSpeechRuntimeParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    speechRuntimeCasesValidated,
+    speechRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -15890,7 +15941,7 @@ function validateSpeechRuntimeParity() {
   }
 
   resetSpeechEvents();
-  speakSwedish('Hej Sverige');
+  speakSwedish(' Hej Sverige ');
   const speakEvent = speechEvents[0];
   if (
     speechEvents.length === 1 &&
@@ -15905,6 +15956,94 @@ function validateSpeechRuntimeParity() {
     reject(
       `speakSwedish must request ${EXPECTED_SWEDISH_SPEECH_LANGUAGE} speech for non-empty text`,
     );
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 1.25 });
+  if (speechEvents[0]?.options?.rate === 1.25) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must forward finite playback rates');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: 99 });
+  if (speechEvents[0]?.options?.rate === 2) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must clamp playback rates to the Expo Speech range');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { rate: Number.NaN });
+  if (speechEvents[0]?.options && speechEvents[0].options.rate === undefined) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must omit invalid playback rates');
+  }
+
+  resetSpeechEvents();
+  const callbacks = {
+    onDone() {},
+    onError() {},
+    onStopped() {},
+  };
+  speakSwedish('Hej Sverige', callbacks);
+  if (
+    speechEvents[0]?.options?.onDone === callbacks.onDone &&
+    speechEvents[0]?.options?.onError === callbacks.onError &&
+    speechEvents[0]?.options?.onStopped === callbacks.onStopped
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must forward Expo Speech lifecycle callbacks');
+  }
+
+  resetSpeechEvents();
+  speakSwedish('Hej Sverige', { onDone: 'done', onError: null, onStopped: 42 });
+  if (
+    speechEvents[0]?.options?.onDone === undefined &&
+    speechEvents[0]?.options?.onError === undefined &&
+    speechEvents[0]?.options?.onStopped === undefined
+  ) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must omit non-function lifecycle callbacks');
+  }
+
+  const originalSpeak = speechMock.speak;
+  const originalWarn = console.warn;
+  const syncError = new Error('speech unavailable');
+  const onErrorCalls = [];
+  const warnings = [];
+  resetSpeechEvents();
+  speechMock.speak = () => {
+    throw syncError;
+  };
+  console.warn = (...args) => {
+    warnings.push(args);
+  };
+  try {
+    speakSwedish('Hej Sverige', {
+      onError(error) {
+        onErrorCalls.push(error);
+      },
+    });
+  } finally {
+    speechMock.speak = originalSpeak;
+    console.warn = originalWarn;
+  }
+  if (onErrorCalls.length === 1 && onErrorCalls[0] === syncError) {
+    speechRuntimeCasesValidated += 1;
+  } else {
+    reject('speakSwedish must call onError once when Speech.speak throws synchronously');
+  }
+  if (
+    warnings.length !== 1 ||
+    String(warnings[0]?.[0] ?? '') !== 'Speech unavailable:' ||
+    warnings[0]?.[1] !== syncError
+  ) {
+    reject('speakSwedish must keep warning diagnostics when Speech.speak is unavailable');
   }
 
   resetSpeechEvents();
