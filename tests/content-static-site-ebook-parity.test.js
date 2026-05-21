@@ -171,57 +171,6 @@ function assertNoUnsupportedPracticalTestClaim(value) {
   }
 }
 
-function parseEbookSourceCounts(html) {
-  const badgeMatch = html.match(
-    /class="ebook__provenance-badge"[^>]*\bdata-source-counts='([^']+)'/,
-  );
-  assert.ok(badgeMatch, 'ebook provenance badge should expose data-source-counts');
-  return JSON.parse(badgeMatch[1].replace(/&#39;/g, "'"));
-}
-
-function renderedFootnoteSourceCounts(html) {
-  return Array.from(html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g)).reduce(
-    (counts, match) => {
-      counts[match[1]] = (counts[match[1]] || 0) + 1;
-      return counts;
-    },
-    {},
-  );
-}
-
-function assertEbookSourceCountsMatchFootnotes(html) {
-  const badgeCounts = parseEbookSourceCounts(html);
-  const footnoteCounts = renderedFootnoteSourceCounts(html);
-
-  for (const [sourceKey, count] of Object.entries(footnoteCounts)) {
-    assert.equal(
-      badgeCounts[sourceKey],
-      count,
-      `provenance badge count for ${sourceKey} should match rendered footnotes`,
-    );
-  }
-
-  assert.equal(
-    Object.values(badgeCounts).reduce((total, count) => total + count, 0),
-    Object.values(footnoteCounts).reduce((total, count) => total + count, 0),
-    'serialized source counts should total the rendered footnotes',
-  );
-}
-
-function assertEbookRoutePreservingFootnotes(html, chapterId) {
-  assert.match(
-    html,
-    new RegExp(`href="#/ebook\\?c=${chapterId}&fn=${chapterId}-1"`),
-    'footnote reference should preserve ebook route and chapter',
-  );
-  assert.match(
-    html,
-    new RegExp(`href="#/ebook\\?c=${chapterId}&fnref=${chapterId}-1"`),
-    'footnote backlink should preserve ebook route and chapter',
-  );
-  assert.doesNotMatch(html, /href="#ebook-fn(?:ref)?-/);
-}
-
 function hasUnsupportedEbookSourcePromise(value) {
   return [
     /source-backed\s+chapters/i,
@@ -237,9 +186,21 @@ function hasEbookCitationCoverage(value) {
     /data-source-claims="ebook"/i,
     /data-source-scope="ebook"/i,
     /EBOOK_SOURCE_NOTES/,
-    /EBOOK_FACTBOX_SOURCE_NOTES/,
     /ebookSourceNotes/,
   ].some((pattern) => pattern.test(value));
+}
+
+function annotatedProseParagraphs(html) {
+  return Array.from(
+    html.matchAll(
+      /<p\b(?=[^>]*\bdata-source-claims="ebook")(?=[^>]*\bdata-source-scope="ebook")(?=[^>]*\bdata-source-keys="[^"]+")[^>]*>[\s\S]*?<\/p>/g,
+    ),
+    (match) => match[0],
+  );
+}
+
+function renderedFootnoteItems(html) {
+  return Array.from(html.matchAll(/<li id="eb-[^"]+-fn-\d+">[\s\S]*?<\/li>/g), (match) => match[0]);
 }
 
 test('static ebook source contains no stale untranslated placeholder copy', () => {
@@ -251,55 +212,10 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoSwedishEbookMockExamUnnaturalness(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
-  assert.match(source, /function renderEbookProvenanceBadge\(lang,\s*sourceCounts\)/);
+  assert.match(source, /function renderEbookProvenanceBadge\(lang,\s*footnotes\)/);
+  assert.match(source, /const EBOOK_SOURCE_NOTES = Object\.freeze\(/);
   assert.match(source, /Starta [oö]vningsprov/);
   assert.match(source, /gör ett [oö]vningsprov/);
-});
-
-test('static ebook fact boxes require explicit source keys', () => {
-  const source = readSiteFile('site/ebook.js');
-
-  assert.doesNotMatch(
-    source,
-    /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\s*=\s*\[/,
-  );
-  assert.equal(
-    /ebookFactBox\([^,]+,[^,]+,[^,]+\)\s*\}/.test(source),
-    false,
-    'ebook fact boxes must not silently fall back to default source keys',
-  );
-});
-
-test('static ebook renders per-section footnotes and chapter source mixes', () => {
-  const harness = createEbookHarness();
-
-  for (const chapterId of getExpectedChapterIds()) {
-    const englishHtml = renderChapter(harness, 'en', chapterId);
-    const swedishHtml = renderChapter(harness, 'sv', chapterId);
-
-    for (const html of [englishHtml, swedishHtml]) {
-      assert.match(html, /class="ebook__footnote-ref"/);
-      assert.match(html, /class="ebook__footnote-list"/);
-      assert.match(html, /data-source-key="uhrStudyMaterial"/);
-      assert.match(html, /data-source-key="editorialCommentary"/);
-      assert.match(html, /class="ebook__provenance-badge"/);
-      assert.match(html, /(?:Sources|Källor):/);
-      assert.match(html, /(?:Editorial|Redaktionellt) \(\d+\)/);
-    }
-  }
-});
-
-test('static ebook footnote hashes preserve route state and source-count metadata', () => {
-  const harness = createEbookHarness();
-
-  for (const chapterId of ['1', '7', '9', '12']) {
-    for (const lang of ['en', 'sv']) {
-      const html = renderChapter(harness, lang, chapterId);
-
-      assertEbookRoutePreservingFootnotes(html, chapterId);
-      assertEbookSourceCountsMatchFootnotes(html);
-    }
-  }
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
@@ -366,12 +282,26 @@ test('static ebook renders every chapter with Swedish and English body parity', 
 
     assert.match(englishHtml, /ebook__study-actions/);
     assert.match(swedishHtml, /ebook__study-actions/);
-    assert.match(englishHtml, /class="ebook__provenance-badge"/);
-    assert.match(swedishHtml, /class="ebook__provenance-badge"/);
-    assert.match(englishHtml, /aria-label="Sources: UHR \(\d+\)[^"]*Editorial \(\d+\)\."/);
-    assert.match(swedishHtml, /aria-label="Källor: UHR \(\d+\)[^"]*Redaktionellt \(\d+\)\."/);
-    assert.match(englishHtml, />Sources:<\/span>/);
-    assert.match(swedishHtml, />Källor:<\/span>/);
+    assert.match(
+      englishHtml,
+      /class="ebook__provenance-badge ebook__provenance-badge--source-mix"/,
+    );
+    assert.match(
+      swedishHtml,
+      /class="ebook__provenance-badge ebook__provenance-badge--source-mix"/,
+    );
+    assert.match(
+      englishHtml,
+      /aria-label="Sources: \d+\. [^"]+\. Original study guide; verify facts through the Sources page and UHR material\."/,
+    );
+    assert.match(
+      swedishHtml,
+      /aria-label="Källor: \d+\. [^"]+\. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet\."/,
+    );
+    assert.match(englishHtml, />Sources: \d+<\/span>/);
+    assert.match(swedishHtml, />Källor: \d+<\/span>/);
+    assert.match(englishHtml, /data-source-scope="ebook"/);
+    assert.match(swedishHtml, /data-source-scope="ebook"/);
     assert.match(englishHtml, /href="#\/mock"/);
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);
@@ -417,6 +347,38 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.doesNotMatch(swedishHtml, /Practice chapter/);
     assert.doesNotMatch(swedishHtml, /Chapter highlights/);
     assert.doesNotMatch(swedishHtml, /Next study steps/);
+  }
+});
+
+test('static ebook chapters render source footnotes for every prose paragraph', () => {
+  const harness = createEbookHarness();
+
+  for (const chapterId of getExpectedChapterIds().filter((id) => id !== 'intro')) {
+    const englishHtml = renderChapter(harness, 'en', chapterId);
+    const swedishHtml = renderChapter(harness, 'sv', chapterId);
+    const englishParagraphs = annotatedProseParagraphs(englishHtml);
+    const swedishParagraphs = annotatedProseParagraphs(swedishHtml);
+    const englishFootnotes = renderedFootnoteItems(englishHtml);
+    const swedishFootnotes = renderedFootnoteItems(swedishHtml);
+
+    assert.ok(englishParagraphs.length > 0, `chapter ${chapterId} should annotate English prose`);
+    assert.ok(swedishParagraphs.length > 0, `chapter ${chapterId} should annotate Swedish prose`);
+    assert.equal(
+      englishFootnotes.length,
+      englishParagraphs.length,
+      `chapter ${chapterId} should render one English footnote per prose paragraph`,
+    );
+    assert.equal(
+      swedishFootnotes.length,
+      swedishParagraphs.length,
+      `chapter ${chapterId} should render one Swedish footnote per prose paragraph`,
+    );
+    assert.match(englishHtml, /class="ebook__footnotes"/);
+    assert.match(swedishHtml, /class="ebook__footnotes"/);
+    assert.match(englishHtml, /UHR public study material/);
+    assert.match(swedishHtml, /UHR public study material/);
+    assert.doesNotMatch(englishHtml, />Editorial<\/span>/);
+    assert.doesNotMatch(swedishHtml, />Redaktionell<\/span>/);
   }
 });
 
