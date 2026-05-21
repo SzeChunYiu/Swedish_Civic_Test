@@ -190,6 +190,24 @@ test('spaced repetition schema parity uses focused content validation routing', 
   );
 });
 
+test('Pro Lifetime relaunch parity uses focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const proIapTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-pro-iap.test.js'),
+    'utf8',
+  );
+
+  assert.match(validatorSource, /--focus-pro-lifetime-relaunch-parity/);
+  assert.match(
+    validatorSource,
+    /validateProLifetimeRelaunchParity\(\);[\s\S]*proLifetimeBareTrueRejectionValidated[\s\S]*proLifetimeStructuredRecordParsingValidated[\s\S]*proLifetimeProviderReceiptRevalidationValidated[\s\S]*proLifetimeFailClosedClearingValidated[\s\S]*proLifetimeNativeHookProviderWiringValidated[\s\S]*proLifetimeRelaunchParityValidated/,
+  );
+  assert.match(proIapTestSource, /--focus-pro-lifetime-relaunch-parity/);
+});
+
 test('monetization selector runs only the focused monetization suite', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
