@@ -1147,22 +1147,38 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
   },
   {
     file: 'lib/learning/glossarySearch.ts',
+    pattern:
+      /import \{ normalizeSearchResultLimit, normalizeSearchText \} from '\.\.\/search\/textNormalization';/,
+    message: 'glossary search must import neutral search normalization helpers',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
+    pattern: /export \{ normalizeSearchResultLimit \};/,
+    message: 'glossary search must keep normalizeSearchResultLimit as a compatibility export',
+  },
+  {
+    file: 'lib/learning/glossarySearch.ts',
     pattern: /export function normalizeGlossarySearchText\(value: string\)/,
     message: 'shared glossary normalizer must be exported for route parity',
   },
   {
     file: 'lib/learning/glossarySearch.ts',
+    pattern: /return normalizeSearchText\(value\);/,
+    message: 'glossary normalizer compatibility export must delegate to the neutral helper',
+  },
+  {
+    file: 'lib/search/textNormalization.ts',
     pattern:
       /export function normalizeSearchResultLimit\(\s*limit: unknown,\s*defaultLimit: number,\s*\): number \| undefined/,
     message: 'shared search limit normalizer must be exported for helper parity',
   },
   {
-    file: 'lib/learning/glossarySearch.ts',
+    file: 'lib/search/textNormalization.ts',
     pattern: /limit === Number\.POSITIVE_INFINITY/,
     message: 'shared search limit normalizer must support explicit unlimited caps',
   },
   {
-    file: 'lib/learning/glossarySearch.ts',
+    file: 'lib/search/textNormalization.ts',
     pattern: /typeof limit === 'number' && Number\.isInteger\(limit\) && limit >= 0/,
     message: 'shared search limit normalizer must accept only finite non-negative integer caps',
   },
@@ -1172,12 +1188,17 @@ const EXPECTED_SEARCH_ROUTE_QUERY_HYDRATION_RULES = Object.freeze([
     message: 'glossary search must not pass runtime limits directly to Array.slice',
   },
   {
-    file: 'lib/learning/glossarySearch.ts',
+    file: 'lib/search/textNormalization.ts',
+    pattern: /export function normalizeSearchText\(value: string\)/,
+    message: 'neutral search text normalizer must be exported',
+  },
+  {
+    file: 'lib/search/textNormalization.ts',
     pattern: /\.replace\(\/\[\^a-z0-9\\s-\]\/g, ' '\)/,
     message: 'shared glossary normalizer must replace punctuation with spaces',
   },
   {
-    file: 'lib/learning/glossarySearch.ts',
+    file: 'lib/search/textNormalization.ts',
     pattern: /\.replace\(\/\\s\+\/g, ' '\)/,
     message: 'shared glossary normalizer must collapse punctuation-created whitespace',
   },
@@ -13235,11 +13256,11 @@ function validateSearchQuestionPunctuationParity() {
 
   const punctuationRules = [
     {
-      label: 'shared glossary normalizer import',
-      pattern: /normalizeGlossarySearchText,/,
+      label: 'neutral search normalizer import',
+      pattern: /normalizeSearchText/,
     },
     {
-      label: 'shared search limit normalizer import',
+      label: 'neutral search limit normalizer import',
       pattern: /normalizeSearchResultLimit,/,
     },
     {
@@ -13248,16 +13269,15 @@ function validateSearchQuestionPunctuationParity() {
     },
     {
       label: 'normalized query',
-      pattern: /const normalizedQuery = normalizeGlossarySearchText\(query\);/,
+      pattern: /const normalizedQuery = normalizeSearchText\(query\);/,
     },
     {
       label: 'normalized weighted field',
-      pattern: /const normalizedValue = normalizeGlossarySearchText\(value\);/,
+      pattern: /const normalizedValue = normalizeSearchText\(value\);/,
     },
     {
       label: 'normalized token haystack',
-      pattern:
-        /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
+      pattern: /searchableFields\(question, chapter\)\.map\(normalizeSearchText\)\.join\(' '\)/,
     },
   ];
 
@@ -13268,6 +13288,9 @@ function validateSearchQuestionPunctuationParity() {
   );
   if (/function normalizeSearchText/.test(questionSearch)) {
     reject('private punctuation-preserving normalizeSearchText function must stay removed');
+  }
+  if (/\.\.\/learning\/glossarySearch/.test(questionSearch)) {
+    reject('question search must import neutral search helpers instead of glossary search');
   }
   if (/\.slice\(0, limit\)/.test(questionSearch)) {
     reject('question search must not pass runtime limits directly to Array.slice');

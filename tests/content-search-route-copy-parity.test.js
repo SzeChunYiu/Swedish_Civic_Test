@@ -11,6 +11,7 @@ const searchQueryHydrationE2ePath = path.join(repoRoot, 'tests/e2e/search-query-
 const themeModeUtilityE2ePath = path.join(repoRoot, 'tests/e2e/theme-mode-utility-routes.spec.ts');
 const glossarySearchPath = path.join(repoRoot, 'lib/learning/glossarySearch.ts');
 const questionSearchPath = path.join(repoRoot, 'lib/search/questionSearch.ts');
+const searchTextNormalizationPath = path.join(repoRoot, 'lib/search/textNormalization.ts');
 const validateContentPath = path.join(repoRoot, 'scripts/validate-content.js');
 const moduleCache = new Map();
 
@@ -24,6 +25,10 @@ function readGlossarySearchSource() {
 
 function readQuestionSearchSource() {
   return fs.readFileSync(questionSearchPath, 'utf8');
+}
+
+function readSearchTextNormalizationSource() {
+  return fs.readFileSync(searchTextNormalizationPath, 'utf8');
 }
 
 function readSearchQueryHydrationE2eSource() {
@@ -205,7 +210,7 @@ function assertSearchRouteGlossarySearchParity(source) {
   );
 }
 
-function assertSharedGlossaryPunctuationNormalizer(source) {
+function assertNeutralSearchPunctuationNormalizer(source) {
   assert.match(
     source,
     /export function normalizeSearchResultLimit\(\s*limit: unknown,\s*defaultLimit: number,\s*\): number \| undefined/,
@@ -223,28 +228,55 @@ function assertSharedGlossaryPunctuationNormalizer(source) {
   );
   assert.match(
     source,
-    /export function normalizeGlossarySearchText\(value: string\)/,
-    'shared glossary normalizer must be exported for route parity',
+    /export function normalizeSearchText\(value: string\)/,
+    'neutral search text normalizer must be exported',
   );
   assert.ok(
     source.includes(".replace(/[^a-z0-9\\s-]/g, ' ')"),
-    'shared glossary normalizer must replace punctuation with spaces',
+    'neutral search normalizer must replace punctuation with spaces',
   );
   assert.ok(
     source.includes(".replace(/\\s+/g, ' ')"),
-    'shared glossary normalizer must collapse punctuation-created whitespace',
+    'neutral search normalizer must collapse punctuation-created whitespace',
+  );
+}
+
+function assertGlossarySearchCompatibilityExport(source) {
+  assert.match(
+    source,
+    /import \{ normalizeSearchResultLimit, normalizeSearchText \} from '\.\.\/search\/textNormalization';/,
+    'Glossary search must import neutral search normalization helpers',
+  );
+  assert.match(
+    source,
+    /export \{ normalizeSearchResultLimit \};/,
+    'Glossary search must keep normalizeSearchResultLimit as a compatibility export',
+  );
+  assert.match(
+    source,
+    /export function normalizeGlossarySearchText\(value: string\)/,
+    'Glossary search must keep normalizeGlossarySearchText as a compatibility export',
+  );
+  assert.match(
+    source,
+    /return normalizeSearchText\(value\);/,
+    'Glossary normalizer compatibility export must delegate to the neutral helper',
   );
 }
 
 function assertQuestionSearchPunctuationNormalizer(source) {
   const requiredRules = [
-    [/normalizeGlossarySearchText,/, 'shared glossary normalizer import'],
-    [/normalizeSearchResultLimit,/, 'shared search limit normalizer import'],
-    [/const normalizedLimit = normalizeSearchResultLimit\(limit, 12\);/, 'normalized limit'],
-    [/const normalizedQuery = normalizeGlossarySearchText\(query\);/, 'normalized query'],
-    [/const normalizedValue = normalizeGlossarySearchText\(value\);/, 'normalized weighted field'],
+    [/normalizeSearchText/, 'neutral search normalizer import'],
+    [/normalizeSearchResultLimit,/, 'neutral search limit normalizer import'],
     [
-      /searchableFields\(question, chapter\)\.map\(normalizeGlossarySearchText\)\.join\(' '\)/,
+      /import \{ normalizeSearchResultLimit, normalizeSearchText \} from '\.\/textNormalization';/,
+      'neutral search helper import path',
+    ],
+    [/const normalizedLimit = normalizeSearchResultLimit\(limit, 12\);/, 'normalized limit'],
+    [/const normalizedQuery = normalizeSearchText\(query\);/, 'normalized query'],
+    [/const normalizedValue = normalizeSearchText\(value\);/, 'normalized weighted field'],
+    [
+      /searchableFields\(question, chapter\)\.map\(normalizeSearchText\)\.join\(' '\)/,
       'normalized token haystack',
     ],
   ];
@@ -257,6 +289,11 @@ function assertQuestionSearchPunctuationNormalizer(source) {
     source,
     /function normalizeSearchText/,
     'Question search must not keep a private punctuation-preserving normalizer',
+  );
+  assert.doesNotMatch(
+    source,
+    /\.\.\/learning\/glossarySearch/,
+    'Question search must not import glossary search just to normalize text',
   );
   assert.doesNotMatch(
     source,
@@ -337,7 +374,8 @@ test('Search route hydrates and resyncs q or query URL params around typing', ()
   assertSearchRouteQueryHydration(source);
   assertSearchRouteQuestionResults(source);
   assertSearchRouteGlossarySearchParity(source);
-  assertSharedGlossaryPunctuationNormalizer(readGlossarySearchSource());
+  assertNeutralSearchPunctuationNormalizer(readSearchTextNormalizationSource());
+  assertGlossarySearchCompatibilityExport(readGlossarySearchSource());
   assertQuestionSearchPunctuationNormalizer(readQuestionSearchSource());
 });
 
@@ -545,30 +583,26 @@ test('Search route glossary results reject route-local punctuation normalization
   );
 });
 
-test('Shared glossary normalizer rejects dropping punctuation stripping', () => {
-  const mutatedSource = readGlossarySearchSource().replace(".replace(/[^a-z0-9\\s-]/g, ' ')", '');
+test('Neutral search normalizer rejects dropping punctuation stripping', () => {
+  const mutatedSource = readSearchTextNormalizationSource().replace(
+    ".replace(/[^a-z0-9\\s-]/g, ' ')",
+    '',
+  );
 
   assert.throws(
-    () => assertSharedGlossaryPunctuationNormalizer(mutatedSource),
+    () => assertNeutralSearchPunctuationNormalizer(mutatedSource),
     /replace punctuation/,
   );
 });
 
+test('Glossary search keeps compatibility exports backed by neutral normalization', () => {
+  assertNeutralSearchPunctuationNormalizer(readSearchTextNormalizationSource());
+  assertGlossarySearchCompatibilityExport(readGlossarySearchSource());
+});
+
 test('Question search rejects route-local punctuation-preserving normalization drift', () => {
   const mutatedSource = readQuestionSearchSource()
-    .replace('  normalizeGlossarySearchText,\n', '')
-    .replace(
-      'const normalizedQuery = normalizeGlossarySearchText(query);',
-      'const normalizedQuery = normalizeSearchText(query);',
-    )
-    .replace(
-      'const normalizedValue = normalizeGlossarySearchText(value);',
-      'const normalizedValue = normalizeSearchText(value);',
-    )
-    .replace(
-      "const haystack = searchableFields(question, chapter).map(normalizeGlossarySearchText).join(' ');",
-      "const haystack = searchableFields(question, chapter).map(normalizeSearchText).join(' ');",
-    )
+    .replace('  normalizeSearchText,\n', '')
     .replace(
       'function searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {',
       "function normalizeSearchText(value: string): string {\n  return value\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLocaleLowerCase('sv-SE')\n    .trim();\n}\n\nfunction searchableFields(question: PracticeQuestion, chapter: Chapter | undefined): string[] {",
@@ -576,7 +610,7 @@ test('Question search rejects route-local punctuation-preserving normalization d
 
   assert.throws(
     () => assertQuestionSearchPunctuationNormalizer(mutatedSource),
-    /shared glossary normalizer/,
+    /neutral search normalizer import|neutral search helper import path|private punctuation-preserving normalizer/,
   );
 });
 
@@ -588,7 +622,10 @@ test('Question search rejects direct runtime limit slices', () => {
       'return results.slice(0, limit);',
     );
 
-  assert.throws(() => assertQuestionSearchPunctuationNormalizer(mutatedSource), /normalized limit/);
+  assert.throws(
+    () => assertQuestionSearchPunctuationNormalizer(mutatedSource),
+    /normalized limit|neutral search limit normalizer import/,
+  );
 });
 
 test('Search route question results reject dropping routed quiz links', () => {

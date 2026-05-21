@@ -1,6 +1,7 @@
 import { chapters } from '../../data/chapters';
 import { glossaryTerms } from '../../data/glossary';
 import type { GlossaryTerm } from '../../types/content';
+import { normalizeSearchResultLimit, normalizeSearchText } from '../search/textNormalization';
 import type { AppLanguage } from '../storage/settingsStore';
 
 export type GlossarySearchResult = GlossaryTerm & {
@@ -10,24 +11,10 @@ export type GlossarySearchResult = GlossaryTerm & {
 
 const chaptersById = new Map(chapters.map((chapter) => [chapter.id, chapter]));
 
-export function normalizeSearchResultLimit(
-  limit: unknown,
-  defaultLimit: number,
-): number | undefined {
-  const safeDefault = Number.isInteger(defaultLimit) && defaultLimit >= 0 ? defaultLimit : 0;
-  if (limit === Number.POSITIVE_INFINITY) return undefined;
-  if (typeof limit === 'number' && Number.isInteger(limit) && limit >= 0) return limit;
-  return safeDefault;
-}
+export { normalizeSearchResultLimit };
 
 export function normalizeGlossarySearchText(value: string) {
-  return value
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('sv-SE')
-    .replace(/[^a-z0-9\s-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return normalizeSearchText(value);
 }
 
 function getTermForLanguage(term: GlossaryTerm, language: AppLanguage) {
