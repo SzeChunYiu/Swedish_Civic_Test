@@ -143,8 +143,17 @@ function englishTranslationMap(appSource) {
   return new Map(Object.entries(dictionary));
 }
 
+function decodeStaticHtmlEntities(value) {
+  return value
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 function normalizeInlineHtml(value) {
-  return value.replace(/\s+/g, ' ').trim();
+  return decodeStaticHtmlEntities(value.replace(/\s+/g, ' ').trim());
 }
 
 function parseStaticFallbackI18nValues(html, includeKey) {
@@ -301,6 +310,46 @@ function assertStaticHomeHeroFooterFallbackParity(indexHtml, appSource) {
   }
 }
 
+function assertStaticSourcesFallbackParity(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const sourcesDictionaryEntries = Array.from(englishTranslations.entries())
+    .filter(([key]) => key.startsWith('sources.'))
+    .map(([key, value]) => [key, normalizeInlineHtml(value)]);
+  const sourcesFallback = staticFallbackI18nValues(sourcesRoute(indexHtml), 'sources.');
+
+  assert.deepEqual(
+    Array.from(sourcesFallback.keys()).sort(),
+    sourcesDictionaryEntries.map(([key]) => key).sort(),
+    'static Sources no-JS fallback should expose every guarded sources.* dictionary key',
+  );
+
+  for (const [key, expectedValue] of sourcesDictionaryEntries) {
+    assert.equal(
+      sourcesFallback.get(key),
+      expectedValue,
+      `${key} no-JS fallback should match the English site/app.js dictionary`,
+    );
+  }
+}
+
+function assertStaticTermsSourceFallbackParity(indexHtml, appSource) {
+  const englishTranslations = englishTranslationMap(appSource);
+  const termsFallback = parseStaticFallbackI18nValues(indexHtml, (key) => key === 'terms.s3.p');
+  const expectedValue = englishTranslations.get('terms.s3.p');
+
+  assert.equal(typeof expectedValue, 'string', 'terms.s3.p should be in site/app.js');
+  assert.equal(
+    termsFallback.get('terms.s3.p'),
+    normalizeInlineHtml(expectedValue),
+    'terms.s3.p no-JS fallback should match the English site/app.js dictionary',
+  );
+}
+
+function assertStaticSourceProvenanceFallbackParity(indexHtml, appSource) {
+  assertStaticSourcesFallbackParity(indexHtml, appSource);
+  assertStaticTermsSourceFallbackParity(indexHtml, appSource);
+}
+
 function sourceProvenanceSurface() {
   const indexHtml = read('site/index.html');
   const appJs = read('site/app.js');
@@ -403,6 +452,36 @@ test('static source provenance copy rejects unshipped external source families',
     /Primary sources\s+8/i,
     /Prim[aä]ra k[aä]llor\s+8/i,
   ].forEach((pattern) => assert.doesNotMatch(surface, pattern));
+});
+
+test('static Sources and Terms no-JS fallback mirrors the English source-provenance dictionary', () => {
+  assertStaticSourceProvenanceFallbackParity(read('site/index.html'), read('site/app.js'));
+});
+
+test('static Sources no-JS fallback rejects stale UHR-only provenance copy', () => {
+  const indexHtml = read('site/index.html');
+  const appSource = read('site/app.js');
+
+  assert.throws(
+    () =>
+      assertStaticSourcesFallbackParity(
+        indexHtml.replace('UHR + derived</span>', 'Sverige i fokus</span>'),
+        appSource,
+      ),
+    /sources\.meta3\.v no-JS fallback should match/,
+  );
+
+  assert.throws(
+    () =>
+      assertStaticTermsSourceFallbackParity(
+        indexHtml.replace(
+          'The current question bank has ~179 questions cited directly to UHR',
+          'The current question bank is written from UHR',
+        ),
+        appSource,
+      ),
+    /terms\.s3\.p no-JS fallback should match/,
+  );
 });
 
 test('static ebook prose provenance is footnoted from concrete source metadata', () => {
