@@ -140,18 +140,48 @@ test('browser specs do not assert obsolete dash-style answer feedback text', () 
   );
 });
 
-test('learn chapter navigation derives the rendered chapter total from questions data', () => {
+test('learn chapter navigation derives and reuses the rendered chapter total', () => {
   const source = readRelative('learn-chapter-navigation.spec.ts');
 
-  assert.match(
+  assert.doesNotMatch(
     source,
-    /import\s+\{\s*questions\s*\}\s+from\s+['"]\.\.\/\.\.\/data\/questions['"]/,
-    'learn chapter navigation spec should import the runtime question data',
+    /from\s+['"]\.\.\/\.\.\/data\/questions['"]/,
+    'learn chapter navigation spec should not reintroduce a direct data/questions import when it validates runtime-rendered totals',
   );
   assert.match(
     source,
-    /questions\.filter\(\s*\(?question\)?\s*=>\s*question\.chapterId\s*===\s*['"]ch01['"]\s*\)\.length/,
-    'learn chapter navigation spec should calculate the ch01 total from data/questions',
+    /function\s+extractQuestionCount\(text:\s*string\s*\|\s*null,\s*pattern:\s*RegExp\)/,
+    'learn chapter navigation spec should extract the rendered chapter count through a shared helper',
+  );
+  assert.match(
+    source,
+    /await\s+firstChapter\.textContent\(\),\s*\/0\\\/\(\\d\+\)\s+besvarade\//,
+    'learn chapter navigation spec should derive the Swedish list total from rendered chapter-card copy',
+  );
+  assert.match(
+    source,
+    /await\s+firstChapter\.textContent\(\),\s*\/0\\\/\(\\d\+\)\s+practiced\//,
+    'learn chapter navigation spec should derive the English list total from rendered chapter-card copy',
+  );
+  assert.match(
+    source,
+    /toContainText\(`0\/\$\{questionCount\}\s+besvarade`\)/,
+    'learn chapter navigation spec should assert the Swedish list total using the derived count',
+  );
+  assert.match(
+    source,
+    /toContainText\(`Övningsfrågor\s+\(\$\{questionCount\}\)`\)/,
+    'learn chapter navigation spec should assert the Swedish detail total using the same derived count',
+  );
+  assert.match(
+    source,
+    /toContainText\(`0\/\$\{questionCount\}\s+practiced`\)/,
+    'learn chapter navigation spec should assert the English list total using the derived count',
+  );
+  assert.match(
+    source,
+    /toContainText\(`Practice questions\s+\(\$\{questionCount\}\)`\)/,
+    'learn chapter navigation spec should assert the English detail total using the same derived count',
   );
 });
 
