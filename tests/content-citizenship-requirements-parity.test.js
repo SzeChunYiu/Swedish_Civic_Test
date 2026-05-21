@@ -142,6 +142,15 @@ test('citizenship requirements screen renders interactive sourced checklist with
   assert.match(routeSource, /aria-checked=\{checked\}/);
   assert.match(routeSource, /buildSummary\(/);
   assert.match(routeSource, /sourceIds\.map\(sourceForId\)/);
+  assert.match(
+    routeSource,
+    /accessibilityLabel=\{`\$\{copy\.openSourceHint\}: \$\{source\.title\[language\]\}`\}/,
+  );
+  assert.match(routeSource, /href=\{source\.url\}/);
+  assert.match(routeSource, /target="_blank"/);
+  assert.match(routeSource, /rel="noreferrer"/);
+  assert.match(routeSource, /<Text style=\{styles\.sourceUrl\}>\{source\.url\}<\/Text>/);
+  assert.doesNotMatch(routeSource, /Linking\.openURL\(source\.url\)/);
   assert.match(routeSource, /Migrationsverket always decides the application/);
   assert.match(routeSource, /Migrationsverket avgör alltid ansökan/);
   assert.doesNotMatch(routeSource, /guaranteed eligible|garanterat behörig|official app/i);
