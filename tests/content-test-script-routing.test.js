@@ -795,6 +795,43 @@ test('persistence warning scope parity uses focused content validation routing',
   assert.match(storageWarningTestSource, /getPersistenceWarningNoticeCopy/);
 });
 
+test('local study corrupt JSON warnings use focused content validation routing', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const storageWarningTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-storage-write-fail-soft.test.js'),
+    'utf8',
+  );
+  const reviewStoreTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/v1-1-review-store.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('localStudyCorruptJsonWarnings');
+
+  assert.ok(registryEntry, 'local study corrupt JSON focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-local-study-corrupt-json-warnings']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'localStudyCorruptJsonStoresValidated',
+    'localStudyCorruptJsonRecoverableReadWarningTestsValidated',
+    'localStudyCorruptJsonWarningParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-local-study-corrupt-json-warnings/);
+  assert.match(
+    validatorSource,
+    /validateLocalStudyCorruptJsonWarnings\(\);[\s\S]*localStudyCorruptJsonStoresValidated[\s\S]*localStudyCorruptJsonRecoverableReadWarningTestsValidated[\s\S]*localStudyCorruptJsonWarningParityValidated/,
+  );
+  assert.match(storageWarningTestSource, /--focus-local-study-corrupt-json-warnings/);
+  assert.match(storageWarningTestSource, /progress corrupt JSON reads/);
+  assert.match(storageWarningTestSource, /mistake-review corrupt JSON reads/);
+  assert.match(storageWarningTestSource, /highlight corrupt JSON reads/);
+  assert.match(
+    reviewStoreTestSource,
+    /review store: successful writes persist JSON and corrupt reads still fall back/,
+  );
+});
+
 test('Profile route copy parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),

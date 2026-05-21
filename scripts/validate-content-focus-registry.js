@@ -215,6 +215,15 @@ const FOCUSED_VALIDATION_REGISTRY = Object.freeze([
     ],
   },
   {
+    id: 'localStudyCorruptJsonWarnings',
+    flags: ['--focus-local-study-corrupt-json-warnings'],
+    summaryKeys: [
+      'localStudyCorruptJsonStoresValidated',
+      'localStudyCorruptJsonRecoverableReadWarningTestsValidated',
+      'localStudyCorruptJsonWarningParityValidated',
+    ],
+  },
+  {
     id: 'homeRouteCopy',
     flags: ['--focus-home-route-copy'],
     summaryKeys: [

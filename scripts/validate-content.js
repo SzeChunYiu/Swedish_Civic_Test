@@ -9262,6 +9262,9 @@ let settingsAudioLabelsValidated = 0;
 let settingsAudioParityValidated = false;
 let persistenceWarningScopeCasesValidated = 0;
 let persistenceWarningScopeParityValidated = false;
+let localStudyCorruptJsonStoresValidated = 0;
+let localStudyCorruptJsonRecoverableReadWarningTestsValidated = 0;
+let localStudyCorruptJsonWarningParityValidated = false;
 let progressQuestionFieldsValidated = 0;
 let progressQuestionSchemaParityValidated = false;
 let progressTypeUnionsValidated = 0;
@@ -10002,6 +10005,17 @@ if (process.argv.includes('--focus-persistence-warning-scope')) {
   printValidationSummary({
     persistenceWarningScopeCasesValidated,
     persistenceWarningScopeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-local-study-corrupt-json-warnings')) {
+  validateLocalStudyCorruptJsonWarnings();
+  exitWithValidationFailures();
+  printValidationSummary({
+    localStudyCorruptJsonStoresValidated,
+    localStudyCorruptJsonRecoverableReadWarningTestsValidated,
+    localStudyCorruptJsonWarningParityValidated,
   });
   process.exit(0);
 }
@@ -16081,6 +16095,218 @@ function validatePersistenceWarningScopeParity() {
 
   if (valid && persistenceWarningScopeCasesValidated === expectedCopyCases.length) {
     persistenceWarningScopeParityValidated = true;
+  }
+}
+
+function validateLocalStudyCorruptJsonWarnings() {
+  let valid = true;
+  const sources = {};
+
+  function reject(message) {
+    valid = false;
+    fail(message);
+  }
+
+  const sourceFiles = {
+    persistenceWarning: 'lib/storage/persistenceWarning.ts',
+    progress: 'lib/storage/progressStore.ts',
+    mistakeReview: 'lib/storage/mistakeReviewStore.ts',
+    review: 'lib/storage/reviewStore.ts',
+    highlights: 'lib/storage/highlightsStore.ts',
+    storageTests: 'tests/content-storage-write-fail-soft.test.js',
+    reviewTests: 'tests/v1-1-review-store.test.js',
+  };
+
+  for (const [key, relativePath] of Object.entries(sourceFiles)) {
+    try {
+      sources[key] = fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+    } catch (error) {
+      reject(`local study corrupt JSON source ${relativePath} could not be read: ${error.message}`);
+      sources[key] = '';
+    }
+  }
+
+  const warningSource = sources.persistenceWarning;
+  const requiredWarningSnippets = [
+    ['export function parseJsonRecoverably', 'parseJsonRecoverably must be exported'],
+    [
+      'warning: createRecoverablePersistenceWarning({',
+      'parseJsonRecoverably must create recoverable warnings',
+    ],
+    ["operation: 'read'", 'parseJsonRecoverably warnings must use read operation'],
+    ['const errorMessage = describeError(error);', 'warnings must preserve parse error details'],
+    [
+      '...(errorMessage ? { errorMessage } : {})',
+      'warnings must expose parse error messages when present',
+    ],
+  ];
+
+  requiredWarningSnippets.forEach(([snippet, message]) => {
+    if (!warningSource.includes(snippet)) reject(message);
+  });
+
+  const storeCases = [
+    {
+      label: 'progress',
+      sourceKey: 'progress',
+      snippets: [
+        "const progressStorageId = 'progress';",
+        "const progressStateKey = 'progressState';",
+        'readRecoverably(progressStorage, progressStorageId, progressStateKey',
+        'parseJsonRecoverably(',
+        'readResult.value',
+        'progressStorageId',
+        'progressStateKey',
+        'emptyProgress',
+        'persistenceWarning: parseResult.warning',
+      ],
+    },
+    {
+      label: 'mistake review',
+      sourceKey: 'mistakeReview',
+      snippets: [
+        "const mistakeReviewStorageId = 'mistake-review';",
+        "const mistakeReviewStateKey = 'mistakeReviewState';",
+        'readRecoverably(',
+        'mistakeReviewStorageId',
+        'mistakeReviewStateKey',
+        'parseJsonRecoverably(',
+        'parseMistakeReview',
+        'emptyMistakeReview',
+        'persistenceWarning: parseResult.warning ?? readResult.warning',
+      ],
+    },
+    {
+      label: 'review',
+      sourceKey: 'review',
+      snippets: [
+        "export const REVIEW_STORE_KEY = 'learning.reviews.cards.v1';",
+        "const reviewStorageId = 'reviews';",
+        'readRecoverably(',
+        'reviewStorageId',
+        'REVIEW_STORE_KEY',
+        'parseJsonRecoverably(',
+        'normalize(JSON.parse(rawValue))',
+        'EMPTY',
+        'persistenceWarning: parsed.warning ?? warning',
+      ],
+    },
+    {
+      label: 'highlights',
+      sourceKey: 'highlights',
+      snippets: [
+        "const HIGHLIGHTS_STATE_KEY = 'ebook.highlights.v1';",
+        "const highlightsStorageId = 'highlights';",
+        'readRecoverably(highlightsStorage, highlightsStorageId, HIGHLIGHTS_STATE_KEY',
+        'parseJsonRecoverably(',
+        'result.value',
+        'highlightsStorageId',
+        'HIGHLIGHTS_STATE_KEY',
+        'normalizeHighlightsState(JSON.parse(rawValue))',
+        'persistenceWarning: parsed.warning ?? result.warning',
+      ],
+    },
+  ];
+
+  for (const storeCase of storeCases) {
+    const source = sources[storeCase.sourceKey];
+    const missingSnippets = storeCase.snippets.filter((snippet) => !source.includes(snippet));
+    if (missingSnippets.length > 0) {
+      reject(
+        `${storeCase.label} store corrupt JSON warning path is missing ${missingSnippets.join(
+          ', ',
+        )}`,
+      );
+    } else {
+      localStudyCorruptJsonStoresValidated += 1;
+    }
+  }
+
+  function testBlock(source, title) {
+    const start = source.indexOf(`test('${title}'`);
+    if (start === -1) return '';
+    const next = source.indexOf("\ntest('", start + 1);
+    return source.slice(start, next === -1 ? source.length : next);
+  }
+
+  const testCases = [
+    {
+      label: 'progress',
+      sourceKey: 'storageTests',
+      title: 'progress corrupt JSON reads fall back with a recoverable read warning',
+      snippets: [
+        "progressState: '{broken'",
+        'persistenceWarning.recoverable',
+        "persistenceWarning.operation, 'read'",
+        "persistenceWarning.storageId, 'progress'",
+        "persistenceWarning.key, 'progressState'",
+        'persistenceWarning.errorMessage',
+      ],
+    },
+    {
+      label: 'mistake review',
+      sourceKey: 'storageTests',
+      title: 'mistake-review corrupt JSON reads fall back with a recoverable read warning',
+      snippets: [
+        "mistakeReviewState: '{broken'",
+        'persistenceWarning.recoverable',
+        "persistenceWarning.operation, 'read'",
+        "persistenceWarning.storageId, 'mistake-review'",
+        "persistenceWarning.key, 'mistakeReviewState'",
+        'persistenceWarning.errorMessage',
+      ],
+    },
+    {
+      label: 'highlights',
+      sourceKey: 'storageTests',
+      title: 'highlight corrupt JSON reads fall back with a recoverable read warning',
+      snippets: [
+        "'ebook.highlights.v1': '{broken'",
+        'persistenceWarning.recoverable',
+        "persistenceWarning.operation, 'read'",
+        "persistenceWarning.storageId, 'highlights'",
+        "persistenceWarning.key, 'ebook.highlights.v1'",
+        'persistenceWarning.errorMessage',
+      ],
+    },
+    {
+      label: 'review',
+      sourceKey: 'reviewTests',
+      title: 'review store: successful writes persist JSON and corrupt reads still fall back',
+      snippets: [
+        "[REVIEW_STORE_KEY]: '{not-json'",
+        'persistenceWarning.recoverable',
+        "persistenceWarning.operation, 'read'",
+        "persistenceWarning.storageId, 'reviews'",
+        'persistenceWarning.key, REVIEW_STORE_KEY',
+        'persistenceWarning.errorMessage',
+      ],
+    },
+  ];
+
+  for (const testCase of testCases) {
+    const block = testBlock(sources[testCase.sourceKey], testCase.title);
+    if (!block) {
+      reject(`${testCase.label} corrupt JSON warning test is missing`);
+      continue;
+    }
+
+    const missingSnippets = testCase.snippets.filter((snippet) => !block.includes(snippet));
+    if (missingSnippets.length > 0) {
+      reject(
+        `${testCase.label} corrupt JSON warning test is missing ${missingSnippets.join(', ')}`,
+      );
+    } else {
+      localStudyCorruptJsonRecoverableReadWarningTestsValidated += 1;
+    }
+  }
+
+  if (
+    valid &&
+    localStudyCorruptJsonStoresValidated === storeCases.length &&
+    localStudyCorruptJsonRecoverableReadWarningTestsValidated === testCases.length
+  ) {
+    localStudyCorruptJsonWarningParityValidated = true;
   }
 }
 
@@ -23625,6 +23851,7 @@ validateLegalSectionRenderingParity();
 validateSettingsRouteHeaderParity();
 validateSettingsRouteCopyParity();
 validatePersistenceWarningScopeParity();
+validateLocalStudyCorruptJsonWarnings();
 validateOnboardingRouteHeaderParity();
 validateOnboardingRouteCopyParity();
 validateScreenShellLayoutParity();
@@ -23954,6 +24181,9 @@ console.log(
       settingsAudioParityValidated,
       persistenceWarningScopeCasesValidated,
       persistenceWarningScopeParityValidated,
+      localStudyCorruptJsonStoresValidated,
+      localStudyCorruptJsonRecoverableReadWarningTestsValidated,
+      localStudyCorruptJsonWarningParityValidated,
       progressQuestionFieldsValidated,
       progressQuestionSchemaParityValidated,
       progressTypeUnionsValidated,
