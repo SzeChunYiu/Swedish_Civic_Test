@@ -1949,6 +1949,11 @@ test('native Mobile Ads consent runtime requests ATT and UMP before SDK init', a
     nativeBannerSource,
     /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
+  assert.match(nativeBannerSource, /BannerAdSize\.ANCHORED_ADAPTIVE_BANNER/);
+  assert.match(
+    nativeBannerSource,
+    /requestNonPersonalizedAdsOnly:\s*mobileAdsConsent\.decision\.requestNonPersonalizedAdsOnly/,
+  );
   assert.match(launchSource, /useMobileAdsConsent/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*consentDecision/);
   assert.match(launchSource, /shouldShowLaunchPopupAd\(\{[\s\S]*platform: Platform\.OS/);

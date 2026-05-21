@@ -10107,6 +10107,44 @@ function validateAdPlacementRouteParity() {
       }
     }
 
+    if (spec.component === 'AdBanner') {
+      const consentAwareShouldShowPattern =
+        /shouldShowAd\(\s*placement\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/;
+      const nativeBannerSource = fs.readFileSync(
+        path.join(repoRoot, 'components/monetization/AdBanner.native.tsx'),
+        'utf8',
+      );
+
+      if (!nativeBannerSource.includes('BannerAd')) {
+        reject('AdBanner native placement must render BannerAd');
+        routeIsValid = false;
+      }
+      if (!nativeBannerSource.includes('BannerAdSize.ANCHORED_ADAPTIVE_BANNER')) {
+        reject('AdBanner native placement must render adaptive banner size');
+        routeIsValid = false;
+      }
+      if (
+        !nativeBannerSource.includes(
+          'requestNonPersonalizedAdsOnly: mobileAdsConsent.decision.requestNonPersonalizedAdsOnly',
+        )
+      ) {
+        reject(
+          'AdBanner native placement must pass consent-derived non-personalized request options',
+        );
+        routeIsValid = false;
+      }
+      if (
+        !nativeBannerSource.includes('const unitId = getPlatformAdUnitId(placement, Platform.OS);')
+      ) {
+        reject('AdBanner native placement must resolve the banner unit by platform');
+        routeIsValid = false;
+      }
+      if (!consentAwareShouldShowPattern.test(nativeBannerSource)) {
+        reject('AdBanner native placement must gate through consent-aware platform shouldShowAd');
+        routeIsValid = false;
+      }
+    }
+
     if (spec.component === 'NativeAdCard') {
       const consentAwareShouldShowPattern = new RegExp(
         `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
