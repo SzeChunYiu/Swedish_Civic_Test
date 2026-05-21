@@ -255,13 +255,13 @@ const i18n = (window.i18n = {
       "It'll help you <em>study</em>. The rest depends on you, the official source material, and how much fika you take. We pull questions from the public bank and explain each one in plain language.",
     'faq.3.q': 'Do I need an account?',
     'faq.3.a':
-      'No. You do not need to register. No email, no phone number, no awkward profile photo from 2017. Progress lives on your device.',
+      'No — you can do everything without registering, and your progress lives on your device. Signing in is optional, but it unlocks more: your highlights, notes, and dashboard sync across all your devices.',
     'faq.4.q': 'Is it free?',
     'faq.4.a':
       'Free to start, free to study, and free to take mock exams. Ads help keep the core app available; Remove Ads is an optional one-time 29 SEK purchase that removes ads.',
     'faq.5.q': 'Does it work in Swedish too?',
     'faq.5.a':
-      "Yes. Toggle the EN / SV switch in the nav, or change it inside the app. Many learners use both at once — read the question in Swedish, peek at the English when you're stuck.",
+      "Yes. Tap the language button in the top bar to switch — Swedish, English, and ten more. Many learners use two at once: read in Swedish, then peek at another when you're stuck.",
     'faq.6.q': 'Is my data shared with anyone?',
     'faq.6.a':
       'Your study progress, answers, mistakes, and settings stay local. The website has AdSense-ready ad slots that stay disabled until reviewed slot IDs are configured; Google Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never receive your study answers or progress.',
@@ -641,13 +641,13 @@ const i18n = (window.i18n = {
       'Det hjälper dig att <em>plugga</em>. Resten beror på dig, det officiella materialet och hur många fikapauser du tar. Vi hämtar frågor från den offentliga banken och förklarar varje en på enkel svenska.',
     'faq.3.q': 'Behöver jag ett konto?',
     'faq.3.a':
-      'Nej. Du behöver inte registrera dig. Ingen e-post, inget telefonnummer, ingen pinsam profilbild från 2017. Dina framsteg sparas på enheten.',
+      'Nej — du kan göra allt utan att registrera dig, och dina framsteg sparas på din enhet. Att logga in är valfritt, men låser upp mer: dina markeringar, anteckningar och panel synkas mellan alla dina enheter.',
     'faq.4.q': 'Är den gratis?',
     'faq.4.a':
       'Gratis att börja, plugga och öva med övningsprov. Du kan göra övningsprov i appen utan betalning; annonser hjälper oss hålla kärnfunktionerna tillgängliga, och Ta bort annonser är ett valfritt engångsköp på 29 SEK som tar bort annonser.',
     'faq.5.q': 'Fungerar den på svenska också?',
     'faq.5.a':
-      'Ja. Växla med EN / SV-knappen i menyn, eller byt inne i appen. Många använder båda samtidigt — läs frågan på svenska, kika på engelska när det kör ihop sig.',
+      'Ja. Tryck på språkknappen i toppmenyn för att byta — svenska, engelska och tio till. Många pluggar på två språk samtidigt: läs på svenska och kika på ett annat när du fastnar.',
     'faq.6.q': 'Delas mina data med någon?',
     'faq.6.a':
       'Dina studieframsteg, svar, misstag och inställningar sparas lokalt. Webbplatsen har annonsytor förberedda för Google AdSense som är avstängda tills granskade annonsplats-ID:n är konfigurerade; Google Mobile Ads (AdMob) i appen kan behandla annons- och samtyckessignaler. Annonser får aldrig dina studiesvar eller framsteg.',
