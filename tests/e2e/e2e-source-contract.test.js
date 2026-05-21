@@ -100,6 +100,83 @@ function collectMatches({ pattern, source, filePath }) {
   }));
 }
 
+test('Home copy specs use shared route setup and language picker helpers', () => {
+  const homeCopySpecs = [
+    {
+      file: 'home-study-loop-copy.spec.ts',
+      switchesLanguage: true,
+    },
+    {
+      file: 'home-sv-mistake-review-copy.spec.ts',
+      switchesLanguage: false,
+    },
+  ];
+
+  for (const { file, switchesLanguage } of homeCopySpecs) {
+    const source = readRelative(file);
+
+    assert.match(source, /from ['"]\.\/browserLaunch['"]/);
+    assert.match(
+      source,
+      /\bcollectConsoleAndPageErrors\b/,
+      `${file} should collect browser errors through the shared helper`,
+    );
+    assert.match(
+      source,
+      /\bsetupHomeCopyRoute\b/,
+      `${file} should seed settings, navigate, and dismiss modals through setupHomeCopyRoute`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bcollectConsoleErrors\b/,
+      `${file} should not define a local console-error collector`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bclickIfVisible\b/,
+      `${file} should not define a local modal-click helper`,
+    );
+    assert.doesNotMatch(
+      source,
+      /\bdismissBlockingModals\b/,
+      `${file} should not bypass setupHomeCopyRoute with direct modal dismissal`,
+    );
+    assert.doesNotMatch(
+      source,
+      /getByRole\(\s*['"]button['"]\s*,\s*\{\s*name:\s*['"](?:English|Swedish)['"]/,
+      `${file} should not select LanguagePicker rows as buttons`,
+    );
+
+    if (switchesLanguage) {
+      assert.match(
+        source,
+        /\bswitchLanguageThroughTopBarPicker\b/,
+        `${file} should use the shared top-bar LanguagePicker helper`,
+      );
+      assert.match(source, /switchLanguageThroughTopBarPicker\(page,\s*['"]en['"]\)/);
+    } else {
+      assert.doesNotMatch(
+        source,
+        /\bswitchLanguageThroughTopBarPicker\b/,
+        `${file} should not import unused language-switching helpers`,
+      );
+    }
+  }
+});
+
+test('shared top-bar LanguagePicker helper selects menuitem rows, not buttons', () => {
+  const source = readRelative('browserLaunch.ts');
+
+  assert.match(source, /export async function switchLanguageThroughTopBarPicker/);
+  assert.match(source, /getByRole\('menu', \{ name: languagePickerMenuName \}\)/);
+  assert.match(source, /getByRole\('menuitem', \{ exact: true, name: targetLabel \}\)/);
+  assert.doesNotMatch(
+    source,
+    /getByRole\(\s*['"]button['"]\s*,\s*\{\s*name:\s*targetLabel/,
+    'shared LanguagePicker helper should not select language rows as buttons',
+  );
+});
+
 test('browser specs do not hardcode stale chapter count copy', () => {
   const staleCountPatterns = [
     /0\/50 besvarade/g,
