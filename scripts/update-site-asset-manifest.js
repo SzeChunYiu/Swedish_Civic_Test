@@ -98,6 +98,14 @@ function isPathInsideDirectory(directory, candidatePath) {
   return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath));
 }
 
+function realPathInsideDirectory(directory, candidatePath) {
+  try {
+    return isPathInsideDirectory(fs.realpathSync(directory), fs.realpathSync(candidatePath));
+  } catch {
+    return false;
+  }
+}
+
 function extractHtmlAttribute(tag, attributeName) {
   const attributePattern = new RegExp(
     `\\b${attributeName}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`,
@@ -161,6 +169,7 @@ function listStylesheetAssetReferences(siteDir, indexHtml) {
     const absoluteStylesheetPath = path.resolve(siteDir, stylesheetPath);
     if (!isPathInsideDirectory(siteDir, absoluteStylesheetPath)) return [stylesheetPath];
     if (!fs.existsSync(absoluteStylesheetPath)) return [stylesheetPath];
+    if (!realPathInsideDirectory(siteDir, absoluteStylesheetPath)) return [stylesheetPath];
 
     const normalizedStylesheetPath = normalizeRelativePath(
       path.relative(siteDir, absoluteStylesheetPath),

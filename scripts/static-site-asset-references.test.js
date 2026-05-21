@@ -376,6 +376,53 @@ test('asset manifest check reports escaped CSS imports without reading outside s
   }
 });
 
+test('asset manifest check reports symlinked CSS without reading outside site root', () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-symlink-'));
+  const tempSiteDir = path.join(tempDir, 'site');
+  const tempManifestPath = path.join(tempSiteDir, 'asset-manifest.json');
+
+  try {
+    fs.mkdirSync(tempSiteDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(tempSiteDir, 'index.html'),
+      '<!doctype html><link rel="stylesheet" href="styles.css">',
+    );
+    fs.writeFileSync(path.join(tempDir, 'outside.css'), '.leak { background: url("leak.png"); }');
+    fs.writeFileSync(path.join(tempDir, 'leak.png'), 'leak');
+
+    try {
+      fs.symlinkSync(path.join(tempDir, 'outside.css'), path.join(tempSiteDir, 'styles.css'));
+    } catch (error) {
+      if (error && (error.code === 'EPERM' || error.code === 'EACCES')) {
+        return;
+      }
+      throw error;
+    }
+
+    writeAssetManifest({
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+
+    const result = checkAssetManifest({
+      manifestPath: tempManifestPath,
+      siteDir: tempSiteDir,
+    });
+    const references = listIndexAssetReferences(tempSiteDir);
+    const mismatchText = result.mismatches.join('\n');
+
+    assert.deepEqual(references, ['styles.css']);
+    assert.equal(result.ok, false);
+    assert.match(
+      mismatchText,
+      /styles\.css: referenced by index\.html or linked stylesheets but missing from committed manifest/,
+    );
+    assert.doesNotMatch(mismatchText, /leak\.png/);
+  } finally {
+    fs.rmSync(tempDir, { force: true, recursive: true });
+  }
+});
+
 test('static site asset extractor covers responsive images and media posters', () => {
   const indexHtml = `
     <img src="hero.png?cache=1" srcset="hero.png 1x, ./hero@2x.png 2x, /img/hero-wide.png 1280w" />
