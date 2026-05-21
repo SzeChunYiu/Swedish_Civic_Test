@@ -20,7 +20,7 @@ test('onboarding route keeps mobile content inside a scrollable root', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/onboarding.tsx'), 'utf8');
 
-  assert.equal(summary.onboardingRouteScrollRulesValidated, 5);
+  assert.equal(summary.onboardingRouteScrollRulesValidated, 8);
   assert.equal(summary.onboardingRouteScrollParityValidated, true);
   assert.match(source, /import \{ Pressable, ScrollView, StyleSheet, Text, View \}/);
   assert.match(
@@ -29,6 +29,9 @@ test('onboarding route keeps mobile content inside a scrollable root', () => {
   );
   assert.match(source, /content: \{\n\s+flexGrow: 1,/);
   assert.match(source, /paddingBottom: space\[10\]/);
+  assert.match(source, /decideLaterLink: \{[\s\S]*display: 'flex'[\s\S]*minHeight: space\[6\]/);
+  assert.match(source, /primaryLink: \{[\s\S]*display: 'flex'[\s\S]*minHeight: space\[6\]/);
+  assert.match(source, /secondaryLink: \{[\s\S]*display: 'flex'[\s\S]*minHeight: space\[6\]/);
   assert.doesNotMatch(source, /<View style=\{styles\.container\}>/);
 });
 
