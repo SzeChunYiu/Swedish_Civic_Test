@@ -20,6 +20,36 @@ function validateContentSummary() {
   return JSON.parse(match[0]);
 }
 
+function runFocusedCountdownValidationWithExamDatePatch(search, replacement) {
+  return spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+const search = ${JSON.stringify(search)};
+const replacement = ${JSON.stringify(replacement)};
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/examDate.ts')) {
+    const source = String(contents);
+    if (!source.includes(search)) {
+      throw new Error('countdown study-plan mutation fixture did not find target source');
+    }
+    return source.replace(search, replacement);
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+}
+
 test('countdown banner keeps citizenship rules and civic test dates separate', () => {
   const summary = validateContentSummary();
 
@@ -201,5 +231,68 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /CountdownBanner must state timeline facts neutrally/,
+  );
+});
+
+test('countdown banner parity rejects unsafe study-plan date formatting', () => {
+  const result = runFocusedCountdownValidationWithExamDatePatch(
+    "  if (!isFiniteDate(target)) return language === 'sv' ? 'datum saknas' : 'date unavailable';",
+    '  // Mutation fixture: invalid dates fall through to locale formatting.',
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /study plan runtime failed: invalid dates use safe fallbacks/,
+  );
+});
+
+test('countdown banner parity rejects study-plan string and fractional count coercion', () => {
+  const result = runFocusedCountdownValidationWithExamDatePatch(
+    [
+      'function normalizeNonNegativeInteger(value: unknown): number {',
+      "  return typeof value === 'number' &&",
+      '    Number.isFinite(value) &&',
+      '    Number.isInteger(value) &&',
+      '    value >= 0',
+      '    ? value',
+      '    : 0;',
+      '}',
+    ].join('\n'),
+    [
+      'function normalizeNonNegativeInteger(value: unknown): number {',
+      '  const numericValue = Number(value);',
+      '  return Number.isFinite(numericValue) && numericValue >= 0 ? numericValue : 0;',
+      '}',
+    ].join('\n'),
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /study plan runtime failed: (string|fractional) counts do not coerce into progress/,
+  );
+});
+
+test('countdown banner parity rejects preserving unknown study intensity values', () => {
+  const result = runFocusedCountdownValidationWithExamDatePatch(
+    [
+      'function normalizeStudyIntensity(value: unknown): StudyIntensity {',
+      "  if (value === 'casual' || value === 'regular' || value === 'serious') return value;",
+      "  return 'regular';",
+      '}',
+    ].join('\n'),
+    [
+      'function normalizeStudyIntensity(value: unknown): StudyIntensity {',
+      "  if (value === 'casual' || value === 'regular' || value === 'serious') return value;",
+      '  return value;',
+      '}',
+    ].join('\n'),
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /study plan runtime failed: NaN dates and unknown intensity normalize/,
   );
 });
