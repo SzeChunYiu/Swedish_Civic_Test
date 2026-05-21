@@ -8,6 +8,7 @@ const test = require('node:test');
 
 const {
   createMemoryMMKV,
+  createThrowingReadMMKV,
   createThrowingSetMMKV,
   loadTsModule,
   loadTsWithStorage,
@@ -71,6 +72,43 @@ test('companion store uses MMKV id "companion" (separate from settings)', () => 
 test('companion store: storage key is versioned for forward-compat', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'lib/storage/companionStore.ts'), 'utf8');
   assert.match(source, /companion\.selectedId\.v1/);
+});
+
+test('companion store: valid persisted mascot hydrates selection', () => {
+  const storage = createMemoryMMKV({ 'companion.selectedId.v1': 'skoglimpa' });
+  const { useCompanionStore } = loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
+    companion: storage,
+  });
+
+  assert.equal(useCompanionStore.getState().selectedId, 'skoglimpa');
+  assert.equal(useCompanionStore.getState().persistenceWarning, null);
+});
+
+test('companion store: invalid persisted mascot falls back without warning', () => {
+  const storage = createMemoryMMKV({ 'companion.selectedId.v1': 'not-a-mascot' });
+  const { useCompanionStore } = loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
+    companion: storage,
+  });
+  const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
+
+  assert.equal(useCompanionStore.getState().selectedId, DEFAULT_COMPANION_ID);
+  assert.equal(useCompanionStore.getState().persistenceWarning, null);
+});
+
+test('companion store: throwing MMKV reads fall back and record warning', () => {
+  const storage = createThrowingReadMMKV('companion read failed');
+  const { useCompanionStore } = loadTsWithStorage(repoRoot, 'lib/storage/companionStore.ts', {
+    companion: storage,
+  });
+  const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
+  const state = useCompanionStore.getState();
+
+  assert.equal(state.selectedId, DEFAULT_COMPANION_ID);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'companion');
+  assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('companion store: throwing MMKV writes keep selected mascot in memory and record warning', () => {
