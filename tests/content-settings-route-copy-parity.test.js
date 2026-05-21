@@ -20,6 +20,10 @@ function parseValidationSummary() {
   return JSON.parse(match[0]);
 }
 
+function assertIncludes(source, text, context) {
+  assert.ok(source.includes(text), `${context} must include ${text}`);
+}
+
 test('settings route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
@@ -88,6 +92,86 @@ test('settings route shell copy follows the persisted settings language', () => 
     source,
     /const setThemeMode = useAccessibilityStore\(\(state\) => state\.setThemeMode\);/,
   );
+});
+
+test('settings import summary copy keeps singular and plural labels for bookmark wrong-answer mock exam FSRS and citizenship rows', () => {
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const e2eSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-import-confirm-apply.spec.ts'),
+    'utf8',
+  );
+  const labelSnippets = [
+    "one: 'fråga med sparad progression'",
+    "other: 'frågor med sparad progression'",
+    "one: 'bokmärke'",
+    "other: 'bokmärken'",
+    "one: 'granskning av fel svar'",
+    "other: 'granskningar av fel svar'",
+    "one: 'genomfört övningsprov'",
+    "other: 'genomförda övningsprov'",
+    "one: 'repetitionskort'",
+    "other: 'repetitionskort'",
+    "one: 'repetitionsdag'",
+    "other: 'repetitionsdagar'",
+    "one: 'sparad inställning'",
+    "other: 'sparade inställningar'",
+    "one: 'markerat kravområde'",
+    "other: 'markerade kravområden'",
+    "one: 'question with saved progress'",
+    "other: 'questions with saved progress'",
+    "one: 'bookmark'",
+    "other: 'bookmarks'",
+    "one: 'wrong-answer review'",
+    "other: 'wrong-answer reviews'",
+    "one: 'completed mock exam'",
+    "other: 'completed mock exams'",
+    "one: 'FSRS review card'",
+    "other: 'FSRS review cards'",
+    "one: 'FSRS review day'",
+    "other: 'FSRS review days'",
+    "one: 'saved setting'",
+    "other: 'saved settings'",
+    "one: 'marked requirement'",
+    "other: 'marked requirements'",
+  ];
+  const pluralPreviewRows = [
+    '3 frågor med sparad progression',
+    '2 bokmärken',
+    '2 granskningar av fel svar',
+    '2 genomförda övningsprov',
+    '2 repetitionskort',
+    '2 repetitionsdagar',
+    '5 sparade inställningar',
+    '3 markerade kravområden',
+    '3 questions with saved progress',
+    '2 bookmarks',
+    '2 wrong-answer reviews',
+    '2 completed mock exams',
+    '2 FSRS review cards',
+    '2 FSRS review days',
+    '5 saved settings',
+    '3 marked requirements',
+  ];
+  const singularPreviewRows = [
+    '1 bokmärke',
+    '1 granskning av fel svar',
+    '1 genomfört övningsprov',
+    '1 repetitionskort',
+    '1 repetitionsdag',
+    '1 bookmark',
+    '1 wrong-answer review',
+    '1 completed mock exam',
+    '1 FSRS review card',
+    '1 FSRS review day',
+  ];
+
+  for (const snippet of labelSnippets) {
+    assertIncludes(settingsSource, snippet, 'settings import summary copy');
+  }
+  for (const row of [...pluralPreviewRows, ...singularPreviewRows]) {
+    assertIncludes(e2eSource, row, 'settings import E2E preview assertions');
+  }
+  assertIncludes(e2eSource, "name: 'plural'", 'settings import E2E payload cases');
 });
 
 test('settings route copy parity rejects Swedish import-summary scheduler jargon', () => {
