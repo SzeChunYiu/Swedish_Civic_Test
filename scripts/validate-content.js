@@ -5819,10 +5819,200 @@ function validateCitizenshipTimeline() {
     homeMountParity,
     homeMountRulesValidated,
     dateParity,
+    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
   };
+}
+
+function validateCountdownBannerHomeMount() {
+  let valid = true;
+  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+  const rules = [
+    {
+      label: 'Home route must import CountdownBanner',
+      pattern: /import \{ CountdownBanner \} from '..\/..\/components\/ui\/CountdownBanner';/,
+    },
+    {
+      label: 'Home route must mount CountdownBanner with the selected language',
+      pattern: /<CountdownBanner language=\{language\} \/>/,
+    },
+  ];
+
+  rules.forEach(({ label, pattern }) => {
+    if (!pattern.test(homeRouteSource)) {
+      valid = false;
+      fail(label);
+      return;
+    }
+    countdownBannerHomeMountRulesValidated += 1;
+  });
+
+  countdownBannerHomeMountParityValidated = valid && countdownBannerHomeMountRulesValidated === 2;
+}
+
+function validateStudyPlanRuntime() {
+  const { daysUntil, formatExamDate, generateStudyPlan } = examDateModule;
+  let valid = true;
+
+  if (
+    typeof daysUntil !== 'function' ||
+    typeof formatExamDate !== 'function' ||
+    typeof generateStudyPlan !== 'function'
+  ) {
+    fail('study plan runtime helpers must be exported');
+    return;
+  }
+
+  const validNow = new Date('2026-05-19T00:00:00.000Z');
+  const invalidDate = new Date('not-a-date');
+  const baseStudyPlanInput = {
+    testDate: new Date('2026-06-15T00:00:00.000Z'),
+    now: validNow,
+    intensity: 'regular',
+  };
+  const cases = [
+    {
+      label: 'invalid dates use safe fallbacks',
+      actual: () =>
+        daysUntil(invalidDate, validNow) === 0 &&
+        daysUntil(new Date('2026-06-15T00:00:00.000Z'), invalidDate) === 0 &&
+        formatExamDate(invalidDate, 'en') === 'date unavailable' &&
+        formatExamDate(invalidDate, 'sv') === 'datum saknas',
+    },
+    {
+      label: 'NaN dates and unknown intensity normalize',
+      actual: () => {
+        const plan = generateStudyPlan({
+          testDate: invalidDate,
+          now: invalidDate,
+          totalQuestions: Number.NaN,
+          masteredQuestions: Number.POSITIVE_INFINITY,
+          mocksTaken: '2',
+          intensity: 'turbo',
+        });
+        return (
+          plan.hasTestDate === true &&
+          plan.daysRemaining === 0 &&
+          plan.intensity === 'regular' &&
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(Date.parse(plan.testDateIso)) &&
+          Number.isFinite(Date.parse(plan.generatedAt)) &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80 &&
+          Number.isInteger(plan.weeklyMockTarget) &&
+          plan.weeklyMockTarget >= 1 &&
+          plan.weeklyMockTarget <= 2
+        );
+      },
+    },
+    {
+      label: 'string counts do not coerce into progress',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: '200',
+          masteredQuestions: '10',
+          mocksTaken: '2',
+        });
+        return (
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'fractional counts do not coerce into progress',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 200.5,
+          masteredQuestions: 10.5,
+          mocksTaken: 1.5,
+        });
+        return (
+          plan.mocksRemaining === 6 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'mastered questions and mocks are clamped',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 10,
+          masteredQuestions: 99,
+          mocksTaken: 99,
+        });
+        return (
+          plan.mocksRemaining === 0 &&
+          Number.isFinite(plan.dailyQuestionTarget) &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80
+        );
+      },
+    },
+    {
+      label: 'valid regular plan remains bounded',
+      actual: () => {
+        const plan = generateStudyPlan({
+          ...baseStudyPlanInput,
+          totalQuestions: 200,
+          masteredQuestions: 0,
+          mocksTaken: 0,
+        });
+        return (
+          plan.hasTestDate === true &&
+          plan.daysRemaining === 27 &&
+          plan.mocksRemaining === 6 &&
+          plan.isCrunch === false &&
+          plan.dailyQuestionTarget >= 5 &&
+          plan.dailyQuestionTarget <= 80 &&
+          plan.weeklyMockTarget >= 1 &&
+          plan.weeklyMockTarget <= 2
+        );
+      },
+    },
+  ];
+
+  cases.forEach(({ label, actual }) => {
+    let passed = false;
+    try {
+      passed = actual() === true;
+    } catch (error) {
+      fail(`study plan runtime ${label} threw: ${error.message}`);
+      valid = false;
+      return;
+    }
+
+    if (!passed) {
+      fail(`study plan runtime failed: ${label}`);
+      valid = false;
+      return;
+    }
+    studyPlanRuntimeCasesValidated += 1;
+  });
+
+  studyPlanRuntimeParityValidated = valid && studyPlanRuntimeCasesValidated === 6;
+}
+
+function validateCountdownBannerFocusedParity() {
+  const timelineValidation = validateCitizenshipTimeline();
+  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
+  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  validateCountdownBannerHomeMount();
+  validateStudyPlanRuntime();
 }
 
 function findQuestionAuthorityOverclaim(question) {
@@ -9346,6 +9536,8 @@ let citizenshipTimelineDateParityValidated = false;
 let countdownBannerTimelineCopyParityValidated = false;
 let countdownBannerHomeMountRulesValidated = 0;
 let countdownBannerHomeMountParityValidated = false;
+let studyPlanRuntimeCasesValidated = 0;
+let studyPlanRuntimeParityValidated = false;
 let practiceScoringRulesValidated = 0;
 let practiceScoringRulesParityValidated = false;
 let practiceFlowCasesValidated = 0;
@@ -9500,34 +9692,24 @@ let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
 
-if (process.argv.includes('--focus-countdown-banner')) {
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  countdownBannerHomeMountRulesValidated = timelineValidation.homeMountRulesValidated;
-  countdownBannerHomeMountParityValidated = timelineValidation.homeMountParity;
-  if (failures.length) exitWithValidationFailures();
-  console.log('Content validation OK');
-  console.log(
-    JSON.stringify(
-      {
-        citizenshipRulesEffectiveDateValidated,
-        civicKnowledgeTestFirstSittingDateValidated,
-        civicKnowledgeTestDeadlineDateValidated,
-        citizenshipTimelineSourceUrlsValidated,
-        citizenshipTimelineDateParityValidated,
-        countdownBannerTimelineCopyParityValidated,
-        countdownBannerHomeMountRulesValidated,
-        countdownBannerHomeMountParityValidated,
-      },
-      null,
-      2,
-    ),
-  );
+if (
+  process.argv.includes('--focus-countdown-banner-parity') ||
+  process.argv.includes('--focus-countdown-banner')
+) {
+  validateCountdownBannerFocusedParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestFirstSittingDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
+    countdownBannerHomeMountRulesValidated,
+    countdownBannerHomeMountParityValidated,
+    studyPlanRuntimeCasesValidated,
+    studyPlanRuntimeParityValidated,
+  });
   process.exit(0);
 }
 
@@ -10317,17 +10499,7 @@ if (process.argv.includes('--focus-mock-exam-copy-parity')) {
   process.exit(0);
 }
 
-{
-  const timelineValidation = validateCitizenshipTimeline();
-  citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
-  civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
-  citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
-  citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
-  countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
-  countdownBannerHomeMountRulesValidated = timelineValidation.homeMountRulesValidated;
-  countdownBannerHomeMountParityValidated = timelineValidation.homeMountParity;
-}
+validateCountdownBannerFocusedParity();
 if (typeof generateExam !== 'function') fail('generateExam export is not a function');
 if (typeof buildExamReviewItems !== 'function') {
   fail('buildExamReviewItems export is not a function');
@@ -22183,6 +22355,8 @@ console.log(
       countdownBannerTimelineCopyParityValidated,
       countdownBannerHomeMountRulesValidated,
       countdownBannerHomeMountParityValidated,
+      studyPlanRuntimeCasesValidated,
+      studyPlanRuntimeParityValidated,
       practiceScoringRulesValidated,
       practiceScoringRulesParityValidated,
       practiceFlowCasesValidated,
