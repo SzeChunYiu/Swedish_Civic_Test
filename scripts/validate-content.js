@@ -2961,7 +2961,7 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
   {
     label: 'localized question display fallback',
     pattern:
-      /const QUESTION_DISPLAY_FALLBACKS: Record<QuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS\[language\]/,
+      /const QUESTION_DISPLAY_FALLBACKS: Record<PrimaryQuestionTextLanguage, string> = \{[\s\S]*sv: 'Fråga saknas'[\s\S]*en: 'Question unavailable'[\s\S]*fallback = QUESTION_DISPLAY_FALLBACKS_BY_LANGUAGE\[language\] \?\?\s*QUESTION_DISPLAY_FALLBACKS\[primaryLanguageFor\(language\)\]/,
   },
   {
     label: 'language-aware source citation signature',
@@ -2972,6 +2972,13 @@ const EXPECTED_QUESTION_SOURCE_CITATION_RULES = [
     label: 'localized source citation prefixes and page labels',
     pattern:
       /language === 'en'\s*\?\s*`Source: Sverige i fokus, \$\{chapter\}, \$\{section\}, p\. \$\{pageApprox\}`\s*:\s*`Källa: Sverige i fokus, \$\{chapter\}, \$\{section\}, s\. \$\{pageApprox\}`/,
+  },
+];
+const EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES = [
+  {
+    label: 'source note disclosure reset on question or language change',
+    pattern:
+      /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
   },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
@@ -7854,6 +7861,16 @@ if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-question-card-accessibility')) {
+  validateQuestionCardAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionCardAccessibilityRulesValidated,
+    questionCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-native-quiz-copy')) {
   validateQuizRouteHeaderParity();
   validateQuizRouteCopyParity();
@@ -11292,6 +11309,7 @@ function validateQuestionCardAccessibilityParity() {
   let valid = true;
   let questionCardSource = '';
   let questionTextSource = '';
+  let provenanceBadgeSource = '';
 
   function reject(message) {
     valid = false;
@@ -11303,11 +11321,13 @@ function validateQuestionCardAccessibilityParity() {
       path.join(repoRoot, 'components/quiz/QuestionCard.tsx'),
       'utf8',
     );
+    provenanceBadgeSource = fs.readFileSync(
+      path.join(repoRoot, 'components/quiz/ProvenanceBadge.tsx'),
+      'utf8',
+    );
     questionTextSource = fs.readFileSync(path.join(repoRoot, 'lib/quiz/questionText.ts'), 'utf8');
   } catch (error) {
-    reject(
-      `components/quiz/QuestionCard.tsx could not be read for accessibility parity: ${error.message}`,
-    );
+    reject(`QuestionCard accessibility parity source files could not be read: ${error.message}`);
     return;
   }
 
@@ -11327,6 +11347,14 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated += 1;
   });
 
+  EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES.forEach((expectedRule) => {
+    if (!expectedRule.pattern.test(provenanceBadgeSource)) {
+      reject(`QuestionCard missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    questionCardAccessibilityRulesValidated += 1;
+  });
+
   if (/Källa\/Source/.test(questionTextSource)) {
     reject('QuestionCard source citation helper still exposes mixed Källa/Source prefix');
   } else {
@@ -11338,6 +11366,7 @@ function validateQuestionCardAccessibilityParity() {
     questionCardAccessibilityRulesValidated ===
       EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES.length +
         EXPECTED_QUESTION_SOURCE_CITATION_RULES.length +
+        EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES.length +
         1
   ) {
     questionCardAccessibilityParityValidated = true;
