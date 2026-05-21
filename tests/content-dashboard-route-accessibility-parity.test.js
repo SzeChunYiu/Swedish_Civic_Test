@@ -351,6 +351,16 @@ function assertDashboardAccessibilitySeparation(sources) {
   );
   assert.match(
     sources.history,
+    /const completedDate = copy\.formatCompletedDate\(entry\.completedAt\);/,
+    'MockExamHistoryCard trend and recent labels must format completed dates before display',
+  );
+  assert.doesNotMatch(
+    sources.history,
+    /completedAt\.slice\(0,\s*10\)|function completedDate/,
+    'MockExamHistoryCard accessibility labels must not expose raw completedAt date slices',
+  );
+  assert.match(
+    sources.history,
     /<Text style=\{styles\.trendSummary\}>\s*\{trendSummary\}\s*<\/Text>/,
     'MockExamHistoryCard trend must expose a hidden trend summary',
   );

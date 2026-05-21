@@ -33,6 +33,8 @@ type DashboardLocaleFixture = {
   mockHistoryExamLink: string;
   mockHistoryLatest: string;
   mockHistoryRecent: string;
+  mockHistoryRecentRowLabel: string;
+  mockHistoryRawDatePattern: RegExp;
   mockHistoryTimeUsed: string;
   mockHistoryTitle: string;
   mockHistoryTrendLabel: string;
@@ -81,10 +83,12 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryExamLink: 'Öppna övningsprovet',
     mockHistoryLatest: 'Senast',
     mockHistoryRecent: 'Senaste övningsprov',
+    mockHistoryRecentRowLabel: '84% den 20 maj 2026, 24m',
+    mockHistoryRawDatePattern: /2026-05-(18|20)/,
     mockHistoryTimeUsed: 'Tid: 24m',
     mockHistoryTitle: 'Övningsprov över tid',
     mockHistoryTrendLabel: 'Resultattrend',
-    mockHistoryTrendPoint: 'Trendpunkt 2 av 2: 84% den 2026-05-20.',
+    mockHistoryTrendPoint: 'Trendpunkt 2 av 2: 84% den 20 maj 2026.',
     mockHistoryTrendSummary:
       'Resultattrend för 2 senaste bedömda prov: senast 84%, 12 procentenheter högre än äldsta som visas.',
     profilePath: '/profile',
@@ -120,10 +124,12 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     mockHistoryExamLink: 'Open the mock exam',
     mockHistoryLatest: 'Latest',
     mockHistoryRecent: 'Recent mock exams',
+    mockHistoryRecentRowLabel: '84% on May 20, 2026, 24m',
+    mockHistoryRawDatePattern: /2026-05-(18|20)/,
     mockHistoryTimeUsed: 'Time: 24m',
     mockHistoryTitle: 'Mock exam history',
     mockHistoryTrendLabel: 'Score trend',
-    mockHistoryTrendPoint: 'Trend point 2 of 2: 84% on 2026-05-20.',
+    mockHistoryTrendPoint: 'Trend point 2 of 2: 84% on May 20, 2026.',
     mockHistoryTrendSummary:
       'Score trend across 2 recent scored exams: latest 84%, 12 points higher than the oldest shown.',
     profilePath: '/profile',
@@ -440,6 +446,9 @@ async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixt
   await expect(page.getByText('84%', { exact: true }).last()).toBeVisible();
   await expect(page.getByText('78%', { exact: true }).last()).toBeVisible();
   await expect(page.getByText('72%', { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryRecentRowLabel, { exact: true })).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryRawDatePattern)).toHaveCount(0);
+  await expect(page.getByLabel(fixture.mockHistoryRawDatePattern)).toHaveCount(0);
   await expect(page.getByText(fixture.mockHistoryTimeUsed, { exact: true }).last()).toBeVisible();
   await expect(page.getByRole('link', { name: fixture.mockHistoryExamLink }).last()).toBeVisible();
   await expectNoHorizontalOverflow(page);

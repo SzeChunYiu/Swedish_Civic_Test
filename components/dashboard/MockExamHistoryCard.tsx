@@ -17,6 +17,7 @@ export type MockExamHistoryCardCopy = {
   emptyState: string;
   examLink: string;
   examLinkAccessibilityLabel: string;
+  formatCompletedDate: (completedAt: string) => string;
   latestLabel: string;
   lowestLabel: string;
   recentLabel: string;
@@ -64,10 +65,6 @@ function formatDuration(durationMs: number | null): string | null {
   if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
   if (hours > 0) return `${hours}h`;
   return `${minutes}m`;
-}
-
-function completedDate(entry: MockHistoryEntry): string {
-  return entry.completedAt.slice(0, 10);
 }
 
 export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistoryCardProps) {
@@ -149,6 +146,7 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
                 <View style={styles.scoreTrendChart}>
                   {trendEntries.map((entry, index) => {
                     const scorePercent = formatPercent(entry.score);
+                    const completedDate = copy.formatCompletedDate(entry.completedAt);
 
                     return (
                       <View
@@ -158,7 +156,7 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
                           index + 1,
                           trendEntries.length,
                           scorePercent,
-                          completedDate(entry),
+                          completedDate,
                         )}
                         style={styles.scoreTrendPoint}
                       >
@@ -183,12 +181,13 @@ export function MockExamHistoryCard({ bestScore, copy, entries }: MockExamHistor
                 {recentEntries.map((entry) => {
                   const scorePercent = formatPercent(entry.score);
                   const duration = formatDuration(entry.durationMs);
+                  const completedDate = copy.formatCompletedDate(entry.completedAt);
                   return (
                     <View key={entry.sessionId} style={styles.recentRow}>
                       <View style={styles.recentCopy}>
                         <Text style={styles.recentScore}>{scorePercent}%</Text>
                         <Text style={styles.recentMeta}>
-                          {copy.scoreLabel(scorePercent, completedDate(entry), duration)}
+                          {copy.scoreLabel(scorePercent, completedDate, duration)}
                         </Text>
                       </View>
                       {duration ? (
