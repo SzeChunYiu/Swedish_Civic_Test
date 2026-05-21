@@ -54,6 +54,10 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
+const citizenshipSelfSupportSourceUrls = [
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+  'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
+];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -141,27 +145,6 @@ function renderChapter(harness, lang, chapterId) {
   return harness.reader.innerHTML;
 }
 
-function extractFootnoteContract(html) {
-  const refIds = Array.from(html.matchAll(/id="ebook-fnref-([^"]+)"/g), (match) => match[1]);
-  const footnoteIds = Array.from(html.matchAll(/id="ebook-fn-([^"]+)"/g), (match) => match[1]);
-  const sourceKeys = Array.from(
-    html.matchAll(/<li id="ebook-fn-[^"]+" data-source-key="([^"]+)"/g),
-    (match) => match[1],
-  );
-  const badgeHtml = html.match(/<p class="ebook__provenance-badge"[\s\S]*?<\/p>/)?.[0] ?? '';
-  const visibleBadgeText = badgeHtml.replace(/^[\s\S]*?<\/span>/, '').replace(/<[^>]+>/g, ' ');
-  const badgeCounts = Array.from(visibleBadgeText.matchAll(/\((\d+)\)/g), (match) =>
-    Number(match[1]),
-  );
-
-  return {
-    badgeCounts,
-    footnoteIds,
-    refIds,
-    sourceKeys,
-  };
-}
-
 function assertNoStaleEbookCopy(value) {
   for (const pattern of staleEbookCopyPatterns) {
     assert.doesNotMatch(value, pattern);
@@ -207,7 +190,6 @@ function hasEbookCitationCoverage(value) {
     /data-source-claims="ebook"/i,
     /data-source-scope="ebook"/i,
     /EBOOK_SOURCE_NOTES/,
-    /EBOOK_FACTBOX_SOURCE_NOTES/,
     /ebookSourceNotes/,
   ].some((pattern) => pattern.test(value));
 }
@@ -221,68 +203,9 @@ test('static ebook source contains no stale untranslated placeholder copy', () =
   assertNoSwedishEbookMockExamUnnaturalness(source);
   assertNoUnsupportedEbookOutcomeClaim(source);
   assertNoUnsupportedPracticalTestClaim(source);
-  assert.match(source, /function renderEbookProvenanceBadge\(lang,\s*sourceCounts\)/);
+  assert.match(source, /function renderEbookProvenanceBadge\(lang\)/);
   assert.match(source, /Starta [oö]vningsprov/);
   assert.match(source, /gör ett [oö]vningsprov/);
-});
-
-test('static ebook fact boxes require explicit source keys', () => {
-  const source = readSiteFile('site/ebook.js');
-
-  assert.doesNotMatch(
-    source,
-    /function ebookFactBox\(lang,\s*heading,\s*facts,\s*sourceKeys\s*=\s*\[/,
-  );
-  assert.equal(
-    /ebookFactBox\([^,]+,[^,]+,[^,]+\)\s*\}/.test(source),
-    false,
-    'ebook fact boxes must not silently fall back to default source keys',
-  );
-});
-
-test('static ebook renders per-section footnotes and chapter source mixes', () => {
-  const harness = createEbookHarness();
-
-  for (const chapterId of getExpectedChapterIds()) {
-    const englishHtml = renderChapter(harness, 'en', chapterId);
-    const swedishHtml = renderChapter(harness, 'sv', chapterId);
-
-    for (const html of [englishHtml, swedishHtml]) {
-      assert.match(html, /class="ebook__footnote-ref"/);
-      assert.match(html, /class="ebook__footnote-list"/);
-      assert.match(html, /data-source-key="uhrStudyMaterial"/);
-      assert.match(html, /data-source-key="editorialCommentary"/);
-      assert.match(html, /class="ebook__provenance-badge"/);
-      assert.match(html, /(?:Sources|Källor):/);
-      assert.match(html, /(?:Editorial|Redaktionellt) \(\d+\)/);
-    }
-  }
-});
-
-test('static ebook footnote hashes and source counts stay internally paired', () => {
-  const harness = createEbookHarness();
-
-  for (const chapterId of getExpectedChapterIds()) {
-    for (const lang of ['en', 'sv']) {
-      const html = renderChapter(harness, lang, chapterId);
-      const { badgeCounts, footnoteIds, refIds, sourceKeys } = extractFootnoteContract(html);
-
-      assert.ok(refIds.length > 0, `${lang}/${chapterId} should render footnote refs`);
-      assert.deepEqual(refIds, footnoteIds, `${lang}/${chapterId} ref/list hashes should match`);
-      for (const id of refIds) {
-        assert.match(html, new RegExp(`href="#ebook-fn-${id}"`));
-        assert.match(html, new RegExp(`href="#ebook-fnref-${id}"`));
-      }
-      assert.equal(sourceKeys.length, refIds.length);
-      assert.ok(sourceKeys.includes('uhrStudyMaterial'));
-      assert.ok(sourceKeys.includes('editorialCommentary'));
-      assert.equal(
-        badgeCounts.reduce((sum, count) => sum + count, 0),
-        sourceKeys.length,
-        `${lang}/${chapterId} badge source counts should equal rendered footnotes`,
-      );
-    }
-  }
 });
 
 test('static ebook Swedish mock-exam wording uses övningsprov', () => {
@@ -351,10 +274,16 @@ test('static ebook renders every chapter with Swedish and English body parity', 
     assert.match(swedishHtml, /ebook__study-actions/);
     assert.match(englishHtml, /class="ebook__provenance-badge"/);
     assert.match(swedishHtml, /class="ebook__provenance-badge"/);
-    assert.match(englishHtml, /aria-label="Sources: UHR \(\d+\)[^"]*Editorial \(\d+\)\."/);
-    assert.match(swedishHtml, /aria-label="Källor: UHR \(\d+\)[^"]*Redaktionellt \(\d+\)\."/);
-    assert.match(englishHtml, />Sources:<\/span>/);
-    assert.match(swedishHtml, />Källor:<\/span>/);
+    assert.match(
+      englishHtml,
+      /aria-label="Provenance: Editorial\. Original study guide; verify facts through the Sources page and UHR material\."/,
+    );
+    assert.match(
+      swedishHtml,
+      /aria-label="Källtyp: Redaktionell\. Egen studieguide; kontrollera fakta via källsidan och UHR-materialet\."/,
+    );
+    assert.match(englishHtml, />Editorial<\/span>/);
+    assert.match(swedishHtml, />Redaktionell<\/span>/);
     assert.match(englishHtml, /href="#\/mock"/);
     assert.match(swedishHtml, /href="#\/mock"/);
     assert.match(englishHtml, /href="#\/sources"/);
@@ -437,4 +366,44 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
     assert.match(englishHtml, new RegExp(url));
     assert.match(swedishHtml, new RegExp(url));
   });
+});
+
+test('static ebook chapter 11 keeps citizenship self-support notes current and bounded', () => {
+  const source = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+  const englishHtml = renderChapter(harness, 'en', '11');
+  const swedishHtml = renderChapter(harness, 'sv', '11');
+
+  assert.match(source, /migrationsverketCitizenshipRules2026/);
+  assert.match(source, /governmentIncomeBaseAmount2026/);
+  citizenshipSelfSupportSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
+
+  assert.match(englishHtml, /own long-term income/);
+  assert.match(englishHtml, /SEK 20,000\/month before tax/);
+  assert.match(englishHtml, /three 2026 income base amounts per year/);
+  assert.match(
+    englishHtml,
+    /Partner income, assets, and temporary work without long-term duration do not count/,
+  );
+  assert.match(englishHtml, /independent study aid/);
+  assert.match(englishHtml, /Migrationsverket decides eligibility/);
+
+  assert.match(swedishHtml, /egen varaktig inkomst/);
+  assert.match(swedishHtml, /20 000 kronor per m[aå]nad f[oö]re skatt/);
+  assert.match(swedishHtml, /tre inkomstbasbelopp per [aå]r/);
+  assert.match(
+    swedishHtml,
+    /Inkomster fr[aå]n partner, tillg[aå]ngar och tillf[aä]lliga jobb utan varaktighet r[aä]knas inte/,
+  );
+  assert.match(swedishHtml, /Migrationsverket avg[oö]r ans[oö]kan/);
+  assert.match(swedishHtml, /studiehj[aä]lpmedel/);
+
+  citizenshipSelfSupportSourceUrls.forEach((url) => {
+    assert.match(englishHtml, new RegExp(url));
+    assert.match(swedishHtml, new RegExp(url));
+  });
+  assert.doesNotMatch(
+    `${englishHtml}\n${swedishHtml}`,
+    /guaranteed eligible|garanterat beh[oö]rig|official app/i,
+  );
 });

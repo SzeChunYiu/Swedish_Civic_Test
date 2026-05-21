@@ -272,6 +272,8 @@ const ebookFactboxSourceUrls = [
   'https://www.scb.se/mi0803-en',
   'https://www.riksbank.se/en-gb/about-the-riksbank/history/historical-timeline/1600-1699/sveriges-riksbank-is-founded/',
   'https://www.government.se/press-releases/2024/03/sweden-is-a-nato-member/',
+  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
+  'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
 ];
 const unsupportedEbookFactboxPatterns = [
   /Facts you'll see on the test/i,
@@ -679,6 +681,20 @@ test('static ebook factbox and current prose claims use retrieved source metadat
   assert.match(ebookSource, /Fakta att repetera/);
   assert.match(ebookSource, /Sources accessed/);
   assert.match(ebookSource, /Källor hämtade/);
+  assert.match(ebookSource, /own long-term income/);
+  assert.match(ebookSource, /SEK 20,000\/month before tax/);
+  assert.match(ebookSource, /three 2026 income base amounts per year/);
+  assert.match(
+    ebookSource,
+    /Partner income, assets, and temporary work without long-term duration do not count/,
+  );
+  assert.match(ebookSource, /egen varaktig inkomst/);
+  assert.match(ebookSource, /20 000 kronor per månad före skatt/);
+  assert.match(
+    ebookSource,
+    /Inkomster från partner, tillgångar och tillfälliga jobb utan varaktighet räknas inte/,
+  );
+  assert.match(ebookSource, /Migrationsverket avgör ansökan/);
 
   ebookFactboxSourceUrls.forEach((url) => assert.match(ebookSource, new RegExp(url)));
   unsupportedEbookFactboxPatterns.forEach((pattern) => assert.doesNotMatch(ebookSource, pattern));

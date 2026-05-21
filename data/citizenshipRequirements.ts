@@ -215,8 +215,8 @@ export const citizenshipRequirementAreas = [
       en: 'From 6 June 2026, adult applicants normally need their own long-term income of at least SEK 250,200 per year using the 2026 income base amount.',
     },
     detail: {
-      sv: 'Beloppet motsvarar tre inkomstbasbelopp. Migrationsverket anger också krav på varaktig inkomst från arbete eller näringsverksamhet, stabilitet över tid och högst sex månaders försörjningsstöd under de senaste tre åren.',
-      en: 'The amount equals three income base amounts. Migrationsverket also describes requirements for long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years.',
+      sv: 'Beloppet motsvarar tre inkomstbasbelopp. Migrationsverket anger också krav på varaktig inkomst från arbete eller näringsverksamhet, stabilitet över tid och högst sex månaders försörjningsstöd under de senaste tre åren. Inkomster från partner, tillgångar som sparande eller fastigheter och tillfälliga anställningar utan varaktighet kan inte räknas.',
+      en: 'The amount equals three income base amounts. Migrationsverket also describes requirements for long-term income from work or self-employment, stability over time, and no more than six months of income support during the past three years. Partner income, assets such as savings or property, and temporary jobs without long-term duration cannot be counted.',
     },
     checklistPrompt: {
       sv: 'Jag har kontrollerat egen inkomst, varaktighet och försörjningsstöd mot de nya reglerna.',
