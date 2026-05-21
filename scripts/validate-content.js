@@ -922,7 +922,7 @@ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
   sv: [
     'Studieöversikt',
     'Studera lugnt, ett samhällsbegrepp i taget',
-    'En tydlig väg för svenska samhällskunskaper: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
+    'En tydlig väg för svensk samhällskunskap: dagliga svar, realistiska prov, genomgång av frågor du missat och källstödda förklaringar.',
     'Dagens mål',
     'Förberedelsesignal',
     'lokalt',
@@ -1050,6 +1050,17 @@ const FORBIDDEN_HOME_ROUTE_READINESS_COPY = [
   'readiness signals',
   "readinessMetricLabel: 'redo'",
   "readinessMetricLabel: 'ready'",
+];
+const FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY = [
+  /svenska samhällskunskaper/i,
+  /samhällskunskaper/i,
+];
+const FORBIDDEN_HOME_ROUTE_UNREACHABLE_FEATURE_COPY = [/flashcards/i, /flashkort/i];
+const FORBIDDEN_HOME_ROUTE_SWEDISH_MOCK_EXAM_COPY = [/\bmockprov(?:et)?\b/i];
+const FORBIDDEN_HOME_ROUTE_SYNTHETIC_FEEDBACK_COPY = [/simulated\s+learners/i];
+const EXPECTED_HOME_ROUTE_GUIDED_PATH_END_COPY = [
+  "chapterRange: 'Kapitel 10-13'",
+  "chapterRange: 'Chapters 10-13'",
 ];
 const EXPECTED_HOME_ROUTE_COPY_SNIPPETS = [
   ['useSettingsStore, type AppLanguage', 'home route must import AppLanguage from settings'],
@@ -10726,6 +10737,12 @@ function validateHomeRouteCopyParity() {
     if (!homeRoute.includes(snippet)) reject(message);
   });
 
+  EXPECTED_HOME_ROUTE_GUIDED_PATH_END_COPY.forEach((snippet) => {
+    if (!homeRoute.includes(snippet)) {
+      reject('home route guided path must finish with chapters 10-13');
+    }
+  });
+
   FORBIDDEN_HOME_ROUTE_LEARNER_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route learner copy must not expose internal benchmark phrase ${forbidden}`);
@@ -10735,6 +10752,30 @@ function validateHomeRouteCopyParity() {
   FORBIDDEN_HOME_ROUTE_READINESS_COPY.forEach((forbidden) => {
     if (homeRoute.includes(forbidden)) {
       reject(`home route preparation signal copy must not expose official-readiness wording`);
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_SUBJECT_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route Swedish subject copy must use natural singular samhällskunskap wording');
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_UNREACHABLE_FEATURE_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route must not advertise flashcards until the feature is reachable');
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SWEDISH_MOCK_EXAM_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route Swedish native copy must use övningsprov');
+    }
+  });
+
+  FORBIDDEN_HOME_ROUTE_SYNTHETIC_FEEDBACK_COPY.forEach((forbidden) => {
+    if (forbidden.test(homeRoute)) {
+      reject('home route contains synthetic learner feedback copy');
     }
   });
 
