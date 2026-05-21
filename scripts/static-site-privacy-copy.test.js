@@ -9,6 +9,7 @@ const {
 } = require('./static-site-release-copy-guard');
 const {
   findCurrentUseAdSenseSlotStateCopyIssues,
+  staticAdSenseCanLoadInSource,
   staticAdSenseSlotsAreConfiguredInSource,
 } = require('./static-adsense-slot-state');
 
@@ -31,12 +32,12 @@ const internalMonetizationCopyPatterns = [
   /\bentitlement flag\b/i,
 ];
 const adSensePreparedDisabledCopyPatterns = [
-  /AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured/i,
-  /prepared for <b>Google AdSense<\/b>, but the static build does not load AdSense until reviewed web slot IDs are configured/i,
-  /When reviewed web ad slots are configured, Google AdSense can set cookies/i,
-  /annonsytor förberedda för Google AdSense, men de är avstängda tills granskade annonsplats-ID:n är konfigurerade/i,
-  /förberedd för <b>Google AdSense<\/b>, men den statiska versionen laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade/i,
-  /När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies/i,
+  /website uses Google AdSense auto ads after your cookie choice/i,
+  /Manual in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot IDs are configured/i,
+  /Google AdSense can set cookies after you choose/i,
+  /webbplatsen använder automatiska Google AdSense-annonser efter ditt cookieval/i,
+  /Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade/i,
+  /Google AdSense kan sätta cookies efter ditt val/i,
 ];
 
 function read(filePath) {
@@ -103,10 +104,11 @@ test('static site privacy copy names current ads, consent, and Remove Ads behavi
   ].forEach((pattern) => assert.match(surface, pattern));
 });
 
-test('static site privacy and consent copy describe unconfigured AdSense slots', () => {
+test('static site privacy and consent copy describe auto ads and manual slot state', () => {
   const appSource = read('site/app.js');
   const surface = [appSource, read('site/index.html')].join('\n');
 
+  assert.equal(staticAdSenseCanLoadInSource(appSource), true);
   assert.equal(staticAdSenseSlotsAreConfiguredInSource(appSource), false);
   adSensePreparedDisabledCopyPatterns.forEach((pattern) => assert.match(surface, pattern));
   assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource), []);
@@ -124,16 +126,21 @@ test('static site current-use AdSense copy is gated by reviewed slot IDs', () =>
 
   const unconfiguredIssues = findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, appSource);
   assert.equal(staticAdSenseSlotsAreConfiguredInSource(appSource), false);
-  assert.equal(unconfiguredIssues.length, 4);
+  assert.equal(staticAdSenseCanLoadInSource(appSource), true);
+  assert.equal(unconfiguredIssues.length, 0);
 
-  const oneSlotOnlyApp = configureStaticAdSenseSlots(appSource).replace(
+  const autoAdsDisabledApp = appSource.replace(/\bautoAds:\s*true/, 'autoAds: false');
+  assert.equal(staticAdSenseCanLoadInSource(autoAdsDisabledApp), false);
+  assert.ok(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, autoAdsDisabledApp).length >= 4);
+
+  const oneSlotOnlyApp = configureStaticAdSenseSlots(autoAdsDisabledApp).replace(
     /anchor:\s*'1234567891'/,
     "anchor: ''",
   );
   assert.equal(staticAdSenseSlotsAreConfiguredInSource(oneSlotOnlyApp), false);
-  assert.equal(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, oneSlotOnlyApp).length, 4);
+  assert.ok(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, oneSlotOnlyApp).length >= 4);
 
-  const configuredApp = configureStaticAdSenseSlots(appSource);
+  const configuredApp = configureStaticAdSenseSlots(autoAdsDisabledApp);
   assert.equal(staticAdSenseSlotsAreConfiguredInSource(configuredApp), true);
   assert.deepEqual(findCurrentUseAdSenseSlotStateCopyIssues(staleSurface, configuredApp), []);
 });
@@ -143,18 +150,18 @@ test('static privacy browser spec covers unconfigured AdSense slot-state copy', 
 
   assert.match(
     browserSpec,
-    /privacy and consent copy describe unconfigured AdSense slots in both languages/,
-    'static privacy browser spec should cover rendered privacy and consent slot-state copy',
+    /privacy and consent copy describe AdSense auto ads in both languages/,
+    'static privacy browser spec should cover rendered privacy and consent AdSense copy',
   );
   assert.match(
     browserSpec,
-    /function expectAdSenseSlotsRemainUnconfigured\(page: Page\)[\s\S]*data-smt-ad-placement/,
-    'static privacy browser spec should inspect rendered ad slot attributes',
+    /function expectAdSenseWaitsForConsent\(page: Page\)[\s\S]*data-smt-ad-placement/,
+    'static privacy browser spec should inspect rendered ad slot attributes before consent',
   );
   assert.match(
     browserSpec,
-    /await expectPreparedAdSenseCopy\(page, 'en'\);[\s\S]*await setStaticSiteLanguage\(page, 'sv'\);[\s\S]*await expectPreparedAdSenseCopy\(page, 'sv'\);/,
-    'static privacy browser spec should prove prepared AdSense copy in English and Swedish',
+    /await expectAutoAdSenseCopy\(page, 'en'\);[\s\S]*await setStaticSiteLanguage\(page, 'sv'\);[\s\S]*await expectAutoAdSenseCopy\(page, 'sv'\);/,
+    'static privacy browser spec should prove AdSense auto ads copy in English and Swedish',
   );
 });
 

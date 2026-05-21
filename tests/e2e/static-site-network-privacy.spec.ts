@@ -9,26 +9,16 @@ const internalMonetizationCopyPatterns = [
   /\bpurchase_fields_rejected\b/i,
   /\bentitlement flag\b/i,
 ];
-const adSenseCurrentUseCopyPatterns = [
-  /This website\s+uses\s+Google AdSense/i,
-  /We use\s+Google AdSense to show/i,
-  /Den h[aä]r webbplatsen anv[aä]nder\s+Google AdSense/i,
-  /Vi anv[aä]nder\s+Google AdSense f[oö]r att visa/i,
-];
-
-const preparedAdSenseCopy = {
+const autoAdSenseCopy = {
   en: {
-    consent: /When reviewed web ad slots are configured, Google AdSense can set cookies/i,
-    summary:
-      /AdSense-ready ad slots, but they stay disabled until reviewed slot IDs are configured/i,
-    web: /prepared for Google AdSense[\s\S]*does not load AdSense until reviewed web slot IDs are configured/i,
+    consent: /Google AdSense can set cookies after you choose/i,
+    summary: /website uses Google AdSense auto ads after your cookie choice/i,
+    web: /uses Google AdSense auto ads after your cookie choice[\s\S]*Manual in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot IDs are configured/i,
   },
   sv: {
-    consent:
-      /När granskade webbaserade annonsytor är konfigurerade kan Google AdSense sätta cookies/i,
-    summary:
-      /annonsytor förberedda för Google AdSense, men de är avstängda tills granskade annonsplats-ID:n är konfigurerade/i,
-    web: /förberedd för Google AdSense[\s\S]*laddar inte AdSense förrän granskade annonsplats-ID:n är konfigurerade/i,
+    consent: /Google AdSense kan sätta cookies efter ditt val/i,
+    summary: /webbplatsen använder automatiska Google AdSense-annonser efter ditt cookieval/i,
+    web: /använder automatiska Google AdSense-annonser efter ditt cookieval[\s\S]*Manuella annonsytor i övning och e-bok visas som reserverade ytor tills granskade annonsplats-ID:n är konfigurerade/i,
   },
 } as const;
 
@@ -63,7 +53,7 @@ async function expectNoVisibleInternalMonetizationCopy(page: Page) {
   }
 }
 
-async function expectAdSenseSlotsRemainUnconfigured(page: Page) {
+async function expectAdSenseWaitsForConsent(page: Page) {
   const slotState = await page.evaluate(() =>
     Array.from(document.querySelectorAll('ins.adsbygoogle[data-smt-ad-placement]')).map((node) => ({
       client: node.getAttribute('data-ad-client'),
@@ -78,8 +68,8 @@ async function expectAdSenseSlotsRemainUnconfigured(page: Page) {
   ]);
 }
 
-async function expectPreparedAdSenseCopy(page: Page, language: keyof typeof preparedAdSenseCopy) {
-  const copy = preparedAdSenseCopy[language];
+async function expectAutoAdSenseCopy(page: Page, language: keyof typeof autoAdSenseCopy) {
+  const copy = autoAdSenseCopy[language];
   const privacyPage = page.locator('[data-page="/privacy"].is-active');
   const consent = page.locator('#consent');
 
@@ -87,12 +77,7 @@ async function expectPreparedAdSenseCopy(page: Page, language: keyof typeof prep
   await expect(privacyPage.locator('[data-i18n="privacy.s5.web.p"]')).toContainText(copy.web);
   await expect(consent.locator('[data-i18n="consent.body"]')).toContainText(copy.consent);
 
-  const renderedCopy = `${await privacyPage.innerText()}\n${await consent.innerText()}`;
-  for (const pattern of adSenseCurrentUseCopyPatterns) {
-    expect(renderedCopy).not.toMatch(pattern);
-  }
-
-  await expectAdSenseSlotsRemainUnconfigured(page);
+  await expectAdSenseWaitsForConsent(page);
 }
 
 let staticSite: StaticSite;
@@ -125,9 +110,7 @@ test('privacy route renders localized plain-language callout labels', async ({ p
   await expectNoHorizontalOverflow(page);
 });
 
-test('privacy and consent copy describe unconfigured AdSense slots in both languages', async ({
-  page,
-}) => {
+test('privacy and consent copy describe AdSense auto ads in both languages', async ({ page }) => {
   await seedStaticPrivacyRun(page);
   await trapExternalRequests(page, new URL(staticSite.baseUrl).origin);
 
@@ -135,12 +118,12 @@ test('privacy and consent copy describe unconfigured AdSense slots in both langu
   await expect(page.locator('[data-page="/privacy"].is-active')).toBeVisible();
   await expect(page.locator('#consent')).toBeVisible();
 
-  await expectPreparedAdSenseCopy(page, 'en');
+  await expectAutoAdSenseCopy(page, 'en');
   await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
 
   await setStaticSiteLanguage(page, 'sv');
-  await expectPreparedAdSenseCopy(page, 'sv');
+  await expectAutoAdSenseCopy(page, 'sv');
   await expectNoVisibleInternalMonetizationCopy(page);
   await expectNoHorizontalOverflow(page);
 });

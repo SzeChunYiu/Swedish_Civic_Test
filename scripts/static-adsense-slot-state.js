@@ -20,6 +20,7 @@ function readStaticAdSenseSlotConfig(appSource) {
   const slotsBlock = source.match(/\bslots\s*:\s*{([\s\S]*?)}/);
   return {
     anchor: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'anchor') : '',
+    autoAds: /\bautoAds\s*:\s*true\b/.test(source),
     inline: slotsBlock ? readStaticAdSenseStringProperty(slotsBlock[1], 'inline') : '',
     publisherId: readStaticAdSenseStringProperty(source, 'publisherId'),
   };
@@ -41,12 +42,25 @@ function staticAdSenseSlotsAreConfiguredInSource(appSource) {
   return staticAdSenseSlotsAreConfigured(readStaticAdSenseSlotConfig(appSource));
 }
 
+function staticAdSenseCanLoad(config) {
+  return /^ca-pub-[0-9]{16}$/.test(config.publisherId || '') && !!config.autoAds;
+}
+
+function staticAdSenseCanLoadInSource(appSource) {
+  return staticAdSenseCanLoad(readStaticAdSenseSlotConfig(appSource));
+}
+
 function findStaticAdSenseCurrentUseCopyMatches(source) {
   return STATIC_ADSENSE_CURRENT_USE_COPY_PATTERNS.filter((pattern) => pattern.test(source));
 }
 
 function findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource) {
-  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
+  if (
+    staticAdSenseCanLoadInSource(appSource) ||
+    staticAdSenseSlotsAreConfiguredInSource(appSource)
+  ) {
+    return [];
+  }
 
   return findStaticAdSenseCurrentUseCopyMatches(String(surface || '')).map(
     (pattern) =>
@@ -55,7 +69,12 @@ function findCurrentUseAdSenseSlotStateCopyIssues(surface, appSource) {
 }
 
 function findStaticAdSenseSlotStateCopyIssues(indexSource, appSource) {
-  if (staticAdSenseSlotsAreConfiguredInSource(appSource)) return [];
+  if (
+    staticAdSenseCanLoadInSource(appSource) ||
+    staticAdSenseSlotsAreConfiguredInSource(appSource)
+  ) {
+    return [];
+  }
 
   return [
     { label: 'index.html', source: String(indexSource || '') },
@@ -73,6 +92,8 @@ module.exports = {
   findStaticAdSenseCurrentUseCopyMatches,
   findStaticAdSenseSlotStateCopyIssues,
   readStaticAdSenseSlotConfig,
+  staticAdSenseCanLoad,
+  staticAdSenseCanLoadInSource,
   staticAdSenseSlotsAreConfigured,
   staticAdSenseSlotsAreConfiguredInSource,
 };
