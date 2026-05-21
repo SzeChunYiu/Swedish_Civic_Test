@@ -22,6 +22,8 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
+const religiousFreedom1860StiltedEnglishPattern =
+  /\bchoose any religion or no religion at all completely freely\b/i;
 const religiousFreedomOptionParallelismPattern =
   /\b(?:Rätten att utöva sin religion och skydd mot diskriminering på grund av tro|The right to practice (?:one’s|one's) religion and protection from discrimination because of belief)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
@@ -1542,6 +1544,87 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
+  );
+});
+
+test('religious-freedom 1860 source and exports use natural English', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = Array.from(actualStaticQuestions());
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q115GeneratedIds = [
+    generatedQuestionId(sourceQuestions, 'q115', 'singleChoice'),
+    generatedQuestionId(sourceQuestions, 'q115', 'trueStatement'),
+    generatedQuestionId(sourceQuestions, 'q115', 'falseStatement'),
+    generatedQuestionId(sourceQuestions, 'q115', 'judgement'),
+  ];
+  const q115Ids = ['q115', ...q115GeneratedIds];
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const generatedOffenders = generatedSiteBank
+    .filter((question) => q115Ids.includes(question.id))
+    .filter((question) => religiousFreedom1860StiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const actualOffenders = actualSiteBank
+    .filter((question) => q115Ids.includes(question.id))
+    .filter((question) => religiousFreedom1860StiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const csvOffenders = fs
+    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
+    .split(/\r?\n/)
+    .filter((line) => q115Ids.includes(line.match(/^"([^"]+)"/)?.[1]))
+    .filter((line) => religiousFreedom1860StiltedEnglishPattern.test(line))
+    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
+  const q115 = generatedSiteBank.find((question) => question.id === 'q115');
+  const q115False = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q115', 'falseStatement'),
+  );
+
+  assert.deepEqual(generatedOffenders, []);
+  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(csvOffenders, []);
+  assert.ok(q115, 'q115 should be published in the site bank');
+  assert.equal(q115.opts?.[1]?.en, 'To freely choose any religion or none');
+  assert.equal(
+    q115.why.en,
+    'In 1860, Swedes were allowed to leave the Church of Sweden, but only if they joined another Christian community. Full freedom to choose any religion or none came with the Religious Freedom Act of 1951, and the separation between the state and the Church of Sweden took place in 2000.',
+  );
+  assert.ok(q115False, 'q115 false generated variant should be published');
+  assert.equal(q115False.q.en, 'In 1860, Swedes were free to choose any religion or none.');
+});
+
+test('religious-freedom 1860 English naturalness guard rejects the old phrasing', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
+    return String(contents).replace(
+      'To freely choose any religion or none',
+      'To choose any religion or no religion at all completely freely',
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q115 uses stilted 1860 religious-freedom English wording/,
   );
 });
 
