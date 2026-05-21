@@ -197,7 +197,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.swedishFlashcardCopyNaturalnessValidated, true);
   assert.equal(summary.audioButtonAccessibilityRulesValidated, 13);
   assert.equal(summary.audioButtonAccessibilityParityValidated, true);
-  assert.equal(summary.questionCardAccessibilityRulesValidated, 20);
+  assert.equal(summary.questionCardAccessibilityRulesValidated, 22);
   assert.equal(summary.questionCardAccessibilityParityValidated, true);
   assert.equal(summary.answerOptionAccessibilityRulesValidated, 19);
   assert.equal(summary.answerOptionAccessibilityParityValidated, true);

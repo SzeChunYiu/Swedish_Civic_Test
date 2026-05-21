@@ -3590,6 +3590,14 @@ const EXPECTED_PROVENANCE_BADGE_QUESTION_CARD_RULES = [
     pattern:
       /useEffect\(\(\) =>\s*\{[\s\S]*setSourceNoteVisible\(false\);[\s\S]*\},\s*\[\s*question\?\.id,\s*language\s*\]\s*\);/,
   },
+  {
+    label: 'expanded source note native polite live region',
+    pattern: /accessibilityLiveRegion="polite"/,
+  },
+  {
+    label: 'expanded source note web polite live region',
+    pattern: /aria-live="polite"/,
+  },
 ];
 const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   {
