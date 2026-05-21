@@ -38,6 +38,18 @@ const localizedChapterSixEducationTerms = {
   ti: /መዋእለ ህጻናት.+ዩኒቨርሲቲ/,
   tr: /Anaokulundan.+üniversiteye/,
 };
+const localizedChapterElevenCitizenshipTerms = {
+  'zh-Hans': /公民身份（medborgarskap）/,
+  'zh-Hant': /公民身分（medborgarskap）/,
+  ar: /الجنسية\s*\(medborgarskap\)/,
+  ckb: /هاووڵاتیبوون\s*\(medborgarskap\)/,
+  fa: /شهروندی\s*\(medborgarskap\)/,
+  pl: /obywatelstwem\s*\(medborgarskap\)/i,
+  so: /jinsiyadda\s*\(medborgarskap\)/i,
+  ti: /ዜግነት\s*\(medborgarskap\)/,
+  tr: /vatandaşlık\s*\(medborgarskap\)/i,
+  uk: /громадянством\s*\(medborgarskap\)/i,
+};
 const allowedSharedFragments = [
   /Almost Swedish/,
   /UHR/,
@@ -138,6 +150,21 @@ function htmlToText(value) {
     .trim();
 }
 
+function assertMedborgarskapOnlyAsParentheticalGloss(value, label) {
+  const lower = value.toLowerCase();
+  let index = lower.indexOf('medborgarskap');
+  assert.notEqual(index, -1, `${label} should keep medborgarskap only as a glossary token`);
+
+  while (index !== -1) {
+    const previousCharacter = value[index - 1];
+    assert.ok(
+      previousCharacter === '(' || previousCharacter === '（',
+      `${label} must place medborgarskap inside parentheses after a localized term`,
+    );
+    index = lower.indexOf('medborgarskap', index + 1);
+  }
+}
+
 test('extra locales translate every displayed home, nav, footer, settings, and consent string', () => {
   const dictionaries = loadDictionaries();
   const keys = homeVisibleKeys();
@@ -221,6 +248,27 @@ test('Somali Tigrinya and Turkish Home chapter 6 cards localize education labels
       value,
       forbiddenStaticHomeEducationTerms,
       `${locale}.chap.6.d must not render bare Swedish education-term tokens`,
+    );
+  }
+});
+
+test('extra locale Home chapter 11 cards localize citizenship before medborgarskap glossary', () => {
+  const dictionaries = loadDictionaries();
+
+  for (const locale of extraLocales) {
+    const value = dictionaries[locale]['chap.11.d'];
+    assert.equal(typeof value, 'string', `${locale}.chap.11.d is translated`);
+    assert.match(
+      value,
+      localizedChapterElevenCitizenshipTerms[locale],
+      `${locale}.chap.11.d should localize citizenship before the Swedish glossary`,
+    );
+    assertMedborgarskapOnlyAsParentheticalGloss(value, `${locale}.chap.11.d`);
+    assert.match(value, /PUT/, `${locale}.chap.11.d should preserve PUT`);
+    assert.doesNotMatch(
+      value,
+      /PUT[^.。؟]*,\s*medborgarskap|medborgarskap\s*[（(]/iu,
+      `${locale}.chap.11.d must not render bare Swedish medborgarskap`,
     );
   }
 });
