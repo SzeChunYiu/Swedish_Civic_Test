@@ -14,6 +14,7 @@ import { QuestionCard } from '../../components/quiz/QuestionCard';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { UHRReferenceCard } from '../../components/quiz/UHRReferenceCard';
 import { PersistenceWarningNotice } from '../../components/storage/PersistenceWarningNotice';
+import { StudyCompanionCard } from '../../components/mascot/StudyCompanionCard';
 import { Button } from '../../components/ui/Button';
 import { ProgressBar } from '../../components/ui/ProgressBar';
 import { questions } from '../../data/questions';
@@ -34,6 +35,7 @@ import {
 import { scoreAnswers } from '../../lib/quiz/scoring';
 import { useMistakeReviewStore } from '../../lib/storage/mistakeReviewStore';
 import { useProgressStore } from '../../lib/storage/progressStore';
+import { useCompanionStore } from '../../lib/storage/companionStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, motion, radius, space, typography } from '../../lib/theme';
 import type { ConfidenceRating } from '../../types/progress';
@@ -159,6 +161,7 @@ export default function Screen() {
     (state) => state.clearPersistenceWarning,
   );
   const questionProgress = useProgressStore((state) => state.questionProgress);
+  const selectedCompanionId = useCompanionStore((state) => state.selectedId);
   const toggleBookmark = useProgressStore((state) => state.toggleBookmark);
   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
@@ -213,6 +216,11 @@ export default function Screen() {
     hasSelectedAnswer && selectedOptionId ? isCorrectAnswer(question, selectedOptionId) : false;
   const isBookmarked = Boolean(questionProgress[question.id]?.bookmarked);
   const currentScore = hasSelectedAnswer ? scoreAnswers([selectedIsCorrect]) : null;
+  const companionFeedbackState = hasSelectedAnswer
+    ? selectedIsCorrect
+      ? 'correct'
+      : 'incorrect'
+    : 'neutral';
   const celebrationStreak = selectedIsCorrect
     ? (questionProgress[question.id]?.correctStreak ?? 1)
     : 0;
@@ -352,6 +360,11 @@ export default function Screen() {
         language={language}
         onDismiss={clearMistakeReviewPersistenceWarning}
         warning={mistakeReviewPersistenceWarning}
+      />
+      <StudyCompanionCard
+        feedbackState={companionFeedbackState}
+        language={language}
+        mascotId={selectedCompanionId}
       />
       <QuestionCard question={question} language={language} />
       <AudioButton
