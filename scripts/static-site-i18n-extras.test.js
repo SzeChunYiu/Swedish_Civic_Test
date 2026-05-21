@@ -124,6 +124,10 @@ const expectedFooterRoadmapLabels = {
   so: 'Qorshaha horumarinta',
   ti: 'መደብ ምዕባለ',
 };
+const expectedCentralKurdishLegalReadingTimes = {
+  'privacy.meta3.v': '~3 خولەک',
+  'terms.meta3.v': '~2 خولەک خوێندنەوە',
+};
 
 const englishFallbacksByKey = {
   'hero.lede': "A friendly, unofficial study app for Sweden's medborgarskapsprov.",
@@ -247,6 +251,19 @@ test('extra locale footer.app.5 Roadmap English fallback guard covers Central Ku
 
   for (const [locale, expected] of Object.entries(expectedFooterRoadmapLabels)) {
     assert.equal(extra[locale]['footer.app.5'], expected, `${locale}.footer.app.5`);
+  }
+});
+
+test('Central Kurdish legal reading-time metadata uses localized minutes', () => {
+  const extra = loadExtraI18n();
+  const centralKurdish = extra?.ckb;
+
+  assert.equal(typeof centralKurdish, 'object');
+  for (const [key, expected] of Object.entries(expectedCentralKurdishLegalReadingTimes)) {
+    const value = centralKurdish[key];
+    assert.equal(value, expected, `ckb.${key}`);
+    assert.match(value, /خولەک/, `ckb.${key} should use the Central Kurdish minute unit`);
+    assert.doesNotMatch(value, /\bmin\b/i, `ckb.${key} must not contain English min`);
   }
 });
 

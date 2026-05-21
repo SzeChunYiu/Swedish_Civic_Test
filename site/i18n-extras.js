@@ -1472,7 +1472,7 @@
       'privacy.meta2.b': 'وەشان',
       'privacy.meta2.v': '1.0',
       'privacy.meta3.b': 'کاتی خوێندنەوە',
-      'privacy.meta3.v': '~3 min',
+      'privacy.meta3.v': '~3 خولەک',
       'privacy.toc': 'لەم سیاسەتەدا',
       'privacy.s1.t': 'سەربەخۆیی',
       'privacy.s1.p':
@@ -1546,7 +1546,7 @@
       'terms.meta2.b': 'یاسای فەرمانڕەوا',
       'terms.meta2.v': 'سوید',
       'terms.meta3.b': 'درێژی',
-      'terms.meta3.v': '~2 min خوێندنەوە',
+      'terms.meta3.v': '~2 خولەک خوێندنەوە',
       'terms.toc': 'لەم مەرجانەدا',
       'terms.s1.t': 'ئەمە چییە',
       'terms.s1.p':
