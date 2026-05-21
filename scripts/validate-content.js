@@ -3844,6 +3844,16 @@ const EXPECTED_CELEBRATION_BURST_ACCESSIBILITY_RULES = [
     pattern: /accessibilityElementsHidden/,
   },
   {
+    label: 'reduced-motion branch hidden from accessibility tree',
+    pattern:
+      /if \(reducedMotionEnabled\) \{\s*return \(\s*<View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
+    label: 'animated branch hidden from accessibility tree',
+    pattern:
+      /<Animated\.View(?=[^>]*accessibilityElementsHidden)(?=[^>]*importantForAccessibility="no-hide-descendants")(?=[^>]*pointerEvents="none")[^>]*>/,
+  },
+  {
     label: 'descendant accessibility hidden',
     pattern: /importantForAccessibility="no-hide-descendants"/,
   },
@@ -10077,6 +10087,16 @@ if (process.argv.includes('--focus-chapter-card-accessibility')) {
   printValidationSummary({
     chapterCardAccessibilityRulesValidated,
     chapterCardAccessibilityParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-celebration-burst-accessibility')) {
+  validateCelebrationBurstAccessibilityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    celebrationBurstAccessibilityRulesValidated,
+    celebrationBurstAccessibilityParityValidated,
   });
   process.exit(0);
 }
