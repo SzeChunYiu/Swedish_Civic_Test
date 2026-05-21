@@ -55,6 +55,8 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'repetitionsdagar'/);
   assert.match(source, /one: 'repetitionskort'/);
   assert.match(source, /other: 'repetitionskort'/);
+  assert.match(source, /one: 'genomfört övningsprov'/);
+  assert.match(source, /other: 'genomförda övningsprov'/);
   assert.match(source, /one: 'markerat kravområde'/);
   assert.match(source, /other: 'markerade kravområden'/);
   assert.match(source, /Studiesvit och svitskydd ingår/);
@@ -62,6 +64,8 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /other: 'FSRS review days'/);
   assert.match(source, /one: 'FSRS review card'/);
   assert.match(source, /other: 'FSRS review cards'/);
+  assert.match(source, /one: 'completed mock exam'/);
+  assert.match(source, /other: 'completed mock exams'/);
   assert.doesNotMatch(source, /dagar med FSRS-repetition|FSRS-repetitionskort|frysstatus/);
   assert.match(source, /accessibilityLabel=\{copy\.backToProfileAccessibilityLabel\}/);
   assert.match(source, /accessibilityLabel=\{copy\.languageAccessibilityLabel\(label\)\}/);
