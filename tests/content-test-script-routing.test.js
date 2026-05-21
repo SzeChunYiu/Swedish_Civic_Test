@@ -364,7 +364,14 @@ test('Badge accessibility parity uses focused content validation routing', () =>
     path.join(repoRoot, 'tests/content-badge-accessibility-parity.test.js'),
     'utf8',
   );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('badgeAccessibility');
 
+  assert.ok(registryEntry, 'Badge accessibility focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-badge-accessibility']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'badgeAccessibilityRulesValidated',
+    'badgeAccessibilityParityValidated',
+  ]);
   assert.match(validatorSource, /--focus-badge-accessibility/);
   assert.match(
     validatorSource,
@@ -376,6 +383,30 @@ test('Badge accessibility parity uses focused content validation routing', () =>
     /\['scripts\/validate-content\.js'\]/,
     'Badge accessibility tests must not route through full content validation',
   );
+  const mutationFocusPushes =
+    badgeTestSource.match(/process\.argv\.push\('\$\{BADGE_ACCESSIBILITY_FOCUS_FLAG\}'\)/g) ?? [];
+  assert.equal(
+    mutationFocusPushes.length,
+    2,
+    'Badge accessibility mutation fixtures must both route through the focused validator',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-badge-accessibility'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused Badge validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.badgeAccessibilityRulesValidated, 9);
+  assert.equal(summary.badgeAccessibilityParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 test('Flashcard accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
