@@ -23,11 +23,17 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/quiz/[sessionId].tsx'), 'utf8');
 
-  assert.equal(summary.quizRouteCopyLabelsValidated, 16);
+  assert.equal(summary.quizRouteCopyLabelsValidated, 26);
   assert.equal(summary.quizRouteCopyParityValidated, true);
   assert.match(source, /const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
   assert.match(source, /const copy = quizSessionCopy\[language\];/);
+  assert.match(source, /Frågan hittades inte/);
+  assert.match(source, /Vi hittar ingen övningsfråga för den här länken\./);
+  assert.match(source, /Sök övningsfrågor/);
+  assert.match(source, /Question not found/);
+  assert.match(source, /We could not find a practice question for this link\./);
+  assert.match(source, /href="\/search"/);
   assert.match(source, /Tillbaka till övning/);
   assert.match(source, /Session \$\{currentSessionId\}/);
   assert.match(source, /Frågepass \$\{currentSessionId\}/);
@@ -42,6 +48,8 @@ test('routed quiz shell copy follows the persisted settings language', () => {
   assert.match(source, /<QuestionDisclaimer language=\{language\} \/>/);
   assert.match(source, /<QuestionCard question=\{question\} language=\{language\} \/>/);
   assert.match(source, /<UHRReferenceCard language=\{language\}/);
+  assert.match(source, /return exactMatch;/);
+  assert.doesNotMatch(source, /stableIndex|charCodeAt|return\s+questions\[/);
 });
 
 test('native routed Swedish study copy avoids learner-facing quiz loanwords', () => {
@@ -130,6 +138,40 @@ require('./scripts/validate-content.js');
 
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /quiz route is missing sv copy/);
+});
+
+test('routed quiz copy parity rejects hashing unknown session ids to questions', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/app/quiz/[sessionId].tsx')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace(
+        '  return exactMatch;\\n}',
+        '  if (exactMatch || questions.length === 0) return exactMatch;\\n\\n  const stableIndex =\\n    [...sessionId].reduce((total, character) => total + character.charCodeAt(0), 0) %\\n    questions.length;\\n\\n  return questions[stableIndex];\\n}',
+      );
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-native-quiz-copy');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /routed quiz must not hash unknown session ids into real questions/,
+  );
 });
 
 test('routed quiz copy parity rejects Swedish quiz loanwords', () => {

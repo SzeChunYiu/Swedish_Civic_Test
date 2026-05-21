@@ -337,3 +337,52 @@ test('routed quiz uses English question headings and answer feedback in English 
 
   expect(consoleErrors).toEqual([]);
 });
+
+test('unknown routed quiz shows an empty state instead of a hashed question', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await page.goto('/quiz/not-a-question', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  await expect(page.getByRole('heading', { name: 'Question not found' })).toBeVisible();
+  await expect(
+    page.getByText('We could not find a practice question for this link.'),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Back to practice' })).toHaveAttribute(
+    'href',
+    '/practice',
+  );
+  await expect(page.getByRole('link', { name: 'Search for practice questions' })).toHaveAttribute(
+    'href',
+    '/search',
+  );
+  await expect(page.getByText('Session not-a-question')).toHaveCount(0);
+  await expect(page.getByText('Where is Sweden located?')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Select answer/ })).toHaveCount(0);
+
+  await enableSwedish(page);
+  await page.goto('/quiz/okand-fraga', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  await expect(page.getByRole('heading', { name: 'Frågan hittades inte' })).toBeVisible();
+  await expect(page.getByText('Vi hittar ingen övningsfråga för den här länken.')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Tillbaka till övning' })).toHaveAttribute(
+    'href',
+    '/practice',
+  );
+  await expect(page.getByRole('link', { name: 'Sök efter övningsfrågor' })).toHaveAttribute(
+    'href',
+    '/search',
+  );
+  await expect(page.getByText('Frågepass okand-fraga')).toHaveCount(0);
+  await expect(page.getByText('Var ligger Sverige?')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Välj svaret/ })).toHaveCount(0);
+
+  expect(consoleErrors).toEqual([]);
+});

@@ -35,10 +35,15 @@ import { colors, radius, space, typography } from '../../lib/theme';
 import type { ConfidenceRating } from '../../types/progress';
 
 type QuizSessionCopy = {
+  backToSearch: string;
+  backToSearchAccessibilityLabel: string;
   backToPractice: string;
   backToPracticeAccessibilityLabel: string;
   badge: string;
+  emptyBody: string;
   emptyTitle: string;
+  notFoundBody: string;
+  notFoundTitle: string;
   scoreLabel: string;
   sessionSubtitle: string;
   sessionTitle: (sessionId: string) => string;
@@ -48,10 +53,15 @@ type QuizSessionCopy = {
 
 const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
   sv: {
+    backToSearch: 'Sök övningsfrågor',
+    backToSearchAccessibilityLabel: 'Sök efter övningsfrågor',
     backToPractice: 'Tillbaka till övning',
     backToPracticeAccessibilityLabel: 'Tillbaka till övning',
     badge: 'Frågepass',
+    emptyBody: 'Gå tillbaka till övning eller sök när frågor har lagts till.',
     emptyTitle: 'Det finns inga övningsfrågor ännu.',
+    notFoundBody: 'Vi hittar ingen övningsfråga för den här länken.',
+    notFoundTitle: 'Frågan hittades inte',
     scoreLabel: 'Poäng',
     sessionSubtitle: 'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     sessionTitle: (currentSessionId) => `Frågepass ${currentSessionId}`,
@@ -59,10 +69,15 @@ const quizSessionCopy: Record<AppLanguage, QuizSessionCopy> = {
     tryAgainAccessibilityLabel: 'Försök igen med den här frågan',
   },
   en: {
+    backToSearch: 'Search questions',
+    backToSearchAccessibilityLabel: 'Search for practice questions',
     backToPractice: 'Back to Practice',
     backToPracticeAccessibilityLabel: 'Back to practice',
     badge: 'Quiz session',
+    emptyBody: 'Go back to Practice or Search when questions have been added.',
     emptyTitle: 'No quiz questions are available yet.',
+    notFoundBody: 'We could not find a practice question for this link.',
+    notFoundTitle: 'Question not found',
     scoreLabel: 'Score',
     sessionSubtitle: 'Answer the routed question, then review the source-backed feedback.',
     sessionTitle: (currentSessionId) => `Session ${currentSessionId}`,
@@ -78,13 +93,7 @@ function normalizeSessionId(sessionId: string | string[] | undefined): string {
 
 function pickSessionQuestion(sessionId: string) {
   const exactMatch = questions.find((question) => question.id === sessionId);
-  if (exactMatch || questions.length === 0) return exactMatch;
-
-  const stableIndex =
-    [...sessionId].reduce((total, character) => total + character.charCodeAt(0), 0) %
-    questions.length;
-
-  return questions[stableIndex];
+  return exactMatch;
 }
 
 export default function QuizSessionScreen() {
@@ -137,19 +146,34 @@ export default function QuizSessionScreen() {
   }, [normalizedSessionId, question?.id]);
 
   if (!question) {
+    const unknownSessionId = questions.length > 0;
+
     return (
       <View style={styles.emptyContainer}>
         <Text accessibilityRole="header" style={styles.title}>
-          {copy.emptyTitle}
+          {unknownSessionId ? copy.notFoundTitle : copy.emptyTitle}
         </Text>
-        <Link
-          accessibilityLabel={copy.backToPracticeAccessibilityLabel}
-          accessibilityRole="link"
-          href="/practice"
-          style={styles.link}
-        >
-          {copy.backToPractice}
-        </Link>
+        <Text style={styles.emptyBody}>
+          {unknownSessionId ? copy.notFoundBody : copy.emptyBody}
+        </Text>
+        <View style={styles.actions}>
+          <Link
+            accessibilityLabel={copy.backToPracticeAccessibilityLabel}
+            accessibilityRole="link"
+            href="/practice"
+            style={styles.linkButton}
+          >
+            {copy.backToPractice}
+          </Link>
+          <Link
+            accessibilityLabel={copy.backToSearchAccessibilityLabel}
+            accessibilityRole="link"
+            href="/search"
+            style={styles.linkButton}
+          >
+            {copy.backToSearch}
+          </Link>
+        </View>
       </View>
     );
   }
@@ -330,6 +354,13 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  emptyBody: {
+    color: colors.textMuted,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+    maxWidth: 420,
+    textAlign: 'center',
   },
   options: {
     gap: space[1],

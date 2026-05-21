@@ -1803,9 +1803,9 @@ const NATIVE_MOCK_EXAM_UNSUPPORTED_SCORE_SOURCE_PATTERNS = [
 ];
 const EXPECTED_QUIZ_ROUTE_HEADERS = [
   {
-    label: 'empty quiz title',
+    label: 'empty or not-found quiz title',
     pattern:
-      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{copy\.emptyTitle\}\s*<\/Text>/,
+      /<Text\s+accessibilityRole="header"\s+style=\{styles\.title\}>\s*\{unknownSessionId\s+\?\s+copy\.notFoundTitle\s+:\s+copy\.emptyTitle\}\s*<\/Text>/,
   },
   {
     label: 'session title',
@@ -1815,9 +1815,14 @@ const EXPECTED_QUIZ_ROUTE_HEADERS = [
 ];
 const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
   sv: [
+    'Sök övningsfrågor',
+    'Sök efter övningsfrågor',
     'Tillbaka till övning',
     'Frågepass',
+    'Gå tillbaka till övning eller sök när frågor har lagts till.',
     'Det finns inga övningsfrågor ännu.',
+    'Vi hittar ingen övningsfråga för den här länken.',
+    'Frågan hittades inte',
     'Poäng',
     'Besvara frågan och gå sedan igenom den källbaserade återkopplingen.',
     'Frågepass ${currentSessionId}',
@@ -1825,9 +1830,14 @@ const EXPECTED_QUIZ_ROUTE_COPY_LABELS = {
     'Försök igen med den här frågan',
   ],
   en: [
+    'Search questions',
+    'Search for practice questions',
     'Back to Practice',
     'Quiz session',
+    'Go back to Practice or Search when questions have been added.',
     'No quiz questions are available yet.',
+    'We could not find a practice question for this link.',
+    'Question not found',
     'Score',
     'Answer the routed question, then review the source-backed feedback.',
     'Session ${currentSessionId}',
@@ -1847,6 +1857,15 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz route must read language from settings store',
   ],
   ['const copy = quizSessionCopy[language];', 'quiz route must select copy from settings language'],
+  ['return exactMatch;', 'routed quiz must only resolve exact question-id routes'],
+  [
+    '{unknownSessionId ? copy.notFoundTitle : copy.emptyTitle}',
+    'routed quiz must render localized not-found title copy',
+  ],
+  [
+    '{unknownSessionId ? copy.notFoundBody : copy.emptyBody}',
+    'routed quiz must render localized not-found body copy',
+  ],
   [
     '<QuestionDisclaimer language={language} />',
     'routed quiz disclaimer must receive settings language',
@@ -1877,6 +1896,12 @@ const EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS = [
     'quiz back-to-practice link must expose localized accessibility copy',
   ],
   ['{copy.backToPractice}', 'quiz back-to-practice link must render localized copy'],
+  [
+    'accessibilityLabel={copy.backToSearchAccessibilityLabel}',
+    'quiz search recovery link must expose localized accessibility copy',
+  ],
+  ['href="/search"', 'quiz search recovery link must route to search'],
+  ['{copy.backToSearch}', 'quiz search recovery link must render localized copy'],
 ];
 const EXPECTED_PRACTICE_ROUTE_HEADERS = [
   {
@@ -11218,6 +11243,10 @@ function validateQuizRouteCopyParity() {
   EXPECTED_QUIZ_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!quizRoute.includes(snippet)) reject(message);
   });
+
+  if (/stableIndex|charCodeAt|return\s+questions\[/.test(quizRoute)) {
+    reject('routed quiz must not hash unknown session ids into real questions');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_QUIZ_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
