@@ -30,6 +30,12 @@ const safeExternalSourceLinkCases = [
     labels: ['UHR: Om medborgarskapsprovet'],
   },
 ] as const;
+const officialTestSourceLinkLabels = [
+  'UHR: Om medborgarskapsprovet',
+  'UHR: Frågor och svar',
+  'UHR: Anmälan',
+  'UHR: Utbildningsmaterial',
+] as const;
 
 const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
   en: {
@@ -38,6 +44,7 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
+    uhrOfficialTestSources: 'UHR test status',
     uhrStudyMaterial: 'UHR',
   },
   sv: {
@@ -46,6 +53,7 @@ const badgeLabels: Record<StaticSiteLanguage, Record<string, string>> = {
     migrationsverketCitizenshipRules: 'Migrationsverket citizenship rules',
     riksbankHistory: 'Riksbank',
     scbLandUse: 'SCB',
+    uhrOfficialTestSources: 'UHR test status',
     uhrStudyMaterial: 'UHR',
   },
 };
@@ -213,6 +221,42 @@ test('static ebook external source links use safe attributes without changing ch
   }
 
   await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=1');
+  await expect(
+    page.getByRole('link', { name: 'editorial commentary' }).first(),
+  ).not.toHaveAttribute('target', '_blank');
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('static ebook chapter 12 official test source links use safe external attributes', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const pageErrors = collectPageErrors(page);
+
+  await openStaticEbook(page, staticSite.baseUrl, 'en', '#/ebook?c=12');
+
+  const currentSourceNotes = page.locator('#ebook-reader .ebook__factbox', {
+    hasText: 'Current source notes',
+  });
+  await expect(currentSourceNotes).toBeVisible();
+  await expect(
+    currentSourceNotes.locator('a[href^="https://www.uhr.se/medborgarskapsprovet/"]'),
+  ).toHaveCount(officialTestSourceLinkLabels.length);
+
+  for (const label of officialTestSourceLinkLabels) {
+    const sourceLink = currentSourceNotes.getByRole('link', { name: label });
+    await expect(sourceLink).toHaveAttribute('target', '_blank');
+    await expect(sourceLink).toHaveAttribute('rel', /(^|\s)noreferrer(\s|$)/);
+  }
+
+  await expect(page.locator('#ebook-reader .ebook__source-ref a').first()).not.toHaveAttribute(
+    'target',
+    '_blank',
+  );
+  await expect(
+    page.locator('#ebook-reader .ebook__footnotes li a[href^="#/ebook"]').first(),
+  ).not.toHaveAttribute('target', '_blank');
   await expect(
     page.getByRole('link', { name: 'editorial commentary' }).first(),
   ).not.toHaveAttribute('target', '_blank');
