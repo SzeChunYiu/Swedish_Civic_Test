@@ -54,8 +54,6 @@ const explainedDuplicateScreenshotGroups = [
   },
 ] as const;
 
-test.setTimeout(90_000);
-
 function readWebBundleText(): string {
   expect(fs.existsSync(webBundleDir), 'dist-web web bundle directory should exist').toBe(true);
   const bundleFiles = fs
