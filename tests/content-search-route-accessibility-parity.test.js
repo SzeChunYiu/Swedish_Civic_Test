@@ -76,6 +76,37 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /accessibilityLabel=\{copy\.openQuestionAccessibilityLabel\(title\)\}/);
   assert.match(source, /href=\{`\/quiz\/\$\{result\.question\.id\}`\}/);
   assert.match(source, /accessibilityRole="link"/);
+  assert.match(source, /function SearchRouteLink\(/);
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /onMouseEnter:\s*\(\) => \{/);
+  assert.match(source, /onMouseLeave:\s*\(\) => \{/);
+  assert.match(source, /onMouseDown:\s*\(\) => \{/);
+  assert.match(source, /onMouseUp:\s*\(\) => \{/);
+  assert.match(source, /onFocus:\s*\(\) => \{/);
+  assert.match(source, /onPressIn=\{\(\) => \{/);
+  assert.match(source, /styles\.routeLinkInteractive/);
+  assert.match(source, /styles\.routeLinkPressed/);
+  assert.match(source, /minHeight:\s*space\[6\]/);
+  assert.match(source, /minWidth:\s*space\[6\]/);
+  assert.match(source, /transform:\s*\[\{ scale: motion\.hoverScale \}\]/);
+  assert.match(source, /transform:\s*\[\{ scale: motion\.pressedScale \}\]/);
+  assert.match(
+    source,
+    /<SearchRouteLink[\s\S]*aria-describedby=\{termSummaryId\}[\s\S]*linkStyle=\{styles\.chapterLink\}/,
+  );
+  assert.match(
+    source,
+    /<SearchRouteLink[\s\S]*aria-describedby=\{questionSummaryId\}[\s\S]*linkStyle=\{styles\.questionLink\}/,
+  );
+  assert.match(
+    source,
+    /<SearchRouteLink[\s\S]*accessibilityLabel=\{copy\.browseChaptersAccessibilityLabel\}[\s\S]*linkStyle=\{styles\.backLink\}/,
+  );
+  assert.doesNotMatch(
+    source,
+    /<Link[\s\S]{0,220}style=\{styles\.(?:chapterLink|questionLink|backLink)\}/,
+    'Search route links must use SearchRouteLink feedback wrapper instead of direct Link styling',
+  );
   assert.match(source, /accessibilitySummaryText/);
   assert.match(source, /Övningsfrågor/);
   assert.match(source, /Practice questions/);
@@ -83,38 +114,8 @@ function assertSearchRouteAccessibilityParity(source) {
   assert.match(source, /Inga begrepp matchar din sökning/);
 }
 
-function assertSearchRouteLinkTargetParity(source) {
-  const requiredTargetRules = [
-    [
-      /chapterLink:\s*\{[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingVertical:\s*space\[1\]/,
-      'glossary chapter link target',
-    ],
-    [
-      /questionLink:\s*\{[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingVertical:\s*space\[1\]/,
-      'practice question link target',
-    ],
-    [
-      /backLink:\s*\{[\s\S]*borderRadius:\s*radius\.pill[\s\S]*minHeight:\s*space\[6\][\s\S]*paddingHorizontal:\s*space\[1\.5\][\s\S]*paddingVertical:\s*space\[1\]/,
-      'bottom Browse chapters link target',
-    ],
-  ];
-
-  for (const [pattern, label] of requiredTargetRules) {
-    assert.match(source, pattern, `Search route missing ${label}`);
-  }
-
-  assert.doesNotMatch(
-    source,
-    /(chapterLink|questionLink|backLink):\s*\{[\s\S]*minHeight:\s*space\[5\]/,
-    'Search route links must not keep 40px target sizing',
-  );
-}
-
 test('search route keeps grouped Cards away from interactive descendants', () => {
-  const source = readSearchRoute();
-
-  assertSearchRouteAccessibilityParity(source);
-  assertSearchRouteLinkTargetParity(source);
+  assertSearchRouteAccessibilityParity(readSearchRoute());
 });
 
 test('search route accessibility parity rejects a grouped search form Card', () => {
@@ -165,26 +166,13 @@ test('search route accessibility parity rejects dropped term summary text', () =
   );
 });
 
-test('search route accessibility parity rejects undersized result links', () => {
-  const mutatedSource = readSearchRoute().replace(
-    '      minHeight: space[6],\n      paddingHorizontal: space[1.25],\n      paddingVertical: space[1],',
-    '      minHeight: space[5],\n      paddingHorizontal: space[1.25],\n      paddingVertical: space[0.75],',
-  );
+test('search route accessibility parity rejects missing route link pressed feedback', () => {
+  const mutatedSource = readSearchRoute()
+    .replace(/    routeLinkInteractive: \{[\s\S]*?    \},\n/, '')
+    .replace(/    routeLinkPressed: \{[\s\S]*?    \},\n/, '');
 
   assert.throws(
-    () => assertSearchRouteLinkTargetParity(mutatedSource),
-    /Search route links must not keep 40px target sizing/,
-  );
-});
-
-test('search route accessibility parity rejects an unstyled Browse chapters link target', () => {
-  const mutatedSource = readSearchRoute().replace(
-    /backLink:\s*\{[\s\S]*?textDecorationLine:\s*'none',\n    \},/,
-    "backLink: {\n      alignSelf: 'flex-start',\n      color: themeColors.accent,\n      fontFamily: typography.navButton.fontFamily,\n      fontSize: typography.navButton.fontSize,\n      fontWeight: typography.navButton.fontWeight,\n      textDecorationLine: 'none',\n    },",
-  );
-
-  assert.throws(
-    () => assertSearchRouteLinkTargetParity(mutatedSource),
-    /Search route missing bottom Browse chapters link target/,
+    () => assertSearchRouteAccessibilityParity(mutatedSource),
+    /routeLinkInteractive|routeLinkPressed/,
   );
 });
