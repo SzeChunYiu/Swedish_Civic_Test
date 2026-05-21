@@ -127,6 +127,10 @@ test('study companion card localizes answer states and links back to Settings', 
     path.join(repoRoot, 'components/mascot/StudyCompanionCard.tsx'),
     'utf8',
   );
+  const artworkSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/MascotArtwork.tsx'),
+    'utf8',
+  );
 
   assert.match(source, /export interface StudyCompanionCardProps/);
   assert.match(source, /feedbackState\?: StudyCompanionFeedbackState/);
@@ -139,7 +143,25 @@ test('study companion card localizes answer states and links back to Settings', 
   assert.match(source, /accessibilityRole="link"/);
   assert.match(source, /accessibilityLabel=\{copy\.accessibilityLabel\(label, body\)\}/);
   assert.match(source, /getMascot\(mascotId\) \?\? getMascot\(DEFAULT_COMPANION_ID\)!/);
+  assert.match(source, /import \{ MascotArtwork, mascotArtworkExpressionForFeedbackState \}/);
+  assert.match(
+    source,
+    /const artworkExpression = mascotArtworkExpressionForFeedbackState\(feedbackState\);/,
+  );
+  assert.match(
+    source,
+    /<MascotArtwork[\s\S]*expression=\{artworkExpression\}[\s\S]*mascotId=\{mascot\.id\}/,
+  );
+  assert.doesNotMatch(source, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
+  assert.match(artworkSource, /SvgUri/);
+  assert.match(artworkSource, /accessibilityElementsHidden/);
+  assert.match(artworkSource, /importantForAccessibility="no-hide-descendants"/);
+  assert.match(artworkSource, /correct'\) return 'happy'/);
+  assert.match(artworkSource, /incorrect'\) return 'oops'/);
+  assert.match(artworkSource, /return 'idle'/);
+  assert.match(artworkSource, /mascotAssetPath\(mascotId, expression\)/);
   assert.doesNotMatch(source, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
+  assert.doesNotMatch(artworkSource, /hasProEntitlement|isPremiumUser|ProTierEntitlements/);
 });
 
 test('companion store uses MMKV id "companion" (separate from settings)', () => {

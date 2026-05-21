@@ -91,6 +91,39 @@ test('mascotAssetPath: every catalog expression has a canonical asset file', () 
   }
 });
 
+test('MascotArtwork maps every catalog companion to practice feedback assets', () => {
+  const { MASCOT_CATALOG, mascotAssetPath } = loadTs('lib/mascot/catalog.ts');
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/MascotArtwork.tsx'),
+    'utf8',
+  );
+  const practiceExpressions = ['idle', 'happy', 'oops'];
+
+  assert.match(
+    source,
+    /type PracticeMascotExpression = Extract<MascotExpression, 'idle' \| 'happy' \| 'oops'>/,
+  );
+  assert.match(
+    source,
+    /satisfies Record<MascotId, Record<PracticeMascotExpression, ImageSourcePropType>>/,
+  );
+  assert.match(source, /typeof source\.uri === 'string'/);
+  assert.match(source, /Image\.resolveAssetSource/);
+
+  for (const mascot of MASCOT_CATALOG) {
+    for (const expression of practiceExpressions) {
+      const assetPath = mascotAssetPath(mascot.id, expression);
+      assert.match(
+        source,
+        new RegExp(
+          `require\\('\\.\\.\\/\\.\\.\\/${assetPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}'\\)`,
+        ),
+        `${mascot.id} ${expression} asset is not wired into MascotArtwork`,
+      );
+    }
+  }
+});
+
 test('inline mascot components share the canonical expression id contract', () => {
   const dalaSource = fs.readFileSync(
     path.join(repoRoot, 'components/mascot/DalaMascot.tsx'),
@@ -130,6 +163,7 @@ test('mascot runtime sources do not reference legacy thinking asset paths', () =
     'components/mascot/CompanionPicker.tsx',
     'components/mascot/DalaMascot.tsx',
     'components/mascot/LumiMascot.tsx',
+    'components/mascot/MascotArtwork.tsx',
     'components/mascot/index.ts',
     'lib/mascot/catalog.ts',
     'lib/storage/companionStore.ts',

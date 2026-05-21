@@ -225,6 +225,9 @@ test('practice shows the selected study companion and answer-state guidance', as
 
   await expect(page.getByText('Your study companion')).toBeVisible();
   await expect(page.getByText('Dala horse', { exact: true })).toBeVisible();
+  const idleArtwork = page.getByTestId('study-companion-artwork-dala-horse-idle');
+  await expect(idleArtwork).toBeVisible();
+  await expect(idleArtwork.locator('svg')).toBeVisible();
   await expect(
     page.getByText('Dala horse is with you in practice. Folk symbol from Dalarna.'),
   ).toBeVisible();
@@ -233,6 +236,10 @@ test('practice shows the selected study companion and answer-state guidance', as
   await page.getByLabel('Select answer In southern Europe').click();
 
   await expect(page.getByText('Review', { exact: true })).toBeVisible();
+  const oopsArtwork = page.getByTestId('study-companion-artwork-dala-horse-oops');
+  await expect(oopsArtwork).toBeVisible();
+  await expect(oopsArtwork.locator('svg')).toBeVisible();
+  await expect(page.getByTestId('study-companion-artwork-dala-horse-idle')).toHaveCount(0);
   await expect(
     page.getByText('Dala horse suggests: read the source, compare the options, and try again.'),
   ).toBeVisible();
