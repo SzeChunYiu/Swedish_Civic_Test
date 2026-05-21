@@ -96,7 +96,9 @@ function loadLanguageHelpers() {
       },
       querySelectorAll(selector) {
         assert.ok(
-          selector === '[data-i18n]' || selector === '.lang button[data-lang]',
+          selector === '[data-i18n]' ||
+            selector === '[data-a11y-label]' ||
+            selector === '.lang button[data-lang]',
           `unexpected selector ${selector}`,
         );
         return [];

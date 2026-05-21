@@ -3827,6 +3827,7 @@
   // Merge into the main i18n dictionary (defined in app.js)
   if (window.i18n) {
     Object.assign(window.i18n, extra);
+    if (typeof window.smtApplySavedLanguage === 'function') window.smtApplySavedLanguage();
   } else {
     // app.js hasn't loaded yet — stash for it
     window.__i18n_extra = extra;
