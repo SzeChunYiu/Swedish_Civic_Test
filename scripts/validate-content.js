@@ -9067,6 +9067,8 @@ const calculateLevel = xpModule.calculateLevel;
 const dashboardProgressSnapshotModule = loadTs('lib/learning/dashboardProgressSnapshot.ts');
 const buildDashboardProgressSnapshot =
   dashboardProgressSnapshotModule.buildDashboardProgressSnapshot;
+const weeklyRecapModule = loadTs('lib/learning/weeklyRecap.ts');
+const generateWeeklyRecap = weeklyRecapModule.generateWeeklyRecap;
 const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
@@ -9292,6 +9294,8 @@ let streakFreezeNormalizerSourceChecksValidated = 0;
 let streakFreezeNormalizerParityValidated = false;
 let dashboardProgressSnapshotCasesValidated = 0;
 let dashboardProgressSnapshotParityValidated = false;
+let weeklyRecapRuntimeCasesValidated = 0;
+let weeklyRecapRuntimeParityValidated = false;
 let monetizationTypeUnionsValidated = 0;
 let monetizationTypeInterfacesValidated = 0;
 let monetizationTypeSchemaParityValidated = false;
@@ -9731,6 +9735,16 @@ if (process.argv.includes('--focus-dashboard-progress-snapshot')) {
   printValidationSummary({
     dashboardProgressSnapshotCasesValidated,
     dashboardProgressSnapshotParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-weekly-recap-runtime')) {
+  validateWeeklyRecapRuntimeGuard();
+  exitWithValidationFailures();
+  printValidationSummary({
+    weeklyRecapRuntimeCasesValidated,
+    weeklyRecapRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -19005,6 +19019,155 @@ function validateSpacedRepetitionSchedule() {
   }
 }
 
+function validateWeeklyRecapRuntimeGuard() {
+  if (typeof generateWeeklyRecap !== 'function') {
+    fail('generateWeeklyRecap export is not a function');
+    return;
+  }
+
+  let recap;
+  try {
+    recap = generateWeeklyRecap({
+      progress: {
+        totalXp: 0,
+        level: 1,
+        currentStreak: '7',
+        dailyGoalAnswers: 10,
+        questionProgress: {
+          q1: {
+            questionId: 'q1',
+            correctStreak: '1',
+            wrongCount: '2',
+            lastAnsweredAt: '2026-05-20T09:05:00.000Z',
+          },
+          q2: {
+            questionId: 'q2',
+            correctStreak: 1,
+            wrongCount: 1,
+            lastAnsweredAt: '2026-05-20T09:06:00.000Z',
+          },
+          q3: {
+            questionId: 'q3',
+            correctStreak: Infinity,
+            wrongCount: 1,
+            lastAnsweredAt: '2026-05-20T09:07:00.000Z',
+          },
+        },
+        sessions: [
+          {
+            id: 'bad-values',
+            mode: 'exam',
+            questionIds: ['q1', 'q2', 'q3'],
+            startedAt: '2026-05-20T09:00:00.000Z',
+            completedAt: '2026-05-20T09:30:00.000Z',
+            score: Infinity,
+            answers: [
+              {
+                questionId: 'q1',
+                selectedOptionIds: ['a'],
+                isCorrect: 'yes',
+                answeredAt: '2026-05-20T09:01:00.000Z',
+                timeSpentSeconds: 10,
+              },
+              {
+                questionId: 'q2',
+                selectedOptionIds: ['a'],
+                isCorrect: 1,
+                answeredAt: '2026-05-20T09:02:00.000Z',
+                timeSpentSeconds: 10,
+              },
+              {
+                questionId: 'q3',
+                selectedOptionIds: ['a'],
+                isCorrect: false,
+                answeredAt: '2026-05-20T09:03:00.000Z',
+                timeSpentSeconds: 10,
+              },
+            ],
+          },
+          {
+            id: 'too-high',
+            mode: 'exam',
+            questionIds: [],
+            answers: [],
+            startedAt: '2026-05-20T10:00:00.000Z',
+            completedAt: '2026-05-20T10:20:00.000Z',
+            score: 1.4,
+          },
+          {
+            id: 'too-low',
+            mode: 'exam',
+            questionIds: [],
+            answers: [],
+            startedAt: '2026-05-20T11:00:00.000Z',
+            completedAt: '2026-05-20T11:20:00.000Z',
+            score: -0.2,
+          },
+        ],
+      },
+      chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
+      chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
+      masteryThreshold: '0.8',
+      now: new Date('2026-05-20T12:00:00.000Z'),
+    });
+  } catch (error) {
+    fail(`weekly recap runtime guard threw ${error.message}`);
+    return;
+  }
+
+  const cases = [
+    {
+      label: 'malformed correctness counts as answered but incorrect',
+      actual: recap.questionsAnswered,
+      expected: 3,
+    },
+    {
+      label: 'malformed correctness preserves zero accuracy',
+      actual: recap.accuracy,
+      expected: 0,
+    },
+    {
+      label: 'malformed question counters are ignored',
+      actual: recap.mistakesResolved,
+      expected: 1,
+    },
+    { label: 'malformed streak falls back to zero', actual: recap.streakDays, expected: 0 },
+    {
+      label: 'mock exam count includes completed exams with malformed scores',
+      actual: recap.mockExamsTaken,
+      expected: 3,
+    },
+    {
+      label: 'mock score clamps malformed runtime scores',
+      actual: recap.bestMockScore,
+      expected: 1,
+    },
+    {
+      label: 'malformed mastery inputs do not cross threshold',
+      actual: recap.chapterNowMastered,
+      expected: null,
+    },
+  ];
+
+  let runtimeGuardIsValid = true;
+  cases.forEach(({ label, actual, expected }) => {
+    if (!jsonEqual(actual, expected)) {
+      runtimeGuardIsValid = false;
+      fail(
+        `weekly recap runtime ${label} returned ${JSON.stringify(
+          actual,
+        )}, expected ${JSON.stringify(expected)}`,
+      );
+    } else {
+      weeklyRecapRuntimeCasesValidated += 1;
+    }
+  });
+
+  if (runtimeGuardIsValid && weeklyRecapRuntimeCasesValidated === cases.length) {
+    weeklyRecapRuntimeParityValidated = true;
+  }
+}
+
 function validateStreakRules() {
   if (typeof calculateStreak !== 'function') return;
   if (typeof getLocalDateKey !== 'function') {
@@ -21535,6 +21698,7 @@ validateProgressTypeSchemaParity();
 validateProgressStoreSchemaParity();
 validateStreakFreezeNormalizerParity();
 validateDashboardProgressSnapshotParity();
+validateWeeklyRecapRuntimeGuard();
 validateBadgeCatalog();
 validatePracticeScoringRules();
 validatePracticeFlowParity();
@@ -21805,6 +21969,8 @@ console.log(
       streakFreezeNormalizerParityValidated,
       dashboardProgressSnapshotCasesValidated,
       dashboardProgressSnapshotParityValidated,
+      weeklyRecapRuntimeCasesValidated,
+      weeklyRecapRuntimeParityValidated,
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
