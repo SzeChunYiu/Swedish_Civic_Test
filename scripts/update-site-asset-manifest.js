@@ -122,11 +122,31 @@ function listInlineStyleAssetReferences(indexHtml) {
 
 function listSrcSetReferences(value) {
   return value
-    .replace(/data:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
+    .replace(/\bdata:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
     .split(',')
     .map((candidate) => candidate.trim().split(/\s+/)[0])
     .map((candidate) => normalizeAssetReference(candidate))
     .filter((reference) => reference && path.posix.extname(reference));
+}
+
+function listHtmlDirectAssetReferences(indexHtml) {
+  const references = [];
+  const attributePattern = /\b(src|href|poster|srcset|imagesrcset|style)\s*=\s*([\"'])([\s\S]*?)\2/gi;
+
+  for (const match of indexHtml.matchAll(attributePattern)) {
+    const attributeName = match[1].toLowerCase();
+    const value = match[3];
+    if (attributeName === 'srcset' || attributeName === 'imagesrcset') {
+      references.push(...listSrcSetReferences(value));
+    } else if (attributeName === 'style') {
+      references.push(...extractCssUrlReferences(value));
+    } else {
+      const reference = normalizeAssetReference(value);
+      if (reference) references.push(reference);
+    }
+  }
+
+  return references;
 }
 
 function listStylesheetAssetReferences(siteDir, indexHtml) {
@@ -188,16 +208,24 @@ function listIndexAssetReferences(siteDir) {
   if (!fs.existsSync(indexPath)) return [];
 
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
+  return extractLocalAssetReferences(indexHtml, { siteDir }).sort((a, b) => a.localeCompare(b));
+}
+
+function extractLocalAssetReferences(indexHtml, options = {}) {
+  const siteDir = path.resolve(options.siteDir || defaultSiteDir);
   const references = [
-    ...listHtmlAssetAttributeReferences(indexHtml),
-    ...Array.from(indexHtml.matchAll(/\b(?:srcset|imagesrcset)\s*=\s*(["'])(.*?)\1/gi)).flatMap(
-      (match) => listSrcSetReferences(match[2]),
-    ),
-    ...listInlineStyleAssetReferences(indexHtml),
+    ...listHtmlDirectAssetReferences(indexHtml),
     ...listStylesheetAssetReferences(siteDir, indexHtml),
   ];
 
-  return [...new Set(references)].sort((a, b) => a.localeCompare(b));
+  return [...new Set(references)];
+}
+
+function findAssetReferencesMissingFromManifest(indexHtml, manifest, options = {}) {
+  const manifestAssets = manifest.assets || {};
+  return extractLocalAssetReferences(indexHtml, options).filter(
+    (referencePath) => !manifestAssets[referencePath],
+  );
 }
 
 function hashFile(absolutePath) {
@@ -279,7 +307,7 @@ function findReferencedAssetMismatches(siteDir, manifest) {
     .filter((referencePath) => !manifestAssets[referencePath])
     .map(
       (referencePath) =>
-        `${referencePath}: referenced by index.html but missing from committed manifest`,
+        `${referencePath}: referenced by index.html or linked stylesheets but missing from committed manifest`,
     );
 }
 
@@ -359,6 +387,8 @@ if (require.main === module) {
 module.exports = {
   buildAssetManifest,
   checkAssetManifest,
+  extractLocalAssetReferences,
+  findAssetReferencesMissingFromManifest,
   findManifestMismatches,
   findReferencedAssetMismatches,
   formatAssetManifest,
