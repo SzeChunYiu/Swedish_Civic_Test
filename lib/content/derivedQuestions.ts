@@ -200,6 +200,10 @@ function stripLeadingPurposeSv(value: string): string {
   return value.replace(/^för att\s+/i, '').replace(/^att\s+/i, '');
 }
 
+function stripLeadingMethodSv(value: string): string {
+  return stripLeadingPurposeSv(value).replace(/^genom att\s+/i, '');
+}
+
 function stripLeadingPurposeEn(value: string): string {
   return value
     .replace(/^to\s+/i, '')
@@ -297,6 +301,65 @@ function englishLowVoterTurnoutStatement(answer: string): string {
     return 'Low voter turnout gives all voters two votes each in the next election';
   }
   return `Low voter turnout can mean that ${phrase}`;
+}
+
+function englishCoordinatedGerundPhrase(value: string): string {
+  return englishGerundPhrase(value)
+    .replace(/\band scare\b/i, 'and scaring')
+    .replace(/\band stop\b/i, 'and stopping')
+    .replace(/\band ban\b/i, 'and banning')
+    .replace(/\band make\b/i, 'and making')
+    .replace(/\band create\b/i, 'and creating');
+}
+
+function swedishAffectStatement(subject: string, target: string, answer: string): string {
+  const phrase = stripFinalPunctuation(answer);
+  const pronounMatch = phrase.match(/^det kan\s+(.+)$/i);
+  if (pronounMatch) {
+    return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+      stripLeadingMethodSv(pronounMatch[1]),
+    )}`;
+  }
+
+  if (/^(?:genom att|att)\s+/i.test(phrase)) {
+    return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+      stripLeadingMethodSv(phrase),
+    )}`;
+  }
+
+  if (/(^|[\s,])(?:kan|ska|måste|gör|får|blir|har)(?=$|[\s,.?!])/i.test(phrase)) {
+    return upperFirst(phrase);
+  }
+
+  return `${upperFirst(subject)} kan påverka ${target} genom att ${lowerLeadingSwedishClauseStart(
+    stripLeadingMethodSv(phrase),
+  )}`;
+}
+
+function englishAffectStatement(subject: string, target: string, answer: string): string {
+  const phrase = stripFinalPunctuation(answer);
+  const pronounMatch = phrase.match(/^it can\s+(.+)$/i);
+  if (pronounMatch) {
+    return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(
+      pronounMatch[1],
+    )}`;
+  }
+
+  if (/^(?:by|to)\s+/i.test(phrase)) {
+    return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(
+      phrase,
+    )}`;
+  }
+
+  if (
+    /(^|[\s,])(?:can|could|should|must|will|would|may|might|is|are|has|have)(?=$|[\s,.?!])/i.test(
+      phrase,
+    )
+  ) {
+    return upperFirst(phrase);
+  }
+
+  return `${upperFirst(subject)} can affect ${target} by ${englishCoordinatedGerundPhrase(phrase)}`;
 }
 
 function swedishCommonToDoStatement(timePhrase: string, answer: string): string {
@@ -1502,7 +1565,7 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^Hur kan (.+?) påverka (.+)$/i);
-  if (match) return `${upperFirst(answer)} när ${match[1]} påverkar ${match[2]}`;
+  if (match) return swedishAffectStatement(match[1], match[2], answer);
 
   match = q.match(/^Hur underlättar (.+?) (.+)$/i);
   if (match)
@@ -2098,7 +2161,7 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   }
 
   match = q.match(/^How can (.+?) affect (.+)$/i);
-  if (match) return `${upperFirst(answer)} when ${match[1]} affects ${match[2]}`;
+  if (match) return englishAffectStatement(match[1], match[2], answer);
 
   match = q.match(/^How does (.+?) make it easier to (.+)$/i);
   if (match) {
