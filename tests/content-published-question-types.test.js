@@ -41,8 +41,7 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const genderEqualityPolicyGoalCleftPattern =
-  /\bThe goal of Sweden’s gender equality policy means that\b/i;
+const policyGoalCleftPattern = /\bThe goal of .+? policy means\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
 const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
@@ -1636,14 +1635,12 @@ test('gender-equality policy goal true/false exports use direct English proposit
   );
   assert.deepEqual(
     [...generatedRows, ...actualRows]
-      .filter((question) =>
-        genderEqualityPolicyGoalCleftPattern.test(`${question.q.sv} ${question.q.en}`),
-      )
+      .filter((question) => policyGoalCleftPattern.test(`${question.q.sv} ${question.q.en}`))
       .map((question) => question.id),
     [],
   );
   assert.deepEqual(
-    csvRows.filter((line) => genderEqualityPolicyGoalCleftPattern.test(line)),
+    csvRows.filter((line) => policyGoalCleftPattern.test(line)),
     [],
   );
 });
@@ -3080,7 +3077,7 @@ require('./scripts/validate-content.js');
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
-test('published question schema rejects gender-equality policy goal cleft true/false stems', () => {
+test('published question schema rejects policy-goal cleft true/false stems', () => {
   const result = spawnSync(
     process.execPath,
     [
@@ -3098,7 +3095,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const genderEqualityPolicyGoalResiduals = {",
-        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s gender equality policy means that women and men should have the same rights and duties and equal power to influence society and their own lives.' },",
+        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
         "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
