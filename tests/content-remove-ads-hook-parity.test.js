@@ -88,10 +88,15 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
     path.join(repoRoot, 'tests/remove-ads-web-e2e-mock-runtime.test.js'),
     'utf8',
   );
+  const runtimeHarnessSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/helpers/monetizationRuntimeHarness.cjs'),
+    'utf8',
+  );
   const monetizationSuiteSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/monetization.test.js'),
     'utf8',
   );
+  const monetizationTestFileSources = `${focusedHarnessSource}\n${monetizationSuiteSource}`;
   const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8'));
 
   assert.match(
@@ -102,6 +107,14 @@ test('Remove Ads E2E mock owned runtime has a dedicated focused harness', () => 
   assert.match(focusedHarnessSource, /__SMT_REMOVE_ADS_MOCK_OWNED__/);
   assert.match(focusedHarnessSource, /createDefaultPurchaseRuntimeOptions/);
   assert.match(focusedHarnessSource, /restoreRemoveAdsPurchase/);
+  assert.match(focusedHarnessSource, /monetizationRuntimeHarness\.cjs/);
+  assert.match(monetizationSuiteSource, /monetizationRuntimeHarness\.cjs/);
+  assert.match(runtimeHarnessSource, /function createTsLoader/);
+  assert.match(runtimeHarnessSource, /function createReactHookStub/);
+  assert.match(runtimeHarnessSource, /function createReactNativeWebStub/);
+  assert.doesNotMatch(monetizationTestFileSources, /function loadTs|ts\.transpileModule/);
+  assert.doesNotMatch(monetizationTestFileSources, /function createReactHookStub/);
+  assert.doesNotMatch(monetizationTestFileSources, /Platform:\s*\{\s*OS:\s*'web'\s*\}/);
   assert.match(
     focusedHarnessSource,
     /non-E2E web runtime must revalidate and clear copied Remove Ads records/,
