@@ -22,6 +22,7 @@ const fixtures: Record<
     profileHeading: string;
     settingsCtaName: string;
     settingsHeading: string;
+    studyFocusCue: string;
     studySetupHeading: string;
   }
 > = {
@@ -34,6 +35,7 @@ const fixtures: Record<
     profileHeading: 'Framsteg utan konto',
     settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
     settingsHeading: 'Inställningar',
+    studyFocusCue: 'Studieinställningarna från profilen är markerade här.',
     studySetupHeading: 'Studieinställningar',
   },
   en: {
@@ -45,6 +47,7 @@ const fixtures: Record<
     profileHeading: 'Progress without an account',
     settingsCtaName: 'Open settings for daily goal, language, and audio',
     settingsHeading: 'Settings',
+    studyFocusCue: 'The study setup controls from Profile are highlighted here.',
     studySetupHeading: 'Study setup',
   },
 };
@@ -79,10 +82,11 @@ for (const language of ['sv', 'en'] as const) {
     await expectMinimumTargetSize(settingsShortcut, `${language} profile settings shortcut`);
     await settingsShortcut.click();
 
-    await expect(page).toHaveURL(/\/settings$/);
+    await expect(page).toHaveURL(/\/settings\?focus=study$/);
     await dismissBlockingModals(page);
 
     await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
+    await expect(page.getByText(copy.studyFocusCue)).toBeVisible();
     await expect(page.getByRole('radiogroup', { name: copy.dailyGoalGroup })).toBeVisible();
     await expect(page.getByRole('radio', { name: copy.dailyGoalRadioName })).toHaveAttribute(
       'aria-checked',

@@ -836,12 +836,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'frågor',
     'Studieinställningar',
     'Små dagliga mål är lättare att hålla än långa maratonpass.',
+    'Dagligt mål',
     'svar/dag',
+    'Språk',
     'Svenska',
+    'Ljud',
+    'Ljud på',
+    'Ljud av',
+    'Ändra mål, språk och ljud',
+    'Öppna inställningar för dagligt mål, språk och ljud',
     'Märken',
     'Milstolpar gör framsteg synliga utan att störa lärandet.',
     'Inga märken ännu',
-    'Öppna inställningar',
   ],
   en: [
     'Local profile',
@@ -856,12 +862,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
     'questions',
     'Study setup',
     'Small daily goals are easier to keep than long cram sessions.',
+    'Daily goal',
     'answers/day',
+    'Language',
     'English support',
+    'Audio',
+    'Audio on',
+    'Audio off',
+    'Adjust goal, language, and audio',
+    'Open settings for daily goal, language, and audio',
     'Badges',
     'Achievement cues make progress visible without distracting from learning.',
     'No badges yet',
-    'Open settings',
   ],
 };
 const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
@@ -894,8 +906,15 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
   ['helper={copy.questionsHelper}', 'profile questions helper must render localized copy'],
   ['title={copy.studySetupTitle}', 'profile study setup title must render localized copy'],
   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
-  ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
-  ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
+  [
+    '{copy.dailyGoalBadgeLabel}: {dailyGoalAnswers} {copy.answersPerDay}',
+    'profile daily goal badge must localize its label and count',
+  ],
+  [
+    '{copy.languageBadgeLabel}: {copy.languageBadge}',
+    'profile language badge must localize its label and value',
+  ],
+  ["{copy.audioStatusLabel}:{' '}", 'profile audio badge must localize current audio state'],
   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
   ['<BadgeRow', 'profile badge summary must render localized badge rows'],
@@ -915,7 +934,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
     'profile settings link must expose localized accessibility copy',
   ],
-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
+  ["pathname: '/settings'", 'profile settings link must route to Settings'],
+  ["params: { focus: 'study' }", 'profile settings link must focus study controls'],
+  ['{copy.studySetupCta}', 'profile settings link must render focused study setup copy'],
   ['language={language}', 'profile premium banner must receive the settings language'],
 ];
 const EXPECTED_HOME_ROUTE_COPY_LABELS = {
@@ -2089,6 +2110,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Importera studiedata',
     'Byt studiespråk till ${label}',
     'Studiespråk',
+    'Studieinställningarna från profilen är markerade här.',
+    'Dagligt mål, språk och ljud',
     'Ställ in dagligt mål till ${goal} svar',
     'Välj tema: ${label}',
     'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
@@ -2151,6 +2174,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
     'Import study data',
     'Set study language to ${label}',
     'Study language',
+    'The study setup controls from Profile are highlighted here.',
+    'Daily goal, language, and audio',
     'Set daily goal to ${goal} answers',
     'Choose theme: ${label}',
     'Control study language, audio, theme, study companion, and your daily goal.',
@@ -2165,6 +2190,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
   ],
 };
 const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+  [
+    "import { useLocalSearchParams } from 'expo-router';",
+    'settings route must read route focus params',
+  ],
   ['import type { AppLanguage }', 'settings route must import AppLanguage'],
   ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
   [
@@ -2179,6 +2208,19 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
     'const copy = settingsCopy[language];',
     'settings route must select copy from settings language',
   ],
+  [
+    "const studyFocusActive = focus === 'study';",
+    'settings route must expose the Profile study-controls focus state',
+  ],
+  [
+    'nativeID="study-settings-controls"',
+    'settings route must expose a stable study-controls focus anchor',
+  ],
+  [
+    'studyFocusActive ? styles.studyControlsGroupFocused : null',
+    'settings route must visibly highlight the focused study-controls cluster',
+  ],
+  ['{copy.studyControlsFocusLabel}', 'settings route must render localized focus cue copy'],
   [
     "const label = language === 'sv' ? labelSv : labelEn;",
     'settings route language buttons must choose visible labels from settings language',
@@ -2210,8 +2252,12 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
   ],
   ['{copy.audioTitle}', 'settings audio section must render localized copy'],
   [
-    'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+    'copy.disableAudioAccessibilityLabel',
     'settings audio switch must expose localized accessibility copy',
+  ],
+  [
+    'copy.enableAudioAccessibilityLabel',
+    'settings audio switch must expose localized accessibility copy for enabling audio',
   ],
   [
     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
@@ -8274,6 +8320,19 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-profile-route-copy')) {
+  validateProfileRouteCopyParity();
+  validateBadgeCatalog();
+  exitWithValidationFailures();
+  printValidationSummary({
+    profileRouteCopyLabelsValidated,
+    profileRouteCopyParityValidated,
+    badgesValidated,
+    badgeMilestoneParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-settings-route-copy')) {
   validateSettingsRouteCopyParity();
   exitWithValidationFailures();
@@ -10621,6 +10680,12 @@ function validateProfileRouteCopyParity() {
   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!profileRoute.includes(snippet)) reject(message);
   });
+  if (!profileRoute.includes('const removeAdsPaywall = entitlementsReady ? (')) {
+    reject('profile premium banner must fail closed while entitlements load');
+  }
+  if (!profileRoute.includes('{entitlementsReady && proRuntimeScopeEnabled ? (')) {
+    reject('profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled');
+  }
 
   const seenLabels = new Set();
   Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
@@ -12795,6 +12860,7 @@ function validateSettingsAudioParity() {
     reject(`settings audio parity source could not be read: ${error.message}`);
     return;
   }
+  const compactSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
 
   const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
   if (audioEnabledKey !== EXPECTED_AUDIO_SETTING_KEY) {
@@ -12855,7 +12921,7 @@ function validateSettingsAudioParity() {
     reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
   }
   if (
-    !settingsRoute.includes(
+    !compactSettingsRoute.includes(
       'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
     )
   ) {
@@ -14607,6 +14673,30 @@ function validateBadgeCatalog() {
         } else if (!textIsTrimmedSingleSpaced(badge[field])) {
           reject(`${label} ${field} must be trimmed and single-spaced`);
         }
+      }
+
+      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
+        if (!hasText(badge[field])) {
+          reject(`${label} missing ${field}`);
+        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
+          reject(`${label} ${field} must be trimmed and single-spaced`);
+        }
+      }
+
+      if (
+        hasText(badge.titleSv) &&
+        hasText(badge.titleEn) &&
+        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
+      ) {
+        reject(`${label} titleSv must be localized separately from titleEn`);
+      }
+      if (
+        hasText(badge.descriptionSv) &&
+        hasText(badge.descriptionEn) &&
+        normalizeComparableText(badge.descriptionSv) ===
+          normalizeComparableText(badge.descriptionEn)
+      ) {
+        reject(`${label} descriptionSv must be localized separately from descriptionEn`);
       }
 
       const normalizedTitle = normalizeComparableText(badge.title);

@@ -61,8 +61,19 @@ test('profile route shell copy stays keyed by the settings language', () => {
   );
   assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
   assert.match(source, /copy\.studySetupCta/);
+  assert.match(source, /dailyGoalBadgeLabel: 'Dagligt mål'/);
+  assert.match(source, /languageBadgeLabel: 'Språk'/);
+  assert.match(source, /audioStatusLabel: 'Ljud'/);
   assert.match(source, /studySetupCta: 'Ändra mål, språk och ljud'/);
   assert.match(source, /studySetupCta: 'Adjust goal, language, and audio'/);
+  assert.match(
+    source,
+    /openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud'/,
+  );
+  assert.match(
+    source,
+    /openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio'/,
+  );
   assert.match(source, /const badgeInput: BadgeInput = \{/);
   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
   assert.match(source, /<BadgeRow/);
@@ -145,12 +156,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
   );
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{ disabled: activeAction !== null \|\| adsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: activeAction !== null \|\| adsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
   );
   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
   assert.match(
     bannerSource,
-    /accessibilityState=\{\{ disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+    /accessibilityState=\{\{ busy: activeAction === 'restore', disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
   );
   assert.match(
     bannerSource,
@@ -167,12 +178,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
 
 test('profile study setup card owns the localized settings shortcut', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
-  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
+  const settingsLinks = source.match(/pathname: '\/settings'/g) ?? [];
   const studySetupStart = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
   const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
   const studySetupCard = source.slice(studySetupStart, badgesStart);
   const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
-  const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
+  const settingsLinkIndex = studySetupCard.indexOf("pathname: '/settings'");
 
   assert.equal(settingsLinks.length, 1);
   assert.notEqual(studySetupStart, -1);
@@ -185,12 +196,15 @@ test('profile study setup card owns the localized settings shortcut', () => {
     studySetupCard,
     /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
   );
-  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
+  assert.match(
+    studySetupCard,
+    /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/,
+  );
   assert.match(
     studySetupCard,
     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
   );
-  assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
+  assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
 });
 

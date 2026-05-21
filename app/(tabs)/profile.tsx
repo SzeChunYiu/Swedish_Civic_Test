@@ -43,14 +43,19 @@ type ProfileCopy = {
   dayStreakFreezeHelper: (count: number) => string;
   dayStreakMetric: string;
   eyebrow: string;
+  audioDisabledBadge: string;
+  audioEnabledBadge: string;
+  audioStatusLabel: string;
+  dailyGoalBadgeLabel: string;
   languageBadge: string;
+  languageBadgeLabel: string;
   levelMetric: string;
-  openSettings: string;
   openSettingsAccessibilityLabel: string;
   noBadges: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
   streakFreezeBadge: string;
+  studySetupCta: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -73,14 +78,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
     dayStreakMetric: 'dagars svit',
     eyebrow: 'Lokal profil',
+    audioDisabledBadge: 'Ljud av',
+    audioEnabledBadge: 'Ljud på',
+    audioStatusLabel: 'Ljud',
+    dailyGoalBadgeLabel: 'Dagligt mål',
     languageBadge: 'Svenska',
+    languageBadgeLabel: 'Språk',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettings: 'Öppna inställningar',
-    openSettingsAccessibilityLabel: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
+    studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -102,14 +112,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
     dayStreakMetric: 'day streak',
     eyebrow: 'Local profile',
+    audioDisabledBadge: 'Audio off',
+    audioEnabledBadge: 'Audio on',
+    audioStatusLabel: 'Audio',
+    dailyGoalBadgeLabel: 'Daily goal',
     languageBadge: 'English support',
+    languageBadgeLabel: 'Language',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettings: 'Open settings',
-    openSettingsAccessibilityLabel: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
+    studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -134,6 +149,7 @@ export default function Screen() {
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
   const removeAdsFocused = focus === 'remove-ads';
@@ -214,22 +230,31 @@ export default function Screen() {
         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
         <View style={styles.pillRow}>
           <Badge tone="blue">
-            {dailyGoalAnswers} {copy.answersPerDay}
+            {copy.dailyGoalBadgeLabel}: {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
-          <Badge tone="warm">{copy.languageBadge}</Badge>
+          <Badge tone="warm">
+            {copy.languageBadgeLabel}: {copy.languageBadge}
+          </Badge>
+          <Badge tone={audioEnabled ? 'green' : 'warm'}>
+            {copy.audioStatusLabel}:{' '}
+            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
+          </Badge>
         </View>
         <Link
           accessibilityLabel={copy.openSettingsAccessibilityLabel}
           accessibilityRole="link"
           asChild
-          href="/settings"
+          href={{
+            pathname: '/settings',
+            params: { focus: 'study' },
+          }}
         >
           <Button
             accessibilityLabel={copy.openSettingsAccessibilityLabel}
             accessibilityRole="link"
             style={styles.settingsLink}
           >
-            {copy.openSettings}
+            {copy.studySetupCta}
           </Button>
         </Link>
       </Card>

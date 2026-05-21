@@ -24,8 +24,26 @@ test('settings route shell copy follows the persisted settings language', () => 
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
 
-  assert.equal(summary.settingsRouteCopyLabelsValidated, 119);
+  assert.equal(summary.settingsRouteCopyLabelsValidated, 123);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
+  assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
+  assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
+  assert.match(source, /const studyFocusActive = focus === 'study';/);
+  assert.match(source, /studyControlsTitle: 'Dagligt mål, språk och ljud'/);
+  assert.match(source, /studyControlsTitle: 'Daily goal, language, and audio'/);
+  assert.match(
+    source,
+    /studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här\.'/,
+  );
+  assert.match(
+    source,
+    /studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here\.'/,
+  );
+  assert.match(source, /nativeID="study-settings-controls"/);
+  assert.match(source, /testID="study-settings-controls"/);
+  assert.match(source, /studyFocusActive \? styles\.studyControlsGroupFocused : null/);
+  assert.match(source, /\{studyFocusActive \? \(/);
+  assert.match(source, /\{copy\.studyControlsFocusLabel\}/);
   assert.match(source, /type SettingsCopy =/);
   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
