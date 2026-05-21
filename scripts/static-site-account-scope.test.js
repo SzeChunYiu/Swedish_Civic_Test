@@ -174,19 +174,16 @@ function createEbookToolsHarness() {
   };
 }
 
-test('static site exposes no reachable sign-in, OAuth, or magic-link surface', () => {
+test('static site optional account surface keeps ebook highlights account-free', () => {
   const index = read('site/index.html');
-  const app = read('site/app.js');
-  const extras = read('site/i18n-extras.js');
-  const styles = read('site/styles.css');
   const ebookTools = read('site/ebook-tools.js');
 
-  const staticSurface = [index, app, extras, styles, ebookTools].join('\n');
-
-  assert.doesNotMatch(index, /id="signin-open"|id="signin-modal"|signin\.js/);
-  assert.doesNotMatch(staticSurface, /Continue with Google|Continue with Apple|Send magic link/i);
-  assert.doesNotMatch(staticSurface, /smtOpenSignin|smt_signed_in|signin__/);
-  assert.doesNotMatch(staticSurface, /Sign in to (?:sync|highlight)|Logga in for att markera/i);
+  assert.match(index, /id="signin-open"/);
+  assert.match(index, /id="signin-modal"/);
+  assert.match(index, /<script src="signin\.js"><\/script>/);
+  assert.match(index, /Highlights and notes stay in this browser\. No account is needed\./);
+  assert.doesNotMatch(ebookTools, /isSignedIn|showSigninNudge|data-act="signin"/);
+  assert.doesNotMatch(ebookTools, /Sign in to (?:sync|highlight)|Logga in för att markera/i);
 });
 
 test('ebook highlights and notes stay local without account prompts', () => {
@@ -263,6 +260,67 @@ test('ebook highlight and note controls expose localized accessible names', () =
   harness.documentListeners.get('mouseup')({ target: { closest: () => null } });
   assert.equal(highlightButton.getAttribute('aria-label'), 'Highlight');
   assert.equal(noteButton.getAttribute('aria-label'), 'Add note');
+});
+
+test('ebook malformed highlight storage hydrates to a safe empty notes list', () => {
+  const malformedStorageValues = [
+    '"not an array"',
+    '{"length":1}',
+    '42',
+    'null',
+    JSON.stringify([
+      null,
+      [],
+      { id: '', text: 'viktig text', before: '', after: '', note: '' },
+      { id: 'h1', text: '', before: '', after: '', note: '' },
+      { id: 'h2', text: 'x'.repeat(501), before: '', after: '', note: '' },
+      { id: 'h3', text: 'viktig text', before: '', after: '', note: 'x'.repeat(2001) },
+      { id: 'h4', text: 'viktig text', before: {}, after: '', note: '' },
+    ]),
+  ];
+
+  for (const storedValue of malformedStorageValues) {
+    const harness = createEbookToolsHarness();
+    harness.localStorage.setItem('smt_hl_intro', storedValue);
+
+    assert.doesNotThrow(() => harness.context.window.smtApplyEbookHighlights());
+    assert.match(
+      harness.notesHost.innerHTML,
+      /No highlights yet\. Select text to mark it\./,
+      `malformed storage should render an empty note list for ${storedValue}`,
+    );
+    assert.doesNotMatch(harness.notesHost.innerHTML, /eb-notes-item/);
+  }
+});
+
+test('ebook highlight storage drops unsupported rows while preserving valid local records', () => {
+  const harness = createEbookToolsHarness();
+  const overlongAnchor = 'a'.repeat(121);
+  const unsafeId = 'h1"][autofocus][data-extra="x';
+
+  harness.localStorage.setItem(
+    'smt_hl_intro',
+    JSON.stringify([
+      { id: '', text: 'viktig text', before: '', after: '', note: '' },
+      { id: 'h-missing-text', before: '', after: '', note: '' },
+      { id: 'h-overlong-anchor', text: 'viktig text', before: overlongAnchor, after: '', note: '' },
+      {
+        id: unsafeId,
+        text: 'viktig text',
+        before: '',
+        after: '',
+        note: 'egen notis',
+      },
+    ]),
+  );
+
+  harness.windowListeners.get('hashchange')();
+
+  assert.match(harness.notesHost.innerHTML, /data-hl-id="h1&quot;\]\[autofocus\]/);
+  assert.match(harness.notesHost.innerHTML, /viktig text/);
+  assert.match(harness.notesHost.innerHTML, /egen notis/);
+  assert.doesNotMatch(harness.notesHost.innerHTML, /h-missing-text/);
+  assert.doesNotMatch(harness.notesHost.innerHTML, /h-overlong-anchor/);
 });
 
 test('ebook highlight ids are escaped before note rendering and selector lookup', () => {
