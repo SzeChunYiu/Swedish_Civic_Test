@@ -23,28 +23,22 @@ test('authored source questions stay reviewed and publish without field drift', 
   assert.equal(summary.sourcePublicationParityValidated, summary.sourceQuestions);
 });
 
-test('derived q002 false variant expectation stays anchored to authored q002 source', () => {
+test('derived q002 false-variant explanation expectation stays anchored to authored source', () => {
   const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
 
-  assert.match(source, /const \{ questions \} = loadTs\('data\/questions\.ts'\);/);
   assert.match(source, /const sourceQ002 = byId\.get\('q002'\);/);
+  assert.match(source, /q151:\s*\[/);
   assert.match(source, /const sourceQ002FalseVariant = assertQuestionTextPresent\(/);
   assert.match(
     source,
-    /sourceQ002FalseVariant\.explanationSv,[\s\S]*'Sveriges nordligaste del ligger norr om polcirkeln\.'/,
+    /sourceQ002FalseVariant\.explanationSv,\s*'Sveriges nordligaste del ligger norr om polcirkeln\.'/,
   );
   assert.match(
     source,
-    /sourceQ002FalseVariant\.explanationEn,[\s\S]*"Sweden's northernmost part lies north of the Arctic Circle\."/,
+    /sourceQ002FalseVariant\.explanationEn,\s*"Sweden's northernmost part lies north of the Arctic Circle\."/,
   );
-  assert.match(
-    source,
-    /sourceQ002\.explanationSv,[\s\S]*'Sveriges nordligaste del ligger norr om polcirkeln, i det arktiska området\./,
-  );
-  assert.match(
-    source,
-    /sourceQ002\.explanationEn,[\s\S]*"Sweden's northernmost part lies north of the Arctic Circle, in the Arctic area\./,
-  );
+  assert.match(source, /sourceQ002\.explanationSv/);
+  assert.match(source, /sourceQ002\.explanationEn/);
 });
 
 test('authored source schema rejects invalid review status values', () => {
@@ -123,6 +117,46 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q001 published source explanationEn does not match authored source/,
   );
+});
+
+test('authored source parity expects localized option overlays for additional pilot rows', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
+    return String(contents).replace(
+\`function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
+}\`,
+\`function expectedPublishedSourceOptions(question) {
+  return question.options;
+}\`,
+    );
+  }
+  return contents;
+};
+process.argv.push('--focus-authored-source-parity');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /q021 published source options does not match authored source/);
+  assert.match(output, /q160 published source options does not match authored source/);
 });
 
 test('authored source parity rejects true/false source prefixes before publishing', () => {

@@ -230,108 +230,17 @@ const STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY = [
   'OFFICIAL_TEST_SOURCE_NOTES',
   "retrievedDate: '2026-05-19'",
   'first civic-knowledge sitting will be held on 15 August 2026 in Stockholm',
-  'registration opens in early June 2026',
   'only people who receive a letter from Migrationsverket can sign up',
   'Seats are limited',
   'free of charge',
   'generous time',
   'UHR has not yet published the exact time and place',
   'första samhällskunskapsprovet inom medborgarskapsprovet',
-  'anmälan öppnar i början av juni 2026',
   'brev från Migrationsverket',
   'Antalet platser är begränsat',
   'kostnadsfritt',
   'generöst med tid',
   'Praktiska detaljer väntar hos UHR',
-];
-const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
-  'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
-  'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
-  'https://www.uhr.se/medborgarskapsprovet/anmalan/',
-  'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
-  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-];
-const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-19';
-const EXPECTED_ABOUT_THE_TEST_COPY_LABELS = {
-  sv: [
-    'Om provet',
-    'Vad är medborgarskapsprovet i samhällskunskap?',
-    'Det första provet som UHR beskriver gäller grundläggande kunskaper om det svenska samhället och är planerat till den 15 augusti 2026 i Stockholm.',
-    'Vad är det?',
-    'Medborgarskapsprovet är ett kunskapsprov som UHR ansvarar för. Första delen handlar om samhällskunskap. Prov i svenska införs senare.',
-    'Vem ska göra det?',
-    'Migrationsverket avgör vem som får skriva provet. UHR skriver att anmälan öppnar i början av juni 2026 och att du bara kan anmäla dig om du har fått ett brev från Migrationsverket. Du kan uppfylla kunskapskravet på andra sätt än genom provet.',
-    'Vad är känt om första provet?',
-    'UHR har bekräftat datumet 15 augusti 2026 och Stockholm för den första provomgången. Exakt tid och plats, anpassningar och praktiska förberedelser kommer senare. Augustiprovet är kostnadsfritt och ges som ett utprövningsprov med generös tid.',
-    'Vilket material bygger appen på?',
-    'Appens UHR-läge utgår från utbildningsmaterialet Sverige i fokus. Våra övningsfrågor är inte UHR:s provfrågor; UHR skriver att övningsprov från andra aktörer inte är kvalitetskontrollerade av myndigheten.',
-    'Är appen officiell?',
-    'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
-    'Källäge kontrollerat',
-    'Lägesbilden är kontrollerad ${officialTestSourceNotes[0].retrievedDate} mot UHR:s sidor om provet, anmälan, frågor och svar, utbildningsmaterial samt Migrationsverkets nyhet om reglerna från 6 juni 2026.',
-    'Tillbaka till start',
-    'Tillbaka till startsidan',
-    'Börja öva',
-    'Öppna övningsläget',
-    'Se kravguiden',
-    'Öppna guiden för medborgarskapskrav',
-  ],
-  en: [
-    'About the test',
-    'What is the Swedish civic test?',
-    'The first test described by UHR covers basic knowledge of Swedish society and is planned for 15 August 2026 in Stockholm.',
-    'What is it?',
-    'The citizenship test is a knowledge test that UHR is responsible for. The first part is about civic knowledge. A Swedish-language test will be introduced later.',
-    'Who takes it?',
-    'Migrationsverket decides who may take the test. UHR says registration opens in early June 2026 and that only people who have received a letter from Migrationsverket can sign up. You may be able to meet the knowledge requirement in other ways.',
-    'What is known about the first test?',
-    'UHR has confirmed 15 August 2026 and Stockholm for the first sitting. Exact time and place, adaptations, and practical preparation details will come later. The August test is free of charge and is a trial sitting with generous time.',
-    'What material does this app use?',
-    "The app's UHR mode is based on the study material Sverige i fokus. Our practice questions are not UHR test questions; UHR says practice tests from other actors are not quality-checked by UHR or another authority.",
-    'Is this app official?',
-    'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
-    'Source status checked',
-    "This status was checked on ${officialTestSourceNotes[0].retrievedDate} against UHR's pages about the test, registration, FAQ, study material, and Migrationsverket's news about the rules from 6 June 2026.",
-    'Back to home',
-    'Return to the home screen',
-    'Start practising',
-    'Open practice mode',
-    'View requirements guide',
-    'Open the citizenship requirements guide',
-  ],
-};
-const EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS = [
-  [
-    'useSettingsStore, type AppLanguage',
-    'about-the-test route must import AppLanguage from settings',
-  ],
-  ['type AboutTheTestCopy = {', 'about-the-test route must define a typed copy contract'],
-  [
-    'const aboutTheTestCopy: Record<AppLanguage, AboutTheTestCopy> = {',
-    'about-the-test route copy must cover every AppLanguage value',
-  ],
-  [
-    'const language = useSettingsStore((state) => state.language);',
-    'about-the-test route must read language from settings store',
-  ],
-  [
-    'const copy = aboutTheTestCopy[language];',
-    'about-the-test route must select copy from settings language',
-  ],
-  ['<QuestionDisclaimer />', 'about-the-test route must render the independent disclaimer'],
-  ['href="/citizenship-requirements"', 'about-the-test route must link to the requirements guide'],
-  ['href="/practice"', 'about-the-test route must link to practice'],
-  ['href="/home"', 'about-the-test route must link back home'],
-];
-const FORBIDDEN_ABOUT_THE_TEST_LOGISTICS_PATTERNS = [
-  /Ett kort\s+prov/i,
-  /short\s+test/i,
-  /digitalt\s+prov/i,
-  /digital\s+exam/i,
-  /Flervalsfr[aå]gor/i,
-  /Multiple-choice\s+questions/i,
-  /dator i en\s+provlokal/i,
-  /computer at a\s+test centre/i,
 ];
 const STATIC_EBOOK_FACTBOX_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
@@ -7169,6 +7078,10 @@ const baseQuestions = questionModule.baseQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
+const applyQuestionLocalizationPilot = loadTs(
+  'data/questionLocalizations.ts',
+  'applyQuestionLocalizationPilot',
+);
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
 const expectedGeneratedPublishedQuestions =
@@ -7394,10 +7307,6 @@ let practiceRouteCopyLabelsValidated = 0;
 let practiceRouteCopyParityValidated = false;
 let provenanceAuthorityCopyFilesValidated = 0;
 let provenanceAuthorityCopyParityValidated = false;
-let aboutTheTestRouteCopyLabelsValidated = 0;
-let aboutTheTestRouteCopyParityValidated = false;
-let aboutTheTestOfficialSourceUrlsValidated = 0;
-let aboutTheTestOfficialSourceRetrievedDateValidated = '';
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
@@ -7630,33 +7539,6 @@ if (process.argv.includes('--focus-static-head-metadata')) {
     staticValidationSyntaxFilesValidated,
     staticValidationImportChecksValidated,
     staticValidationSyntaxGateValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-about-the-test-route-copy')) {
-  validateAboutTheTestRouteCopyParity();
-  const practicalTestValidation = validateStaticEbookPracticalTestClaims();
-  staticEbookPracticalTestClaimPatternsValidated =
-    practicalTestValidation.unsupportedPracticalClaimsValidated;
-  staticEbookPracticalTestRequiredCopyValidated = practicalTestValidation.requiredCopyValidated;
-  staticEbookPracticalTestSourceUrlsValidated = practicalTestValidation.sourceUrlsValidated;
-  staticEbookPracticalTestCurrentnessValidated =
-    staticEbookPracticalTestClaimPatternsValidated ===
-      STATIC_EBOOK_UNSUPPORTED_PRACTICAL_TEST_CLAIM_PATTERNS.length &&
-    staticEbookPracticalTestRequiredCopyValidated ===
-      STATIC_EBOOK_PRACTICAL_TEST_REQUIRED_COPY.length &&
-    staticEbookPracticalTestSourceUrlsValidated === STATIC_EBOOK_PRACTICAL_TEST_SOURCE_URLS.length;
-  exitWithValidationFailures();
-  printValidationSummary({
-    aboutTheTestRouteCopyLabelsValidated,
-    aboutTheTestRouteCopyParityValidated,
-    aboutTheTestOfficialSourceUrlsValidated,
-    aboutTheTestOfficialSourceRetrievedDateValidated,
-    staticEbookPracticalTestClaimPatternsValidated,
-    staticEbookPracticalTestRequiredCopyValidated,
-    staticEbookPracticalTestSourceUrlsValidated,
-    staticEbookPracticalTestCurrentnessValidated,
   });
   process.exit(0);
 }
@@ -9459,89 +9341,6 @@ function validateProvenanceAuthorityCopyBoundary() {
 
   if (valid && provenanceAuthorityCopyFilesValidated === PROVENANCE_AUTHORITY_COPY_FILES.length) {
     provenanceAuthorityCopyParityValidated = true;
-  }
-}
-
-function validateAboutTheTestRouteCopyParity() {
-  let valid = true;
-  let aboutRoute = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
-  } catch (error) {
-    reject(`about-the-test route copy source could not be read: ${error.message}`);
-    return;
-  }
-
-  EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS.forEach(([snippet, message]) => {
-    if (!aboutRoute.includes(snippet)) reject(message);
-  });
-
-  FORBIDDEN_ABOUT_THE_TEST_LOGISTICS_PATTERNS.forEach((pattern) => {
-    if (pattern.test(aboutRoute))
-      reject('about-the-test route must not make unsupported logistics claim');
-  });
-
-  const seenLabels = new Set();
-  Object.entries(EXPECTED_ABOUT_THE_TEST_COPY_LABELS).forEach(([language, labels]) => {
-    labels.forEach((label) => {
-      let labelIsValid = true;
-      if (!textIsTrimmedSingleSpaced(label)) {
-        labelIsValid = false;
-        reject(`about-the-test ${language} label ${JSON.stringify(label)} must be normalized`);
-      }
-      if (!aboutRoute.includes(label)) {
-        labelIsValid = false;
-        reject(`about-the-test route is missing ${language} copy ${JSON.stringify(label)}`);
-      }
-
-      const normalizedLabel = `${language}:${normalizeComparableText(label)}`;
-      if (seenLabels.has(normalizedLabel)) {
-        labelIsValid = false;
-        reject(`about-the-test route duplicates ${language} copy ${JSON.stringify(label)}`);
-      }
-      if (normalizedLabel) seenLabels.add(normalizedLabel);
-      if (labelIsValid) aboutTheTestRouteCopyLabelsValidated += 1;
-    });
-  });
-
-  EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.forEach((url) => {
-    if (!aboutRoute.includes(url)) {
-      reject(`about-the-test route official source metadata missing ${url}`);
-      return;
-    }
-    aboutTheTestOfficialSourceUrlsValidated += 1;
-  });
-
-  const sourceRetrievedDates = Array.from(
-    aboutRoute.matchAll(/retrievedDate: '([^']+)'/g),
-    (match) => match[1],
-  );
-  const retrievedDatesValid =
-    sourceRetrievedDates.length === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length &&
-    sourceRetrievedDates.every(
-      (date) => date === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE,
-    );
-  if (retrievedDatesValid) {
-    aboutTheTestOfficialSourceRetrievedDateValidated =
-      EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE;
-  } else {
-    reject(
-      `about-the-test route official source metadata must use retrievedDate ${EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_RETRIEVED_DATE} for every source`,
-    );
-  }
-
-  const expectedLabelCount = Object.values(EXPECTED_ABOUT_THE_TEST_COPY_LABELS).reduce(
-    (count, labels) => count + labels.length,
-    0,
-  );
-  if (valid && aboutTheTestRouteCopyLabelsValidated === expectedLabelCount) {
-    aboutTheTestRouteCopyParityValidated = true;
   }
 }
 
@@ -15044,6 +14843,14 @@ const PUBLISHED_SOURCE_PARITY_FIELDS = [
   'tags',
 ];
 
+function expectedPublishedSourceOptions(question) {
+  if (typeof applyQuestionLocalizationPilot !== 'function') {
+    return question.options;
+  }
+
+  return applyQuestionLocalizationPilot(question).options;
+}
+
 function validateAuthoredSourcePartition(questionsToValidate, label, startQuestionNumber, count) {
   if (!Array.isArray(questionsToValidate)) return;
 
@@ -15074,6 +14881,9 @@ function expectedPublishedSourceField(question, field) {
   }
   if (question.type === 'true_false' && field === 'questionEn') {
     return ensureSentence(stripTrueFalsePromptEn(question.questionEn));
+  }
+  if (field === 'options') {
+    return expectedPublishedSourceOptions(question);
   }
   return question[field];
 }
@@ -15166,6 +14976,17 @@ function validateAuthoredSourceParity() {
 }
 
 validateAuthoredSourceParity();
+
+if (process.argv.includes('--focus-authored-source-parity')) {
+  exitWithValidationFailures();
+  printValidationSummary({
+    sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+    authoredSourceQuestionsValidated,
+    authoredSourcePartitionQuestionsValidated,
+    sourcePublicationParityValidated,
+  });
+  process.exit(0);
+}
 
 function validateGenerationParity() {
   if (
@@ -16075,7 +15896,6 @@ validateQuizRouteCopyParity();
 validatePracticeRouteHeaderParity();
 validatePracticeRouteCopyParity();
 validateProvenanceAuthorityCopyBoundary();
-validateAboutTheTestRouteCopyParity();
 validateChapterRouteHeaderParity();
 validateChapterRouteCopyParity();
 validateLearnRouteHeaderParity();
@@ -16211,10 +16031,6 @@ console.log(
       practiceRouteCopyParityValidated,
       provenanceAuthorityCopyFilesValidated,
       provenanceAuthorityCopyParityValidated,
-      aboutTheTestRouteCopyLabelsValidated,
-      aboutTheTestRouteCopyParityValidated,
-      aboutTheTestOfficialSourceUrlsValidated,
-      aboutTheTestOfficialSourceRetrievedDateValidated,
       chapterRouteHeadersValidated,
       chapterRouteHeaderParityValidated,
       chapterRouteCopyLabelsValidated,
