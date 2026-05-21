@@ -771,7 +771,7 @@ test('mistakes screen has a bookmarked-question review section', () => {
   assert.match(source, /bookmarkedReviewQuestions/);
   assert.match(source, /Bokmärkta frågor/);
   assert.match(source, /Bookmarked questions/);
-  assert.match(source, /Sparad till senare övning/);
+  assert.match(source, /Sparad för fokuserad repetition/);
   assert.match(source, /Saved for focused review/);
   assert.match(source, /\{copy\.bookmarkedTitle\}/);
   assert.match(source, /\{copy\.bookmarkedMeta\}/);
@@ -857,10 +857,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(webSource, /useSettingsStore/);
   assert.match(webSource, /const copy = adBannerCopy\[language\]/);
   assert.match(webSource, /const placementLabel = copy\.placementLabels\[placement\];/);
-  assert.match(
-    webSource,
-    /const adStatusLabel = unit\?\.testOnly \? copy\.testStatus : copy\.liveStatus;/,
-  );
+  assert.match(webSource, /const adStatusLabel = getAdBannerStatusLabel\(copy, unit\);/);
   assert.match(webSource, /const accessibilityLabel = copy\.accessibilityLabel/);
   assert.match(
     webSource,
@@ -890,7 +887,7 @@ test('native ads use Google Mobile Ads while web keeps a safe preview component'
   assert.match(copySource, /chapter_list_banner: 'Annons i kapitellistan'/);
   assert.match(copySource, /Döljs när Ta bort annonser är aktivt/);
   assert.match(copySource, /home_banner: 'Home banner'/);
-  assert.match(copySource, /AdMob test unit active - web preview/);
+  assert.match(copySource, /AdMob test unit active - test placement/);
 });
 
 test('native ad preview card exposes a grouped accessibility summary', () => {
