@@ -268,7 +268,6 @@ test('asset manifest check follows local CSS imports and ignores commented refer
   }
 });
 
-
 test('asset manifest check follows local CSS imports recursively without leaving the site root', () => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'site-css-import-reference-'));
   const tempSiteDir = path.join(tempDir, 'site');

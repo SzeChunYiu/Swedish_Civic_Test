@@ -345,7 +345,7 @@
         <div class="ad-slot__inner">
           <span class="ad-slot__label" data-i18n="ad.label">Sponsored</span>
           <div class="ad-slot__frame">
-            <!-- Static AdSense loads only after reviewed slot IDs are configured in site/app.js. -->
+            <!-- Static AdSense auto ads load only after consent; manual slots need reviewed IDs in site/app.js. -->
             <ins
               class="adsbygoogle"
               style="display: block; width: 100%; min-height: 120px"
@@ -478,9 +478,9 @@
               <summary data-i18n="faq.6.q">Is my data shared with anyone?</summary>
               <p data-i18n="faq.6.a">
                 Your study progress, answers, mistakes, and settings stay local. The website has
-                AdSense-ready ad slots that stay disabled until reviewed slot IDs are configured;
-                Google Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never
-                receive your study answers or progress.
+                Google AdSense auto ads on the website can load after your cookie choice; Google
+                Mobile Ads (AdMob) in the app can process ad and consent signals. Ads never receive
+                your study answers or progress.
               </p>
             </details>
           </div>
@@ -627,8 +627,8 @@
           </h1>
           <p class="doc__lede" data-i18n="privacy.lede">
             Almost Swedish is an independent study app. We don't ask for an account, and study
-            progress stays local. This page explains the AdSense-ready web ad slots, Google Mobile
-            Ads app ads, and optional one-time Remove Ads purchase.
+            progress stays local. This page explains Google AdSense web ads, Google Mobile Ads app
+            ads, and optional one-time Remove Ads purchase.
           </p>
           <div class="doc__meta">
             <span
@@ -696,20 +696,22 @@
 
               <h2 id="p5" data-i18n="privacy.s5.t">Ads and purchases</h2>
               <p data-i18n="privacy.s5.p">
-                This website has Google AdSense-ready ad slots, but they stay disabled until
-                reviewed slot IDs are configured. The mobile app uses Google Mobile Ads (AdMob)
-                behind Google's consent flow. Remove Ads is an optional one-time 29 SEK purchase
-                that removes ads. Ads help fund the free study experience, and ads never collect
-                study answers or progress.
+                This website uses Google AdSense auto ads after your cookie choice. Manual
+                in-content panels in Practice and Ebook stay as reserved spaces until reviewed slot
+                IDs are configured. The mobile app uses Google Mobile Ads (AdMob) behind Google's
+                consent flow. Remove Ads is an optional one-time 29 SEK purchase that removes ads.
+                Ads help fund the free study experience, and ads never collect study answers or
+                progress.
               </p>
               <h3 data-i18n="privacy.s5.web.t">Ads on this website</h3>
               <p data-i18n="privacy.s5.web.p">
-                This website is prepared for <b>Google AdSense</b>, but the static build does not
-                load AdSense until reviewed web slot IDs are configured. When enabled, AdSense and
-                its partners may set cookies on your device and use them to personalise ads, measure
-                performance, and detect fraud. We load AdSense according to your cookie choice:
-                <em>Accept all</em> allows personalised ads, while <em>Necessary only</em> keeps ads
-                non-personalised. You can change your choice by clearing site data for this domain.
+                This website uses <b>Google AdSense</b> auto ads after your cookie choice. AdSense
+                and its partners may set cookies on your device and use them to personalise ads,
+                measure performance, and detect fraud. We load AdSense according to your cookie
+                choice: <em>Accept all</em> allows personalised ads, while <em>Necessary only</em>
+                keeps ads non-personalised. Manual in-content panels in Practice and Ebook stay as
+                reserved spaces until reviewed slot IDs are configured. You can change your choice
+                by clearing site data for this domain.
               </p>
               <h3 data-i18n="privacy.s5.app.t">Ads in the mobile app</h3>
               <p data-i18n="privacy.s5.app.p">
@@ -1403,8 +1405,8 @@
         <div class="consent__copy">
           <b data-i18n="consent.title">Cookies, lagom-style.</b>
           <span data-i18n="consent.body"
-            >When reviewed web ad slots are configured, Google AdSense can set cookies and may use
-            them for ad personalisation. You can accept all, accept only what's needed, or read the
+            >Google AdSense can set cookies after you choose. You can accept all for personalised
+            ads, accept only what's needed for non-personalised ads, or read the
             <a href="#/privacy">privacy page</a>.</span
           >
         </div>
