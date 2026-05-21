@@ -9,20 +9,33 @@ function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
 }
 
+function assertLocalizedSourceCitation(source, copyIdentifier) {
+  assert.match(
+    source,
+    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*en: \\{ source: 'Source', page: 'p\\.' \\}`),
+  );
+  assert.match(
+    source,
+    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*sv: \\{ source: 'Källa', page: 's\\.' \\}`),
+  );
+  assert.match(
+    source,
+    new RegExp(`${copyIdentifier} = \\{[\\s\\S]*'zh-Hans': \\{ source: '来源', page: '页' \\}`),
+  );
+  assert.match(source, /const copy = .*?\|\| .*?\.en;/);
+  assert.match(
+    source,
+    /return `\$\{copy\.source\}: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, \$\{copy\.page\} \$\{source\.page\}`;/,
+  );
+}
+
 test('static practice quiz renders localized source citations below each question', () => {
   const source = readSiteFile('site/app.js');
 
   assert.match(source, /function smtQuizSourceCitation\(question, lang\)/);
   assert.match(source, /Källhänvisning saknas/);
   assert.match(source, /Source citation unavailable/);
-  assert.match(
-    source,
-    /`Källa: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, s\. \$\{source\.page\}`/,
-  );
-  assert.match(
-    source,
-    /`Source: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, p\. \$\{source\.page\}`/,
-  );
+  assertLocalizedSourceCitation(source, 'SMT_QUIZ_SOURCE_CITATION_COPY');
   assert.match(
     source,
     /function smtQuizQuestionSourceRow\(question, lang, citationClassName = ['"]quiz__source['"]\)/,
@@ -39,14 +52,7 @@ test('static mock exam and review render per-question source citations', () => {
   assert.match(source, /function sourceCitation\(question\)/);
   assert.match(source, /Källhänvisning saknas/);
   assert.match(source, /Source citation unavailable/);
-  assert.match(
-    source,
-    /`Källa: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, s\. \$\{source\.page\}`/,
-  );
-  assert.match(
-    source,
-    /`Source: \$\{title\}, \$\{source\.chapter\}, \$\{source\.section\}, p\. \$\{source\.page\}`/,
-  );
+  assertLocalizedSourceCitation(source, 'sourceCitationCopy');
   assert.match(
     source,
     /function questionSourceRow\(question, citationClassName = ['"]quiz__source['"]\)/,
