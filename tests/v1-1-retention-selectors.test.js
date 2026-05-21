@@ -322,6 +322,104 @@ test('chapterWeaknesses: invalid and future answer dates do not count toward wea
   assert.equal(validChapter.coverage, 0.1);
 });
 
+test('chapterWeaknesses: malformed counts and truthy correctness do not poison scores', () => {
+  const { chapterWeaknesses, topWeakChapters } = loadTs('lib/learning/weakChapters.ts');
+  const answers = [
+    {
+      questionId: 'nan-1',
+      selectedOptionIds: [],
+      isCorrect: 'yes',
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'negative-1',
+      selectedOptionIds: [],
+      isCorrect: 1,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'fractional-1',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'undersized-1',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'undersized-2',
+      selectedOptionIds: [],
+      isCorrect: false,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'strict-1',
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    {
+      questionId: 'strict-2',
+      selectedOptionIds: [],
+      isCorrect: 'true',
+      answeredAt: '2026-05-18T10:00:00.000Z',
+    },
+    null,
+  ];
+  const input = {
+    progress: progressWithSessions([
+      {
+        id: 's1',
+        mode: 'study',
+        questionIds: [],
+        answers,
+        startedAt: '2026-05-18T00:00:00.000Z',
+      },
+    ]),
+    chapters: [
+      { id: 'nan-count', questionCount: Number.NaN },
+      { id: 'negative-count', questionCount: -2 },
+      { id: 'fractional-count', questionCount: 2.5 },
+      { id: 'undersized-count', questionCount: 1 },
+      { id: 'strict-boolean', questionCount: 10 },
+    ],
+    questionChapterIndex: {
+      'nan-1': 'nan-count',
+      'negative-1': 'negative-count',
+      'fractional-1': 'fractional-count',
+      'undersized-1': 'undersized-count',
+      'undersized-2': 'undersized-count',
+      'strict-1': 'strict-boolean',
+      'strict-2': 'strict-boolean',
+    },
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  const result = chapterWeaknesses(input);
+  result.forEach((chapter) => {
+    assert.ok(Number.isFinite(chapter.coverage));
+    assert.ok(chapter.coverage >= 0 && chapter.coverage <= 1);
+    assert.ok(Number.isFinite(chapter.weaknessScore));
+    assert.ok(chapter.weaknessScore >= 0 && chapter.weaknessScore <= 1);
+  });
+
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').accuracy, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'nan-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').accuracy, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'negative-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'fractional-count').coverage, 0);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'undersized-count').coverage, 1);
+  assert.equal(result.find((chapter) => chapter.chapterId === 'strict-boolean').accuracy, 0.5);
+
+  assert.deepEqual(
+    topWeakChapters(input, 3).map((chapter) => chapter.chapterId),
+    ['fractional-count', 'nan-count', 'negative-count'],
+  );
+});
+
 // ---------------------------------------------------------------- mock exam library
 
 test('mockExamLibrary: library contains the canonical 7 mocks', () => {

@@ -175,6 +175,68 @@ test('mastery blends accuracy, coverage, and recency', () => {
   assert.deepEqual(findWeakChapterIds(questions, progress, 0.7), ['ch01']);
 });
 
+test('weak chapter selector clamps malformed imported chapter progress', () => {
+  const { chapterWeaknesses } = loadAllTs('lib/learning/weakChapters.ts');
+  const result = chapterWeaknesses({
+    progress: {
+      totalXp: 0,
+      level: 1,
+      currentStreak: 0,
+      dailyGoalAnswers: 10,
+      questionProgress: {},
+      sessions: [
+        {
+          id: 's1',
+          mode: 'study',
+          questionIds: [],
+          answers: [
+            {
+              questionId: 'q1',
+              selectedOptionIds: [],
+              isCorrect: 'yes',
+              answeredAt: '2026-05-18T10:00:00.000Z',
+            },
+            {
+              questionId: 'q2',
+              selectedOptionIds: [],
+              isCorrect: true,
+              answeredAt: '2026-05-18T10:00:00.000Z',
+            },
+            {
+              questionId: 'q3',
+              selectedOptionIds: [],
+              isCorrect: false,
+              answeredAt: 'not-a-date',
+            },
+          ],
+          startedAt: '2026-05-18T00:00:00.000Z',
+        },
+      ],
+    },
+    chapters: [
+      { id: 'bad-count', questionCount: Number.NaN },
+      { id: 'small-count', questionCount: 1 },
+    ],
+    questionChapterIndex: {
+      q1: 'bad-count',
+      q2: 'small-count',
+      q3: 'small-count',
+    },
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  });
+
+  const badCount = result.find((chapter) => chapter.chapterId === 'bad-count');
+  const smallCount = result.find((chapter) => chapter.chapterId === 'small-count');
+  assert.equal(badCount.accuracy, 0);
+  assert.equal(badCount.coverage, 0);
+  assert.equal(smallCount.accuracy, 1);
+  assert.equal(smallCount.coverage, 1);
+  for (const chapter of result) {
+    assert.ok(Number.isFinite(chapter.weaknessScore));
+    assert.ok(chapter.weaknessScore >= 0 && chapter.weaknessScore <= 1);
+  }
+});
+
 test('readiness score can be derived from the persisted question progress snapshot', () => {
   const { computeReadinessFromQuestionProgress } = loadAllTs('lib/learning/readiness.ts');
 

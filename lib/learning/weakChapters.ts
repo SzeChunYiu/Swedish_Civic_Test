@@ -15,6 +15,21 @@ import type { UserProgress } from '../../types/progress';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+function isFiniteNonNegativeInteger(value: unknown): value is number {
+  return (
+    typeof value === 'number' && Number.isFinite(value) && Number.isInteger(value) && value >= 0
+  );
+}
+
+function normalizeQuestionCount(value: unknown): number {
+  return isFiniteNonNegativeInteger(value) ? value : 0;
+}
+
+function clampUnitInterval(value: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(1, value));
+}
+
 export interface ChapterWeakness {
   chapterId: string;
   /** 0..1; null when no answers yet. */
@@ -69,17 +84,26 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
     });
   }
 
-  for (const session of input.progress.sessions ?? []) {
+  const sessions = Array.isArray(input.progress.sessions) ? input.progress.sessions : [];
+  for (const session of sessions) {
+    if (!Array.isArray(session.answers)) continue;
     for (const answer of session.answers) {
-      const answeredAtMs = validAnswerTimestampMs(answer.answeredAt, now);
+      if (!answer || typeof answer !== 'object') continue;
+      const candidate = answer as {
+        answeredAt?: unknown;
+        isCorrect?: unknown;
+        questionId?: unknown;
+      };
+      if (typeof candidate.questionId !== 'string') continue;
+      const answeredAtMs = validAnswerTimestampMs(candidate.answeredAt, now);
       if (answeredAtMs === null) continue;
-      const chapterId = input.questionChapterIndex[answer.questionId];
+      const chapterId = input.questionChapterIndex[candidate.questionId];
       if (!chapterId) continue;
       const bucket = buckets.get(chapterId);
       if (!bucket) continue;
       bucket.total += 1;
-      if (answer.isCorrect) bucket.correct += 1;
-      bucket.questionIds.add(answer.questionId);
+      if (candidate.isCorrect === true) bucket.correct += 1;
+      bucket.questionIds.add(candidate.questionId);
       if (bucket.lastAnsweredAtMs === null || answeredAtMs > bucket.lastAnsweredAtMs) {
         bucket.lastAnsweredAtMs = answeredAtMs;
       }
@@ -88,9 +112,10 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
 
   return input.chapters.map((chapter): ChapterWeakness => {
     const bucket = buckets.get(chapter.id)!;
+    const questionCount = normalizeQuestionCount(chapter.questionCount);
     const accuracy = bucket.total === 0 ? null : bucket.correct / bucket.total;
     const coverage =
-      chapter.questionCount === 0 ? 0 : bucket.questionIds.size / chapter.questionCount;
+      questionCount === 0 ? 0 : clampUnitInterval(bucket.questionIds.size / questionCount);
     const isSparse = bucket.total < minAnswers;
 
     // Sparse → neutral 0.5 effective accuracy so it ranks "moderately weak" and surfaces.
@@ -108,8 +133,9 @@ export function chapterWeaknesses(input: WeakChaptersInput): ChapterWeakness[] {
       stalenessBoost = 1;
     }
 
-    const weaknessScore =
-      0.7 * (1 - effectiveAccuracy) + 0.2 * (1 - coverage) + 0.1 * stalenessBoost;
+    const weaknessScore = clampUnitInterval(
+      0.7 * (1 - effectiveAccuracy) + 0.2 * (1 - coverage) + 0.1 * stalenessBoost,
+    );
 
     return {
       chapterId: chapter.id,
