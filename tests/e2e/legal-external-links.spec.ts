@@ -52,6 +52,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     sectionTitle: 'Primärt studiematerial',
     title: 'Källor',
     url: UHR_EDUCATION_MATERIAL_URL,
+    visibleLabel: 'UHR: Utbildningsmaterial om det svenska samhället',
   },
   {
     actionLabel: 'Open UHR education material',
@@ -61,6 +62,7 @@ const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
     sectionTitle: 'Primary study material',
     title: 'Sources',
     url: UHR_EDUCATION_MATERIAL_URL,
+    visibleLabel: 'UHR: Study material about Swedish society',
   },
   {
     actionLabel: 'Öppna UHR:s utbildningsmaterial',
