@@ -3768,7 +3768,7 @@
             <li><b>Iidda Faasiga</b> waxay ku dhacdaa Maarso ama Abriil waxayna leedahay xididdo Masiixi ah, inkastoo dad badani u xuso sidii fasax qoys iyo gu'.</li>
             <li><b>Habeenka Walpurgis</b>, 30 Abriil, badanaa wuxuu macnaheedu yahay dab-shidan iyo heeso lagu soo dhoweynayo gu'ga.</li>
             <li><b>Kowda Maajo</b> waa Maalinta Caalamiga ah ee Shaqaalaha, oo lagu calaamadiyo bannaanbaxyo iyo khudbado siyaasadeed.</li>
-            <li><b>Habeenka Bartamaha Xagaaga</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluunka herring, baradho cusub iyo farawle.</li>
+            <li><b>Habeenka Bartamaha Xagaaga</b> had iyo jeer waa Jimce u dhexeeya 19 iyo 25 Juun, oo leh kulammo bannaan, taajaj ubax, tiir bartamaha xagaaga, kalluun la dhanaaniyey, baradho cusub iyo farawle.</li>
           </ul>
           <h2>Dayr iyo jiilaal</h2>
           <ul>

@@ -10,6 +10,7 @@ import { useReducedMotion } from '../lib/motion/useReducedMotion';
 import {
   LOCAL_STUDY_DATA_IMPORT_MAX_BYTES,
   applyLocalStudyDataImport,
+  formatLocalStudyDataImportErrorDetail,
   getLocalStudyDataImportPayloadByteCount,
   previewLocalStudyDataImport,
   type LocalStudyDataImportErrorCode,
@@ -46,7 +47,7 @@ type SettingsCopy = {
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
   importByteLimitExceeded: (byteCountLabel: string, maxLabel: string) => string;
-  importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
+  importErrorMessage: (code: LocalStudyDataImportErrorCode, detail?: string) => string;
   importPasteLabel: string;
   importPastePlaceholder: string;
   importPreview: string;
@@ -96,6 +97,11 @@ function formatImportByteCount(byteCount: number, language: AppLanguage): string
 
 const localStudyDataImportMaxLabel = `${LOCAL_STUDY_DATA_IMPORT_MAX_BYTES / (1024 * 1024)} MB`;
 
+function appendImportErrorDetail(message: string, detail: string | undefined, fieldLabel: string) {
+  const formattedDetail = formatLocalStudyDataImportErrorDetail(detail);
+  return formattedDetail ? `${message} ${fieldLabel}: ${formattedDetail}` : message;
+}
+
 const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
@@ -126,7 +132,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importByteLimitExceeded: (byteCountLabel, maxLabel) =>
       `Importen är ${byteCountLabel} byte. Gränsen är ${maxLabel}; klistra in en mindre export innan du förhandsgranskar.`,
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Klistra in JSON innan du förhandsgranskar.';
       if (code === 'input_too_large') {
         return `JSON-exporten är större än ${localStudyDataImportMaxLabel}. Klistra in en export på högst ${localStudyDataImportMaxLabel}.`;
@@ -216,7 +222,7 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importByteLimitExceeded: (byteCountLabel, maxLabel) =>
       `The import is ${byteCountLabel} bytes. The limit is ${maxLabel}; paste a smaller export before previewing.`,
-    importErrorMessage: (code) => {
+    importErrorMessage: (code, detail) => {
       if (code === 'empty_input') return 'Paste JSON before previewing.';
       if (code === 'input_too_large') {
         return `The JSON export is larger than ${localStudyDataImportMaxLabel}. Paste an export under ${localStudyDataImportMaxLabel}.`;
