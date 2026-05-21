@@ -117,6 +117,7 @@ test('mock exam requires all answers before showing Swedish score and source pro
   await expect(submit).toBeDisabled();
   await expect(page.getByText('Frågegenomgång')).toHaveCount(0);
   await expect(page.getByText('Förklaring', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('UHR-källa', { exact: true })).toHaveCount(totalQuestions);
   await expectProvenanceSourceNoteToggle(page, {
     buttonName: /Källtyp: UHR-källa/,
     sourceNoteLabel: /^Källanteckning:/,

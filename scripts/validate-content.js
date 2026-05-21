@@ -10194,6 +10194,15 @@ if (process.argv.includes('--focus-badge-xp-runtime')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-exam-submission-finality-parity')) {
+  validateExamSubmissionFinalityParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    examSubmissionFinalityParityValidated,
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes('--focus-content-type-schema-parity')) {
   validateContentTypeSchemaParity();
   exitWithValidationFailures();
@@ -12018,15 +12027,28 @@ function validateExamSubmissionFinalityParity() {
   }
   if (
     !examRoute.includes('const recordMockExamSession = useProgressStore') ||
-    !examRoute.includes('recordMockExamSession({') ||
-    !examRoute.includes(
-      'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
-    ) ||
-    !examRoute.includes(
-      'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString()',
-    )
+    !examRoute.includes('recordMockExamSession({')
   ) {
     reject('exam result submission must persist a completed mock-exam score for readiness');
+  }
+  const recordMockExamSessionCalls = examRoute.match(/\brecordMockExamSession\s*\(\s*\{/g) ?? [];
+  if (recordMockExamSessionCalls.length !== 1) {
+    reject('exam result submission must persist exactly one completed mock-exam session');
+  }
+  const requiredPersistenceFields = [
+    'sessionId: examAttemptId',
+    'score: resultTotalCount > 0 ? resultCorrectCount / resultTotalCount : 0',
+    'completedAt: submittedExamSession?.completedAt ?? new Date().toISOString()',
+    'correctCount: resultCorrectCount',
+    'totalCount: resultTotalCount',
+    'questionTimings:',
+    'submittedExamSession?.answers',
+    'timeSpentSeconds: answer.timeSpentSeconds',
+  ];
+  for (const snippet of requiredPersistenceFields) {
+    if (!examRoute.includes(snippet)) {
+      reject(`exam result submission must persist readiness field: ${snippet}`);
+    }
   }
 
   if (valid) examSubmissionFinalityParityValidated = true;

@@ -8,6 +8,13 @@ const ts = require('typescript');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+
+function parseValidationSummary(output) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused validation should print JSON summary');
+  return JSON.parse(match[0]);
+}
+
 function runValidationWithProgressStorePatch(search, replacement) {
   return spawnSync(
     process.execPath,
@@ -338,6 +345,35 @@ test('streak freeze normalizer focused validator rejects progress store alias dr
     `${result.stdout}\n${result.stderr}`,
     /progressStore must import the shared streak-freeze normalizer by storage alias/,
   );
+});
+
+test('exam submission finality parity has focused readiness persistence coverage', () => {
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const summary = parseValidationSummary(output);
+  const examRoute = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/exam.tsx'), 'utf8');
+
+  assert.deepEqual(Object.keys(summary), ['examSubmissionFinalityParityValidated']);
+  assert.equal(summary.examSubmissionFinalityParityValidated, true);
+  assert.equal((examRoute.match(/\brecordMockExamSession\s*\(\s*\{/g) ?? []).length, 1);
+  assert.match(examRoute, /sessionId: examAttemptId/);
+  assert.match(
+    examRoute,
+    /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/,
+  );
+  assert.match(
+    examRoute,
+    /completedAt: submittedExamSession\?\.completedAt \?\? new Date\(\)\.toISOString\(\)/,
+  );
+  assert.match(examRoute, /correctCount: resultCorrectCount/);
+  assert.match(examRoute, /totalCount: resultTotalCount/);
+  assert.match(examRoute, /questionTimings:/);
 });
 
 test('DailyChallengeProgress schema mirrors public DailyChallengeCompletion fields', () => {
@@ -813,7 +849,7 @@ test('exam submission finality parity rejects losing the submitted completion ti
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /exam result submission must persist a completed mock-exam score for readiness/,
+    /exam result submission must persist/,
   );
 });
 
