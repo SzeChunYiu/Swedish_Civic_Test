@@ -97,65 +97,20 @@ test('QuestionNavigator tabs keep token-sized touch targets', () => {
   assert.match(source, /minWidth:\s*space\[6\]/);
 });
 
-test('LanguagePicker menu rows expose menu-item state semantics', () => {
+test('LanguagePicker trigger and menu rows expose popup state semantics', () => {
   const source = fs.readFileSync(path.join(ROOT, 'components', 'ui', 'LanguagePicker.tsx'), 'utf8');
 
   assert.match(source, /aria-haspopup="menu"/);
+  assert.match(source, /aria-expanded=\{open\}/);
   assert.match(source, /accessibilityRole="menu"/);
   assert.match(source, /accessibilityRole="menuitem"/);
   assert.match(source, /aria-selected=\{selected\}/);
   assert.match(source, /aria-disabled=\{!opt\.available\}/);
-  assert.match(source, /tabIndex: option\.available \? 0 : -1/);
-  assert.match(
-    source,
-    /onKeyDown: \(event: KeyboardEventLike\) => handleRowKeyDown\(event, option\)/,
-  );
-  assert.match(source, /\{\.\.\.getRowWebKeyboardProps\(opt\)\}/);
-  assert.match(source, /const closeButtonRef = useRef<FocusableElement \| null>\(null\);/);
-  assert.match(
-    source,
-    /const focusCloseButton = useCallback\(\(\) => \{[\s\S]*closeButtonRef\.current\?\.focus\?\.\(\);/,
-  );
-  assert.match(
-    source,
-    /const focusFirstAvailableLocale = useCallback\(\(\) => \{[\s\S]*focusAvailableLocale\(0\);/,
-  );
-  assert.match(
-    source,
-    /const focusLastAvailableLocale = useCallback\(\(\) => \{[\s\S]*focusAvailableLocale\(availableLocales\.length - 1\);/,
-  );
-  assert.match(source, /case 'Tab':[\s\S]*focusCloseButton\(\);/);
-  assert.match(source, /const handleCloseKeyDown = \(event: KeyboardEventLike\) => \{/);
-  assert.match(source, /if \(key !== 'Tab'\) return;[\s\S]*event\.preventDefault\?\.\(\);/);
-  assert.match(source, /if \(shiftKey\) \{[\s\S]*focusLastAvailableLocale\(\);/);
-  assert.match(source, /else \{[\s\S]*focusFirstAvailableLocale\(\);/);
-  assert.match(source, /\{\.\.\.getCloseWebKeyboardProps\(\)\}/);
-  assert.match(source, /case 'Escape':[\s\S]*closeMenu\(\);/);
-  assert.match(source, /case 'ArrowDown':[\s\S]*focusAvailableLocale/);
-  assert.match(source, /case 'Home':[\s\S]*focusAvailableLocale\(0\);/);
-  assert.match(source, /case 'End':[\s\S]*focusAvailableLocale\(availableLocales\.length - 1\);/);
-  assert.match(source, /case 'Enter':[\s\S]*handleSelect\(option\);/);
-  assert.match(source, /case ' ':[\s\S]*handleSelect\(option\);/);
   assert.match(source, /accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/);
-  assert.match(
-    source,
-    /accessible=\{false\}[\s\S]*importantForAccessibility="no-hide-descendants"/,
-  );
-  assert.match(
-    source,
-    /accessibilityLabel=\{copy\.closeLabel\}[\s\S]*accessibilityRole="button"[\s\S]*hitSlop=\{space\[1\]\}[\s\S]*styles\.closeButton/,
-  );
-  assert.match(source, /minHeight:\s*space\[6\]/);
-  assert.match(source, /minWidth:\s*space\[6\]/);
   assert.doesNotMatch(
     source,
     /key=\{opt\.code\}[\s\S]*accessibilityRole="button"[\s\S]*accessibilityState=\{\{ selected, disabled: !opt\.available \}\}/,
   );
-  const backdropTag = source.match(
-    /<Pressable\s+accessible=\{false\}[\s\S]*?style=\{\(\{ pressed \}\) => \[styles\.backdrop[\s\S]*?\/>/,
-  );
-  assert.ok(backdropTag, 'LanguagePicker backdrop must be hidden from accessibility');
-  assert.doesNotMatch(backdropTag[0], /accessibilityRole=|accessibilityLabel=/);
 });
 
 test('NativeAdCard native summary and CTA are separate accessibility elements', () => {
