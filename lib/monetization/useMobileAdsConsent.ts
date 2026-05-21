@@ -16,6 +16,11 @@ let cachedInitializationPlatform: string | undefined;
 let initializationPromise: Promise<MobileAdsConsentInitializationResult> | undefined;
 let initializationPromisePlatform: string | undefined;
 
+function resetInitializationPromise() {
+  initializationPromise = undefined;
+  initializationPromisePlatform = undefined;
+}
+
 function createInitialResult(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
@@ -40,6 +45,20 @@ function createInitialResult(
   };
 }
 
+function resolveInitializationResult(
+  result: MobileAdsConsentInitializationResult,
+  platform: string,
+): MobileAdsConsentInitializationResult {
+  if (!result.initialized) {
+    resetInitializationPromise();
+    return result;
+  }
+
+  cachedInitialization = result;
+  cachedInitializationPlatform = platform;
+  return result;
+}
+
 function initializeOnce(
   entitlements: Pick<PremiumEntitlements, 'adsDisabled'>,
   platform: string,
@@ -52,7 +71,7 @@ function initializeOnce(
   }
 
   if (initializationPromisePlatform && initializationPromisePlatform !== platform) {
-    initializationPromise = undefined;
+    resetInitializationPromise();
   }
   initializationPromisePlatform = platform;
 
@@ -60,13 +79,9 @@ function initializeOnce(
     entitlements,
     runtime: createNativeMobileAdsConsentRuntime(platform),
   })
-    .then((result) => {
-      cachedInitialization = result;
-      cachedInitializationPlatform = platform;
-      return result;
-    })
+    .then((result) => resolveInitializationResult(result, platform))
     .catch((error: unknown) => {
-      initializationPromise = undefined;
+      resetInitializationPromise();
       throw error;
     });
 

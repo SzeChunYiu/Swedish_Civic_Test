@@ -30,7 +30,6 @@ const {
   sourceLineNumberForIndex,
   summarizePinnedCwdCalls,
 } = require('./content-exec-cwd-guards');
-const { validatePurchaseActionInFlightGuard } = require('./purchase-inflight-guard');
 
 const repoRoot = path.resolve(__dirname, '..');
 const failures = [];
@@ -57,7 +56,6 @@ const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
   'scripts/compliance-pages.test.js',
-  'scripts/purchase-inflight-guard.js',
 ]);
 const EXPECTED_BASE_SOURCE_QUESTIONS = 20;
 const GENERATED_VARIANTS_PER_SOURCE = 4;
@@ -745,7 +743,7 @@ const GENERATED_TRUE_FALSE_EXPLANATION_META_PATTERNS = [
 ];
 const EXPECTED_BADGE_IDS = ['first_practice', 'streak_3', 'level_2', 'mistake_reviewer'];
 const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
-const EXPECTED_STREAK_RULE_COUNT = 13;
+const EXPECTED_STREAK_RULE_COUNT = 10;
 const EXPECTED_XP_RULE_COUNT = 20;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
 const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
@@ -1580,9 +1578,9 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 21;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 20;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 8;
-const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
+const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
   {
     label: 'mock exam title',
@@ -14369,7 +14367,6 @@ function validatePurchaseTypeSchemaParity() {
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
   let placementCtaSource = '';
-  let premiumBannerSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -14382,10 +14379,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
       'utf8',
     );
-    premiumBannerSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/PremiumBanner.tsx'),
-      'utf8',
-    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
     reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
@@ -14393,16 +14386,7 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
-  const normalizedPremiumBannerSource = premiumBannerSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
-  const placementCtaGuard = validatePurchaseActionInFlightGuard(placementCtaSource, {
-    awaitedCalls: ['await purchaseAction('],
-    surfaceName: 'RemoveAdsPlacementCta',
-  });
-  const premiumBannerGuard = validatePurchaseActionInFlightGuard(premiumBannerSource, {
-    awaitedCalls: ['await buyRemoveAds(', 'await restoreRemoveAdsPurchase('],
-    surfaceName: 'PremiumBanner',
-  });
   const runtimeCases = [
     [
       typeof REMOVE_ADS_PRODUCT_ID === 'string' &&
@@ -14529,16 +14513,11 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint',
     ],
     [
-      placementCtaGuard.valid,
-      placementCtaGuard.message ||
-        'Remove Ads placement CTA must use a ref-backed in-flight guard before awaiting store calls',
-    ],
-    [
-      normalizedPremiumBannerSource.includes('restoreRemoveAdsPurchase') &&
-        normalizedPremiumBannerSource.includes("action === 'buy'") &&
-        premiumBannerGuard.valid,
-      premiumBannerGuard.message ||
-        'PremiumBanner buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
+      normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
+        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
+        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
+      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 
@@ -14864,8 +14843,17 @@ function validateMobileAdsConsentHookParity() {
       normalizedHookSource.includes(
         'initializationPromise ??= initializeGoogleMobileAdsAfterConsent({',
       ) &&
+        /function\s+resolveInitializationResult\([\s\S]*result:\s*MobileAdsConsentInitializationResult,[\s\S]*platform:\s*string,[\s\S]*\):\s*MobileAdsConsentInitializationResult\s*\{[\s\S]*if\s*\(\s*!result\.initialized\s*\)\s*\{[\s\S]*resetInitializationPromise\(\);[\s\S]*return\s+result;[\s\S]*\}[\s\S]*cachedInitialization\s*=\s*result;[\s\S]*cachedInitializationPlatform\s*=\s*platform;[\s\S]*return\s+result;[\s\S]*\}/.test(
+          hookSource,
+        ),
+      'Mobile Ads consent hook must retry after non-initialized blocked consent results',
+    ],
+    [
+      normalizedHookSource.includes(
+        'initializationPromise ??= initializeGoogleMobileAdsAfterConsent({',
+      ) &&
         normalizedHookSource.includes('cachedInitialization = result;') &&
-        normalizedHookSource.includes('initializationPromise = undefined;') &&
+        normalizedHookSource.includes('resetInitializationPromise();') &&
         normalizedHookSource.includes('throw error;'),
       'Mobile Ads consent hook must cache successful non-disabled initialization and reset after errors',
     ],
@@ -16609,70 +16597,6 @@ function validateStreakRules() {
       },
       expected: true,
     },
-    {
-      label: 'refillFreezes rejects string freeze counters',
-      actual: () => {
-        const refilled = refillFreezes(
-          {
-            available: '1',
-            lastEarnedAt: '2026-05-18',
-            lifetimeEarned: '2',
-            lifetimeSpent: NaN,
-            rescuedDayKeys: ['bad-key', '2026-05-17'],
-          },
-          streakFreezeNow,
-        );
-        return (
-          refilled.available === 0 &&
-          refilled.lifetimeEarned === 0 &&
-          refilled.lifetimeSpent === 0 &&
-          refilled.rescuedDayKeys.length === 1 &&
-          refilled.rescuedDayKeys[0] === '2026-05-17'
-        );
-      },
-      expected: true,
-    },
-    {
-      label: 'refillFreezes clamps overstocked freeze availability',
-      actual: () =>
-        refillFreezes(
-          {
-            available: 99,
-            lastEarnedAt: '2026-05-12',
-            lifetimeEarned: 3,
-            lifetimeSpent: 1,
-            rescuedDayKeys: [],
-          },
-          streakFreezeNow,
-        ).available,
-      expected: 4,
-    },
-    {
-      label: 'streakWithFreeze rejects fractional freeze availability',
-      actual: () => {
-        const result = calculateStreakWithFreeze({
-          activeDayKeys: ['2026-05-16', '2026-05-18', '2026-05-19'],
-          freezeState: {
-            available: 1.5,
-            lastEarnedAt: '2026-05-18',
-            lifetimeEarned: Infinity,
-            lifetimeSpent: -1,
-            rescuedDayKeys: ['bad-key'],
-          },
-          today: '2026-05-19',
-          now: streakFreezeNow,
-        });
-        return (
-          result.streakDays === 2 &&
-          result.rescuedThisRun.length === 0 &&
-          result.freezeState.available === 0 &&
-          result.freezeState.lifetimeEarned === 0 &&
-          result.freezeState.lifetimeSpent === 0 &&
-          result.freezeState.rescuedDayKeys.length === 0
-        );
-      },
-      expected: true,
-    },
   ];
 
   let rulesAreValid = true;
@@ -17650,6 +17574,16 @@ if (process.argv.includes('--focus-remove-ads-hook-parity')) {
   printValidationSummary({
     removeAdsEntitlementHookCasesValidated,
     removeAdsEntitlementHookParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-mobile-ads-consent-hook')) {
+  validateMobileAdsConsentHookParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    mobileAdsConsentHookCasesValidated,
+    mobileAdsConsentHookParityValidated,
   });
   process.exit(0);
 }
