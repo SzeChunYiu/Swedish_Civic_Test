@@ -1,7 +1,9 @@
 #!/usr/bin/env node
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
+const vm = require('node:vm');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
@@ -144,7 +146,7 @@ function buildSiteQuestionBank() {
   return { questions: siteQuestions, chapters: chapterMeta };
 }
 
-function generateStaticSiteQuestionBankJs() {
+function generateUnformattedStaticSiteQuestionBankJs() {
   const bank = buildSiteQuestionBank();
   return `/* Almost Swedish - generated static question bank.
    Source: data/questions.ts and data/chapters.ts.
@@ -161,6 +163,75 @@ function generateStaticSiteQuestionBankJs() {
 `;
 }
 
+function formatStaticSiteQuestionBankJs(source) {
+  const prettierBinPath = require.resolve('prettier/bin/prettier.cjs');
+  return execFileSync(
+    process.execPath,
+    [
+      prettierBinPath,
+      '--stdin-filepath',
+      path.join(repoRoot, 'site', 'questions.js'),
+      '--config',
+      path.join(repoRoot, '.prettierrc.json'),
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      input: source,
+      maxBuffer: 16 * 1024 * 1024,
+    },
+  );
+}
+
+function generateStaticSiteQuestionBankJs() {
+  return formatStaticSiteQuestionBankJs(generateUnformattedStaticSiteQuestionBankJs());
+}
+
+function readStaticSiteQuestionBankFromSource(source) {
+  const context = { window: {} };
+  vm.runInNewContext(source, context, { timeout: 3000 });
+  const { SMT_QUESTIONS: questions, SMT_CHAPTERS_META: chapters } = context.window;
+  if (!Array.isArray(questions) || !Array.isArray(chapters)) {
+    throw new Error('source does not define SMT_QUESTIONS and SMT_CHAPTERS_META arrays');
+  }
+  return { questions, chapters };
+}
+
+function comparableStaticSiteQuestionBank(source) {
+  const bank = readStaticSiteQuestionBankFromSource(source);
+  return JSON.stringify(bank);
+}
+
+function classifyStaticSiteQuestionBankDrift(actual, expected) {
+  if (actual === expected) {
+    return {
+      kind: 'none',
+      message: 'site/questions.js matches the generated static question bank',
+    };
+  }
+
+  try {
+    if (comparableStaticSiteQuestionBank(actual) === comparableStaticSiteQuestionBank(expected)) {
+      return {
+        kind: 'format',
+        message:
+          'site/questions.js has format-only exporter drift; run node scripts/export-site-question-bank.js',
+      };
+    }
+  } catch (error) {
+    return {
+      kind: 'semantic',
+      message: `site/questions.js could not be compared semantically: ${error.message}`,
+    };
+  }
+
+  return {
+    kind: 'semantic',
+    message:
+      'site/questions.js semantic content is out of sync; run node scripts/export-site-question-bank.js and inspect the question-bank changes',
+  };
+}
+
 function main() {
   const outPath = path.join(repoRoot, 'site', 'questions.js');
   const generated = generateStaticSiteQuestionBankJs();
@@ -168,9 +239,7 @@ function main() {
   if (checkMode) {
     const existing = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : '';
     if (existing !== generated) {
-      console.error(
-        'site/questions.js is out of sync; run node scripts/export-site-question-bank.js',
-      );
+      console.error(classifyStaticSiteQuestionBankDrift(existing, generated).message);
       process.exit(1);
     }
     const bank = buildSiteQuestionBank();
@@ -197,5 +266,9 @@ if (require.main === module) {
 
 module.exports = {
   buildSiteQuestionBank,
+  classifyStaticSiteQuestionBankDrift,
+  formatStaticSiteQuestionBankJs,
   generateStaticSiteQuestionBankJs,
+  generateUnformattedStaticSiteQuestionBankJs,
+  readStaticSiteQuestionBankFromSource,
 };

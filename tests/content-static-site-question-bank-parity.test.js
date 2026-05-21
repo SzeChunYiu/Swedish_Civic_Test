@@ -6,7 +6,9 @@ const test = require('node:test');
 
 const {
   buildSiteQuestionBank,
+  classifyStaticSiteQuestionBankDrift,
   generateStaticSiteQuestionBankJs,
+  generateUnformattedStaticSiteQuestionBankJs,
 } = require('../scripts/export-site-question-bank');
 
 const repoRoot = path.resolve(__dirname, '..');
@@ -26,6 +28,18 @@ test('static site question bank exposes the canonical question and chapter count
   assert.equal(context.window.SMT_QUESTIONS.length, bank.questions.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, bank.chapters.length);
   assert.equal(context.window.SMT_CHAPTERS_META.length, 13);
+});
+
+test('static site question bank drift classifier separates formatting from semantics', () => {
+  const expected = generateStaticSiteQuestionBankJs();
+  const formatOnly = generateUnformattedStaticSiteQuestionBankJs();
+  const semanticDrift = expected.replace("id: 'q001'", "id: 'q999'");
+
+  assert.notEqual(formatOnly, expected, 'fixture should differ only by generated JS formatting');
+  assert.notEqual(semanticDrift, expected, 'fixture should change the exported question data');
+  assert.equal(classifyStaticSiteQuestionBankDrift(expected, expected).kind, 'none');
+  assert.equal(classifyStaticSiteQuestionBankDrift(formatOnly, expected).kind, 'format');
+  assert.equal(classifyStaticSiteQuestionBankDrift(semanticDrift, expected).kind, 'semantic');
 });
 
 test('static site chapter metadata exposes canonical sv/en localized text', () => {
