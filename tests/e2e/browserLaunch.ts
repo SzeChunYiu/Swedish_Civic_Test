@@ -16,8 +16,11 @@ export type BlockingModalDismissal = {
 const settingsStorageId = 'settings';
 const settingsLanguageKey = 'language';
 const settingsSeenAboutKey = 'hasSeenAboutTheTest';
+const progressStorageId = 'progress';
+const progressStateKey = 'progressState';
 export const currentSettingsLanguageStorageKey = `${settingsStorageId}\\${settingsLanguageKey}`;
 export const currentSettingsSeenAboutStorageKey = `${settingsStorageId}\\${settingsSeenAboutKey}`;
+export const currentProgressStateStorageKey = `${progressStorageId}\\${progressStateKey}`;
 const settingsLanguageStorageKeys = [
   settingsLanguageKey,
   currentSettingsLanguageStorageKey,
