@@ -232,6 +232,24 @@ function normalizeDailyChallengeQuestionIds(value: unknown): string[] {
   return questionIds;
 }
 
+function normalizeCompletedQuestionIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+
+  const questionIds: string[] = [];
+  const seenQuestionIds = new Set<string>();
+  for (const item of value) {
+    const questionId = typeof item === 'string' ? item.trim() : '';
+    if (!questionId || !isSafeImportedMapKey(questionId) || seenQuestionIds.has(questionId)) {
+      continue;
+    }
+    seenQuestionIds.add(questionId);
+    questionIds.push(questionId);
+    if (questionIds.length >= maxHydratedQuestionAnswerCount) break;
+  }
+
+  return questionIds;
+}
+
 function normalizeDailyChallengeProgress(value: unknown): DailyChallengeProgress | null {
   if (!value || typeof value !== 'object') return null;
 
@@ -280,9 +298,7 @@ function normalizeProgress(value: unknown): PersistedProgress {
   if (!value || typeof value !== 'object') return emptyProgress;
 
   const candidate = value as Partial<PersistedProgress>;
-  const completedQuestionIds = Array.isArray(candidate.completedQuestionIds)
-    ? candidate.completedQuestionIds.filter((id): id is string => typeof id === 'string')
-    : [];
+  const completedQuestionIds = normalizeCompletedQuestionIds(candidate.completedQuestionIds);
   const answerDates = Array.isArray(candidate.answerDates)
     ? [
         ...new Set(
