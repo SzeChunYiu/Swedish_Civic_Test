@@ -505,13 +505,10 @@
       return (ch.answered || 0) > 0;
     });
 
-    // Signed in but nothing practised yet → nothing to show. When signed OUT we
-    // always render the shape (blurred, behind the sign-in overlay) as a teaser.
-    if (signedIn && !hasAnyProgress) {
-      el.style.display = 'none';
-      el.classList.remove('v11-dashboard--locked');
-      return;
-    }
+    // Always show the dashboard on the practice hub: a signed-in user sees their
+    // panel (even at zero — it fills in as they practise); a signed-out user sees
+    // the blurred shape behind the sign-in overlay. (Previously it vanished right
+    // after sign-in when the new account had no local progress yet.)
     el.style.display = '';
 
     const readiness = computeReadiness();
