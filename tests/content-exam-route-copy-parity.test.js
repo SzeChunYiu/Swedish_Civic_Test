@@ -60,7 +60,10 @@ test('exam route shell and review copy follows the persisted settings language',
   );
   assert.match(source, /recordMockExamSession\(\{/);
   assert.match(source, /score: resultTotalCount > 0 \? resultCorrectCount \/ resultTotalCount : 0/);
-  assert.match(source, /completedAt: new Date\(\)\.toISOString\(\)/);
+  assert.match(
+    source,
+    /completedAt: submittedExamSession\?\.completedAt \?\? new Date\(\)\.toISOString\(\)/,
+  );
 });
 
 test('exam route copy parity rejects bypassing the settings language', () => {
