@@ -33,6 +33,10 @@ import type { ThemeColors } from '../lib/theme';
 type SettingsCopy = {
   audioDisabledLabel: string;
   audioEnabledLabel: string;
+  audioListenFirstDisabledLabel: string;
+  audioListenFirstEnabledLabel: string;
+  audioListenFirstSubtitle: string;
+  audioListenFirstTitle: string;
   audioTitle: string;
   backToProfile: string;
   backToProfileAccessibilityLabel: string;
@@ -42,7 +46,9 @@ type SettingsCopy = {
   dailyGoalSummary: (answerCount: number) => string;
   dailyGoalTitle: string;
   disableAudioAccessibilityLabel: string;
+  disableListenFirstAudioAccessibilityLabel: string;
   enableAudioAccessibilityLabel: string;
+  enableListenFirstAudioAccessibilityLabel: string;
   confirmImport: string;
   confirmImportAccessibilityLabel: string;
   importErrorMessage: (code: LocalStudyDataImportErrorCode) => string;
@@ -93,6 +99,11 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   sv: {
     audioDisabledLabel: 'Ljud avstängt',
     audioEnabledLabel: 'Ljud på',
+    audioListenFirstDisabledLabel: 'Av',
+    audioListenFirstEnabledLabel: 'På',
+    audioListenFirstSubtitle:
+      'Spelar upp den svenska frågan och svarsalternativen automatiskt när en ny övningsfråga visas.',
+    audioListenFirstTitle: 'Lyssna först',
     audioTitle: 'Ljud',
     backToProfile: '← Tillbaka till profil',
     backToProfileAccessibilityLabel: 'Tillbaka till profil',
@@ -109,7 +120,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} svar per dag`,
     dailyGoalTitle: 'Dagligt mål',
     disableAudioAccessibilityLabel: 'Stäng av ljud',
+    disableListenFirstAudioAccessibilityLabel: 'Stäng av lyssna först för övningsfrågor',
     enableAudioAccessibilityLabel: 'Slå på ljud',
+    enableListenFirstAudioAccessibilityLabel: 'Slå på lyssna först för övningsfrågor',
     confirmImport: 'Bekräfta import',
     confirmImportAccessibilityLabel: 'Bekräfta lokal studiedataimport',
     importErrorMessage: (code) => {
@@ -170,6 +183,11 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
   en: {
     audioDisabledLabel: 'Audio disabled',
     audioEnabledLabel: 'Audio enabled',
+    audioListenFirstDisabledLabel: 'Off',
+    audioListenFirstEnabledLabel: 'On',
+    audioListenFirstSubtitle:
+      'Automatically plays the Swedish question and answer options when a new practice question appears.',
+    audioListenFirstTitle: 'Listen first',
     audioTitle: 'Audio',
     backToProfile: '← Back to Profile',
     backToProfileAccessibilityLabel: 'Back to profile',
@@ -186,7 +204,9 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
     dailyGoalSummary: (answerCount) => `${answerCount} answers per day`,
     dailyGoalTitle: 'Daily goal',
     disableAudioAccessibilityLabel: 'Disable audio',
+    disableListenFirstAudioAccessibilityLabel: 'Disable listen-first practice audio',
     enableAudioAccessibilityLabel: 'Enable audio',
+    enableListenFirstAudioAccessibilityLabel: 'Enable listen-first practice audio',
     confirmImport: 'Confirm import',
     confirmImportAccessibilityLabel: 'Confirm local study data import',
     importErrorMessage: (code) => {
@@ -284,7 +304,11 @@ export default function Screen() {
   const setDailyGoalAnswers = useSettingsStore((state) => state.setDailyGoalAnswers);
   const clearPersistenceWarning = useSettingsStore((state) => state.clearPersistenceWarning);
   const themeMode = useAccessibilityStore((state) => state.themeMode);
+  const listenFirstAudioEnabled = useAccessibilityStore((state) => state.listenFirstAudioEnabled);
   const setThemeMode = useAccessibilityStore((state) => state.setThemeMode);
+  const setListenFirstAudioEnabled = useAccessibilityStore(
+    (state) => state.setListenFirstAudioEnabled,
+  );
   const selectedCompanionId = useCompanionStore((state) => state.selectedId);
   const setSelectedCompanion = useCompanionStore((state) => state.setSelected);
   const companionPersistenceWarning = useCompanionStore((state) => state.persistenceWarning);
@@ -464,6 +488,37 @@ export default function Screen() {
         >
           <Text style={styles.secondaryButtonText}>
             {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
+          </Text>
+        </Pressable>
+        <Text style={styles.subtitle}>{copy.audioListenFirstSubtitle}</Text>
+        <Pressable
+          aria-checked={listenFirstAudioEnabled}
+          accessibilityLabel={
+            listenFirstAudioEnabled
+              ? copy.disableListenFirstAudioAccessibilityLabel
+              : copy.enableListenFirstAudioAccessibilityLabel
+          }
+          accessibilityRole="switch"
+          accessibilityState={{ checked: listenFirstAudioEnabled }}
+          hitSlop={space[1]}
+          onBlur={() => setFocusedControl(null)}
+          onFocus={() => setFocusedControl('listen-first-audio')}
+          onPress={() => setListenFirstAudioEnabled(!listenFirstAudioEnabled)}
+          style={({ pressed }) => [
+            styles.secondaryButton,
+            focusedControl === 'listen-first-audio' ? styles.secondaryButtonFocused : null,
+            pressed
+              ? reduceMotion
+                ? styles.secondaryButtonPressedReducedMotion
+                : styles.secondaryButtonPressed
+              : null,
+          ]}
+        >
+          <Text style={styles.secondaryButtonText}>
+            {copy.audioListenFirstTitle}:{' '}
+            {listenFirstAudioEnabled
+              ? copy.audioListenFirstEnabledLabel
+              : copy.audioListenFirstDisabledLabel}
           </Text>
         </Pressable>
       </View>

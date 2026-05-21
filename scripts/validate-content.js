@@ -2957,6 +2957,10 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /const hasSpeechText = speechText\.length > 0;/,
   },
   {
+    label: 'speaking state tracks active question audio',
+    pattern: /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/,
+  },
+  {
     label: 'enabled plus text playback guard',
     pattern: /const canPlayAudio = enabled && hasSpeechText;/,
   },
@@ -2964,6 +2968,10 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     label: 'localized state-specific visible labels',
     pattern:
       /const audioButtonCopy: Record<AppLanguage, AudioButtonCopy> = \{[\s\S]*disabledLabel: 'Ljud är avstängt'[\s\S]*enabledLabel: 'Lyssna på den svenska frågan och svaren'[\s\S]*unavailableLabel: 'Ljud saknas för den här frågan'[\s\S]*disabledLabel: 'Audio is disabled'[\s\S]*enabledLabel: 'Listen to the Swedish question and answers'[\s\S]*unavailableLabel: 'Audio is unavailable for this question'/,
+  },
+  {
+    label: 'localized stop-state labels',
+    pattern: /stopLabel: 'Stoppa frågeljud'[\s\S]*stopLabel: 'Stop question audio'/,
   },
   {
     label: 'accessibility label follows localized visible label',
@@ -2988,9 +2996,19 @@ const EXPECTED_AUDIO_BUTTON_ACCESSIBILITY_RULES = [
     pattern: /disabled=\{!canPlayAudio\}/,
   },
   {
-    label: 'trimmed speech playback',
+    label: 'second press stops active question audio',
     pattern:
-      /if \(!canPlayAudio\) return;[\s\S]*stopSpeech\(\);[\s\S]*speakSwedish\(speechText,\s*\{/,
+      /if \(isSpeaking\) \{[\s\S]*stopSpeech\(\);[\s\S]*setIsSpeaking\(false\);[\s\S]*return;[\s\S]*\}/,
+  },
+  {
+    label: 'trimmed speech playback with lifecycle cleanup',
+    pattern:
+      /if \(!canPlayAudio\) return;[\s\S]*setIsSpeaking\(true\);[\s\S]*speakSwedish\(speechText,\s*\{[\s\S]*rate,[\s\S]*onDone: \(\) => setIsSpeaking\(false\),[\s\S]*onError: \(\) => setIsSpeaking\(false\),[\s\S]*onStopped: \(\) => setIsSpeaking\(false\),/,
+  },
+  {
+    label: 'speech cleanup on text change and unmount',
+    pattern:
+      /useEffect\(\(\) => \{[\s\S]*setIsSpeaking\(false\);[\s\S]*return \(\) => \{[\s\S]*stopSpeech\(\);[\s\S]*\};[\s\S]*\}, \[speechText\]\);/,
   },
 ];
 const EXPECTED_QUESTION_CARD_ACCESSIBILITY_RULES = [

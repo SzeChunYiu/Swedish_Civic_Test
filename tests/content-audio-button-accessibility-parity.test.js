@@ -36,7 +36,7 @@ test('learning AudioButton keeps playback guards and accessibility copy in parit
   assert.match(source, /rate,/);
   assert.match(source, /rate\?: number;/);
   assert.match(source, /const \[isSpeaking, setIsSpeaking\] = useState\(false\);/);
-  assert.match(source, /const speechText = typeof text === 'string' \? text\.trim\(\) : '';/);
+  assert.match(source, /const speechText = text\.trim\(\);/);
   assert.match(source, /const hasSpeechText = speechText\.length > 0;/);
   assert.match(source, /const canPlayAudio = enabled && hasSpeechText;/);
   assert.match(source, /Lyssna på den svenska frågan och svaren/);

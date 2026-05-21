@@ -51,6 +51,127 @@ async function expectPrimaryPrompt(page: Page, primaryText: string, secondaryTex
   expect(primaryBox!.y).toBeLessThan(secondaryBox!.y);
 }
 
+type SpeechStubSnapshot = {
+  cancelCount: number;
+  speakCalls: { lang: string; rate: number; text: string }[];
+};
+
+function expectSwedishQuestionSpeech(call: SpeechStubSnapshot['speakCalls'][number] | undefined) {
+  expect(call?.lang).toBe('sv-SE');
+  expect(call?.text).toContain('Alternativ A.');
+  expect(call?.text).toContain('Alternativ B.');
+}
+
+async function installSpeechSynthesisStub(page: Page) {
+  await page.addInitScript(() => {
+    type SpeechStubState = {
+      cancelCount: number;
+      paused: boolean;
+      speakCalls: { lang: string; rate: number; text: string }[];
+      speaking: boolean;
+    };
+    type SpeechStubWindow = Window &
+      typeof globalThis & {
+        __SMT_SPEECH_STUB__?: SpeechStubState;
+      };
+
+    const stubWindow = window as SpeechStubWindow;
+    const state: SpeechStubState = {
+      cancelCount: 0,
+      paused: false,
+      speakCalls: [],
+      speaking: false,
+    };
+
+    class StubSpeechSynthesisUtterance {
+      lang = '';
+      onboundary: ((event: Event) => void) | null = null;
+      onend: ((event: Event) => void) | null = null;
+      onerror: ((event: Event) => void) | null = null;
+      onmark: ((event: Event) => void) | null = null;
+      onpause: ((event: Event) => void) | null = null;
+      onresume: ((event: Event) => void) | null = null;
+      onstart: ((event: Event) => void) | null = null;
+      pitch = 1;
+      rate = 1;
+      text = '';
+      voice: SpeechSynthesisVoice | null = null;
+      volume = 1;
+    }
+
+    const speechSynthesisStub = {
+      cancel() {
+        state.cancelCount += 1;
+        state.speaking = false;
+        state.paused = false;
+      },
+      getVoices() {
+        return [];
+      },
+      pause() {
+        state.paused = true;
+        state.speaking = false;
+      },
+      get paused() {
+        return state.paused;
+      },
+      get pending() {
+        return false;
+      },
+      resume() {
+        state.paused = false;
+        state.speaking = true;
+      },
+      speak(message: SpeechSynthesisUtterance) {
+        state.speaking = true;
+        state.paused = false;
+        state.speakCalls.push({
+          lang: message.lang,
+          rate: message.rate,
+          text: message.text,
+        });
+        (message.onstart as ((event: Event) => void) | null)?.(new Event('start'));
+      },
+      get speaking() {
+        return state.speaking;
+      },
+    };
+
+    Object.defineProperty(stubWindow, '__SMT_SPEECH_STUB__', {
+      configurable: true,
+      value: state,
+    });
+    Object.defineProperty(stubWindow, 'SpeechSynthesisUtterance', {
+      configurable: true,
+      value: StubSpeechSynthesisUtterance,
+    });
+    Object.defineProperty(stubWindow, 'speechSynthesis', {
+      configurable: true,
+      value: speechSynthesisStub,
+    });
+  });
+}
+
+async function getSpeechStubSnapshot(page: Page): Promise<SpeechStubSnapshot> {
+  return page.evaluate(() => {
+    const state = (
+      window as Window &
+        typeof globalThis & {
+          __SMT_SPEECH_STUB__?: SpeechStubSnapshot;
+        }
+    ).__SMT_SPEECH_STUB__;
+
+    if (!state) {
+      throw new Error('Speech synthesis stub was not installed');
+    }
+
+    return {
+      cancelCount: state.cancelCount,
+      speakCalls: state.speakCalls.map((call) => ({ ...call })),
+    };
+  });
+}
+
 test('practice audio control follows the selected question language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
@@ -84,6 +205,75 @@ test('practice audio control follows the selected question language', async ({ p
     page.getByRole('button', { name: 'Lyssna på den svenska frågan och svaren' }),
   ).toHaveCount(0);
 
+  expect(consoleErrors).toEqual([]);
+});
+
+test('practice and routed quiz question audio controls expose a browser stop state', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await installSpeechSynthesisStub(page);
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const practiceAudio = page.getByRole('button', {
+    name: 'Listen to the Swedish question and answers',
+  });
+  await expect(practiceAudio).toBeVisible();
+
+  const beforePractice = await getSpeechStubSnapshot(page);
+  await practiceAudio.click();
+
+  const practiceStop = page.getByRole('button', { name: 'Stop question audio' });
+  await expect(practiceStop).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Listen to the Swedish question and answers' }),
+  ).toHaveCount(0);
+
+  const afterPracticePlay = await getSpeechStubSnapshot(page);
+  expect(afterPracticePlay.speakCalls.length).toBe(beforePractice.speakCalls.length + 1);
+  expectSwedishQuestionSpeech(afterPracticePlay.speakCalls.at(-1));
+
+  await practiceStop.click();
+  await expect(
+    page.getByRole('button', { name: 'Listen to the Swedish question and answers' }),
+  ).toBeVisible();
+
+  const afterPracticeStop = await getSpeechStubSnapshot(page);
+  expect(afterPracticeStop.cancelCount).toBeGreaterThan(afterPracticePlay.cancelCount);
+
+  await page.goto('/quiz/q001', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const quizAudio = page.getByRole('button', {
+    name: 'Listen to the Swedish question and answers',
+  });
+  await expect(quizAudio).toBeVisible();
+
+  const beforeQuiz = await getSpeechStubSnapshot(page);
+  await quizAudio.click();
+
+  const quizStop = page.getByRole('button', { name: 'Stop question audio' });
+  await expect(quizStop).toBeVisible();
+
+  const afterQuizPlay = await getSpeechStubSnapshot(page);
+  expect(afterQuizPlay.speakCalls.length).toBe(beforeQuiz.speakCalls.length + 1);
+  expectSwedishQuestionSpeech(afterQuizPlay.speakCalls.at(-1));
+
+  await quizStop.click();
+  await expect(
+    page.getByRole('button', { name: 'Listen to the Swedish question and answers' }),
+  ).toBeVisible();
+
+  const afterQuizStop = await getSpeechStubSnapshot(page);
+  expect(afterQuizStop.cancelCount).toBeGreaterThan(afterQuizPlay.cancelCount);
   expect(consoleErrors).toEqual([]);
 });
 
