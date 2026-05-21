@@ -81,6 +81,11 @@ const staticEbookSourceAuthorityPhrasingPatterns = [
   /UHR\s+ከም\s+ዝብሎ|UHR[^።<]{0,120}ይብል/,
 ];
 const staticEbookSomaliHolidayFoodTokenPatterns = [/\bherring\b/i];
+const staticEbookSomaliHolidayFoodRequiredCopy = [
+  'Habeenka Bartamaha Xagaaga',
+  'kalluun la dhanaaniyey',
+  'baradho cusub iyo farawle',
+];
 const staticEbookChapter13FoodBeverageSourceTokenPatterns = [
   /\bherring\b/i,
   /\bstrawberries\b/i,
@@ -292,6 +297,15 @@ function assertNoUnsupportedPracticalTestClaim(value) {
 function assertNoStaticEbookSourceAuthorityPhrasing(value) {
   for (const pattern of staticEbookSourceAuthorityPhrasingPatterns) {
     assert.doesNotMatch(value, pattern);
+  }
+}
+
+function assertSomaliChapter13HolidayFoodIsLocalized(value) {
+  for (const pattern of staticEbookSomaliHolidayFoodTokenPatterns) {
+    assert.doesNotMatch(value, pattern);
+  }
+  for (const copy of staticEbookSomaliHolidayFoodRequiredCopy) {
+    assert.match(value, new RegExp(escapeRegExp(copy)));
   }
 }
 
@@ -739,17 +753,12 @@ test('static ebook chapter 13 extra languages avoid parenthetical English holida
   }
 });
 
-test('static ebook Somali chapter 13 localizes holiday food copy', () => {
+test('static ebook Somali chapter 13 localizes Midsummer food wording', () => {
   const harness = createEbookHarness();
   const html = renderChapter(harness, 'so', '13');
 
-  assert.match(html, /Habeenka Bartamaha Xagaaga/);
-  assert.match(html, /kalluun la dhanaaniyey/);
-  assert.match(html, /baradho cusub iyo farawle/);
-
-  for (const pattern of staticEbookSomaliHolidayFoodTokenPatterns) {
-    assert.doesNotMatch(html, pattern);
-  }
+  assert.match(html, /class="ebook__h1"/, 'Somali chapter 13 should render');
+  assertSomaliChapter13HolidayFoodIsLocalized(html);
 });
 
 test('static ebook chapter 13 source keeps English food and beverage tokens out of extra locales', () => {
