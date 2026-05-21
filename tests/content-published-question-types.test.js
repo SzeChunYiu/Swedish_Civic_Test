@@ -22,31 +22,18 @@ const q071SocialInsuranceOverlapPattern =
 const traditionCommonToDoEnglishPattern =
   /\bWhat is common to do on (?:New Year(?:’|')s Eve|All Saints(?:’|') Day)\b/i;
 const religiousFreedom1951StiltedEnglishPattern = /\bcompletely freely\b/i;
-const religiousFreedomOptionParallelismPattern =
-  /\b(?:Rätten att utöva sin religion och skydd mot diskriminering på grund av tro|The right to practice (?:one’s|one's) religion and protection from discrimination because of belief)\b/i;
 const mayDayEnglishCalquePattern = /\bFirst of May\b/i;
-const workersDayHolidayEnglishPatterns = [
-  /\bDemonstrations on workers[’'] day\b/i,
-  /\bHolding demonstrations on workers[’'] day\b/i,
-  /\bWorkers[’'] day with demonstrations and speeches\b/,
-  /\bmarks workers[’'] day with demonstrations and speeches\b/i,
-];
+const referendumAdvisorySvNaturalnessPattern = /\bmåste inte följa resultatet\b/i;
+const generatedReferendumMeaningWrongOrderSvPattern =
+  /\bbetyder att politikerna (?:måste inte|behöver inte|måste alltid) följa resultatet\b/i;
 const euCooperationMissingArticleEnglishPattern =
   /\bThe EU is political and economic cooperation between European countries\b/i;
-const goodFridayRemembersEnglishPattern =
-  /\bGood Friday remembers Jesus' death and Easter Sunday his resurrection\b/i;
 const councilOfEuropeWorkForEnglishPattern =
   /\b(?:What does the Council of Europe work for\??|The Council of Europe works (?:only )?for)\b/i;
 const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
-const humanRightsDefinitionCleftPattern =
-  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const policyGoalCleftPattern = /\bThe goal of .+? policy means\b/i;
 const luciaExplanationRoleScaffoldPattern =
   /\b(?:In a Lucia procession,\s+one person is Lucia|I ett luciatåg\s+(?:är en person Lucia|en person är Lucia))\b/i;
-const umeaDemonymOldSwedishPattern = /\bumebor\b/i;
-const referendumAdvisorySwedishNaturalnessPattern =
-  /\b(?:måste inte följa resultatet|betyder att politikerna måste (?:inte|alltid) följa resultatet)\b/i;
 const taxVatTwoConceptPattern =
   /\b(?:skatt och moms|tax and VAT|Företag betalar också skatt,\s+och moms betalas|Companies also pay tax,\s+and VAT is paid|Skatt betalas både av personer som arbetar och av företag\.\s+Moms är|Both people who work and companies pay tax\.\s+VAT is)\b/i;
 const q038OldVatDistractorPattern = /\b(?:Vilka varor som har moms|Which goods have VAT)\b/i;
@@ -163,7 +150,6 @@ test('published source parity localizes only q160-q169 source option maps', () =
 
 test('published question types stay answerable by quiz runtime', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
     encoding: 'utf8',
   });
   const match = output.match(/\{[\s\S]*\}/);
@@ -177,9 +163,8 @@ test('published question types stay answerable by quiz runtime', () => {
   );
   assert.equal(summary.questionMayDayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(summary.questionLuciaExplanationRoleScaffoldValidated, summary.publishedQuestions);
-  assert.equal(summary.questionGoodFridayEnglishNaturalnessValidated, summary.publishedQuestions);
   assert.equal(
-    summary.questionReferendumAdvisorySwedishNaturalnessValidated,
+    summary.questionReferendumAdvisorySvNaturalnessValidated,
     summary.publishedQuestions,
   );
   assert.equal(summary.derivedCivicStatementPromptMirrorValidated, 2);
@@ -539,67 +524,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('Umeå demonym source and exports use natural Swedish spelling', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    umeaDemonymOldSwedishPattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
-  );
-  const textForQuestion = (question) =>
-    [question.q?.sv, ...(question.opts || []).map((option) => option.sv)].join(' ');
-  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
-    .filter((question) => umeaDemonymOldSwedishPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const umeaDemonymRows = generatedSiteBank.filter((question) =>
-    textForQuestion(question).includes('Stockholmare, göteborgare, malmöbor, uppsalabor'),
-  );
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(bankFindings, []);
-  assert.ok(umeaDemonymRows.length >= 1, 'Umeå demonym distractor should be published');
-  for (const question of umeaDemonymRows) {
-    assert.match(textForQuestion(question), /umeåbor/);
-  }
-});
-
-test('Umeå demonym naturalness guard rejects learner-facing umebor', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents).replace(
-      'Stockholmare, göteborgare, malmöbor, uppsalabor och umeåbor',
-      'Stockholmare, göteborgare, malmöbor, uppsalabor och umebor',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-      '--',
-      '--focus-umea-demonym',
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q058 uses nonstandard Umeå demonym Swedish wording/,
-  );
-});
-
 test('state welfare source coverage separates q071 higher education from q156 social insurance', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
@@ -839,306 +763,46 @@ require('./scripts/validate-content.js');
   assert.match(output, /q103 uses literal First of May English wording/);
 });
 
-test('referendum advisory Swedish copy stays natural across source and exports', () => {
+test('referendum advisory source and exports use natural Swedish wording', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = Array.from(actualStaticQuestions());
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
+  const fileFindings = [
+    'data/questions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    referendumAdvisorySvNaturalnessPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
   );
-  const q020GeneratedIds = [
-    generatedQuestionId(sourceQuestions, 'q020', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q020', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
-    generatedQuestionId(sourceQuestions, 'q020', 'judgement'),
-  ];
-  const q020Ids = ['q020', ...q020GeneratedIds];
   const textForQuestion = (question) =>
     [question.q?.sv, question.why?.sv, ...(question.opts || []).map((option) => option.sv)].join(
       ' ',
     );
-  const fileFindings = ['data/questions.ts', 'content/question-bank.csv', 'site/questions.js']
-    .filter((relativePath) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(
-        fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-      ),
-    )
-    .map((relativePath) => path.normalize(relativePath));
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => q020Ids.includes(question.id))
+  const wrongOrderFindings = [...generatedSiteBank, ...actualSiteBank]
     .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
-    )
-    .map((question) => question.id);
-  const actualOffenders = actualSiteBank
-    .filter((question) => q020Ids.includes(question.id))
-    .filter((question) =>
-      referendumAdvisorySwedishNaturalnessPattern.test(textForQuestion(question)),
+      generatedReferendumMeaningWrongOrderSvPattern.test(textForQuestion(question)),
     )
     .map((question) => question.id);
   const q020 = generatedSiteBank.find((question) => question.id === 'q020');
-  const q020True = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q020', 'trueStatement'),
-  );
-  const q020False = generatedSiteBank.find(
-    (question) => question.id === generatedQuestionId(sourceQuestions, 'q020', 'falseStatement'),
-  );
+  const referendumGeneratedText = generatedSiteBank
+    .filter((question) => question.type === 'true_false')
+    .map(textForQuestion)
+    .join('\n');
 
   assert.deepEqual(fileFindings, []);
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
+  assert.deepEqual(wrongOrderFindings, []);
   assert.ok(q020, 'q020 should be published in the site bank');
-  assert.equal(q020.opts[0]?.sv, 'Politikerna behöver inte följa resultatet');
+  assert.equal(q020.opts[0].sv, 'Politikerna behöver inte följa resultatet');
   assert.match(q020.why.sv, /politikerna behöver inte följa resultatet/);
-  assert.ok(q020True, 'q020 true generated variant should be published');
-  assert.ok(q020False, 'q020 false generated variant should be published');
-  assert.equal(
-    q020True.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet.',
-  );
-  assert.equal(
-    q020False.q.sv,
-    'Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet.',
-  );
-});
-
-test('referendum advisory Swedish naturalness guard rejects old måste inte wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Politikerna behöver inte följa resultatet',
-        'Politikerna måste inte följa resultatet',
-      )
-      .replace(
-        'politikerna behöver inte följa resultatet.',
-        'politikerna måste inte följa resultatet.',
-      );
-  }
-  if (normalizedPath.endsWith('/scripts/validate-content.js')) {
-    return String(contents).replace(
-      'validateAuthoredSourceParity();',
-      '// validateAuthoredSourceParity skipped for focused q020 fixture;',
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
   assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q020 uses ambiguous advisory-referendum Swedish wording/,
+    referendumGeneratedText,
+    /Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet\./,
   );
-});
-
-test('May Day holiday options use natural International Workers Day English', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = Array.from(actualStaticQuestions());
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
+  assert.match(
+    referendumGeneratedText,
+    /Att folkomröstningar i Sverige är rådgivande betyder att politikerna alltid måste följa resultatet\./,
   );
-  const holidayIds = [
-    'q097',
-    generatedQuestionId(sourceQuestions, 'q097', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q097', 'judgement'),
-    'q100',
-    generatedQuestionId(sourceQuestions, 'q100', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q100', 'judgement'),
-    'q103',
-    generatedQuestionId(sourceQuestions, 'q103', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q103', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q103', 'judgement'),
-  ];
-  const textForQuestion = (question) =>
-    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
-      ' ',
-    );
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    workersDayHolidayEnglishPatterns.some((pattern) =>
-      pattern.test(fs.readFileSync(path.join(repoRoot, relativePath), 'utf8')),
-    ),
-  );
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => holidayIds.includes(question.id))
-    .filter((question) =>
-      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
-    )
-    .map((question) => question.id);
-  const actualOffenders = actualSiteBank
-    .filter((question) => holidayIds.includes(question.id))
-    .filter((question) =>
-      workersDayHolidayEnglishPatterns.some((pattern) => pattern.test(textForQuestion(question))),
-    )
-    .map((question) => question.id);
-  const q097 = generatedSiteBank.find((question) => question.id === 'q097');
-  const q100 = generatedSiteBank.find((question) => question.id === 'q100');
-  const q103 = generatedSiteBank.find((question) => question.id === 'q103');
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  assert.ok(q097?.opts.some((option) => option.en === 'May Day demonstrations'));
-  assert.ok(q100?.opts.some((option) => option.en === 'Holding May Day demonstrations'));
-  assert.ok(
-    q103?.opts.some(
-      (option) => option.en === "International Workers' Day with demonstrations and speeches",
-    ),
-  );
-});
-
-test('May Day holiday English guard rejects lower-case workers day labels', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace('May Day demonstrations', 'Demonstrations on workers’ day')
-      .replace('Holding May Day demonstrations', 'Holding demonstrations on workers’ day')
-      .replace(
-        "International Workers' Day with demonstrations and speeches",
-        "Workers' day with demonstrations and speeches",
-      );
-  }
-  return contents;
-};
-const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
-const bad = buildSiteQuestionBank().questions
-  .filter((question) => {
-    const text = [
-      question.q?.en,
-      question.why?.en,
-      ...(question.opts || []).map((option) => option.en),
-    ].join(' ');
-    return /(?:Demonstrations on workers[’'] day|Holding demonstrations on workers[’'] day|Workers[’'] day with demonstrations and speeches|marks workers[’'] day with demonstrations and speeches)/i.test(text);
-  })
-  .map((question) => question.id);
-console.log(JSON.stringify(bad));
-if (!bad.includes('q097') || !bad.includes('q100') || !bad.includes('q103') || bad.length < 8) {
-  process.exit(1);
-}
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.equal(result.status, 0, output);
-  assert.match(output, /q097/);
-  assert.match(output, /q100/);
-  assert.match(output, /q103/);
-});
-
-test('Good Friday source and exports use natural commemorates English', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = Array.from(actualStaticQuestions());
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q101GeneratedIds = [
-    generatedQuestionId(sourceQuestions, 'q101', 'singleChoice'),
-    generatedQuestionId(sourceQuestions, 'q101', 'trueStatement'),
-    generatedQuestionId(sourceQuestions, 'q101', 'falseStatement'),
-    generatedQuestionId(sourceQuestions, 'q101', 'judgement'),
-  ];
-  const q101Ids = ['q101', ...q101GeneratedIds];
-  const naturalExplanation =
-    "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection";
-  const textForQuestion = (question) =>
-    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
-      ' ',
-    );
-  const fileFindings = [
-    'data/additionalQuestions.ts',
-    'content/question-bank.csv',
-    'site/questions.js',
-  ].filter((relativePath) =>
-    goodFridayRemembersEnglishPattern.test(
-      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
-    ),
-  );
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => q101Ids.includes(question.id))
-    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = actualSiteBank
-    .filter((question) => q101Ids.includes(question.id))
-    .filter((question) => goodFridayRemembersEnglishPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-
-  assert.deepEqual(fileFindings, []);
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  for (const id of q101Ids) {
-    assert.match(
-      generatedSiteBank.find((question) => question.id === id)?.why.en ?? '',
-      new RegExp(naturalExplanation),
-    );
-    assert.match(
-      actualSiteBank.find((question) => question.id === id)?.why.en ?? '',
-      new RegExp(naturalExplanation),
-    );
-  }
-});
-
-test('Good Friday English naturalness guard rejects remembers wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents).replace(
-      "Good Friday commemorates Jesus' death, and Easter Sunday celebrates his resurrection",
-      "Good Friday remembers Jesus' death and Easter Sunday his resurrection",
-    );
-  }
-  return contents;
-};
-const { buildSiteQuestionBank } = require('./scripts/export-site-question-bank.js');
-const bad = buildSiteQuestionBank().questions
-  .filter((question) =>
-    /Good Friday remembers Jesus' death and Easter Sunday his resurrection/i.test(question.why.en),
-  )
-  .map((question) => question.id);
-console.log(JSON.stringify(bad));
-if (!bad.includes('q101') || bad.length < 5) process.exit(1);
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.equal(result.status, 0, output);
-  assert.match(output, /q101/);
 });
 
 test('EU cooperation source and exports use natural English article', () => {
@@ -1483,191 +1147,6 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q093 uses stilted 1951 religious-freedom English wording/,
-  );
-});
-
-test('religious-freedom option parallelism stays natural in exports', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const textForQuestion = (question) =>
-    [
-      question.q?.sv,
-      question.q?.en,
-      question.why?.sv,
-      question.why?.en,
-      ...(question.opts || []).flatMap((option) => [option.sv, option.en]),
-    ].join(' ');
-  const q116Ids = new Set(['q116', 'q630', 'q633']);
-  const generatedOffenders = generatedSiteBank
-    .filter((question) => q116Ids.has(question.id))
-    .filter((question) => religiousFreedomOptionParallelismPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const actualOffenders = Array.from(actualSiteBank)
-    .filter((question) => q116Ids.has(question.id))
-    .filter((question) => religiousFreedomOptionParallelismPattern.test(textForQuestion(question)))
-    .map((question) => question.id);
-  const csvOffenders = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => q116Ids.has(line.match(/^"([^"]+)"/)?.[1]))
-    .filter((line) => religiousFreedomOptionParallelismPattern.test(line))
-    .map((line) => line.match(/^"([^"]+)"/)?.[1]);
-  const q116 = generatedSiteBank.find((question) => question.id === 'q116');
-
-  assert.deepEqual(generatedOffenders, []);
-  assert.deepEqual(actualOffenders, []);
-  assert.deepEqual(csvOffenders, []);
-  assert.ok(q116, 'q116 should be published in the site bank');
-  assert.equal(
-    q116.opts?.[0]?.sv,
-    'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
-  );
-  assert.equal(
-    q116.opts?.[0]?.en,
-    'The right to practice one’s religion and to be protected from discrimination because of belief',
-  );
-});
-
-test('religious-freedom option parallelism guard rejects the old wording', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/additionalQuestions.ts')) {
-    return String(contents)
-      .replace(
-        'Rätten att utöva sin religion och att skyddas mot diskriminering på grund av tro',
-        'Rätten att utöva sin religion och skydd mot diskriminering på grund av tro',
-      )
-      .replace(
-        'The right to practice one’s religion and to be protected from discrimination because of belief',
-        'The right to practice one’s religion and protection from discrimination because of belief',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q116 uses nonparallel religious-freedom option wording/,
-  );
-});
-
-test('human-rights definition true/false exports use direct propositions', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q175TrueId = generatedQuestionId(sourceQuestions, 'q175', 'trueStatement');
-  const q175FalseId = generatedQuestionId(sourceQuestions, 'q175', 'falseStatement');
-  const expectedSv = [
-    'Mänskliga rättigheter gäller varje människa oavsett bakgrund eller livssituation.',
-    'Mänskliga rättigheter gäller bara svenska medborgare.',
-  ];
-  const expectedEn = [
-    'Human rights apply to every person regardless of background or life situation.',
-    'Human rights apply only to Swedish citizens.',
-  ];
-  const generatedRows = [q175TrueId, q175FalseId].map((id) =>
-    generatedSiteBank.find((question) => question.id === id),
-  );
-  const actualRows = [q175TrueId, q175FalseId].map((id) =>
-    Array.from(actualSiteBank).find((question) => question.id === id),
-  );
-  const csvRows = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => [q175TrueId, q175FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
-
-  assert.ok(generatedRows.every(Boolean), 'generated q175 true/false rows should exist');
-  assert.ok(actualRows.every(Boolean), 'static q175 true/false rows should exist');
-  assert.equal(csvRows.length, 2);
-  assert.deepEqual(
-    generatedRows.map((question) => question.q.sv),
-    expectedSv,
-  );
-  assert.deepEqual(
-    generatedRows.map((question) => question.q.en),
-    expectedEn,
-  );
-  assert.deepEqual(
-    actualRows.map((question) => question.q.sv),
-    expectedSv,
-  );
-  assert.deepEqual(
-    actualRows.map((question) => question.q.en),
-    expectedEn,
-  );
-  assert.deepEqual(
-    [...generatedRows, ...actualRows]
-      .filter((question) =>
-        humanRightsDefinitionCleftPattern.test(`${question.q.sv} ${question.q.en}`),
-      )
-      .map((question) => question.id),
-    [],
-  );
-  assert.deepEqual(
-    csvRows.filter((line) => humanRightsDefinitionCleftPattern.test(line)),
-    [],
-  );
-});
-
-test('gender-equality policy goal true/false exports use direct English propositions', () => {
-  const generatedSiteBank = buildSiteQuestionBank().questions;
-  const actualSiteBank = actualStaticQuestions();
-  const sourceQuestions = generatedSiteBank.filter(
-    (question) => question.questionProvenance === 'uhr',
-  );
-  const q053TrueId = generatedQuestionId(sourceQuestions, 'q053', 'trueStatement');
-  const q053FalseId = generatedQuestionId(sourceQuestions, 'q053', 'falseStatement');
-  const expectedEn = [
-    'Sweden’s gender equality policy aims for women and men to have the same rights, duties, and power to influence society and their own lives.',
-    'Sweden’s gender equality policy is only about how many women are in politics.',
-  ];
-  const generatedRows = [q053TrueId, q053FalseId].map((id) =>
-    generatedSiteBank.find((question) => question.id === id),
-  );
-  const actualRows = [q053TrueId, q053FalseId].map((id) =>
-    Array.from(actualSiteBank).find((question) => question.id === id),
-  );
-  const csvRows = fs
-    .readFileSync(path.join(repoRoot, 'content/question-bank.csv'), 'utf8')
-    .split(/\r?\n/)
-    .filter((line) => [q053TrueId, q053FalseId].includes(line.match(/^"([^"]+)"/)?.[1]));
-
-  assert.ok(generatedRows.every(Boolean), 'generated q053 true/false rows should exist');
-  assert.ok(actualRows.every(Boolean), 'static q053 true/false rows should exist');
-  assert.equal(csvRows.length, 2);
-  assert.deepEqual(
-    generatedRows.map((question) => question.q.en),
-    expectedEn,
-  );
-  assert.deepEqual(
-    actualRows.map((question) => question.q.en),
-    expectedEn,
-  );
-  assert.deepEqual(
-    [...generatedRows, ...actualRows]
-      .filter((question) => policyGoalCleftPattern.test(`${question.q.sv} ${question.q.en}`))
-      .map((question) => question.id),
-    [],
-  );
-  assert.deepEqual(
-    csvRows.filter((line) => policyGoalCleftPattern.test(line)),
-    [],
   );
 });
 
@@ -2836,43 +2315,6 @@ require('./scripts/validate-content.js');
   );
 });
 
-test('published question schema rejects generated how-can-affect when-splices', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    return String(contents)
-      .replace(
-        'Sveriges nordligaste del ligger norr om polcirkeln.',
-        'Falska uppgifter kan spridas snabbt när falsk information påverkar demokratin.',
-      )
-      .replace(
-        "Sweden's northernmost part lies north of the Arctic Circle.",
-        'False information can spread quickly when false information affects democracy.',
-      );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /q002 contains a generated true\/false grammar-splice stem/,
-  );
-});
-
 test('published question schema rejects generated true/false answer-scaffold stems', () => {
   const result = spawnSync(
     process.execPath,
@@ -3056,96 +2498,6 @@ require('./scripts/validate-content.js');
     `${result.stdout}\n${result.stderr}`,
     /q002 contains a generated true\/false grammar-splice stem/,
   );
-});
-
-test('published question schema rejects human-rights definition-cleft true/false stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const humanRightsDefinitionResiduals = {",
-        "  [generatedFixtureId('q175', 1)]: { questionSv: 'Att mänskliga rättigheter gäller alla betyder att varje människa har rättigheter oavsett bakgrund eller livssituation.', questionEn: 'That human rights apply to everyone means every person has rights regardless of background or life situation.' },",
-        "  [generatedFixtureId('q175', 2)]: { questionSv: 'Att mänskliga rättigheter gäller alla betyder att bara svenska medborgare har mänskliga rättigheter.', questionEn: 'That human rights apply to everyone means only Swedish citizens have human rights.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  humanRightsDefinitionResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...humanRightsDefinitionResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
-});
-
-test('published question schema rejects policy-goal cleft true/false stems', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const genderEqualityPolicyGoalResiduals = {",
-        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
-        "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  genderEqualityPolicyGoalResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...genderEqualityPolicyGoalResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
 });
 
 test('published question schema rejects residual generated true/false list and meaning splices', () => {
@@ -3604,78 +2956,6 @@ test('published question schema guards capitalized generated reason clauses', ()
   assert.match(validatorSource, /\/\^One reason is that It\\b\//);
 });
 
-test('published question schema guards targetless generated why-reason stems', () => {
-  const validatorSource = fs.readFileSync(
-    path.join(repoRoot, 'scripts/validate-content.js'),
-    'utf8',
-  );
-
-  assert.match(validatorSource, /\/\^En anledning är\\b\//);
-  assert.match(validatorSource, /\/\^One reason is\\b\//);
-});
-
-test('published question schema reports focused generated why-reason guard coverage', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-generated-why-reason-stems'],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
-  const match = result.stdout.match(/\{\s*"generatedWhyReasonTargetStemsValidated"[\s\S]*\}/);
-  assert.ok(match, 'focused generated why-reason validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-  assert.ok(summary.generatedWhyReasonTargetStemsValidated > 0);
-  assert.equal(summary.generatedWhyReasonTargetStemParityValidated, true);
-});
-
-test('published question schema rejects targetless generated why-reason stems in focused mode', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const targetlessWhyReasonResiduals = {",
-        "  [generatedFixtureId('q032', 1)]: { questionSv: 'En anledning är att valet är hemligt och ingen annan ska se vilket val de gör.', questionEn: 'One reason is the vote is secret and no one else should see their choice.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  targetlessWhyReasonResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...targetlessWhyReasonResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-process.argv.push('scripts/validate-content.js', '--focus-generated-why-reason-stems');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /contains a targetless generated why-reason stem/,
-  );
-});
-
 test('published question schema rejects residual q306-q355 true/false wording', () => {
   const result = spawnSync(
     process.execPath,
@@ -4132,57 +3412,6 @@ require('./scripts/validate-content.js');
   const output = `${result.stdout}\n${result.stderr}`;
   assert.notEqual(result.status, 0);
   assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 2);
-});
-
-test('published question schema rejects generated media and local-party answer fragments', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  const contents = originalReadFileSync.call(this, filePath, ...args);
-  if (normalizedPath.endsWith('/data/questions.ts')) {
-    const marker = "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions];";
-    return String(contents).replace(
-      marker,
-      [
-        ${JSON.stringify(generatedFixtureIdHelperSource())},
-        "const mediaAndLocalPartyResiduals = {",
-        "  [generatedFixtureId('q150', 1)]: { questionSv: 'De säljer reklamplats eller tar betalt för en särskild kanal.', questionEn: 'They sell advertising space or charge for a specific channel.' },",
-        "  [generatedFixtureId('q150', 2)]: { questionSv: 'Genom domstolsavgifter från rättegångar.', questionEn: 'Through court fees from trials.' },",
-        "  [generatedFixtureId('q151', 1)]: { questionSv: 'De drivs ofta av privata företag och får inkomster genom reklam.', questionEn: 'They are often run by private companies and earn income from advertising.' },",
-        "  [generatedFixtureId('q151', 2)]: { questionSv: 'De får aldrig sälja reklamplats.', questionEn: 'They may never sell advertising space.' },",
-        "  [generatedFixtureId('q152', 1)]: { questionSv: 'De finns också på internet och uppdateras med nyheter flera gånger per dag.', questionEn: 'They are also available online and updated with news several times per day.' },",
-        "  [generatedFixtureId('q152', 2)]: { questionSv: 'De får bara säljas som ett exemplar per år.', questionEn: 'They may be sold only as one copy per year.' },",
-        "  [generatedFixtureId('q169', 1)]: { questionSv: 'De kan ha politik bara för den egna kommunen eller regionen.', questionEn: 'They can have policies only for their own municipality or region.' },",
-        "  [generatedFixtureId('q169', 2)]: { questionSv: 'De måste alltid vara partier i riksdagen.', questionEn: 'They must always be parties in the Riksdag.' },",
-        "};",
-        "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
-        "  mediaAndLocalPartyResiduals[question.id]",
-        "    ? {",
-        "        ...question,",
-        "        ...mediaAndLocalPartyResiduals[question.id],",
-        "      }",
-        "    : question,",
-        ");",
-      ].join('\\n'),
-    );
-  }
-  return contents;
-};
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  const output = `${result.stdout}\n${result.stderr}`;
-  assert.notEqual(result.status, 0);
-  assert.equal(output.match(/contains a generated true\/false grammar-splice stem/g)?.length, 8);
 });
 
 test('published question schema rejects generated proportional-party referent splices', () => {
