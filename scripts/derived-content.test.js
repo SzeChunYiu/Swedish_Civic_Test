@@ -3,6 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 const ts = require('typescript');
+const {
+  GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS,
+} = require('./generated-true-false-naturalness-patterns');
 
 const repoRoot = path.resolve(__dirname, '..');
 const moduleCache = new Map();
@@ -46,6 +49,25 @@ function assertQuestionTextPresent(questions, questionSv, questionEn) {
   );
   assert.ok(question, `expected generated question text: ${questionSv} / ${questionEn}`);
   return question;
+}
+
+function assertNoGeneratedTrueFalseNaturalnessIssues(questions) {
+  for (const question of questions) {
+    const fields = [
+      ['questionSv', question.questionSv],
+      ['questionEn', question.questionEn],
+    ];
+    for (const [fieldName, text] of fields) {
+      const matchedPattern = GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) =>
+        pattern.test(text),
+      );
+      assert.equal(
+        matchedPattern,
+        undefined,
+        `${question.id}.${fieldName} matched generated true/false naturalness guard ${matchedPattern}: ${text}`,
+      );
+    }
+  }
 }
 
 test('derivePublishedQuestions creates four published UHR-referenced variants per source question', () => {
@@ -1419,18 +1441,8 @@ test('derivePublishedQuestions cleans residual generated true/false splice rows'
   const residualQuestions = questions.filter(
     (question) => question.type === 'true_false' && question.tags.includes('published-variant'),
   );
-  const residualText = residualQuestions
-    .map((question) => `${question.questionSv} ${question.questionEn}`)
-    .join('\n');
 
-  assert.doesNotMatch(
-    residualText,
-    /Det stämmer i sak att|It is factually true that|describes (?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)|beskriver (?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)|is the list that contains|är listan som innehåller|about public power in Sweden|om offentlig makt i Sverige|means it gives|The goal of .+? policy means|innebär att den ger|när ett lågt valdeltagande påverkar demokratin|when a low voter turnout affects democracy|när\s+[^.?!]+?\spåverkar\s+[^.?!]+|when\s+[^.?!]+?\saffects\s+[^.?!]+|from (?:13|15) years|One reason is to (?:prevent war|decide Swedish municipal taxes|protect employees|decide who becomes head of state)|^One reason is\b|^En anledning är\b|One reason is (?:better farming methods|eU membership|EU membership|the vote is secret|votes are counted faster)|En anledning är(?: att)? (?:förhindra krig|bestämma svenska kommunalskatter|skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet|valet är hemligt|rösterna ska räknas snabbare)|It was presented in (?:1918|1948)|Den presenterades (?:1918|1948)|One reason is that so|One reason is that Sweden had|En anledning är att Sverige (?:hade|saknade)|have they|har de|applies to|gäller för|common to (?:eating|lighting|opening|holding)|har förändrat bara hur|has changed only how|arbetar för endast|works for only|den näst största i Sverige|the second largest in Sweden|,\s*,|it is common to large bonfires|brukar [^.?!]* arrangerar|spreadinging|welcominging|Advent occurs (?:the four Sundays|a Saturday)|Travel to Asia and increased interest[^.?!]*\bis mentioned|^That Sweden's first mosques were built|skyddar rätten [^.?!]* och skydd mot|protects the right [^.?!]* and protection from|skyddar att staten väljer|protects that the state chooses|Många svenskar firar id al-fitr och Newroz även om|Many Swedes celebrate Eid al-Fitr and Newroz even if|fick rätt att bo i landet och utöva|gained the right to live in the country and practice|called Lucia procession|^En (?:ljuskrona|blomsterkrans) på huvudet|(?:fram till julafton|på kvällen)\s+med en adventskalender hemma|(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home|^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)|^Sverige beslutade att barnkonventionen blev svensk lag|^(?:De|They) (?:företräder|bestämmer|represent|decide)|^En myndighet som|^An authority that/im,
-  );
-  assert.doesNotMatch(
-    residualText,
-    /att Kungens makt|för Samarbetet mellan|for Cooperation between/,
-  );
+  assertNoGeneratedTrueFalseNaturalnessIssues(residualQuestions);
   residualQuestions.forEach((question) => {
     assert.doesNotMatch(question.questionSv, /är (?:Judar|Danskar),/, question.id);
     assert.doesNotMatch(question.questionEn, /celebrates The/, question.id);

@@ -66,6 +66,17 @@ function readValidateContentSource() {
   return fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
 }
 
+function readDerivedContentTestSource() {
+  return fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
+}
+
+function readGeneratedTrueFalseNaturalnessPatternSource() {
+  return fs.readFileSync(
+    path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'),
+    'utf8',
+  );
+}
+
 function readFocusedValidationRegistryModule() {
   const modulePath = path.join(repoRoot, 'scripts/validate-content-focus-registry.js');
   delete require.cache[require.resolve(modulePath)];
@@ -488,6 +499,64 @@ test('CelebrationBurst focused content validation runs only its accessibility su
     Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
     false,
   );
+});
+
+test('generated true_false naturalness patterns are shared by validate-content and derived-content', () => {
+  const validateContentSource = readValidateContentSource();
+  const derivedContentSource = readDerivedContentTestSource();
+  const patternSource = readGeneratedTrueFalseNaturalnessPatternSource();
+  const {
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS,
+    findGeneratedTrueFalseNaturalnessPattern,
+  } = require(path.join(repoRoot, 'scripts/generated-true-false-naturalness-patterns.js'));
+
+  assert.ok(
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.length >= 90,
+    'shared generated true/false naturalness guard should carry the full residual policy',
+  );
+  assert.equal(
+    findGeneratedTrueFalseNaturalnessPattern(
+      'The goal of Sweden’s gender equality policy means rights differ.',
+    ),
+    GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find((pattern) =>
+      pattern.test('The goal of Sweden’s gender equality policy means rights differ.'),
+    ),
+  );
+
+  assert.match(
+    validateContentSource,
+    /require\(['"]\.\/generated-true-false-naturalness-patterns['"]\)/,
+    'validate-content must import the shared generated true/false naturalness guard',
+  );
+  assert.match(
+    derivedContentSource,
+    /require\(['"]\.\/generated-true-false-naturalness-patterns['"]\)/,
+    'derived-content residual tests must import the shared generated true/false naturalness guard',
+  );
+  assert.doesNotMatch(
+    validateContentSource,
+    /const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = \[/,
+    'validate-content must not keep a private generated true/false pattern list',
+  );
+  assert.doesNotMatch(
+    derivedContentSource,
+    /Det stämmer i sak att\|It is factually true that\|describes \(\?:government agencies/,
+    'derived-content must not keep a duplicate generated true/false residual mega-regex',
+  );
+
+  for (const requiredPolicyPattern of [
+    'The goal of .+? policy means',
+    'describes\\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)',
+    '^(?:By|Apply|Leave|Live)\\b',
+    'Påståendet är sant:',
+    'Det stämmer i sak att',
+  ]) {
+    assert.match(
+      patternSource,
+      new RegExp(requiredPolicyPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')),
+      `shared guard must own ${requiredPolicyPattern}`,
+    );
+  }
 });
 
 test('validate-content focus registry owns every focused route and summary', () => {
