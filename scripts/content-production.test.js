@@ -276,7 +276,7 @@ test('full content production validates published UHR-referenced questions', () 
   assert.equal(summary.practiceScoringRulesParityValidated, true);
   assert.equal(summary.practiceFlowCasesValidated, 12);
   assert.equal(summary.practiceFlowParityValidated, true);
-  assert.equal(summary.practiceSessionStoreFieldsValidated, 6);
+  assert.equal(summary.practiceSessionStoreFieldsValidated, 8);
   assert.equal(summary.practiceSessionStoreSchemaParityValidated, true);
   assert.equal(summary.practiceSessionStoreRuntimeParityValidated, true);
   assert.equal(summary.answerValidationTypeUnionsValidated, 1);
