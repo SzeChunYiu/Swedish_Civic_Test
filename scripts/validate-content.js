@@ -3445,8 +3445,26 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
     pattern: /resultLabel\?: string;/,
   },
   {
+    label: 'struck option prop',
+    pattern: /struck\?: boolean;/,
+  },
+  {
+    label: 'strikeout toggle prop',
+    pattern: /onToggleStrikeout\?: \(\) => void;/,
+  },
+  {
     label: 'language-specific copy map',
     pattern: /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/,
+  },
+  {
+    label: 'localized strikeout accessibility copy',
+    pattern:
+      /strikeoutAccessibilityLabel: \(label\) => `Eliminera svaret \$\{label\}`[\s\S]*strikeoutAccessibilityLabel: \(label\) => `Eliminate answer \$\{label\}`/,
+  },
+  {
+    label: 'localized restore accessibility copy',
+    pattern:
+      /restoreStrikeoutAccessibilityLabel: \(label\) => `Återställ svaret \$\{label\}`[\s\S]*restoreStrikeoutAccessibilityLabel: \(label\) => `Restore answer \$\{label\}`/,
   },
   {
     label: 'localized option state label contract',
@@ -3466,8 +3484,11 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   },
   {
     label: 'feedback-aware accessibility label',
-    pattern:
-      /const accessibilityLabel = resultLabel\s*\?\s*`\$\{label\}, \$\{resultLabel\}`\s*:\s*copy\.selectAccessibilityLabel\(label\);/,
+    pattern: /const accessibilityLabel = resultLabel\s*\?\s*`\$\{label\}, \$\{resultLabel\}`/,
+  },
+  {
+    label: 'strikeout-aware accessibility label',
+    pattern: /struck\s*\?\s*`\$\{label\}, \$\{copy\.struckStateLabel\}`/,
   },
   {
     label: 'localized OptionCard state label selection',
@@ -3475,11 +3496,19 @@ const EXPECTED_ANSWER_OPTION_ACCESSIBILITY_RULES = [
   },
   {
     label: 'selected and disabled state forwarding',
-    pattern: /accessibilityState=\{\{ disabled, selected \}\}/,
+    pattern: /accessibilityState=\{\{ disabled: optionDisabled, selected \}\}/,
   },
   {
     label: 'disabled interaction forwarding',
-    pattern: /disabled=\{disabled\}/,
+    pattern: /disabled=\{optionDisabled\}/,
+  },
+  {
+    label: 'struck option visual handoff',
+    pattern: /struck=\{struck\}/,
+  },
+  {
+    label: 'strikeout toggle button state',
+    pattern: /aria-pressed=\{struck\}/,
   },
   {
     label: 'feedback-aware visible label handoff',
@@ -4060,8 +4089,14 @@ const EXPECTED_PRACTICE_SESSION_STORE_FIELDS = [
   { name: 'answeredQuestionIds', type: 'string[]', optional: false },
   { name: 'selectedOptionId', type: 'string | null', optional: false },
   { name: 'shuffleSessionId', type: 'string', optional: false },
+  { name: 'struckOptionIdsByQuestionId', type: 'Record<string, string[]>', optional: false },
   { name: 'markAnswerXpAwarded', type: '(awardKey: string) => void', optional: false },
   { name: 'selectOption', type: '(questionId: string, optionId: string) => void', optional: false },
+  {
+    name: 'toggleStruckOption',
+    type: '(questionId: string, optionId: string) => void',
+    optional: false,
+  },
   { name: 'startSession', type: '(questionId?: string | null) => void', optional: false },
   { name: 'resetSelection', type: '() => void', optional: false },
   { name: 'advanceQuestion', type: '() => void', optional: false },
@@ -8960,8 +8995,6 @@ let provenanceAuthorityCopyFilesValidated = 0;
 let provenanceAuthorityCopyParityValidated = false;
 let learnRouteLinkCopyLabelsValidated = 0;
 let learnRouteLinkCopyParityValidated = false;
-let searchRouteQueryHydrationRulesValidated = 0;
-let searchRouteQueryHydrationParityValidated = false;
 let mistakesRouteCopyLabelsValidated = 0;
 let mistakesRouteCopyParityValidated = false;
 let mistakeReviewHydrationFixtureCasesValidated = 0;
@@ -9325,16 +9358,6 @@ if (process.argv.includes('--focus-native-quiz-copy')) {
     chapterRouteHeaderParityValidated,
     chapterRouteCopyLabelsValidated,
     chapterRouteCopyParityValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-search-route-query-hydration')) {
-  validateSearchRouteQueryHydrationParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    searchRouteQueryHydrationRulesValidated,
-    searchRouteQueryHydrationParityValidated,
   });
   process.exit(0);
 }
@@ -17242,10 +17265,32 @@ function validatePracticeSessionStoreParity() {
       answeredQuestionIds: [],
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
+      struckOptionIdsByQuestionId: {},
     });
 
-    usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    usePracticeSessionStore.getState().toggleStruckOption('q-validator', 'option-b');
     let state = usePracticeSessionStore.getState();
+    if (
+      state.activeQuestionId !== 'q-validator' ||
+      state.struckOptionIdsByQuestionId['q-validator']?.join(',') !== 'option-b'
+    ) {
+      rejectRuntime('practice strikeout toggle must lock question id and mark option struck');
+    }
+
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-b');
+    state = usePracticeSessionStore.getState();
+    if (state.selectedOptionId !== null) {
+      rejectRuntime('practice session selectOption must not select a struck option');
+    }
+
+    usePracticeSessionStore.getState().toggleStruckOption('q-validator', 'option-b');
+    state = usePracticeSessionStore.getState();
+    if (state.struckOptionIdsByQuestionId['q-validator']) {
+      rejectRuntime('practice strikeout toggle must restore an already struck option');
+    }
+
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    state = usePracticeSessionStore.getState();
     if (state.activeQuestionId !== 'q-validator' || state.selectedOptionId !== 'option-a') {
       rejectRuntime('practice session selectOption must lock question id and selected option id');
     }
@@ -17255,6 +17300,14 @@ function validatePracticeSessionStoreParity() {
     if (state.shuffleSessionId !== 'practice-session-0') {
       rejectRuntime('practice session selectOption must keep the current shuffle session seed');
     }
+    usePracticeSessionStore.getState().toggleStruckOption('q-validator', 'option-c');
+    usePracticeSessionStore.getState().resetSelection();
+    state = usePracticeSessionStore.getState();
+    if (state.struckOptionIdsByQuestionId['q-validator']) {
+      rejectRuntime('practice retry must clear strikeouts for the active question');
+    }
+    usePracticeSessionStore.getState().selectOption('q-validator', 'option-a');
+    state = usePracticeSessionStore.getState();
     const firstFeedbackKey = getPracticeInterstitialShowKey(
       state.activeQuestionId,
       state.shuffleSessionId,
@@ -17296,6 +17349,9 @@ function validatePracticeSessionStoreParity() {
     if (state.shuffleSessionId !== 'practice-session-1') {
       rejectRuntime('practice session advanceQuestion must advance the shuffle session seed');
     }
+    if (state.struckOptionIdsByQuestionId['q-validator']) {
+      rejectRuntime('practice advance must clear strikeouts for the answered question');
+    }
     if (
       firstFeedbackKey === getPracticeInterstitialShowKey('q-validator', state.shuffleSessionId)
     ) {
@@ -17306,6 +17362,7 @@ function validatePracticeSessionStoreParity() {
       activeQuestionId: null,
       selectedOptionId: null,
       shuffleSessionId: 'practice-session-0',
+      struckOptionIdsByQuestionId: {},
     });
     if (runtimeValid) practiceInterstitialQuestionCapValidated = true;
   }

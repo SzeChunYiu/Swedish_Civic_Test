@@ -86,7 +86,19 @@ test('practice session separates retry from next-question advancement', () => {
     answeredQuestionIds: [],
     selectedOptionId: null,
     shuffleSessionId: 'practice-session-0',
+    struckOptionIdsByQuestionId: {},
   });
+
+  usePracticeSessionStore.getState().toggleStruckOption('q1', 'q1-b');
+  assert.deepEqual(usePracticeSessionStore.getState().struckOptionIdsByQuestionId, {
+    q1: ['q1-b'],
+  });
+
+  usePracticeSessionStore.getState().selectOption('q1', 'q1-b');
+  assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+
+  usePracticeSessionStore.getState().toggleStruckOption('q1', 'q1-b');
+  assert.deepEqual(usePracticeSessionStore.getState().struckOptionIdsByQuestionId, {});
 
   usePracticeSessionStore.getState().selectOption('q1', 'q1-a');
 
@@ -104,6 +116,7 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, 'q1');
   assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, []);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+  assert.deepEqual(usePracticeSessionStore.getState().struckOptionIdsByQuestionId, {});
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-0');
   assert.equal(
     getPracticeInterstitialShowKey(
@@ -118,6 +131,7 @@ test('practice session separates retry from next-question advancement', () => {
   assert.equal(usePracticeSessionStore.getState().activeQuestionId, null);
   assert.deepEqual(usePracticeSessionStore.getState().answeredQuestionIds, ['q1']);
   assert.equal(usePracticeSessionStore.getState().selectedOptionId, null);
+  assert.deepEqual(usePracticeSessionStore.getState().struckOptionIdsByQuestionId, {});
   assert.equal(usePracticeSessionStore.getState().shuffleSessionId, 'practice-session-1');
   assert.notEqual(
     getPracticeInterstitialShowKey('q1', usePracticeSessionStore.getState().shuffleSessionId),

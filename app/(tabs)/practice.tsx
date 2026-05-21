@@ -239,6 +239,10 @@ export default function Screen() {
   const markAnswerXpAwarded = usePracticeSessionStore((state) => state.markAnswerXpAwarded);
   const selectedOptionId = usePracticeSessionStore((state) => state.selectedOptionId);
   const selectOption = usePracticeSessionStore((state) => state.selectOption);
+  const struckOptionIdsByQuestionId = usePracticeSessionStore(
+    (state) => state.struckOptionIdsByQuestionId,
+  );
+  const toggleStruckOption = usePracticeSessionStore((state) => state.toggleStruckOption);
   const startSession = usePracticeSessionStore((state) => state.startSession);
   const resetSelection = usePracticeSessionStore((state) => state.resetSelection);
   const advanceQuestion = usePracticeSessionStore((state) => state.advanceQuestion);
@@ -330,6 +334,7 @@ export default function Screen() {
       rawQuestion ? shuffleQuestionOptionsForSession(rawQuestion, shuffleSessionId) : undefined,
     [rawQuestion, shuffleSessionId],
   );
+  const struckOptionIds = question ? (struckOptionIdsByQuestionId[question.id] ?? []) : [];
   const confidenceRatingEnabled = proEntitlementsReady && proEntitlements.confidenceSlider === true;
   const hasSelectedAnswer = Boolean(
     question && selectedOptionId && activeQuestionId === question.id,
@@ -469,6 +474,8 @@ export default function Screen() {
   const bankProgress =
     practiceQuestionBank.length > 0 ? questionNumber / practiceQuestionBank.length : 0;
   const handleSelectOption = (optionId: string) => {
+    if (struckOptionIds.includes(optionId)) return;
+
     const selectedOption = question.options.find((option) => option.id === optionId);
     const optionIsCorrect = isCorrectAnswer(question, optionId);
     const answerConfidenceRating = confidenceRatingEnabled
@@ -638,6 +645,7 @@ export default function Screen() {
 
       <View style={styles.options}>
         {question.options.map((option) => {
+          const isStruck = !hasSelectedAnswer && struckOptionIds.includes(option.id);
           const feedback = getAnswerOptionFeedback(
             question,
             option.id,
@@ -648,12 +656,15 @@ export default function Screen() {
           return (
             <AnswerOption
               key={option.id}
-              disabled={hasSelectedAnswer}
+              disabled={hasSelectedAnswer || isStruck}
               language={language}
+              onToggleStrikeout={() => toggleStruckOption(question.id, option.id)}
               option={option}
-              onPress={() => handleSelectOption(option.id)}
+              onPress={isStruck ? undefined : () => handleSelectOption(option.id)}
               resultLabel={feedback.resultLabel}
               selected={hasSelectedAnswer && selectedOptionId === option.id}
+              showStrikeoutControl={!hasSelectedAnswer}
+              struck={isStruck}
               tone={feedback.tone}
             />
           );
