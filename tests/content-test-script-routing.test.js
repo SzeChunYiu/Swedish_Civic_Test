@@ -224,6 +224,38 @@ test('content-focused selector rejects missing file lists before running node', 
   }
 });
 
+test('test:content routes the legal section rendering guard exactly once', () => {
+  const pkg = readPackageJson();
+  const matches =
+    pkg.scripts['test:content'].match(/tests\/content-legal-section-rendering\.test\.js/g) ?? [];
+
+  assert.equal(matches.length, 1);
+});
+
+test('legal section rendering focused content validation runs only its parity summary', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-legal-section-rendering'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused legal section rendering validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(summary.legalSectionRenderingTestsRoutedValidated, true);
+  assert.equal(summary.legalSectionRenderingCasesValidated, 16);
+  assert.equal(summary.legalSectionRenderingParityValidated, true);
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(summary, 'legalRouteHeaderParityValidated'),
+    false,
+  );
+});
+
 test('answer shuffle parity uses the focused content validator path', () => {
   const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
   const parityTest = fs.readFileSync(
