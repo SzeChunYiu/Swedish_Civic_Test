@@ -1810,7 +1810,7 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
 const EXPECTED_REMOVE_ADS_HOOK_CASES = 15;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 25;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 28;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_RUNTIME_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 6;
@@ -8898,7 +8898,10 @@ const isPremiumUser = premiumModule.isPremiumUser;
 const premiumConfig = premiumModule.premiumConfig;
 const purchaseModule = loadTs('lib/monetization/purchases.ts');
 const REMOVE_ADS_PRICE_LABEL = purchaseModule.REMOVE_ADS_PRICE_LABEL;
+const REMOVE_ADS_ANDROID_PRODUCT_ID = purchaseModule.REMOVE_ADS_ANDROID_PRODUCT_ID;
+const REMOVE_ADS_IOS_PRODUCT_ID = purchaseModule.REMOVE_ADS_IOS_PRODUCT_ID;
 const REMOVE_ADS_PRODUCT_ID = purchaseModule.REMOVE_ADS_PRODUCT_ID;
+const REMOVE_ADS_STORE_PRODUCT_IDS = purchaseModule.REMOVE_ADS_STORE_PRODUCT_IDS;
 const effectiveEntitlementsModule = loadTs('lib/monetization/effectiveEntitlements.ts');
 const resolveEffectiveEntitlement = effectiveEntitlementsModule.resolveEffectiveEntitlement;
 const timeBoundedExpiry = effectiveEntitlementsModule.timeBoundedExpiry;
@@ -17068,6 +17071,22 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       'Remove Ads product id must stay a reverse-DNS removeads identifier',
     ],
     [
+      REMOVE_ADS_IOS_PRODUCT_ID === REMOVE_ADS_PRODUCT_ID &&
+        REMOVE_ADS_ANDROID_PRODUCT_ID === 'removeads' &&
+        REMOVE_ADS_STORE_PRODUCT_IDS?.ios === REMOVE_ADS_PRODUCT_ID &&
+        REMOVE_ADS_STORE_PRODUCT_IDS?.android === 'removeads',
+      'Remove Ads store product ids must map iOS to the canonical bundle id and Android to Play Console removeads',
+    ],
+    [
+      normalizedPurchaseSource.includes('function normalizeRemoveAdsStorePlatform(platform') &&
+        normalizedPurchaseSource.includes("return platform === 'android' ? 'android' : 'ios';") &&
+        normalizedPurchaseSource.includes('export function getRemoveAdsStoreProductId(') &&
+        normalizedPurchaseSource.includes(
+          'return REMOVE_ADS_STORE_PRODUCT_IDS[normalizeRemoveAdsStorePlatform(platform)];',
+        ),
+      'Remove Ads runtime must resolve platform-specific store product ids',
+    ],
+    [
       /return\s+\{[\s\S]*priceLabel:\s*REMOVE_ADS_PRICE_LABEL,[\s\S]*productId:\s*REMOVE_ADS_PRODUCT_ID,[\s\S]*\};/.test(
         purchaseSource,
       ),
@@ -17095,16 +17114,25 @@ function validateRemoveAdsPurchaseRuntimeParity() {
       normalizedPurchaseSource.includes(
         'const storeProductId = getPurchaseStoreProductId(productId, storePlatform);',
       ) &&
+        normalizedPurchaseSource.includes(
+          'if (productId === REMOVE_ADS_PRODUCT_ID) return getRemoveAdsStoreProductId(platform);',
+        ) &&
         /requestPurchase\(\{[\s\S]*request:\s*\{[\s\S]*apple:\s*\{\s*sku:\s*storeProductId\s*\},[\s\S]*google:\s*\{\s*skus:\s*\[\s*storeProductId\s*\]\s*\},[\s\S]*\},[\s\S]*type:\s*'in-app',[\s\S]*\}\)/.test(
           purchaseSource,
         ),
-      'native Remove Ads purchase request must map the supplied canonical id to the active store id as an in-app purchase',
+      'native Remove Ads purchase request must map Android to removeads and iOS to the canonical bundle id as an in-app purchase',
     ],
     [
       normalizedPurchaseSource.includes(
         'if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];',
       ) && normalizedPurchaseSource.includes("return [createMockPurchase('restore-remove-ads')];"),
       'mock Remove Ads restore must require the canonical product id',
+    ],
+    [
+      /restorePurchases\(productIds\)[\s\S]*const storePlatform = await resolveNativeStorePlatform\(platform\);[\s\S]*productIds\.some\(\(productId\) =>[\s\S]*getPurchaseStoreProductId\(productId, storePlatform\)/.test(
+        purchaseSource,
+      ),
+      'native Remove Ads restore must match Android removeads and iOS canonical store ids',
     ],
     [
       normalizedPurchaseSource.includes('export const REMOVE_ADS_RECORD_SCHEMA_VERSION = 1;') &&

@@ -1763,6 +1763,98 @@ test('native purchase provider matches requested product ids instead of Remove A
   );
 });
 
+test('native Remove Ads requests platform store ids while storing canonical entitlement records', async () => {
+  const {
+    REMOVE_ADS_ANDROID_PRODUCT_ID,
+    REMOVE_ADS_IOS_PRODUCT_ID,
+    REMOVE_ADS_PRODUCT_ID,
+    REMOVE_ADS_RECORD_SCHEMA_VERSION,
+    REMOVE_ADS_STORAGE_KEY,
+    buyRemoveAds,
+    createMemoryPurchaseStorage,
+    createNativePurchaseProvider,
+    restoreRemoveAdsPurchase,
+  } = loadTs('lib/monetization/purchases.ts');
+  const scenarios = [
+    { platform: 'android', storeProductId: REMOVE_ADS_ANDROID_PRODUCT_ID },
+    { platform: 'ios', storeProductId: REMOVE_ADS_IOS_PRODUCT_ID },
+  ];
+
+  for (const { platform, storeProductId } of scenarios) {
+    const purchaseFixture = makeNativeIapProductFixture();
+    const purchaseStorage = createMemoryPurchaseStorage();
+    const purchaseResult = await buyRemoveAds({
+      provider: createNativePurchaseProvider({
+        loadIap: async () => purchaseFixture.iap,
+        platform,
+        purchaseTimeoutMs: 10,
+        async receiptValidator(purchase, productId) {
+          return {
+            productId,
+            purchaseToken: purchase.purchaseToken ?? null,
+            status: 'valid',
+            transactionId: purchase.transactionId ?? null,
+            validatedAt: '2026-05-21T12:00:00.000Z',
+          };
+        },
+      }),
+      storage: purchaseStorage,
+    });
+
+    assert.equal(purchaseResult.status, 'purchased');
+    assert.equal(purchaseResult.productId, REMOVE_ADS_PRODUCT_ID);
+    assert.equal(purchaseResult.entitlements.adsDisabled, true);
+    assert.deepEqual(purchaseFixture.state.requestedProductIds, [storeProductId]);
+    const storedPurchaseRecord = JSON.parse(
+      await purchaseStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
+    );
+    assert.equal(storedPurchaseRecord.productId, REMOVE_ADS_PRODUCT_ID);
+    assert.equal(storedPurchaseRecord.schemaVersion, REMOVE_ADS_RECORD_SCHEMA_VERSION);
+    assert.equal(storedPurchaseRecord.source, 'purchase');
+    assert.equal(storedPurchaseRecord.transactionId, `tx-${storeProductId}`);
+
+    const restoreFixture = makeNativeIapProductFixture({
+      availablePurchases: [
+        {
+          ids: [storeProductId],
+          productId: storeProductId,
+          purchaseToken: `restore-token-${platform}`,
+          transactionId: `restore-tx-${platform}`,
+        },
+      ],
+    });
+    const restoreStorage = createMemoryPurchaseStorage();
+    const restoreResult = await restoreRemoveAdsPurchase({
+      provider: createNativePurchaseProvider({
+        loadIap: async () => restoreFixture.iap,
+        platform,
+        purchaseTimeoutMs: 10,
+        async receiptValidator(purchase, productId) {
+          return {
+            productId,
+            purchaseToken: purchase.purchaseToken ?? null,
+            status: 'valid',
+            transactionId: purchase.transactionId ?? null,
+            validatedAt: '2026-05-21T12:00:00.000Z',
+          };
+        },
+      }),
+      storage: restoreStorage,
+    });
+
+    assert.equal(restoreResult.status, 'restored');
+    assert.equal(restoreResult.productId, REMOVE_ADS_PRODUCT_ID);
+    assert.equal(restoreResult.entitlements.adsDisabled, true);
+    assert.equal(restoreFixture.state.restored, true);
+    const storedRestoreRecord = JSON.parse(
+      await restoreStorage.getItemAsync(REMOVE_ADS_STORAGE_KEY),
+    );
+    assert.equal(storedRestoreRecord.productId, REMOVE_ADS_PRODUCT_ID);
+    assert.equal(storedRestoreRecord.source, 'restore');
+    assert.equal(storedRestoreRecord.transactionId, `restore-tx-${platform}`);
+  }
+});
+
 test('Pro Lifetime entitlement storage and receipts require canonical UTC timestamps', async () => {
   const { createMemoryPurchaseStorage } = loadTs('lib/monetization/purchases.ts');
   const {
