@@ -6,6 +6,7 @@ const test = require('node:test');
 const ts = require('typescript');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('../scripts/static-outcome-copy-guard');
 const {
+  STATIC_EBOOK_CREDENTIAL_CLAIM_FILES,
   assertNoUnsupportedStaticEbookCredentialClaims,
   assertNoUnsupportedStaticEbookCredentialText,
 } = require('../scripts/static-ebook-credential-claim-guard');
@@ -263,6 +264,10 @@ test('static ebook intro avoids unsupported test-taker credential claims', () =>
   assertNoUnsupportedStaticEbookCredentialText(englishHtml, 'rendered english intro');
   assertNoUnsupportedStaticEbookCredentialText(swedishHtml, 'rendered swedish intro');
   assert.match(englishHtml, /public study material into calm, unofficial practice reading/);
+});
+
+test('static ebook credential guard scans shipped ebook source, not negative fixtures', () => {
+  assert.deepEqual(STATIC_EBOOK_CREDENTIAL_CLAIM_FILES, ['site/ebook.js']);
 });
 
 test('static ebook navigation covers every shipped static chapter', () => {
