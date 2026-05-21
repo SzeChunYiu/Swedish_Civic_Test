@@ -3096,7 +3096,7 @@
       'chap.3.d':
         'Grundlagarna ብቐሊል ቋንቋ። ናጽነት ሕትመት፡ ናጽነት ሓሳብካ ምግላጽ፡ ስለምንታይ ድማ ሓላፊኻ ብዛዕባ ሃይማኖትካ ክሓትት ዘይክእል።',
       'chap.3.m2': '~11 ደቒቕ',
-      'chap.4.d': 'Skatteverket፡ kollektivavtal፡ föräldraledighet፡ sjukpenning። እቲ ዝተሰማማዕካሉ ስምምዕ።',
+      'chap.4.d': 'Skatteverket፡ ሓባራዊ ስምምዓት፡ ናይ ወለዲ ዕረፍቲ፡ ጥቕማጥቕሚ ሕማም። እቲ ዝተሰማማዕካሉ ስምምዕ።',
       'chap.4.m2': '~10 ደቒቕ',
       'chap.5.d':
         'Jämställdhet፡ መሰላት LGBTQ+፡ ኣገባብ ምክፍፋል ናይ ወለዲ ዕረፍቲ። ሽወደን ኣብቶም ናይ ደረጃ ዝርዝራት ቀጻሊ ዝቐርበሉ ምኽንያት።',

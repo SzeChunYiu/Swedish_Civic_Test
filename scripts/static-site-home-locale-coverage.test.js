@@ -22,6 +22,7 @@ const allowedSharedFragments = [
   /Allemansrätten/,
   /Jantelagen/,
 ];
+const forbiddenTigrinyaWorkWelfareTerms = ['kollektivavtal', 'föräldraledighet', 'sjukpenning'];
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
@@ -89,7 +90,7 @@ function homeVisibleKeys() {
     block(
       html,
       '<!-- ============================================================ COOKIE CONS',
-      '<script src="app.js"',
+      '<script src="app.js',
     ),
   ];
   return [
@@ -129,5 +130,24 @@ test('extra locales translate every displayed home, nav, footer, settings, and c
         `${locale}.${key} falls back to English: ${value}`,
       );
     }
+  }
+});
+
+test('Tigrinya Home chapter 4 avoids bare Swedish labor and welfare terms', () => {
+  const dictionaries = loadDictionaries();
+  const description = dictionaries.ti?.['chap.4.d'];
+
+  assert.equal(typeof description, 'string', 'ti.chap.4.d is translated');
+  assert.match(description, /Skatteverket/, 'ti.chap.4.d preserves the agency name');
+  assert.match(description, /ሓባራዊ ስምምዓት/, 'ti.chap.4.d localizes collective agreements');
+  assert.match(description, /ናይ ወለዲ ዕረፍቲ/, 'ti.chap.4.d localizes parental leave');
+  assert.match(description, /ጥቕማጥቕሚ ሕማም/, 'ti.chap.4.d localizes sickness benefit');
+
+  for (const term of forbiddenTigrinyaWorkWelfareTerms) {
+    assert.doesNotMatch(
+      description,
+      new RegExp(term, 'i'),
+      `ti.chap.4.d exposes bare Swedish term ${term}`,
+    );
   }
 });
