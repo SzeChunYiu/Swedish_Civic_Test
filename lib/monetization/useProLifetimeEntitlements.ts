@@ -3,6 +3,8 @@ import { Platform } from 'react-native';
 
 import type { ProTierEntitlements } from '../../types/monetization';
 import {
+  createE2EMockPurchaseProviderOptions,
+  createMockPurchaseProvider,
   createNativePurchaseProvider,
   createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
@@ -22,8 +24,28 @@ const FREE_PRO_ENTITLEMENTS: ProTierEntitlements = {
   multiColorHighlights: false,
 };
 
+type ProLifetimeE2ERuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_PRO_LIFETIME_MOCK_OWNED__?: boolean;
+};
+
 function getNativePurchasePlatform() {
   return Platform.OS === 'android' ? 'android' : 'ios';
+}
+
+function createE2EWebProLifetimeRuntimeOptions(): ProLifetimeRuntimeOptions | undefined {
+  if (Platform.OS !== 'web') return undefined;
+
+  const runtime = globalThis as ProLifetimeE2ERuntime;
+  if (!runtime.__SMT_E2E__) return undefined;
+
+  return {
+    provider: createMockPurchaseProvider({
+      owned: runtime.__SMT_PRO_LIFETIME_MOCK_OWNED__ === true,
+      ...createE2EMockPurchaseProviderOptions(),
+    }),
+    storage: createWebPurchaseStorage(),
+  };
 }
 
 export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOptions {
@@ -33,6 +55,9 @@ export function createDefaultProLifetimeRuntimeOptions(): ProLifetimeRuntimeOpti
       storage: createSecureStorePurchaseStorage(),
     };
   }
+
+  const e2eRuntimeOptions = createE2EWebProLifetimeRuntimeOptions();
+  if (e2eRuntimeOptions) return e2eRuntimeOptions;
 
   return {
     storage: createWebPurchaseStorage(),

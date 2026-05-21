@@ -5,6 +5,7 @@ import type { PremiumEntitlements } from '../../types/monetization';
 import { FREE_ENTITLEMENTS } from './premium';
 import {
   createNativePurchaseProvider,
+  createE2EMockPurchaseProviderOptions,
   createMockPurchaseProvider,
   createSecureStorePurchaseStorage,
   createWebPurchaseStorage,
@@ -78,7 +79,10 @@ function createE2EWebPurchaseRuntimeOptions(
     }
 
     return {
-      provider: createMockPurchaseProvider({ owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__ }),
+      provider: createMockPurchaseProvider({
+        owned: runtime.__SMT_REMOVE_ADS_MOCK_OWNED__,
+        ...createE2EMockPurchaseProviderOptions(),
+      }),
       storage: createWebPurchaseStorage(initialAdsDisabled),
     };
   }

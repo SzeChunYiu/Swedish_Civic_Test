@@ -1457,6 +1457,60 @@ test('native purchase provider matches requested product ids instead of Remove A
   );
 });
 
+test('Remove Ads and ProPaywall in-flight E2E mock provider records one action per requested product', async () => {
+  const {
+    REMOVE_ADS_PRODUCT_ID,
+    createE2EMockPurchaseProviderOptions,
+    createMockPurchaseProvider,
+  } = loadTs('lib/monetization/purchases.ts');
+  const { PRO_LIFETIME_PRODUCT_ID } = loadTs('lib/monetization/proLifetimePurchase.ts');
+  const previousE2E = globalThis.__SMT_E2E__;
+  const previousDelay = globalThis.__SMT_E2E_PURCHASE_DELAY_MS;
+  const previousCounts = globalThis.__SMT_E2E_PURCHASE_ACTION_COUNTS__;
+
+  globalThis.__SMT_E2E__ = true;
+  globalThis.__SMT_E2E_PURCHASE_DELAY_MS = 1;
+  delete globalThis.__SMT_E2E_PURCHASE_ACTION_COUNTS__;
+
+  try {
+    const provider = createMockPurchaseProvider({
+      owned: true,
+      ...createE2EMockPurchaseProviderOptions(),
+    });
+
+    await provider.connect();
+    const proPurchase = await provider.requestRemoveAdsPurchase(PRO_LIFETIME_PRODUCT_ID);
+    const receipt = await provider.validateRemoveAdsReceipt(proPurchase, PRO_LIFETIME_PRODUCT_ID);
+    const restored = await provider.restorePurchases([
+      REMOVE_ADS_PRODUCT_ID,
+      PRO_LIFETIME_PRODUCT_ID,
+    ]);
+    await provider.disconnect();
+
+    assert.equal(proPurchase.productId, PRO_LIFETIME_PRODUCT_ID);
+    assert.equal(proPurchase.purchaseToken, 'mock-token-buy-prolifetime');
+    assert.equal(receipt.status, 'valid');
+    assert.equal(receipt.productId, PRO_LIFETIME_PRODUCT_ID);
+    assert.deepEqual(
+      restored.map((purchase) => purchase.productId),
+      [REMOVE_ADS_PRODUCT_ID, PRO_LIFETIME_PRODUCT_ID],
+    );
+    assert.deepEqual(globalThis.__SMT_E2E_PURCHASE_ACTION_COUNTS__, {
+      [`request:${PRO_LIFETIME_PRODUCT_ID}`]: 1,
+      [`restore:${REMOVE_ADS_PRODUCT_ID}`]: 1,
+      [`restore:${PRO_LIFETIME_PRODUCT_ID}`]: 1,
+    });
+  } finally {
+    globalThis.__SMT_E2E__ = previousE2E;
+    globalThis.__SMT_E2E_PURCHASE_DELAY_MS = previousDelay;
+    if (previousCounts === undefined) {
+      delete globalThis.__SMT_E2E_PURCHASE_ACTION_COUNTS__;
+    } else {
+      globalThis.__SMT_E2E_PURCHASE_ACTION_COUNTS__ = previousCounts;
+    }
+  }
+});
+
 test('remove-ads entitlement storage rejects stale boolean and malformed records', async () => {
   const {
     REMOVE_ADS_PRODUCT_ID,

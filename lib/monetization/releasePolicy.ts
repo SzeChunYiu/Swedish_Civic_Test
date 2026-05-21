@@ -29,10 +29,21 @@ function readBooleanFlag(value: string | undefined, fallback: boolean): boolean 
   return ['1', 'true', 'yes', 'on'].includes(normalized);
 }
 
+function readE2EProRuntimeScopeOverride(): boolean {
+  const runtime = globalThis as typeof globalThis & {
+    __SMT_E2E__?: boolean;
+    __SMT_E2E_PRO_RUNTIME_SCOPE__?: boolean;
+  };
+
+  return runtime.__SMT_E2E__ === true && runtime.__SMT_E2E_PRO_RUNTIME_SCOPE__ === true;
+}
+
 export function isProRuntimeScopeEnabled(): boolean {
-  return readBooleanFlag(
-    process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE,
-    releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled,
+  return (
+    readBooleanFlag(
+      process.env.EXPO_PUBLIC_ENABLE_PRO_RUNTIME_SCOPE,
+      releaseMonetizationPolicy.proRuntimeScopeDefaultEnabled,
+    ) || readE2EProRuntimeScopeOverride()
   );
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -17,6 +17,7 @@ import {
   type ProLifetimePurchaseStatus,
   type ProLifetimeRuntimeOptions,
 } from '../../lib/monetization/proLifetimePurchase';
+import { createDefaultProLifetimeRuntimeOptions } from '../../lib/monetization/useProLifetimeEntitlements';
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import type { ProTierEntitlements } from '../../types/monetization';
@@ -154,6 +155,10 @@ export function ProPaywall({
   const [activeAction, setActiveAction] = useState<ProAction | null>(null);
   const [status, setStatus] = useState<ProPaywallStatus>('idle');
   const purchaseActionInFlightRef = useRef(false);
+  const purchaseRuntime = useMemo(
+    () => runtimeOptions ?? createDefaultProLifetimeRuntimeOptions(),
+    [runtimeOptions],
+  );
   const primaryLabel = language === 'sv' ? ctaLabels.primarySv : ctaLabels.primaryEn;
   const secondaryLabel = language === 'sv' ? ctaLabels.secondarySv : ctaLabels.secondaryEn;
   const statusMessage = copy.statusMessages[status];
@@ -167,8 +172,8 @@ export function ProPaywall({
       try {
         const result =
           action === 'buy'
-            ? await buyProLifetime(runtimeOptions)
-            : await restoreProLifetime(runtimeOptions);
+            ? await buyProLifetime(purchaseRuntime)
+            : await restoreProLifetime(purchaseRuntime);
 
         onEntitlementsChange?.(result.entitlements);
         setStatus(result.status);
@@ -179,7 +184,7 @@ export function ProPaywall({
         setActiveAction(null);
       }
     },
-    [onEntitlementsChange, runtimeOptions],
+    [onEntitlementsChange, purchaseRuntime],
   );
 
   return (

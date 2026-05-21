@@ -111,6 +111,11 @@ export interface MockPurchaseProviderOptions {
   receiptValidationStatus?: RemoveAdsReceiptValidationStatus;
 }
 
+type MockPurchaseProviderRuntimeOptions = MockPurchaseProviderOptions & {
+  actionDelayMs?: number;
+  onAction?: (action: 'request' | 'restore', productIds: readonly string[]) => void;
+};
+
 interface BrowserPurchaseStorage {
   getItem(key: string): string | null;
   removeItem(key: string): void;
@@ -264,11 +269,19 @@ function createReceiptValidationResult(
   purchase: RemoveAdsPurchaseRecord,
   validatedAt = new Date(),
 ): RemoveAdsReceiptValidationResult {
-  if (!isRemoveAdsPurchase(purchase)) return { status: 'invalid' };
+  return createReceiptValidationResultForProduct(purchase, REMOVE_ADS_PRODUCT_ID, validatedAt);
+}
+
+function createReceiptValidationResultForProduct(
+  purchase: RemoveAdsPurchaseRecord,
+  productId: string,
+  validatedAt = new Date(),
+): RemoveAdsReceiptValidationResult {
+  if (!isPurchaseForProduct(purchase, productId)) return { status: 'invalid' };
   if (!purchase.purchaseToken && !purchase.transactionId) return { status: 'pending' };
 
   return {
-    productId: REMOVE_ADS_PRODUCT_ID,
+    productId,
     purchaseToken: purchase.purchaseToken ?? null,
     status: 'valid',
     transactionId: purchase.transactionId ?? null,
@@ -776,24 +789,86 @@ export function createNativePurchaseProvider({
   };
 }
 
+type PurchaseE2ERuntime = typeof globalThis & {
+  __SMT_E2E__?: boolean;
+  __SMT_E2E_PURCHASE_ACTION_COUNTS__?: Record<string, number>;
+  __SMT_E2E_PURCHASE_DELAY_MS?: number;
+};
+
+function getMockTransactionSuffix(productId: string): string {
+  if (productId === REMOVE_ADS_PRODUCT_ID) return 'remove-ads';
+
+  const productSuffix = productId.split('.').pop() ?? 'product';
+  return productSuffix.replace(/[^a-z0-9-]+/gi, '-').toLowerCase() || 'product';
+}
+
+function normalizeMockPurchaseDelayMs(delayMs: number | undefined): number {
+  if (typeof delayMs !== 'number' || !Number.isFinite(delayMs) || delayMs <= 0) return 0;
+  return Math.min(Math.round(delayMs), 5000);
+}
+
+function waitForMockPurchaseDelay(delayMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+}
+
+export function createE2EMockPurchaseProviderOptions(): Pick<
+  MockPurchaseProviderRuntimeOptions,
+  'actionDelayMs' | 'onAction'
+> {
+  const runtime = globalThis as PurchaseE2ERuntime;
+  if (!runtime.__SMT_E2E__) return {};
+
+  return {
+    actionDelayMs: normalizeMockPurchaseDelayMs(runtime.__SMT_E2E_PURCHASE_DELAY_MS),
+    onAction(action, productIds) {
+      const counts = runtime.__SMT_E2E_PURCHASE_ACTION_COUNTS__ ?? {};
+      runtime.__SMT_E2E_PURCHASE_ACTION_COUNTS__ = counts;
+
+      for (const productId of productIds) {
+        const key = `${action}:${productId}`;
+        counts[key] = (counts[key] ?? 0) + 1;
+      }
+    },
+  };
+}
+
 export function createMockPurchaseProvider({
+  actionDelayMs,
+  onAction,
   owned = false,
   pendingPurchase = false,
   receiptValidationStatus = 'valid',
-}: MockPurchaseProviderOptions = {}): RemoveAdsPurchaseProvider {
+}: MockPurchaseProviderRuntimeOptions = {}): RemoveAdsPurchaseProvider {
   let connected = false;
-  let ownsRemoveAds = owned;
+  const ownedProductIds = new Set<string>(owned ? [REMOVE_ADS_PRODUCT_ID] : []);
+  const delayMs = normalizeMockPurchaseDelayMs(actionDelayMs);
 
   function assertConnected() {
     if (!connected) throw new Error('Mock purchase provider is not connected');
   }
 
-  function createMockPurchase(transactionId: string): RemoveAdsPurchaseRecord {
+  function ownsProduct(productId: string): boolean {
+    return owned || ownedProductIds.has(productId);
+  }
+
+  function createMockPurchase(
+    transactionId: string,
+    productId: string = REMOVE_ADS_PRODUCT_ID,
+  ): RemoveAdsPurchaseRecord {
     return {
-      productId: REMOVE_ADS_PRODUCT_ID,
+      productId,
       purchaseToken: `mock-token-${transactionId}`,
       transactionId,
     };
+  }
+
+  function createMockPurchaseForProduct(
+    productId: string,
+    action: 'buy' | 'restore',
+  ): RemoveAdsPurchaseRecord {
+    return createMockPurchase(`${action}-${getMockTransactionSuffix(productId)}`, productId);
   }
 
   return {
@@ -806,21 +881,31 @@ export function createMockPurchaseProvider({
     async finishPurchase() {
       assertConnected();
     },
-    async validateRemoveAdsReceipt(purchase) {
+    async validateRemoveAdsReceipt(purchase, productId) {
       assertConnected();
       if (receiptValidationStatus !== 'valid') return { status: receiptValidationStatus };
-      return createReceiptValidationResult(purchase);
+      return createReceiptValidationResultForProduct(purchase, productId);
     },
-    async requestRemoveAdsPurchase() {
+    async requestRemoveAdsPurchase(productId) {
       assertConnected();
+      onAction?.('request', [productId]);
+      if (delayMs > 0) await waitForMockPurchaseDelay(delayMs);
       if (pendingPurchase) return null;
-      ownsRemoveAds = true;
-      return createMockPurchase('buy-remove-ads');
+      ownedProductIds.add(productId);
+      return createMockPurchaseForProduct(productId, 'buy');
     },
     async restorePurchases(productIds) {
       assertConnected();
-      if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
-      return [createMockPurchase('restore-remove-ads')];
+      onAction?.('restore', productIds);
+      if (delayMs > 0) await waitForMockPurchaseDelay(delayMs);
+      if (productIds.length === 1 && productIds.includes(REMOVE_ADS_PRODUCT_ID)) {
+        const ownsRemoveAds = ownsProduct(REMOVE_ADS_PRODUCT_ID);
+        if (!ownsRemoveAds || !productIds.includes(REMOVE_ADS_PRODUCT_ID)) return [];
+        return [createMockPurchase('restore-remove-ads')];
+      }
+      return productIds
+        .filter((productId) => ownsProduct(productId))
+        .map((productId) => createMockPurchaseForProduct(productId, 'restore'));
     },
   };
 }
