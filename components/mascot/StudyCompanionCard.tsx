@@ -11,6 +11,7 @@ import {
 import type { AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { Button } from '../ui/Button';
+import { MascotArtwork, mascotArtworkExpressionForFeedbackState } from './MascotArtwork';
 
 export type StudyCompanionFeedbackState = 'neutral' | 'correct' | 'incorrect';
 
@@ -78,19 +79,14 @@ export function StudyCompanionCard({
   const anchor = language === 'sv' ? mascot.anchorSv : mascot.anchorEn;
   const body = bodyForState(copy, feedbackState, label, anchor);
   const stateLabel = stateLabelFor(copy, feedbackState);
+  const artworkExpression = mascotArtworkExpressionForFeedbackState(feedbackState);
 
   return (
     <View
       accessibilityLabel={copy.accessibilityLabel(label, body)}
       style={[styles.card, styles[feedbackState], style]}
     >
-      <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={styles.glyph}
-      >
-        <Text style={styles.glyphText}>{label.slice(0, 1).toUpperCase()}</Text>
-      </View>
+      <MascotArtwork expression={artworkExpression} mascotId={mascot.id} style={styles.artwork} />
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>{copy.title}</Text>
@@ -168,21 +164,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceWarm,
     borderColor: colors.border,
   },
-  glyph: {
-    alignItems: 'center',
-    backgroundColor: colors.badgeBlueBg,
-    borderColor: colors.border,
-    borderRadius: radius.circle,
-    borderWidth: space.hairline,
-    height: space[6],
-    justifyContent: 'center',
-    width: space[6],
-  },
-  glyphText: {
-    color: colors.badgeBlueText,
-    fontSize: typography.subHeading.fontSize,
-    fontWeight: typography.bodyBold.fontWeight,
-    lineHeight: typography.subHeading.lineHeight,
+  artwork: {
+    marginTop: space[0.5],
   },
   content: {
     flex: 1,

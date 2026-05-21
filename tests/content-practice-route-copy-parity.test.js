@@ -96,6 +96,10 @@ test('practice route source wires selected companion copy to answer feedback sta
     path.join(repoRoot, 'components/mascot/StudyCompanionCard.tsx'),
     'utf8',
   );
+  const mascotArtwork = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/MascotArtwork.tsx'),
+    'utf8',
+  );
 
   assert.match(source, /import \{ StudyCompanionCard \}/);
   assert.match(source, /import \{ useCompanionStore \}/);
@@ -114,6 +118,13 @@ test('practice route source wires selected companion copy to answer feedback sta
   assert.match(companionCard, /settingsAccessibilityLabel: 'Change study companion in Settings'/);
   assert.match(companionCard, /settingsAccessibilityLabel: 'Byt studiekompis i Inställningar'/);
   assert.match(companionCard, /href="\/settings"/);
+  assert.match(companionCard, /<MascotArtwork[\s\S]*mascotId=\{mascot\.id\}/);
+  assert.doesNotMatch(companionCard, /label\.slice\(0,\s*1\)\.toUpperCase\(\)/);
+  assert.match(mascotArtwork, /SvgUri/);
+  assert.match(mascotArtwork, /study-companion-artwork-\$\{mascotId\}-\$\{expression\}/);
+  assert.match(mascotArtwork, /feedbackState === 'correct'[\s\S]*return 'happy'/);
+  assert.match(mascotArtwork, /feedbackState === 'incorrect'[\s\S]*return 'oops'/);
+  assert.match(mascotArtwork, /return 'idle'/);
   assert.doesNotMatch(source, /selectedCompanionId[\s\S]{0,120}recordAnswer/);
 });
 
