@@ -2571,6 +2571,55 @@ test('generated id fixture guard allows source ids and helper-derived ids', () =
   );
 });
 
+test('published question schema validates localized q001 generated answer templates', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/data/questions.ts')) {
+    return String(contents).replace(
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
+      [
+        ${JSON.stringify(generatedFixtureIdHelperSource())},
+        "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
+        "  sourceQuestions,",
+        "  sourceQuestions.length + 1,",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
+        "  question.id === generatedFixtureId('q001', 1)",
+        "    ? {",
+        "        ...question,",
+        "        options: question.options.map((option, index) =>",
+        "          index === 0",
+        "            ? { ...option, text: { ...option.text, en: 'Template drift' } }",
+        "            : option,",
+        "        ),",
+        "      }",
+        "    : question,",
+        ");",
+      ].join('\\n'),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q001 generated variant\[1\] options do not match generated answer template/,
+  );
+});
+
 test('criminal-responsibility age copy is date-stamped to the current main-rule boundary', () => {
   const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
     cwd: repoRoot,
@@ -4800,13 +4849,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
@@ -4849,13 +4898,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 3)",
         "    ? {",
         "        ...question,",
@@ -4898,13 +4947,13 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n);",
+      "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(\\n  sourceQuestions,\\n  sourceQuestions.length + 1,\\n).map(applyQuestionLocalizationPilot);",
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "export const generatedPublishedQuestions: PracticeQuestion[] = derivePublishedQuestions(",
         "  sourceQuestions,",
         "  sourceQuestions.length + 1,",
-        ").map((question) =>",
+        ").map(applyQuestionLocalizationPilot).map((question) =>",
         "  question.id === generatedFixtureId('q001', 0)",
         "    ? {",
         "        ...question,",
