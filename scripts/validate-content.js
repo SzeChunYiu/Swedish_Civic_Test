@@ -224,11 +224,13 @@ const EXPECTED_UHR_SOURCE = {
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
+const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
   civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -5097,11 +5099,41 @@ function questionSentenceEndingsAreComplete(question) {
   );
 }
 
+function validateCountdownBannerHomeMountParity() {
+  let homeMountParity = true;
+  let rulesValidated = 0;
+  const homeRouteSource = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/home.tsx'), 'utf8');
+
+  function rejectHomeMount(message) {
+    homeMountParity = false;
+    fail(message);
+  }
+
+  if (
+    /import\s+\{\s*CountdownBanner\s*\}\s+from\s+['"]\.\.\/\.\.\/components\/ui\/CountdownBanner['"]/.test(
+      homeRouteSource,
+    )
+  ) {
+    rulesValidated += 1;
+  } else {
+    rejectHomeMount('home route must import CountdownBanner from the shared UI component');
+  }
+
+  if (/<CountdownBanner\s+language=\{language\}\s*\/>/.test(homeRouteSource)) {
+    rulesValidated += 1;
+  } else {
+    rejectHomeMount('Home route must mount CountdownBanner with the selected language');
+  }
+
+  return { homeMountParity, rulesValidated };
+}
+
 function validateCitizenshipTimeline() {
   let dateParity = true;
   let countdownCopyParity = true;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
+  const firstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -5119,6 +5151,11 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
+  if (firstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
+    rejectDate(
+      `civic knowledge test first sitting must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
+    );
+  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -5126,11 +5163,14 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
+    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
+    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
+    examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <
+      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
   ) {
-    rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
+    rejectDate('civic knowledge test dates must stay after the citizenship rules date');
   }
   if (dateIsoDay(examDateModule.EXAM_REFORM_DATE) !== rulesDate) {
     rejectDate('EXAM_REFORM_DATE must remain an alias for the citizenship rules date');
@@ -5157,11 +5197,16 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
+    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
     'Nya medborgarskapsregler gäller från',
-    'Samhällskunskapsprovet väntas starta i augusti 2026',
+    'UHR har bekräftat att den första provomgången',
+    'tills nya reglerna',
+    'i Stockholm',
     'New citizenship rules apply from',
-    'The civic-knowledge test is expected in August 2026',
+    'UHR has confirmed that the first civic-knowledge',
+    'until new rules',
+    'in Stockholm',
+    'CITIZENSHIP_TIMELINE_SOURCE_URLS',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -5171,8 +5216,13 @@ function validateCitizenshipTimeline() {
   [
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
+    /Samhällskunskapsprovet väntas starta i augusti 2026/,
+    /The civic-knowledge test is expected in August 2026/,
+    /Regeringens tidsgräns för första steget/,
+    /The government deadline for the first step/,
     /until new exam/,
     /tills nya provet/,
+    /Regeringen/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
       rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
@@ -5182,6 +5232,7 @@ function validateCitizenshipTimeline() {
   return {
     countdownCopyParity,
     dateParity,
+    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
@@ -8294,6 +8345,7 @@ let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
+let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
@@ -8904,6 +8956,34 @@ if (process.argv.includes('--focus-search-route-query-hydration')) {
   process.exit(0);
 }
 
+if (process.argv.includes('--focus-countdown-banner')) {
+  {
+    const timelineValidation = validateCitizenshipTimeline();
+    citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
+    civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
+    civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
+    citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
+    citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
+    countdownBannerTimelineCopyParityValidated = timelineValidation.countdownCopyParity;
+  }
+  {
+    const homeMountValidation = validateCountdownBannerHomeMountParity();
+    countdownBannerHomeMountRulesValidated = homeMountValidation.rulesValidated;
+    countdownBannerHomeMountParityValidated = homeMountValidation.homeMountParity;
+  }
+  exitWithValidationFailures();
+  printValidationSummary({
+    citizenshipRulesEffectiveDateValidated,
+    civicKnowledgeTestFirstSittingDateValidated,
+    civicKnowledgeTestDeadlineDateValidated,
+    citizenshipTimelineSourceUrlsValidated,
+    citizenshipTimelineDateParityValidated,
+    countdownBannerTimelineCopyParityValidated,
+    countdownBannerHomeMountRulesValidated,
+    countdownBannerHomeMountParityValidated,
+  });
+  process.exit(0);
+}
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
@@ -19004,6 +19084,7 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
+      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,

@@ -26,11 +26,12 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.equal(summary.citizenshipRulesEffectiveDateValidated, '2026-06-06');
   assert.equal(summary.civicKnowledgeTestFirstSittingDateValidated, '2026-08-15');
   assert.equal(summary.civicKnowledgeTestDeadlineDateValidated, '2026-08-17');
-  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 3);
+  assert.equal(summary.citizenshipTimelineSourceUrlsValidated, 4);
   assert.equal(summary.citizenshipTimelineDateParityValidated, true);
   assert.equal(summary.countdownBannerTimelineCopyParityValidated, true);
   assert.equal(summary.countdownBannerHomeMountRulesValidated, 2);
   assert.equal(summary.countdownBannerHomeMountParityValidated, true);
+  assert.equal(Object.hasOwn(summary, 'homeRouteCopyParityValidated'), false);
 
   const countdownBanner = fs.readFileSync(
     path.join(repoRoot, 'components/ui/CountdownBanner.tsx'),
