@@ -1,4 +1,19 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
+
+import { seedFreshSettingsLanguageAndAboutSeen } from './browserLaunch';
+
+const minimumTouchTargetPx = 44;
+
+const launchCloseTargetRoutes = ['/home', '/profile', '/settings', '/search'] as const;
+
+async function expectMinimumTouchTarget(locator: Locator, label: string) {
+  await expect(locator, `${label} should be visible`).toBeVisible();
+  const box = await locator.boundingBox();
+
+  expect(box, `${label} should render a measurable target`).not.toBeNull();
+  expect(box!.width, `${label} target width`).toBeGreaterThanOrEqual(minimumTouchTargetPx);
+  expect(box!.height, `${label} target height`).toBeGreaterThanOrEqual(minimumTouchTargetPx);
+}
 
 test('ad placements announce Remove Ads in web accessible names', async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -41,3 +56,25 @@ test('ad placements announce Remove Ads in web accessible names', async ({ page 
 
   expect(consoleErrors).toEqual([]);
 });
+
+for (const routePath of launchCloseTargetRoutes) {
+  test(`launch sponsor close control keeps a 44px target on ${routePath}`, async ({ page }) => {
+    const consoleErrors: string[] = [];
+
+    page.on('console', (message) => {
+      if (message.type() === 'error') consoleErrors.push(message.text());
+    });
+    page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+    await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
+    await page.goto(routePath, { waitUntil: 'networkidle' });
+
+    const closeLaunchAd = page.getByRole('button', { name: 'Stäng startannons' });
+    await expectMinimumTouchTarget(closeLaunchAd, `${routePath} launch close control`);
+
+    await closeLaunchAd.click();
+    await expect(closeLaunchAd).toHaveCount(0);
+
+    expect(consoleErrors).toEqual([]);
+  });
+}

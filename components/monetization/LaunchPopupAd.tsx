@@ -161,8 +161,10 @@ const styles = StyleSheet.create({
   closeButton: {
     alignItems: 'center',
     backgroundColor: colors.accent,
-    borderRadius: radius.micro,
+    borderRadius: radius.button,
+    justifyContent: 'center',
     marginTop: space[1],
+    minHeight: space[6],
     paddingHorizontal: space[2],
     paddingVertical: space[1],
   },
