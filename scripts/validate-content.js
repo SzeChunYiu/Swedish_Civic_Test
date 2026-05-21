@@ -565,8 +565,24 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bthere are buddhist and Hindu\b/,
   /\bcalled Lucia procession\b/i,
   /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
+  /^Försöka övertyga andra om sina politiska idéer\.?$/i,
+  /^Hindra andra från att rösta\.?$/i,
+  /^Try to persuade others of their political ideas\.?$/i,
+  /^Stop others from voting\.?$/i,
   /^Light candles on graves to remember and honour people who have died\.?$/i,
   /^Open an Advent calendar every day until Christmas Eve\.?$/i,
+  /^Vårdcentraler, barnavårdscentraler och mödravårdscentraler\.?$/i,
+  /^Domstolar, åklagare och kriminalvård\.?$/i,
+  /^Health centres, child health centres, and maternity clinics\.?$/i,
+  /^Courts, prosecutors, and prison and probation services\.?$/i,
+  /^Ordna förskolor, fritidshem, grundskolor och gymnasieskolor\.?$/i,
+  /^Betala sjukförsäkring och statliga pensioner\.?$/i,
+  /^Arrange preschools, after-school centres, compulsory schools, and upper-secondary schools\.?$/i,
+  /^Pay sickness insurance and state pensions\.?$/i,
+  /^Vård och service hemma eller boende som är anpassat för äldre personer\.?$/i,
+  /^Automatiskt studiestöd och plats på universitet\.?$/i,
+  /^Care and services at home or housing adapted for older people\.?$/i,
+  /^Automatic study support and a university place\.?$/i,
   /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
   /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
   /\bMany people voting, getting involved, and learning about social issues\b/i,
@@ -6528,6 +6544,14 @@ function civicStatementSv(source, option) {
   }
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+  if (source.id === 'q146') {
+    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+    }
+    if (/^Att hindra andra från att rösta$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+    }
+  }
   let match = q.match(/^Var ligger (.+)$/i);
   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
   match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
@@ -6878,6 +6902,14 @@ function civicStatementEn(source, option) {
   }
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+  if (source.id === 'q146') {
+    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+    }
+    if (/^To stop others from voting$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may not stop others from voting';
+    }
+  }
   let match = q.match(/^Where is (.+) located$/i);
   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
@@ -8059,13 +8091,17 @@ const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
-const expectedGeneratedPublishedQuestions =
-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
-    : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
 const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+const expectedGeneratedPublishedQuestions =
+  Array.isArray(sourceQuestions) &&
+  typeof derivePublishedQuestions === 'function' &&
+  typeof applyQuestionLocalizationPilot === 'function'
+    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map(
+        applyQuestionLocalizationPilot,
+      )
+    : [];
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');

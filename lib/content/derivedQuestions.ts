@@ -1410,6 +1410,15 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
 
+  if (source.id === 'q146') {
+    if (/^Att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+    }
+    if (/^Att hindra andra från att rösta$/i.test(answer)) {
+      return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+    }
+  }
+
   if (source.id === 'q151') {
     if (/^De drivs ofta av privata företag och får inkomster genom reklam$/i.test(answer)) {
       return 'Reklamfinansierade medier drivs ofta av privata företag och får inkomster genom reklam';
@@ -1999,6 +2008,15 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+
+  if (source.id === 'q146') {
+    if (/^To try to persuade others of their political ideas$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+    }
+    if (/^To stop others from voting$/i.test(answer)) {
+      return 'In a democracy, people, groups, and parties may not stop others from voting';
+    }
+  }
 
   if (source.id === 'q151') {
     if (
