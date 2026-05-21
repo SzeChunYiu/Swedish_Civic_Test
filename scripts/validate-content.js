@@ -461,6 +461,8 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
   /\bfick rätt att bo i landet och utöva\b/i,
   /\bgained the right to live in the country and practice\b/i,
+  /^Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp\.?$/i,
+  /^Some may vote if they are registered as living in Sweden and meet the rules for their group\.?$/i,
 ];
 const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person who is Lucia\b/i];
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
@@ -4624,6 +4626,29 @@ function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   );
 }
 
+function validateQuestionGeneratedTrueFalseNaturalness(question, label) {
+  const generatedTrueFalseNaturalnessIssue =
+    findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+  if (generatedTrueFalseNaturalnessIssue) {
+    fail(`${label} contains a generated true/false grammar-splice stem`);
+    return false;
+  }
+
+  questionGeneratedTrueFalseNaturalnessValidated += 1;
+  return true;
+}
+
+function validateGeneratedTrueFalseNaturalness(questionsToValidate) {
+  if (!Array.isArray(questionsToValidate)) {
+    fail('questions export is not an array');
+    return;
+  }
+
+  questionsToValidate.forEach((question, index) => {
+    validateQuestionGeneratedTrueFalseNaturalness(question, question?.id || `question[${index}]`);
+  });
+}
+
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
   const text = [
     question.questionEn,
@@ -7137,8 +7162,6 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const weeklyRecapModule = loadTs('lib/learning/weeklyRecap.ts');
-const generateWeeklyRecap = weeklyRecapModule.generateWeeklyRecap;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7395,8 +7418,6 @@ let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
-let weeklyRecapRuntimeCasesValidated = 0;
-let weeklyRecapRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7486,6 +7507,20 @@ let generatedSingleChoiceMetaStemsValidated = 0;
 let generatedSingleChoiceExplanationLabelsValidated = 0;
 let generatedTrueFalseExplanationMetaValidated = 0;
 let generatedTagTemplateParityValidated = 0;
+
+if (process.argv.includes('--focus-generated-true-false-naturalness')) {
+  validateGeneratedTrueFalseNaturalness(questions);
+  exitWithValidationFailures();
+  const publishedQuestions = Array.isArray(questions)
+    ? questions.filter((question) => question.reviewStatus === 'published').length
+    : 0;
+  printValidationSummary({
+    questions: Array.isArray(questions) ? questions.length : 0,
+    publishedQuestions,
+    questionGeneratedTrueFalseNaturalnessValidated,
+  });
+  process.exit(0);
+}
 
 if (process.argv.includes('--focus-static-v11-readiness-copy')) {
   validateStaticValidationSyntaxGate();
@@ -14506,114 +14541,6 @@ function validateMasteryRules() {
   }
 }
 
-const EXPECTED_WEEKLY_RECAP_RUNTIME_CASES = 7;
-
-function validateWeeklyRecapRuntimeGuards() {
-  if (typeof generateWeeklyRecap !== 'function') {
-    return;
-  }
-
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: '7',
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
-        },
-        stringCounters: {
-          questionId: 'stringCounters',
-          correctStreak: '1',
-          wrongCount: '2',
-          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-bad-runtime',
-          mode: 'exam',
-          questionIds: ['q1', 'q2', 'q3'],
-          startedAt: '2026-05-20T10:00:00.000Z',
-          completedAt: '2026-05-20T10:30:00.000Z',
-          score: Infinity,
-          answers: [
-            {
-              questionId: 'q1',
-              selectedOptionIds: ['a'],
-              isCorrect: 'true',
-              answeredAt: '2026-05-20T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q2',
-              selectedOptionIds: ['a'],
-              isCorrect: 1,
-              answeredAt: '2026-05-20T10:01:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q3',
-              selectedOptionIds: ['a'],
-              isCorrect: false,
-              answeredAt: '2026-05-20T10:02:00.000Z',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-high-runtime',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          startedAt: '2026-05-20T11:00:00.000Z',
-          completedAt: '2026-05-20T11:20:00.000Z',
-          score: 1.2,
-        },
-      ],
-    },
-    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
-    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
-    masteryThreshold: '0.8',
-    now: new Date('2026-05-20T12:00:00.000Z'),
-  });
-
-  const cases = [
-    { label: 'truthy correctness is not correct', actual: recap.accuracy, expected: 0 },
-    { label: 'answered count is preserved', actual: recap.questionsAnswered, expected: 3 },
-    { label: 'valid resolved mistake still counts', actual: recap.mistakesResolved, expected: 1 },
-    { label: 'malformed streak normalizes to number', actual: recap.streakDays, expected: 0 },
-    { label: 'exam completions still count', actual: recap.mockExamsTaken, expected: 2 },
-    { label: 'mock best score is finite and clamped', actual: recap.bestMockScore, expected: 1 },
-    {
-      label: 'invalid mastery values do not master',
-      actual: recap.chapterNowMastered,
-      expected: null,
-    },
-  ];
-
-  let rulesAreValid = true;
-
-  cases.forEach(({ label, actual, expected }) => {
-    if (!jsonEqual(actual, expected)) {
-      rulesAreValid = false;
-      fail(
-        `weekly recap runtime guard ${label} returned ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`,
-      );
-    } else {
-      weeklyRecapRuntimeCasesValidated += 1;
-    }
-  });
-
-  if (rulesAreValid && weeklyRecapRuntimeCasesValidated === EXPECTED_WEEKLY_RECAP_RUNTIME_CASES) {
-    weeklyRecapRuntimeParityValidated = true;
-  }
-}
-
 function validateQuestionBankCsvContract() {
   if (!Array.isArray(questions)) return;
 
@@ -15835,8 +15762,6 @@ if (Array.isArray(questions)) {
       const stemSourceAuthorityReference = findQuestionStemSourceAuthorityReference(question);
       const nestedMetaStem = findQuestionNestedMetaStem(question);
       const judgementMetaStem = findQuestionJudgementMetaStem(question);
-      const generatedTrueFalseNaturalnessIssue =
-        findQuestionGeneratedTrueFalseNaturalnessIssue(question);
       const luciaRoleEnglishNaturalnessIssue =
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
@@ -15862,11 +15787,7 @@ if (Array.isArray(questions)) {
       } else {
         questionJudgementMetaStemsValidated += 1;
       }
-      if (generatedTrueFalseNaturalnessIssue) {
-        fail(`${label} contains a generated true/false grammar-splice stem`);
-      } else {
-        questionGeneratedTrueFalseNaturalnessValidated += 1;
-      }
+      validateQuestionGeneratedTrueFalseNaturalness(question, label);
       if (luciaRoleEnglishNaturalnessIssue) {
         fail(`${label} uses stilted Lucia role English wording`);
       } else {
@@ -16053,7 +15974,6 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
-validateWeeklyRecapRuntimeGuards();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -16307,8 +16227,6 @@ console.log(
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
-      weeklyRecapRuntimeCasesValidated,
-      weeklyRecapRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,

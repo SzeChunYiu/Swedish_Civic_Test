@@ -44,6 +44,10 @@ const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
+const focusGeneratedTrueFalseNaturalness = [
+  "process.argv.push('--focus-generated-true-false-naturalness');",
+  "require('./scripts/validate-content.js');",
+].join('\n');
 const generatedIdLiteralPatterns = [
   {
     label: 'question.id equality',
@@ -2270,7 +2274,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2280,6 +2284,43 @@ require('./scripts/validate-content.js');
   assert.match(
     `${result.stdout}\n${result.stderr}`,
     /q002 contains a generated true\/false grammar-splice stem/,
+  );
+});
+
+test('focused generated true/false naturalness rejects q831 without the non-citizen subject', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/content/derivedQuestions.ts')) {
+    return String(contents)
+      .replace(
+        'Vissa personer som inte är svenska medborgare kan rösta i kommun- och regionval om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+        'Vissa kan rösta om de är folkbokförda i Sverige och uppfyller reglerna för sin grupp',
+      )
+      .replace(
+        'Some people who are not Swedish citizens may vote in municipal and regional elections if they are registered as living in Sweden and meet the rules for their group',
+        'Some may vote if they are registered as living in Sweden and meet the rules for their group',
+      );
+  }
+  return contents;
+};
+${focusGeneratedTrueFalseNaturalness}
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /q831 contains a generated true\/false grammar-splice stem/,
   );
 });
 
@@ -2339,7 +2380,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2376,7 +2417,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2413,7 +2454,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2450,7 +2491,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2487,7 +2528,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2524,7 +2565,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2561,7 +2602,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2713,7 +2754,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2750,7 +2791,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2935,7 +2976,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -2986,7 +3027,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3029,7 +3070,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3072,7 +3113,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3123,7 +3164,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3173,7 +3214,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3220,7 +3261,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3312,7 +3353,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },
@@ -3358,7 +3399,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return contents;
 };
-require('./scripts/validate-content.js');
+${focusGeneratedTrueFalseNaturalness}
 `,
     ],
     { cwd: repoRoot, encoding: 'utf8' },

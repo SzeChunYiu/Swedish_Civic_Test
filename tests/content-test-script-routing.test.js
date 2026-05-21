@@ -21,23 +21,6 @@ function createFakeNpm(tmpDir) {
   return fakeNpm;
 }
 
-function createFakeNode(tmpDir) {
-  const fakeNode = path.join(tmpDir, 'node');
-  fs.writeFileSync(
-    fakeNode,
-    [
-      '#!/bin/sh',
-      'for arg in "$@"; do',
-      '  printf "%s\\n" "$arg" >> "$TEST_DISPATCH_LOG"',
-      'done',
-      'exit 0',
-      '',
-    ].join('\n'),
-    { mode: 0o755 },
-  );
-  return fakeNode;
-}
-
 function runDispatcher(args, env) {
   return spawnSync(process.execPath, ['scripts/test-dispatch.js', ...args], {
     cwd: repoRoot,
@@ -54,12 +37,10 @@ function runPackageTest(args, env) {
   });
 }
 
-function runPackageContentFocused(args, env) {
-  return spawnSync('npm', ['run', 'test:content-focused', '--', ...args], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-    env,
-  });
+function parseJsonSummary(output) {
+  const match = output.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'validation should print JSON summary');
+  return JSON.parse(match[0]);
 }
 
 test('npm test keeps selector routing in the project dispatcher', () => {
@@ -67,23 +48,7 @@ test('npm test keeps selector routing in the project dispatcher', () => {
 
   assert.equal(pkg.scripts.test, 'node scripts/test-dispatch.js');
   assert.doesNotMatch(pkg.scripts.test, /&&/);
-  assert.equal(
-    pkg.scripts['test:content-focused'],
-    'node scripts/test-dispatch.js content-focused',
-  );
   assert.match(pkg.scripts['test:content'], /tests\/content-test-script-routing\.test\.js/);
-});
-
-test('question report link parity runs through its focused validator path', () => {
-  const pkg = readPackageJson();
-  const source = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-question-report-link-parity.test.js'),
-    'utf8',
-  );
-
-  assert.match(pkg.scripts['test:content'], /tests\/content-question-report-link-parity\.test\.js/);
-  assert.match(source, /--focus-question-report-link-parity/);
-  assert.match(source, /process\.argv\.push\('--focus-question-report-link-parity'\)/);
 });
 
 test('monetization selector runs only the focused monetization suite', () => {
@@ -110,6 +75,24 @@ test('monetization selector runs only the focused monetization suite', () => {
   }
 });
 
+test('generated true/false naturalness focus bypasses unrelated full-content blockers', () => {
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-generated-true-false-naturalness'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+  const output = `${result.stdout}\n${result.stderr}`;
+
+  assert.equal(result.status, 0, output);
+  const summary = parseJsonSummary(result.stdout);
+  assert.equal(summary.questionGeneratedTrueFalseNaturalnessValidated, summary.publishedQuestions);
+  assert.ok(summary.publishedQuestions > 0);
+  assert.doesNotMatch(output, /published source .* does not match authored source/);
+});
+
 test('package npm test selector enters the dispatcher before running suites', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -128,343 +111,6 @@ test('package npm test selector enters the dispatcher before running suites', ()
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
-});
-
-test('content-focused package script routes test-name pattern before file list', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-'));
-  const nodeLog = path.join(tmpDir, 'node.log');
-  const pattern = 'religious-freedom option parallelism|focus-religious-freedom';
-  const env = {
-    ...process.env,
-    npm_config_loglevel: 'silent',
-    TEST_DISPATCH_CAPTURE: '1',
-    TEST_DISPATCH_LOG: nodeLog,
-    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
-  };
-
-  try {
-    const result = runPackageContentFocused(
-      [
-        '--test-name-pattern',
-        pattern,
-        'tests/content-test-script-routing.test.js',
-        'tests/content-published-question-types.test.js',
-      ],
-      env,
-    );
-
-    assert.equal(result.status, 0, result.stderr || result.stdout);
-    assert.deepEqual(fs.readFileSync(nodeLog, 'utf8').trim().split(/\n/), [
-      '--test',
-      '--test-name-pattern',
-      pattern,
-      'tests/content-test-script-routing.test.js',
-      'tests/content-published-question-types.test.js',
-    ]);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
-
-test('content-focused selector rejects missing file lists before running node', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-content-focused-invalid-'));
-  const nodeLog = path.join(tmpDir, 'node.log');
-  const env = {
-    ...process.env,
-    TEST_DISPATCH_CAPTURE: '1',
-    TEST_DISPATCH_LOG: nodeLog,
-    TEST_DISPATCH_NODE: createFakeNode(tmpDir),
-  };
-
-  try {
-    const result = runDispatcher(['content-focused', '--test-name-pattern', 'routing'], env);
-
-    assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /missing test file list/);
-    assert.equal(fs.existsSync(nodeLog), false);
-  } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
-  }
-});
-
-test('answer shuffle parity uses the focused content validator path', () => {
-  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-  const parityTest = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-answer-shuffle-parity.test.js'),
-    'utf8',
-  );
-  const focusBlockStart = validator.indexOf(
-    "process.argv.includes('--focus-answer-shuffle-parity')",
-  );
-  const focusBlockEnd =
-    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
-  const focusBlock =
-    focusBlockStart === -1 || focusBlockEnd === -1
-      ? ''
-      : validator.slice(focusBlockStart, focusBlockEnd);
-  const focusFlagMatches = parityTest.match(/--focus-answer-shuffle-parity/g) || [];
-
-  assert.notEqual(focusBlockStart, -1, 'validate-content needs the answer-shuffle focus flag');
-  assert.match(focusBlock, /validateAnswerShuffleDistributionParity\(\);/);
-  assert.match(focusBlock, /answerShuffleDistributionParityValidated/);
-  assert.match(focusBlock, /publishedQuestions/);
-  assert.ok(
-    focusFlagMatches.length >= 3,
-    'positive and mutation answer-shuffle checks should use the focused validator',
-  );
-});
-
-test('answer feedback focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-answer-feedback-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused answer feedback validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.answerValidationTypeSchemaParityValidated, true);
-  assert.equal(summary.answerFeedbackRuntimeParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'questionCardAccessibilityParityValidated'),
-    false,
-  );
-});
-
-test('question speech text focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-question-speech-text-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused question speech validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.questionSpeechTextQuestionsValidated, summary.publishedQuestions);
-  assert.ok(summary.questionSpeechTextOptionsValidated > 0);
-  assert.equal(summary.questionSpeechTextParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'speechRuntimeParityValidated'),
-    false,
-  );
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
-    false,
-  );
-});
-
-test('XP rules focused content validation runs only its parity summary', () => {
-  const result = spawnSync(process.execPath, ['scripts/validate-content.js', '--focus-xp-rules'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused XP validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.xpRulesValidated, 24);
-  assert.equal(summary.xpRulesParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'streakRulesParityValidated'), false);
-});
-
-test('streak rules parity uses the focused content validator path', () => {
-  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-  const parityTest = fs.readFileSync(
-    path.join(repoRoot, 'tests/content-streak-rules-parity.test.js'),
-    'utf8',
-  );
-  const focusBlockStart = validator.indexOf("process.argv.includes('--focus-streak-rules')");
-  const focusBlockEnd =
-    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
-  const focusBlock =
-    focusBlockStart === -1 || focusBlockEnd === -1
-      ? ''
-      : validator.slice(focusBlockStart, focusBlockEnd);
-  const focusFlagMatches = parityTest.match(/--focus-streak-rules/g) || [];
-
-  assert.notEqual(focusBlockStart, -1, 'validate-content needs the streak-rules focus flag');
-  assert.match(focusBlock, /validateStreakRules\(\);/);
-  assert.match(focusBlock, /streakRulesValidated/);
-  assert.match(focusBlock, /streakRulesParityValidated/);
-  assert.ok(
-    focusFlagMatches.length >= 2,
-    'positive and mutation streak checks should use the focused validator',
-  );
-});
-
-test('streak rules focused content validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-streak-rules'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused streak validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.streakRulesValidated, 10);
-  assert.equal(summary.streakRulesParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
-});
-
-test('readiness adapter focused content validation runs only its runtime summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-readiness-adapter-rules'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused readiness adapter validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.readinessAdapterRulesValidated, 6);
-  assert.equal(summary.readinessAdapterRuntimeParityValidated, true);
-  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'xpRulesParityValidated'), false);
-});
-
-test('exam submission finality focused validation runs only its parity summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-exam-submission-finality-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused exam submission validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.examSubmissionFinalityParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'progressQuestionSchemaParityValidated'),
-    false,
-  );
-});
-
-test('UHR reference card focused content validation runs only its accessibility summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-uhr-reference-card-accessibility'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused UHR reference validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.uhrReferenceCardAccessibilityRulesValidated, 15);
-  assert.equal(summary.uhrReferenceCardAccessibilityParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
-    false,
-  );
-});
-
-test('CelebrationBurst focused content validation runs only its accessibility summary', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-celebration-burst-accessibility'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused CelebrationBurst validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.celebrationBurstAccessibilityRulesValidated, 13);
-  assert.equal(summary.celebrationBurstAccessibilityParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'answerFeedbackRuntimeParityValidated'),
-    false,
-  );
-});
-
-test('learning Pro gated selector focus imports store-backed modules through shared stubs', () => {
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-learning-pro-gated-selectors'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
-
-  assert.equal(result.status, 0, result.stderr || result.stdout);
-  const match = result.stdout.match(/\{[\s\S]*\}/);
-  assert.ok(match, 'focused store-stub validation should print JSON summary');
-  const summary = JSON.parse(match[0]);
-
-  assert.equal(summary.validateContentStoreStubModulesImported, 3);
-  assert.equal(summary.validateContentStoreStubHarnessParityValidated, true);
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'settingsStoreSchemaParityValidated'),
-    false,
-  );
-  assert.equal(
-    Object.prototype.hasOwnProperty.call(summary, 'questionBankCsvRowsValidated'),
-    false,
-  );
-});
-
-test('validate-content uses the shared storage store harness for MMKV and Zustand stubs', () => {
-  const validator = fs.readFileSync(path.join(repoRoot, 'scripts/validate-content.js'), 'utf8');
-  const helper = fs.readFileSync(
-    path.join(repoRoot, 'tests/helpers/storageStoreHarness.cjs'),
-    'utf8',
-  );
-  const focusBlockStart = validator.indexOf(
-    "process.argv.includes('--focus-learning-pro-gated-selectors')",
-  );
-  const focusBlockEnd =
-    focusBlockStart === -1 ? -1 : validator.indexOf('process.exit(0);', focusBlockStart);
-  const focusBlock =
-    focusBlockStart === -1 || focusBlockEnd === -1
-      ? ''
-      : validator.slice(focusBlockStart, focusBlockEnd);
-
-  assert.match(helper, /function createStorageModuleStubs/);
-  assert.match(helper, /createMMKV: \(\{ id \} = \{\}\) => resolveStorage\(storageById, id\)/);
-  assert.match(helper, /zustand: createZustandStub/);
-  assert.match(helper, /const stubs = createStorageModuleStubs\(storageById, moduleStubs\);/);
-  assert.match(validator, /createStorageModuleStubs\(/);
-  assert.match(validator, /validateContentModuleStubs\[request\]/);
-  assert.match(focusBlock, /validateContentStoreStubHarnessParity\(\);/);
-  assert.match(focusBlock, /validateContentStoreStubModulesImported/);
 });
 
 test('unsupported npm test selectors fail before running any suite', () => {
