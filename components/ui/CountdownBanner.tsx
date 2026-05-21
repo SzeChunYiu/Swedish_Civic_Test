@@ -24,9 +24,9 @@ const copy = {
     label: (d: number) => (d === 1 ? '1 dag kvar' : `${d} dagar kvar`),
     body: {
       rules: (rulesDate: string, firstSittingDate: string) =>
-        `Nya medborgarskapsregler gäller från ${rulesDate}. UHR har bekräftat att den första provomgången i samhällskunskap är ${firstSittingDate} i Stockholm.`,
+        `Nya medborgarskapsregler gäller från ${rulesDate}. Första provomgången i samhällskunskap hålls ${firstSittingDate} i Stockholm.`,
       civicKnowledgeTest: (rulesDate: string, firstSittingDate: string) =>
-        `De nya medborgarskapsreglerna gäller nu sedan ${rulesDate}. Nästa viktiga fas är samhällskunskapsprovet: UHR har bekräftat första provet ${firstSittingDate} i Stockholm.`,
+        `De nya medborgarskapsreglerna gäller nu sedan ${rulesDate}. Nästa viktiga fas är samhällskunskapsprovet: första provomgången hålls ${firstSittingDate} i Stockholm.`,
     } satisfies Record<
       CitizenshipTimelineCountdownPhase,
       (rulesDate: string, firstSittingDate: string) => string
@@ -53,9 +53,9 @@ const copy = {
     label: (d: number) => (d === 1 ? '1 day left' : `${d} days left`),
     body: {
       rules: (rulesDate: string, firstSittingDate: string) =>
-        `New citizenship rules apply from ${rulesDate}. UHR has confirmed that the first civic-knowledge test sitting is ${firstSittingDate} in Stockholm.`,
+        `New citizenship rules apply from ${rulesDate}. The first civic-knowledge test sitting is on ${firstSittingDate} in Stockholm.`,
       civicKnowledgeTest: (rulesDate: string, firstSittingDate: string) =>
-        `The new citizenship rules have applied since ${rulesDate}. The next key phase is the civic-knowledge test: UHR has confirmed the first sitting on ${firstSittingDate} in Stockholm.`,
+        `The new citizenship rules have applied since ${rulesDate}. The next key phase is the civic-knowledge test: the first sitting is on ${firstSittingDate} in Stockholm.`,
     } satisfies Record<
       CitizenshipTimelineCountdownPhase,
       (rulesDate: string, firstSittingDate: string) => string

@@ -43,12 +43,11 @@ test('countdown banner keeps citizenship rules and civic test dates separate', (
   assert.doesNotMatch(countdownBanner, /The new civic knowledge test takes effect/i);
   assert.doesNotMatch(countdownBanner, /Det nya samhällskunskapstestet träder i kraft/i);
   assert.match(countdownBanner, /New citizenship rules apply from/);
-  assert.match(countdownBanner, /UHR has confirmed that the first civic-knowledge test sitting is/);
+  assert.match(countdownBanner, /The first civic-knowledge test sitting is on/);
   assert.match(countdownBanner, /Nya medborgarskapsregler gäller från/);
-  assert.match(
-    countdownBanner,
-    /UHR har bekräftat att den första provomgången i samhällskunskap är/,
-  );
+  assert.match(countdownBanner, /Första provomgången i samhällskunskap hålls/);
+  assert.doesNotMatch(countdownBanner, /UHR has\s+confirmed/);
+  assert.doesNotMatch(countdownBanner, /UHR har\s+bekräftat/);
   assert.match(countdownBanner, /CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE/);
   assert.match(countdownBanner, /Stockholm/);
   assert.doesNotMatch(countdownBanner, /expected in August 2026/i);
@@ -153,7 +152,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/components/ui/CountdownBanner.tsx')) {
     return String(contents).replace(
-      'UHR has confirmed that the first civic-knowledge test sitting is',
+      'The first civic-knowledge test sitting is on',
       'The civic-knowledge test is expected in August 2026; the first sitting is',
     );
   }
@@ -168,6 +167,39 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(
     `${result.stdout}\n${result.stderr}`,
-    /CountdownBanner still says the civic knowledge test starts on 6 June|CountdownBanner missing timeline copy or constant/,
+    /CountdownBanner must state timeline facts neutrally|CountdownBanner missing timeline copy or constant/,
+  );
+});
+
+test('countdown banner parity rejects source-authority phrasing in learner copy', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+process.argv.push('scripts/validate-content.js', '--focus-countdown-banner-parity');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/components/ui/CountdownBanner.tsx')) {
+    return String(contents).replace(
+      'The first civic-knowledge test sitting is on',
+      ['UHR has', 'confirmed that the first civic-knowledge test sitting is'].join(' '),
+    );
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /CountdownBanner must state timeline facts neutrally/,
   );
 });

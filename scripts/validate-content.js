@@ -6190,9 +6190,9 @@ function validateCitizenshipTimeline() {
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
     'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
     'Nya medborgarskapsregler gäller från',
-    'UHR har bekräftat att den första provomgången i samhällskunskap är',
+    'Första provomgången i samhällskunskap hålls',
     'New citizenship rules apply from',
-    'UHR has confirmed that the first civic-knowledge test sitting is',
+    'The first civic-knowledge test sitting is on',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -6204,9 +6204,13 @@ function validateCitizenshipTimeline() {
     /The new civic knowledge test takes effect/,
     /until new exam/,
     /tills nya provet/,
+    /UHR har\s+bekräftat/,
+    /UHR has\s+confirmed/,
   ].forEach((forbiddenPattern) => {
     if (forbiddenPattern.test(countdownBannerSource)) {
-      rejectCountdown('CountdownBanner still says the civic knowledge test starts on 6 June');
+      rejectCountdown(
+        'CountdownBanner must state timeline facts neutrally and keep source authority in source links',
+      );
     }
   });
 
