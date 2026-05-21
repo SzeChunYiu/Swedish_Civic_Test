@@ -67,7 +67,7 @@ test('Practice bookmark, supplementary, and About sources controls expose aria s
     'false',
   );
 
-  const provenance = page.getByRole('button', { name: /Provenance: UHR source\. Source note:/ });
+  const provenance = page.getByRole('button', { name: /^Provenance: UHR source$/ });
   const sourceNote = page.getByText(/^Source note:/);
   await expect(provenance).toHaveAttribute('aria-expanded', 'false');
   await expect(sourceNote).toHaveCount(0);

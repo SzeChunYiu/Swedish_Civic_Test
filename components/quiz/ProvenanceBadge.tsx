@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { getProvenanceDescription, getQuestionProvenance } from '../../lib/content/provenance';
@@ -55,9 +55,20 @@ export function ProvenanceBadge({
   const [sourceNoteVisible, setSourceNoteVisible] = useState(false);
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const focusRevealTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (focusRevealTimeoutRef.current != null) {
+      clearTimeout(focusRevealTimeoutRef.current);
+      focusRevealTimeoutRef.current = null;
+    }
     setSourceNoteVisible(false);
+    return () => {
+      if (focusRevealTimeoutRef.current != null) {
+        clearTimeout(focusRevealTimeoutRef.current);
+        focusRevealTimeoutRef.current = null;
+      }
+    };
   }, [question?.id, language]);
 
   if (!question) return null;
@@ -82,6 +93,31 @@ export function ProvenanceBadge({
       : provenance === 'derived'
         ? styles.supplementaryText
         : styles.editorialText;
+  const showSourceNote = () => setSourceNoteVisible(true);
+  const clearFocusRevealTimeout = () => {
+    if (focusRevealTimeoutRef.current == null) return;
+    clearTimeout(focusRevealTimeoutRef.current);
+    focusRevealTimeoutRef.current = null;
+  };
+  const scheduleShowSourceNote = () => {
+    clearFocusRevealTimeout();
+    focusRevealTimeoutRef.current = setTimeout(() => {
+      focusRevealTimeoutRef.current = null;
+      showSourceNote();
+    }, 0);
+  };
+  const toggleSourceNote = () => {
+    clearFocusRevealTimeout();
+    setSourceNoteVisible((visible) => !visible);
+  };
+  const handleFocus = () => {
+    setFocused(true);
+    scheduleShowSourceNote();
+  };
+  const handleBlur = () => {
+    setFocused(false);
+    clearFocusRevealTimeout();
+  };
 
   return (
     <View style={styles.container}>
@@ -92,11 +128,11 @@ export function ProvenanceBadge({
         accessibilityState={{ expanded: sourceNoteVisible }}
         aria-expanded={sourceNoteVisible}
         hitSlop={space[1]}
-        onBlur={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
         onHoverIn={() => setHovered(true)}
         onHoverOut={() => setHovered(false)}
-        onPress={() => setSourceNoteVisible((visible) => !visible)}
+        onPress={toggleSourceNote}
         style={({ pressed }) => [
           styles.badge,
           tone,
