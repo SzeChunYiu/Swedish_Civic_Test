@@ -76,8 +76,8 @@
       "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
     },
     "ebook.js": {
-      "bytes": 520921,
-      "sha256": "b160518296bd72d7916832f740a8575a0a7d3324161002d5bcd5437d82fa82fd"
+      "bytes": 522473,
+      "sha256": "d7ac0bce40bb12cd3d205c5011006a6b4c1b61cdf3e26611d7918bd28ae9ce49"
     },
     "extras.js": {
       "bytes": 31378,
@@ -88,8 +88,8 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 345495,
-      "sha256": "21bfea0fc42a41fa87479a9e5b7150394c09c6222aef35893086f62ef0c8f7fa"
+      "bytes": 345537,
+      "sha256": "5e0d0663a7898ad30ed4c76384e9afc96a80383232848a5d03dd76ce32591252"
     },
     "icon.png": {
       "bytes": 362794,
