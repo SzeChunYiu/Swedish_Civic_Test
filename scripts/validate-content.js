@@ -42,6 +42,7 @@ const {
   summarizeSomaliGeographyNaturalness,
 } = require('./check-question-i18n-v8');
 const {
+  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('../tests/helpers/adaptivePracticeRuntimeFixtures.cjs');
 
@@ -8865,6 +8866,8 @@ let spacedRepetitionDueTimestampCasesValidated = 0;
 let spacedRepetitionDueTimestampParityValidated = false;
 let adaptivePracticeSizeRuntimeCasesValidated = 0;
 let adaptivePracticeSizeRuntimeParityValidated = false;
+let adaptivePracticeDifficultyRuntimeCasesValidated = 0;
+let adaptivePracticeDifficultyRuntimeParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
@@ -9764,6 +9767,16 @@ if (process.argv.includes('--focus-adaptive-practice-size')) {
   printValidationSummary({
     adaptivePracticeSizeRuntimeCasesValidated,
     adaptivePracticeSizeRuntimeParityValidated,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-adaptive-practice-difficulty')) {
+  validateAdaptivePracticeDifficultyRuntimeGuards();
+  exitWithValidationFailures();
+  printValidationSummary({
+    adaptivePracticeDifficultyRuntimeCasesValidated,
+    adaptivePracticeDifficultyRuntimeParityValidated,
   });
   process.exit(0);
 }
@@ -19468,6 +19481,110 @@ function validateAdaptivePracticeSizeRuntimeGuards() {
   }
 }
 
+function validateAdaptivePracticeDifficultyRuntimeGuards() {
+  if (typeof pickAdaptiveSession !== 'function' || typeof explainAdaptivePick !== 'function') {
+    fail(
+      'adaptive practice difficulty runtime guard requires pickAdaptiveSession and explainAdaptivePick',
+    );
+    return;
+  }
+
+  const now = new Date('2026-05-19T12:00:00.000Z');
+  const expectedUnseenCounts = {
+    'recently-wrong': 0,
+    unseen: 1,
+    mastered: 0,
+    stale: 0,
+  };
+  let runtimeParityIsValid = true;
+
+  function reject(message) {
+    runtimeParityIsValid = false;
+    fail(message);
+  }
+
+  function staleCorrectAnswer(questionId) {
+    return {
+      questionId,
+      selectedOptionIds: [],
+      isCorrect: true,
+      answeredAt: '2026-04-14T12:00:00.000Z',
+      timeSpentSeconds: 5,
+    };
+  }
+
+  const validDifficultyCases = [
+    { expectedId: 'easy1', recentAccuracyOverride: 0.25 },
+    { expectedId: 'med1', recentAccuracyOverride: 0.65 },
+    { expectedId: 'hard1', recentAccuracyOverride: 0.95 },
+  ];
+  for (const { expectedId, recentAccuracyOverride } of validDifficultyCases) {
+    const picked = pickAdaptiveSession({
+      progress: adaptivePracticeProgressFromAnswers([]),
+      bank: [
+        { id: 'easy1', difficulty: 'easy', chapterId: 'ch01' },
+        { id: 'med1', difficulty: 'medium', chapterId: 'ch01' },
+        { id: 'hard1', difficulty: 'hard', chapterId: 'ch01' },
+      ],
+      size: 1,
+      recentAccuracyOverride,
+      now,
+    });
+
+    if (picked[0] !== expectedId) {
+      reject(
+        `adaptive practice valid difficulty weighting at accuracy ${recentAccuracyOverride} picked ${JSON.stringify(
+          picked,
+        )}, expected ${expectedId}`,
+      );
+    }
+  }
+
+  for (const { label, difficulty } of MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES) {
+    const picked = pickAdaptiveSession({
+      progress: adaptivePracticeProgressFromAnswers([staleCorrectAnswer('a-stale-invalid')]),
+      bank: [
+        { id: 'a-stale-invalid', difficulty, chapterId: 'ch01' },
+        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'ch01' },
+      ],
+      size: 1,
+      recentAccuracyOverride: 0.95,
+      now,
+    });
+    const counts = explainAdaptivePick({
+      progress: adaptivePracticeProgressFromAnswers([staleCorrectAnswer('a-stale-invalid')]),
+      bank: [
+        { id: 'a-stale-invalid', difficulty, chapterId: 'ch01' },
+        { id: 'z-unseen-medium', difficulty: 'medium', chapterId: 'ch01' },
+      ],
+      size: 1,
+      recentAccuracyOverride: 0.95,
+      now,
+    });
+
+    if (picked[0] !== 'z-unseen-medium' || !jsonEqual(counts, expectedUnseenCounts)) {
+      reject(
+        `adaptive practice malformed ${label} picked ${JSON.stringify(
+          picked,
+        )} with counts ${JSON.stringify(
+          counts,
+        )}, expected neutral difficulty to keep z-unseen-medium first`,
+      );
+      continue;
+    }
+
+    adaptivePracticeDifficultyRuntimeCasesValidated += 1;
+  }
+
+  if (
+    runtimeParityIsValid &&
+    adaptivePracticeDifficultyRuntimeCasesValidated ===
+      MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.length
+  ) {
+    adaptivePracticeDifficultyRuntimeParityValidated = true;
+  }
+}
+
 function validateWeeklyRecapRuntimeGuard() {
   if (typeof generateWeeklyRecap !== 'function') {
     fail('generateWeeklyRecap export is not a function');
@@ -22456,6 +22573,7 @@ validateSpeechRuntimeParity();
 validateChapterQuizSessionParity();
 validateSpacedRepetitionSchedule();
 validateAdaptivePracticeSizeRuntimeGuards();
+validateAdaptivePracticeDifficultyRuntimeGuards();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
@@ -22779,6 +22897,8 @@ console.log(
       spacedRepetitionDueTimestampParityValidated,
       adaptivePracticeSizeRuntimeCasesValidated,
       adaptivePracticeSizeRuntimeParityValidated,
+      adaptivePracticeDifficultyRuntimeCasesValidated,
+      adaptivePracticeDifficultyRuntimeParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,

@@ -7,6 +7,7 @@ const test = require('node:test');
 
 const { FOCUSED_VALIDATION_REGISTRY_BY_ID } = require('../scripts/validate-content-focus-registry');
 const {
+  MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES,
   MALFORMED_ADAPTIVE_PRACTICE_SIZE_CASES,
 } = require('./helpers/adaptivePracticeRuntimeFixtures.cjs');
 
@@ -831,6 +832,102 @@ test('adaptive size focused content validation runs only its runtime summary', (
   );
   assert.equal(summary.adaptivePracticeSizeRuntimeParityValidated, true);
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
+test('adaptive difficulty focused content validation runs only its runtime summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('adaptivePracticeDifficulty');
+
+  assert.ok(registryEntry, 'adaptive practice difficulty focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-adaptive-practice-difficulty']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'adaptivePracticeDifficultyRuntimeCasesValidated',
+    'adaptivePracticeDifficultyRuntimeParityValidated',
+  ]);
+  assert.match(validatorSource, /--focus-adaptive-practice-difficulty/);
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*adaptivePracticeDifficultyRuntimeCasesValidated[\s\S]*adaptivePracticeDifficultyRuntimeParityValidated/,
+  );
+  assert.match(
+    validatorSource,
+    /validateAdaptivePracticeSizeRuntimeGuards\(\);[\s\S]*validateAdaptivePracticeDifficultyRuntimeGuards\(\);[\s\S]*validateStreakRules\(\);/,
+    'full content validation must still invoke the adaptive practice difficulty runtime guard',
+  );
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-adaptive-practice-difficulty'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused adaptive difficulty validation should print JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  assert.equal(
+    summary.adaptivePracticeDifficultyRuntimeCasesValidated,
+    MALFORMED_ADAPTIVE_PRACTICE_DIFFICULTY_CASES.length,
+  );
+  assert.equal(summary.adaptivePracticeDifficultyRuntimeParityValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
+test('adaptive difficulty focus rejects unsupported difficulty scoring mutation', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  const contents = originalReadFileSync.call(this, filePath, ...args);
+  if (normalizedPath.endsWith('/lib/learning/adaptivePractice.ts')) {
+    const current = [
+      '    const difficultyWeight = adaptiveDifficultyWeight(question.difficulty);',
+      '    if (difficultyWeight !== null) {',
+      '      const dist = Math.abs(difficultyWeight - idealDifficulty);',
+      '      score -= dist * 5;',
+      '    }',
+    ].join('\\n');
+    const replacement = [
+      '    const difficultyWeight = DIFFICULTY_WEIGHT[question.difficulty];',
+      '    const dist = Math.abs(difficultyWeight - idealDifficulty);',
+      '    score -= dist * 5;',
+    ].join('\\n');
+    const mutated = String(contents).replace(current, replacement);
+    if (mutated === String(contents)) {
+      throw new Error('adaptive practice difficulty mutation target not found');
+    }
+    return mutated;
+  }
+  return contents;
+};
+require('./scripts/validate-content.js');
+`,
+      '--',
+      '--focus-adaptive-practice-difficulty',
+    ],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
+
+  assert.notEqual(result.status, 0, 'mutated unsupported difficulty scoring should fail');
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /adaptive practice malformed invalid string difficulty picked/,
+  );
 });
 
 test('monetization schema parity uses focused content validation routing', () => {
