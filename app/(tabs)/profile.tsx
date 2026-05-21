@@ -20,7 +20,6 @@ import {
   getBadgeProgressHint,
   getBadgeTitle,
   type BadgeInput,
-  type Badge as LearningBadge,
 } from '../../lib/learning/badges';
 import { calculateStreakWithFreeze, freezeBannerCopy } from '../../lib/learning/streakWithFreeze';
 import { calculateLevel } from '../../lib/learning/xp';
@@ -32,8 +31,6 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type ProfileCopy = {
   answersPerDay: string;
-  audioDisabledBadge: string;
-  audioEnabledBadge: string;
   badgeLocked: string;
   badgeUnlocked: string;
   badgesSubtitle: string;
@@ -48,12 +45,12 @@ type ProfileCopy = {
   eyebrow: string;
   languageBadge: string;
   levelMetric: string;
-  noBadges: string;
+  openSettings: string;
   openSettingsAccessibilityLabel: string;
+  noBadges: string;
   questionsHelper: string;
   removeAdsFocusCue: string;
   streakFreezeBadge: string;
-  studySetupCta: string;
   studySetupSubtitle: string;
   studySetupTitle: string;
   subtitle: string;
@@ -64,8 +61,6 @@ type ProfileCopy = {
 const profileCopy: Record<AppLanguage, ProfileCopy> = {
   sv: {
     answersPerDay: 'svar/dag',
-    audioDisabledBadge: 'Ljud av',
-    audioEnabledBadge: 'Ljud på',
     badgeLocked: 'Låst',
     badgeUnlocked: 'Upplåst',
     badgesSubtitle: 'Milstolpar gör framsteg synliga utan att störa lärandet.',
@@ -81,11 +76,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'Svenska',
     levelMetric: 'nivå',
     noBadges: 'Inga märken ännu',
-    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
+    openSettings: 'Öppna inställningar',
+    openSettingsAccessibilityLabel: 'Öppna inställningar',
     questionsHelper: 'frågor',
     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
     streakFreezeBadge: 'Svitskydd',
-    studySetupCta: 'Ändra mål, språk och ljud',
     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
     studySetupTitle: 'Studieinställningar',
     subtitle:
@@ -95,8 +90,6 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
   },
   en: {
     answersPerDay: 'answers/day',
-    audioDisabledBadge: 'Audio off',
-    audioEnabledBadge: 'Audio on',
     badgeLocked: 'Locked',
     badgeUnlocked: 'Unlocked',
     badgesSubtitle: 'Achievement cues make progress visible without distracting from learning.',
@@ -112,11 +105,11 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
     languageBadge: 'English support',
     levelMetric: 'level',
     noBadges: 'No badges yet',
-    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
+    openSettings: 'Open settings',
+    openSettingsAccessibilityLabel: 'Open settings',
     questionsHelper: 'questions',
     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
     streakFreezeBadge: 'Streak freeze',
-    studySetupCta: 'Adjust goal, language, and audio',
     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
     studySetupTitle: 'Study setup',
     subtitle:
@@ -140,7 +133,6 @@ export default function Screen() {
   const answerDates = useProgressStore((state) => state.answerDates);
   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
-  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
   const language = useSettingsStore((state) => state.language);
   const copy = profileCopy[language];
@@ -171,7 +163,7 @@ export default function Screen() {
     level,
     wrongAnswerCount,
   };
-  const badges = deriveBadges(badgeInput);
+  const allBadges = getAllBadges();
   const unlockedBadgeIds = new Set(deriveBadges(badgeInput).map((badge) => badge.id));
 
   useEffect(() => {
@@ -225,9 +217,6 @@ export default function Screen() {
             {dailyGoalAnswers} {copy.answersPerDay}
           </Badge>
           <Badge tone="warm">{copy.languageBadge}</Badge>
-          <Badge tone={audioEnabled ? 'green' : 'warm'}>
-            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
-          </Badge>
         </View>
         <Link
           accessibilityLabel={copy.openSettingsAccessibilityLabel}
@@ -240,7 +229,7 @@ export default function Screen() {
             accessibilityRole="link"
             style={styles.settingsLink}
           >
-            {copy.studySetupCta}
+            {copy.openSettings}
           </Button>
         </Link>
       </Card>
@@ -254,31 +243,31 @@ export default function Screen() {
         />
       </Card>
 
-      <Card
-        accessible
-        accessibilityLabel={formatBadges(badges, language, copy.noBadges)}
-        style={styles.cardWide}
-      >
+      <Card style={styles.cardWide}>
         <SectionHeader title={copy.badgesTitle} subtitle={copy.badgesSubtitle} />
         <View style={styles.badgeList}>
-          {getAllBadges().map((badge) => {
-            const unlocked = unlockedBadgeIds.has(badge.id);
-            const statusLabel = unlocked ? copy.badgeUnlocked : copy.badgeLocked;
-            const description = unlocked
-              ? getBadgeDescription(badge, language)
-              : getBadgeLockedHint(badge, language);
+          {allBadges.length > 0 ? (
+            allBadges.map((badge) => {
+              const unlocked = unlockedBadgeIds.has(badge.id);
+              const statusLabel = unlocked ? copy.badgeUnlocked : copy.badgeLocked;
+              const description = unlocked
+                ? getBadgeDescription(badge, language)
+                : getBadgeLockedHint(badge, language);
 
-            return (
-              <BadgeRow
-                description={description}
-                key={badge.id}
-                progressHint={getBadgeProgressHint(badge, badgeInput, language)}
-                statusLabel={statusLabel}
-                title={getBadgeTitle(badge, language)}
-                unlocked={unlocked}
-              />
-            );
-          })}
+              return (
+                <BadgeRow
+                  description={description}
+                  key={badge.id}
+                  progressHint={getBadgeProgressHint(badge, badgeInput, language)}
+                  statusLabel={statusLabel}
+                  title={getBadgeTitle(badge, language)}
+                  unlocked={unlocked}
+                />
+              );
+            })
+          ) : (
+            <Text style={styles.noBadgesText}>{copy.noBadges}</Text>
+          )}
         </View>
       </Card>
 
@@ -293,12 +282,6 @@ export default function Screen() {
       <ComplianceLinks />
     </ScreenShell>
   );
-}
-
-function formatBadges(badges: LearningBadge[], language: AppLanguage, noBadges: string) {
-  if (badges.length === 0) return noBadges;
-
-  return badges.map((badge) => getBadgeTitle(badge, language)).join(', ');
 }
 
 const styles = StyleSheet.create({
@@ -325,6 +308,11 @@ const styles = StyleSheet.create({
   badgeList: {
     gap: space[1],
   },
+  noBadgesText: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
   settingsLink: {
     alignSelf: 'flex-start',
     minHeight: space[6],
@@ -335,7 +323,7 @@ const styles = StyleSheet.create({
   removeAdsPaywallFocused: {
     borderColor: colors.accent,
     borderRadius: radius.card,
-    borderWidth: space.hairline,
+    borderWidth: 2,
     padding: space[1],
   },
   removeAdsFocusCue: {
