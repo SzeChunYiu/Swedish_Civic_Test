@@ -46,7 +46,7 @@
     "test:a11y-labels": "node --test scripts/accessibility-labels.test.js",
     "test:public-urls": "node --test scripts/check-public-urls.test.js",
     "test:static-site-account-scope": "node --test scripts/static-site-account-scope.test.js",
-    "test:static-site-asset-references": "node --test scripts/static-site-asset-references.test.js",
+    "test:static-site-asset-references": "node scripts/update-site-asset-manifest.js --check && node --test scripts/static-site-asset-references.test.js",
     "update:site-asset-manifest": "node scripts/update-site-asset-manifest.js",
     "test:native-account-scope": "node --test scripts/native-account-scope.test.js",
     "test:static-site-privacy-copy": "node --test scripts/static-site-privacy-copy.test.js",

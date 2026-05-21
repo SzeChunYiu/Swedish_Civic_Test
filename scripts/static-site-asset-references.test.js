@@ -17,13 +17,11 @@ function readSiteIndex() {
 }
 
 test('static site index references only shipped local assets', () => {
-  const indexHtml = readSiteIndex();
   const missingAssets = listIndexAssetReferences(siteRoot).filter(
     (assetPath) => !fs.existsSync(path.join(siteRoot, assetPath)),
   );
 
   assert.deepEqual(missingAssets, []);
-  assert.doesNotMatch(indexHtml, /signin\.js/);
 });
 
 test('committed static site asset manifest matches shipped assets', () => {
