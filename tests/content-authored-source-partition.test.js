@@ -1,12 +1,19 @@
 const assert = require('node:assert/strict');
 const { execFileSync, spawnSync } = require('node:child_process');
+const path = require('node:path');
 const test = require('node:test');
 
+const repoRoot = path.resolve(__dirname, '..');
+
 function validateContentSummary() {
-  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
-    cwd: repoRoot,
-    encoding: 'utf8',
-  });
+  const output = execFileSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-authored-source-partition'],
+    {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    },
+  );
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -31,16 +38,17 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   const contents = originalReadFileSync.call(this, filePath, ...args);
   if (normalizedPath.endsWith('/data/questions.ts')) {
     return String(contents).replace(
-      "\\n];\\n\\nexport const sourceQuestions",
-      "\\n  additionalQuestions[0],\\n];\\n\\nexport const sourceQuestions",
+      "\\n];\\n\\nexport const baseQuestions",
+      "\\n  additionalQuestions[0],\\n];\\n\\nexport const baseQuestions",
     );
   }
   return contents;
 };
+process.argv.push('--focus-authored-source-partition');
 require('./scripts/validate-content.js');
 `,
     ],
-    { encoding: 'utf8' },
+    { cwd: repoRoot, encoding: 'utf8' },
   );
 
   assert.notEqual(result.status, 0);

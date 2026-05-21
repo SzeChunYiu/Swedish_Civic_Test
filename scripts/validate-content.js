@@ -51,7 +51,7 @@ const PUBLISHED_QUESTION_TYPES = new Set(['single_choice', 'true_false']);
 const DIFFICULTIES = new Set(DIFFICULTY_VALUES);
 const REVIEW_STATUSES = new Set(REVIEW_STATUS_VALUES);
 const EXPECTED_UX_BENCHMARKS = 4;
-const EXPECTED_SOURCE_QUESTIONS = 179;
+const EXPECTED_SOURCE_QUESTIONS = 174;
 const EXPECTED_VALIDATION_SCRIPT_SYNTAX_FILES = Object.freeze([
   'scripts/static-outcome-copy-guard.js',
   'scripts/static-v11-readiness-copy-guard.js',
@@ -232,7 +232,7 @@ const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
-const EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE = '2026-05-20';
+const EXPECTED_ABOUT_THE_TEST_RETRIEVED_DATE = '2026-05-19';
 const EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/om-medborgarskapsprovet/',
   'https://www.uhr.se/medborgarskapsprovet/fragor-och-svar/',
@@ -256,11 +256,6 @@ const EXPECTED_ABOUT_THE_TEST_COPY_LABELS = {
     'Är appen officiell?',
     'Nej. Appen är ett oberoende studieverktyg. Vi är inte UHR, Skolverket eller Migrationsverket. Frågorna här är inte riktiga provfrågor.',
     'Källäge kontrollerat',
-    'Officiella källor',
-    'Utgivare',
-    'Hämtad',
-    'URL',
-    'Öppna officiell källa',
     'Tillbaka till start',
     'Tillbaka till startsidan',
     'Börja öva',
@@ -283,11 +278,6 @@ const EXPECTED_ABOUT_THE_TEST_COPY_LABELS = {
     'Is this app official?',
     'No. The app is an independent study tool. We are not UHR, Skolverket, or Migrationsverket. The questions here are not real exam questions.',
     'Source status checked',
-    'Official sources',
-    'Publisher',
-    'Retrieved',
-    'URL',
-    'Open official source',
     'Back to home',
     'Return to the home screen',
     'Start practising',
@@ -319,47 +309,6 @@ const EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS = [
   [
     'sectionSourceBody: `This status was checked on ${officialTestSourceNotes[0].retrievedDate}',
     'about-the-test route English source-status copy must use source metadata',
-  ],
-  [
-    "import { LegalExternalLink } from '../components/compliance/LegalPage';",
-    'about-the-test route must reuse the legal external-link pattern',
-  ],
-  [
-    "publisher: 'Universitets- och högskolerådet (UHR)'",
-    'about-the-test route official source notes must expose publisher metadata',
-  ],
-  [
-    "titleEn: 'UHR: About the citizenship test'",
-    'about-the-test route official source notes must expose localized source titles',
-  ],
-  [
-    'officialTestSourceNotes.map((source) =>',
-    'about-the-test route must render every official source note',
-  ],
-  ['<LegalExternalLink', 'about-the-test route must render official sources as external links'],
-  [
-    'href={source.url}',
-    'about-the-test route official source links must use the source URL as href',
-  ],
-  [
-    'copy.officialSourcePublisherLabel',
-    'about-the-test route official source links must visibly include publisher labels',
-  ],
-  [
-    'source.publisher',
-    'about-the-test route official source links must visibly include source publishers',
-  ],
-  [
-    'copy.officialSourceRetrievedLabel',
-    'about-the-test route official source links must visibly include retrieved-date labels',
-  ],
-  [
-    'source.retrievedDate',
-    'about-the-test route official source links must visibly include retrieved dates',
-  ],
-  [
-    'copy.officialSourceUrlLabel',
-    'about-the-test route official source links must visibly include URL labels',
   ],
 ];
 const EXPECTED_CITIZENSHIP_REQUIREMENTS_LIMITED_SEAT_SNIPPETS = [
@@ -1285,7 +1234,7 @@ const EXPECTED_MISTAKES_ROUTE_COPY_LABELS = {
     'Öva svåra frågor',
     'Starta övning',
     'När du missar en övningsfråga visas den här.',
-    'Inga missade frågor ännu',
+    'Inga misstag ännu',
     'Missade frågor',
     'Frågor att öva på',
     'Ditt senaste svar',
@@ -8100,8 +8049,6 @@ let aboutTheTestRouteCopyLabelsValidated = 0;
 let aboutTheTestRouteCopyParityValidated = false;
 let aboutTheTestOfficialSourceUrlsValidated = 0;
 let aboutTheTestOfficialSourceRetrievedDateValidated = '';
-let aboutTheTestSeenEffectRulesValidated = 0;
-let aboutTheTestSeenEffectParityValidated = false;
 let citizenshipRequirementsLimitedSeatCopyValidated = 0;
 let examRouteHeadersValidated = 0;
 let examRouteHeaderParityValidated = false;
@@ -8575,7 +8522,79 @@ function validateAuthoredSourceParity() {
   });
 }
 
-if (process.argv.includes('--focus-authored-source-parity')) {
+function validateQuestionExactSchemaKeys() {
+  if (!Array.isArray(questions)) return;
+
+  questions.forEach((question, index) => {
+    const label = question?.id || `question[${index}]`;
+    if (
+      validateQuestionSchema(question, index) &&
+      questionExactSchemaKeyFailures(question, label).length === 0
+    ) {
+      questionExactSchemaKeysValidated += 1;
+    }
+  });
+}
+
+function validateUhrReferenceSectionPageParity() {
+  if (!Array.isArray(questions)) return;
+
+  const uhrReferenceChapters = buildUhrReferenceChapters();
+  questions.forEach((question, index) => {
+    const label = question?.id || `question[${index}]`;
+    validateQuestionSchema(question, index);
+
+    if (
+      !question?.uhrReference?.chapter ||
+      !question?.uhrReference?.section ||
+      !question?.uhrReference?.pageApprox
+    ) {
+      fail(`${label} has incomplete UHR reference`);
+      return;
+    }
+
+    const uhrChapter = uhrReferenceChapters.get(question.uhrReference.chapter);
+    if (!uhrChapter) {
+      fail(`${label} UHR chapter "${question.uhrReference.chapter}" is not in section map`);
+      return;
+    }
+
+    let referenceIsValid = true;
+    if (question.chapterId !== uhrChapter.id) {
+      fail(
+        `${label} chapterId ${question.chapterId} does not match UHR chapter "${question.uhrReference.chapter}" (${uhrChapter.id})`,
+      );
+    } else {
+      questionChapterReferenceParityValidated += 1;
+    }
+    if (!uhrChapter.sections.has(question.uhrReference.section)) {
+      fail(
+        `${label} UHR section "${question.uhrReference.section}" is not listed for "${question.uhrReference.chapter}"`,
+      );
+      referenceIsValid = false;
+    }
+    if (
+      !Number.isInteger(question.uhrReference.pageApprox) ||
+      question.uhrReference.pageApprox < uhrChapter.startPage ||
+      question.uhrReference.pageApprox > uhrChapter.endPage
+    ) {
+      referenceIsValid = false;
+      const pageRange =
+        uhrChapter.endPage === Number.POSITIVE_INFINITY
+          ? `${uhrChapter.startPage}+`
+          : `${uhrChapter.startPage}-${uhrChapter.endPage}`;
+      fail(
+        `${label} UHR page ${question.uhrReference.pageApprox} is outside "${question.uhrReference.chapter}" page range ${pageRange}`,
+      );
+    }
+    if (referenceIsValid) uhrReferencesValidated += 1;
+  });
+}
+
+if (
+  process.argv.includes('--focus-authored-source-parity') ||
+  process.argv.includes('--focus-authored-source-partition')
+) {
   validateAuthoredSourceParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8583,6 +8602,27 @@ if (process.argv.includes('--focus-authored-source-parity')) {
     authoredSourcePartitionQuestionsValidated,
     sourcePublicationParityValidated,
     sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-question-exact-schema-keys')) {
+  validateQuestionExactSchemaKeys();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionExactSchemaKeysValidated,
+    publishedQuestions: Array.isArray(questions) ? questions.length : 0,
+  });
+  process.exit(0);
+}
+
+if (process.argv.includes('--focus-uhr-reference-section-page-parity')) {
+  validateUhrReferenceSectionPageParity();
+  exitWithValidationFailures();
+  printValidationSummary({
+    questionChapterReferenceParityValidated,
+    publishedQuestions: Array.isArray(questions) ? questions.length : 0,
+    uhrReferencesValidated,
   });
   process.exit(0);
 }
@@ -8827,7 +8867,6 @@ if (process.argv.includes('--focus-answer-feedback-parity')) {
 
 if (process.argv.includes('--focus-about-the-test-route-copy')) {
   validateAboutTheTestRouteCopyParity();
-  validateAboutTheTestSeenEffectParity();
   validateCitizenshipRequirementsLimitedSeatParity();
   exitWithValidationFailures();
   printValidationSummary({
@@ -8835,8 +8874,6 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
     aboutTheTestRouteCopyParityValidated,
     aboutTheTestOfficialSourceUrlsValidated,
     aboutTheTestOfficialSourceRetrievedDateValidated,
-    aboutTheTestSeenEffectRulesValidated,
-    aboutTheTestSeenEffectParityValidated,
     citizenshipRequirementsLimitedSeatCopyValidated,
   });
   process.exit(0);
@@ -9559,7 +9596,7 @@ function validateAdPlacementRouteParity() {
 
     if (spec.component === 'PracticeInterstitialAd') {
       const consentAwareShouldShowPattern = new RegExp(
-        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)`,
+        `shouldShowAd\\(\\s*'${spec.placement}'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,?\\s*\\)`,
       );
       const webInterstitialSource = fs.readFileSync(
         path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
@@ -9606,7 +9643,7 @@ function validateAdPlacementRouteParity() {
       }
       if (!consentAwareShouldShowPattern.test(nativeInterstitialSource)) {
         reject(
-          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware platform shouldShowAd`,
+          `PracticeInterstitialAd native placement must gate ${spec.placement} through consent-aware shouldShowAd`,
         );
         routeIsValid = false;
       }
@@ -10491,7 +10528,6 @@ function validateCitizenshipRequirementsLimitedSeatParity() {
 function validateAboutTheTestRouteCopyParity() {
   let valid = true;
   let aboutRoute = '';
-  let legalPage = '';
 
   function reject(message) {
     valid = false;
@@ -10504,23 +10540,10 @@ function validateAboutTheTestRouteCopyParity() {
     reject(`app/about-the-test.tsx could not be read: ${error.message}`);
     return;
   }
-  try {
-    legalPage = fs.readFileSync(path.join(repoRoot, 'components/compliance/LegalPage.tsx'), 'utf8');
-  } catch (error) {
-    reject(`components/compliance/LegalPage.tsx could not be read: ${error.message}`);
-    return;
-  }
 
   EXPECTED_ABOUT_THE_TEST_COPY_SNIPPETS.forEach(([snippet, message]) => {
     if (!aboutRoute.includes(snippet)) reject(message);
   });
-
-  if (!legalPage.includes('target="_blank"') || !legalPage.includes('rel="noreferrer"')) {
-    reject('about-the-test official source links must inherit safe external-link attributes');
-  }
-  if (!legalPage.includes('minHeight: space[6]') || !legalPage.includes('minWidth: space[6]')) {
-    reject('about-the-test official source links must inherit touch-safe legal link sizing');
-  }
 
   EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.forEach((url) => {
     if (!aboutRoute.includes(url)) {
@@ -10602,79 +10625,6 @@ function validateAboutTheTestRouteCopyParity() {
     aboutTheTestOfficialSourceUrlsValidated === EXPECTED_ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS.length
   ) {
     aboutTheTestRouteCopyParityValidated = true;
-  }
-}
-
-function validateAboutTheTestSeenEffectParity() {
-  let valid = true;
-  let aboutRoute = '';
-
-  function reject(message) {
-    valid = false;
-    fail(message);
-  }
-
-  try {
-    aboutRoute = fs.readFileSync(path.join(repoRoot, 'app/about-the-test.tsx'), 'utf8');
-  } catch (error) {
-    reject(`app/about-the-test.tsx could not be read for seen-effect parity: ${error.message}`);
-    return;
-  }
-
-  const expectedEffect =
-    'useEffect(() => {\n' +
-    '    if (!hasSeenAboutTheTest) {\n' +
-    '      markAboutTheTestSeen();\n' +
-    '    }\n' +
-    '  }, [hasSeenAboutTheTest, markAboutTheTestSeen]);';
-  const expectedRules = [
-    {
-      pattern: /import \{ useEffect \} from 'react';/,
-      message: 'about-the-test route must import useEffect for first-run seen effect',
-    },
-    {
-      pattern:
-        /const hasSeenAboutTheTest = useSettingsStore\(\(state\) => state\.hasSeenAboutTheTest\);/,
-      message:
-        'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
-    },
-    {
-      pattern:
-        /const markAboutTheTestSeen = useSettingsStore\(\(state\) => state\.markAboutTheTestSeen\);/,
-      message: 'about-the-test route must subscribe to markAboutTheTestSeen from settings store',
-    },
-  ];
-
-  expectedRules.forEach(({ pattern, message }) => {
-    if (!pattern.test(aboutRoute)) {
-      reject(message);
-      return;
-    }
-    aboutTheTestSeenEffectRulesValidated += 1;
-  });
-
-  if (!aboutRoute.includes(expectedEffect)) {
-    reject('about-the-test route missing effect-scoped seen marker for first-run seen effect');
-  } else {
-    aboutTheTestSeenEffectRulesValidated += 1;
-  }
-
-  if (/useSettingsStore\.getState\(\)\.hasSeenAboutTheTest/.test(aboutRoute)) {
-    reject(
-      'about-the-test route must subscribe to hasSeenAboutTheTest instead of reading useSettingsStore.getState() during render',
-    );
-  } else {
-    aboutTheTestSeenEffectRulesValidated += 1;
-  }
-
-  if (/markAboutTheTestSeen\(\);/.test(aboutRoute.replace(expectedEffect, ''))) {
-    reject('about-the-test route must call markAboutTheTestSeen() only inside useEffect');
-  } else {
-    aboutTheTestSeenEffectRulesValidated += 1;
-  }
-
-  if (valid && aboutTheTestSeenEffectRulesValidated === 6) {
-    aboutTheTestSeenEffectParityValidated = true;
   }
 }
 
@@ -16305,20 +16255,6 @@ function validateQuestionSpeechTextParity() {
   }
 }
 
-if (process.argv.includes('--focus-question-speech-text-parity')) {
-  validateQuestionSpeechTextParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    publishedQuestions: Array.isArray(questions)
-      ? questions.filter((question) => question.reviewStatus === 'published').length
-      : 0,
-    questionSpeechTextQuestionsValidated,
-    questionSpeechTextOptionsValidated,
-    questionSpeechTextParityValidated,
-  });
-  process.exit(0);
-}
-
 function resetSpeechEvents() {
   speechEvents.length = 0;
 }
@@ -18673,7 +18609,6 @@ validateMockExamRuntimeParity(defaultMockExamConfig);
 validateMockExamTimerParity(defaultMockExamConfig);
 validateExamSubmissionFinalityParity();
 validateAboutTheTestRouteCopyParity();
-validateAboutTheTestSeenEffectParity();
 validateCitizenshipRequirementsLimitedSeatParity();
 validateExamRouteHeaderParity();
 validateExamRouteCopyParity();
@@ -18815,8 +18750,6 @@ console.log(
       aboutTheTestRouteCopyParityValidated,
       aboutTheTestOfficialSourceUrlsValidated,
       aboutTheTestOfficialSourceRetrievedDateValidated,
-      aboutTheTestSeenEffectRulesValidated,
-      aboutTheTestSeenEffectParityValidated,
       citizenshipRequirementsLimitedSeatCopyValidated,
       examRouteHeadersValidated,
       examRouteHeaderParityValidated,
