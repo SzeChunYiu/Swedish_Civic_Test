@@ -224,6 +224,8 @@ test('progress question schema stays in parity with persisted progress records',
   assert.match(progressStore, /mockExamSessions: MockExamProgress\[\];/);
   assert.match(progressStore, /streakFreezeState: StreakFreezeState;/);
   assert.match(progressStore, /persistenceWarning: RecoverablePersistenceWarning \| null;/);
+  assert.match(progressStore, /normalizeStreakFreezeState as normalizeStoredStreakFreezeState/);
+  assert.doesNotMatch(progressStore, /function normalizeStreakFreezeState\(value: unknown\)/);
   assert.match(progressStore, /function normalizeNonNegativeInteger\(value: unknown/);
   assert.match(progressStore, /function normalizeAnswerHistoryEntry\(value: unknown\)/);
   assert.match(progressStore, /const seenCount = normalizeNonNegativeInteger/);
@@ -550,6 +552,20 @@ test('progress mutations return the same shape as persisted JSON readback', () =
   assert.deepEqual(useProgressStore.getState().mockExamSessions[0].questionTimings, [
     { questionId: 'q001', timeSpentSeconds: 18 },
   ]);
+
+  useProgressStore.getState().setStreakFreezeState({
+    available: 99,
+    lastEarnedAt: '2099-01-01',
+    lifetimeEarned: 99999,
+    lifetimeSpent: 3.5,
+    rescuedDayKeys: ['2026-05-18', '2099-01-01', 'bad-key', '2026-05-18'],
+  });
+  assertReturnedStateMatchesReadback();
+  assert.equal(useProgressStore.getState().streakFreezeState.available, 4);
+  assert.notEqual(useProgressStore.getState().streakFreezeState.lastEarnedAt, '2099-01-01');
+  assert.equal(useProgressStore.getState().streakFreezeState.lifetimeEarned, 10000);
+  assert.equal(useProgressStore.getState().streakFreezeState.lifetimeSpent, 0);
+  assert.deepEqual(useProgressStore.getState().streakFreezeState.rescuedDayKeys, ['2026-05-18']);
 
   useProgressStore.getState().resetProgress();
   assertReturnedStateMatchesReadback();
