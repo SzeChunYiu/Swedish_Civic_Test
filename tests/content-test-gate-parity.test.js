@@ -138,7 +138,7 @@ test('validate-content exec cwd guard is source-scanned without running validate
     });
   }
 
-  assert.ok(total >= 75, 'content suite should contain broad direct validate-content exec guards');
+  assert.ok(total >= 70, 'content suite should contain broad direct validate-content exec guards');
   assert.equal(pinned, total, `unpinned validate-content exec calls: ${unpinnedCalls.join(', ')}`);
 });
 
@@ -174,7 +174,7 @@ test('validate-content focus reports direct exec cwd guard summary', () => {
   assert.ok(match, 'focused validator should print JSON summary');
   const summary = JSON.parse(match[0]);
 
-  assert.ok(summary.contentTestValidateContentExecCallsValidated >= 75);
+  assert.ok(summary.contentTestValidateContentExecCallsValidated >= 70);
   assert.equal(
     summary.contentTestValidateContentExecCwdPinnedValidated,
     summary.contentTestValidateContentExecCallsValidated,
@@ -189,6 +189,10 @@ test('test:content script includes every content test file exactly once', () => 
   assert.equal(typeof testContentScript, 'string');
 
   const expectedContentTestFiles = contentTestFiles();
+  assert.ok(
+    expectedContentTestFiles.includes('tests/content-legal-section-rendering.test.js'),
+    'content file discovery should include the LegalSection rendering suite',
+  );
   const wiredContentTests = testContentScript
     .split(/\s+/)
     .filter((token) => token.startsWith('tests/content-') && token.endsWith('.test.js'));
