@@ -40,7 +40,7 @@ const ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS = [
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
   'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
 ];
-const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-20';
+const OFFICIAL_SOURCE_RETRIEVED_DATE = '2026-05-21';
 const UHR_AUTHORITY_BOUNDARY_URL = ABOUT_THE_TEST_OFFICIAL_SOURCE_URLS[0];
 
 const legalExternalLinkFixtures: LegalExternalLinkFixture[] = [
