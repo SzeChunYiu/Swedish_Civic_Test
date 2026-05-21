@@ -22,12 +22,15 @@ test('learn links to native study articles and back to chapter practice', async 
   await expect(page.locator('body')).toContainText('Redaktionell');
   await expect(page.locator('body')).toContainText('Källor hämtade 2026-05-19');
   await expect(page.locator('body')).toContainText('UHR:s offentliga utbildningsmaterial');
+  await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Lyssna på avsnittet' }).first()).toBeVisible();
 
   await page.getByLabel(/Öppna artikel Kapitel 01 · Historia/).click();
 
   await expect(page).toHaveURL(/\/ebook\?c=1$/);
   await expect(page.locator('body')).toContainText('En kort historia om Sverige.');
   await expect(page.locator('body')).toContainText('Repetera nära källan');
+  await expect(page.getByRole('button', { name: 'Lyssna på artikeln' })).toBeVisible();
 
   await page.getByLabel('Öppna övning för En kort historia om Sverige.').click();
 

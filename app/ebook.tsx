@@ -2,9 +2,14 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../components/Button';
+import { ArticleAudioButton } from '../components/learning/ArticleAudioButton';
 import { Badge } from '../components/ui/Badge';
 import { Card } from '../components/ui/Card';
 import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
+import {
+  buildEbookArticleNarrationText,
+  buildEbookSectionNarrationText,
+} from '../lib/audio/ebookNarration';
 import {
   EBOOK_ARTICLES,
   getAdjacentEbookArticle,
@@ -14,6 +19,7 @@ import {
   type EbookArticle,
   type EbookSourceNote,
 } from '../lib/content/ebookContent';
+import { useAccessibilityStore } from '../lib/storage/accessibilityStore';
 import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../lib/theme';
 
@@ -95,6 +101,8 @@ export default function EbookScreen() {
   const { c } = useLocalSearchParams<{ c?: string | string[] }>();
   const router = useRouter();
   const language = useSettingsStore((state) => state.language);
+  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+  const audioPlaybackRate = useAccessibilityStore((state) => state.audioPlaybackRate);
   const copy = ebookRouteCopy[language];
   const article = getEbookArticleByParam(c);
   const previousArticle = getAdjacentEbookArticle(article, 'previous');
@@ -164,6 +172,14 @@ export default function EbookScreen() {
           {articleTitle}
         </Text>
         <Text style={styles.lede}>{getLocalizedText(article.lede, language)}</Text>
+        <ArticleAudioButton
+          enabled={audioEnabled}
+          language={language}
+          rate={audioPlaybackRate}
+          scope="article"
+          style={styles.audioAction}
+          text={buildEbookArticleNarrationText(article)}
+        />
 
         <Card
           accessibilityLabel={`${copy.provenanceBadge}. ${copy.provenanceText}`}
@@ -179,6 +195,14 @@ export default function EbookScreen() {
               {getLocalizedText(section.heading, language)}
             </Text>
             <Text style={styles.sectionBody}>{getLocalizedText(section.body, language)}</Text>
+            <ArticleAudioButton
+              enabled={audioEnabled}
+              language={language}
+              rate={audioPlaybackRate}
+              scope="section"
+              style={styles.sectionAudioAction}
+              text={buildEbookSectionNarrationText(section)}
+            />
           </View>
         ))}
 
@@ -313,6 +337,9 @@ const styles = StyleSheet.create({
     fontSize: typography.bodyLarge.fontSize,
     lineHeight: typography.bodyLarge.lineHeight,
   },
+  audioAction: {
+    alignSelf: 'flex-start',
+  },
   provenanceCard: {
     backgroundColor: colors.surfaceWarm,
     gap: space[1],
@@ -335,6 +362,10 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.body.fontSize,
     lineHeight: typography.body.lineHeight,
+  },
+  sectionAudioAction: {
+    alignSelf: 'flex-start',
+    marginTop: space[0.5],
   },
   sourcesCard: {
     gap: space[1],

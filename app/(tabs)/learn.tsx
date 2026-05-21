@@ -4,12 +4,14 @@ import { StyleSheet, View } from 'react-native';
 
 import { ChapterCard } from '../../components/learning/ChapterCard';
 import { Flashcard } from '../../components/learning/Flashcard';
+import { StudyArticleCard } from '../../components/learning/StudyArticleCard';
 import { AdBanner } from '../../components/monetization/AdBanner';
 import { RemoveAdsPlacementCta } from '../../components/monetization/RemoveAdsPlacementCta';
 import { QuestionDisclaimer } from '../../components/quiz/QuestionDisclaimer';
 import { ScreenShell, SectionHeader } from '../../components/ui/ScreenShell';
 import { chapters } from '../../data/chapters';
 import { questions } from '../../data/questions';
+import { EBOOK_ARTICLE_COUNT } from '../../lib/content/ebookContent';
 import { selectDailyFlashcardDeck } from '../../lib/learning/flashcardDeck';
 import { useProgressStore } from '../../lib/storage/progressStore';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
@@ -36,6 +38,12 @@ type LearnRouteCopy = {
   flashcardSectionTitle: string;
   sectionSubtitle: string;
   sectionTitle: string;
+  studyArticlesAccessibilityLabel: string;
+  studyArticlesCta: string;
+  studyArticlesEyebrow: string;
+  studyArticlesMeta: (articleCount: number) => string;
+  studyArticlesSubtitle: string;
+  studyArticlesTitle: string;
   subtitle: string;
   title: string;
 };
@@ -48,6 +56,14 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
     flashcardSectionTitle: 'Snabba flashkort',
     sectionSubtitle: 'Studera med källnära kapitel och öva sedan på samma material.',
     sectionTitle: '13 samhällsområden',
+    studyArticlesAccessibilityLabel:
+      'Öppna studieartiklar. Korta offlineartiklar med källor och länk till kapitelövning.',
+    studyArticlesCta: 'Öppna studieartiklar',
+    studyArticlesEyebrow: 'Offlineguide',
+    studyArticlesMeta: (articleCount) => `${articleCount} artiklar · svenska och engelska`,
+    studyArticlesSubtitle:
+      'Läs en kort artikel, kontrollera källtypen och gå direkt till övningen för samma område.',
+    studyArticlesTitle: 'Studieartiklar med övningsväg',
     subtitle: 'Varje kapitel visar omfång och lokal progression så att du kan fokusera studierna.',
     title: 'Bläddra bland kapitel med tydliga nästa steg',
   },
@@ -58,6 +74,14 @@ const learnRouteCopy: Record<AppLanguage, LearnRouteCopy> = {
     flashcardSectionTitle: 'Quick flashcards',
     sectionSubtitle: 'Study in source-aligned chapters, then practice from the same material.',
     sectionTitle: '13 civic areas',
+    studyArticlesAccessibilityLabel:
+      'Open study articles. Short offline articles with sources and a path back to chapter practice.',
+    studyArticlesCta: 'Open study articles',
+    studyArticlesEyebrow: 'Offline guide',
+    studyArticlesMeta: (articleCount) => `${articleCount} articles · Swedish and English`,
+    studyArticlesSubtitle:
+      'Read a short article, check the provenance, then jump straight into practice for the same area.',
+    studyArticlesTitle: 'Study articles with a practice path',
     subtitle:
       'Each chapter shows scope and local completion so you can focus study instead of guessing what to open next.',
     title: 'Browse chapters with a clear next step',
@@ -188,6 +212,22 @@ export default function Screen() {
           />
         ))}
       </View>
+
+      <Link
+        accessibilityLabel={routeCopy.studyArticlesAccessibilityLabel}
+        accessibilityRole="link"
+        href="/ebook"
+        style={styles.link}
+      >
+        <StudyArticleCard
+          accessibilityMode="presentation"
+          ctaLabel={routeCopy.studyArticlesCta}
+          eyebrow={routeCopy.studyArticlesEyebrow}
+          meta={routeCopy.studyArticlesMeta(EBOOK_ARTICLE_COUNT)}
+          subtitle={routeCopy.studyArticlesSubtitle}
+          title={routeCopy.studyArticlesTitle}
+        />
+      </Link>
 
       <SectionHeader title={routeCopy.sectionTitle} subtitle={routeCopy.sectionSubtitle} />
       <View style={styles.list}>

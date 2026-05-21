@@ -522,3 +522,22 @@ test('static ebook chapter 11 keeps child citizenship application rules current'
   assert.match(source, /retrievedDate: '2026-05-20'/);
   assert.match(source, new RegExp(migrationsverketCitizenshipRulesUrl));
 });
+
+test('native ebook study article audio narrates article prose with persisted rate', () => {
+  const routeSource = readSiteFile('app/ebook.tsx');
+  const articleAudioSource = readSiteFile('components/learning/ArticleAudioButton.tsx');
+  const narrationSource = readSiteFile('lib/audio/ebookNarration.ts');
+
+  assert.match(routeSource, /useAccessibilityStore\(\(state\) => state\.audioPlaybackRate\)/);
+  assert.match(routeSource, /useSettingsStore\(\(state\) => state\.audioEnabled\)/);
+  assert.match(routeSource, /<ArticleAudioButton[\s\S]*scope="article"/);
+  assert.match(routeSource, /<ArticleAudioButton[\s\S]*scope="section"/);
+  assert.match(routeSource, /text=\{buildEbookArticleNarrationText\(article\)\}/);
+  assert.match(routeSource, /text=\{buildEbookSectionNarrationText\(section\)\}/);
+  assert.match(articleAudioSource, /speakSwedish\(chunk, \{[\s\S]*rate,/);
+  assert.match(articleAudioSource, /onDone:[\s\S]*playChunk\(index \+ 1, runId\)/);
+  assert.match(narrationSource, /getLocalizedText\(article\.title, 'sv'\)/);
+  assert.match(narrationSource, /getLocalizedText\(article\.lede, 'sv'\)/);
+  assert.match(narrationSource, /article\.sections\.map\(buildEbookSectionNarrationText\)/);
+  assert.doesNotMatch(narrationSource, /getEbookSourceNotes|sourceNoteKeys|provenance/i);
+});
