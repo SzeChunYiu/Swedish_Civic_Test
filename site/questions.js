@@ -22976,7 +22976,7 @@
     "type": "true_false",
     "q": {
       "en": "That referendums in Sweden are advisory means politicians do not have to follow the result.",
-      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att Politikerna behöver inte följa resultatet."
+      "sv": "Att folkomröstningar i Sverige är rådgivande betyder att politikerna inte behöver följa resultatet."
     },
     "opts": [
       {
