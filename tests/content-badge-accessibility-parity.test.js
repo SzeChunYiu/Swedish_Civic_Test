@@ -80,6 +80,7 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
+process.argv.push('${BADGE_ACCESSIBILITY_FOCUS_FLAG}');
 require('./scripts/validate-content.js');
 `,
     ],
