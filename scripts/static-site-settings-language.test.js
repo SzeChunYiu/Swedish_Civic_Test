@@ -302,9 +302,9 @@ test('Settings modal source keeps keyboard focus inside the dialog', () => {
   assert.match(source, /else if \(!e\.shiftKey && active === last\)/);
   assert.match(source, /function restoreSettingsInvoker\(\)/);
   assert.match(source, /if \(invoker && document\.contains\(invoker\)\) focusElement\(invoker\)/);
-  assert.match(source, /const settingsOpen = e\.target\.closest\("#settings-open"\)/);
-  assert.match(source, /if \(settingsOpen\) \{ open\(settingsOpen\); return; \}/);
-  assert.match(source, /e\.key === "Tab"/);
+  assert.match(source, /const settingsOpen = e\.target\.closest\(['"]#settings-open['"]\)/);
+  assert.match(source, /if \(settingsOpen\) \{[\s\S]*?open\(settingsOpen\);[\s\S]*?return;/);
+  assert.match(source, /e\.key === ['"]Tab['"]/);
   assert.match(source, /trapSettingsModalTab\(e, m\)/);
   assert.match(source, /close\(\{ restoreFocus: false \}\)/);
   assert.match(source, /focusConsentPrompt\(\)/);
@@ -472,15 +472,21 @@ test('Static Settings selected visuals mirror aria-pressed state', () => {
 
   assert.match(settingsSource, /function setPressedState\(el, on\) \{[\s\S]*?aria-pressed/);
   assert.equal(
-    Array.from(settingsSource.matchAll(/\.classList\.toggle\("is-on"/g)).length,
+    Array.from(settingsSource.matchAll(/\.classList\.toggle\(['"]is-on['"]/g)).length,
     1,
     'Settings should toggle .is-on only through setPressedState so aria-pressed stays in sync',
   );
-  assert.match(settingsSource, /setAttribute\("aria-pressed", on \? "true" : "false"\)/);
+  assert.match(
+    settingsSource,
+    /setAttribute\(['"]aria-pressed['"], on \? ['"]true['"] : ['"]false['"]\)/,
+  );
   assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === String\(value\)\)/);
   assert.match(settingsSource, /setPressedState\(b, b\.dataset\.val === value\)/);
   assert.match(settingsSource, /setPressedState\(c, c\.dataset\.buddy === id\)/);
-  assert.ok(settingsSource.includes('aria-pressed="${b.id === cur ? "true" : "false"}"'));
+  assert.match(
+    settingsSource,
+    /aria-pressed="\$\{b\.id === cur \? ['"]true['"] : ['"]false['"]\}"/,
+  );
 
   for (const dataSet of ['theme', 'palette', 'language', 'textsize']) {
     settingButtonTags(html, dataSet).forEach((tag) => {
