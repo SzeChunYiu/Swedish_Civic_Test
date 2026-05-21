@@ -1,10 +1,12 @@
 {
   "gate": "release-owner-approval",
   "status": "blocked",
-  "approved": false,
-  "approver": "TBD",
-  "approvedCommit": "TBD",
-  "approvedForStoreSubmission": false,
-  "noKnownBlockersAssertion": false,
-  "checkedAtUtc": "TBD"
+  "approvedAt": "pending-owner-approval",
+  "approver": "pending-release-owner",
+  "approvedCommit": "pending-release-commit",
+  "releaseDecision": "pending-owner-decision",
+  "noKnownBlockers": false,
+  "evidenceReport": "reports/release-evidence-2026-05-15.md",
+  "checkedGates": [],
+  "notes": "Release owner approval must stay blocked until all build, device, store, policy, privacy, URL, and screenshot gates are READY."
 }

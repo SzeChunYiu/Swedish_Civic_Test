@@ -2,20 +2,20 @@
   "gate": "eas-build-artifacts",
   "status": "blocked",
   "appVersion": "1.0.0",
-  "gitCommit": "TBD",
+  "gitCommit": "pending-release-commit",
   "android": {
     "profile": "preview",
-    "buildId": "TBD",
-    "buildUrl": "TBD",
+    "buildId": "pending-eas-android-build-id",
+    "buildUrl": "pending-eas-android-build-url",
     "artifactType": "apk",
-    "installOrTestStatus": "TBD"
+    "installOrTestStatus": "pending-manual-evidence"
   },
   "ios": {
     "profile": "preview",
-    "buildId": "TBD",
-    "buildUrl": "TBD",
+    "buildId": "pending-eas-ios-build-id",
+    "buildUrl": "pending-eas-ios-build-url",
     "artifactType": "ipa",
-    "installOrTestStatus": "TBD"
+    "installOrTestStatus": "pending-manual-evidence"
   },
   "notes": "Record only non-secret build IDs, URLs, profiles, and readiness states."
 }

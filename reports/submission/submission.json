@@ -1,10 +1,29 @@
 {
   "gate": "submission",
   "status": "blocked",
-  "testFlightBuild": "TBD",
-  "googlePlayInternalTrackUrl": "TBD",
-  "iosProductionSubmissionId": "TBD",
-  "androidProductionSubmissionId": "TBD",
-  "monitoringReportPath": "reports/monitoring/v1-week1.md",
+  "testFlightBuild": {
+    "buildNumber": "pending-testflight-build-number",
+    "processingStatus": "pending",
+    "betaReviewStatus": "pending",
+    "url": "pending-app-store-connect-testflight-url"
+  },
+  "googlePlayInternal": {
+    "trackUrl": "pending-google-play-internal-track-url",
+    "versionCode": 0,
+    "testerGroup": "pending-tester-group"
+  },
+  "productionSubmissions": [
+    {
+      "platform": "ios",
+      "submissionId": "pending-ios-production-submission-id",
+      "reviewStatus": "pending"
+    },
+    {
+      "platform": "android",
+      "submissionId": "pending-android-production-submission-id",
+      "reviewStatus": "pending"
+    }
+  ],
+  "monitoringReport": "reports/monitoring/v1-week1.md",
   "notes": "Submit only after every pre-submission gate is READY."
 }
