@@ -53,6 +53,10 @@ function cutoffFor(now: Date, maxAgeDays: number): number {
   return now.getTime() - (Number.isFinite(maxAgeMs) ? maxAgeMs : DEFAULT_MAX_AGE_DAYS * DAY_MS);
 }
 
+function nonNegativeIntegerCount(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? Math.floor(value) : 0;
+}
+
 function progressSessions(progress: UserProgress): readonly unknown[] {
   const sessions = (progress as { sessions?: unknown } | null | undefined)?.sessions;
   return Array.isArray(sessions) ? sessions : [];
@@ -143,11 +147,11 @@ export function resumeBannerCopy(
       subtitle: null,
     };
   }
-  const n = candidate.questionsAnsweredInChapter;
+  const n = nonNegativeIntegerCount(candidate.questionsAnsweredInChapter);
   return language === 'sv'
     ? {
         title: 'Fortsätt där du slutade',
-        subtitle: `${n} fråga${n === 1 ? '' : 'r'} avklarade i detta kapitel`,
+        subtitle: `${n} ${n === 1 ? 'fråga avklarad' : 'frågor avklarade'} i detta kapitel`,
       }
     : {
         title: 'Continue where you left off',

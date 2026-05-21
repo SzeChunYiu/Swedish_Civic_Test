@@ -585,26 +585,40 @@ test('resumeWhereLeftOff: ignores invalid and future answer dates', () => {
 
 test('resumeBannerCopy: bilingual messages', () => {
   const { resumeBannerCopy } = loadTs('lib/learning/resumeWhereLeftOff.ts');
-  const sv = resumeBannerCopy(
-    {
-      chapterId: 'c1',
-      lastQuestionId: 'q1',
-      lastAnsweredAt: '2026-05-19',
-      questionsAnsweredInChapter: 5,
-    },
-    'sv',
-  );
-  const en = resumeBannerCopy(
-    {
-      chapterId: 'c1',
-      lastQuestionId: 'q1',
-      lastAnsweredAt: '2026-05-19',
-      questionsAnsweredInChapter: 5,
-    },
-    'en',
-  );
+  const candidate = (questionsAnsweredInChapter) => ({
+    chapterId: 'c1',
+    lastQuestionId: 'q1',
+    lastAnsweredAt: '2026-05-19',
+    questionsAnsweredInChapter,
+  });
+  const sv = resumeBannerCopy(candidate(5), 'sv');
+  const en = resumeBannerCopy(candidate(5), 'en');
   assert.match(sv.title, /Fortsätt/i);
+  assert.equal(sv.subtitle, '5 frågor avklarade i detta kapitel');
   assert.match(en.title, /Continue/i);
+  assert.equal(en.subtitle, '5 questions answered in this chapter');
+  assert.equal(resumeBannerCopy(candidate(1), 'sv').subtitle, '1 fråga avklarad i detta kapitel');
+  assert.equal(
+    resumeBannerCopy(candidate(1), 'en').subtitle,
+    '1 question answered in this chapter',
+  );
+  assert.equal(resumeBannerCopy(candidate(0), 'sv').subtitle, '0 frågor avklarade i detta kapitel');
+  assert.equal(
+    resumeBannerCopy(candidate(Number.NaN), 'sv').subtitle,
+    '0 frågor avklarade i detta kapitel',
+  );
+  assert.equal(
+    resumeBannerCopy(candidate(Infinity), 'en').subtitle,
+    '0 questions answered in this chapter',
+  );
+  assert.equal(
+    resumeBannerCopy(candidate(-1), 'en').subtitle,
+    '0 questions answered in this chapter',
+  );
+  assert.equal(
+    resumeBannerCopy(candidate(1.5), 'en').subtitle,
+    '1 question answered in this chapter',
+  );
   const empty = resumeBannerCopy(
     { chapterId: null, lastQuestionId: null, lastAnsweredAt: null, questionsAnsweredInChapter: 0 },
     'en',
