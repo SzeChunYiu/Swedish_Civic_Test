@@ -500,8 +500,8 @@ test('practice locks answer options after feedback is visible', () => {
   const answerOptionSource = read('components/quiz/AnswerOption.tsx');
 
   assert.match(answerOptionSource, /disabled\?: boolean/);
-  assert.match(answerOptionSource, /disabled=\{disabled\}/);
-  assert.match(practiceSource, /disabled=\{hasSelectedAnswer\}/);
+  assert.match(answerOptionSource, /disabled=\{optionDisabled\}/);
+  assert.match(practiceSource, /disabled=\{hasSelectedAnswer \|\| isStruck\}/);
 });
 
 test('practice and routed quiz answer options expose selected state', () => {
@@ -511,7 +511,10 @@ test('practice and routed quiz answer options expose selected state', () => {
 
   assert.match(answerOptionSource, /selected = false/);
   assert.match(answerOptionSource, /selected\?: boolean/);
-  assert.match(answerOptionSource, /accessibilityState=\{\{ disabled, selected \}\}/);
+  assert.match(
+    answerOptionSource,
+    /accessibilityState=\{\{ disabled: optionDisabled, selected \}\}/,
+  );
   assert.match(practiceSource, /selected=\{hasSelectedAnswer && selectedOptionId === option\.id\}/);
   assert.match(routedQuizSource, /selected=\{selectedOptionId === option\.id\}/);
 });
@@ -523,10 +526,13 @@ test('answer option feedback remains available in the accessibility label', () =
   assert.match(source, /const answerOptionCopy: Record<AnswerLanguage, AnswerOptionCopy>/);
   assert.match(source, /Välj svaret \$\{label\}/);
   assert.match(source, /Select answer \$\{label\}/);
+  assert.match(source, /Eliminate answer \$\{label\}/);
+  assert.match(source, /Restore answer \$\{label\}/);
   assert.match(source, /function getOptionLabel/);
-  assert.match(source, /language === 'en' \? option\.textEn : option\.textSv/);
+  assert.match(source, /return getQuestionOptionText\(option, language\);/);
   assert.match(source, /const accessibilityLabel = resultLabel/);
   assert.match(source, /\$\{label\}, \$\{resultLabel\}/);
+  assert.match(source, /\$\{label\}, \$\{copy\.struckStateLabel\}/);
   assert.match(source, /copy\.selectAccessibilityLabel\(label\)/);
   assert.match(source, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.doesNotMatch(source, /accessibilityLabel=\{`Select answer \$\{label\}`\}/);

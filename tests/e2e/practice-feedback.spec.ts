@@ -164,6 +164,52 @@ test('practice and routed quiz answer option labels follow the selected language
   expect(consoleErrors).toEqual([]);
 });
 
+test('practice answer choices can be eliminated and restored before submission', async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await enableEnglishSupport(page);
+  await page.goto('/practice', { waitUntil: 'networkidle' });
+  await closeLaunchAdIfPresent(page);
+
+  const eliminatedAnswer = page.getByLabel('In North America, Eliminated');
+  const eliminateWrongAnswer = page.getByRole('button', {
+    name: 'Eliminate answer In North America',
+  });
+  const restoreWrongAnswer = page.getByRole('button', {
+    name: 'Restore answer In North America',
+  });
+
+  await expect(eliminateWrongAnswer).toBeVisible();
+  await eliminateWrongAnswer.click();
+  await expect(eliminatedAnswer).toBeVisible();
+  await expect(eliminatedAnswer).toBeDisabled();
+  await expect(restoreWrongAnswer).toHaveAttribute('aria-pressed', 'true');
+
+  await restoreWrongAnswer.click();
+  await expect(eliminatedAnswer).toHaveCount(0);
+  await expect(eliminateWrongAnswer).toBeVisible();
+
+  await eliminateWrongAnswer.click();
+  await page.getByLabel('Select answer In the Nordic region in northern Europe').click();
+  await expect(page.getByLabel('In the Nordic region in northern Europe, Correct')).toBeVisible();
+  await expect(page.getByRole('button', { name: /Eliminate answer|Restore answer/ })).toHaveCount(
+    0,
+  );
+
+  await page.getByLabel('Try this practice question again').click();
+  await expect(eliminatedAnswer).toHaveCount(0);
+  await expect(eliminateWrongAnswer).toBeVisible();
+
+  expect(consoleErrors).toEqual([]);
+});
+
 test('practice question source citation prefix follows the selected language', async ({ page }) => {
   const consoleErrors: string[] = [];
 
