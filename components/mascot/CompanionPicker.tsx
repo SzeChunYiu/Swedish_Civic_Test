@@ -12,6 +12,7 @@ import { colors, radius, space, typography } from '../../lib/theme';
 
 type CompanionPickerCopy = {
   favoriteBadge: string;
+  groupLabel: string;
   selectedBadge: string;
   selectLabel: (label: string, anchor: string) => string;
   selectedLabel: (label: string, anchor: string) => string;
@@ -20,12 +21,14 @@ type CompanionPickerCopy = {
 const companionPickerCopy: Record<AppLanguage, CompanionPickerCopy> = {
   sv: {
     favoriteBadge: 'Favorit',
+    groupLabel: 'Välj studiekompis',
     selectedBadge: 'Vald',
     selectLabel: (label, anchor) => `Välj ${label} som studiekompis. ${anchor}`,
     selectedLabel: (label, anchor) => `${label} är vald som studiekompis. ${anchor}`,
   },
   en: {
     favoriteBadge: 'Favorite',
+    groupLabel: 'Choose study companion',
     selectedBadge: 'Selected',
     selectLabel: (label, anchor) => `Choose ${label} as study companion. ${anchor}`,
     selectedLabel: (label, anchor) => `${label} is selected as study companion. ${anchor}`,
@@ -90,7 +93,12 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
   const copy = companionPickerCopy[language];
 
   return (
-    <View style={styles.grid}>
+    <View
+      aria-label={copy.groupLabel}
+      accessibilityLabel={copy.groupLabel}
+      accessibilityRole="radiogroup"
+      style={styles.grid}
+    >
       {getCompanionPickerMascots().map((mascot) => {
         const label = mascotLabel(mascot, language);
         const anchor = mascotAnchor(mascot, language);
@@ -104,11 +112,11 @@ export function CompanionPicker({ language, onSelect, selectedId }: CompanionPic
         return (
           <Pressable
             key={mascot.id}
+            aria-checked={selected}
             aria-label={accessibilityLabel}
-            aria-selected={selected}
             accessibilityLabel={accessibilityLabel}
-            accessibilityRole="button"
-            accessibilityState={{ selected }}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: selected }}
             onPress={() => onSelect(mascot.id)}
             style={({ pressed }) => [
               styles.option,

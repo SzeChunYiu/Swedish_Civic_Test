@@ -27,6 +27,10 @@ function assertIncludes(source, text, context) {
 test('settings route shell copy follows the persisted settings language', () => {
   const summary = parseValidationSummary();
   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const companionPickerSource = fs.readFileSync(
+    path.join(repoRoot, 'components/mascot/CompanionPicker.tsx'),
+    'utf8',
+  );
 
   assert.equal(summary.settingsRouteCopyLabelsValidated, 125);
   assert.equal(summary.settingsRouteCopyParityValidated, true);
@@ -66,6 +70,12 @@ test('settings route shell copy follows the persisted settings language', () => 
   assert.match(source, /Choose a study companion for practice/);
   assert.match(source, /selectedId=\{selectedCompanionId\}/);
   assert.match(source, /onSelect=\{setSelectedCompanion\}/);
+  assert.match(companionPickerSource, /accessibilityRole="radiogroup"/);
+  assert.match(companionPickerSource, /accessibilityRole="radio"/);
+  assert.match(companionPickerSource, /aria-checked=\{selected\}/);
+  assert.match(companionPickerSource, /accessibilityState=\{\{ checked: selected \}\}/);
+  assert.doesNotMatch(companionPickerSource, /aria-selected=\{selected\}/);
+  assert.doesNotMatch(companionPickerSource, /accessibilityState=\{\{ selected \}\}/);
   assert.match(source, /Byt studiespråk till \$\{label\}/);
   assert.match(source, /Set study language to \$\{label\}/);
   assert.match(source, /Studiespråk/);

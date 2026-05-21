@@ -68,7 +68,12 @@ test('companion picker source consumes favorite ordering and store-compatible id
   assert.match(source, /getCompanionPickerMascots/);
   assert.match(source, /FAVORITE_COMPANION_IDS/);
   assert.match(source, /onSelect\(mascot\.id\)/);
-  assert.match(source, /accessibilityState=\{\{ selected \}\}/);
+  assert.match(source, /accessibilityRole="radiogroup"/);
+  assert.match(source, /accessibilityRole="radio"/);
+  assert.match(source, /aria-checked=\{selected\}/);
+  assert.match(source, /accessibilityState=\{\{ checked: selected \}\}/);
+  assert.doesNotMatch(source, /aria-selected=\{selected\}/);
+  assert.doesNotMatch(source, /accessibilityState=\{\{ selected \}\}/);
 });
 
 test('settings route renders the free companion picker with persistence warning handling', () => {
@@ -234,9 +239,14 @@ test('companion store: throwing MMKV reads fall back to the default companion', 
     companion: storage,
   });
   const { DEFAULT_COMPANION_ID } = loadTs('lib/mascot/catalog.ts');
+  const state = useCompanionStore.getState();
 
-  assert.equal(useCompanionStore.getState().selectedId, DEFAULT_COMPANION_ID);
-  assert.equal(useCompanionStore.getState().persistenceWarning, null);
+  assert.equal(state.selectedId, DEFAULT_COMPANION_ID);
+  assert.equal(state.persistenceWarning.recoverable, true);
+  assert.equal(state.persistenceWarning.storageId, 'companion');
+  assert.equal(state.persistenceWarning.key, 'companion.selectedId.v1');
+  assert.equal(state.persistenceWarning.operation, 'read');
+  assert.match(state.persistenceWarning.errorMessage, /read failed/);
 });
 
 test('companion store: successful writes persist and clear persistence warning', () => {
