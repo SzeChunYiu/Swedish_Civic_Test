@@ -1,7 +1,9 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
 import type { PropsWithChildren, ReactNode } from 'react';
 import { Badge } from './Badge';
 import { colors, radius, shadows, space, typography } from '../../lib/theme';
+import type { ThemeColors } from '../../lib/theme';
 
 export function ScreenShell({
   title,
@@ -9,17 +11,22 @@ export function ScreenShell({
   eyebrow,
   children,
   rightSlot,
+  themeColors,
 }: PropsWithChildren<{
   title: string;
   subtitle?: string;
   eyebrow?: string;
   rightSlot?: ReactNode;
+  themeColors?: ThemeColors;
 }>) {
+  const resolvedColors = themeColors ?? colors;
+  const styles = useMemo(() => createStyles(resolvedColors), [resolvedColors]);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <View style={styles.heroCopy}>
-          {eyebrow ? <Badge>{eyebrow}</Badge> : null}
+          {eyebrow ? <Badge themeColors={resolvedColors}>{eyebrow}</Badge> : null}
           <Text accessibilityRole="header" style={styles.title}>
             {title}
           </Text>
@@ -32,7 +39,17 @@ export function ScreenShell({
   );
 }
 
-export function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+export function SectionHeader({
+  title,
+  subtitle,
+  themeColors,
+}: {
+  title: string;
+  subtitle?: string;
+  themeColors?: ThemeColors;
+}) {
+  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
+
   return (
     <View style={styles.sectionHeader}>
       <Text accessibilityRole="header" style={styles.sectionTitle}>
@@ -43,55 +60,57 @@ export function SectionHeader({ title, subtitle }: { title: string; subtitle?: s
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.canvas,
-    flex: 1,
-  },
-  content: {
-    gap: space[2.25],
-    padding: space[3],
-    paddingBottom: space[10],
-  },
-  hero: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.large,
-    borderWidth: StyleSheet.hairlineWidth,
-    gap: space[2],
-    padding: space[3],
-    ...shadows.card,
-  },
-  heroCopy: {
-    gap: space[1.25],
-  },
-  title: {
-    color: colors.text,
-    fontSize: typography.heroMobile.fontSize,
-    fontWeight: typography.heroMobile.fontWeight,
-    letterSpacing: typography.heroMobile.letterSpacing,
-    lineHeight: typography.heroMobile.lineHeight,
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: typography.body.fontSize,
-    lineHeight: typography.body.lineHeight,
-  },
-  rightSlot: {
-    gap: space[1],
-  },
-  sectionHeader: {
-    gap: space[0.5],
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontSize: typography.sectionTitle.fontSize,
-    fontWeight: typography.sectionTitle.fontWeight,
-    lineHeight: typography.sectionTitle.lineHeight,
-  },
-  sectionSubtitle: {
-    color: colors.textMuted,
-    fontSize: typography.caption.fontSize,
-    lineHeight: typography.caption.lineHeight,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: themeColors.canvas,
+      flex: 1,
+    },
+    content: {
+      gap: space[2.25],
+      padding: space[3],
+      paddingBottom: space[10],
+    },
+    hero: {
+      backgroundColor: themeColors.surface,
+      borderColor: themeColors.border,
+      borderRadius: radius.large,
+      borderWidth: StyleSheet.hairlineWidth,
+      gap: space[2],
+      padding: space[3],
+      ...shadows.card,
+    },
+    heroCopy: {
+      gap: space[1.25],
+    },
+    title: {
+      color: themeColors.text,
+      fontSize: typography.heroMobile.fontSize,
+      fontWeight: typography.heroMobile.fontWeight,
+      letterSpacing: typography.heroMobile.letterSpacing,
+      lineHeight: typography.heroMobile.lineHeight,
+    },
+    subtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.body.fontSize,
+      lineHeight: typography.body.lineHeight,
+    },
+    rightSlot: {
+      gap: space[1],
+    },
+    sectionHeader: {
+      gap: space[0.5],
+    },
+    sectionTitle: {
+      color: themeColors.text,
+      fontSize: typography.sectionTitle.fontSize,
+      fontWeight: typography.sectionTitle.fontWeight,
+      lineHeight: typography.sectionTitle.lineHeight,
+    },
+    sectionSubtitle: {
+      color: themeColors.textMuted,
+      fontSize: typography.caption.fontSize,
+      lineHeight: typography.caption.lineHeight,
+    },
+  });
+}

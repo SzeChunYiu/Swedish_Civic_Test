@@ -1,16 +1,26 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import type { StyleProp, TextStyle } from 'react-native';
 import type { PropsWithChildren } from 'react';
 import { colors, radius, space, typography } from '../../lib/theme';
+import type { ThemeColors } from '../../lib/theme';
 
 type BadgeTone = 'blue' | 'green' | 'orange' | 'warm';
 export interface BadgeProps extends PropsWithChildren {
   accessibilityLabel?: string;
   style?: StyleProp<TextStyle>;
+  themeColors?: ThemeColors;
   tone?: BadgeTone;
 }
 
-export function Badge({ accessibilityLabel, children, style, tone = 'blue' }: BadgeProps) {
+export function Badge({
+  accessibilityLabel,
+  children,
+  style,
+  themeColors,
+  tone = 'blue',
+}: BadgeProps) {
+  const styles = useMemo(() => createStyles(themeColors ?? colors), [themeColors]);
   const badgeAccessibilityLabel =
     accessibilityLabel ??
     (typeof children === 'string' || typeof children === 'number' ? String(children) : undefined);
@@ -26,33 +36,35 @@ export function Badge({ accessibilityLabel, children, style, tone = 'blue' }: Ba
   );
 }
 
-const styles = StyleSheet.create({
-  badge: {
-    alignSelf: 'flex-start',
-    borderRadius: radius.pill,
-    fontSize: typography.badge.fontSize,
-    fontWeight: typography.badge.fontWeight,
-    letterSpacing: typography.badge.letterSpacing,
-    lineHeight: typography.badge.lineHeight,
-    overflow: 'hidden',
-    paddingHorizontal: space[1.25],
-    paddingVertical: space[0.5],
-    textTransform: 'uppercase',
-  },
-  blue: {
-    backgroundColor: colors.badgeBlueBg,
-    color: colors.badgeBlueText,
-  },
-  green: {
-    backgroundColor: colors.successSoft,
-    color: colors.success,
-  },
-  orange: {
-    backgroundColor: colors.warningSoft,
-    color: colors.warning,
-  },
-  warm: {
-    backgroundColor: colors.surfaceWarm,
-    color: colors.textMuted,
-  },
-});
+function createStyles(themeColors: ThemeColors) {
+  return StyleSheet.create({
+    badge: {
+      alignSelf: 'flex-start',
+      borderRadius: radius.pill,
+      fontSize: typography.badge.fontSize,
+      fontWeight: typography.badge.fontWeight,
+      letterSpacing: typography.badge.letterSpacing,
+      lineHeight: typography.badge.lineHeight,
+      overflow: 'hidden',
+      paddingHorizontal: space[1.25],
+      paddingVertical: space[0.5],
+      textTransform: 'uppercase',
+    },
+    blue: {
+      backgroundColor: themeColors.badgeBlueBg,
+      color: themeColors.badgeBlueText,
+    },
+    green: {
+      backgroundColor: themeColors.successSoft,
+      color: themeColors.success,
+    },
+    orange: {
+      backgroundColor: themeColors.warningSoft,
+      color: themeColors.warning,
+    },
+    warm: {
+      backgroundColor: themeColors.surfaceWarm,
+      color: themeColors.textMuted,
+    },
+  });
+}

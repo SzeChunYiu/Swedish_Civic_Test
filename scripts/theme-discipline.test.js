@@ -144,12 +144,12 @@ test('disabled button tokens keep labels readable without wrapper opacity', () =
     );
     assert.match(
       source,
-      /disabled:\s*\{[\s\S]*backgroundColor:\s*colors\.surfaceWarm[\s\S]*borderColor:\s*colors\.border[\s\S]*\}/,
+      /disabled:\s*\{[\s\S]*backgroundColor:\s*(?:colors|themeColors)\.surfaceWarm[\s\S]*borderColor:\s*(?:colors|themeColors)\.border[\s\S]*\}/,
       `${label} disabled state should use tokenized disabled surface and border`,
     );
     assert.match(
       source,
-      /disabledLabel:\s*\{[\s\S]*color:\s*colors\.textMuted[\s\S]*\}/,
+      /disabledLabel:\s*\{[\s\S]*color:\s*(?:colors|themeColors)\.textMuted[\s\S]*\}/,
       `${label} disabled label should use the readable muted text token`,
     );
   }
@@ -185,6 +185,72 @@ test('form fields and primary button controls consume dedicated radius tokens', 
   assert.doesNotMatch(uiButtonSource, /button:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(searchSource, /searchInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
   assert.doesNotMatch(settingsSource, /importInput:\s*\{[^}]*borderRadius:\s*radius\.card/);
+});
+
+function assertUtilityRouteThemeContract(source, routeLabel) {
+  assert.match(source, /useColorScheme/, `${routeLabel} should read the system color scheme`);
+  assert.match(
+    source,
+    /useAccessibilityStore/,
+    `${routeLabel} should read the persisted accessibility theme mode`,
+  );
+  assert.match(
+    source,
+    /colorsForThemeMode\(themeMode, systemColorScheme\)/,
+    `${routeLabel} should resolve theme colors through colorsForThemeMode`,
+  );
+  assert.match(
+    source,
+    /const styles = useMemo\(\(\) => createStyles\(themeColors\), \[themeColors\]\);/,
+    `${routeLabel} should derive its StyleSheet from resolved theme colors`,
+  );
+  assert.match(
+    source,
+    /function createStyles\(themeColors: ThemeColors\)/,
+    `${routeLabel} should type its dynamic theme stylesheet`,
+  );
+  assert.match(
+    source,
+    /<ScreenShell[\s\S]*themeColors=\{themeColors\}/,
+    `${routeLabel} should pass theme colors to the shared shell`,
+  );
+  assert.match(
+    source,
+    /<Card[\s\S]*themeColors=\{themeColors\}/,
+    `${routeLabel} should pass theme colors to shared cards`,
+  );
+  assert.doesNotMatch(
+    source,
+    /import \{[^}]*\bcolors\b[^}]*\} from '\.\.\/lib\/theme';/,
+    `${routeLabel} should not import static light color tokens`,
+  );
+  assert.doesNotMatch(
+    source,
+    /\bcolors\./,
+    `${routeLabel} should not reference static light color tokens`,
+  );
+}
+
+test('search and citizenship utility routes resolve colors from persisted theme mode', () => {
+  assertUtilityRouteThemeContract(read('app/search.tsx'), 'search route');
+  assertUtilityRouteThemeContract(
+    read('app/citizenship-requirements.tsx'),
+    'citizenship requirements route',
+  );
+});
+
+test('utility route theme contract rejects static route-local colors', () => {
+  const mutatedSearchSource = read('app/search.tsx')
+    .replace(
+      "import { colorsForThemeMode, radius, space, typography } from '../lib/theme';",
+      "import { colors, colorsForThemeMode, radius, space, typography } from '../lib/theme';",
+    )
+    .replace('color: themeColors.text,', 'color: colors.text,');
+
+  assert.throws(
+    () => assertUtilityRouteThemeContract(mutatedSearchSource, 'search route'),
+    /static light color tokens/,
+  );
 });
 
 test('theme content validation parser keeps one token schema validator', () => {

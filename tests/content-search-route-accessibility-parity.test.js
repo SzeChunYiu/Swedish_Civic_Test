@@ -89,8 +89,8 @@ test('search route keeps grouped Cards away from interactive descendants', () =>
 
 test('search route accessibility parity rejects a grouped search form Card', () => {
   const mutatedSource = readSearchRoute().replace(
-    '<Card>',
-    '<Card accessible accessibilityLabel={copy.searchCardAccessibilityLabel}>',
+    '<Card themeColors={themeColors}>',
+    '<Card accessible accessibilityLabel={copy.searchCardAccessibilityLabel} themeColors={themeColors}>',
   );
 
   assert.throws(

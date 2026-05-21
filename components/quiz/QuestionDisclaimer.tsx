@@ -1,4 +1,5 @@
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
+import type { ThemeColors } from '../../lib/theme';
 import { DisclaimerBanner } from '../DisclaimerBanner';
 
 type QuestionDisclaimerCopy = {
@@ -25,7 +26,10 @@ const disclaimerCopy: Record<AppLanguage, QuestionDisclaimerCopy> = {
   },
 };
 
-export function QuestionDisclaimer({ language }: { language?: AppLanguage } = {}) {
+export function QuestionDisclaimer({
+  language,
+  themeColors,
+}: { language?: AppLanguage; themeColors?: ThemeColors } = {}) {
   const settingsLanguage = useSettingsStore((state) => state.language);
   const copy = disclaimerCopy[language ?? settingsLanguage];
   const disclaimerAccessibilityLabel = `${copy.accessibilityLabelPrefix}: ${copy.text}`;
@@ -35,6 +39,7 @@ export function QuestionDisclaimer({ language }: { language?: AppLanguage } = {}
       accessibilityHint={copy.accessibilityHint}
       accessibilityLabel={disclaimerAccessibilityLabel}
       message={copy.text}
+      themeColors={themeColors}
       title={copy.title}
     />
   );
