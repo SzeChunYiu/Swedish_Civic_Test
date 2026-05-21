@@ -12,6 +12,10 @@ const {
 } = require('./export-site-question-bank');
 const { findSourceAuthorityStemPattern } = require('./sourceAuthorityStemPatterns');
 const {
+  findGeneratedTrueFalseNaturalnessPatternMatch,
+  formatGeneratedTrueFalseNaturalnessPatternMatch,
+} = require('./generated-true-false-naturalness-patterns');
+const {
   UNSUPPORTED_STATIC_HEAD_TITLE_PATTERNS,
   UNSUPPORTED_STATIC_OUTCOME_SLOGAN_PATTERNS,
   extractStaticHeadMetaDescriptions,
@@ -477,137 +481,6 @@ const QUESTION_NESTED_META_STEM_PATTERNS = [
 const QUESTION_JUDGEMENT_META_STEM_PATTERNS = [
   /\bVilket alternativ motsvarar rätt bedömning av påståendet\?/i,
   /\bWhich option gives the correct judgment of the statement\?/i,
-];
-const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
-  /\bDet stämmer att\s+(?:Ungefär|Havet)\b/i,
-  /\bIt is true that\s+(?:The|In|Approximately)\b/i,
-  /\bbelongs to\s+[a-zåäö][^.,"]*/i,
-  /\bhör till\s+[a-zåäö][^.,"]*/i,
-  /\b(?:Det är korrekt att\s+)?(?:Det att|Svaret är)\b/i,
-  /\b(?:It is correct that\s+)?(?:the answer is)\b/i,
-  /\bdescribes that\b/i,
-  /\btillåtet att gifta sig\b/i,
-  /\bwhen false information affects democracy\b/i,
-  /\bnär falsk information påverkar demokratin\b/i,
-  /\bis\s+(?:be|judge)\b/i,
-  /\bis an example of municipal responsibilities\b/i,
-  /\b(?:has one vote each|may stand for election)\s+is part of\b/i,
-  /\b(?:har en röst var|får ställa upp)\s+ingår i\b/i,
-  /\bis a way to\b/i,
-  /\bär ett sätt att\b/i,
-  /\bapplies to\b/i,
-  /\bgäller för\b/i,
-  /\bare The\b/,
-  /^That hitting children is prohibited\b/i,
-  /\bdescribes\s+(?:government agencies|legal certainty|the role|an important role|Sweden two hundred years ago)\b/i,
-  /\bbeskriver\s+(?:statliga myndigheter|rättssäkerhet|polisens uppgift|en viktig uppgift|Sverige för tvåhundra år sedan)\b/i,
-  /\bis the list that contains\b/i,
-  /\bär listan som innehåller\b/i,
-  /\babout public power in Sweden\b/i,
-  /\bom offentlig makt i Sverige\b/i,
-  /\bmeans it gives\b/i,
-  /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i,
-  /\bThe goal of .+?\bpolicy means(?: that)?\b/i,
-  /\binnebär att den ger\b/i,
-  /^Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera\.?$/i,
-  /^Important activities such as school, work, and health care can continue to function\.?$/i,
-  /^Politiska val ersätts med militära beslut\.?$/i,
-  /^Political elections are replaced with military decisions\.?$/i,
-  /\bfrom (?:13|15) years\b/i,
-  /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
-  /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
-  /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
-  /^It was presented in (?:1918|1948)\b/i,
-  /^Den presenterades (?:1918|1948)\b/i,
-  /^One reason is (?:to (?:protect employees|decide who becomes head of state)|better farming methods|EU membership|eU membership)\b/i,
-  /^En anledning är att (?:valet är hemligt|rösterna ska räknas snabbare)\b/i,
-  /^One reason is (?:the vote is secret|votes are counted faster)\b/i,
-  /^En myndighet som\b/i,
-  /^An authority that\b/i,
-  /\beU membership\b/,
-  /\bOne reason is that so\b/i,
-  /\bhave\s+[^.?!]*\bin common\b/i,
-  /\bhar\s+[^.?!]*\bgemensamt\b/i,
-  /\bcommon to\s+(?:eating|lighting|opening|holding)\b/i,
-  /\bcelebrates The\b/,
-  /\bfirar traditionellt (?!Jesu födelse\b)[A-ZÅÄÖ]/,
-  /\bfirar traditionellt jesu födelse\b/,
-  /\bcelebrates jesus' birth\b/,
-  /^(?:By|Apply|Leave|Live)\b/i,
-  /^(?:Genom att|Representera\b|Arbeta\s|Bo i landet|Lämna Svenska|Samarbetet mellan|Nordiska rådet|Riksdagen och|Islam\.|Jul\.|Påsk\.|Julotta\.|Bön,|[0-9]{4}\.)/i,
-  /\bPåståendet är sant:/i,
-  /\bThe statement is true:/i,
-  /\b(?:Det är inte sant att|Det stämmer inte att|Det stämmer att)\b/i,
-  /\b(?:It is not true that|It is true that)\b/i,
-  /^Det är (?:brottsligt enligt svensk lag|alltid en privat familjefråga)/i,
-  /^Sverige beslutade att barnkonventionen blev svensk lag\b/i,
-  /\bär (?:Judar|Danskar),/,
-  /^(?:De|They) (?:företräder|bestämmer|represent|decide)\b/i,
-  /\batt Kungens makt\b/,
-  /\bför Samarbetet mellan\b/,
-  /\bfor Cooperation between\b/,
-  /^En anledning är att Sverige (?:hade|saknade)\b/,
-  /^One reason is that Sweden had\b/,
-  /^En anledning är att Det\b/,
-  /^One reason is that It\b/,
-  /^En anledning är\b/i,
-  /^One reason is\b/i,
-  /\bhar förändrat bara hur\b/i,
-  /\bhas changed only how\b/i,
-  /\barbetar för endast\b/i,
-  /\bworks for only\b/i,
-  /\b(?:den näst största i Sverige|the second largest in Sweden)\b/i,
-  /,\s*,/,
-  /\bit is common to large bonfires\b/i,
-  /\bbrukar\s+\S+\s+arrangerar\b/i,
-  /\b(?:spreadinging|welcominging)\b/i,
-  /\bAdvent occurs (?:the four Sundays|a Saturday)\b/i,
-  /\bthere are buddhist and Hindu\b/,
-  /\bcalled Lucia procession\b/i,
-  /^En (?:ljuskrona|blomsterkrans) på huvudet\.?$/i,
-  /^Light candles on graves to remember and honour people who have died\.?$/i,
-  /^Open an Advent calendar every day until Christmas Eve\.?$/i,
-  /\b(?:fram till julafton|på kvällen)\s+med en adventskalender hemma\b/i,
-  /\b(?:until Christmas Eve|in the evening)\s+with an Advent calendar at home\b/i,
-  /\bMany people voting, getting involved, and learning about social issues\b/i,
-  /\bFewer people taking part in elections\b/i,
-  /\bPeople with different backgrounds and economic situations living closer\b/i,
-  /\bPeople living completely separated by income or ethnic background\b/i,
-  /\bTravel to Asia and increased interest[^.?!]*\bis mentioned\b/i,
-  /^That Sweden's first mosques were built\b/i,
-  /\bskyddar rätten [^.?!]* och skydd mot\b/i,
-  /\bprotects the right [^.?!]* and protection from\b/i,
-  /\bskyddar att staten väljer\b/i,
-  /\bprotects that the state chooses\b/i,
-  /\bMånga svenskar firar id al-fitr och Newroz även om\b/i,
-  /\bMany Swedes celebrate Eid al-Fitr and Newroz even if\b/i,
-  /\bfick rätt att bo i landet och utöva\b/i,
-  /\bgained the right to live in the country and practice\b/i,
-  /\bnär ett lågt valdeltagande påverkar demokratin\b/i,
-  /\bwhen a low voter turnout affects democracy\b/i,
-  /^De drivs ofta av privata företag och får inkomster genom reklam\.?$/i,
-  /^They are often run by private companies and earn income from advertising\.?$/i,
-  /^De får aldrig sälja reklamplats\.?$/i,
-  /^They may never sell advertising space\.?$/i,
-  /^De finns också på internet och uppdateras med nyheter flera gånger per dag\.?$/i,
-  /^They are also available online and updated with news several times per day\.?$/i,
-  /^De får bara säljas som ett exemplar per år\.?$/i,
-  /^They may be sold only as one copy per year\.?$/i,
-  /^Vem som helst kan skapa innehåll där, och det kontrolleras inte alltid som i andra medier\.?$/i,
-  /^Anyone can create content there, and it is not always checked the same way as in other media\.?$/i,
-  /^Bara ansvariga utgivare får skriva inlägg där\.?$/i,
-  /^Only responsible publishers may write posts there\.?$/i,
-  /\b(?:Att Sverige är en sekulär stat betyder att|That Sweden is a secular state means)\b/i,
-  /\b(?:Att val i en demokrati är hemliga betyder att|That elections in a democracy are secret means)\b/i,
-  /^Water and sewage\b/i,
-  /^Vatten och avlopp\b/i,
-  /^Sending ambassadors\b/i,
-  /^Skicka ambassadörer\b/i,
-  /^Incomplete answer fragment for naturalness guard\b/i,
-  /^Ofullständig svarsfras för naturlighetskontroll\b/i,
-  /\bI ett proportionellt val får partiet\b.*\bom ett parti får\b/i,
-  /\bIn a proportional election, the party receives\b.*\bif a party receives\b/i,
-  /\b(?:bli Sveriges största religiösa grupp|become Sweden’s largest religious group)\b/i,
 ];
 const QUESTION_STATE_WELFARE_ENGLISH_NATURALNESS_PATTERNS = [
   /\bstate(?:[-\s]funded|\s+finances)?\s+security\s+systems\b/i,
@@ -5135,9 +5008,16 @@ function findQuestionJudgementMetaStem(question) {
 function findQuestionGeneratedTrueFalseNaturalnessIssue(question) {
   if (question.type !== 'true_false') return null;
 
-  return QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS.find(
-    (pattern) => pattern.test(question.questionSv) || pattern.test(question.questionEn),
+  return (
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionSv) ||
+    findGeneratedTrueFalseNaturalnessPatternMatch(question.questionEn)
   );
+}
+
+function formatQuestionGeneratedTrueFalseNaturalnessIssue(label, issue) {
+  return `${label} contains a generated true/false grammar-splice stem (${formatGeneratedTrueFalseNaturalnessPatternMatch(
+    issue,
+  )})`;
 }
 
 function findQuestionLuciaRoleEnglishNaturalnessIssue(question) {
@@ -6522,12 +6402,34 @@ function universalHumanRightsStatementEn(answer) {
   }
   return null;
 }
+function politicalExpressionRightStatementSv(answer) {
+  if (/^att försöka övertyga andra om sina politiska idéer$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier försöka övertyga andra om sina politiska idéer';
+  }
+  if (/^att hindra andra från att rösta$/i.test(answer)) {
+    return 'I en demokrati får människor, grupper och partier inte hindra andra från att rösta';
+  }
+  return null;
+}
+function politicalExpressionRightStatementEn(answer) {
+  if (/^to try to persuade others of their political ideas$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may try to persuade others of their political ideas';
+  }
+  if (/^to stop others from voting$/i.test(answer)) {
+    return 'In a democracy, people, groups, and parties may not stop others from voting';
+  }
+  return null;
+}
 function civicStatementSv(source, option) {
   if (isTrueFalseSource(source)) {
     return trueFalseSourceStatementSv(source, option.id === source.correctOptionId);
   }
   const answer = stripFinalPunctuation(answerLabel(option));
   const q = stripFinalPunctuation(source.questionSv);
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementSv(answer);
+    if (statement) return statement;
+  }
   let match = q.match(/^Var ligger (.+)$/i);
   if (match) return `${upperFirst(match[1])} ligger ${lowerFirst(answer)}`;
   match = q.match(/^Ungefär hur långt sträcker sig (.+?) (från .+)$/i);
@@ -6878,6 +6780,10 @@ function civicStatementEn(source, option) {
   }
   const answer = stripFinalPunctuation(answerTextEn(option));
   const q = stripFinalPunctuation(source.questionEn);
+  if (source.id === 'q146') {
+    const statement = politicalExpressionRightStatementEn(answer);
+    if (statement) return statement;
+  }
   let match = q.match(/^Where is (.+) located$/i);
   if (match) return `${upperFirst(match[1])} is located ${lowerFirst(answer)}`;
   match = q.match(/^Approximately how far does (.+?) stretch (from .+)$/i);
@@ -8033,8 +7939,12 @@ function validateQuestionSchema(question, index) {
   if (findQuestionSecretBallotSingularSwedishIssue(question)) {
     reject(`${label} uses unnatural secret-ballot Swedish voting pronoun`);
   }
-  if (findQuestionGeneratedTrueFalseNaturalnessIssue(question)) {
-    reject(`${label} contains a generated true/false grammar-splice stem`);
+  const generatedTrueFalseNaturalnessIssue =
+    findQuestionGeneratedTrueFalseNaturalnessIssue(question);
+  if (generatedTrueFalseNaturalnessIssue) {
+    reject(
+      formatQuestionGeneratedTrueFalseNaturalnessIssue(label, generatedTrueFalseNaturalnessIssue),
+    );
   }
 
   if (question.uhrReference && typeof question.uhrReference === 'object') {
@@ -8059,13 +7969,17 @@ const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
 const derivedQuestionModule = loadTs('lib/content/derivedQuestions.ts');
 const derivePublishedQuestions = derivedQuestionModule.derivePublishedQuestions;
-const expectedGeneratedPublishedQuestions =
-  Array.isArray(sourceQuestions) && typeof derivePublishedQuestions === 'function'
-    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1)
-    : [];
 const additionalQuestions = loadTs('data/additionalQuestions.ts', 'additionalQuestions');
 const questionLocalizationModule = loadTs('data/questionLocalizations.ts');
 const applyQuestionLocalizationPilot = questionLocalizationModule.applyQuestionLocalizationPilot;
+const expectedGeneratedPublishedQuestions =
+  Array.isArray(sourceQuestions) &&
+  typeof derivePublishedQuestions === 'function' &&
+  typeof applyQuestionLocalizationPilot === 'function'
+    ? derivePublishedQuestions(sourceQuestions, sourceQuestions.length + 1).map(
+        applyQuestionLocalizationPilot,
+      )
+    : [];
 const glossaryTerms = loadTs('data/glossary.ts', 'glossaryTerms');
 const uxBenchmarks = loadTs('data/uxBenchmarks.ts', 'uxBenchmarks');
 const defaultMockExamConfig = loadTs('data/mockExamConfig.ts', 'defaultMockExamConfig');
@@ -8679,7 +8593,7 @@ if (process.argv.includes('--focus-generated-true-false-naturalness')) {
       .forEach((question) => {
         const issue = findQuestionGeneratedTrueFalseNaturalnessIssue(question);
         if (issue) {
-          fail(`${question.id} contains a generated true/false grammar-splice stem`);
+          fail(formatQuestionGeneratedTrueFalseNaturalnessIssue(question.id, issue));
         } else {
           questionGeneratedTrueFalseNaturalnessValidated += 1;
         }
@@ -17846,12 +17760,12 @@ function validatePublishedQuestionNaturalnessGuards() {
       ],
       [
         findQuestionGeneratedTrueFalseNaturalnessIssue(question),
-        `${label} contains a generated true/false grammar-splice stem`,
+        (issue) => formatQuestionGeneratedTrueFalseNaturalnessIssue(label, issue),
       ],
     ];
 
     guardFailures.forEach(([issue, message]) => {
-      if (issue) fail(message);
+      if (issue) fail(typeof message === 'function' ? message(issue) : message);
     });
 
     const answerKeyPromptIssue = findQuestionAnswerKeyPromptIssue(question);
@@ -18114,7 +18028,12 @@ if (Array.isArray(questions)) {
         questionJudgementMetaStemsValidated += 1;
       }
       if (generatedTrueFalseNaturalnessIssue) {
-        fail(`${label} contains a generated true/false grammar-splice stem`);
+        fail(
+          formatQuestionGeneratedTrueFalseNaturalnessIssue(
+            label,
+            generatedTrueFalseNaturalnessIssue,
+          ),
+        );
       } else {
         questionGeneratedTrueFalseNaturalnessValidated += 1;
       }
