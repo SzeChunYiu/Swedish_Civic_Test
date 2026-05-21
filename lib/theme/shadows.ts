@@ -1,19 +1,21 @@
 import type { ViewStyle } from 'react-native';
 
-/** Subtle multi-layer shadows from DESIGN.md, adapted for React Native. */
+/** DESIGN.md soft depth: navy whisper shadows, never heavy black elevation. */
+const whisperShadowColor = '#0b1f33';
+
 export const shadows = {
   card: {
-    shadowColor: 'rgba(0, 0, 0, 0.04)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 18,
+    shadowColor: whisperShadowColor,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
     elevation: 1,
   } satisfies ViewStyle,
   deep: {
-    shadowColor: 'rgba(0, 0, 0, 0.05)',
-    shadowOffset: { width: 0, height: 23 },
-    shadowOpacity: 1,
-    shadowRadius: 52,
-    elevation: 3,
+    shadowColor: whisperShadowColor,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 2,
   } satisfies ViewStyle,
 } as const;

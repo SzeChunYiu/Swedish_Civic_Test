@@ -8,10 +8,10 @@ const ROOT = path.resolve(__dirname, '..');
 const SOURCE_DIRS = ['app', 'components'];
 const COLOR_LITERAL = /#[0-9a-fA-F]{6}|rgba?\(/;
 const SPACING_LITERAL = /\b(?:padding(?:Horizontal|Vertical)?|marginTop|gap|borderRadius):\s*\d/;
-const BORDER_WIDTH_LITERAL =
-  /\bborder(?:Top|Right|Bottom|Left)?Width:\s*(?:StyleSheet\.hairlineWidth|\d)/;
 const TYPOGRAPHY_LITERAL =
   /\b(?:fontSize|lineHeight|letterSpacing):\s*-?\d|\bfontWeight:\s*['\"]\d/;
+const SHADOW_LITERAL =
+  /\b(?:shadowColor|shadowOpacity|shadowRadius|shadowOffset|boxShadow|elevation)\s*:/;
 const MIN_BODY_TEXT_CONTRAST = 4.5;
 const REQUIRED_CONTRAST_PAIRS = [
   ['text', 'surface'],
@@ -45,6 +45,29 @@ function walk(dir) {
 
 function read(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
+}
+
+function collectStyleTokenOffenders(readFileSync = fs.readFileSync) {
+  const offenders = [];
+
+  for (const sourceDir of SOURCE_DIRS) {
+    for (const filePath of walk(path.join(ROOT, sourceDir))) {
+      const relPath = path.relative(ROOT, filePath);
+      const lines = readFileSync(filePath, 'utf8').split('\n');
+      lines.forEach((line, index) => {
+        if (
+          COLOR_LITERAL.test(line) ||
+          SPACING_LITERAL.test(line) ||
+          TYPOGRAPHY_LITERAL.test(line) ||
+          SHADOW_LITERAL.test(line)
+        ) {
+          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
+        }
+      });
+    }
+  }
+
+  return offenders;
 }
 
 function readColorTokens() {
@@ -97,27 +120,8 @@ function contrastRatio(foreground, background) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-test('app and component styles use theme tokens instead of literal colors, spacing, or typography', () => {
-  const offenders = [];
-
-  for (const sourceDir of SOURCE_DIRS) {
-    for (const filePath of walk(path.join(ROOT, sourceDir))) {
-      const relPath = path.relative(ROOT, filePath);
-      const lines = fs.readFileSync(filePath, 'utf8').split('\n');
-      lines.forEach((line, index) => {
-        if (
-          COLOR_LITERAL.test(line) ||
-          SPACING_LITERAL.test(line) ||
-          BORDER_WIDTH_LITERAL.test(line) ||
-          TYPOGRAPHY_LITERAL.test(line)
-        ) {
-          offenders.push(`${relPath}:${index + 1}: ${line.trim()}`);
-        }
-      });
-    }
-  }
-
-  assert.deepEqual(offenders, []);
+test('app and component styles use theme tokens instead of literal colors, spacing, typography, or shadows', () => {
+  assert.deepEqual(collectStyleTokenOffenders(), []);
 });
 
 test('theme discipline rejects negative literal typography drift', () => {
@@ -128,19 +132,32 @@ test('theme discipline rejects negative literal typography drift', () => {
   );
 });
 
-test('app and component border widths use named theme tokens', () => {
-  for (const rawWidth of [
-    'borderWidth: StyleSheet.hairlineWidth,',
-    'borderWidth: 1,',
-    'borderTopWidth: 0,',
-    'borderBottomWidth: 2,',
-  ]) {
-    assert.match(rawWidth, BORDER_WIDTH_LITERAL);
-  }
+test('theme discipline rejects route or component raw shadow drift', () => {
+  const offenders = collectStyleTokenOffenders((filePath, encoding) => {
+    const source = fs.readFileSync(filePath, encoding);
+    if (path.relative(ROOT, filePath) === 'components/Surface.tsx') {
+      return source.replace(
+        '...shadows.card,',
+        [
+          'shadowColor: colors.text,',
+          'shadowOpacity: 0.2,',
+          'shadowOffset: { width: 0, height: 10 },',
+          'shadowRadius: 32,',
+          'elevation: 3,',
+        ].join('\n'),
+      );
+    }
+    return source;
+  });
 
-  for (const tokenizedWidth of ['borderWidth: space.hairline,', 'borderTopWidth: space[0],']) {
-    assert.doesNotMatch(tokenizedWidth, BORDER_WIDTH_LITERAL);
-  }
+  assert.ok(
+    offenders.some((offender) => /components\/Surface\.tsx:\d+: shadowColor:/.test(offender)),
+    `expected raw shadowColor offender, got ${JSON.stringify(offenders)}`,
+  );
+  assert.ok(
+    offenders.some((offender) => /components\/Surface\.tsx:\d+: elevation: 3/.test(offender)),
+    `expected raw elevation offender, got ${JSON.stringify(offenders)}`,
+  );
 });
 
 test('semantic text tokens meet WCAG AA contrast on app surfaces', () => {

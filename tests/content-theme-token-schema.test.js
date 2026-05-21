@@ -151,6 +151,81 @@ require('./scripts/validate-content.js');
   assert.match(`${result.stdout}\n${result.stderr}`, /theme radius\.button expected 12, found 16/);
 });
 
+test('theme token schema rejects black or opacity-masked shadows', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/shadows.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace("const whisperShadowColor = '#0b1f33';", "const whisperShadowColor = 'rgba(0, 0, 0, 0.04)';")
+      .replace('shadowOpacity: 0.06,', 'shadowOpacity: 1,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.card\.shadowColor must use the navy whisper shadow #0b1f33/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.card\.shadowOpacity must be a whisper value no higher than 0\.08/,
+  );
+});
+
+test('theme token schema rejects heavy shadow geometry', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/shadows.ts')) {
+    return originalReadFileSync
+      .call(this, filePath, ...args)
+      .replace('shadowOffset: { width: 0, height: 8 },', 'shadowOffset: { width: 0, height: 23 },')
+      .replace('shadowRadius: 24,', 'shadowRadius: 52,')
+      .replace('elevation: 2,', 'elevation: 3,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.deep\.shadowOffset\.height must be between 0 and 8/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.deep\.shadowRadius must be no higher than 24/,
+  );
+  assert.match(
+    `${result.stdout}\n${result.stderr}`,
+    /theme shadows\.deep\.elevation must be no higher than 2/,
+  );
+});
+
 test('theme token schema rejects low contrast semantic text pairs', () => {
   const result = spawnSync(
     process.execPath,
