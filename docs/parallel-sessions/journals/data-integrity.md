@@ -119,6 +119,14 @@ Blocked? no - the atom is verified against both positive content gates and a tar
 Next suggested validator action: review and accept this DATA-INTEGRITY parity atom as the next DI row, then keep `npm run validate:content` and `npm run test:content` as the nearest generated-source metadata regression gates.
 
 Lane: DATA-INTEGRITY
+Host/branch: task/generated-tf-gender-goal-1779344364-2469890 -> main via PR #2226
+Task/checklist item: GENERATED-TF-GENDER-EQUALITY-GOAL-MEANS-Q389-Q390-1.
+Artifacts changed: `lib/content/derivedQuestions.ts`, `scripts/validate-content.js`, `scripts/generated-true-false-naturalness-patterns.js`, `scripts/derived-content.test.js`, `tests/content-published-question-types.test.js`, `content/question-bank.csv`, `site/questions.js`.
+Verification: `NODE_OPTIONS="--v8-pool-size=1" node --test --test-name-pattern "policy-goal|gender-equality policy goal|gender-equality policy goal prompts" scripts/derived-content.test.js tests/content-published-question-types.test.js` passed 3/3; `NODE_OPTIONS="--v8-pool-size=1" node scripts/export-question-bank.js --check` passed with 895 questions; `NODE_OPTIONS="--v8-pool-size=1" node scripts/export-site-question-bank.js --check` passed with 895 questions and 13 chapters; `git diff --check` passed; `npm run typecheck -- --pretty false` passed.
+Blocked? partial - `NODE_OPTIONS="--v8-pool-size=1" npm run validate:content` remains red on current-main blockers outside this slice, including q781/q782/q785/q786/q789/q790 generated true/false bare-phrase stems plus unrelated route/schema/CSV header gates.
+Next suggested validator action: accept PR #2226 for the q053/q389/q390 policy-goal English rewrite, then queue follow-up cleanup through `GENERATED-ID-FIXTURE-SOURCE-COUNT-DERIVATION-1` or the existing generated-output naturalness rows before treating full `validate:content` as green.
+
+Lane: DATA-INTEGRITY
 Host/branch: local/main
 Task/checklist item: Published question prompt uniqueness schema atom.
 Artifacts changed: `scripts/validate-content.js`, `scripts/content-production.test.js`, `data/additionalQuestions.ts`, `content/question-bank.csv`, `docs/parallel-sessions/journals/data-integrity.md`.
