@@ -49,7 +49,8 @@
     const copy = PLAN_COPY[kind] || PLAN_COPY.remove_ads;
     const locked = !account;
     button.dataset.purchaseLocked = locked ? 'true' : 'false';
-    button.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    button.removeAttribute('aria-disabled');
+    button.disabled = false;
     button.textContent = t(locked ? copy.locked : copy.ready);
   }
 
@@ -117,6 +118,10 @@
     } catch (error) {
       if (console && console.warn) console.warn('[purchase] intent failed', error);
       button.disabled = false;
+      if (error && error.code === 'PGRST205') {
+        status('purchase.status.backendMissing');
+        return;
+      }
       status('purchase.status.error');
     }
   }

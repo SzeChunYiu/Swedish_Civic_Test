@@ -5254,3 +5254,133 @@ html[dir='rtl'] .lang-menu {
   font-size: 14px;
   margin: 20px 0 0;
 }
+
+
+/* ------------------------------------------------------------------ LIVE FIXES: consent, purchases, and narrow screens */
+:root[data-consent-visible] .dala-buddy {
+  display: none !important;
+}
+
+.purchase__grid,
+.purchase__card,
+.purchase__btn,
+.hero__inner,
+.qcard,
+.mock-card,
+.modal__panel {
+  min-width: 0;
+}
+
+.purchase__btn {
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  white-space: normal;
+}
+
+.purchase__btn[data-purchase-locked='true'] {
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  body {
+    overflow-x: clip;
+  }
+  .topbar__inner {
+    padding-inline: 10px;
+  }
+  .brand {
+    min-width: 0;
+  }
+  .brand__wordmark {
+    max-width: min(52vw, 180px);
+    height: auto;
+  }
+  .topbar__tools {
+    gap: 6px;
+  }
+  .icon-btn,
+  .btn--sm {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .signin-trigger {
+    padding-inline: 10px;
+  }
+  .signin-trigger span:not([aria-hidden]) {
+    display: none;
+  }
+  .hero__inner {
+    padding: 96px 18px 72px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 13vw, 48px);
+    overflow-wrap: anywhere;
+  }
+  .hero p.lede,
+  p.deck,
+  .purchase__lede {
+    font-size: 16.5px;
+  }
+  section.band {
+    padding: 72px 18px;
+  }
+  .hero__ctas,
+  .consent__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .hero__ctas .btn,
+  .consent__actions .btn,
+  .mock-actions .btn {
+    justify-content: center;
+    width: 100%;
+  }
+  .qcard {
+    padding: 28px 18px 22px;
+  }
+  .qcard__q {
+    font-size: 22px;
+  }
+  .qopt {
+    align-items: flex-start;
+  }
+  .qcard__meta {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .qcard__meta button {
+    min-height: 44px;
+  }
+  .purchase__grid {
+    grid-template-columns: 1fr !important;
+  }
+  .purchase__card {
+    padding: 24px 18px;
+  }
+  .consent {
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    padding: 16px;
+  }
+  .consent__inner {
+    gap: 14px;
+  }
+  .consent__copy {
+    font-size: 13.5px;
+  }
+  .dala-buddy {
+    right: 10px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  }
+  #dala-figure,
+  #dala-figure .buddy-img {
+    width: 84px !important;
+    height: 84px !important;
+  }
+  .dala-bubble {
+    max-width: min(230px, calc(100vw - 110px));
+  }
+}
