@@ -1296,6 +1296,33 @@ test('correct-display-position selector runs the P0 answer shuffle acceptance sc
   }
 });
 
+test('xp selector runs only the focused XP rules parity script', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-xp-routing-'));
+  const npmLog = path.join(tmpDir, 'npm.log');
+  const env = {
+    ...process.env,
+    TEST_DISPATCH_CAPTURE: '1',
+    TEST_DISPATCH_LOG: npmLog,
+    TEST_DISPATCH_NPM: createFakeNpm(tmpDir),
+  };
+
+  try {
+    const selectedResult = runDispatcher(['--', 'xp'], env);
+    assert.equal(selectedResult.status, 0, selectedResult.stderr || selectedResult.stdout);
+    assert.equal(fs.readFileSync(npmLog, 'utf8'), 'run test:xp-rules\n');
+
+    const pkg = readPackageJson();
+    const script = pkg.scripts['test:xp-rules'];
+    assert.match(script, /tests\/content-xp-rules-parity\.test\.js/);
+    assert.match(script, /tests\/content-test-script-routing\.test\.js/);
+    assert.match(script, /scripts\/learning\.test\.js/);
+    assert.match(script, /XP\|xp\|calculateAnswerXp\|calculateQuizCompletionXp\|calculateLevel/);
+    assert.doesNotMatch(script, /npm run test:content|npm run test:all|npm test/);
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
 test('package npm test selector enters the dispatcher before running suites', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'test-dispatch-package-routing-'));
   const npmLog = path.join(tmpDir, 'npm.log');
@@ -1459,6 +1486,7 @@ test('unsupported npm test selectors fail before running any suite', () => {
       /correct-display-position -> npm run test:correct-display-position/,
     );
     assert.match(result.stderr, /monetization -> npm run test:monetization/);
+    assert.match(result.stderr, /xp -> npm run test:xp-rules/);
     assert.equal(fs.existsSync(npmLog), false);
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
