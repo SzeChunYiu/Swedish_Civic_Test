@@ -27,6 +27,9 @@ const swedishEbookQuizLoanwordPatterns = [
   phrasePattern('quiz', 'pass'),
   phrasePattern('quiz', 'et'),
 ];
+const staticEbookCivicTermGuardChapters = ['2', '4', '6'];
+const staticEbookBareCivicTermPattern =
+  /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
 const swedishEbookMockExamUnnaturalPatterns = [/provexempel/i];
 const unsupportedEbookOutcomeClaimPatterns = [
   /Most people who pass this way/i,
@@ -223,6 +226,14 @@ function assertNoSwedishEbookQuizLoanwords(value) {
   for (const pattern of swedishEbookQuizLoanwordPatterns) {
     assert.doesNotMatch(value, pattern);
   }
+}
+
+function assertNoBareStaticEbookCivicTerms(value, label) {
+  const offenders = Array.from(
+    value.matchAll(staticEbookBareCivicTermPattern),
+    (match) => match[2],
+  );
+  assert.deepEqual(offenders, [], `${label} should localize kommun/region civic terms`);
 }
 
 function assertNoSwedishEbookMockExamUnnaturalness(value) {
@@ -720,6 +731,20 @@ test('static ebook Swedish study briefs source factual bullets and editorial pra
   assert.equal(dataSourceMetadata(governmentPoint), 'inline');
   assert.deepEqual(dataSourceKeys(practiceHint), ['editorialCommentary']);
   assert.equal(dataSourceMetadata(practiceHint), 'inline');
+});
+
+test('static ebook extra-locale kommun and region civic terms use localized glossary words', () => {
+  const harness = createEbookHarness();
+  const extraLanguages = getStaticSiteLanguages().filter((lang) => !['en', 'sv'].includes(lang));
+
+  assert.ok(extraLanguages.length > 0, 'static ebook should expose extra reader languages');
+
+  for (const chapterId of staticEbookCivicTermGuardChapters) {
+    for (const lang of extraLanguages) {
+      const html = renderChapter(harness, lang, chapterId);
+      assertNoBareStaticEbookCivicTerms(html, `${lang} chapter ${chapterId}`);
+    }
+  }
 });
 
 test('static ebook source metadata keeps Vikings prose off governmentNato and source counts explicit', () => {

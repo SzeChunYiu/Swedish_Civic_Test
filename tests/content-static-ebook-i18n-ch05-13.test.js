@@ -7,6 +7,7 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 const targetChapters = ['5', '6', '7', '8', '9', '10', '11', '12', '13'];
 const extraLanguages = ['zh-Hans', 'zh-Hant', 'ar', 'ckb', 'fa', 'pl', 'so', 'ti', 'tr', 'uk'];
+const bareCivicTermPattern = /(^|[^\p{L}\p{N}_-])(region|kommun)(?=$|[^\p{L}\p{N}_-])/giu;
 const englishFallbackSnippets = [
   'Equality and the modern household.',
   'Society, school, and healthcare.',
@@ -79,6 +80,11 @@ function renderChapter(harness, lang, chapterId) {
   return harness.reader.innerHTML;
 }
 
+function assertNoBareCivicTerms(html, label) {
+  const offenders = Array.from(html.matchAll(bareCivicTermPattern), (match) => match[2]);
+  assert.deepEqual(offenders, [], `${label} should localize kommun/region civic terms`);
+}
+
 test('static ebook chapters 5-13 do not fall back to English for non-English reader languages', () => {
   const harness = createEbookHarness();
 
@@ -109,5 +115,14 @@ test('static ebook chapters 5-13 do not fall back to English for non-English rea
         );
       }
     }
+  }
+});
+
+test('static ebook chapter 6 localizes kommun and region civic terms for extra languages', () => {
+  const harness = createEbookHarness();
+
+  for (const lang of extraLanguages) {
+    const html = renderChapter(harness, lang, '6');
+    assertNoBareCivicTerms(html, `${lang} chapter 6`);
   }
 });
