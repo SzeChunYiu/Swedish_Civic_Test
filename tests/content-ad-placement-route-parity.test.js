@@ -150,7 +150,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
 });
 
-test('AdBanner testStatus copy stays platform-neutral for native and web previews', () => {
+test('AdBanner testStatus copy stays platform-neutral for native and web test placements', () => {
   const webBannerSource = fs.readFileSync(
     path.join(repoRoot, 'components/monetization/AdBanner.tsx'),
     'utf8',
@@ -161,8 +161,8 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
 
-  assert.match(adCopySource, /testStatus: 'AdMob test unit active - preview'/);
-  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - förhandsvisning'/);
+  assert.match(adCopySource, /testStatus: 'AdMob test unit active - test placement'/);
+  assert.match(adCopySource, /testStatus: 'AdMob-testannons aktiv - testplacering'/);
   assert.doesNotMatch(adCopySource, /web preview|webbförhandsvisning/);
   assert.match(
     webBannerSource,
@@ -175,8 +175,9 @@ test('AdBanner testStatus copy stays platform-neutral for native and web preview
   );
   assert.match(
     nativeBannerSource,
-    /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, adStatusLabel\)\}/,
+    /const accessibilityLabel = copy\.accessibilityLabel\(placementLabel, adStatusLabel\);/,
   );
+  assert.match(nativeBannerSource, /accessibilityLabel=\{accessibilityLabel\}/);
   assert.doesNotMatch(
     nativeBannerSource,
     /accessibilityLabel=\{copy\.accessibilityLabel\(placementLabel, copy\.liveStatus\)\}/,
