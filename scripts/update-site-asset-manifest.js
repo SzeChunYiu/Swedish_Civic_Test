@@ -40,11 +40,28 @@ function listSiteAssetFiles(siteDir, options = {}) {
 }
 
 function isExternalReference(value) {
-  return /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(value);
+  return /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(value.trim());
 }
 
 function normalizeAssetReference(value) {
-  return value.replace(/[?#].*$/, '').replace(/^\.?\//, '');
+  return value
+    .trim()
+    .replace(/[?#].*$/, '')
+    .replace(/^\.?\//, '');
+}
+
+function addLocalReference(references, value) {
+  const reference = value.trim();
+  if (!reference || isExternalReference(reference)) return;
+  references.push(normalizeAssetReference(reference));
+}
+
+function listSrcSetReferences(value) {
+  return value
+    .replace(/\bdata:[^\s]+(?:\s+[-+]?(?:\d*\.)?\d+[wx])?/gi, '')
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter(Boolean);
 }
 
 function listIndexAssetReferences(siteDir) {
@@ -52,12 +69,17 @@ function listIndexAssetReferences(siteDir) {
   if (!fs.existsSync(indexPath)) return [];
 
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  const references = Array.from(
-    indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/g),
-    (match) => normalizeAssetReference(match[2]),
-  )
-    .filter(Boolean)
-    .filter((referencePath) => !isExternalReference(referencePath));
+  const references = [];
+
+  for (const match of indexHtml.matchAll(/\b(?:src|href|poster)\s*=\s*(["'])(.*?)\1/gi)) {
+    addLocalReference(references, match[2]);
+  }
+
+  for (const match of indexHtml.matchAll(/\b(?:srcset|imagesrcset)\s*=\s*(["'])(.*?)\1/gi)) {
+    for (const reference of listSrcSetReferences(match[2])) {
+      addLocalReference(references, reference);
+    }
+  }
 
   return [...new Set(references)].sort((a, b) => a.localeCompare(b));
 }
