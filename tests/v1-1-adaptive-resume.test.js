@@ -159,6 +159,33 @@ test('pickAdaptiveSession: respects chapter filter', () => {
   assert.deepEqual(picked.sort(), ['a', 'c']);
 });
 
+test('pickAdaptiveSession: malformed runtime sizes fall back to a bounded default', () => {
+  const { explainAdaptivePick, pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
+  const items = Array.from({ length: 12 }, (_, index) => ({
+    id: `q${String(index + 1).padStart(2, '0')}`,
+    difficulty: 'medium',
+    chapterId: index < 4 ? 'c1' : 'c2',
+  }));
+  const baseInput = {
+    progress: progressFromAnswers([]),
+    bank: items,
+    now: new Date('2026-05-19T12:00:00.000Z'),
+  };
+
+  for (const size of [NaN, Infinity, -1, 2.5, '2']) {
+    const picked = pickAdaptiveSession({ ...baseInput, size });
+    const counts = explainAdaptivePick({ ...baseInput, size });
+
+    assert.equal(picked.length, 10, `malformed size ${String(size)} should use default size`);
+    assert.equal(counts.unseen, 10);
+    assert.equal(counts['recently-wrong'] + counts.mastered + counts.stale, 0);
+  }
+
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 2 }).length, 2);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: 99 }).length, 12);
+  assert.equal(pickAdaptiveSession({ ...baseInput, size: Infinity, chapterId: 'c1' }).length, 4);
+});
+
 test('pickAdaptiveSession: high accuracy biases toward hard questions', () => {
   const { pickAdaptiveSession } = loadTs('lib/learning/adaptivePractice.ts');
   const bankMixed = [
