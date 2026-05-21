@@ -8,6 +8,14 @@ const repoRoot = path.resolve(__dirname, '..');
 const defaultSiteDir = path.join(repoRoot, 'site');
 const defaultManifestPath = path.join(defaultSiteDir, 'asset-manifest.json');
 const manifestFileName = 'asset-manifest.json';
+const scalarAssetReferenceAttributes = new Set(['href', 'poster', 'src']);
+const srcsetAssetReferenceAttributes = new Set(['imagesrcset', 'srcset']);
+const htmlAttributePattern = /\b([a-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/gi;
+const htmlLinkTagPattern = /<link\b[^>]*>/gi;
+const cssImportReferencePattern =
+  /@import\s+(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)|"([^"]*)"|'([^']*)')/gi;
+const cssUrlReferencePattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^'")]*?))\s*\)/gi;
+const maxStylesheetImportDepth = 16;
 
 function normalizeRelativePath(filePath) {
   return filePath.split(path.sep).join('/');
@@ -40,11 +48,192 @@ function listSiteAssetFiles(siteDir, options = {}) {
 }
 
 function isExternalReference(value) {
-  return /^(?:https?:|data:|mailto:|tel:|#|javascript:)/i.test(value);
+  return /^(?:https?:|data:|mailto:|tel:|#|javascript:|\/\/)/i.test(value);
 }
 
 function normalizeAssetReference(value) {
-  return value.replace(/[?#].*$/, '').replace(/^\.?\//, '');
+  return value.trim().replace(/[?#].*$/, '').replace(/^\.?\//, '');
+}
+
+function normalizeLocalAssetReference(value, basePath = '') {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  if (!trimmed || /^var\(/i.test(trimmed) || isExternalReference(trimmed)) return null;
+
+  const isRootRelative = trimmed.startsWith('/');
+  const normalized = normalizeAssetReference(trimmed);
+  if (!normalized) return null;
+
+  if (!basePath || isRootRelative) return normalized;
+  return normalizeRelativePath(path.posix.normalize(path.posix.join(basePath, normalized))).replace(
+    /^\.\//,
+    '',
+  );
+}
+
+function parseSrcsetAssetCandidates(value) {
+  const candidates = [];
+  let index = 0;
+
+  while (index < value.length) {
+    while (index < value.length && /[\s,]/.test(value[index])) index += 1;
+    const start = index;
+
+    while (index < value.length) {
+      const char = value[index];
+      const currentUrl = value.slice(start, index).toLowerCase();
+      if (/\s/.test(char)) break;
+      if (char === ',' && !currentUrl.startsWith('data:')) break;
+      index += 1;
+    }
+
+    const candidate = value.slice(start, index).trim();
+    if (candidate) candidates.push(candidate);
+
+    while (index < value.length && value[index] !== ',') index += 1;
+    if (value[index] === ',') index += 1;
+  }
+
+  return candidates;
+}
+
+function parseHtmlAttributes(html) {
+  return Array.from(html.matchAll(htmlAttributePattern), (match) => ({
+    name: match[1].toLowerCase(),
+    value: match[2] ?? match[3] ?? match[4] ?? '',
+  }));
+}
+
+function parseCssUrlAssetCandidates(cssText) {
+  return Array.from(cssText.matchAll(cssUrlReferencePattern), (match) =>
+    (match[1] ?? match[2] ?? match[3] ?? '').trim(),
+  ).filter(Boolean);
+}
+
+function parseCssImportAssetCandidates(cssText) {
+  return Array.from(cssText.matchAll(cssImportReferencePattern), (match) =>
+    (match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? '').trim(),
+  ).filter(Boolean);
+}
+
+function extractLinkedStylesheetReferences(indexHtml) {
+  const references = [];
+
+  for (const match of indexHtml.matchAll(htmlLinkTagPattern)) {
+    const attributes = new Map(
+      parseHtmlAttributes(match[0]).map((attribute) => [attribute.name, attribute.value]),
+    );
+    const relTokens = (attributes.get('rel') || '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (!relTokens.includes('stylesheet')) continue;
+
+    const reference = normalizeLocalAssetReference(attributes.get('href'));
+    if (reference) references.push(reference);
+  }
+
+  return [...new Set(references)];
+}
+
+function isPathInsideDirectory(absolutePath, directory) {
+  const relativePath = path.relative(directory, absolutePath);
+  return (
+    relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath))
+  );
+}
+
+function readStylesheetAssetReferences(siteDir, stylesheetPath, options = {}) {
+  const references = [];
+  const visitedStylesheets = options.visitedStylesheets || new Set();
+  const depth = options.depth || 0;
+
+  if (depth > maxStylesheetImportDepth) {
+    throw new Error(
+      `CSS import depth exceeded while scanning ${stylesheetPath}; maximum depth is ${maxStylesheetImportDepth}`,
+    );
+  }
+
+  if (visitedStylesheets.has(stylesheetPath)) return references;
+  visitedStylesheets.add(stylesheetPath);
+
+  const absolutePath = path.resolve(siteDir, stylesheetPath);
+  if (!isPathInsideDirectory(absolutePath, siteDir)) return references;
+  if (!fs.existsSync(absolutePath) || !fs.statSync(absolutePath).isFile()) return references;
+
+  const cssText = fs.readFileSync(absolutePath, 'utf8');
+  const stylesheetBasePath = path.posix.dirname(stylesheetPath);
+  const basePath = stylesheetBasePath === '.' ? '' : stylesheetBasePath;
+
+  for (const candidate of parseCssImportAssetCandidates(cssText)) {
+    const reference = normalizeLocalAssetReference(candidate, basePath);
+    if (!reference) continue;
+
+    references.push(reference);
+    references.push(
+      ...readStylesheetAssetReferences(siteDir, reference, {
+        visitedStylesheets,
+        depth: depth + 1,
+      }),
+    );
+  }
+
+  for (const candidate of parseCssUrlAssetCandidates(cssText)) {
+    const reference = normalizeLocalAssetReference(candidate, basePath);
+    if (reference) references.push(reference);
+  }
+
+  return references;
+}
+
+function extractLinkedStylesheetAssetReferences(indexHtml, siteDir) {
+  const references = [];
+  const visitedStylesheets = new Set();
+
+  for (const stylesheetPath of extractLinkedStylesheetReferences(indexHtml)) {
+    references.push(
+      ...readStylesheetAssetReferences(siteDir, stylesheetPath, { visitedStylesheets }),
+    );
+  }
+
+  return references;
+}
+
+function extractLocalAssetReferences(indexHtml, options = {}) {
+  const siteDir = path.resolve(options.siteDir || defaultSiteDir);
+  const references = [];
+
+  for (const { name: attributeName, value: attributeValue } of parseHtmlAttributes(indexHtml)) {
+    if (attributeName === 'style') {
+      for (const candidate of parseCssUrlAssetCandidates(attributeValue)) {
+        const reference = normalizeLocalAssetReference(candidate);
+        if (reference) references.push(reference);
+      }
+      continue;
+    }
+
+    if (scalarAssetReferenceAttributes.has(attributeName)) {
+      const reference = normalizeLocalAssetReference(attributeValue);
+      if (reference) references.push(reference);
+      continue;
+    }
+
+    if (srcsetAssetReferenceAttributes.has(attributeName)) {
+      for (const candidate of parseSrcsetAssetCandidates(attributeValue)) {
+        const reference = normalizeLocalAssetReference(candidate);
+        if (reference) references.push(reference);
+      }
+    }
+  }
+
+  references.push(...extractLinkedStylesheetAssetReferences(indexHtml, siteDir));
+
+  return [...new Set(references)];
+}
+
+function findAssetReferencesMissingFromManifest(indexHtml, manifest, options = {}) {
+  const manifestAssets = new Set(Object.keys(manifest.assets || {}));
+  return extractLocalAssetReferences(indexHtml, options).filter(
+    (assetPath) => !manifestAssets.has(assetPath),
+  );
 }
 
 function listIndexAssetReferences(siteDir) {
@@ -52,14 +241,9 @@ function listIndexAssetReferences(siteDir) {
   if (!fs.existsSync(indexPath)) return [];
 
   const indexHtml = fs.readFileSync(indexPath, 'utf8');
-  const references = Array.from(
-    indexHtml.matchAll(/\b(?:src|href)\s*=\s*(["'])(.*?)\1/g),
-    (match) => normalizeAssetReference(match[2]),
-  )
-    .filter(Boolean)
-    .filter((referencePath) => !isExternalReference(referencePath));
-
-  return [...new Set(references)].sort((a, b) => a.localeCompare(b));
+  return extractLocalAssetReferences(indexHtml, { siteDir }).sort((a, b) =>
+    a.localeCompare(b),
+  );
 }
 
 function hashFile(absolutePath) {
@@ -135,14 +319,14 @@ function findManifestMismatches(expected, actual) {
 }
 
 function findReferencedAssetMismatches(siteDir, manifest) {
-  const manifestAssets = manifest.assets || {};
+  const indexPath = path.join(siteDir, 'index.html');
+  if (!fs.existsSync(indexPath)) return [];
 
-  return listIndexAssetReferences(siteDir)
-    .filter((referencePath) => !manifestAssets[referencePath])
-    .map(
-      (referencePath) =>
-        `${referencePath}: referenced by index.html but missing from committed manifest`,
-    );
+  const indexHtml = fs.readFileSync(indexPath, 'utf8');
+  return findAssetReferencesMissingFromManifest(indexHtml, manifest, { siteDir }).map(
+    (referencePath) =>
+      `${referencePath}: referenced by index.html or linked stylesheets but missing from committed manifest`,
+  );
 }
 
 function checkAssetManifest(options = {}) {
@@ -221,9 +405,14 @@ if (require.main === module) {
 module.exports = {
   buildAssetManifest,
   checkAssetManifest,
+  extractLocalAssetReferences,
+  findAssetReferencesMissingFromManifest,
   findManifestMismatches,
   findReferencedAssetMismatches,
   formatAssetManifest,
+  parseCssImportAssetCandidates,
+  parseCssUrlAssetCandidates,
+  readStylesheetAssetReferences,
   listIndexAssetReferences,
   listSiteAssetFiles,
   writeAssetManifest,
