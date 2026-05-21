@@ -183,7 +183,7 @@ export const chapters: Chapter[] = [
       tr: 'Grundlagarna (anayasal temel yasalar), yargı sistemi, hukukun üstünlüğü ve allemansrätten (doğaya serbest erişim hakkı).',
       uk: 'Grundlagarna (основні закони), система правосуддя, верховенство права та allemansrätten (право вільного доступу до природи).',
     },
-    questionCount: 70,
+    questionCount: 45,
   },
   {
     id: 'ch06',
@@ -258,7 +258,7 @@ export const chapters: Chapter[] = [
       tr: 'İnsan hakları, toplumsal cinsiyet eşitliği, çocuk hakları, azınlık hakları ve ayrımcılık.',
       uk: 'Права людини, гендерна рівність, права дітей, права меншин та дискримінація.',
     },
-    questionCount: 80,
+    questionCount: 55,
   },
   {
     id: 'ch08',

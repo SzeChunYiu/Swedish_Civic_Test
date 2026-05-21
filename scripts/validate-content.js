@@ -164,12 +164,11 @@ const EXPECTED_UHR_SOURCE = {
 const EXPECTED_UHR_EDUCATION_MATERIAL_URL =
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/';
 const EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE = '2026-06-06';
-const EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE = '2026-08-15';
 const EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE = '2026-08-17';
 const EXPECTED_CITIZENSHIP_TIMELINE_SOURCE_URLS = {
   rulesEffectiveDate:
     'https://www.migrationsverket.se/nyheter/news-archive/2026-05-06-new-rules-for-swedish-citizenship-from-6-june-2026.html',
-  civicKnowledgeTestFirstSitting: 'https://www.uhr.se/medborgarskapsprovet/',
+  civicKnowledgeTestStart: 'https://www.uhr.se/medborgarskapsprovet/',
   civicKnowledgeTestDeadline:
     'https://www.regeringen.se/regeringsuppdrag/2026/02/andring-av-uppdraget-till-goteborgs-universitet-och-stockholms-universitet-att-bista-universitets--och-hogskoleradet-med-utvecklingen-av-ett-medborgarskapsprov/',
 };
@@ -401,8 +400,6 @@ const QUESTION_GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /\bmeans it gives\b/i,
   /\binnebär att den ger\b/i,
   /\bfrom (?:13|15) years\b/i,
-  /^En anledning är\b/i,
-  /^One reason is\b/i,
   /^One reason is to (?:prevent war|decide Swedish municipal taxes)\b/i,
   /^En anledning är att (?:förhindra krig|bestämma svenska kommunalskatter)\b/i,
   /^En anledning är(?: att)? (?:skydda anställdas rättigheter|bestämma vem som blir statschef|bättre jordbruksmetoder|EU-medlemskapet)\b/i,
@@ -469,7 +466,6 @@ const QUESTION_LUCIA_ROLE_ENGLISH_NATURALNESS_PATTERNS = [/\b(?:the\s+)?person w
 const QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS = [
   /\bThe EU is political and economic cooperation between European countries\b/i,
 ];
-const QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS = [/\bumebor\b/i];
 const QUESTION_TRUE_FALSE_STEM_PREFIX_PATTERNS = [
   /^\s*Sant eller falskt\s*:/i,
   /^\s*True or false\s*:/i,
@@ -532,7 +528,6 @@ const EXPECTED_SPACED_REPETITION_SCHEDULE = [1, 3, 7, 15, 30];
 const EXPECTED_STREAK_RULE_COUNT = 6;
 const EXPECTED_XP_RULE_COUNT = 11;
 const EXPECTED_MASTERY_RULE_COUNT = 7;
-const EXPECTED_READINESS_ADAPTER_RULE_COUNT = 6;
 const EXPECTED_SUPPORTED_LANGUAGES = ['sv', 'en'];
 const EXPECTED_LANGUAGE_LABELS = {
   sv: 'Swedish',
@@ -1263,8 +1258,8 @@ const EXPECTED_ROUTE_AD_PLACEMENTS = [
   },
 ];
 const EXPECTED_NO_AD_ROUTE_FILES = ['app/(tabs)/exam.tsx'];
-const EXPECTED_REMOVE_ADS_HOOK_CASES = 8;
-const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 18;
+const EXPECTED_REMOVE_ADS_HOOK_CASES = 7;
+const EXPECTED_REMOVE_ADS_PURCHASE_RUNTIME_CASES = 15;
 const EXPECTED_REMOVE_ADS_SWEDISH_EXAM_COPY_CASES = 7;
 const EXPECTED_MOBILE_ADS_CONSENT_HOOK_CASES = 5;
 const EXPECTED_EXAM_ROUTE_HEADERS = [
@@ -3394,10 +3389,10 @@ const EXPECTED_CONTENT_INTERFACES = [
       { name: 'id', type: 'string', optional: false },
       { name: 'nameSv', type: 'string', optional: false },
       { name: 'nameEn', type: 'string', optional: false },
-      { name: 'nameText', type: 'LocalizedContentTextOverrides', optional: true },
+      { name: 'nameText', type: 'LocalizedContentText', optional: true },
       { name: 'descriptionSv', type: 'string', optional: false },
       { name: 'descriptionEn', type: 'string', optional: false },
-      { name: 'descriptionText', type: 'LocalizedContentTextOverrides', optional: true },
+      { name: 'descriptionText', type: 'LocalizedContentText', optional: true },
       { name: 'questionCount', type: 'number', optional: false },
     ],
   },
@@ -3788,11 +3783,9 @@ const EXPECTED_REWARDED_AD_INTERFACES = [
   {
     name: 'RewardedExtraExamAdOptions',
     fields: [
-      { name: 'confirmReward', type: 'RewardedExtraExamRewardConfirmation', optional: true },
       { name: 'entitlements', type: "Pick<PremiumEntitlements, 'adsDisabled'>", optional: true },
       { name: 'requestNonPersonalizedAdsOnly', type: 'boolean', optional: true },
       { name: 'timeoutMs', type: 'number', optional: true },
-      { name: 'webConsentDecision', type: 'RewardedExtraExamWebConsentDecision', optional: true },
     ],
   },
 ];
@@ -4507,7 +4500,6 @@ function validateCitizenshipTimeline() {
   let countdownCopyParity = true;
   const sourceUrls = examDateModule.CITIZENSHIP_TIMELINE_SOURCE_URLS;
   const rulesDate = dateIsoDay(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE);
-  const firstSittingDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE);
   const testDeadlineDate = dateIsoDay(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE);
 
   function rejectDate(message) {
@@ -4525,11 +4517,6 @@ function validateCitizenshipTimeline() {
       `citizenship rules effective date must be ${EXPECTED_CITIZENSHIP_RULES_EFFECTIVE_DATE}`,
     );
   }
-  if (firstSittingDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE) {
-    rejectDate(
-      `civic knowledge first sitting date must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE}`,
-    );
-  }
   if (testDeadlineDate !== EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE) {
     rejectDate(
       `civic knowledge test deadline must be ${EXPECTED_CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE}`,
@@ -4537,12 +4524,9 @@ function validateCitizenshipTimeline() {
   }
   if (
     !(examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE instanceof Date) ||
-    !(examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE instanceof Date) ||
     !(examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE instanceof Date) ||
-    examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime() <=
-      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime() ||
     examDateModule.CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE.getTime() <=
-      examDateModule.CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE.getTime()
+      examDateModule.CITIZENSHIP_RULES_EFFECTIVE_DATE.getTime()
   ) {
     rejectDate('civic knowledge test deadline must stay after the citizenship rules date');
   }
@@ -4571,14 +4555,11 @@ function validateCitizenshipTimeline() {
 
   [
     'CITIZENSHIP_RULES_EFFECTIVE_DATE',
-    'CIVIC_KNOWLEDGE_TEST_FIRST_SITTING_DATE',
-    'daysUntil',
+    'CIVIC_KNOWLEDGE_TEST_DEADLINE_DATE',
     'Nya medborgarskapsregler gäller från',
-    'UHR har bekräftat att den första provomgången i samhällskunskap genomförs',
-    'tills nya reglerna',
+    'Samhällskunskapsprovet väntas starta i augusti 2026',
     'New citizenship rules apply from',
-    'UHR has confirmed that the first civic-knowledge sitting will be held on',
-    'until new rules',
+    'The civic-knowledge test is expected in August 2026',
   ].forEach((requiredText) => {
     if (!countdownBannerSource.includes(requiredText)) {
       rejectCountdown(`CountdownBanner missing timeline copy or constant: ${requiredText}`);
@@ -4586,12 +4567,6 @@ function validateCitizenshipTimeline() {
   });
 
   [
-    /Samhällskunskapsprovet väntas starta i augusti 2026/,
-    /The civic-knowledge test is expected in August 2026/,
-    /Regeringens tidsgräns för första steget/,
-    /government deadline for the first step/,
-    /sourceKey: 'civicKnowledgeTestDeadline'/,
-    /label: 'Regeringen'/,
     /Det nya samhällskunskapstestet träder i kraft/,
     /The new civic knowledge test takes effect/,
     /until new exam/,
@@ -4605,7 +4580,6 @@ function validateCitizenshipTimeline() {
   return {
     countdownCopyParity,
     dateParity,
-    firstSittingDate,
     rulesDate,
     sourceUrlsValidated,
     testDeadlineDate,
@@ -4668,16 +4642,6 @@ function findQuestionEuCooperationEnglishNaturalnessIssue(question) {
   ].join(' ');
 
   return QUESTION_EU_COOPERATION_ENGLISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
-}
-
-function findQuestionUmeaDemonymSwedishNaturalnessIssue(question) {
-  const text = [
-    question.questionSv,
-    question.explanationSv,
-    ...(question.options || []).map((option) => option.textSv),
-  ].join(' ');
-
-  return QUESTION_UMEA_DEMONYM_SWEDISH_NATURALNESS_PATTERNS.find((pattern) => pattern.test(text));
 }
 
 function findQuestionTrueFalseStemPrefix(question) {
@@ -6904,48 +6868,6 @@ function trueFalseOptionLabelsMatchConvention(question) {
   return jsonEqual(legacyLabels, TRUE_FALSE_OPTIONS);
 }
 
-function validateChapterLocalizedTextMap(chapter, label, fieldName, svField, enField, reject) {
-  let valid = true;
-
-  function rejectMap(message) {
-    valid = false;
-    reject(message);
-  }
-
-  const localizedText = chapter[fieldName];
-  if (!isObjectRecord(localizedText)) {
-    rejectMap(`${label} ${fieldName} must be a localized text map`);
-    return false;
-  }
-
-  for (const [locale, sourceField] of [
-    ['sv', svField],
-    ['en', enField],
-  ]) {
-    const value = localizedText[locale];
-    if (!hasText(value)) {
-      rejectMap(`${label} ${fieldName}.${locale} missing localized text`);
-      continue;
-    }
-    if (!textIsTrimmedSingleSpaced(value)) {
-      rejectMap(`${label} ${fieldName}.${locale} must be trimmed and single-spaced`);
-    }
-    if (value !== chapter[sourceField]) {
-      rejectMap(`${label} ${fieldName}.${locale} must match ${sourceField}`);
-    }
-  }
-
-  Object.entries(localizedText).forEach(([locale, value]) => {
-    if (!hasText(value)) {
-      rejectMap(`${label} ${fieldName}.${locale} must be non-empty localized text`);
-    } else if (!textIsTrimmedSingleSpaced(value)) {
-      rejectMap(`${label} ${fieldName}.${locale} must be trimmed and single-spaced`);
-    }
-  });
-
-  return valid;
-}
-
 function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn) {
   const expectedId = `ch${String(index + 1).padStart(2, '0')}`;
   const label = hasText(chapter?.id) ? chapter.id : `chapter[${index}]`;
@@ -7018,10 +6940,63 @@ function validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seen
   return valid;
 }
 
+function validateChapterLocalizedTextMap(chapter, label, localizedField, svField, enField, reject) {
+  const localizedText = chapter[localizedField];
+  if (!isObjectRecord(localizedText)) {
+    reject(`${label} ${localizedField} must be a localized text map`);
+    return false;
+  }
+
+  let valid = true;
+  for (const [locale, canonicalField] of [
+    ['sv', svField],
+    ['en', enField],
+  ]) {
+    if (!hasText(localizedText[locale])) {
+      reject(`${label} ${localizedField}.${locale} must be filled`);
+      valid = false;
+      continue;
+    }
+    if (localizedText[locale] !== chapter[canonicalField]) {
+      reject(`${label} ${localizedField}.${locale} must match ${canonicalField}`);
+      valid = false;
+    }
+    if (!textIsTrimmedSingleSpaced(localizedText[locale])) {
+      reject(`${label} ${localizedField}.${locale} must be trimmed and single-spaced`);
+      valid = false;
+    }
+  }
+
+  return valid;
+}
+
 function chapterTextFieldsAreNormalized(chapter) {
   return ['id', 'nameSv', 'nameEn', 'descriptionSv', 'descriptionEn'].every((field) =>
     textIsTrimmedSingleSpaced(chapter[field]),
   );
+}
+
+function validateChapterMetadata() {
+  if (!Array.isArray(chapters)) {
+    fail('chapters export is not an array');
+    return;
+  }
+  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
+  const seenChapterIds = new Set();
+  const seenNamesSv = new Set();
+  const seenNamesEn = new Set();
+  chapters.forEach((chapter, index) => {
+    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
+      chapterSchemasValidated += 1;
+      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
+        chapterExactSchemaKeysValidated += 1;
+      }
+      if (chapterTextFieldsAreNormalized(chapter)) {
+        chapterTextFieldsNormalizedValidated += 1;
+      }
+    }
+  });
+  chapterLocalizedTextParityValidated = chapterLocalizedTextMapsValidated === chapters.length * 2;
 }
 
 function validateQuestionSchema(question, index) {
@@ -7169,7 +7144,6 @@ function validateQuestionSchema(question, index) {
 const chapters = loadTs('data/chapters.ts', 'chapters');
 const questionModule = loadTs('data/questions.ts');
 const baseQuestions = questionModule.baseQuestions;
-const localizedAdditionalQuestions = questionModule.localizedAdditionalQuestions;
 const questions = questionModule.questions;
 const sourceQuestions = questionModule.sourceQuestions;
 const generatedPublishedQuestions = questionModule.generatedPublishedQuestions;
@@ -7222,8 +7196,6 @@ const examDateModule = loadTs('lib/learning/examDate.ts');
 const spacedRepetitionModule = loadTs('lib/learning/spacedRepetition.ts');
 const spacedRepetitionSchedule = spacedRepetitionModule.spacedRepetitionSchedule;
 const getNextReviewAt = spacedRepetitionModule.getNextReviewAt;
-const createNewCard = spacedRepetitionModule.createNewCard;
-const gradeCard = spacedRepetitionModule.gradeCard;
 const streakModule = loadTs('lib/learning/streaks.ts');
 const calculateStreak = streakModule.calculateStreak;
 const xpModule = loadTs('lib/learning/xp.ts');
@@ -7234,8 +7206,6 @@ const masteryModule = loadTs('lib/learning/mastery.ts');
 const calculateMastery = masteryModule.calculateMastery;
 const calculateChapterMastery = masteryModule.calculateChapterMastery;
 const findWeakChapterIds = masteryModule.findWeakChapterIds;
-const readinessModule = loadTs('lib/learning/readiness.ts');
-const computeReadinessFromQuestionProgress = readinessModule.computeReadinessFromQuestionProgress;
 const themeModule = loadTs('lib/theme/index.ts');
 const colors = themeModule.colors;
 const motion = themeModule.motion;
@@ -7271,6 +7241,7 @@ let chapterSchemasValidated = 0;
 let chapterTextFieldsNormalizedValidated = 0;
 let chapterExactSchemaKeysValidated = 0;
 let chapterLocalizedTextMapsValidated = 0;
+let chapterLocalizedTextParityValidated = false;
 let validationScriptSyntaxChecksValidated = 0;
 let appConfigPluginsValidated = 0;
 let appConfigSchemaValidated = false;
@@ -7456,7 +7427,6 @@ let themeTokenSchemaValidated = false;
 let badgesValidated = 0;
 let badgeMilestoneParityValidated = false;
 let citizenshipRulesEffectiveDateValidated = '';
-let civicKnowledgeTestFirstSittingDateValidated = '';
 let civicKnowledgeTestDeadlineDateValidated = '';
 let citizenshipTimelineSourceUrlsValidated = 0;
 let citizenshipTimelineDateParityValidated = false;
@@ -7488,16 +7458,12 @@ let speechRuntimeParityValidated = false;
 let chapterQuizSessionParityValidated = 0;
 let spacedRepetitionIntervalsValidated = 0;
 let spacedRepetitionRuntimeParityValidated = false;
-let spacedRepetitionRuntimeInputCasesValidated = 0;
-let spacedRepetitionRuntimeInputParityValidated = false;
 let streakRulesValidated = 0;
 let streakRulesParityValidated = false;
 let xpRulesValidated = 0;
 let xpRulesParityValidated = false;
 let masteryRulesValidated = 0;
 let masteryRulesParityValidated = false;
-let readinessAdapterRulesValidated = 0;
-let readinessAdapterRuntimeParityValidated = false;
 let uhrReferencesValidated = 0;
 let questionSchemasValidated = 0;
 let publishedQuestionTypesValidated = 0;
@@ -7513,7 +7479,6 @@ let questionJudgementMetaStemsValidated = 0;
 let questionGeneratedTrueFalseNaturalnessValidated = 0;
 let questionLuciaRoleEnglishNaturalnessValidated = 0;
 let questionEuCooperationEnglishNaturalnessValidated = 0;
-let questionUmeaDemonymSwedishNaturalnessValidated = 0;
 let questionFalseAnswerExplanationsValidated = 0;
 let questionPromptTextUniquenessValidated = 0;
 let questionOptionTextLabelsValidated = 0;
@@ -7645,30 +7610,9 @@ if (process.argv.includes('--focus-static-head-metadata')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-answer-feedback-parity')) {
-  validateAnswerValidationTypeSchemaParity();
-  validateAnswerFeedbackParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    publishedQuestions: Array.isArray(questions)
-      ? questions.filter((question) => question.reviewStatus === 'published').length
-      : 0,
-    answerValidationTypeUnionsValidated,
-    answerValidationTypeInterfacesValidated,
-    answerValidationTypeSchemaParityValidated,
-    answerFeedbackQuestionsValidated,
-    answerFeedbackOptionsValidated,
-    answerFeedbackRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 if (!Array.isArray(chapters)) fail('chapters export is not an array');
 if (!Array.isArray(baseQuestions)) fail('baseQuestions export is not an array');
 if (!Array.isArray(additionalQuestions)) fail('additionalQuestions export is not an array');
-if (!Array.isArray(localizedAdditionalQuestions)) {
-  fail('localizedAdditionalQuestions export is not an array');
-}
 if (!Array.isArray(glossaryTerms)) fail('glossaryTerms export is not an array');
 if (!Array.isArray(questions)) fail('questions export is not an array');
 if (!Array.isArray(sourceQuestions)) fail('sourceQuestions export is not an array');
@@ -7684,10 +7628,24 @@ if (
 ) {
   fail('strings export is not an object');
 }
+
+if (process.argv.includes('--focus-chapter-metadata')) {
+  validateChapterMetadata();
+  exitWithValidationFailures();
+  printValidationSummary({
+    chapters: Array.isArray(chapters) ? chapters.length : 0,
+    chapterSchemasValidated,
+    chapterTextFieldsNormalizedValidated,
+    chapterExactSchemaKeysValidated,
+    chapterLocalizedTextMapsValidated,
+    chapterLocalizedTextParityValidated,
+  });
+  process.exit(0);
+}
+
 {
   const timelineValidation = validateCitizenshipTimeline();
   citizenshipRulesEffectiveDateValidated = timelineValidation.rulesDate;
-  civicKnowledgeTestFirstSittingDateValidated = timelineValidation.firstSittingDate;
   civicKnowledgeTestDeadlineDateValidated = timelineValidation.testDeadlineDate;
   citizenshipTimelineSourceUrlsValidated = timelineValidation.sourceUrlsValidated;
   citizenshipTimelineDateParityValidated = timelineValidation.dateParity;
@@ -7853,9 +7811,6 @@ if (typeof calculateChapterMastery !== 'function') {
   fail('calculateChapterMastery export is not a function');
 }
 if (typeof findWeakChapterIds !== 'function') fail('findWeakChapterIds export is not a function');
-if (typeof computeReadinessFromQuestionProgress !== 'function') {
-  fail('computeReadinessFromQuestionProgress export is not a function');
-}
 if (!isObjectRecord(colors)) fail('theme colors export is not an object');
 if (!isObjectRecord(motion)) fail('theme motion export is not an object');
 if (!isObjectRecord(radius)) fail('theme radius export is not an object');
@@ -8423,18 +8378,6 @@ function validateAdPlacementRouteParity() {
   }
 }
 
-if (process.argv.includes('--focus-ad-placement-route-parity')) {
-  validateStaticValidationSyntaxGate();
-  validateAdPlacementRouteParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    adPlacementRoutesValidated,
-    noAdRoutesValidated,
-    adPlacementRouteParityValidated,
-  });
-  process.exit(0);
-}
-
 function validateReleaseMonetizationPolicyParity() {
   let valid = true;
 
@@ -8556,14 +8499,6 @@ function validateRemoveAdsEntitlementHookParity() {
       normalizedHookSource.includes('provider: createMockPurchaseProvider(),') &&
         normalizedHookSource.includes('storage: createWebPurchaseStorage(initialAdsDisabled),'),
       'web purchase runtime must preserve mock provider plus initial adsDisabled storage',
-    ],
-    [
-      normalizedHookSource.includes(
-        'provider: createNativePurchaseProvider({ platform: getNativePurchasePlatform() }),',
-      ) &&
-        normalizedHookSource.includes('storage: createSecureStorePurchaseStorage(),') &&
-        !normalizedHookSource.includes("if (Platform.OS !== 'web') return undefined;"),
-      'native Remove Ads entitlement runtime must provide a native provider and secure storage',
     ],
     [
       normalizedHookSource.includes('void getPurchaseEntitlements(purchaseRuntime)') &&
@@ -12432,7 +12367,6 @@ function validatePurchaseTypeSchemaParity() {
 
 function validateRemoveAdsPurchaseRuntimeParity() {
   let valid = true;
-  let placementCtaSource = '';
   let purchaseSource = '';
 
   function reject(message) {
@@ -12441,17 +12375,12 @@ function validateRemoveAdsPurchaseRuntimeParity() {
   }
 
   try {
-    placementCtaSource = fs.readFileSync(
-      path.join(repoRoot, 'components/monetization/RemoveAdsPlacementCta.tsx'),
-      'utf8',
-    );
     purchaseSource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/purchases.ts'), 'utf8');
   } catch (error) {
-    reject(`Remove Ads purchase runtime sources could not be read: ${error.message}`);
+    reject(`lib/monetization/purchases.ts could not be read: ${error.message}`);
     return;
   }
 
-  const normalizedPlacementCtaSource = placementCtaSource.replace(/\s+/g, ' ');
   const normalizedPurchaseSource = purchaseSource.replace(/\s+/g, ' ');
   const runtimeCases = [
     [
@@ -12545,27 +12474,6 @@ function validateRemoveAdsPurchaseRuntimeParity() {
         purchaseSource,
       ),
       'Remove Ads buy flow must persist the entitlement before finishing the native transaction',
-    ],
-    [
-      normalizedPlacementCtaSource.includes('restoreRemoveAdsPurchase') &&
-        normalizedPlacementCtaSource.includes(
-          "onPress={() => void runPurchaseAction('restore', restoreRemoveAdsPurchase)}",
-        ),
-      'RemoveAdsPlacementCta must wire restoreRemoveAdsPurchase through the shared purchase runtime',
-    ],
-    [
-      normalizedPlacementCtaSource.includes(
-        'accessibilityLabel={copy.restoreAccessibilityLabel}',
-      ) &&
-        normalizedPlacementCtaSource.includes('accessibilityHint={copy.restoreAccessibilityHint}'),
-      'RemoveAdsPlacementCta restore action must keep localized accessibility label and hint',
-    ],
-    [
-      normalizedPlacementCtaSource.includes('const purchaseActionInFlightRef = useRef(false);') &&
-        normalizedPlacementCtaSource.includes('if (purchaseActionInFlightRef.current) return;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = true;') &&
-        normalizedPlacementCtaSource.includes('purchaseActionInFlightRef.current = false;'),
-      'Remove Ads buy/restore handlers must use a ref-backed in-flight guard before awaiting store calls',
     ],
   ];
 
@@ -14427,82 +14335,6 @@ function validateSpacedRepetitionSchedule() {
   });
 
   if (runtimeParityIsValid) spacedRepetitionRuntimeParityValidated = true;
-
-  if (typeof createNewCard !== 'function' || typeof gradeCard !== 'function') return;
-
-  const invalidInputCases = [
-    {
-      label: 'non-boolean correctness',
-      actual: () => getNextReviewAt({ isCorrect: 'false', correctStreak: 3, answeredAt }),
-      expected: isoDaysAfter(answeredAt, 1),
-    },
-    {
-      label: 'non-finite correct streak',
-      actual: () =>
-        getNextReviewAt({
-          isCorrect: true,
-          correctStreak: Number.POSITIVE_INFINITY,
-          answeredAt,
-        }),
-      expected: isoDaysAfter(answeredAt, 1),
-    },
-    {
-      label: 'fractional correct streak',
-      actual: () => getNextReviewAt({ isCorrect: true, correctStreak: 1.5, answeredAt }),
-      expected: isoDaysAfter(answeredAt, 1),
-    },
-  ];
-  let runtimeInputParityIsValid = true;
-
-  invalidInputCases.forEach(({ label, actual, expected }) => {
-    try {
-      const value = actual();
-      if (value !== expected) {
-        runtimeInputParityIsValid = false;
-        fail(`getNextReviewAt ${label} returned ${value}, expected ${expected}`);
-        return;
-      }
-      spacedRepetitionRuntimeInputCasesValidated += 1;
-    } catch (error) {
-      runtimeInputParityIsValid = false;
-      fail(`getNextReviewAt ${label} threw ${error.message}`);
-    }
-  });
-
-  try {
-    const card = createNewCard('q-runtime-guard', answeredAt);
-    const invalidGradeResult = gradeCard(card, 5, answeredAt);
-    if (JSON.stringify(invalidGradeResult) !== JSON.stringify(card)) {
-      runtimeInputParityIsValid = false;
-      fail('gradeCard invalid grade must leave the card unchanged');
-    } else {
-      spacedRepetitionRuntimeInputCasesValidated += 1;
-    }
-    const invalidNowResult = gradeCard(card, 3, 'not-a-date');
-    if (JSON.stringify(invalidNowResult) !== JSON.stringify(card)) {
-      runtimeInputParityIsValid = false;
-      fail('gradeCard invalid now timestamp must leave the card unchanged');
-    } else {
-      spacedRepetitionRuntimeInputCasesValidated += 1;
-    }
-  } catch (error) {
-    runtimeInputParityIsValid = false;
-    fail(`gradeCard invalid input guard threw ${error.message}`);
-  }
-
-  if (runtimeInputParityIsValid) spacedRepetitionRuntimeInputParityValidated = true;
-}
-
-if (process.argv.includes('--focus-spaced-repetition-schema')) {
-  validateSpacedRepetitionSchedule();
-  exitWithValidationFailures();
-  printValidationSummary({
-    spacedRepetitionIntervalsValidated,
-    spacedRepetitionRuntimeParityValidated,
-    spacedRepetitionRuntimeInputCasesValidated,
-    spacedRepetitionRuntimeInputParityValidated,
-  });
-  process.exit(0);
 }
 
 function validateStreakRules() {
@@ -14753,147 +14585,6 @@ function validateMasteryRules() {
 
   if (rulesAreValid && masteryRulesValidated === EXPECTED_MASTERY_RULE_COUNT) {
     masteryRulesParityValidated = true;
-  }
-}
-
-function validateReadinessAdapterRules() {
-  if (typeof computeReadinessFromQuestionProgress !== 'function') return;
-
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  let malformedProgressResult;
-  let stringCountedMockResult;
-  let hugeCountedMockResult;
-  let runtimeIsValid = true;
-
-  try {
-    malformedProgressResult = computeReadinessFromQuestionProgress({
-      questionProgress: {
-        valid: {
-          seenCount: 1,
-          correctCount: 1,
-          wrongCount: 0,
-          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-        },
-        stringCorrect: {
-          seenCount: 1,
-          correctCount: '1',
-          wrongCount: 0,
-          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-        },
-        stringOnly: {
-          seenCount: '2',
-          correctCount: '2',
-          wrongCount: '0',
-          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-        },
-        huge: {
-          seenCount: 1_000_000_000,
-          correctCount: 1_000_000_000,
-          wrongCount: 0,
-          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-        },
-        unknown: {
-          seenCount: 1_000_000_000,
-          correctCount: 1_000_000_000,
-          wrongCount: 0,
-          lastAnsweredAt: '2026-05-18T10:00:00.000Z',
-        },
-      },
-      questions: [
-        { id: 'valid', chapterId: 'ch01' },
-        { id: 'stringCorrect', chapterId: 'ch02' },
-        { id: 'stringOnly', chapterId: 'ch03' },
-        { id: 'huge', chapterId: 'ch04' },
-        { id: 'nonFinite', chapterId: 'ch05' },
-      ],
-      chapters: [
-        { id: 'ch01', questionCount: 10 },
-        { id: 'ch02', questionCount: 10 },
-        { id: 'ch03', questionCount: 10 },
-        { id: 'ch04', questionCount: 10 },
-        { id: 'ch05', questionCount: 10 },
-      ],
-      now,
-    });
-    stringCountedMockResult = computeReadinessFromQuestionProgress({
-      questionProgress: {},
-      questions: [{ id: 'q1', chapterId: 'ch01' }],
-      chapters: [{ id: 'ch01', questionCount: 10 }],
-      mockExamSessions: [
-        {
-          sessionId: 'string-counted',
-          score: 0.8,
-          completedAt: '2026-05-19T10:00:00.000Z',
-          correctCount: '32',
-          totalCount: '40',
-        },
-      ],
-      now,
-    });
-    hugeCountedMockResult = computeReadinessFromQuestionProgress({
-      questionProgress: {},
-      questions: [{ id: 'q1', chapterId: 'ch01' }],
-      chapters: [{ id: 'ch01', questionCount: 10 }],
-      mockExamSessions: [
-        {
-          sessionId: 'huge-counted',
-          score: 0.8,
-          completedAt: '2026-05-19T10:00:00.000Z',
-          correctCount: Number.MAX_SAFE_INTEGER,
-          totalCount: Number.MAX_SAFE_INTEGER,
-        },
-      ],
-      now,
-    });
-  } catch (error) {
-    runtimeIsValid = false;
-    fail(`readiness adapter malformed counter guard threw ${error.message}`);
-  }
-
-  const closeTo = (actual, expected) =>
-    typeof actual === 'number' && Math.abs(actual - expected) < 0.000001;
-  const cases = [
-    {
-      label: 'numeric-string question counts are not coerced',
-      valid: () => closeTo(malformedProgressResult.components.accuracy, 0.8),
-    },
-    {
-      label: 'malformed question counts do not touch missing chapters',
-      valid: () => closeTo(malformedProgressResult.components.coverage, 0.6),
-    },
-    {
-      label: 'oversized question counts stay sparse after bank-size bounding',
-      valid: () => malformedProgressResult.isSparse === true,
-    },
-    {
-      label: 'numeric-string mock counts are ignored',
-      valid: () => stringCountedMockResult.isSparse === true,
-    },
-    {
-      label: 'mock score contribution survives malformed counts',
-      valid: () => closeTo(stringCountedMockResult.components.mockAverage, 0.8),
-    },
-    {
-      label: 'oversized mock counts return a finite readiness score',
-      valid: () =>
-        Number.isFinite(hugeCountedMockResult.score) &&
-        hugeCountedMockResult.components.accuracy === 0,
-    },
-  ];
-
-  if (!runtimeIsValid) return;
-
-  cases.forEach((rule) => {
-    if (!rule.valid()) {
-      runtimeIsValid = false;
-      fail(`readiness adapter rule failed: ${rule.label}`);
-      return;
-    }
-    readinessAdapterRulesValidated += 1;
-  });
-
-  if (runtimeIsValid && readinessAdapterRulesValidated === EXPECTED_READINESS_ADAPTER_RULE_COUNT) {
-    readinessAdapterRuntimeParityValidated = true;
   }
 }
 
@@ -15171,19 +14862,6 @@ function validateCriminalResponsibilityCurrentness() {
     criminalResponsibilityCurrentnessQuestionsValidated === currentnessIds.length;
 }
 
-function validateUmeaDemonymSwedishNaturalness() {
-  if (!Array.isArray(questions)) return;
-
-  questions.forEach((question, index) => {
-    const label = question?.id || `question[${index}]`;
-    if (findQuestionUmeaDemonymSwedishNaturalnessIssue(question)) {
-      fail(`${label} uses nonstandard Umeå demonym Swedish wording`);
-    } else {
-      questionUmeaDemonymSwedishNaturalnessValidated += 1;
-    }
-  });
-}
-
 if (process.argv.includes('--focus-exam-generator-schema')) {
   validateStaticValidationSyntaxGate();
   validateExamGeneratorTypeSchemaParity();
@@ -15196,41 +14874,7 @@ if (process.argv.includes('--focus-exam-generator-schema')) {
   process.exit(0);
 }
 
-if (process.argv.includes('--focus-remove-ads-hook-parity')) {
-  validateRemoveAdsEntitlementHookParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    removeAdsEntitlementHookCasesValidated,
-    removeAdsEntitlementHookParityValidated,
-  });
-  process.exit(0);
-}
-
-if (process.argv.includes('--focus-remove-ads-purchase-runtime-parity')) {
-  validatePurchaseTypeSchemaParity();
-  validateRemoveAdsPurchaseRuntimeParity();
-  exitWithValidationFailures();
-  printValidationSummary({
-    purchaseTypeUnionsValidated,
-    purchaseTypeInterfacesValidated,
-    purchaseTypeSchemaParityValidated,
-    removeAdsPurchaseRuntimeCasesValidated,
-    removeAdsPurchaseRuntimeParityValidated,
-  });
-  process.exit(0);
-}
-
 validateCriminalResponsibilityCurrentness();
-
-if (process.argv.includes('--focus-umea-demonym')) {
-  validateStaticValidationSyntaxGate();
-  validateUmeaDemonymSwedishNaturalness();
-  exitWithValidationFailures();
-  printValidationSummary({
-    questionUmeaDemonymSwedishNaturalnessValidated,
-  });
-  process.exit(0);
-}
 
 function validateStaticSiteQuestionBankParity() {
   if (failures.length > 0) return;
@@ -15319,7 +14963,6 @@ function validateAuthoredSourceParity() {
   if (
     !Array.isArray(baseQuestions) ||
     !Array.isArray(additionalQuestions) ||
-    !Array.isArray(localizedAdditionalQuestions) ||
     !Array.isArray(sourceQuestions)
   ) {
     return;
@@ -15338,7 +14981,7 @@ function validateAuthoredSourceParity() {
     EXPECTED_SOURCE_QUESTIONS - EXPECTED_BASE_SOURCE_QUESTIONS,
   );
 
-  const authoredQuestions = [...baseQuestions, ...localizedAdditionalQuestions];
+  const authoredQuestions = [...baseQuestions, ...additionalQuestions];
   if (authoredQuestions.length !== EXPECTED_SOURCE_QUESTIONS) {
     fail(
       `expected ${EXPECTED_SOURCE_QUESTIONS} authored source questions, found ${authoredQuestions.length}`,
@@ -15403,6 +15046,8 @@ function validateAuthoredSourceParity() {
   });
 }
 
+validateAuthoredSourceParity();
+
 function validateGenerationParity() {
   if (
     !Array.isArray(questions) ||
@@ -15445,50 +15090,14 @@ function validateGenerationParity() {
   if (failures.length === 0) generationParityValidated = true;
 }
 
+validateGenerationParity();
+
 function countQuestionsByChapter(questionsToCount) {
   return questionsToCount.reduce((counts, question) => {
     counts.set(question.chapterId, (counts.get(question.chapterId) || 0) + 1);
     return counts;
   }, new Map());
 }
-
-function validateChapterMetadataSchemas() {
-  if (!Array.isArray(chapters)) return;
-
-  if (chapters.length !== 13) fail(`expected 13 chapters, found ${chapters.length}`);
-  const seenChapterIds = new Set();
-  const seenNamesSv = new Set();
-  const seenNamesEn = new Set();
-  chapters.forEach((chapter, index) => {
-    if (validateChapterSchema(chapter, index, seenChapterIds, seenNamesSv, seenNamesEn)) {
-      chapterSchemasValidated += 1;
-      if (chapterExactSchemaKeyFailures(chapter, chapter.id || `chapter[${index}]`).length === 0) {
-        chapterExactSchemaKeysValidated += 1;
-      }
-      if (chapterTextFieldsAreNormalized(chapter)) {
-        chapterTextFieldsNormalizedValidated += 1;
-      }
-    }
-  });
-}
-
-if (process.argv.includes('--focus-chapter-localized-text')) {
-  validateStaticValidationSyntaxGate();
-  exitWithValidationFailures();
-  validateChapterMetadataSchemas();
-  exitWithValidationFailures();
-  printValidationSummary({
-    chapters: Array.isArray(chapters) ? chapters.length : 0,
-    chapterSchemasValidated,
-    chapterTextFieldsNormalizedValidated,
-    chapterExactSchemaKeysValidated,
-    chapterLocalizedTextMapsValidated,
-  });
-  process.exit(0);
-}
-
-validateAuthoredSourceParity();
-validateGenerationParity();
 
 function validateChapterGenerationParity() {
   if (
@@ -16083,7 +15692,10 @@ if (process.argv.includes('--focus-home-sv-mistake-review-copy')) {
 validateStaticHeadMetadataParity();
 validateUhrSectionMapExactSchemaKeys();
 const uhrReferenceChapters = buildUhrReferenceChapters();
-validateChapterMetadataSchemas();
+
+if (Array.isArray(chapters)) {
+  validateChapterMetadata();
+}
 
 if (Array.isArray(questions)) {
   if (questions.length !== EXPECTED_PUBLISHED_QUESTIONS) {
@@ -16189,8 +15801,6 @@ if (Array.isArray(questions)) {
         findQuestionLuciaRoleEnglishNaturalnessIssue(question);
       const euCooperationEnglishNaturalnessIssue =
         findQuestionEuCooperationEnglishNaturalnessIssue(question);
-      const umeaDemonymSwedishNaturalnessIssue =
-        findQuestionUmeaDemonymSwedishNaturalnessIssue(question);
       const trueFalseStemPrefix = findQuestionTrueFalseStemPrefix(question);
       const falseAnswerExplanationMismatch = findQuestionFalseAnswerExplanationMismatch(question);
       const generatedTrueFalseExplanationMetaIssue =
@@ -16226,11 +15836,6 @@ if (Array.isArray(questions)) {
         fail(`${label} uses missing-article EU cooperation English wording`);
       } else {
         questionEuCooperationEnglishNaturalnessValidated += 1;
-      }
-      if (umeaDemonymSwedishNaturalnessIssue) {
-        fail(`${label} uses nonstandard Umeå demonym Swedish wording`);
-      } else {
-        questionUmeaDemonymSwedishNaturalnessValidated += 1;
       }
       if (trueFalseStemPrefix) {
         fail(`${label} contains a redundant true/false prefix in the stem`);
@@ -16408,7 +16013,6 @@ validateSpacedRepetitionSchedule();
 validateStreakRules();
 validateXpRules();
 validateMasteryRules();
-validateReadinessAdapterRules();
 validateQuestionBankCsvContract();
 validateStaticSiteQuestionBankParity();
 validateUhrSourceMaterialLinkParity();
@@ -16430,6 +16034,7 @@ console.log(
       chapterTextFieldsNormalizedValidated,
       chapterExactSchemaKeysValidated,
       chapterLocalizedTextMapsValidated,
+      chapterLocalizedTextParityValidated,
       validationScriptSyntaxChecksValidated,
       appConfigPluginsValidated,
       appConfigSchemaValidated,
@@ -16626,7 +16231,6 @@ console.log(
       badgesValidated,
       badgeMilestoneParityValidated,
       citizenshipRulesEffectiveDateValidated,
-      civicKnowledgeTestFirstSittingDateValidated,
       civicKnowledgeTestDeadlineDateValidated,
       citizenshipTimelineSourceUrlsValidated,
       citizenshipTimelineDateParityValidated,
@@ -16658,16 +16262,12 @@ console.log(
       chapterQuizSessionParityValidated,
       spacedRepetitionIntervalsValidated,
       spacedRepetitionRuntimeParityValidated,
-      spacedRepetitionRuntimeInputCasesValidated,
-      spacedRepetitionRuntimeInputParityValidated,
       streakRulesValidated,
       streakRulesParityValidated,
       xpRulesValidated,
       xpRulesParityValidated,
       masteryRulesValidated,
       masteryRulesParityValidated,
-      readinessAdapterRulesValidated,
-      readinessAdapterRuntimeParityValidated,
       questions: questions.length,
       publishedQuestions,
       sourceQuestions: Array.isArray(sourceQuestions) ? sourceQuestions.length : 0,
@@ -16703,7 +16303,6 @@ console.log(
       questionGeneratedTrueFalseNaturalnessValidated,
       questionLuciaRoleEnglishNaturalnessValidated,
       questionEuCooperationEnglishNaturalnessValidated,
-      questionUmeaDemonymSwedishNaturalnessValidated,
       questionFalseAnswerExplanationsValidated,
       questionPromptTextUniquenessValidated,
       questionOptionTextLabelsValidated,
