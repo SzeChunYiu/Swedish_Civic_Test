@@ -47,10 +47,10 @@ export function AudioButton({
   enabled?: boolean;
   language?: AppLanguage;
   rate?: number;
-  text?: string;
+  text?: string | null;
 }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const speechText = text.trim();
+  const speechText = typeof text === 'string' ? text.trim() : '';
   const hasSpeechText = speechText.length > 0;
   const canPlayAudio = enabled && hasSpeechText;
   const copy = audioButtonCopy[language];

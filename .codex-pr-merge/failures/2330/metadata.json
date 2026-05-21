@@ -1,0 +1,40 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n- adds an explicit UHR test-status source key for chapter 12 current-source note factboxes\n- marks intro editorial tip factboxes as editorial commentary instead of allowing the default UHR fallback\n- expands ebook parity and content validation guards so raw `.ebook__factbox p` markup must carry explicit source metadata\n\n## Root cause\nRaw static ebook factbox paragraphs were rendered through `createEbookFootnoteCollector.annotate(rawBodyHtml)` without `data-ebook-source-keys`, so they inherited `EBOOK_DEFAULT_PROSE_SOURCE_KEYS = ['uhrStudyMaterial']`. Editorial study tips could therefore be footnoted as UHR-sourced.\n\n## Validation\n- `NODE_OPTIONS='--v8-pool-size=1' node --test tests/content-static-site-ebook-parity.test.js --test-name-pattern \"ebook|factbox|source key|raw factbox|editorial tip|current source notes\"`\n- `NODE_OPTIONS='--v8-pool-size=1' node scripts/validate-content.js --focus-static-ebook-provenance`\n- `npm run typecheck -- --pretty false`\n- `git diff --check origin/main...HEAD`\n\n## Known unrelated baseline\n- `NODE_OPTIONS='--v8-pool-size=1' node --test scripts/static-site-source-provenance-copy.test.js` currently fails on `static FAQ no-JS fallback mirrors the English dictionary` because `faq.3.a` differs between the static no-JS fallback and the English dictionary. This PR does not touch the FAQ fallback or dictionary files.",
+  "files": [
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 27,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    },
+    { "path": "site/ebook.js", "additions": 22, "deletions": 14, "changeType": "MODIFIED" },
+    {
+      "path": "tests/content-static-site-ebook-parity.test.js",
+      "additions": 57,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/static-ebook-factbox-sourcekeys-1779358461",
+  "headRefOid": "98bb6197886e8d545bfd81881cf61bf364b50b54",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2330,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T10:22:37Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26220139295/job/77152703250",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T10:21:39Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "uiux: require ebook factbox provenance keys",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2330"
+}

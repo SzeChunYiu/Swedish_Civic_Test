@@ -187,14 +187,32 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
-  assert.match(settingsStore, /answerCount < minDailyGoalAnswers/);
-  assert.match(settingsStore, /const safeGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/);
   assert.match(
+    settingsStore,
+    /export const supportedDailyGoalAnswerOptions = \[5, 10, 20, 40\] as const;/,
+  );
+  assert.match(
+    settingsStore,
+    /const dailyGoalAnswerOptions = new Set<number>\(supportedDailyGoalAnswerOptions\);/,
+  );
+  assert.match(settingsStore, /dailyGoalAnswerOptions\.has\(answerCount\)/);
+  assert.match(settingsStore, /const safeGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/);
+  assert.match(settingsStore, /function normalizeImportedDailyGoalAnswers/);
+  assert.match(
+    settingsStore,
+    /const dailyGoalAnswers = normalizeImportedDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
+  );
+  assert.match(
+    settingsStore,
+    /if \(dailyGoalAnswers !== undefined\) settings\.dailyGoalAnswers = dailyGoalAnswers;/,
+  );
+  assert.doesNotMatch(
     settingsStore,
     /settings\.dailyGoalAnswers = normalizeDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
   );
   assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
-  assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
+  assert.match(settingsRoute, /supportedDailyGoalAnswerOptions\.map\(\(goal\) =>/);
+  assert.doesNotMatch(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
   assert.match(settingsRoute, /Set daily goal to \$\{goal\} answers/);
   assert.match(settingsRoute, /Ställ in dagligt mål till \$\{goal\} svar/);
   assert.match(settingsRoute, /\$\{answerCount\} svar per dag/);
@@ -210,6 +228,9 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
     [-1, 10],
     [0, 10],
     [3.5, 10],
+    [1, 10],
+    [6, 10],
+    [50, 10],
     [999, 10],
     [5, 5],
     [10, 10],
@@ -224,13 +245,15 @@ test('daily goal setter falls back for malformed runtime inputs before persistin
   const storage = createDailyGoalStorage(20);
   const store = loadSettingsStoreFromStorage(storage);
 
-  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
-    store.getState().setDailyGoalAnswers(goal);
-    const latestWrite = storage.writes.at(-1);
-    assert.equal(store.getState().dailyGoalAnswers, 10);
-    assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
-    assert.equal(Number.isFinite(latestWrite.value), true);
-  });
+  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 1, 6, 50, 51].forEach(
+    (goal) => {
+      store.getState().setDailyGoalAnswers(goal);
+      const latestWrite = storage.writes.at(-1);
+      assert.equal(store.getState().dailyGoalAnswers, 10);
+      assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
+      assert.equal(Number.isFinite(latestWrite.value), true);
+    },
+  );
 
   [5, 10, 20, 40].forEach((goal) => {
     store.getState().setDailyGoalAnswers(goal);
@@ -239,17 +262,26 @@ test('daily goal setter falls back for malformed runtime inputs before persistin
   });
 });
 
-test('imported daily goal settings fall back for malformed snapshot values before persisting', () => {
+test('imported daily goal settings omit malformed snapshot values before persisting', () => {
   const storage = createDailyGoalStorage(20);
-  const { importSettingsSnapshot, useSettingsStore } = loadSettingsModuleFromStorage(storage);
+  const { importSettingsSnapshot, normalizeImportedSettings, useSettingsStore } =
+    loadSettingsModuleFromStorage(storage);
 
-  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
-    importSettingsSnapshot({ dailyGoalAnswers: goal });
-    const latestWrite = storage.writes.at(-1);
-    assert.equal(useSettingsStore.getState().dailyGoalAnswers, 10);
-    assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
-    assert.equal(Number.isFinite(latestWrite.value), true);
-  });
+  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 1, 6, 50, 51].forEach(
+    (goal) => {
+      assert.equal(
+        Object.prototype.hasOwnProperty.call(
+          normalizeImportedSettings({ dailyGoalAnswers: goal }),
+          'dailyGoalAnswers',
+        ),
+        false,
+        `invalid imported goal ${String(goal)} must be omitted`,
+      );
+      importSettingsSnapshot({ dailyGoalAnswers: goal });
+      assert.equal(useSettingsStore.getState().dailyGoalAnswers, 20);
+      assert.deepEqual(storage.writes, []);
+    },
+  );
 
   [5, 10, 20, 40].forEach((goal) => {
     importSettingsSnapshot({ dailyGoalAnswers: goal });
@@ -269,18 +301,29 @@ test('settings hydration falls back when MMKV reads throw', () => {
 });
 
 test('daily goal settings parity rejects option-set drift', () => {
+  const result = runValidationWithSettingsStorePatch(
+    'export const supportedDailyGoalAnswerOptions = [5, 10, 20, 40] as const;',
+    'export const supportedDailyGoalAnswerOptions = [5, 20, 40] as const;',
+  );
+
+  assert.notEqual(result.status, 0);
+  const output = `${result.stdout}\n${result.stderr}`;
+  assert.match(output, /supportedDailyGoalAnswerOptions is \[5,20,40\], expected \[5,10,20,40\]/);
+  assert.match(output, /daily goal options must include the default 10/);
+});
+
+test('daily goal settings parity rejects inline settings option arrays', () => {
   const result = runValidationWithSettingsRoutePatch(
+    'supportedDailyGoalAnswerOptions.map((goal) =>',
     '[5, 10, 20, 40].map((goal) =>',
-    '[5, 20, 40].map((goal) =>',
   );
 
   assert.notEqual(result.status, 0);
   const output = `${result.stdout}\n${result.stderr}`;
   assert.match(
     output,
-    /app\/settings\.tsx daily goal options are \[\[5,20,40\]\], expected \[5,10,20,40\]/,
+    /app\/settings\.tsx must render daily goal options from supportedDailyGoalAnswerOptions/,
   );
-  assert.match(output, /daily goal options must include the default 10/);
 });
 
 test('daily goal settings parity rejects raw runtime clamp in the setter', () => {

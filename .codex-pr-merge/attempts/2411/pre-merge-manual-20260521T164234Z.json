@@ -1,0 +1,22 @@
+{
+  "headRefOid": "4456ccf28b94d734f620c5c1f79e6379963480f4",
+  "isDraft": false,
+  "mergeStateStatus": "UNKNOWN",
+  "mergeable": "UNKNOWN",
+  "number": 2411,
+  "state": "MERGED",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239863585/job/77222995860",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:43:52Z",
+      "status": "QUEUED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Localize Swedish ebook source-count units",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2411"
+}

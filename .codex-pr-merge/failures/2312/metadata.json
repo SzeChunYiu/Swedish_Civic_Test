@@ -1,0 +1,45 @@
+{
+  "baseRefName": "main",
+  "body": "## Summary\n\n- Add `--focus-uhr-reference-card-accessibility` routing to `scripts/validate-content.js`.\n- Extend the UHR reference card accessibility rule set from 10 to 15 checks by validating the nested `SourceCitation` accessibility defaults used by the card.\n- Add routing coverage so the UHR parity test uses the focused validator path instead of full content validation.\n\n## Validation\n\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS=\"--v8-pool-size=1\" node scripts/validate-content.js --focus-uhr-reference-card-accessibility`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS=\"--v8-pool-size=1\" node --test tests/content-uhr-reference-card-accessibility-parity.test.js tests/content-test-script-routing.test.js --test-name-pattern \"UHRReferenceCard|SourceCitation|focus-uhr-reference-card\"`\n- `NODE_PATH=/home/billy/Swedish_Civic_Test/node_modules PATH=/home/billy/Swedish_Civic_Test/node_modules/.bin:$PATH NODE_OPTIONS=\"--v8-pool-size=1\" npm run validate:content`\n- `NODE_OPTIONS=\"--v8-pool-size=1\" npm run typecheck -- --pretty false` with the existing repo `node_modules` temporarily linked into this isolated worktree\n- `git diff --check`\n\n## Note\n\nA separate targeted run of `node --test scripts/content-production.test.js --test-name-pattern \"content production|UHR|accessibility|uhrReferenceCard\"` still fails before the UHR assertion on stale production-summary constants (`practiceFlowCasesValidated` expects 12 but current validation emits 6; `launchAdSuppressedRoutesValidated` expects 8 but current validation emits 14).",
+  "files": [
+    {
+      "path": "scripts/content-production.test.js",
+      "additions": 1,
+      "deletions": 1,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "scripts/validate-content.js",
+      "additions": 57,
+      "deletions": 3,
+      "changeType": "MODIFIED"
+    },
+    {
+      "path": "tests/content-test-script-routing.test.js",
+      "additions": 23,
+      "deletions": 0,
+      "changeType": "MODIFIED"
+    }
+  ],
+  "headRefName": "task/uhr-reference-card-a11y-1779359560",
+  "headRefOid": "96b97eedbdfa98a3c93b68524a501047763d7d65",
+  "isDraft": false,
+  "mergeStateStatus": "DIRTY",
+  "mergeable": "CONFLICTING",
+  "number": 2312,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "2026-05-21T09:48:16Z",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26218526519/job/77147116655",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T09:47:21Z",
+      "status": "COMPLETED",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "[codex] Focus UHR reference card accessibility validation",
+  "url": "https://github.com/SzeChunYiu/Swedish_Civic_Test/pull/2312"
+}

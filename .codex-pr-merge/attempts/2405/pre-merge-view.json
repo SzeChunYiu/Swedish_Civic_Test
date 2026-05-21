@@ -1,0 +1,19 @@
+{
+  "isDraft": false,
+  "mergeStateStatus": "UNSTABLE",
+  "number": 2405,
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "__typename": "CheckRun",
+      "completedAt": "0001-01-01T00:00:00Z",
+      "conclusion": "",
+      "detailsUrl": "https://github.com/SzeChunYiu/Swedish_Civic_Test/actions/runs/26239776890/job/77222688591",
+      "name": "Validate release-safe candidate",
+      "startedAt": "2026-05-21T16:42:12Z",
+      "status": "IN_PROGRESS",
+      "workflowName": "Release validation"
+    }
+  ],
+  "title": "content: preserve Sweden scope in generated legal true-false"
+}

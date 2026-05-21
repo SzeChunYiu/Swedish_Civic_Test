@@ -1,0 +1,786 @@
+From 72a0d0dfa7afbc0f8df8dbfd406ce6860e5bd5cd Mon Sep 17 00:00:00 2001
+From: SzeChunYiu <52784502+SzeChunYiu@users.noreply.github.com>
+Date: Thu, 21 May 2026 13:42:20 +0200
+Subject: [PATCH] uiux: focus profile settings shortcut
+
+---
+ app/(tabs)/profile.tsx                        |  43 +++-
+ app/settings.tsx                              | 229 +++++++++++-------
+ scripts/validate-content.js                   | 104 +++++++-
+ .../content-profile-route-copy-parity.test.js |  26 +-
+ ...content-settings-route-copy-parity.test.js |  20 +-
+ tests/e2e/profile-settings-shortcut.spec.ts   |   6 +-
+ 6 files changed, 311 insertions(+), 117 deletions(-)
+
+diff --git a/app/(tabs)/profile.tsx b/app/(tabs)/profile.tsx
+index 5a382af2c..da12cb3e1 100644
+--- a/app/(tabs)/profile.tsx
++++ b/app/(tabs)/profile.tsx
+@@ -43,14 +43,19 @@ type ProfileCopy = {
+   dayStreakFreezeHelper: (count: number) => string;
+   dayStreakMetric: string;
+   eyebrow: string;
++  audioDisabledBadge: string;
++  audioEnabledBadge: string;
++  audioStatusLabel: string;
++  dailyGoalBadgeLabel: string;
+   languageBadge: string;
++  languageBadgeLabel: string;
+   levelMetric: string;
+-  openSettings: string;
+   openSettingsAccessibilityLabel: string;
+   noBadges: string;
+   questionsHelper: string;
+   removeAdsFocusCue: string;
+   streakFreezeBadge: string;
++  studySetupCta: string;
+   studySetupSubtitle: string;
+   studySetupTitle: string;
+   subtitle: string;
+@@ -73,14 +78,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+     dayStreakFreezeHelper: (count) => `${count} svitskydd redo`,
+     dayStreakMetric: 'dagars svit',
+     eyebrow: 'Lokal profil',
++    audioDisabledBadge: 'Ljud av',
++    audioEnabledBadge: 'Ljud på',
++    audioStatusLabel: 'Ljud',
++    dailyGoalBadgeLabel: 'Dagligt mål',
+     languageBadge: 'Svenska',
++    languageBadgeLabel: 'Språk',
+     levelMetric: 'nivå',
+     noBadges: 'Inga märken ännu',
+-    openSettings: 'Öppna inställningar',
+-    openSettingsAccessibilityLabel: 'Öppna inställningar',
++    openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
+     questionsHelper: 'frågor',
+     removeAdsFocusCue: 'Ta bort annonser är markerat. Köp- och återställningsknapparna finns här.',
+     streakFreezeBadge: 'Svitskydd',
++    studySetupCta: 'Ändra mål, språk och ljud',
+     studySetupSubtitle: 'Små dagliga mål är lättare att hålla än långa maratonpass.',
+     studySetupTitle: 'Studieinställningar',
+     subtitle:
+@@ -102,14 +112,19 @@ const profileCopy: Record<AppLanguage, ProfileCopy> = {
+     dayStreakFreezeHelper: (count) => `${count} streak freeze ready`,
+     dayStreakMetric: 'day streak',
+     eyebrow: 'Local profile',
++    audioDisabledBadge: 'Audio off',
++    audioEnabledBadge: 'Audio on',
++    audioStatusLabel: 'Audio',
++    dailyGoalBadgeLabel: 'Daily goal',
+     languageBadge: 'English support',
++    languageBadgeLabel: 'Language',
+     levelMetric: 'level',
+     noBadges: 'No badges yet',
+-    openSettings: 'Open settings',
+-    openSettingsAccessibilityLabel: 'Open settings',
++    openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio',
+     questionsHelper: 'questions',
+     removeAdsFocusCue: 'Remove Ads is highlighted. Buy and Restore controls are here.',
+     streakFreezeBadge: 'Streak freeze',
++    studySetupCta: 'Adjust goal, language, and audio',
+     studySetupSubtitle: 'Small daily goals are easier to keep than long cram sessions.',
+     studySetupTitle: 'Study setup',
+     subtitle:
+@@ -134,6 +149,7 @@ export default function Screen() {
+   const streakFreezeState = useProgressStore((state) => state.streakFreezeState);
+   const setStreakFreezeState = useProgressStore((state) => state.setStreakFreezeState);
+   const dailyGoalAnswers = useSettingsStore((state) => state.dailyGoalAnswers);
++  const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+   const language = useSettingsStore((state) => state.language);
+   const copy = profileCopy[language];
+   const removeAdsFocused = focus === 'remove-ads';
+@@ -214,22 +230,31 @@ export default function Screen() {
+         <SectionHeader title={copy.studySetupTitle} subtitle={copy.studySetupSubtitle} />
+         <View style={styles.pillRow}>
+           <Badge tone="blue">
+-            {dailyGoalAnswers} {copy.answersPerDay}
++            {copy.dailyGoalBadgeLabel}: {dailyGoalAnswers} {copy.answersPerDay}
++          </Badge>
++          <Badge tone="warm">
++            {copy.languageBadgeLabel}: {copy.languageBadge}
++          </Badge>
++          <Badge tone={audioEnabled ? 'green' : 'warm'}>
++            {copy.audioStatusLabel}:{' '}
++            {audioEnabled ? copy.audioEnabledBadge : copy.audioDisabledBadge}
+           </Badge>
+-          <Badge tone="warm">{copy.languageBadge}</Badge>
+         </View>
+         <Link
+           accessibilityLabel={copy.openSettingsAccessibilityLabel}
+           accessibilityRole="link"
+           asChild
+-          href="/settings"
++          href={{
++            pathname: '/settings',
++            params: { focus: 'study' },
++          }}
+         >
+           <Button
+             accessibilityLabel={copy.openSettingsAccessibilityLabel}
+             accessibilityRole="link"
+             style={styles.settingsLink}
+           >
+-            {copy.openSettings}
++            {copy.studySetupCta}
+           </Button>
+         </Link>
+       </Card>
+diff --git a/app/settings.tsx b/app/settings.tsx
+index 9a78bd0bd..e7b423389 100644
+--- a/app/settings.tsx
++++ b/app/settings.tsx
+@@ -1,3 +1,4 @@
++import { useLocalSearchParams } from 'expo-router';
+ import { useMemo, useState } from 'react';
+ import {
+   Pressable,
+@@ -67,6 +68,8 @@ type SettingsCopy = {
+   importTitle: string;
+   languageAccessibilityLabel: (label: string) => string;
+   studyLanguageTitle: string;
++  studyControlsFocusLabel: string;
++  studyControlsTitle: string;
+   setDailyGoalAccessibilityLabel: (goal: number) => string;
+   setThemeModeAccessibilityLabel: (label: string) => string;
+   subtitle: string;
+@@ -157,6 +160,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+     importTitle: 'Importera studiedata',
+     languageAccessibilityLabel: (label) => `Byt studiespråk till ${label}`,
+     studyLanguageTitle: 'Studiespråk',
++    studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här.',
++    studyControlsTitle: 'Dagligt mål, språk och ljud',
+     setDailyGoalAccessibilityLabel: (goal) => `Ställ in dagligt mål till ${goal} svar`,
+     setThemeModeAccessibilityLabel: (label) => `Välj tema: ${label}`,
+     subtitle: 'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
+@@ -238,6 +243,8 @@ const settingsCopy: Record<AppLanguage, SettingsCopy> = {
+     importTitle: 'Import study data',
+     languageAccessibilityLabel: (label) => `Set study language to ${label}`,
+     studyLanguageTitle: 'Study language',
++    studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here.',
++    studyControlsTitle: 'Daily goal, language, and audio',
+     setDailyGoalAccessibilityLabel: (goal) => `Set daily goal to ${goal} answers`,
+     setThemeModeAccessibilityLabel: (label) => `Choose theme: ${label}`,
+     subtitle: 'Control study language, audio, theme, study companion, and your daily goal.',
+@@ -274,6 +281,7 @@ function buildImportSummaryLines(
+ }
+ 
+ export default function Screen() {
++  const { focus } = useLocalSearchParams<{ focus?: string }>();
+   const systemColorScheme = useColorScheme();
+   const language = useSettingsStore((state) => state.language);
+   const audioEnabled = useSettingsStore((state) => state.audioEnabled);
+@@ -295,6 +303,7 @@ export default function Screen() {
+   const reduceMotion = useReducedMotion();
+   const themeColors = colorsForThemeMode(themeMode, systemColorScheme);
+   const styles = useMemo(() => createStyles(themeColors), [themeColors]);
++  const studyFocusActive = focus === 'study';
+   const [importText, setImportText] = useState('');
+   const [importPreview, setImportPreview] = useState<LocalStudyDataImportPreview | null>(null);
+   const [importFeedback, setImportFeedback] = useState<ImportFeedback | null>(null);
+@@ -420,52 +429,118 @@ export default function Screen() {
+         warning={persistenceWarning}
+       />
+ 
+-      <View style={styles.section}>
+-        <Text accessibilityRole="header" style={styles.sectionTitle}>
+-          {copy.studyLanguageTitle}
+-        </Text>
+-        <View
+-          aria-label={copy.studyLanguageTitle}
+-          accessibilityLabel={copy.studyLanguageTitle}
+-          accessibilityRole="radiogroup"
+-          style={styles.row}
+-        >
+-          {[
+-            renderLanguageButton('sv', 'Swedish', 'Svenska'),
+-            renderLanguageButton('en', 'English support', 'Engelskt stöd'),
+-          ]}
++      <View
++        accessibilityLabel={copy.studyControlsTitle}
++        nativeID="study-settings-controls"
++        style={[
++          styles.studyControlsGroup,
++          studyFocusActive ? styles.studyControlsGroupFocused : null,
++        ]}
++        testID="study-settings-controls"
++      >
++        {studyFocusActive ? (
++          <Text style={styles.studyFocusText}>{copy.studyControlsFocusLabel}</Text>
++        ) : null}
++
++        <View style={styles.section}>
++          <Text accessibilityRole="header" style={styles.sectionTitle}>
++            {copy.dailyGoalTitle}
++          </Text>
++          <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
++          <View
++            aria-label={copy.dailyGoalTitle}
++            accessibilityLabel={copy.dailyGoalTitle}
++            accessibilityRole="radiogroup"
++            style={styles.row}
++          >
++            {[5, 10, 20, 40].map((goal) => {
++              const selected = dailyGoalAnswers === goal;
++              const focusKey = `daily-goal-${goal}`;
++
++              return (
++                <Pressable
++                  key={goal}
++                  aria-checked={dailyGoalAnswers === goal}
++                  accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
++                  accessibilityRole="radio"
++                  accessibilityState={{ checked: dailyGoalAnswers === goal }}
++                  hitSlop={space[1]}
++                  onBlur={() => setFocusedControl(null)}
++                  onFocus={() => setFocusedControl(focusKey)}
++                  onPress={() => setDailyGoalAnswers(goal)}
++                  style={({ pressed }) => [
++                    styles.pill,
++                    styles.goalPill,
++                    selected ? styles.pillActive : null,
++                    focusedControl === focusKey ? styles.controlFocused : null,
++                    pressed
++                      ? reduceMotion
++                        ? styles.controlPressedReducedMotion
++                        : styles.controlPressed
++                      : null,
++                  ]}
++                >
++                  <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
++                    {goal}
++                  </Text>
++                  <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
++                    {copy.dailyGoalPresetLabel(goal)}
++                  </Text>
++                </Pressable>
++              );
++            })}
++          </View>
+         </View>
+-      </View>
+ 
+-      <View style={styles.section}>
+-        <Text accessibilityRole="header" style={styles.sectionTitle}>
+-          {copy.audioTitle}
+-        </Text>
+-        <Pressable
+-          aria-checked={audioEnabled}
+-          accessibilityLabel={
+-            audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
+-          }
+-          accessibilityRole="switch"
+-          accessibilityState={{ checked: audioEnabled }}
+-          hitSlop={space[1]}
+-          onBlur={() => setFocusedControl(null)}
+-          onFocus={() => setFocusedControl('audio')}
+-          onPress={() => setAudioEnabled(!audioEnabled)}
+-          style={({ pressed }) => [
+-            styles.secondaryButton,
+-            focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
+-            pressed
+-              ? reduceMotion
+-                ? styles.secondaryButtonPressedReducedMotion
+-                : styles.secondaryButtonPressed
+-              : null,
+-          ]}
+-        >
+-          <Text style={styles.secondaryButtonText}>
+-            {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
++        <View style={styles.section}>
++          <Text accessibilityRole="header" style={styles.sectionTitle}>
++            {copy.studyLanguageTitle}
++          </Text>
++          <View
++            aria-label={copy.studyLanguageTitle}
++            accessibilityLabel={copy.studyLanguageTitle}
++            accessibilityRole="radiogroup"
++            style={styles.row}
++          >
++            {[
++              renderLanguageButton('sv', 'Swedish', 'Svenska'),
++              renderLanguageButton('en', 'English support', 'Engelskt stöd'),
++            ]}
++          </View>
++        </View>
++
++        <View style={styles.section}>
++          <Text accessibilityRole="header" style={styles.sectionTitle}>
++            {copy.audioTitle}
+           </Text>
+-        </Pressable>
++          <Pressable
++            aria-checked={audioEnabled}
++            accessibilityLabel={
++              audioEnabled
++                ? copy.disableAudioAccessibilityLabel
++                : copy.enableAudioAccessibilityLabel
++            }
++            accessibilityRole="switch"
++            accessibilityState={{ checked: audioEnabled }}
++            hitSlop={space[1]}
++            onBlur={() => setFocusedControl(null)}
++            onFocus={() => setFocusedControl('audio')}
++            onPress={() => setAudioEnabled(!audioEnabled)}
++            style={({ pressed }) => [
++              styles.secondaryButton,
++              focusedControl === 'audio' ? styles.secondaryButtonFocused : null,
++              pressed
++                ? reduceMotion
++                  ? styles.secondaryButtonPressedReducedMotion
++                  : styles.secondaryButtonPressed
++                : null,
++            ]}
++          >
++            <Text style={styles.secondaryButtonText}>
++              {audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}
++            </Text>
++          </Pressable>
++        </View>
+       </View>
+ 
+       <View style={styles.section}>
+@@ -495,56 +570,6 @@ export default function Screen() {
+         />
+       </View>
+ 
+-      <View style={styles.section}>
+-        <Text accessibilityRole="header" style={styles.sectionTitle}>
+-          {copy.dailyGoalTitle}
+-        </Text>
+-        <Text style={styles.subtitle}>{copy.dailyGoalSummary(dailyGoalAnswers)}</Text>
+-        <View
+-          aria-label={copy.dailyGoalTitle}
+-          accessibilityLabel={copy.dailyGoalTitle}
+-          accessibilityRole="radiogroup"
+-          style={styles.row}
+-        >
+-          {[5, 10, 20, 40].map((goal) => {
+-            const selected = dailyGoalAnswers === goal;
+-            const focusKey = `daily-goal-${goal}`;
+-
+-            return (
+-              <Pressable
+-                key={goal}
+-                aria-checked={dailyGoalAnswers === goal}
+-                accessibilityLabel={copy.setDailyGoalAccessibilityLabel(goal)}
+-                accessibilityRole="radio"
+-                accessibilityState={{ checked: dailyGoalAnswers === goal }}
+-                hitSlop={space[1]}
+-                onBlur={() => setFocusedControl(null)}
+-                onFocus={() => setFocusedControl(focusKey)}
+-                onPress={() => setDailyGoalAnswers(goal)}
+-                style={({ pressed }) => [
+-                  styles.pill,
+-                  styles.goalPill,
+-                  selected ? styles.pillActive : null,
+-                  focusedControl === focusKey ? styles.controlFocused : null,
+-                  pressed
+-                    ? reduceMotion
+-                      ? styles.controlPressedReducedMotion
+-                      : styles.controlPressed
+-                    : null,
+-                ]}
+-              >
+-                <Text style={[styles.goalNumberText, selected ? styles.pillTextActive : null]}>
+-                  {goal}
+-                </Text>
+-                <Text style={[styles.goalPresetText, selected ? styles.pillTextActive : null]}>
+-                  {copy.dailyGoalPresetLabel(goal)}
+-                </Text>
+-              </Pressable>
+-            );
+-          })}
+-        </View>
+-      </View>
+-
+       <View style={styles.section}>
+         <Text accessibilityRole="header" style={styles.sectionTitle}>
+           {copy.importTitle}
+@@ -670,6 +695,24 @@ function createStyles(themeColors: ThemeColors) {
+       fontSize: typography.body.fontSize,
+       lineHeight: typography.body.lineHeight,
+     },
++    studyControlsGroup: {
++      borderColor: themeColors.canvas,
++      borderRadius: radius.card,
++      borderWidth: StyleSheet.hairlineWidth,
++      gap: space[1.5],
++      marginHorizontal: -space[0.5],
++      padding: space[0.5],
++    },
++    studyControlsGroupFocused: {
++      backgroundColor: themeColors.focusSoft,
++      borderColor: themeColors.focus,
++    },
++    studyFocusText: {
++      color: themeColors.focus,
++      fontSize: typography.caption.fontSize,
++      fontWeight: typography.bodyBold.fontWeight,
++      lineHeight: typography.caption.lineHeight,
++    },
+     section: {
+       backgroundColor: themeColors.surface,
+       borderColor: themeColors.border,
+diff --git a/scripts/validate-content.js b/scripts/validate-content.js
+index 61704b37e..8f1b91c44 100755
+--- a/scripts/validate-content.js
++++ b/scripts/validate-content.js
+@@ -836,12 +836,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+     'frågor',
+     'Studieinställningar',
+     'Små dagliga mål är lättare att hålla än långa maratonpass.',
++    'Dagligt mål',
+     'svar/dag',
++    'Språk',
+     'Svenska',
++    'Ljud',
++    'Ljud på',
++    'Ljud av',
++    'Ändra mål, språk och ljud',
++    'Öppna inställningar för dagligt mål, språk och ljud',
+     'Märken',
+     'Milstolpar gör framsteg synliga utan att störa lärandet.',
+     'Inga märken ännu',
+-    'Öppna inställningar',
+   ],
+   en: [
+     'Local profile',
+@@ -856,12 +862,18 @@ const EXPECTED_PROFILE_ROUTE_COPY_LABELS = {
+     'questions',
+     'Study setup',
+     'Small daily goals are easier to keep than long cram sessions.',
++    'Daily goal',
+     'answers/day',
++    'Language',
+     'English support',
++    'Audio',
++    'Audio on',
++    'Audio off',
++    'Adjust goal, language, and audio',
++    'Open settings for daily goal, language, and audio',
+     'Badges',
+     'Achievement cues make progress visible without distracting from learning.',
+     'No badges yet',
+-    'Open settings',
+   ],
+ };
+ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+@@ -894,8 +906,15 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+   ['helper={copy.questionsHelper}', 'profile questions helper must render localized copy'],
+   ['title={copy.studySetupTitle}', 'profile study setup title must render localized copy'],
+   ['subtitle={copy.studySetupSubtitle}', 'profile study setup subtitle must render localized copy'],
+-  ['{dailyGoalAnswers} {copy.answersPerDay}', 'profile daily goal badge must localize'],
+-  ['<Badge tone="warm">{copy.languageBadge}</Badge>', 'profile language badge must localize'],
++  [
++    '{copy.dailyGoalBadgeLabel}: {dailyGoalAnswers} {copy.answersPerDay}',
++    'profile daily goal badge must localize its label and count',
++  ],
++  [
++    '{copy.languageBadgeLabel}: {copy.languageBadge}',
++    'profile language badge must localize its label and value',
++  ],
++  ["{copy.audioStatusLabel}:{' '}", 'profile audio badge must localize current audio state'],
+   ['title={copy.badgesTitle}', 'profile badges title must render localized copy'],
+   ['subtitle={copy.badgesSubtitle}', 'profile badges subtitle must render localized copy'],
+   ['<BadgeRow', 'profile badge summary must render localized badge rows'],
+@@ -915,7 +934,9 @@ const EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS = [
+     'accessibilityLabel={copy.openSettingsAccessibilityLabel}',
+     'profile settings link must expose localized accessibility copy',
+   ],
+-  ['{copy.openSettings}', 'profile settings link must render localized copy'],
++  ["pathname: '/settings'", 'profile settings link must route to Settings'],
++  ["params: { focus: 'study' }", 'profile settings link must focus study controls'],
++  ['{copy.studySetupCta}', 'profile settings link must render focused study setup copy'],
+   ['language={language}', 'profile premium banner must receive the settings language'],
+ ];
+ const EXPECTED_HOME_ROUTE_COPY_LABELS = {
+@@ -2089,6 +2110,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
+     'Importera studiedata',
+     'Byt studiespråk till ${label}',
+     'Studiespråk',
++    'Studieinställningarna från profilen är markerade här.',
++    'Dagligt mål, språk och ljud',
+     'Ställ in dagligt mål till ${goal} svar',
+     'Välj tema: ${label}',
+     'Styr studiespråk, ljud, tema, studiekompis och ditt dagliga mål.',
+@@ -2151,6 +2174,8 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
+     'Import study data',
+     'Set study language to ${label}',
+     'Study language',
++    'The study setup controls from Profile are highlighted here.',
++    'Daily goal, language, and audio',
+     'Set daily goal to ${goal} answers',
+     'Choose theme: ${label}',
+     'Control study language, audio, theme, study companion, and your daily goal.',
+@@ -2165,6 +2190,10 @@ const EXPECTED_SETTINGS_ROUTE_COPY_LABELS = {
+   ],
+ };
+ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
++  [
++    "import { useLocalSearchParams } from 'expo-router';",
++    'settings route must read route focus params',
++  ],
+   ['import type { AppLanguage }', 'settings route must import AppLanguage'],
+   ['type SettingsCopy = {', 'settings route must define a typed copy contract'],
+   [
+@@ -2179,6 +2208,19 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+     'const copy = settingsCopy[language];',
+     'settings route must select copy from settings language',
+   ],
++  [
++    "const studyFocusActive = focus === 'study';",
++    'settings route must expose the Profile study-controls focus state',
++  ],
++  [
++    'nativeID="study-settings-controls"',
++    'settings route must expose a stable study-controls focus anchor',
++  ],
++  [
++    'studyFocusActive ? styles.studyControlsGroupFocused : null',
++    'settings route must visibly highlight the focused study-controls cluster',
++  ],
++  ['{copy.studyControlsFocusLabel}', 'settings route must render localized focus cue copy'],
+   [
+     "const label = language === 'sv' ? labelSv : labelEn;",
+     'settings route language buttons must choose visible labels from settings language',
+@@ -2210,9 +2252,13 @@ const EXPECTED_SETTINGS_ROUTE_COPY_SNIPPETS = [
+   ],
+   ['{copy.audioTitle}', 'settings audio section must render localized copy'],
+   [
+-    'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
++    'copy.disableAudioAccessibilityLabel',
+     'settings audio switch must expose localized accessibility copy',
+   ],
++  [
++    'copy.enableAudioAccessibilityLabel',
++    'settings audio switch must expose localized accessibility copy for enabling audio',
++  ],
+   [
+     '{audioEnabled ? copy.audioEnabledLabel : copy.audioDisabledLabel}',
+     'settings audio switch must render localized state copy',
+@@ -8274,6 +8320,19 @@ if (process.argv.includes('--focus-about-the-test-route-copy')) {
+   process.exit(0);
+ }
+ 
++if (process.argv.includes('--focus-profile-route-copy')) {
++  validateProfileRouteCopyParity();
++  validateBadgeCatalog();
++  exitWithValidationFailures();
++  printValidationSummary({
++    profileRouteCopyLabelsValidated,
++    profileRouteCopyParityValidated,
++    badgesValidated,
++    badgeMilestoneParityValidated,
++  });
++  process.exit(0);
++}
++
+ if (process.argv.includes('--focus-settings-route-copy')) {
+   validateSettingsRouteCopyParity();
+   exitWithValidationFailures();
+@@ -10621,6 +10680,12 @@ function validateProfileRouteCopyParity() {
+   EXPECTED_PROFILE_ROUTE_COPY_SNIPPETS.forEach(([snippet, message]) => {
+     if (!profileRoute.includes(snippet)) reject(message);
+   });
++  if (!profileRoute.includes('const removeAdsPaywall = entitlementsReady ? (')) {
++    reject('profile premium banner must fail closed while entitlements load');
++  }
++  if (!profileRoute.includes('{entitlementsReady && proRuntimeScopeEnabled ? (')) {
++    reject('profile Pro tier comparison must fail closed unless the Pro runtime scope is enabled');
++  }
+ 
+   const seenLabels = new Set();
+   Object.entries(EXPECTED_PROFILE_ROUTE_COPY_LABELS).forEach(([language, labels]) => {
+@@ -12795,6 +12860,7 @@ function validateSettingsAudioParity() {
+     reject(`settings audio parity source could not be read: ${error.message}`);
+     return;
+   }
++  const compactSettingsRoute = settingsRoute.replace(/\s+/g, ' ');
+ 
+   const audioEnabledKey = extractStringConstantFromTs(settingsStore, 'audioEnabledKey');
+   if (audioEnabledKey !== EXPECTED_AUDIO_SETTING_KEY) {
+@@ -12855,7 +12921,7 @@ function validateSettingsAudioParity() {
+     reject('app/settings.tsx audio switch must expose checked state from audioEnabled');
+   }
+   if (
+-    !settingsRoute.includes(
++    !compactSettingsRoute.includes(
+       'audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel',
+     )
+   ) {
+@@ -14609,6 +14675,30 @@ function validateBadgeCatalog() {
+         }
+       }
+ 
++      for (const field of ['titleSv', 'titleEn', 'descriptionSv', 'descriptionEn']) {
++        if (!hasText(badge[field])) {
++          reject(`${label} missing ${field}`);
++        } else if (!textIsTrimmedSingleSpaced(badge[field])) {
++          reject(`${label} ${field} must be trimmed and single-spaced`);
++        }
++      }
++
++      if (
++        hasText(badge.titleSv) &&
++        hasText(badge.titleEn) &&
++        normalizeComparableText(badge.titleSv) === normalizeComparableText(badge.titleEn)
++      ) {
++        reject(`${label} titleSv must be localized separately from titleEn`);
++      }
++      if (
++        hasText(badge.descriptionSv) &&
++        hasText(badge.descriptionEn) &&
++        normalizeComparableText(badge.descriptionSv) ===
++          normalizeComparableText(badge.descriptionEn)
++      ) {
++        reject(`${label} descriptionSv must be localized separately from descriptionEn`);
++      }
++
+       const normalizedTitle = normalizeComparableText(badge.title);
+       if (normalizedTitle && seenTitles.has(normalizedTitle)) {
+         reject(`${label} duplicates badge title`);
+diff --git a/tests/content-profile-route-copy-parity.test.js b/tests/content-profile-route-copy-parity.test.js
+index c74545141..ea8316853 100644
+--- a/tests/content-profile-route-copy-parity.test.js
++++ b/tests/content-profile-route-copy-parity.test.js
+@@ -61,8 +61,19 @@ test('profile route shell copy stays keyed by the settings language', () => {
+   );
+   assert.match(source, /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/);
+   assert.match(source, /copy\.studySetupCta/);
++  assert.match(source, /dailyGoalBadgeLabel: 'Dagligt mål'/);
++  assert.match(source, /languageBadgeLabel: 'Språk'/);
++  assert.match(source, /audioStatusLabel: 'Ljud'/);
+   assert.match(source, /studySetupCta: 'Ändra mål, språk och ljud'/);
+   assert.match(source, /studySetupCta: 'Adjust goal, language, and audio'/);
++  assert.match(
++    source,
++    /openSettingsAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud'/,
++  );
++  assert.match(
++    source,
++    /openSettingsAccessibilityLabel: 'Open settings for daily goal, language, and audio'/,
++  );
+   assert.match(source, /const badgeInput: BadgeInput = \{/);
+   assert.match(source, /const unlockedBadgeIds = new Set\(deriveBadges\(badgeInput\)/);
+   assert.match(source, /<BadgeRow/);
+@@ -145,12 +156,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
+   );
+   assert.match(
+     bannerSource,
+-    /accessibilityState=\{\{ disabled: activeAction !== null \|\| adsDisabled \}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
++    /accessibilityState=\{\{[\s\S]*busy: activeAction === 'buy'[\s\S]*disabled: activeAction !== null \|\| adsDisabled[\s\S]*\}\}[\s\S]*disabled=\{activeAction !== null \|\| adsDisabled\}[\s\S]*copy\.buyIdle\(REMOVE_ADS_PRICE_LABEL\)/,
+   );
+   assert.match(bannerSource, /accessibilityLabel=\{copy\.restoreAccessibilityLabel\}/);
+   assert.match(
+     bannerSource,
+-    /accessibilityState=\{\{ disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
++    /accessibilityState=\{\{ busy: activeAction === 'restore', disabled: activeAction !== null \}\}[\s\S]*disabled=\{activeAction !== null\}[\s\S]*copy\.restoreIdle/,
+   );
+   assert.match(
+     bannerSource,
+@@ -167,12 +178,12 @@ test('profile premium banner keeps current Remove Ads purchase and recovery cont
+ 
+ test('profile study setup card owns the localized settings shortcut', () => {
+   const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/profile.tsx'), 'utf8');
+-  const settingsLinks = source.match(/href="\/settings"/g) ?? [];
++  const settingsLinks = source.match(/pathname: '\/settings'/g) ?? [];
+   const studySetupStart = source.indexOf('<SectionHeader title={copy.studySetupTitle}');
+   const badgesStart = source.indexOf('<SectionHeader title={copy.badgesTitle}');
+   const studySetupCard = source.slice(studySetupStart, badgesStart);
+   const pillRowIndex = studySetupCard.indexOf('<View style={styles.pillRow}>');
+-  const settingsLinkIndex = studySetupCard.indexOf('href="/settings"');
++  const settingsLinkIndex = studySetupCard.indexOf("pathname: '/settings'");
+ 
+   assert.equal(settingsLinks.length, 1);
+   assert.notEqual(studySetupStart, -1);
+@@ -185,12 +196,15 @@ test('profile study setup card owns the localized settings shortcut', () => {
+     studySetupCard,
+     /audioEnabled \? copy\.audioEnabledBadge : copy\.audioDisabledBadge/,
+   );
+-  assert.match(studySetupCard, /<Link[\s\S]*asChild[\s\S]*href="\/settings"[\s\S]*>/);
++  assert.match(
++    studySetupCard,
++    /<Link[\s\S]*asChild[\s\S]*href=\{\{[\s\S]*pathname: '\/settings'[\s\S]*params: \{ focus: 'study' \}[\s\S]*\}\}[\s\S]*>/,
++  );
+   assert.match(
+     studySetupCard,
+     /<Button[\s\S]*accessibilityLabel=\{copy\.openSettingsAccessibilityLabel\}[\s\S]*accessibilityRole="link"[\s\S]*style=\{styles\.settingsLink\}[\s\S]*\{copy\.studySetupCta\}[\s\S]*<\/Button>/,
+   );
+-  assert.doesNotMatch(source.slice(badgesStart), /href="\/settings"/);
++  assert.doesNotMatch(source.slice(badgesStart), /pathname: '\/settings'/);
+   assert.match(source, /settingsLink: \{[\s\S]*minHeight: space\[6\]/);
+ });
+ 
+diff --git a/tests/content-settings-route-copy-parity.test.js b/tests/content-settings-route-copy-parity.test.js
+index 4d706365e..28b49bb5e 100644
+--- a/tests/content-settings-route-copy-parity.test.js
++++ b/tests/content-settings-route-copy-parity.test.js
+@@ -24,8 +24,26 @@ test('settings route shell copy follows the persisted settings language', () =>
+   const summary = parseValidationSummary();
+   const source = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+ 
+-  assert.equal(summary.settingsRouteCopyLabelsValidated, 119);
++  assert.equal(summary.settingsRouteCopyLabelsValidated, 123);
+   assert.equal(summary.settingsRouteCopyParityValidated, true);
++  assert.match(source, /import \{ useLocalSearchParams \} from 'expo-router';/);
++  assert.match(source, /const \{ focus \} = useLocalSearchParams<\{ focus\?: string \}>\(\);/);
++  assert.match(source, /const studyFocusActive = focus === 'study';/);
++  assert.match(source, /studyControlsTitle: 'Dagligt mål, språk och ljud'/);
++  assert.match(source, /studyControlsTitle: 'Daily goal, language, and audio'/);
++  assert.match(
++    source,
++    /studyControlsFocusLabel: 'Studieinställningarna från profilen är markerade här\.'/,
++  );
++  assert.match(
++    source,
++    /studyControlsFocusLabel: 'The study setup controls from Profile are highlighted here\.'/,
++  );
++  assert.match(source, /nativeID="study-settings-controls"/);
++  assert.match(source, /testID="study-settings-controls"/);
++  assert.match(source, /studyFocusActive \? styles\.studyControlsGroupFocused : null/);
++  assert.match(source, /\{studyFocusActive \? \(/);
++  assert.match(source, /\{copy\.studyControlsFocusLabel\}/);
+   assert.match(source, /type SettingsCopy =/);
+   assert.match(source, /const settingsCopy: Record<AppLanguage, SettingsCopy> = \{/);
+   assert.match(source, /const language = useSettingsStore\(\(state\) => state\.language\);/);
+diff --git a/tests/e2e/profile-settings-shortcut.spec.ts b/tests/e2e/profile-settings-shortcut.spec.ts
+index d63f44ee2..43f3c6d43 100644
+--- a/tests/e2e/profile-settings-shortcut.spec.ts
++++ b/tests/e2e/profile-settings-shortcut.spec.ts
+@@ -22,6 +22,7 @@ const fixtures: Record<
+     profileHeading: string;
+     settingsCtaName: string;
+     settingsHeading: string;
++    studyFocusCue: string;
+     studySetupHeading: string;
+   }
+ > = {
+@@ -34,6 +35,7 @@ const fixtures: Record<
+     profileHeading: 'Framsteg utan konto',
+     settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
+     settingsHeading: 'Inställningar',
++    studyFocusCue: 'Studieinställningarna från profilen är markerade här.',
+     studySetupHeading: 'Studieinställningar',
+   },
+   en: {
+@@ -45,6 +47,7 @@ const fixtures: Record<
+     profileHeading: 'Progress without an account',
+     settingsCtaName: 'Open settings for daily goal, language, and audio',
+     settingsHeading: 'Settings',
++    studyFocusCue: 'The study setup controls from Profile are highlighted here.',
+     studySetupHeading: 'Study setup',
+   },
+ };
+@@ -79,10 +82,11 @@ for (const language of ['sv', 'en'] as const) {
+     await expectMinimumTargetSize(settingsShortcut, `${language} profile settings shortcut`);
+     await settingsShortcut.click();
+ 
+-    await expect(page).toHaveURL(/\/settings$/);
++    await expect(page).toHaveURL(/\/settings\?focus=study$/);
+     await dismissBlockingModals(page);
+ 
+     await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
++    await expect(page.getByText(copy.studyFocusCue)).toBeVisible();
+     await expect(page.getByRole('radiogroup', { name: copy.dailyGoalGroup })).toBeVisible();
+     await expect(page.getByRole('radio', { name: copy.dailyGoalRadioName })).toHaveAttribute(
+       'aria-checked',
