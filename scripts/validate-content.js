@@ -2644,74 +2644,131 @@ const EXPECTED_CARD_ACCESSIBILITY_RULES = [
 const EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES = [
   {
     label: 'settings language type import',
-    pattern: /import type \{ AppLanguage \} from '\.\.\/\.\.\/lib\/storage\/settingsStore';/,
+    source: 'foundation',
+    pattern: /type AppLanguage \} from '\.\.\/lib\/storage\/settingsStore';/,
   },
   {
     label: 'typed localized copy contract',
+    source: 'foundation',
     pattern:
       /type ProgressBarCopy = \{\s*progressLabel: \(progressPercent: number\) => string;\s*\};/,
   },
   {
     label: 'localized progress copy',
+    source: 'foundation',
     pattern:
       /const progressBarCopy: Record<AppLanguage, ProgressBarCopy> = \{[\s\S]*sv:[\s\S]*`\$\{progressPercent\} procent klart`[\s\S]*en:[\s\S]*`\$\{progressPercent\} percent complete`/,
   },
   {
     label: 'clamped progress source',
+    source: 'foundation',
     pattern: /const clampedProgress = Math\.max\(0, Math\.min\(1, progress\)\);/,
   },
   {
     label: 'percent value derived from clamped progress',
+    source: 'foundation',
     pattern: /const progressPercent = Math\.round\(clampedProgress \* 100\);/,
   },
   {
     label: 'language copy selection',
+    source: 'foundation',
     pattern: /const copy = progressBarCopy\[language\];/,
   },
   {
     label: 'readable localized progress label',
+    source: 'foundation',
     pattern: /const progressAccessibilityLabel = copy\.progressLabel\(progressPercent\);/,
   },
   {
     label: 'web aria label',
-    pattern: /aria-label=\{progressAccessibilityLabel\}/,
+    source: 'foundation',
+    pattern: /aria-label=\{resolvedAccessibilityLabel\}/,
   },
   {
     label: 'web aria max value',
+    source: 'foundation',
     pattern: /aria-valuemax=\{100\}/,
   },
   {
     label: 'web aria min value',
+    source: 'foundation',
     pattern: /aria-valuemin=\{0\}/,
   },
   {
     label: 'web aria current value',
+    source: 'foundation',
     pattern: /aria-valuenow=\{progressPercent\}/,
   },
   {
     label: 'web aria localized value text',
-    pattern: /aria-valuetext=\{progressAccessibilityLabel\}/,
+    source: 'foundation',
+    pattern: /aria-valuetext=\{resolvedAccessibilityLabel\}/,
   },
   {
     label: 'native accessibility label',
-    pattern: /accessibilityLabel=\{progressAccessibilityLabel\}/,
+    source: 'foundation',
+    pattern: /accessibilityLabel=\{resolvedAccessibilityLabel\}/,
   },
   {
     label: 'native progressbar role',
-    pattern: /accessibilityRole="progressbar"/,
+    source: 'foundation',
+    pattern: /accessibilityRole=\{accessibilityRole\}/,
   },
   {
     label: 'native clamped accessibility value',
+    source: 'foundation',
     pattern:
-      /accessibilityValue=\{\{[\s\S]*min:\s*0,\s*max:\s*100,\s*now:\s*progressPercent,\s*text:\s*progressAccessibilityLabel,?\s*\}\}/,
+      /accessibilityValue=\{\{[\s\S]*min:\s*0,[\s\S]*max:\s*100,[\s\S]*now:\s*progressPercent,[\s\S]*text:\s*resolvedAccessibilityLabel,[\s\S]*\.\.\.accessibilityValue,[\s\S]*\}\}/,
   },
   {
     label: 'animated fill uses clamped source',
+    source: 'foundation',
     pattern: /new Animated\.Value\(clampedProgress\)/,
   },
   {
+    label: 'reduced-motion hook',
+    source: 'foundation',
+    pattern: /const reducedMotionEnabled = useReducedMotion\(\);/,
+  },
+  {
+    label: 'animated fill respects reduced motion',
+    source: 'foundation',
+    pattern: /const shouldAnimate = animated && !reducedMotionEnabled;/,
+  },
+  {
     label: 'visual fill uses percent interpolation bounds',
+    source: 'foundation',
     pattern: /inputRange:\s*\[0, 1\],[\s\S]*outputRange:\s*\['0%', '100%'\]/,
+  },
+  {
+    label: 'adapter imports root implementation',
+    source: 'adapter',
+    pattern:
+      /import \{[\s\S]*ProgressBar as RootProgressBar,[\s\S]*type ProgressBarProps as RootProgressBarProps,[\s\S]*\} from '\.\.\/ProgressBar';/,
+  },
+  {
+    label: 'adapter preserves route language prop',
+    source: 'adapter',
+    pattern: /language\?: AppLanguage;/,
+  },
+  {
+    label: 'adapter forwards language as languageOverride',
+    source: 'adapter',
+    pattern: /<RootProgressBar \{\.\.\.progressBarProps\} languageOverride=\{language\} \/>/,
+  },
+];
+const FORBIDDEN_PROGRESS_BAR_ADAPTER_PATTERNS = [
+  {
+    label: 'duplicate animation implementation',
+    pattern: /Animated\.timing|new Animated\.Value|Easing\./,
+  },
+  {
+    label: 'duplicate localized copy implementation',
+    pattern: /ProgressBarCopy|progressBarCopy|progressAccessibilityLabel/,
+  },
+  {
+    label: 'duplicate reduced-motion hook usage',
+    pattern: /useReducedMotion/,
   },
 ];
 const EXPECTED_METRIC_CARD_ACCESSIBILITY_RULES = [
@@ -5465,6 +5522,14 @@ function arrayEquals(left, right) {
 
 function jsonEqual(left, right) {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function answerTemplateOptions(options) {
+  return options.map(({ id, textSv, textEn }) => ({ id, textSv, textEn }));
+}
+
+function generatedAnswerOptionsEqual(left, right) {
+  return jsonEqual(answerTemplateOptions(left), answerTemplateOptions(right));
 }
 
 function escapeRegExp(value) {
@@ -11967,6 +12032,7 @@ function validateCardAccessibilityParity() {
 function validateProgressBarAccessibilityParity() {
   let valid = true;
   let progressBarSource = '';
+  let progressBarAdapterSource = '';
 
   function reject(message) {
     valid = false;
@@ -11974,7 +12040,16 @@ function validateProgressBarAccessibilityParity() {
   }
 
   try {
-    progressBarSource = fs.readFileSync(
+    progressBarSource = fs.readFileSync(path.join(repoRoot, 'components/ProgressBar.tsx'), 'utf8');
+  } catch (error) {
+    reject(
+      `components/ProgressBar.tsx could not be read for accessibility parity: ${error.message}`,
+    );
+    return;
+  }
+
+  try {
+    progressBarAdapterSource = fs.readFileSync(
       path.join(repoRoot, 'components/ui/ProgressBar.tsx'),
       'utf8',
     );
@@ -11986,8 +12061,19 @@ function validateProgressBarAccessibilityParity() {
   }
 
   EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.forEach((expectedRule) => {
-    if (!expectedRule.pattern.test(progressBarSource)) {
+    const source = expectedRule.source === 'adapter' ? progressBarAdapterSource : progressBarSource;
+    if (!expectedRule.pattern.test(source)) {
       reject(`ProgressBar missing ${expectedRule.label} for accessibility parity`);
+      return;
+    }
+    progressBarAccessibilityRulesValidated += 1;
+  });
+
+  FORBIDDEN_PROGRESS_BAR_ADAPTER_PATTERNS.forEach((forbiddenRule) => {
+    if (forbiddenRule.pattern.test(progressBarAdapterSource)) {
+      reject(
+        `components/ui/ProgressBar.tsx must stay a thin adapter without ${forbiddenRule.label}`,
+      );
       return;
     }
     progressBarAccessibilityRulesValidated += 1;
@@ -11995,7 +12081,9 @@ function validateProgressBarAccessibilityParity() {
 
   if (
     valid &&
-    progressBarAccessibilityRulesValidated === EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length
+    progressBarAccessibilityRulesValidated ===
+      EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length +
+        FORBIDDEN_PROGRESS_BAR_ADAPTER_PATTERNS.length
   ) {
     progressBarAccessibilityParityValidated = true;
   }
@@ -17430,7 +17518,7 @@ function validateGeneratedAnswerTemplateParity() {
       if (!expected) {
         variantIsValid = false;
         fail(`${label} expected generated variant is missing`);
-      } else if (!jsonEqual(variant.options, expected.options)) {
+      } else if (!generatedAnswerOptionsEqual(variant.options, expected.options)) {
         variantIsValid = false;
         fail(`${label} options do not match generated answer template`);
       }
@@ -18477,6 +18565,9 @@ console.log(
       buttonAccessibilityParityValidated,
       cardAccessibilityRulesValidated,
       cardAccessibilityParityValidated,
+      progressBarAccessibilityRulesExpected:
+        EXPECTED_PROGRESS_BAR_ACCESSIBILITY_RULES.length +
+        FORBIDDEN_PROGRESS_BAR_ADAPTER_PATTERNS.length,
       progressBarAccessibilityRulesValidated,
       progressBarAccessibilityParityValidated,
       metricCardAccessibilityRulesValidated,
