@@ -187,11 +187,16 @@ test('daily goal settings stay in parity between storage and settings controls',
   assert.doesNotMatch(settingsStore, /storedValue && storedValue > 0 \? storedValue : 10/);
   assert.match(settingsStore, /Number\.isFinite\(answerCount\)/);
   assert.match(settingsStore, /Number\.isInteger\(answerCount\)/);
-  assert.match(settingsStore, /answerCount < minDailyGoalAnswers/);
+  assert.match(settingsStore, /const dailyGoalAnswerOptions = \[5, 10, 20, 40\] as const;/);
+  assert.match(settingsStore, /dailyGoalAnswerOptions\.includes/);
   assert.match(settingsStore, /const safeGoal = normalizeDailyGoalAnswers\(dailyGoalAnswers\);/);
   assert.match(
     settingsStore,
-    /settings\.dailyGoalAnswers = normalizeDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
+    /const importedDailyGoalAnswers = normalizeImportedDailyGoalAnswers\(candidate\.dailyGoalAnswers\);/,
+  );
+  assert.match(
+    settingsStore,
+    /if \(importedDailyGoalAnswers !== undefined\) \{[\s\S]*settings\.dailyGoalAnswers = importedDailyGoalAnswers;/,
   );
   assert.doesNotMatch(settingsStore, /Math\.round\(dailyGoalAnswers\)/);
   assert.match(settingsRoute, /\[5, 10, 20, 40\]\.map\(\(goal\) =>/);
@@ -209,7 +214,12 @@ test('daily goal hydration falls back for unsafe persisted values', () => {
     [Infinity, 10],
     [-1, 10],
     [0, 10],
+    [1, 10],
     [3.5, 10],
+    [15, 10],
+    [19.6, 10],
+    [39.6, 10],
+    [50, 10],
     [999, 10],
     [5, 5],
     [10, 10],
@@ -224,7 +234,23 @@ test('daily goal setter falls back for malformed runtime inputs before persistin
   const storage = createDailyGoalStorage(20);
   const store = loadSettingsStoreFromStorage(storage);
 
-  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
+  [
+    Number.NaN,
+    Infinity,
+    -Infinity,
+    '20',
+    null,
+    undefined,
+    3.5,
+    -1,
+    0,
+    1,
+    15,
+    19.6,
+    39.6,
+    50,
+    51,
+  ].forEach((goal) => {
     store.getState().setDailyGoalAnswers(goal);
     const latestWrite = storage.writes.at(-1);
     assert.equal(store.getState().dailyGoalAnswers, 10);
@@ -239,16 +265,31 @@ test('daily goal setter falls back for malformed runtime inputs before persistin
   });
 });
 
-test('imported daily goal settings fall back for malformed snapshot values before persisting', () => {
+test('imported daily goal settings ignore malformed snapshot values before persisting', () => {
   const storage = createDailyGoalStorage(20);
   const { importSettingsSnapshot, useSettingsStore } = loadSettingsModuleFromStorage(storage);
 
-  [Number.NaN, Infinity, -Infinity, '20', null, undefined, 3.5, -1, 0, 51].forEach((goal) => {
+  [
+    Number.NaN,
+    Infinity,
+    -Infinity,
+    '20',
+    null,
+    undefined,
+    3.5,
+    -1,
+    0,
+    1,
+    15,
+    19.6,
+    39.6,
+    50,
+    51,
+  ].forEach((goal) => {
+    const writeCount = storage.writes.length;
     importSettingsSnapshot({ dailyGoalAnswers: goal });
-    const latestWrite = storage.writes.at(-1);
-    assert.equal(useSettingsStore.getState().dailyGoalAnswers, 10);
-    assert.deepEqual(latestWrite, { key: 'dailyGoalAnswers', value: 10 });
-    assert.equal(Number.isFinite(latestWrite.value), true);
+    assert.equal(useSettingsStore.getState().dailyGoalAnswers, 20);
+    assert.equal(storage.writes.length, writeCount);
   });
 
   [5, 10, 20, 40].forEach((goal) => {

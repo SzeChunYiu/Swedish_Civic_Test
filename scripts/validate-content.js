@@ -14173,6 +14173,9 @@ function validateSettingsDailyGoalParity() {
   if (!settingsStore.includes(`const defaultDailyGoalAnswers = ${EXPECTED_DAILY_GOAL_DEFAULT};`)) {
     reject(`readDailyGoalAnswers must default to ${EXPECTED_DAILY_GOAL_DEFAULT} answers`);
   }
+  if (!settingsStore.includes('const dailyGoalAnswerOptions = [5, 10, 20, 40] as const;')) {
+    reject('settingsStore must define the same daily-goal option set rendered in Settings');
+  }
 
   const normalizedSettingsStore = settingsStore.replace(/\s+/g, ' ');
   if (!normalizedSettingsStore.includes('return normalizeDailyGoalAnswers(storedValue);')) {
@@ -14191,12 +14194,25 @@ function validateSettingsDailyGoalParity() {
   if (settingsStore.includes('Math.round(dailyGoalAnswers)')) {
     reject('setDailyGoalAnswers must not persist a raw Math.round daily-goal clamp');
   }
+  if (!normalizedSettingsStore.includes('dailyGoalAnswerOptions.includes(answerCount as')) {
+    reject('normalizeDailyGoalAnswers must reject values outside the Settings daily-goal options');
+  }
+  if (!settingsStore.includes('function normalizeImportedDailyGoalAnswers')) {
+    reject('normalizeImportedSettings must use an import-specific daily-goal normalizer');
+  }
   if (
     !normalizedSettingsStore.includes(
-      'settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);',
+      'const importedDailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);',
     )
   ) {
     reject('normalizeImportedSettings must normalize imported daily-goal input');
+  }
+  if (
+    !normalizedSettingsStore.includes(
+      'if (importedDailyGoalAnswers !== undefined) { settings.dailyGoalAnswers = importedDailyGoalAnswers;',
+    )
+  ) {
+    reject('normalizeImportedSettings must omit invalid imported daily-goal input');
   }
 
   const goalOptionArrays = extractMappedNumericArraysFromTs(settingsRoute, 'goal');
@@ -17479,8 +17495,7 @@ function validateStreakRules() {
     },
     {
       label: 'invalid local date fallback',
-      actual: () =>
-        /^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0,
+      actual: () => (/^\d{4}-\d{2}-\d{2}$/.test(getLocalDateKey(new Date(Number.NaN))) ? 1 : 0),
       expected: 1,
     },
   ];

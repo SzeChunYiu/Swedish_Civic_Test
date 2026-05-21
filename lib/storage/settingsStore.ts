@@ -25,8 +25,7 @@ const includeSupplementaryKey = 'includeSupplementaryQuestions';
 const hasSeenAboutTheTestKey = 'hasSeenAboutTheTest';
 const settingsStorageId = 'settings';
 const defaultDailyGoalAnswers = 10;
-const minDailyGoalAnswers = 1;
-const maxDailyGoalAnswers = 50;
+const dailyGoalAnswerOptions = [5, 10, 20, 40] as const;
 
 let settingsStorage: MMKV | null = null;
 
@@ -75,10 +74,22 @@ function normalizeDailyGoalAnswers(answerCount: unknown): number {
     typeof answerCount !== 'number' ||
     !Number.isFinite(answerCount) ||
     !Number.isInteger(answerCount) ||
-    answerCount < minDailyGoalAnswers ||
-    answerCount > maxDailyGoalAnswers
+    !dailyGoalAnswerOptions.includes(answerCount as (typeof dailyGoalAnswerOptions)[number])
   ) {
     return defaultDailyGoalAnswers;
+  }
+
+  return answerCount;
+}
+
+function normalizeImportedDailyGoalAnswers(answerCount: unknown): number | undefined {
+  if (
+    typeof answerCount !== 'number' ||
+    !Number.isFinite(answerCount) ||
+    !Number.isInteger(answerCount) ||
+    !dailyGoalAnswerOptions.includes(answerCount as (typeof dailyGoalAnswerOptions)[number])
+  ) {
+    return undefined;
   }
 
   return answerCount;
@@ -137,7 +148,10 @@ export function normalizeImportedSettings(value: unknown): ImportableSettings {
     settings.audioEnabled = candidate.audioEnabled;
   }
   if (Object.prototype.hasOwnProperty.call(candidate, 'dailyGoalAnswers')) {
-    settings.dailyGoalAnswers = normalizeDailyGoalAnswers(candidate.dailyGoalAnswers);
+    const importedDailyGoalAnswers = normalizeImportedDailyGoalAnswers(candidate.dailyGoalAnswers);
+    if (importedDailyGoalAnswers !== undefined) {
+      settings.dailyGoalAnswers = importedDailyGoalAnswers;
+    }
   }
   if (typeof candidate.includeSupplementaryQuestions === 'boolean') {
     settings.includeSupplementaryQuestions = candidate.includeSupplementaryQuestions;
