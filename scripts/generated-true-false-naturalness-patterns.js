@@ -142,6 +142,8 @@ const GENERATED_TRUE_FALSE_NATURALNESS_PATTERNS = [
   /^They are often run by private companies and earn income from advertising\.?$/i,
   /^De får aldrig sälja reklamplats\.?$/i,
   /^They may never sell advertising space\.?$/i,
+  /^Society should be accessible so people can participate on equal terms\.?$/i,
+  /^People with disabilities should not be able to study or work\.?$/i,
   /^De finns också på internet och uppdateras med nyheter flera gånger per dag\.?$/i,
   /^They are also available online and updated with news several times per day\.?$/i,
   /^De får bara säljas som ett exemplar per år\.?$/i,

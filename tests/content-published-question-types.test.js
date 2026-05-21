@@ -4565,6 +4565,52 @@ test('q146 political-rights generated true/false exports direct propositions', (
   );
 });
 
+test('q178 disability-rights generated true/false exports scoped aim propositions', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const trueStatementId = generatedQuestionId(sourceQuestions, 'q178', 'trueStatement');
+  const falseStatementId = generatedQuestionId(sourceQuestions, 'q178', 'falseStatement');
+  const byId = new Map(generatedSiteBank.map((question) => [question.id, question]));
+  const actualById = new Map(Array.from(actualSiteBank).map((question) => [question.id, question]));
+  const csvRows = contentQuestionBankCsvRowsById([trueStatementId, falseStatementId]);
+  const stalePattern =
+    /^(?:Society should be accessible so people can participate on equal terms|People with disabilities should not be able to study or work)\.?$/im;
+
+  assert.equal(byId.get('q178')?.q.en, 'What is one aim of disability rights work?');
+  assert.equal(byId.get(trueStatementId)?.q.sv, actualById.get(trueStatementId)?.q.sv);
+  assert.equal(byId.get(trueStatementId)?.q.en, actualById.get(trueStatementId)?.q.en);
+  assert.equal(
+    byId.get(trueStatementId)?.q.en,
+    'One aim of disability rights work is that society should be accessible so people can participate on equal terms.',
+  );
+  assert.equal(byId.get(falseStatementId)?.q.sv, actualById.get(falseStatementId)?.q.sv);
+  assert.equal(byId.get(falseStatementId)?.q.en, actualById.get(falseStatementId)?.q.en);
+  assert.equal(
+    byId.get(falseStatementId)?.q.en,
+    'One aim of disability rights work is that people with disabilities should not be able to study or work.',
+  );
+  assert.equal(csvRows.get(trueStatementId)?.[4], byId.get(trueStatementId)?.q.en);
+  assert.equal(csvRows.get(falseStatementId)?.[4], byId.get(falseStatementId)?.q.en);
+  assert.equal(csvRows.get(trueStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(csvRows.get(falseStatementId)?.[11], 'Personer med funktionsnedsättning');
+  assert.equal(byId.get(trueStatementId)?.answer, 0);
+  assert.equal(byId.get(falseStatementId)?.answer, 1);
+  assert.doesNotMatch(
+    [
+      byId.get(trueStatementId)?.q.en,
+      byId.get(falseStatementId)?.q.en,
+      actualById.get(trueStatementId)?.q.en,
+      actualById.get(falseStatementId)?.q.en,
+      csvRows.get(trueStatementId)?.[4],
+      csvRows.get(falseStatementId)?.[4],
+    ].join('\n'),
+    stalePattern,
+  );
+});
+
 test('q062 public-sector exports natural English in canonical and static banks', () => {
   const generatedSiteBank = buildSiteQuestionBank().questions;
   const actualSiteBank = actualStaticQuestions();

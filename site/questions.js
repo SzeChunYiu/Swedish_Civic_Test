@@ -63687,7 +63687,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "Society should be accessible so people can participate on equal terms.",
+      "en": "One aim of disability rights work is that society should be accessible so people can participate on equal terms.",
       "sv": "Ett mål med arbetet för personer med funktionsnedsättning är att samhället ska vara tillgängligt så att människor kan delta på jämlika villkor."
     },
     "opts": [
@@ -63727,7 +63727,7 @@
     "chapter": "Ch. 07 · Human rights",
     "type": "true_false",
     "q": {
-      "en": "People with disabilities should not be able to study or work.",
+      "en": "One aim of disability rights work is that people with disabilities should not be able to study or work.",
       "sv": "Ett mål med arbetet för personer med funktionsnedsättning är att personer med funktionsnedsättning inte ska kunna studera eller arbeta."
     },
     "opts": [
