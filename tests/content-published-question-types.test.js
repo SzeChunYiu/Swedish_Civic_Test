@@ -41,7 +41,8 @@ const saltsjobadenAgreementStiltedEnglishPattern =
   /\b(?:What did the 1938 Saltsj(?:ö|o)baden Agreement become important for|bec(?:o|a)me important for)\b/i;
 const humanRightsDefinitionCleftPattern =
   /\b(?:Att mänskliga rättigheter gäller alla betyder att|That human rights apply to everyone means)\b/i;
-const policyGoalCleftPattern = /\bThe goal of .+?\bpolicy means(?: that)?\b/i;
+const policyGoalCleftPattern =
+  /\b(?:The goal of .+?\bpolicy means(?: that)?|Målet med .+?politik(?:en)? betyder att)\b/i;
 const civilDefenceContextlessPattern =
   /\b(?:Viktiga verksamheter som skola, arbete och hälso- och sjukvård kan fortsätta fungera|Important activities such as school, work, and health care can continue to function|Politiska val ersätts med militära beslut|Political elections are replaced with military decisions)\b/i;
 const luciaExplanationRoleScaffoldPattern =
@@ -3524,8 +3525,8 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
       [
         ${JSON.stringify(generatedFixtureIdHelperSource())},
         "const genderEqualityPolicyGoalResiduals = {",
-        "  [generatedFixtureId('q053', 1)]: { questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
-        "  [generatedFixtureId('q053', 2)]: { questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
+        "  [generatedFixtureId('q053', 1)]: { questionSv: 'Målet med Sveriges folkhälsopolitik betyder att människor ska ha lika möjligheter till en god hälsa.', questionEn: 'The goal of Sweden’s public health policy means people should have equal opportunities for good health.' },",
+        "  [generatedFixtureId('q053', 2)]: { questionSv: 'Målet med Sveriges jämställdhetspolitik betyder att jämställdhet bara handlar om hur många kvinnor som finns i politiken.', questionEn: 'The goal of Sweden’s gender equality policy means that gender equality is only about how many women are in politics.' },",
         "};",
         "export const questions: PracticeQuestion[] = [...sourceQuestions, ...generatedPublishedQuestions].map((question) =>",
         "  genderEqualityPolicyGoalResiduals[question.id]",
