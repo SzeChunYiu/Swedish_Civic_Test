@@ -1,0 +1,374 @@
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+import { Button } from '../components/Button';
+import { Badge } from '../components/ui/Badge';
+import { Card } from '../components/ui/Card';
+import { ScreenShell, SectionHeader } from '../components/ui/ScreenShell';
+import {
+  EBOOK_ARTICLES,
+  getAdjacentEbookArticle,
+  getEbookArticleByParam,
+  getEbookSourceNotes,
+  getLocalizedText,
+  type EbookArticle,
+  type EbookSourceNote,
+} from '../lib/content/ebookContent';
+import { useSettingsStore, type AppLanguage } from '../lib/storage/settingsStore';
+import { colors, radius, space, typography } from '../lib/theme';
+
+type EbookRouteCopy = {
+  articleNavAccessibilityLabel: (kicker: string, title: string) => string;
+  backToLearn: string;
+  backToLearnAccessibilityLabel: string;
+  nextArticle: string;
+  openPracticeAccessibilityLabel: (title: string) => string;
+  previousArticle: string;
+  provenanceBadge: string;
+  provenanceText: string;
+  sectionSubtitle: string;
+  sectionTitle: string;
+  sourceHeading: (date: string) => string;
+  sourcesCta: string;
+  sourcesCtaAccessibilityLabel: string;
+  subtitle: string;
+  title: string;
+};
+
+const ebookRouteCopy: Record<AppLanguage, EbookRouteCopy> = {
+  sv: {
+    articleNavAccessibilityLabel: (kicker, title) => `Öppna artikel ${kicker}: ${title}`,
+    backToLearn: 'Tillbaka till studievägen',
+    backToLearnAccessibilityLabel: 'Tillbaka till studievägen',
+    nextArticle: 'Nästa',
+    openPracticeAccessibilityLabel: (title) => `Öppna övning för ${title}`,
+    previousArticle: 'Förra',
+    provenanceBadge: 'Redaktionell',
+    provenanceText:
+      'Egen studieguide. Kontrollera fakta via UHR-materialet och källsidan när en uppgift påverkar dig.',
+    sectionSubtitle:
+      'Läs en kort artikel offline och gå sedan direkt till övningen som använder samma frågebank.',
+    sectionTitle: 'Studieartiklar',
+    sourceHeading: (date) => `Källor hämtade ${date}`,
+    sourcesCta: 'Öppna källor',
+    sourcesCtaAccessibilityLabel: 'Öppna källsidan',
+    subtitle:
+      'Korta, tvåspråkiga artiklar från den statiska studieguiden, anpassade för appen och kopplade till kapitelövning.',
+    title: 'Studieguide i appen',
+  },
+  en: {
+    articleNavAccessibilityLabel: (kicker, title) => `Open article ${kicker}: ${title}`,
+    backToLearn: 'Back to Learn',
+    backToLearnAccessibilityLabel: 'Back to Learn',
+    nextArticle: 'Next',
+    openPracticeAccessibilityLabel: (title) => `Open practice for ${title}`,
+    previousArticle: 'Previous',
+    provenanceBadge: 'Editorial',
+    provenanceText:
+      'Original study guide. Verify facts through UHR material and the Sources page when a detail affects you.',
+    sectionSubtitle:
+      'Read a short article offline, then jump straight into practice from the same question bank.',
+    sectionTitle: 'Study articles',
+    sourceHeading: (date) => `Sources accessed ${date}`,
+    sourcesCta: 'Open sources',
+    sourcesCtaAccessibilityLabel: 'Open the Sources page',
+    subtitle:
+      'Short bilingual articles from the static study guide, adapted for the app and connected to chapter practice.',
+    title: 'In-app study guide',
+  },
+};
+
+function navigateToArticle(router: ReturnType<typeof useRouter>, article: EbookArticle) {
+  router.push(`/ebook?c=${article.staticChapterId}`);
+}
+
+function SourceNoteLine({ language, source }: { language: AppLanguage; source: EbookSourceNote }) {
+  return (
+    <View style={styles.sourceLine}>
+      <Text style={styles.sourceLabel}>{getLocalizedText(source.label, language)}</Text>
+      <Text style={styles.sourceUrl}>{source.url}</Text>
+    </View>
+  );
+}
+
+export default function EbookScreen() {
+  const { c } = useLocalSearchParams<{ c?: string | string[] }>();
+  const router = useRouter();
+  const language = useSettingsStore((state) => state.language);
+  const copy = ebookRouteCopy[language];
+  const article = getEbookArticleByParam(c);
+  const previousArticle = getAdjacentEbookArticle(article, 'previous');
+  const nextArticle = getAdjacentEbookArticle(article, 'next');
+  const sources = getEbookSourceNotes(article);
+  const articleTitle = getLocalizedText(article.title, language);
+  const articleKicker = getLocalizedText(article.kicker, language);
+  const sourceDate = sources[0]?.retrievedDate ?? '2026-05-19';
+
+  return (
+    <ScreenShell eyebrow={copy.sectionTitle} title={copy.title} subtitle={copy.subtitle}>
+      <Pressable
+        accessibilityLabel={copy.backToLearnAccessibilityLabel}
+        accessibilityRole="link"
+        hitSlop={space[1]}
+        onPress={() => router.push('/learn')}
+        style={({ pressed }) => [styles.backLink, pressed ? styles.pressedLink : null]}
+      >
+        <Text style={styles.backLinkText}>{copy.backToLearn}</Text>
+      </Pressable>
+
+      <SectionHeader title={copy.sectionTitle} subtitle={copy.sectionSubtitle} />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.articleNavContent}
+        style={styles.articleNav}
+      >
+        {EBOOK_ARTICLES.map((item) => {
+          const selected = item.staticChapterId === article.staticChapterId;
+          const kicker = getLocalizedText(item.kicker, language);
+          const title = getLocalizedText(item.title, language);
+
+          return (
+            <Pressable
+              key={item.staticChapterId}
+              accessibilityLabel={copy.articleNavAccessibilityLabel(kicker, title)}
+              accessibilityRole="button"
+              accessibilityState={{ selected }}
+              hitSlop={space[1]}
+              onPress={() => navigateToArticle(router, item)}
+              style={({ pressed }) => [
+                styles.articleNavItem,
+                pressed ? styles.articleNavItemPressed : null,
+                selected ? styles.articleNavItemSelected : null,
+              ]}
+            >
+              <Text
+                style={[styles.articleNavKicker, selected ? styles.articleNavTextSelected : null]}
+              >
+                {kicker}
+              </Text>
+              <Text
+                numberOfLines={2}
+                style={[styles.articleNavTitle, selected ? styles.articleNavTextSelected : null]}
+              >
+                {title}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+
+      <Card elevated style={styles.articleCard}>
+        <Badge tone="blue">{articleKicker}</Badge>
+        <Text accessibilityRole="header" style={styles.articleTitle}>
+          {articleTitle}
+        </Text>
+        <Text style={styles.lede}>{getLocalizedText(article.lede, language)}</Text>
+
+        <Card
+          accessibilityLabel={`${copy.provenanceBadge}. ${copy.provenanceText}`}
+          style={styles.provenanceCard}
+        >
+          <Badge tone="warm">{copy.provenanceBadge}</Badge>
+          <Text style={styles.provenanceText}>{copy.provenanceText}</Text>
+        </Card>
+
+        {article.sections.map((section) => (
+          <View key={getLocalizedText(section.heading, 'en')} style={styles.sectionBlock}>
+            <Text accessibilityRole="header" style={styles.sectionHeading}>
+              {getLocalizedText(section.heading, language)}
+            </Text>
+            <Text style={styles.sectionBody}>{getLocalizedText(section.body, language)}</Text>
+          </View>
+        ))}
+
+        <Card style={styles.sourcesCard}>
+          <Text accessibilityRole="header" style={styles.sourcesHeading}>
+            {copy.sourceHeading(sourceDate)}
+          </Text>
+          {sources.map((source) => (
+            <SourceNoteLine key={source.key} language={language} source={source} />
+          ))}
+        </Card>
+      </Card>
+
+      <View style={styles.actions}>
+        <Button
+          accessibilityLabel={copy.openPracticeAccessibilityLabel(articleTitle)}
+          accessibilityRole="link"
+          onPress={() => router.push(article.practicePath)}
+          style={styles.primaryAction}
+        >
+          {getLocalizedText(article.practiceLabel, language)}
+        </Button>
+        <Button
+          accessibilityLabel={copy.sourcesCtaAccessibilityLabel}
+          accessibilityRole="link"
+          onPress={() => router.push('/sources')}
+          variant="secondary"
+        >
+          {copy.sourcesCta}
+        </Button>
+      </View>
+
+      <View style={styles.pager}>
+        {previousArticle ? (
+          <Button
+            accessibilityLabel={`${copy.previousArticle}: ${getLocalizedText(previousArticle.title, language)}`}
+            onPress={() => navigateToArticle(router, previousArticle)}
+            variant="ghost"
+          >
+            {copy.previousArticle}
+          </Button>
+        ) : (
+          <View />
+        )}
+        {nextArticle ? (
+          <Button
+            accessibilityLabel={`${copy.nextArticle}: ${getLocalizedText(nextArticle.title, language)}`}
+            onPress={() => navigateToArticle(router, nextArticle)}
+            variant="ghost"
+          >
+            {copy.nextArticle}
+          </Button>
+        ) : (
+          <View />
+        )}
+      </View>
+    </ScreenShell>
+  );
+}
+
+const styles = StyleSheet.create({
+  backLink: {
+    alignSelf: 'flex-start',
+    borderRadius: radius.button,
+    minHeight: space[6],
+    paddingHorizontal: space[1],
+    paddingVertical: space[1],
+  },
+  pressedLink: {
+    backgroundColor: colors.focusSoft,
+  },
+  backLinkText: {
+    color: colors.accent,
+    fontSize: typography.navButton.fontSize,
+    fontWeight: typography.navButton.fontWeight,
+    lineHeight: typography.bodyTight.lineHeight,
+  },
+  articleNav: {
+    marginHorizontal: -space[3],
+  },
+  articleNavContent: {
+    gap: space[1],
+    paddingHorizontal: space[3],
+  },
+  articleNavItem: {
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.card,
+    borderWidth: StyleSheet.hairlineWidth,
+    maxWidth: 220,
+    minHeight: space[8],
+    paddingHorizontal: space[1.5],
+    paddingVertical: space[1],
+    width: 184,
+  },
+  articleNavItemSelected: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  articleNavItemPressed: {
+    backgroundColor: colors.focusSoft,
+    borderColor: colors.focus,
+  },
+  articleNavKicker: {
+    color: colors.textMuted,
+    fontSize: typography.badge.fontSize,
+    fontWeight: typography.badge.fontWeight,
+    lineHeight: typography.badge.lineHeight,
+    textTransform: 'uppercase',
+  },
+  articleNavTitle: {
+    color: colors.text,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  articleNavTextSelected: {
+    color: colors.surface,
+  },
+  articleCard: {
+    gap: space[2],
+  },
+  articleTitle: {
+    color: colors.text,
+    fontSize: typography.subHeading.fontSize,
+    fontWeight: typography.subHeading.fontWeight,
+    letterSpacing: typography.subHeading.letterSpacing,
+    lineHeight: typography.subHeading.lineHeight,
+  },
+  lede: {
+    color: colors.textSecondary,
+    fontSize: typography.bodyLarge.fontSize,
+    lineHeight: typography.bodyLarge.lineHeight,
+  },
+  provenanceCard: {
+    backgroundColor: colors.surfaceWarm,
+    gap: space[1],
+  },
+  provenanceText: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  sectionBlock: {
+    gap: space[0.75],
+  },
+  sectionHeading: {
+    color: colors.text,
+    fontSize: typography.sectionTitle.fontSize,
+    fontWeight: typography.sectionTitle.fontWeight,
+    lineHeight: typography.sectionTitle.lineHeight,
+  },
+  sectionBody: {
+    color: colors.textSecondary,
+    fontSize: typography.body.fontSize,
+    lineHeight: typography.body.lineHeight,
+  },
+  sourcesCard: {
+    gap: space[1],
+  },
+  sourcesHeading: {
+    color: colors.text,
+    fontSize: typography.bodyLarge.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.bodyLarge.lineHeight,
+  },
+  sourceLine: {
+    gap: space[0.5],
+  },
+  sourceLabel: {
+    color: colors.textSecondary,
+    fontSize: typography.caption.fontSize,
+    fontWeight: typography.bodyBold.fontWeight,
+    lineHeight: typography.caption.lineHeight,
+  },
+  sourceUrl: {
+    color: colors.textMuted,
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+  },
+  actions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[1],
+  },
+  primaryAction: {
+    flexGrow: 1,
+  },
+  pager: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+});

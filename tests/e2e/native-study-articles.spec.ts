@@ -1,0 +1,38 @@
+import { expect, test } from '@playwright/test';
+
+import { dismissBlockingModals } from './browserLaunch';
+
+test('learn links to native study articles and back to chapter practice', async ({ page }) => {
+  const consoleErrors: string[] = [];
+
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  await page.goto('/learn', { waitUntil: 'networkidle' });
+  await dismissBlockingModals(page);
+
+  await expect(page.getByLabel(/Öppna studieartiklar/)).toBeVisible();
+  await page.getByLabel(/Öppna studieartiklar/).click();
+
+  await expect(page).toHaveURL(/\/ebook$/);
+  await expect(page.locator('body')).toContainText('Studieguide i appen');
+  await expect(page.locator('body')).toContainText('Sakta in. Vi har kaffe.');
+  await expect(page.locator('body')).toContainText('Redaktionell');
+  await expect(page.locator('body')).toContainText('Källor hämtade 2026-05-19');
+  await expect(page.locator('body')).toContainText('UHR:s offentliga utbildningsmaterial');
+
+  await page.getByLabel(/Öppna artikel Kapitel 01 · Historia/).click();
+
+  await expect(page).toHaveURL(/\/ebook\?c=1$/);
+  await expect(page.locator('body')).toContainText('En kort historia om Sverige.');
+  await expect(page.locator('body')).toContainText('Repetera nära källan');
+
+  await page.getByLabel('Öppna övning för En kort historia om Sverige.').click();
+
+  await expect(page).toHaveURL(/\/chapter\/ch10$/);
+  await expect(page.locator('body')).toContainText('Sveriges moderna historia');
+
+  expect(consoleErrors).toEqual([]);
+});

@@ -94,3 +94,27 @@ require('./scripts/validate-content.js');
   assert.notEqual(result.status, 0);
   assert.match(`${result.stdout}\n${result.stderr}`, /learn route is missing sv copy/);
 });
+
+test('learn route exposes native ebook study articles with localized practice-path copy', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'app/(tabs)/learn.tsx'), 'utf8');
+  const cardSource = fs.readFileSync(
+    path.join(repoRoot, 'components/learning/StudyArticleCard.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /import \{ StudyArticleCard \}/);
+  assert.match(source, /import \{ EBOOK_ARTICLE_COUNT \}/);
+  assert.match(source, /href="\/ebook"/);
+  assert.match(source, /studyArticlesAccessibilityLabel/);
+  assert.match(source, /Korta offlineartiklar med källor och länk till kapitelövning/);
+  assert.match(source, /Short offline articles with sources and a path back to chapter practice/);
+  assert.match(source, /Studieartiklar med övningsväg/);
+  assert.match(source, /Study articles with a practice path/);
+  assert.match(source, /RemoveAdsPlacementCta placement="chapter_list_banner"/);
+  assert.match(source, /AdBanner placement="chapter_list_banner"/);
+
+  assert.match(cardSource, /export interface StudyArticleCardProps/);
+  assert.match(cardSource, /accessibilityMode\?: 'summary' \| 'presentation'/);
+  assert.match(cardSource, /importantForAccessibility=.*no-hide-descendants/);
+  assert.match(cardSource, /tone="green"/);
+});

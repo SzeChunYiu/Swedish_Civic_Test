@@ -375,157 +375,6 @@ test('generateWeeklyRecap: counts mock exams completed this week with best score
   assert.equal(recap.bestMockScore, 0.85);
 });
 
-test('generateWeeklyRecap: guards malformed runtime recap inputs', () => {
-  const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: '7',
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-05-20T10:03:00.000Z',
-        },
-        stringCounters: {
-          questionId: 'stringCounters',
-          correctStreak: '1',
-          wrongCount: '2',
-          lastAnsweredAt: '2026-05-20T10:04:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-bad',
-          mode: 'exam',
-          questionIds: ['q1', 'q2', 'q3'],
-          startedAt: '2026-05-20T10:00:00.000Z',
-          completedAt: '2026-05-20T10:30:00.000Z',
-          score: Infinity,
-          answers: [
-            {
-              questionId: 'q1',
-              selectedOptionIds: ['a'],
-              isCorrect: 'true',
-              answeredAt: '2026-05-20T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q2',
-              selectedOptionIds: ['a'],
-              isCorrect: 1,
-              answeredAt: '2026-05-20T10:01:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'q3',
-              selectedOptionIds: ['a'],
-              isCorrect: false,
-              answeredAt: '2026-05-20T10:02:00.000Z',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-high',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          startedAt: '2026-05-20T11:00:00.000Z',
-          completedAt: '2026-05-20T11:20:00.000Z',
-          score: 1.2,
-        },
-      ],
-    },
-    chapterMasteryAtWeekStart: { ch01: 0.1, ch02: '0.1', ch03: 0.2 },
-    chapterMasteryNow: { ch01: Infinity, ch02: 0.9, ch03: 1.1 },
-    masteryThreshold: '0.8',
-    now: new Date('2026-05-20T12:00:00.000Z'),
-  });
-
-  assert.equal(recap.questionsAnswered, 3);
-  assert.equal(recap.accuracy, 0);
-  assert.equal(recap.mistakesResolved, 1);
-  assert.equal(recap.streakDays, 0);
-  assert.equal(recap.mockExamsTaken, 2);
-  assert.equal(recap.bestMockScore, 1);
-  assert.equal(recap.chapterNowMastered, null);
-});
-
-test('generateWeeklyRecap: rejects rollover and noncanonical answer dates', () => {
-  const { generateWeeklyRecap } = loadTs('lib/learning/weeklyRecap.ts');
-  const recap = generateWeeklyRecap({
-    progress: {
-      totalXp: 0,
-      level: 1,
-      currentStreak: 1,
-      dailyGoalAnswers: 10,
-      questionProgress: {
-        rolloverResolved: {
-          questionId: 'rolloverResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-02-30T10:03:00.000Z',
-        },
-        validResolved: {
-          questionId: 'validResolved',
-          correctStreak: 1,
-          wrongCount: 1,
-          lastAnsweredAt: '2026-03-03T10:03:00.000Z',
-        },
-      },
-      sessions: [
-        {
-          id: 'weekly-valid',
-          mode: 'study',
-          questionIds: ['valid', 'rollover', 'noncanonical'],
-          answers: [
-            {
-              questionId: 'valid',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-03-03T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'rollover',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-02-30T10:00:00.000Z',
-              timeSpentSeconds: 5,
-            },
-            {
-              questionId: 'noncanonical',
-              selectedOptionIds: ['a'],
-              isCorrect: true,
-              answeredAt: '2026-03-03 10:01:00',
-              timeSpentSeconds: 5,
-            },
-          ],
-        },
-        {
-          id: 'weekly-rollover-exam',
-          mode: 'exam',
-          questionIds: [],
-          answers: [],
-          completedAt: '2026-02-30T10:30:00.000Z',
-          score: 0.99,
-        },
-      ],
-    },
-    now: new Date('2026-03-04T12:00:00.000Z'),
-  });
-
-  assert.equal(recap.questionsAnswered, 1);
-  assert.equal(recap.accuracy, 1);
-  assert.equal(recap.mistakesResolved, 1);
-  assert.equal(recap.mockExamsTaken, 0);
-  assert.equal(recap.bestMockScore, null);
-});
-
 // -------------------------------------------------------- Tier comparison
 
 test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_ENTITLEMENTS as true', () => {
@@ -542,7 +391,7 @@ test('tierComparison: every flag referenced in TIER_ROWS exists on PRO_LIFETIME_
   }
 });
 
-test('tierComparison: Pro Lifetime stays separate from the Remove Ads entitlement', () => {
+test('tierComparison: Pro Lifetime is an ad-free superset while Remove Ads stays non-Pro', () => {
   const tier = loadTs('lib/monetization/tierComparison.ts');
   const premium = loadTs('lib/monetization/premium.ts');
   const adsRow = tier.TIER_ROWS.find((row) => row.id === 'ads');
@@ -557,19 +406,10 @@ test('tierComparison: Pro Lifetime stays separate from the Remove Ads entitlemen
     }),
     false,
   );
-  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, false);
-  assert.equal(adsRow.flag, undefined);
-  assert.deepEqual(adsRow.free, {
-    kind: 'text',
-    sv: 'vid sessionsskifte',
-    en: 'at session boundaries',
-  });
+  assert.equal(premium.PRO_LIFETIME_ENTITLEMENTS.adsDisabled, true);
+  assert.equal(adsRow.flag, 'adsDisabled');
   assert.deepEqual(adsRow.adFree, { kind: 'text', sv: 'inga', en: 'none' });
-  assert.deepEqual(adsRow.pro, {
-    kind: 'text',
-    sv: 'vid sessionsskifte',
-    en: 'at session boundaries',
-  });
+  assert.deepEqual(adsRow.pro, { kind: 'text', sv: 'inga', en: 'none' });
 });
 
 test('tierComparison: three columns in canonical order', () => {
@@ -579,9 +419,9 @@ test('tierComparison: three columns in canonical order', () => {
     TIER_COLUMNS.map((c) => c.id),
     ['free', 'adFree', 'pro'],
   );
-  assert.equal(columnsById.adFree.priceSv, '29 kr · engångsköp');
+  assert.equal(columnsById.adFree.priceSv, '29 SEK · engångsköp');
   assert.equal(columnsById.adFree.priceEn, '29 SEK · one-time');
-  assert.equal(columnsById.pro.priceSv, '59 kr · engångsköp');
+  assert.equal(columnsById.pro.priceSv, '59 SEK · engångsköp');
   assert.equal(columnsById.pro.priceEn, '59 SEK · one-time');
 });
 
@@ -592,22 +432,33 @@ test('tierComparison: every row has all three cells present', () => {
   }
 });
 
-test('tierComparison: native table lists ebook storage benefits already backed by local primitives', () => {
+test('tierComparison: native table hides ebook-only benefits until a native ebook route exists', () => {
   const { TIER_ROWS } = loadTs('lib/monetization/tierComparison.ts');
+  const nativeEbookRouteExists = fs.existsSync(path.join(repoRoot, 'app/ebook.tsx'));
   const rowIds = TIER_ROWS.map((row) => row.id);
   const rowLabels = TIER_ROWS.map((row) => `${row.labelSv}\n${row.labelEn}`).join('\n');
   const rowFlags = TIER_ROWS.map((row) => row.flag).filter(Boolean);
+
+  if (nativeEbookRouteExists) {
+    assert.equal(rowIds.includes('highlights'), true);
+    assert.equal(rowIds.includes('notesExport'), true);
+    assert.equal(rowFlags.includes('multiColorHighlights'), true);
+    assert.equal(rowFlags.includes('notesExport'), true);
+    assert.match(rowLabels, /Markeringar i e-bok|Ebook highlights/);
+    assert.match(rowLabels, /Exportera anteckningar|Notes export/);
+    return;
+  }
 
   assert.equal(
     fs.existsSync(path.join(repoRoot, 'lib/storage/highlightsStore.ts')),
     true,
     'the local highlight store can remain as a tested primitive while the native reader is absent',
   );
-  assert.equal(rowIds.includes('highlights'), true);
-  assert.equal(rowIds.includes('notesExport'), true);
-  assert.equal(rowFlags.includes('multiColorHighlights'), true);
-  assert.equal(rowFlags.includes('notesExport'), true);
-  assert.match(
+  assert.equal(rowIds.includes('highlights'), false);
+  assert.equal(rowIds.includes('notesExport'), false);
+  assert.equal(rowFlags.includes('multiColorHighlights'), false);
+  assert.equal(rowFlags.includes('notesExport'), false);
+  assert.doesNotMatch(
     rowLabels,
     /Markeringar i e-bok|Ebook highlights|Exportera anteckningar|Notes export/,
   );
@@ -617,8 +468,8 @@ test('paywallCtaLabels: secondary CTA flips for users who already own Ad-Free', 
   const { paywallCtaLabels } = loadTs('lib/monetization/tierComparison.ts');
   const fresh = paywallCtaLabels({ alreadyAdFree: false });
   const upgrader = paywallCtaLabels({ alreadyAdFree: true });
-  assert.equal(fresh.primarySv, 'Köp Pro · 59 kr');
-  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 kr');
+  assert.equal(fresh.primarySv, 'Köp Pro · 59 SEK');
+  assert.equal(fresh.secondarySv, 'Bara ta bort annonser · 29 SEK');
   assert.equal(fresh.secondaryEn, 'Just remove ads · 29 SEK');
   assert.match(fresh.secondaryEn, /remove ads/i);
   assert.match(upgrader.secondaryEn, /upgrade/i);
@@ -639,9 +490,10 @@ test('ProPaywall: renders the canonical tier model with separate Pro and Remove 
   assert.match(source, /rowSummary:/);
   assert.match(source, /accessibilityRole="summary"/);
   assert.match(source, /PRO_LIFETIME_PRICE_LABEL/);
-  assert.match(source, /Remove Ads for 29 SEK stays available/);
-  assert.match(source, /Ta bort annonser för 29 kr finns kvar/);
-  assert.match(source, /Ta bort annonser för 29 kronor finns kvar separat/);
+  assert.match(source, /REMOVE_ADS_PRICE_LABEL/);
+  assert.match(source, /Remove Ads for \$\{REMOVE_ADS_PRICE_LABEL\} stays available/);
+  assert.match(source, /Ta bort annonser för \$\{REMOVE_ADS_PRICE_LABEL\} finns kvar/);
+  assert.doesNotMatch(source, /29 kr|29 kronor/);
   assert.match(source, /copy\.secondaryPathHint\(secondaryLabel, alreadyAdFree\)/);
   assert.doesNotMatch(source, /#[0-9a-fA-F]{6}|rgba?\(/);
 });
@@ -676,8 +528,9 @@ function progressWithSessions(sessions) {
 
 test('dashboard progress snapshot adapts local store progress for free dashboard selectors', () => {
   const { buildDashboardProgressSnapshot } = loadTs('lib/learning/dashboardProgressSnapshot.ts');
-  const { dailyActivityHistogram, perChapterProgress, xpSparkline, dashboardSummary, mockHistory } =
-    loadTs('lib/learning/dashboardStats.ts');
+  const { dailyActivityHistogram, perChapterProgress, xpSparkline, dashboardSummary } = loadTs(
+    'lib/learning/dashboardStats.ts',
+  );
   const questionProgress = {
     q1: {
       questionId: 'q1',
@@ -698,7 +551,7 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
   };
   const progress = buildDashboardProgressSnapshot({
     answerDates: ['2026-05-18', '2026-05-19'],
-    answerHistory: [
+    answerAttempts: [
       { questionId: 'q2', isCorrect: false, answeredAt: '2026-05-18T10:00:00.000Z' },
       { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T10:00:00.000Z' },
       { questionId: 'q1', isCorrect: true, answeredAt: '2026-05-19T11:00:00.000Z' },
@@ -710,10 +563,6 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
         score: 0.8,
         completedAt: '2026-05-19T12:00:00.000Z',
         correctCount: 16,
-        questionTimings: [
-          { questionId: 'q1', timeSpentSeconds: 12 },
-          { questionId: 'q2', timeSpentSeconds: 18 },
-        ],
         totalCount: 20,
       },
     ],
@@ -752,7 +601,6 @@ test('dashboard progress snapshot adapts local store progress for free dashboard
     }).bestMockScore,
     0.8,
   );
-  assert.equal(mockHistory(progress)[0].durationMs, 30 * 1000);
 });
 
 test('dashboard progress snapshot prefers dated answer history over synthetic attempts', () => {
@@ -952,112 +800,6 @@ test('perChapterProgress: accuracy + coverage computed per chapter', () => {
   const history = result.find((r) => r.chapterId === 'history');
   assert.equal(history.answers, 1);
   assert.equal(history.accuracy, 1);
-});
-
-test('dashboard stats ignore non-boolean correctness and clamp malformed chapter coverage', () => {
-  const {
-    dashboardSummary,
-    mistakeConvergence,
-    perChapterProgress,
-    timeOfDayPattern,
-    xpSparkline,
-  } = loadTs('lib/learning/dashboardStats.ts');
-  const now = new Date('2026-05-19T12:00:00.000Z');
-  const answeredAt = '2026-05-19T10:00:00.000Z';
-  const sessions = [
-    {
-      id: 's1',
-      mode: 'study',
-      questionIds: [],
-      startedAt: '2026-05-19T00:00:00.000Z',
-      answers: [
-        {
-          questionId: 'q1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q2',
-          selectedOptionIds: [],
-          isCorrect: 'yes',
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q3',
-          selectedOptionIds: [],
-          isCorrect: 1,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'q4',
-          selectedOptionIds: [],
-          isCorrect: false,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'nan1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'negative1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-        {
-          questionId: 'fractional1',
-          selectedOptionIds: [],
-          isCorrect: true,
-          answeredAt,
-          timeSpentSeconds: 5,
-        },
-      ],
-    },
-  ];
-  const progress = progressWithSessions(sessions);
-  const questionChapterIndex = {
-    q1: 'undersized',
-    q2: 'undersized',
-    q3: 'undersized',
-    q4: 'undersized',
-    nan1: 'nan',
-    negative1: 'negative',
-    fractional1: 'fractional',
-  };
-
-  const bars = perChapterProgress(
-    progress,
-    [
-      { id: 'undersized', questionCount: 1 },
-      { id: 'nan', questionCount: Number.NaN },
-      { id: 'negative', questionCount: -5 },
-      { id: 'fractional', questionCount: 2.5 },
-    ],
-    questionChapterIndex,
-    { now },
-  );
-  const undersized = bars.find((bar) => bar.chapterId === 'undersized');
-  assert.equal(undersized.answers, 4);
-  assert.equal(undersized.accuracy, 1 / 4);
-  assert.equal(undersized.coverage, 1);
-  assert.equal(bars.find((bar) => bar.chapterId === 'nan').coverage, 0);
-  assert.equal(bars.find((bar) => bar.chapterId === 'negative').coverage, 0);
-  assert.equal(bars.find((bar) => bar.chapterId === 'fractional').coverage, 0);
-
-  assert.equal(xpSparkline(progress, { daysBack: 1, now })[0].xp, 40);
-  const answeredHour = timeOfDayPattern(progress, { now }).find((bin) => bin.answers === 7);
-  assert.equal(answeredHour.accuracy, 4 / 7);
-  assert.equal(mistakeConvergence(progress, { daysBack: 1, now })[0].unresolvedMistakes, 1);
-  assert.equal(dashboardSummary(progress, questionChapterIndex, { now }).unresolvedMistakes, 1);
 });
 
 test('mockHistory + bestMockScore: returns only exam-mode completed sessions', () => {

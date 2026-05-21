@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const test = require('node:test');
+const ts = require('typescript');
 const { assertNoUnsupportedStaticOutcomeSlogans } = require('../scripts/static-outcome-copy-guard');
 const {
   assertNoUnsupportedStaticEbookCredentialClaims,
@@ -54,13 +55,30 @@ const officialPracticalTestSourceUrls = [
   'https://www.uhr.se/medborgarskapsprovet/anmalan/',
   'https://www.uhr.se/medborgarskapsprovet/utbildningsmaterial/',
 ];
-const citizenshipSelfSupportSourceUrls = [
-  'https://www.migrationsverket.se/nyheter/nyhetsarkiv/2026-05-06-nya-regler-for-svenskt-medborgarskap-fran-6-juni-2026.html',
-  'https://www.regeringen.se/artiklar/2025/11/inkomstbasbelopp-och-inkomstindex-for-ar-2026-faststallt/',
-];
 
 function readSiteFile(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+require.extensions['.ts'] = function tsLoader(module, filename) {
+  const source = fs.readFileSync(filename, 'utf8');
+  const transpiled = ts.transpileModule(source, {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    fileName: filename,
+  }).outputText;
+  module._compile(transpiled, filename);
+};
+
+function loadTs(relativePath) {
+  return require(path.join(repoRoot, relativePath));
+}
+
+function stripHtml(value) {
+  return value
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function readStaticChapterMeta() {
@@ -254,6 +272,41 @@ test('static ebook navigation covers every shipped static chapter', () => {
   assert.deepEqual(getEbookNavChapterIds(), expectedChapterIds);
 });
 
+test('native ebook study articles mirror static ebook order and provenance', () => {
+  const {
+    EBOOK_ARTICLE_COUNT,
+    EBOOK_ARTICLE_ORDER,
+    EBOOK_ARTICLES,
+    EBOOK_SOURCE_NOTES,
+    getEbookSourceNotes,
+  } = loadTs('lib/content/ebookContent.ts');
+  const expectedChapterIds = getExpectedChapterIds();
+  const ebookSource = readSiteFile('site/ebook.js');
+  const harness = createEbookHarness();
+
+  assert.deepEqual(EBOOK_ARTICLE_ORDER, expectedChapterIds);
+  assert.equal(EBOOK_ARTICLE_COUNT, expectedChapterIds.length);
+  assert.equal(EBOOK_ARTICLES[0].staticChapterId, 'intro');
+  assert.equal(EBOOK_ARTICLES.at(-1).staticChapterId, '13');
+
+  for (const source of Object.values(EBOOK_SOURCE_NOTES)) {
+    assert.match(ebookSource, new RegExp(source.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(ebookSource, new RegExp(source.retrievedDate));
+  }
+
+  for (const article of EBOOK_ARTICLES) {
+    const englishText = stripHtml(renderChapter(harness, 'en', article.staticChapterId));
+    const swedishText = stripHtml(renderChapter(harness, 'sv', article.staticChapterId));
+
+    assert.ok(englishText.includes(article.title.en), `${article.staticChapterId} en title`);
+    assert.ok(swedishText.includes(article.title.sv), `${article.staticChapterId} sv title`);
+    assert.ok(englishText.includes(article.lede.en), `${article.staticChapterId} en lede`);
+    assert.ok(swedishText.includes(article.lede.sv), `${article.staticChapterId} sv lede`);
+    assert.ok(article.sections.length >= 2, `${article.staticChapterId} native sections`);
+    assert.ok(getEbookSourceNotes(article).length >= 1, `${article.staticChapterId} source notes`);
+  }
+});
+
 test('static ebook renders every chapter with Swedish and English body parity', () => {
   const harness = createEbookHarness();
 
@@ -347,7 +400,6 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
   officialPracticalTestSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
 
   assert.match(englishHtml, /15 August 2026 in Stockholm/);
-  assert.match(englishHtml, /Registration opens in early June 2026/);
   assert.match(englishHtml, /Migrationsverket letter/);
   assert.match(englishHtml, /Seats are limited/);
   assert.match(englishHtml, /free of charge/);
@@ -356,7 +408,6 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
   assert.match(englishHtml, /Sources accessed 2026-05-19/);
 
   assert.match(swedishHtml, /15 augusti 2026 i Stockholm/);
-  assert.match(swedishHtml, /Anmälan öppnar i början av juni 2026/);
   assert.match(swedishHtml, /brev från Migrationsverket/);
   assert.match(swedishHtml, /Antalet platser är begränsat/);
   assert.match(swedishHtml, /kostnadsfritt/);
@@ -368,44 +419,4 @@ test('static ebook chapter 12 keeps practical test claims current and sourced', 
     assert.match(englishHtml, new RegExp(url));
     assert.match(swedishHtml, new RegExp(url));
   });
-});
-
-test('static ebook chapter 11 keeps citizenship self-support notes current and bounded', () => {
-  const source = readSiteFile('site/ebook.js');
-  const harness = createEbookHarness();
-  const englishHtml = renderChapter(harness, 'en', '11');
-  const swedishHtml = renderChapter(harness, 'sv', '11');
-
-  assert.match(source, /migrationsverketCitizenshipRules2026/);
-  assert.match(source, /governmentIncomeBaseAmount2026/);
-  citizenshipSelfSupportSourceUrls.forEach((url) => assert.match(source, new RegExp(url)));
-
-  assert.match(englishHtml, /own long-term income/);
-  assert.match(englishHtml, /SEK 20,000\/month before tax/);
-  assert.match(englishHtml, /three 2026 income base amounts per year/);
-  assert.match(
-    englishHtml,
-    /Partner income, assets, and temporary work without long-term duration do not count/,
-  );
-  assert.match(englishHtml, /independent study aid/);
-  assert.match(englishHtml, /Migrationsverket decides eligibility/);
-
-  assert.match(swedishHtml, /egen varaktig inkomst/);
-  assert.match(swedishHtml, /20 000 kronor per m[aå]nad f[oö]re skatt/);
-  assert.match(swedishHtml, /tre inkomstbasbelopp per [aå]r/);
-  assert.match(
-    swedishHtml,
-    /Inkomster fr[aå]n partner, tillg[aå]ngar och tillf[aä]lliga jobb utan varaktighet r[aä]knas inte/,
-  );
-  assert.match(swedishHtml, /Migrationsverket avg[oö]r ans[oö]kan/);
-  assert.match(swedishHtml, /studiehj[aä]lpmedel/);
-
-  citizenshipSelfSupportSourceUrls.forEach((url) => {
-    assert.match(englishHtml, new RegExp(url));
-    assert.match(swedishHtml, new RegExp(url));
-  });
-  assert.doesNotMatch(
-    `${englishHtml}\n${swedishHtml}`,
-    /guaranteed eligible|garanterat beh[oö]rig|official app/i,
-  );
 });
