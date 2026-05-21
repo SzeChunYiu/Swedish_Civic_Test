@@ -68,14 +68,24 @@ test('Practice bookmark, supplementary, and About sources controls expose aria s
   );
 
   const provenance = page.getByRole('button', { name: /Provenance: UHR source\. Source note:/ });
+  const sourceNote = page.getByText(/^Source note:/);
   await expect(provenance).toHaveAttribute('aria-expanded', 'false');
-  await provenance.focus();
-  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.getByText(/^Source note:/)).toBeVisible();
-  await page.keyboard.press('Enter');
-  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+  await provenance.evaluate((element: HTMLElement) => element.blur());
+  await expect(provenance).not.toBeFocused();
   await provenance.click();
   await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote).toBeVisible();
+  await provenance.click();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
+  await provenance.evaluate((element: HTMLElement) => element.blur());
+  await provenance.focus();
+  await expect(provenance).toHaveAttribute('aria-expanded', 'true');
+  await expect(sourceNote).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(provenance).toHaveAttribute('aria-expanded', 'false');
+  await expect(sourceNote).toHaveCount(0);
 
   expect(consoleErrors).toEqual([]);
 });
