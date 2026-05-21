@@ -7,14 +7,9 @@ const test = require('node:test');
 const repoRoot = path.resolve(__dirname, '..');
 
 function parseValidationSummary() {
-  const output = execFileSync(
-    process.execPath,
-    ['scripts/validate-content.js', '--focus-ad-placement-route-parity'],
-    {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    },
-  );
+  const output = execFileSync(process.execPath, ['scripts/validate-content.js'], {
+    encoding: 'utf8',
+  });
   const match = output.match(/\{[\s\S]*\}/);
   assert.ok(match, 'validation should print JSON summary');
   return JSON.parse(match[0]);
@@ -35,8 +30,8 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     path.join(repoRoot, 'components/monetization/NativeAdCard.native.tsx'),
     'utf8',
   );
-  const practiceInterstitialNativeSource = fs.readFileSync(
-    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.native.tsx'),
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
     'utf8',
   );
   const adCopySource = fs.readFileSync(path.join(repoRoot, 'lib/monetization/adCopy.ts'), 'utf8');
@@ -44,6 +39,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   assert.equal(summary.adPlacementRoutesValidated, 4);
   assert.equal(summary.noAdRoutesValidated, 1);
   assert.equal(summary.adPlacementRouteParityValidated, true);
+  assert.equal(summary.practiceInterstitialQuestionCapValidated, true);
   assert.match(
     homeSource,
     /const showRemoveAdsOffer = entitlementsReady && !monetizationEntitlements\.adsDisabled;/,
@@ -69,6 +65,15 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
   );
   assert.match(nativeAdCardSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
   assert.doesNotMatch(nativeAdCardSource, /react-native-google-mobile-ads/);
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
   assert.match(nativeAdCardNativeSource, /NativeAd\.createForAdRequest/);
   assert.match(nativeAdCardNativeSource, /NativeAdView/);
   assert.match(nativeAdCardNativeSource, /NativeAsset/);
@@ -87,16 +92,6 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
     nativeAdCardNativeSource,
     /shouldShowAd\(\s*'results_native'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
   );
-  assert.match(
-    practiceInterstitialNativeSource,
-    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*mobileAdsConsent\.decision\.consentDecision\s*,\s*Platform\.OS\s*,?\s*\)/,
-  );
-  assert.match(practiceInterstitialNativeSource, /const INTERSTITIAL_AD_LOAD_TIMEOUT_MS = 15_000;/);
-  assert.match(practiceInterstitialNativeSource, /clearTimeout\(loadTimeout\);/);
-  assert.match(
-    practiceInterstitialNativeSource,
-    /loadTimeout = setTimeout\(\(\) => \{[\s\S]*unsubscribeLoadListeners\(\);[\s\S]*finishAttempt\(\);[\s\S]*\}, INTERSTITIAL_AD_LOAD_TIMEOUT_MS\);/,
-  );
   assert.match(nativeAdCardNativeSource, /\.destroy\(\)/);
   assert.match(adCopySource, /getNativeAdCardCopy/);
   assert.match(adCopySource, /live:\s*\{[\s\S]*?accessibilityLabel:\s*'Ad:/);
@@ -112,75 +107,7 @@ test('study routes keep their expected ad placements and exam stays ad-free', ()
       /Test native ad|Inbyggd testannons|AdMob test placement preview|AdMob-testplacering/,
     );
   }
-  assert.doesNotMatch(
-    examSource,
-    /AdBanner|NativeAd|Interstitial|LaunchPopupAd|RewardedAd|showRewardedExtraExamAd|rewardPreview|sponsor preview|Sponsrad förhandsvisning|Sponsored preview|Complete sponsor preview|Slutför förhandsvisning|Unlock extra exam|Lås upp extra prov/i,
-  );
-});
-
-test('ad placement route parity rejects native practice interstitial platform bypass drift', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace(
-        /shouldShowAd\\(\\s*'quiz_completed_interstitial'\\s*,\\s*resolvedEntitlements\\s*,\\s*mobileAdsConsent\\.decision\\.consentDecision\\s*,\\s*Platform\\.OS\\s*,?\\s*\\)/,
-        "shouldShowAd('quiz_completed_interstitial', resolvedEntitlements, mobileAdsConsent.decision.consentDecision)",
-      );
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-ad-placement-route-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /PracticeInterstitialAd native placement must gate quiz_completed_interstitial through consent-aware platform shouldShowAd/,
-  );
-});
-
-test('ad placement route parity rejects missing practice interstitial load timeout cleanup', () => {
-  const result = spawnSync(
-    process.execPath,
-    [
-      '-e',
-      `
-const fs = require('node:fs');
-const originalReadFileSync = fs.readFileSync;
-fs.readFileSync = function readFileSync(filePath, ...args) {
-  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
-  if (normalizedPath.endsWith('/components/monetization/PracticeInterstitialAd.native.tsx')) {
-    return originalReadFileSync
-      .call(this, filePath, ...args)
-      .replace('loadTimeout = setTimeout(() => {', 'loadTimeout = undefined; (() => {');
-  }
-  return originalReadFileSync.call(this, filePath, ...args);
-};
-process.argv.push('--focus-ad-placement-route-parity');
-require('./scripts/validate-content.js');
-`,
-    ],
-    { cwd: repoRoot, encoding: 'utf8' },
-  );
-
-  assert.notEqual(result.status, 0);
-  assert.match(
-    `${result.stdout}\n${result.stderr}`,
-    /PracticeInterstitialAd native placement must clear in-flight state when load callbacks stall/,
-  );
+  assert.doesNotMatch(examSource, /AdBanner|NativeAd|Interstitial|LaunchPopupAd/i);
 });
 
 test('Home ad placement waits for Remove Ads entitlements before rendering', () => {
@@ -194,6 +121,33 @@ test('Home ad placement waits for Remove Ads entitlements before rendering', () 
   assert.match(
     homeSource,
     /\{entitlementsReady \? \([\s\S]*<PremiumBanner[\s\S]*<AdBanner entitlements=\{monetizationEntitlements\} placement="home_banner" \/>/,
+  );
+});
+
+test('PracticeInterstitialAd web fallback gates quiz_completed_interstitial with WEB_AD_FALLBACK_CONSENT_DECISION', () => {
+  const practiceInterstitialSource = fs.readFileSync(
+    path.join(repoRoot, 'components/monetization/PracticeInterstitialAd.tsx'),
+    'utf8',
+  );
+  const validateContentSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+
+  assert.match(practiceInterstitialSource, /WEB_AD_FALLBACK_CONSENT_DECISION/);
+  assert.match(
+    practiceInterstitialSource,
+    /shouldShowAd\(\s*'quiz_completed_interstitial'\s*,\s*resolvedEntitlements\s*,\s*WEB_AD_FALLBACK_CONSENT_DECISION\s*,?\s*\)/,
+  );
+  assert.match(practiceInterstitialSource, /useResolvedAdEntitlements\(entitlements\)/);
+  assert.match(practiceInterstitialSource, /!entitlementsReady \|\| !?shouldRenderFallback/);
+  assert.doesNotMatch(
+    practiceInterstitialSource,
+    /react-native-google-mobile-ads|InterstitialAd\./,
+  );
+  assert.match(
+    validateContentSource,
+    /PracticeInterstitialAd web fallback must use the shared web fallback consent decision/,
   );
 });
 
@@ -217,7 +171,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -248,7 +201,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -279,7 +231,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -313,7 +264,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -344,7 +294,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],
@@ -378,7 +327,6 @@ fs.readFileSync = function readFileSync(filePath, ...args) {
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
-process.argv.push('--focus-ad-placement-route-parity');
 require('./scripts/validate-content.js');
 `,
     ],

@@ -1,7 +1,11 @@
 import { StyleSheet, Text } from 'react-native';
 
 import { adBannerCopy } from '../../lib/monetization/adCopy';
-import { getAdUnit, shouldShowAd } from '../../lib/monetization/ads';
+import {
+  getAdUnit,
+  shouldShowAd,
+  WEB_AD_FALLBACK_CONSENT_DECISION,
+} from '../../lib/monetization/ads';
 import { useResolvedAdEntitlements } from '../../lib/monetization/useRemoveAdsEntitlements';
 import { useSettingsStore } from '../../lib/storage/settingsStore';
 import { colors, space, typography } from '../../lib/theme';
@@ -18,8 +22,15 @@ export function PracticeInterstitialAd({
   const copy = adBannerCopy[language];
   const { entitlements: resolvedEntitlements, entitlementsReady } =
     useResolvedAdEntitlements(entitlements);
+  const shouldRenderFallback =
+    shouldShowAd('quiz_completed_interstitial', resolvedEntitlements) ||
+    shouldShowAd(
+      'quiz_completed_interstitial',
+      resolvedEntitlements,
+      WEB_AD_FALLBACK_CONSENT_DECISION,
+    );
 
-  if (!entitlementsReady || !shouldShowAd('quiz_completed_interstitial', resolvedEntitlements)) {
+  if (!entitlementsReady || !shouldRenderFallback) {
     return null;
   }
 
