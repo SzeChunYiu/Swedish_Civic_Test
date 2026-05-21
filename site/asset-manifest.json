@@ -8,8 +8,8 @@
       "sha256": "fa08d5f935a0f425e591e8ddc00b027fc9737d6f8e11f765677aa3bfb1ee1959"
     },
     "app.js": {
-      "bytes": 110655,
-      "sha256": "8cb3db989002094ceda85f5c9a2cca7fdc91021652bc239d28dd203e30193742"
+      "bytes": 110618,
+      "sha256": "e4fe9cd803a835835f3e0b31f76bc94a2141d506aba9ffbbe5c9d7ebcc15396b"
     },
     "assets/banner.png": {
       "bytes": 254757,
@@ -76,8 +76,8 @@
       "sha256": "a7a08f26bfe1000acb83a3825c40e9a58cc2366221cbb2c71a40c1b6ce989a79"
     },
     "ebook.js": {
-      "bytes": 522473,
-      "sha256": "d7ac0bce40bb12cd3d205c5011006a6b4c1b61cdf3e26611d7918bd28ae9ce49"
+      "bytes": 520575,
+      "sha256": "4a75904aad5785ee86cd2187dd7812d78d5d3a24fd72f05ba8e9743e5733b61a"
     },
     "extras.js": {
       "bytes": 31378,
@@ -88,8 +88,8 @@
       "sha256": "292a60fafed6aeb71be4d99e4e231f1644cda3656c5f5fa9f00b537468bba1a8"
     },
     "i18n-extras.js": {
-      "bytes": 345551,
-      "sha256": "772118ee81bc0c19a3d7ef5675c988a231139531d9a96e06ec1e8ba3967f7503"
+      "bytes": 345841,
+      "sha256": "c19ee5036eb51cc2825c6f84ec61dd626e4cd6777b6f9892b67f922f8c1ab1b5"
     },
     "icon.png": {
       "bytes": 362794,
@@ -108,12 +108,12 @@
       "sha256": "7c73ab63e08a89f3dde77b2eba53fcb32477fee7a899467742c7029020f0ef74"
     },
     "questions.js": {
-      "bytes": 3768081,
-      "sha256": "c042a0227d083a2ed1e4bcfc04697638a3594a0b22ae680db101339e51943b30"
+      "bytes": 3771039,
+      "sha256": "4c76cdb5cb1cc122f9eded930c17727e2daa5bf52addc4a9494218794fabc528"
     },
     "settings.js": {
-      "bytes": 11985,
-      "sha256": "88d9b602ce7828e1ffc18fde7f7b72e9a3ea0eb23b7440c1233e616f05c27d51"
+      "bytes": 12319,
+      "sha256": "c1e92f0f5fbbc956c1e6f62cbad70ea331ef46065e3453160882abfe72b99afb"
     },
     "signin.js": {
       "bytes": 19236,
@@ -124,8 +124,8 @@
       "sha256": "4e2dca9706273065513ca97fb0d493f6ea67d852034a03166d67f1ee03c9975b"
     },
     "styles.css": {
-      "bytes": 108383,
-      "sha256": "d456fb407d35306157593ba4231f66025df899af1ed0dc401264ccd07fde37a9"
+      "bytes": 112094,
+      "sha256": "8c90841e0fb204cc4d53124b034d6d60058e5fb67f1f0fdec039284d95db1612"
     },
     "tweaks-panel.jsx": {
       "bytes": 25802,

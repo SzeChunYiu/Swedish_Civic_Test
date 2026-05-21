@@ -17,6 +17,7 @@
   --ink: #0b1f33;
   --ink-soft: #44586b;
   --paper: #faf6ec;
+  --paper-soft: #fffaf0;
   --paper-warm: #f3ebd6;
   --white: #ffffff;
   --line: #e6dcc1;
@@ -5382,5 +5383,177 @@ html[dir='rtl'] .lang-menu {
   }
   .dala-bubble {
     max-width: min(230px, calc(100vw - 110px));
+  }
+}
+
+/* ------------------------------------------------------------------
+   UI CARD OPTIMIZATION ROUND
+   Tactile Nordic study cards: stronger hierarchy, clearer boxes, and
+   restrained motion without changing copy or purchase/account logic.
+------------------------------------------------------------------ */
+
+:root {
+  --card-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 250, 240, 0.98));
+  --card-border: color-mix(in srgb, var(--blue) 14%, var(--line));
+  --card-rail: linear-gradient(180deg, var(--flag-blue), var(--flag-gold));
+  --card-shadow: 0 1px 0 rgba(11, 31, 51, 0.05), 0 18px 42px -24px rgba(0, 58, 92, 0.5);
+  --card-shadow-hover: 0 2px 0 rgba(11, 31, 51, 0.05), 0 28px 70px -28px rgba(0, 58, 92, 0.55);
+}
+
+.qcard,
+.hub__stats > div,
+.hub__card,
+.mock-card,
+.purchase__card {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.qcard,
+.hub__card,
+.mock-card,
+.purchase__card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.qcard::before,
+.hub__card::before,
+.mock-card::before,
+.purchase__card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  background: var(--card-rail);
+  opacity: 0.9;
+  z-index: -1;
+}
+
+.qcard::after,
+.purchase__card::after {
+  content: '';
+  position: absolute;
+  inset: -40% -20% auto auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 204, 0, 0.22), rgba(254, 204, 0, 0) 68%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.qcard {
+  padding-left: 42px;
+}
+
+.qopt {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+}
+
+.qopt:hover {
+  border-color: rgba(0, 106, 167, 0.35);
+  transform: translateX(2px);
+}
+
+.hub__stats > div {
+  background:
+    linear-gradient(135deg, rgba(254, 204, 0, 0.12), rgba(254, 204, 0, 0) 46%),
+    var(--card-surface);
+}
+
+.hub__card {
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.hub__card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
+}
+
+.mock-card {
+  padding-left: 38px;
+}
+
+.purchase__grid {
+  gap: 22px;
+}
+
+.purchase__card {
+  border-width: 1px;
+  box-shadow: var(--card-shadow);
+  transform: translateZ(0);
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.purchase__card:hover {
+  border-color: rgba(0, 106, 167, 0.45);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
+}
+
+.purchase__price {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.purchase__price span {
+  margin-top: 0;
+}
+
+:root[data-theme='dark'] {
+  --card-surface: linear-gradient(180deg, rgba(22, 33, 46, 0.96), rgba(13, 22, 32, 0.98));
+  --card-border: #25313e;
+  --card-shadow: 0 18px 52px -26px rgba(0, 0, 0, 0.86);
+  --card-shadow-hover: 0 26px 72px -30px rgba(0, 0, 0, 0.92);
+}
+
+:root[data-theme='dark'] .qcard,
+:root[data-theme='dark'] .hub__stats > div,
+:root[data-theme='dark'] .hub__card,
+:root[data-theme='dark'] .mock-card,
+:root[data-theme='dark'] .purchase__card {
+  background: var(--card-surface);
+  border-color: var(--card-border);
+}
+
+:root[data-theme='dark'] .qopt {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub__card,
+  .purchase__card,
+  .qopt {
+    transition: none;
+  }
+  .hub__card:hover,
+  .purchase__card:hover,
+  .qopt:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .qcard,
+  .mock-card,
+  .purchase__card {
+    padding-left: 24px;
+  }
+  .qcard::before,
+  .hub__card::before,
+  .mock-card::before,
+  .purchase__card::before {
+    width: 5px;
   }
 }
