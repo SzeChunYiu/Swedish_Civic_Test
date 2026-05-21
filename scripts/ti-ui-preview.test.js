@@ -88,6 +88,6 @@ test('Tigrinya preview does not enable runtime release', () => {
   assert.match(locales, /code: 'ti',[\s\S]*available: false,[\s\S]*fallback: 'en'/);
   assert.equal(readiness.locales.ti.appAvailable, false);
   assert.equal(readiness.locales.ti.uiStrings, 'not_started');
-  assert.equal(readiness.locales.ti.questionContent, 'pilot_q001_q177_machine_assisted');
+  assert.equal(readiness.locales.ti.questionContent, 'pilot_q001_q178_machine_assisted');
   assert.equal(readiness.locales.ti.releaseGate, 'blocked');
 });
