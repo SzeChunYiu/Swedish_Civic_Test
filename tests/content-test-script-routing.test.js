@@ -232,6 +232,58 @@ test('LegalSection rendering focus registry lists granular summary keys', () => 
   assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
 });
 
+test('mock exam copy parity focus registry executes a narrow summary', () => {
+  const validatorSource = fs.readFileSync(
+    path.join(repoRoot, 'scripts/validate-content.js'),
+    'utf8',
+  );
+  const mockExamRuntimeTestSource = fs.readFileSync(
+    path.join(repoRoot, 'tests/content-mock-exam-runtime-parity.test.js'),
+    'utf8',
+  );
+  const registryEntry = FOCUSED_VALIDATION_REGISTRY_BY_ID.get('mockExamCopyParity');
+
+  assert.ok(registryEntry, 'mock exam copy focus mode must be registered');
+  assert.deepEqual(registryEntry.flags, ['--focus-mock-exam-copy-parity']);
+  assert.deepEqual(registryEntry.summaryKeys, [
+    'nativeMockExamComponentCopyLabelsValidated',
+    'nativeMockExamComponentLegalCopyValidated',
+    'nativeMockExamLibraryLabelsValidated',
+    'nativeMockExamScoreSourceCopyValidated',
+    'nativeMockExamSwedishCopyNaturalnessValidated',
+    'nativeMockExamTierCopyValidated',
+  ]);
+  assert.match(validatorSource, /--focus-mock-exam-copy-parity/);
+  assert.match(
+    validatorSource,
+    /validateNativeMockExamComponentLegalCopy\(\);[\s\S]*validateNativeMockExamLibraryAndTierCopy\(\);[\s\S]*nativeMockExamLibraryLabelsValidated[\s\S]*nativeMockExamTierCopyValidated/,
+  );
+  assert.match(mockExamRuntimeTestSource, /--focus-mock-exam-copy-parity/);
+  assert.match(mockExamRuntimeTestSource, /provexamen and provexamina regressions/);
+  assert.match(mockExamRuntimeTestSource, /weakened English Mock Exam labels/);
+
+  const result = spawnSync(
+    process.execPath,
+    ['scripts/validate-content.js', '--focus-mock-exam-copy-parity'],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  const match = result.stdout.match(/\{[\s\S]*\}/);
+  assert.ok(match, 'focused mock exam copy validation should print a JSON summary');
+  const summary = JSON.parse(match[0]);
+
+  for (const key of registryEntry.summaryKeys) {
+    assert.ok(Object.prototype.hasOwnProperty.call(summary, key), `${key} is present`);
+  }
+  assert.equal(summary.nativeMockExamComponentCopyLabelsValidated, 6);
+  assert.equal(summary.nativeMockExamComponentLegalCopyValidated, true);
+  assert.equal(summary.nativeMockExamLibraryLabelsValidated, 7);
+  assert.equal(summary.nativeMockExamScoreSourceCopyValidated, true);
+  assert.equal(summary.nativeMockExamSwedishCopyNaturalnessValidated, true);
+  assert.equal(summary.nativeMockExamTierCopyValidated, true);
+  assert.equal(Object.prototype.hasOwnProperty.call(summary, 'questionSchemasValidated'), false);
+});
+
 test('ProgressBar accessibility parity uses focused content validation routing', () => {
   const validatorSource = fs.readFileSync(
     path.join(repoRoot, 'scripts/validate-content.js'),
