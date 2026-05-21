@@ -243,6 +243,22 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('Settings import purchase_fields_rejected e2e covers köp i appen and IAP terms', () => {
+  const source = fs.readFileSync(
+    path.join(repoRoot, 'tests/e2e/settings-import-purchase-fields.spec.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /purchase_fields_rejected/);
+  assert.match(source, /köp i appen/);
+  assert.match(source, /kvitton/);
+  assert.match(source, /\bIAP\b/);
+  assert.match(source, /progress\\\\progressState/);
+  assert.match(source, /mistake-review\\\\mistakeReviewState/);
+  assert.match(source, /reviews\\\\learning\.reviews\.cards\.v1/);
+  assert.match(source, /settings\\\\dailyGoalAnswers/);
+});
+
 test('settings route copy parity rejects selected-button segmented controls', () => {
   const result = spawnSync(
     process.execPath,

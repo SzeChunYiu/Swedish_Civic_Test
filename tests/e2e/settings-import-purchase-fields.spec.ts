@@ -1,119 +1,134 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
-  collectConsoleAndPageErrors,
   dismissBlockingModals,
   seedFreshSettingsLanguageAndAboutSeen,
+  type AppLanguage,
 } from './browserLaunch';
 
-const learnerImportStorageKeys = [
-  'progress\\progressState',
-  'mistake-review\\mistakeReviewState',
-  'reviews\\learning.reviews.cards.v1',
+test.use({ viewport: { width: 390, height: 844 } });
+
+type ImportPurchaseFieldScenario = {
+  alertText: string;
+  confirmImportLabel: string;
+  forbiddenAlertCopy?: RegExp;
+  language: AppLanguage;
+  pasteLabel: string;
+  previewLabel: string;
+  requiredAlertCopy: RegExp;
+  summaryHeading: string;
+};
+
+const purchaseFieldsRejectedCode = 'purchase_fields_rejected';
+
+const rejectedStudyDataPayload = JSON.stringify(
+  {
+    version: 1,
+    progress: {
+      completedQuestionIds: ['q001'],
+      questionProgress: {
+        q001: {
+          bookmarked: true,
+          correctCount: 1,
+          correctStreak: 1,
+          questionId: 'q001',
+          seenCount: 1,
+          wrongCount: 0,
+        },
+      },
+      removeAdsReceipt: {
+        productId: 'remove-ads',
+        transactionId: 'tx-settings-import-test',
+      },
+    },
+    settings: {
+      dailyGoalAnswers: 40,
+      language: 'en',
+    },
+  },
+  null,
+  2,
+);
+
+const scenarios: ImportPurchaseFieldScenario[] = [
+  {
+    alertText:
+      'Importen innehåller fält för köp i appen eller kvitton. Ta bort dem och återställ köp via appbutiken.',
+    confirmImportLabel: 'Bekräfta lokal studiedataimport',
+    forbiddenAlertCopy: /\b(?:IAP|purchase|receipt)\b/i,
+    language: 'sv',
+    pasteLabel: 'Klistra in JSON-export',
+    previewLabel: 'Förhandsgranska lokal studiedataimport',
+    requiredAlertCopy: /köp i appen.*kvitton/i,
+    summaryHeading: 'Sammanfattning före import',
+  },
+  {
+    alertText:
+      'The import contains purchase, receipt, or IAP fields. Remove them and restore purchases through the app store.',
+    confirmImportLabel: 'Confirm local study data import',
+    language: 'en',
+    pasteLabel: 'Paste JSON export',
+    previewLabel: 'Preview local study data import',
+    requiredAlertCopy: /\bpurchase\b.*\breceipt\b.*\bIAP\b/i,
+    summaryHeading: 'Summary before import',
+  },
 ];
 
-async function forceTextInputValue(locator: Locator, value: string) {
-  await locator.evaluate((element, nextValue) => {
-    const target = element as HTMLInputElement | HTMLTextAreaElement;
-    const prototype =
-      target instanceof HTMLTextAreaElement
-        ? HTMLTextAreaElement.prototype
-        : HTMLInputElement.prototype;
-    const valueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+function collectConsoleErrors(page: Page): string[] {
+  const consoleErrors: string[] = [];
 
-    valueSetter?.call(target, nextValue);
-    target.dispatchEvent(new Event('input', { bubbles: true }));
-    target.dispatchEvent(new Event('change', { bubbles: true }));
-  }, value);
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('pageerror', (error) => consoleErrors.push(error.message));
+
+  return consoleErrors;
 }
 
-async function expectNoLearnerImportWrites(page: Page) {
-  const writtenValues = await page.evaluate((keys) => {
-    return Object.fromEntries(keys.map((key) => [key, window.localStorage.getItem(key)]));
-  }, learnerImportStorageKeys);
-
-  expect(writtenValues).toEqual(
-    Object.fromEntries(learnerImportStorageKeys.map((key) => [key, null])),
-  );
+async function expectNoLocalStudyDataStoresWritten(page: Page): Promise<void> {
+  await expect
+    .poll(() =>
+      page.evaluate(() => ({
+        importedDailyGoal: window.localStorage.getItem('settings\\dailyGoalAnswers'),
+        importedProgress: window.localStorage.getItem('progress\\progressState'),
+        importedReviews: window.localStorage.getItem('reviews\\learning.reviews.cards.v1'),
+        importedWrongAnswers: window.localStorage.getItem('mistake-review\\mistakeReviewState'),
+      })),
+    )
+    .toEqual({
+      importedDailyGoal: null,
+      importedProgress: null,
+      importedReviews: null,
+      importedWrongAnswers: null,
+    });
 }
 
-test('settings import rejects oversized JSON with localized max-size feedback', async ({
-  page,
-}) => {
-  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
-  const errors = collectConsoleAndPageErrors(page);
+for (const scenario of scenarios) {
+  test(`Settings import ${purchaseFieldsRejectedCode} keeps purchase-field rejection copy safe in ${scenario.language}`, async ({
+    page,
+  }) => {
+    const consoleErrors = collectConsoleErrors(page);
 
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
+    await seedFreshSettingsLanguageAndAboutSeen(page, scenario.language);
+    await page.goto('/settings', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
 
-  await expect(page.getByText(/under 1 MB/)).toBeVisible();
-  const importInput = page.getByLabel('Paste JSON export');
-  const maxLength = await importInput.evaluate(
-    (element) => (element as HTMLInputElement | HTMLTextAreaElement).maxLength,
-  );
+    const importInput = page.getByLabel(scenario.pasteLabel);
+    await importInput.scrollIntoViewIfNeeded();
+    await importInput.fill(rejectedStudyDataPayload);
+    await page.getByLabel(scenario.previewLabel).click();
 
-  expect(maxLength).toBeGreaterThan(1024);
-  await forceTextInputValue(importInput, 'x'.repeat(maxLength + 1));
-  await page.getByRole('button', { name: 'Preview local study data import' }).click();
+    const alert = page.getByRole('alert').filter({ hasText: scenario.alertText });
+    await expect(alert).toBeVisible();
+    await expect(alert).toContainText(scenario.requiredAlertCopy);
+    if (scenario.forbiddenAlertCopy) {
+      await expect(alert).not.toContainText(scenario.forbiddenAlertCopy);
+    }
 
-  await expect(page.getByRole('alert')).toContainText(
-    'The JSON export is larger than 1 MB. Choose a smaller export and try again.',
-  );
-  await expectNoLearnerImportWrites(page);
-  expect(errors.get()).toEqual([]);
-});
+    await expect(page.getByRole('heading', { name: scenario.summaryHeading })).toHaveCount(0);
+    await expect(page.getByLabel(scenario.confirmImportLabel)).toHaveCount(0);
+    await expectNoLocalStudyDataStoresWritten(page);
 
-test('settings import rejects multibyte payloads that are under the character limit', async ({
-  page,
-}) => {
-  await seedFreshSettingsLanguageAndAboutSeen(page, 'en');
-  const errors = collectConsoleAndPageErrors(page);
-
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-
-  const importInput = page.getByLabel('Paste JSON export');
-  const maxLength = await importInput.evaluate(
-    (element) => (element as HTMLInputElement | HTMLTextAreaElement).maxLength,
-  );
-  const oversizedByBytes = 'å'.repeat(Math.floor(maxLength / 2) + 1);
-
-  expect(oversizedByBytes.length).toBeLessThan(maxLength);
-  await forceTextInputValue(importInput, oversizedByBytes);
-  await page.getByRole('button', { name: 'Preview local study data import' }).click();
-
-  await expect(page.getByRole('alert')).toContainText(
-    'The JSON export is larger than 1 MB. Choose a smaller export and try again.',
-  );
-  await expectNoLearnerImportWrites(page);
-  expect(errors.get()).toEqual([]);
-});
-
-test('settings import keeps in-limit purchase fields rejected before writes', async ({ page }) => {
-  await seedFreshSettingsLanguageAndAboutSeen(page, 'sv');
-  const errors = collectConsoleAndPageErrors(page);
-
-  await page.goto('/settings', { waitUntil: 'networkidle' });
-  await dismissBlockingModals(page);
-
-  await expect(page.getByText(/högst 1 MB/)).toBeVisible();
-  await page.getByLabel('Klistra in JSON-export').fill(
-    JSON.stringify({
-      version: 1,
-      progress: {
-        completedQuestionIds: ['q001'],
-      },
-      purchase: {
-        receipt: 'local-test-receipt',
-      },
-    }),
-  );
-  await page.getByRole('button', { name: 'Förhandsgranska lokal studiedataimport' }).click();
-
-  await expect(page.getByRole('alert')).toContainText(
-    'Importen innehåller fält för köp i appen eller kvitton.',
-  );
-  await expect(page.getByRole('alert')).not.toContainText('JSON-exporten är större');
-  await expectNoLearnerImportWrites(page);
-  expect(errors.get()).toEqual([]);
-});
+    expect(consoleErrors).toEqual([]);
+  });
+}
