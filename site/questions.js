@@ -14313,8 +14313,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "What do many people do with a tree at Christmas in Sweden?",
-      "sv": "Vad gör många med en gran vid jul i Sverige?",
+      "en": "What do many people do with a Christmas tree at Christmas in Sweden?",
+      "sv": "Vad gör många med en julgran vid jul i Sverige?",
       "zh-Hant": "瑞典許多人在聖誕節會怎樣處理一棵樹？",
       "zh-Hans": "瑞典许多人在圣诞节会怎样处理一棵树？",
       "ar": "ماذا يفعل كثيرون بشجرة في عيد الميلاد في السويد؟",
@@ -14328,8 +14328,8 @@
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
-        "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter",
+        "en": "Bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel",
+        "sv": "Tar in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter",
         "zh-Hant": "把一棵樅樹帶進家裡，並用燈串、彩球和金銀絲裝飾",
         "zh-Hans": "把一棵枞树带进家里，并用灯串、彩球和金银丝装饰",
         "ar": "يجلبون شجرة تنوب إلى البيت ويزينونها بسلاسل أضواء وكرات وزينة لامعة",
@@ -14342,8 +14342,8 @@
         "uk": "Приносять ялинку в дім і прикрашають її гірляндами, кульками та мішурою"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
-        "sv": "Planterar en gran på kyrkogården och tänder gravljus",
+        "en": "Plant a Christmas tree at the cemetery and light grave candles",
+        "sv": "Planterar en julgran på kyrkogården och tänder gravljus",
         "zh-Hant": "在墓地種一棵樹並點墓地蠟燭",
         "zh-Hans": "在墓地种一棵树并点墓地蜡烛",
         "ar": "يزرعون شجرة في المقبرة ويشعلون شموع القبور",
@@ -14356,8 +14356,8 @@
         "uk": "Садять дерево на кладовищі та запалюють свічки на могилах"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
-        "sv": "Dansar runt en gran utomhus för att välkomna sommaren",
+        "en": "Dance around a Christmas tree outdoors to welcome summer",
+        "sv": "Dansar runt en julgran utomhus för att välkomna sommaren",
         "zh-Hant": "在戶外圍著一棵樹跳舞來迎接夏天",
         "zh-Hans": "在户外围着一棵树跳舞来迎接夏天",
         "ar": "يرقصون حول شجرة في الخارج للترحيب بالصيف",
@@ -14370,8 +14370,8 @@
         "uk": "Танцюють надворі навколо дерева, щоб привітати літо"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
-        "sv": "Tänder en gran som vårbrasa på valborgsmässoafton",
+        "en": "Light a Christmas tree as a spring bonfire on Walpurgis Night",
+        "sv": "Tänder en julgran som vårbrasa på valborgsmässoafton",
         "zh-Hant": "在瓦爾普吉斯夜把一棵樹點燃作為春天篝火",
         "zh-Hans": "在瓦尔普吉斯夜把一棵树点燃作为春天篝火",
         "ar": "يشعلون شجرة كنار ربيعية في ليلة فالبورغ",
@@ -14386,8 +14386,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider.",
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider.",
       "zh-Hant": "聖誕節時，許多人把一棵樅樹帶進家裡，並用燈串、彩球和金銀絲裝飾。聖誕樹屬於聖誕慶祝，而墓地蠟燭、仲夏舞和瓦爾普吉斯篝火屬於其他節日。",
       "zh-Hans": "圣诞节时，许多人把一棵枞树带进家里，并用灯串、彩球和金银丝装饰。圣诞树属于圣诞庆祝，而墓地蜡烛、仲夏舞和瓦尔普吉斯篝火属于其他节日。",
       "ar": "في عيد الميلاد يجلب كثيرون شجرة تنوب إلى البيت ويزينونها بسلاسل أضواء وكرات وزينة لامعة. شجرة عيد الميلاد تخص احتفال الميلاد، بينما شموع القبور ورقص منتصف الصيف ونيران فالبورغ تخص أعيادًا أخرى.",
@@ -53327,13 +53327,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Which answer best matches? What do many people do with a tree at Christmas in Sweden?",
-      "sv": "Vilket svar stämmer bäst? Vad gör många med en gran vid jul i Sverige?"
+      "en": "Which answer best matches? What do many people do with a Christmas tree at Christmas in Sweden?",
+      "sv": "Vilket svar stämmer bäst? Vad gör många med en julgran vid jul i Sverige?"
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
-        "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter",
+        "en": "Bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel",
+        "sv": "Tar in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter",
         "zh-Hant": "把一棵樅樹帶進家裡，並用燈串、彩球和金銀絲裝飾",
         "zh-Hans": "把一棵枞树带进家里，并用灯串、彩球和金银丝装饰",
         "ar": "يجلبون شجرة تنوب إلى البيت ويزينونها بسلاسل أضواء وكرات وزينة لامعة",
@@ -53346,8 +53346,8 @@
         "uk": "Приносять ялинку в дім і прикрашають її гірляндами, кульками та мішурою"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
-        "sv": "Planterar en gran på kyrkogården och tänder gravljus",
+        "en": "Plant a Christmas tree at the cemetery and light grave candles",
+        "sv": "Planterar en julgran på kyrkogården och tänder gravljus",
         "zh-Hant": "在墓地種一棵樹並點墓地蠟燭",
         "zh-Hans": "在墓地种一棵树并点墓地蜡烛",
         "ar": "يزرعون شجرة في المقبرة ويشعلون شموع القبور",
@@ -53360,8 +53360,8 @@
         "uk": "Садять дерево на кладовищі та запалюють свічки на могилах"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
-        "sv": "Dansar runt en gran utomhus för att välkomna sommaren",
+        "en": "Dance around a Christmas tree outdoors to welcome summer",
+        "sv": "Dansar runt en julgran utomhus för att välkomna sommaren",
         "zh-Hant": "在戶外圍著一棵樹跳舞來迎接夏天",
         "zh-Hans": "在户外围着一棵树跳舞来迎接夏天",
         "ar": "يرقصون حول شجرة في الخارج للترحيب بالصيف",
@@ -53374,8 +53374,8 @@
         "uk": "Танцюють надворі навколо дерева, щоб привітати літо"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
-        "sv": "Tänder en gran som vårbrasa på valborgsmässoafton",
+        "en": "Light a Christmas tree as a spring bonfire on Walpurgis Night",
+        "sv": "Tänder en julgran som vårbrasa på valborgsmässoafton",
         "zh-Hant": "在瓦爾普吉斯夜把一棵樹點燃作為春天篝火",
         "zh-Hans": "在瓦尔普吉斯夜把一棵树点燃作为春天篝火",
         "ar": "يشعلون شجرة كنار ربيعية في ليلة فالبورغ",
@@ -53390,8 +53390,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -53416,8 +53416,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter."
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter."
     },
     "opts": [
       {
@@ -53431,8 +53431,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -53457,8 +53457,8 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "true_false",
     "q": {
-      "en": "At Christmas, many people plant a tree at the cemetery and light grave candles.",
-      "sv": "Vid jul planterar många en gran på kyrkogården och tänder gravljus."
+      "en": "At Christmas, many people plant a Christmas tree at the cemetery and light grave candles.",
+      "sv": "Vid jul planterar många en julgran på kyrkogården och tänder gravljus."
     },
     "opts": [
       {
@@ -53472,8 +53472,8 @@
     ],
     "answer": 1,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",
@@ -53498,13 +53498,13 @@
     "chapter": "Ch. 13 · Traditions and holidays",
     "type": "single_choice",
     "q": {
-      "en": "Choose the correct option: What do many people do with a tree at Christmas in Sweden?",
-      "sv": "Välj rätt alternativ: Vad gör många med en gran vid jul i Sverige?"
+      "en": "Choose the correct option: What do many people do with a Christmas tree at Christmas in Sweden?",
+      "sv": "Välj rätt alternativ: Vad gör många med en julgran vid jul i Sverige?"
     },
     "opts": [
       {
-        "en": "Bring a tree into the house and decorate it with strings of lights, baubles, and tinsel",
-        "sv": "Tar in en gran i huset och dekorerar den med ljusslingor, kulor och glitter",
+        "en": "Bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel",
+        "sv": "Tar in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter",
         "zh-Hant": "把一棵樅樹帶進家裡，並用燈串、彩球和金銀絲裝飾",
         "zh-Hans": "把一棵枞树带进家里，并用灯串、彩球和金银丝装饰",
         "ar": "يجلبون شجرة تنوب إلى البيت ويزينونها بسلاسل أضواء وكرات وزينة لامعة",
@@ -53517,8 +53517,8 @@
         "uk": "Приносять ялинку в дім і прикрашають її гірляндами, кульками та мішурою"
       },
       {
-        "en": "Plant a tree at the cemetery and light grave candles",
-        "sv": "Planterar en gran på kyrkogården och tänder gravljus",
+        "en": "Plant a Christmas tree at the cemetery and light grave candles",
+        "sv": "Planterar en julgran på kyrkogården och tänder gravljus",
         "zh-Hant": "在墓地種一棵樹並點墓地蠟燭",
         "zh-Hans": "在墓地种一棵树并点墓地蜡烛",
         "ar": "يزرعون شجرة في المقبرة ويشعلون شموع القبور",
@@ -53531,8 +53531,8 @@
         "uk": "Садять дерево на кладовищі та запалюють свічки на могилах"
       },
       {
-        "en": "Dance around a tree outdoors to welcome summer",
-        "sv": "Dansar runt en gran utomhus för att välkomna sommaren",
+        "en": "Dance around a Christmas tree outdoors to welcome summer",
+        "sv": "Dansar runt en julgran utomhus för att välkomna sommaren",
         "zh-Hant": "在戶外圍著一棵樹跳舞來迎接夏天",
         "zh-Hans": "在户外围着一棵树跳舞来迎接夏天",
         "ar": "يرقصون حول شجرة في الخارج للترحيب بالصيف",
@@ -53545,8 +53545,8 @@
         "uk": "Танцюють надворі навколо дерева, щоб привітати літо"
       },
       {
-        "en": "Light a tree as a spring bonfire on Walpurgis Night",
-        "sv": "Tänder en gran som vårbrasa på valborgsmässoafton",
+        "en": "Light a Christmas tree as a spring bonfire on Walpurgis Night",
+        "sv": "Tänder en julgran som vårbrasa på valborgsmässoafton",
         "zh-Hant": "在瓦爾普吉斯夜把一棵樹點燃作為春天篝火",
         "zh-Hans": "在瓦尔普吉斯夜把一棵树点燃作为春天篝火",
         "ar": "يشعلون شجرة كنار ربيعية في ليلة فالبورغ",
@@ -53561,8 +53561,8 @@
     ],
     "answer": 0,
     "why": {
-      "en": "At Christmas, many people bring a tree into the house and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
-      "sv": "Vid jul tar många in en gran i huset och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
+      "en": "At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel. The Christmas tree belongs to Christmas celebrations, while grave candles, Midsummer dancing, and Walpurgis bonfires belong to other holidays.",
+      "sv": "Vid jul tar många in en julgran i hemmet och dekorerar den med ljusslingor, kulor och glitter. Julgranen hör till julfirandet, medan gravljus, midsommardans och valborgsbrasor hör till andra högtider."
     },
     "source": {
       "title": "Sverige i fokus",

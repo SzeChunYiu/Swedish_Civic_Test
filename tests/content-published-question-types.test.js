@@ -60,6 +60,7 @@ const q026OldMunicipalResponsibilitiesPromptPattern =
   /\b(?:Vilket exempel beskriver kommunernas ansvar|Which example describes municipal responsibilities)\b/i;
 const q140OldChristmasPromptPattern =
   /\b(?:Vilket påstående stämmer om julfirande i Sverige|Which statement is correct about Christmas celebrations in Sweden)\b/i;
+const christmasTreeStiltedEnglishPattern = /\bwith a tree at Christmas\b/i;
 const sourceRecallPromptPattern =
   /\b(?:nämns som exempel|mentioned as examples?|nämns som en anledning|mentioned as a reason|Vad nämns som exempel|What is mentioned as an example|Vilken händelse från[^?!.]*nämns|Which event from[^?!.]*mentioned)\b/i;
 const sourceCriticismStiltedEnglishPattern = /\bsource-critical\b/i;
@@ -787,6 +788,63 @@ test('tradition prompts avoid literal common-to-do English', () => {
   assert.equal(
     q104Judgement?.q.en,
     'Choose the correct option: How is All Saints’ Day commonly observed in Sweden?',
+  );
+});
+
+test('Christmas tree prompts keep natural English wording', () => {
+  const generatedSiteBank = buildSiteQuestionBank().questions;
+  const actualSiteBank = actualStaticQuestions();
+  const textForQuestion = (question) =>
+    [question.q?.en, question.why?.en, ...(question.opts || []).map((option) => option.en)].join(
+      ' ',
+    );
+  const fileFindings = [
+    'data/additionalQuestions.ts',
+    'content/question-bank.csv',
+    'site/questions.js',
+  ].filter((relativePath) =>
+    christmasTreeStiltedEnglishPattern.test(
+      fs.readFileSync(path.join(repoRoot, relativePath), 'utf8'),
+    ),
+  );
+  const bankFindings = [...generatedSiteBank, ...Array.from(actualSiteBank)]
+    .filter((question) => christmasTreeStiltedEnglishPattern.test(textForQuestion(question)))
+    .map((question) => question.id);
+  const sourceQuestions = generatedSiteBank.filter(
+    (question) => question.questionProvenance === 'uhr',
+  );
+  const q138 = generatedSiteBank.find((question) => question.id === 'q138');
+  const q138SingleChoice = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q138', 'singleChoice'),
+  );
+  const q138TrueStatement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q138', 'trueStatement'),
+  );
+  const q138FalseStatement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q138', 'falseStatement'),
+  );
+  const q138Judgement = generatedSiteBank.find(
+    (question) => question.id === generatedQuestionId(sourceQuestions, 'q138', 'judgement'),
+  );
+
+  assert.deepEqual(fileFindings, []);
+  assert.deepEqual(bankFindings, []);
+  assert.equal(q138?.q.en, 'What do many people do with a Christmas tree at Christmas in Sweden?');
+  assert.equal(
+    q138SingleChoice?.q.en,
+    'Which answer best matches? What do many people do with a Christmas tree at Christmas in Sweden?',
+  );
+  assert.equal(
+    q138TrueStatement?.q.en,
+    'At Christmas, many people bring a Christmas tree into the home and decorate it with strings of lights, baubles, and tinsel.',
+  );
+  assert.equal(
+    q138FalseStatement?.q.en,
+    'At Christmas, many people plant a Christmas tree at the cemetery and light grave candles.',
+  );
+  assert.equal(
+    q138Judgement?.q.en,
+    'Choose the correct option: What do many people do with a Christmas tree at Christmas in Sweden?',
   );
 });
 
