@@ -211,6 +211,45 @@ function stripLeadingByEn(value: string): string {
   return stripLeadingPurposeEn(value).replace(/^by\s+/i, '');
 }
 
+function swedishIncomeMethod(answer: string): string {
+  const phrase = lowerFirst(answer.trim());
+  if (/^de säljer reklamplats eller tar betalt för en särskild kanal$/i.test(phrase)) {
+    return 'genom att sälja reklamplats eller ta betalt för en särskild kanal';
+  }
+  if (/^genom\b/i.test(phrase)) return phrase;
+  return `genom ${phrase}`;
+}
+
+function englishIncomeMethod(answer: string): string {
+  const phrase = answer.trim();
+  if (/^they sell advertising space or charge for a specific channel$/i.test(phrase)) {
+    return 'by selling advertising space or charging for a specific channel';
+  }
+  if (/^(?:through|by)\b/i.test(phrase)) return lowerFirst(phrase);
+  return `through ${lowerFirst(phrase)}`;
+}
+
+function swedishPartyPoliticsStatement(answer: string): string {
+  const phrase = lowerFirst(answer.trim());
+  if (/^bara rösta om personen redan sitter i riksdagen$/i.test(phrase)) {
+    return 'En person kan bara påverka partipolitik genom att rösta om personen redan sitter i riksdagen';
+  }
+  return `En person kan påverka partipolitik genom att ${stripLeadingPurposeSv(phrase)}`;
+}
+
+function englishPartyPoliticsStatement(answer: string): string {
+  const phrase = answer.trim();
+  if (
+    /^become a member of a political party or start a new party together with others$/i.test(phrase)
+  ) {
+    return 'A person can influence party politics by becoming a member of a political party or starting a new party together with others';
+  }
+  if (/^only vote if the person already sits in the Riksdag$/i.test(phrase)) {
+    return 'A person can influence party politics only by voting if they already sit in the Riksdag';
+  }
+  return `A person can influence party politics by ${englishGerundPhrase(phrase)}`;
+}
+
 function englishGerundPhrase(value: string): string {
   const phrase = stripLeadingByEn(value).trim();
   const [first = '', ...rest] = phrase.split(/\s+/);
@@ -1592,6 +1631,9 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^Vad gäller för (.+)$/i);
   if (match) return replaceLeadingSwedishSubject(match[1], answer);
 
+  match = q.match(/^Hur kan (.+?) få inkomster$/i);
+  if (match) return `${upperFirst(match[1])} kan få inkomster ${swedishIncomeMethod(answer)}`;
+
   match = q.match(/^Hur stor del av (.+?) (jobbar .+)$/i);
   if (match) return `${upperFirst(answer)} av ${match[1]} ${match[2]}`;
 
@@ -1877,6 +1919,12 @@ function civicStatementSv(source: PracticeQuestion, option: QuestionOption): str
   );
   if (match) return `Ett parti måste få ${lowerFirst(answer)} för att komma in i riksdagen`;
 
+  match = q.match(/^Vad står på röstkortet som skickas hem före valet$/i);
+  if (match) return `Röstkortet visar ${lowerFirst(answer)}`;
+
+  match = q.match(/^Vad kan den som vill påverka innehållet i partipolitiken göra$/i);
+  if (match) return swedishPartyPoliticsStatement(answer);
+
   return upperFirst(stripLeadingPurposeSv(answer));
 }
 
@@ -2045,6 +2093,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
   match = q.match(/^How often are (.+) held in Sweden$/i);
   if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)} in Sweden`;
 
+  match = q.match(/^How often are (.+) held$/i);
+  if (match) return `${upperFirst(match[1])} are held ${lowerFirst(answer)}`;
+
   match = q.match(/^Which requirements apply to (.+)$/i);
   if (match) return `To ${requirementTargetEn(match[1])}, ${lowerFirst(answer)}`;
 
@@ -2105,6 +2156,9 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What applies to (.+)$/i);
   if (match) return appliesStatementEn(match[1], answer);
+
+  match = q.match(/^How can (.+?) earn income$/i);
+  if (match) return `${upperFirst(match[1])} can earn income ${englishIncomeMethod(answer)}`;
 
   match = q.match(/^What share of (.+?) works (.+)$/i);
   if (match) return `${upperFirst(answer)} of ${match[1]} works ${match[2]}`;
@@ -2428,6 +2482,12 @@ function civicStatementEn(source: PracticeQuestion, option: QuestionOption): str
 
   match = q.match(/^What minimum share of votes must a party receive to enter the Riksdag$/i);
   if (match) return `A party must receive ${lowerFirst(answer)} to enter the Riksdag`;
+
+  match = q.match(/^What is stated on the voting card sent home before an election$/i);
+  if (match) return `The voting card shows ${lowerFirst(answer)}`;
+
+  match = q.match(/^What can someone do to influence the content of party politics$/i);
+  if (match) return englishPartyPoliticsStatement(answer);
 
   return upperFirst(stripLeadingPurposeEn(answer));
 }
