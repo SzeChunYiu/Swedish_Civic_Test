@@ -4294,7 +4294,8 @@ const EXPECTED_THEME_COLOR_TOKENS = [
   'swedishGold',
 ];
 const EXPECTED_THEME_SPACE_VALUES = {
-  hairline: 2,
+  hairline: 1,
+  divider: 2,
   micro: 3,
   0: 0,
   0.5: 4,
@@ -4364,6 +4365,8 @@ const EXPECTED_THEME_MOTION_EASING = ['standard', 'press'];
 const THEME_BORDER_WIDTH_SOURCE_DIRS = ['app', 'components'];
 const RAW_THEME_BORDER_WIDTH_PATTERN =
   /\b(?:border(?:Top|Right|Bottom|Left)?Width):\s*(?:StyleSheet\.hairlineWidth|\d+(?:\.\d+)?)/;
+const NON_BORDER_THEME_HAIRLINE_PATTERN =
+  /\b(?:gap|height|padding(?:Horizontal|Vertical)?|width):\s*space\.hairline\b/;
 const REQUIRED_THEME_CONTRAST_PAIRS = [
   ['text', 'surface'],
   ['text', 'canvas'],
@@ -17803,6 +17806,7 @@ function validateThemeTokenSchema() {
   }
 
   const borderWidthOffenders = [];
+  const nonBorderHairlineOffenders = [];
   for (const sourceDir of THEME_BORDER_WIDTH_SOURCE_DIRS) {
     for (const filePath of listSourceFiles(sourceDir)) {
       themeBorderWidthTokenFilesValidated += 1;
@@ -17812,11 +17816,20 @@ function validateThemeTokenSchema() {
         if (RAW_THEME_BORDER_WIDTH_PATTERN.test(line)) {
           borderWidthOffenders.push(`${relativePath}:${index + 1}: ${line.trim()}`);
         }
+        if (NON_BORDER_THEME_HAIRLINE_PATTERN.test(line)) {
+          nonBorderHairlineOffenders.push(`${relativePath}:${index + 1}: ${line.trim()}`);
+        }
       });
     }
   }
   if (borderWidthOffenders.length > 0) {
     reject(`theme border width tokens required: ${borderWidthOffenders.join('; ')}`);
+  } else if (nonBorderHairlineOffenders.length > 0) {
+    reject(
+      `theme hairline reserved for border widths; use space.divider for 2px layout/dividers: ${nonBorderHairlineOffenders.join(
+        '; ',
+      )}`,
+    );
   } else {
     themeBorderWidthTokenParityValidated = themeBorderWidthTokenFilesValidated > 0;
   }

@@ -642,11 +642,11 @@ function createStyles(themeColors: ThemeColors) {
       lineHeight: typography.caption.lineHeight,
     },
     accessibilitySummaryText: {
-      height: space.hairline,
+      height: space.divider,
       left: -10000,
       overflow: 'hidden',
       position: 'absolute',
-      width: space.hairline,
+      width: space.divider,
     },
     termList: {
       gap: space[1.5],

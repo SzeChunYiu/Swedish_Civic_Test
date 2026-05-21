@@ -21,7 +21,7 @@ test('theme token schema validates the exported design-token catalog', () => {
   const spacingSource = fs.readFileSync(path.join(repoRoot, 'lib/theme/spacing.ts'), 'utf8');
 
   assert.equal(summary.themeColorTokensValidated, 37);
-  assert.equal(summary.themeSpaceTokensValidated, 24);
+  assert.equal(summary.themeSpaceTokensValidated, 25);
   assert.equal(summary.themeRadiusTokensValidated, 9);
   assert.equal(summary.themeTypographyTokensValidated, 22);
   assert.equal(summary.themeShadowTokensValidated, 2);
@@ -34,9 +34,8 @@ test('theme token schema validates the exported design-token catalog', () => {
   assert.equal(summary.themeDarkContrastPairsValidated, 20);
   assert.equal(summary.themeDarkContrastPairsAAValidated, true);
   assert.equal(summary.themeTokenSchemaValidated, true);
-  assert.match(spacingSource, /hairline:\s*2,/);
-  assert.match(shadowSource, /boxShadow:\s*'0px 6px 20px rgba\(11, 31, 51, 0\.06\)'/);
-  assert.match(shadowSource, /boxShadow:\s*'0px 8px 24px rgba\(11, 31, 51, 0\.08\)'/);
+  assert.match(spacingSource, /hairline:\s*1,/);
+  assert.match(spacingSource, /divider:\s*2,/);
   assert.match(
     themeIndex,
     /export \{[\s\S]*colors[\s\S]*colorsForThemeMode[\s\S]*\} from '\.\/colors';/,
@@ -81,6 +80,58 @@ require('./scripts/validate-content.js');
   );
 });
 
+test('semantic hairline token is reserved for border widths', () => {
+  const sourceRoots = ['app', 'components'];
+  const nonBorderHairlinePattern =
+    /\b(?:gap|height|padding(?:Horizontal|Vertical)?|width):\s*space\.hairline\b/;
+  const offenders = [];
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(fullPath);
+        continue;
+      }
+      if (!/\.(?:ts|tsx)$/.test(entry.name)) continue;
+      const relativePath = path.relative(repoRoot, fullPath).replace(/\\/g, '/');
+      fs.readFileSync(fullPath, 'utf8')
+        .split('\n')
+        .forEach((line, index) => {
+          if (nonBorderHairlinePattern.test(line)) {
+            offenders.push(`${relativePath}:${index + 1}: ${line.trim()}`);
+          }
+        });
+    }
+  }
+
+  for (const sourceRoot of sourceRoots) {
+    walk(path.join(repoRoot, sourceRoot));
+  }
+
+  assert.deepEqual(
+    offenders,
+    [],
+    'use space.divider for intentional 2px layout/divider sizing; reserve space.hairline for border widths',
+  );
+});
+
+test('search and language controls keep 2px divider layout token separate from hairline borders', () => {
+  const searchSource = fs.readFileSync(path.join(repoRoot, 'app/search.tsx'), 'utf8');
+  const settingsSource = fs.readFileSync(path.join(repoRoot, 'app/settings.tsx'), 'utf8');
+  const languageToggleSource = fs.readFileSync(
+    path.join(repoRoot, 'components/ui/LanguageToggle.tsx'),
+    'utf8',
+  );
+
+  assert.match(searchSource, /height:\s*space\.divider/);
+  assert.match(searchSource, /width:\s*space\.divider/);
+  assert.match(languageToggleSource, /padding:\s*space\.divider/);
+  assert.match(settingsSource, /gap:\s*space\.divider/);
+  assert.match(searchSource, /borderWidth:\s*space\.hairline/);
+  assert.match(languageToggleSource, /borderWidth:\s*space\.hairline/);
+});
+
 test('theme token schema rejects spacing token drift', () => {
   const result = spawnSync(
     process.execPath,
@@ -118,7 +169,7 @@ const originalReadFileSync = fs.readFileSync;
 fs.readFileSync = function readFileSync(filePath, ...args) {
   const normalizedPath = String(filePath).replace(/\\\\/g, '/');
   if (normalizedPath.endsWith('/lib/theme/spacing.ts')) {
-    return originalReadFileSync.call(this, filePath, ...args).replace('hairline: 2,', 'hairline: 1,');
+    return originalReadFileSync.call(this, filePath, ...args).replace('hairline: 1,', 'hairline: 2,');
   }
   return originalReadFileSync.call(this, filePath, ...args);
 };
@@ -130,7 +181,33 @@ require('./scripts/validate-content.js');
   );
 
   assert.notEqual(result.status, 0);
-  assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.hairline expected 2, found 1/);
+  assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.hairline expected 1, found 2/);
+});
+
+test('theme token schema rejects divider spacing token drift', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+const fs = require('node:fs');
+const originalReadFileSync = fs.readFileSync;
+fs.readFileSync = function readFileSync(filePath, ...args) {
+  const normalizedPath = String(filePath).replace(/\\\\/g, '/');
+  if (normalizedPath.endsWith('/lib/theme/spacing.ts')) {
+    return originalReadFileSync.call(this, filePath, ...args).replace('divider: 2,', 'divider: 1,');
+  }
+  return originalReadFileSync.call(this, filePath, ...args);
+};
+process.argv.push('--focus-theme-token-schema');
+require('./scripts/validate-content.js');
+`,
+    ],
+    { cwd: repoRoot, encoding: 'utf8' },
+  );
+
+  assert.notEqual(result.status, 0);
+  assert.match(`${result.stdout}\n${result.stderr}`, /theme space\.divider expected 2, found 1/);
 });
 
 test('theme token schema rejects control radius token drift', () => {

@@ -577,7 +577,9 @@ export default function Screen() {
           <Pressable
             aria-checked={audioEnabled}
             accessibilityLabel={
-              audioEnabled ? copy.disableAudioAccessibilityLabel : copy.enableAudioAccessibilityLabel
+              audioEnabled
+                ? copy.disableAudioAccessibilityLabel
+                : copy.enableAudioAccessibilityLabel
             }
             accessibilityRole="switch"
             accessibilityState={{ checked: audioEnabled }}
@@ -888,7 +890,7 @@ function createStyles(themeColors: ThemeColors) {
     },
     goalPill: {
       alignItems: 'flex-start',
-      gap: space.hairline,
+      gap: space.divider,
       minWidth: space[12],
     },
     goalNumberText: {
