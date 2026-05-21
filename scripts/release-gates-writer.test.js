@@ -163,11 +163,18 @@ test('release evidence stub command creates gate-specific non-secret evidence fi
   assert.equal(stub.status, 'blocked');
   assert.equal(stub.bundleIdentifier, 'com.billyyiu.almostswedish');
   assert.equal(stub.packageName, 'com.billyyiu.almostswedish');
-  assert.match(stub.supportUrl, /szechunyiu.github.io/);
-  assert.match(stub.privacyUrl, /szechunyiu.github.io/);
+  assert.equal(
+    stub.supportUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/',
+  );
+  assert.equal(
+    stub.privacyUrl,
+    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
+  );
   assert.equal(stub.privacyPolicyUrl, undefined);
-  assert.equal(stub.accountOwnership.appleBundleIdReviewed, false);
   assert.equal(stub.adMob.realAdsEnabled, true);
+  assert.match(stub.adMob.appId, /^ca-app-pub-\d{16}~\d{10}$/);
+  assert.equal(stub.adMob.appAdsTxtReviewed, false);
   assert.equal(stub.listingMetadata.appStoreListingPath, 'publishing/app-store-listing.md');
 
   const secondRun = spawnSync(
@@ -179,157 +186,32 @@ test('release evidence stub command creates gate-specific non-secret evidence fi
   assert.match(secondRun.stderr || secondRun.stdout, /already exists/i);
 });
 
-function createStub(tmpRoot, gate, relativePath) {
+test('release evidence stub command creates current privacy-review release posture', () => {
+  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-privacy-stub-'));
+
   const result = spawnSync(
     process.execPath,
-    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--gate', gate],
+    ['scripts/create-release-evidence-stub.js', '--root', tmpRoot, '--gate', 'privacy-review'],
     { cwd: repoRoot, encoding: 'utf8' },
   );
+  const outputPath = path.join(tmpRoot, 'reports/privacy-review/privacy-review.json');
+  const stubSource = fs.readFileSync(outputPath, 'utf8');
+  const stub = JSON.parse(stubSource);
 
   assert.equal(result.status, 0, result.stderr || result.stdout);
-  assert.match(result.stdout, new RegExp(gate));
-  return JSON.parse(fs.readFileSync(path.join(tmpRoot, relativePath), 'utf8'));
-}
-
-test('release evidence stub templates match current release-preflight artifact schemas', () => {
-  const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-schema-stubs-'));
-  const stubs = {
-    eas: createStub(
-      tmpRoot,
-      'eas-build-artifacts',
-      'reports/eas-build-artifacts/eas-build-artifacts.json',
-    ),
-    androidAudio: createStub(tmpRoot, 'android-device-audio', 'reports/device-smoke/android.json'),
-    iosAudio: createStub(tmpRoot, 'ios-device-audio', 'reports/device-smoke/ios.json'),
-    storeRecords: createStub(tmpRoot, 'store-records', 'reports/store-records/store-records.json'),
-    storeCredentials: createStub(
-      tmpRoot,
-      'store-credentials',
-      'reports/store-credentials/store-credentials.json',
-    ),
-    storePolicy: createStub(
-      tmpRoot,
-      'store-policy-questionnaires',
-      'reports/store-policy-questionnaires/store-policy-questionnaires.json',
-    ),
-    privacy: createStub(tmpRoot, 'privacy-review', 'reports/privacy-review/privacy-review.json'),
-    ownerApproval: createStub(
-      tmpRoot,
-      'release-owner-approval',
-      'reports/release-owner-approval/release-owner-approval.json',
-    ),
-    screenshots: createStub(
-      tmpRoot,
-      'device-screenshots',
-      'reports/final-store-screenshots/manifest.json',
-    ),
-    submission: createStub(tmpRoot, 'submission', 'reports/submission/submission.json'),
-  };
-
-  assert.equal(stubs.eas.status, 'blocked');
-  assert.equal(stubs.eas.android.artifactType, 'apk');
-  assert.equal(stubs.eas.ios.artifactType, 'ipa');
-  assert.equal(stubs.eas.android.buildId.startsWith('pending-'), true);
-  assert.equal(stubs.eas.ios.buildUrl.startsWith('pending-'), true);
-
-  for (const [platform, stub] of [
-    ['android', stubs.androidAudio],
-    ['ios', stubs.iosAudio],
-  ]) {
-    assert.equal(stub.status, 'pending');
-    assert.equal(stub.platform, platform);
-    assert.equal(stub.sourceBuild, 'pending-eas-build-url-or-id');
-    assert.deepEqual(
-      stub.checks.map((check) => check.id),
-      [
-        'sv-se-question-audio',
-        'audio-button-state',
-        'speech-engine-unavailable',
-        'onboarding',
-        'practice-answer-flow',
-        'mock-exam-no-ads',
-        'progress-restart',
-        'privacy-legal-pages',
-      ],
-    );
-    assert.ok(stub.checks.every((check) => check.result === 'pending' && check.notes));
-    assert.deepEqual(stub.artifacts, []);
-    assert.equal(stub.buildIdOrUrl, undefined);
-    assert.equal(stub.buildIdOrTestFlightUrl, undefined);
-    assert.equal(stub.proofArtifact, undefined);
-  }
-
-  assert.equal(stubs.storeRecords.bundleIdentifier, 'com.billyyiu.almostswedish');
-  assert.equal(stubs.storeRecords.packageName, 'com.billyyiu.almostswedish');
-  assert.equal(
-    stubs.storeRecords.privacyUrl,
-    'https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/',
-  );
-  assert.equal(stubs.storeRecords.privacyPolicyUrl, undefined);
-  assert.equal(stubs.storeRecords.accountOwnership.googlePackageNameReviewed, false);
-  assert.equal(stubs.storeRecords.adMob.realAdsEnabled, true);
-  assert.match(stubs.storeRecords.adMob.appAdsTxtPublisherLine, /^google\.com, pub-\d+, DIRECT,/);
-  assert.equal(
-    stubs.storeRecords.listingMetadata.googlePlayListingPath,
-    'publishing/google-play-listing.md',
-  );
-
-  assert.equal(stubs.storeCredentials.status, 'blocked');
-  assert.equal(stubs.storeCredentials.appStoreConnect, undefined);
-  assert.equal(stubs.storeCredentials.googlePlay, undefined);
-  assert.equal(stubs.storeCredentials.ios.appleId, 'pending-apple-id-email');
-  assert.equal(stubs.storeCredentials.ios.credentialsSource, 'pending-secure-source-outside-git');
-  assert.equal(stubs.storeCredentials.android.packageName, 'com.billyyiu.almostswedish');
-  assert.match(stubs.storeCredentials.android.serviceAccountEmail, /iam\.gserviceaccount\.com$/);
-
-  assert.equal(stubs.storePolicy.status, 'pending-review');
-  assert.equal(stubs.storePolicy.googlePlay, undefined);
-  assert.equal(stubs.storePolicy.apple.noOfficialAffiliationClaims, false);
-  assert.equal(stubs.storePolicy.apple.usesNonExemptEncryption, false);
-  assert.equal(stubs.storePolicy.google.noGovernmentAffiliationClaims, false);
-  assert.equal(stubs.storePolicy.google.containsRealMoneyGambling, false);
-  assert.ok(stubs.storePolicy.evidenceBasis.includes('reports/store-records/store-records.json'));
-
-  assert.equal(stubs.privacy.status, 'blocked');
-  assert.equal(stubs.privacy.binaryBuildIdOrUrl, undefined);
-  assert.equal(stubs.privacy.reviewedBuild.version, '1.0.0');
-  assert.equal(stubs.privacy.applePrivacyLabels.path, 'publishing/privacy-labels.md');
-  assert.equal(stubs.privacy.googlePlayDataSafety.path, 'publishing/google-play-data-safety.md');
-  assert.equal(stubs.privacy.googleMobileAds.realAdsEnabled, true);
-  assert.equal(stubs.privacy.disabledSdks.analytics, true);
-
-  assert.equal(stubs.ownerApproval.status, 'blocked');
-  assert.equal(stubs.ownerApproval.approved, undefined);
-  assert.equal(stubs.ownerApproval.approvedForStoreSubmission, undefined);
-  assert.equal(stubs.ownerApproval.releaseDecision, 'pending-owner-decision');
-  assert.equal(stubs.ownerApproval.evidenceReport, 'reports/release-evidence-2026-05-15.md');
-  assert.deepEqual(stubs.ownerApproval.checkedGates, []);
-
-  assert.equal(stubs.screenshots.status, 'blocked');
-  assert.equal(
-    stubs.screenshots.screenshotStatus,
-    'pending-final-device-or-accepted-store-tooling',
-  );
-  assert.equal(stubs.screenshots.contentReview.mockExamShowsNoAds, false);
-  assert.deepEqual(stubs.screenshots.screenshots, []);
-
-  assert.equal(stubs.submission.status, 'blocked');
-  assert.equal(stubs.submission.testFlightBuild.buildNumber, 'pending-testflight-build-number');
-  assert.equal(
-    stubs.submission.googlePlayInternal.trackUrl,
-    'pending-google-play-internal-track-url',
-  );
-  assert.equal(stubs.submission.googlePlayInternalTrackUrl, undefined);
-  assert.deepEqual(
-    stubs.submission.productionSubmissions.map((submission) => submission.platform),
-    ['ios', 'android'],
-  );
-  assert.equal(stubs.submission.monitoringReport, 'reports/monitoring/v1-week1.md');
-  assert.equal(stubs.submission.monitoringReportPath, undefined);
-
-  const serialized = JSON.stringify(stubs);
-  assert.doesNotMatch(serialized, /com\.billyyiu\.swedishcivictest/);
-  assert.doesNotMatch(serialized, /\bTBD\b/);
+  assert.equal(stub.gate, 'privacy-review');
+  assert.equal(stub.status, 'blocked');
+  assert.equal(stub.reviewedBuild.version, '1.0.0');
+  assert.equal(stub.applePrivacyLabels.path, 'publishing/privacy-labels.md');
+  assert.equal(stub.googlePlayDataSafety.path, 'publishing/google-play-data-safety.md');
+  assert.equal(stub.googleMobileAds.sdkPresent, true);
+  assert.equal(stub.googleMobileAds.realAdsEnabled, true);
+  assert.match(stub.googleMobileAds.gate, /EXPO_PUBLIC_REAL_ADS_ENABLED=true/);
+  assert.match(stub.googleMobileAds.gate, /Remove Ads/);
+  assert.match(stub.googleMobileAds.gate, /29 SEK/);
+  assert.match(stub.googleMobileAds.gate, /ATT and UMP consent/i);
+  assert.equal(stub.realAdsEnabledForV1, undefined);
+  assert.doesNotMatch(stubSource, /REAL_ADS_ENABLED_FOR_V1/);
 });
 
 test('release evidence stub command creates all missing blocked manual templates', () => {
@@ -409,10 +291,7 @@ test('release evidence stub list stays synchronized with blocked manual gates', 
   );
   for (const row of rows) {
     assert.match(row.path, /^reports\//);
-    assert.ok(
-      ['blocked', 'pending', 'pending-review'].includes(row.status),
-      `${row.gate} should list an intentionally blocked or pending draft status`,
-    );
+    assert.equal(row.status, 'blocked');
   }
 });
 

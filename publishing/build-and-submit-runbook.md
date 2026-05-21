@@ -8,10 +8,11 @@ Reference: Expo EAS `eas.json` documentation, https://docs.expo.dev/build/eas-js
   `npx --yes eas-cli@18.13.0` so no local or global EAS CLI install is required.
 - Expo account access.
 - Apple Developer account access.
-- App Store Connect app record for `com.billyyiu.swedishcivictest`.
-- Google Play Console app record for `com.billyyiu.swedishcivictest`.
+- App Store Connect app record for `com.billyyiu.almostswedish`.
+- Google Play Console app record for `com.billyyiu.almostswedish`.
 - Google Play service account JSON saved outside git, then copied locally to `publishing/google-play-service-account.json` only for submission.
-- Public support URL and privacy policy URL.
+- Public support URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/support/.
+- Public privacy policy URL: https://szechunyiu.github.io/Swedish_Civic_Test-public-site/privacy/.
 - Final device screenshots.
 
 ## Preview/internal build

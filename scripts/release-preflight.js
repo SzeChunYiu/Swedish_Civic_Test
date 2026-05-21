@@ -146,6 +146,17 @@ const staleReleaseAdEvidencePatterns = [
   [new RegExp(['disabled', 'Google Mobile Ads'].join('\\s+'), 'i'), 'disabled ad SDK posture'],
 ];
 
+const staleReleaseIdentityEvidencePatterns = [
+  [
+    new RegExp(['com', 'billyyiu', 'swedishcivictest'].join('\\.'), 'i'),
+    'stale native app identifier',
+  ],
+  [
+    /https?:\/\/(?:dist-[^\s/]+|[^\s/]*billy10384[^\s/]*)\.vercel\.app[^\s),;]*/i,
+    'legacy Vercel public-site host URL',
+  ],
+];
+
 const gateSpecificBlockedEvidencePatterns = {
   'device-screenshots': [
     [/web[- ]draft/i, 'web-draft evidence is not final store screenshot evidence'],
@@ -252,6 +263,25 @@ function staleReleaseAdEvidenceError(staleTerms) {
   return `obsolete ad-disablement evidence (${matchCount} pattern match${
     matchCount === 1 ? '' : 'es'
   })`;
+}
+
+function staleReleaseIdentityEvidenceTerms(source) {
+  return staleReleaseIdentityEvidencePatterns
+    .filter(([pattern]) => pattern.test(source))
+    .map(([, label]) => label);
+}
+
+function staleReleaseIdentityEvidenceGate(id, label, staleTerms) {
+  const matchCount = staleTerms.length;
+  return gate(
+    id,
+    label,
+    'BLOCKED',
+    `Gate ${id} evidence in ${evidencePath} still uses obsolete app identity or public-site host values (${matchCount} pattern match${
+      matchCount === 1 ? '' : 'es'
+    }: ${staleTerms.join(', ')}). Replace it with com.billyyiu.almostswedish and the current GitHub Pages support/privacy URLs before relying on this gate.`,
+    `Replace obsolete app identity/public URL evidence for ${id} in ${evidencePath}.`,
+  );
 }
 
 function listFiles(root) {
@@ -1620,7 +1650,12 @@ function evidenceGate(manualEvidence, id, label, fallbackEvidence, nextAction, o
   const recorded = manualEvidence.gates[id];
   const status = recorded?.status === 'READY' ? 'READY' : 'BLOCKED';
   const recordedEvidence = typeof recorded?.evidence === 'string' ? recorded.evidence.trim() : '';
+  const staleIdentityTerms = staleReleaseIdentityEvidenceTerms(recordedEvidence);
   const staleTerms = staleReleaseAdEvidenceTerms(recordedEvidence);
+
+  if (recordedEvidence.length > 0 && staleIdentityTerms.length > 0) {
+    return staleReleaseIdentityEvidenceGate(id, label, staleIdentityTerms);
+  }
 
   if (recordedEvidence.length > 0 && staleTerms.length > 0) {
     return staleReleaseAdEvidenceGate(id, label, staleTerms);

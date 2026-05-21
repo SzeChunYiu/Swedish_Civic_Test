@@ -2754,6 +2754,43 @@ test('release preflight blocks store record evidence without exact public URLs',
   );
 });
 
+test('release preflight blocks READY release evidence with stale app identity or public host values', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-stale-identity-'));
+  const evidencePath = path.join(tmpDir, 'release-gates.json');
+  const staleNativeId = ['com', 'billyyiu', 'swedishcivictest'].join('.');
+  const oldVercelHost = 'https://dist-web-billy10384-5430s-projects.vercel.app/support/';
+
+  writeAllReadyEvidence(evidencePath, {
+    'store-records': {
+      status: 'READY',
+      evidence: `${storeRecordReadyEvidence()} Historical store draft mentioned ${staleNativeId}.`,
+    },
+    'privacy-review': {
+      status: 'READY',
+      evidence: privacyReviewReadyEvidence(`Support evidence was copied from ${oldVercelHost}.`),
+    },
+  });
+  writeFakeReleaseCommands(tmpDir);
+
+  const report = runPreflight({
+    expectedStatus: 1,
+    env: {
+      PATH: `${tmpDir}${path.delimiter}${process.env.PATH}`,
+      RELEASE_PREFLIGHT_EVIDENCE_PATH: evidencePath,
+      RELEASE_PREFLIGHT_SKIP_PUBLIC_URL_CHECK: '1',
+    },
+  });
+
+  const storeRecords = report.gates.find((gate) => gate.id === 'store-records');
+  const privacyReview = report.gates.find((gate) => gate.id === 'privacy-review');
+  assert.equal(storeRecords.status, 'BLOCKED');
+  assert.match(storeRecords.evidence, /stale native app identifier/i);
+  assert.match(storeRecords.evidence, /com\.billyyiu\.almostswedish/i);
+  assert.equal(privacyReview.status, 'BLOCKED');
+  assert.match(privacyReview.evidence, /legacy Vercel public-site host URL/i);
+  assert.match(privacyReview.evidence, /GitHub Pages support\/privacy URLs/i);
+});
+
 test('release preflight blocks READY manual release gates with stale disabled-real-ads evidence', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-preflight-stale-ads-'));
   const evidencePath = path.join(tmpDir, 'release-gates.json');
