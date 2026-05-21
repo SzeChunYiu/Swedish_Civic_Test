@@ -1,7 +1,7 @@
 import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Children, Fragment, isValidElement } from 'react';
-import type { ComponentProps, PropsWithChildren, ReactElement, ReactNode } from 'react';
+import { Children } from 'react';
+import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import { useSettingsStore, type AppLanguage } from '../../lib/storage/settingsStore';
 import { colors, radius, space, typography } from '../../lib/theme';
 import { ComplianceActionLink } from './ComplianceActionLink';
@@ -53,8 +53,6 @@ export interface LegalExternalLinkProps {
   href: LegalExternalHref;
   label: string;
 }
-
-export type LegalLinkListProps = PropsWithChildren;
 
 export function LegalPage({
   backAccessibilityLabel,
@@ -120,78 +118,45 @@ export function LegalExternalLink({
   );
 }
 
-export function LegalLinkList({ children }: LegalLinkListProps) {
-  return <View style={styles.linkList}>{children}</View>;
-}
-
 function getBackAccessibilityLabel(label: string) {
   return label.replace(/^[←\s]+/, '').trim();
 }
 
 function renderSectionChildren(children: ReactNode) {
-  const sectionChildren = flattenSectionChildren(children);
+  if (children == null) return null;
+  const sectionChildren = Children.toArray(children);
   if (sectionChildren.length === 0) return null;
 
   const renderedChildren: ReactNode[] = [];
-  let paragraphChildren: LegalSectionTextChild[] = [];
+  let textBuffer: (string | number)[] = [];
+
+  const flushTextBuffer = (key: string | number) => {
+    if (textBuffer.length === 0) return;
+    renderedChildren.push(
+      <Text key={`paragraph-${key}`} style={styles.paragraph}>
+        {textBuffer}
+      </Text>,
+    );
+    textBuffer = [];
+  };
 
   sectionChildren.forEach((child, index) => {
     if (isTextChild(child)) {
-      paragraphChildren.push(child);
+      textBuffer.push(child);
       return;
     }
 
-    flushParagraph(renderedChildren, paragraphChildren, index);
-    paragraphChildren = [];
+    flushTextBuffer(index);
     renderedChildren.push(child);
   });
 
-  flushParagraph(renderedChildren, paragraphChildren, sectionChildren.length);
-  return renderedChildren.length === 1 ? renderedChildren[0] : renderedChildren;
+  flushTextBuffer('tail');
+  if (renderedChildren.length === 1) return renderedChildren[0];
+  return renderedChildren;
 }
 
-type LegalSectionRenderableChild = Exclude<ReactNode, boolean | null | undefined>;
-type LegalSectionTextChild = string | number;
-
-function flattenSectionChildren(children: ReactNode): LegalSectionRenderableChild[] {
-  const flattenedChildren: LegalSectionRenderableChild[] = [];
-
-  Children.forEach(children, (child) => {
-    if (child == null || typeof child === 'boolean') return;
-
-    if (isFragmentChild(child)) {
-      flattenedChildren.push(...flattenSectionChildren(child.props.children));
-      return;
-    }
-
-    flattenedChildren.push(child);
-  });
-
-  return flattenedChildren;
-}
-
-function isFragmentChild(
-  child: ReactNode,
-): child is ReactElement<PropsWithChildren<Record<string, never>>> {
-  return isValidElement<PropsWithChildren<Record<string, never>>>(child) && child.type === Fragment;
-}
-
-function isTextChild(child: LegalSectionRenderableChild): child is LegalSectionTextChild {
+function isTextChild(child: ReactNode): child is string | number {
   return typeof child === 'string' || typeof child === 'number';
-}
-
-function flushParagraph(
-  renderedChildren: ReactNode[],
-  paragraphChildren: LegalSectionTextChild[],
-  paragraphIndex: number,
-) {
-  if (paragraphChildren.length === 0) return;
-
-  renderedChildren.push(
-    <Text key={`legal-section-paragraph-${paragraphIndex}`} style={styles.paragraph}>
-      {paragraphChildren}
-    </Text>,
-  );
 }
 
 const styles = StyleSheet.create({
@@ -243,8 +208,5 @@ const styles = StyleSheet.create({
     paddingVertical: space[1],
     textDecorationLine: 'none',
     width: '100%',
-  },
-  linkList: {
-    gap: space[1],
   },
 });
