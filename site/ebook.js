@@ -33,16 +33,6 @@
     },
   });
 
-  const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object.freeze({
-    intro: [],
-    1: ['governmentNato'],
-    7: ['scbLandUse'],
-    9: ['riksbankHistory'],
-    10: ['governmentNato'],
-    11: ['governmentNato'],
-    12: ['governmentNato'],
-  });
-
   const OFFICIAL_TEST_SOURCE_NOTES = Object.freeze([
     {
       label: 'UHR: Om medborgarskapsprovet',
@@ -76,25 +66,19 @@
     },
   ]);
 
-  function externalSourceAnchor(note) {
-    return `<a href="${note.url}" target="_blank" rel="noreferrer">${note.label}</a>`;
-  }
-
   function sourceLink(note) {
     if (!note.url) return `${note.label} (${note.retrievedDate})`;
-    return `${externalSourceAnchor(note)} (${note.retrievedDate})`;
+    return `<a href="${note.url}">${note.label}</a> (${note.retrievedDate})`;
   }
 
   function officialTestSourceLinks() {
-    return OFFICIAL_TEST_SOURCE_NOTES.map((source) => externalSourceAnchor(source)).join(' · ');
+    return OFFICIAL_TEST_SOURCE_NOTES.map(
+      (source) => `<a href="${source.url}">${source.label}</a>`,
+    ).join(' · ');
   }
 
   function ebookSourceNote(lang, sourceKeys) {
-    const notes = sourceKeys.map((key) => {
-      const note = EBOOK_FACTBOX_SOURCE_NOTES[key];
-      if (!note) throw new Error(`Unknown ebook source key: ${key}`);
-      return { key, note };
-    });
+    const notes = sourceKeys.map((key) => EBOOK_FACTBOX_SOURCE_NOTES[key]).filter(Boolean);
     const label = tr({
       sv: 'Källor hämtade',
       en: 'Sources accessed',
@@ -109,9 +93,16 @@
       tr: 'Erişilen kaynaklar',
       uk: 'Отримані джерела',
     });
-    return `<p class="ebook__source-note">${label}: ${notes
-      .map(({ key, note }) => `<span data-source-key="${key}">${sourceLink(note)}</span>`)
-      .join(' · ')}</p>`;
+    return `<p class="ebook__source-note">${label}: ${notes.map(sourceLink).join(' · ')}</p>`;
+  }
+
+  function escapeHtmlAttribute(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   function ebookFactBox(lang, heading, facts, sourceKeys) {
@@ -137,15 +128,22 @@
     return `
       <div class="ebook__factbox">
         <h4>${resolvedHeading}</h4>
-        <p>${facts}</p>
+        <p data-source-keys="${sourceKeys.join(' ')}">${facts}</p>
         ${ebookSourceNote(lang, sourceKeys)}
       </div>
     `;
   }
 
   function getEbookChapterSourceKeys(chapterId) {
-    const externalKeys = EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS[String(chapterId)] || [];
-    return ['uhrStudyMaterial', ...externalKeys, 'editorialCommentary'];
+    const externalByChapter = {
+      intro: [],
+      1: ['governmentNato'],
+      7: ['scbLandUse'],
+      9: ['riksbankHistory'],
+      10: ['governmentNato'],
+      12: ['governmentNato'],
+    };
+    return ['uhrStudyMaterial', ...(externalByChapter[chapterId] || []), 'editorialCommentary'];
   }
 
   function labelForSourceKey(key, lang) {
@@ -170,24 +168,78 @@
     return note.label.replace(/\s+(statistics|timeline|notice)$/i, '');
   }
 
-  function chooseEbookFootnoteKey(chapterSourceKeys, index) {
-    const external = chapterSourceKeys.filter(
-      (key) => key !== 'uhrStudyMaterial' && key !== 'editorialCommentary',
-    );
-    if (index === 0 && external.length > 0) return external[0];
-    if (index % 3 === 2) return 'editorialCommentary';
-    return 'uhrStudyMaterial';
+  const EBOOK_BLOCK_EXTERNAL_SOURCE_RULES = Object.freeze({
+    governmentNato: /\bNATO\b/i,
+    scbLandUse:
+      /\b(?:Vänern|landscape|landscapes|forests?|lakes?|mountains?|coastline|coastal|kust|skog|sjö|fjäll|net-zero|2045)\b/i,
+    riksbankHistory: /\b(?:Riksbank(?:en)?|1668|SEK|krona|Swish|BankID)\b/i,
+  });
+
+  const EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS = Object.freeze({
+    intro: [],
+    1: ['governmentNato'],
+    7: ['scbLandUse'],
+    9: ['riksbankHistory'],
+    10: ['governmentNato'],
+    12: ['governmentNato'],
+  });
+
+  const EBOOK_EDITORIAL_BLOCK_PATTERNS = Object.freeze([
+    /\b(?:skippable|patterns are not|mostly because|on-brand|famously|foreigners imagine)\b/i,
+    /\b(?:plugga smart|läs punkterna|öppna sedan övningen|fel svar visa)\b/i,
+    /\b(?:read the points slowly|open practice|wrong answers show)\b/i,
+  ]);
+
+  function normalizeEbookBlockText(html) {
+    return html
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function explicitEbookSourceKeysForBlock(html) {
+    const match = html.match(/\sdata-source-keys?="([^"]+)"/i);
+    if (!match) return [];
+    return match[1]
+      .split(/\s+/)
+      .map((key) => key.trim())
+      .filter((key) => Boolean(EBOOK_FACTBOX_SOURCE_NOTES[key]));
+  }
+
+  function sourceKeysForEbookBlock(chapterId, html) {
+    const explicitKeys = explicitEbookSourceKeysForBlock(html);
+    if (explicitKeys.length > 0) return Array.from(new Set(explicitKeys));
+
+    const text = normalizeEbookBlockText(html);
+    const sourceKeys = ['uhrStudyMaterial'];
+    const externalKeys = EBOOK_CHAPTER_EXTERNAL_SOURCE_KEYS[chapterId] || [];
+
+    externalKeys.forEach((sourceKey) => {
+      const pattern = EBOOK_BLOCK_EXTERNAL_SOURCE_RULES[sourceKey];
+      if (pattern && pattern.test(text)) sourceKeys.push(sourceKey);
+    });
+
+    if (EBOOK_EDITORIAL_BLOCK_PATTERNS.some((pattern) => pattern.test(text))) {
+      sourceKeys.push('editorialCommentary');
+    }
+
+    return Array.from(new Set(sourceKeys));
   }
 
   function renderEbookProvenanceBadge(lang, sourceCounts) {
-    const summary = Object.entries(sourceCounts)
-      .filter(([, count]) => count > 0)
+    const visibleSourceCounts = Object.fromEntries(
+      Object.entries(sourceCounts).filter(([, count]) => count > 0),
+    );
+    const summary = Object.entries(visibleSourceCounts)
       .map(([key, count]) => `${labelForSourceKey(key, lang)} (${count})`)
       .join(' · ');
+    const sourceCountsJson = escapeHtmlAttribute(JSON.stringify(visibleSourceCounts));
     if (lang === 'sv') {
-      return `<p class="ebook__provenance-badge" aria-label="Källor: ${summary}."><span>Källor:</span> ${summary}</p>`;
+      return `<p class="ebook__provenance-badge" data-source-counts='${sourceCountsJson}' aria-label="Källor: ${summary}."><span>Källor:</span> ${summary}</p>`;
     }
-    return `<p class="ebook__provenance-badge" aria-label="Sources: ${summary}."><span>Sources:</span> ${summary}</p>`;
+    return `<p class="ebook__provenance-badge" data-source-counts='${sourceCountsJson}' aria-label="Sources: ${summary}."><span>Sources:</span> ${summary}</p>`;
   }
 
   function renderEbookFootnoteList(lang, footnotes) {
@@ -222,23 +274,28 @@
   }
 
   function addEbookSectionFootnotes(lang, chapterId, html) {
-    const chapterSourceKeys = getEbookChapterSourceKeys(chapterId);
-    const sourceCounts = Object.fromEntries(chapterSourceKeys.map((key) => [key, 0]));
+    const sourceCounts = Object.fromEntries(
+      getEbookChapterSourceKeys(chapterId).map((key) => [key, 0]),
+    );
     const footnotes = [];
     let proseIndex = 0;
     const withRefs = html.replace(/<(p|li)\b[^>]*>[\s\S]*?<\/\1>/g, (match, tag) => {
       if (/ebook__source-note/.test(match) || /ebook__footnote-ref/.test(match)) {
         return match;
       }
-      const sourceKey = chooseEbookFootnoteKey(chapterSourceKeys, proseIndex);
       const id = `${chapterId}-${proseIndex + 1}`;
+      const sourceKeys = sourceKeysForEbookBlock(chapterId, match);
       proseIndex += 1;
-      sourceCounts[sourceKey] = (sourceCounts[sourceKey] || 0) + 1;
-      footnotes.push({ id, sourceKey });
-      return match.replace(
-        new RegExp(`</${tag}>$`),
-        `<sup id="ebook-fnref-${id}" class="ebook__footnote-ref"><a href="#ebook-fn-${id}" aria-label="${tr({ sv: 'Källnot', en: 'Source note', 'zh-Hans': '来源注释', 'zh-Hant': '來源註釋', ar: 'ملاحظة مصدر', ckb: 'تێبینی سەرچاوە', fa: 'یادداشت منبع', pl: 'Przypis źródłowy', so: 'Qoraal il', ti: 'ምንጪ ሓበሬታ', tr: 'Kaynak notu', uk: 'Джерельна примітка' })} ${footnotes.length}">${footnotes.length}</a></sup></${tag}>`,
-      );
+      const refs = sourceKeys
+        .map((sourceKey, sourceIndex) => {
+          const footnoteId = sourceKeys.length === 1 ? id : `${id}-${sourceIndex + 1}`;
+          const footnoteNumber = footnotes.length + 1;
+          sourceCounts[sourceKey] = (sourceCounts[sourceKey] || 0) + 1;
+          footnotes.push({ id: footnoteId, sourceKey });
+          return `<sup id="ebook-fnref-${footnoteId}" class="ebook__footnote-ref"><a href="#ebook-fn-${footnoteId}" aria-label="${tr({ sv: 'Källnot', en: 'Source note', 'zh-Hans': '来源注释', 'zh-Hant': '來源註釋', ar: 'ملاحظة مصدر', ckb: 'تێبینی سەرچاوە', fa: 'یادداشت منبع', pl: 'Przypis źródłowy', so: 'Qoraal il', ti: 'ምንጪ ሓበሬታ', tr: 'Kaynak notu', uk: 'Джерельна примітка' })} ${footnoteNumber}">${footnoteNumber}</a></sup>`;
+        })
+        .join('');
+      return match.replace(new RegExp(`</${tag}>$`), `${refs}</${tag}>`);
     });
     return {
       html: withRefs,
@@ -252,12 +309,14 @@
       sourceKeys = practiceHint;
       practiceHint = '';
     }
-    const items = points.map((point) => `<li>${point}</li>`).join('');
+    const items = points
+      .map((point) => `<li data-source-key="uhrStudyMaterial">${point}</li>`)
+      .join('');
     return `
       <h2>Det viktigaste</h2>
       <ul>${items}</ul>
       <h2>Plugga smart</h2>
-      <p>${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
+      <p data-source-key="editorialCommentary">${practiceHint || 'Läs punkterna långsamt, öppna sedan övningen för samma kapitel och låt fel svar visa vad du ska läsa om.'}</p>
       ${afterPracticeHtml}
       ${ebookFactBox('sv', 'Fakta att repetera', facts, sourceKeys)}
     `;
@@ -3468,7 +3527,7 @@
           <ul>
             <li><b>Easter</b> falls in March or April and has Christian roots, though many people celebrate it as a family and spring holiday.</li>
             <li><b>Walpurgis Night</b>, 30 April, often means bonfires and songs welcoming spring.</li>
-            <li><b>May Day</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
+            <li><b>First of May</b> is International Workers' Day, marked by demonstrations and political speeches.</li>
             <li><b>Midsummer Eve</b> is always a Friday between 19 and 25 June, with outdoor gatherings, flower wreaths, a midsummer pole, herring, new potatoes, and strawberries.</li>
           </ul>
           <h2>Autumn and winter</h2>
@@ -3504,7 +3563,7 @@
           <ul>
             <li><b>复活节</b>（Easter）落在3月或4月，源于基督教，不过许多人把它当作家庭与春季的节日来庆祝。</li>
             <li><b>瓦尔普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味着篝火和迎接春天的歌声。</li>
-            <li><b>五一</b>（May Day）是国际劳动节，以游行和政治演讲来标记。</li>
+            <li><b>五一</b>（First of May）是国际劳动节，以游行和政治演讲来标记。</li>
             <li><b>仲夏前夜</b>（Midsummer Eve）总是在6月19日至25日之间的一个星期五，人们在户外聚会，戴花环、立仲夏柱，享用鲱鱼、新土豆和草莓。</li>
           </ul>
           <h2>秋与冬</h2>
@@ -3528,7 +3587,7 @@
           <ul>
             <li><b>復活節</b>（Easter）落在3月或4月，源於基督教，不過許多人把它當作家庭與春季的節日來慶祝。</li>
             <li><b>瓦爾普吉斯之夜</b>（Walpurgis Night），4月30日，通常意味著篝火和迎接春天的歌聲。</li>
-            <li><b>五一</b>（May Day）是國際勞動節，以遊行和政治演講來標記。</li>
+            <li><b>五一</b>（First of May）是國際勞動節，以遊行和政治演講來標記。</li>
             <li><b>仲夏前夜</b>（Midsummer Eve）總是在6月19日至25日之間的一個星期五，人們在戶外聚會，戴花環、立仲夏柱，享用鯡魚、新馬鈴薯和草莓。</li>
           </ul>
           <h2>秋與冬</h2>
