@@ -12,6 +12,13 @@ type DashboardLocaleFixture = {
   activityTitle: string;
   dashboardLinkLabel: RegExp | string;
   language: AppLanguage;
+  mockHistoryAverage: string;
+  mockHistoryEmptyState: string;
+  mockHistoryExamLink: string;
+  mockHistoryLatest: string;
+  mockHistoryRecent: string;
+  mockHistoryTimeUsed: string;
+  mockHistoryTitle: string;
   profilePath: string;
   summaryLine: string;
   title: string;
@@ -25,6 +32,14 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     chapterProgressTitle: 'Kapitelframsteg',
     dashboardLinkLabel: /Öppna framstegsöversikten/,
     language: 'sv',
+    mockHistoryAverage: 'Snitt',
+    mockHistoryEmptyState:
+      'Genomför ett övningsprov så visas tidigare resultat, tempo och bästa försök här.',
+    mockHistoryExamLink: 'Öppna övningsprovet',
+    mockHistoryLatest: 'Senast',
+    mockHistoryRecent: 'Senaste övningsprov',
+    mockHistoryTimeUsed: 'Tid: 24m',
+    mockHistoryTitle: 'Övningsprov över tid',
     profilePath: '/profile',
     streakXpTitle: 'Svit och XP',
     summaryLine: '0 svar den här veckan · 0 kapitel provade · 0 olösta misstag',
@@ -35,6 +50,14 @@ const dashboardLocales: DashboardLocaleFixture[] = [
     chapterProgressTitle: 'Chapter progress',
     dashboardLinkLabel: /Open (?:the )?progress dashboard/,
     language: 'en',
+    mockHistoryAverage: 'Average',
+    mockHistoryEmptyState:
+      'Finish a mock exam and your past scores, pacing, and best attempt will appear here.',
+    mockHistoryExamLink: 'Open the mock exam',
+    mockHistoryLatest: 'Latest',
+    mockHistoryRecent: 'Recent mock exams',
+    mockHistoryTimeUsed: 'Time: 24m',
+    mockHistoryTitle: 'Mock exam history',
     profilePath: '/profile',
     streakXpTitle: 'Streak and XP',
     summaryLine: '0 answers this week · 0 chapters tried · 0 unresolved mistakes',
@@ -50,6 +73,59 @@ async function seedCleanLanguage(page: Page, language: AppLanguage) {
     window.sessionStorage.clear();
   });
   await seedSettingsLanguage(page, language);
+  await markAboutTheTestSeen(page);
+}
+
+async function seedMockExamHistory(page: Page, language: AppLanguage) {
+  await page.addInitScript((seededLanguage) => {
+    const completedAt = '2026-05-20T12:00:00.000Z';
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem('settings\\language', seededLanguage);
+    window.localStorage.setItem('settings\\hasSeenAboutTheTest', 'true');
+    window.localStorage.setItem(
+      'progress\\progressState',
+      JSON.stringify({
+        completedQuestionIds: [],
+        questionProgress: {},
+        totalXp: 0,
+        answerDates: [],
+        answerHistory: [],
+        dailyChallengeCompletions: {},
+        mockExamSessions: [
+          {
+            sessionId: 'dashboard-mock-history-1',
+            score: 0.72,
+            completedAt: '2026-05-18T12:00:00.000Z',
+            correctCount: 36,
+            totalCount: 50,
+            questionTimings: [
+              { questionId: 'q001', timeSpentSeconds: 600 },
+              { questionId: 'q002', timeSpentSeconds: 480 },
+            ],
+          },
+          {
+            sessionId: 'dashboard-mock-history-2',
+            score: 0.84,
+            completedAt,
+            correctCount: 42,
+            totalCount: 50,
+            questionTimings: [
+              { questionId: 'q003', timeSpentSeconds: 900 },
+              { questionId: 'q004', timeSpentSeconds: 540 },
+            ],
+          },
+        ],
+        streakFreezeState: {
+          available: 0,
+          lastEarnedAt: '2026-05-20',
+          lifetimeEarned: 0,
+          lifetimeSpent: 0,
+          rescuedDayKeys: [],
+        },
+      }),
+    );
+  }, language);
   await markAboutTheTestSeen(page);
 }
 
@@ -89,6 +165,22 @@ async function expectDashboardVisible(page: Page, fixture: DashboardLocaleFixtur
     page.getByRole('heading', { name: fixture.chapterProgressTitle }).last(),
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: fixture.streakXpTitle }).last()).toBeVisible();
+  await expect(page.getByRole('heading', { name: fixture.mockHistoryTitle }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryEmptyState, { exact: true }).last()).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+}
+
+async function expectMockHistoryVisible(page: Page, fixture: DashboardLocaleFixture) {
+  await expect(page).toHaveURL(/\/dashboard(?:\?|$)/);
+  await expect(page.getByRole('heading', { name: fixture.mockHistoryTitle }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryLatest, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryAverage, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryRecent, { exact: true }).last()).toBeVisible();
+  await expect(page.getByText('84%', { exact: true }).last()).toBeVisible();
+  await expect(page.getByText('78%', { exact: true }).last()).toBeVisible();
+  await expect(page.getByText('72%', { exact: true }).last()).toBeVisible();
+  await expect(page.getByText(fixture.mockHistoryTimeUsed, { exact: true }).last()).toBeVisible();
+  await expect(page.getByRole('link', { name: fixture.mockHistoryExamLink }).last()).toBeVisible();
   await expectNoHorizontalOverflow(page);
 }
 
@@ -114,6 +206,17 @@ for (const fixture of dashboardLocales) {
     await dismissBlockingModals(page);
     await page.getByLabel(fixture.dashboardLinkLabel).first().click();
     await expectDashboardVisible(page, fixture);
+
+    expect(consoleErrors).toEqual([]);
+  });
+
+  test(`dashboard route renders mock exam history in ${fixture.language}`, async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    await seedMockExamHistory(page, fixture.language);
+
+    await page.goto('/dashboard', { waitUntil: 'networkidle' });
+    await dismissBlockingModals(page);
+    await expectMockHistoryVisible(page, fixture);
 
     expect(consoleErrors).toEqual([]);
   });
