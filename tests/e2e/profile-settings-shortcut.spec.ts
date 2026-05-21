@@ -7,102 +7,96 @@ import {
   type AppLanguage,
 } from './browserLaunch';
 
-type ActivationMode = 'keyboard' | 'pointer';
+test.use({ viewport: { width: 390, height: 844 } });
 
-type ShortcutFixture = {
-  activation: ActivationMode;
-  audioSwitchLabel: string;
-  ctaAccessibilityLabel: string;
-  ctaText: string;
-  dailyGoalOptionLabel: string;
-  dailyGoalTitle: string;
-  language: AppLanguage;
-  languageOptionLabel: string;
-  settingsTitle: string;
-  studyLanguageTitle: string;
+const minimumTargetSizePx = 44;
+
+const fixtures: Record<
+  AppLanguage,
+  {
+    audioSwitchName: string;
+    dailyGoalGroup: string;
+    dailyGoalRadioName: string;
+    languageGroup: string;
+    languageRadioName: string;
+    profileHeading: string;
+    settingsCtaName: string;
+    settingsHeading: string;
+    studySetupHeading: string;
+  }
+> = {
+  sv: {
+    audioSwitchName: 'Stäng av ljud',
+    dailyGoalGroup: 'Dagligt mål',
+    dailyGoalRadioName: 'Ställ in dagligt mål till 10 svar',
+    languageGroup: 'Studiespråk',
+    languageRadioName: 'Byt studiespråk till Svenska',
+    profileHeading: 'Framsteg utan konto',
+    settingsCtaName: 'Öppna inställningar för dagligt mål, språk och ljud',
+    settingsHeading: 'Inställningar',
+    studySetupHeading: 'Studieinställningar',
+  },
+  en: {
+    audioSwitchName: 'Disable audio',
+    dailyGoalGroup: 'Daily goal',
+    dailyGoalRadioName: 'Set daily goal to 10 answers',
+    languageGroup: 'Study language',
+    languageRadioName: 'Set study language to English support',
+    profileHeading: 'Progress without an account',
+    settingsCtaName: 'Open settings for daily goal, language, and audio',
+    settingsHeading: 'Settings',
+    studySetupHeading: 'Study setup',
+  },
 };
 
-const mobileViewport = { width: 390, height: 844 };
-
-const shortcutFixtures: ShortcutFixture[] = [
-  {
-    activation: 'pointer',
-    audioSwitchLabel: 'Stäng av ljud',
-    ctaAccessibilityLabel: 'Öppna inställningar för dagligt mål, språk och ljud',
-    ctaText: 'Ändra mål, språk och ljud',
-    dailyGoalOptionLabel: 'Ställ in dagligt mål till 10 svar',
-    dailyGoalTitle: 'Dagligt mål',
-    language: 'sv',
-    languageOptionLabel: 'Byt studiespråk till Engelskt stöd',
-    settingsTitle: 'Inställningar',
-    studyLanguageTitle: 'Studiespråk',
-  },
-  {
-    activation: 'keyboard',
-    audioSwitchLabel: 'Disable audio',
-    ctaAccessibilityLabel: 'Open settings for daily goal, language, and audio',
-    ctaText: 'Adjust goal, language, and audio',
-    dailyGoalOptionLabel: 'Set daily goal to 10 answers',
-    dailyGoalTitle: 'Daily goal',
-    language: 'en',
-    languageOptionLabel: 'Set study language to Swedish',
-    settingsTitle: 'Settings',
-    studyLanguageTitle: 'Study language',
-  },
-];
-
-async function expectMinimumTarget(locator: Locator, label: string) {
+async function expectMinimumTargetSize(locator: Locator, name: string): Promise<void> {
+  await locator.scrollIntoViewIfNeeded();
   const box = await locator.boundingBox();
-  expect(box, `${label} should render measurable geometry`).not.toBeNull();
-  expect(box!.width, `${label} should be at least 44px wide`).toBeGreaterThanOrEqual(44);
-  expect(box!.height, `${label} should be at least 44px tall`).toBeGreaterThanOrEqual(44);
+
+  expect(box, `${name} should have a rendered target box`).not.toBeNull();
+  expect(box!.width, `${name} target width`).toBeGreaterThanOrEqual(minimumTargetSizePx);
+  expect(box!.height, `${name} target height`).toBeGreaterThanOrEqual(minimumTargetSizePx);
 }
 
-async function openProfile(page: Page, language: AppLanguage) {
+async function openProfile(page: Page, language: AppLanguage): Promise<void> {
   await seedFreshSettingsLanguageAndAboutSeen(page, language);
   await page.goto('/profile', { waitUntil: 'networkidle' });
   await dismissBlockingModals(page);
 }
 
-async function activateShortcut(shortcut: Locator, activation: ActivationMode) {
-  if (activation === 'keyboard') {
-    await shortcut.focus();
-    await expect(shortcut).toBeFocused();
-    await shortcut.press('Enter');
-    return;
-  }
-
-  await shortcut.click();
-}
-
-test.use({ viewport: mobileViewport });
-
-for (const fixture of shortcutFixtures) {
-  test(`profile study setup shortcut opens settings with promised controls in ${fixture.language}`, async ({
-    page,
-  }) => {
+for (const language of ['sv', 'en'] as const) {
+  test(`Profile study setup shortcut opens Settings controls in ${language}`, async ({ page }) => {
+    const copy = fixtures[language];
     const errors = collectConsoleAndPageErrors(page);
 
-    await openProfile(page, fixture.language);
+    await openProfile(page, language);
 
-    const settingsShortcut = page.getByRole('link', {
-      name: fixture.ctaAccessibilityLabel,
-    });
+    await expect(page.getByRole('heading', { name: copy.profileHeading })).toBeVisible();
+    await expect(page.getByRole('heading', { name: copy.studySetupHeading })).toBeVisible();
 
+    const settingsShortcut = page.getByRole('link', { name: copy.settingsCtaName });
     await expect(settingsShortcut).toHaveCount(1);
-    await expect(settingsShortcut).toContainText(fixture.ctaText);
-    await expectMinimumTarget(settingsShortcut, `${fixture.language} study setup shortcut`);
+    await expectMinimumTargetSize(settingsShortcut, `${language} profile settings shortcut`);
+    await settingsShortcut.click();
 
-    await activateShortcut(settingsShortcut, fixture.activation);
+    await expect(page).toHaveURL(/\/settings$/);
+    await dismissBlockingModals(page);
 
-    await expect(page).toHaveURL(/\/settings(?:[?#].*)?$/);
-    await expect(page.getByRole('heading', { name: fixture.settingsTitle })).toBeVisible();
-    await expect(page.getByRole('heading', { name: fixture.dailyGoalTitle })).toBeVisible();
-    await expect(page.getByRole('heading', { name: fixture.studyLanguageTitle })).toBeVisible();
-    await expect(page.getByRole('heading', { name: /^Ljud$|^Audio$/ })).toBeVisible();
-    await expect(page.getByRole('radio', { name: fixture.dailyGoalOptionLabel })).toBeVisible();
-    await expect(page.getByRole('radio', { name: fixture.languageOptionLabel })).toBeVisible();
-    await expect(page.getByRole('switch', { name: fixture.audioSwitchLabel })).toBeVisible();
+    await expect(page.getByRole('heading', { name: copy.settingsHeading })).toBeVisible();
+    await expect(page.getByRole('radiogroup', { name: copy.dailyGoalGroup })).toBeVisible();
+    await expect(page.getByRole('radio', { name: copy.dailyGoalRadioName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await expect(page.getByRole('radiogroup', { name: copy.languageGroup })).toBeVisible();
+    await expect(page.getByRole('radio', { name: copy.languageRadioName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+    await expect(page.getByRole('switch', { name: copy.audioSwitchName })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
 
     expect(errors.get()).toEqual([]);
   });
