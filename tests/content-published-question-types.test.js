@@ -7,6 +7,7 @@ const vm = require('node:vm');
 
 const { buildSiteQuestionBank } = require('../scripts/export-site-question-bank');
 const {
+  generatedExpectedRowsKeyFindingsForSource,
   generatedFixtureIdExpression,
   generatedFixtureIdHelperSource,
   generatedQuestionId,
@@ -3165,6 +3166,40 @@ test('generated id fixture guard allows source ids and helper-derived ids', () =
       firstGeneratedNumber,
     ),
     [],
+  );
+});
+
+test('generated-output expectedRows maps derive keys with generatedQuestionId', () => {
+  const source = fs.readFileSync(path.join(repoRoot, 'scripts/derived-content.test.js'), 'utf8');
+
+  assert.deepEqual(
+    generatedExpectedRowsKeyFindingsForSource('scripts/derived-content.test.js', source),
+    [],
+  );
+});
+
+test('generated-output expectedRows guard rejects literal and helper-derived map keys', () => {
+  const source = [
+    "const source = sourceQuestions.find((question) => question.id === 'q151');",
+    "const unrelatedRows = { q167: ['source id outside expectedRows maps is allowed'] };",
+    'const expectedRows = {',
+    "  q151: ['De drivs ofta av privata företag.', 'They are often run by private companies.'],",
+    "  'q167': ['De får aldrig sälja reklamplats.', 'They may never sell advertising space.'],",
+    "  [generatedFixtureId('q151', 1)]: ['De finns också på internet.', 'They are also available online.'],",
+    "  [generatedQuestionId(sourceQuestions, 'q151', 'trueStatement')]: ['computed sv', 'computed en'],",
+    '};',
+    'const arrayExpectedRows = [',
+    "  ['q027', 1, 'source-id array fixture stays allowed', 'source-id array fixture stays allowed'],",
+    '];',
+  ].join('\n');
+
+  assert.deepEqual(
+    generatedExpectedRowsKeyFindingsForSource('scripts/derived-content.test.js', source),
+    [
+      'scripts/derived-content.test.js:4 hardcodes generated expectedRows map key q151',
+      'scripts/derived-content.test.js:5 hardcodes generated expectedRows map key q167',
+      'scripts/derived-content.test.js:6 uses a generated expectedRows map key without generatedQuestionId(...)',
+    ],
   );
 });
 
